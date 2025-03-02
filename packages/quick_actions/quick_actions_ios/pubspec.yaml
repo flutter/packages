@@ -24,8 +24,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  integration_test:
-    sdk: flutter
   pigeon: ^20.0.1
   plugin_platform_interface: ^2.1.7
 

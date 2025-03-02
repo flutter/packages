@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:go_router_builder_example/all_types.dart';
 import 'package:go_router_builder_example/shared/data.dart';
 
@@ -220,5 +221,75 @@ void main() {
       ),
     );
     expect(find.text('/iterable-route-with-default-values'), findsOneWidget);
+  });
+
+  testWidgets(
+      'Test navigation with invalid query and path parameters using Uri.parse',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(AllTypesApp());
+
+    final ScaffoldState scaffoldState =
+        tester.firstState(find.byType(Scaffold));
+
+    // Test invalid BigInt parameter
+    scaffoldState.context
+        .go(Uri.parse('/big-int-route/4?bigIntField=invalid').toString());
+    await tester.pumpAndSettle();
+    expect(find.text('BigIntRoute'), findsOneWidget);
+    expect(find.text('Param: 4'), findsOneWidget);
+    expect(find.text('Query param: null'), findsOneWidget);
+
+    // Test invalid DateTime parameter
+    scaffoldState.context.go(Uri.parse(
+            '/date-time-route/2021-01-01T00:00:00.000?dateTimeField=invalid-date')
+        .toString());
+    await tester.pumpAndSettle();
+    expect(find.text('DateTimeRoute'), findsOneWidget);
+    expect(find.text('Param: 2021-01-01 00:00:00.000'), findsOneWidget);
+    expect(find.text('Query param: null'), findsOneWidget);
+
+    // Test invalid Double parameter
+    scaffoldState.context
+        .go(Uri.parse('/double-route/3.14?doubleField=invalid').toString());
+    await tester.pumpAndSettle();
+    expect(find.text('DoubleRoute'), findsOneWidget);
+    expect(find.text('Param: 3.14'), findsOneWidget);
+    expect(find.text('Query param: null'), findsOneWidget);
+    expect(find.text('Query param with default value: 1.0'), findsOneWidget);
+
+    // Test invalid Int parameter
+    scaffoldState.context
+        .go(Uri.parse('/int-route/65?intField=invalid').toString());
+    await tester.pumpAndSettle();
+    expect(find.text('IntRoute'), findsOneWidget);
+    expect(find.text('Param: 65'), findsOneWidget);
+    expect(find.text('Query param: null'), findsOneWidget);
+    expect(find.text('Query param with default value: 1'), findsOneWidget);
+
+    // Test invalid Uri parameter
+    scaffoldState.context.go(
+        Uri.parse('/uri-route/https%3A%2F%2Fdart.dev?uriField=invalid-uri')
+            .toString());
+    await tester.pumpAndSettle();
+    expect(find.text('UriRoute'), findsOneWidget);
+    expect(find.text('Param: https://dart.dev'), findsOneWidget);
+    expect(find.text('Query param: null'), findsOneWidget);
+
+    // Test invalid Enum parameter
+    scaffoldState.context.go(
+        Uri.parse('/enum-route/favorite-food?enum-field=invalid').toString());
+    await tester.pumpAndSettle();
+    expect(find.text('EnumRoute'), findsOneWidget);
+    expect(find.text('Query param: null'), findsOneWidget);
+    expect(
+        find.text('Query param with default value: PersonDetails.favoriteFood'),
+        findsOneWidget);
+
+    // Test invalid Iterable parameter
+    scaffoldState.context
+        .go(Uri.parse('/iterable-route?intListField=invalid').toString());
+    await tester.pumpAndSettle();
+    expect(find.text('IterableRoute'), findsOneWidget);
+    expect(find.text('/iterable-route'), findsOneWidget);
   });
 }

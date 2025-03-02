@@ -25,8 +25,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  integration_test:
-    sdk: flutter
   pigeon: ^22.4.2
   test: ^1.16.0
 

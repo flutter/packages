@@ -3992,10 +3992,13 @@ protocol PigeonApiProtocolWKNavigationDelegate {
     pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Asks the delegate to respond to an authentication challenge.
+  ///
+  /// Returns a List with a `UrlSessionAuthChallengeDisposition` and a nullable
+  /// `URLCredential`.
   func didReceiveAuthenticationChallenge(
     pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     challenge challengeArg: URLAuthenticationChallenge,
-    completion: @escaping (Result<AuthenticationChallengeResponse, PigeonError>) -> Void)
+    completion: @escaping (Result<[Any?], PigeonError>) -> Void)
 }
 
 final class PigeonApiWKNavigationDelegate: PigeonApiProtocolWKNavigationDelegate {
@@ -4333,10 +4336,13 @@ final class PigeonApiWKNavigationDelegate: PigeonApiProtocolWKNavigationDelegate
   }
 
   /// Asks the delegate to respond to an authentication challenge.
+  ///
+  /// Returns a List with a `UrlSessionAuthChallengeDisposition` and a nullable
+  /// `URLCredential`.
   func didReceiveAuthenticationChallenge(
     pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     challenge challengeArg: URLAuthenticationChallenge,
-    completion: @escaping (Result<AuthenticationChallengeResponse, PigeonError>) -> Void
+    completion: @escaping (Result<[Any?], PigeonError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -4369,7 +4375,7 @@ final class PigeonApiWKNavigationDelegate: PigeonApiProtocolWKNavigationDelegate
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
-        let result = listResponse[0] as! AuthenticationChallengeResponse
+        let result = listResponse[0] as! [Any?]
         completion(.success(result))
       }
     }

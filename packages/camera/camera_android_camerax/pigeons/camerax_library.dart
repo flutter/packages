@@ -260,8 +260,6 @@ abstract class SystemServicesHostApi {
   CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
 
   String getTempFilePath(String prefix, String suffix);
-
-  bool isPreviewPreTransformed();
 }
 
 @FlutterApi()
@@ -297,6 +295,8 @@ abstract class PreviewHostApi {
   ResolutionInfo getResolutionInfo(int identifier);
 
   void setTargetRotation(int identifier, int rotation);
+
+  bool surfaceProducerHandlesCropAndRotation();
 }
 
 @HostApi(dartHostTestHandler: 'TestVideoCaptureHostApi')

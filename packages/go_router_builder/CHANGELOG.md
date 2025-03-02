@@ -1,3 +1,7 @@
+## 2.8.1
+
+- Fixes an issue when navigate to router with invalid params 
+
 ## 2.8.0
 
 - Adds support for passing `preload` parameter to `StatefulShellBranchData`.

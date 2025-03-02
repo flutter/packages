@@ -263,6 +263,20 @@ public class PreviewTest {
     verify(mockPreview).setTargetRotation(targetRotation);
   }
 
+  @Test
+  public void
+      surfaceProducerHandlesCropAndRotation_returnsIfSurfaceProducerHandlesCropAndRotation() {
+    final PreviewHostApiImpl hostApi =
+        new PreviewHostApiImpl(mockBinaryMessenger, testInstanceManager, mockTextureRegistry);
+    final TextureRegistry.SurfaceProducer mockSurfaceProducer =
+        mock(TextureRegistry.SurfaceProducer.class);
+
+    hostApi.flutterSurfaceProducer = mockSurfaceProducer;
+    when(mockSurfaceProducer.handlesCropAndRotation()).thenReturn(true);
+
+    assertEquals(hostApi.surfaceProducerHandlesCropAndRotation(), true);
+  }
+
   // TODO(bparrishMines): Replace with inline calls to onSurfaceCleanup once available on stable;
   // see https://github.com/flutter/flutter/issues/16125. This separate method only exists to scope
   // the suppression.
