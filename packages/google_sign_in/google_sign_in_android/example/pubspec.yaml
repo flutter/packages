@@ -16,7 +16,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  google_sign_in_platform_interface: ^2.2.0
+  google_sign_in_platform_interface: ^2.5.0
   http: ">=0.13.0 <2.0.0"
 
 dev_dependencies:
@@ -28,8 +28,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-   {google_sign_in_platform_interface: {path: ../../../../packages/google_sign_in/google_sign_in_platform_interface}}

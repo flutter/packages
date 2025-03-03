@@ -26,7 +26,7 @@ dependencies:
     sdk: flutter
   google_sign_in_android: ^6.1.0
   google_sign_in_ios: ^5.7.0
-  google_sign_in_platform_interface: ^2.4.0
+  google_sign_in_platform_interface: ^2.5.0
   google_sign_in_web: ^0.12.0
 
 dev_dependencies:
@@ -47,8 +47,3 @@ false_secrets:
   - /example/ios/RunnerTests/GoogleService-Info.plist
   - /example/ios/RunnerTests/GoogleSignInTests.m
   - /example/macos/Runner/Info.plist
-
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-   {google_sign_in_android: {path: ../../../packages/google_sign_in/google_sign_in_android}, google_sign_in_ios: {path: ../../../packages/google_sign_in/google_sign_in_ios}, google_sign_in_platform_interface: {path: ../../../packages/google_sign_in/google_sign_in_platform_interface}}
