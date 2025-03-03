@@ -7,12 +7,12 @@ import 'dart:ffi';
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/cmake.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/file_utils.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/native_test_command.dart';
+import 'package:git/git.dart';
 import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
@@ -80,22 +80,25 @@ void main() {
   const String kDestination = '--ios-destination';
 
   group('test native_test_command on Posix', () {
-    late FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       // iOS and macOS tests expect macOS, Linux tests expect Linux; nothing
       // needs to distinguish between Linux and macOS, so set both to true to
       // allow them to share a setup group.
       mockPlatform = MockPlatform(isMacOS: true, isLinux: true);
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-      processRunner = RecordingProcessRunner();
-      final NativeTestCommand command = NativeTestCommand(packagesDir,
-          processRunner: processRunner, platform: mockPlatform);
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
+      final NativeTestCommand command = NativeTestCommand(
+        packagesDir,
+        processRunner: processRunner,
+        platform: mockPlatform,
+        gitDir: gitDir,
+      );
 
       runner = CommandRunner<void>(
           'native_test_command', 'Test for native_test_command');
@@ -1245,7 +1248,7 @@ public class FlutterActivityTest {
     });
 
     // Tests behaviors of implementation that is shared between iOS and macOS.
-    group('iOS/macOS', () {
+    group('iOS or macOS', () {
       test('fails if xcrun fails', () async {
         createFakePlugin('plugin', packagesDir,
             platformSupport: <String, PlatformDetails>{
@@ -1855,17 +1858,16 @@ public class FlutterActivityTest {
   });
 
   group('test native_test_command on Windows', () {
-    late FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
+    late GitDir gitDir;
 
     setUp(() {
-      fileSystem = MemoryFileSystem(style: FileSystemStyle.windows);
       mockPlatform = MockPlatform(isWindows: true);
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-      processRunner = RecordingProcessRunner();
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
     });
 
     // Returns the ProcessCall to expect for build the Windows unit tests for
@@ -1895,6 +1897,7 @@ public class FlutterActivityTest {
         final NativeTestCommand command = NativeTestCommand(packagesDir,
             processRunner: processRunner,
             platform: mockPlatform,
+            gitDir: gitDir,
             abi: Abi.windowsX64);
 
         runner = CommandRunner<void>(
@@ -2165,6 +2168,7 @@ public class FlutterActivityTest {
         final NativeTestCommand command = NativeTestCommand(packagesDir,
             processRunner: processRunner,
             platform: mockPlatform,
+            gitDir: gitDir,
             abi: Abi.windowsArm64);
 
         runner = CommandRunner<void>(

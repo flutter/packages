@@ -17,7 +17,6 @@ import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/file_utils.dart';
-import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/package_looping_command.dart';
@@ -175,12 +174,12 @@ class PublishCommand extends PackageLoopingCommand {
   @override
   Stream<PackageEnumerationEntry> getPackagesToProcess() async* {
     if (getBoolArg(_allChangedFlag)) {
-      final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
-      final String baseSha = await gitVersionFinder.getBaseSha();
       print(
           'Publishing all packages that have changed relative to "$baseSha"\n');
-      final List<String> changedPubspecs =
-          await gitVersionFinder.getChangedPubSpecs();
+
+      final List<String> changedPubspecs = changedFiles
+          .where((String file) => file.trim().endsWith('pubspec.yaml'))
+          .toList();
 
       for (final String pubspecPath in changedPubspecs) {
         // git outputs a relativa, Posix-style path.

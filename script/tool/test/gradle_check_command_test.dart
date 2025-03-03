@@ -4,10 +4,10 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/gradle_check_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'util.dart';
@@ -16,15 +16,15 @@ const String _defaultFakeNamespace = 'dev.flutter.foo';
 
 void main() {
   late CommandRunner<void> runner;
-  late FileSystem fileSystem;
   late Directory packagesDir;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = fileSystem.currentDirectory.childDirectory('packages');
-    createPackagesDirectory(parentDir: packagesDir.parent);
+    final GitDir gitDir;
+    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks();
     final GradleCheckCommand command = GradleCheckCommand(
       packagesDir,
+      gitDir: gitDir,
     );
 
     runner = CommandRunner<void>(

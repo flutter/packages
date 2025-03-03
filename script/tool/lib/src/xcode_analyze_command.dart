@@ -16,6 +16,7 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) : _xcode = Xcode(processRunner: processRunner, log: true) {
     argParser.addFlag(platformIOS, help: 'Analyze iOS');
     argParser.addFlag(platformMacOS, help: 'Analyze macOS');

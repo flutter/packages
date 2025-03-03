@@ -7,7 +7,6 @@ import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/output_utils.dart';
 import 'package:flutter_plugin_tools/src/common/package_looping_command.dart';
@@ -77,17 +76,16 @@ String _filenameForType(_ResultFileType type) {
 }
 
 void main() {
-  late FileSystem fileSystem;
   late MockPlatform mockPlatform;
   late Directory packagesDir;
   late Directory thirdPartyPackagesDir;
 
   setUp(() {
+    mockPlatform = MockPlatform();
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks(platform: mockPlatform);
     // Correct color handling is part of the behavior being tested here.
     useColorForOutput = true;
-    fileSystem = MemoryFileSystem();
-    mockPlatform = MockPlatform();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     thirdPartyPackagesDir = packagesDir.parent
         .childDirectory('third_party')
         .childDirectory('packages');
