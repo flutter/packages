@@ -9,7 +9,6 @@ final class MockFLTCam: FLTCam {
   var startStub: (() -> Void)?
   var setDeviceOrientationStub: ((UIDeviceOrientation) -> Void)?
 
-
   override var onFrameAvailable: (() -> Void) {
     get {
       return super.onFrameAvailable
