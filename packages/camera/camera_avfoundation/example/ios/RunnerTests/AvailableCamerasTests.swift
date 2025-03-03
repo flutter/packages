@@ -50,7 +50,7 @@ final class AvailableCamerasTest: XCTestCase {
     if #available(iOS 13.0, *) {
       requiredTypes.append(.builtInUltraWideCamera)
     }
-    var cameras: [MockCaptureDevice] = [wideAngleCamera, frontFacingCamera, telephotoCamera]
+    var cameras = [wideAngleCamera, frontFacingCamera, telephotoCamera]
     if #available(iOS 13.0, *) {
       cameras.append(ultraWideCamera)
     }
@@ -98,7 +98,7 @@ final class AvailableCamerasTest: XCTestCase {
     if #available(iOS 13.0, *) {
       requiredTypes.append(.builtInUltraWideCamera)
     }
-    let cameras: [MockCaptureDevice] = [wideAngleCamera, frontFacingCamera]
+    let cameras = [wideAngleCamera, frontFacingCamera]
 
     mockDeviceDiscoverer.discoverySessionStub = { deviceTypes, mediaType, position in
       XCTAssertEqual(deviceTypes, requiredTypes)
@@ -134,7 +134,7 @@ final class AvailableCamerasTest: XCTestCase {
     if #available(iOS 13.0, *) {
       requiredTypes.append(.builtInUltraWideCamera)
     }
-    let cameras: [MockCaptureDevice] = [unspecifiedCamera]
+    let cameras = [unspecifiedCamera]
 
     mockDeviceDiscoverer.discoverySessionStub = { deviceTypes, mediaType, position in
       XCTAssertEqual(deviceTypes, requiredTypes)
@@ -151,6 +151,6 @@ final class AvailableCamerasTest: XCTestCase {
     }
     waitForExpectations(timeout: 30, handler: nil)
 
-    XCTAssertEqual(resultValue?.first?.lensDirection, FCPPlatformCameraLensDirection.external)
+    XCTAssertEqual(resultValue?.first?.lensDirection, .external)
   }
 }

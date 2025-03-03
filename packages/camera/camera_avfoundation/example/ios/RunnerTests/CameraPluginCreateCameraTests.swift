@@ -45,7 +45,7 @@ final class CameraPluginCreateCameraTests: XCTestCase {
     cameraPlugin.createCamera(
       withName: "camera_name",
       settings: FCPPlatformMediaSettings.make(
-        with: FCPPlatformResolutionPreset.medium,
+        with: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
@@ -79,7 +79,7 @@ final class CameraPluginCreateCameraTests: XCTestCase {
     cameraPlugin.createCamera(
       withName: "camera_name",
       settings: FCPPlatformMediaSettings.make(
-        with: FCPPlatformResolutionPreset.medium,
+        with: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
@@ -110,7 +110,7 @@ final class CameraPluginCreateCameraTests: XCTestCase {
     cameraPlugin.createCamera(
       withName: "camera_name",
       settings: FCPPlatformMediaSettings.make(
-        with: FCPPlatformResolutionPreset.medium,
+        with: .medium,
         framesPerSecond: nil,
         videoBitrate: nil,
         audioBitrate: nil,
