@@ -23,7 +23,7 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'io.flutter.plugins.flutter_plugin_android_lifecycle'
-    compileSdk 35
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
         minSdkVersion 19
