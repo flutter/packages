@@ -1,3 +1,8 @@
+## 2.10.1
+
+* Updates READMEs and API docs.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 2.10.0
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

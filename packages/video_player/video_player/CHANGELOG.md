@@ -1,3 +1,8 @@
+## 2.9.3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes mechanism to detect identifier in multi-line WebVTT captions.
+
 ## 2.9.2
 
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.

@@ -446,10 +446,12 @@ diff --git a/packages/foo/foo_bar/lib/foo.dart b/packages/foo/foo_bar/lib/foo.da
 index abc123..def456 100644
 --- a/packages/foo/foo_bar/lib/foo.dart
 +++ b/packages/foo/foo_bar/lib/foo.dart
-@@ -51,6 +51,7 @@ Future<bool> launchUrl(
+@@ -51,6 +51,9 @@ Future<bool> launchUrl(
  }
 
  void foo() {
++  // blank lines should also be allowed as part of comment changes.
++
 +  // ignore: exhaustive_cases
    switch(a_foo) {
      case a:

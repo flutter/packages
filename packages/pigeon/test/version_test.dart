@@ -4,7 +4,7 @@
 
 import 'dart:io';
 
-import 'package:pigeon/generator_tools.dart';
+import 'package:pigeon/src/generator_tools.dart';
 import 'package:test/test.dart';
 
 void main() {

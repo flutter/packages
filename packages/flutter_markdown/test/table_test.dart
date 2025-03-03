@@ -48,7 +48,7 @@ void defineTests() {
       'should work with alignments',
       (WidgetTester tester) async {
         const String data =
-            '|Header 1|Header 2|\n|:----:|----:|\n|Col 1|Col 2|';
+            '|Header 1|Header 2|Header 3|\n|:----|:----:|----:|\n|Col 1|Col 2|Col 3|';
         await tester.pumpWidget(
           boilerplate(
             const MarkdownBody(data: data),
@@ -58,27 +58,21 @@ void defineTests() {
         final Iterable<DefaultTextStyle> styles =
             tester.widgetList(find.byType(DefaultTextStyle));
 
-        expect(styles.first.textAlign, TextAlign.center);
+        expect(styles.first.textAlign, TextAlign.left);
+        expect(styles.elementAt(1).textAlign, TextAlign.center);
         expect(styles.last.textAlign, TextAlign.right);
-      },
-    );
-
-    testWidgets(
-      'should work with table alignments',
-      (WidgetTester tester) async {
-        const String data =
-            '|Header 1|Header 2|Header 3|\n|:----|:----:|----:|\n|Col 1|Col 2|Col 3|';
-        await tester.pumpWidget(
-          boilerplate(
-            const MarkdownBody(data: data),
-          ),
-        );
 
         final Iterable<Wrap> wraps = tester.widgetList(find.byType(Wrap));
 
         expect(wraps.first.alignment, WrapAlignment.start);
         expect(wraps.elementAt(1).alignment, WrapAlignment.center);
         expect(wraps.last.alignment, WrapAlignment.end);
+
+        final Iterable<Text> texts = tester.widgetList(find.byType(Text));
+
+        expect(texts.first.textAlign, TextAlign.left);
+        expect(texts.elementAt(1).textAlign, TextAlign.center);
+        expect(texts.last.textAlign, TextAlign.right);
       },
     );
 
@@ -197,6 +191,50 @@ void defineTests() {
         final Table table = tester.widget(find.byType(Table));
 
         expect(table.defaultVerticalAlignment, tableCellVerticalAlignment);
+      },
+    );
+
+    testWidgets(
+      'table scrollbar thumbVisibility should follow stylesheet',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        const bool tableScrollbarThumbVisibility = true;
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
+            .copyWith(
+                tableColumnWidth: const FixedColumnWidth(100),
+                tableScrollbarThumbVisibility: tableScrollbarThumbVisibility);
+
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Scrollbar scrollbar = tester.widget(find.byType(Scrollbar));
+
+        expect(scrollbar.thumbVisibility, tableScrollbarThumbVisibility);
+      },
+    );
+
+    testWidgets(
+      'table scrollbar thumbVisibility should follow stylesheet',
+      (WidgetTester tester) async {
+        final ThemeData theme =
+            ThemeData.light().copyWith(textTheme: textTheme);
+
+        const String data = '|Header|\n|----|\n|Column|';
+        const bool tableScrollbarThumbVisibility = false;
+        final MarkdownStyleSheet style = MarkdownStyleSheet.fromTheme(theme)
+            .copyWith(
+                tableColumnWidth: const FixedColumnWidth(100),
+                tableScrollbarThumbVisibility: tableScrollbarThumbVisibility);
+
+        await tester.pumpWidget(
+            boilerplate(MarkdownBody(data: data, styleSheet: style)));
+
+        final Scrollbar scrollbar = tester.widget(find.byType(Scrollbar));
+
+        expect(scrollbar.thumbVisibility, tableScrollbarThumbVisibility);
       },
     );
 

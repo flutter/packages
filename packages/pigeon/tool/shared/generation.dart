@@ -5,8 +5,8 @@
 import 'dart:io' show Platform;
 
 import 'package:path/path.dart' as p;
-import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart';
+import 'package:pigeon/src/generator_tools.dart';
 
 import 'process_utils.dart';
 
@@ -23,7 +23,26 @@ enum GeneratorLanguage {
 // A map of pigeons/ files to the languages that they can't yet be generated
 // for due to limitations of that generator.
 const Map<String, Set<GeneratorLanguage>> _unsupportedFiles =
-    <String, Set<GeneratorLanguage>>{};
+    <String, Set<GeneratorLanguage>>{
+  'event_channel_tests': <GeneratorLanguage>{
+    GeneratorLanguage.cpp,
+    GeneratorLanguage.gobject,
+    GeneratorLanguage.java,
+    GeneratorLanguage.objc,
+  },
+  'event_channel_without_classes_tests': <GeneratorLanguage>{
+    GeneratorLanguage.cpp,
+    GeneratorLanguage.gobject,
+    GeneratorLanguage.java,
+    GeneratorLanguage.objc,
+  },
+  'proxy_api_tests': <GeneratorLanguage>{
+    GeneratorLanguage.cpp,
+    GeneratorLanguage.gobject,
+    GeneratorLanguage.java,
+    GeneratorLanguage.objc,
+  },
+};
 
 String _snakeToPascalCase(String snake) {
   final List<String> parts = snake.split('_');
@@ -48,21 +67,29 @@ String _javaFilenameForName(String inputName) {
 }
 
 Future<int> generateExamplePigeons() async {
-  return runPigeon(
+  int success = 0;
+  success = await runPigeon(
     input: './example/app/pigeons/messages.dart',
     basePath: './example/app',
     suppressVersion: true,
   );
+  success += await runPigeon(
+    input: './example/app/pigeons/event_channel_messages.dart',
+    basePath: './example/app',
+    suppressVersion: true,
+  );
+  return success;
 }
 
 Future<int> generateTestPigeons(
     {required String baseDir, bool includeOverflow = false}) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
-  const List<String> inputs = <String>[
-    'background_platform_channels',
+  const Set<String> inputs = <String>{
     'core_tests',
     'enum',
+    'event_channel_tests',
+    'event_channel_without_classes_tests',
     'flutter_unittests', // Only for Dart unit tests in shared_test_plugin_code
     'message',
     'multiple_arity',
@@ -71,7 +98,7 @@ Future<int> generateTestPigeons(
     'nullable_returns',
     'primitive',
     'proxy_api_tests',
-  ];
+  };
 
   final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');
   final String alternateOutputBase =
@@ -85,14 +112,14 @@ Future<int> generateTestPigeons(
         _unsupportedFiles[input] ?? <GeneratorLanguage>{};
 
     final bool kotlinErrorClassGenerationTestFiles =
-        input == 'core_tests' || input == 'background_platform_channels';
+        input == 'core_tests' || input == 'primitive';
 
     final String kotlinErrorName = kotlinErrorClassGenerationTestFiles
         ? 'FlutterError'
         : '${pascalCaseName}Error';
 
     final bool swiftErrorUseDefaultErrorName =
-        input == 'core_tests' || input == 'background_platform_channels';
+        input == 'core_tests' || input == 'primitive';
 
     final String? swiftErrorClassName =
         swiftErrorUseDefaultErrorName ? null : '${pascalCaseName}Error';
@@ -112,13 +139,13 @@ Future<int> generateTestPigeons(
           : '$outputBase/android/src/main/kotlin/com/example/test_plugin/$pascalCaseName.gen.kt',
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
-      kotlinIncludeErrorClass: input != 'core_tests',
+      kotlinIncludeErrorClass: input != 'primitive',
       // iOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'core_tests',
+      swiftIncludeErrorClass: input != 'primitive',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -150,7 +177,7 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'core_tests',
+      swiftIncludeErrorClass: input != 'primitive',
       suppressVersion: true,
       dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',

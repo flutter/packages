@@ -15,11 +15,42 @@ import 'package:pigeon/pigeon.dart';
   dartOut: 'lib/src/messages_async.g.dart',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
+
+/// Possible types found during a getStringList call.
+enum StringListLookupResultType {
+  /// A deprecated platform-side encoding string list.
+  platformEncoded,
+
+  /// A JSON-encoded string list.
+  jsonEncoded,
+
+  /// A string that doesn't have the expected encoding prefix.
+  unexpectedString,
+
+  // There is no type for non-string values, as those will throw an exception
+  // on the native side, so don't need a return value.
+}
+
 class SharedPreferencesPigeonOptions {
   SharedPreferencesPigeonOptions({
-    this.fileKey,
+    this.fileName,
+    this.useDataStore = true,
   });
-  String? fileKey;
+  String? fileName;
+  bool useDataStore;
+}
+
+class StringListResult {
+  StringListResult({
+    required this.jsonEncodedValue,
+    required this.type,
+  });
+
+  /// The JSON-encoded stored value, or null if something else was found.
+  String? jsonEncodedValue;
+
+  /// The type of value found.
+  StringListLookupResultType type;
 }
 
 @HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')
@@ -54,7 +85,17 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Adds property to shared preferences data set of type List<String>.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  void setStringList(
+  void setEncodedStringList(
+    String key,
+    String value,
+    SharedPreferencesPigeonOptions options,
+  );
+
+  /// Adds property to shared preferences data set of type List<String>.
+  ///
+  /// Deprecated, this is only here for testing purposes.
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  void setDeprecatedStringList(
     String key,
     List<String> value,
     SharedPreferencesPigeonOptions options,
@@ -90,7 +131,14 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Gets individual List<String> value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  List<String>? getStringList(
+  List<String>? getPlatformEncodedStringList(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  );
+
+  /// Gets the JSON-encoded List<String> value stored with [key], if any.
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
+  StringListResult? getStringList(
     String key,
     SharedPreferencesPigeonOptions options,
   );

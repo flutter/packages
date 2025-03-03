@@ -82,6 +82,16 @@ public class WebSettingsProxyApi extends PigeonApiWebSettings {
   }
 
   @Override
+  public void setAllowContentAccess(@NonNull WebSettings pigeon_instance, boolean enabled) {
+    pigeon_instance.setAllowContentAccess(enabled);
+  }
+
+  @Override
+  public void setGeolocationEnabled(@NonNull WebSettings pigeon_instance, boolean enabled) {
+    pigeon_instance.setGeolocationEnabled(enabled);
+  }
+
+  @Override
   public void setTextZoom(@NonNull WebSettings pigeon_instance, long textZoom) {
     pigeon_instance.setTextZoom((int) textZoom);
   }

@@ -1,3 +1,11 @@
+## 0.10.10
+
+* Adds API support query for image streaming.
+
+## 0.10.9+17
+
+* Updates annotations lib to 1.9.1.
+
 ## 0.10.9+16
 
 * Updates annotations lib to 1.9.0.

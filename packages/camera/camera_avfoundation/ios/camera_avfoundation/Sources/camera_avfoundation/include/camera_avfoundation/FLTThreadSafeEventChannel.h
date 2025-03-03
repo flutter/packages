@@ -4,6 +4,8 @@
 
 #import <Flutter/Flutter.h>
 
+#import "FLTEventChannel.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 /// A thread safe wrapper for FlutterEventChannel that can be called from any thread, by dispatching
@@ -12,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Creates a FLTThreadSafeEventChannel by wrapping a FlutterEventChannel object.
 /// @param channel The FlutterEventChannel object to be wrapped.
-- (instancetype)initWithEventChannel:(FlutterEventChannel *)channel;
+- (instancetype)initWithEventChannel:(NSObject<FLTEventChannel> *)channel;
 
 /// Registers a handler on the main thread for stream setup requests from the Flutter side.
 /// The completion block runs on the main thread.

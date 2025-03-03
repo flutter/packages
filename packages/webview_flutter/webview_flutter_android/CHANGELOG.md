@@ -1,3 +1,21 @@
+## 4.3.2
+
+* Bumps gradle-plugin to 2.1.10.
+
+## 4.3.1
+
+* Bumps gradle-plugin to 2.1.0.
+
+## 4.3.0
+
+* Adds support for disabling content URL access within WebView and disabling the Geolocation API.
+  See `AndroidWebViewController.setAllowContentAccess` and
+  `AndroidWebViewController.setGeolocationEnabled`.
+
+## 4.2.0
+
+* Adds support for configuring file access permissions. See `AndroidWebViewController.setAllowFileAccess`.
+
 ## 4.1.0
 
 * Updates internal API wrapper to use `ProxyApi`s.

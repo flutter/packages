@@ -45,7 +45,8 @@ void main() {
 
       verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<List<int>>()),
           argThat(isA<bool?>())));
-    });
+    }, skip: 'Flaky test: https://github.com/flutter/flutter/issues/164132');
+
     test('create calls create on the Java side', () {
       final MockTestFocusMeteringActionHostApi mockApi =
           MockTestFocusMeteringActionHostApi();

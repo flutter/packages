@@ -75,7 +75,8 @@ class RunnerUITests: XCTestCase {
     }
 
     findAndTapQuickActionButton(
-      buttonName: "Action one", quickActionsAppIcon: quickActionsAppIcon, springboard: springboard)
+      buttonName: "Action one, Action one subtitle", quickActionsAppIcon: quickActionsAppIcon,
+      springboard: springboard)
 
     let actionOneConfirmation = exampleApp.otherElements["action_one"]
     if !actionOneConfirmation.waitForExistence(timeout: elementWaitingTime) {

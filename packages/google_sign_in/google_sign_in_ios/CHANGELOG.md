@@ -1,3 +1,8 @@
+## 5.8.0
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds Swift Package Manager compatibility.
+
 ## 5.7.8
 
 * Updates Pigeon for non-nullable collection type support.

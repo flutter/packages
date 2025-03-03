@@ -6,8 +6,8 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 6.2.2
 
 environment:
-  sdk: ^3.3.0
-  flutter: ">=3.19.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 flutter:
   plugin:
@@ -34,8 +34,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   http: ">=0.13.0 <2.0.0"
-  integration_test:
-    sdk: flutter
   mockito: ^5.4.4
 
 topics:

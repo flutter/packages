@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/ast.dart';
-import 'package:pigeon/kotlin_generator.dart';
+import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/kotlin/kotlin_generator.dart';
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
@@ -1533,6 +1533,7 @@ void main() {
       apis: <Api>[api],
       classes: <Class>[],
       enums: <Enum>[],
+      containsHostApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions =
@@ -1577,6 +1578,7 @@ void main() {
       ],
       classes: <Class>[],
       enums: <Enum>[],
+      containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
     const KotlinOptions kotlinOptions = KotlinOptions();

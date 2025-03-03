@@ -1,3 +1,8 @@
+## 0.9.3+4
+
+* Fixes compile errors under strict standards mode.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 0.9.3+3
 
 * Updates Pigeon for non-nullable collection type support.

@@ -7,7 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/sk2_pigeon.g.dart',
   dartTestOut: 'test/sk2_test_api.g.dart',
-  swiftOut: 'darwin/Classes/StoreKit2/sk2_pigeon.g.swift',
+  swiftOut:
+      'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit/StoreKit2/sk2_pigeon.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 enum SK2ProductTypeMessage {
@@ -146,6 +147,7 @@ class SK2TransactionMessage {
       this.appAccountToken,
       this.error,
       this.receiptData,
+      this.jsonRepresentation,
       this.restoring = false});
   final int id;
   final int originalId;
@@ -157,6 +159,7 @@ class SK2TransactionMessage {
   final bool restoring;
   final String? receiptData;
   final SK2ErrorMessage? error;
+  final String? jsonRepresentation;
 }
 
 class SK2ErrorMessage {

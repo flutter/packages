@@ -93,6 +93,20 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
 ''');
   }
 
+  /// Adds a 'dependency_overrides:' section with entries for each package in
+  /// [overrides] to [package].
+  void addDependencyOverridesSection(
+      RepositoryPackage package, Iterable<String> overrides,
+      {String path = '../'}) {
+    final String originalContent = package.pubspecFile.readAsStringSync();
+    package.pubspecFile.writeAsStringSync('''
+$originalContent
+
+dependency_overrides:
+${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
+''');
+  }
+
   Map<String, String> getDependencyOverrides(RepositoryPackage package) {
     final Pubspec pubspec = package.parsePubspec();
     return pubspec.dependencyOverrides.map((String name, Dependency dep) =>
@@ -424,12 +438,57 @@ ${devDependencies.map((String dep) => '  $dep: $constraint').join('\n')}
           '  Modified packages/bar/bar_android/pubspec.yaml',
           '  Modified packages/foo/pubspec.yaml',
         ]));
-    expect(simplePackageUpdatedContent,
-        simplePackage.pubspecFile.readAsStringSync());
-    expect(appFacingPackageUpdatedContent,
-        pluginAppFacing.pubspecFile.readAsStringSync());
-    expect(implementationPackageUpdatedContent,
-        pluginImplementation.pubspecFile.readAsStringSync());
+    expect(simplePackage.pubspecFile.readAsStringSync(),
+        simplePackageUpdatedContent);
+    expect(pluginAppFacing.pubspecFile.readAsStringSync(),
+        appFacingPackageUpdatedContent);
+    expect(pluginImplementation.pubspecFile.readAsStringSync(),
+        implementationPackageUpdatedContent);
+  });
+
+  test('sorts with existing overrides', () async {
+    final RepositoryPackage simplePackage =
+        createFakePackage('foo', packagesDir, isFlutter: true);
+    final Directory pluginGroup = packagesDir.childDirectory('bar');
+
+    createFakePackage('bar_platform_interface', pluginGroup, isFlutter: true);
+    final RepositoryPackage pluginImplementation =
+        createFakePlugin('bar_android', pluginGroup);
+    final RepositoryPackage pluginAppFacing =
+        createFakePlugin('bar', pluginGroup);
+
+    addDependencies(simplePackage, <String>[
+      'bar',
+      'bar_android',
+      'bar_platform_interface',
+    ]);
+    addDependencies(pluginAppFacing, <String>[
+      'bar_platform_interface',
+      'bar_android',
+    ]);
+    addDependencies(pluginImplementation, <String>[
+      'bar_platform_interface',
+    ]);
+    addDependencyOverridesSection(
+      simplePackage,
+      <String>['bar_android'],
+      path: '../bar/bar_android',
+    );
+
+    await runCapturingPrint(runner, <String>[
+      'make-deps-path-based',
+      '--target-dependencies=bar,bar_platform_interface'
+    ]);
+    final String simplePackageUpdatedContent =
+        simplePackage.pubspecFile.readAsStringSync();
+
+    expect(
+        simplePackageUpdatedContent.split('\n'),
+        containsAllInOrder(<Matcher>[
+          contains('  bar:'),
+          contains('  bar_android:'),
+          contains('  bar_platform_interface:'),
+        ]));
   });
 
   group('target-dependencies-with-non-breaking-updates', () {
