@@ -8,14 +8,6 @@ import XCTest
 
 @testable import camera_avfoundation
 
-private final class MockCamera: FLTCam {
-  var setDeviceOrientationStub: ((UIDeviceOrientation) -> Void)?
-
-  override func setDeviceOrientation(_ orientation: UIDeviceOrientation) {
-    setDeviceOrientationStub?(orientation)
-  }
-}
-
 private final class MockUIDevice: UIDevice {
   var mockOrientation: UIDeviceOrientation = .unknown
 
@@ -26,10 +18,10 @@ private final class MockUIDevice: UIDevice {
 
 final class CameraOrientationTests: XCTestCase {
   private func createCameraPlugin() -> (
-    CameraPlugin, MockCamera, MockGlobalEventApi, MockCaptureDevice, MockCameraDeviceDiscoverer
+    CameraPlugin, MockFLTCam, MockGlobalEventApi, MockCaptureDevice, MockCameraDeviceDiscoverer
   ) {
     let mockDevice = MockCaptureDevice()
-    let mockCamera = MockCamera()
+    let mockCamera = MockFLTCam()
     let mockEventAPI = MockGlobalEventApi()
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
 
@@ -38,6 +30,7 @@ final class CameraOrientationTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: mockEventAPI,
       deviceDiscoverer: mockDeviceDiscoverer,
+      permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in mockDevice },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory()
@@ -124,6 +117,7 @@ final class CameraOrientationTests: XCTestCase {
         messenger: MockFlutterBinaryMessenger(),
         globalAPI: mockEventAPI,
         deviceDiscoverer: mockDeviceDiscoverer,
+        permissionManager: MockFLTCameraPermissionManager(),
         deviceFactory: { _ in weakDevice! },
         captureSessionFactory: { MockCaptureSession() },
         captureDeviceInputFactory: MockCaptureDeviceInputFactory()

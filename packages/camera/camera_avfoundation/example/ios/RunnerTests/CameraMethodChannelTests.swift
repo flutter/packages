@@ -14,6 +14,7 @@ final class CameraMethodChannelTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
+      permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { session },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory()
