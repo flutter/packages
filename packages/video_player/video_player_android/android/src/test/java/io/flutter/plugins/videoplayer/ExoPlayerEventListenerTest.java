@@ -42,14 +42,10 @@ public final class ExoPlayerEventListenerTest {
 
   @Rule public MockitoRule initRule = MockitoJUnit.rule();
 
-  @Before
-  public void setUp() {
-    eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks);
-  }
-
   @Test
-  @Config(maxSdk = 28)
-  public void onPlaybackStateChangedReadySendInitialized_belowAndroid29() {
+  @Config(maxSdk = 21)
+  public void onPlaybackStateChangedReadySendInitialized_belowAndroid21() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     VideoSize size = new VideoSize(800, 400, 0, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
@@ -59,9 +55,22 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 29)
+  @Config(minSdk = 22)
+  public void onPlaybackStateChangedReadySendInitialized_whenSurfaceProducerHandlesCropAndRotation() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
+    VideoSize size = new VideoSize(800, 400, 0, 0);
+    when(mockExoPlayer.getVideoSize()).thenReturn(size);
+    when(mockExoPlayer.getDuration()).thenReturn(10L);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onInitialized(800, 400, 10L, 0);
+  }
+
+  @Test
+  @Config(minSdk = 22)
   public void
-      onPlaybackStateChangedReadySendInitializedWithRotationCorrectionAndWidthAndHeightSwap_aboveAndroid29() {
+      onPlaybackStateChangedReadySendInitializedWithRotationCorrectionAndWidthAndHeightSwap_whenSurfaceProducerDoesNotHandleCropAndRotation() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, false);
     VideoSize size = new VideoSize(800, 400, 0, 0);
     int rotationCorrection = 90;
     Format videoFormat = new Format.Builder().setRotationDegrees(rotationCorrection).build();
@@ -78,6 +87,7 @@ public final class ExoPlayerEventListenerTest {
   @Config(maxSdk = 21)
   public void
       onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_belowAndroid21() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     VideoSize size = new VideoSize(800, 400, 90, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
@@ -87,9 +97,10 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 22, maxSdk = 28)
+  @Config(minSdk = 22)
   public void
-      onPlaybackStateChangedReadyInPortraitMode90DegreesDoesNotSwapWidthAndHeight_aboveAndroid21belowAndroid29() {
+      onPlaybackStateChangedReadyInPortraitMode90DegreesDoesNotSwapWidthAndHeight_whenSurfaceProducerHandlesCropAndRotation() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     VideoSize size = new VideoSize(800, 400, 90, 0);
 
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
@@ -100,9 +111,10 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 29)
+  @Config(minSdk = 22)
   public void
-      onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_aboveAndroid29() {
+      onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_whenSurfaceProducerDoesNotHandleCropAndRotation() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, false);
     VideoSize size = new VideoSize(800, 400, 0, 0);
     int rotationCorrection = 90;
     Format videoFormat = new Format.Builder().setRotationDegrees(rotationCorrection).build();
@@ -119,6 +131,7 @@ public final class ExoPlayerEventListenerTest {
   @Config(maxSdk = 21)
   public void
       onPlaybackStateChangedReadyInPortraitMode270DegreesSwapWidthAndHeight_belowAndroid21() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     VideoSize size = new VideoSize(800, 400, 270, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
@@ -128,9 +141,10 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 22, maxSdk = 28)
+  @Config(minSdk = 22)
   public void
-      onPlaybackStateChangedReadyInPortraitMode270DegreesDoesNotSwapWidthAndHeight_aboveAndroid21belowAndroid29() {
+      onPlaybackStateChangedReadyInPortraitMode270DegreesDoesNotSwapWidthAndHeight_whenSurfaceProducerHandlesCropAndRotation() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     VideoSize size = new VideoSize(800, 400, 270, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
@@ -140,9 +154,10 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 29)
+  @Config(minSdk = 22)
   public void
-      onPlaybackStateChangedReadyInPortraitMode270DegreesSwapWidthAndHeight_aboveAndroid29() {
+      onPlaybackStateChangedReadyInPortraitMode270DegreesSwapWidthAndHeight_whenSurfaceProducerDoesNotHandleCropAndRotation() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, false);
     VideoSize size = new VideoSize(800, 400, 0, 0);
     int rotationCorrection = 270;
     Format videoFormat = new Format.Builder().setRotationDegrees(rotationCorrection).build();
@@ -158,6 +173,7 @@ public final class ExoPlayerEventListenerTest {
   @Test
   @Config(maxSdk = 21)
   public void onPlaybackStateChangedReadyFlipped180DegreesInformEventHandler_belowAndroid21() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     VideoSize size = new VideoSize(800, 400, 180, 0);
     when(mockExoPlayer.getVideoSize()).thenReturn(size);
     when(mockExoPlayer.getDuration()).thenReturn(10L);
@@ -168,6 +184,7 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onPlaybackStateChangedBufferingSendsBufferingStartAndUpdates() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
 
@@ -182,6 +199,7 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onPlaybackStateChangedEndedSendsOnCompleted() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     eventListener.onPlaybackStateChanged(Player.STATE_ENDED);
 
     verify(mockCallbacks).onCompleted();
@@ -190,6 +208,7 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onPlaybackStateChangedEndedAfterBufferingSendsBufferingEndAndOnCompleted() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
     verify(mockCallbacks).onBufferingStart();
@@ -204,6 +223,7 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onPlaybackStateChangedIdleDoNothing() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     eventListener.onPlaybackStateChanged(Player.STATE_IDLE);
 
     verifyNoInteractions(mockCallbacks);
@@ -211,6 +231,7 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onPlaybackStateChangedIdleAfterBufferingSendsBufferingEnd() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
     verify(mockCallbacks).onBufferingStart();
@@ -224,6 +245,7 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onErrorVideoErrorWhenBufferingInProgressAlsoEndBuffering() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
     eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
     verify(mockCallbacks).onBufferingStart();
@@ -237,6 +259,7 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onErrorBehindLiveWindowSeekToDefaultAndPrepare() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     eventListener.onPlayerError(
         new PlaybackException("SORT_OF_OK", null, PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW));
 
@@ -247,6 +270,7 @@ public final class ExoPlayerEventListenerTest {
 
   @Test
   public void onIsPlayingChangedToggled() {
+    ExoPlayerEventListener eventListener = new ExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
     eventListener.onIsPlayingChanged(true);
     verify(mockCallbacks).onIsPlayingStateUpdate(true);
 

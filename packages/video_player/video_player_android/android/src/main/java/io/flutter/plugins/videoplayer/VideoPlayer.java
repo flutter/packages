@@ -112,7 +112,8 @@ final class VideoPlayer implements TextureRegistry.SurfaceProducer.Callback {
     exoPlayer.setVideoSurface(surfaceProducer.getSurface());
 
     boolean wasInitialized = savedStateDuring != null;
-    exoPlayer.addListener(new ExoPlayerEventListener(exoPlayer, videoPlayerEvents, wasInitialized));
+    boolean surfaceProducerHandlesCropAndRotation = surfaceProducer.handlesCropAndRotation();
+    exoPlayer.addListener(new ExoPlayerEventListener(exoPlayer, videoPlayerEvents, wasInitialized, surfaceProducerHandlesCropAndRotation));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
     return exoPlayer;
