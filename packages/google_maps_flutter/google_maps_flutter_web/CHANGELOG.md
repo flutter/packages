@@ -1,10 +1,8 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-
 ## 0.5.11
-
 * Adds support for marker anchor.
+
+## 0.5.10+1
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.5.10
 
