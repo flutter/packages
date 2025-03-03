@@ -6,7 +6,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-final class CameraCaptureSessionQueueRaceConditionTests: XCTestCase {
+final class CameraInitRaceConditionsTests: XCTestCase {
   private func createCameraPlugin() -> CameraPlugin {
     return CameraPlugin(
       registry: MockFlutterTextureRegistry(),
@@ -51,4 +51,41 @@ final class CameraCaptureSessionQueueRaceConditionTests: XCTestCase {
     XCTAssertNotNil(
       cameraPlugin.captureSessionQueue, "captureSessionQueue must not be nil after create method.")
   }
+
+  func testFlutterChannelInitializedWhenStartingImageStream() {
+    let cameraPlugin = createCameraPlugin()
+    let configuration = FLTCreateTestCameraConfiguration()
+    cameraPlugin.camera = FLTCreateCamWithConfiguration(configuration)
+
+    let createExpectation = expectation(description: "create's result block must be called")
+
+    cameraPlugin.createCameraOnSessionQueue(
+      withName: "acamera",
+      settings: FCPPlatformMediaSettings.make(
+        with: .medium,
+        framesPerSecond: nil,
+        videoBitrate: nil,
+        audioBitrate: nil,
+        enableAudio: true
+      )
+    ) { result, error in
+      createExpectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    // Start stream and wait for its completion
+    let startStreamExpectation = expectation(
+      description: "startImageStream's result block must be called")
+    cameraPlugin.startImageStream(completion: {
+      _ in
+      startStreamExpectation.fulfill()
+    })
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertEqual(cameraPlugin.camera?.isStreamingImages, true)
+
+  }
+
 }
