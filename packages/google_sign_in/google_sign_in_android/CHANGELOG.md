@@ -1,3 +1,7 @@
+## 6.1.36
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 6.1.35
 
 * Removes the dependency on the Guava library.
