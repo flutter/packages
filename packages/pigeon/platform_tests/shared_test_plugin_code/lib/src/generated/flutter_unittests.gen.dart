@@ -19,6 +19,65 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+bool _listEquals(List<Object?>? list1, List<Object?>? list2) {
+  if (list1 == list2) {
+    return true;
+  }
+  if (list1 == null || list2 == null) {
+    return false;
+  }
+  if (list1.length != list2.length) {
+    return false;
+  }
+  bool elementsMatch = true;
+  for (int i = 0; i < list1.length; i++) {
+    if (list1[i] is List) {
+      elementsMatch =
+          _listEquals(list1[i] as List<Object?>?, list2[i] as List<Object?>?);
+    } else if (list1[i] is Map) {
+      elementsMatch = _mapEquals(list1[i] as Map<Object?, Object?>?,
+          list2[i] as Map<Object?, Object?>?);
+    } else {
+      elementsMatch = list1[i] == list2[i];
+    }
+    if (!elementsMatch) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _mapEquals(Map<Object?, Object?>? map1, Map<Object?, Object?>? map2) {
+  if (map1 == map2) {
+    return true;
+  }
+  if (map1 == null || map2 == null) {
+    return false;
+  }
+  if (map1.length != map2.length) {
+    return false;
+  }
+  bool elementsMatch = true;
+  for (Object? key in map1.keys) {
+    if (!map2.containsKey(key)) {
+      return false;
+    }
+    if (map1[key] is List) {
+      elementsMatch =
+          _listEquals(map1[key] as List<Object?>?, map2[key] as List<Object?>?);
+    } else if (map1[key] is Map) {
+      elementsMatch = _mapEquals(map1[key] as Map<Object?, Object?>?,
+          map2[key] as Map<Object?, Object?>?);
+    } else {
+      elementsMatch = map1[key] == map2[key];
+    }
+    if (!elementsMatch) {
+      return false;
+    }
+  }
+  return true;
+}
+
 class FlutterSearchRequest {
   FlutterSearchRequest({
     this.query,
@@ -26,10 +85,14 @@ class FlutterSearchRequest {
 
   String? query;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       query,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static FlutterSearchRequest decode(Object result) {
@@ -38,6 +101,22 @@ class FlutterSearchRequest {
       query: result[0] as String?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FlutterSearchRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return query == other.query;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class FlutterSearchReply {
@@ -50,11 +129,15 @@ class FlutterSearchReply {
 
   String? error;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       result,
       error,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static FlutterSearchReply decode(Object result) {
@@ -64,6 +147,22 @@ class FlutterSearchReply {
       error: result[1] as String?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FlutterSearchReply || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return result == other.result && error == other.error;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class FlutterSearchRequests {
@@ -73,10 +172,14 @@ class FlutterSearchRequests {
 
   List<Object?>? requests;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       requests,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static FlutterSearchRequests decode(Object result) {
@@ -85,6 +188,22 @@ class FlutterSearchRequests {
       requests: result[0] as List<Object?>?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FlutterSearchRequests || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _listEquals(requests, other.requests);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class FlutterSearchReplies {
@@ -94,10 +213,14 @@ class FlutterSearchReplies {
 
   List<Object?>? replies;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       replies,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static FlutterSearchReplies decode(Object result) {
@@ -106,6 +229,22 @@ class FlutterSearchReplies {
       replies: result[0] as List<Object?>?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FlutterSearchReplies || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _listEquals(replies, other.replies);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {

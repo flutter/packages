@@ -12,6 +12,65 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+bool _listEquals(List<Object?>? list1, List<Object?>? list2) {
+  if (list1 == list2) {
+    return true;
+  }
+  if (list1 == null || list2 == null) {
+    return false;
+  }
+  if (list1.length != list2.length) {
+    return false;
+  }
+  bool elementsMatch = true;
+  for (int i = 0; i < list1.length; i++) {
+    if (list1[i] is List) {
+      elementsMatch =
+          _listEquals(list1[i] as List<Object?>?, list2[i] as List<Object?>?);
+    } else if (list1[i] is Map) {
+      elementsMatch = _mapEquals(list1[i] as Map<Object?, Object?>?,
+          list2[i] as Map<Object?, Object?>?);
+    } else {
+      elementsMatch = list1[i] == list2[i];
+    }
+    if (!elementsMatch) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _mapEquals(Map<Object?, Object?>? map1, Map<Object?, Object?>? map2) {
+  if (map1 == map2) {
+    return true;
+  }
+  if (map1 == null || map2 == null) {
+    return false;
+  }
+  if (map1.length != map2.length) {
+    return false;
+  }
+  bool elementsMatch = true;
+  for (Object? key in map1.keys) {
+    if (!map2.containsKey(key)) {
+      return false;
+    }
+    if (map1[key] is List) {
+      elementsMatch =
+          _listEquals(map1[key] as List<Object?>?, map2[key] as List<Object?>?);
+    } else if (map1[key] is Map) {
+      elementsMatch = _mapEquals(map1[key] as Map<Object?, Object?>?,
+          map2[key] as Map<Object?, Object?>?);
+    } else {
+      elementsMatch = map1[key] == map2[key];
+    }
+    if (!elementsMatch) {
+      return false;
+    }
+  }
+  return true;
+}
+
 enum EventEnum {
   one,
   two,
@@ -122,7 +181,7 @@ class EventAllNullableTypes {
 
   Map<int?, EventAllNullableTypes?>? recursiveClassMap;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       aNullableBool,
       aNullableInt,
@@ -156,6 +215,10 @@ class EventAllNullableTypes {
       mapMap,
       recursiveClassMap,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static EventAllNullableTypes decode(Object result) {
@@ -201,6 +264,52 @@ class EventAllNullableTypes {
           ?.cast<int?, EventAllNullableTypes?>(),
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! EventAllNullableTypes || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _listEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _listEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _listEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _listEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        allNullableTypes == other.allNullableTypes &&
+        _listEquals(list, other.list) &&
+        _listEquals(stringList, other.stringList) &&
+        _listEquals(intList, other.intList) &&
+        _listEquals(doubleList, other.doubleList) &&
+        _listEquals(boolList, other.boolList) &&
+        _listEquals(enumList, other.enumList) &&
+        _listEquals(objectList, other.objectList) &&
+        _listEquals(listList, other.listList) &&
+        _listEquals(mapList, other.mapList) &&
+        _listEquals(recursiveClassList, other.recursiveClassList) &&
+        _mapEquals(map, other.map) &&
+        _mapEquals(stringMap, other.stringMap) &&
+        _mapEquals(intMap, other.intMap) &&
+        _mapEquals(enumMap, other.enumMap) &&
+        _mapEquals(objectMap, other.objectMap) &&
+        _mapEquals(listMap, other.listMap) &&
+        _mapEquals(mapMap, other.mapMap) &&
+        _mapEquals(recursiveClassMap, other.recursiveClassMap);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 sealed class PlatformEvent {}
@@ -212,10 +321,14 @@ class IntEvent extends PlatformEvent {
 
   int value;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static IntEvent decode(Object result) {
@@ -224,6 +337,22 @@ class IntEvent extends PlatformEvent {
       value: result[0]! as int,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! IntEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return value == other.value;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class StringEvent extends PlatformEvent {
@@ -233,10 +362,14 @@ class StringEvent extends PlatformEvent {
 
   String value;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static StringEvent decode(Object result) {
@@ -245,6 +378,22 @@ class StringEvent extends PlatformEvent {
       value: result[0]! as String,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! StringEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return value == other.value;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class BoolEvent extends PlatformEvent {
@@ -254,10 +403,14 @@ class BoolEvent extends PlatformEvent {
 
   bool value;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static BoolEvent decode(Object result) {
@@ -266,6 +419,22 @@ class BoolEvent extends PlatformEvent {
       value: result[0]! as bool,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! BoolEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return value == other.value;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class DoubleEvent extends PlatformEvent {
@@ -275,10 +444,14 @@ class DoubleEvent extends PlatformEvent {
 
   double value;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static DoubleEvent decode(Object result) {
@@ -287,6 +460,22 @@ class DoubleEvent extends PlatformEvent {
       value: result[0]! as double,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! DoubleEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return value == other.value;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class ObjectsEvent extends PlatformEvent {
@@ -296,10 +485,14 @@ class ObjectsEvent extends PlatformEvent {
 
   Object value;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static ObjectsEvent decode(Object result) {
@@ -308,6 +501,22 @@ class ObjectsEvent extends PlatformEvent {
       value: result[0]!,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! ObjectsEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return value == other.value;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class EnumEvent extends PlatformEvent {
@@ -317,10 +526,14 @@ class EnumEvent extends PlatformEvent {
 
   EventEnum value;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static EnumEvent decode(Object result) {
@@ -329,6 +542,22 @@ class EnumEvent extends PlatformEvent {
       value: result[0]! as EventEnum,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! EnumEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return value == other.value;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class ClassEvent extends PlatformEvent {
@@ -338,10 +567,14 @@ class ClassEvent extends PlatformEvent {
 
   EventAllNullableTypes value;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static ClassEvent decode(Object result) {
@@ -350,6 +583,22 @@ class ClassEvent extends PlatformEvent {
       value: result[0]! as EventAllNullableTypes,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! ClassEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return value == other.value;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {

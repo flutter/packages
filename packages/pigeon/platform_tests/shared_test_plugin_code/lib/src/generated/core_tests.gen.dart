@@ -30,6 +30,65 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+bool _listEquals(List<Object?>? list1, List<Object?>? list2) {
+  if (list1 == list2) {
+    return true;
+  }
+  if (list1 == null || list2 == null) {
+    return false;
+  }
+  if (list1.length != list2.length) {
+    return false;
+  }
+  bool elementsMatch = true;
+  for (int i = 0; i < list1.length; i++) {
+    if (list1[i] is List) {
+      elementsMatch =
+          _listEquals(list1[i] as List<Object?>?, list2[i] as List<Object?>?);
+    } else if (list1[i] is Map) {
+      elementsMatch = _mapEquals(list1[i] as Map<Object?, Object?>?,
+          list2[i] as Map<Object?, Object?>?);
+    } else {
+      elementsMatch = list1[i] == list2[i];
+    }
+    if (!elementsMatch) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _mapEquals(Map<Object?, Object?>? map1, Map<Object?, Object?>? map2) {
+  if (map1 == map2) {
+    return true;
+  }
+  if (map1 == null || map2 == null) {
+    return false;
+  }
+  if (map1.length != map2.length) {
+    return false;
+  }
+  bool elementsMatch = true;
+  for (Object? key in map1.keys) {
+    if (!map2.containsKey(key)) {
+      return false;
+    }
+    if (map1[key] is List) {
+      elementsMatch =
+          _listEquals(map1[key] as List<Object?>?, map2[key] as List<Object?>?);
+    } else if (map1[key] is Map) {
+      elementsMatch = _mapEquals(map1[key] as Map<Object?, Object?>?,
+          map2[key] as Map<Object?, Object?>?);
+    } else {
+      elementsMatch = map1[key] == map2[key];
+    }
+    if (!elementsMatch) {
+      return false;
+    }
+  }
+  return true;
+}
+
 enum AnEnum {
   one,
   two,
@@ -49,10 +108,14 @@ class UnusedClass {
 
   Object? aField;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       aField,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static UnusedClass decode(Object result) {
@@ -61,6 +124,22 @@ class UnusedClass {
       aField: result[0],
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! UnusedClass || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aField == other.aField;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 /// A class containing all supported types.
@@ -152,7 +231,7 @@ class AllTypes {
 
   Map<int, Map<Object?, Object?>> mapMap;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       aBool,
       anInt,
@@ -183,6 +262,10 @@ class AllTypes {
       listMap,
       mapMap,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static AllTypes decode(Object result) {
@@ -220,6 +303,49 @@ class AllTypes {
           .cast<int, Map<Object?, Object?>>(),
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AllTypes || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aBool == other.aBool &&
+        anInt == other.anInt &&
+        anInt64 == other.anInt64 &&
+        aDouble == other.aDouble &&
+        _listEquals(aByteArray, other.aByteArray) &&
+        _listEquals(a4ByteArray, other.a4ByteArray) &&
+        _listEquals(a8ByteArray, other.a8ByteArray) &&
+        _listEquals(aFloatArray, other.aFloatArray) &&
+        anEnum == other.anEnum &&
+        anotherEnum == other.anotherEnum &&
+        aString == other.aString &&
+        anObject == other.anObject &&
+        _listEquals(list, other.list) &&
+        _listEquals(stringList, other.stringList) &&
+        _listEquals(intList, other.intList) &&
+        _listEquals(doubleList, other.doubleList) &&
+        _listEquals(boolList, other.boolList) &&
+        _listEquals(enumList, other.enumList) &&
+        _listEquals(objectList, other.objectList) &&
+        _listEquals(listList, other.listList) &&
+        _listEquals(mapList, other.mapList) &&
+        _mapEquals(map, other.map) &&
+        _mapEquals(stringMap, other.stringMap) &&
+        _mapEquals(intMap, other.intMap) &&
+        _mapEquals(enumMap, other.enumMap) &&
+        _mapEquals(objectMap, other.objectMap) &&
+        _mapEquals(listMap, other.listMap) &&
+        _mapEquals(mapMap, other.mapMap);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 /// A class containing all supported nullable types.
@@ -320,7 +446,7 @@ class AllNullableTypes {
 
   Map<int?, AllNullableTypes?>? recursiveClassMap;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       aNullableBool,
       aNullableInt,
@@ -354,6 +480,10 @@ class AllNullableTypes {
       mapMap,
       recursiveClassMap,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static AllNullableTypes decode(Object result) {
@@ -398,6 +528,52 @@ class AllNullableTypes {
           ?.cast<int?, AllNullableTypes?>(),
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AllNullableTypes || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _listEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _listEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _listEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _listEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        allNullableTypes == other.allNullableTypes &&
+        _listEquals(list, other.list) &&
+        _listEquals(stringList, other.stringList) &&
+        _listEquals(intList, other.intList) &&
+        _listEquals(doubleList, other.doubleList) &&
+        _listEquals(boolList, other.boolList) &&
+        _listEquals(enumList, other.enumList) &&
+        _listEquals(objectList, other.objectList) &&
+        _listEquals(listList, other.listList) &&
+        _listEquals(mapList, other.mapList) &&
+        _listEquals(recursiveClassList, other.recursiveClassList) &&
+        _mapEquals(map, other.map) &&
+        _mapEquals(stringMap, other.stringMap) &&
+        _mapEquals(intMap, other.intMap) &&
+        _mapEquals(enumMap, other.enumMap) &&
+        _mapEquals(objectMap, other.objectMap) &&
+        _mapEquals(listMap, other.listMap) &&
+        _mapEquals(mapMap, other.mapMap) &&
+        _mapEquals(recursiveClassMap, other.recursiveClassMap);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -491,7 +667,7 @@ class AllNullableTypesWithoutRecursion {
 
   Map<int?, Map<Object?, Object?>?>? mapMap;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       aNullableBool,
       aNullableInt,
@@ -522,6 +698,10 @@ class AllNullableTypesWithoutRecursion {
       listMap,
       mapMap,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static AllNullableTypesWithoutRecursion decode(Object result) {
@@ -561,6 +741,50 @@ class AllNullableTypesWithoutRecursion {
           ?.cast<int?, Map<Object?, Object?>?>(),
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AllNullableTypesWithoutRecursion ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _listEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _listEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _listEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _listEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        _listEquals(list, other.list) &&
+        _listEquals(stringList, other.stringList) &&
+        _listEquals(intList, other.intList) &&
+        _listEquals(doubleList, other.doubleList) &&
+        _listEquals(boolList, other.boolList) &&
+        _listEquals(enumList, other.enumList) &&
+        _listEquals(objectList, other.objectList) &&
+        _listEquals(listList, other.listList) &&
+        _listEquals(mapList, other.mapList) &&
+        _mapEquals(map, other.map) &&
+        _mapEquals(stringMap, other.stringMap) &&
+        _mapEquals(intMap, other.intMap) &&
+        _mapEquals(enumMap, other.enumMap) &&
+        _mapEquals(objectMap, other.objectMap) &&
+        _mapEquals(listMap, other.listMap) &&
+        _mapEquals(mapMap, other.mapMap);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 /// A class for testing nested class handling.
@@ -593,7 +817,7 @@ class AllClassesWrapper {
 
   Map<int?, AllNullableTypesWithoutRecursion?>? nullableClassMap;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       allNullableTypes,
       allNullableTypesWithoutRecursion,
@@ -603,6 +827,10 @@ class AllClassesWrapper {
       classMap,
       nullableClassMap,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static AllClassesWrapper decode(Object result) {
@@ -620,6 +848,29 @@ class AllClassesWrapper {
           ?.cast<int?, AllNullableTypesWithoutRecursion?>(),
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AllClassesWrapper || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return allNullableTypes == other.allNullableTypes &&
+        allNullableTypesWithoutRecursion ==
+            other.allNullableTypesWithoutRecursion &&
+        allTypes == other.allTypes &&
+        _listEquals(classList, other.classList) &&
+        _listEquals(nullableClassList, other.nullableClassList) &&
+        _mapEquals(classMap, other.classMap) &&
+        _mapEquals(nullableClassMap, other.nullableClassMap);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 /// A data class containing a List, used in unit tests.
@@ -630,10 +881,14 @@ class TestMessage {
 
   List<Object?>? testList;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       testList,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static TestMessage decode(Object result) {
@@ -642,6 +897,22 @@ class TestMessage {
       testList: result[0] as List<Object?>?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! TestMessage || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _listEquals(testList, other.testList);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {

@@ -30,6 +30,65 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+bool _listEquals(List<Object?>? list1, List<Object?>? list2) {
+  if (list1 == list2) {
+    return true;
+  }
+  if (list1 == null || list2 == null) {
+    return false;
+  }
+  if (list1.length != list2.length) {
+    return false;
+  }
+  bool elementsMatch = true;
+  for (int i = 0; i < list1.length; i++) {
+    if (list1[i] is List) {
+      elementsMatch =
+          _listEquals(list1[i] as List<Object?>?, list2[i] as List<Object?>?);
+    } else if (list1[i] is Map) {
+      elementsMatch = _mapEquals(list1[i] as Map<Object?, Object?>?,
+          list2[i] as Map<Object?, Object?>?);
+    } else {
+      elementsMatch = list1[i] == list2[i];
+    }
+    if (!elementsMatch) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _mapEquals(Map<Object?, Object?>? map1, Map<Object?, Object?>? map2) {
+  if (map1 == map2) {
+    return true;
+  }
+  if (map1 == null || map2 == null) {
+    return false;
+  }
+  if (map1.length != map2.length) {
+    return false;
+  }
+  bool elementsMatch = true;
+  for (Object? key in map1.keys) {
+    if (!map2.containsKey(key)) {
+      return false;
+    }
+    if (map1[key] is List) {
+      elementsMatch =
+          _listEquals(map1[key] as List<Object?>?, map2[key] as List<Object?>?);
+    } else if (map1[key] is Map) {
+      elementsMatch = _mapEquals(map1[key] as Map<Object?, Object?>?,
+          map2[key] as Map<Object?, Object?>?);
+    } else {
+      elementsMatch = map1[key] == map2[key];
+    }
+    if (!elementsMatch) {
+      return false;
+    }
+  }
+  return true;
+}
+
 enum ReplyType {
   success,
   error,
@@ -42,10 +101,14 @@ class NonNullFieldSearchRequest {
 
   String query;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       query,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static NonNullFieldSearchRequest decode(Object result) {
@@ -54,6 +117,23 @@ class NonNullFieldSearchRequest {
       query: result[0]! as String,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NonNullFieldSearchRequest ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return query == other.query;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class ExtraData {
@@ -66,11 +146,15 @@ class ExtraData {
 
   String detailB;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       detailA,
       detailB,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static ExtraData decode(Object result) {
@@ -80,6 +164,22 @@ class ExtraData {
       detailB: result[1]! as String,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! ExtraData || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return detailA == other.detailA && detailB == other.detailB;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class NonNullFieldSearchReply {
@@ -101,7 +201,7 @@ class NonNullFieldSearchReply {
 
   ReplyType type;
 
-  Object encode() {
+  List<Object?> toList() {
     return <Object?>[
       result,
       error,
@@ -109,6 +209,10 @@ class NonNullFieldSearchReply {
       extraData,
       type,
     ];
+  }
+
+  Object encode() {
+    return toList();
   }
 
   static NonNullFieldSearchReply decode(Object result) {
@@ -121,6 +225,26 @@ class NonNullFieldSearchReply {
       type: result[4]! as ReplyType,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NonNullFieldSearchReply || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return result == other.result &&
+        error == other.error &&
+        _listEquals(indices, other.indices) &&
+        extraData == other.extraData &&
+        type == other.type;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {

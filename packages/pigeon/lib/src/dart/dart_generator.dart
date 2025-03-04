@@ -185,6 +185,8 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         indent.writeln('$datatype ${field.name};');
         indent.newln();
       }
+      _writeToList(indent, classDefinition);
+      indent.newln();
       writeClassEncode(
         generatorOptions,
         root,
@@ -194,6 +196,14 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       );
       indent.newln();
       writeClassDecode(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
+      indent.newln();
+      writeClassEquality(
         generatorOptions,
         root,
         indent,
@@ -219,6 +229,17 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     });
   }
 
+  void _writeToList(Indent indent, Class classDefinition) {
+    indent.writeScoped('List<Object?> toList() {', '}', () {
+      indent.writeScoped('return <Object?>[', '];', () {
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
+          indent.writeln('${field.name},');
+        }
+      });
+    });
+  }
+
   @override
   void writeClassEncode(
     DartOptions generatorOptions,
@@ -230,14 +251,8 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     indent.write('Object encode() ');
     indent.addScoped('{', '}', () {
       indent.write(
-        'return <Object?>',
+        'return toList();',
       );
-      indent.addScoped('[', '];', () {
-        for (final NamedType field
-            in getFieldsInSerializationOrder(classDefinition)) {
-          indent.writeln('${field.name},');
-        }
-      });
     });
   }
 
@@ -286,6 +301,49 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         });
       });
     });
+  }
+
+  @override
+  void writeClassEquality(
+    DartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeln('@override');
+    indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
+    indent.writeScoped('bool operator ==(Object other) {', '}', () {
+      indent.writeScoped(
+          'if (other is! ${classDefinition.name} || other.runtimeType != runtimeType) {',
+          '}', () {
+        indent.writeln('return false;');
+      });
+      indent.writeScoped('if (identical(this, other)) {', '}', () {
+        indent.writeln('return true;');
+      });
+      indent.writeScoped('return ', '', () {
+        indent.format(
+            classDefinition.fields
+                .map((NamedType field) => field.type.baseName == 'List' ||
+                        field.type.baseName == 'Float64List' ||
+                        field.type.baseName == 'Int32List' ||
+                        field.type.baseName == 'Int64List' ||
+                        field.type.baseName == 'Uint8List'
+                    ? '_listEquals(${field.name}, other.${field.name})'
+                    : field.type.baseName == 'Map'
+                        ? '_mapEquals(${field.name}, other.${field.name})'
+                        : '${field.name} == other.${field.name}')
+                .join('\n&& '),
+            trailingNewline: false);
+        indent.addln(';');
+      }, addTrailingNewline: false);
+    });
+    indent.newln();
+    indent.writeln('@override');
+    indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
+    indent.writeln('int get hashCode => Object.hashAll(toList())');
+    indent.addln(';');
   }
 
   @override
@@ -1001,6 +1059,64 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         root.containsProxyApi ||
         generatorOptions.testOutPath != null) {
       _writeWrapResponse(generatorOptions, root, indent);
+    }
+    if (root.classes.isNotEmpty) {
+      indent.format('''
+    bool _listEquals(List<Object?>? list1, List<Object?>? list2) {
+      if (list1 == list2) {
+        return true;
+      }
+      if (list1 == null || list2 == null) {
+        return false;
+      }
+      if (list1.length != list2.length) {
+        return false;
+      }
+      bool elementsMatch = true;
+      for (int i = 0; i < list1.length; i++) {
+        if (list1[i] is List) {
+          elementsMatch = _listEquals(list1[i] as List<Object?>?, list2[i] as List<Object?>?);
+        } else if (list1[i] is Map) {
+          elementsMatch = _mapEquals(list1[i] as Map<Object?, Object?>?, list2[i] as Map<Object?, Object?>?);
+        } else {
+          elementsMatch = list1[i] == list2[i];
+        }
+        if (!elementsMatch) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    bool _mapEquals(Map<Object?, Object?>? map1, Map<Object?, Object?>? map2) {
+      if (map1 == map2) {
+        return true;
+      }
+      if (map1 == null || map2 == null) {
+        return false;
+      }
+      if (map1.length != map2.length) {
+        return false;
+      }
+      bool elementsMatch = true;
+      for (Object? key in map1.keys) {
+        if (!map2.containsKey(key)) {
+          return false;
+        }
+        if (map1[key] is List) {
+          elementsMatch = _listEquals(map1[key] as List<Object?>?, map2[key] as List<Object?>?);
+        } else if (map1[key] is Map) {
+          elementsMatch = _mapEquals(map1[key] as Map<Object?, Object?>?, map2[key] as Map<Object? , Object?>?);
+        } else {
+          elementsMatch = map1[key] == map2[key];
+        }
+        if (!elementsMatch) {
+          return false;
+        }
+      }
+      return true;
+    }
+    ''');
     }
   }
 
