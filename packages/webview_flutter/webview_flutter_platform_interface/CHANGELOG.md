@@ -1,3 +1,8 @@
+## 2.12.0
+
+* Adds `PlatformWebViewController.loadFileWithParams(LoadFileParams)` to support loading local HTML files with platform-specific parameters.
+* Deprecates `PlatformWebViewController.loadFile(String)` in favour of `PlatformWebViewController.loadFileWithParams(LoadFileParams)`.
+
 ## 2.11.0
 
 * Adds support to set the over-scroll mode for the WebView. See `PlatformWebViewController.setOverScrollMode`.

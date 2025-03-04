@@ -1,3 +1,7 @@
+## 4.5.0
+
+* Introduces `AndroidLoadFileParams`, a platform-specific extension of `LoadFileParams` for Android that adds support for `headers`.
+
 ## 4.4.2
 
 * Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
