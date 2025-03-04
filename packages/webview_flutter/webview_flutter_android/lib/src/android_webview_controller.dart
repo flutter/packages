@@ -18,6 +18,48 @@ import 'android_webkit_constants.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
 
+/// Object specifying parameters for loading a local file in a
+/// [AndroidWebViewController].
+@immutable
+class AndroidLoadFileParams extends LoadFileParams {
+  /// Constructs a [AndroidLoadFileParams], the subclass of a [LoadFileParams].
+  ///
+  /// Optionally, [headers] map may be included, which contains key-value pairs
+  /// that will be passed as additional HTTP headers when loading the file.
+  AndroidLoadFileParams({
+    required String absoluteFilePath,
+    this.headers = _defaultHeaders,
+  }) : super(
+          absoluteFilePath: absoluteFilePath.startsWith('file://')
+              ? absoluteFilePath
+              : Uri.file(absoluteFilePath).toString(),
+        );
+
+  /// Constructs a [AndroidLoadFileParams] using a [LoadFileParams].
+  factory AndroidLoadFileParams.fromLoadFileParams(
+    LoadFileParams params, {
+    Map<String, String> headers = _defaultHeaders,
+  }) {
+    return AndroidLoadFileParams(
+      absoluteFilePath: params.absoluteFilePath,
+      headers: headers,
+    );
+  }
+
+  /// Default empty headers used when no custom headers are provided.
+  ///
+  /// This constant ensures that the [headers] parameter is never `null`,
+  /// simplifying internal logic and avoiding the need for null checks.
+  static const Map<String, String> _defaultHeaders = <String, String>{};
+
+  /// Additional HTTP headers to be included when loading the local file.
+  ///
+  /// On Android, WebView supports adding headers when loading local or remote
+  /// content. This can be useful for scenarios like authentication,
+  /// content-type overrides, or custom request context.
+  final Map<String, String> headers;
+}
+
 /// Object specifying creation parameters for creating a [AndroidWebViewController].
 ///
 /// When adding additional fields make sure they can be null or have a default
@@ -383,15 +425,19 @@ class AndroidWebViewController extends PlatformWebViewController {
       _webView.pigeon_instanceManager.getIdentifier(_webView)!;
 
   @override
-  Future<void> loadFile(
-    String absoluteFilePath,
-  ) {
-    final String url = absoluteFilePath.startsWith('file://')
-        ? absoluteFilePath
-        : Uri.file(absoluteFilePath).toString();
+  Future<void> loadFileWithParams(LoadFileParams params) {
+    switch (params) {
+      case final AndroidLoadFileParams params:
+        _webView.settings.setAllowFileAccess(true);
+        return _webView.loadUrl(
+          params.absoluteFilePath,
+          params.headers,
+        );
 
-    _webView.settings.setAllowFileAccess(true);
-    return _webView.loadUrl(url, <String, String>{});
+      default:
+        return loadFileWithParams(
+            AndroidLoadFileParams.fromLoadFileParams(params));
+    }
   }
 
   @override
