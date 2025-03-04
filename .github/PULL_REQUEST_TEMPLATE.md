@@ -2,7 +2,7 @@
 
 *List which issues are fixed by this PR. You must list at least one issue.*
 
-## PR Pre-Review Checklist
+## Pre-Review Checklist
 
 - [ ] I read the [Contributor Guide] and followed the process outlined there for submitting PRs.
 - [ ] I read the [Tree Hygiene] page, which explains my responsibilities.
