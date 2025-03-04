@@ -50,7 +50,7 @@ bool _mapEquals(Map<Object?, Object?>? map1, Map<Object?, Object?>? map2) {
     return false;
   }
   bool elementsMatch = true;
-  for (Object? key in map1.keys) {
+  for (final Object? key in map1.keys) {
     if (!map2.containsKey(key)) {
       return false;
     }
