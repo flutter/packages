@@ -616,6 +616,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testAudioOnlyHLSControls {
+  XCTSkip(@"Flaky; see https://github.com/flutter/flutter/issues/164381");
   NSObject<FlutterPluginRegistrar> *registrar =
       [GetPluginRegistry() registrarForPlugin:@"TestAudioOnlyHLSControls"];
 
