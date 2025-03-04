@@ -1,3 +1,7 @@
+## 24.3.0
+
+* [dart] Adds equality methods.
+
 ## 24.2.1
 
 * [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in
