@@ -5,6 +5,8 @@
 @import camera_avfoundation;
 @import AVFoundation;
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// Mock implementation of `FLTCapturePhotoOutput` protocol which allows injecting a custom
 /// implementation.
 @interface MockCapturePhotoOutput : NSObject <FLTCapturePhotoOutput>
@@ -20,3 +22,5 @@
     (AVCapturePhotoSettings *, NSObject<AVCapturePhotoCaptureDelegate> *);
 
 @end
+
+NS_ASSUME_NONNULL_END

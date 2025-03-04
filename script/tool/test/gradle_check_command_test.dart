@@ -43,6 +43,8 @@ void main() {
     bool includeNamespace = true,
     bool commentNamespace = false,
     bool warningsConfigured = true,
+    bool useDeprecatedCompileSdkVersion = false,
+    String compileSdk = '33',
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -88,7 +90,7 @@ apply plugin: 'com.android.library'
 ${includeLanguageVersion ? javaSection : ''}
 android {
 ${includeNamespace ? namespace : ''}
-    compileSdk 33
+    ${useDeprecatedCompileSdkVersion ? 'compileSdkVersion' : 'compileSdk'} $compileSdk
 
     defaultConfig {
         minSdkVersion 30
@@ -985,6 +987,113 @@ dependencies {
           contains('build.gradle sets "ext.kotlin_version" to "1.6.21". The '
               'minimum Kotlin version that can be specified is '
               '$minKotlinVersion, for compatibility with modern dependencies.'),
+        ]),
+      );
+    });
+  });
+
+  group('compileSdk check', () {
+    test('passes if set to a number', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage(packageName, packagesDir, isFlutter: true);
+      writeFakePluginBuildGradle(package,
+          includeLanguageVersion: true, compileSdk: '35');
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example, pluginName: packageName);
+      writeFakeManifest(example, isApp: true);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['gradle-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Validating android/build.gradle'),
+        ]),
+      );
+    });
+
+    test('passes if set to flutter.compileSdkVersion with Flutter 3.27+',
+        () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package = createFakePackage(
+          packageName, packagesDir,
+          isFlutter: true, flutterConstraint: '>=3.27.0');
+      writeFakePluginBuildGradle(package,
+          includeLanguageVersion: true,
+          compileSdk: 'flutter.compileSdkVersion');
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example, pluginName: packageName);
+      writeFakeManifest(example, isApp: true);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['gradle-check']);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Validating android/build.gradle'),
+        ]),
+      );
+    });
+
+    test('fails if set to flutter.compileSdkVersion with Flutter <3.27',
+        () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package = createFakePackage(
+          packageName, packagesDir,
+          isFlutter: true, flutterConstraint: '>=3.24.0');
+      writeFakePluginBuildGradle(package,
+          includeLanguageVersion: true,
+          compileSdk: 'flutter.compileSdkVersion');
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example, pluginName: packageName);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Use of flutter.compileSdkVersion requires a minimum '
+              'Flutter version of 3.27, but this package currently supports '
+              '3.24.0'),
+        ]),
+      );
+    });
+
+    test('fails if uses the legacy key', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage(packageName, packagesDir, isFlutter: true);
+      writeFakePluginBuildGradle(package,
+          includeLanguageVersion: true, useDeprecatedCompileSdkVersion: true);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example, pluginName: packageName);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Please replace the deprecated "compileSdkVersion" setting '
+              'with the newer "compileSdk"'),
         ]),
       );
     });
