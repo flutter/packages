@@ -448,7 +448,7 @@ abstract class WKFrameInfo extends NSObject {
   late bool isMainFrame;
 
   /// The frame’s current request.
-  late URLRequest request;
+  late URLRequest? request;
 }
 
 /// Information about an error condition including a domain, a domain-specific
