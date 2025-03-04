@@ -1,3 +1,7 @@
+## 3.18.4
+
+* Fixes crash when sending undefined message via javascript channel.
+
 ## 3.18.3
 
 * Fixes crash where the native `AuthenticationChallengeResponse` could not be found for auth
