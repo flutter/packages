@@ -1,3 +1,9 @@
+## 3.19.0
+
+* Adds a new `readAccessURLProvider` property to the `WebKitWebViewControllerCreationParams` class,
+  allowing control over the directory path for additional resources when loading a local web page
+  with `loadFile` on iOS.
+
 ## 3.18.5
 
 * Fixes crash when sending undefined message via JavaScript channel.
