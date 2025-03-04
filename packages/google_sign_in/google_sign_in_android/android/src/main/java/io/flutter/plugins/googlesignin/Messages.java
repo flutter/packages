@@ -587,7 +587,7 @@ public class Messages {
 
     /** Clears the authentication caching for the given token, requiring a new sign in. */
     void clearAuthCache(@NonNull String token);
-    
+
     /** Requests access to the given scopes. */
     void requestScopes(@NonNull List<String> scopes, @NonNull Result<Boolean> result);
 
