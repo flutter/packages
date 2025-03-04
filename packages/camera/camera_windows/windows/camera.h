@@ -85,7 +85,8 @@ class Camera : public CaptureControllerListener {
   // Returns false if initialization fails.
   virtual bool InitCamera(flutter::TextureRegistrar* texture_registrar,
                           flutter::BinaryMessenger* messenger,
-                          const PlatformMediaSettings& media_settings) = 0;
+                          const PlatformMediaSettings& media_settings,
+                          std::shared_ptr<TaskRunner> task_runner) = 0;
 };
 
 // Concrete implementation of the |Camera| interface.
@@ -151,7 +152,8 @@ class CameraImpl : public Camera {
   }
   bool InitCamera(flutter::TextureRegistrar* texture_registrar,
                   flutter::BinaryMessenger* messenger,
-                  const PlatformMediaSettings& media_settings) override;
+                  const PlatformMediaSettings& media_settings,
+                  std::shared_ptr<TaskRunner> task_runner) override;
 
   // Initializes the camera and its associated capture controller.
   //
@@ -163,7 +165,8 @@ class CameraImpl : public Camera {
       std::unique_ptr<CaptureControllerFactory> capture_controller_factory,
       flutter::TextureRegistrar* texture_registrar,
       flutter::BinaryMessenger* messenger,
-      const PlatformMediaSettings& media_settings);
+      const PlatformMediaSettings& media_settings,
+      std::shared_ptr<TaskRunner> task_runner);
 
  private:
   // A generic type for any pending asyncronous result.
@@ -230,6 +233,7 @@ class CameraImpl : public Camera {
   std::unique_ptr<CaptureController> capture_controller_;
   std::unique_ptr<CameraEventApi> event_api_;
   flutter::BinaryMessenger* messenger_ = nullptr;
+  std::shared_ptr<TaskRunner> task_runner_;
   int64_t camera_id_ = -1;
   std::string device_id_;
 };
