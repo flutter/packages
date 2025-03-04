@@ -1,3 +1,7 @@
+## 4.3.3
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 4.3.2
 
 * Bumps gradle-plugin to 2.1.10.

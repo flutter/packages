@@ -1,5 +1,6 @@
-## NEXT
+## 2.7.18
 
+* Updates compileSdk 34 to flutter.compileSdkVersion.
 * Suppresses deprecation and removal warnings for
   `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
 
