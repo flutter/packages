@@ -97,7 +97,7 @@ final class CameraPluginCreateCameraTests: XCTestCase {
     XCTAssertTrue(requestAudioPermissionCalled)
   }
 
-  func testCreateCamera_assignsCamera() {
+  func testCreateCamera_createsFLTCamSuccessfully() {
     let (cameraPlugin, mockPermissionManager, mockCaptureSession) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
