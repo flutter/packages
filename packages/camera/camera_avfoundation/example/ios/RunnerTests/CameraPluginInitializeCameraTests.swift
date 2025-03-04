@@ -7,7 +7,7 @@ import XCTest
 @testable import camera_avfoundation
 
 final class CameraPluginInitializeCameraTests: XCTestCase {
-  private func createSutAndMocks() -> (
+  private func createCameraPlugin() -> (
     CameraPlugin, MockFLTCam, MockGlobalEventApi
   ) {
     let mockCamera = MockFLTCam()
@@ -39,7 +39,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   }
 
   func testInitializeCamera_setsCameraOnFrameAvailableCallback() {
-    let (cameraPlugin, mockCamera, _) = createSutAndMocks()
+    let (cameraPlugin, mockCamera, _) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
     var onFrameAvailableSet = false
@@ -59,7 +59,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   }
 
   func testInitializeCamera_setsCameraDartAPI() {
-    let (cameraPlugin, mockCamera, _) = createSutAndMocks()
+    let (cameraPlugin, mockCamera, _) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
     var dartAPISet = false
@@ -79,7 +79,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   }
 
   func testInitializeCamera_sendsDeviceOrientation() {
-    let (cameraPlugin, _, mockGlobalEventApi) = createSutAndMocks()
+    let (cameraPlugin, _, mockGlobalEventApi) = createCameraPlugin()
 
     cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
       error in
@@ -92,7 +92,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   }
 
   func testInitializeCamera_startsCamera() {
-    let (cameraPlugin, mockCamera, _) = createSutAndMocks()
+    let (cameraPlugin, mockCamera, _) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
     var startCalled = false

@@ -7,7 +7,7 @@ import XCTest
 @testable import camera_avfoundation
 
 final class CameraPluginCreateCameraTests: XCTestCase {
-  private func createSutAndMocks() -> (
+  private func createCameraPlugin() -> (
     CameraPlugin, MockFLTCameraPermissionManager, MockCaptureSession
   ) {
     let mockPermissionManager = MockFLTCameraPermissionManager()
@@ -28,17 +28,19 @@ final class CameraPluginCreateCameraTests: XCTestCase {
   }
 
   func testCreateCamera_requestsOnlyCameraPermissionWithAudioDisabled() {
-    let (cameraPlugin, mockPermissionManager, _) = createSutAndMocks()
+    let (cameraPlugin, mockPermissionManager, _) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
     var requestCameraPermissionCalled = false
     mockPermissionManager.requestCameraPermissionStub = { completion in
       requestCameraPermissionCalled = true
+      // Permission is granted
       completion?(nil)
     }
     var requestAudioPermissionCalled = false
     mockPermissionManager.requestAudioPermissionStub = { completion in
       requestAudioPermissionCalled = true
+      // Permission is granted
       completion?(nil)
     }
 
@@ -61,17 +63,19 @@ final class CameraPluginCreateCameraTests: XCTestCase {
   }
 
   func testCreateCamera_requestsCameraAndAudioPermissionWithAudioEnabled() {
-    let (cameraPlugin, mockPermissionManager, _) = createSutAndMocks()
+    let (cameraPlugin, mockPermissionManager, _) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
     var requestCameraPermissionCalled = false
     mockPermissionManager.requestCameraPermissionStub = { completion in
       requestCameraPermissionCalled = true
+      // Permission is granted
       completion?(nil)
     }
     var requestAudioPermissionCalled = false
     mockPermissionManager.requestAudioPermissionStub = { completion in
       requestAudioPermissionCalled = true
+      // Permission is granted
       completion?(nil)
     }
 
@@ -94,13 +98,15 @@ final class CameraPluginCreateCameraTests: XCTestCase {
   }
 
   func testCreateCamera_assignsCamera() {
-    let (cameraPlugin, mockPermissionManager, mockCaptureSession) = createSutAndMocks()
+    let (cameraPlugin, mockPermissionManager, mockCaptureSession) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
     mockPermissionManager.requestCameraPermissionStub = { completion in
+      // Permission is granted
       completion?(nil)
     }
     mockPermissionManager.requestAudioPermissionStub = { completion in
+      // Permission is granted
       completion?(nil)
     }
     mockCaptureSession.canSetSessionPreset = true
