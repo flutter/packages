@@ -1,6 +1,6 @@
 ## 2.8.2
 
-- Fixes an issue when enum params is required
+- Fixes an issue when enum params are not required
 
 ## 2.8.1
 
