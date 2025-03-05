@@ -281,12 +281,13 @@ class PaletteGenerator with Diagnosticable {
     final ui.Image image = await imageCompleter.future;
     ui.Rect? newRegion = region;
     if (size != null && region != null) {
-      final double scale = image.width / size.width;
+      final double wScale = image.width / size.width;
+      final double hScale = image.height / size.height;
       newRegion = Rect.fromLTRB(
-        region.left * scale,
-        region.top * scale,
-        region.right * scale,
-        region.bottom * scale,
+        region.left * wScale,
+        region.top * hScale,
+        region.right * wScale,
+        region.bottom * hScale,
       );
     }
     return PaletteGenerator.fromImage(
