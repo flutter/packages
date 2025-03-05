@@ -52,9 +52,7 @@ void main() {
       await tester.pumpAndSettle(_playDuration);
       await controller.pause();
 
-      // Disposing controller causes the Widget to crash in the next line
-      // (Issue https://github.com/flutter/flutter/issues/90046)
-      // await controller.dispose();
+      await controller.dispose();
 
       // Now replace it with `another` controller...
       await tester.pumpWidget(renderVideoWidget(another));
@@ -70,7 +68,9 @@ void main() {
       await expectLater(started.future, completes);
       await expectLater(ended.future, completes);
     },
-    skip: !(kIsWeb || defaultTargetPlatform == TargetPlatform.android),
+    // TODO: (tarrinneal) Re-enable on Android once out of band failure is fixed.
+    // https://github.com/flutter/flutter/issues/164651
+    skip: !kIsWeb,
   );
 }
 
