@@ -38,16 +38,30 @@ final class StreamingTests: XCTestCase {
     return (camera, sampleBuffer)
   }
 
-  func testExceedMaxStreamingPendingFramesCount() async {
+  func testExceedMaxStreamingPendingFramesCount() {
     let (camera, sampleBuffer) = createCamera()
+    let handlerMock = MockImageStreamHandler()
+
+    let finishStartStreamExpectation = expectation(
+      description: "Finish startStream")
+
+    let messenger = MockFlutterBinaryMessenger()
+    camera.startImageStream(
+      with: messenger, imageStreamHandler: handlerMock,
+      withCompletion: {
+        _ in
+        finishStartStreamExpectation.fulfill()
+      })
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    // Setup mocked event sink after the stream starts
     let streamingExpectation = expectation(
       description: "Must not call handler over maxStreamingPendingFramesCount")
-    let handlerMock = MockImageStreamHandler()
+
     handlerMock.eventSinkStub = { event in
       streamingExpectation.fulfill()
     }
-    let messenger = MockFlutterBinaryMessenger()
-    await camera.startImageStream(with: messenger, imageStreamHandler: handlerMock)
 
     let expectation = XCTKVOExpectation(
       keyPath: "isStreamingImages", object: camera, expectedValue: true)
@@ -62,16 +76,29 @@ final class StreamingTests: XCTestCase {
     waitForExpectations(timeout: 30, handler: nil)
   }
 
-  func testReceivedImageStreamData() async {
-    let (camera, sampleBuffer) = createCamera()
+  func testReceivedImageStreamData() {
+    let (camera, sampleBuffer, configuration) = createCamera()
+    let handlerMock = MockImageStreamHandler()
+
+    let finishStartStreamExpectation = expectation(
+      description: "Finish startStream")
+
+    let messenger = MockFlutterBinaryMessenger()
+    camera.startImageStream(
+      with: messenger, imageStreamHandler: handlerMock,
+      withCompletion: {
+        _ in
+        finishStartStreamExpectation.fulfill()
+      })
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    // Setup mocked event sink after the stream starts
     let streamingExpectation = expectation(
       description: "Must be able to call the handler again when receivedImageStreamData is called")
-    let handlerMock = MockImageStreamHandler()
     handlerMock.eventSinkStub = { event in
       streamingExpectation.fulfill()
     }
-    let messenger = MockFlutterBinaryMessenger()
-    await camera.startImageStream(with: messenger, imageStreamHandler: handlerMock)
 
     let expectation = XCTKVOExpectation(
       keyPath: "isStreamingImages", object: camera, expectedValue: true)
