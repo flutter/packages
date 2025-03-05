@@ -7,8 +7,8 @@
 @import XCTest;
 @import GoogleMaps;
 
+#import <GoogleMapController_Test.h>
 #import <OCMock/OCMock.h>
-#import <google_maps_flutter_ios/GoogleMapController_Test.h>
 #import "FGMCATransactionWrapper.h"
 #import "PartiallyMockedMapView.h"
 
@@ -159,6 +159,39 @@
                                             error:&error];
   OCMVerifyAll(mapViewMock);
   OCMVerifyAll(mockTransactionWrapper);
+}
+
+- (void)testInspectorAPICameraPosition {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
+  mapViewOptions.frame = frame;
+
+  // Init camera with specific position.
+  GMSCameraPosition *initialCameraPosition = [[GMSCameraPosition alloc] initWithLatitude:37.7749
+                                                                               longitude:-122.4194
+                                                                                    zoom:10];
+  mapViewOptions.camera = initialCameraPosition;
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
+
+  FLTGoogleMapController *controller =
+      [[FLTGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                            registrar:registrar];
+
+  FGMMapInspector *inspector = [[FGMMapInspector alloc] initWithMapController:controller
+                                                                    messenger:registrar.messenger
+                                                                 pigeonSuffix:@"0"];
+
+  FlutterError *error = nil;
+  FGMPlatformCameraPosition *cameraPosition = [inspector cameraPosition:&error];
+
+  XCTAssertEqual(cameraPosition.target.latitude, initialCameraPosition.target.latitude);
+  XCTAssertEqual(cameraPosition.target.longitude, initialCameraPosition.target.longitude);
+  XCTAssertEqual(cameraPosition.zoom, initialCameraPosition.zoom);
 }
 
 /// Creates an empty creation paramaters object for tests where the values don't matter, just that

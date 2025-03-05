@@ -40,4 +40,13 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FGMMapCallHandler : NSObject <FGMMapsApi>
 @end
 
+/// Implementation of the Pigeon maps inspector API.
+///
+/// This is a separate object from the maps controller because the Pigeon API registration keeps a
+/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
+/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
+/// the target of the registration.
+@interface FGMMapInspector : NSObject <FGMMapsInspectorApi>
+@end
+
 NS_ASSUME_NONNULL_END

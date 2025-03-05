@@ -15,6 +15,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.os.Build;
@@ -23,6 +24,8 @@ import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -297,5 +300,22 @@ public class GoogleMapControllerTest {
 
     verify(mockGoogleMap, times(1))
         .animateCamera(any(CameraUpdate.class), eq(durationMilliseconds.intValue()), isNull());
+  }
+
+  @Test
+  public void getCameraPositionReturnsCorrectData() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+    googleMapController.onMapReady(mockGoogleMap);
+
+    CameraPosition cameraPosition = new CameraPosition(new LatLng(10.0, 20.0), 15.0f, 30.0f, 45.0f);
+    when(mockGoogleMap.getCameraPosition()).thenReturn(cameraPosition);
+
+    Messages.PlatformCameraPosition result = googleMapController.getCameraPosition();
+
+    Assert.assertEquals(cameraPosition.target.latitude, result.getTarget().getLatitude(), 1e-15);
+    Assert.assertEquals(cameraPosition.target.longitude, result.getTarget().getLongitude(), 1e-15);
+    Assert.assertEquals(cameraPosition.zoom, result.getZoom(), 1e-15);
+    Assert.assertEquals(cameraPosition.tilt, result.getTilt(), 1e-15);
+    Assert.assertEquals(cameraPosition.bearing, result.getBearing(), 1e-15);
   }
 }

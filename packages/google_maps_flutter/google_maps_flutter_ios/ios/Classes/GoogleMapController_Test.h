@@ -18,6 +18,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+/// Exposes internal properties of FGMMapInspector for unit testing.
+@interface FGMMapInspector (Test)
+
+/// Initializes a Pigeon API for inpector with a map controller.
+- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
+                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                         pigeonSuffix:(NSString *)suffix;
+
+@end
+
 @interface FLTGoogleMapController (Test)
 
 /// Initializes a map controller with a concrete map view.

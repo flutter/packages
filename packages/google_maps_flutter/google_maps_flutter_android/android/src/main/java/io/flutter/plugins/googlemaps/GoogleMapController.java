@@ -26,6 +26,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
@@ -943,13 +944,11 @@ class GoogleMapController
       throw new FlutterError(
           "GoogleMap uninitialized", "animateCamera called prior to map initialization", null);
     }
+    CameraUpdate update = Convert.cameraUpdateFromPigeon(cameraUpdate, density);
     if (durationMilliseconds != null) {
-      googleMap.animateCamera(
-          Convert.cameraUpdateFromPigeon(cameraUpdate, density),
-          durationMilliseconds.intValue(),
-          null);
+      googleMap.animateCamera(update, durationMilliseconds.intValue(), null);
     } else {
-      googleMap.animateCamera(Convert.cameraUpdateFromPigeon(cameraUpdate, density));
+      googleMap.animateCamera(update);
     }
   }
 
