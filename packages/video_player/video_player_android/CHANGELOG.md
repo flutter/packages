@@ -1,9 +1,12 @@
-## 2.7.18
-
-* Suppresses deprecation and removal warnings for
-  `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
+## 2.8.1
 * Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect
   whether or not the video player rotation needs to be corrected.
+  
+## 2.8.0
+
+* Adds support for platform views as an optional way of displaying a video.
+* Suppresses deprecation and removal warnings for
+  `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
 
 ## 2.7.17
 
