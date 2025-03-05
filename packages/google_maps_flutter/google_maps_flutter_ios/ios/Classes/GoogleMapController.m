@@ -64,46 +64,30 @@
 
 #pragma mark -
 
-/// Implementation of the Pigeon maps API.
-///
-/// This is a separate object from the maps controller because the Pigeon API registration keeps a
-/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
-/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
-/// the target of the registration.
-@interface FGMMapCallHandler : NSObject <FGMMapsApi>
+/// Private declarations of the FGMMapCallHandler.
+@interface FGMMapCallHandler ()
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
                             messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                          pigeonSuffix:(NSString *)suffix;
-@end
 
-/// Private declarations.
-// This is separate in case the above is made public in the future (e.g., for unit testing).
-@interface FGMMapCallHandler ()
 /// The map controller this inspector corresponds to.
 @property(nonatomic, weak) FLTGoogleMapController *controller;
 /// The messenger this instance was registered with by Pigeon.
 @property(nonatomic, copy) NSObject<FlutterBinaryMessenger> *messenger;
 /// The suffix this instance was registered under with Pigeon.
 @property(nonatomic, copy) NSString *pigeonSuffix;
+/// The transaction wrapper to use for camera animations.
+@property(nonatomic, strong) id<FGMCATransactionProtocol> transactionWrapper;
 @end
 
 #pragma mark -
 
-/// Implementation of the Pigeon maps inspector API.
-///
-/// This is a separate object from the maps controller because the Pigeon API registration keeps a
-/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
-/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
-/// the target of the registration.
-@interface FGMMapInspector : NSObject <FGMMapsInspectorApi>
+/// Private declarations of the FGMMapInspector.
+@interface FGMMapInspector ()
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
                             messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                          pigeonSuffix:(NSString *)suffix;
-@end
 
-/// Private declarations.
-// This is separate in case the above is made public in the future (e.g., for unit testing).
-@interface FGMMapInspector ()
 /// The map controller this inspector corresponds to.
 @property(nonatomic, weak) FLTGoogleMapController *controller;
 /// The messenger this instance was registered with by Pigeon.
@@ -525,6 +509,7 @@
     _controller = controller;
     _messenger = messenger;
     _pigeonSuffix = suffix;
+    _transactionWrapper = [[FGMCATransactionWrapper alloc] init];
   }
   return self;
 }
@@ -656,6 +641,7 @@
 }
 
 - (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
+                       duration:(nullable NSNumber *)durationMilliseconds
                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(cameraUpdate);
   if (!update) {
@@ -664,7 +650,11 @@
                                  details:nil];
     return;
   }
+  FGMCATransactionWrapper *transaction = durationMilliseconds ? self.transactionWrapper : nil;
+  [transaction begin];
+  [transaction setAnimationDuration:[durationMilliseconds doubleValue] / 1000];
   [self.controller.mapView animateWithCameraUpdate:update];
+  [transaction commit];
 }
 
 - (nullable NSNumber *)currentZoomLevel:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
@@ -820,6 +810,11 @@
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   return [FGMPlatformZoomRange makeWithMin:@(self.controller.mapView.minZoom)
                                        max:@(self.controller.mapView.maxZoom)];
+}
+
+- (nullable FGMPlatformCameraPosition *)cameraPosition:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return FGMGetPigeonCameraPositionForPosition(self.controller.mapView.camera);
 }
 
 @end

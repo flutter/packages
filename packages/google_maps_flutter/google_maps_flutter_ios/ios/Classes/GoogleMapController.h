@@ -5,6 +5,7 @@
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
 
+#import "FGMCATransactionWrapper.h"
 #import "FGMClusterManagersController.h"
 #import "GoogleMapCircleController.h"
 #import "GoogleMapMarkerController.h"
@@ -28,6 +29,24 @@ NS_ASSUME_NONNULL_BEGIN
 // Allows the engine to create new Google Map instances.
 @interface FLTGoogleMapFactory : NSObject <FlutterPlatformViewFactory>
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+@end
+
+/// Implementation of the Pigeon maps API.
+///
+/// This is a separate object from the maps controller because the Pigeon API registration keeps a
+/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
+/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
+/// the target of the registration.
+@interface FGMMapCallHandler : NSObject <FGMMapsApi>
+@end
+
+/// Implementation of the Pigeon maps inspector API.
+///
+/// This is a separate object from the maps controller because the Pigeon API registration keeps a
+/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
+/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
+/// the target of the registration.
+@interface FGMMapInspector : NSObject <FGMMapsInspectorApi>
 @end
 
 NS_ASSUME_NONNULL_END
