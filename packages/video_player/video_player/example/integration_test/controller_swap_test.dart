@@ -54,7 +54,7 @@ void main() {
 
       // Disposing controller causes the Widget to crash in the next line
       // (Issue https://github.com/flutter/flutter/issues/90046)
-      await controller.dispose();
+      // await controller.dispose();
 
       // Now replace it with `another` controller...
       await tester.pumpWidget(renderVideoWidget(another));
