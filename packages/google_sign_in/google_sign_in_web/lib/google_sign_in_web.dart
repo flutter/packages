@@ -155,6 +155,9 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
         'Check https://developers.google.com/identity/protocols/googlescopes '
         'for a list of valid OAuth 2.0 scopes.');
 
+    assert(params.forceAccountName == null,
+        'forceAccountName is not supported on Web.');
+
     _initCalled = Completer<void>();
 
     await _jsSdkLoadedFuture;
