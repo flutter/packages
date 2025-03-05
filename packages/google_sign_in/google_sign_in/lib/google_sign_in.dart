@@ -187,7 +187,6 @@ class GoogleSignIn {
     this.clientId,
     this.serverClientId,
     this.forceCodeForRefreshToken = false,
-    this.forceAccountName,
   }) {
     // Start initializing.
     if (kIsWeb) {
@@ -264,9 +263,6 @@ class GoogleSignIn {
   /// Force the authorization code to be valid for a refresh token every time. Only needed on Android.
   final bool forceCodeForRefreshToken;
 
-  /// Explicitly specifies the account name to be used in sign-in. Must only be set on Android.
-  final String? forceAccountName;
-
   final StreamController<GoogleSignInAccount?> _currentUserController =
       StreamController<GoogleSignInAccount?>.broadcast();
 
@@ -321,7 +317,6 @@ class GoogleSignIn {
       clientId: clientId,
       serverClientId: serverClientId,
       forceCodeForRefreshToken: forceCodeForRefreshToken,
-      forceAccountName: forceAccountName,
     ));
 
     unawaited(GoogleSignInPlatform.instance.userDataEvents
