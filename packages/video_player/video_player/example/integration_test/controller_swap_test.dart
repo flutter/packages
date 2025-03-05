@@ -42,6 +42,10 @@ void main() {
         print('listener');
         if (started.isCompleted) {
           print('started.isCompleted');
+          print(another);
+          print(another.value);
+          print(another.value.isBuffering);
+          print('ended is not complete ==' + ((!ended.isCompleted).toString()));
           if (!another.value.isBuffering) {
             print('!another.value.isBuffering');
             if (!ended.isCompleted) {
