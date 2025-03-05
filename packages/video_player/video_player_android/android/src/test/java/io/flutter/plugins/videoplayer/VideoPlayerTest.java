@@ -274,9 +274,11 @@ public final class VideoPlayerTest {
 
   @Test
   public void onSurfaceAvailableWithoutDestroyDoesNotRecreate() {
-    // Initially create the video player, which creates the initial surface.
+    // Initially create the video player, which creates the initial surface and queries
+    // whether or not the device handles Surface crop and rotation automatically.
     VideoPlayer videoPlayer = createVideoPlayer();
     verify(mockProducer).getSurface();
+    verify(mockProducer).handlesCropAndRotation();
 
     // Capture the lifecycle events so we can simulate onSurfaceAvailable/Destroyed.
     verify(mockProducer).setCallback(callbackCaptor.capture());

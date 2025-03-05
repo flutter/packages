@@ -47,11 +47,18 @@ final class ExoPlayerEventListener implements Player.Listener {
     }
   }
 
-  ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean surfaceProducerHandlesCropAndRotation) {
+  ExoPlayerEventListener(
+      ExoPlayer exoPlayer,
+      VideoPlayerCallbacks events,
+      boolean surfaceProducerHandlesCropAndRotation) {
     this(exoPlayer, events, false, surfaceProducerHandlesCropAndRotation);
   }
 
-  ExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks events, boolean initialized, boolean surfaceProducerHandlesCropAndRotation) {
+  ExoPlayerEventListener(
+      ExoPlayer exoPlayer,
+      VideoPlayerCallbacks events,
+      boolean initialized,
+      boolean surfaceProducerHandlesCropAndRotation) {
     this.exoPlayer = exoPlayer;
     this.events = events;
     this.isInitialized = initialized;
@@ -98,8 +105,7 @@ final class ExoPlayerEventListener implements Player.Listener {
           reportedRotationCorrection = RotationDegrees.ROTATE_0;
           rotationCorrection = 0;
         }
-      }
-      else if (surfaceProducerHandlesCropAndRotation) {
+      } else if (surfaceProducerHandlesCropAndRotation) {
         // When the SurfaceTexture backend for Impeller is used, the preview should already
         // be correctly rotated.
         rotationCorrection = 0;

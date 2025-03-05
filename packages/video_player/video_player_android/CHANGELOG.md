@@ -2,8 +2,8 @@
 
 * Suppresses deprecation and removal warnings for
   `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
-* Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation`
-  to detect the backend used to provide `Surface`s.
+* Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect
+  whether or not the video player rotation needs to be corrected.
 
 ## 2.7.17
 
