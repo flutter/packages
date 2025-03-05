@@ -12,6 +12,7 @@ import androidx.media3.exoplayer.ExoPlayer;
 public abstract class ExoPlayerEventListener implements Player.Listener {
   private boolean isBuffering = false;
   private boolean isInitialized;
+  private boolean surfaceProducerHandlesCropAndRotation;
   protected final ExoPlayer exoPlayer;
   protected final VideoPlayerCallbacks events;
 
@@ -46,6 +47,7 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     this.exoPlayer = exoPlayer;
     this.events = events;
     this.isInitialized = initialized;
+    this.surfaceProducerHandlesCropAndRotation = surfaceProducerHandlesCropAndRotation;
   }
 
   private void setBuffering(boolean buffering) {

@@ -52,10 +52,13 @@ public abstract class VideoPlayer {
   @NonNull
   protected ExoPlayer createVideoPlayer() {
     ExoPlayer exoPlayer = exoPlayerProvider.get();
+
     exoPlayer.setMediaItem(mediaItem);
+
     exoPlayer.prepare();
 
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer));
+
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
     return exoPlayer;
