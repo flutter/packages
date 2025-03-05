@@ -1252,6 +1252,14 @@ static void selectBestFormatForRequestedFrameRate(
   return _captureDevice.maxAvailableVideoZoomFactor;
 }
 
+- (CGFloat)minimumExposureOffset {
+  return _captureDevice.minExposureTargetBias;
+}
+
+- (CGFloat)maximumExposureOffset {
+  return _captureDevice.maxExposureTargetBias;
+}
+
 - (BOOL)setupWriterForPath:(NSString *)path {
   NSError *error = nil;
   NSURL *outputURL;

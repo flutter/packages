@@ -1,6 +1,11 @@
-## 0.9.18+9
+## 0.9.18+10
 
 * Fix race condition when starting image stream
+
+## 0.9.18+9
+
+* Backfills unit tests for `CameraPlugin` class.
+* Adds `minimumExposureOffset` and `maximumExposureOffset` methods to `FLTCam` class.
 
 ## 0.9.18+8
 
