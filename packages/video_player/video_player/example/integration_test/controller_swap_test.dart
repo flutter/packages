@@ -68,7 +68,7 @@ void main() {
       await expectLater(started.future, completes);
       await expectLater(ended.future, completes);
     },
-    // TODO: (tarrinneal) Re-enable on Android once out of band failure is fixed.
+    // TODO(tarrinneal): Re-enable on Android once out of band failure is fixed,
     // https://github.com/flutter/flutter/issues/164651
     skip: !kIsWeb,
   );
