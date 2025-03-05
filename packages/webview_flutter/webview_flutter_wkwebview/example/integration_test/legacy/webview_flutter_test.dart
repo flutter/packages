@@ -404,6 +404,7 @@ Future<void> main() async {
       WebViewController controller = await controllerCompleter.future;
       await pageLoaded.future;
 
+      await Future<void>.delayed(const Duration(seconds: 5));
       String isPaused =
           await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(false));
@@ -433,6 +434,7 @@ Future<void> main() async {
       await pageLoaded.future;
 
       isPaused = await controller.runJavascriptReturningResult('isPaused();');
+      await Future<void>.delayed(const Duration(seconds: 5));
       expect(isPaused, _webviewBool(true));
     });
 
@@ -465,6 +467,8 @@ Future<void> main() async {
 
       String isPaused =
           await controller.runJavascriptReturningResult('isPaused();');
+
+      await Future<void>.delayed(const Duration(seconds: 5));
       expect(isPaused, _webviewBool(false));
 
       pageLoaded = Completer<void>();
@@ -491,6 +495,7 @@ Future<void> main() async {
       await pageLoaded.future;
 
       isPaused = await controller.runJavascriptReturningResult('isPaused();');
+      await Future<void>.delayed(const Duration(seconds: 5));
       expect(isPaused, _webviewBool(false));
     });
 
