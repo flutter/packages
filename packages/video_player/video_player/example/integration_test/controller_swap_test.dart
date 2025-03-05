@@ -37,25 +37,26 @@ void main() {
 
       another.addListener(() {
         if (another.value.isBuffering && !started.isCompleted) {
-          print('Started complete');
           started.complete();
         }
-        if (started.isCompleted &&
-            !another.value.isBuffering &&
-            !ended.isCompleted) {
-          print('Ended complete');
-          ended.complete();
+        print('listener');
+        if (started.isCompleted) {
+          print('started.isCompleted');
+          if (!another.value.isBuffering) {
+            print('!another.value.isBuffering');
+            if (!ended.isCompleted) {
+              print('!ended.isCompleted');
+              ended.complete();
+              print('Ended complete');
+            }
+          }
         }
       });
 
       // Inject a widget with `controller`...
-      print('tester.pumpWidget(renderVideoWidget(controller));');
       await tester.pumpWidget(renderVideoWidget(controller));
-      print('controller.play()');
       await controller.play();
-      print('tester.pumpAndSettle(_playDuration)');
       await tester.pumpAndSettle(_playDuration);
-      print('controller.pause()');
       await controller.pause();
 
       // Disposing controller causes the Widget to crash in the next line
@@ -63,25 +64,19 @@ void main() {
       await controller.dispose();
 
       // Now replace it with `another` controller...
-      print('tester.pumpWidget(renderVideoWidget(another));');
       await tester.pumpWidget(renderVideoWidget(another));
-      print('another.play()');
       await another.play();
-      print('another.seekTo(const Duration(seconds: 5))');
       await another.seekTo(const Duration(seconds: 5));
-      print('tester.pumpAndSettle(_playDuration)');
       await tester.pumpAndSettle(_playDuration);
-      print('another.pause()');
       await another.pause();
 
       // Expect that `another` played.
       expect(another.value.position,
           (Duration position) => position > Duration.zero);
 
-      print('expectLater(started.future, completes);');
       await expectLater(started.future, completes);
-      print('expectLater(ended.future, completes);');
       await expectLater(ended.future, completes);
+      print('expectLater(ended.future, completes);');
     },
     skip: !(kIsWeb || defaultTargetPlatform == TargetPlatform.android),
   );
