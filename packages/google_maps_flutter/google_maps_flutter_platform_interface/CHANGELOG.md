@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes typo in CHANGELOG.
+
 ## 2.11.1
 
 * Updates READMEs and API docs.
