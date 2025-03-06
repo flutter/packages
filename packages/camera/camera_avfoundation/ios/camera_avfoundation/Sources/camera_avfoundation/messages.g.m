@@ -26,12 +26,7 @@ static NSArray<id> *wrapResult(id result, FlutterError *error) {
 }
 
 static FlutterError *createConnectionError(NSString *channelName) {
-  return [FlutterError
-      errorWithCode:@"channel-error"
-            message:[NSString stringWithFormat:@"%@/%@/%@",
-                                               @"Unable to establish connection on channel: '",
-                                               channelName, @"'."]
-            details:@""];
+  return [FlutterError errorWithCode:@"channel-error" message:[NSString stringWithFormat:@"%@/%@/%@", @"Unable to establish connection on channel: '", channelName, @"'."] details:@""];
 }
 
 static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
@@ -162,9 +157,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 
 @implementation FCPPlatformCameraDescription
 + (instancetype)makeWithName:(NSString *)name
-               lensDirection:(FCPPlatformCameraLensDirection)lensDirection
-                    lensType:(FCPPlatformCameraLensType)lensType {
-  FCPPlatformCameraDescription *pigeonResult = [[FCPPlatformCameraDescription alloc] init];
+    lensDirection:(FCPPlatformCameraLensDirection)lensDirection
+    lensType:(FCPPlatformCameraLensType)lensType {
+  FCPPlatformCameraDescription* pigeonResult = [[FCPPlatformCameraDescription alloc] init];
   pigeonResult.name = name;
   pigeonResult.lensDirection = lensDirection;
   pigeonResult.lensType = lensType;
@@ -173,9 +168,10 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 + (FCPPlatformCameraDescription *)fromList:(NSArray<id> *)list {
   FCPPlatformCameraDescription *pigeonResult = [[FCPPlatformCameraDescription alloc] init];
   pigeonResult.name = GetNullableObjectAtIndex(list, 0);
-  FCPPlatformCameraLensDirectionBox *boxedFCPPlatformCameraLensDirection =
-      GetNullableObjectAtIndex(list, 1);
+  FCPPlatformCameraLensDirectionBox *boxedFCPPlatformCameraLensDirection = GetNullableObjectAtIndex(list, 1);
   pigeonResult.lensDirection = boxedFCPPlatformCameraLensDirection.value;
+  FCPPlatformCameraLensTypeBox *boxedFCPPlatformCameraLensType = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.lensType = boxedFCPPlatformCameraLensType.value;
   return pigeonResult;
 }
 + (nullable FCPPlatformCameraDescription *)nullableFromList:(NSArray<id> *)list {
@@ -185,17 +181,18 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return @[
     self.name ?: [NSNull null],
     [[FCPPlatformCameraLensDirectionBox alloc] initWithValue:self.lensDirection],
+    [[FCPPlatformCameraLensTypeBox alloc] initWithValue:self.lensType],
   ];
 }
 @end
 
 @implementation FCPPlatformCameraState
 + (instancetype)makeWithPreviewSize:(FCPPlatformSize *)previewSize
-                       exposureMode:(FCPPlatformExposureMode)exposureMode
-                          focusMode:(FCPPlatformFocusMode)focusMode
-             exposurePointSupported:(BOOL)exposurePointSupported
-                focusPointSupported:(BOOL)focusPointSupported {
-  FCPPlatformCameraState *pigeonResult = [[FCPPlatformCameraState alloc] init];
+    exposureMode:(FCPPlatformExposureMode)exposureMode
+    focusMode:(FCPPlatformFocusMode)focusMode
+    exposurePointSupported:(BOOL )exposurePointSupported
+    focusPointSupported:(BOOL )focusPointSupported {
+  FCPPlatformCameraState* pigeonResult = [[FCPPlatformCameraState alloc] init];
   pigeonResult.previewSize = previewSize;
   pigeonResult.exposureMode = exposureMode;
   pigeonResult.focusMode = focusMode;
@@ -230,11 +227,11 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 
 @implementation FCPPlatformMediaSettings
 + (instancetype)makeWithResolutionPreset:(FCPPlatformResolutionPreset)resolutionPreset
-                         framesPerSecond:(nullable NSNumber *)framesPerSecond
-                            videoBitrate:(nullable NSNumber *)videoBitrate
-                            audioBitrate:(nullable NSNumber *)audioBitrate
-                             enableAudio:(BOOL)enableAudio {
-  FCPPlatformMediaSettings *pigeonResult = [[FCPPlatformMediaSettings alloc] init];
+    framesPerSecond:(nullable NSNumber *)framesPerSecond
+    videoBitrate:(nullable NSNumber *)videoBitrate
+    audioBitrate:(nullable NSNumber *)audioBitrate
+    enableAudio:(BOOL )enableAudio {
+  FCPPlatformMediaSettings* pigeonResult = [[FCPPlatformMediaSettings alloc] init];
   pigeonResult.resolutionPreset = resolutionPreset;
   pigeonResult.framesPerSecond = framesPerSecond;
   pigeonResult.videoBitrate = videoBitrate;
@@ -244,8 +241,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 + (FCPPlatformMediaSettings *)fromList:(NSArray<id> *)list {
   FCPPlatformMediaSettings *pigeonResult = [[FCPPlatformMediaSettings alloc] init];
-  FCPPlatformResolutionPresetBox *boxedFCPPlatformResolutionPreset =
-      GetNullableObjectAtIndex(list, 0);
+  FCPPlatformResolutionPresetBox *boxedFCPPlatformResolutionPreset = GetNullableObjectAtIndex(list, 0);
   pigeonResult.resolutionPreset = boxedFCPPlatformResolutionPreset.value;
   pigeonResult.framesPerSecond = GetNullableObjectAtIndex(list, 1);
   pigeonResult.videoBitrate = GetNullableObjectAtIndex(list, 2);
@@ -268,8 +264,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FCPPlatformPoint
-+ (instancetype)makeWithX:(double)x y:(double)y {
-  FCPPlatformPoint *pigeonResult = [[FCPPlatformPoint alloc] init];
++ (instancetype)makeWithX:(double )x
+    y:(double )y {
+  FCPPlatformPoint* pigeonResult = [[FCPPlatformPoint alloc] init];
   pigeonResult.x = x;
   pigeonResult.y = y;
   return pigeonResult;
@@ -292,8 +289,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FCPPlatformSize
-+ (instancetype)makeWithWidth:(double)width height:(double)height {
-  FCPPlatformSize *pigeonResult = [[FCPPlatformSize alloc] init];
++ (instancetype)makeWithWidth:(double )width
+    height:(double )height {
+  FCPPlatformSize* pigeonResult = [[FCPPlatformSize alloc] init];
   pigeonResult.width = width;
   pigeonResult.height = height;
   return pigeonResult;
@@ -322,61 +320,49 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   switch (type) {
     case 129: {
       NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil ? nil
-                                 : [[FCPPlatformCameraLensDirectionBox alloc]
-                                       initWithValue:[enumAsNumber integerValue]];
+      return enumAsNumber == nil ? nil : [[FCPPlatformCameraLensDirectionBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
     case 130: {
       NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil ? nil
-                                 : [[FCPPlatformDeviceOrientationBox alloc]
-                                       initWithValue:[enumAsNumber integerValue]];
+      return enumAsNumber == nil ? nil : [[FCPPlatformCameraLensTypeBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
     case 131: {
       NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil
-                 ? nil
-                 : [[FCPPlatformExposureModeBox alloc] initWithValue:[enumAsNumber integerValue]];
+      return enumAsNumber == nil ? nil : [[FCPPlatformDeviceOrientationBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
     case 132: {
       NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil
-                 ? nil
-                 : [[FCPPlatformFlashModeBox alloc] initWithValue:[enumAsNumber integerValue]];
+      return enumAsNumber == nil ? nil : [[FCPPlatformExposureModeBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
     case 133: {
       NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil
-                 ? nil
-                 : [[FCPPlatformFocusModeBox alloc] initWithValue:[enumAsNumber integerValue]];
+      return enumAsNumber == nil ? nil : [[FCPPlatformFlashModeBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
     case 134: {
       NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil ? nil
-                                 : [[FCPPlatformImageFileFormatBox alloc]
-                                       initWithValue:[enumAsNumber integerValue]];
+      return enumAsNumber == nil ? nil : [[FCPPlatformFocusModeBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
     case 135: {
       NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil ? nil
-                                 : [[FCPPlatformImageFormatGroupBox alloc]
-                                       initWithValue:[enumAsNumber integerValue]];
+      return enumAsNumber == nil ? nil : [[FCPPlatformImageFileFormatBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
     case 136: {
       NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil ? nil
-                                 : [[FCPPlatformResolutionPresetBox alloc]
-                                       initWithValue:[enumAsNumber integerValue]];
+      return enumAsNumber == nil ? nil : [[FCPPlatformImageFormatGroupBox alloc] initWithValue:[enumAsNumber integerValue]];
     }
-    case 137:
+    case 137: {
+      NSNumber *enumAsNumber = [self readValue];
+      return enumAsNumber == nil ? nil : [[FCPPlatformResolutionPresetBox alloc] initWithValue:[enumAsNumber integerValue]];
+    }
+    case 138: 
       return [FCPPlatformCameraDescription fromList:[self readValue]];
-    case 138:
+    case 139: 
       return [FCPPlatformCameraState fromList:[self readValue]];
-    case 139:
+    case 140: 
       return [FCPPlatformMediaSettings fromList:[self readValue]];
-    case 140:
+    case 141: 
       return [FCPPlatformPoint fromList:[self readValue]];
-    case 142:
+    case 142: 
       return [FCPPlatformSize fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -460,8 +446,7 @@ NSObject<FlutterMessageCodec> *FCPGetMessagesCodec(void) {
   static FlutterStandardMessageCodec *sSharedObject = nil;
   static dispatch_once_t sPred = 0;
   dispatch_once(&sPred, ^{
-    FCPMessagesPigeonCodecReaderWriter *readerWriter =
-        [[FCPMessagesPigeonCodecReaderWriter alloc] init];
+    FCPMessagesPigeonCodecReaderWriter *readerWriter = [[FCPMessagesPigeonCodecReaderWriter alloc] init];
     sSharedObject = [FlutterStandardMessageCodec codecWithReaderWriter:readerWriter];
   });
   return sSharedObject;
@@ -470,29 +455,19 @@ void SetUpFCPCameraApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FCPC
   SetUpFCPCameraApiWithSuffix(binaryMessenger, api, @"");
 }
 
-void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
-                                 NSObject<FCPCameraApi> *api, NSString *messageChannelSuffix) {
-  messageChannelSuffix = messageChannelSuffix.length > 0
-                             ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
-                             : @"";
+void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FCPCameraApi> *api, NSString *messageChannelSuffix) {
+  messageChannelSuffix = messageChannelSuffix.length > 0 ? [NSString stringWithFormat: @".%@", messageChannelSuffix] : @"";
   /// Returns the list of available cameras.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.getAvailableCameras",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.getAvailableCameras", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(availableCamerasWithCompletion:)],
-          @"FCPCameraApi api (%@) doesn't respond to @selector(availableCamerasWithCompletion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(availableCamerasWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(availableCamerasWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api availableCamerasWithCompletion:^(
-                 NSArray<FCPPlatformCameraDescription *> *_Nullable output,
-                 FlutterError *_Nullable error) {
+        [api availableCamerasWithCompletion:^(NSArray<FCPPlatformCameraDescription *> *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -502,27 +477,20 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Create a new camera with the given settings, and returns its ID.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:
-                                      @"%@%@",
-                                      @"dev.flutter.pigeon.camera_avfoundation.CameraApi.create",
-                                      messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.create", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createCameraWithName:settings:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to "
-                @"@selector(createCameraWithName:settings:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(createCameraWithName:settings:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(createCameraWithName:settings:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_cameraName = GetNullableObjectAtIndex(args, 0);
         FCPPlatformMediaSettings *arg_settings = GetNullableObjectAtIndex(args, 1);
-        [api createCameraWithName:arg_cameraName
-                         settings:arg_settings
-                       completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
-                         callback(wrapResult(output, error));
-                       }];
+        [api createCameraWithName:arg_cameraName settings:arg_settings completion:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -530,30 +498,21 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Initializes the camera with the given ID.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               [NSString
-                   stringWithFormat:@"%@%@",
-                                    @"dev.flutter.pigeon.camera_avfoundation.CameraApi.initialize",
-                                    messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.initialize", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(initializeCamera:withImageFormat:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to "
-                @"@selector(initializeCamera:withImageFormat:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(initializeCamera:withImageFormat:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(initializeCamera:withImageFormat:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSInteger arg_cameraId = [GetNullableObjectAtIndex(args, 0) integerValue];
-        FCPPlatformImageFormatGroupBox *boxedFCPPlatformImageFormatGroup =
-            GetNullableObjectAtIndex(args, 1);
+        FCPPlatformImageFormatGroupBox *boxedFCPPlatformImageFormatGroup = GetNullableObjectAtIndex(args, 1);
         FCPPlatformImageFormatGroup arg_imageFormat = boxedFCPPlatformImageFormatGroup.value;
-        [api initializeCamera:arg_cameraId
-              withImageFormat:arg_imageFormat
-                   completion:^(FlutterError *_Nullable error) {
-                     callback(wrapResult(nil, error));
-                   }];
+        [api initializeCamera:arg_cameraId withImageFormat:arg_imageFormat completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -561,18 +520,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Begins streaming frames from the camera.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.startImageStream",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.startImageStream", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(startImageStreamWithCompletion:)],
-          @"FCPCameraApi api (%@) doesn't respond to @selector(startImageStreamWithCompletion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(startImageStreamWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(startImageStreamWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api startImageStreamWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -584,19 +538,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Stops streaming frames from the camera.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.stopImageStream",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.stopImageStream", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(stopImageStreamWithCompletion:)],
-          @"FCPCameraApi api (%@) doesn't respond to @selector(stopImageStreamWithCompletion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(stopImageStreamWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(stopImageStreamWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api stopImageStreamWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -611,18 +559,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   ///
   /// This is used to throttle sending frames across the channel.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.receivedImageStreamData",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.receivedImageStreamData", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(receivedImageStreamDataWithCompletion:)],
-                @"FCPCameraApi api (%@) doesn't respond to "
-                @"@selector(receivedImageStreamDataWithCompletion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(receivedImageStreamDataWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(receivedImageStreamDataWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api receivedImageStreamDataWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -635,24 +578,19 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   /// Indicates that the given camera is no longer being used on the Dart side,
   /// and any associated resources can be cleaned up.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:
-                                      @"%@%@",
-                                      @"dev.flutter.pigeon.camera_avfoundation.CameraApi.dispose",
-                                      messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.dispose", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(disposeCamera:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(disposeCamera:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(disposeCamera:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(disposeCamera:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSInteger arg_cameraId = [GetNullableObjectAtIndex(args, 0) integerValue];
-        [api disposeCamera:arg_cameraId
-                completion:^(FlutterError *_Nullable error) {
-                  callback(wrapResult(nil, error));
-                }];
+        [api disposeCamera:arg_cameraId completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -660,27 +598,20 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Locks the camera capture to the current device orientation.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.lockCaptureOrientation",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.lockCaptureOrientation", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(lockCaptureOrientation:completion:)],
-          @"FCPCameraApi api (%@) doesn't respond to @selector(lockCaptureOrientation:completion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(lockCaptureOrientation:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(lockCaptureOrientation:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FCPPlatformDeviceOrientationBox *boxedFCPPlatformDeviceOrientation =
-            GetNullableObjectAtIndex(args, 0);
+        FCPPlatformDeviceOrientationBox *boxedFCPPlatformDeviceOrientation = GetNullableObjectAtIndex(args, 0);
         FCPPlatformDeviceOrientation arg_orientation = boxedFCPPlatformDeviceOrientation.value;
-        [api lockCaptureOrientation:arg_orientation
-                         completion:^(FlutterError *_Nullable error) {
-                           callback(wrapResult(nil, error));
-                         }];
+        [api lockCaptureOrientation:arg_orientation completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -689,18 +620,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   /// Unlocks camera capture orientation, allowing it to automatically adapt to
   /// device orientation.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.unlockCaptureOrientation",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.unlockCaptureOrientation", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(unlockCaptureOrientationWithCompletion:)],
-                @"FCPCameraApi api (%@) doesn't respond to "
-                @"@selector(unlockCaptureOrientationWithCompletion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(unlockCaptureOrientationWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(unlockCaptureOrientationWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api unlockCaptureOrientationWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -713,23 +639,17 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   /// Takes a picture with the current settings, and returns the path to the
   /// resulting file.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:
-               [NSString
-                   stringWithFormat:@"%@%@",
-                                    @"dev.flutter.pigeon.camera_avfoundation.CameraApi.takePicture",
-                                    messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.takePicture", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(takePictureWithCompletion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(takePictureWithCompletion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(takePictureWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(takePictureWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api
-            takePictureWithCompletion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
-              callback(wrapResult(output, error));
-            }];
+        [api takePictureWithCompletion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
+          callback(wrapResult(output, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -737,18 +657,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Does any preprocessing necessary before beginning to record video.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.prepareForVideoRecording",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.prepareForVideoRecording", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(prepareForVideoRecordingWithCompletion:)],
-                @"FCPCameraApi api (%@) doesn't respond to "
-                @"@selector(prepareForVideoRecordingWithCompletion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(prepareForVideoRecordingWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(prepareForVideoRecordingWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api prepareForVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -761,25 +676,19 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   /// Begins recording video, optionally enabling streaming to Dart at the same
   /// time.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.startVideoRecording",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.startVideoRecording", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(startVideoRecordingWithStreaming:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to "
-                @"@selector(startVideoRecordingWithStreaming:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(startVideoRecordingWithStreaming:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(startVideoRecordingWithStreaming:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         BOOL arg_enableStream = [GetNullableObjectAtIndex(args, 0) boolValue];
-        [api startVideoRecordingWithStreaming:arg_enableStream
-                                   completion:^(FlutterError *_Nullable error) {
-                                     callback(wrapResult(nil, error));
-                                   }];
+        [api startVideoRecordingWithStreaming:arg_enableStream completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -787,21 +696,15 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Stops recording video, and results the path to the resulting file.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.stopVideoRecording",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.stopVideoRecording", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(stopVideoRecordingWithCompletion:)],
-          @"FCPCameraApi api (%@) doesn't respond to @selector(stopVideoRecordingWithCompletion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(stopVideoRecordingWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(stopVideoRecordingWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        [api stopVideoRecordingWithCompletion:^(NSString *_Nullable output,
-                                                FlutterError *_Nullable error) {
+        [api stopVideoRecordingWithCompletion:^(NSString *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
         }];
       }];
@@ -811,18 +714,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Pauses video recording.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.pauseVideoRecording",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.pauseVideoRecording", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(pauseVideoRecordingWithCompletion:)],
-          @"FCPCameraApi api (%@) doesn't respond to @selector(pauseVideoRecordingWithCompletion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(pauseVideoRecordingWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(pauseVideoRecordingWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api pauseVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -834,18 +732,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Resumes a previously paused video recording.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.resumeVideoRecording",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.resumeVideoRecording", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(resumeVideoRecordingWithCompletion:)],
-                @"FCPCameraApi api (%@) doesn't respond to "
-                @"@selector(resumeVideoRecordingWithCompletion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(resumeVideoRecordingWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(resumeVideoRecordingWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api resumeVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -857,26 +750,20 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Switches the camera to the given flash mode.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setFlashMode",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setFlashMode", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setFlashMode:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(setFlashMode:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setFlashMode:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(setFlashMode:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FCPPlatformFlashModeBox *boxedFCPPlatformFlashMode = GetNullableObjectAtIndex(args, 0);
         FCPPlatformFlashMode arg_mode = boxedFCPPlatformFlashMode.value;
-        [api setFlashMode:arg_mode
-               completion:^(FlutterError *_Nullable error) {
-                 callback(wrapResult(nil, error));
-               }];
+        [api setFlashMode:arg_mode completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -884,27 +771,20 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Switches the camera to the given exposure mode.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposureMode",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposureMode", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setExposureMode:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(setExposureMode:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setExposureMode:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(setExposureMode:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FCPPlatformExposureModeBox *boxedFCPPlatformExposureMode =
-            GetNullableObjectAtIndex(args, 0);
+        FCPPlatformExposureModeBox *boxedFCPPlatformExposureMode = GetNullableObjectAtIndex(args, 0);
         FCPPlatformExposureMode arg_mode = boxedFCPPlatformExposureMode.value;
-        [api setExposureMode:arg_mode
-                  completion:^(FlutterError *_Nullable error) {
-                    callback(wrapResult(nil, error));
-                  }];
+        [api setExposureMode:arg_mode completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -914,24 +794,19 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   ///
   /// A null value resets to the default exposure point.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.setExposurePoint",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposurePoint", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setExposurePoint:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(setExposurePoint:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setExposurePoint:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(setExposurePoint:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FCPPlatformPoint *arg_point = GetNullableObjectAtIndex(args, 0);
-        [api setExposurePoint:arg_point
-                   completion:^(FlutterError *_Nullable error) {
-                     callback(wrapResult(nil, error));
-                   }];
+        [api setExposurePoint:arg_point completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -939,17 +814,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Returns the minimum exposure offset supported by the camera.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.getMinExposureOffset",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.getMinExposureOffset", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getMinimumExposureOffset:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(getMinimumExposureOffset:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(getMinimumExposureOffset:)], @"FCPCameraApi api (%@) doesn't respond to @selector(getMinimumExposureOffset:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api getMinimumExposureOffset:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
@@ -961,17 +832,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Returns the maximum exposure offset supported by the camera.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.getMaxExposureOffset",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.getMaxExposureOffset", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getMaximumExposureOffset:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(getMaximumExposureOffset:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(getMaximumExposureOffset:)], @"FCPCameraApi api (%@) doesn't respond to @selector(getMaximumExposureOffset:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api getMaximumExposureOffset:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
@@ -983,25 +850,19 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Sets the exposure offset manually to the given value.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.setExposureOffset",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setExposureOffset", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(setExposureOffset:completion:)],
-          @"FCPCameraApi api (%@) doesn't respond to @selector(setExposureOffset:completion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(setExposureOffset:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(setExposureOffset:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         double arg_offset = [GetNullableObjectAtIndex(args, 0) doubleValue];
-        [api setExposureOffset:arg_offset
-                    completion:^(FlutterError *_Nullable error) {
-                      callback(wrapResult(nil, error));
-                    }];
+        [api setExposureOffset:arg_offset completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1009,26 +870,20 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Switches the camera to the given focus mode.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setFocusMode",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setFocusMode", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setFocusMode:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(setFocusMode:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setFocusMode:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(setFocusMode:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FCPPlatformFocusModeBox *boxedFCPPlatformFocusMode = GetNullableObjectAtIndex(args, 0);
         FCPPlatformFocusMode arg_mode = boxedFCPPlatformFocusMode.value;
-        [api setFocusMode:arg_mode
-               completion:^(FlutterError *_Nullable error) {
-                 callback(wrapResult(nil, error));
-               }];
+        [api setFocusMode:arg_mode completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1038,25 +893,19 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   ///
   /// A null value resets to the default focus point.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setFocusPoint",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setFocusPoint", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setFocusPoint:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(setFocusPoint:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setFocusPoint:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(setFocusPoint:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FCPPlatformPoint *arg_point = GetNullableObjectAtIndex(args, 0);
-        [api setFocusPoint:arg_point
-                completion:^(FlutterError *_Nullable error) {
-                  callback(wrapResult(nil, error));
-                }];
+        [api setFocusPoint:arg_point completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1064,17 +913,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Returns the minimum zoom level supported by the camera.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.getMinZoomLevel",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.getMinZoomLevel", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getMinimumZoomLevel:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(getMinimumZoomLevel:)", api);
+      NSCAssert([api respondsToSelector:@selector(getMinimumZoomLevel:)], @"FCPCameraApi api (%@) doesn't respond to @selector(getMinimumZoomLevel:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api getMinimumZoomLevel:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
@@ -1086,17 +931,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Returns the maximum zoom level supported by the camera.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.getMaxZoomLevel",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.getMaxZoomLevel", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getMaximumZoomLevel:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(getMaximumZoomLevel:)", api);
+      NSCAssert([api respondsToSelector:@selector(getMaximumZoomLevel:)], @"FCPCameraApi api (%@) doesn't respond to @selector(getMaximumZoomLevel:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api getMaximumZoomLevel:^(NSNumber *_Nullable output, FlutterError *_Nullable error) {
           callback(wrapResult(output, error));
@@ -1108,25 +949,19 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Sets the zoom factor.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setZoomLevel",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setZoomLevel", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(setZoomLevel:completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(setZoomLevel:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(setZoomLevel:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(setZoomLevel:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         double arg_zoom = [GetNullableObjectAtIndex(args, 0) doubleValue];
-        [api setZoomLevel:arg_zoom
-               completion:^(FlutterError *_Nullable error) {
-                 callback(wrapResult(nil, error));
-               }];
+        [api setZoomLevel:arg_zoom completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1134,18 +969,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Pauses streaming of preview frames.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.pausePreview",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.pausePreview", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(pausePreviewWithCompletion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(pausePreviewWithCompletion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(pausePreviewWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(pausePreviewWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api pausePreviewWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -1157,18 +987,13 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Resumes a previously paused preview stream.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString
-                            stringWithFormat:
-                                @"%@%@",
-                                @"dev.flutter.pigeon.camera_avfoundation.CameraApi.resumePreview",
-                                messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.resumePreview", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(resumePreviewWithCompletion:)],
-                @"FCPCameraApi api (%@) doesn't respond to @selector(resumePreviewWithCompletion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(resumePreviewWithCompletion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(resumePreviewWithCompletion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         [api resumePreviewWithCompletion:^(FlutterError *_Nullable error) {
           callback(wrapResult(nil, error));
@@ -1182,26 +1007,19 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   ///
   /// This should only be called while video recording is active.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.updateDescriptionWhileRecording",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.updateDescriptionWhileRecording", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(updateDescriptionWhileRecordingCameraName:
-                                                                                 completion:)],
-                @"FCPCameraApi api (%@) doesn't respond to "
-                @"@selector(updateDescriptionWhileRecordingCameraName:completion:)",
-                api);
+      NSCAssert([api respondsToSelector:@selector(updateDescriptionWhileRecordingCameraName:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(updateDescriptionWhileRecordingCameraName:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_cameraName = GetNullableObjectAtIndex(args, 0);
-        [api updateDescriptionWhileRecordingCameraName:arg_cameraName
-                                            completion:^(FlutterError *_Nullable error) {
-                                              callback(wrapResult(nil, error));
-                                            }];
+        [api updateDescriptionWhileRecordingCameraName:arg_cameraName completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1209,27 +1027,20 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   }
   /// Sets the file format used for taking pictures.
   {
-    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.camera_avfoundation."
-                                                   @"CameraApi.setImageFileFormat",
-                                                   messageChannelSuffix]
+    FlutterBasicMessageChannel *channel =
+      [[FlutterBasicMessageChannel alloc]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraApi.setImageFileFormat", messageChannelSuffix]
         binaryMessenger:binaryMessenger
-                  codec:FCPGetMessagesCodec()];
+        codec:FCPGetMessagesCodec()];
     if (api) {
-      NSCAssert(
-          [api respondsToSelector:@selector(setImageFileFormat:completion:)],
-          @"FCPCameraApi api (%@) doesn't respond to @selector(setImageFileFormat:completion:)",
-          api);
+      NSCAssert([api respondsToSelector:@selector(setImageFileFormat:completion:)], @"FCPCameraApi api (%@) doesn't respond to @selector(setImageFileFormat:completion:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        FCPPlatformImageFileFormatBox *boxedFCPPlatformImageFileFormat =
-            GetNullableObjectAtIndex(args, 0);
+        FCPPlatformImageFileFormatBox *boxedFCPPlatformImageFileFormat = GetNullableObjectAtIndex(args, 0);
         FCPPlatformImageFileFormat arg_format = boxedFCPPlatformImageFileFormat.value;
-        [api setImageFileFormat:arg_format
-                     completion:^(FlutterError *_Nullable error) {
-                       callback(wrapResult(nil, error));
-                     }];
+        [api setImageFileFormat:arg_format completion:^(FlutterError *_Nullable error) {
+          callback(wrapResult(nil, error));
+        }];
       }];
     } else {
       [channel setMessageHandler:nil];
@@ -1246,42 +1057,32 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
 - (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
   return [self initWithBinaryMessenger:binaryMessenger messageChannelSuffix:@""];
 }
-- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
-                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix {
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger messageChannelSuffix:(nullable NSString*)messageChannelSuffix{
   self = [self init];
   if (self) {
     _binaryMessenger = binaryMessenger;
-    _messageChannelSuffix = [messageChannelSuffix length] == 0
-                                ? @""
-                                : [NSString stringWithFormat:@".%@", messageChannelSuffix];
+    _messageChannelSuffix = [messageChannelSuffix length] == 0 ? @"" : [NSString stringWithFormat: @".%@", messageChannelSuffix];
   }
   return self;
 }
-- (void)deviceOrientationChangedOrientation:(FCPPlatformDeviceOrientation)arg_orientation
-                                 completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString
-      stringWithFormat:
-          @"%@%@",
-          @"dev.flutter.pigeon.camera_avfoundation.CameraGlobalEventApi.deviceOrientationChanged",
-          _messageChannelSuffix];
+- (void)deviceOrientationChangedOrientation:(FCPPlatformDeviceOrientation)arg_orientation completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraGlobalEventApi.deviceOrientationChanged", _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-      [FlutterBasicMessageChannel messageChannelWithName:channelName
-                                         binaryMessenger:self.binaryMessenger
-                                                   codec:FCPGetMessagesCodec()];
-  [channel sendMessage:@[ [[FCPPlatformDeviceOrientationBox alloc] initWithValue:arg_orientation] ]
-                 reply:^(NSArray<id> *reply) {
-                   if (reply != nil) {
-                     if (reply.count > 1) {
-                       completion([FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                     } else {
-                       completion(nil);
-                     }
-                   } else {
-                     completion(createConnectionError(channelName));
-                   }
-                 }];
+    [FlutterBasicMessageChannel
+      messageChannelWithName:channelName
+      binaryMessenger:self.binaryMessenger
+      codec:FCPGetMessagesCodec()];
+  [channel sendMessage:@[[[FCPPlatformDeviceOrientationBox alloc] initWithValue:arg_orientation]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion(createConnectionError(channelName));
+    } 
+  }];
 }
 @end
 
@@ -1295,64 +1096,51 @@ void SetUpFCPCameraApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
 - (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
   return [self initWithBinaryMessenger:binaryMessenger messageChannelSuffix:@""];
 }
-- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
-                   messageChannelSuffix:(nullable NSString *)messageChannelSuffix {
+- (instancetype)initWithBinaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger messageChannelSuffix:(nullable NSString*)messageChannelSuffix{
   self = [self init];
   if (self) {
     _binaryMessenger = binaryMessenger;
-    _messageChannelSuffix = [messageChannelSuffix length] == 0
-                                ? @""
-                                : [NSString stringWithFormat:@".%@", messageChannelSuffix];
+    _messageChannelSuffix = [messageChannelSuffix length] == 0 ? @"" : [NSString stringWithFormat: @".%@", messageChannelSuffix];
   }
   return self;
 }
-- (void)initializedWithState:(FCPPlatformCameraState *)arg_initialState
-                  completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString
-      stringWithFormat:@"%@%@",
-                       @"dev.flutter.pigeon.camera_avfoundation.CameraEventApi.initialized",
-                       _messageChannelSuffix];
+- (void)initializedWithState:(FCPPlatformCameraState *)arg_initialState completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraEventApi.initialized", _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-      [FlutterBasicMessageChannel messageChannelWithName:channelName
-                                         binaryMessenger:self.binaryMessenger
-                                                   codec:FCPGetMessagesCodec()];
-  [channel sendMessage:@[ arg_initialState ?: [NSNull null] ]
-                 reply:^(NSArray<id> *reply) {
-                   if (reply != nil) {
-                     if (reply.count > 1) {
-                       completion([FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                     } else {
-                       completion(nil);
-                     }
-                   } else {
-                     completion(createConnectionError(channelName));
-                   }
-                 }];
+    [FlutterBasicMessageChannel
+      messageChannelWithName:channelName
+      binaryMessenger:self.binaryMessenger
+      codec:FCPGetMessagesCodec()];
+  [channel sendMessage:@[arg_initialState ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion(createConnectionError(channelName));
+    } 
+  }];
 }
-- (void)reportError:(NSString *)arg_message
-         completion:(void (^)(FlutterError *_Nullable))completion {
-  NSString *channelName = [NSString
-      stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraEventApi.error",
-                       _messageChannelSuffix];
+- (void)reportError:(NSString *)arg_message completion:(void (^)(FlutterError *_Nullable))completion {
+  NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.camera_avfoundation.CameraEventApi.error", _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
-      [FlutterBasicMessageChannel messageChannelWithName:channelName
-                                         binaryMessenger:self.binaryMessenger
-                                                   codec:FCPGetMessagesCodec()];
-  [channel sendMessage:@[ arg_message ?: [NSNull null] ]
-                 reply:^(NSArray<id> *reply) {
-                   if (reply != nil) {
-                     if (reply.count > 1) {
-                       completion([FlutterError errorWithCode:reply[0]
-                                                      message:reply[1]
-                                                      details:reply[2]]);
-                     } else {
-                       completion(nil);
-                     }
-                   } else {
-                     completion(createConnectionError(channelName));
-                   }
-                 }];
+    [FlutterBasicMessageChannel
+      messageChannelWithName:channelName
+      binaryMessenger:self.binaryMessenger
+      codec:FCPGetMessagesCodec()];
+  [channel sendMessage:@[arg_message ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+    if (reply != nil) {
+      if (reply.count > 1) {
+        completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);
+      } else {
+        completion(nil);
+      }
+    } else {
+      completion(createConnectionError(channelName));
+    } 
+  }];
 }
 @end
+
