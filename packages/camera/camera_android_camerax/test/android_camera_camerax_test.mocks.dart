@@ -1134,6 +1134,17 @@ class MockPreview extends _i1.Mock implements _i35.Preview {
           ),
         )),
       ) as _i17.Future<_i10.ResolutionInfo>);
+
+  @override
+  _i17.Future<bool> surfaceProducerHandlesCropAndRotation() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #surfaceProducerHandlesCropAndRotation,
+          [],
+        ),
+        returnValue: _i17.Future<bool>.value(false),
+        returnValueForMissingStub: _i17.Future<bool>.value(false),
+      ) as _i17.Future<bool>);
 }
 
 /// A class which mocks [ProcessCameraProvider].
@@ -1410,16 +1421,6 @@ class MockTestSystemServicesHostApi extends _i1.Mock
           ),
         ),
       ) as String);
-
-  @override
-  bool isPreviewPreTransformed() => (super.noSuchMethod(
-        Invocation.method(
-          #isPreviewPreTransformed,
-          [],
-        ),
-        returnValue: false,
-        returnValueForMissingStub: false,
-      ) as bool);
 }
 
 /// A class which mocks [VideoCapture].

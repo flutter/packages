@@ -1,8 +1,12 @@
-## 24.2.2
+## 25.0.0
 
 * Separates internal options classes from user facing options.
 * Adds `mergeDefinitionFileOptions` parameter to `runWithOptions` method.
 * Relocates `injectOverflowTypes` to non-public facing method.
+
+## 24.2.2
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
 
 ## 24.2.1
 

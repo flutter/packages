@@ -1,3 +1,7 @@
+## 2.2.16
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 2.2.15
 
 * Removes unnecessary native code.
