@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/generator_tools.dart';
 import 'package:pigeon/src/pigeon_lib.dart';
+import 'package:pigeon/src/pigeon_lib_internal.dart';
 import 'package:test/test.dart';
 
 class _ValidatorGeneratorAdapter implements GeneratorAdapter {

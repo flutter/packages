@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/pigeon.dart' show Error;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/cpp/cpp_generator.dart';
 import 'package:pigeon/src/generator_tools.dart';
+import 'package:pigeon/src/pigeon_lib_internal.dart' show Error;
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';

@@ -8,7 +8,7 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib.dart' show Error;
+import '../pigeon_lib_internal.dart';
 
 /// General comment opening token.
 const String _commentPrefix = '//';
