@@ -33,10 +33,6 @@ CameraLensType cameraLensTypeFromPlatform(PlatformCameraLensType type) {
     PlatformCameraLensType.wide => CameraLensType.wide,
     PlatformCameraLensType.telephoto => CameraLensType.telephoto,
     PlatformCameraLensType.ultraWide => CameraLensType.ultraWide,
-    PlatformCameraLensType.dual => CameraLensType.dual,
-    PlatformCameraLensType.dualWide => CameraLensType.dualWide,
-    PlatformCameraLensType.triple => CameraLensType.triple,
-    PlatformCameraLensType.continuity => CameraLensType.continuity,
     PlatformCameraLensType.unknown => CameraLensType.unknown,
   };
 }
