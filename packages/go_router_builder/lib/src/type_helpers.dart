@@ -115,11 +115,13 @@ String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   }
 
   late String access;
+  final String suffix =
+      !element.type.isNullableType && !element.hasDefaultValue ? '!' : '';
   if (pathParameters.contains(element.name)) {
-    access =
-        'pathParameters[${escapeDartString(element.name)}]${element.isRequired ? '!' : ''}';
+    access = 'pathParameters[${escapeDartString(element.name)}]$suffix';
   } else {
-    access = 'uri.queryParameters[${escapeDartString(element.name.kebab)}]';
+    access =
+        'uri.queryParameters[${escapeDartString(element.name.kebab)}]$suffix';
   }
 
   return access;
