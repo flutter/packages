@@ -29,5 +29,17 @@ dev_dependencies:
     sdk: flutter
   leak_tracker_flutter_testing: any
 
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  camera:
+    path: ../../../camera/camera
+  camera_avfoundation:
+    path: ../../../camera/camera_avfoundation
+  camera_platform_interface:
+    path: ../../../camera/camera_platform_interface
+  camera_web:
+    path: ../../camera_web
+
 flutter:
   uses-material-design: true
