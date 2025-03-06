@@ -1,3 +1,7 @@
+## 2.10.2
+
+* Fixes typos in README and CHANGELOG.
+
 ## 2.10.1
 
 * Updates READMEs and API docs.
