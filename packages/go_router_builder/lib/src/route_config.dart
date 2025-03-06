@@ -775,7 +775,7 @@ bool $boolConverterHelperName(String value) {
 
 const String _enumConverterHelper = '''
 extension<T extends Enum> on Map<T, String> {
-  T? $enumExtensionHelperName(String value) =>
+  T? $enumExtensionHelperName(String? value) =>
       entries.where((element) => element.value == value).firstOrNull?.key;
 }''';
 

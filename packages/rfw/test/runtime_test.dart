@@ -1606,6 +1606,54 @@ void main() {
     expect(textFinder, findsOneWidget);
     expect(tester.widget<Text>(textFinder).data, 'The input is true, the output is false');
   });
+
+  testWidgets('Widget builders - builder works with loops', (WidgetTester tester) async {
+    const LibraryName coreLibraryName = LibraryName(<String>['core']);
+    const LibraryName localLibraryName = LibraryName(<String>['local']);
+    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
+    final Runtime runtime = Runtime();
+    addTearDown(runtime.dispose);
+    final DynamicContent data = DynamicContent();
+    final Finder textFinder = find.byType(Text);
+
+    runtime.update(coreLibraryName, createCoreWidgets());
+    runtime.update(
+        localLibraryName,
+        LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+          'Builder': (BuildContext context, DataSource source) {
+            return source.builder(
+              <String>['builder'],
+              <String, Object?>{
+                'values': <String>['Value1', 'Value2', 'Value3'],
+              },
+            );
+          },
+        }));
+    runtime.update(remoteLibraryName, parseLibraryFile('''
+      import core;
+      import local;
+
+      widget test = Builder(
+        builder: (scope) =>
+          Column(
+            children: [
+              ...for value in scope.values:
+                Text(text: value, textDirection: 'ltr'),
+            ],
+          ),
+      );
+    '''));
+    await tester.pumpWidget(RemoteWidget(
+      runtime: runtime,
+      data: data,
+      widget: const FullyQualifiedWidgetName(remoteLibraryName, 'test'),
+    ));
+
+    expect(textFinder, findsNWidgets(3));
+    expect((textFinder.at(0).evaluate().first.widget as Text).data, 'Value1');
+    expect((textFinder.at(1).evaluate().first.widget as Text).data, 'Value2');
+    expect((textFinder.at(2).evaluate().first.widget as Text).data, 'Value3');
+  });
 }
 
 final class RfwEvent {
