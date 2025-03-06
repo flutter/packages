@@ -1,7 +1,3 @@
-## 0.9.19
-
-* Adds lensType in the PlatformCameraDescription
-
 ## 0.9.18+9
 
 * Backfills unit tests for `CameraPlugin` class.
@@ -60,7 +56,6 @@
 
 * Updates Pigeon for non-nullable collection type support.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Adds lensType in the PlatformCameraDescription
 
 ## 0.9.17+3
 
