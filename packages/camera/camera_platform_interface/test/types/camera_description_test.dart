@@ -103,9 +103,10 @@ void main() {
         name: 'Test',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 0,
+        lensType: CameraLensType.ultraWide,
       );
-      final int expectedHashCode =
-          Object.hash(description.name, description.lensDirection);
+      final int expectedHashCode = Object.hash(
+          description.name, description.lensDirection, description.lensType);
 
       expect(description.hashCode, expectedHashCode);
     });
