@@ -1,7 +1,3 @@
-## NEXT
-
-* Fixes typo in README.
-
 ## 2.10.1
 
 * Updates READMEs and API docs.
