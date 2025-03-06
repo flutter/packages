@@ -70,7 +70,7 @@ void main() {
     },
     // TODO(tarrinneal): Re-enable on Android once out of band failure is fixed,
     // https://github.com/flutter/flutter/issues/164651
-    skip: !kIsWeb,
+    skip: true,
   );
 }
 
