@@ -15,10 +15,7 @@ class FakeController extends ValueNotifier<CameraValue>
   FakeController() : super(const CameraValue.uninitialized(fakeDescription));
 
   static const CameraDescription fakeDescription = CameraDescription(
-      name: '',
-      lensDirection: CameraLensDirection.back,
-      sensorOrientation: 0,
-      lensType: CameraLensType.ultraWide);
+      name: '', lensDirection: CameraLensDirection.back, sensorOrientation: 0);
 
   @override
   Future<void> dispose() async {
