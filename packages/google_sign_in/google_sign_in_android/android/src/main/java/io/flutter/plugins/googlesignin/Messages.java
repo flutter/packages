@@ -156,6 +156,16 @@ public class Messages {
       this.forceCodeForRefreshToken = setterArg;
     }
 
+    private @Nullable String forceAccountName;
+
+    public @Nullable String getForceAccountName() {
+      return forceAccountName;
+    }
+
+    public void setForceAccountName(@Nullable String setterArg) {
+      this.forceAccountName = setterArg;
+    }
+
     /** Constructor is non-public to enforce null safety; use Builder. */
     InitParams() {}
 
@@ -173,13 +183,20 @@ public class Messages {
           && Objects.equals(hostedDomain, that.hostedDomain)
           && Objects.equals(clientId, that.clientId)
           && Objects.equals(serverClientId, that.serverClientId)
-          && forceCodeForRefreshToken.equals(that.forceCodeForRefreshToken);
+          && forceCodeForRefreshToken.equals(that.forceCodeForRefreshToken)
+          && Objects.equals(forceAccountName, that.forceAccountName);
     }
 
     @Override
     public int hashCode() {
       return Objects.hash(
-          scopes, signInType, hostedDomain, clientId, serverClientId, forceCodeForRefreshToken);
+          scopes,
+          signInType,
+          hostedDomain,
+          clientId,
+          serverClientId,
+          forceCodeForRefreshToken,
+          forceAccountName);
     }
 
     public static final class Builder {
@@ -232,6 +249,14 @@ public class Messages {
         return this;
       }
 
+      private @Nullable String forceAccountName;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setForceAccountName(@Nullable String setterArg) {
+        this.forceAccountName = setterArg;
+        return this;
+      }
+
       public @NonNull InitParams build() {
         InitParams pigeonReturn = new InitParams();
         pigeonReturn.setScopes(scopes);
@@ -240,19 +265,21 @@ public class Messages {
         pigeonReturn.setClientId(clientId);
         pigeonReturn.setServerClientId(serverClientId);
         pigeonReturn.setForceCodeForRefreshToken(forceCodeForRefreshToken);
+        pigeonReturn.setForceAccountName(forceAccountName);
         return pigeonReturn;
       }
     }
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(6);
+      ArrayList<Object> toListResult = new ArrayList<>(7);
       toListResult.add(scopes);
       toListResult.add(signInType);
       toListResult.add(hostedDomain);
       toListResult.add(clientId);
       toListResult.add(serverClientId);
       toListResult.add(forceCodeForRefreshToken);
+      toListResult.add(forceAccountName);
       return toListResult;
     }
 
@@ -270,6 +297,8 @@ public class Messages {
       pigeonResult.setServerClientId((String) serverClientId);
       Object forceCodeForRefreshToken = pigeonVar_list.get(5);
       pigeonResult.setForceCodeForRefreshToken((Boolean) forceCodeForRefreshToken);
+      Object forceAccountName = pigeonVar_list.get(6);
+      pigeonResult.setForceAccountName((String) forceAccountName);
       return pigeonResult;
     }
   }
@@ -512,6 +541,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
     /** Success case callback method for handling returns. */
@@ -520,6 +550,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for void API method returns. */
   public interface VoidResult {
     /** Success case callback method for handling returns. */
@@ -528,26 +559,35 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface GoogleSignInApi {
     /** Initializes a sign in request with the given parameters. */
     void init(@NonNull InitParams params);
+
     /** Starts a silent sign in. */
     void signInSilently(@NonNull Result<UserData> result);
+
     /** Starts a sign in with user interaction. */
     void signIn(@NonNull Result<UserData> result);
+
     /** Requests the access token for the current sign in. */
     void getAccessToken(
         @NonNull String email, @NonNull Boolean shouldRecoverAuth, @NonNull Result<String> result);
+
     /** Signs out the current user. */
     void signOut(@NonNull VoidResult result);
+
     /** Revokes scope grants to the application. */
     void disconnect(@NonNull VoidResult result);
+
     /** Returns whether the user is currently signed in. */
     @NonNull
     Boolean isSignedIn();
+
     /** Clears the authentication caching for the given token, requiring a new sign in. */
     void clearAuthCache(@NonNull String token);
+
     /** Requests access to the given scopes. */
     void requestScopes(@NonNull List<String> scopes, @NonNull Result<Boolean> result);
 
@@ -555,6 +595,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `GoogleSignInApi` to handle messages through the `binaryMessenger`.
      */
