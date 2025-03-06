@@ -72,6 +72,15 @@ void main() {
     // https://github.com/flutter/flutter/issues/164651
     skip: !kIsWeb,
   );
+
+  // TODO(tarrinneal): Remove once other test is enabled,
+  // https://github.com/flutter/flutter/issues/164651
+  testWidgets(
+    'no-op',
+    (WidgetTester tester) async {
+      expect(true, true);
+    },
+  );
 }
 
 Widget renderVideoWidget(VideoPlayerController controller) {
