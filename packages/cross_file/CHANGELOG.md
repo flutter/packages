@@ -1,6 +1,7 @@
-## NEXT
+## 0.3.5
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes a bug where the bytes of an XFile, that is created using the `XFile.fromData` constructor, are ignored on web.
 
 ## 0.3.4+2
 
