@@ -1,6 +1,6 @@
 ## 2.10.2
 
-* Fixes typos in README and CHANGELOG.
+* Fixes typo in README.
 
 ## 2.10.1
 
