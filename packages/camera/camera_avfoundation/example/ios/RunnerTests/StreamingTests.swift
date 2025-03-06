@@ -77,7 +77,7 @@ final class StreamingTests: XCTestCase {
   }
 
   func testReceivedImageStreamData() {
-    let (camera, sampleBuffer, configuration) = createCamera()
+    let (camera, sampleBuffer) = createCamera()
     let handlerMock = MockImageStreamHandler()
 
     let finishStartStreamExpectation = expectation(
