@@ -27,7 +27,7 @@ apply plugin: 'kotlin-android'
 android {
     namespace 'dev.flutter.packages.interactive_media_ads'
 
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11

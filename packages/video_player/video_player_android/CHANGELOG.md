@@ -1,3 +1,7 @@
+## 2.8.1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 2.8.0
 
 * Adds support for platform views as an optional way of displaying a video.
