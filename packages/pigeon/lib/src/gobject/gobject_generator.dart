@@ -29,7 +29,7 @@ class GObjectOptions {
     this.headerOutPath,
   });
 
-  /// The path to the header that will get placed in the source filed (example:
+  /// The path to the header that will get placed in the source file (example:
   /// "foo.h").
   final String? headerIncludePath;
 
@@ -97,7 +97,7 @@ class InternalGObjectOptions {
         copyrightHeader = options.copyrightHeader ?? copyrightHeader,
         headerOutPath = options.headerOutPath;
 
-  /// The path to the header that will get placed in the source filed (example:
+  /// The path to the header that will get placed in the source file (example:
   /// "foo.h").
   final String headerIncludePath;
 

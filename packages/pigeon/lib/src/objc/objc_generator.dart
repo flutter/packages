@@ -46,7 +46,7 @@ class ObjcOptions {
     this.fileSpecificClassNameComponent,
   });
 
-  /// The path to the header that will get placed in the source filed (example:
+  /// The path to the header that will get placed in the source file (example:
   /// "foo.h").
   final String? headerIncludePath;
 
@@ -120,7 +120,7 @@ class InternalObjcOptions {
             options.fileSpecificClassNameComponent ??
                 fileSpecificClassNameComponent;
 
-  /// The path to the header that will get placed in the source filed (example:
+  /// The path to the header that will get placed in the source file (example:
   /// "foo.h").
   final String headerIncludePath;
 

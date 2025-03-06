@@ -1133,13 +1133,18 @@ class _FindInitializer extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   }
 }
 
+/// Class used to parse, and check the validity of input files.
+/// Builds the [Root] class used throughout generation.
 class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
+  /// Constructor for RootBuilder.
   RootBuilder(this.source);
 
   final List<Api> _apis = <Api>[];
   final List<Enum> _enums = <Enum>[];
   final List<Class> _classes = <Class>[];
   final List<Error> _errors = <Error>[];
+
+  /// Input file location.
   final String source;
 
   Class? _currentClass;
@@ -1162,6 +1167,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
   }
 
+  /// The results after parsing the input files.
   ParseResults results() {
     _storeCurrentApi();
     _storeCurrentClass();
@@ -1638,7 +1644,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         <String>[];
   }
 
-  Parameter formalParameterToPigeonParameter(
+  Parameter _formalParameterToPigeonParameter(
     dart_ast.FormalParameter formalParameter, {
     bool? isNamed,
     bool? isOptional,
@@ -1647,14 +1653,14 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     String? defaultValue,
   }) {
     final dart_ast.NamedType? parameter =
-        getFirstChildOfType<dart_ast.NamedType>(formalParameter);
+        _getFirstChildOfType<dart_ast.NamedType>(formalParameter);
     final dart_ast.SimpleFormalParameter? simpleFormalParameter =
-        getFirstChildOfType<dart_ast.SimpleFormalParameter>(formalParameter);
+        _getFirstChildOfType<dart_ast.SimpleFormalParameter>(formalParameter);
     if (parameter != null) {
       final String argTypeBaseName = _getNamedTypeQualifiedName(parameter);
       final bool isNullable = parameter.question != null;
       final List<TypeDeclaration> argTypeArguments =
-          typeAnnotationsToTypeArguments(parameter.typeArguments);
+          _typeAnnotationsToTypeArguments(parameter.typeArguments);
       return Parameter(
         type: TypeDeclaration(
           baseName: argTypeBaseName,
@@ -1675,7 +1681,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         defaultValue = formalParameter.defaultValue?.toString();
       }
 
-      return formalParameterToPigeonParameter(
+      return _formalParameterToPigeonParameter(
         simpleFormalParameter,
         isNamed: simpleFormalParameter.isNamed,
         isOptional: simpleFormalParameter.isOptional,
@@ -1692,7 +1698,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     }
   }
 
-  static T? getFirstChildOfType<T>(dart_ast.AstNode entity) {
+  static T? _getFirstChildOfType<T>(dart_ast.AstNode entity) {
     for (final dart_ast_syntactic_entity.SyntacticEntity child
         in entity.childEntities) {
       if (child is T) {
@@ -1718,7 +1724,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
     final List<Parameter> arguments =
-        parameters.parameters.map(formalParameterToPigeonParameter).toList();
+        parameters.parameters.map(_formalParameterToPigeonParameter).toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     final bool isStatic = _hasMetadata(node.metadata, 'static');
     final String objcSelector = _findMetadata(node.metadata, 'ObjCSelector')
@@ -1739,7 +1745,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         _findMetadata(node.metadata, 'TaskQueue')?.arguments;
     final String? taskQueueTypeName = taskQueueArguments == null
         ? null
-        : getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
+        : _getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
             ?.expression
             .asNullable<dart_ast.PrefixedIdentifier>()
             ?.name;
@@ -1757,7 +1763,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           returnType: TypeDeclaration(
               baseName: _getNamedTypeQualifiedName(returnType),
               typeArguments:
-                  typeAnnotationsToTypeArguments(returnType.typeArguments),
+                  _typeAnnotationsToTypeArguments(returnType.typeArguments),
               isNullable: returnType.question != null),
           parameters: arguments,
           isStatic: isStatic,
@@ -1804,7 +1810,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     return null;
   }
 
-  List<TypeDeclaration> typeAnnotationsToTypeArguments(
+  List<TypeDeclaration> _typeAnnotationsToTypeArguments(
       dart_ast.TypeArgumentList? typeArguments) {
     final List<TypeDeclaration> result = <TypeDeclaration>[];
     if (typeArguments != null) {
@@ -1813,7 +1819,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           result.add(TypeDeclaration(
               baseName: _getNamedTypeQualifiedName(x),
               isNullable: x.question != null,
-              typeArguments: typeAnnotationsToTypeArguments(x.typeArguments)));
+              typeArguments: _typeAnnotationsToTypeArguments(x.typeArguments)));
         }
       }
     }
@@ -1844,7 +1850,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             type: TypeDeclaration(
               baseName: _getNamedTypeQualifiedName(type),
               isNullable: type.question != null,
-              typeArguments: typeAnnotationsToTypeArguments(typeArguments),
+              typeArguments: _typeAnnotationsToTypeArguments(typeArguments),
             ),
             name: name,
             offset: node.offset,
@@ -1875,7 +1881,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     if (_currentApi is AstProxyApi) {
       final dart_ast.FormalParameterList parameters = node.parameters;
       final List<Parameter> arguments =
-          parameters.parameters.map(formalParameterToPigeonParameter).toList();
+          parameters.parameters.map(_formalParameterToPigeonParameter).toList();
       final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
               ?.arguments
               ?.arguments
@@ -1941,7 +1947,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     final bool isStatic = _hasMetadata(node.metadata, 'static');
     if (type is dart_ast.GenericFunctionType) {
       final List<Parameter> parameters = type.parameters.parameters
-          .map(formalParameterToPigeonParameter)
+          .map(_formalParameterToPigeonParameter)
           .toList();
       final String swiftFunction = _findMetadata(node.metadata, 'SwiftFunction')
               ?.arguments
@@ -1954,7 +1960,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           _findMetadata(node.metadata, 'TaskQueue')?.arguments;
       final String? taskQueueTypeName = taskQueueArguments == null
           ? null
-          : getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
+          : _getFirstChildOfType<dart_ast.NamedExpression>(taskQueueArguments)
               ?.expression
               .asNullable<dart_ast.PrefixedIdentifier>()
               ?.name;
@@ -1972,7 +1978,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           returnType: TypeDeclaration(
             baseName: _getNamedTypeQualifiedName(returnType),
             typeArguments:
-                typeAnnotationsToTypeArguments(returnType.typeArguments),
+                _typeAnnotationsToTypeArguments(returnType.typeArguments),
             isNullable: returnType.question != null,
           ),
           location: ApiLocation.flutter,
@@ -2002,7 +2008,7 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
                 type: TypeDeclaration(
                   baseName: _getNamedTypeQualifiedName(type),
                   isNullable: type.question != null,
-                  typeArguments: typeAnnotationsToTypeArguments(
+                  typeArguments: _typeAnnotationsToTypeArguments(
                     typeArguments,
                   ),
                 ),
