@@ -455,6 +455,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         return;
       }
 
+      print(event.eventType);
+      print(value.buffered);
+      print(event.buffered);
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(

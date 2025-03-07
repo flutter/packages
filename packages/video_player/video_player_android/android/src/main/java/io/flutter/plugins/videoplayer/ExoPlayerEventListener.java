@@ -64,6 +64,9 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
 
   @Override
   public void onPlaybackStateChanged(final int playbackState) {
+    if (playbackState != Player.STATE_BUFFERING) {
+      setBuffering(false);
+    }
     switch (playbackState) {
       case Player.STATE_BUFFERING:
         setBuffering(true);
@@ -81,9 +84,6 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
         break;
       case Player.STATE_IDLE:
         break;
-    }
-    if (playbackState != Player.STATE_BUFFERING) {
-      setBuffering(false);
     }
   }
 
