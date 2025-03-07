@@ -26,366 +26,579 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     return (cameraPlugin, mockCamera)
   }
 
-  // Universal function orchiestrating a test of a delegating method
-  private func testDelegatingMethod(
-    // Callback with MockFLTCam instance and a callback to call when the expected FLTCam method has
-    // been called
-    setUp: (MockFLTCam, @escaping () -> Void) -> Void,
-    // Callback with CameraPlugin instance and a complition to call when the tested method finishes
-    act: (CameraPlugin, @escaping (FlutterError?) -> Void) -> Void
-  ) {
+  func testLockCapture_callsCameraLockCapture() {
     let (cameraPlugin, mockCamera) = createCameraPlugin()
-    // Expectation fulfilled when complition passed to `act` callback is called
     let expectation = expectation(description: "Call completed")
 
-    var markCalled = false
+    let targetOrientation = FCPPlatformDeviceOrientation.landscapeLeft
 
-    setUp(
-      mockCamera,
-      {
-        markCalled = true
-      }
-    )
+    var lockCaptureCalled = false
+    mockCamera.lockCaptureStub = { orientation in
+      XCTAssertEqual(orientation, targetOrientation)
+      lockCaptureCalled = true
+    }
 
-    act(cameraPlugin) { error in
+    cameraPlugin.lockCapture(targetOrientation) { error in
       XCTAssertNil(error)
       expectation.fulfill()
     }
 
     waitForExpectations(timeout: 30, handler: nil)
 
-    XCTAssertTrue(markCalled)
+    XCTAssertTrue(lockCaptureCalled)
   }
 
-  func testLockCapture_callsDelegateMethod() {
-    let targetOrientation = FCPPlatformDeviceOrientation.landscapeLeft
+  func testPausePreview_callsCameraPausePreview() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.lockCaptureStub = { orientation in
-        XCTAssertEqual(orientation, targetOrientation)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.lockCapture(targetOrientation, completion: complition)
+    var pausePreviewCalled = false
+    mockCamera.pausePreviewStub = {
+      pausePreviewCalled = true
     }
-  }
 
-  func testPausePreview_callsDelegateMethod() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.pausePreviewStub = { markCalled() }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.pausePreview(completion: complition)
+    cameraPlugin.pausePreview { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
     }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(pausePreviewCalled)
   }
 
-  func testPauseVideoRecording_callsDelegateMethod() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.pauseVideoRecordingStub = { markCalled() }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.pauseVideoRecording(completion: complition)
+  func testPauseVideoRecording_callsCameraPauseVideoRecording() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var pauseVideoRecordingCalled = false
+    mockCamera.pauseVideoRecordingStub = {
+      pauseVideoRecordingCalled = true
     }
-  }
 
-  func testPrepareForVideoRecording_callsDelegateMethod() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setUpCaptureSessionForAudioIfNeededStub = { markCalled() }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.prepareForVideoRecording(completion: complition)
+    cameraPlugin.pauseVideoRecording { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
     }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(pauseVideoRecordingCalled)
   }
 
-  func testReceivedImageStreamData_callsDelegateMethod() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.receivedImageStreamDataStub = { markCalled() }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.receivedImageStreamData(completion: complition)
+  func testPrepareForVideoRecording_callsCameraSetUpCaptureSessionForAudioIfNeeded() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var setUpCaptureSessionForAudioIfNeededCalled = false
+    mockCamera.setUpCaptureSessionForAudioIfNeededStub = {
+      setUpCaptureSessionForAudioIfNeededCalled = true
     }
-  }
 
-  func testResumeVideoRecording_callsDelegateMethod() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.resumeVideoRecordingStub = { markCalled() }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.resumeVideoRecording(completion: complition)
+    cameraPlugin.prepareForVideoRecording { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
     }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setUpCaptureSessionForAudioIfNeededCalled)
   }
 
-  func testResumePreview_callsDelegateMethod() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.resumePreviewStub = { markCalled() }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.resumePreview(completion: complition)
+  func testReceivedImageStreamData_callsCameraReceivedImageStreamData() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var receivedImageStreamDataCalled = false
+    mockCamera.receivedImageStreamDataStub = {
+      receivedImageStreamDataCalled = true
     }
+
+    cameraPlugin.receivedImageStreamData { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(receivedImageStreamDataCalled)
   }
 
-  func testSetExposureMode_callsDelegateMethod() {
+  func testResumeVideoRecording_callsCameraResumeVideoRecording() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var resumeVideoRecordingCalled = false
+    mockCamera.resumeVideoRecordingStub = {
+      resumeVideoRecordingCalled = true
+    }
+
+    cameraPlugin.resumeVideoRecording { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(resumeVideoRecordingCalled)
+  }
+
+  func testResumePreview_callsCameraResumePreview() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var resumePreviewCalled = false
+    mockCamera.resumePreviewStub = {
+      resumePreviewCalled = true
+    }
+
+    cameraPlugin.resumePreview { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(resumePreviewCalled)
+  }
+
+  func testSetExposureMode_callsCameraExposureMode() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetExposureMode = FCPPlatformExposureMode.locked
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setExposureModeStub = { mode in
-        XCTAssertEqual(mode, targetExposureMode)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.setExposureMode(targetExposureMode, completion: complition)
+    var setExposureModeCalled = false
+    mockCamera.setExposureModeStub = { mode in
+      XCTAssertEqual(mode, targetExposureMode)
+      setExposureModeCalled = true
     }
+
+    cameraPlugin.setExposureMode(targetExposureMode) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setExposureModeCalled)
   }
 
-  func testSetExposureOffset_callsDelegateMethod() {
+  func testSetExposureOffset_callsCameraSetExposureOffset() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetExposureOffset = 1.0
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setExposureOffsetStub = { offset in
-        XCTAssertEqual(offset, targetExposureOffset)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.setExposureOffset(targetExposureOffset, completion: complition)
+    var setExposureOffsetCalled = false
+    mockCamera.setExposureOffsetStub = { offset in
+      XCTAssertEqual(offset, targetExposureOffset)
+      setExposureOffsetCalled = true
     }
+
+    cameraPlugin.setExposureOffset(targetExposureOffset) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setExposureOffsetCalled)
   }
 
-  func testSetFocusMode_callsDelegateMethod() {
+  func testSetFocusMode_callsCameraSetFocusMode() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetFocusMode = FCPPlatformFocusMode.locked
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setFocusModeStub = { mode in
-        XCTAssertEqual(mode, targetFocusMode)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.setFocusMode(targetFocusMode, completion: complition)
+    var setFocusModeCalled = false
+    mockCamera.setFocusModeStub = { mode in
+      XCTAssertEqual(mode, targetFocusMode)
+      setFocusModeCalled = true
     }
+
+    cameraPlugin.setFocusMode(targetFocusMode) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setFocusModeCalled)
   }
 
-  func testSetImageFileFormat_callsDelegateMethod() {
+  func testSetImageFileFormat_callsCameraSetImageFileFormat() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetFileFormat = FCPPlatformImageFileFormat.heif
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setImageFileFormatStub = { filerFormat in
-        XCTAssertEqual(filerFormat, targetFileFormat)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.setImageFileFormat(targetFileFormat, completion: complition)
+    var setImageFileFormatCalled = false
+    mockCamera.setImageFileFormatStub = { fileFormat in
+      XCTAssertEqual(fileFormat, targetFileFormat)
+      setImageFileFormatCalled = true
     }
+
+    cameraPlugin.setImageFileFormat(targetFileFormat) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setImageFileFormatCalled)
   }
 
-  func testStartImageStream_callsDelegateMethod() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.startImageStreamStub = { _ in markCalled() }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.startImageStream(completion: complition)
+  func testStartImageStream_callsCameraStartImageStream() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var startImageStreamCalled = false
+    mockCamera.startImageStreamStub = { _ in
+      startImageStreamCalled = true
     }
+
+    cameraPlugin.startImageStream { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(startImageStreamCalled)
   }
 
-  func testStopImageStream_callsDelegateMethod() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.stopImageStreamStub = { markCalled() }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.stopImageStream(completion: complition)
+  func testStopImageStream_callsCameraStopImageStream() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var stopImageStreamCalled = false
+    mockCamera.stopImageStreamStub = {
+      stopImageStreamCalled = true
     }
+
+    cameraPlugin.stopImageStream { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(stopImageStreamCalled)
   }
 
-  func testStartVideoRecording_withStreamingTrue_callsDelegateMethodWithMessanger() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.startVideoRecordingStub = { complition, messanger in
-        XCTAssertNotNil(messanger)
-        complition(nil)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.startVideoRecording(withStreaming: true, completion: complition)
+  func testStartVideoRecording_withStreamingTrue_callsCameraStartVideoRecordingWithMessenger() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var startVideoRecordingCalled = false
+    mockCamera.startVideoRecordingStub = { completion, messenger in
+      XCTAssertNotNil(messenger)
+      completion(nil)
+      startVideoRecordingCalled = true
     }
+
+    cameraPlugin.startVideoRecording(withStreaming: true) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(startVideoRecordingCalled)
   }
 
-  func testStartVideoRecording_withStreamingFalse_callsDelegateMethodWithoutMessagner() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.startVideoRecordingStub = { complition, messanger in
-        XCTAssertNil(messanger)
-        complition(nil)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.startVideoRecording(withStreaming: false, completion: complition)
+  func testStartVideoRecording_withStreamingFalse_callsCameraStartVideoRecordingWithoutMessenger() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var startVideoRecordingCalled = false
+    mockCamera.startVideoRecordingStub = { completion, messenger in
+      XCTAssertNil(messenger)
+      completion(nil)
+      startVideoRecordingCalled = true
     }
+
+    cameraPlugin.startVideoRecording(withStreaming: false) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(startVideoRecordingCalled)
   }
 
-  func testStopVideoRecording_callsDelegateMethod() {
+  func testStopVideoRecording_callsCameraStopVideoRecording() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetPath = "path"
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.stopVideoRecordingStub = { completion in
-        completion?(targetPath, nil)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.stopVideoRecording { path, error in
-        XCTAssertEqual(path, targetPath)
-        complition(error)
-      }
+    var stopVideoRecordingCalled = false
+    mockCamera.stopVideoRecordingStub = { completion in
+      completion?(targetPath, nil)
+      stopVideoRecordingCalled = true
     }
+
+    cameraPlugin.stopVideoRecording { path, error in
+      XCTAssertEqual(path, targetPath)
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(stopVideoRecordingCalled)
   }
 
-  func testUnlockCaptureOrientation_callsDelegateMethod() {
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.unlockCaptureOrientationStub = { markCalled() }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.unlockCaptureOrientation(completion: complition)
+  func testUnlockCaptureOrientation_callsCameraUnlockCaptureOrientation() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
+    var unlockCaptureOrientationCalled = false
+    mockCamera.unlockCaptureOrientationStub = {
+      unlockCaptureOrientationCalled = true
     }
+
+    cameraPlugin.unlockCaptureOrientation { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(unlockCaptureOrientationCalled)
   }
 
-  func testSetExposurePoint_callsDelegateMethod() {
+  func testSetExposurePoint_callsCameraSetExposurePoint() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetExposurePoint = FCPPlatformPoint.makeWith(x: 1.0, y: 1.0)
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setExposurePointStub = { point, complition in
-        XCTAssertEqual(point, targetExposurePoint)
-        complition?(nil)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.setExposurePoint(targetExposurePoint, completion: complition)
+    var setExposurePointCalled = false
+    mockCamera.setExposurePointStub = { point, completion in
+      XCTAssertEqual(point, targetExposurePoint)
+      completion?(nil)
+      setExposurePointCalled = true
     }
+
+    cameraPlugin.setExposurePoint(targetExposurePoint) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setExposurePointCalled)
   }
 
-  func testSetFlashMode_callsDelegateMethod() {
+  func testSetFlashMode_callsCameraSetFlashMode() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetFlashMode = FCPPlatformFlashMode.auto
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setFlashModeStub = { mode, complition in
-        XCTAssertEqual(mode, targetFlashMode)
-        complition?(nil)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.setFlashMode(targetFlashMode, completion: complition)
+    var setFlashModeCalled = false
+    mockCamera.setFlashModeStub = { mode, completion in
+      XCTAssertEqual(mode, targetFlashMode)
+      completion?(nil)
+      setFlashModeCalled = true
     }
+
+    cameraPlugin.setFlashMode(targetFlashMode) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setFlashModeCalled)
   }
 
-  func testSetFocusPoint_callsDelegateMethod() {
+  func testSetFocusPoint_callsCameraSetFocusPoint() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetFocusPoint = FCPPlatformPoint.makeWith(x: 1.0, y: 1.0)
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setFocusPointStub = { point, complition in
-        XCTAssertEqual(point, targetFocusPoint)
-        complition?(nil)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.setFocus(targetFocusPoint, completion: complition)
+    var setFocusPointCalled = false
+    mockCamera.setFocusPointStub = { point, completion in
+      XCTAssertEqual(point, targetFocusPoint)
+      completion?(nil)
+      setFocusPointCalled = true
     }
+
+    cameraPlugin.setFocus(targetFocusPoint) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setFocusPointCalled)
   }
 
-  func testSetZoomLevel_callsDelegateMethod() {
+  func testSetZoomLevel_callsCameraSetZoomLevel() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetZoomLevel = 1.0
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setZoomLevelStub = { zoom, complition in
-        XCTAssertEqual(zoom, targetZoomLevel)
-        complition?(nil)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.setZoomLevel(targetZoomLevel, completion: complition)
+    var setZoomLevelCalled = false
+    mockCamera.setZoomLevelStub = { zoom, completion in
+      XCTAssertEqual(zoom, targetZoomLevel)
+      completion?(nil)
+      setZoomLevelCalled = true
     }
+
+    cameraPlugin.setZoomLevel(targetZoomLevel) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setZoomLevelCalled)
   }
 
-  func testTakePicture_callsDelegateMethod() {
+  func testTakePicture_callsCameraCaptureToFile() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetPath = "path"
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.captureToFileStub = { completion in
-        completion?(targetPath, nil)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.takePicture { path, error in
-        XCTAssertEqual(path, targetPath)
-        complition(error)
-      }
+    var captureToFileCalled = false
+    mockCamera.captureToFileStub = { completion in
+      completion?(targetPath, nil)
+      captureToFileCalled = true
     }
+
+    cameraPlugin.takePicture { path, error in
+      XCTAssertEqual(path, targetPath)
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(captureToFileCalled)
   }
 
-  func testUpdateDescriptionWhileRecordingCameraName_callsDelegateMethod() {
+  func testUpdateDescriptionWhileRecordingCameraName_callsCameraSetDescriptionWhileRecording() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetCameraName = "camera_name"
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.setDescriptionWhileRecordingStub = { cameraName, complition in
-        XCTAssertEqual(cameraName, targetCameraName)
-        complition?(nil)
-        markCalled()
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.updateDescriptionWhileRecordingCameraName(
-        targetCameraName, completion: complition)
+    var setDescriptionWhileRecordingCalled = false
+    mockCamera.setDescriptionWhileRecordingStub = { cameraName, completion in
+      XCTAssertEqual(cameraName, targetCameraName)
+      completion?(nil)
+      setDescriptionWhileRecordingCalled = true
     }
+
+    cameraPlugin.updateDescriptionWhileRecordingCameraName(targetCameraName) { error in
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(setDescriptionWhileRecordingCalled)
   }
 
-  func testGetMaximumZoomLevel_returnsValueFromDelegateMethod() {
+  func testGetMaximumZoomLevel_returnsValueFromCameraGetMaximumAvailableZoomFactor() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetMaximumZoomLevel = CGFloat(1.0)
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.getMaximumAvailableZoomFactorStub = {
-        markCalled()
-        return targetMaximumZoomLevel
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.getMaximumZoomLevel { zoom, error in
-        XCTAssertNil(error)
-        XCTAssertEqual(zoom?.doubleValue, targetMaximumZoomLevel)
-        complition(nil)
-      }
+    var getMaximumAvailableZoomFactorCalled = false
+    mockCamera.getMaximumAvailableZoomFactorStub = {
+      getMaximumAvailableZoomFactorCalled = true
+      return targetMaximumZoomLevel
     }
+
+    cameraPlugin.getMaximumZoomLevel { zoom, error in
+      XCTAssertEqual(zoom?.doubleValue, targetMaximumZoomLevel)
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(getMaximumAvailableZoomFactorCalled)
   }
 
-  func testGetMinimumZoomLevel_returnsValueFromDelegateMethod() {
+  func testGetMinimumZoomLevel_returnsValueFromCameraGetMinimumAvailableZoomFactor() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetMinimumZoomLevel = CGFloat(1.0)
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.getMinimumAvailableZoomFactorStub = {
-        markCalled()
-        return targetMinimumZoomLevel
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.getMinimumZoomLevel { zoom, error in
-        XCTAssertNil(error)
-        XCTAssertEqual(zoom?.doubleValue, targetMinimumZoomLevel)
-        complition(nil)
-      }
+    var getMinimumAvailableZoomFactorCalled = false
+    mockCamera.getMinimumAvailableZoomFactorStub = {
+      getMinimumAvailableZoomFactorCalled = true
+      return targetMinimumZoomLevel
     }
+
+    cameraPlugin.getMinimumZoomLevel { zoom, error in
+      XCTAssertEqual(zoom?.doubleValue, targetMinimumZoomLevel)
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(getMinimumAvailableZoomFactorCalled)
   }
 
-  func testGetMaximumExposureOffset_returnsValueFromDelegateMethod() {
+  func testGetMaximumExposureOffset_returnsValueFromCameraGetMaximumExposureOffset() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetMaximumExposureOffset = CGFloat(1.0)
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.getMaximumExposureOffsetStub = {
-        markCalled()
-        return targetMaximumExposureOffset
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.getMaximumExposureOffset { offset, error in
-        XCTAssertNil(error)
-        XCTAssertEqual(offset?.doubleValue, targetMaximumExposureOffset)
-        complition(nil)
-      }
+    var getMaximumExposureOffsetCalled = false
+    mockCamera.getMaximumExposureOffsetStub = {
+      getMaximumExposureOffsetCalled = true
+      return targetMaximumExposureOffset
     }
+
+    cameraPlugin.getMaximumExposureOffset { offset, error in
+      XCTAssertEqual(offset?.doubleValue, targetMaximumExposureOffset)
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(getMaximumExposureOffsetCalled)
   }
 
-  func testGetMinimumExposureOffset_returnsValueFromDelegateMethod() {
+  func testGetMinimumExposureOffset_returnsValueFromCameraGetMinimumExposureOffset() {
+    let (cameraPlugin, mockCamera) = createCameraPlugin()
+    let expectation = expectation(description: "Call completed")
+
     let targetMinimumExposureOffset = CGFloat(1.0)
 
-    testDelegatingMethod { mockCamera, markCalled in
-      mockCamera.getMinimumExposureOffsetStub = {
-        markCalled()
-        return targetMinimumExposureOffset
-      }
-    } act: { cameraPlugin, complition in
-      cameraPlugin.getMinimumExposureOffset { offset, error in
-        XCTAssertNil(error)
-        XCTAssertEqual(offset?.doubleValue, targetMinimumExposureOffset)
-        complition(nil)
-      }
+    var getMinimumExposureOffsetCalled = false
+    mockCamera.getMinimumExposureOffsetStub = {
+      getMinimumExposureOffsetCalled = true
+      return targetMinimumExposureOffset
     }
+
+    cameraPlugin.getMinimumExposureOffset { offset, error in
+      XCTAssertEqual(offset?.doubleValue, targetMinimumExposureOffset)
+      XCTAssertNil(error)
+      expectation.fulfill()
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    XCTAssertTrue(getMinimumExposureOffsetCalled)
   }
 }
