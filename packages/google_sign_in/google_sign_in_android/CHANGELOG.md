@@ -1,3 +1,11 @@
+## 6.2.0
+
+* Adds a sign-in field to allow clients to explicitly specify an account name.
+
+## 6.1.36
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 6.1.35
 
 * Removes the dependency on the Guava library.

@@ -31,7 +31,7 @@ buildFeatures {
         buildConfig true
     }
     namespace 'io.flutter.plugins.camera'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
         minSdkVersion 21
