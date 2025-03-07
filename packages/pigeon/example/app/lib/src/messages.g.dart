@@ -29,63 +29,21 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
-bool _listEquals(List<Object?>? list1, List<Object?>? list2) {
-  if (list1 == list2) {
-    return true;
-  }
-  if (list1 == null || list2 == null) {
-    return false;
-  }
-  if (list1.length != list2.length) {
-    return false;
-  }
-  bool elementsMatch = true;
-  for (int i = 0; i < list1.length; i++) {
-    if (list1[i] is List) {
-      elementsMatch =
-          _listEquals(list1[i] as List<Object?>?, list2[i] as List<Object?>?);
-    } else if (list1[i] is Map) {
-      elementsMatch = _mapEquals(list1[i] as Map<Object?, Object?>?,
-          list2[i] as Map<Object?, Object?>?);
-    } else {
-      elementsMatch = list1[i] == list2[i];
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List || a is Map && b is Map) {
+    if (a is List && b is List) {
+      a = a.asMap();
+      b = b.asMap();
     }
-    if (!elementsMatch) {
-      return false;
-    }
-  }
-  return true;
-}
+    final Map<Object?, Object?> a1 = a! as Map<Object?, Object?>;
+    final Map<Object?, Object?> b1 = b! as Map<Object?, Object?>;
 
-bool _mapEquals(Map<Object?, Object?>? map1, Map<Object?, Object?>? map2) {
-  if (map1 == map2) {
-    return true;
+    final List<Object?> keys = a1.keys.toList();
+    return keys.any((Object? key) =>
+        !(b! as Map<Object?, Object?>).containsKey(key) ||
+        _deepEquals(a1[key], b1[key]));
   }
-  if (map1 == null || map2 == null) {
-    return false;
-  }
-  if (map1.length != map2.length) {
-    return false;
-  }
-  bool elementsMatch = true;
-  for (final Object? key in map1.keys) {
-    if (!map2.containsKey(key)) {
-      return false;
-    }
-    if (map1[key] is List) {
-      elementsMatch =
-          _listEquals(map1[key] as List<Object?>?, map2[key] as List<Object?>?);
-    } else if (map1[key] is Map) {
-      elementsMatch = _mapEquals(map1[key] as Map<Object?, Object?>?,
-          map2[key] as Map<Object?, Object?>?);
-    } else {
-      elementsMatch = map1[key] == map2[key];
-    }
-    if (!elementsMatch) {
-      return false;
-    }
-  }
-  return true;
+  return a == b;
 }
 
 enum Code {
@@ -109,7 +67,7 @@ class MessageData {
 
   Map<String, String> data;
 
-  List<Object?> toList() {
+  List<Object?> _toList() {
     return <Object?>[
       name,
       description,
@@ -119,7 +77,7 @@ class MessageData {
   }
 
   Object encode() {
-    return toList();
+    return _toList();
   }
 
   static MessageData decode(Object result) {
@@ -144,12 +102,12 @@ class MessageData {
     return name == other.name &&
         description == other.description &&
         code == other.code &&
-        _mapEquals(data, other.data);
+        _deepEquals(data, other.data);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(toList());
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
