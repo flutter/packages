@@ -1,7 +1,7 @@
 ## 2.10.0
 
-- Introduces a new CameraLensType enum to provide lens type information about
-  the camera (e.g. ultra-wide, telephoto, ...).
+* Introduces a new `CameraLensType` enum to provide lens type information about
+  the camera (e.g., ultra-wide, telephoto, ...).
 
 ## 2.9.0
 
