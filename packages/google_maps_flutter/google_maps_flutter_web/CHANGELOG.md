@@ -1,6 +1,6 @@
 ## 0.5.11
-* Adds support for marker anchor.
 
+* Adds support for marker anchor.
 * Updates READMEs and API docs.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
