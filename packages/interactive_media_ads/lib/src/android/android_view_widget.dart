@@ -24,9 +24,7 @@ class AndroidViewWidget extends StatelessWidget {
     required this.view,
     this.layoutDirection = TextDirection.ltr,
     this.onPlatformViewCreated,
-    this.displayWithHybridComposition = false,
     ima.PigeonInstanceManager? instanceManager,
-    this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
   }) : instanceManager = instanceManager ?? ima.PigeonInstanceManager.instance;
 
   /// The unique identifier for the view type to be embedded.
@@ -42,15 +40,7 @@ class AndroidViewWidget extends StatelessWidget {
   /// This field is exposed for testing purposes only and should not be used
   /// outside of tests.
   final ima.PigeonInstanceManager instanceManager;
-
-  /// Proxy that provides access to the platform views service.
-  ///
-  /// This service allows creating and controlling platform-specific views.
-  final PlatformViewsServiceProxy platformViewsServiceProxy;
-
-  /// Whether to use Hybrid Composition to display the Android View.
-  final bool displayWithHybridComposition;
-
+  
   /// Layout direction used by the Android View.
   final TextDirection layoutDirection;
 
@@ -59,48 +49,16 @@ class AndroidViewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PlatformViewLink(
+    return AndroidView(
       viewType: _viewType,
-      surfaceFactory: (
-        BuildContext context,
-        PlatformViewController controller,
-      ) {
-        return AndroidViewSurface(
-          controller: controller as AndroidViewController,
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-        );
-      },
-      onCreatePlatformView: (PlatformViewCreationParams params) {
-        return _initAndroidView(params)
-          ..addOnPlatformViewCreatedListener((int id) {
-            params.onPlatformViewCreated(id);
-            onPlatformViewCreated?.call();
-          })
-          ..create();
+      layoutDirection: layoutDirection,
+      gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+      hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+      creationParamsCodec: const StandardMessageCodec(),
+      creationParams: instanceManager.getIdentifier(view),
+      onPlatformViewCreated: (id) {
+        onPlatformViewCreated?.call();
       },
     );
-  }
-
-  AndroidViewController _initAndroidView(PlatformViewCreationParams params) {
-    final int? identifier = instanceManager.getIdentifier(view);
-
-    if (displayWithHybridComposition) {
-      return platformViewsServiceProxy.initExpensiveAndroidView(
-        id: params.id,
-        viewType: _viewType,
-        layoutDirection: layoutDirection,
-        creationParams: identifier,
-        creationParamsCodec: const StandardMessageCodec(),
-      );
-    } else {
-      return platformViewsServiceProxy.initSurfaceAndroidView(
-        id: params.id,
-        viewType: _viewType,
-        layoutDirection: layoutDirection,
-        creationParams: identifier,
-        creationParamsCodec: const StandardMessageCodec(),
-      );
-    }
   }
 }
