@@ -2,7 +2,7 @@
 
 * Adds support for platform views as an optional way of displaying a video on Android and iOS.
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
-* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.9.5
 
