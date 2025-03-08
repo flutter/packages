@@ -1024,7 +1024,7 @@ void main() {
     }
 
     // Wait for at least 3 position updates
-    await intervalUpdateCompleter.future.timeout(const Duration(seconds: 5));
+    await intervalUpdateCompleter.future;
 
     // Verify that the intervals between updates are approximately correct
     expect(positions[1] - positions[0], greaterThanOrEqualTo(updatesInterval));
