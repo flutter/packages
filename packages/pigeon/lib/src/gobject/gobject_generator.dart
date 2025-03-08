@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:path/path.dart' as path;
+
 import '../ast.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
@@ -27,7 +29,7 @@ class GObjectOptions {
     this.headerOutPath,
   });
 
-  /// The path to the header that will get placed in the source filed (example:
+  /// The path to the header that will get placed in the source file (example:
   /// "foo.h").
   final String? headerIncludePath;
 
@@ -71,15 +73,60 @@ class GObjectOptions {
   }
 }
 
+/// Options that control how GObject code will be generated.
+class InternalGObjectOptions {
+  /// Creates a [InternalGObjectOptions] object
+  const InternalGObjectOptions({
+    required this.headerIncludePath,
+    required this.gobjectHeaderOut,
+    required this.gobjectSourceOut,
+    this.module,
+    this.copyrightHeader,
+    this.headerOutPath,
+  });
+
+  /// Creates InternalGObjectOptions from GObjectOptions.
+  InternalGObjectOptions.fromGObjectOptions(
+    GObjectOptions options, {
+    required this.gobjectHeaderOut,
+    required this.gobjectSourceOut,
+    Iterable<String>? copyrightHeader,
+  })  : headerIncludePath =
+            options.headerIncludePath ?? path.basename(gobjectHeaderOut),
+        module = options.module,
+        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
+        headerOutPath = options.headerOutPath;
+
+  /// The path to the header that will get placed in the source file (example:
+  /// "foo.h").
+  final String headerIncludePath;
+
+  /// Path to the ".h" GObject file that will be generated.
+  final String gobjectHeaderOut;
+
+  /// Path to the ".cc" GObject file that will be generated.
+  final String gobjectSourceOut;
+
+  /// The module where the generated class will live.
+  final String? module;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// The path to the output header file location.
+  final String? headerOutPath;
+}
+
 /// Class that manages all GObject code generation.
-class GObjectGenerator extends Generator<OutputFileOptions<GObjectOptions>> {
+class GObjectGenerator
+    extends Generator<OutputFileOptions<InternalGObjectOptions>> {
   /// Constructor.
   const GObjectGenerator();
 
   /// Generates GObject file of type specified in [generatorOptions]
   @override
   void generate(
-    OutputFileOptions<GObjectOptions> generatorOptions,
+    OutputFileOptions<InternalGObjectOptions> generatorOptions,
     Root root,
     StringSink sink, {
     required String dartPackageName,
@@ -105,13 +152,14 @@ class GObjectGenerator extends Generator<OutputFileOptions<GObjectOptions>> {
 }
 
 /// Writes GObject header (.h) file to sink.
-class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
+class GObjectHeaderGenerator
+    extends StructuredGenerator<InternalGObjectOptions> {
   /// Constructor.
   const GObjectHeaderGenerator();
 
   @override
   void writeFilePrologue(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -125,7 +173,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeFileImports(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -141,7 +189,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeOpenNamespace(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -152,7 +200,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeEnum(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -192,7 +240,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeDataClass(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -281,7 +329,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeGeneralCodec(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -294,7 +342,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeFlutterApi(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -506,7 +554,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeHostApi(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -714,7 +762,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeCloseNamespace(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -729,13 +777,14 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 }
 
 /// Writes GObject source (.cc) file to sink.
-class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
+class GObjectSourceGenerator
+    extends StructuredGenerator<InternalGObjectOptions> {
   /// Constructor.
   const GObjectSourceGenerator();
 
   @override
   void writeFilePrologue(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -749,7 +798,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeFileImports(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -760,7 +809,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeDataClass(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -950,7 +999,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeGeneralCodec(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -1106,7 +1155,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeFlutterApi(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -1365,7 +1414,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeHostApi(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -1705,7 +1754,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 }
 
 // Returns the module name to use.
-String _getModule(GObjectOptions generatorOptions, String dartPackageName) {
+String _getModule(
+    InternalGObjectOptions generatorOptions, String dartPackageName) {
   return generatorOptions.module ?? _camelCaseFromSnakeCase(dartPackageName);
 }
 
