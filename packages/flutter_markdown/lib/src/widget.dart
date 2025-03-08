@@ -32,7 +32,17 @@ typedef MarkdownOnSelectionChangedCallback = void Function(
 typedef MarkdownTapLinkCallback = void Function(
     String text, String? href, String title);
 
-/// Signature for custom image builder.
+/// Signature for custom image builders used by [MarkdownWidget.sizedImageBuilder].
+///
+/// This signature allows for custom rendering of images within the Markdown
+/// content when size information is available. It takes a
+/// [MarkdownImageConfig] object as a parameter, which contains information
+/// about the image, including:
+/// - `uri`: The URI of the image.
+/// - `title`: The title of the image.
+/// - `alt`: The alternative text for the image.
+/// - 'height': The height of the image.
+/// - 'width': The width of the image.
 ///
 /// Used by [MarkdownWidget.sizedImageBuilder]
 typedef MarkdownSizedImageBuilder = Widget Function(MarkdownImageConfig config);
@@ -283,13 +293,13 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// Defaults to [md.ExtensionSet.gitHubFlavored]
   final md.ExtensionSet? extensionSet;
 
-  /// Call when build an image widget.
+  /// {@macro flutter_markdown.builder.MarkdownBuilder.imageBuilder}
   @Deprecated('Use sizedImageBuilder instead')
   final MarkdownImageBuilder? imageBuilder;
 
-  /// Call when build an image widget.
+  /// {@macro flutter_markdown.builder.MarkdownBuilder.sizedImageBuilder}
   final MarkdownSizedImageBuilder? sizedImageBuilder;
-
+  
   /// Call when build a checkbox widget.
   final MarkdownCheckboxBuilder? checkboxBuilder;
 

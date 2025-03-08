@@ -160,10 +160,40 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// The base directory holding images referenced by Img tags with local or network file paths.
   final String? imageDirectory;
 
-  /// Call when building an image widget when no sizing information is available.
+
+  /// {@template flutter_markdown.builder.MarkdownBuilder.imageBuilder}
+  /// Called to build an image widget.
+  ///
+  /// This builder allows for custom rendering of images within the Markdown content.
+  /// It provides the image `Uri`, `title`, and `alt` text.
+  ///
+  /// **Deprecated:** Use [sizedImageBuilder] instead, which offers more comprehensive
+  /// image information.
+  ///
+  /// Only one of [imageBuilder] or [sizedImageBuilder] may be specified.
+  ///
+  /// {@endtemplate}
+  @Deprecated('Use sizedImageBuilder instead')
   final MarkdownImageBuilder? imageBuilder;
 
-  /// Call when building an image widget with sizing information available.
+  /// {@template flutter_markdown.builder.MarkdownBuilder.sizedImageBuilder}
+  /// Called to build an image widget with size information.
+  ///
+  /// This builder allows for custom rendering of images within the Markdown content
+  /// when size information is available. It provides a [MarkdownImageConfig]
+  /// containing the `Uri`, `title`, `alt`, `width`, and `height` of the image.
+  ///
+  /// If both [imageBuilder] and [sizedImageBuilder] are `null`, a default image builder
+  /// will be used.
+  /// when size information is available. It provides a [MarkdownImageConfig]
+  /// containing the `Uri`, `title`, `alt`, `width`, and `height` of the image.
+  ///
+  /// If both [imageBuilder] and [sizedImageBuilder] are `null`, a default
+  /// image builder will be used.
+  ///
+  /// Only one of [imageBuilder] or [sizedImageBuilder] may be specified.
+  ///
+  /// {@endtemplate}
   final MarkdownSizedImageBuilder? sizedImageBuilder;
 
   /// Call when build a checkbox widget.
