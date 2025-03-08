@@ -1,3 +1,7 @@
+## 2.9.4
+
+* Optimizes caption retrieval with binary search.
+
 ## 2.9.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
