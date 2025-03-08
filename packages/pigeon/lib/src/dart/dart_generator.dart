@@ -1064,20 +1064,17 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
             (NamedType field) =>
                 field.type.baseName.startsWith('List') ||
                 field.type.baseName.startsWith('Map')))) {
-      indent.format('''
+      indent.format(r'''
 bool _deepEquals(Object? a, Object? b) {
-  if (a is List && b is List || a is Map && b is Map) {
-    if (a is List && b is List) {
-      a = a.asMap();
-      b = b.asMap();
-    }
-    final Map<Object?, Object?> a1 = a! as Map<Object?, Object?>;
-    final Map<Object?, Object?> b1 = b! as Map<Object?, Object?>;
-
-    final List<Object?> keys = a1.keys.toList();
-    return keys.any((Object? key) =>
-        !(b! as Map<Object?, Object?>).containsKey(key) ||
-        _deepEquals(a1[key], b1[key]));
+  if (a is List && b is List) {
+    return !a.indexed
+        .any(((int, dynamic) item) => !_deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
+    return !keys.any((Object? key) =>
+        !(b as Map<Object?, Object?>).containsKey(key) ||
+        !_deepEquals(a[key], b[key]));
   }
   return a == b;
 }
