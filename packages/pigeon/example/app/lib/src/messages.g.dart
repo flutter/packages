@@ -29,6 +29,23 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List || a is Map && b is Map) {
+    if (a is List && b is List) {
+      a = a.asMap();
+      b = b.asMap();
+    }
+    final Map<Object?, Object?> a1 = a! as Map<Object?, Object?>;
+    final Map<Object?, Object?> b1 = b! as Map<Object?, Object?>;
+
+    final List<Object?> keys = a1.keys.toList();
+    return keys.any((Object? key) =>
+        !(b! as Map<Object?, Object?>).containsKey(key) ||
+        _deepEquals(a1[key], b1[key]));
+  }
+  return a == b;
+}
+
 enum Code {
   one,
   two,
@@ -50,13 +67,17 @@ class MessageData {
 
   Map<String, String> data;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       name,
       description,
       code,
       data,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static MessageData decode(Object result) {
@@ -68,6 +89,25 @@ class MessageData {
       data: (result[3] as Map<Object?, Object?>?)!.cast<String, String>(),
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! MessageData || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return name == other.name &&
+        description == other.description &&
+        code == other.code &&
+        _deepEquals(data, other.data);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
