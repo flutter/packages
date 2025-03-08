@@ -52,6 +52,21 @@ void main() {
             (PlatformException e) => e.code, 'code', 'unsupported-options')));
   });
 
+  test('init throws for forceAccountName', () async {
+    expect(
+        () => googleSignIn.initWithParams(
+              const SignInInitParameters(
+                hostedDomain: 'example.com',
+                clientId: 'fakeClientId',
+                forceAccountName: 'fakeEmailAddress@example.com',
+              ),
+            ),
+        throwsA(isInstanceOf<ArgumentError>().having(
+            (ArgumentError e) => e.message,
+            'message',
+            'Force account name is not supported on iOS')));
+  });
+
   test('signInSilently transforms platform data to GoogleSignInUserData',
       () async {
     when(api.signInSilently()).thenAnswer((_) async => UserData(

@@ -1,3 +1,11 @@
+## 0.6.14+1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 0.6.14
+
+* Fixes incorrect camera preview rotation.
+
 ## 0.6.13
 
 * Adds API support query for image streaming.

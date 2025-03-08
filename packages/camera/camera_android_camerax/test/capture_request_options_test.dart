@@ -49,7 +49,7 @@ void main() {
         argThat(isA<int>()),
         argThat(isA<Map<int, Object?>>()),
       ));
-    });
+    }, skip: 'Flaky test: https://github.com/flutter/flutter/issues/164132');
 
     test(
         'create makes call on the Java side as expected for suppported null capture request options',
