@@ -744,6 +744,30 @@ ${_argParser.usage}''';
   }
 }
 
+/// Represents an error as a result of parsing and generating code.
+class Error {
+  /// Parametric constructor for Error.
+  Error({
+    required this.message,
+    this.filename,
+    this.lineNumber,
+  });
+
+  /// A description of the error.
+  String message;
+
+  /// What file caused the [Error].
+  String? filename;
+
+  /// What line the error happened on.
+  int? lineNumber;
+
+  @override
+  String toString() {
+    return '(Error message:"$message" filename:"$filename" lineNumber:$lineNumber)';
+  }
+}
+
 /// A collection of an AST represented as a [Root] and [Error]'s.
 class ParseResults {
   /// Parametric constructor for [ParseResults].

@@ -28,30 +28,6 @@ import 'objc/objc_generator.dart';
 import 'pigeon_lib.dart';
 import 'swift/swift_generator.dart';
 
-/// Represents an error as a result of parsing and generating code.
-class Error {
-  /// Parametric constructor for Error.
-  Error({
-    required this.message,
-    this.filename,
-    this.lineNumber,
-  });
-
-  /// A description of the error.
-  String message;
-
-  /// What file caused the [Error].
-  String? filename;
-
-  /// What line the error happened on.
-  int? lineNumber;
-
-  @override
-  String toString() {
-    return '(Error message:"$message" filename:"$filename" lineNumber:$lineNumber)';
-  }
-}
-
 /// Options used when running the code generator.
 class InternalPigeonOptions {
   /// Creates a instance of InternalPigeonOptions

@@ -8,8 +8,7 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib_internal.dart';
-import '../types/task_queue.dart';
+import '../pigeon_lib.dart';
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';

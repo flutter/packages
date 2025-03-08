@@ -2,11 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/pigeon.dart' show TaskQueueType;
+import 'package:pigeon/pigeon.dart' show Error, TaskQueueType;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/generator_tools.dart';
 import 'package:pigeon/src/objc/objc_generator.dart';
-import 'package:pigeon/src/pigeon_lib_internal.dart';
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
