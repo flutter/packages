@@ -20,8 +20,8 @@ Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 ## SharedPreferences vs SharedPreferencesAsync vs SharedPreferencesWithCache
 
 Starting with version 2.3.0 there are three available APIs that can be used in this package.
-[SharedPreferences] is a legacy API that will be deprecated in the future. We highly encourage
-any new users of the plugin to use the newer [SharedPreferencesAsync] or [SharedPreferencesWithCache] 
+`SharedPreferences` is a legacy API that will be deprecated in the future. We highly encourage
+any new users of the plugin to use the newer `SharedPreferencesAsync` or `SharedPreferencesWithCache`
 APIs instead.
 
 Consider migrating existing code to one of the new APIs. See [below](#migrating-from-sharedpreferences-to-sharedpreferencesasyncwithcache) 
@@ -29,7 +29,7 @@ for more information.
 
 ### Cache and async or sync getters
 
-[SharedPreferences] and [SharedPreferencesWithCache] both use a local cache to store preferences.
+`SharedPreferences` and `SharedPreferencesWithCache` both use a local cache to store preferences.
 This allows for synchronous get calls after the initial setup call fetches the preferences from the platform.
 However, The cache can present issues as well:
 
@@ -42,19 +42,19 @@ However, The cache can present issues as well:
   other than the `shared_preferences` plugin, such as native code.
 
 This can be remedied by calling the `reload` method before using a getter as needed. 
-If most get calls need a reload, consider using [SharedPreferencesAsync] instead.
+If most get calls need a reload, consider using `SharedPreferencesAsync` instead.
 
-[SharedPreferencesAsync] does not utilize a local cache which causes all calls to be asynchronous
+`SharedPreferencesAsync` does not utilize a local cache which causes all calls to be asynchronous
 calls to the host platforms storage solution. This can be less performant, but should always provide the
 latest data stored on the native platform regardless of what process was used to store it.
 
 ### Android platform storage
 
-The [SharedPreferencesAsync] and [SharedPreferencesWithCache] APIs can use [DataStore Preferences](https://developer.android.com/topic/libraries/architecture/datastore) or [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) to store data.
+The `SharedPreferencesAsync` and `SharedPreferencesWithCache` APIs can use `DataStore Preferences` (https://developer.android.com/topic/libraries/architecture/datastore) or `Android SharedPreferences` (https://developer.android.com/reference/android/content/SharedPreferences) to store data.
 In most cases you should use the default option of DataStore Preferences, as it is the platform-recommended preferences storage system. 
 However, in some cases you may need to interact with preferences that were written to SharedPreferences by code you don't control.
 
-To use the `Android SharedPreferences` backend, use the `SharedPreferencesAsyncAndroidOptions` when using [SharedPreferencesAsync] on Android.
+To use the `Android SharedPreferences` backend, use the `SharedPreferencesAsyncAndroidOptions` when using `SharedPreferencesAsync` on Android.
 <?code-excerpt "readme_excerpts.dart (Android_Options1)"?>
 ```dart
 import 'package:shared_preferences_android/shared_preferences_android.dart';
@@ -68,7 +68,7 @@ const SharedPreferencesAsyncAndroidOptions options =
             fileName: 'the_name_of_a_file'));
 ```
 
-The [SharedPreferences] API uses the native [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
+The `SharedPreferences` API uses the native [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.
 
 ## Examples
 Here are small examples that show you how to use the API.
