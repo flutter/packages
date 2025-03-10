@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -888,12 +887,15 @@ class _VideoPlayerWithRotation extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => rotation == 0
-      ? child
-      : Transform.rotate(
-          angle: rotation * math.pi / 180,
-          child: child,
-        );
+  Widget build(BuildContext context) {
+    if (rotation % 90 != 0 || rotation == 0) {
+      return child;
+    }
+    return RotatedBox(
+      quarterTurns: rotation ~/ 90,
+      child: child,
+    );
+  }
 }
 
 /// Used to configure the [VideoProgressIndicator] widget's colors for how it
