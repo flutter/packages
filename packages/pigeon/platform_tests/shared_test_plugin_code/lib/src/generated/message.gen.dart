@@ -62,12 +62,16 @@ class MessageSearchRequest {
   /// This comment is to test field documentation comments.
   bool? aBool;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       query,
       anInt,
       aBool,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static MessageSearchRequest decode(Object result) {
@@ -78,6 +82,22 @@ class MessageSearchRequest {
       aBool: result[2] as bool?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! MessageSearchRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return query == other.query && anInt == other.anInt && aBool == other.aBool;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// This comment is to test class documentation comments.
@@ -99,12 +119,16 @@ class MessageSearchReply {
   /// This comment is to test field documentation comments.
   MessageRequestState? state;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       result,
       error,
       state,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static MessageSearchReply decode(Object result) {
@@ -115,6 +139,24 @@ class MessageSearchReply {
       state: result[2] as MessageRequestState?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! MessageSearchReply || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return result == other.result &&
+        error == other.error &&
+        state == other.state;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// This comment is to test class documentation comments.
@@ -126,10 +168,14 @@ class MessageNested {
   /// This comment is to test field documentation comments.
   MessageSearchRequest? request;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       request,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static MessageNested decode(Object result) {
@@ -138,6 +184,22 @@ class MessageNested {
       request: result[0] as MessageSearchRequest?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! MessageNested || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return request == other.request;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
