@@ -39,10 +39,21 @@ void main() {
         if (another.value.isBuffering && !started.isCompleted) {
           started.complete();
         }
-        if (started.isCompleted &&
-            !another.value.isBuffering &&
-            !ended.isCompleted) {
-          ended.complete();
+        print('listener');
+        if (started.isCompleted) {
+          print('started.isCompleted');
+          print(another);
+          print(another.value);
+          print(another.value.isBuffering);
+          print('ended is not complete ==' + ((!ended.isCompleted).toString()));
+          if (!another.value.isBuffering) {
+            print('!another.value.isBuffering');
+            if (!ended.isCompleted) {
+              print('!ended.isCompleted');
+              ended.complete();
+              print('Ended complete');
+            }
+          }
         }
       });
 
@@ -67,6 +78,7 @@ void main() {
 
       await expectLater(started.future, completes);
       await expectLater(ended.future, completes);
+      print('expectLater(ended.future, completes);');
     },
     // TODO(tarrinneal): Re-enable once out of band failure is fixed,
     // https://github.com/flutter/flutter/issues/164651
