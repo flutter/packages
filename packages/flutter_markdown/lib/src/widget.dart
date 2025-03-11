@@ -299,7 +299,7 @@ abstract class MarkdownWidget extends StatefulWidget {
 
   /// {@macro flutter_markdown.builder.MarkdownBuilder.sizedImageBuilder}
   final MarkdownSizedImageBuilder? sizedImageBuilder;
-  
+
   /// Call when build a checkbox widget.
   final MarkdownCheckboxBuilder? checkboxBuilder;
 

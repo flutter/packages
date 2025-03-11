@@ -132,7 +132,7 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.selectable,
     required this.styleSheet,
     required this.imageDirectory,
-    required this.imageBuilder,
+    @Deprecated('Use sizedImageBuilder instead') this.imageBuilder,
     required this.sizedImageBuilder,
     required this.checkboxBuilder,
     required this.bulletBuilder,
@@ -159,7 +159,6 @@ class MarkdownBuilder implements md.NodeVisitor {
 
   /// The base directory holding images referenced by Img tags with local or network file paths.
   final String? imageDirectory;
-
 
   /// {@template flutter_markdown.builder.MarkdownBuilder.imageBuilder}
   /// Called to build an image widget.
