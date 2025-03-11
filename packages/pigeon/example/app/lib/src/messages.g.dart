@@ -31,14 +31,16 @@ List<Object?> wrapResponse(
 
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
-    return !a.indexed
-        .any(((int, dynamic) item) => !_deepEquals(item.$2, b[item.$1]));
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
-    return !keys.any((Object? key) =>
-        !(b as Map<Object?, Object?>).containsKey(key) ||
-        !_deepEquals(a[key], b[key]));
+    return a.length == b.length &&
+        keys.every((Object? key) =>
+            (b as Map<Object?, Object?>).containsKey(key) &&
+            _deepEquals(a[key], b[key]));
   }
   return a == b;
 }
