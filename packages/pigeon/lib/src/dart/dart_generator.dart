@@ -1064,22 +1064,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
             (NamedType field) =>
                 field.type.baseName.startsWith('List') ||
                 field.type.baseName.startsWith('Map')))) {
-      indent.format(r'''
-bool _deepEquals(Object? a, Object? b) {
-  if (a is List && b is List) {
-    return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
-  }
-  if (a is Map && b is Map) {
-    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
-    return a.length == b.length && keys.every((Object? key) =>
-        (b as Map<Object?, Object?>).containsKey(key) &&
-        _deepEquals(a[key], b[key]));
-  }
-  return a == b;
-}
-    ''');
+      _writeDeepEquals(indent);
     }
   }
 
@@ -1098,6 +1083,25 @@ bool _deepEquals(Object? a, Object? b) {
       indent.writeln(
           'return <Object?>[error.code, error.message, error.details];');
     });
+  }
+
+  void _writeDeepEquals(Indent indent) {
+    indent.format(r'''
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
+    return a.length == b.length && keys.every((Object? key) =>
+        (b as Map<Object?, Object?>).containsKey(key) &&
+        _deepEquals(a[key], b[key]));
+  }
+  return a == b;
+}
+    ''');
   }
 
   void _writeCreateConnectionError(Indent indent) {
