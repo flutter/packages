@@ -19,6 +19,22 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
+    return a.length == b.length &&
+        keys.every((Object? key) =>
+            (b as Map<Object?, Object?>).containsKey(key) &&
+            _deepEquals(a[key], b[key]));
+  }
+  return a == b;
+}
+
 class FlutterSearchRequest {
   FlutterSearchRequest({
     this.query,
@@ -26,10 +42,14 @@ class FlutterSearchRequest {
 
   String? query;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       query,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static FlutterSearchRequest decode(Object result) {
@@ -38,6 +58,22 @@ class FlutterSearchRequest {
       query: result[0] as String?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FlutterSearchRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return query == other.query;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class FlutterSearchReply {
@@ -50,11 +86,15 @@ class FlutterSearchReply {
 
   String? error;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       result,
       error,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static FlutterSearchReply decode(Object result) {
@@ -64,6 +104,22 @@ class FlutterSearchReply {
       error: result[1] as String?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FlutterSearchReply || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return result == other.result && error == other.error;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class FlutterSearchRequests {
@@ -73,10 +129,14 @@ class FlutterSearchRequests {
 
   List<Object?>? requests;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       requests,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static FlutterSearchRequests decode(Object result) {
@@ -85,6 +145,22 @@ class FlutterSearchRequests {
       requests: result[0] as List<Object?>?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FlutterSearchRequests || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(requests, other.requests);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class FlutterSearchReplies {
@@ -94,10 +170,14 @@ class FlutterSearchReplies {
 
   List<Object?>? replies;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       replies,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static FlutterSearchReplies decode(Object result) {
@@ -106,6 +186,22 @@ class FlutterSearchReplies {
       replies: result[0] as List<Object?>?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FlutterSearchReplies || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(replies, other.replies);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
