@@ -55,7 +55,7 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func recommendedVideoSettingsForAssetWriter(
-    withFileType fileType: AVFileType, for output: AVCaptureVideoDataOutput
+    withFileType fileType: AVFileType, for output: FLTCaptureVideoDataOutput
   ) -> [String: Any]? {
     return [:]
   }
@@ -100,7 +100,7 @@ final class CameraSampleBufferTests: XCTestCase {
     let captureSessionQueue = DispatchQueue(label: "testing")
     let camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue)
     XCTAssertEqual(
-      captureSessionQueue, camera.captureVideoOutput.sampleBufferCallbackQueue,
+      captureSessionQueue, camera.captureVideoOutput.avOutput.sampleBufferCallbackQueue,
       "Sample buffer callback queue must be the capture session queue.")
   }
 
@@ -110,7 +110,8 @@ final class CameraSampleBufferTests: XCTestCase {
     let capturedPixelBuffer = CMSampleBufferGetImageBuffer(capturedSampleBuffer)!
     // Mimic sample buffer callback when captured a new video sample.
     camera.captureOutput(
-      camera.captureVideoOutput, didOutputSampleBuffer: capturedSampleBuffer, from: connectionMock)
+      camera.captureVideoOutput.avOutput, didOutputSampleBuffer: capturedSampleBuffer,
+      from: connectionMock)
     let deliveredPixelBuffer = camera.copyPixelBuffer()?.takeRetainedValue()
     XCTAssertEqual(
       deliveredPixelBuffer, capturedPixelBuffer,
@@ -129,7 +130,7 @@ final class CameraSampleBufferTests: XCTestCase {
     camera.resumeVideoRecording()
 
     camera.captureOutput(
-      camera.captureVideoOutput, didOutputSampleBuffer: sampleBuffer, from: connectionMock)
+      camera.captureVideoOutput.avOutput, didOutputSampleBuffer: sampleBuffer, from: connectionMock)
 
     let finalRetainCount = CFGetRetainCount(sampleBuffer)
     XCTAssertEqual(
@@ -166,7 +167,7 @@ final class CameraSampleBufferTests: XCTestCase {
     camera.captureOutput(nil, didOutputSampleBuffer: audioSample, from: connectionMock)
     camera.captureOutput(nil, didOutputSampleBuffer: audioSample, from: connectionMock)
     camera.captureOutput(
-      camera.captureVideoOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
+      camera.captureVideoOutput.avOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
     camera.captureOutput(nil, didOutputSampleBuffer: audioSample, from: connectionMock)
 
     let expectedSamples = ["video", "audio"]
@@ -207,17 +208,17 @@ final class CameraSampleBufferTests: XCTestCase {
     camera.pauseVideoRecording()
     camera.resumeVideoRecording()
     camera.captureOutput(
-      camera.captureVideoOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
+      camera.captureVideoOutput.avOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
     camera.captureOutput(nil, didOutputSampleBuffer: audioSample, from: connectionMock)
     camera.captureOutput(
-      camera.captureVideoOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
+      camera.captureVideoOutput.avOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
     camera.captureOutput(nil, didOutputSampleBuffer: audioSample, from: connectionMock)
 
     XCTAssert(videoAppended && audioAppended, "Video or audio was not appended.")
   }
 
   func testDidOutputSampleBufferMustNotAppendSampleWhenReadyForMoreMediaDataIsFalse() {
-    let (camera, writerMock, adaptorMock, inputMock, connectionMock) = createCamera()
+    let (camera, _, adaptorMock, inputMock, connectionMock) = createCamera()
 
     let videoSample = FLTCreateTestSampleBuffer().takeRetainedValue()
 
@@ -232,18 +233,18 @@ final class CameraSampleBufferTests: XCTestCase {
     inputMock.readyForMoreMediaData = true
     sampleAppended = false
     camera.captureOutput(
-      camera.captureVideoOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
+      camera.captureVideoOutput.avOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
     XCTAssertTrue(sampleAppended, "Sample was not appended.")
 
     inputMock.readyForMoreMediaData = false
     sampleAppended = false
     camera.captureOutput(
-      camera.captureVideoOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
+      camera.captureVideoOutput.avOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
     XCTAssertFalse(sampleAppended, "Sample cannot be appended when readyForMoreMediaData is NO.")
   }
 
   func testStopVideoRecordingWithCompletionMustCallCompletion() {
-    let (camera, writerMock, adaptorMock, inputMock, _) = createCamera()
+    let (camera, writerMock, _, _, _) = createCamera()
 
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
@@ -291,13 +292,13 @@ final class CameraSampleBufferTests: XCTestCase {
 
     let startWritingCalledBefore = startWritingCalled
     camera.captureOutput(
-      camera.captureVideoOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
+      camera.captureVideoOutput.avOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
     XCTAssert(
       (startWritingCalledBefore && videoAppended) || (startWritingCalled && !videoAppended),
       "The startWriting was called between sample creation and appending.")
 
     camera.captureOutput(
-      camera.captureVideoOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
+      camera.captureVideoOutput.avOutput, didOutputSampleBuffer: videoSample, from: connectionMock)
     XCTAssert(videoAppended, "Video was not appended.")
   }
 

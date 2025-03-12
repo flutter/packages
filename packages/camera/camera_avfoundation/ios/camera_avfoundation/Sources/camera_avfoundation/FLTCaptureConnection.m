@@ -4,11 +4,9 @@
 
 #import "./include/camera_avfoundation/FLTCaptureConnection.h"
 
-@interface FLTDefaultCaptureConnection ()
-@property(nonatomic, strong) AVCaptureConnection *connection;
-@end
-
-@implementation FLTDefaultCaptureConnection
+@implementation FLTDefaultCaptureConnection {
+  AVCaptureConnection *_connection;
+}
 
 - (instancetype)initWithConnection:(AVCaptureConnection *)connection {
   self = [super init];
