@@ -10,13 +10,15 @@
 - [ ] I signed the [CLA].
 - [ ] The title of the PR starts with the name of the package surrounded by square brackets, e.g. `[shared_preferences]`
 - [ ] I [linked to at least one issue that this PR fixes] in the description above.
-- [ ] I updated `pubspec.yaml` with an appropriate new version according to the [pub versioning philosophy], or I have commented below to indicate which [version change exemption] this PR falls under.
-- [ ] I updated `CHANGELOG.md` to add a description of the change, [following repository CHANGELOG style], or I have commented below to indicate which [CHANGELOG exemption] this PR falls under.
+- [ ] I updated `pubspec.yaml` with an appropriate new version according to the [pub versioning philosophy], or I have commented below to indicate which [version change exemption] this PR falls under[^1].
+- [ ] I updated `CHANGELOG.md` to add a description of the change, [following repository CHANGELOG style], or I have commented below to indicate which [CHANGELOG exemption] this PR falls under[^1].
 - [ ] I updated/added any relevant documentation (doc comments with `///`).
-- [ ] I added new tests to check the change I am making, or I have commented below to indicate which [test exemption] this PR falls under.
+- [ ] I added new tests to check the change I am making, or I have commented below to indicate which [test exemption] this PR falls under[^1].
 - [ ] All existing and new tests are passing.
 
 If you need help, consider asking for advice on the #hackers-new channel on [Discord].
+
+[^1]: Regular contributors who have demonstrated familiarity with the repository guidelines only need to comment if the PR is not auto-exempted by repo tooling.
 
 <!-- Links -->
 [Contributor Guide]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
