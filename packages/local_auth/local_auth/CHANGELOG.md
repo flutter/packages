@@ -1,3 +1,23 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.3.0
+
+* Adds endorsed macOS support.
+
+## 2.2.0
+
+* Switches endorsed iOS implementation to `local_auth_darwin`.
+  * Clients directly importing `local_auth_ios` for auth strings should switch
+    dependencies and imports to `local_auth_darwin`. No other change is necessary.
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Updates minimum supported SDK version to Flutter 3.16.6.
+
+## 2.1.8
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
 ## 2.1.7
 
 * Adds pub topics to package metadata.

@@ -123,7 +123,6 @@ abstract class PackageLoopingCommand extends PackageCommand {
     switch (packageLoopingType) {
       case PackageLoopingType.topLevelOnly:
         yield* getTargetPackages(filterExcluded: false);
-        break;
       case PackageLoopingType.includeExamples:
         await for (final PackageEnumerationEntry packageEntry
             in getTargetPackages(filterExcluded: false)) {
@@ -135,10 +134,8 @@ abstract class PackageLoopingCommand extends PackageCommand {
                   package,
                   excluded: packageEntry.excluded)));
         }
-        break;
       case PackageLoopingType.includeAllSubpackages:
         yield* getTargetPackagesAndSubpackages(filterExcluded: false);
-        break;
     }
   }
 
@@ -343,7 +340,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
     if (minFlutterVersion != null) {
       final Pubspec pubspec = package.parsePubspec();
       final VersionConstraint? flutterConstraint =
-          pubspec.environment?['flutter'];
+          pubspec.environment['flutter'];
       if (flutterConstraint != null &&
           !flutterConstraint.allows(minFlutterVersion)) {
         return PackageResult.skip(
@@ -353,7 +350,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
 
     if (minDartVersion != null) {
       final Pubspec pubspec = package.parsePubspec();
-      final VersionConstraint? dartConstraint = pubspec.environment?['sdk'];
+      final VersionConstraint? dartConstraint = pubspec.environment['sdk'];
       if (dartConstraint != null && !dartConstraint.allows(minDartVersion)) {
         return PackageResult.skip('Does not support Dart $minDartVersion');
       }

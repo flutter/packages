@@ -299,6 +299,26 @@ class _MyHomePageState extends State<MyHomePage>
                   );
                 },
               ),
+              Breakpoints.mediumLarge: SlotLayout.from(
+                key: const Key('MediumLarge primaryNavigation'),
+                // The AdaptiveScaffold builder here greatly simplifies
+                // navigational elements.
+                builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  leading: const _LargeComposeIcon(),
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _navigationIndex = index;
+                    });
+                  },
+                  selectedIndex: _navigationIndex,
+                  trailing: trailingNavRail,
+                  extended: true,
+                  destinations:
+                      destinations.map((NavigationDestination destination) {
+                    return AdaptiveScaffold.toRailDestination(destination);
+                  }).toList(),
+                ),
+              ),
               Breakpoints.large: SlotLayout.from(
                 key: const Key('Large primaryNavigation'),
                 // The AdaptiveScaffold builder here greatly simplifies
@@ -313,8 +333,29 @@ class _MyHomePageState extends State<MyHomePage>
                   selectedIndex: _navigationIndex,
                   trailing: trailingNavRail,
                   extended: true,
-                  destinations: destinations.map((_) {
-                    return AdaptiveScaffold.toRailDestination(_);
+                  destinations:
+                      destinations.map((NavigationDestination destination) {
+                    return AdaptiveScaffold.toRailDestination(destination);
+                  }).toList(),
+                ),
+              ),
+              Breakpoints.extraLarge: SlotLayout.from(
+                key: const Key('ExtraLarge primaryNavigation'),
+                // The AdaptiveScaffold builder here greatly simplifies
+                // navigational elements.
+                builder: (_) => AdaptiveScaffold.standardNavigationRail(
+                  leading: const _LargeComposeIcon(),
+                  onDestinationSelected: (int index) {
+                    setState(() {
+                      _navigationIndex = index;
+                    });
+                  },
+                  selectedIndex: _navigationIndex,
+                  trailing: trailingNavRail,
+                  extended: true,
+                  destinations:
+                      destinations.map((NavigationDestination destination) {
+                    return AdaptiveScaffold.toRailDestination(destination);
                   }).toList(),
                 ),
               ),
@@ -652,7 +693,7 @@ class _ItemListTile extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyLarge),
                 const SizedBox(height: 9),
                 SizedBox(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery.sizeOf(context).width,
                   child: (email.bodyImage != '')
                       ? Image.asset(email.bodyImage)
                       : Container(),
@@ -676,7 +717,7 @@ class _DetailTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height,
+        height: MediaQuery.sizeOf(context).height,
         child: Container(
           decoration: const BoxDecoration(
             color: Color.fromARGB(255, 245, 241, 248),
@@ -850,7 +891,7 @@ class _EmailTile extends StatelessWidget {
                       color: Colors.grey[700], height: 1.35, fontSize: 14.5)),
               const SizedBox(height: 9),
               SizedBox(
-                  width: MediaQuery.of(context).size.width,
+                  width: MediaQuery.sizeOf(context).width,
                   child:
                       (bodyImage != '') ? Image.asset(bodyImage) : Container()),
               const SizedBox(height: 10),
@@ -862,14 +903,14 @@ class _EmailTile extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: () {},
                       style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
+                        shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0)),
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                           const Color.fromARGB(255, 245, 241, 248),
                         ),
-                        side: MaterialStateProperty.all(
+                        side: WidgetStateProperty.all(
                           const BorderSide(
                               width: 0.0, color: Colors.transparent),
                         ),
@@ -884,14 +925,14 @@ class _EmailTile extends StatelessWidget {
                     child: OutlinedButton(
                       onPressed: () {},
                       style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
+                        shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30.0)),
                         ),
-                        backgroundColor: MaterialStateProperty.all<Color>(
+                        backgroundColor: WidgetStateProperty.all<Color>(
                           const Color.fromARGB(255, 245, 241, 248),
                         ),
-                        side: MaterialStateProperty.all(
+                        side: WidgetStateProperty.all(
                           const BorderSide(
                               width: 0.0, color: Colors.transparent),
                         ),

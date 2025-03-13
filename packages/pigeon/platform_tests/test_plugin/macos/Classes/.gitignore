@@ -3,3 +3,8 @@
 # such as a flag to suppress version stamp generation.
 *.gen.swift
 !CoreTests.gen.swift
+# Keeping this makes it easier to review changes to ProxyApi generation.
+!ProxyApiTests.gen.swift
+# Including these makes it easier to review code generation changes.
+!ProxyApiTestClass.swift
+!EventChannelTests.gen.swift

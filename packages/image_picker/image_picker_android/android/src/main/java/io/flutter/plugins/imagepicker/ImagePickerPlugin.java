@@ -18,7 +18,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.imagepicker.Messages.CacheRetrievalResult;
 import io.flutter.plugins.imagepicker.Messages.FlutterError;
 import io.flutter.plugins.imagepicker.Messages.GeneralOptions;
@@ -117,7 +116,6 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
         final Activity activity,
         final BinaryMessenger messenger,
         final ImagePickerApi handler,
-        final PluginRegistry.Registrar registrar,
         final ActivityPluginBinding activityBinding) {
       this.application = application;
       this.activity = activity;
@@ -125,20 +123,14 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       this.messenger = messenger;
 
       delegate = constructDelegate(activity);
-      ImagePickerApi.setup(messenger, handler);
+      ImagePickerApi.setUp(messenger, handler);
       observer = new LifeCycleObserver(activity);
-      if (registrar != null) {
-        // V1 embedding setup for activity listeners.
-        application.registerActivityLifecycleCallbacks(observer);
-        registrar.addActivityResultListener(delegate);
-        registrar.addRequestPermissionsResultListener(delegate);
-      } else {
-        // V2 embedding setup for activity listeners.
-        activityBinding.addActivityResultListener(delegate);
-        activityBinding.addRequestPermissionsResultListener(delegate);
-        lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(activityBinding);
-        lifecycle.addObserver(observer);
-      }
+
+      // V2 embedding setup for activity listeners.
+      activityBinding.addActivityResultListener(delegate);
+      activityBinding.addRequestPermissionsResultListener(delegate);
+      lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(activityBinding);
+      lifecycle.addObserver(observer);
     }
 
     // Only invoked by {@link #ImagePickerPlugin(ImagePickerDelegate, Activity)} for testing.
@@ -159,7 +151,7 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
         lifecycle = null;
       }
 
-      ImagePickerApi.setup(messenger, null);
+      ImagePickerApi.setUp(messenger, null);
 
       if (application != null) {
         application.unregisterActivityLifecycleCallbacks(observer);
@@ -182,20 +174,6 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
   private FlutterPluginBinding pluginBinding;
   ActivityState activityState;
-
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    if (registrar.activity() == null) {
-      // If a background flutter view tries to register the plugin, there will be no activity from the registrar,
-      // we stop the registering process immediately because the ImagePicker requires an activity.
-      return;
-    }
-    Activity activity = registrar.activity();
-    Application application = (Application) (registrar.context().getApplicationContext());
-    ImagePickerPlugin plugin = new ImagePickerPlugin();
-    plugin.setup(registrar.messenger(), application, activity, registrar, null);
-  }
 
   /**
    * Default constructor for the plugin.
@@ -231,7 +209,6 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
         pluginBinding.getBinaryMessenger(),
         (Application) pluginBinding.getApplicationContext(),
         binding.getActivity(),
-        null,
         binding);
   }
 
@@ -254,10 +231,8 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
       final BinaryMessenger messenger,
       final Application application,
       final Activity activity,
-      final PluginRegistry.Registrar registrar,
       final ActivityPluginBinding activityBinding) {
-    activityState =
-        new ActivityState(application, activity, messenger, this, registrar, activityBinding);
+    activityState = new ActivityState(application, activity, messenger, this, activityBinding);
   }
 
   private void tearDown() {
@@ -317,7 +292,10 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
     setCameraDevice(delegate, source);
     if (generalOptions.getAllowMultiple()) {
-      delegate.chooseMultiImageFromGallery(options, generalOptions.getUsePhotoPicker(), result);
+      int limit = ImagePickerUtils.getLimitFromOption(generalOptions);
+
+      delegate.chooseMultiImageFromGallery(
+          options, generalOptions.getUsePhotoPicker(), limit, result);
     } else {
       switch (source.getType()) {
         case GALLERY:

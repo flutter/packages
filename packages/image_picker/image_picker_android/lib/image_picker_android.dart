@@ -51,7 +51,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    final List<dynamic> paths = await _getMultiImagePath(
+    final List<String> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
@@ -60,13 +60,14 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       return null;
     }
 
-    return paths.map((dynamic path) => PickedFile(path as String)).toList();
+    return paths.map((String path) => PickedFile(path)).toList();
   }
 
-  Future<List<dynamic>> _getMultiImagePath({
+  Future<List<String>> _getMultiImagePath({
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) {
     if (imageQuality != null && (imageQuality < 0 || imageQuality > 100)) {
       throw ArgumentError.value(
@@ -81,6 +82,10 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+    }
+
     return _hostApi.pickImages(
       SourceSpecification(type: SourceType.gallery),
       ImageSelectionOptions(
@@ -88,7 +93,10 @@ class ImagePickerAndroid extends ImagePickerPlatform {
           maxHeight: maxHeight,
           quality: imageQuality ?? 100),
       GeneralOptions(
-          allowMultiple: true, usePhotoPicker: useAndroidPhotoPicker),
+        allowMultiple: true,
+        usePhotoPicker: useAndroidPhotoPicker,
+        limit: limit,
+      ),
     );
   }
 
@@ -113,7 +121,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    final List<String?> paths = await _hostApi.pickImages(
+    final List<String> paths = await _hostApi.pickImages(
       _buildSourceSpec(source, preferredCameraDevice),
       ImageSelectionOptions(
           maxWidth: maxWidth,
@@ -146,7 +154,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
   }) async {
-    final List<String?> paths = await _hostApi.pickVideos(
+    final List<String> paths = await _hostApi.pickVideos(
       _buildSourceSpec(source, preferredCameraDevice),
       VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
       GeneralOptions(
@@ -197,7 +205,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    final List<dynamic> paths = await _getMultiImagePath(
+    final List<String> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
@@ -206,7 +214,25 @@ class ImagePickerAndroid extends ImagePickerPlatform {
       return null;
     }
 
-    return paths.map((dynamic path) => XFile(path as String)).toList();
+    return paths.map((String path) => XFile(path)).toList();
+  }
+
+  @override
+  Future<List<XFile>> getMultiImageWithOptions({
+    MultiImagePickerOptions options = const MultiImagePickerOptions(),
+  }) async {
+    final List<String> paths = await _getMultiImagePath(
+      maxWidth: options.imageOptions.maxWidth,
+      maxHeight: options.imageOptions.maxHeight,
+      imageQuality: options.imageOptions.imageQuality,
+      limit: options.limit,
+    );
+
+    if (paths.isEmpty) {
+      return <XFile>[];
+    }
+
+    return paths.map((String path) => XFile(path)).toList();
   }
 
   @override
@@ -215,10 +241,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
   }) async {
     return (await _hostApi.pickMedia(
       _mediaOptionsToMediaSelectionOptions(options),
-      GeneralOptions(
-        allowMultiple: options.allowMultiple,
-        usePhotoPicker: useAndroidPhotoPicker,
-      ),
+      _mediaOptionsToGeneralOptions(options),
     ))
         .map((String? path) => XFile(path!))
         .toList();
@@ -243,6 +266,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     final ImageSelectionOptions imageSelectionOptions =
         _imageOptionsToImageSelectionOptionsWithValidator(
             mediaOptions.imageOptions);
+
     return MediaSelectionOptions(
       imageSelectionOptions: imageSelectionOptions,
     );
@@ -268,6 +292,29 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     }
     return ImageSelectionOptions(
         quality: imageQuality ?? 100, maxHeight: maxHeight, maxWidth: maxWidth);
+  }
+
+  GeneralOptions _mediaOptionsToGeneralOptions(MediaOptions options) {
+    final bool allowMultiple = options.allowMultiple;
+    final int? limit = options.limit;
+
+    if (!allowMultiple && limit != null) {
+      throw ArgumentError.value(
+        allowMultiple,
+        'allowMultiple',
+        'cannot be false, when limit is not null',
+      );
+    }
+
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower then 2');
+    }
+
+    return GeneralOptions(
+      allowMultiple: allowMultiple,
+      usePhotoPicker: useAndroidPhotoPicker,
+      limit: limit,
+    );
   }
 
   @override

@@ -49,8 +49,9 @@ List<Caption> _parseCaptionsFromWebVTTString(String file) {
       continue;
     }
 
-    // Caption has header
-    final bool hasHeader = captionLines.length > 2;
+    // Caption has header / identifier
+    // See: https://www.w3.org/TR/webvtt1/#webvtt-cue-identifier for valid cue identifier
+    final bool hasHeader = !captionLines[0].contains(_webVTTArrow);
     if (hasHeader) {
       final int? tryParseCaptionNumber = int.tryParse(captionLines[0]);
       if (tryParseCaptionNumber != null) {

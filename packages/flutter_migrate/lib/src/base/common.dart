@@ -63,7 +63,7 @@ String getEnumName(dynamic enumItem) {
 /// Rationale:
 ///
 /// Consider the following snippet:
-/// ```
+/// ```dart
 /// try {
 ///   await foo();
 ///   ...
@@ -87,7 +87,7 @@ String getEnumName(dynamic enumItem) {
 /// [asyncGuard] is intended to wrap awaited expressions occurring in a `try`
 /// block. The behavior described above gives the behavior that users
 /// intuitively expect from `await`. Consider the snippet:
-/// ```
+/// ```dart
 /// try {
 ///   await asyncGuard(() async {
 ///     var c = Completer();
@@ -138,7 +138,7 @@ Future<T> asyncGuard<T>(
     }
   }
 
-  runZoned<void>(() async {
+  runZonedGuarded<void>(() async {
     try {
       final T result = await fn();
       if (!completer.isCompleted) {
@@ -150,8 +150,7 @@ Future<T> asyncGuard<T>(
       // ignore: avoid_catches_without_on_clauses, forwards to Future
       handleError(e, s);
     }
-    // ignore: deprecated_member_use
-  }, onError: (Object e, StackTrace s) {
+  }, (Object e, StackTrace s) {
     handleError(e, s);
   });
 

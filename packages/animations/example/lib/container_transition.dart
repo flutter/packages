@@ -312,7 +312,7 @@ class _ExampleCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Expanded(
-            child: Container(
+            child: ColoredBox(
               color: Colors.black38,
               child: Center(
                 child: Image.asset(

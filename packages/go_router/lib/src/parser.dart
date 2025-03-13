@@ -12,7 +12,6 @@ import 'configuration.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
-import 'route.dart';
 import 'router.dart';
 
 /// The function signature of [GoRouteInformationParser.onParserException].
@@ -73,23 +72,27 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       return debugParserFuture = _redirect(context, matchList)
           .then<RouteMatchList>((RouteMatchList value) {
         if (value.isError && onParserException != null) {
+          // TODO(chunhtai): Figure out what to return if context is invalid.
+          // ignore: use_build_context_synchronously
           return onParserException!(context, value);
         }
         return value;
       });
     }
 
-    late final RouteMatchList initialMatches;
-    initialMatches =
-        // TODO(chunhtai): remove this ignore and migrate the code
-        // https://github.com/flutter/flutter/issues/124045.
-        // ignore: deprecated_member_use, unnecessary_non_null_assertion
-        configuration.findMatch(routeInformation.location!, extra: state.extra);
+    Uri uri = routeInformation.uri;
+    if (uri.hasEmptyPath) {
+      uri = uri.replace(path: '/');
+    } else if (uri.path.length > 1 && uri.path.endsWith('/')) {
+      // Remove trailing `/`.
+      uri = uri.replace(path: uri.path.substring(0, uri.path.length - 1));
+    }
+    final RouteMatchList initialMatches = configuration.findMatch(
+      uri,
+      extra: state.extra,
+    );
     if (initialMatches.isError) {
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      log.info('No initial matches: ${routeInformation.location}');
+      log('No initial matches: ${routeInformation.uri.path}');
     }
 
     return debugParserFuture = _redirect(
@@ -97,12 +100,14 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       initialMatches,
     ).then<RouteMatchList>((RouteMatchList matchList) {
       if (matchList.isError && onParserException != null) {
+        // TODO(chunhtai): Figure out what to return if context is invalid.
+        // ignore: use_build_context_synchronously
         return onParserException!(context, matchList);
       }
 
       assert(() {
         if (matchList.isNotEmpty) {
-          assert(!(matchList.last.route as GoRoute).redirectOnly,
+          assert(!matchList.last.route.redirectOnly,
               'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}');
         }
         return true;
@@ -129,16 +134,26 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     if (configuration.isEmpty) {
       return null;
     }
+    String? location;
     if (GoRouter.optionURLReflectsImperativeAPIs &&
-        configuration.matches.last is ImperativeRouteMatch) {
-      configuration =
-          (configuration.matches.last as ImperativeRouteMatch).matches;
+        (configuration.matches.last is ImperativeRouteMatch ||
+            configuration.matches.last is ShellRouteMatch)) {
+      RouteMatchBase route = configuration.matches.last;
+
+      while (route is! ImperativeRouteMatch) {
+        if (route is ShellRouteMatch && route.matches.isNotEmpty) {
+          route = route.matches.last;
+        } else {
+          break;
+        }
+      }
+
+      if (route case final ImperativeRouteMatch safeRoute) {
+        location = safeRoute.matches.uri.toString();
+      }
     }
     return RouteInformation(
-      // TODO(chunhtai): remove this ignore and migrate the code
-      // https://github.com/flutter/flutter/issues/124045.
-      // ignore: deprecated_member_use
-      location: configuration.uri.toString(),
+      uri: Uri.parse(location ?? configuration.uri.toString()),
       state: _routeMatchListCodec.encode(configuration),
     );
   }
@@ -170,24 +185,37 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         );
       case NavigatingType.pushReplacement:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
-        return baseRouteMatchList.remove(routeMatch).push(
-              ImperativeRouteMatch(
-                pageKey: _getUniqueValueKey(),
-                completer: completer!,
-                matches: newMatchList,
-              ),
-            );
+        baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
+        if (baseRouteMatchList.isEmpty) {
+          return newMatchList;
+        }
+        return baseRouteMatchList.push(
+          ImperativeRouteMatch(
+            pageKey: _getUniqueValueKey(),
+            completer: completer!,
+            matches: newMatchList,
+          ),
+        );
       case NavigatingType.replace:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
-        return baseRouteMatchList.remove(routeMatch).push(
-              ImperativeRouteMatch(
-                pageKey: routeMatch.pageKey,
-                completer: completer!,
-                matches: newMatchList,
-              ),
-            );
+        baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
+        if (baseRouteMatchList.isEmpty) {
+          return newMatchList;
+        }
+        return baseRouteMatchList.push(
+          ImperativeRouteMatch(
+            pageKey: routeMatch.pageKey,
+            completer: completer!,
+            matches: newMatchList,
+          ),
+        );
       case NavigatingType.go:
         return newMatchList;
+      case NavigatingType.restore:
+        // Still need to consider redirection.
+        return baseRouteMatchList!.uri.toString() != newMatchList.uri.toString()
+            ? newMatchList
+            : baseRouteMatchList;
     }
   }
 

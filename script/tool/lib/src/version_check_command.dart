@@ -210,20 +210,16 @@ class VersionCheckCommand extends PackageLoopingCommand {
     switch (versionState) {
       case _CurrentVersionState.unchanged:
         versionChanged = false;
-        break;
       case _CurrentVersionState.validIncrease:
       case _CurrentVersionState.validRevert:
       case _CurrentVersionState.newPackage:
         versionChanged = true;
-        break;
       case _CurrentVersionState.invalidChange:
         versionChanged = true;
         errors.add('Disallowed version change.');
-        break;
       case _CurrentVersionState.unknown:
         versionChanged = false;
         errors.add('Unable to determine previous version.');
-        break;
     }
 
     if (!(await _validateChangelogVersion(package,
@@ -362,7 +358,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
           '${indentation}Breaking changes to platform interfaces are not '
           'allowed without explicit justification.\n'
           '${indentation}See '
-          'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages '
+          'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md '
           'for more information.');
       return _CurrentVersionState.invalidChange;
     }
@@ -396,6 +392,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
     }
     // Remove all leading mark down syntax from the version line.
     String? versionString = firstLineWithText?.split(' ').last;
+    String? leadingMarkdown = firstLineWithText?.split(' ').first;
 
     final String badNextErrorMessage = '${indentation}When bumping the version '
         'for release, the NEXT section should be incorporated into the new '
@@ -417,15 +414,18 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       // CHANGELOG. That means the next version entry in the CHANGELOG should
       // pass the normal validation.
       versionString = null;
+      leadingMarkdown = null;
       while (iterator.moveNext()) {
         if (iterator.current.trim().startsWith('## ')) {
           versionString = iterator.current.trim().split(' ').last;
+          leadingMarkdown = iterator.current.trim().split(' ').first;
           break;
         }
       }
     }
 
-    if (versionString == null) {
+    final bool validLeadingMarkdown = leadingMarkdown == '##';
+    if (versionString == null || !validLeadingMarkdown) {
       printError('${indentation}Unable to find a version in CHANGELOG.md');
       print('${indentation}The current version should be on a line starting '
           'with "## ", either on the first non-empty line or after a "## NEXT" '
@@ -558,11 +558,12 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       } else {
         printError(
             'No version change found, but the change to this package could '
-            'not be verified to be exempt from version changes according to '
-            'repository policy. If this is a false positive, please comment in '
-            'the PR to explain why the PR is exempt, and add (or ask your '
-            'reviewer to add) the "$_missingVersionChangeOverrideLabel" '
-            'label.');
+            'not be verified to be exempt\n'
+            'from version changes according to repository policy.\n'
+            'If this is a false positive, please comment in '
+            'the PR to explain why the PR\n'
+            'is exempt, and add (or ask your reviewer to add) the '
+            '"$_missingVersionChangeOverrideLabel" label.');
         return 'Missing version change';
       }
     }
@@ -572,13 +573,13 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         logWarning('Ignoring lack of CHANGELOG update due to the '
             '"$_missingChangelogChangeOverrideLabel" label.');
       } else {
-        printError(
-            'No CHANGELOG change found. If this PR needs an exemption from '
-            'the standard policy of listing all changes in the CHANGELOG, '
+        printError('No CHANGELOG change found.\n'
+            'If this PR needs an exemption from the standard policy of listing '
+            'all changes in the CHANGELOG,\n'
             'comment in the PR to explain why the PR is exempt, and add (or '
-            'ask your reviewer to add) the '
-            '"$_missingChangelogChangeOverrideLabel" label. Otherwise, '
-            'please add a NEXT entry in the CHANGELOG as described in '
+            'ask your reviewer to add) the\n'
+            '"$_missingChangelogChangeOverrideLabel" label.\n'
+            'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
             'the contributing guide.');
         return 'Missing CHANGELOG change';
       }

@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.camera.core.Camera;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
@@ -24,8 +25,8 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  private Context context;
-  private LifecycleOwner lifecycleOwner;
+  @Nullable private Context context;
+  @Nullable private LifecycleOwner lifecycleOwner;
 
   public ProcessCameraProviderHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
@@ -36,7 +37,7 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
     this.context = context;
   }
 
-  public void setLifecycleOwner(@NonNull LifecycleOwner lifecycleOwner) {
+  public void setLifecycleOwner(@Nullable LifecycleOwner lifecycleOwner) {
     this.lifecycleOwner = lifecycleOwner;
   }
 
@@ -57,6 +58,10 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
    */
   @Override
   public void getInstance(@NonNull GeneratedCameraXLibrary.Result<Long> result) {
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to get ProcessCameraProvider instance.");
+    }
+
     ListenableFuture<ProcessCameraProvider> processCameraProviderFuture =
         ProcessCameraProvider.getInstance(context);
 
@@ -110,6 +115,11 @@ public class ProcessCameraProviderHostApiImpl implements ProcessCameraProviderHo
       @NonNull Long identifier,
       @NonNull Long cameraSelectorIdentifier,
       @NonNull List<Long> useCaseIds) {
+    if (lifecycleOwner == null) {
+      throw new IllegalStateException(
+          "LifecycleOwner must be set to get ProcessCameraProvider instance.");
+    }
+
     ProcessCameraProvider processCameraProvider =
         (ProcessCameraProvider) Objects.requireNonNull(instanceManager.getInstance(identifier));
     CameraSelector cameraSelector =

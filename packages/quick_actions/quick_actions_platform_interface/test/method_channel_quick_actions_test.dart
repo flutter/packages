@@ -18,8 +18,7 @@ void main() {
     final List<MethodCall> log = <MethodCall>[];
 
     setUp(() {
-      _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-          .defaultBinaryMessenger
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(quickActions.channel,
               (MethodCall methodCall) async {
         log.add(methodCall);
@@ -62,7 +61,38 @@ void main() {
         quickActions.initialize((String type) {});
         quickActions.setShortcutItems(<ShortcutItem>[
           const ShortcutItem(
-              type: 'test', localizedTitle: 'title', icon: 'icon.svg')
+            type: 'test',
+            localizedTitle: 'title',
+            localizedSubtitle: 'subtitle',
+            icon: 'icon.svg',
+          )
+        ]);
+
+        expect(
+          log,
+          <Matcher>[
+            isMethodCall('getLaunchAction', arguments: null),
+            isMethodCall('setShortcutItems', arguments: <Map<String, String>>[
+              <String, String>{
+                'type': 'test',
+                'localizedTitle': 'title',
+                'localizedSubtitle': 'subtitle',
+                'icon': 'icon.svg',
+              }
+            ]),
+          ],
+        );
+      });
+
+      test('passes shortcutItem through channel with null localizedSubtitle',
+          () {
+        quickActions.initialize((String type) {});
+        quickActions.setShortcutItems(<ShortcutItem>[
+          const ShortcutItem(
+            type: 'test',
+            localizedTitle: 'title',
+            icon: 'icon.svg',
+          )
         ]);
 
         expect(
@@ -83,10 +113,15 @@ void main() {
       test('setShortcutItems with demo data', () async {
         const String type = 'type';
         const String localizedTitle = 'localizedTitle';
+        const String localizedSubtitle = 'localizedSubtitle';
         const String icon = 'icon';
         await quickActions.setShortcutItems(
           const <ShortcutItem>[
-            ShortcutItem(type: type, localizedTitle: localizedTitle, icon: icon)
+            ShortcutItem(
+                type: type,
+                localizedTitle: localizedTitle,
+                localizedSubtitle: localizedSubtitle,
+                icon: icon)
           ],
         );
         expect(
@@ -98,6 +133,7 @@ void main() {
                 <String, String>{
                   'type': type,
                   'localizedTitle': localizedTitle,
+                  'localizedSubtitle': localizedSubtitle,
                   'icon': icon,
                 }
               ],
@@ -139,20 +175,20 @@ void main() {
     test('Shortcut item can be constructed', () {
       const String type = 'type';
       const String localizedTitle = 'title';
+      const String localizedSubtitle = 'subtitle';
       const String icon = 'foo';
 
-      const ShortcutItem item =
-          ShortcutItem(type: type, localizedTitle: localizedTitle, icon: icon);
+      const ShortcutItem item = ShortcutItem(
+        type: type,
+        localizedTitle: localizedTitle,
+        localizedSubtitle: localizedSubtitle,
+        icon: icon,
+      );
 
       expect(item.type, type);
       expect(item.localizedTitle, localizedTitle);
+      expect(item.localizedSubtitle, localizedSubtitle);
       expect(item.icon, icon);
     });
   });
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

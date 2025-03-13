@@ -10,6 +10,7 @@ import 'package:file/file.dart';
 import 'common/core.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
+import 'common/plugin_utils.dart';
 import 'common/repository_package.dart';
 
 const int _exitUnsupportedPlatform = 2;
@@ -84,7 +85,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 ''';
           final String path =
               getRelativePosixPath(podspec, from: package.directory);
-          printError('$path is missing seach path configuration. Any iOS '
+          printError('$path is missing search path configuration. Any iOS '
               'plugin implementation that contains Swift implementation code '
               'needs to contain the following:\n\n'
               '$workaroundBlock\n'
@@ -94,16 +95,33 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       }
     }
 
+    if ((pluginSupportsPlatform(platformIOS, package) ||
+            pluginSupportsPlatform(platformMacOS, package)) &&
+        !podspecs.any(_hasPrivacyManifest)) {
+      printError('No PrivacyInfo.xcprivacy file specified. Please ensure that '
+          'a privacy manifest is included in the build using '
+          '`resource_bundles`');
+      errors.add('No privacy manifest');
+    }
+
     return errors.isEmpty
         ? PackageResult.success()
         : PackageResult.fail(errors);
   }
 
   Future<List<File>> _podspecsToLint(RepositoryPackage package) async {
+    // Since the pigeon platform tests podspecs require generated files that are not included in git,
+    // the podspec lint fails.
+    if (package.path.contains('packages/pigeon/platform_tests/')) {
+      return <File>[];
+    }
     final List<File> podspecs =
         await getFilesForPackage(package).where((File entity) {
-      final String filePath = entity.path;
-      return path.extension(filePath) == '.podspec';
+      final String filename = entity.basename;
+      return path.extension(filename) == '.podspec' &&
+          filename != 'Flutter.podspec' &&
+          filename != 'FlutterMacOS.podspec' &&
+          !entity.path.contains('packages/pigeon/platform_tests/');
     }).toList();
 
     podspecs.sort((File a, File b) => a.basename.compareTo(b.basename));
@@ -140,10 +158,6 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       podspecPath,
       '--configuration=Debug', // Release targets unsupported arm64 simulators. Use Debug to only build against targeted x86_64 simulator devices.
       '--skip-tests',
-      // TODO(vashworth): remove allow-warnings when https://github.com/flutter/flutter/issues/125812 is fixed.
-      // https://github.com/flutter/flutter/issues/125812
-      '--allow-warnings',
-      '--use-modular-headers', // Flutter sets use_modular_headers! in its templates.
       if (libraryLint) '--use-libraries'
     ];
 
@@ -153,8 +167,19 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   }
 
   /// Returns true if there is any iOS plugin implementation code written in
-  /// Swift.
+  /// Swift. Skips files named "Package.swift", which is a Swift Package Manager
+  /// manifest file and does not mean the plugin is written in Swift.
   Future<bool> _hasIOSSwiftCode(RepositoryPackage package) async {
+    final String iosSwiftPackageManifestPath = package
+        .platformDirectory(FlutterPlatform.ios)
+        .childDirectory(package.directory.basename)
+        .childFile('Package.swift')
+        .path;
+    final String darwinSwiftPackageManifestPath = package.directory
+        .childDirectory('darwin')
+        .childDirectory(package.directory.basename)
+        .childFile('Package.swift')
+        .path;
     return getFilesForPackage(package).any((File entity) {
       final String relativePath =
           getRelativePosixPath(entity, from: package.directory);
@@ -162,8 +187,16 @@ class PodspecCheckCommand extends PackageLoopingCommand {
       if (relativePath.startsWith('example/')) {
         return false;
       }
+      // Ignore test code.
+      if (relativePath.contains('/Tests/') ||
+          relativePath.contains('/RunnerTests/') ||
+          relativePath.contains('/RunnerUITests/')) {
+        return false;
+      }
       final String filePath = entity.path;
-      return path.extension(filePath) == '.swift';
+      return filePath != iosSwiftPackageManifestPath &&
+          filePath != darwinSwiftPackageManifestPath &&
+          path.extension(filePath) == '.swift';
     });
   }
 
@@ -192,5 +225,13 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 \s*'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',[^}]*
 \s*}''', dotAll: true);
     return !workaround.hasMatch(podspec.readAsStringSync());
+  }
+
+  /// Returns true if [podspec] specifies a .xcprivacy file.
+  bool _hasPrivacyManifest(File podspec) {
+    final RegExp manifestBundling = RegExp(r'''
+\.(?:ios\.)?resource_bundles\s*=\s*{[^}]*PrivacyInfo.xcprivacy''',
+        dotAll: true);
+    return manifestBundling.hasMatch(podspec.readAsStringSync());
   }
 }

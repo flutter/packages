@@ -9,6 +9,8 @@
 ///
 /// usage: dart run tool/test.dart
 ////////////////////////////////////////////////////////////////////////////////
+library;
+
 import 'dart:io' show Platform, exit;
 import 'dart:math';
 
@@ -21,6 +23,7 @@ const String _testFlag = 'test';
 const String _noGen = 'no-generation';
 const String _listFlag = 'list';
 const String _format = 'format';
+const String _overflow = 'overflow';
 
 Future<void> main(List<String> args) async {
   final ArgParser parser = ArgParser()
@@ -29,6 +32,10 @@ Future<void> main(List<String> args) async {
         abbr: 'g', help: 'Skips the generation step.', negatable: false)
     ..addFlag(_format,
         abbr: 'f', help: 'Formats generated test files before running tests.')
+    ..addFlag(_overflow,
+        help:
+            'Generates overflow files for integration tests, runs tests with and without overflow files.',
+        abbr: 'o')
     ..addFlag(_listFlag,
         negatable: false, abbr: 'l', help: 'List available tests.')
     ..addFlag('help',
@@ -78,6 +85,10 @@ ${parser.usage}''');
       iOSSwiftUnitTests,
       iOSSwiftIntegrationTests,
     ];
+    const List<String> linuxTests = <String>[
+      linuxUnitTests,
+      linuxIntegrationTests,
+    ];
     const List<String> macOSTests = <String>[
       macOSObjCIntegrationTests,
       macOSSwiftUnitTests,
@@ -104,6 +115,7 @@ ${parser.usage}''');
       testsToRun = <String>[
         ...dartTests,
         ...androidTests,
+        ...linuxTests,
       ];
     } else {
       print('Unsupported host platform.');
@@ -115,5 +127,6 @@ ${parser.usage}''');
     testsToRun,
     runGeneration: !argResults.wasParsed(_noGen),
     runFormat: argResults.wasParsed(_format),
+    includeOverflow: argResults.wasParsed(_overflow),
   );
 }

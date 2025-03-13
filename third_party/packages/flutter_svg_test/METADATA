@@ -1,0 +1,15 @@
+name: "flutter_svg_test"
+description:
+    "A testing library which makes it easy to test flutter_svg."
+
+third_party {
+  identifier {
+    type: "Git"
+    value: "https://github.com/dnfield/flutter_svg/"
+    primary_source: true
+    version: "2f7c8ca1a1c1aaedc37e77cf1560cbb0e00baa9a"
+  }
+  version: "2f7c8ca1a1c1aaedc37e77cf1560cbb0e00baa9a"
+  last_upgrade_date { year: 2024 month: 10 day: 28 }
+  license_type: NOTICE
+}

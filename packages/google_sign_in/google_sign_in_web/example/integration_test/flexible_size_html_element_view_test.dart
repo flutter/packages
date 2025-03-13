@@ -9,8 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_web/src/flexible_size_html_element_view.dart';
 import 'package:integration_test/integration_test.dart';
-
-import 'src/dom.dart';
+import 'package:web/web.dart' as web;
 
 /// Used to keep track of the number of HtmlElementView factories the test has registered.
 int widgetFactoryNumber = 0;
@@ -23,12 +22,12 @@ void main() {
       widgetFactoryNumber++;
     });
 
-    testWidgets('empty case, calls onPlatformViewCreated',
+    testWidgets('empty case, calls onElementCreated',
         (WidgetTester tester) async {
-      final Completer<int> viewCreatedCompleter = Completer<int>();
+      final Completer<Object> viewCreatedCompleter = Completer<Object>();
 
-      await pumpResizableWidget(tester, onPlatformViewCreated: (int id) {
-        viewCreatedCompleter.complete(id);
+      await pumpResizableWidget(tester, onElementCreated: (Object view) {
+        viewCreatedCompleter.complete(view);
       });
       await tester.pumpAndSettle();
 
@@ -54,12 +53,13 @@ void main() {
         (WidgetTester tester) async {
       const Size childSize = Size(300, 40);
 
-      final DomHtmlElement resizable = document.createElement('div');
+      final web.HTMLDivElement resizable =
+          web.document.createElement('div') as web.HTMLDivElement;
       resize(resizable, childSize);
 
       final Element element = await pumpResizableWidget(
         tester,
-        onPlatformViewCreated: injectElement(resizable),
+        onElementCreated: injectElement(resizable),
       );
       await tester.pumpAndSettle();
 
@@ -73,13 +73,14 @@ void main() {
       const Size initialSize = Size(160, 100);
       const Size newSize = Size(300, 40);
 
-      final DomHtmlElement resizable = document.createElement('div');
+      final web.HTMLDivElement resizable =
+          web.document.createElement('div') as web.HTMLDivElement;
       resize(resizable, newSize);
 
       final Element element = await pumpResizableWidget(
         tester,
         initialSize: initialSize,
-        onPlatformViewCreated: injectElement(resizable),
+        onElementCreated: injectElement(resizable),
       );
       await tester.pumpAndSettle();
 
@@ -94,14 +95,15 @@ void main() {
       final Size expandedSize = initialSize * 2;
       final Size contractedSize = initialSize / 2;
 
-      final DomHtmlElement resizable = document.createElement('div')
+      final web.HTMLDivElement resizable = web.document.createElement('div')
+          as web.HTMLDivElement
         ..setAttribute(
             'style', 'width: 100%; height: 100%; background: #fabada;');
 
       final Element element = await pumpResizableWidget(
         tester,
         initialSize: initialSize,
-        onPlatformViewCreated: injectElement(resizable),
+        onElementCreated: injectElement(resizable),
       );
       await tester.pumpAndSettle();
 
@@ -132,12 +134,12 @@ void main() {
 /// Injects a ResizableFromJs widget into the `tester`.
 Future<Element> pumpResizableWidget(
   WidgetTester tester, {
-  void Function(int)? onPlatformViewCreated,
+  void Function(Object)? onElementCreated,
   Size? initialSize,
 }) async {
   await tester.pumpWidget(ResizableFromJs(
     instanceId: widgetFactoryNumber,
-    onPlatformViewCreated: onPlatformViewCreated,
+    onElementCreated: onElementCreated,
     initialSize: initialSize,
   ));
   // Needed for JS to have time to kick-off.
@@ -153,14 +155,15 @@ Future<Element> pumpResizableWidget(
 class ResizableFromJs extends StatelessWidget {
   ResizableFromJs({
     required this.instanceId,
-    this.onPlatformViewCreated,
+    this.onElementCreated,
     this.initialSize,
     super.key,
   }) {
     ui_web.platformViewRegistry.registerViewFactory(
       'resizable_from_js_$instanceId',
       (int viewId) {
-        final DomHtmlElement element = document.createElement('div');
+        final web.HTMLDivElement element =
+            web.document.createElement('div') as web.HTMLDivElement;
         element.setAttribute('style',
             'width: 100%; height: 100%; overflow: hidden; background: red;');
         element.id = 'test_element_$viewId';
@@ -170,7 +173,7 @@ class ResizableFromJs extends StatelessWidget {
   }
 
   final int instanceId;
-  final void Function(int)? onPlatformViewCreated;
+  final void Function(Object)? onElementCreated;
   final Size? initialSize;
 
   @override
@@ -181,7 +184,7 @@ class ResizableFromJs extends StatelessWidget {
           child: FlexHtmlElementView(
             viewType: 'resizable_from_js_$instanceId',
             key: Key('resizable_from_js_$instanceId'),
-            onPlatformViewCreated: onPlatformViewCreated,
+            onElementCreated: onElementCreated,
             initialSize: initialSize ?? const Size(640, 480),
           ),
         ),
@@ -191,16 +194,14 @@ class ResizableFromJs extends StatelessWidget {
 }
 
 /// Resizes `resizable` to `size`.
-void resize(DomHtmlElement resizable, Size size) {
+void resize(web.HTMLElement resizable, Size size) {
   resizable.setAttribute('style',
       'width: ${size.width}px; height: ${size.height}px; background: #fabada');
 }
 
-/// Returns a function that can be used to inject `element` in `onPlatformViewCreated` callbacks.
-void Function(int) injectElement(DomHtmlElement element) {
-  return (int viewId) {
-    final DomHtmlElement root =
-        document.querySelector('#test_element_$viewId')!;
-    root.appendChild(element);
+/// Returns an `onElementCreated` callback that injects [element].
+ElementCreatedCallback injectElement(web.HTMLElement element) {
+  return (Object root) {
+    (root as web.HTMLElement).appendChild(element);
   };
 }

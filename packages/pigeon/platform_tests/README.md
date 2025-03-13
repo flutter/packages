@@ -15,7 +15,7 @@ necessary Pigeon output.
 
 The new unified test harness for all platforms. Tests in this plugin use the
 same structure as tests for the Flutter team-maintained plugins, as described
-[in the repository documentation](https://github.com/flutter/flutter/wiki/Plugin-Tests).
+[in the repository documentation](https://github.com/flutter/flutter/blob/master/docs/ecosystem/testing/Plugin-Tests.md#web-tests).
 
 ## alternate\_language\_test\_plugin
 

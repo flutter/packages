@@ -30,7 +30,7 @@ part 'go_router_builder.g.dart';
 @immutable
 class HomeScreenRoute extends GoRouteData {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, GoRouterState state) {
     return const HomeScreen();
   }
 }
@@ -44,7 +44,7 @@ class SongRoute extends GoRouteData {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, GoRouterState state) {
     return SongScreen(songId: id.toString());
   }
 }

@@ -5,7 +5,9 @@
 #import <OCMock/OCMock.h>
 
 @import image_picker_ios;
+#if __has_include(<image_picker_ios/image_picker_ios-umbrella.h>)
 @import image_picker_ios.Test;
+#endif
 @import UniformTypeIdentifiers;
 @import XCTest;
 
@@ -159,15 +161,6 @@
 - (void)testSaveProRAWImage API_AVAILABLE(ios(14)) {
   NSURL *imageURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"proRawImage"
                                                              withExtension:@"dng"];
-  NSItemProvider *itemProvider = [[NSItemProvider alloc] initWithContentsOfURL:imageURL];
-  PHPickerResult *result = [self createPickerResultWithProvider:itemProvider];
-
-  [self verifySavingImageWithPickerResult:result fullMetadata:YES withExtension:@"jpg"];
-}
-
-- (void)testSaveSVGImage API_AVAILABLE(ios(14)) {
-  NSURL *imageURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"svgImage"
-                                                             withExtension:@"svg"];
   NSItemProvider *itemProvider = [[NSItemProvider alloc] initWithContentsOfURL:imageURL];
   PHPickerResult *result = [self createPickerResultWithProvider:itemProvider];
 

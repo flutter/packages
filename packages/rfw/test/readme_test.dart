@@ -143,7 +143,7 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
       return <WidgetLibrary>[LocalWidgetLibrary(<String, LocalWidgetBuilder>{
         // #docregion defaultLocalWidgets
         'GreenBox': (BuildContext context, DataSource source) {
-          return Container(color: const Color(0xFF002211), child: source.child(<Object>['child']));
+          return ColoredBox(color: const Color(0xFF002211), child: source.child(<Object>['child']));
         },
         'Hello': (BuildContext context, DataSource source) {
           return Center(child: Text('Hello, ${source.v<String>(<Object>["name"])}!', textDirection: TextDirection.ltr));
@@ -175,7 +175,7 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
       return <WidgetLibrary>[LocalWidgetLibrary(<String, LocalWidgetBuilder>{
         // #docregion child
         'GreenBox': (BuildContext context, DataSource source) {
-          return Container(color: const Color(0xFF002211), child: source.child(<Object>['child']));
+          return ColoredBox(color: const Color(0xFF002211), child: source.child(<Object>['child']));
         },
         // #enddocregion child
         // #docregion isMap
@@ -191,7 +191,7 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
       return <WidgetLibrary>[LocalWidgetLibrary(<String, LocalWidgetBuilder>{
         // #docregion optionalChild
         'GreenBox': (BuildContext context, DataSource source) {
-          return Container(color: const Color(0xFF002211), child: source.optionalChild(<Object>['child']));
+          return ColoredBox(color: const Color(0xFF002211), child: source.optionalChild(<Object>['child']));
         },
         // #enddocregion optionalChild
         // #docregion length
@@ -285,6 +285,7 @@ void main() {
     final Runtime runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['material']), createMaterialWidgets());
+    addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent(parseDataFile(gameData));
     for (final String region in rawRemoteWidgetSnippets.keys) {
       final String body = rawRemoteWidgetSnippets[region]!;

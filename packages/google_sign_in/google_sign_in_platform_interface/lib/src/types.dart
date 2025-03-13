@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/widgets.dart';
-import 'package:quiver/core.dart';
 
 /// Default configuration options to use when signing in.
 ///
@@ -37,6 +36,7 @@ class SignInInitParameters {
     this.clientId,
     this.serverClientId,
     this.forceCodeForRefreshToken = false,
+    this.forceAccountName,
   });
 
   /// The list of OAuth scope codes to request when signing in.
@@ -79,6 +79,11 @@ class SignInInitParameters {
   ///
   /// This is only used on Android.
   final bool forceCodeForRefreshToken;
+
+  /// Can be used to explicitly set an account name on the underlying platform sign-in API.
+  ///
+  /// This should only be set on Android; other platforms may throw.
+  final String? forceAccountName;
 }
 
 /// Holds information about the signed in user.
@@ -132,8 +137,8 @@ class GoogleSignInUserData {
   @override
   // TODO(stuartmorgan): Make this class immutable in the next breaking change.
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => hashObjects(
-      <String?>[displayName, email, id, photoUrl, idToken, serverAuthCode]);
+  int get hashCode =>
+      Object.hash(displayName, email, id, photoUrl, idToken, serverAuthCode);
 
   @override
   // TODO(stuartmorgan): Make this class immutable in the next breaking change.
@@ -176,7 +181,7 @@ class GoogleSignInTokenData {
   @override
   // TODO(stuartmorgan): Make this class immutable in the next breaking change.
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => hash3(idToken, accessToken, serverAuthCode);
+  int get hashCode => Object.hash(idToken, accessToken, serverAuthCode);
 
   @override
   // TODO(stuartmorgan): Make this class immutable in the next breaking change.

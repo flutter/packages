@@ -115,24 +115,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       }
     }
     // Load explicitly allowed packages.
-    _allowedUnpinnedPackages
-        .addAll(_getAllowedPackages(_allowDependenciesFlag));
-    _allowedPinnedPackages
-        .addAll(_getAllowedPackages(_allowPinnedDependenciesFlag));
-  }
-
-  Iterable<String> _getAllowedPackages(String flag) {
-    return getStringListArg(flag).expand<String>((String item) {
-      if (item.endsWith('.yaml')) {
-        final File file = packagesDir.fileSystem.file(item);
-        final Object? yaml = loadYaml(file.readAsStringSync());
-        if (yaml == null) {
-          return <String>[];
-        }
-        return (yaml as YamlList).toList().cast<String>();
-      }
-      return <String>[item];
-    });
+    _allowedUnpinnedPackages.addAll(getYamlListArg(_allowDependenciesFlag));
+    _allowedPinnedPackages.addAll(getYamlListArg(_allowPinnedDependenciesFlag));
   }
 
   @override
@@ -200,7 +184,10 @@ class PubspecCheckCommand extends PackageLoopingCommand {
 
     final String? dependenciesError = _checkDependencies(pubspec);
     if (dependenciesError != null) {
-      printError('$indentation$dependenciesError');
+      printError(dependenciesError
+          .split('\n')
+          .map((String line) => '$indentation$line')
+          .join('\n'));
       passing = false;
     }
 
@@ -332,7 +319,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         false;
   }
 
-  // Validates the "implements" keyword for a plugin, returning an error
+  // Validates the "topics" keyword for a plugin, returning an error
   // string if there are any issues.
   String? _checkTopics(
     Pubspec pubspec, {
@@ -343,6 +330,10 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       return 'A published package should include "topics". '
           'See https://dart.dev/tools/pub/pubspec#topics.';
     }
+    if (topics.length > 5) {
+      return 'A published package should have maximum 5 topics. '
+          'See https://dart.dev/tools/pub/pubspec#topics.';
+    }
     if (isFlutterPlugin(package) && package.isFederated) {
       final String pluginName = package.directory.parent.basename;
       // '_' isn't allowed in topics, so convert to '-'.
@@ -351,6 +342,19 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         return 'A federated plugin package should include its plugin name as '
             'a topic. Add "$topicName" to the "topics" section.';
       }
+    }
+
+    // Validates topic names according to https://dart.dev/tools/pub/pubspec#topics
+    final RegExp expectedTopicFormat = RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
+    final Iterable<String> invalidTopics = topics.where((String topic) =>
+        !expectedTopicFormat.hasMatch(topic) ||
+        topic.length < 2 ||
+        topic.length > 32);
+    if (invalidTopics.isNotEmpty) {
+      return 'Invalid topic(s): ${invalidTopics.join(', ')} in "topics" section. '
+          'Topics must consist of lowercase alphanumerical characters or dash (but no double dash), '
+          'start with a-z and ending with a-z or 0-9, have a minimum of 2 characters '
+          'and have a maximum of 32 characters.';
     }
     return null;
   }
@@ -453,7 +457,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     Version? minMinFlutterVersion,
   }) {
     String unknownDartVersionError(Version flutterVersion) {
-      return 'Dart SDK version for Fluter SDK version '
+      return 'Dart SDK version for Flutter SDK version '
           '$flutterVersion is unknown. '
           'Please update the map for getDartSdkForFlutterSdk with the '
           'corresponding Dart version.';
@@ -468,9 +472,9 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     }
 
     final Version? dartConstraintMin =
-        _minimumForConstraint(pubspec.environment?['sdk']);
+        _minimumForConstraint(pubspec.environment['sdk']);
     final Version? flutterConstraintMin =
-        _minimumForConstraint(pubspec.environment?['flutter']);
+        _minimumForConstraint(pubspec.environment['flutter']);
 
     // Validate the Flutter constraint, if any.
     if (flutterConstraintMin != null && minMinFlutterVersion != null) {
@@ -525,6 +529,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   // there are any that aren't allowed.
   String? _checkDependencies(Pubspec pubspec) {
     final Set<String> badDependencies = <String>{};
+    final Set<String> misplacedDevDependencies = <String>{};
+    // Shipped dependencies.
     for (final Map<String, Dependency> dependencies
         in <Map<String, Dependency>>[
       pubspec.dependencies,
@@ -536,16 +542,49 @@ class PubspecCheckCommand extends PackageLoopingCommand {
         }
       });
     }
-    if (badDependencies.isEmpty) {
-      return null;
+
+    // Ensure that dev-only dependencies aren't in `dependencies`.
+    const Set<String> devOnlyDependencies = <String>{
+      'build_runner',
+      'integration_test',
+      'flutter_test',
+      'leak_tracker_flutter_testing',
+      'mockito',
+      'pigeon',
+      'test',
+    };
+    // Non-published packages like pigeon subpackages are allowed to violate
+    // the dev only dependencies rule, as are packages that end in `_test` (as
+    // they are assumed to be intended to be used as dev_dependencies by
+    // clients).
+    if (pubspec.publishTo != 'none' && !pubspec.name.endsWith('_test')) {
+      pubspec.dependencies.forEach((String name, Dependency dependency) {
+        if (devOnlyDependencies.contains(name)) {
+          misplacedDevDependencies.add(name);
+        }
+      });
     }
-    return 'The following unexpected non-local dependencies were found:\n'
-        '${badDependencies.map((String name) => '  $name').join('\n')}\n'
-        'Please see https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#Dependencies '
-        'for more information and next steps.';
+
+    final List<String> errors = <String>[
+      if (badDependencies.isNotEmpty)
+        '''
+The following unexpected non-local dependencies were found:
+${badDependencies.map((String name) => '  $name').join('\n')}
+Please see https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#Dependencies
+for more information and next steps.
+''',
+      if (misplacedDevDependencies.isNotEmpty)
+        '''
+The following dev dependencies were found in the dependencies section:
+${misplacedDevDependencies.map((String name) => '  $name').join('\n')}
+Please move them to dev_dependencies.
+''',
+    ];
+    return errors.isEmpty ? null : errors.join('\n\n');
   }
 
   // Checks whether a given dependency is allowed.
+  // Defaults to false.
   bool _shouldAllowDependency(String name, Dependency dependency) {
     if (dependency is PathDependency || dependency is SdkDependency) {
       return true;
@@ -560,7 +599,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       if (constraint is VersionRange &&
           constraint.min != null &&
           constraint.max != null &&
-          constraint.min == constraint.max) {
+          constraint.includeMin &&
+          constraint.includeMax) {
         return true;
       }
     }

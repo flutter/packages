@@ -22,12 +22,12 @@ void main() {
   setUp(() {
     plugin = FileSelectorMacOS();
     mockApi = MockTestFileSelectorApi();
-    TestFileSelectorApi.setup(mockApi);
+    TestFileSelectorApi.setUp(mockApi);
 
     // Set default stubs for tests that don't expect a specific return value,
     // so calls don't throw. Tests that `expect` return values should override
     // these locally.
-    when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String?>[]);
+    when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
     when(mockApi.displaySavePanel(any)).thenAnswer((_) async => null);
   });
 
@@ -39,7 +39,7 @@ void main() {
   group('openFile', () {
     test('works as expected with no arguments', () async {
       when(mockApi.displayOpenPanel(any))
-          .thenAnswer((_) async => <String?>['foo']);
+          .thenAnswer((_) async => <String>['foo']);
 
       final XFile? file = await plugin.openFile();
 
@@ -57,7 +57,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String?>[]);
+      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
 
       final XFile? file = await plugin.openFile();
 
@@ -134,7 +134,7 @@ void main() {
   group('openFiles', () {
     test('works as expected with no arguments', () async {
       when(mockApi.displayOpenPanel(any))
-          .thenAnswer((_) async => <String?>['foo', 'bar']);
+          .thenAnswer((_) async => <String>['foo', 'bar']);
 
       final List<XFile> files = await plugin.openFiles();
 
@@ -153,7 +153,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String?>[]);
+      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
 
       final List<XFile> files = await plugin.openFiles();
 
@@ -467,7 +467,7 @@ void main() {
   group('getDirectoryPath', () {
     test('works as expected with no arguments', () async {
       when(mockApi.displayOpenPanel(any))
-          .thenAnswer((_) async => <String?>['foo']);
+          .thenAnswer((_) async => <String>['foo']);
 
       final String? path = await plugin.getDirectoryPath();
 
@@ -485,7 +485,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String?>[]);
+      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
 
       final String? path = await plugin.getDirectoryPath();
 
@@ -533,7 +533,7 @@ void main() {
     });
 
     test('handles cancel', () async {
-      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String?>[]);
+      when(mockApi.displayOpenPanel(any)).thenAnswer((_) async => <String>[]);
 
       final List<String> paths = await plugin.getDirectoryPaths();
 

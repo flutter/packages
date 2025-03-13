@@ -22,10 +22,8 @@ class ContentType {
         switch (bits[0]) {
           case 'charset':
             _charset = bits[1];
-            break;
           case 'boundary':
             _boundary = bits[1];
-            break;
           default:
             throw StateError('Unable to parse "$chunk" in content-type.');
         }

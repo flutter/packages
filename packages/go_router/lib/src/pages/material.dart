@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import '../misc/extensions.dart';
 
 /// Checks for MaterialApp in the widget tree.
-bool isMaterialApp(Element elem) =>
-    elem.findAncestorWidgetOfExactType<MaterialApp>() != null;
+bool isMaterialApp(BuildContext context) =>
+    context.findAncestorWidgetOfExactType<MaterialApp>() != null;
 
 /// Creates a Material HeroController.
 HeroController createMaterialHeroController() =>

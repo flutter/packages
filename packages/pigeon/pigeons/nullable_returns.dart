@@ -24,7 +24,7 @@ abstract class NullableArgHostApi {
 
 @FlutterApi()
 abstract class NullableArgFlutterApi {
-  int doit(int? x);
+  int? doit(int? x);
 }
 
 @HostApi()

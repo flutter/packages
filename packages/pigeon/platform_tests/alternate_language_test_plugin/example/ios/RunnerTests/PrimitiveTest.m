@@ -18,10 +18,10 @@
 
 - (void)testIntPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  [api anIntValue:@1
+  [api anIntValue:1
        completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
          XCTAssertEqualObjects(@1, result);
          [expectation fulfill];
@@ -31,13 +31,14 @@
 
 - (void)testBoolPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  NSNumber *arg = @YES;
+  BOOL arg = YES;
   [api aBoolValue:arg
        completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
-         XCTAssertEqualObjects(arg, result);
+         XCTAssertNotNil(result);
+         XCTAssertEqual(arg, result.boolValue);
          [expectation fulfill];
        }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
@@ -45,21 +46,22 @@
 
 - (void)testDoublePrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  NSNumber *arg = @(1.5);
-  [api aBoolValue:arg
-       completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
-         XCTAssertEqualObjects(arg, result);
-         [expectation fulfill];
-       }];
+  NSInteger arg = 1.5;
+  [api aDoubleValue:arg
+         completion:^(NSNumber *_Nonnull result, FlutterError *_Nullable err) {
+           XCTAssertNotNil(result);
+           XCTAssertEqual(arg, result.integerValue);
+           [expectation fulfill];
+         }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
 - (void)testStringPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSString *arg = @"hello";
@@ -73,12 +75,12 @@
 
 - (void)testListPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
-  NSArray *arg = @[ @"hello" ];
+  NSArray<id> *arg = @[ @"hello" ];
   [api aListValue:arg
-       completion:^(NSArray *_Nonnull result, FlutterError *_Nullable err) {
+       completion:^(NSArray<id> *_Nonnull result, FlutterError *_Nullable err) {
          XCTAssertEqualObjects(arg, result);
          [expectation fulfill];
        }];
@@ -87,7 +89,7 @@
 
 - (void)testMapPrimitive {
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:PrimitiveFlutterApiGetCodec()];
+      [[EchoBinaryMessenger alloc] initWithCodec:GetPrimitiveCodec()];
   PrimitiveFlutterApi *api = [[PrimitiveFlutterApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   NSDictionary *arg = @{@"hello" : @1};

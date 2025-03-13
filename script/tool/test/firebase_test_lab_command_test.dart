@@ -165,6 +165,14 @@ public class MainActivityTest {
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
           ProcessCall(
+              'flutter',
+              const <String>['build', 'apk', '--debug', '--config-only'],
+              plugin1
+                  .getExamples()
+                  .first
+                  .platformDirectory(FlutterPlatform.android)
+                  .path),
+          ProcessCall(
               'gcloud',
               'auth activate-service-account --key-file=/path/to/key'
                   .split(' '),
@@ -185,6 +193,14 @@ public class MainActivityTest {
               'firebase test android run --type instrumentation --app build/app/outputs/apk/debug/app-debug.apk --test build/app/outputs/apk/androidTest/debug/app-debug-androidTest.apk --timeout 7m --results-bucket=gs://a_bucket --results-dir=plugins_android_test/plugin1/buildId/testRunId/example/0/ --device model=redfin,version=30 --device model=seoul,version=26'
                   .split(' '),
               '/packages/plugin1/example'),
+          ProcessCall(
+              'flutter',
+              const <String>['build', 'apk', '--debug', '--config-only'],
+              plugin2
+                  .getExamples()
+                  .first
+                  .platformDirectory(FlutterPlatform.android)
+                  .path),
           ProcessCall(
               '/packages/plugin2/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true'.split(' '),
@@ -245,6 +261,14 @@ public class MainActivityTest {
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
+          ProcessCall(
+              'flutter',
+              const <String>['build', 'apk', '--debug', '--config-only'],
+              plugin
+                  .getExamples()
+                  .first
+                  .platformDirectory(FlutterPlatform.android)
+                  .path),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true'.split(' '),
@@ -564,6 +588,48 @@ public class MainActivityTest {
       );
     });
 
+    test('supports kotlin implementation of integration_test runner', () async {
+      const String kotlinTestFileRelativePath =
+          'example/android/app/src/androidTest/MainActivityTest.kt';
+      final RepositoryPackage plugin =
+          createFakePlugin('plugin', packagesDir, extraFiles: <String>[
+        'test/plugin_test.dart',
+        'example/integration_test/foo_test.dart',
+        'example/android/gradlew',
+        kotlinTestFileRelativePath,
+      ]);
+
+      // Kotlin equivalent of the test runner
+      childFileWithSubcomponents(
+              plugin.directory, p.posix.split(kotlinTestFileRelativePath))
+          .writeAsStringSync('''
+@DartIntegrationTest
+@RunWith(FlutterTestRunner::class)
+class MainActivityTest {
+  @JvmField @Rule var rule = ActivityTestRule(MainActivity::class.java)
+}
+''');
+
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>[
+          'firebase-test-lab',
+          '--results-bucket=a_bucket',
+          '--device',
+          'model=redfin,version=30',
+        ],
+      );
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for plugin'),
+          contains('Testing example/integration_test/foo_test.dart...'),
+          contains('Ran for 1 package')
+        ]),
+      );
+    });
+
     test('skips packages with no android directory', () async {
       createFakePackage('package', packagesDir, extraFiles: <String>[
         'example/integration_test/foo_test.dart',
@@ -627,8 +693,12 @@ public class MainActivityTest {
         orderedEquals(<ProcessCall>[
           ProcessCall(
             'flutter',
-            'build apk --config-only'.split(' '),
-            '/packages/plugin/example/android',
+            'build apk --debug --config-only'.split(' '),
+            plugin
+                .getExamples()
+                .first
+                .platformDirectory(FlutterPlatform.android)
+                .path,
           ),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
@@ -799,6 +869,20 @@ public class MainActivityTest {
       expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
+          ProcessCall(
+              'flutter',
+              const <String>[
+                'build',
+                'apk',
+                '--debug',
+                '--config-only',
+                '--enable-experiment=exp1'
+              ],
+              plugin
+                  .getExamples()
+                  .first
+                  .platformDirectory(FlutterPlatform.android)
+                  .path),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true -Pextra-front-end-options=--enable-experiment%3Dexp1 -Pextra-gen-snapshot-options=--enable-experiment%3Dexp1'

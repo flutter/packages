@@ -62,6 +62,8 @@ void main() {
 
       const List<String> changedFiles = <String>[
         'packages/a_plugin/CHANGELOG.md',
+        // Dev-facing docs.
+        'packages/a_plugin/CONTRIBUTING.md',
         // Analysis.
         'packages/a_plugin/example/android/lint-baseline.xml',
         // Tests.
@@ -229,6 +231,27 @@ void main() {
       expect(state.hasChanges, true);
       expect(state.needsVersionChange, false);
       expect(state.needsChangelogChange, true);
+    });
+
+    test(
+        'requires neither a changelog nor version change for README.md when '
+        'code example is present in a federated plugin implementation',
+        () async {
+      final RepositoryPackage package = createFakePlugin(
+          'a_plugin_android', packagesDir.childDirectory('a_plugin'),
+          extraFiles: <String>['example/lib/main.dart']);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/a_plugin_android/example/README.md',
+      ];
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/a_plugin_android');
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
     });
 
     test(

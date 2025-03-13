@@ -8,6 +8,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// #docregion migrate
+import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
+// #enddocregion migrate
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'SharedPreferences Demo',
+      title: 'SharedPreferencesWithCache Demo',
       home: SharedPreferencesDemo(),
     );
   }
@@ -33,25 +36,56 @@ class SharedPreferencesDemo extends StatefulWidget {
 }
 
 class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  final Future<SharedPreferencesWithCache> _prefs =
+      SharedPreferencesWithCache.create(
+          cacheOptions: const SharedPreferencesWithCacheOptions(
+              // This cache will only accept the key 'counter'.
+              allowList: <String>{'counter'}));
   late Future<int> _counter;
+  int _externalCounter = 0;
 
   Future<void> _incrementCounter() async {
-    final SharedPreferences prefs = await _prefs;
+    final SharedPreferencesWithCache prefs = await _prefs;
     final int counter = (prefs.getInt('counter') ?? 0) + 1;
 
     setState(() {
-      _counter = prefs.setInt('counter', counter).then((bool success) {
+      _counter = prefs.setInt('counter', counter).then((_) {
         return counter;
       });
     });
   }
 
+  /// Gets external button presses that could occur in another instance, thread,
+  /// or via some native system.
+  Future<void> _getExternalCounter() async {
+    final SharedPreferencesAsync prefs = SharedPreferencesAsync();
+    final int externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
+    setState(() {
+      _externalCounter = externalCounter;
+    });
+  }
+
+  Future<void> _migratePreferences() async {
+    // #docregion migrate
+    const SharedPreferencesOptions sharedPreferencesOptions =
+        SharedPreferencesOptions();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
+      legacySharedPreferencesInstance: prefs,
+      sharedPreferencesAsyncOptions: sharedPreferencesOptions,
+      migrationCompletedKey: 'migrationCompleted',
+    );
+    // #enddocregion migrate
+  }
+
   @override
   void initState() {
     super.initState();
-    _counter = _prefs.then((SharedPreferences prefs) {
-      return prefs.getInt('counter') ?? 0;
+    _migratePreferences().then((_) {
+      _counter = _prefs.then((SharedPreferencesWithCache prefs) {
+        return prefs.getInt('counter') ?? 0;
+      });
+      _getExternalCounter();
     });
   }
 
@@ -59,7 +93,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SharedPreferences Demo'),
+        title: const Text('SharedPreferencesWithCache Demo'),
       ),
       body: Center(
           child: FutureBuilder<int>(
@@ -75,7 +109,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
                       return Text('Error: ${snapshot.error}');
                     } else {
                       return Text(
-                        'Button tapped ${snapshot.data} time${snapshot.data == 1 ? '' : 's'}.\n\n'
+                        'Button tapped ${snapshot.data ?? 0 + _externalCounter} time${(snapshot.data ?? 0 + _externalCounter) == 1 ? '' : 's'}.\n\n'
                         'This should persist across restarts.',
                       );
                     }

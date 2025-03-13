@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
+import android.view.Surface;
 import androidx.camera.video.Recorder;
 import androidx.camera.video.VideoCapture;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -76,6 +77,20 @@ public class VideoCaptureTest {
 
     testInstanceManager.remove(recorderId);
     testInstanceManager.remove(videoCaptureId);
+  }
+
+  @Test
+  public void setTargetRotation_makesCallToSetTargetRotation() {
+    final VideoCaptureHostApiImpl hostApi =
+        new VideoCaptureHostApiImpl(mockBinaryMessenger, testInstanceManager);
+    final long instanceIdentifier = 62;
+    final int targetRotation = Surface.ROTATION_270;
+
+    testInstanceManager.addDartCreatedInstance(mockVideoCapture, instanceIdentifier);
+
+    hostApi.setTargetRotation(instanceIdentifier, Long.valueOf(targetRotation));
+
+    verify(mockVideoCapture).setTargetRotation(targetRotation);
   }
 
   @Test

@@ -1,3 +1,51 @@
+## 2.0.27
+
+* Bumps flutter supported version to 3.27 and use flutter.compileSdkVersion.
+
+## 2.0.26
+
+* Removes flutter.compileSdkVersion for 35 to support flutter versions prior to 3.27.
+
+## 2.0.25
+
+* Updates compileSdk 35 to flutter.compileSdkVersion.
+
+## 2.0.24
+
+* Updates annotation to 1.9.1.
+
+## 2.0.23
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 2.0.22
+
+* Bumps `com.android.tools.build:gradle` from 7.2.1 to 8.5.1.
+
+## 2.0.21
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 2.0.20
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 2.0.19
+
+* Updates minSdkVersion to 19.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.0.18
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+
+## 2.0.17
+
+* Updates annotations lib to 1.7.0.
+
 ## 2.0.16
 
 * Adds pub topics to package metadata.

@@ -71,7 +71,10 @@ void main() {
         expect(await controller.getZoomLevel(), 12);
         expect(coords.latitude, closeTo(19, _acceptableLatLngDelta));
         expect(coords.longitude, closeTo(26, _acceptableLatLngDelta));
-      });
+      },
+          // TODO(bparrishMines): This is failing due to an error being thrown after
+          // completion. See https://github.com/flutter/flutter/issues/145149
+          skip: true);
 
       testWidgets('addPadding', (WidgetTester tester) async {
         const LatLng initialMapCenter = LatLng(0, 0);

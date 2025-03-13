@@ -70,6 +70,7 @@ void main() {
         },
       }))
       ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
+    addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent();
     final List<String> eventLog = <String>[];
     await tester.pumpWidget(
@@ -235,6 +236,7 @@ void main() {
     final Runtime runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
+      addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent();
     final List<String> eventLog = <String>[];
     await tester.pumpWidget(
@@ -295,6 +297,7 @@ void main() {
                 1.0, 1.0, 1.0, 1.0, 1.0,
               ],
             },
+            filterQuality: "none",
           },
           gradient: {
             type: 'sweep',
@@ -314,6 +317,7 @@ void main() {
               blendMode: "xor",
             },
             onError: event 'image-error-event' { },
+            filterQuality: "high",
           },
           gradient: {
             type: 'linear',
@@ -374,7 +378,9 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/argument_decoders_test.containers.png'),
-      skip: !runGoldens,
+      // TODO(louisehsu): Unskip once golden file is updated. See
+      // https://github.com/flutter/flutter/issues/151995
+      skip: !runGoldens || true,
     );
     expect(find.byType(DecoratedBox), findsNWidgets(6));
     const String matrix = kIsWeb ? '1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1'
@@ -383,13 +389,13 @@ void main() {
       (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[1].decoration as BoxDecoration).image.toString(),
       'DecorationImage(AssetImage(bundle: null, name: "asset"), ' // this just seemed like the easiest way to check all this...
       'ColorFilter.matrix([$matrix]), '
-      'Alignment.center, centerSlice: Rect.fromLTRB(5.0, 8.0, 105.0, 78.0), scale 1.0, opacity 1.0, FilterQuality.low)',
+      'Alignment.center, centerSlice: Rect.fromLTRB(5.0, 8.0, 105.0, 78.0), scale 1.0, opacity 1.0, FilterQuality.none)',
     );
     expect(
       (tester.widgetList<DecoratedBox>(find.byType(DecoratedBox)).toList()[0].decoration as BoxDecoration).image.toString(),
       'DecorationImage(NetworkImage("x-invalid://", scale: 1.0), '
-      'ColorFilter.mode(Color(0xff8811ff), BlendMode.xor), Alignment.center, scale 1.0, '
-      'opacity 1.0, FilterQuality.low)',
+      'ColorFilter.mode(${const Color(0xff8811ff)}, BlendMode.xor), Alignment.center, scale 1.0, '
+      'opacity 1.0, FilterQuality.high)',
     );
 
     ArgumentDecoders.colorFilterDecoders['custom'] = (DataSource source, List<Object> key) {

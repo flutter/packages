@@ -29,12 +29,14 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     SignInOption signInOption = SignInOption.standard,
     String? hostedDomain,
     String? clientId,
+    String? forceAccountName,
   }) {
     return initWithParams(SignInInitParameters(
       signInOption: signInOption,
       scopes: scopes,
       hostedDomain: hostedDomain,
       clientId: clientId,
+      forceAccountName: forceAccountName,
     ));
   }
 
@@ -47,6 +49,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
       clientId: params.clientId,
       serverClientId: params.serverClientId,
       forceCodeForRefreshToken: params.forceCodeForRefreshToken,
+      forceAccountName: params.forceAccountName,
     ));
   }
 
@@ -86,10 +89,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthCache({String? token}) {
-    // The token is not acutally nullable; see
-    // https://github.com/flutter/flutter/issues/129717
-    return _api.clearAuthCache(token!);
+  Future<void> clearAuthCache({required String token}) {
+    return _api.clearAuthCache(token);
   }
 
   @override

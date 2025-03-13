@@ -6,5 +6,5 @@ tasks:
   # new APIs but forget to update minimum versions of dependencies to where
   # those APIs are introduced.
   - name: analyze - downgraded
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["analyze", "--downgrade", "--custom-analysis=script/configs/custom_analysis.yaml"]

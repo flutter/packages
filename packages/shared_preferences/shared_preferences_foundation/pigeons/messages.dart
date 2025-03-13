@@ -5,21 +5,60 @@
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/messages.g.dart',
+  dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  swiftOut: 'darwin/Classes/messages.g.swift',
+  swiftOut:
+      'darwin/shared_preferences_foundation/Sources/shared_preferences_foundation/messages.g.swift',
   copyrightHeader: 'pigeons/copyright_header.txt',
 ))
 @HostApi(dartHostTestHandler: 'TestUserDefaultsApi')
-abstract class UserDefaultsApi {
+abstract class LegacyUserDefaultsApi {
   void remove(String key);
-  // TODO(stuartmorgan): Give these setters better Swift signatures (_,forKey:)
-  // once https://github.com/flutter/flutter/issues/105932 is fixed.
   void setBool(String key, bool value);
   void setDouble(String key, double value);
   void setValue(String key, Object value);
-  // TODO(stuartmorgan): Make these non-nullable once
-  // https://github.com/flutter/flutter/issues/97848 is fixed.
-  Map<String?, Object?> getAll(String prefix, List<String>? allowList);
+  Map<String, Object> getAll(String prefix, List<String>? allowList);
   bool clear(String prefix, List<String>? allowList);
+}
+
+class SharedPreferencesPigeonOptions {
+  SharedPreferencesPigeonOptions({
+    this.suiteName,
+  });
+  String? suiteName;
+}
+
+@HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')
+abstract class UserDefaultsApi {
+  /// Adds property to shared preferences data set of type String.
+  @SwiftFunction('set(key:value:options:)')
+  void set(
+    String key,
+    Object value,
+    SharedPreferencesPigeonOptions options,
+  );
+
+  /// Removes all properties from shared preferences data set with matching prefix.
+  void clear(
+    List<String>? allowList,
+    SharedPreferencesPigeonOptions options,
+  );
+
+  /// Gets all properties from shared preferences data set with matching prefix.
+  Map<String, Object> getAll(
+    List<String>? allowList,
+    SharedPreferencesPigeonOptions options,
+  );
+
+  /// Gets individual value stored with [key], if any.
+  Object? getValue(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  );
+
+  /// Gets all properties from shared preferences data set with matching prefix.
+  List<String> getKeys(
+    List<String>? allowList,
+    SharedPreferencesPigeonOptions options,
+  );
 }

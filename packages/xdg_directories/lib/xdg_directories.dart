@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-library xdg_directories;
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -175,6 +173,13 @@ Directory get dataHome =>
 ///
 /// Throws [StateError] if the HOME environment variable is not set.
 Directory? get runtimeDir => _directoryFromEnvironment('XDG_RUNTIME_DIR');
+
+/// The base directory relative to which user-specific state data should be
+/// written. (Corresponds to `$XDG_STATE_HOME`).
+///
+/// Throws [StateError] if the HOME environment variable is not set.
+Directory get stateHome =>
+    _directoryFromEnvironmentWithFallback('XDG_STATE_HOME', '.local/state');
 
 /// Gets the xdg user directory named by `dirName`.
 ///

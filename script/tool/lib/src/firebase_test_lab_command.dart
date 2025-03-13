@@ -245,22 +245,23 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
   ///
   /// Returns true if either gradlew was already present, or the build succeeds.
   Future<bool> _ensureGradleWrapperExists(GradleProject project) async {
-    if (!project.isConfigured()) {
-      print('Running flutter build apk...');
-      final String experiment = getStringArg(kEnableExperiment);
-      final int exitCode = await processRunner.runAndStream(
-          flutterCommand,
-          <String>[
-            'build',
-            'apk',
-            '--config-only',
-            if (experiment.isNotEmpty) '--enable-experiment=$experiment',
-          ],
-          workingDir: project.androidDirectory);
+    // Unconditionally re-run build with --debug --config-only, to ensure that
+    // the project is in a debug state even if it was previously configured.
+    print('Running flutter build apk...');
+    final String experiment = getStringArg(kEnableExperiment);
+    final int exitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>[
+          'build',
+          'apk',
+          '--debug',
+          '--config-only',
+          if (experiment.isNotEmpty) '--enable-experiment=$experiment',
+        ],
+        workingDir: project.androidDirectory);
 
-      if (exitCode != 0) {
-        return false;
-      }
+    if (exitCode != 0) {
+      return false;
     }
     return true;
   }
@@ -360,8 +361,16 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
         .where((FileSystemEntity entity) => entity is File)
         .cast<File>()
         .any((File file) {
-      return file.basename.endsWith('.java') &&
-          file.readAsStringSync().contains('@RunWith(FlutterTestRunner.class)');
+      if (file.basename.endsWith('.java')) {
+        return file
+            .readAsStringSync()
+            .contains('@RunWith(FlutterTestRunner.class)');
+      } else if (file.basename.endsWith('.kt')) {
+        return file
+            .readAsStringSync()
+            .contains('@RunWith(FlutterTestRunner::class)');
+      }
+      return false;
     });
   }
 }

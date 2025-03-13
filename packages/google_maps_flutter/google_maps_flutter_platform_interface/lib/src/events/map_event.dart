@@ -152,6 +152,14 @@ class CircleTapEvent extends MapEvent<CircleId> {
   CircleTapEvent(super.mapId, super.circleId);
 }
 
+/// An event fired when a [GroundOverlay] is tapped.
+class GroundOverlayTapEvent extends MapEvent<GroundOverlayId> {
+  /// Build a GroundOverlayTap Event triggered from the map represented by `mapId`.
+  ///
+  /// The `value` of this event is a [GroundOverlayId] object that represents the tapped GroundOverlay.
+  GroundOverlayTapEvent(super.mapId, super.croundOverlayId);
+}
+
 /// An event fired when a Map is tapped.
 class MapTapEvent extends _PositionedMapEvent<void> {
   /// Build an MapTap Event triggered from the map represented by `mapId`.
@@ -166,4 +174,13 @@ class MapLongPressEvent extends _PositionedMapEvent<void> {
   ///
   /// The `position` of this event is the LatLng where the Map was long pressed.
   MapLongPressEvent(int mapId, LatLng position) : super(mapId, position, null);
+}
+
+/// An event fired when a cluster icon managed by [ClusterManager] is tapped.
+class ClusterTapEvent extends MapEvent<Cluster> {
+  /// Build a ClusterTapEvent Event triggered from the map represented by `mapId`.
+  ///
+  /// The `value` of this event is a [Cluster] object that represents the tapped
+  /// cluster icon managed by [ClusterManager].
+  ClusterTapEvent(super.mapId, super.cluster);
 }

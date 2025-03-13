@@ -5,5 +5,6 @@ application, rather than in a plugin.
 
 To update the generated code, run:
 ```sh
-dart run pigeon --input pigeons/messages.dart
+cd ../..
+dart tool/generate.dart
 ```

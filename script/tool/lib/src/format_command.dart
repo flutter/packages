@@ -11,7 +11,9 @@ import 'package:meta/meta.dart';
 
 import 'common/core.dart';
 import 'common/output_utils.dart';
-import 'common/package_command.dart';
+import 'common/package_looping_command.dart';
+import 'common/pub_utils.dart';
+import 'common/repository_package.dart';
 
 /// In theory this should be 8191, but in practice that was still resulting in
 /// "The input line is too long" errors. This was chosen as a value that worked
@@ -31,48 +33,118 @@ const int _exitFlutterFormatFailed = 4;
 const int _exitJavaFormatFailed = 5;
 const int _exitGitFailed = 6;
 const int _exitDependencyMissing = 7;
+const int _exitSwiftFormatFailed = 8;
+const int _exitKotlinFormatFailed = 9;
+const int _exitSwiftLintFoundIssues = 10;
 
-final Uri _googleFormatterUrl = Uri.https('github.com',
+final Uri _javaFormatterUrl = Uri.https('github.com',
     '/google/google-java-format/releases/download/google-java-format-1.3/google-java-format-1.3-all-deps.jar');
+final Uri _kotlinFormatterUrl = Uri.https('maven.org',
+    '/maven2/com/facebook/ktfmt/0.46/ktfmt-0.46-jar-with-dependencies.jar');
 
 /// A command to format all package code.
-class FormatCommand extends PackageCommand {
+class FormatCommand extends PackageLoopingCommand {
   /// Creates an instance of the format command.
   FormatCommand(
     super.packagesDir, {
     super.processRunner,
     super.platform,
   }) {
-    argParser.addFlag('fail-on-change', hide: true);
-    argParser.addOption('clang-format',
+    argParser.addFlag(_failonChangeArg, hide: true);
+    argParser.addFlag(_dartArg, help: 'Format Dart files', defaultsTo: true);
+    argParser.addFlag(_clangFormatArg,
+        help: 'Format with "clang-format"', defaultsTo: true);
+    argParser.addFlag(_kotlinArg,
+        help: 'Format Kotlin files', defaultsTo: true);
+    argParser.addFlag(_javaArg, help: 'Format Java files', defaultsTo: true);
+    argParser.addFlag(_swiftArg,
+        help: 'Format and lint Swift files', defaultsTo: true);
+    argParser.addOption(_clangFormatPathArg,
         defaultsTo: 'clang-format', help: 'Path to "clang-format" executable.');
-    argParser.addOption('java',
+    argParser.addOption(_javaPathArg,
         defaultsTo: 'java', help: 'Path to "java" executable.');
+    argParser.addOption(_swiftFormatPathArg,
+        defaultsTo: 'swift-format', help: 'Path to "swift-format" executable.');
   }
+
+  static const String _dartArg = 'dart';
+  static const String _clangFormatArg = 'clang-format';
+  static const String _failonChangeArg = 'fail-on-change';
+  static const String _kotlinArg = 'kotlin';
+  static const String _javaArg = 'java';
+  static const String _swiftArg = 'swift';
+  static const String _clangFormatPathArg = 'clang-format-path';
+  static const String _javaPathArg = 'java-path';
+  static const String _swiftFormatPathArg = 'swift-format-path';
 
   @override
   final String name = 'format';
 
   @override
   final String description =
-      'Formats the code of all packages (Java, Objective-C, C++, and Dart).\n\n'
-      'This command requires "git", "flutter" and "clang-format" v5 to be in '
-      'your path.';
+      'Formats the code of all packages (C++, Dart, Java, Kotlin, Objective-C, '
+      'and optionally Swift).\n\n'
+      'This command requires "git", "flutter", "java", and "clang-format" v5 '
+      'to be in your path.';
 
   @override
-  Future<void> run() async {
-    final String googleFormatterPath = await _getGoogleFormatterPath();
+  Future<void> initializeRun() async {
+    final String javaFormatterPath = await _getJavaFormatterPath();
+    final String kotlinFormatterPath = await _getKotlinFormatterPath();
 
-    // This class is not based on PackageLoopingCommand because running the
-    // formatters separately for each package is an order of magnitude slower,
-    // due to the startup overhead of the formatters.
+    // All but Dart is formatted here rather than in runForPackage because
+    // running the formatters separately for each package is an order of
+    // magnitude slower, due to the startup overhead of the formatters.
+    //
+    // Dart has to be run per-package because the formatter can have different
+    // behavior based on the package's SDK, which can't be determined if the
+    // formatter isn't running in the context of the package.
     final Iterable<String> files =
         await _getFilteredFilePaths(getFiles(), relativeTo: packagesDir);
-    await _formatDart(files);
-    await _formatJava(files, googleFormatterPath);
-    await _formatCppAndObjectiveC(files);
+    if (getBoolArg(_javaArg)) {
+      await _formatJava(files, javaFormatterPath);
+    }
+    if (getBoolArg(_kotlinArg)) {
+      await _formatKotlin(files, kotlinFormatterPath);
+    }
+    if (getBoolArg(_clangFormatArg)) {
+      await _formatCppAndObjectiveC(files);
+    }
+    if (getBoolArg(_swiftArg)) {
+      await _formatAndLintSwift(files);
+    }
+  }
 
-    if (getBoolArg('fail-on-change')) {
+  @override
+  Future<PackageResult> runForPackage(RepositoryPackage package) async {
+    final Iterable<String> files = await _getFilteredFilePaths(
+      getFilesForPackage(package),
+      relativeTo: package.directory,
+    );
+    if (getBoolArg(_dartArg)) {
+      // Ensure that .dart_tool exists, since without it `dart` doesn't know
+      // the lanugage version, so the formatter may give different output.
+      if (!package.directory.childDirectory('.dart_tool').existsSync()) {
+        if (!await runPubGet(package, processRunner, super.platform)) {
+          printError('Unable to fetch dependencies.');
+          return PackageResult.fail(<String>['unable to fetch dependencies']);
+        }
+      }
+
+      await _formatDart(files, workingDir: package.directory);
+    }
+    // Success or failure is determined overall in completeRun, since most code
+    // isn't being validated per-package, so just always return success at the
+    // package level.
+    // TODO(stuartmorgan): Consider doing _didModifyAnything checks per-package
+    //  instead, since the other languages are already formatted by the time
+    //  this code is being run.
+    return PackageResult.success();
+  }
+
+  @override
+  Future<void> completeRun() async {
+    if (getBoolArg(_failonChangeArg)) {
       final bool modified = await _didModifyAnything();
       if (modified) {
         throw ToolExit(exitCommandFoundErrors);
@@ -83,8 +155,13 @@ class FormatCommand extends PackageCommand {
   Future<bool> _didModifyAnything() async {
     final io.ProcessResult modifiedFiles = await processRunner.run(
       'git',
-      <String>['ls-files', '--modified'],
-      workingDir: packagesDir,
+      <String>[
+        'ls-files',
+        '--modified',
+        packagesDir.path,
+        thirdPartyPackagesDir.path
+      ],
+      workingDir: packagesDir.parent,
       logOnError: true,
     );
     if (modifiedFiles.exitCode != 0) {
@@ -109,8 +186,8 @@ class FormatCommand extends PackageCommand {
 
     final io.ProcessResult diff = await processRunner.run(
       'git',
-      <String>['diff'],
-      workingDir: packagesDir,
+      <String>['diff', packagesDir.path, thirdPartyPackagesDir.path],
+      workingDir: packagesDir.parent,
       logOnError: true,
     );
     if (diff.exitCode != 0) {
@@ -141,10 +218,42 @@ class FormatCommand extends PackageCommand {
     }
   }
 
+  Future<void> _formatAndLintSwift(Iterable<String> files) async {
+    final Iterable<String> swiftFiles =
+        _getPathsWithExtensions(files, <String>{'.swift'});
+    if (swiftFiles.isNotEmpty) {
+      final String swiftFormat = await _findValidSwiftFormat();
+      print('Formatting .swift files...');
+      final int formatExitCode =
+          await _runBatched(swiftFormat, <String>['-i'], files: swiftFiles);
+      if (formatExitCode != 0) {
+        printError('Failed to format Swift files: exit code $formatExitCode.');
+        throw ToolExit(_exitSwiftFormatFailed);
+      }
+
+      print('Linting .swift files...');
+      final int lintExitCode = await _runBatched(
+          swiftFormat,
+          <String>[
+            'lint',
+            '--parallel',
+            '--strict',
+          ],
+          files: swiftFiles);
+      if (lintExitCode == 1) {
+        printError('Swift linter found issues. See above for linter output.');
+        throw ToolExit(_exitSwiftLintFoundIssues);
+      } else if (lintExitCode != 0) {
+        printError('Failed to lint Swift files: exit code $lintExitCode.');
+        throw ToolExit(_exitSwiftFormatFailed);
+      }
+    }
+  }
+
   Future<String> _findValidClangFormat() async {
-    final String clangFormatArg = getStringArg('clang-format');
-    if (await _hasDependency(clangFormatArg)) {
-      return clangFormatArg;
+    final String clangFormat = getStringArg(_clangFormatPathArg);
+    if (await _hasDependency(clangFormat)) {
+      return clangFormat;
     }
 
     // There is a known issue where "chromium/depot_tools/clang-format"
@@ -157,26 +266,36 @@ class FormatCommand extends PackageCommand {
       }
     }
     printError('Unable to run "clang-format". Make sure that it is in your '
-        'path, or provide a full path with --clang-format.');
+        'path, or provide a full path with --$_clangFormatPathArg.');
     throw ToolExit(_exitDependencyMissing);
   }
 
-  Future<void> _formatJava(
-      Iterable<String> files, String googleFormatterPath) async {
+  Future<String> _findValidSwiftFormat() async {
+    final String swiftFormat = getStringArg(_swiftFormatPathArg);
+    if (await _hasDependency(swiftFormat)) {
+      return swiftFormat;
+    }
+
+    printError('Unable to run "swift-format". Make sure that it is in your '
+        'path, or provide a full path with --$_swiftFormatPathArg.');
+    throw ToolExit(_exitDependencyMissing);
+  }
+
+  Future<void> _formatJava(Iterable<String> files, String formatterPath) async {
     final Iterable<String> javaFiles =
         _getPathsWithExtensions(files, <String>{'.java'});
     if (javaFiles.isNotEmpty) {
-      final String java = getStringArg('java');
+      final String java = getStringArg(_javaPathArg);
       if (!await _hasDependency(java)) {
         printError(
             'Unable to run "java". Make sure that it is in your path, or '
-            'provide a full path with --java.');
+            'provide a full path with --$_javaPathArg.');
         throw ToolExit(_exitDependencyMissing);
       }
 
       print('Formatting .java files...');
       final int exitCode = await _runBatched(
-          java, <String>['-jar', googleFormatterPath, '--replace'],
+          java, <String>['-jar', formatterPath, '--replace'],
           files: javaFiles);
       if (exitCode != 0) {
         printError('Failed to format Java files: exit code $exitCode.');
@@ -185,13 +304,40 @@ class FormatCommand extends PackageCommand {
     }
   }
 
-  Future<void> _formatDart(Iterable<String> files) async {
+  Future<void> _formatKotlin(
+      Iterable<String> files, String formatterPath) async {
+    final Iterable<String> kotlinFiles =
+        _getPathsWithExtensions(files, <String>{'.kt'});
+    if (kotlinFiles.isNotEmpty) {
+      final String java = getStringArg(_javaPathArg);
+      if (!await _hasDependency(java)) {
+        printError(
+            'Unable to run "java". Make sure that it is in your path, or '
+            'provide a full path with --$_javaPathArg.');
+        throw ToolExit(_exitDependencyMissing);
+      }
+
+      print('Formatting .kt files...');
+      final int exitCode = await _runBatched(
+          java, <String>['-jar', formatterPath],
+          files: kotlinFiles);
+      if (exitCode != 0) {
+        printError('Failed to format Kotlin files: exit code $exitCode.');
+        throw ToolExit(_exitKotlinFormatFailed);
+      }
+    }
+  }
+
+  Future<void> _formatDart(
+    Iterable<String> files, {
+    Directory? workingDir,
+  }) async {
     final Iterable<String> dartFiles =
         _getPathsWithExtensions(files, <String>{'.dart'});
     if (dartFiles.isNotEmpty) {
       print('Formatting .dart files...');
-      final int exitCode =
-          await _runBatched('dart', <String>['format'], files: dartFiles);
+      final int exitCode = await _runBatched('dart', <String>['format'],
+          files: dartFiles, workingDir: workingDir);
       if (exitCode != 0) {
         printError('Failed to format Dart files: exit code $exitCode.');
         throw ToolExit(_exitFlutterFormatFailed);
@@ -246,6 +392,8 @@ class FormatCommand extends PackageCommand {
                 pathFragmentForDirectories(<String>['example', 'build'])) &&
             // Ignore files in Pods, which are not part of the repository.
             !path.contains(pathFragmentForDirectories(<String>['Pods'])) &&
+            // See https://github.com/flutter/flutter/issues/144039
+            !path.endsWith('GeneratedPluginRegistrant.swift') &&
             // Ignore .dart_tool/, which can have various intermediate files.
             !path.contains(pathFragmentForDirectories(<String>['.dart_tool'])))
         .toList();
@@ -257,7 +405,7 @@ class FormatCommand extends PackageCommand {
         (String filePath) => extensions.contains(path.extension(filePath)));
   }
 
-  Future<String> _getGoogleFormatterPath() async {
+  Future<String> _getJavaFormatterPath() async {
     final String javaFormatterPath = path.join(
         path.dirname(path.fromUri(platform.script)),
         'google-java-format-1.3-all-deps.jar');
@@ -266,11 +414,27 @@ class FormatCommand extends PackageCommand {
 
     if (!javaFormatterFile.existsSync()) {
       print('Downloading Google Java Format...');
-      final http.Response response = await http.get(_googleFormatterUrl);
+      final http.Response response = await http.get(_javaFormatterUrl);
       javaFormatterFile.writeAsBytesSync(response.bodyBytes);
     }
 
     return javaFormatterPath;
+  }
+
+  Future<String> _getKotlinFormatterPath() async {
+    final String kotlinFormatterPath = path.join(
+        path.dirname(path.fromUri(platform.script)),
+        'ktfmt-0.46-jar-with-dependencies.jar');
+    final File kotlinFormatterFile =
+        packagesDir.fileSystem.file(kotlinFormatterPath);
+
+    if (!kotlinFormatterFile.existsSync()) {
+      print('Downloading ktfmt...');
+      final http.Response response = await http.get(_kotlinFormatterUrl);
+      kotlinFormatterFile.writeAsBytesSync(response.bodyBytes);
+    }
+
+    return kotlinFormatterPath;
   }
 
   /// Returns true if [command] can be run successfully.
@@ -316,11 +480,8 @@ class FormatCommand extends PackageCommand {
   ///
   /// Returns the exit code of the first failure, which stops the run, or 0
   /// on success.
-  Future<int> _runBatched(
-    String command,
-    List<String> arguments, {
-    required Iterable<String> files,
-  }) async {
+  Future<int> _runBatched(String command, List<String> arguments,
+      {required Iterable<String> files, Directory? workingDir}) async {
     final int commandLineMax =
         platform.isWindows ? windowsCommandLineMax : nonWindowsCommandLineMax;
 
@@ -338,7 +499,7 @@ class FormatCommand extends PackageCommand {
       batch.sort(); // For ease of testing.
       final int exitCode = await processRunner.runAndStream(
           command, <String>[...arguments, ...batch],
-          workingDir: packagesDir);
+          workingDir: workingDir ?? packagesDir);
       if (exitCode != 0) {
         return exitCode;
       }

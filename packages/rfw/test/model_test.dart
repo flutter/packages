@@ -101,4 +101,71 @@ void main() {
     expect(result.depth, 9);
     expect(result.parts, const <Object>[0, 1]);
   });
+
+  testWidgets('$SourceLocation comparison', (WidgetTester tester) async {
+    const SourceLocation test1 = SourceLocation('test', 123);
+    const SourceLocation test2 = SourceLocation('test', 234);
+    expect(test1.compareTo(test2), lessThan(0));
+    // test1 vs test1
+    expect(test1 == test1, isTrue);
+    expect(test1 < test1, isFalse);
+    expect(test1 <= test1, isTrue);
+    expect(test1 > test1, isFalse);
+    expect(test1 >= test1, isTrue);
+    // test1 vs test2
+    expect(test1 == test2, isFalse);
+    expect(test1 < test2, isTrue);
+    expect(test1 <= test2, isTrue);
+    expect(test1 > test2, isFalse);
+    expect(test1 >= test2, isFalse);
+    // test2 vs test1
+    expect(test2 == test1, isFalse);
+    expect(test2 < test1, isFalse);
+    expect(test2 <= test1, isFalse);
+    expect(test2 > test1, isTrue);
+    expect(test2 >= test1, isTrue);
+    // map
+    final Map<SourceLocation, SourceLocation> map = <SourceLocation, SourceLocation>{
+      test1: test1,
+      test2: test2,
+    };
+    expect(map[test1], test1);
+    expect(map[test2], test2);
+  });
+
+  testWidgets('$SourceLocation with non-matching sources', (WidgetTester tester) async {
+    const SourceLocation test1 = SourceLocation('test1', 123);
+    const SourceLocation test2 = SourceLocation('test2', 234);
+    expect(() => test1.compareTo(test2), throwsA(anything));
+    expect(() => test1 < test2, throwsA(anything));
+    expect(() => test1 <= test2, throwsA(anything));
+    expect(() => test1 > test2, throwsA(anything));
+    expect(() => test1 >= test2, throwsA(anything));
+  });
+
+  testWidgets('$SourceLocation toString', (WidgetTester tester) async {
+    const SourceLocation test = SourceLocation('test1', 123);
+    expect('$test', 'test1@123');
+  });
+
+  testWidgets('$SourceRange', (WidgetTester tester) async {
+    const SourceLocation a = SourceLocation('test', 123);
+    const SourceLocation b = SourceLocation('test', 124);
+    const SourceLocation c = SourceLocation('test', 125);
+    final SourceRange range1 = SourceRange(a, b);
+    final SourceRange range2 = SourceRange(b, c);
+    // toString
+    expect('$range1', 'test@123..124');
+    // equality
+    expect(range1 == range1, isTrue);
+    expect(range1 == range2, isFalse);
+    expect(range2 == range1, isFalse);
+    // map
+    final Map<SourceRange, SourceRange> map = <SourceRange, SourceRange>{
+      range1: range1,
+      range2: range2,
+    };
+    expect(map[range1], range1);
+    expect(map[range2], range2);
+  });
 }

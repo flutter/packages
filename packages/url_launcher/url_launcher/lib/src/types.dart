@@ -14,8 +14,11 @@ enum LaunchMode {
   /// implementation.
   platformDefault,
 
-  /// Loads the URL in an in-app web view (e.g., Android Custom Tabs, Safari View Controller).
+  /// Loads the URL in an in-app web view (e.g., Android WebView).
   inAppWebView,
+
+  /// Loads the URL in an in-app web view (e.g., Android Custom Tabs, SFSafariViewController).
+  inAppBrowserView,
 
   /// Passes the URL to the OS to be handled by another application.
   externalApplication,
@@ -51,4 +54,16 @@ class WebViewConfiguration {
   /// [Browser.EXTRA_HEADERS](https://developer.android.com/reference/android/provider/Browser#EXTRA_HEADERS)
   /// Not all browsers support this, so it is not guaranteed to be honored.
   final Map<String, String> headers;
+}
+
+/// Additional configuration options for [LaunchMode.inAppBrowserView]
+@immutable
+class BrowserConfiguration {
+  /// Creates a new InAppBrowserConfiguration with given settings.
+  const BrowserConfiguration({this.showTitle = false});
+
+  /// Whether or not to show the webpage title.
+  ///
+  /// May not be supported on all platforms.
+  final bool showTitle;
 }

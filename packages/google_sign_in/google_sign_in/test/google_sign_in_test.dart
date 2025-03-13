@@ -13,7 +13,7 @@ import 'package:mockito/mockito.dart';
 import 'google_sign_in_test.mocks.dart';
 
 /// Verify that [GoogleSignInAccount] can be mocked even though it's unused
-// ignore: avoid_implementing_value_types, must_be_immutable
+// ignore: avoid_implementing_value_types, must_be_immutable, unreachable_from_main
 class MockGoogleSignInAccount extends Mock implements GoogleSignInAccount {}
 
 @GenerateMocks(<Type>[GoogleSignInPlatform])
@@ -81,6 +81,28 @@ void main() {
       verify(mockPlatform.signIn());
     });
 
+    test(
+        'clientId and serverClientId parameters is forwarded to implementation',
+        () async {
+      // #docregion GoogleSignIn
+      final GoogleSignIn googleSignIn = GoogleSignIn(
+        // The OAuth client id of your app. This is required.
+        clientId: 'Your Client ID',
+        // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
+        serverClientId: 'Your Server ID',
+      );
+      // #enddocregion GoogleSignIn
+
+      await googleSignIn.signIn();
+
+      _verifyInit(
+        mockPlatform,
+        clientId: 'Your Client ID',
+        serverClientId: 'Your Server ID',
+      );
+      verify(mockPlatform.signIn());
+    });
+
     test('forceCodeForRefreshToken sent with init method call', () async {
       final GoogleSignIn googleSignIn =
           GoogleSignIn(forceCodeForRefreshToken: true);
@@ -88,6 +110,17 @@ void main() {
       await googleSignIn.signIn();
 
       _verifyInit(mockPlatform, forceCodeForRefreshToken: true);
+      verify(mockPlatform.signIn());
+    });
+
+    test('forceAccountName sent with init method call', () async {
+      final GoogleSignIn googleSignIn =
+          GoogleSignIn(forceAccountName: 'fakeEmailAddress@example.com');
+
+      await googleSignIn.signIn();
+
+      _verifyInit(mockPlatform,
+          forceAccountName: 'fakeEmailAddress@example.com');
       verify(mockPlatform.signIn());
     });
 
@@ -425,6 +458,7 @@ void _verifyInit(
   String? clientId,
   String? serverClientId,
   bool forceCodeForRefreshToken = false,
+  String? forceAccountName,
 }) {
   verify(mockSignIn.initWithParams(argThat(
     isA<SignInInitParameters>()
@@ -457,6 +491,11 @@ void _verifyInit(
           (SignInInitParameters p) => p.forceCodeForRefreshToken,
           'forceCodeForRefreshToken',
           forceCodeForRefreshToken,
+        )
+        .having(
+          (SignInInitParameters p) => p.forceAccountName,
+          'forceAccountName',
+          forceAccountName,
         ),
   )));
 }

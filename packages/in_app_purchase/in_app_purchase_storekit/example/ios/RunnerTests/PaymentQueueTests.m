@@ -1,1 +1,0 @@
-../../shared/RunnerTests/PaymentQueueTests.m

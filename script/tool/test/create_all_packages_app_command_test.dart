@@ -10,6 +10,7 @@ import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/create_all_packages_app_command.dart';
 import 'package:platform/platform.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -67,14 +68,14 @@ dependencies {
       ..writeAsStringSync('''
 android {
     namespace 'dev.flutter.packages.foo.example'
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
         applicationId "dev.flutter.packages.foo.example"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 32
+        targetSdkVersion 35
     }
 }
 
@@ -105,6 +106,21 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 ###
+''');
+
+    // iOS
+    final Directory iOS = package.platformDirectory(FlutterPlatform.ios);
+    iOS.childDirectory('Runner.xcodeproj').childFile('project.pbxproj')
+      ..createSync(recursive: true)
+      ..writeAsStringSync('''
+    97C147041CF9000F007C117D /* Release */ = {
+      isa = XCBuildConfiguration;
+      buildSettings = {
+        GCC_WARN_UNUSED_VARIABLE = YES;
+        IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+      };
+      name = Release;
+    };
 ''');
 
     // macOS
@@ -205,6 +221,38 @@ project 'Runner', {
           ]));
     });
 
+    test(
+        'pubspec special-cases camera_android_camerax to remove it from deps but not overrides',
+        () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      final Directory cameraDir = packagesDir.childDirectory('camera');
+      createFakePlugin('camera', cameraDir);
+      createFakePlugin('camera_android', cameraDir);
+      createFakePlugin('camera_android_camerax', cameraDir);
+
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
+      final Pubspec pubspec = command.app.parsePubspec();
+
+      final Dependency? cameraDependency = pubspec.dependencies['camera'];
+      final Dependency? cameraAndroidDependency =
+          pubspec.dependencies['camera_android'];
+      final Dependency? cameraCameraXDependency =
+          pubspec.dependencies['camera_android_camerax'];
+      expect(cameraDependency, isA<PathDependency>());
+      expect((cameraDependency! as PathDependency).path,
+          endsWith('/packages/camera/camera'));
+      expect(cameraAndroidDependency, isA<PathDependency>());
+      expect((cameraAndroidDependency! as PathDependency).path,
+          endsWith('/packages/camera/camera_android'));
+      expect(cameraCameraXDependency, null);
+
+      final Dependency? cameraCameraXOverride =
+          pubspec.dependencyOverrides['camera_android_camerax'];
+      expect(cameraCameraXOverride, isA<PathDependency>());
+      expect((cameraCameraXOverride! as PathDependency).path,
+          endsWith('/packages/camera/camera_android_camerax'));
+    });
+
     test('legacy files are copied when requested', () async {
       writeFakeFlutterCreateOutput(testRoot);
       createFakePlugin('plugina', packagesDir);
@@ -267,7 +315,7 @@ project 'Runner', {
       const String legacyAppBuildGradleContents = '''
 # This is the legacy file
 android {
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk flutter.compileSdkVersion
     defaultConfig {
         minSdkVersion flutter.minSdkVersion
     }
@@ -294,8 +342,7 @@ android {
           buildGradle,
           containsAll(<Matcher>[
             contains('This is the legacy file'),
-            contains('minSdkVersion 21'),
-            contains('compileSdkVersion 33'),
+            contains('compileSdk 34'),
           ]));
     });
 
@@ -309,7 +356,7 @@ android {
       final Pubspec generatedPubspec = command.app.parsePubspec();
 
       const String dartSdkKey = 'sdk';
-      expect(generatedPubspec.environment?[dartSdkKey].toString(),
+      expect(generatedPubspec.environment[dartSdkKey].toString(),
           existingSdkConstraint);
     });
 
@@ -328,9 +375,7 @@ android {
       expect(
           buildGradle,
           containsAll(<Matcher>[
-            contains('minSdkVersion 21'),
-            contains('compileSdkVersion 33'),
-            contains('multiDexEnabled true'),
+            contains('compileSdk 34'),
             contains('androidx.lifecycle:lifecycle-runtime'),
           ]));
     });
@@ -399,6 +444,24 @@ android {
           everyElement((String line) =>
               !line.contains('MACOSX_DEPLOYMENT_TARGET') ||
               line.contains('10.15')));
+    });
+
+    test('iOS deployment target is modified in pbxproj', () async {
+      writeFakeFlutterCreateOutput(testRoot);
+      createFakePlugin('plugina', packagesDir);
+
+      await runCapturingPrint(runner, <String>['create-all-packages-app']);
+      final List<String> pbxproj = command.app
+          .platformDirectory(FlutterPlatform.ios)
+          .childDirectory('Runner.xcodeproj')
+          .childFile('project.pbxproj')
+          .readAsLinesSync();
+
+      expect(
+          pbxproj,
+          everyElement((String line) =>
+              !line.contains('IPHONEOS_DEPLOYMENT_TARGET') ||
+              line.contains('14.0')));
     });
 
     test('calls flutter pub get', () async {

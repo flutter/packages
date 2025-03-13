@@ -13,33 +13,20 @@ import 'package:pigeon/pigeon.dart';
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
-class TextureMessage {
-  TextureMessage(this.textureId);
-  int textureId;
+
+/// Pigeon equivalent of VideoViewType.
+enum PlatformVideoViewType {
+  textureView,
+  platformView,
 }
 
-class LoopingMessage {
-  LoopingMessage(this.textureId, this.isLooping);
-  int textureId;
-  bool isLooping;
-}
+/// Information passed to the platform view creation.
+class PlatformVideoViewCreationParams {
+  const PlatformVideoViewCreationParams({
+    required this.playerId,
+  });
 
-class VolumeMessage {
-  VolumeMessage(this.textureId, this.volume);
-  int textureId;
-  double volume;
-}
-
-class PlaybackSpeedMessage {
-  PlaybackSpeedMessage(this.textureId, this.speed);
-  int textureId;
-  double speed;
-}
-
-class PositionMessage {
-  PositionMessage(this.textureId, this.position);
-  int textureId;
-  int position;
+  final int playerId;
 }
 
 class CreateMessage {
@@ -48,25 +35,21 @@ class CreateMessage {
   String? uri;
   String? packageName;
   String? formatHint;
-  Map<String?, String?> httpHeaders;
-}
-
-class MixWithOthersMessage {
-  MixWithOthersMessage(this.mixWithOthers);
-  bool mixWithOthers;
+  Map<String, String> httpHeaders;
+  PlatformVideoViewType? viewType;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
 abstract class AndroidVideoPlayerApi {
   void initialize();
-  TextureMessage create(CreateMessage msg);
-  void dispose(TextureMessage msg);
-  void setLooping(LoopingMessage msg);
-  void setVolume(VolumeMessage msg);
-  void setPlaybackSpeed(PlaybackSpeedMessage msg);
-  void play(TextureMessage msg);
-  PositionMessage position(TextureMessage msg);
-  void seekTo(PositionMessage msg);
-  void pause(TextureMessage msg);
-  void setMixWithOthers(MixWithOthersMessage msg);
+  int create(CreateMessage msg);
+  void dispose(int playerId);
+  void setLooping(int playerId, bool looping);
+  void setVolume(int playerId, double volume);
+  void setPlaybackSpeed(int playerId, double speed);
+  void play(int playerId);
+  int position(int playerId);
+  void seekTo(int playerId, int position);
+  void pause(int playerId);
+  void setMixWithOthers(bool mixWithOthers);
 }

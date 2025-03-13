@@ -31,7 +31,7 @@ void main() {
         'exposureMode': 'auto',
         'exposurePointSupported': true,
         'focusMode': 'auto',
-        'focusPointSupported': true
+        'focusPointSupported': true,
       });
 
       expect(event.cameraId, 1);

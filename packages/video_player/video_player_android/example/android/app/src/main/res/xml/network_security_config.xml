@@ -3,5 +3,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">www.sample-videos.com</domain>
         <domain includeSubdomains="true">184.72.239.149</domain>
+        <!-- Needed for Espresso integration test -->
+        <domain includeSubdomains="true">127.0.0.1</domain>
     </domain-config>
 </network-security-config>

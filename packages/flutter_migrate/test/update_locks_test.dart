@@ -120,7 +120,7 @@ flutter:
         currentDir.childDirectory('android').childFile('gradle.properties');
     gradleProperties.writeAsStringSync('''
 org.gradle.daemon=false
-org.gradle.jvmargs=-Xmx1536M
+org.gradle.jvmargs=-Xmx4G
 android.useAndroidX=true
 android.enableJetifier=true
 ''', flush: true);
@@ -203,7 +203,7 @@ subprojects {
   }, timeout: const Timeout(Duration(seconds: 500)), skip: true);
 }
 
-class _VersionCode extends Comparable<_VersionCode> {
+class _VersionCode implements Comparable<_VersionCode> {
   _VersionCode(this.first, this.second, this.third, this.caret);
   _VersionCode.fromString(String str)
       : first = 0,

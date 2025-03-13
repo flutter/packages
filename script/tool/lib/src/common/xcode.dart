@@ -6,7 +6,9 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:file/file.dart';
+import 'package:platform/platform.dart';
 
+import 'core.dart';
 import 'output_utils.dart';
 import 'process_runner.dart';
 
@@ -32,27 +34,82 @@ class Xcode {
 
   /// Runs an `xcodebuild` in [directory] with the given parameters.
   Future<int> runXcodeBuild(
-    Directory directory, {
+    Directory exampleDirectory,
+    String targetPlatform, {
     List<String> actions = const <String>['build'],
     required String workspace,
     required String scheme,
     String? configuration,
     List<String> extraFlags = const <String>[],
-  }) {
-    final List<String> args = <String>[
-      _xcodeBuildCommand,
-      ...actions,
-      ...<String>['-workspace', workspace],
-      ...<String>['-scheme', scheme],
-      if (configuration != null) ...<String>['-configuration', configuration],
-      ...extraFlags,
-    ];
-    final String completeTestCommand = '$_xcRunCommand ${args.join(' ')}';
-    if (log) {
-      print(completeTestCommand);
+    required Platform hostPlatform,
+  }) async {
+    final FileSystem fileSystem = exampleDirectory.fileSystem;
+    String? resultBundlePath;
+    final Directory? logsDirectory = ciLogsDirectory(hostPlatform, fileSystem);
+    Directory? resultBundleTemp;
+    try {
+      if (logsDirectory != null) {
+        resultBundleTemp =
+            fileSystem.systemTempDirectory.createTempSync('flutter_xcresult.');
+        resultBundlePath = resultBundleTemp.childDirectory('result').path;
+      }
+      File? disabledSandboxEntitlementFile;
+      if (actions.contains('test') && targetPlatform.toLowerCase() == 'macos') {
+        disabledSandboxEntitlementFile = _createDisabledSandboxEntitlementFile(
+          exampleDirectory.childDirectory(targetPlatform.toLowerCase()),
+          configuration ?? 'Debug',
+        );
+      }
+      final List<String> args = <String>[
+        _xcodeBuildCommand,
+        ...actions,
+        ...<String>['-workspace', workspace],
+        ...<String>['-scheme', scheme],
+        if (resultBundlePath != null) ...<String>[
+          '-resultBundlePath',
+          resultBundlePath
+        ],
+        if (configuration != null) ...<String>['-configuration', configuration],
+        ...extraFlags,
+        if (disabledSandboxEntitlementFile != null)
+          'CODE_SIGN_ENTITLEMENTS=${disabledSandboxEntitlementFile.path}',
+      ];
+      final String completeTestCommand = '$_xcRunCommand ${args.join(' ')}';
+      if (log) {
+        print(completeTestCommand);
+      }
+      final int resultExit = await processRunner
+          .runAndStream(_xcRunCommand, args, workingDir: exampleDirectory);
+
+      if (resultExit != 0 && resultBundleTemp != null) {
+        final Directory xcresultBundle =
+            resultBundleTemp.childDirectory('result.xcresult');
+        if (logsDirectory != null) {
+          if (xcresultBundle.existsSync()) {
+            // Zip the test results to the artifacts directory for upload.
+            final File zipPath = logsDirectory.childFile(
+                'xcodebuild-${DateTime.now().toLocal().toIso8601String()}.zip');
+            await processRunner.run(
+              'zip',
+              <String>[
+                '-r',
+                '-9',
+                '-q',
+                zipPath.path,
+                xcresultBundle.basename,
+              ],
+              workingDir: resultBundleTemp,
+            );
+          } else {
+            print(
+                'xcresult bundle ${xcresultBundle.path} does not exist, skipping upload');
+          }
+        }
+      }
+      return resultExit;
+    } finally {
+      resultBundleTemp?.deleteSync(recursive: true);
     }
-    return processRunner.runAndStream(_xcRunCommand, args,
-        workingDir: directory);
   }
 
   /// Returns true if [project], which should be an .xcodeproj directory,
@@ -155,5 +212,49 @@ class Xcode {
       }
     }
     return null;
+  }
+
+  /// Finds and copies macOS entitlements file. In the copy, disables sandboxing.
+  /// If entitlements file is not found, returns null.
+  ///
+  /// As of macOS 14, testing a macOS sandbox app may prompt the user to grant
+  /// access to the app. To workaround this in CI, we create and use a entitlements
+  /// file with sandboxing disabled. See
+  /// https://developer.apple.com/documentation/security/app_sandbox/accessing_files_from_the_macos_app_sandbox.
+  File? _createDisabledSandboxEntitlementFile(
+    Directory macOSDirectory,
+    String configuration,
+  ) {
+    final String entitlementDefaultFileName =
+        configuration == 'Release' ? 'Release' : 'DebugProfile';
+
+    final File entitlementFile = macOSDirectory
+        .childDirectory('Runner')
+        .childFile('$entitlementDefaultFileName.entitlements');
+
+    if (!entitlementFile.existsSync()) {
+      print('Unable to find entitlements file at ${entitlementFile.path}');
+      return null;
+    }
+
+    final String originalEntitlementFileContents =
+        entitlementFile.readAsStringSync();
+    final File disabledSandboxEntitlementFile = macOSDirectory
+        .fileSystem.systemTempDirectory
+        .createTempSync('flutter_disable_sandbox_entitlement.')
+        .childFile(
+            '${entitlementDefaultFileName}WithDisabledSandboxing.entitlements');
+    disabledSandboxEntitlementFile.createSync(recursive: true);
+    disabledSandboxEntitlementFile.writeAsStringSync(
+      originalEntitlementFileContents.replaceAll(
+        RegExp(
+            r'<key>com\.apple\.security\.app-sandbox<\/key>[\S\s]*?<true\/>'),
+        '''
+<key>com.apple.security.app-sandbox</key>
+	<false/>''',
+      ),
+    );
+
+    return disabledSandboxEntitlementFile;
   }
 }

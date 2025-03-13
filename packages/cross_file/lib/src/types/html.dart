@@ -4,10 +4,11 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
+import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:meta/meta.dart';
+import 'package:web/web.dart';
 
 import '../web_helpers/web_helpers.dart';
 import 'base.dart';
@@ -65,7 +66,7 @@ class XFile extends XFileBase {
         super(path) {
     if (path == null) {
       _browserBlob = _createBlobFromBytes(bytes, mimeType);
-      _path = Url.createObjectUrl(_browserBlob);
+      _path = URL.createObjectURL(_browserBlob!);
     } else {
       _path = path;
     }
@@ -74,8 +75,9 @@ class XFile extends XFileBase {
   // Initializes a Blob from a bunch of `bytes` and an optional `mimeType`.
   Blob _createBlobFromBytes(Uint8List bytes, String? mimeType) {
     return (mimeType == null)
-        ? Blob(<dynamic>[bytes])
-        : Blob(<dynamic>[bytes], mimeType);
+        ? Blob(<JSUint8Array>[bytes.toJS].toJS)
+        : Blob(
+            <JSUint8Array>[bytes.toJS].toJS, BlobPropertyBag(type: mimeType));
   }
 
   // Overridable (meta) data that can be specified by the constructors.
@@ -127,26 +129,30 @@ class XFile extends XFileBase {
 
     // Attempt to re-hydrate the blob from the `path` via a (local) HttpRequest.
     // Note that safari hangs if the Blob is >=4GB, so bail out in that case.
-    if (isSafari() && _length != null && _length! >= _fourGigabytes) {
+    if (isSafari() && _length != null && _length >= _fourGigabytes) {
       throw Exception('Safari cannot handle XFiles larger than 4GB.');
     }
 
-    late HttpRequest request;
-    try {
-      request = await HttpRequest.request(path, responseType: 'blob');
-    } on ProgressEvent catch (e) {
-      if (e.type == 'error') {
-        throw Exception(
-            'Could not load Blob from its URL. Has it been revoked?');
-      }
-      rethrow;
-    }
+    final Completer<Blob> blobCompleter = Completer<Blob>();
 
-    _browserBlob = request.response as Blob?;
+    late XMLHttpRequest request;
+    request = XMLHttpRequest()
+      ..open('get', path, true)
+      ..responseType = 'blob'
+      ..onLoad.listen((ProgressEvent e) {
+        assert(request.response != null,
+            'The Blob backing this XFile cannot be null!');
+        blobCompleter.complete(request.response! as Blob);
+      })
+      ..onError.listen((ProgressEvent e) {
+        if (e.type == 'error') {
+          blobCompleter.completeError(Exception(
+              'Could not load Blob from its URL. Has it been revoked?'));
+        }
+      })
+      ..send();
 
-    assert(_browserBlob != null, 'The Blob backing this XFile cannot be null!');
-
-    return _browserBlob!;
+    return blobCompleter.future;
   }
 
   @override
@@ -181,7 +187,8 @@ class XFile extends XFileBase {
 
     await reader.onLoadEnd.first;
 
-    final Uint8List? result = reader.result as Uint8List?;
+    final Uint8List? result =
+        (reader.result as JSArrayBuffer?)?.toDart.asUint8List();
 
     if (result == null) {
       throw Exception('Cannot read bytes from Blob. Is it still available?');
@@ -201,12 +208,14 @@ class XFile extends XFileBase {
 
     // Create an <a> tag with the appropriate download attributes and click it
     // May be overridden with CrossFileTestOverrides
-    final AnchorElement element = _hasTestOverrides
-        ? _overrides!.createAnchorElement(this.path, name) as AnchorElement
+    final HTMLAnchorElement element = _hasTestOverrides
+        ? _overrides!.createAnchorElement(this.path, name) as HTMLAnchorElement
         : createAnchorElement(this.path, name);
 
     // Clear the children in _target and add an element to click
-    _target.children.clear();
+    while (_target.children.length > 0) {
+      _target.removeChild(_target.children.item(0)!);
+    }
     addElementToContainerAndClick(_target, element);
   }
 }

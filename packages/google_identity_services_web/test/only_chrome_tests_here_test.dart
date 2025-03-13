@@ -5,6 +5,7 @@
 // ignore_for_file: avoid_print
 
 @TestOn('vm')
+library;
 
 import 'package:test/test.dart';
 

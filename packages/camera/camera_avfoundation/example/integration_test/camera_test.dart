@@ -319,4 +319,148 @@ void main() {
 
     expect(await completer.future, isNotNull);
   });
+
+  // Test fileFormat is respected when taking a picture.
+  testWidgets('Capture specific image output formats',
+      (WidgetTester tester) async {
+    final List<CameraDescription> cameras =
+        await CameraPlatform.instance.availableCameras();
+    if (cameras.isEmpty) {
+      return;
+    }
+    for (final CameraDescription cameraDescription in cameras) {
+      for (final ImageFileFormat fileFormat in ImageFileFormat.values) {
+        final CameraController controller =
+            CameraController(cameraDescription, ResolutionPreset.low);
+        await controller.initialize();
+        await controller.setImageFileFormat(fileFormat);
+        final XFile file = await controller.takePicture();
+        await controller.dispose();
+        expect(file.path.endsWith(fileFormat.name), true);
+      }
+    }
+  });
+
+  group('Camera settings', () {
+    testWidgets('Control FPS', (WidgetTester tester) async {
+      final List<CameraDescription> cameras =
+          await CameraPlatform.instance.availableCameras();
+      if (cameras.isEmpty) {
+        return;
+      }
+
+      final List<int> lengths = <int>[];
+      for (final int fps in <int>[10, 30]) {
+        final CameraController controller = CameraController.withSettings(
+          cameras.first,
+          mediaSettings: MediaSettings(
+            resolutionPreset: ResolutionPreset.medium,
+            fps: fps,
+          ),
+        );
+        await controller.initialize();
+        await controller.prepareForVideoRecording();
+
+        // Take Video
+        await controller.startVideoRecording();
+        sleep(const Duration(milliseconds: 500));
+        final XFile file = await controller.stopVideoRecording();
+
+        // Load video size
+        final File videoFile = File(file.path);
+
+        lengths.add(await videoFile.length());
+
+        await controller.dispose();
+      }
+
+      for (int n = 0; n < lengths.length - 1; n++) {
+        expect(lengths[n], lessThan(lengths[n + 1]),
+            reason: 'incrementing fps should increment file size');
+      }
+    });
+
+    testWidgets('Control video bitrate', (WidgetTester tester) async {
+      final List<CameraDescription> cameras =
+          await CameraPlatform.instance.availableCameras();
+      if (cameras.isEmpty) {
+        return;
+      }
+
+      const int kiloBits = 1024;
+      final List<int> lengths = <int>[];
+      for (final int videoBitrate in <int>[100 * kiloBits, 1000 * kiloBits]) {
+        final CameraController controller = CameraController.withSettings(
+          cameras.first,
+          mediaSettings: MediaSettings(
+            resolutionPreset: ResolutionPreset.medium,
+            videoBitrate: videoBitrate,
+          ),
+        );
+        await controller.initialize();
+        await controller.prepareForVideoRecording();
+
+        // Take Video
+        await controller.startVideoRecording();
+        sleep(const Duration(milliseconds: 500));
+        final XFile file = await controller.stopVideoRecording();
+
+        // Load video size
+        final File videoFile = File(file.path);
+
+        lengths.add(await videoFile.length());
+
+        await controller.dispose();
+      }
+
+      for (int n = 0; n < lengths.length - 1; n++) {
+        expect(lengths[n], lessThan(lengths[n + 1]),
+            reason: 'incrementing video bitrate should increment file size');
+      }
+    });
+
+    testWidgets('Control audio bitrate', (WidgetTester tester) async {
+      final List<CameraDescription> cameras =
+          await CameraPlatform.instance.availableCameras();
+      if (cameras.isEmpty) {
+        return;
+      }
+
+      final List<int> lengths = <int>[];
+
+      const int kiloBits = 1024;
+      for (final int audioBitrate in <int>[32 * kiloBits, 64 * kiloBits]) {
+        final CameraController controller = CameraController.withSettings(
+          cameras.first,
+          mediaSettings: MediaSettings(
+              resolutionPreset: ResolutionPreset.low,
+              fps: 5,
+              videoBitrate: 32000,
+              audioBitrate: audioBitrate,
+              enableAudio: true),
+        );
+        await controller.initialize();
+        await controller.prepareForVideoRecording();
+
+        // Take Video
+        await controller.startVideoRecording();
+        sleep(const Duration(milliseconds: 1000));
+        final XFile file = await controller.stopVideoRecording();
+
+        // Load video metadata
+        final File videoFile = File(file.path);
+
+        final int length = await videoFile.length();
+
+        lengths.add(length);
+
+        await controller.dispose();
+      }
+
+      for (int n = 0; n < lengths.length - 1; n++) {
+        expect(lengths[n], lessThan(lengths[n + 1]),
+            reason: 'incrementing audio bitrate should increment file size');
+      }
+    });
+  });
 }

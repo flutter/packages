@@ -1,3 +1,26 @@
+## 3.0.6
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Extends the `mime` package version constraint from `^1.0.4` to `>=1.0.4 <3.0.0`.
+
+## 3.0.5
+
+* Adds support for `web: ^1.0.0`.
+
+## 3.0.4
+
+* Improves README example and updates it to use code excerpts.
+
+## 3.0.3
+
+* Migrates package and tests to `package:web`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 3.0.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Removes input element after completion
+
 ## 3.0.1
 
 * Adds pub topics to package metadata.

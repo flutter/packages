@@ -5,6 +5,7 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'mini_controller.dart';
 
@@ -20,7 +21,7 @@ class _App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         key: const ValueKey<String>('home_page'),
         appBar: AppBar(
@@ -28,18 +29,25 @@ class _App extends StatelessWidget {
           bottom: const TabBar(
             isScrollable: true,
             tabs: <Widget>[
-              Tab(
-                icon: Icon(Icons.cloud),
-                text: 'Remote',
-              ),
+              Tab(icon: Icon(Icons.cloud), text: 'Remote'),
+              Tab(icon: Icon(Icons.videocam), text: 'RTSP'),
               Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset'),
             ],
           ),
         ),
         body: TabBarView(
           children: <Widget>[
-            _BumbleBeeRemoteVideo(),
-            _ButterFlyAssetVideo(),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _BumbleBeeRemoteVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) => _RtspRemoteVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _ButterFlyAssetVideo(viewType),
+            ),
           ],
         ),
       ),
@@ -47,7 +55,70 @@ class _App extends StatelessWidget {
   }
 }
 
+class _ViewTypeTabBar extends StatefulWidget {
+  const _ViewTypeTabBar({
+    required this.builder,
+  });
+
+  final Widget Function(VideoViewType) builder;
+
+  @override
+  State<_ViewTypeTabBar> createState() => _ViewTypeTabBarState();
+}
+
+class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: const <Widget>[
+            Tab(
+              icon: Icon(Icons.texture),
+              text: 'Texture view',
+            ),
+            Tab(
+              icon: Icon(Icons.construction),
+              text: 'Platform view',
+            ),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              widget.builder(VideoViewType.textureView),
+              widget.builder(VideoViewType.platformView),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _ButterFlyAssetVideo extends StatefulWidget {
+  const _ButterFlyAssetVideo(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _ButterFlyAssetVideoState createState() => _ButterFlyAssetVideoState();
 }
@@ -58,13 +129,15 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = MiniController.asset('assets/Butterfly-209.mp4');
+    _controller = MiniController.asset(
+      'assets/Butterfly-209.mp4',
+      viewType: widget.viewType,
+    );
 
     _controller.addListener(() {
       setState(() {});
     });
-    _controller.initialize().then((_) => setState(() {}));
-    _controller.play();
+    _controller.initialize().then((_) => _controller.play());
   }
 
   @override
@@ -103,6 +176,10 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
 }
 
 class _BumbleBeeRemoteVideo extends StatefulWidget {
+  const _BumbleBeeRemoteVideo(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _BumbleBeeRemoteVideoState createState() => _BumbleBeeRemoteVideoState();
 }
@@ -115,6 +192,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     super.initState();
     _controller = MiniController.network(
       'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+      viewType: widget.viewType,
     );
 
     _controller.addListener(() {
@@ -156,6 +234,97 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   }
 }
 
+class _RtspRemoteVideo extends StatefulWidget {
+  const _RtspRemoteVideo(this.viewType);
+
+  final VideoViewType viewType;
+
+  @override
+  _RtspRemoteVideoState createState() => _RtspRemoteVideoState();
+}
+
+class _RtspRemoteVideoState extends State<_RtspRemoteVideo> {
+  MiniController? _controller;
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  Future<void> changeUrl(String url) async {
+    if (_controller != null) {
+      await _controller!.dispose();
+    }
+
+    setState(() {
+      _controller = MiniController.network(
+        url,
+        viewType: widget.viewType,
+      );
+    });
+
+    _controller!.addListener(() {
+      setState(() {});
+    });
+
+    return _controller!.initialize();
+  }
+
+  String? _validateRtspUrl(String? value) {
+    if (value == null || !value.startsWith('rtsp://')) {
+      return 'Enter a valid RTSP URL';
+    }
+    return null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Container(padding: const EdgeInsets.only(top: 20.0)),
+          const Text('With RTSP streaming'),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: const InputDecoration(label: Text('RTSP URL')),
+              validator: _validateRtspUrl,
+              textInputAction: TextInputAction.done,
+              onFieldSubmitted: (String value) {
+                if (_validateRtspUrl(value) == null) {
+                  changeUrl(value);
+                } else {
+                  setState(() {
+                    _controller?.dispose();
+                    _controller = null;
+                  });
+                }
+              },
+            ),
+          ),
+          if (_controller != null)
+            Container(
+              padding: const EdgeInsets.all(20),
+              child: AspectRatio(
+                aspectRatio: _controller!.value.aspectRatio,
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: <Widget>[
+                    VideoPlayer(_controller!),
+                    _ControlsOverlay(controller: _controller!),
+                    VideoProgressIndicator(_controller!),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ControlsOverlay extends StatelessWidget {
   const _ControlsOverlay({required this.controller});
 
@@ -181,10 +350,11 @@ class _ControlsOverlay extends StatelessWidget {
           reverseDuration: const Duration(milliseconds: 200),
           child: controller.value.isPlaying
               ? const SizedBox.shrink()
-              : Container(
+              : const ColoredBox(
                   color: Colors.black26,
-                  child: const Center(
+                  child: Center(
                     child: Icon(
+                      key: ValueKey<String>('Play'),
                       Icons.play_arrow,
                       color: Colors.white,
                       size: 100.0,

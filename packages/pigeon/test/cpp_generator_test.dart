@@ -2,30 +2,47 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/ast.dart';
-import 'package:pigeon/cpp_generator.dart';
-import 'package:pigeon/generator_tools.dart';
 import 'package:pigeon/pigeon.dart' show Error;
+import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/cpp/cpp_generator.dart';
+import 'package:pigeon/src/generator_tools.dart';
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
 
+final Class emptyClass = Class(name: 'className', fields: <NamedType>[
+  NamedType(
+    name: 'namedTypeName',
+    type: const TypeDeclaration(baseName: 'baseName', isNullable: false),
+  )
+]);
+
+final Enum emptyEnum = Enum(
+  name: 'enumName',
+  members: <EnumMember>[EnumMember(name: 'enumMemberName')],
+);
+
 void main() {
   test('gen one api', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'input')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          location: ApiLocation.host,
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -84,20 +101,29 @@ void main() {
   });
 
   test('naming follows style', () {
+    final Enum anEnum = Enum(name: 'AnEnum', members: <EnumMember>[
+      EnumMember(name: 'one'),
+      EnumMember(name: 'fortyTwo'),
+    ]);
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'someInput')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          location: ApiLocation.host,
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -115,9 +141,19 @@ void main() {
               baseName: 'bool',
               isNullable: false,
             ),
-            name: 'outputField')
+            name: 'outputField'),
+        NamedType(
+          type: TypeDeclaration(
+            baseName: anEnum.name,
+            isNullable: false,
+            associatedEnum: anEnum,
+          ),
+          name: 'code',
+        )
       ])
-    ], enums: <Enum>[]);
+    ], enums: <Enum>[
+      anEnum
+    ]);
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
@@ -139,6 +175,9 @@ void main() {
       // Instance variables should be adjusted.
       expect(code, contains('bool input_field_'));
       expect(code, contains('bool output_field_'));
+      // Enum values should be adjusted.
+      expect(code, contains('kOne'));
+      expect(code, contains('kFortyTwo'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -159,11 +198,12 @@ void main() {
 
   test('FlutterError fields are private with public accessors', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
@@ -209,22 +249,29 @@ void main() {
   });
 
   test('Error field is private with public accessors', () {
-    final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
-        Method(
-          name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
-                  baseName: 'int',
-                  isNullable: false,
-                ),
-                name: 'someInput')
-          ],
-          returnType: const TypeDeclaration(baseName: 'int', isNullable: false),
-        )
-      ])
-    ], classes: <Class>[], enums: <Enum>[]);
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+            name: 'doSomething',
+            location: ApiLocation.host,
+            parameters: <Parameter>[
+              Parameter(
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
+                  name: 'someInput')
+            ],
+            returnType:
+                const TypeDeclaration(baseName: 'int', isNullable: false),
+          )
+        ])
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+      containsHostApi: true,
+    );
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
@@ -253,19 +300,24 @@ void main() {
 
   test('Spaces before {', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'input')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
         )
       ])
     ], classes: <Class>[
@@ -326,11 +378,12 @@ void main() {
 
   test('include blocks follow style', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
@@ -399,11 +452,12 @@ void main() {
 
   test('namespaces follows style', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
@@ -454,14 +508,16 @@ void main() {
 
   test('data classes handle nullable fields', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'someInput')
           ],
@@ -497,9 +553,10 @@ void main() {
             ),
             name: 'nullableString'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: true,
+              associatedClass: emptyClass,
             ),
             name: 'nullableNested'),
       ]),
@@ -550,11 +607,12 @@ void main() {
           contains('void set_nullable_string(std::string_view value_arg)'));
       expect(
           code, contains('void set_nullable_nested(const Nested& value_arg)'));
-      // Instance variables should be std::optionals.
+      // Most instance variables should be std::optionals.
       expect(code, contains('std::optional<bool> nullable_bool_'));
       expect(code, contains('std::optional<int64_t> nullable_int_'));
       expect(code, contains('std::optional<std::string> nullable_string_'));
-      expect(code, contains('std::optional<Nested> nullable_nested_'));
+      // Custom classes are the exception, to avoid inline storage.
+      expect(code, contains('std::unique_ptr<Nested> nullable_nested_'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -590,10 +648,7 @@ void main() {
           code,
           contains(
               'return nullable_string_ ? &(*nullable_string_) : nullptr;'));
-      expect(
-          code,
-          contains(
-              'return nullable_nested_ ? &(*nullable_nested_) : nullptr;'));
+      expect(code, contains('return nullable_nested_.get();'));
       // Setters convert to optionals.
       expect(
           code,
@@ -609,8 +664,8 @@ void main() {
               'std::optional<std::string>(*value_arg) : std::nullopt;'));
       expect(
           code,
-          contains('nullable_nested_ = value_arg ? '
-              'std::optional<Nested>(*value_arg) : std::nullopt;'));
+          contains(
+              'nullable_nested_ = value_arg ? std::make_unique<Nested>(*value_arg) : nullptr;'));
       // Serialization handles optionals.
       expect(
           code,
@@ -619,8 +674,7 @@ void main() {
       expect(
           code,
           contains(
-              'nullable_nested_ ? EncodableValue(nullable_nested_->ToEncodableList()) '
-              ': EncodableValue()'));
+              'nullable_nested_ ? CustomEncodableValue(*nullable_nested_) : EncodableValue())'));
 
       // Serialization should use push_back, not initializer lists, to avoid
       // copies.
@@ -635,14 +689,16 @@ void main() {
 
   test('data classes handle non-nullable fields', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: 'someInput')
           ],
@@ -678,9 +734,10 @@ void main() {
             ),
             name: 'nonNullableString'),
         NamedType(
-            type: const TypeDeclaration(
+            type: TypeDeclaration(
               baseName: 'Nested',
               isNullable: false,
+              associatedClass: emptyClass,
             ),
             name: 'nonNullableNested'),
       ]),
@@ -726,7 +783,8 @@ void main() {
       expect(code, contains('bool non_nullable_bool_;'));
       expect(code, contains('int64_t non_nullable_int_;'));
       expect(code, contains('std::string non_nullable_string_;'));
-      expect(code, contains('Nested non_nullable_nested_;'));
+      // Except for custom classes.
+      expect(code, contains('std::unique_ptr<Nested> non_nullable_nested_;'));
     }
     {
       final StringBuffer sink = StringBuffer();
@@ -756,30 +814,38 @@ void main() {
       expect(code, contains('return non_nullable_bool_;'));
       expect(code, contains('return non_nullable_int_;'));
       expect(code, contains('return non_nullable_string_;'));
-      expect(code, contains('return non_nullable_nested_;'));
+      // Unless it's a custom class.
+      expect(code, contains('return *non_nullable_nested_;'));
       // Setters just assign the value.
       expect(code, contains('non_nullable_bool_ = value_arg;'));
       expect(code, contains('non_nullable_int_ = value_arg;'));
       expect(code, contains('non_nullable_string_ = value_arg;'));
-      expect(code, contains('non_nullable_nested_ = value_arg;'));
+      // Unless it's a custom class.
+      expect(
+          code,
+          contains(
+              'non_nullable_nested_ = std::make_unique<Nested>(value_arg);'));
       // Serialization uses the value directly.
       expect(code, contains('EncodableValue(non_nullable_bool_)'));
-      expect(code, contains('non_nullable_nested_.ToEncodableList()'));
+      expect(code, contains('CustomEncodableValue(*non_nullable_nested_)'));
 
       // Serialization should use push_back, not initializer lists, to avoid
       // copies.
       expect(code, contains('list.reserve(4)'));
       expect(
-          code, contains('list.push_back(EncodableValue(non_nullable_bool_))'));
+          code,
+          contains(
+              'list.push_back(CustomEncodableValue(*non_nullable_nested_))'));
     }
   });
 
   test('host nullable return types map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'returnNullableBool',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: true,
@@ -787,7 +853,8 @@ void main() {
         ),
         Method(
           name: 'returnNullableInt',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'int',
             isNullable: true,
@@ -795,7 +862,8 @@ void main() {
         ),
         Method(
           name: 'returnNullableString',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'String',
             isNullable: true,
@@ -803,7 +871,8 @@ void main() {
         ),
         Method(
           name: 'returnNullableList',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
@@ -817,7 +886,8 @@ void main() {
         ),
         Method(
           name: 'returnNullableMap',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
@@ -835,10 +905,12 @@ void main() {
         ),
         Method(
           name: 'returnNullableDataClass',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: true,
+            associatedClass: emptyClass,
           ),
         ),
       ])
@@ -892,10 +964,11 @@ void main() {
 
   test('host non-nullable return types map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'returnBool',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'bool',
             isNullable: false,
@@ -903,7 +976,8 @@ void main() {
         ),
         Method(
           name: 'returnInt',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'int',
             isNullable: false,
@@ -911,7 +985,8 @@ void main() {
         ),
         Method(
           name: 'returnString',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'String',
             isNullable: false,
@@ -919,7 +994,8 @@ void main() {
         ),
         Method(
           name: 'returnList',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'List',
             typeArguments: <TypeDeclaration>[
@@ -933,7 +1009,8 @@ void main() {
         ),
         Method(
           name: 'returnMap',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration(
             baseName: 'Map',
             typeArguments: <TypeDeclaration>[
@@ -951,10 +1028,12 @@ void main() {
         ),
         Method(
           name: 'returnDataClass',
-          arguments: <NamedType>[],
-          returnType: const TypeDeclaration(
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
+          returnType: TypeDeclaration(
             baseName: 'ReturnData',
             isNullable: false,
+            associatedClass: emptyClass,
           ),
         ),
       ])
@@ -994,29 +1073,30 @@ void main() {
 
   test('host nullable arguments map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -1025,7 +1105,7 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -1035,13 +1115,14 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
+                  associatedClass: emptyClass,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
                 type: const TypeDeclaration(
                   baseName: 'Object',
@@ -1122,21 +1203,19 @@ void main() {
           code,
           contains(
               'const auto* a_map_arg = std::get_if<EncodableMap>(&encodable_a_map_arg);'));
-      // Ints are complicated since there are two possible pointer types, but
-      // the paramter always needs an int64_t*.
       expect(
           code,
           contains(
-              'const int64_t an_int_arg_value = encodable_an_int_arg.IsNull() ? 0 : encodable_an_int_arg.LongValue();'));
+              'const auto* a_bool_arg = std::get_if<bool>(&encodable_a_bool_arg);'));
       expect(
           code,
           contains(
-              'const auto* an_int_arg = encodable_an_int_arg.IsNull() ? nullptr : &an_int_arg_value;'));
+              'const auto* an_int_arg = std::get_if<int64_t>(&encodable_an_int_arg);'));
       // Custom class types require an extra layer of extraction.
       expect(
           code,
           contains(
-              'const auto* an_object_arg = &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
+              'const auto* an_object_arg = encodable_an_object_arg.IsNull() ? nullptr : &(std::any_cast<const ParameterObject&>(std::get<CustomEncodableValue>(encodable_an_object_arg)));'));
       // "Object" requires no extraction at all since it has to use
       // EncodableValue directly.
       expect(
@@ -1148,29 +1227,30 @@ void main() {
 
   test('host non-nullable arguments map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -1179,7 +1259,7 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -1189,13 +1269,14 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
                 type: const TypeDeclaration(
                   baseName: 'Object',
@@ -1275,7 +1356,7 @@ void main() {
           contains(
               'const auto& a_map_arg = std::get<EncodableMap>(encodable_a_map_arg);'));
       // Ints use a copy since there are two possible reference types, but
-      // the paramter always needs an int64_t.
+      // the parameter always needs an int64_t.
       expect(
           code,
           contains(
@@ -1297,29 +1378,30 @@ void main() {
 
   test('flutter nullable arguments map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.flutter,
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -1328,7 +1410,7 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -1338,13 +1420,14 @@ void main() {
                   ],
                   isNullable: true,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: true,
+                  associatedClass: emptyClass,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
                 type: const TypeDeclaration(
                   baseName: 'Object',
@@ -1455,29 +1538,30 @@ void main() {
 
   test('flutter non-nullable arguments map correctly', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.flutter,
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -1486,7 +1570,7 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -1496,13 +1580,14 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aGenericObject',
                 type: const TypeDeclaration(
                   baseName: 'Object',
@@ -1574,24 +1659,25 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final String code = sink.toString();
-      // Standard types are wrapped an EncodableValues.
+      // Standard types are wrapped in EncodableValues.
       expect(code, contains('EncodableValue(a_bool_arg)'));
       expect(code, contains('EncodableValue(an_int_arg)'));
       expect(code, contains('EncodableValue(a_string_arg)'));
       expect(code, contains('EncodableValue(a_list_arg)'));
       expect(code, contains('EncodableValue(a_map_arg)'));
-      // Class types use ToEncodableList.
+      // Class types are wrapped in CustomEncodableValues.
       expect(code, contains('CustomEncodableValue(an_object_arg)'));
     }
   });
 
   test('host API argument extraction uses references', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
                 name: 'anArg',
                 type: const TypeDeclaration(
                   baseName: 'int',
@@ -1618,7 +1704,7 @@ void main() {
     );
     final String code = sink.toString();
     // A bare 'auto' here would create a copy, not a reference, which is
-    // ineffecient.
+    // inefficient.
     expect(
         code, contains('const auto& args = std::get<EncodableList>(message);'));
     expect(code, contains('const auto& encodable_an_arg_arg = args.at(0);'));
@@ -1627,15 +1713,20 @@ void main() {
   test('enum argument', () {
     final Root root = Root(
       apis: <Api>[
-        Api(name: 'Bar', location: ApiLocation.host, methods: <Method>[
+        AstHostApi(name: 'Bar', methods: <Method>[
           Method(
               name: 'bar',
+              location: ApiLocation.host,
               returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
-                    name: 'foo',
-                    type: const TypeDeclaration(
-                        baseName: 'Foo', isNullable: false))
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'foo',
+                  type: TypeDeclaration(
+                    baseName: 'Foo',
+                    isNullable: false,
+                    associatedEnum: emptyEnum,
+                  ),
+                )
               ])
         ])
       ],
@@ -1667,17 +1758,17 @@ void main() {
 
     final Root root = Root(
       apis: <Api>[
-        Api(
+        AstFlutterApi(
           name: 'Api',
-          location: ApiLocation.flutter,
           documentationComments: <String>[comments[count++]],
           methods: <Method>[
             Method(
               name: 'method',
+              location: ApiLocation.flutter,
               returnType: const TypeDeclaration.voidDeclaration(),
               documentationComments: <String>[comments[count++]],
-              arguments: <NamedType>[
-                NamedType(
+              parameters: <Parameter>[
+                Parameter(
                   name: 'field',
                   type: const TypeDeclaration(
                     baseName: 'int',
@@ -1744,64 +1835,26 @@ void main() {
     expect(code, contains('// ///'));
   });
 
-  test('doesnt create codecs if no custom datatypes', () {
-    final Root root = Root(
-      apis: <Api>[
-        Api(
-          name: 'Api',
-          location: ApiLocation.flutter,
-          methods: <Method>[
-            Method(
-              name: 'method',
-              returnType: const TypeDeclaration.voidDeclaration(),
-              arguments: <NamedType>[
-                NamedType(
-                  name: 'field',
-                  type: const TypeDeclaration(
-                    baseName: 'int',
-                    isNullable: true,
-                  ),
-                ),
-              ],
-            )
-          ],
-        )
-      ],
-      classes: <Class>[],
-      enums: <Enum>[],
-    );
-    final StringBuffer sink = StringBuffer();
-    const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
-      fileType: FileType.header,
-      languageOptions: const CppOptions(),
-    );
-    generator.generate(
-      generatorOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final String code = sink.toString();
-    expect(code, isNot(contains(' : public flutter::StandardCodecSerializer')));
-  });
-
-  test('creates custom codecs if custom datatypes present', () {
+  test('creates custom codecs', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
-                type: const TypeDeclaration(
+          location: ApiLocation.flutter,
+          parameters: <Parameter>[
+            Parameter(
+                type: TypeDeclaration(
                   baseName: 'Input',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 ),
                 name: '')
           ],
-          returnType:
-              const TypeDeclaration(baseName: 'Output', isNullable: false),
+          returnType: TypeDeclaration(
+            baseName: 'Output',
+            isNullable: false,
+            associatedClass: emptyClass,
+          ),
           isAsynchronous: true,
         )
       ])
@@ -1842,29 +1895,30 @@ void main() {
 
   test('Does not send unwrapped EncodableLists', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'Api', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'Api', methods: <Method>[
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
                 name: 'aBool',
                 type: const TypeDeclaration(
                   baseName: 'bool',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anInt',
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aString',
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aList',
                 type: const TypeDeclaration(
                   baseName: 'List',
@@ -1873,7 +1927,7 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'aMap',
                 type: const TypeDeclaration(
                   baseName: 'Map',
@@ -1883,11 +1937,12 @@ void main() {
                   ],
                   isNullable: false,
                 )),
-            NamedType(
+            Parameter(
                 name: 'anObject',
-                type: const TypeDeclaration(
+                type: TypeDeclaration(
                   baseName: 'ParameterObject',
                   isNullable: false,
+                  associatedClass: emptyClass,
                 )),
           ],
           returnType: const TypeDeclaration.voidDeclaration(),
@@ -1923,17 +1978,19 @@ void main() {
 
   test('does not keep unowned references in async handlers', () {
     final Root root = Root(apis: <Api>[
-      Api(name: 'HostApi', location: ApiLocation.host, methods: <Method>[
+      AstHostApi(name: 'HostApi', methods: <Method>[
         Method(
           name: 'noop',
-          arguments: <NamedType>[],
+          location: ApiLocation.host,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.host,
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'int',
                   isNullable: false,
@@ -1945,17 +2002,19 @@ void main() {
           isAsynchronous: true,
         ),
       ]),
-      Api(name: 'FlutterApi', location: ApiLocation.flutter, methods: <Method>[
+      AstFlutterApi(name: 'FlutterApi', methods: <Method>[
         Method(
           name: 'noop',
-          arguments: <NamedType>[],
+          location: ApiLocation.flutter,
+          parameters: <Parameter>[],
           returnType: const TypeDeclaration.voidDeclaration(),
           isAsynchronous: true,
         ),
         Method(
           name: 'doSomething',
-          arguments: <NamedType>[
-            NamedType(
+          location: ApiLocation.flutter,
+          parameters: <Parameter>[
+            Parameter(
                 type: const TypeDeclaration(
                   baseName: 'String',
                   isNullable: false,
@@ -1990,5 +2049,100 @@ void main() {
     // ensure that the negative tests above get updated if there are any
     // changes to lambda capture.
     expect(code, contains('[reply]('));
+  });
+
+  test('connection error contains channel name', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'method',
+              location: ApiLocation.flutter,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+      containsFlutterApi: true,
+    );
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.source,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            '"Unable to establish connection on channel: \'" + channel_name + "\'."'));
+    expect(code, contains('on_error(CreateConnectionError(channel_name));'));
+  });
+
+  test('stack allocates the message channel.', () {
+    final Root root = Root(
+      apis: <Api>[
+        AstFlutterApi(
+          name: 'Api',
+          methods: <Method>[
+            Method(
+              name: 'method',
+              location: ApiLocation.flutter,
+              returnType: const TypeDeclaration.voidDeclaration(),
+              parameters: <Parameter>[
+                Parameter(
+                  name: 'field',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: true,
+                  ),
+                ),
+              ],
+            )
+          ],
+        )
+      ],
+      classes: <Class>[],
+      enums: <Enum>[],
+    );
+    final StringBuffer sink = StringBuffer();
+    const CppGenerator generator = CppGenerator();
+    final OutputFileOptions<CppOptions> generatorOptions =
+        OutputFileOptions<CppOptions>(
+      fileType: FileType.source,
+      languageOptions: const CppOptions(),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(
+        code,
+        contains(
+            'BasicMessageChannel<> channel(binary_messenger_, channel_name, &GetCodec());'));
+    expect(code, contains('channel.Send'));
   });
 }

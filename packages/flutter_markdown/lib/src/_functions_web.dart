@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html'; // ignore: avoid_web_libraries_in_flutter
+import 'dart:js_interop';
 
 import 'package:flutter/cupertino.dart' show CupertinoTheme;
 import 'package:flutter/material.dart' show Theme;
@@ -25,22 +25,66 @@ final ImageBuilder kDefaultImageBuilder = (
   double? height,
 ) {
   if (uri.scheme == 'http' || uri.scheme == 'https') {
-    return Image.network(uri.toString(), width: width, height: height);
+    return Image.network(
+      uri.toString(),
+      width: width,
+      height: height,
+      errorBuilder: kDefaultImageErrorWidgetBuilder,
+    );
   } else if (uri.scheme == 'data') {
     return _handleDataSchemeUri(uri, width, height);
   } else if (uri.scheme == 'resource') {
-    return Image.asset(uri.path, width: width, height: height);
+    return Image.asset(
+      uri.path,
+      width: width,
+      height: height,
+      errorBuilder: kDefaultImageErrorWidgetBuilder,
+    );
   } else {
-    final Uri fileUri = imageDirectory != null
-        ? Uri.parse(p.join(imageDirectory, uri.toString()))
-        : uri;
+    final Uri fileUri;
+
+    if (imageDirectory != null) {
+      try {
+        fileUri = Uri.parse(p.join(imageDirectory, uri.toString()));
+      } catch (error, stackTrace) {
+        // Handle any invalid file URI's.
+        return Builder(
+          builder: (BuildContext context) {
+            return kDefaultImageErrorWidgetBuilder(context, error, stackTrace);
+          },
+        );
+      }
+    } else {
+      fileUri = uri;
+    }
+
     if (fileUri.scheme == 'http' || fileUri.scheme == 'https') {
-      return Image.network(fileUri.toString(), width: width, height: height);
+      return Image.network(
+        fileUri.toString(),
+        width: width,
+        height: height,
+        errorBuilder: kDefaultImageErrorWidgetBuilder,
+      );
     } else {
       final String src = p.join(p.current, fileUri.toString());
-      return Image.network(src, width: width, height: height);
+      return Image.network(
+        src,
+        width: width,
+        height: height,
+        errorBuilder: kDefaultImageErrorWidgetBuilder,
+      );
     }
   }
+};
+
+/// A default error widget builder for handling image errors.
+// ignore: prefer_function_declarations_over_variables
+final ImageErrorWidgetBuilder kDefaultImageErrorWidgetBuilder = (
+  BuildContext context,
+  Object error,
+  StackTrace? stackTrace,
+) {
+  return const SizedBox();
 };
 
 /// A default style sheet generator.
@@ -50,26 +94,17 @@ final MarkdownStyleSheet Function(BuildContext, MarkdownStyleSheetBaseTheme?)
   BuildContext context,
   MarkdownStyleSheetBaseTheme? baseTheme,
 ) {
-  MarkdownStyleSheet result;
-  switch (baseTheme) {
-    case MarkdownStyleSheetBaseTheme.platform:
-      final String userAgent = window.navigator.userAgent;
-      result = userAgent.contains('Mac OS X')
-          ? MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context))
-          : MarkdownStyleSheet.fromTheme(Theme.of(context));
-      break;
-    case MarkdownStyleSheetBaseTheme.cupertino:
-      result =
-          MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context));
-      break;
-    case MarkdownStyleSheetBaseTheme.material:
-    default: // ignore: no_default_cases
-      result = MarkdownStyleSheet.fromTheme(Theme.of(context));
-  }
+  final MarkdownStyleSheet result = switch (baseTheme) {
+    MarkdownStyleSheetBaseTheme.platform
+        when _userAgent.toDart.contains('Mac OS X') =>
+      MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
+    MarkdownStyleSheetBaseTheme.cupertino =>
+      MarkdownStyleSheet.fromCupertinoTheme(CupertinoTheme.of(context)),
+    _ => MarkdownStyleSheet.fromTheme(Theme.of(context)),
+  };
 
   return result.copyWith(
-    textScaleFactor:
-        MediaQuery.textScaleFactorOf(context), // ignore: deprecated_member_use
+    textScaler: MediaQuery.textScalerOf(context),
   );
 };
 
@@ -81,9 +116,13 @@ Widget _handleDataSchemeUri(
       uri.data!.contentAsBytes(),
       width: width,
       height: height,
+      errorBuilder: kDefaultImageErrorWidgetBuilder,
     );
   } else if (mimeType.startsWith('text/')) {
     return Text(uri.data!.contentAsString());
   }
   return const SizedBox();
 }
+
+@JS('window.navigator.userAgent')
+external JSString get _userAgent;

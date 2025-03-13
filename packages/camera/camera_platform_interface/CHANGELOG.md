@@ -1,3 +1,42 @@
+## 2.9.0
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds API support query for image streaming.
+
+## 2.8.0
+
+* Deprecates `maxVideoDuration`/`maxDuration`, as it was never implemented on
+  most platforms, and there is no plan to implement it in the future.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.7.4
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Documents `getExposureOffsetStepSize` to return -1 if the device does not support
+  exposure compensation.
+
+## 2.7.3
+
+* Adds documentation to clarify that platform implementations of the plugin use
+  resolution presets as target resolutions.
+
+## 2.7.2
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.7.1
+
+* Fixes new lint warnings.
+
+## 2.7.0
+
+* Adds support for setting the image file format. See `CameraPlatform.setImageFileFormat`.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.6.0
+
+* Adds support to control video fps and bitrate. See `CameraPlatform.createCameraWithSettings`.
+
 ## 2.5.2
 
 * Adds pub topics to package metadata.

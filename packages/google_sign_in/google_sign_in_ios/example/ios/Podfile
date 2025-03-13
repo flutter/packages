@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-# platform :ios, '11.0'
+# platform :ios, '12.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
@@ -26,8 +26,7 @@ end
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 # Suppress warnings from transitive dependencies that cause analysis to fail.
-pod 'AppAuth', :inhibit_warnings => true
-pod 'GTMAppAuth', :inhibit_warnings => true
+inhibit_all_warnings!
 
 flutter_ios_podfile_setup
 
@@ -35,8 +34,6 @@ target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
-
-    pod 'OCMock','3.5'
   end
 end
 

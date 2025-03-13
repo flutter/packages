@@ -1,0 +1,29 @@
+framework module camera_avfoundation {
+  umbrella header "camera_avfoundation-umbrella.h"
+
+  export *
+  module * { export * }
+
+  explicit module Test {
+    header "FLTAssetWriter.h"
+    header "FLTCameraDeviceDiscovering.h"
+    header "FLTCaptureConnection.h"
+    header "FLTCaptureDevice.h"
+    header "FLTCaptureDeviceFormat.h"
+    header "FLTCapturePhotoOutput.h"
+    header "FLTCaptureSession.h"
+    header "FLTDeviceOrientationProviding.h"
+    header "FLTEventChannel.h"
+    header "FLTWritableData.h"
+    header "FLTPermissionServicing.h"
+    header "CameraPlugin_Test.h"
+    header "CameraProperties.h"
+    header "FLTCam.h"
+    header "FLTCam_Test.h"
+    header "FLTCamConfiguration.h"
+    header "FLTSavePhotoDelegate_Test.h"
+    header "FLTThreadSafeEventChannel.h"
+    header "FLTCameraPermissionManager.h"
+    header "QueueUtils.h"
+  }
+}

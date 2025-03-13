@@ -22,7 +22,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
 
-  private Context context;
+  @Nullable private Context context;
   private SystemServicesFlutterApiImpl systemServicesFlutterApiImpl;
 
   public static final String TEMPORARY_FILE_NAME = "CAP";
@@ -53,9 +53,15 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
    */
   @Override
   public void create(
-      @NonNull Long identifier, @Nullable Long flashMode, @Nullable Long resolutionSelectorId) {
+      @NonNull Long identifier,
+      @Nullable Long rotation,
+      @Nullable Long flashMode,
+      @Nullable Long resolutionSelectorId) {
     ImageCapture.Builder imageCaptureBuilder = cameraXProxy.createImageCaptureBuilder();
 
+    if (rotation != null) {
+      imageCaptureBuilder.setTargetRotation(rotation.intValue());
+    }
     if (flashMode != null) {
       // This sets the requested flash mode, but may fail silently.
       imageCaptureBuilder.setFlashMode(flashMode.intValue());
@@ -73,8 +79,7 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   /** Sets the flash mode of the {@link ImageCapture} instance with the specified identifier. */
   @Override
   public void setFlashMode(@NonNull Long identifier, @NonNull Long flashMode) {
-    ImageCapture imageCapture =
-        (ImageCapture) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    ImageCapture imageCapture = getImageCaptureInstance(identifier);
     imageCapture.setFlashMode(flashMode.intValue());
   }
 
@@ -82,8 +87,11 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
   @Override
   public void takePicture(
       @NonNull Long identifier, @NonNull GeneratedCameraXLibrary.Result<String> result) {
-    ImageCapture imageCapture =
-        (ImageCapture) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    if (context == null) {
+      throw new IllegalStateException("Context must be set to take picture.");
+    }
+
+    ImageCapture imageCapture = getImageCaptureInstance(identifier);
     final File outputDir = context.getCacheDir();
     File temporaryCaptureFile;
     try {
@@ -117,5 +125,19 @@ public class ImageCaptureHostApiImpl implements ImageCaptureHostApi {
         result.error(exception);
       }
     };
+  }
+
+  /** Dynamically sets the target rotation of the {@link ImageCapture}. */
+  @Override
+  public void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation) {
+    ImageCapture imageCapture = getImageCaptureInstance(identifier);
+    imageCapture.setTargetRotation(rotation.intValue());
+  }
+
+  /**
+   * Retrieves the {@link ImageCapture} instance associated with the specified {@code identifier}.
+   */
+  private ImageCapture getImageCaptureInstance(@NonNull Long identifier) {
+    return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
 }

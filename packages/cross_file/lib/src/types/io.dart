@@ -17,6 +17,13 @@ class XFile extends XFileBase {
   /// [bytes] is ignored; the parameter exists only to match the web version of
   /// the constructor. To construct a dart:io XFile from bytes, use
   /// [XFile.fromData].
+  ///
+  /// [name] is ignored; the parameter exists only to match the web version of
+  /// the constructor.
+  ///
+  /// [length] is ignored; the parameter exists only to match the web version of
+  /// the constructor.
+  ///
   // ignore: use_super_parameters
   XFile(
     String path, {
@@ -32,6 +39,9 @@ class XFile extends XFileBase {
         super(path);
 
   /// Construct an CrossFile from its data
+  ///
+  /// [name] is ignored; the parameter exists only to match the web version of
+  /// the constructor.
   XFile.fromData(
     Uint8List bytes, {
     String? mimeType,
@@ -72,6 +82,8 @@ class XFile extends XFileBase {
       await _file.copy(path);
     } else {
       final File fileToSave = File(path);
+      // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
+      // ignore: unnecessary_non_null_assertion
       await fileToSave.writeAsBytes(_bytes!);
     }
   }
@@ -96,6 +108,8 @@ class XFile extends XFileBase {
   @override
   Future<String> readAsString({Encoding encoding = utf8}) {
     if (_bytes != null) {
+      // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
+      // ignore: unnecessary_non_null_assertion
       return Future<String>.value(String.fromCharCodes(_bytes!));
     }
     return _file.readAsString(encoding: encoding);

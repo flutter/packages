@@ -4,22 +4,35 @@
 
 import 'dart:async';
 import 'dart:developer' as developer;
+
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 
 /// The logger for this package.
-final Logger log = Logger('GoRouter');
+@visibleForTesting
+final Logger logger = Logger('GoRouter');
+
+/// Whether or not the logging is enabled.
+bool _enabled = false;
+
+/// Logs the message if logging is enabled.
+void log(String message, {Level level = Level.INFO}) {
+  if (_enabled) {
+    logger.log(level, message);
+  }
+}
 
 StreamSubscription<LogRecord>? _subscription;
 
 /// Forwards diagnostic messages to the dart:developer log() API.
 void setLogging({bool enabled = false}) {
   _subscription?.cancel();
-  if (!enabled) {
+  _enabled = enabled;
+  if (!enabled || hierarchicalLoggingEnabled) {
     return;
   }
 
-  _subscription = log.onRecord.listen((LogRecord e) {
+  _subscription = logger.onRecord.listen((LogRecord e) {
     // use `dumpErrorToConsole` for severe messages to ensure that severe
     // exceptions are formatted consistently with other Flutter examples and
     // avoids printing duplicate exceptions
@@ -34,16 +47,28 @@ void setLogging({bool enabled = false}) {
         ),
       );
     } else {
-      developer.log(
-        e.message,
-        time: e.time,
-        sequenceNumber: e.sequenceNumber,
-        level: e.level.value,
-        name: e.loggerName,
-        zone: e.zone,
-        error: e.error,
-        stackTrace: e.stackTrace,
-      );
+      _developerLogFunction(e);
     }
   });
 }
+
+void _developerLog(LogRecord record) {
+  developer.log(
+    record.message,
+    time: record.time,
+    sequenceNumber: record.sequenceNumber,
+    level: record.level.value,
+    name: record.loggerName,
+    zone: record.zone,
+    error: record.error,
+    stackTrace: record.stackTrace,
+  );
+}
+
+/// A function that can be set during test to mock the developer log function.
+@visibleForTesting
+void Function(LogRecord)? testDeveloperLog;
+
+/// The function used to log messages.
+void Function(LogRecord) get _developerLogFunction =>
+    testDeveloperLog ?? _developerLog;

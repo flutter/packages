@@ -12,12 +12,6 @@ import 'package:test/fake.dart';
 import '../src/common.dart';
 import '../src/fakes.dart';
 
-// final Platform _kNoAnsiPlatform = FakePlatform();
-final String red = RegExp.escape(AnsiTerminal.red);
-final String bold = RegExp.escape(AnsiTerminal.bold);
-final String resetBold = RegExp.escape(AnsiTerminal.resetBold);
-final String resetColor = RegExp.escape(AnsiTerminal.resetColor);
-
 void main() {
   testWithoutContext('correct logger instance is created', () {
     final LoggerFactory loggerFactory = LoggerFactory(
@@ -643,13 +637,6 @@ void main() {
       expect(logger.statusText, 'AAA\nBBB\n');
     });
   });
-}
-
-/// A fake [Logger] that throws the [Invocation] for any method call.
-class FakeLogger implements Logger {
-  @override
-  dynamic noSuchMethod(Invocation invocation) =>
-      throw invocation; // ignore: only_throw_errors
 }
 
 class FakeStdout extends Fake implements Stdout {

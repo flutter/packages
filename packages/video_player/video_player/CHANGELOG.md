@@ -1,3 +1,68 @@
+## 2.9.3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes mechanism to detect identifier in multi-line WebVTT captions.
+
+## 2.9.2
+
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Throws a more descriptive `StateError` in the case where 
+  `VideoPlayerController.initialize` receives more than one `initialized` event.
+
+## 2.9.1
+
+* Updates minimum web implementation version to ensure support for
+  the new `webOptions` exposed in `2.9.0`.
+
+## 2.9.0
+
+* Exports types: `VideoPlayerWebOptions` and `VideoPlayerWebOptionsControls` to
+  customize the `webOptions` field in `VideoPlayerOptions` objects.
+* Forwards `webOptions` to the web implementation.
+
+## 2.8.7
+
+* Ensures that `value.position` never reports a value larger than `value.duration`.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.8.6
+
+* Updates minimum iOS implementation version to include a privacy manifest.
+* Updates minimum supported SDK version to Flutter 3.16.6/Dart 3.2.3.
+
+## 2.8.5
+
+* Updates example to call `super.dispose()` last.
+
+## 2.8.4
+
+* Removes `_ambiguate` methods from code.
+
+## 2.8.3
+
+* Fixes typo in `README.md`.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Clients on versions of Flutter that still support iOS 11 can continue to use this
+  package with iOS 11, but will not receive any further updates to the iOS implementation.
+
+## 2.8.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 2.8.1
+
+* Updates the example app: replaces `ButtonBar` with `OverflowBar` widget.
+
+## 2.8.0
+
+* Adds support for macOS.
+
+## 2.7.2
+
+* Adds `isCompleted` event to `VideoPlayerEvent`.
+
 ## 2.7.1
 
 * Adds pub topics to package metadata.

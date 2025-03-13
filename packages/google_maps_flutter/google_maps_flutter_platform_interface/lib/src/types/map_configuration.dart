@@ -36,6 +36,7 @@ class MapConfiguration {
     this.trafficEnabled,
     this.buildingsEnabled,
     this.cloudMapId,
+    this.style,
   });
 
   /// This setting controls how the API handles gestures on the map. Web only.
@@ -113,6 +114,11 @@ class MapConfiguration {
   /// for more details.
   final String? cloudMapId;
 
+  /// Locally configured JSON style.
+  ///
+  /// To clear a previously set style, set this to an empty string.
+  final String? style;
+
   /// Returns a new options object containing only the values of this instance
   /// that are different from [other].
   MapConfiguration diffFrom(MapConfiguration other) {
@@ -174,6 +180,7 @@ class MapConfiguration {
       buildingsEnabled:
           buildingsEnabled != other.buildingsEnabled ? buildingsEnabled : null,
       cloudMapId: cloudMapId != other.cloudMapId ? cloudMapId : null,
+      style: style != other.style ? style : null,
     );
   }
 
@@ -206,6 +213,7 @@ class MapConfiguration {
       trafficEnabled: diff.trafficEnabled ?? trafficEnabled,
       buildingsEnabled: diff.buildingsEnabled ?? buildingsEnabled,
       cloudMapId: diff.cloudMapId ?? cloudMapId,
+      style: diff.style ?? style,
     );
   }
 
@@ -231,7 +239,8 @@ class MapConfiguration {
       indoorViewEnabled == null &&
       trafficEnabled == null &&
       buildingsEnabled == null &&
-      cloudMapId == null;
+      cloudMapId == null &&
+      style == null;
 
   @override
   bool operator ==(Object other) {
@@ -262,7 +271,8 @@ class MapConfiguration {
         indoorViewEnabled == other.indoorViewEnabled &&
         trafficEnabled == other.trafficEnabled &&
         buildingsEnabled == other.buildingsEnabled &&
-        cloudMapId == other.cloudMapId;
+        cloudMapId == other.cloudMapId &&
+        style == other.style;
   }
 
   @override
@@ -288,5 +298,6 @@ class MapConfiguration {
         trafficEnabled,
         buildingsEnabled,
         cloudMapId,
+        style,
       ]);
 }

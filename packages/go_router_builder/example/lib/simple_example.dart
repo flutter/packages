@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, unreachable_from_main
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -45,8 +45,9 @@ class FamilyRoute extends GoRouteData {
   final String familyId;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      FamilyScreen(family: familyById(familyId));
+  Widget build(BuildContext context, GoRouterState state) {
+    return FamilyScreen(family: familyById(familyId));
+  }
 }
 
 class HomeScreen extends StatelessWidget {

@@ -61,6 +61,7 @@ void main() {
           enableDomStorage: true,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       await followLink!();
@@ -86,12 +87,13 @@ void main() {
       mock
         ..setLaunchExpectations(
           url: 'http://example.com/foobar',
-          launchMode: PreferredLaunchMode.inAppWebView,
+          launchMode: PreferredLaunchMode.inAppBrowserView,
           universalLinksOnly: false,
           enableJavaScript: true,
           enableDomStorage: true,
           headers: <String, String>{},
           webOnlyWindowName: null,
+          showTitle: false,
         )
         ..setResponse(true);
       await followLink!();

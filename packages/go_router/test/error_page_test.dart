@@ -51,15 +51,3 @@ Widget widgetsAppBuilder({required Widget home}) {
     color: Colors.white,
   );
 }
-
-class DummyStatefulWidget extends StatefulWidget {
-  const DummyStatefulWidget({super.key});
-
-  @override
-  State<DummyStatefulWidget> createState() => _DummyStatefulWidgetState();
-}
-
-class _DummyStatefulWidgetState extends State<DummyStatefulWidget> {
-  @override
-  Widget build(BuildContext context) => Container();
-}

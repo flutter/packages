@@ -88,7 +88,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    final List<dynamic> paths = await _pickMultiImageAsPath(
+    final List<String> paths = await _pickMultiImageAsPath(
       options: MultiImagePickerOptions(
         imageOptions: ImageOptions(
           maxWidth: maxWidth,
@@ -103,7 +103,7 @@ class ImagePickerIOS extends ImagePickerPlatform {
       return null;
     }
 
-    return paths.map((dynamic path) => PickedFile(path as String)).toList();
+    return paths.map((String path) => PickedFile(path)).toList();
   }
 
   @override
@@ -133,13 +133,17 @@ class ImagePickerIOS extends ImagePickerPlatform {
       throw ArgumentError.value(maxHeight, 'maxHeight', 'cannot be negative');
     }
 
-    // TODO(stuartmorgan): Remove the cast once Pigeon supports non-nullable
-    //  generics, https://github.com/flutter/flutter/issues/97848
-    return (await _hostApi.pickMultiImage(
-            MaxSize(width: maxWidth, height: maxHeight),
-            imageQuality,
-            options.imageOptions.requestFullMetadata))
-        .cast<String>();
+    final int? limit = options.limit;
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+    }
+
+    return _hostApi.pickMultiImage(
+      MaxSize(width: maxWidth, height: maxHeight),
+      imageQuality,
+      options.imageOptions.requestFullMetadata,
+      limit,
+    );
   }
 
   Future<String?> _pickImageAsPath({
@@ -210,11 +214,28 @@ class ImagePickerIOS extends ImagePickerPlatform {
       MediaOptions mediaOptions) {
     final MaxSize maxSize =
         _imageOptionsToMaxSizeWithValidation(mediaOptions.imageOptions);
+
+    final bool allowMultiple = mediaOptions.allowMultiple;
+    final int? limit = mediaOptions.limit;
+
+    if (!allowMultiple && limit != null) {
+      throw ArgumentError.value(
+        allowMultiple,
+        'allowMultiple',
+        'cannot be false, when limit is not null',
+      );
+    }
+
+    if (limit != null && limit < 2) {
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
+    }
+
     return MediaSelectionOptions(
       maxSize: maxSize,
       imageQuality: mediaOptions.imageOptions.imageQuality,
       requestFullMetadata: mediaOptions.imageOptions.requestFullMetadata,
       allowMultiple: mediaOptions.allowMultiple,
+      limit: mediaOptions.limit,
     );
   }
 

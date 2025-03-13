@@ -5,11 +5,11 @@ tasks:
     script: .ci/scripts/set_default_linux_apps.sh
     infra_step: true
   - name: download Dart deps
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["fetch-deps", "--linux", "--supporting-target-platforms-only"]
     infra_step: true
   - name: build examples
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["build-examples", "--linux"]
   - name: native test
     script: .ci/scripts/xvfb_tool_runner.sh

@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:js_interop';
+
 import 'package:flutter/foundation.dart';
+import 'package:web/web.dart' as web;
 
 /// Options used to create a camera with the given
 /// [audio] and [video] media constraints.
@@ -28,12 +31,12 @@ class CameraOptions {
   /// The video constraints for the camera.
   final VideoConstraints video;
 
-  /// Converts the current instance to a Map.
-  Map<String, dynamic> toJson() {
-    return <String, Object>{
-      'audio': audio.toJson(),
-      'video': video.toJson(),
-    };
+  /// Converts `this` to something that can be used by the browser.
+  web.MediaStreamConstraints toMediaStreamConstraints() {
+    return web.MediaStreamConstraints(
+      audio: audio.toMediaStreamConstraints(),
+      video: video.toMediaStreamConstraints(),
+    );
   }
 
   @override
@@ -63,8 +66,8 @@ class AudioConstraints {
   /// Whether the audio track should be enabled.
   final bool enabled;
 
-  /// Converts the current instance to a Map.
-  Object toJson() => enabled;
+  /// Convert `this` to something that can be used on the browser.
+  JSAny toMediaStreamConstraints() => enabled.toJS;
 
   @override
   bool operator ==(Object other) {
@@ -104,24 +107,15 @@ class VideoConstraints {
   /// The device id of the video track.
   final String? deviceId;
 
-  /// Converts the current instance to a Map.
-  Object toJson() {
-    final Map<String, dynamic> json = <String, dynamic>{};
-
-    if (width != null) {
-      json['width'] = width!.toJson();
-    }
-    if (height != null) {
-      json['height'] = height!.toJson();
-    }
-    if (facingMode != null) {
-      json['facingMode'] = facingMode!.toJson();
-    }
-    if (deviceId != null) {
-      json['deviceId'] = <String, Object>{'exact': deviceId!};
-    }
-
-    return json;
+  // TODO(dit): package:web has a class for this. Use it instead of jsify and toJson.
+  /// Convert `this` to something that can be used on the browser.
+  JSAny toMediaStreamConstraints() {
+    return <String, Object>{
+      if (width != null) 'width': width!.toJson(),
+      if (height != null) 'height': height!.toJson(),
+      if (facingMode != null) 'facingMode': facingMode!.toJson(),
+      if (deviceId != null) 'deviceId': <String, Object>{'exact': deviceId!},
+    }.jsify()!;
   }
 
   @override
@@ -145,23 +139,24 @@ class VideoConstraints {
 ///
 /// Specifies whether the requested camera should be facing away
 /// or toward the user.
-class CameraType {
+enum CameraType {
+  /// The camera is facing away from the user, viewing their environment.
+  /// This includes the back camera on a smartphone.
+  environment._('environment'),
+
+  /// The camera is facing toward the user.
+  /// This includes the front camera on a smartphone.
+  user._('user');
+
   const CameraType._(this._type);
 
   final String _type;
 
   @override
   String toString() => _type;
-
-  /// The camera is facing away from the user, viewing their environment.
-  /// This includes the back camera on a smartphone.
-  static const CameraType environment = CameraType._('environment');
-
-  /// The camera is facing toward the user.
-  /// This includes the front camera on a smartphone.
-  static const CameraType user = CameraType._('user');
 }
 
+// TODO(dit): package:web has a class for this. Use it instead of toJson.
 /// Indicates the direction in which the desired camera should be pointing.
 @immutable
 class FacingModeConstraint {
@@ -191,6 +186,7 @@ class FacingModeConstraint {
   /// the desired facing [type] to be considered acceptable.
   final CameraType? exact;
 
+  // TODO(dit): package:web has a class for this. Use it instead of toJson.
   /// Converts the current instance to a Map.
   Object toJson() {
     return <String, Object>{
@@ -214,6 +210,7 @@ class FacingModeConstraint {
   int get hashCode => Object.hash(ideal, exact);
 }
 
+// TODO(dit): package:web has a class for this. Use it instead of toJson.
 /// The size of the requested video track used in
 /// [VideoConstraints.width] and [VideoConstraints.height].
 ///
@@ -240,6 +237,7 @@ class VideoSizeConstraint {
   /// The maximum video size.
   final int? maximum;
 
+  // TODO(dit): package:web has a class for this. Use it instead of toJson.
   /// Converts the current instance to a Map.
   Object toJson() {
     final Map<String, dynamic> json = <String, dynamic>{};

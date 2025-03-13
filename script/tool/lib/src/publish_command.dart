@@ -21,6 +21,7 @@ import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
 import 'common/package_command.dart';
 import 'common/package_looping_command.dart';
+import 'common/pub_utils.dart';
 import 'common/pub_version_finder.dart';
 import 'common/repository_package.dart';
 
@@ -58,6 +59,11 @@ class PublishCommand extends PackageLoopingCommand {
   })  : _pubVersionFinder =
             PubVersionFinder(httpClient: httpClient ?? http.Client()),
         _stdin = stdinput ?? io.stdin {
+    argParser.addFlag(_alreadyTaggedFlag,
+        help:
+            'Instead of tagging, validates that the current checkout is already tagged with the expected version.\n'
+            'This is primarily intended for use in CI publish steps triggered by tagging.',
+        negatable: false);
     argParser.addMultiOption(_pubFlagsOption,
         help:
             'A list of options that will be forwarded on to pub. Separate multiple flags with commas.');
@@ -83,13 +89,20 @@ class PublishCommand extends PackageLoopingCommand {
     argParser.addFlag(_skipConfirmationFlag,
         help: 'Run the command without asking for Y/N inputs.\n'
             'This command will add a `--force` flag to the `pub publish` command if it is not added with $_pubFlagsOption\n');
+    argParser.addFlag(_tagForAutoPublishFlag,
+        help:
+            'Runs the dry-run publish, and tags if it succeeds, but does not actually publish.\n'
+            'This is intended for use with a separate publish step that is based on tag push events.',
+        negatable: false);
   }
 
+  static const String _alreadyTaggedFlag = 'already-tagged';
   static const String _pubFlagsOption = 'pub-publish-flags';
   static const String _remoteOption = 'remote';
   static const String _allChangedFlag = 'all-changed';
   static const String _dryRunFlag = 'dry-run';
   static const String _skipConfirmationFlag = 'skip-confirmation';
+  static const String _tagForAutoPublishFlag = 'tag-for-auto-publish';
 
   static const String _pubCredentialName = 'PUB_CREDENTIALS';
 
@@ -189,19 +202,35 @@ class PublishCommand extends PackageLoopingCommand {
       return checkResult;
     }
 
+    if (!await _runPrePublishScript(package)) {
+      return PackageResult.fail(<String>['pre-publish failed']);
+    }
+
     if (!await _checkGitStatus(package)) {
       return PackageResult.fail(<String>['uncommitted changes']);
     }
 
-    if (!await _publish(package)) {
-      return PackageResult.fail(<String>['publish failed']);
+    final bool tagOnly = getBoolArg(_tagForAutoPublishFlag);
+    if (!tagOnly) {
+      if (!await _publish(package)) {
+        return PackageResult.fail(<String>['publish failed']);
+      }
     }
 
-    if (!await _tagRelease(package)) {
-      return PackageResult.fail(<String>['tagging failed']);
+    final String tag = _getTag(package);
+    if (getBoolArg(_alreadyTaggedFlag)) {
+      if (!(await _getCurrentTags()).contains(tag)) {
+        printError('The current checkout is not already tagged "$tag"');
+        return PackageResult.fail(<String>['missing tag']);
+      }
+    } else {
+      if (!await _tagRelease(package, tag)) {
+        return PackageResult.fail(<String>['tagging failed']);
+      }
     }
 
-    print('\nPublished ${package.directory.basename} successfully!');
+    final String action = tagOnly ? 'Tagged' : 'Published';
+    print('\n$action ${package.directory.basename} successfully!');
     return PackageResult.success();
   }
 
@@ -277,8 +306,7 @@ Safe to ignore if the package is deleted in this commit.
   // Tag the release with <package-name>-v<version>, and push it to the remote.
   //
   // Return `true` if successful, `false` otherwise.
-  Future<bool> _tagRelease(RepositoryPackage package) async {
-    final String tag = _getTag(package);
+  Future<bool> _tagRelease(RepositoryPackage package, String tag) async {
     print('Tagging release $tag...');
     if (!getBoolArg(_dryRunFlag)) {
       final io.ProcessResult result = await (await gitDir).runCommand(
@@ -301,13 +329,28 @@ Safe to ignore if the package is deleted in this commit.
     return success;
   }
 
+  Future<Iterable<String>> _getCurrentTags() async {
+    // git tag --points-at HEAD
+    final io.ProcessResult tagsResult = await (await gitDir).runCommand(
+      <String>['tag', '--points-at', 'HEAD'],
+      throwOnError: false,
+    );
+    if (tagsResult.exitCode != 0) {
+      return <String>[];
+    }
+
+    return (tagsResult.stdout as String)
+        .split('\n')
+        .map((String line) => line.trim())
+        .where((String line) => line.isNotEmpty);
+  }
+
   Future<bool> _checkGitStatus(RepositoryPackage package) async {
     final io.ProcessResult statusResult = await (await gitDir).runCommand(
       <String>[
         'status',
         '--porcelain',
-        '--ignored',
-        package.directory.absolute.path
+        package.directory.absolute.path,
       ],
       throwOnError: false,
     );
@@ -334,6 +377,31 @@ Safe to ignore if the package is deleted in this commit.
       return null;
     }
     return getRemoteUrlResult.stdout as String?;
+  }
+
+  Future<bool> _runPrePublishScript(RepositoryPackage package) async {
+    final File script = package.prePublishScript;
+    if (!script.existsSync()) {
+      return true;
+    }
+    final String relativeScriptPath =
+        getRelativePosixPath(script, from: package.directory);
+    print('Running pre-publish hook $relativeScriptPath...');
+
+    // Ensure that dependencies are available.
+    if (!await runPubGet(package, processRunner, platform)) {
+      printError('Failed to get depenedencies');
+      return false;
+    }
+
+    final int exitCode = await processRunner.runAndStream(
+        'dart', <String>['run', relativeScriptPath],
+        workingDir: package.directory);
+    if (exitCode != 0) {
+      printError('Pre-publish script failed.');
+      return false;
+    }
+    return true;
   }
 
   Future<bool> _publish(RepositoryPackage package) async {

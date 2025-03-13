@@ -1,3 +1,54 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 5.0.0
+
+* Updates `package:lints` dependency to version 5.0.0, with the following changes:
+    * adds `invalid_runtime_check_with_js_interop_types`
+    * adds `unnecessary_library_name`
+    * removes `avoid_null_checks_in_equality_operators`
+* Removes the following lints (see https://github.com/dart-lang/lints/issues/205):
+    * `prefer_const_constructors`
+    * `prefer_const_declarations`
+    * `prefer_const_literals_to_create_immutables`
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 4.0.0
+
+* Updates `package:lints` dependency to version 4.0.0, with the following changes:
+    * adds `library_annotations`
+    * adds `no_wildcard_variable_uses`
+    * removes `package_prefixed_library_names`
+    * removes `library_names`
+
+## 3.0.2
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates various links in comments and documentation.
+
+## 3.0.1
+
+* Replaces `flutter pub add --dev` with `dev:` in README.md.
+
+## 3.0.0
+
+* Updated `package:lints` dependency to version 3.0.0, with the following changes:
+    * added `collection_methods_unrelated_type`
+    * added `dangling_library_doc_comments`
+    * added `implicit_call_tearoffs`
+    * added `secure_pubspec_urls`
+    * added `type_literal_in_constant_pattern`
+    * added `unnecessary_to_list_in_spreads`
+    * added `use_string_in_part_of_directives`
+    * added `use_super_parameters`
+    * removed `iterable_contains_unrelated_type`
+    * removed `list_remove_unrelated_type`
+    * removed `no_wildcard_variable_uses`
+    * removed `prefer_equal_for_default_values`
+    * removed `prefer_void_to_null`
+* Updates minimum supported SDK version to Flutter 3.10 / Dart 3.0.
+
 ## 2.0.3
 
 * Adds pub topics to package metadata.

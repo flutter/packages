@@ -20,9 +20,14 @@ import 'package:test/test.dart';
 import 'mocks.dart';
 import 'util.dart';
 
+const String _allAbiFlag =
+    '-Ptarget-platform=android-arm,android-arm64,android-x64,android-x86';
+
 const String _androidIntegrationTestFilter =
     '-Pandroid.testInstrumentationRunnerArguments.'
     'notAnnotation=io.flutter.plugins.DartIntegrationTest';
+
+const String _simulatorDeviceId = '1E76A0FD-38AC-4537-A989-EA639D7D012A';
 
 final Map<String, dynamic> _kDeviceListMap = <String, dynamic>{
   'runtimes': <Map<String, dynamic>>[
@@ -134,11 +139,13 @@ void main() {
       String platform, {
       String? destination,
       List<String> extraFlags = const <String>[],
+      bool treatWarningsAsErrors = true,
     }) {
       return ProcessCall(
           'xcrun',
           <String>[
             'xcodebuild',
+            'clean',
             'test',
             '-workspace',
             '$platform/Runner.xcworkspace',
@@ -148,7 +155,7 @@ void main() {
             'Debug',
             if (destination != null) ...<String>['-destination', destination],
             ...extraFlags,
-            'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+            if (treatWarningsAsErrors) 'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
           ],
           package.path);
     }
@@ -220,7 +227,7 @@ void main() {
         getMockXcodebuildListProcess(<String>['RunnerTests', 'RunnerUITests']),
         // Exit code 66 from testing indicates no tests.
         FakeProcessInfo(
-            MockProcess(exitCode: 66), <String>['xcodebuild', 'test']),
+            MockProcess(exitCode: 66), <String>['xcodebuild', 'clean', 'test']),
       ];
       final List<String> output = await runCapturingPrint(
           runner, <String>['native-test', '--macos', '--no-unit']);
@@ -345,7 +352,7 @@ void main() {
                   null),
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
               getRunTestCall(pluginExampleDirectory, 'ios',
-                  destination: 'id=1E76A0FD-38AC-4537-A989-EA639D7D012A'),
+                  destination: 'id=$_simulatorDeviceId'),
             ]));
       });
     });
@@ -562,6 +569,7 @@ void main() {
               const <String>[
                 'app:connectedAndroidTest',
                 _androidIntegrationTestFilter,
+                _allAbiFlag,
               ],
               androidFolder.path,
             ),
@@ -696,6 +704,7 @@ public class FlutterActivityTest {
               const <String>[
                 'app:connectedAndroidTest',
                 _androidIntegrationTestFilter,
+                _allAbiFlag,
               ],
               androidFolder.path,
             ),
@@ -733,6 +742,7 @@ public class FlutterActivityTest {
               const <String>[
                 'app:connectedAndroidTest',
                 _androidIntegrationTestFilter,
+                _allAbiFlag,
               ],
               androidFolder.path,
             ),
@@ -1443,6 +1453,98 @@ public class FlutterActivityTest {
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
             ]));
       });
+
+      test('Xcode warnings exceptions list', () async {
+        final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: jsonEncode(_kDeviceListMap)),
+              <String>['simctl', 'list']),
+          getMockXcodebuildListProcess(
+              <String>['RunnerTests', 'RunnerUITests']),
+        ];
+
+        await runCapturingPrint(runner, <String>[
+          'native-test',
+          '--ios',
+          '--xcode-warnings-exceptions=plugin'
+        ]);
+
+        expect(
+            processRunner.recordedCalls,
+            contains(
+              getRunTestCall(pluginExampleDirectory, 'ios',
+                  destination: 'id=$_simulatorDeviceId',
+                  treatWarningsAsErrors: false),
+            ));
+      });
+
+      test('Xcode warnings exceptions file', () async {
+        final File configFile = packagesDir.childFile('exceptions.yaml');
+        await configFile.writeAsString('- plugin');
+        final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: jsonEncode(_kDeviceListMap)),
+              <String>['simctl', 'list']),
+          getMockXcodebuildListProcess(
+              <String>['RunnerTests', 'RunnerUITests']),
+        ];
+
+        await runCapturingPrint(runner, <String>[
+          'native-test',
+          '--ios',
+          '--xcode-warnings-exceptions=${configFile.path}'
+        ]);
+
+        expect(
+            processRunner.recordedCalls,
+            contains(
+              getRunTestCall(pluginExampleDirectory, 'ios',
+                  destination: 'id=$_simulatorDeviceId',
+                  treatWarningsAsErrors: false),
+            ));
+      });
+
+      test('treat warnings as errors if plugin not on exceptions list',
+          () async {
+        final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
+            platformSupport: <String, PlatformDetails>{
+              platformIOS: const PlatformDetails(PlatformSupport.inline)
+            });
+
+        final Directory pluginExampleDirectory = getExampleDir(plugin);
+
+        processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: jsonEncode(_kDeviceListMap)),
+              <String>['simctl', 'list']),
+          getMockXcodebuildListProcess(
+              <String>['RunnerTests', 'RunnerUITests']),
+        ];
+
+        await runCapturingPrint(runner, <String>[
+          'native-test',
+          '--ios',
+          '--xcode-warnings-exceptions=foo,bar'
+        ]);
+
+        expect(
+            processRunner.recordedCalls,
+            contains(
+              getRunTestCall(pluginExampleDirectory, 'ios',
+                  destination: 'id=$_simulatorDeviceId'),
+            ));
+      });
     });
 
     group('multiplatform', () {
@@ -1468,12 +1570,12 @@ public class FlutterActivityTest {
         processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']), // iOS list
-          FakeProcessInfo(
-              MockProcess(), <String>['xcodebuild', 'test']), // iOS run
+          FakeProcessInfo(MockProcess(),
+              <String>['xcodebuild', 'clean', 'test']), // iOS run
           getMockXcodebuildListProcess(
               <String>['RunnerTests', 'RunnerUITests']), // macOS list
-          FakeProcessInfo(
-              MockProcess(), <String>['xcodebuild', 'test']), // macOS run
+          FakeProcessInfo(MockProcess(),
+              <String>['xcodebuild', 'clean', 'test']), // macOS run
         ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[

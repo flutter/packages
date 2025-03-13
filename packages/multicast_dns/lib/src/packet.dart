@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'constants.dart';
@@ -134,76 +135,55 @@ _FQDNReadResult _readFQDN(
 
   final List<String> parts = <String>[];
   final int prevOffset = offset;
-  while (true) {
-    // At least one byte is required.
-    checkLength(offset + 1);
+  final List<int> offsetsToVisit = <int>[offset];
+  int upperLimitOffset = offset;
+  int highestOffsetRead = offset;
 
-    // Check for compressed.
-    if (data[offset] & 0xc0 == 0xc0) {
-      // At least two bytes are required for a compressed FQDN.
-      checkLength(offset + 2);
+  while (offsetsToVisit.isNotEmpty) {
+    offset = offsetsToVisit.removeLast();
 
-      // A compressed FQDN has a new offset in the lower 14 bits.
-      final _FQDNReadResult result = _readFQDN(
-          data, byteData, byteData.getUint16(offset) & ~0xc000, length);
-      parts.addAll(result.fqdnParts);
-      offset += 2;
-      break;
-    } else {
-      // A normal FQDN part has a length and a UTF-8 encoded name
-      // part. If the length is 0 this is the end of the FQDN.
-      final int partLength = data[offset];
-      offset++;
-      if (partLength > 0) {
-        checkLength(offset + partLength);
-        final Uint8List partBytes =
-            Uint8List.view(data.buffer, offset, partLength);
-        offset += partLength;
-        // According to the RFC, this is supposed to be utf-8 encoded, but
-        // we should continue decoding even if it isn't to avoid dropping the
-        // rest of the data, which might still be useful.
-        parts.add(utf8.decode(partBytes, allowMalformed: true));
-      } else {
+    while (true) {
+      // At least one byte is required.
+      checkLength(offset + 1);
+      // Check for compressed.
+      if (data[offset] & 0xc0 == 0xc0) {
+        // At least two bytes are required for a compressed FQDN (see RFC1035 section 4.1.4).
+        checkLength(offset + 2);
+
+        // A compressed FQDN has a new offset in the lower 14 bits.
+        final int pointerDest = byteData.getUint16(offset) & ~0xc000;
+        // Pointers can only point to prior occurances of some name.
+        // This check also guards against pointers that form loops.
+        if (pointerDest >= upperLimitOffset) {
+          throw MDnsDecodeException(offset);
+        }
+        upperLimitOffset = pointerDest;
+        offsetsToVisit.add(pointerDest);
+        highestOffsetRead = max(highestOffsetRead, offset + 2);
         break;
+      } else {
+        // A normal FQDN part has a length and a UTF-8 encoded name
+        // part. If the length is 0 this is the end of the FQDN.
+        final int partLength = data[offset];
+        offset++;
+        if (partLength > 0) {
+          checkLength(offset + partLength);
+          final Uint8List partBytes =
+              Uint8List.view(data.buffer, offset, partLength);
+          offset += partLength;
+          // According to the RFC, this is supposed to be utf-8 encoded, but
+          // we should continue decoding even if it isn't to avoid dropping the
+          // rest of the data, which might still be useful.
+          parts.add(utf8.decode(partBytes, allowMalformed: true));
+          highestOffsetRead = max(highestOffsetRead, offset);
+        } else {
+          highestOffsetRead = max(highestOffsetRead, offset);
+          break;
+        }
       }
     }
   }
-  return _FQDNReadResult(parts, offset - prevOffset);
-}
-
-/// Decode an mDNS query packet.
-///
-/// If decoding fails (e.g. due to an invalid packet), `null` is returned.
-///
-/// See https://tools.ietf.org/html/rfc1035 for format.
-ResourceRecordQuery? decodeMDnsQuery(List<int> packet) {
-  final int length = packet.length;
-  if (length < _kHeaderSize) {
-    return null;
-  }
-
-  final Uint8List data =
-      packet is Uint8List ? packet : Uint8List.fromList(packet);
-  final ByteData packetBytes = ByteData.view(data.buffer);
-
-  // Check whether it's a query.
-  final int flags = packetBytes.getUint16(_kFlagsOffset);
-  if (flags != 0) {
-    return null;
-  }
-  final int questionCount = packetBytes.getUint16(_kQdcountOffset);
-  if (questionCount == 0) {
-    return null;
-  }
-
-  final _FQDNReadResult fqdn =
-      _readFQDN(data, packetBytes, _kHeaderSize, data.length);
-
-  int offset = _kHeaderSize + fqdn.bytesRead;
-  final int type = packetBytes.getUint16(offset);
-  offset += 2;
-  final int queryType = packetBytes.getUint16(offset) & 0x8000;
-  return ResourceRecordQuery(type, fqdn.fqdn, queryType);
+  return _FQDNReadResult(parts, highestOffsetRead - prevOffset);
 }
 
 /// Decode an mDNS response packet.

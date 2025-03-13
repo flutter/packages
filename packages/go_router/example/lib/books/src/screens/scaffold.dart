@@ -43,13 +43,10 @@ class BookstoreScaffold extends StatelessWidget {
             switch (ScaffoldTab.values[idx]) {
               case ScaffoldTab.books:
                 context.go('/books');
-                break;
               case ScaffoldTab.authors:
                 context.go('/authors');
-                break;
               case ScaffoldTab.settings:
                 context.go('/settings');
-                break;
             }
           },
           destinations: const <AdaptiveScaffoldDestination>[

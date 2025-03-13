@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
+import 'test_helpers.dart';
+
 void main() {
   group('updateShouldNotify', () {
     test('does not update when goRouter does not change', () {
@@ -79,6 +81,34 @@ void main() {
     await tester.tap(find.text('My Page'));
     expect(router.latestPushedName, 'my_page');
   });
+
+  testWidgets('builder can access GoRouter', (WidgetTester tester) async {
+    // Regression test for https://github.com/flutter/flutter/issues/110512.
+    late final GoRouter buildContextRouter;
+    final GoRouter router = GoRouter(
+      initialLocation: '/',
+      routes: <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, __) {
+            buildContextRouter = GoRouter.of(context);
+            return const DummyScreen();
+          },
+        )
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+          routeInformationProvider: router.routeInformationProvider,
+          routeInformationParser: router.routeInformationParser,
+          routerDelegate: router.routerDelegate),
+    );
+
+    expect(buildContextRouter, isNotNull);
+    expect(buildContextRouter, equals(router));
+  });
 }
 
 bool setupInheritedGoRouterChange({
@@ -124,7 +154,10 @@ class _MyWidget extends StatelessWidget {
 }
 
 class MockGoRouter extends GoRouter {
-  MockGoRouter() : super(routes: <GoRoute>[]);
+  MockGoRouter()
+      : super.routingConfig(
+            routingConfig: const ConstantRoutingConfig(
+                RoutingConfig(routes: <RouteBase>[])));
 
   late String latestPushedName;
 

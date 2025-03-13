@@ -1,3 +1,81 @@
+## 2.8.2
+
+- Fixes an issue when enum params are not required
+
+## 2.8.1
+
+- Fixes an issue when navigate to router with invalid params 
+
+## 2.8.0
+
+- Adds support for passing `preload` parameter to `StatefulShellBranchData`.
+
+## 2.7.5
+
+- Fixes trailing `?` in the location when a go route has an empty default value.
+
+## 2.7.4
+
+- Fixes an issue by removing unnecessary `const` in StatefulShellRouteData generation.
+
+## 2.7.3
+
+- Fixes an issue when using a not null List or Set param.
+
+## 2.7.2
+
+- Supports the latest `package:analyzer` and `package:source_gen`.
+- Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 2.7.1
+
+- Fixes readme typos and uses code excerpts.
+
+## 2.7.0
+
+- Adds an example and a test with `onExit`.
+- Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 2.6.2
+
+* Fixes a bug in the example app when accessing `BuildContext`.
+
+## 2.6.1
+
+* Fixes typo in `durationDecoderHelperName`.
+* Updates development dependency to `dart_style-2.3.6` (compatible with `analyzer-6.5.0`).
+
+## 2.6.0
+
+* Adds support for passing observers to the StatefulShellBranch for the nested Navigator.
+
+## 2.5.1
+
+- Updates examples to use uri.path instead of uri.toString() for accessing the current location.
+
+## 2.5.0
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates dependencies to require `analyzer` 5.2.0 or later.
+* Adds `restorationScopeId` to `ShellRouteData`.
+
+## 2.4.1
+
+* Fixes new lint warnings.
+
+## 2.4.0
+
+* Adds support for passing observers to the ShellRoute for the nested Navigator.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
+## 2.3.4
+
+* Fixes a bug of typeArguments losing NullabilitySuffix
+
+## 2.3.3
+
+* Adds `initialLocation` for `StatefulShellBranchConfig`
+
 ## 2.3.2
 
 * Supports the latest `package:analyzer`.

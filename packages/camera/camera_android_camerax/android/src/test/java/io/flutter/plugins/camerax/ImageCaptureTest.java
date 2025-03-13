@@ -14,6 +14,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
+import android.view.Surface;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
@@ -63,18 +64,24 @@ public class ImageCaptureTest {
         new ImageCaptureHostApiImpl(mockBinaryMessenger, testInstanceManager, context);
     final ImageCapture.Builder mockImageCaptureBuilder = mock(ImageCapture.Builder.class);
     final Long imageCaptureIdentifier = 74L;
-    final Long flashMode = Long.valueOf(ImageCapture.FLASH_MODE_ON);
+    final int flashMode = ImageCapture.FLASH_MODE_ON;
     final ResolutionSelector mockResolutionSelector = mock(ResolutionSelector.class);
     final long mockResolutionSelectorId = 77;
+    final int targetRotation = Surface.ROTATION_270;
 
     imageCaptureHostApiImpl.cameraXProxy = mockCameraXProxy;
     testInstanceManager.addDartCreatedInstance(mockResolutionSelector, mockResolutionSelectorId);
     when(mockCameraXProxy.createImageCaptureBuilder()).thenReturn(mockImageCaptureBuilder);
     when(mockImageCaptureBuilder.build()).thenReturn(mockImageCapture);
 
-    imageCaptureHostApiImpl.create(imageCaptureIdentifier, flashMode, mockResolutionSelectorId);
+    imageCaptureHostApiImpl.create(
+        imageCaptureIdentifier,
+        Long.valueOf(targetRotation),
+        Long.valueOf(flashMode),
+        mockResolutionSelectorId);
 
-    verify(mockImageCaptureBuilder).setFlashMode(flashMode.intValue());
+    verify(mockImageCaptureBuilder).setTargetRotation(targetRotation);
+    verify(mockImageCaptureBuilder).setFlashMode(flashMode);
     verify(mockImageCaptureBuilder).setResolutionSelector(mockResolutionSelector);
     verify(mockImageCaptureBuilder).build();
     verify(testInstanceManager).addDartCreatedInstance(mockImageCapture, imageCaptureIdentifier);
@@ -196,5 +203,19 @@ public class ImageCaptureTest {
     onImageSavedCallback.onError(mockException);
 
     verify(mockResult).error(mockException);
+  }
+
+  @Test
+  public void setTargetRotation_makesCallToSetTargetRotation() {
+    final ImageCaptureHostApiImpl hostApi =
+        new ImageCaptureHostApiImpl(mockBinaryMessenger, testInstanceManager, context);
+    final long instanceIdentifier = 42;
+    final int targetRotation = Surface.ROTATION_90;
+
+    testInstanceManager.addDartCreatedInstance(mockImageCapture, instanceIdentifier);
+
+    hostApi.setTargetRotation(instanceIdentifier, Long.valueOf(targetRotation));
+
+    verify(mockImageCapture).setTargetRotation(targetRotation);
   }
 }

@@ -96,7 +96,8 @@ void main() {
       expect(clone, equals(marker));
     });
     test('copyWith', () {
-      const Marker marker = Marker(markerId: MarkerId('ABC123'));
+      const MarkerId markerId = MarkerId('ABC123');
+      const Marker marker = Marker(markerId: markerId);
 
       final BitmapDescriptor testDescriptor =
           BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan);
@@ -111,6 +112,8 @@ void main() {
       const double testRotationParam = 100;
       final bool testVisibleParam = !marker.visible;
       const double testZIndexParam = 100;
+      const ClusterManagerId testClusterManagerIdParam =
+          ClusterManagerId('DEF123');
       final List<String> log = <String>[];
 
       final Marker copy = marker.copyWith(
@@ -125,6 +128,7 @@ void main() {
         rotationParam: testRotationParam,
         visibleParam: testVisibleParam,
         zIndexParam: testZIndexParam,
+        clusterManagerIdParam: testClusterManagerIdParam,
         onTapParam: () {
           log.add('onTapParam');
         },
@@ -139,6 +143,7 @@ void main() {
         },
       );
 
+      expect(copy.markerId, equals(markerId));
       expect(copy.alpha, equals(testAlphaParam));
       expect(copy.anchor, equals(testAnchorParam));
       expect(copy.consumeTapEvents, equals(testConsumeTapEventsParam));
@@ -150,6 +155,7 @@ void main() {
       expect(copy.rotation, equals(testRotationParam));
       expect(copy.visible, equals(testVisibleParam));
       expect(copy.zIndex, equals(testZIndexParam));
+      expect(copy.clusterManagerId, equals(testClusterManagerIdParam));
 
       copy.onTap!();
       expect(log, contains('onTapParam'));

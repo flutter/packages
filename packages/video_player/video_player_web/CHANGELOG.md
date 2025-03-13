@@ -1,3 +1,45 @@
+## 2.3.4
+
+* Adjusts the code to the new platform interface.
+
+## 2.3.3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Corrects the behavior of muting/unmuting videos in Chrome's Tap Emulation mode.
+
+## 2.3.2
+
+* Adds support for `web: ^1.0.0`.
+
+## 2.3.1
+
+* Fixes some `package:web` tweaks.
+
+## 2.3.0
+
+* Migrates package and tests to `package:web`.
+* Fixes infinite event loop caused by `seekTo` when the video ends.
+
+## 2.2.0
+
+* Updates SDK version to Dart `^3.3.0`. Flutter `^3.19.0`.
+
+## 2.1.3
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
+## 2.1.2
+
+* Listens to `loadedmetadata` as an event that marks that initialization is
+  complete. (Fixes playback in Safari iOS 17).
+* Sets the `src` of the underlying video element after every other attribute.
+
+## 2.1.1
+
+* Ensures that the `autoplay` attribute of the underlying video element is set
+  to **false**.
+
 ## 2.1.0
 
 * Adds web options to customize the control list and context menu display.
