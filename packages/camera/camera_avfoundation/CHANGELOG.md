@@ -1,3 +1,7 @@
+## 0.9.19
+
+* Fixes exposure mode locked not working
+
 ## 0.9.18+9
 
 * Backfills unit tests for `CameraPlugin` class.

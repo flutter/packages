@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// The API instance used to communicate with the Dart side of the plugin. Once initially set, this
 /// should only ever be accessed on the main thread.
 @property(nonatomic) FCPCameraEventApi *dartAPI;
-@property(assign, nonatomic) FCPPlatformExposureMode exposureMode;
+@property(readonly, nonatomic) FCPPlatformExposureMode exposureMode;
 @property(assign, nonatomic) FCPPlatformFocusMode focusMode;
 @property(assign, nonatomic) FCPPlatformFlashMode flashMode;
 // Format used for video and image streaming.

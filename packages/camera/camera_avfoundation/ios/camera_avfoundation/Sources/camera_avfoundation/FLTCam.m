@@ -989,7 +989,7 @@ static void selectBestFormatForRequestedFrameRate(
   [_captureDevice lockForConfiguration:nil];
   switch (_exposureMode) {
     case FCPPlatformExposureModeLocked:
-      [_captureDevice setExposureMode:AVCaptureExposureModeAutoExpose];
+      [_captureDevice setExposureMode:AVCaptureExposureModeLocked];
       break;
     case FCPPlatformExposureModeAuto:
       if ([_captureDevice isExposureModeSupported:AVCaptureExposureModeContinuousAutoExposure]) {
