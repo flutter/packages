@@ -1,3 +1,7 @@
+## 0.9.18+10
+
+* Fix race condition when starting image stream
+
 ## 0.9.18+9
 
 * Backfills unit tests for `CameraPlugin` class.
