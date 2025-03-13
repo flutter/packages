@@ -1218,6 +1218,18 @@ class StatefulNavigationShell extends StatefulWidget {
     assert(index >= 0);
     return index;
   }
+
+  void updateBranches() {
+    final StatefulShellRoute route =
+    shellRouteContext.route as StatefulShellRoute;
+    final StatefulNavigationShellState? shellState =
+        route._shellStateKey.currentState;
+    if (shellState != null) {
+      for (StatefulShellBranch branch in route.branches) {
+        shellState._branchStateFor(branch);
+      }
+    }
+  }
 }
 
 /// State for StatefulNavigationShell.
@@ -1414,10 +1426,6 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
             navigatorForBranch: (StatefulShellBranch branch) =>
                 _branchState[branch]?.navigator))
         .toList();
-
-    for(StatefulShellBranch branch in route.branches){
-      _branchLocation(branch);
-    }
 
     return widget.containerBuilder(context, widget, children);
   }
