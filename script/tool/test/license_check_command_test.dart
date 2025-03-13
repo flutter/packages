@@ -4,33 +4,28 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/license_check_command.dart';
-import 'package:mockito/mockito.dart';
+import 'package:git/git.dart';
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
   group('LicenseCheckCommand', () {
     late CommandRunner<void> runner;
-    late FileSystem fileSystem;
     late Platform platform;
+    late Directory packagesDir;
     late Directory root;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       platform = MockPlatformWithSeparator();
-      final Directory packagesDir =
-          fileSystem.currentDirectory.childDirectory('packages');
+      final GitDir gitDir;
+      (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: platform);
       root = packagesDir.parent;
-
-      final MockGitDir gitDir = MockGitDir();
-      when(gitDir.path).thenReturn(packagesDir.parent.path);
 
       final LicenseCheckCommand command = LicenseCheckCommand(
         packagesDir,
