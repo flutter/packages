@@ -1219,6 +1219,8 @@ class StatefulNavigationShell extends StatefulWidget {
     return index;
   }
 
+  /// trigger an update of [_branchState] to make dynamically added
+  /// [StatefulShellBranch]es available
   void updateBranches() {
     final StatefulShellRoute route =
     shellRouteContext.route as StatefulShellRoute;
