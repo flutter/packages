@@ -24,3 +24,5 @@ export 'web_resource_request.dart';
 export 'web_resource_response.dart';
 export 'webview_cookie.dart';
 export 'webview_credential.dart';
+export 'web_history.dart';
+export 'web_history_item.dart';

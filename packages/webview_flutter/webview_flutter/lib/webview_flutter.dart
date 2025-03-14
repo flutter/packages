@@ -27,6 +27,8 @@ export 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
         ProgressCallback,
         ScrollPositionChange,
         UrlChange,
+        WebHistory,
+        WebHistoryItem,
         WebResourceError,
         WebResourceErrorCallback,
         WebResourceErrorType,

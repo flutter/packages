@@ -399,6 +399,10 @@ class WebViewController {
     return platform.getUserAgent();
   }
 
+  Future<Map<String, dynamic>> getCopyBackForwardList() async {
+    return platform.getCopyBackForwardList();
+  }
+
   /// Sets a listener for scroll position changes.
   Future<void> setOnScrollPositionChange(
     void Function(ScrollPositionChange change)? onScrollPositionChange,

@@ -552,6 +552,11 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<String?> getTitle() => _webView.getTitle();
 
   @override
+  Future<Map<String, dynamic>> getCopyBackForwardList() {
+    return _webView.getCopyBackForwardList();
+  }
+
+  @override
   Future<void> scrollTo(int x, int y) => _webView.scrollTo(x, y);
 
   @override

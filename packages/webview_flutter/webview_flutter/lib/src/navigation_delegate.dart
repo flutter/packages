@@ -127,7 +127,7 @@ class NavigationDelegate {
     this.onPageFinished,
     this.onProgress,
     this.onWebResourceError,
-    void Function(UrlChange change)? onUrlChange,
+    this.onUrlChange,
     HttpAuthRequestCallback? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
   }) {
@@ -147,7 +147,7 @@ class NavigationDelegate {
       platform.setOnWebResourceError(onWebResourceError!);
     }
     if (onUrlChange != null) {
-      platform.setOnUrlChange(onUrlChange);
+      platform.setOnUrlChange(onUrlChange!);
     }
     if (onHttpAuthRequest != null) {
       platform.setOnHttpAuthRequest(onHttpAuthRequest);
@@ -183,4 +183,6 @@ class NavigationDelegate {
 
   /// Invoked when a resource loading error occurred.
   final WebResourceErrorCallback? onWebResourceError;
+
+  final UrlChangeCallback? onUrlChange;
 }

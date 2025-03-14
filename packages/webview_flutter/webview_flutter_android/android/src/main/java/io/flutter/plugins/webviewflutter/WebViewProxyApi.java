@@ -15,11 +15,15 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebBackForwardList;
+import android.webkit.WebHistoryItem;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.android.FlutterView;
 import io.flutter.plugin.platform.PlatformView;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.ArrayList;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -214,6 +218,33 @@ public class WebViewProxyApi extends PigeonApiWebView {
   @Override
   public void clearCache(@NonNull WebView pigeon_instance, boolean includeDiskFiles) {
     pigeon_instance.clearCache(includeDiskFiles);
+  }
+
+  @Nullable
+  @Override
+  public Map<String, Object> getCopyBackForwardList(@NonNull WebView pigeon_instance) {
+    WebBackForwardList wbfl = pigeon_instance.copyBackForwardList();
+
+    HashMap<String, Object> map = new HashMap<>();
+
+    map.put("currentIndex", wbfl.getCurrentIndex());
+
+    ArrayList<Map<String, Object>> history = new ArrayList<>();
+
+    for (int i = 0; i < wbfl.getSize(); i++) {
+      WebHistoryItem whi = wbfl.getItemAtIndex(i);
+
+      HashMap<String, Object> item = new HashMap<>();
+      item.put("originalUrl", whi.getOriginalUrl());
+      item.put("title", whi.getTitle());
+      item.put("url", whi.getUrl());
+
+      history.add(item);
+    }
+
+    map.put("history", history);
+
+    return map;
   }
 
   @Override

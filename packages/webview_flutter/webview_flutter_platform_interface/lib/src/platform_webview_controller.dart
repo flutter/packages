@@ -197,6 +197,11 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'addJavaScriptChannel is not implemented on the current platform');
   }
 
+  /// Get the history
+  Future<Map<String, dynamic>> getCopyBackForwardList() async {
+    throw UnimplementedError('getCopyBackForwardList is not implemented on the current platform');
+  }
+
   /// Removes the JavaScript channel with the matching name from the set of
   /// enabled channels.
   ///
