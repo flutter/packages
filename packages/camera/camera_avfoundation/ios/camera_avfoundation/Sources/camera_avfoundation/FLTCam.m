@@ -1240,6 +1240,29 @@ static void selectBestFormatForRequestedFrameRate(
   completion(nil);
 }
 
+- (void)setVideoStabilizationMode:(FCPPlatformVideoStabilizationMode)mode
+                   withCompletion:(void (^)(FlutterError *_Nullable))completion {
+  AVCaptureVideoStabilizationMode stabilizationMode = getAvCaptureVideoStabilizationMode(mode);
+
+  if (![_captureDevice.activeFormat isVideoStabilizationModeSupported:stabilizationMode]) {
+    completion([FlutterError errorWithCode:@"VIDEO_STABILIIZATION_ERROR"
+                                   message:@"Unavailable video stabilization mode."
+                                   details:nil]);
+    return;
+  }
+
+  AVCaptureConnection *connection = [_captureVideoOutput connectionWithMediaType:AVMediaTypeVideo];
+
+  connection.preferredVideoStabilizationMode = stabilizationMode;
+
+  completion(nil);
+}
+
+- (BOOL)isVideoStabilizationModeSupported:(FCPPlatformVideoStabilizationMode)mode {
+  AVCaptureVideoStabilizationMode stabilizationMode = getAvCaptureVideoStabilizationMode(mode);
+  return [_captureDevice.activeFormat isVideoStabilizationModeSupported:stabilizationMode];
+}
+
 - (CGFloat)minimumAvailableZoomFactor {
   return _captureDevice.minAvailableVideoZoomFactor;
 }

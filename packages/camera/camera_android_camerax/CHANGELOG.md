@@ -1,3 +1,7 @@
+## 0.7.0
+
+* Adds video stabilization.
+
 ## 0.6.14+1
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.

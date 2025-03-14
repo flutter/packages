@@ -793,6 +793,71 @@ class AndroidCameraCameraX extends CameraPlatform {
     await cameraControl.setZoomRatio(zoom);
   }
 
+  /// Gets a list of video stabilization modes that are supported for the
+  /// selected camera.
+  @override
+  Future<Iterable<VideoStabilizationMode>> getSupportedVideoStabilizationModes(
+      int cameraId) async {
+    return (await _getSupportedVideoStabilizationModeMap(cameraId)).keys;
+  }
+
+  /// Set the video stabilization mode for the selected camera.
+  ///
+  /// Throws a [ArgumentError] when an unsupported [mode] is
+  /// supplied.
+  @override
+  Future<void> setVideoStabilizationMode(
+      int cameraId, VideoStabilizationMode mode) async {
+    final Map<VideoStabilizationMode, int> availableModes =
+        await _getSupportedVideoStabilizationModeMap(cameraId);
+
+    final int? controlMode = availableModes[mode];
+    if (controlMode == null) {
+      throw ArgumentError('Unavailable video stabilization mode.', 'mode');
+    }
+
+    final CaptureRequestOptions captureRequestOptions = proxy
+        .createCaptureRequestOptions(<(
+      CaptureRequestKeySupportedType,
+      Object?
+    )>[
+      (
+        CaptureRequestKeySupportedType.controlVideoStabilizationMode,
+        controlMode
+      )
+    ]);
+
+    final Camera2CameraControl camera2Control =
+        proxy.getCamera2CameraControl(cameraControl);
+    await camera2Control.addCaptureRequestOptions(captureRequestOptions);
+  }
+
+  /// Gets a map of video stabilization control modes that are supported for the
+  /// selected camera, indexed by the respective [VideoStabilizationMode].
+  Future<Map<VideoStabilizationMode, int>>
+      _getSupportedVideoStabilizationModeMap(int cameraId) async {
+    final CameraInfo? camInfo = cameraInfo;
+    if (camInfo == null) {
+      return <VideoStabilizationMode, int>{};
+    }
+    final Camera2CameraInfo cam2Info =
+        await proxy.getCamera2CameraInfo(camInfo);
+
+    final List<int> controlModes =
+        await cam2Info.getAvailableVideoStabilizationModes();
+
+    final Map<VideoStabilizationMode, int> modes =
+        <VideoStabilizationMode, int>{
+      for (final int controlMode in controlModes)
+        if (controlMode == CameraMetadata.controlVideoStabilizationModeOff)
+          VideoStabilizationMode.off: controlMode
+        else if (controlMode == CameraMetadata.controlVideoStabilizationModeOn)
+          VideoStabilizationMode.level1: controlMode
+    };
+
+    return modes;
+  }
+
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {

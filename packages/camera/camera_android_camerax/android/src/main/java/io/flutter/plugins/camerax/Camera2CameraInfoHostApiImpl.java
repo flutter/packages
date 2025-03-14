@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import android.content.Context;
 import android.hardware.camera2.CameraCharacteristics;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
@@ -14,6 +13,8 @@ import androidx.camera.camera2.interop.ExperimentalCamera2Interop;
 import androidx.camera.core.CameraInfo;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.camerax.GeneratedCameraXLibrary.Camera2CameraInfoHostApi;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -22,6 +23,7 @@ import java.util.Objects;
  * <p>This class handles instantiating and adding native object instances that are attached to a
  * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
+@OptIn(markerClass = ExperimentalCamera2Interop.class)
 public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
   private final BinaryMessenger binaryMessenger;
   private final InstanceManager instanceManager;
@@ -29,7 +31,6 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
 
   /** Proxy for methods of {@link Camera2CameraInfo}. */
   @VisibleForTesting
-  @OptIn(markerClass = ExperimentalCamera2Interop.class)
   public static class Camera2CameraInfoProxy {
 
     @NonNull
@@ -53,6 +54,14 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
       return Long.valueOf(
           camera2CameraInfo.getCameraCharacteristic(CameraCharacteristics.SENSOR_ORIENTATION));
     }
+
+    @NonNull
+    public int[] getAvailableVideoStabilizationModes(@NonNull Camera2CameraInfo camera2CameraInfo) {
+      int[] modes =
+          camera2CameraInfo.getCameraCharacteristic(
+              CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES);
+      return modes == null ? new int[] {} : modes;
+    }
   }
 
   /**
@@ -60,7 +69,6 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
    *
    * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param context {@link Context} used to retrieve {@code Executor}
    */
   public Camera2CameraInfoHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
@@ -116,7 +124,18 @@ public class Camera2CameraInfoHostApiImpl implements Camera2CameraInfoHostApi {
     return proxy.getSensorOrientation(getCamera2CameraInfoInstance(identifier));
   }
 
-  @OptIn(markerClass = ExperimentalCamera2Interop.class)
+  @NonNull
+  @Override
+  public List<Long> getAvailableVideoStabilizationModes(@NonNull Long identifier) {
+
+    int[] availableModes = proxy.getAvailableVideoStabilizationModes(getCamera2CameraInfoInstance(identifier));
+    List<Long> ret = new ArrayList<Long>(availableModes.length);
+    for (int i : availableModes) {
+      ret.add((long) i);
+    }
+    return ret;
+  }
+
   private Camera2CameraInfo getCamera2CameraInfoInstance(@NonNull Long identifier) {
     return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }

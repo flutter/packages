@@ -708,6 +708,17 @@ class MockCamera2CameraInfo extends _i1.Mock implements _i26.Camera2CameraInfo {
       ) as _i17.Future<int>);
 
   @override
+  _i17.Future<List<int>> getAvailableVideoStabilizationModes() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAvailableVideoStabilizationModes,
+          [],
+        ),
+        returnValue: _i17.Future<List<int>>.value(<int>[]),
+        returnValueForMissingStub: _i17.Future<List<int>>.value(<int>[]),
+      ) as _i17.Future<List<int>>);
+
+  @override
   _i17.Future<String> getCameraId() => (super.noSuchMethod(
         Invocation.method(
           #getCameraId,

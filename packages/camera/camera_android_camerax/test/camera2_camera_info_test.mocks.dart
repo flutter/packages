@@ -99,6 +99,16 @@ class MockTestCamera2CameraInfoHostApi extends _i1.Mock
         ),
         returnValue: 0,
       ) as int);
+
+  @override
+  List<int?> getAvailableVideoStabilizationModes(int? identifier) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAvailableVideoStabilizationModes,
+          [identifier],
+        ),
+        returnValue: <int?>[],
+      ) as List<int?>);
 }
 
 /// A class which mocks [TestInstanceManagerHostApi].

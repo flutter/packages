@@ -101,10 +101,11 @@ void main() {
       );
 
       final List<(CaptureRequestKeySupportedType key, Object? value)>
-          supportedOptionsForTesting = <(
-        CaptureRequestKeySupportedType key,
-        Object? value
-      )>[(CaptureRequestKeySupportedType.controlAeLock, false)];
+          supportedOptionsForTesting =
+          <(CaptureRequestKeySupportedType key, Object? value)>[
+        (CaptureRequestKeySupportedType.controlAeLock, false),
+        (CaptureRequestKeySupportedType.controlVideoStabilizationMode, 0),
+      ];
 
       final CaptureRequestOptions instance = CaptureRequestOptions(
         requestedOptions: supportedOptionsForTesting,
@@ -129,6 +130,10 @@ void main() {
           case CaptureRequestKeySupportedType.controlAeLock:
             expect(captureRequestOptions[optionKey.index],
                 equals(optionValue! as bool));
+
+          case CaptureRequestKeySupportedType.controlVideoStabilizationMode:
+            expect(captureRequestOptions[optionKey.index],
+                equals(optionValue! as int));
           // This ignore statement is safe beause this will test when
           // a new CaptureRequestKeySupportedType is being added, but the logic in
           // in the CaptureRequestOptions class has not yet been updated.

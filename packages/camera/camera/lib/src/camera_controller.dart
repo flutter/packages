@@ -54,6 +54,7 @@ class CameraValue {
     this.recordingOrientation,
     this.isPreviewPaused = false,
     this.previewPauseOrientation,
+    this.videoStabilizationMode = VideoStabilizationMode.off,
   }) : _isRecordingPaused = isRecordingPaused;
 
   /// Creates a new camera controller state for an uninitialized controller.
@@ -72,6 +73,7 @@ class CameraValue {
           deviceOrientation: DeviceOrientation.portraitUp,
           isPreviewPaused: false,
           description: description,
+          videoStabilizationMode: VideoStabilizationMode.off,
         );
 
   /// True after [CameraController.initialize] has completed successfully.
@@ -148,6 +150,9 @@ class CameraValue {
   /// The properties of the camera device controlled by this controller.
   final CameraDescription description;
 
+  /// The video stabilization mode in
+  final VideoStabilizationMode videoStabilizationMode;
+
   /// Creates a modified copy of the object.
   ///
   /// Explicitly specified fields get the specified value, all other fields get
@@ -171,6 +176,7 @@ class CameraValue {
     bool? isPreviewPaused,
     CameraDescription? description,
     Optional<DeviceOrientation>? previewPauseOrientation,
+    VideoStabilizationMode? videoStabilizationMode,
   }) {
     return CameraValue(
       isInitialized: isInitialized ?? this.isInitialized,
@@ -198,6 +204,8 @@ class CameraValue {
       previewPauseOrientation: previewPauseOrientation == null
           ? this.previewPauseOrientation
           : previewPauseOrientation.orNull,
+      videoStabilizationMode:
+          videoStabilizationMode ?? this.videoStabilizationMode,
     );
   }
 
@@ -219,6 +227,7 @@ class CameraValue {
         'recordingOrientation: $recordingOrientation, '
         'isPreviewPaused: $isPreviewPaused, '
         'previewPausedOrientation: $previewPauseOrientation, '
+        'videoStabilizationMode: $videoStabilizationMode, '
         'description: $description)';
   }
 }
@@ -682,6 +691,80 @@ class CameraController extends ValueNotifier<CameraValue> {
     _throwIfNotInitialized('setZoomLevel');
     try {
       return CameraPlatform.instance.setZoomLevel(_cameraId, zoom);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// Set the video stabilization mode for the selected camera.
+  ///
+  /// On Android (when using camera_android_camerax) and on iOS
+  /// the supplied [mode] value should be a mode in the list returned
+  /// by [getSupportedVideoStabilizationModes].
+  ///
+  /// When [allowFallback] is true (default) and when
+  /// the camera supports any video stabilization other than
+  /// [VideoStabilizationMode.off], then the camera will
+  /// be set to the best video stabilization mode up to, and including, [mode].
+  ///
+  /// When either [allowFallback] is false or the only
+  /// supported video stabilization mode is [VideoStabilizationMode.off],
+  /// and if [mode] is not one of the supported modes,
+  /// then it throws an [ArgumentError].
+  Future<void> setVideoStabilizationMode(
+    VideoStabilizationMode mode, {
+    bool allowFallback = true,
+  }) async {
+    _throwIfNotInitialized('setVideoStabilizationMode');
+    try {
+      final VideoStabilizationMode requestMode =
+          allowFallback ? await _getVideoStabilizationFallbackMode(mode) : mode;
+
+      await CameraPlatform.instance
+          .setVideoStabilizationMode(_cameraId, requestMode);
+      value = value.copyWith(videoStabilizationMode: mode);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  Future<VideoStabilizationMode> _getVideoStabilizationFallbackMode(
+      VideoStabilizationMode mode) async {
+    final Iterable<VideoStabilizationMode> supportedModes = await CameraPlatform
+        .instance
+        .getSupportedVideoStabilizationModes(_cameraId);
+
+    // if there are no supported modes or if the only supported mode is Off
+    // and something else is requested, then we throw an ArgumentError.
+    if (supportedModes.isEmpty ||
+        (mode != VideoStabilizationMode.off &&
+            supportedModes.every((VideoStabilizationMode sm) =>
+                sm == VideoStabilizationMode.off))) {
+      throw ArgumentError('Unavailable video stabilization mode.', 'mode');
+    }
+
+    VideoStabilizationMode requestMode = VideoStabilizationMode.off;
+    for (final VideoStabilizationMode supportedMode in supportedModes) {
+      if (supportedMode.index <= mode.index &&
+          supportedMode.index >= requestMode.index) {
+        requestMode = supportedMode;
+      }
+    }
+
+    return requestMode;
+  }
+
+  /// Gets a list of video stabilization modes that are supported for the selected camera.
+  ///
+  /// Will return the list of supported video stabilization modes
+  /// on Android (when using camera_android_camerax package) and
+  /// on iOS. Throws an [UnimplementedError] on all other platforms.
+  Future<Iterable<VideoStabilizationMode>>
+      getSupportedVideoStabilizationModes() {
+    _throwIfNotInitialized('isVideoStabilizationModeSupported');
+    try {
+      return CameraPlatform.instance
+          .getSupportedVideoStabilizationModes(_cameraId);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }

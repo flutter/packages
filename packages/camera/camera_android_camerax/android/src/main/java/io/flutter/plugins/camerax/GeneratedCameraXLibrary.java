@@ -181,7 +181,8 @@ public class GeneratedCameraXLibrary {
    * Camera2.
    */
   public enum CaptureRequestKeySupportedType {
-    CONTROL_AE_LOCK(0);
+    CONTROL_AE_LOCK(0),
+    CONTROL_VIDEO_STABILIZATION_MODE(1);
 
     final int index;
 
@@ -4444,6 +4445,9 @@ public class GeneratedCameraXLibrary {
     @NonNull
     Long getSensorOrientation(@NonNull Long identifier);
 
+    @NonNull
+    List<Long> getAvailableVideoStabilizationModes(@NonNull Long identifier);
+
     /** The codec used by Camera2CameraInfoHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return new StandardMessageCodec();
@@ -4551,6 +4555,33 @@ public class GeneratedCameraXLibrary {
                 try {
                   Long output =
                       api.getSensorOrientation(
+                          (identifierArg == null) ? null : identifierArg.longValue());
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.Camera2CameraInfoHostApi.getAvailableVideoStabilizationModes",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Number identifierArg = (Number) args.get(0);
+                try {
+                  List<Long> output =
+                      api.getAvailableVideoStabilizationModes(
                           (identifierArg == null) ? null : identifierArg.longValue());
                   wrapped.add(0, output);
                 } catch (Throwable exception) {

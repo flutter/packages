@@ -34,9 +34,24 @@ class CameraMetadata {
   /// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3.
   static const int infoSupportedHardwareLevel3 = 3;
 
-  /// Constant taht specifies a camera device is backed by an external camera
+  /// Constant that specifies a camera device is backed by an external camera
   /// connected to this Android device.
   ///
   /// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_EXTERNAL.
   static const int infoSupportedHardwareLevelExternal = 4;
+
+  /// Constant that specifies that video stabilization is disabled.
+  ///
+  /// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#CONTROL_VIDEO_STABILIZATION_MODE_OFF.
+  static const int controlVideoStabilizationModeOff = 0;
+
+  /// Constant that specifies that video stabilization is enabled.
+  ///
+  /// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#CONTROL_VIDEO_STABILIZATION_MODE_ON.
+  static const int controlVideoStabilizationModeOn = 1;
+
+  /// Constant that specifies that video stabilization mode is preview stabilization,
+  ///
+  /// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#CONTROL_VIDEO_STABILIZATION_MODE_PREVIEW_STABILIZATION.
+  static const int controlVideoStabilizationModePreviewStabilization = 2;
 }

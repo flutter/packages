@@ -51,6 +51,10 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
             builder.setCaptureRequestOption(
                 (CaptureRequest.Key<Boolean>) optionKey, (Boolean) optionValue);
             break;
+          case CONTROL_VIDEO_STABILIZATION_MODE:
+            builder.setCaptureRequestOption(
+                (CaptureRequest.Key<Integer>) optionKey, (int) optionValue);
+            break;
           default:
             throw new IllegalArgumentException(
                 "The capture request key "
@@ -68,6 +72,9 @@ public class CaptureRequestOptionsHostApiImpl implements CaptureRequestOptionsHo
       switch (type) {
         case CONTROL_AE_LOCK:
           key = CaptureRequest.CONTROL_AE_LOCK;
+          break;
+        case CONTROL_VIDEO_STABILIZATION_MODE:
+          key = CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE;
           break;
         default:
           throw new IllegalArgumentException(

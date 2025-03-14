@@ -2487,6 +2487,8 @@ abstract class TestCamera2CameraInfoHostApi {
 
   int getSensorOrientation(int identifier);
 
+  List<int?> getAvailableVideoStabilizationModes(int identifier);
+
   static void setup(TestCamera2CameraInfoHostApi? api,
       {BinaryMessenger? binaryMessenger}) {
     {
@@ -2575,6 +2577,30 @@ abstract class TestCamera2CameraInfoHostApi {
           assert(arg_identifier != null,
               'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getSensorOrientation was null, expected non-null int.');
           final int output = api.getSensorOrientation(arg_identifier!);
+          return <Object?>[output];
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.Camera2CameraInfoHostApi.getAvailableVideoStabilizationModes',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getAvailableVideoStabilizationModes was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_identifier = (args[0] as int?);
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.Camera2CameraInfoHostApi.getAvailableVideoStabilizationModes was null, expected non-null int.');
+          final List<int?> output =
+              api.getAvailableVideoStabilizationModes(arg_identifier!);
           return <Object?>[output];
         });
       }

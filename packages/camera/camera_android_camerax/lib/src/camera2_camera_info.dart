@@ -48,6 +48,22 @@ class Camera2CameraInfo extends JavaObject {
   Future<int> getSupportedHardwareLevel() =>
       _api.getSupportedHardwareLevelFromInstance(this);
 
+  /// Retrieves de list of available common platform video stabilization modes
+  /// the device to which this instance pertains to supports.
+  ///
+  /// Works by retrieving the value of `CameraCharacteristics.CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES`
+  /// and mapping each of those values to the corresponding common platform
+  /// video stabilization mode.
+  ///
+  /// See https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#CONTROL_AVAILABLE_VIDEO_STABILIZATION_MODES
+  /// for more information.
+  Future<List<int>> getAvailableVideoStabilizationModes() async {
+    final List<int> modes =
+        await _api.getAvailableVideoStabilizationModesFromInstance(this);
+
+    return modes;
+  }
+
   /// Gets the camera ID.
   ///
   /// The ID may change based on the internal configuration of the camera to which
@@ -89,6 +105,15 @@ class _Camera2CameraInfoHostApiImpl extends Camera2CameraInfoHostApi {
       Camera2CameraInfo instance) {
     final int? identifier = instanceManager.getIdentifier(instance);
     return getSupportedHardwareLevel(identifier!);
+  }
+
+  Future<List<int>> getAvailableVideoStabilizationModesFromInstance(
+      Camera2CameraInfo instance) async {
+    final int? identifier = instanceManager.getIdentifier(instance);
+    final List<int?> modes =
+        await getAvailableVideoStabilizationModes(identifier!);
+
+    return modes.where((int? e) => e != null).map((int? e) => e!).toList();
   }
 
   Future<String> getCameraIdFromInstance(Camera2CameraInfo instance) {

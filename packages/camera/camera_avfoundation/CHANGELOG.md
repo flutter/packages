@@ -1,3 +1,7 @@
+## 0.10.0
+
+* Adds video stabilization.
+
 ## 0.9.18+9
 
 * Backfills unit tests for `CameraPlugin` class.

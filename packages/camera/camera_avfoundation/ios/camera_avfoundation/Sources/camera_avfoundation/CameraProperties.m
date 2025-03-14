@@ -55,3 +55,24 @@ OSType FCPGetPixelFormatForPigeonFormat(FCPPlatformImageFormatGroup imageFormat)
       return kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
   }
 }
+
+AVCaptureVideoStabilizationMode getAvCaptureVideoStabilizationMode(
+    FCPPlatformVideoStabilizationMode videoStabilizationMode) {
+  switch (videoStabilizationMode) {
+    case FCPPlatformVideoStabilizationModeOff:
+      return AVCaptureVideoStabilizationModeOff;
+    case FCPPlatformVideoStabilizationModeStandard:
+      return AVCaptureVideoStabilizationModeStandard;
+    case FCPPlatformVideoStabilizationModeCinematic:
+      return AVCaptureVideoStabilizationModeCinematic;
+    case FCPPlatformVideoStabilizationModeCinematicExtended:
+      if (@available(iOS 13.0, *)) {
+        return AVCaptureVideoStabilizationModeCinematicExtended;
+      } else {
+        return AVCaptureVideoStabilizationModeCinematic;
+      }
+
+    default:
+      return AVCaptureVideoStabilizationModeOff;
+  }
+}

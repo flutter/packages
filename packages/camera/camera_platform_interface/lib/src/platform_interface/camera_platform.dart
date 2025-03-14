@@ -275,6 +275,22 @@ abstract class CameraPlatform extends PlatformInterface {
     throw UnimplementedError('setZoomLevel() is not implemented.');
   }
 
+  /// Gets a list of video stabilization modes that are supported for the selected camera.
+  Future<Iterable<VideoStabilizationMode>> getSupportedVideoStabilizationModes(
+      int cameraId) async {
+    throw UnimplementedError(
+        'getSupportedVideoStabilizationModes() is not implemented.');
+  }
+
+  /// Sets the video stabilization mode for the selected camera.
+  ///
+  /// Throws a [ArgumentError] when a not supported video stabilization
+  /// mode is supplied.
+  Future<void> setVideoStabilizationMode(
+      int cameraId, VideoStabilizationMode mode) async {
+    throw UnimplementedError('setVideoStabilizationMode() is not implemented.');
+  }
+
   /// Pause the active preview on the current frame for the selected camera.
   Future<void> pausePreview(int cameraId) {
     throw UnimplementedError('pausePreview() is not implemented.');

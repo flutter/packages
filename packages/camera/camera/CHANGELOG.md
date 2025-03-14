@@ -1,3 +1,7 @@
+## 0.12.0
+
+* Adds support for video stabilization.
+
 ## 0.11.1
 
 * Adds API support query for image streaming.
