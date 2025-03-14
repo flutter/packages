@@ -4,9 +4,11 @@
 
 #import "./include/camera_avfoundation/FLTCaptureVideoDataOutput.h"
 
-@implementation FLTDefaultCaptureVideoDataOutput {
-  AVCaptureVideoDataOutput *_avOutput;
-}
+@interface FLTDefaultCaptureVideoDataOutput ()
+@property(nonatomic, strong) AVCaptureVideoDataOutput *avOutput;
+@end
+
+@implementation FLTDefaultCaptureVideoDataOutput
 
 - (instancetype)initWithCaptureVideoOutput:(AVCaptureVideoDataOutput *)videoOutput {
   self = [super init];
@@ -16,36 +18,32 @@
   return self;
 }
 
-- (AVCaptureVideoDataOutput *)avOutput {
-  return _avOutput;
-}
-
 - (BOOL)alwaysDiscardsLateVideoFrames {
-  return _avOutput.alwaysDiscardsLateVideoFrames;
+  return self.avOutput.alwaysDiscardsLateVideoFrames;
 }
 
 - (void)setAlwaysDiscardsLateVideoFrames:(BOOL)alwaysDiscardsLateVideoFrames {
-  _avOutput.alwaysDiscardsLateVideoFrames = alwaysDiscardsLateVideoFrames;
+  self.avOutput.alwaysDiscardsLateVideoFrames = alwaysDiscardsLateVideoFrames;
 }
 
 - (NSDictionary<NSString *, id> *)videoSettings {
-  return _avOutput.videoSettings;
+  return self.avOutput.videoSettings;
 }
 
 - (void)setVideoSettings:(NSDictionary<NSString *, id> *)videoSettings {
-  _avOutput.videoSettings = videoSettings;
+  self.avOutput.videoSettings = videoSettings;
 }
 
 - (nullable NSObject<FLTCaptureConnection> *)connectionWithMediaType:
     (nonnull AVMediaType)mediaType {
   return [[FLTDefaultCaptureConnection alloc]
-      initWithConnection:[_avOutput connectionWithMediaType:mediaType]];
+      initWithConnection:[self.avOutput connectionWithMediaType:mediaType]];
 }
 
 - (void)setSampleBufferDelegate:
             (nullable id<AVCaptureVideoDataOutputSampleBufferDelegate>)sampleBufferDelegate
                           queue:(nullable dispatch_queue_t)sampleBufferCallbackQueue {
-  [_avOutput setSampleBufferDelegate:sampleBufferDelegate queue:sampleBufferCallbackQueue];
+  [self.avOutput setSampleBufferDelegate:sampleBufferDelegate queue:sampleBufferCallbackQueue];
 }
 
 @end
