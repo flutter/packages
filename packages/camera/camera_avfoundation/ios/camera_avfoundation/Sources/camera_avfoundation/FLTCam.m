@@ -111,6 +111,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
 @property(assign, nonatomic) FCPPlatformExposureMode exposureMode;
 @property(assign, nonatomic) FCPPlatformFocusMode focusMode;
+@property(assign, nonatomic) FCPPlatformFlashMode flashMode;
 @property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
@@ -406,8 +407,8 @@ static void selectBestFormatForRequestedFrameRate(
   }
 
   // If the flash is in torch mode, no capture-level flash setting is needed.
-  if (_flashMode != FCPPlatformFlashModeTorch) {
-    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(_flashMode)];
+  if (self.flashMode != FCPPlatformFlashModeTorch) {
+    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(self.flashMode)];
   }
   NSError *error;
   NSString *path = [self getTemporaryFilePathWithExtension:extension
@@ -1333,7 +1334,7 @@ static void selectBestFormatForRequestedFrameRate(
     [_audioOutput setSampleBufferDelegate:self queue:_captureSessionQueue];
   }
 
-  if (_flashMode == FCPPlatformFlashModeTorch) {
+  if (self.flashMode == FCPPlatformFlashModeTorch) {
     [self.captureDevice lockForConfiguration:nil];
     [self.captureDevice setTorchMode:AVCaptureTorchModeOn];
     [self.captureDevice unlockForConfiguration];

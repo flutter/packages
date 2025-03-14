@@ -1,7 +1,7 @@
 ## 0.9.18+10
 
 * Backfills unit tests for the `FLTCam` class.
-* Makes `exposureMode` and `focusMode` properties of `FLTCam` private.
+* Makes `exposureMode`, `focusMode`, and `flashMode` properties of `FLTCam` private.
 
 ## 0.9.18+9
 
