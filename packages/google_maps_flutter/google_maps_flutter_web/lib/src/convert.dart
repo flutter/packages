@@ -153,7 +153,7 @@ bool _isJsonMapStyle(Map<String, Object?> value) {
 // Converts an incoming JSON-encoded Style info, into the correct gmaps array.
 List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
   List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[];
-  if (mapStyleJson != null) {
+  if (mapStyleJson != null && mapStyleJson.isNotEmpty) {
     try {
       styles =
           (json.decode(mapStyleJson, reviver: (Object? key, Object? value) {
