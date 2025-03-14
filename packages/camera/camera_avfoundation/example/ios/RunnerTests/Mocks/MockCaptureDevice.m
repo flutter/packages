@@ -35,6 +35,13 @@
   }
 }
 
+- (AVCaptureTorchMode)torchMode {
+  if (self.getTorchModeStub) {
+    return self.getTorchModeStub();
+  }
+  return AVCaptureTorchModeOff;
+}
+
 - (BOOL)isFocusModeSupported:(AVCaptureFocusMode)mode {
   if (self.isFocusModeSupportedStub) {
     return self.isFocusModeSupportedStub(mode);

@@ -51,6 +51,7 @@
 		E0CDBAC227CD9729002561D9 /* CameraTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E0CDBAC127CD9729002561D9 /* CameraTestUtils.m */; };
 		E12C4FF62D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12C4FF52D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift */; };
 		E12C4FF82D68E85500515E70 /* MockFLTCameraPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12C4FF72D68E85500515E70 /* MockFLTCameraPermissionManager.swift */; };
+		E1A5F4E32D80259C0005BA64 /* FLTCamSetFlashModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */; };
 		E1FFEAAD2D6C8DD700B14107 /* MockFLTCam.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FFEAAC2D6C8DD700B14107 /* MockFLTCam.swift */; };
 		E1FFEAAF2D6CDA8C00B14107 /* CameraPluginCreateCameraTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FFEAAE2D6CDA8C00B14107 /* CameraPluginCreateCameraTests.swift */; };
 		E1FFEAB12D6CDE5B00B14107 /* CameraPluginInitializeCameraTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FFEAB02D6CDE5B00B14107 /* CameraPluginInitializeCameraTests.swift */; };
@@ -148,6 +149,7 @@
 		E0CDBAC127CD9729002561D9 /* CameraTestUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CameraTestUtils.m; sourceTree = "<group>"; };
 		E12C4FF52D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPluginDelegatingMethodTests.swift; sourceTree = "<group>"; };
 		E12C4FF72D68E85500515E70 /* MockFLTCameraPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFLTCameraPermissionManager.swift; sourceTree = "<group>"; };
+		E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamSetFlashModeTests.swift; sourceTree = "<group>"; };
 		E1FFEAAC2D6C8DD700B14107 /* MockFLTCam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFLTCam.swift; sourceTree = "<group>"; };
 		E1FFEAAE2D6CDA8C00B14107 /* CameraPluginCreateCameraTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPluginCreateCameraTests.swift; sourceTree = "<group>"; };
 		E1FFEAB02D6CDE5B00B14107 /* CameraPluginInitializeCameraTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPluginInitializeCameraTests.swift; sourceTree = "<group>"; };
@@ -206,6 +208,7 @@
 				E12C4FF52D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift */,
 				E1FFEAAE2D6CDA8C00B14107 /* CameraPluginCreateCameraTests.swift */,
 				E1FFEAB02D6CDE5B00B14107 /* CameraPluginInitializeCameraTests.swift */,
+				E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -540,6 +543,7 @@
 				972CA92D2D5A28C4004B846F /* QueueUtilsTests.swift in Sources */,
 				E1FFEAB12D6CDE5B00B14107 /* CameraPluginInitializeCameraTests.swift in Sources */,
 				979B3DFB2D5B6BC7009BDE1A /* ExceptionCatcher.m in Sources */,
+				E1A5F4E32D80259C0005BA64 /* FLTCamSetFlashModeTests.swift in Sources */,
 				7FD83D2B2D5BA65B00F4DB7C /* MockCaptureConnection.m in Sources */,
 				977A25242D5A511600931E34 /* CameraPermissionTests.swift in Sources */,
 				970ADABE2D6740A900EFDCD9 /* MockWritableData.swift in Sources */,

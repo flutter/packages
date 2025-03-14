@@ -157,7 +157,7 @@ final class PhotoCaptureTests: XCTestCase {
     let captureDeviceMock = MockCaptureDevice()
     captureDeviceMock.hasTorch = true
     captureDeviceMock.isTorchAvailable = true
-    captureDeviceMock.torchMode = .auto
+    captureDeviceMock.getTorchModeStub = { .auto }
     captureDeviceMock.setTorchModeStub = { mode in
       if mode == .on {
         setTorchExpectation.fulfill()
