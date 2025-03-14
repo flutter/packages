@@ -4560,6 +4560,9 @@ protocol PigeonApiDelegateNSViewWKWebView {
   func getTitle(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String?
   #endif
   #if !os(iOS)
+  func getCopyBackForwardList(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> [String: Any]
+  #endif
+  #if !os(iOS)
   /// A Boolean value that indicates whether horizontal swipe gestures trigger
   /// backward and forward page navigation.
   func setAllowsBackForwardNavigationGestures(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, allow: Bool) throws
@@ -4891,6 +4894,23 @@ withIdentifier: pigeonIdentifierArg)
       }
     } else {
       getTitleChannel.setMessageHandler(nil)
+    }
+    #endif
+    #if !os(iOS)
+    let getCopyBackForwardListChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getCopyBackForwardList", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getCopyBackForwardListChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! WKWebView
+        do {
+          let result = try api.pigeonDelegate.getCopyBackForwardList(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getCopyBackForwardListChannel.setMessageHandler(nil)
     }
     #endif
     #if !os(iOS)

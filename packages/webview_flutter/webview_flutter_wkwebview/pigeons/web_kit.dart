@@ -950,6 +950,8 @@ abstract class NSViewWKWebView extends NSObject implements WKWebView {
   /// The page title.
   String? getTitle();
 
+  Map<String, Object> getCopyBackForwardList();
+
   /// A Boolean value that indicates whether horizontal swipe gestures trigger
   /// backward and forward page navigation.
   void setAllowsBackForwardNavigationGestures(bool allow);
