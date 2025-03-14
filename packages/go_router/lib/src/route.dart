@@ -1223,13 +1223,13 @@ class StatefulNavigationShell extends StatefulWidget {
   /// [StatefulShellBranch]es available
   void updateBranches() {
     final StatefulShellRoute route =
-    shellRouteContext.route as StatefulShellRoute;
+        shellRouteContext.route as StatefulShellRoute;
     final StatefulNavigationShellState? shellState =
         route._shellStateKey.currentState;
     if (shellState != null) {
-      for (StatefulShellBranch branch in route.branches) {
-        shellState._branchStateFor(branch);
-      }
+      route.branches.forEach(
+        (branch) => shellState._branchStateFor(branch),
+      );
     }
   }
 }
