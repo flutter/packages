@@ -6,8 +6,8 @@
 /// implementation.
 class MockCaptureVideoDataOutput: NSObject, FLTCaptureVideoDataOutput {
 
-  var avOutput: AVCaptureVideoDataOutput = AVCaptureVideoDataOutput()
-  var alwaysDiscardsLateVideoFrames: Bool = false
+  var avOutput = AVCaptureVideoDataOutput()
+  var alwaysDiscardsLateVideoFrames = false
   var videoSettings: [String: Any] = [:]
 
   var connectionWithMediaTypeStub: ((AVMediaType) -> FLTCaptureConnection?)?
