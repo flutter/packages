@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:async/async.dart';
@@ -61,6 +62,10 @@ void main() {
           cameraId: any(named: 'cameraId'),
         ),
       ).thenAnswer((_) => Future<MediaStream>.value(mediaStream));
+
+      when(
+        () => cameraService.hasPropertyOffScreenCanvas(),
+      ).thenAnswer((_) => true);
     });
 
     setUpAll(() {
@@ -1703,6 +1708,108 @@ void main() {
           await streamQueue.cancel();
         });
       });
+    });
+    group('cameraFrameStream', () {
+      testWidgets(
+        'CameraImageData bytes is a multiple of 4 '
+        'when browser supports OffscreenCanvas',
+        (WidgetTester tester) async {
+          final VideoElement videoElement = getVideoElementWithBlankStream(
+            const Size(10, 10),
+          );
+
+          final Camera camera = Camera(
+            textureId: textureId,
+            cameraService: cameraService,
+          )..videoElement = videoElement;
+
+          when(() => cameraService.hasPropertyOffScreenCanvas()).thenReturn(
+            true,
+          );
+
+          when(
+            () => cameraService.takeFrame(videoElement),
+          ).thenAnswer(
+            (_) => CameraImageData(
+              format: const CameraImageFormat(
+                ImageFormatGroup.unknown,
+                raw: 0,
+              ),
+              planes: <CameraImagePlane>[
+                CameraImagePlane(
+                  bytes: Uint8List(32),
+                  bytesPerRow: videoElement.width * 4,
+                ),
+              ],
+              height: 10,
+              width: 10,
+            ),
+          );
+
+          final CameraImageData cameraImageData =
+              await camera.cameraFrameStream().first;
+          expect(
+            cameraImageData,
+            equals(
+              isA<CameraImageData>().having(
+                (CameraImageData e) => e.planes.first.bytes.length % 4,
+                'bytes',
+                equals(0),
+              ),
+            ),
+          );
+        },
+      );
+      testWidgets(
+        'CameraImageData bytes is a multiple of 4 '
+        'when browser does not supports OffscreenCanvas',
+        (WidgetTester tester) async {
+          final VideoElement videoElement = getVideoElementWithBlankStream(
+            const Size(10, 10),
+          );
+
+          final Camera camera = Camera(
+            textureId: textureId,
+            cameraService: cameraService,
+          )..videoElement = videoElement;
+
+          when(() => cameraService.hasPropertyOffScreenCanvas()).thenReturn(
+            false,
+          );
+
+          when(
+            () => cameraService.takeFrame(videoElement),
+          ).thenAnswer(
+            (_) => CameraImageData(
+              format: const CameraImageFormat(
+                ImageFormatGroup.unknown,
+                raw: 0,
+              ),
+              planes: <CameraImagePlane>[
+                CameraImagePlane(
+                  bytes: Uint8List(32),
+                  bytesPerRow: videoElement.width * 4,
+                ),
+              ],
+              height: 10,
+              width: 10,
+            ),
+          );
+
+          final CameraImageData cameraImageData =
+              await camera.cameraFrameStream().first;
+          expect(
+            cameraImageData,
+            equals(
+              isA<CameraImageData>().having(
+                (CameraImageData e) => e.planes.first.bytes.length % 4,
+                'bytes',
+                equals(0),
+              ),
+            ),
+          );
+        },
+      );
     });
   });
 }
