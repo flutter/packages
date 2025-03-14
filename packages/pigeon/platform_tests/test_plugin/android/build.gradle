@@ -2,7 +2,7 @@ group 'com.example.test_plugin'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.1.0'
+    ext.kotlin_version = '2.1.10'
     repositories {
         google()
         mavenCentral()
@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 
 android {
     namespace 'com.example.test_plugin'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11

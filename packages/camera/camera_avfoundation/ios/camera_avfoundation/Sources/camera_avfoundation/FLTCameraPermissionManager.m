@@ -61,11 +61,11 @@
       FlutterError *flutterError;
       if (forAudio) {
         flutterError = [FlutterError errorWithCode:@"AudioAccessRestricted"
-                                           message:@"Audio access is restricted. "
+                                           message:@"Audio access is restricted."
                                            details:nil];
       } else {
         flutterError = [FlutterError errorWithCode:@"CameraAccessRestricted"
-                                           message:@"Camera access is restricted. "
+                                           message:@"Camera access is restricted."
                                            details:nil];
       }
       handler(flutterError);

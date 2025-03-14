@@ -86,6 +86,12 @@ class Preview extends UseCase {
   Future<ResolutionInfo> getResolutionInfo() {
     return _api.getResolutionInfoFromInstance(this);
   }
+
+  /// Returns whether or not the Android surface producer automatically handles
+  /// correcting the rotation of camera previews for the device this plugin runs on.
+  Future<bool> surfaceProducerHandlesCropAndRotation() {
+    return _api.surfaceProducerHandlesCropAndRotationFromInstance();
+  }
 }
 
 /// Host API implementation of [Preview].
@@ -155,5 +161,11 @@ class PreviewHostApiImpl extends PreviewHostApi {
     final ResolutionInfo resolutionInfo = await getResolutionInfo(identifier!);
 
     return resolutionInfo;
+  }
+
+  /// Returns whether or not the Android surface producer automatically handles
+  /// correcting the rotation of camera previews for the device this plugin runs on.
+  Future<bool> surfaceProducerHandlesCropAndRotationFromInstance() {
+    return surfaceProducerHandlesCropAndRotation();
   }
 }

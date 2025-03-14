@@ -1,3 +1,15 @@
+## 4.3.3
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 4.3.2
+
+* Bumps gradle-plugin to 2.1.10.
+
+## 4.3.1
+
+* Bumps gradle-plugin to 2.1.0.
+
 ## 4.3.0
 
 * Adds support for disabling content URL access within WebView and disabling the Geolocation API.

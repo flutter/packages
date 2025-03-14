@@ -3,47 +3,54 @@
 // found in the LICENSE file.
 
 #import "./include/camera_avfoundation/FLTCamMediaSettingsAVWrapper.h"
+#import "./include/camera_avfoundation/FLTAssetWriter.h"
+#import "./include/camera_avfoundation/FLTCaptureDevice.h"
+#import "./include/camera_avfoundation/FLTCaptureSession.h"
 
 @implementation FLTCamMediaSettingsAVWrapper
 
-- (BOOL)lockDevice:(AVCaptureDevice *)captureDevice error:(NSError *_Nullable *_Nullable)outError {
+- (BOOL)lockDevice:(NSObject<FLTCaptureDevice> *)captureDevice
+             error:(NSError *_Nullable *_Nullable)outError {
   return [captureDevice lockForConfiguration:outError];
 }
 
-- (void)unlockDevice:(AVCaptureDevice *)captureDevice {
+- (void)unlockDevice:(NSObject<FLTCaptureDevice> *)captureDevice {
   return [captureDevice unlockForConfiguration];
 }
 
-- (void)beginConfigurationForSession:(AVCaptureSession *)videoCaptureSession {
+- (void)beginConfigurationForSession:(NSObject<FLTCaptureSession> *)videoCaptureSession {
   [videoCaptureSession beginConfiguration];
 }
 
-- (void)commitConfigurationForSession:(AVCaptureSession *)videoCaptureSession {
+- (void)commitConfigurationForSession:(NSObject<FLTCaptureSession> *)videoCaptureSession {
   [videoCaptureSession commitConfiguration];
 }
 
-- (void)setMinFrameDuration:(CMTime)duration onDevice:(AVCaptureDevice *)captureDevice {
+- (void)setMinFrameDuration:(CMTime)duration onDevice:(NSObject<FLTCaptureDevice> *)captureDevice {
   captureDevice.activeVideoMinFrameDuration = duration;
 }
 
-- (void)setMaxFrameDuration:(CMTime)duration onDevice:(AVCaptureDevice *)captureDevice {
+- (void)setMaxFrameDuration:(CMTime)duration onDevice:(NSObject<FLTCaptureDevice> *)captureDevice {
   captureDevice.activeVideoMaxFrameDuration = duration;
 }
 
-- (AVAssetWriterInput *)assetWriterAudioInputWithOutputSettings:
+- (NSObject<FLTAssetWriterInput> *)assetWriterAudioInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
-  return [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio
-                                            outputSettings:outputSettings];
+  return [[FLTDefaultAssetWriterInput alloc]
+      initWithInput:[AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio
+                                                       outputSettings:outputSettings]];
 }
 
-- (AVAssetWriterInput *)assetWriterVideoInputWithOutputSettings:
+- (NSObject<FLTAssetWriterInput> *)assetWriterVideoInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings {
-  return [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
-                                            outputSettings:outputSettings];
+  return [[FLTDefaultAssetWriterInput alloc]
+      initWithInput:[AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo
+                                                       outputSettings:outputSettings]];
 }
 
-- (void)addInput:(AVAssetWriterInput *)writerInput toAssetWriter:(AVAssetWriter *)writer {
-  [writer addInput:writerInput];
+- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput
+    toAssetWriter:(NSObject<FLTAssetWriter> *)writer {
+  [writer addInput:writerInput.input];
 }
 
 - (nullable NSDictionary<NSString *, id> *)

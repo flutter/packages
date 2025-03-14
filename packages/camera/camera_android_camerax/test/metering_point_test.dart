@@ -41,7 +41,7 @@ void main() {
 
       verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<int>()),
           argThat(isA<int>()), argThat(isA<int>()), argThat(isA<int>())));
-    });
+    }, skip: 'Flaky test: https://github.com/flutter/flutter/issues/164132');
 
     test('create calls create on the Java side', () async {
       final MockTestMeteringPointHostApi mockApi =

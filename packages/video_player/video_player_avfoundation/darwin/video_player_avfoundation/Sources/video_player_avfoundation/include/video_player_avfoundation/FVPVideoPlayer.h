@@ -2,57 +2,46 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import <AVFoundation/AVFoundation.h>
+
+#import "FVPAVFactory.h"
+
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
 #else
 #import <Flutter/Flutter.h>
 #endif
 
-#import <AVFoundation/AVFoundation.h>
-
-#import "FVPAVFactory.h"
-#import "FVPDisplayLink.h"
-#import "FVPFrameUpdater.h"
-
 NS_ASSUME_NONNULL_BEGIN
 
-/// FVPVideoPlayer is responsible for managing video playback using AVPlayer.
-/// It provides methods to control playback, adjust volume, handle seeking, and
-/// notify the Flutter engine about new video frames.
-@interface FVPVideoPlayer : NSObject <FlutterStreamHandler, FlutterTexture>
+/// FVPVideoPlayer manages video playback using AVPlayer.
+/// It provides methods for controlling playback, adjusting volume, and handling seeking.
+/// This class contains all functionalities needed to manage video playback in platform views and is
+/// typically used alongside FVPNativeVideoViewFactory. If you need to display a video using a
+/// texture, use FVPTextureBasedVideoPlayer instead.
+@interface FVPVideoPlayer : NSObject <FlutterStreamHandler>
 /// The Flutter event channel used to communicate with the Flutter engine.
 @property(nonatomic) FlutterEventChannel *eventChannel;
+/// The AVPlayer instance used for video playback.
+@property(nonatomic, readonly) AVPlayer *player;
 /// Indicates whether the video player has been disposed.
 @property(nonatomic, readonly) BOOL disposed;
 /// Indicates whether the video player is set to loop.
 @property(nonatomic) BOOL isLooping;
 /// The current playback position of the video, in milliseconds.
-@property(readonly, nonatomic) int64_t position;
+@property(nonatomic, readonly) int64_t position;
 
-/// Initializes a new instance of FVPVideoPlayer with the given asset, frame updater, display link,
-/// AV factory, and registrar.
+/// Initializes a new instance of FVPVideoPlayer with the given asset, AV factory, and registrar.
 - (instancetype)initWithAsset:(NSString *)asset
-                 frameUpdater:(FVPFrameUpdater *)frameUpdater
-                  displayLink:(FVPDisplayLink *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
-/// Initializes a new instance of FVPVideoPlayer with the given URL, frame updater, display link,
-/// HTTP headers, AV factory, and registrar.
+/// Initializes a new instance of FVPVideoPlayer with the given URL, HTTP headers, AV factory, and
+/// registrar.
 - (instancetype)initWithURL:(NSURL *)url
-               frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(FVPDisplayLink *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
                   registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-
-/// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, frame updater, display
-/// link, AV factory, and registrar.
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                      frameUpdater:(FVPFrameUpdater *)frameUpdater
-                       displayLink:(FVPDisplayLink *)displayLink
-                         avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 /// Disposes the video player and releases any resources it holds.
 - (void)dispose;
@@ -77,10 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// Seeks to the specified location in the video and calls the completion handler when done, if one
 /// is supplied.
 - (void)seekTo:(int64_t)location completionHandler:(void (^_Nullable)(BOOL))completionHandler;
-
-/// Tells the player to run its frame updater until it receives a frame, regardless of the
-/// play/pause state.
-- (void)expectFrame;
 @end
 
 NS_ASSUME_NONNULL_END

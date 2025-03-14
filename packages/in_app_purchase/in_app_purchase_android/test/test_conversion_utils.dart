@@ -13,8 +13,7 @@ import 'package:in_app_purchase_android/src/pigeon_converters.dart';
 /// target must have a non-null string as well.
 PlatformBillingResult convertToPigeonResult(BillingResultWrapper targetResult) {
   return PlatformBillingResult(
-    responseCode:
-        const BillingResponseConverter().toJson(targetResult.responseCode),
+    responseCode: billingResponseFromWrapper(targetResult.responseCode),
     debugMessage: targetResult.debugMessage!,
   );
 }

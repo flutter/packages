@@ -1,3 +1,7 @@
+## 2.3.4
+
+* Adjusts the code to the new platform interface.
+
 ## 2.3.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

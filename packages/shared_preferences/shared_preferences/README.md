@@ -161,18 +161,25 @@ await prefsWithCache.clear();
 
 #### Migrating from SharedPreferences to SharedPreferencesAsync/WithCache
 
-Currently, migration from the older [SharedPreferences] API to the newer 
-[SharedPreferencesAsync] or [SharedPreferencesWithCache] will need to be done manually.
+To migrate to the newer `SharedPreferencesAsync` or `SharedPreferencesWithCache` APIs, 
+import the migration utility and provide it with the `SharedPreferences` instance that 
+was being used previously, as well as the options for the desired new API options.
 
-A simple form of this could be fetching all preferences with [SharedPreferences] and adding 
-them back using [SharedPreferencesAsync], then storing a preference indicating that the 
-migration has been done so that future runs don't repeat the migration.
+This can be run on every launch without data loss as long as the `migrationCompletedKey` is not altered or deleted.
 
-If a migration is not performed before moving to [SharedPreferencesAsync] or [SharedPreferencesWithCache],
-most (if not all) data will be lost. Android preferences are stored in a new system, and all platforms
-are likely to have some form of enforced prefix (see below) that would not transfer automatically.
-
-A tool to make this process easier can be tracked here: https://github.com/flutter/flutter/issues/150732
+<?code-excerpt "main.dart (migrate)"?>
+```dart
+import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
+// ···
+    const SharedPreferencesOptions sharedPreferencesOptions =
+        SharedPreferencesOptions();
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
+      legacySharedPreferencesInstance: prefs,
+      sharedPreferencesAsyncOptions: sharedPreferencesOptions,
+      migrationCompletedKey: 'migrationCompleted',
+    );
+```
 
 #### Adding, Removing, or changing prefixes on SharedPreferences
 

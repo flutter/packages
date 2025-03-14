@@ -285,6 +285,7 @@ void main() {
     final Runtime runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['material']), createMaterialWidgets());
+    addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent(parseDataFile(gameData));
     for (final String region in rawRemoteWidgetSnippets.keys) {
       final String body = rawRemoteWidgetSnippets[region]!;

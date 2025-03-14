@@ -9,6 +9,7 @@
 #include <sys/utsname.h>
 
 #include <cstring>
+#include <thread>
 
 #include "pigeon/core_tests.gen.h"
 #include "test_plugin_private.h"
@@ -24,6 +25,8 @@ struct _TestPlugin {
   CoreTestsPigeonTestFlutterSmallApi* flutter_small_api_two;
 
   GCancellable* cancellable;
+
+  std::thread::id main_thread_id;
 };
 
 G_DEFINE_TYPE(TestPlugin, test_plugin, G_TYPE_OBJECT)
@@ -787,6 +790,20 @@ static void echo_another_async_nullable_enum(
     gpointer user_data) {
   core_tests_pigeon_test_host_integration_core_api_respond_echo_another_async_nullable_enum(
       response_handle, another_enum);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiDefaultIsMainThreadResponse*
+default_is_main_thread(gpointer user_data) {
+  TestPlugin* self = TEST_PLUGIN(user_data);
+  return core_tests_pigeon_test_host_integration_core_api_default_is_main_thread_response_new(
+      std::this_thread::get_id() == self->main_thread_id);
+}
+
+static CoreTestsPigeonTestHostIntegrationCoreApiTaskQueueIsBackgroundThreadResponse*
+task_queue_is_background_thread(gpointer user_data) {
+  TestPlugin* self = TEST_PLUGIN(user_data);
+  return core_tests_pigeon_test_host_integration_core_api_task_queue_is_background_thread_response_new(
+      std::this_thread::get_id() != self->main_thread_id);
 }
 
 static void noop_cb(GObject* object, GAsyncResult* result, gpointer user_data) {
@@ -3280,6 +3297,8 @@ static CoreTestsPigeonTestHostIntegrationCoreApiVTable host_core_api_vtable = {
     .echo_async_nullable_class_map = echo_async_nullable_class_map,
     .echo_async_nullable_enum = echo_async_nullable_enum,
     .echo_another_async_nullable_enum = echo_another_async_nullable_enum,
+    .default_is_main_thread = default_is_main_thread,
+    .task_queue_is_background_thread = task_queue_is_background_thread,
     .call_flutter_noop = call_flutter_noop,
     .call_flutter_throw_error = call_flutter_throw_error,
     .call_flutter_throw_error_from_void = call_flutter_throw_error_from_void,
@@ -3415,6 +3434,8 @@ static TestPlugin* test_plugin_new(FlBinaryMessenger* messenger) {
       core_tests_pigeon_test_flutter_small_api_new(messenger, "suffixOne");
   self->flutter_small_api_two =
       core_tests_pigeon_test_flutter_small_api_new(messenger, "suffixTwo");
+
+  self->main_thread_id = std::this_thread::get_id();
 
   return self;
 }

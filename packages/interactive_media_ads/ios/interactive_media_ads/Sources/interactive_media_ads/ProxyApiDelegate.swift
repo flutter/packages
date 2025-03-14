@@ -145,4 +145,10 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
     return PigeonApiIMACompanionDelegate(
       pigeonRegistrar: registrar, delegate: CompanionDelegateProxyAPIDelegate())
   }
+
+  func pigeonApiIMAAdPodInfo(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAdPodInfo
+  {
+    return PigeonApiIMAAdPodInfo(pigeonRegistrar: registrar, delegate: AdPodInfoProxyAPIDelegate())
+  }
 }

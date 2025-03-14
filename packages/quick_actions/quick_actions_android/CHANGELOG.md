@@ -1,3 +1,11 @@
+## 1.0.20
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 1.0.19
+
+* Updates `pigeon` dependency to version 24.
+
 ## 1.0.18
 
 * Updates Java compatibility version to 11.
