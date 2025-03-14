@@ -51,6 +51,7 @@
 		E11D6A912D82C7740031E6C5 /* FLTCamExposureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11D6A902D82C7740031E6C5 /* FLTCamExposureTests.swift */; };
 		E12C4FF62D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12C4FF52D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift */; };
 		E12C4FF82D68E85500515E70 /* MockFLTCameraPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12C4FF72D68E85500515E70 /* MockFLTCameraPermissionManager.swift */; };
+		E16602952D8471C0003CFE12 /* FLTCamZoomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16602942D8471C0003CFE12 /* FLTCamZoomTests.swift */; };
 		E1A5F4E32D80259C0005BA64 /* FLTCamSetFlashModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */; };
 		E1FFEAAD2D6C8DD700B14107 /* MockFLTCam.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FFEAAC2D6C8DD700B14107 /* MockFLTCam.swift */; };
 		E1FFEAAF2D6CDA8C00B14107 /* CameraPluginCreateCameraTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FFEAAE2D6CDA8C00B14107 /* CameraPluginCreateCameraTests.swift */; };
@@ -149,6 +150,7 @@
 		E11D6A902D82C7740031E6C5 /* FLTCamExposureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamExposureTests.swift; sourceTree = "<group>"; };
 		E12C4FF52D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPluginDelegatingMethodTests.swift; sourceTree = "<group>"; };
 		E12C4FF72D68E85500515E70 /* MockFLTCameraPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFLTCameraPermissionManager.swift; sourceTree = "<group>"; };
+		E16602942D8471C0003CFE12 /* FLTCamZoomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamZoomTests.swift; sourceTree = "<group>"; };
 		E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamSetFlashModeTests.swift; sourceTree = "<group>"; };
 		E1FFEAAC2D6C8DD700B14107 /* MockFLTCam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFLTCam.swift; sourceTree = "<group>"; };
 		E1FFEAAE2D6CDA8C00B14107 /* CameraPluginCreateCameraTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPluginCreateCameraTests.swift; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 				E11D6A902D82C7740031E6C5 /* FLTCamExposureTests.swift */,
 				977A25212D5A49EC00931E34 /* FLTCamFocusTests.swift */,
 				E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */,
+				E16602942D8471C0003CFE12 /* FLTCamZoomTests.swift */,
 			);
 			path = RunnerTests;
 			sourceTree = "<group>";
@@ -565,6 +568,7 @@
 				977A25202D5A439300931E34 /* AvailableCamerasTests.swift in Sources */,
 				E1FFEAAD2D6C8DD700B14107 /* MockFLTCam.swift in Sources */,
 				7F29EB292D26A59000740257 /* MockCameraDeviceDiscoverer.m in Sources */,
+				E16602952D8471C0003CFE12 /* FLTCamZoomTests.swift in Sources */,
 				97BD4A102D5CE13500F857D5 /* CameraSessionPresetsTests.swift in Sources */,
 				7FD582272D57C020003B1200 /* MockAssetWriter.m in Sources */,
 				979B3E022D5BA48F009BDE1A /* CameraOrientationTests.swift in Sources */,
