@@ -1,3 +1,7 @@
+## 14.8.2
+
+- Add method to trigger an update to make dynamically added StatefulShellBranches available
+
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
