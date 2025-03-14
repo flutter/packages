@@ -3,26 +3,34 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() {
-  runApp(const MyApp());
-}
-
-/// App for testing
-class MyApp extends StatefulWidget {
-  /// Constructor with key
-  const MyApp({super.key});
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  @override
-  Widget build(BuildContext context) {
-    return const Directionality(
-      textDirection: TextDirection.ltr,
-      child: Text('Testing... Look at the console output for results!'),
-    );
-  }
+  const double latitude = -28.4503081;
+  const double longitude = -52.1976798;
+  runApp(
+    MaterialApp(
+      home: Scaffold(
+        body: GoogleMap(
+          mapType: MapType.hybrid,
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(
+              latitude,
+              longitude,
+            ),
+            zoom: 18.742,
+          ),
+          markers: <Marker>{
+            const Marker(
+              markerId: MarkerId('Objetiva Software'),
+              position: LatLng(
+                latitude,
+                longitude,
+              ),
+            ),
+          },
+        ),
+      ),
+    ),
+  );
 }
