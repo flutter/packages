@@ -111,7 +111,11 @@
 }
 
 - (BOOL)isExposureModeSupported:(AVCaptureExposureMode)mode {
-  return self.exposureModeSupported;
+  if (self.isExposureModeSupportedStub) {
+    return self.isExposureModeSupportedStub(mode);
+  } else {
+    return NO;
+  }
 }
 
 @synthesize device;
