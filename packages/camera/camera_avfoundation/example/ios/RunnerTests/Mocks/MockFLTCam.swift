@@ -54,16 +54,6 @@ final class MockFLTCam: FLTCam {
     }
   }
 
-  /// The `setFocusMode` ObjC method is converted to property accessor in Swift translation
-  override var focusMode: FCPPlatformFocusMode {
-    get {
-      return super.focusMode
-    }
-    set {
-      setFocusModeStub?(newValue)
-    }
-  }
-
   override var minimumAvailableZoomFactor: CGFloat {
     get {
       return getMinimumAvailableZoomFactorStub?() ?? super.minimumAvailableZoomFactor
@@ -143,14 +133,18 @@ final class MockFLTCam: FLTCam {
     unlockCaptureOrientationStub?()
   }
 
+  override func setExposureMode(_ mode: FCPPlatformExposureMode) {
+    setExposureModeStub?(mode)
+  }
+
+  override func setFocusMode(_ mode: FCPPlatformFocusMode) {
+    setFocusModeStub?(mode)
+  }
+
   override func setFlashMode(
     _ mode: FCPPlatformFlashMode, withCompletion completion: @escaping (FlutterError?) -> Void
   ) {
     setFlashModeStub?(mode, completion)
-  }
-
-  override func setExposureMode(_ mode: FCPPlatformExposureMode) {
-    setExposureModeStub?(mode)
   }
 
   override func receivedImageStreamData() {

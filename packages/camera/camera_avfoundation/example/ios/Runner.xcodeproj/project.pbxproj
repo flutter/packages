@@ -28,7 +28,7 @@
 		972CA92B2D5A1D8C004B846F /* CameraPropertiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972CA92A2D5A1D8C004B846F /* CameraPropertiesTests.swift */; };
 		972CA92D2D5A28C4004B846F /* QueueUtilsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 972CA92C2D5A28C4004B846F /* QueueUtilsTests.swift */; };
 		977A25202D5A439300931E34 /* AvailableCamerasTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977A251F2D5A439300931E34 /* AvailableCamerasTests.swift */; };
-		977A25222D5A49EC00931E34 /* CameraFocusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977A25212D5A49EC00931E34 /* CameraFocusTests.swift */; };
+		977A25222D5A49EC00931E34 /* FLTCamFocusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977A25212D5A49EC00931E34 /* FLTCamFocusTests.swift */; };
 		977A25242D5A511600931E34 /* CameraPermissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977A25232D5A511600931E34 /* CameraPermissionTests.swift */; };
 		977CAC9F2D5E5180001E5DC3 /* ThreadSafeEventChannelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 977CAC9E2D5E5180001E5DC3 /* ThreadSafeEventChannelTests.swift */; };
 		978296CF2D5F744B0009BDD3 /* PhotoCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978296CE2D5F744B0009BDD3 /* PhotoCaptureTests.swift */; };
@@ -119,7 +119,7 @@
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		977A251F2D5A439300931E34 /* AvailableCamerasTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailableCamerasTests.swift; sourceTree = "<group>"; };
-		977A25212D5A49EC00931E34 /* CameraFocusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraFocusTests.swift; sourceTree = "<group>"; };
+		977A25212D5A49EC00931E34 /* FLTCamFocusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamFocusTests.swift; sourceTree = "<group>"; };
 		977A25232D5A511600931E34 /* CameraPermissionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPermissionTests.swift; sourceTree = "<group>"; };
 		977CAC9E2D5E5180001E5DC3 /* ThreadSafeEventChannelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafeEventChannelTests.swift; sourceTree = "<group>"; };
 		978296CE2D5F744B0009BDD3 /* PhotoCaptureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoCaptureTests.swift; sourceTree = "<group>"; };
@@ -197,7 +197,6 @@
 				972CA92A2D5A1D8C004B846F /* CameraPropertiesTests.swift */,
 				972CA92C2D5A28C4004B846F /* QueueUtilsTests.swift */,
 				977A251F2D5A439300931E34 /* AvailableCamerasTests.swift */,
-				977A25212D5A49EC00931E34 /* CameraFocusTests.swift */,
 				977A25232D5A511600931E34 /* CameraPermissionTests.swift */,
 				97C0FFAD2D5E023200A36284 /* SavePhotoDelegateTests.swift */,
 				977CAC9E2D5E5180001E5DC3 /* ThreadSafeEventChannelTests.swift */,
@@ -208,6 +207,7 @@
 				E1FFEAAE2D6CDA8C00B14107 /* CameraPluginCreateCameraTests.swift */,
 				E1FFEAB02D6CDE5B00B14107 /* CameraPluginInitializeCameraTests.swift */,
 				E11D6A902D82C7740031E6C5 /* FLTCamExposureTests.swift */,
+				977A25212D5A49EC00931E34 /* FLTCamFocusTests.swift */,
 				E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */,
 			);
 			path = RunnerTests;
@@ -569,7 +569,7 @@
 				7FD582272D57C020003B1200 /* MockAssetWriter.m in Sources */,
 				979B3E022D5BA48F009BDE1A /* CameraOrientationTests.swift in Sources */,
 				E12C4FF62D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift in Sources */,
-				977A25222D5A49EC00931E34 /* CameraFocusTests.swift in Sources */,
+				977A25222D5A49EC00931E34 /* FLTCamFocusTests.swift in Sources */,
 				978D90B42D5F630300CD817E /* StreamingTests.swift in Sources */,
 				7F29EB412D281C7E00740257 /* MockCaptureSession.m in Sources */,
 				7FCEDD352D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m in Sources */,

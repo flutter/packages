@@ -110,6 +110,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
 @property(assign, nonatomic) FCPPlatformExposureMode exposureMode;
+@property(assign, nonatomic) FCPPlatformFocusMode focusMode;
 @property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
@@ -1019,6 +1020,7 @@ static void selectBestFormatForRequestedFrameRate(
   [captureDevice lockForConfiguration:nil];
   switch (focusMode) {
     case FCPPlatformFocusModeLocked:
+      // AVCaptureFocusModeAutoFocus automatically adjusts the focus one time, and then locks focus
       if ([captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
         [captureDevice setFocusMode:AVCaptureFocusModeAutoFocus];
       }
