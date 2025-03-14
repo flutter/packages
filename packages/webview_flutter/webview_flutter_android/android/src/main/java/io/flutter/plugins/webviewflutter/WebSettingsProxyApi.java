@@ -36,6 +36,7 @@ public class WebSettingsProxyApi extends PigeonApiWebSettings {
 
   @Override
   public void setJavaScriptEnabled(@NonNull WebSettings pigeon_instance, boolean flag) {
+    pigeon_instance.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
     pigeon_instance.setJavaScriptEnabled(flag);
   }
 
