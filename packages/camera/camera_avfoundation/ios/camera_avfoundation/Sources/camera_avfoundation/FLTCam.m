@@ -109,6 +109,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
+@property(assign, nonatomic) FCPPlatformExposureMode exposureMode;
 @property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
@@ -987,8 +988,10 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)applyExposureMode {
   [_captureDevice lockForConfiguration:nil];
-  switch (_exposureMode) {
+  switch (self.exposureMode) {
     case FCPPlatformExposureModeLocked:
+      // AVCaptureExposureModeAutoExpose automatically adjusts the exposure one time, and then
+      // locks exposure for the device
       [_captureDevice setExposureMode:AVCaptureExposureModeAutoExpose];
       break;
     case FCPPlatformExposureModeAuto:

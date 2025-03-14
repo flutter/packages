@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Exposure
 @property(nonatomic, assign) BOOL exposurePointOfInterestSupported;
 @property(nonatomic, assign) AVCaptureExposureMode exposureMode;
-@property(nonatomic, assign) BOOL exposureModeSupported;
+@property(nonatomic, copy) BOOL (^isExposureModeSupportedStub)(AVCaptureExposureMode mode);
 /// Overrides the default implementation of setting exposure mode.
 /// @param mode The exposure mode being set
 @property(nonatomic, copy) void (^setExposureModeStub)(AVCaptureExposureMode mode);
