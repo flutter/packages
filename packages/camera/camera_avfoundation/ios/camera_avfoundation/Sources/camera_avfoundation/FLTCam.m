@@ -221,13 +221,13 @@ static void selectBestFormatForRequestedFrameRate(
   }
 
   [_videoCaptureSession addInputWithNoConnections:_captureVideoInput];
-  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
+  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput.avOutput];
   [_videoCaptureSession addConnection:connection];
 
   _capturePhotoOutput =
       [[FLTDefaultCapturePhotoOutput alloc] initWithPhotoOutput:[AVCapturePhotoOutput new]];
   [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
-  [_videoCaptureSession addOutput:_capturePhotoOutput.photoOutput];
+  [_videoCaptureSession addOutput:_capturePhotoOutput.avOutput];
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
@@ -292,7 +292,8 @@ static void selectBestFormatForRequestedFrameRate(
   }
 
   // Setup video capture output.
-  _captureVideoOutput = [AVCaptureVideoDataOutput new];
+  _captureVideoOutput = [[FLTDefaultCaptureVideoDataOutput alloc]
+      initWithCaptureVideoOutput:[AVCaptureVideoDataOutput new]];
   _captureVideoOutput.videoSettings =
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)};
   [_captureVideoOutput setAlwaysDiscardsLateVideoFrames:YES];
@@ -301,7 +302,7 @@ static void selectBestFormatForRequestedFrameRate(
   // Setup video capture connection.
   AVCaptureConnection *connection =
       [AVCaptureConnection connectionWithInputPorts:_captureVideoInput.ports
-                                             output:_captureVideoOutput];
+                                             output:_captureVideoOutput.avOutput];
   if ([_captureDevice position] == AVCaptureDevicePositionFront) {
     connection.videoMirrored = YES;
   }
@@ -366,17 +367,18 @@ static void selectBestFormatForRequestedFrameRate(
                                         ? _lockedCaptureOrientation
                                         : _deviceOrientation;
 
-  [self updateOrientation:orientation forCaptureOutput:_capturePhotoOutput.photoOutput];
+  [self updateOrientation:orientation forCaptureOutput:_capturePhotoOutput];
   [self updateOrientation:orientation forCaptureOutput:_captureVideoOutput];
 }
 
 - (void)updateOrientation:(UIDeviceOrientation)orientation
-         forCaptureOutput:(AVCaptureOutput *)captureOutput {
+         forCaptureOutput:(NSObject<FLTCaptureOutput> *)captureOutput {
   if (!captureOutput) {
     return;
   }
 
-  AVCaptureConnection *connection = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
+  NSObject<FLTCaptureConnection> *connection =
+      [captureOutput connectionWithMediaType:AVMediaTypeVideo];
   if (connection && connection.isVideoOrientationSupported) {
     connection.videoOrientation = [self getVideoOrientationForDeviceOrientation:orientation];
   }
@@ -586,7 +588,7 @@ static void selectBestFormatForRequestedFrameRate(
 - (void)captureOutput:(AVCaptureOutput *)output
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
            fromConnection:(NSObject<FLTCaptureConnection> *)connection {
-  if (output == _captureVideoOutput) {
+  if (output == _captureVideoOutput.avOutput) {
     CVPixelBufferRef newBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     CFRetain(newBuffer);
 
@@ -688,7 +690,7 @@ static void selectBestFormatForRequestedFrameRate(
 
     // ignore audio samples until the first video sample arrives to avoid black frames
     // https://github.com/flutter/flutter/issues/57831
-    if (_isFirstVideoSample && output != _captureVideoOutput) {
+    if (_isFirstVideoSample && output != _captureVideoOutput.avOutput) {
       return;
     }
 
@@ -704,7 +706,7 @@ static void selectBestFormatForRequestedFrameRate(
       _isFirstVideoSample = NO;
     }
 
-    if (output == _captureVideoOutput) {
+    if (output == _captureVideoOutput.avOutput) {
       if (_videoIsDisconnected) {
         _videoIsDisconnected = NO;
 
@@ -1050,7 +1052,7 @@ static void selectBestFormatForRequestedFrameRate(
 
   _captureDevice = self.captureDeviceFactory();
 
-  AVCaptureConnection *oldConnection =
+  NSObject<FLTCaptureConnection> *oldConnection =
       [_captureVideoOutput connectionWithMediaType:AVMediaTypeVideo];
 
   // Stop video capture from the old output.
@@ -1059,7 +1061,7 @@ static void selectBestFormatForRequestedFrameRate(
   // Remove the old video capture connections.
   [_videoCaptureSession beginConfiguration];
   [_videoCaptureSession removeInput:_captureVideoInput];
-  [_videoCaptureSession removeOutput:_captureVideoOutput];
+  [_videoCaptureSession removeOutput:_captureVideoOutput.avOutput];
 
   NSError *error = nil;
   AVCaptureConnection *newConnection = [self createConnection:&error];
@@ -1079,11 +1081,11 @@ static void selectBestFormatForRequestedFrameRate(
                                    message:@"Unable switch video input"
                                    details:nil]);
   [_videoCaptureSession addInputWithNoConnections:_captureVideoInput];
-  if (![_videoCaptureSession canAddOutput:_captureVideoOutput])
+  if (![_videoCaptureSession canAddOutput:_captureVideoOutput.avOutput])
     completion([FlutterError errorWithCode:@"VideoError"
                                    message:@"Unable switch video output"
                                    details:nil]);
-  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
+  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput.avOutput];
   if (![_videoCaptureSession canAddConnection:newConnection])
     completion([FlutterError errorWithCode:@"VideoError"
                                    message:@"Unable switch video connection"

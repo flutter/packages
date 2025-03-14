@@ -4,45 +4,45 @@
 
 #import "./include/camera_avfoundation/FLTCapturePhotoOutput.h"
 
-@implementation FLTDefaultCapturePhotoOutput {
-  AVCapturePhotoOutput *_photoOutput;
-}
+@interface FLTDefaultCapturePhotoOutput ()
+@property(nonatomic, strong) AVCapturePhotoOutput *avOutput;
+@end
+
+@implementation FLTDefaultCapturePhotoOutput
 
 - (instancetype)initWithPhotoOutput:(AVCapturePhotoOutput *)photoOutput {
   self = [super init];
   if (self) {
-    _photoOutput = photoOutput;
+    _avOutput = photoOutput;
   }
   return self;
 }
 
-- (AVCapturePhotoOutput *)photoOutput {
-  return _photoOutput;
-}
-
 - (NSArray<AVVideoCodecType> *)availablePhotoCodecTypes {
-  return _photoOutput.availablePhotoCodecTypes;
+  return self.avOutput.availablePhotoCodecTypes;
 }
 
 - (BOOL)highResolutionCaptureEnabled {
-  return _photoOutput.isHighResolutionCaptureEnabled;
+  return self.avOutput.isHighResolutionCaptureEnabled;
 }
 
 - (void)setHighResolutionCaptureEnabled:(BOOL)enabled {
-  [_photoOutput setHighResolutionCaptureEnabled:enabled];
+  [self.avOutput setHighResolutionCaptureEnabled:enabled];
 }
 
 - (void)capturePhotoWithSettings:(AVCapturePhotoSettings *)settings
                         delegate:(NSObject<AVCapturePhotoCaptureDelegate> *)delegate {
-  [_photoOutput capturePhotoWithSettings:settings delegate:delegate];
+  [self.avOutput capturePhotoWithSettings:settings delegate:delegate];
 }
 
-- (nullable AVCaptureConnection *)connectionWithMediaType:(nonnull AVMediaType)mediaType {
-  return [_photoOutput connectionWithMediaType:mediaType];
+- (nullable NSObject<FLTCaptureConnection> *)connectionWithMediaType:
+    (nonnull AVMediaType)mediaType {
+  return [[FLTDefaultCaptureConnection alloc]
+      initWithConnection:[self.avOutput connectionWithMediaType:mediaType]];
 }
 
 - (NSArray<NSNumber *> *)supportedFlashModes {
-  return _photoOutput.supportedFlashModes;
+  return self.avOutput.supportedFlashModes;
 }
 
 @end
