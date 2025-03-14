@@ -528,6 +528,10 @@ class WebKitWebViewController extends PlatformWebViewController {
   @override
   Future<String?> getTitle() => _webView.getTitle();
 
+
+  @override
+  Future<Map<String, dynamic>?> getCopyBackForwardList() => _webView.getCopyBackForwardList();
+
   @override
   Future<void> scrollTo(int x, int y) {
     // TODO(stuartmorgan): Investigate doing this via on macOS with JS instead.

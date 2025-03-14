@@ -382,4 +382,44 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
     return try getCustomUserAgent(
       pigeonApi: getUIViewWKWebViewAPI(pigeonApi), pigeonInstance: pigeonInstance)
   }
+
+  func getCopyBackForwardList(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView
+  ) throws -> [String: Any] {
+      let backForwardList = pigeonInstance.backForwardList
+      let currentIndex = backForwardList.backList.count
+
+      var completeList: [WKBackForwardListItem] = backForwardList.backList
+      if let currentItem = backForwardList.currentItem {
+          completeList.append(currentItem)
+      }
+      completeList.append(contentsOf: backForwardList.forwardList)
+
+      var history: [[String: Any]] = []
+
+      for (index, historyItem) in completeList.enumerated() {
+          let item: [String: Any] = [
+              "originalUrl": historyItem.initialURL.absoluteString,
+              "title": historyItem.title ?? "",
+              "url": historyItem.url.absoluteString,
+              "index": index,
+              "offset": index - currentIndex
+          ]
+          history.append(item)
+      }
+
+      return [
+          "currentIndex": currentIndex,
+          "history": history
+      ]
+  }
+
+  func getCopyBackForwardList(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView
+  ) throws -> [String: Any] {
+      return try getCopyBackForwardList(
+          pigeonApi: getUIViewWKWebViewAPI(pigeonApi),
+          pigeonInstance: pigeonInstance
+      )
+  }
 }
