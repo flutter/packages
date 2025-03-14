@@ -4,9 +4,11 @@
 
 #import "./include/camera_avfoundation/FLTCaptureConnection.h"
 
-@implementation FLTDefaultCaptureConnection {
-  AVCaptureConnection *_connection;
-}
+@interface FLTDefaultCaptureConnection ()
+@property(nonatomic, strong) AVCaptureConnection *connection;
+@end
+
+@implementation FLTDefaultCaptureConnection
 
 - (instancetype)initWithConnection:(AVCaptureConnection *)connection {
   self = [super init];
@@ -17,31 +19,31 @@
 }
 
 - (BOOL)isVideoMirroringSupported {
-  return _connection.isVideoMirroringSupported;
+  return self.connection.isVideoMirroringSupported;
 }
 
 - (BOOL)isVideoOrientationSupported {
-  return _connection.isVideoOrientationSupported;
+  return self.connection.isVideoOrientationSupported;
 }
 
 - (void)setVideoMirrored:(BOOL)videoMirrored {
-  _connection.videoMirrored = videoMirrored;
+  self.connection.videoMirrored = videoMirrored;
 }
 
 - (BOOL)isVideoMirrored {
-  return _connection.isVideoMirrored;
+  return self.connection.isVideoMirrored;
 }
 
 - (void)setVideoOrientation:(AVCaptureVideoOrientation)videoOrientation {
-  _connection.videoOrientation = videoOrientation;
+  self.connection.videoOrientation = videoOrientation;
 }
 
 - (AVCaptureVideoOrientation)videoOrientation {
-  return _connection.videoOrientation;
+  return self.connection.videoOrientation;
 }
 
 - (NSArray<AVCaptureInputPort *> *)inputPorts {
-  return _connection.inputPorts;
+  return self.connection.inputPorts;
 }
 
 @end
