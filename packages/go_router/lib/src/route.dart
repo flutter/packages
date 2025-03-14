@@ -1227,9 +1227,9 @@ class StatefulNavigationShell extends StatefulWidget {
     final StatefulNavigationShellState? shellState =
         route._shellStateKey.currentState;
     if (shellState != null) {
-      route.branches.forEach(
-        (branch) => shellState._branchStateFor(branch),
-      );
+      for (final StatefulShellBranch branch in route.branches) {
+        shellState._branchStateFor(branch);
+      }
     }
   }
 }
