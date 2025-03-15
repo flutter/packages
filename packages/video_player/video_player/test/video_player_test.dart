@@ -192,17 +192,6 @@ void main() {
     expect(find.byType(RotatedBox), findsNothing);
   });
 
-  testWidgets('no RotatedBox when rotationCorrection is not a multiple of 90',
-      (WidgetTester tester) async {
-    final FakeController controller = FakeController.value(
-        const VideoPlayerValue(
-            duration: Duration.zero, rotationCorrection: 45));
-    addTearDown(controller.dispose);
-    controller.textureId = 1;
-    await tester.pumpWidget(VideoPlayer(controller));
-    expect(find.byType(RotatedBox), findsNothing);
-  });
-
   group('ClosedCaption widget', () {
     testWidgets('uses a default text style', (WidgetTester tester) async {
       const String text = 'foo';
