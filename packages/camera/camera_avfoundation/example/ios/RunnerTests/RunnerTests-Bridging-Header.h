@@ -11,7 +11,6 @@
 #import "camera_avfoundation/FLTThreadSafeEventChannel.h"
 
 // Mocks, protocols.
-#import "MockCaptureConnection.h"
 #import "MockFlutterBinaryMessenger.h"
 #import "MockFlutterTextureRegistry.h"
 #import "MockGlobalEventApi.h"
