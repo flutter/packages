@@ -15,7 +15,6 @@
 		7F8FD2292D4BFABF001AF2C1 /* MockGlobalEventApi.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F8FD2282D4BFABF001AF2C1 /* MockGlobalEventApi.m */; };
 		7F8FD22C2D4D07DD001AF2C1 /* MockFlutterTextureRegistry.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F8FD22B2D4D07DD001AF2C1 /* MockFlutterTextureRegistry.m */; };
 		7F8FD22F2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 7F8FD22E2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m */; };
-		7FCEDD352D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */; };
 		7FCEDD362D43C2B900EA1CA8 /* MockCaptureDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */; };
 		7FD582202D579ECC003B1200 /* MockCapturePhotoOutput.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */; };
 		7FD582272D57C020003B1200 /* MockAssetWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 7FD582262D57C020003B1200 /* MockAssetWriter.m */; };
@@ -53,6 +52,7 @@
 		E142681D2D8483FD0046CBBC /* MockCaptureSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = E142681C2D8483FD0046CBBC /* MockCaptureSession.swift */; };
 		E142681F2D8566230046CBBC /* CameraTestsUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = E142681E2D8566230046CBBC /* CameraTestsUtils.swift */; };
 		E142F1362D8587F900824824 /* MockCameraDeviceDiscoverer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E142F1352D8587F900824824 /* MockCameraDeviceDiscoverer.swift */; };
+		E142F1382D85919700824824 /* MockDeviceOrientationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E142F1372D85919700824824 /* MockDeviceOrientationProvider.swift */; };
 		E15139182D80980900FEE47B /* FLTCamSetDeviceOrientationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15139172D80980900FEE47B /* FLTCamSetDeviceOrientationTests.swift */; };
 		E16602952D8471C0003CFE12 /* FLTCamZoomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16602942D8471C0003CFE12 /* FLTCamZoomTests.swift */; };
 		E1A5F4E32D80259C0005BA64 /* FLTCamSetFlashModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */; };
@@ -102,8 +102,6 @@
 		7F8FD22E2D4D0B88001AF2C1 /* MockFlutterBinaryMessenger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockFlutterBinaryMessenger.m; sourceTree = "<group>"; };
 		7FCEDD312D43C2B900EA1CA8 /* MockCaptureDevice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCaptureDevice.h; sourceTree = "<group>"; };
 		7FCEDD322D43C2B900EA1CA8 /* MockCaptureDevice.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCaptureDevice.m; sourceTree = "<group>"; };
-		7FCEDD332D43C2B900EA1CA8 /* MockDeviceOrientationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockDeviceOrientationProvider.h; sourceTree = "<group>"; };
-		7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockDeviceOrientationProvider.m; sourceTree = "<group>"; };
 		7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockCapturePhotoOutput.m; sourceTree = "<group>"; };
 		7FD582212D579ED9003B1200 /* MockCapturePhotoOutput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockCapturePhotoOutput.h; sourceTree = "<group>"; };
 		7FD582262D57C020003B1200 /* MockAssetWriter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockAssetWriter.m; sourceTree = "<group>"; };
@@ -153,6 +151,7 @@
 		E142681C2D8483FD0046CBBC /* MockCaptureSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCaptureSession.swift; sourceTree = "<group>"; };
 		E142681E2D8566230046CBBC /* CameraTestsUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraTestsUtils.swift; sourceTree = "<group>"; };
 		E142F1352D8587F900824824 /* MockCameraDeviceDiscoverer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCameraDeviceDiscoverer.swift; sourceTree = "<group>"; };
+		E142F1372D85919700824824 /* MockDeviceOrientationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDeviceOrientationProvider.swift; sourceTree = "<group>"; };
 		E15139172D80980900FEE47B /* FLTCamSetDeviceOrientationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamSetDeviceOrientationTests.swift; sourceTree = "<group>"; };
 		E16602942D8471C0003CFE12 /* FLTCamZoomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamZoomTests.swift; sourceTree = "<group>"; };
 		E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamSetFlashModeTests.swift; sourceTree = "<group>"; };
@@ -250,8 +249,7 @@
 				7FD582342D57D97C003B1200 /* MockCaptureDeviceFormat.m */,
 				7FD582212D579ED9003B1200 /* MockCapturePhotoOutput.h */,
 				7FD5821F2D579ECC003B1200 /* MockCapturePhotoOutput.m */,
-				7FCEDD332D43C2B900EA1CA8 /* MockDeviceOrientationProvider.h */,
-				7FCEDD342D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m */,
+				E142F1372D85919700824824 /* MockDeviceOrientationProvider.swift */,
 				E142F1352D8587F900824824 /* MockCameraDeviceDiscoverer.swift */,
 				E1FFEAAC2D6C8DD700B14107 /* MockFLTCam.swift */,
 				970ADABF2D6764CC00EFDCD9 /* MockEventChannel.swift */,
@@ -583,7 +581,7 @@
 				E12C4FF62D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift in Sources */,
 				977A25222D5A49EC00931E34 /* FLTCamFocusTests.swift in Sources */,
 				978D90B42D5F630300CD817E /* StreamingTests.swift in Sources */,
-				7FCEDD352D43C2B900EA1CA8 /* MockDeviceOrientationProvider.m in Sources */,
+				E142F1382D85919700824824 /* MockDeviceOrientationProvider.swift in Sources */,
 				E11D6A8F2D81B81D0031E6C5 /* MockCaptureVideoDataOutput.swift in Sources */,
 				977CAC9F2D5E5180001E5DC3 /* ThreadSafeEventChannelTests.swift in Sources */,
 				7FCEDD362D43C2B900EA1CA8 /* MockCaptureDevice.m in Sources */,

@@ -16,7 +16,6 @@
 #import "MockCaptureDevice.h"
 #import "MockCaptureDeviceFormat.h"
 #import "MockCapturePhotoOutput.h"
-#import "MockDeviceOrientationProvider.h"
 #import "MockFlutterBinaryMessenger.h"
 #import "MockFlutterTextureRegistry.h"
 #import "MockGlobalEventApi.h"
