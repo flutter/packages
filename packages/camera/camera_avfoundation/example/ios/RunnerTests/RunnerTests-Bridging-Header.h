@@ -12,7 +12,6 @@
 
 // Mocks, protocols.
 #import "MockAssetWriter.h"
-#import "MockCaptureConnection.h"
 #import "MockCaptureDevice.h"
 #import "MockFlutterBinaryMessenger.h"
 #import "MockFlutterTextureRegistry.h"
