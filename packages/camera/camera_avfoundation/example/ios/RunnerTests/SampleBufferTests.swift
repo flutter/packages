@@ -74,7 +74,7 @@ final class CameraSampleBufferTests: XCTestCase {
     let adaptor = MockAssetWriterInputPixelBufferAdaptor()
     let input = MockAssetWriterInput()
 
-    let configuration = FLTCreateTestCameraConfiguration()
+    let configuration = createTestCameraConfiguration()
     configuration.mediaSettings = FCPPlatformMediaSettings.make(
       with: .medium,
       framesPerSecond: nil,
@@ -91,14 +91,14 @@ final class CameraSampleBufferTests: XCTestCase {
     }
 
     return (
-      FLTCreateCamWithConfiguration(configuration), assetWriter, adaptor, input,
+      FLTCam(configuration: configuration, error: nil), assetWriter, adaptor, input,
       MockCaptureConnection()
     )
   }
 
   func testSampleBufferCallbackQueueMustBeCaptureSessionQueue() {
     let captureSessionQueue = DispatchQueue(label: "testing")
-    let camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue)
+    let camera = createCameraWithCaptureSessionQueue(captureSessionQueue)
     XCTAssertEqual(
       captureSessionQueue, camera.captureVideoOutput.avOutput.sampleBufferCallbackQueue,
       "Sample buffer callback queue must be the capture session queue.")
@@ -106,7 +106,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
   func testCopyPixelBuffer() {
     let (camera, _, _, _, connectionMock) = createCamera()
-    let capturedSampleBuffer = FLTCreateTestSampleBuffer().takeRetainedValue()
+    let capturedSampleBuffer = createTestSampleBuffer()
     let capturedPixelBuffer = CMSampleBufferGetImageBuffer(capturedSampleBuffer)!
     // Mimic sample buffer callback when captured a new video sample.
     camera.captureOutput(
@@ -120,7 +120,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
   func testDidOutputSampleBuffer_mustNotChangeSampleBufferRetainCountAfterPauseResumeRecording() {
     let (camera, _, _, _, connectionMock) = createCamera()
-    let sampleBuffer = FLTCreateTestSampleBuffer().takeRetainedValue()
+    let sampleBuffer = createTestSampleBuffer()
 
     let initialRetainCount = CFGetRetainCount(sampleBuffer)
 
@@ -149,8 +149,8 @@ final class CameraSampleBufferTests: XCTestCase {
       return status
     }
 
-    let videoSample = FLTCreateTestSampleBuffer().takeRetainedValue()
-    let audioSample = FLTCreateTestAudioSampleBuffer().takeRetainedValue()
+    let videoSample = createTestSampleBuffer()
+    let audioSample = createTestAudioSampleBuffer()
 
     var writtenSamples: [String] = []
     adaptorMock.appendPixelBufferStub = { buffer, time in
@@ -177,8 +177,8 @@ final class CameraSampleBufferTests: XCTestCase {
   func testDidOutputSampleBufferSampleTimesMustBeNumericAfterPauseResume() {
     let (camera, writerMock, adaptorMock, inputMock, connectionMock) = createCamera()
 
-    let videoSample = FLTCreateTestSampleBuffer().takeRetainedValue()
-    let audioSample = FLTCreateTestAudioSampleBuffer().takeRetainedValue()
+    let videoSample = createTestSampleBuffer()
+    let audioSample = createTestAudioSampleBuffer()
 
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
@@ -220,7 +220,7 @@ final class CameraSampleBufferTests: XCTestCase {
   func testDidOutputSampleBufferMustNotAppendSampleWhenReadyForMoreMediaDataIsFalse() {
     let (camera, _, adaptorMock, inputMock, connectionMock) = createCamera()
 
-    let videoSample = FLTCreateTestSampleBuffer().takeRetainedValue()
+    let videoSample = createTestSampleBuffer()
 
     var sampleAppended = false
     adaptorMock.appendPixelBufferStub = { buffer, time in
@@ -273,7 +273,7 @@ final class CameraSampleBufferTests: XCTestCase {
   func testStartWritingShouldNotBeCalledBetweenSampleCreationAndAppending() {
     let (camera, writerMock, adaptorMock, inputMock, connectionMock) = createCamera()
 
-    let videoSample = FLTCreateTestSampleBuffer().takeRetainedValue()
+    let videoSample = createTestSampleBuffer()
 
     var startWritingCalled = false
     writerMock.startWritingStub = {
@@ -303,7 +303,7 @@ final class CameraSampleBufferTests: XCTestCase {
   }
 
   func testStartVideoRecordingWithCompletionShouldNotDisableMixWithOthers() {
-    let cam = FLTCreateCamWithCaptureSessionQueue(DispatchQueue(label: "testing"))
+    let cam = createCameraWithCaptureSessionQueue(DispatchQueue(label: "testing"))
 
     try? AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
     cam.startVideoRecording(completion: { error in }, messengerForStreaming: nil)
