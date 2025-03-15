@@ -118,10 +118,10 @@ final class CameraSettingsTests: XCTestCase {
     )
     let injectedWrapper = TestMediaSettingsAVWrapper(test: self)
 
-    let configuration = FLTCreateTestCameraConfiguration()
+    let configuration = createTestCameraConfiguration()
     configuration.mediaSettingsWrapper = injectedWrapper
     configuration.mediaSettings = settings
-    let camera = FLTCreateCamWithConfiguration(configuration)
+    let camera = FLTCam(configuration: configuration, error: nil)
 
     // Expect FPS configuration is passed to camera device.
     wait(
@@ -149,7 +149,7 @@ final class CameraSettingsTests: XCTestCase {
   func testSettings_ShouldBeSupportedByMethodCall() {
     let mockDevice = MockCaptureDevice()
     let mockSession = MockCaptureSession()
-    mockSession.canSetSessionPreset = true
+    mockSession.canSetSessionPresetStub = { _ in true }
     let camera = CameraPlugin(
       registry: MockFlutterTextureRegistry(),
       messenger: MockFlutterBinaryMessenger(),
@@ -192,9 +192,9 @@ final class CameraSettingsTests: XCTestCase {
       enableAudio: testEnableAudio
     )
 
-    let configuration = FLTCreateTestCameraConfiguration()
+    let configuration = createTestCameraConfiguration()
     configuration.mediaSettings = settings
-    let camera = FLTCreateCamWithConfiguration(configuration)
+    let camera = FLTCam(configuration: configuration, error: nil)
 
     let range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0]
     XCTAssertLessThanOrEqual(range.minFrameRate, 60)
