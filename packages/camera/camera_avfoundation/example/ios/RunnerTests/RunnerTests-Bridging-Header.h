@@ -14,7 +14,6 @@
 #import "MockAssetWriter.h"
 #import "MockCaptureConnection.h"
 #import "MockCaptureDevice.h"
-#import "MockCaptureDeviceFormat.h"
 #import "MockFlutterBinaryMessenger.h"
 #import "MockFlutterTextureRegistry.h"
 #import "MockGlobalEventApi.h"
