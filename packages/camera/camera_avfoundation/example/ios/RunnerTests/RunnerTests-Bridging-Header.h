@@ -12,7 +12,6 @@
 
 // Mocks, protocols.
 #import "MockFlutterBinaryMessenger.h"
-#import "MockFlutterTextureRegistry.h"
 
 // Utils.
 #import "ExceptionCatcher.h"
