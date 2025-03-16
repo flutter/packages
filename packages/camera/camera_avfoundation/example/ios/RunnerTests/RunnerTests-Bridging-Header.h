@@ -10,9 +10,6 @@
 #import "camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "camera_avfoundation/FLTThreadSafeEventChannel.h"
 
-// Mocks, protocols.
-#import "MockFlutterBinaryMessenger.h"
-
 // Utils.
 #import "ExceptionCatcher.h"
 #import "QueueTestUtils.h"
