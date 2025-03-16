@@ -144,6 +144,7 @@ final class CameraSampleBufferTests: XCTestCase {
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
       status = .writing
+      return true
     }
     writerMock.statusStub = {
       return status
@@ -153,12 +154,12 @@ final class CameraSampleBufferTests: XCTestCase {
     let audioSample = CameraTestUtils.createTestAudioSampleBuffer()
 
     var writtenSamples: [String] = []
-    adaptorMock.appendPixelBufferStub = { buffer, time in
+    adaptorMock.appendStub = { buffer, time in
       writtenSamples.append("video")
       return true
     }
     inputMock.readyForMoreMediaData = true
-    inputMock.appendSampleBufferStub = { buffer in
+    inputMock.appendStub = { buffer in
       writtenSamples.append("audio")
       return true
     }
@@ -183,13 +184,14 @@ final class CameraSampleBufferTests: XCTestCase {
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
       status = .writing
+      return true
     }
     writerMock.statusStub = {
       return status
     }
 
     var videoAppended = false
-    adaptorMock.appendPixelBufferStub = { buffer, time in
+    adaptorMock.appendStub = { buffer, time in
       XCTAssert(CMTIME_IS_NUMERIC(time))
       videoAppended = true
       return true
@@ -197,8 +199,8 @@ final class CameraSampleBufferTests: XCTestCase {
 
     var audioAppended = false
     inputMock.readyForMoreMediaData = true
-    inputMock.appendSampleBufferStub = { buffer in
-      let sampleTime = CMSampleBufferGetPresentationTimeStamp(buffer!)
+    inputMock.appendStub = { buffer in
+      let sampleTime = CMSampleBufferGetPresentationTimeStamp(buffer)
       XCTAssert(CMTIME_IS_NUMERIC(sampleTime))
       audioAppended = true
       return true
@@ -223,7 +225,7 @@ final class CameraSampleBufferTests: XCTestCase {
     let videoSample = CameraTestUtils.createTestSampleBuffer()
 
     var sampleAppended = false
-    adaptorMock.appendPixelBufferStub = { buffer, time in
+    adaptorMock.appendStub = { buffer, time in
       sampleAppended = true
       return true
     }
@@ -249,6 +251,7 @@ final class CameraSampleBufferTests: XCTestCase {
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
       status = .writing
+      return true
     }
     writerMock.statusStub = {
       return status
@@ -258,7 +261,7 @@ final class CameraSampleBufferTests: XCTestCase {
         writerMock.status == .writing,
         "Cannot call finishWritingWithCompletionHandler when status is not AVAssetWriter.Status.writing."
       )
-      handler?()
+      handler()
     }
 
     camera.startVideoRecording(completion: { error in }, messengerForStreaming: nil)
@@ -278,10 +281,12 @@ final class CameraSampleBufferTests: XCTestCase {
     var startWritingCalled = false
     writerMock.startWritingStub = {
       startWritingCalled = true
+      return true
+
     }
 
     var videoAppended = false
-    adaptorMock.appendPixelBufferStub = { buffer, time in
+    adaptorMock.appendStub = { buffer, time in
       videoAppended = true
       return true
     }
