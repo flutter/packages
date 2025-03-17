@@ -29,5 +29,9 @@ Objective-C:
 
 Then you will have access to the native class `FWFWebViewFlutterWKWebViewExternalAPI`.
 
+## Contributing
+
+For information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
 [1]: https://pub.dev/packages/webview_flutter
 [2]: https://flutter.dev/to/endorsed-federated-plugin

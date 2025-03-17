@@ -81,6 +81,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (navigatorKey.currentState?.canPop() ?? false) {
       return true;
     }
+    if (currentConfiguration.matches.isEmpty) {
+      return false;
+    }
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
       if (walker.navigatorKey.currentState?.canPop() ?? false) {
@@ -182,7 +185,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// The top [GoRouterState], the state of the route that was
   /// last used in either [GoRouter.go] or [GoRouter.push].
-  GoRouterState? get state => currentConfiguration.last
+  GoRouterState get state => currentConfiguration.last
       .buildState(_configuration, currentConfiguration);
 
   /// For use by the Router architecture as part of the RouterDelegate.

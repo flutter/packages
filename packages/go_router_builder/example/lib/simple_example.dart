@@ -45,8 +45,9 @@ class FamilyRoute extends GoRouteData {
   final String familyId;
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      FamilyScreen(family: familyById(familyId));
+  Widget build(BuildContext context, GoRouterState state) {
+    return FamilyScreen(family: familyById(familyId));
+  }
 }
 
 class HomeScreen extends StatelessWidget {

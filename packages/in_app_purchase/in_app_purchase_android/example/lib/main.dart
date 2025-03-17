@@ -424,8 +424,8 @@ class _MyAppState extends State<_MyApp> {
                               changeSubscriptionParam: oldSubscription != null
                                   ? ChangeSubscriptionParam(
                                       oldPurchaseDetails: oldSubscription,
-                                      prorationMode: ProrationMode
-                                          .immediateWithTimeProration)
+                                      replacementMode:
+                                          ReplacementMode.withTimeProration)
                                   : null);
                       if (productDetails.id == _kConsumableId) {
                         _inAppPurchasePlatform.buyConsumable(
@@ -680,19 +680,15 @@ class _FeatureCard extends StatelessWidget {
   }
 
   String _featureToString(BillingClientFeature feature) {
-    switch (feature) {
-      case BillingClientFeature.inAppItemsOnVR:
-        return 'inAppItemsOnVR';
-      case BillingClientFeature.priceChangeConfirmation:
-        return 'priceChangeConfirmation';
-      case BillingClientFeature.productDetails:
-        return 'productDetails';
-      case BillingClientFeature.subscriptions:
-        return 'subscriptions';
-      case BillingClientFeature.subscriptionsOnVR:
-        return 'subscriptionsOnVR';
-      case BillingClientFeature.subscriptionsUpdate:
-        return 'subscriptionsUpdate';
-    }
+    return switch (feature) {
+      BillingClientFeature.alternativeBillingOnly => 'alternativeBillingOnly',
+      BillingClientFeature.priceChangeConfirmation => 'priceChangeConfirmation',
+      BillingClientFeature.productDetails => 'productDetails',
+      BillingClientFeature.subscriptions => 'subscriptions',
+      BillingClientFeature.subscriptionsUpdate => 'subscriptionsUpdate',
+      BillingClientFeature.billingConfig => 'billingConfig',
+      BillingClientFeature.externalOffer => 'externalOffer',
+      BillingClientFeature.inAppMessaging => 'inAppMessaging',
+    };
   }
 }

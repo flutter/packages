@@ -4,14 +4,8 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 import '../../billing_client_wrappers.dart';
-
-// WARNING: Changes to `@JsonSerializable` classes need to be reflected in the
-// below generated file. Run `flutter packages pub run build_runner watch` to
-// rebuild and watch for further changes.
-part 'purchase_wrapper.g.dart';
 
 /// Data structure representing a successful purchase.
 ///
@@ -20,8 +14,6 @@ part 'purchase_wrapper.g.dart';
 /// purchase"](https://developer.android.com/google/play/billing/billing_library_overview#Verify).
 ///
 /// This wraps [`com.android.billlingclient.api.Purchase`](https://developer.android.com/reference/com/android/billingclient/api/Purchase)
-@JsonSerializable()
-@PurchaseStateConverter()
 @immutable
 class PurchaseWrapper {
   /// Creates a purchase wrapper with the given purchase details.
@@ -39,13 +31,8 @@ class PurchaseWrapper {
     required this.purchaseState,
     this.obfuscatedAccountId,
     this.obfuscatedProfileId,
+    this.pendingPurchaseUpdate,
   });
-
-  /// Factory for creating a [PurchaseWrapper] from a [Map] with the purchase details.
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  factory PurchaseWrapper.fromJson(Map<String, dynamic> map) =>
-      _$PurchaseWrapperFromJson(map);
 
   @override
   bool operator ==(Object other) {
@@ -65,7 +52,8 @@ class PurchaseWrapper {
         other.isAutoRenewing == isAutoRenewing &&
         other.originalJson == originalJson &&
         other.isAcknowledged == isAcknowledged &&
-        other.purchaseState == purchaseState;
+        other.purchaseState == purchaseState &&
+        other.pendingPurchaseUpdate == pendingPurchaseUpdate;
   }
 
   @override
@@ -79,32 +67,27 @@ class PurchaseWrapper {
       isAutoRenewing,
       originalJson,
       isAcknowledged,
-      purchaseState);
+      purchaseState,
+      pendingPurchaseUpdate);
 
   /// The unique ID for this purchase. Corresponds to the Google Payments order
   /// ID.
-  @JsonKey(defaultValue: '')
   final String orderId;
 
   /// The package name the purchase was made from.
-  @JsonKey(defaultValue: '')
   final String packageName;
 
   /// When the purchase was made, as an epoch timestamp.
-  @JsonKey(defaultValue: 0)
   final int purchaseTime;
 
   /// A unique ID for a given [ProductDetailsWrapper], user, and purchase.
-  @JsonKey(defaultValue: '')
   final String purchaseToken;
 
   /// Signature of purchase data, signed with the developer's private key. Uses
   /// RSASSA-PKCS1-v1_5.
-  @JsonKey(defaultValue: '')
   final String signature;
 
   /// The product IDs of this purchase.
-  @JsonKey(defaultValue: <String>[])
   final List<String> products;
 
   /// True for subscriptions that renew automatically. Does not apply to
@@ -122,7 +105,6 @@ class PurchaseWrapper {
   /// device"](https://developer.android.com/google/play/billing/billing_library_overview#Verify-purchase-device).
   /// Note though that verifying a purchase locally is inherently insecure (see
   /// the article for more details).
-  @JsonKey(defaultValue: '')
   final String originalJson;
 
   /// The payload specified by the developer when the purchase was acknowledged or consumed.
@@ -136,7 +118,6 @@ class PurchaseWrapper {
   ///
   /// A successful purchase has to be acknowledged within 3 days after the purchase via [BillingClient.acknowledgePurchase].
   /// * See also [BillingClient.acknowledgePurchase] for more details on acknowledging purchases.
-  @JsonKey(defaultValue: false)
   final bool isAcknowledged;
 
   /// Determines the current state of the purchase.
@@ -158,6 +139,51 @@ class PurchaseWrapper {
   /// directly calling [BillingClient.launchBillingFlow] and is not available
   /// on the generic [InAppPurchasePlatform].
   final String? obfuscatedProfileId;
+
+  /// The [PendingPurchaseUpdateWrapper] for an uncommitted transaction.
+  ///
+  /// A PendingPurchaseUpdate is normally generated from a pending transaction
+  /// upgrading/downgrading an existing subscription.
+  /// Returns null if this purchase does not have a pending transaction.
+  final PendingPurchaseUpdateWrapper? pendingPurchaseUpdate;
+}
+
+@immutable
+
+/// Represents a pending change/update to the existing purchase.
+///
+/// This wraps [`com.android.billingclient.api.Purchase.PendingPurchaseUpdate`](https://developer.android.com/reference/com/android/billingclient/api/Purchase.PendingPurchaseUpdate).
+class PendingPurchaseUpdateWrapper {
+  /// Creates a pending purchase wrapper update wrapper with the given purchase details.
+  const PendingPurchaseUpdateWrapper({
+    required this.purchaseToken,
+    required this.products,
+  });
+
+  /// A token that uniquely identifies this pending transaction.
+  final String purchaseToken;
+
+  /// The product IDs of this pending purchase update.
+  final List<String> products;
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(other, this)) {
+      return true;
+    }
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is PendingPurchaseUpdateWrapper &&
+        other.purchaseToken == purchaseToken &&
+        listEquals(other.products, products);
+  }
+
+  @override
+  int get hashCode => Object.hash(
+        purchaseToken,
+        products.hashCode,
+      );
 }
 
 /// Data structure representing a purchase history record.
@@ -169,7 +195,6 @@ class PurchaseWrapper {
 /// * See also: [BillingClient.queryPurchaseHistory] for obtaining a [PurchaseHistoryRecordWrapper].
 // We can optionally make [PurchaseWrapper] extend or implement [PurchaseHistoryRecordWrapper].
 // For now, we keep them separated classes to be consistent with Android's BillingClient implementation.
-@JsonSerializable()
 @immutable
 class PurchaseHistoryRecordWrapper {
   /// Creates a [PurchaseHistoryRecordWrapper] with the given record details.
@@ -182,27 +207,17 @@ class PurchaseHistoryRecordWrapper {
     required this.developerPayload,
   });
 
-  /// Factory for creating a [PurchaseHistoryRecordWrapper] from a [Map] with the record details.
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  factory PurchaseHistoryRecordWrapper.fromJson(Map<String, dynamic> map) =>
-      _$PurchaseHistoryRecordWrapperFromJson(map);
-
   /// When the purchase was made, as an epoch timestamp.
-  @JsonKey(defaultValue: 0)
   final int purchaseTime;
 
   /// A unique ID for a given [ProductDetailsWrapper], user, and purchase.
-  @JsonKey(defaultValue: '')
   final String purchaseToken;
 
   /// Signature of purchase data, signed with the developer's private key. Uses
   /// RSASSA-PKCS1-v1_5.
-  @JsonKey(defaultValue: '')
   final String signature;
 
   /// The product ID of this purchase.
-  @JsonKey(defaultValue: <String>[])
   final List<String> products;
 
   /// Details about this purchase, in JSON.
@@ -211,7 +226,6 @@ class PurchaseHistoryRecordWrapper {
   /// device"](https://developer.android.com/google/play/billing/billing_library_overview#Verify-purchase-device).
   /// Note though that verifying a purchase locally is inherently insecure (see
   /// the article for more details).
-  @JsonKey(defaultValue: '')
   final String originalJson;
 
   /// The payload specified by the developer when the purchase was acknowledged or consumed.
@@ -254,8 +268,6 @@ class PurchaseHistoryRecordWrapper {
 /// [BillingResponse] to signify the overall state of the transaction.
 ///
 /// Wraps [`com.android.billingclient.api.Purchase.PurchasesResult`](https://developer.android.com/reference/com/android/billingclient/api/Purchase.PurchasesResult).
-@JsonSerializable()
-@BillingResponseConverter()
 @immutable
 class PurchasesResultWrapper implements HasBillingResponse {
   /// Creates a [PurchasesResultWrapper] with the given purchase result details.
@@ -263,12 +275,6 @@ class PurchasesResultWrapper implements HasBillingResponse {
       {required this.responseCode,
       required this.billingResult,
       required this.purchasesList});
-
-  /// Factory for creating a [PurchaseResultWrapper] from a [Map] with the result details.
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  factory PurchasesResultWrapper.fromJson(Map<String, dynamic> map) =>
-      _$PurchasesResultWrapperFromJson(map);
 
   @override
   bool operator ==(Object other) {
@@ -300,7 +306,6 @@ class PurchasesResultWrapper implements HasBillingResponse {
   /// The list of successful purchases made in this transaction.
   ///
   /// May be empty, especially if [responseCode] is not [BillingResponse.ok].
-  @JsonKey(defaultValue: <PurchaseWrapper>[])
   final List<PurchaseWrapper> purchasesList;
 }
 
@@ -308,19 +313,11 @@ class PurchasesResultWrapper implements HasBillingResponse {
 ///
 /// Contains a potentially empty list of [PurchaseHistoryRecordWrapper]s and a [BillingResultWrapper]
 /// that contains a detailed description of the status.
-@JsonSerializable()
-@BillingResponseConverter()
 @immutable
 class PurchasesHistoryResult implements HasBillingResponse {
   /// Creates a [PurchasesHistoryResult] with the provided history.
   const PurchasesHistoryResult(
       {required this.billingResult, required this.purchaseHistoryRecordList});
-
-  /// Factory for creating a [PurchasesHistoryResult] from a [Map] with the history result details.
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  factory PurchasesHistoryResult.fromJson(Map<String, dynamic> map) =>
-      _$PurchasesHistoryResultFromJson(map);
 
   @override
   BillingResponse get responseCode => billingResult.responseCode;
@@ -347,7 +344,6 @@ class PurchasesHistoryResult implements HasBillingResponse {
   /// The list of queried purchase history records.
   ///
   /// May be empty, especially if [billingResult.responseCode] is not [BillingResponse.ok].
-  @JsonKey(defaultValue: <PurchaseHistoryRecordWrapper>[])
   final List<PurchaseHistoryRecordWrapper> purchaseHistoryRecordList;
 }
 
@@ -356,20 +352,17 @@ class PurchasesHistoryResult implements HasBillingResponse {
 /// Wraps
 /// [`BillingClient.api.Purchase.PurchaseState`](https://developer.android.com/reference/com/android/billingclient/api/Purchase.PurchaseState.html).
 /// * See also: [PurchaseWrapper].
-@JsonEnum(alwaysCreate: true)
 enum PurchaseStateWrapper {
   /// The state is unspecified.
   ///
   /// No actions on the [PurchaseWrapper] should be performed on this state.
   /// This is a catch-all. It should never be returned by the Play Billing Library.
-  @JsonValue(0)
   unspecified_state,
 
   /// The user has completed the purchase process.
   ///
   /// The production should be delivered and then the purchase should be acknowledged.
   /// * See also [BillingClient.acknowledgePurchase] for more details on acknowledging purchases.
-  @JsonValue(1)
   purchased,
 
   /// The user has started the purchase process.
@@ -379,44 +372,5 @@ enum PurchaseStateWrapper {
   ///
   /// You can also choose to remind the user to complete the purchase if you detected a
   /// [PurchaseWrapper] is still in the `pending` state in the future while calling [BillingClient.queryPurchases].
-  @JsonValue(2)
   pending,
-}
-
-/// Serializer for [PurchaseStateWrapper].
-///
-/// Use these in `@JsonSerializable()` classes by annotating them with
-/// `@PurchaseStateConverter()`.
-class PurchaseStateConverter
-    implements JsonConverter<PurchaseStateWrapper, int?> {
-  /// Default const constructor.
-  const PurchaseStateConverter();
-
-  @override
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  PurchaseStateWrapper fromJson(int? json) {
-    if (json == null) {
-      return PurchaseStateWrapper.unspecified_state;
-    }
-    return $enumDecode(_$PurchaseStateWrapperEnumMap, json);
-  }
-
-  @override
-  int toJson(PurchaseStateWrapper object) =>
-      _$PurchaseStateWrapperEnumMap[object]!;
-
-  /// Converts the purchase state stored in `object` to a [PurchaseStatus].
-  ///
-  /// [PurchaseStateWrapper.unspecified_state] is mapped to [PurchaseStatus.error].
-  PurchaseStatus toPurchaseStatus(PurchaseStateWrapper object) {
-    switch (object) {
-      case PurchaseStateWrapper.pending:
-        return PurchaseStatus.pending;
-      case PurchaseStateWrapper.purchased:
-        return PurchaseStatus.purchased;
-      case PurchaseStateWrapper.unspecified_state:
-        return PurchaseStatus.error;
-    }
-  }
 }

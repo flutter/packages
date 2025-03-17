@@ -12,9 +12,48 @@ import GoogleInteractiveMediaAds
 class AdDisplayContainerProxyAPIDelegate: PigeonApiDelegateIMAAdDisplayContainer {
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiIMAAdDisplayContainer, adContainer: UIView,
-    adContainerViewController: UIViewController?
+    companionSlots: [IMACompanionAdSlot]?, adContainerViewController: UIViewController?
   ) throws -> IMAAdDisplayContainer {
     return IMAAdDisplayContainer(
-      adContainer: adContainer, viewController: adContainerViewController)
+      adContainer: adContainer, viewController: adContainerViewController,
+      companionSlots: companionSlots)
+  }
+
+  func adContainer(pigeonApi: PigeonApiIMAAdDisplayContainer, pigeonInstance: IMAAdDisplayContainer)
+    throws -> UIView
+  {
+    return pigeonInstance.adContainer
+  }
+
+  func companionSlots(
+    pigeonApi: PigeonApiIMAAdDisplayContainer, pigeonInstance: IMAAdDisplayContainer
+  ) throws -> [IMACompanionAdSlot]? {
+    return pigeonInstance.companionSlots
+  }
+
+  func setAdContainerViewController(
+    pigeonApi: PigeonApiIMAAdDisplayContainer, pigeonInstance: IMAAdDisplayContainer,
+    controller: UIViewController?
+  ) throws {
+    pigeonInstance.adContainerViewController = controller
+  }
+
+  func getAdContainerViewController(
+    pigeonApi: PigeonApiIMAAdDisplayContainer, pigeonInstance: IMAAdDisplayContainer
+  ) throws -> UIViewController? {
+    return pigeonInstance.adContainerViewController
+  }
+
+  func registerFriendlyObstruction(
+    pigeonApi: PigeonApiIMAAdDisplayContainer, pigeonInstance: IMAAdDisplayContainer,
+    friendlyObstruction: IMAFriendlyObstruction
+  ) throws {
+    pigeonInstance.register(friendlyObstruction)
+  }
+
+  func unregisterAllFriendlyObstructions(
+    pigeonApi: PigeonApiIMAAdDisplayContainer, pigeonInstance: IMAAdDisplayContainer
+  ) throws {
+    pigeonInstance.unregisterAllFriendlyObstructions()
   }
 }

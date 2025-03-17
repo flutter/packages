@@ -11,7 +11,9 @@
 
 @import XCTest;
 @import google_sign_in_ios;
+#if __has_include(<google_sign_in_ios/google_sign_in_ios-umbrella.h>)
 @import google_sign_in_ios.Test;
+#endif
 @import GoogleSignIn;
 
 // OCMock library doesn't generate a valid modulemap.

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:video_player_avfoundation/src/messages.g.dart';
@@ -12,7 +13,7 @@ import 'test_api.g.dart';
 
 class _ApiLogger implements TestHostVideoPlayerApi {
   final List<String> log = <String>[];
-  int? textureId;
+  int? playerId;
   CreationOptions? creationOptions;
   int? position;
   bool? looping;
@@ -28,9 +29,9 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  void dispose(int textureId) {
+  void dispose(int playerId) {
     log.add('dispose');
-    this.textureId = textureId;
+    this.playerId = playerId;
   }
 
   @override
@@ -39,15 +40,15 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  void pause(int textureId) {
+  void pause(int playerId) {
     log.add('pause');
-    this.textureId = textureId;
+    this.playerId = playerId;
   }
 
   @override
-  void play(int textureId) {
+  void play(int playerId) {
     log.add('play');
-    this.textureId = textureId;
+    this.playerId = playerId;
   }
 
   @override
@@ -57,38 +58,38 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  int getPosition(int textureId) {
+  int getPosition(int playerId) {
     log.add('position');
-    this.textureId = textureId;
+    this.playerId = playerId;
     return 234;
   }
 
   @override
-  Future<void> seekTo(int position, int textureId) async {
+  Future<void> seekTo(int position, int playerId) async {
     log.add('seekTo');
     this.position = position;
-    this.textureId = textureId;
+    this.playerId = playerId;
   }
 
   @override
-  void setLooping(bool loop, int textureId) {
+  void setLooping(bool loop, int playerId) {
     log.add('setLooping');
     looping = loop;
-    this.textureId = textureId;
+    this.playerId = playerId;
   }
 
   @override
-  void setVolume(double volume, int textureId) {
+  void setVolume(double volume, int playerId) {
     log.add('setVolume');
     this.volume = volume;
-    this.textureId = textureId;
+    this.playerId = playerId;
   }
 
   @override
-  void setPlaybackSpeed(double speed, int textureId) {
+  void setPlaybackSpeed(double speed, int playerId) {
     log.add('setPlaybackSpeed');
     playbackSpeed = speed;
-    this.textureId = textureId;
+    this.playerId = playerId;
   }
 }
 
@@ -118,13 +119,17 @@ void main() {
     });
 
     test('dispose', () async {
+      player.playerViewStates[1] =
+          const VideoPlayerTextureViewState(textureId: 1);
+
       await player.dispose(1);
       expect(log.log.last, 'dispose');
-      expect(log.textureId, 1);
+      expect(log.playerId, 1);
+      expect(player.playerViewStates, isEmpty);
     });
 
     test('create with asset', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.asset,
         asset: 'someAsset',
         package: 'somePackage',
@@ -132,23 +137,13 @@ void main() {
       expect(log.log.last, 'create');
       expect(log.creationOptions?.asset, 'someAsset');
       expect(log.creationOptions?.packageName, 'somePackage');
-      expect(textureId, 3);
-    });
-
-    test('create with incorrect asset throws exception', () async {
-      try {
-        await player.create(DataSource(
-          sourceType: DataSourceType.asset,
-          asset: '/path/to/incorrect_asset',
-        ));
-        fail('should throw PlatformException');
-      } catch (e) {
-        expect(e, isException);
-      }
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with network', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
         formatHint: VideoFormat.dash,
@@ -159,11 +154,13 @@ void main() {
       expect(log.creationOptions?.packageName, null);
       expect(log.creationOptions?.formatHint, 'dash');
       expect(log.creationOptions?.httpHeaders, <String, String>{});
-      expect(textureId, 3);
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with network (some headers)', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.network,
         uri: 'someUri',
         httpHeaders: <String, String>{'Authorization': 'Bearer token'},
@@ -175,36 +172,157 @@ void main() {
       expect(log.creationOptions?.formatHint, null);
       expect(log.creationOptions?.httpHeaders,
           <String, String>{'Authorization': 'Bearer token'});
-      expect(textureId, 3);
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('create with file', () async {
-      final int? textureId = await player.create(DataSource(
+      final int? playerId = await player.create(DataSource(
         sourceType: DataSourceType.file,
         uri: 'someUri',
       ));
       expect(log.log.last, 'create');
       expect(log.creationOptions?.uri, 'someUri');
-      expect(textureId, 3);
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
+    });
+
+    test('createWithOptions with asset', () async {
+      final int? playerId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.asset,
+            asset: 'someAsset',
+            package: 'somePackage',
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.asset, 'someAsset');
+      expect(log.creationOptions?.packageName, 'somePackage');
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
+    });
+
+    test('createWithOptions with network', () async {
+      final int? playerId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'someUri',
+            formatHint: VideoFormat.dash,
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.asset, null);
+      expect(log.creationOptions?.uri, 'someUri');
+      expect(log.creationOptions?.packageName, null);
+      expect(log.creationOptions?.formatHint, 'dash');
+      expect(log.creationOptions?.httpHeaders, <String, String>{});
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
+    });
+
+    test('createWithOptions with network (some headers)', () async {
+      final int? playerId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'someUri',
+            httpHeaders: <String, String>{'Authorization': 'Bearer token'},
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.asset, null);
+      expect(log.creationOptions?.uri, 'someUri');
+      expect(log.creationOptions?.packageName, null);
+      expect(log.creationOptions?.formatHint, null);
+      expect(log.creationOptions?.httpHeaders,
+          <String, String>{'Authorization': 'Bearer token'});
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
+    });
+
+    test('createWithOptions with file', () async {
+      final int? playerId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.textureView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.uri, 'someUri');
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
+    });
+
+    test('createWithOptions with platform view on iOS', () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      final int? playerId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.platformView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.viewType, PlatformVideoViewType.platformView);
+      expect(playerId, 3);
+      expect(player.playerViewStates[3], const VideoPlayerPlatformViewState());
+    });
+
+    test('createWithOptions with platform view uses texture view on MacOS',
+        () async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+      final int? playerId = await player.createWithOptions(
+        VideoCreationOptions(
+          dataSource: DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'someUri',
+          ),
+          viewType: VideoViewType.platformView,
+        ),
+      );
+      expect(log.log.last, 'create');
+      expect(log.creationOptions?.viewType, PlatformVideoViewType.textureView);
+      expect(playerId, 3);
+      expect(player.playerViewStates[3],
+          const VideoPlayerTextureViewState(textureId: 3));
     });
 
     test('setLooping', () async {
       await player.setLooping(1, true);
       expect(log.log.last, 'setLooping');
-      expect(log.textureId, 1);
+      expect(log.playerId, 1);
       expect(log.looping, true);
     });
 
     test('play', () async {
       await player.play(1);
       expect(log.log.last, 'play');
-      expect(log.textureId, 1);
+      expect(log.playerId, 1);
     });
 
     test('pause', () async {
       await player.pause(1);
       expect(log.log.last, 'pause');
-      expect(log.textureId, 1);
+      expect(log.playerId, 1);
     });
 
     test('setMixWithOthers', () async {
@@ -220,28 +338,28 @@ void main() {
     test('setVolume', () async {
       await player.setVolume(1, 0.7);
       expect(log.log.last, 'setVolume');
-      expect(log.textureId, 1);
+      expect(log.playerId, 1);
       expect(log.volume, 0.7);
     });
 
     test('setPlaybackSpeed', () async {
       await player.setPlaybackSpeed(1, 1.5);
       expect(log.log.last, 'setPlaybackSpeed');
-      expect(log.textureId, 1);
+      expect(log.playerId, 1);
       expect(log.playbackSpeed, 1.5);
     });
 
     test('seekTo', () async {
       await player.seekTo(1, const Duration(milliseconds: 12345));
       expect(log.log.last, 'seekTo');
-      expect(log.textureId, 1);
+      expect(log.playerId, 1);
       expect(log.position, 12345);
     });
 
     test('getPosition', () async {
       final Duration position = await player.getPosition(1);
       expect(log.log.last, 'position');
-      expect(log.textureId, 1);
+      expect(log.playerId, 1);
       expect(position, const Duration(milliseconds: 234));
     });
 

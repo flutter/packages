@@ -115,24 +115,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       }
     }
     // Load explicitly allowed packages.
-    _allowedUnpinnedPackages
-        .addAll(_getAllowedPackages(_allowDependenciesFlag));
-    _allowedPinnedPackages
-        .addAll(_getAllowedPackages(_allowPinnedDependenciesFlag));
-  }
-
-  Iterable<String> _getAllowedPackages(String flag) {
-    return getStringListArg(flag).expand<String>((String item) {
-      if (item.endsWith('.yaml')) {
-        final File file = packagesDir.fileSystem.file(item);
-        final Object? yaml = loadYaml(file.readAsStringSync());
-        if (yaml == null) {
-          return <String>[];
-        }
-        return (yaml as YamlList).toList().cast<String>();
-      }
-      return <String>[item];
-    });
+    _allowedUnpinnedPackages.addAll(getYamlListArg(_allowDependenciesFlag));
+    _allowedPinnedPackages.addAll(getYamlListArg(_allowPinnedDependenciesFlag));
   }
 
   @override
@@ -564,6 +548,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       'build_runner',
       'integration_test',
       'flutter_test',
+      'leak_tracker_flutter_testing',
       'mockito',
       'pigeon',
       'test',

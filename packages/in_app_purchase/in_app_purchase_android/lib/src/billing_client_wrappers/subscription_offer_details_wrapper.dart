@@ -3,20 +3,13 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 import 'billing_client_wrapper.dart';
 import 'product_details_wrapper.dart';
 
-// WARNING: Changes to `@JsonSerializable` classes need to be reflected in the
-// below generated file. Run `flutter packages pub run build_runner watch` to
-// rebuild and watch for further changes.
-part 'subscription_offer_details_wrapper.g.dart';
-
 /// Dart wrapper around [`com.android.billingclient.api.ProductDetails.SubscriptionOfferDetails`](https://developer.android.com/reference/com/android/billingclient/api/ProductDetails.SubscriptionOfferDetails).
 ///
 /// Represents the available purchase plans to buy a subscription product.
-@JsonSerializable()
 @immutable
 class SubscriptionOfferDetailsWrapper {
   /// Creates a [SubscriptionOfferDetailsWrapper].
@@ -26,38 +19,30 @@ class SubscriptionOfferDetailsWrapper {
     required this.offerTags,
     required this.offerIdToken,
     required this.pricingPhases,
+    this.installmentPlanDetails,
   });
 
-  /// Factory for creating a [SubscriptionOfferDetailsWrapper] from a [Map]
-  /// with the offer details.
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  factory SubscriptionOfferDetailsWrapper.fromJson(Map<String, dynamic> map) =>
-      _$SubscriptionOfferDetailsWrapperFromJson(map);
-
   /// The base plan id associated with the subscription product.
-  @JsonKey(defaultValue: '')
   final String basePlanId;
 
   /// The offer id associated with the subscription product.
   ///
   /// This field is only set for a discounted offer. Returns null for a regular
   /// base plan.
-  @JsonKey(defaultValue: null)
   final String? offerId;
 
   /// The offer tags associated with this Subscription Offer.
-  @JsonKey(defaultValue: <String>[])
   final List<String> offerTags;
 
   /// The offer token required to pass in [BillingClient.launchBillingFlow] to
   /// purchase the subscription product with these [pricingPhases].
-  @JsonKey(defaultValue: '')
   final String offerIdToken;
 
   /// The pricing phases for the subscription product.
-  @JsonKey(defaultValue: <PricingPhaseWrapper>[])
   final List<PricingPhaseWrapper> pricingPhases;
+
+  /// Represents additional details of an installment subscription plan.
+  final InstallmentPlanDetailsWrapper? installmentPlanDetails;
 
   @override
   bool operator ==(Object other) {
@@ -70,7 +55,8 @@ class SubscriptionOfferDetailsWrapper {
         other.offerId == offerId &&
         listEquals(other.offerTags, offerTags) &&
         other.offerIdToken == offerIdToken &&
-        listEquals(other.pricingPhases, pricingPhases);
+        listEquals(other.pricingPhases, pricingPhases) &&
+        installmentPlanDetails == other.installmentPlanDetails;
   }
 
   @override
@@ -81,13 +67,12 @@ class SubscriptionOfferDetailsWrapper {
       offerTags.hashCode,
       offerIdToken.hashCode,
       pricingPhases.hashCode,
+      installmentPlanDetails.hashCode,
     );
   }
 }
 
 /// Represents a pricing phase, describing how a user pays at a point in time.
-@JsonSerializable()
-@RecurrenceModeConverter()
 @immutable
 class PricingPhaseWrapper {
   /// Creates a new [PricingPhaseWrapper] from the supplied info.
@@ -100,37 +85,25 @@ class PricingPhaseWrapper {
     required this.recurrenceMode,
   });
 
-  /// Factory for creating a [PricingPhaseWrapper] from a [Map] with the phase details.
-  @Deprecated('JSON serialization is not intended for public use, and will '
-      'be removed in a future version.')
-  factory PricingPhaseWrapper.fromJson(Map<String, dynamic> map) =>
-      _$PricingPhaseWrapperFromJson(map);
-
   /// Represents a pricing phase, describing how a user pays at a point in time.
-  @JsonKey(defaultValue: 0)
   final int billingCycleCount;
 
   /// Billing period for which the given price applies, specified in ISO 8601
   /// format.
-  @JsonKey(defaultValue: '')
   final String billingPeriod;
 
   /// Returns formatted price for the payment cycle, including its currency
   /// sign.
-  @JsonKey(defaultValue: '')
   final String formattedPrice;
 
   /// Returns the price for the payment cycle in micro-units, where 1,000,000
   /// micro-units equal one unit of the currency.
-  @JsonKey(defaultValue: 0)
   final int priceAmountMicros;
 
   /// Returns ISO 4217 currency code for price.
-  @JsonKey(defaultValue: '')
   final String priceCurrencyCode;
 
   /// Returns [RecurrenceMode] for the pricing phase.
-  @JsonKey(defaultValue: RecurrenceMode.nonRecurring)
   final RecurrenceMode recurrenceMode;
 
   @override
@@ -157,4 +130,54 @@ class PricingPhaseWrapper {
         priceCurrencyCode,
         recurrenceMode,
       );
+}
+
+/// Represents additional details of an installment subscription plan.
+///
+/// This wraps [`com.android.billingclient.api.ProductDetails.InstallmentPlanDetails`](https://developer.android.com/reference/com/android/billingclient/api/ProductDetails.InstallmentPlanDetails).
+@immutable
+class InstallmentPlanDetailsWrapper {
+  /// Creates a [InstallmentPlanDetailsWrapper].
+  const InstallmentPlanDetailsWrapper({
+    required this.commitmentPaymentsCount,
+    required this.subsequentCommitmentPaymentsCount,
+  });
+
+  /// Committed payments count after a user signs up for this subscription plan.
+  ///
+  /// For example, for a monthly subscription plan with commitmentPaymentsCount
+  /// as 12, users will be charged monthly for 12 month after initial signup.
+  /// User cancellation won't take effect until all 12 committed payments are finished.
+  final int commitmentPaymentsCount;
+
+  /// Subsequent committed payments count after this subscription plan renews.
+  ///
+  /// For example, for a monthly subscription plan with subsequentCommitmentPaymentsCount
+  /// as 12, when the subscription plan renews, users will be committed to another fresh
+  /// 12 monthly payments.
+  ///
+  /// Note: Returns 0 if the installment plan doesn't have any subsequent committment,
+  /// which means this subscription plan will fall back to a normal non-installment
+  /// monthly plan when the plan renews.
+  final int subsequentCommitmentPaymentsCount;
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+
+    return other is InstallmentPlanDetailsWrapper &&
+        other.commitmentPaymentsCount == commitmentPaymentsCount &&
+        other.subsequentCommitmentPaymentsCount ==
+            subsequentCommitmentPaymentsCount;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      commitmentPaymentsCount.hashCode,
+      subsequentCommitmentPaymentsCount.hashCode,
+    );
+  }
 }

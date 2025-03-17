@@ -19,9 +19,9 @@ import Foundation
 final class EventChannelTestsError: Error {
   let code: String
   let message: String?
-  let details: Any?
+  let details: Sendable?
 
-  init(code: String, message: String?, details: Any?) {
+  init(code: String, message: String?, details: Sendable?) {
     self.code = code
     self.message = message
     self.details = details
@@ -569,6 +569,24 @@ class StreamEventsStreamHandler: PigeonEventChannelWrapper<PlatformEvent> {
       channelName += ".\(instanceName)"
     }
     let internalStreamHandler = PigeonStreamHandler<PlatformEvent>(wrapper: streamHandler)
+    let channel = FlutterEventChannel(
+      name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
+    channel.setStreamHandler(internalStreamHandler)
+  }
+}
+
+class StreamConsistentNumbersStreamHandler: PigeonEventChannelWrapper<Int64> {
+  static func register(
+    with messenger: FlutterBinaryMessenger,
+    instanceName: String = "",
+    streamHandler: StreamConsistentNumbersStreamHandler
+  ) {
+    var channelName =
+      "dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers"
+    if !instanceName.isEmpty {
+      channelName += ".\(instanceName)"
+    }
+    let internalStreamHandler = PigeonStreamHandler<Int64>(wrapper: streamHandler)
     let channel = FlutterEventChannel(
       name: channelName, binaryMessenger: messenger, codec: eventChannelTestsPigeonMethodCodec)
     channel.setStreamHandler(internalStreamHandler)

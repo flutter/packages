@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'billing_client_wrapper.dart';
+import 'pending_purchases_params_wrapper.dart';
 import 'purchase_wrapper.dart';
 import 'user_choice_details_wrapper.dart';
 
@@ -44,6 +45,8 @@ class BillingClientManager {
   BillingClientManager(
       {@visibleForTesting BillingClientFactory? billingClientFactory})
       : _billingChoiceMode = BillingChoiceMode.playBillingOnly,
+        _pendingPurchasesParams =
+            const PendingPurchasesParamsWrapper(enablePrepaidPlans: false),
         _billingClientFactory = billingClientFactory ?? _createBillingClient {
     _connect();
   }
@@ -85,6 +88,7 @@ class BillingClientManager {
 
   BillingChoiceMode _billingChoiceMode;
   final BillingClientFactory _billingClientFactory;
+  PendingPurchasesParamsWrapper _pendingPurchasesParams;
   bool _isConnecting = false;
   bool _isDisposed = false;
 
@@ -161,9 +165,14 @@ class BillingClientManager {
   Future<void> reconnectWithBillingChoiceMode(
       BillingChoiceMode billingChoiceMode) async {
     _billingChoiceMode = billingChoiceMode;
-    // Ends connection and triggers OnBillingServiceDisconnected, which causes reconnect.
-    await client.endConnection();
-    await _connect();
+    await _reconnect();
+  }
+
+  /// Ends connection to [BillingClient] and reconnects with [pendingPurchasesParams].
+  Future<void> reconnectWithPendingPurchasesParams(
+      PendingPurchasesParamsWrapper pendingPurchasesParams) async {
+    _pendingPurchasesParams = pendingPurchasesParams;
+    await _reconnect();
   }
 
   // If disposed, does nothing.
@@ -179,11 +188,19 @@ class BillingClientManager {
     _isConnecting = true;
     _readyFuture = Future<void>.sync(() async {
       await client.startConnection(
-          onBillingServiceDisconnected: _connect,
-          billingChoiceMode: _billingChoiceMode);
+        onBillingServiceDisconnected: _connect,
+        billingChoiceMode: _billingChoiceMode,
+        pendingPurchasesParams: _pendingPurchasesParams,
+      );
       _isConnecting = false;
     });
     return _readyFuture;
+  }
+
+  Future<void> _reconnect() async {
+    // Ends connection and triggers OnBillingServiceDisconnected, which causes reconnect.
+    await client.endConnection();
+    await _connect();
   }
 
   void _onPurchasesUpdated(PurchasesResultWrapper event) {

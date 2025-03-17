@@ -11,7 +11,11 @@
 #import "FLTRequestHandlerProtocol.h"
 #import "FLTTransactionCacheProtocol.h"
 
+#if __has_include(<in_app_purchase_storekit/in_app_purchase_storekit.h>)
 @import in_app_purchase_storekit;
+#else
+@import in_app_purchase_storekit_objc;
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 API_AVAILABLE(ios(11.2), macos(10.13.2))

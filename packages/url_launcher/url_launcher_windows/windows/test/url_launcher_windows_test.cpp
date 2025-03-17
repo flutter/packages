@@ -24,6 +24,7 @@ using flutter::EncodableMap;
 using flutter::EncodableValue;
 using ::testing::_;
 using ::testing::DoAll;
+using ::testing::HasSubstr;
 using ::testing::Pointee;
 using ::testing::Return;
 using ::testing::SetArgPointee;
@@ -158,6 +159,29 @@ TEST(UrlLauncherPlugin, LaunchUTF8EncodedFileURLSuccess) {
 
   ASSERT_FALSE(result.has_error());
   EXPECT_TRUE(result.value());
+}
+
+TEST(UrlLauncherPlugin, LaunchUTF8LogsUnescapedOnFail) {
+  std::unique_ptr<MockSystemApis> system = std::make_unique<MockSystemApis>();
+
+  // Return a failure value (<32) from launching.
+  EXPECT_CALL(
+      *system,
+      ShellExecuteW(
+          _, StrEq(L"open"),
+          // 家の管理/スキャナ"),
+          StrEq(
+              L"file:///G:/\x5bb6\x306e\x7ba1\x7406/\x30b9\x30ad\x30e3\x30ca"),
+          _, _, _))
+      .WillOnce(Return(reinterpret_cast<HINSTANCE>(0)));
+
+  UrlLauncherPlugin plugin(std::move(system));
+  ErrorOr<bool> result = plugin.LaunchUrl(
+      "file:///G:/%E5%AE%B6%E3%81%AE%E7%AE%A1%E7%90%86/"
+      "%E3%82%B9%E3%82%AD%E3%83%A3%E3%83%8A");
+
+  ASSERT_TRUE(result.has_error());
+  EXPECT_THAT(result.error().message(), HasSubstr("家の管理/スキャナ"));
 }
 
 }  // namespace test

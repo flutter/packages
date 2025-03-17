@@ -1,3 +1,23 @@
+## 0.2.3+8
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 0.2.3+7
+
+* Bumps gradle-plugin to 2.1.10.
+
+## 0.2.3+6
+
+* Adds internal wrapper for iOS native `IMAAdPodInfo`.
+
+## 0.2.3+5
+
+* Bumps gradle-plugin to 2.1.0.
+
+## 0.2.3+4
+
+* Adds remaining methods for internal wrapper of the iOS native `IMAAdDisplayContainer`.
+
 ## 0.2.3+3
 
 * Adds internal wrapper for Android native `CompanionAdSlot` and `CompanionAdSlot.ClickListener`.

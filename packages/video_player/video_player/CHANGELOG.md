@@ -1,7 +1,11 @@
+## 2.9.4
+
+* Reduces the position update interval from 500ms to 100ms.
+
 ## 2.9.3
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-* Reduces the position update interval from 500ms to 100ms.
+* Fixes mechanism to detect identifier in multi-line WebVTT captions.
 
 ## 2.9.2
 

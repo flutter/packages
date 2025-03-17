@@ -22,41 +22,46 @@ Future<void> runTests(
 }) async {
   final String baseDir = p.dirname(p.dirname(Platform.script.toFilePath()));
   if (runGeneration) {
-    await _runGenerate(baseDir);
+    await _runGenerate(baseDir, ciMode: ciMode);
   }
 
   if (runFormat) {
-    await _runFormat(baseDir);
+    await _runFormat(baseDir, ciMode: ciMode);
   }
 
   await _runTests(testsToRun, ciMode: ciMode);
 
   if (includeOverflow) {
-    await _runGenerate(baseDir, includeOverflow: true);
+    await _runGenerate(baseDir, ciMode: ciMode, includeOverflow: true);
 
     // TODO(tarrinneal): Remove linux filter once overflow class is added to gobject generator.
     // https://github.com/flutter/flutter/issues/152916
-    await _runTests(testsToRun
-        .where((String test) =>
-            test.contains('integration') && !test.contains('linux'))
-        .toList());
+    await _runTests(
+        testsToRun
+            .where((String test) =>
+                test.contains('integration') && !test.contains('linux'))
+            .toList(),
+        ciMode: ciMode);
 
     if (!ciMode) {
-      await _runGenerate(baseDir);
+      await _runGenerate(baseDir, ciMode: ciMode);
     }
 
     if (!ciMode && (runFormat || !runGeneration)) {
-      await _runFormat(baseDir);
+      await _runFormat(baseDir, ciMode: ciMode);
     }
   }
 }
 
 // Pre-generate the necessary common output files.
-Future<void> _runGenerate(String baseDir,
-    {bool includeOverflow = false}) async {
+Future<void> _runGenerate(
+  String baseDir, {
+  required bool ciMode,
+  bool includeOverflow = false,
+}) async {
   // TODO(stuartmorgan): Consider making this conditional on the specific
   // tests being run, as not all of them need these files.
-  print('# Generating platform_test/ output...');
+  _printHeading('Generating platform_test/ output', ciMode: ciMode);
   final int generateExitCode = await generateTestPigeons(
     baseDir: baseDir,
     includeOverflow: includeOverflow,
@@ -68,8 +73,8 @@ Future<void> _runGenerate(String baseDir,
   }
 }
 
-Future<void> _runFormat(String baseDir) async {
-  print('Formatting generated output...');
+Future<void> _runFormat(String baseDir, {required bool ciMode}) async {
+  _printHeading('Formatting generated output', ciMode: ciMode);
   final int formatExitCode =
       await formatAllFiles(repositoryRoot: p.dirname(p.dirname(baseDir)));
   if (formatExitCode != 0) {
@@ -80,13 +85,12 @@ Future<void> _runFormat(String baseDir) async {
 
 Future<void> _runTests(
   List<String> testsToRun, {
-  bool ciMode = true,
+  required bool ciMode,
 }) async {
   for (final String test in testsToRun) {
     final TestInfo? info = testSuites[test];
     if (info != null) {
-      print('##############################');
-      print('# Running $test');
+      _printHeading('Running $test', ciMode: ciMode);
       final int testCode = await info.function(ciMode: ciMode);
       if (testCode != 0) {
         print('# Failed, exit code: $testCode');
@@ -99,4 +103,14 @@ Future<void> _runTests(
       exit(1);
     }
   }
+}
+
+void _printHeading(String heading, {required bool ciMode}) {
+  String timestamp = '';
+  if (ciMode) {
+    final DateTime now = DateTime.now();
+    timestamp = ' [start time ${now.hour}:${now.minute}:${now.second}]';
+  }
+  print('##############################');
+  print('# $heading$timestamp');
 }

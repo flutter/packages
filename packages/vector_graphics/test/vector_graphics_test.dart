@@ -314,6 +314,32 @@ void main() {
     expect(debugLastTextDirection, TextDirection.ltr);
   });
 
+  testWidgets('Test animated switch between placeholder and image',
+      (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+    const Text placeholderWidget = Text('Placeholder');
+
+    await tester.pumpWidget(DefaultAssetBundle(
+      bundle: testBundle,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: VectorGraphic(
+          loader: const AssetBytesLoader('bar.svg'),
+          placeholderBuilder: (BuildContext context) => placeholderWidget,
+          transitionDuration: const Duration(microseconds: 500),
+        ),
+      ),
+    ));
+
+    expect(find.text('Placeholder'), findsOneWidget);
+    expect(find.byType(Container), findsNothing); // No image yet
+
+    await tester.pumpAndSettle(const Duration(microseconds: 500));
+
+    expect(find.text('Placeholder'), findsNothing);
+    expect(testBundle.loadKeys, <String>['bar.svg']);
+  });
+
   testWidgets('Can exclude from semantics', (WidgetTester tester) async {
     final TestAssetBundle testBundle = TestAssetBundle();
 

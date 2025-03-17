@@ -46,13 +46,13 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
     this.quickActions = new QuickActions(binding.getApplicationContext());
-    Messages.AndroidQuickActionsApi.setup(binding.getBinaryMessenger(), quickActions);
+    Messages.AndroidQuickActionsApi.setUp(binding.getBinaryMessenger(), quickActions);
     this.quickActionsFlutterApi = new AndroidQuickActionsFlutterApi(binding.getBinaryMessenger());
   }
 
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-    Messages.AndroidQuickActionsApi.setup(binding.getBinaryMessenger(), null);
+    Messages.AndroidQuickActionsApi.setUp(binding.getBinaryMessenger(), null);
     this.quickActions = null;
   }
 
@@ -96,12 +96,20 @@ public class QuickActionsPlugin implements FlutterPlugin, ActivityAware, NewInte
     if (intent.hasExtra(QuickActions.EXTRA_ACTION) && activity != null) {
       Context context = activity.getApplicationContext();
       String shortcutId = intent.getStringExtra(QuickActions.EXTRA_ACTION);
-      quickActionsFlutterApi.launchAction(
-          shortcutId,
-          value -> {
-            // noop
-          });
-      ShortcutManagerCompat.reportShortcutUsed(context, shortcutId);
+      if (shortcutId != null) {
+        quickActionsFlutterApi.launchAction(
+            shortcutId,
+            new Messages.VoidResult() {
+              @Override
+              public void success() {}
+
+              @Override
+              public void error(@NonNull Throwable error) {
+                Log.e(TAG, "Failed to handle launch action: " + error.getMessage());
+              }
+            });
+        ShortcutManagerCompat.reportShortcutUsed(context, shortcutId);
+      }
     }
     return false;
   }

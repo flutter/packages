@@ -141,4 +141,5 @@ class ClassEvent extends PlatformEvent {
 abstract class EventChannelMethods {
   int streamInts();
   PlatformEvent streamEvents();
+  int streamConsistentNumbers();
 }

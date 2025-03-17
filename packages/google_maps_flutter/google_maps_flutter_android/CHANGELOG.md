@@ -1,3 +1,15 @@
+## 2.14.14
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.14.13
+
+* Updates READMEs and API docs.
+
+## 2.14.12
+
+* Updates androidx.annotation:annotation to 1.9.1.
+
 ## 2.14.11
 
 * Updates internal Pigeon API to use newer features.

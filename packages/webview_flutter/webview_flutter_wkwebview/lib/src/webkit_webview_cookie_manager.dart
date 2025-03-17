@@ -5,8 +5,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
-import 'foundation/foundation.dart';
-import 'web_kit/web_kit.dart';
+import 'common/web_kit.g.dart';
 import 'webkit_proxy.dart';
 
 /// Object specifying creation parameters for a [WebKitWebViewCookieManager].
@@ -33,7 +32,7 @@ class WebKitWebViewCookieManagerCreationParams
 
   /// Manages stored data for [WKWebView]s.
   late final WKWebsiteDataStore _websiteDataStore =
-      webKitProxy.defaultWebsiteDataStore();
+      webKitProxy.defaultDataStoreWKWebsiteDataStore();
 }
 
 /// An implementation of [PlatformWebViewCookieManager] with the WebKit api.
@@ -53,8 +52,8 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
   @override
   Future<bool> clearCookies() {
     return _webkitParams._websiteDataStore.removeDataOfTypes(
-      <WKWebsiteDataType>{WKWebsiteDataType.cookies},
-      DateTime.fromMillisecondsSinceEpoch(0),
+      <WebsiteDataType>[WebsiteDataType.cookies],
+      0.0,
     );
   }
 
@@ -67,12 +66,12 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
     }
 
     return _webkitParams._websiteDataStore.httpCookieStore.setCookie(
-      NSHttpCookie.withProperties(
-        <NSHttpCookiePropertyKey, Object>{
-          NSHttpCookiePropertyKey.name: cookie.name,
-          NSHttpCookiePropertyKey.value: cookie.value,
-          NSHttpCookiePropertyKey.domain: cookie.domain,
-          NSHttpCookiePropertyKey.path: cookie.path,
+      _webkitParams.webKitProxy.newHTTPCookie(
+        properties: <HttpCookiePropertyKey, Object>{
+          HttpCookiePropertyKey.name: cookie.name,
+          HttpCookiePropertyKey.value: cookie.value,
+          HttpCookiePropertyKey.domain: cookie.domain,
+          HttpCookiePropertyKey.path: cookie.path,
         },
       ),
     );

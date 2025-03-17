@@ -245,22 +245,23 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
   ///
   /// Returns true if either gradlew was already present, or the build succeeds.
   Future<bool> _ensureGradleWrapperExists(GradleProject project) async {
-    if (!project.isConfigured()) {
-      print('Running flutter build apk...');
-      final String experiment = getStringArg(kEnableExperiment);
-      final int exitCode = await processRunner.runAndStream(
-          flutterCommand,
-          <String>[
-            'build',
-            'apk',
-            '--config-only',
-            if (experiment.isNotEmpty) '--enable-experiment=$experiment',
-          ],
-          workingDir: project.androidDirectory);
+    // Unconditionally re-run build with --debug --config-only, to ensure that
+    // the project is in a debug state even if it was previously configured.
+    print('Running flutter build apk...');
+    final String experiment = getStringArg(kEnableExperiment);
+    final int exitCode = await processRunner.runAndStream(
+        flutterCommand,
+        <String>[
+          'build',
+          'apk',
+          '--debug',
+          '--config-only',
+          if (experiment.isNotEmpty) '--enable-experiment=$experiment',
+        ],
+        workingDir: project.androidDirectory);
 
-      if (exitCode != 0) {
-        return false;
-      }
+    if (exitCode != 0) {
+      return false;
     }
     return true;
   }

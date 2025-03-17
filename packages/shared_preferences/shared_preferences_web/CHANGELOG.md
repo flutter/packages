@@ -1,3 +1,7 @@
+## 2.4.3
+
+* Fixes issue where non-JSON formatted strings cause parsing errors.
+
 ## 2.4.2
 
 * Fixes `getStringList` returning immutable list.

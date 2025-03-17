@@ -354,6 +354,12 @@ abstract class WebSettings {
   /// Enables or disables file access within WebView.
   void setAllowFileAccess(bool enabled);
 
+  /// Enables or disables content URL access within WebView.
+  void setAllowContentAccess(bool enabled);
+
+  /// Sets whether Geolocation is enabled within WebView.
+  void setGeolocationEnabled(bool enabled);
+
   /// Sets the text zoom of the page in percent.
   void setTextZoom(int textZoom);
 

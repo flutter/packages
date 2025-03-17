@@ -599,6 +599,18 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
 
+  /// Enables or disables content URL access.
+  ///
+  /// The default is true.
+  Future<void> setAllowContentAccess(bool enabled) =>
+      _webView.settings.setAllowContentAccess(enabled);
+
+  /// Sets whether Geolocation is enabled.
+  ///
+  /// The default is true.
+  Future<void> setGeolocationEnabled(bool enabled) =>
+      _webView.settings.setGeolocationEnabled(enabled);
+
   /// Sets the callback that is invoked when the client should show a file
   /// selector.
   Future<void> setOnShowFileSelector(

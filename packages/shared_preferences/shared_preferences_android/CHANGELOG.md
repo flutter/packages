@@ -1,3 +1,36 @@
+## 2.4.8
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.4.7
+
+* Updates datastore to 1.1.3.
+
+## 2.4.6
+
+* Ensures that platform messages on background queues are handled in order.
+
+## 2.4.5
+
+* Bumps gradle-plugin to 2.1.10.
+
+## 2.4.4
+
+* Restores the behavior of throwing a `TypeError` when calling `getStringList`
+  on a value stored with `setString`.
+
+## 2.4.3
+
+* Migrates `List<String>` value encoding to JSON.
+
+## 2.4.2
+
+* Bumps gradle-plugin to 2.1.0.
+
+## 2.4.1
+
+* Bumps kotlin version to 1.9.10 androidx.datastore:datastore from 1.0.0 to 1.1.1.
+
 ## 2.4.0
 
 * Adds `SharedPreferences` support within `SharedPreferencesAsyncAndroid` API.

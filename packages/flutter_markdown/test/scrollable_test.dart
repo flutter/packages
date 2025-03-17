@@ -68,6 +68,7 @@ void defineTests() {
         final ScrollController controller = ScrollController(
           initialScrollOffset: 209.0,
         );
+        addTearDown(controller.dispose);
 
         await tester.pumpWidget(
           boilerplate(
@@ -112,7 +113,7 @@ void defineTests() {
     );
 
     testWidgets(
-      'table',
+      'table with fixed column width',
       (WidgetTester tester) async {
         const String data = '|Header 1|Header 2|Header 3|'
             '\n|-----|-----|-----|'
@@ -125,6 +126,34 @@ void defineTests() {
                 data: data,
                 styleSheet: MarkdownStyleSheet(
                   tableColumnWidth: const FixedColumnWidth(150),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        final Iterable<SingleChildScrollView> scrollViews =
+            widgets.whereType<SingleChildScrollView>();
+        expect(scrollViews, isNotEmpty);
+        expect(scrollViews.first.controller, isNotNull);
+      },
+    );
+
+    testWidgets(
+      'table with intrinsic column width',
+      (WidgetTester tester) async {
+        const String data = '|Header 1|Header 2|Header 3|'
+            '\n|-----|-----|-----|'
+            '\n|Col 1|Col 2|Col 3|';
+        await tester.pumpWidget(
+          boilerplate(
+            MediaQuery(
+              data: const MediaQueryData(),
+              child: MarkdownBody(
+                data: data,
+                styleSheet: MarkdownStyleSheet(
+                  tableColumnWidth: const IntrinsicColumnWidth(),
                 ),
               ),
             ),

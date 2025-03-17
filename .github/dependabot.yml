@@ -16,6 +16,11 @@ updates:
       - "team"
       - "team: infra"
       - "autosubmit"
+    # Updating patch versions for "github-actions" is too chatty.
+    # See https://github.com/flutter/flutter/issues/158350.
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
 
   # Android example apps.
   - package-ecosystem: "gradle"
@@ -109,7 +114,7 @@ updates:
       test-dependencies:
         patterns:
           - "androidx.test:*"
-          - "io.mockk:mockk:*"
+          - "io.mockk:*"
           - "junit:junit"
           - "org.mockito:*"
           - "org.robolectric:*"
@@ -121,14 +126,14 @@ updates:
           - "androidx.annotation:annotation"
     ignore:
       - dependency-name: "com.android.tools.build:gradle"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "junit:junit"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "org.mockito:*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "androidx.test:*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "org.robolectric:*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]
       - dependency-name: "io.mockk:mockk:*"
-        update-types: ["version-update:semver-minor", "version-update:semver-patch"]
+        update-types: ["version-update:semver-patch"]

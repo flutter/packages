@@ -13,6 +13,7 @@ import static org.mockito.Mockito.anyString;
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.Arrays;
@@ -54,17 +55,17 @@ public class LegacySharedPreferencesTest {
     data.put("Language", "Java");
     data.put("Counter", 0L);
     data.put("Pie", 3.14);
-    data.put("Names", Arrays.asList("Flutter", "Dart"));
+    data.put("Names", Arrays.asList("Flutter", "Dart").toString());
     data.put("NewToFlutter", false);
     data.put("flutter.Language", "Java");
     data.put("flutter.Counter", 0L);
     data.put("flutter.Pie", 3.14);
-    data.put("flutter.Names", Arrays.asList("Flutter", "Dart"));
+    data.put("flutter.Names", Arrays.asList("Flutter", "Dart").toString());
     data.put("flutter.NewToFlutter", false);
     data.put("prefix.Language", "Java");
     data.put("prefix.Counter", 0L);
     data.put("prefix.Pie", 3.14);
-    data.put("prefix.Names", Arrays.asList("Flutter", "Dart"));
+    data.put("prefix.Names", Arrays.asList("Flutter", "Dart").toString());
     data.put("prefix.NewToFlutter", false);
   }
 
@@ -80,7 +81,7 @@ public class LegacySharedPreferencesTest {
     assertEquals(flutterData.get("flutter.Language"), "Java");
     assertEquals(flutterData.get("flutter.Counter"), 0L);
     assertEquals(flutterData.get("flutter.Pie"), 3.14);
-    assertEquals(flutterData.get("flutter.Names"), Arrays.asList("Flutter", "Dart"));
+    assertEquals(flutterData.get("flutter.Names"), Arrays.asList("Flutter", "Dart").toString());
     assertEquals(flutterData.get("flutter.NewToFlutter"), false);
 
     Map<String, Object> allData = plugin.getAll("", null);
@@ -142,10 +143,10 @@ public class LegacySharedPreferencesTest {
   }
 
   @Test
-  public void setStringList() {
+  public void setEncodedStringListSetsAndGetsString() {
     final String key = "Names";
-    final List<String> value = Arrays.asList("Flutter", "Dart");
-    plugin.setStringList(key, value);
+    final String value = Arrays.asList("Flutter", "Dart").toString();
+    plugin.setEncodedStringList(key, value);
     Map<String, Object> flutterData = plugin.getAll("", null);
     assertEquals(flutterData.get(key), value);
   }
@@ -206,17 +207,17 @@ public class LegacySharedPreferencesTest {
     plugin.setString("Language", "Java");
     plugin.setInt("Counter", 0L);
     plugin.setDouble("Pie", 3.14);
-    plugin.setStringList("Names", Arrays.asList("Flutter", "Dart"));
+    plugin.setEncodedStringList("Names", Arrays.asList("Flutter", "Dart").toString());
     plugin.setBool("NewToFlutter", false);
     plugin.setString("flutter.Language", "Java");
     plugin.setInt("flutter.Counter", 0L);
     plugin.setDouble("flutter.Pie", 3.14);
-    plugin.setStringList("flutter.Names", Arrays.asList("Flutter", "Dart"));
+    plugin.setEncodedStringList("flutter.Names", Arrays.asList("Flutter", "Dart").toString());
     plugin.setBool("flutter.NewToFlutter", false);
     plugin.setString("prefix.Language", "Java");
     plugin.setInt("prefix.Counter", 0L);
     plugin.setDouble("prefix.Pie", 3.14);
-    plugin.setStringList("prefix.Names", Arrays.asList("Flutter", "Dart"));
+    plugin.setEncodedStringList("prefix.Names", Arrays.asList("Flutter", "Dart").toString());
     plugin.setBool("prefix.NewToFlutter", false);
   }
 
@@ -236,7 +237,7 @@ public class LegacySharedPreferencesTest {
 
     @Override
     public @NonNull SharedPreferences.Editor putStringSet(
-        @NonNull String key, @NonNull Set<String> values) {
+        @NonNull String key, @Nullable Set<String> values) {
       sharedPrefData.put(key, values);
       return this;
     }

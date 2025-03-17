@@ -435,7 +435,7 @@ void main() {
       controller.addHeatmaps(heatmaps);
 
       expect(
-        controller.heatmaps[const HeatmapId('1')]?.heatmap?.data,
+        controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart,
         hasLength(0),
       );
 
@@ -450,7 +450,7 @@ void main() {
 
       expect(controller.heatmaps.length, 1);
       expect(
-        controller.heatmaps[const HeatmapId('1')]?.heatmap?.data,
+        controller.heatmaps[const HeatmapId('1')]!.heatmap!.data.array.toDart,
         hasLength(1),
       );
     });
@@ -510,7 +510,9 @@ void main() {
           controller.heatmaps.values.first.heatmap!;
 
       expect(
-        heatmap.get('gradient'),
+        (heatmap.get('gradient')! as JSArray<JSString>)
+            .toDart
+            .map((JSString? value) => value!.toDart),
         <String>['rgba(250, 186, 218, 0.00)', 'rgba(250, 186, 218, 1.00)'],
       );
     });

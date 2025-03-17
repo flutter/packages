@@ -55,6 +55,7 @@ widget verify { state: true } = switch args.value.c.0 {
       // We use the actual source text as the sourceIdentifier to make it trivial to find the source contents.
       // In normal operation, the sourceIdentifier would be the file name or some similar object.
       ..update(const LibraryName(<String>['test']), parseLibraryFile(sourceFile, sourceIdentifier: sourceFile));
+    addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent(<String, Object?>{
       'list': <Object?>[
         <String, Object?>{
