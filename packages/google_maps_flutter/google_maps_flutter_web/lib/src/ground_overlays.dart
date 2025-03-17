@@ -64,16 +64,16 @@ class GroundOverlaysController extends GeometryController {
     final GroundOverlayController? controller =
         _groundOverlayIdToController[groundOverlay.groundOverlayId];
 
-    if (controller == null) {
+    if (controller == null || controller.groundOverlay == null) {
       return;
     }
 
     assert(groundOverlay.bounds != null,
         'On Web platform, bounds must be provided for GroundOverlay');
 
-    controller.groundOverlay.set('clickable', groundOverlay.clickable.toJS);
-    controller.groundOverlay.map = groundOverlay.visible ? googleMap : null;
-    controller.groundOverlay.opacity = 1.0 - groundOverlay.transparency;
+    controller.groundOverlay!.set('clickable', groundOverlay.clickable.toJS);
+    controller.groundOverlay!.map = groundOverlay.visible ? googleMap : null;
+    controller.groundOverlay!.opacity = 1.0 - groundOverlay.transparency;
   }
 
   /// Removes the ground overlays associated with the given [GroundOverlayId]s.

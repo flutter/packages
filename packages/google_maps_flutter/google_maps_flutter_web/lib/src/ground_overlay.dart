@@ -11,19 +11,21 @@ class GroundOverlayController {
   GroundOverlayController({
     required gmaps.GroundOverlay groundOverlay,
     required VoidCallback onTap,
-  }) {
-    _groundOverlay = groundOverlay;
-    _groundOverlay.onClick.listen((gmaps.MapMouseEvent event) {
+  }) : _groundOverlay = groundOverlay {
+    groundOverlay.onClick.listen((gmaps.MapMouseEvent event) {
       onTap.call();
     });
   }
 
   /// The [GroundOverlay] providing data for this controller.
-  gmaps.GroundOverlay get groundOverlay => _groundOverlay;
-  late gmaps.GroundOverlay _groundOverlay;
+  gmaps.GroundOverlay? get groundOverlay => _groundOverlay;
+  gmaps.GroundOverlay? _groundOverlay;
 
   /// Removes the [GroundOverlay] from the map.
   void remove() {
-    _groundOverlay.map = null;
+    if (_groundOverlay != null) {
+      _groundOverlay!.map = null;
+      _groundOverlay = null;
+    }
   }
 }

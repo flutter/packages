@@ -861,7 +861,8 @@ class Convert {
    *     asset files stored in the application's assets directory.
    * @param density the density of the display, used to calculate pixel dimensions.
    * @param wrapper the BitmapDescriptorFactoryWrapper to create BitmapDescriptor.
-   * @return the identifier of the ground overlay.
+   * @return the identifier of the ground overlay. The identifier is valid as long as the ground
+   *     overlay exists.
    * @throws IllegalArgumentException if required fields are missing or invalid.
    */
   static @NonNull String interpretGroundOverlayOptions(
@@ -911,8 +912,12 @@ class Convert {
       @NonNull String groundOverlayId,
       boolean isCreatedWithBounds) {
 
-    // Dummy image is used as image is a required field of PlatformGroundOverlay and converting
-    // BitmapDescriptor used by Google Maps back to PlatformImageDescriptor is not currently supported.
+    // Image is mandatory field on PlatformGroundOverlay (and it should be kept
+    // non-nullable), therefore image must be set for the object. The image is
+    // description either contains set of bytes, or path to asset. This info is
+    // converted to format google maps uses (BitmapDescription), and the original
+    // data is not stored on native code. Therefore placeholder image is used for
+    // the image field.
     Messages.PlatformBitmap dummyImage =
         new Messages.PlatformBitmap.Builder()
             .setBitmap(

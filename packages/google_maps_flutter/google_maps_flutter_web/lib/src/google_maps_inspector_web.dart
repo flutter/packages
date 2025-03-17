@@ -97,6 +97,8 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
       return null;
     }
 
+    final JSAny? clickable = groundOverlay.get('clickable');
+
     return GroundOverlay.fromBounds(
         groundOverlayId: groundOverlayId,
         image: BytesMapBitmap(
@@ -106,8 +108,7 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
         bounds: gmLatLngBoundsTolatLngBounds(groundOverlay.bounds),
         transparency: 1.0 - groundOverlay.opacity,
         visible: groundOverlay.map != null,
-        clickable: groundOverlay.get('clickable') is JSAny &&
-            (groundOverlay.get('clickable')! as JSBoolean).toDart);
+        clickable: clickable != null && (clickable as JSBoolean).toDart);
   }
 
   @override

@@ -116,8 +116,12 @@ FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
 FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOverlay,
                                                     NSString *overlayId, BOOL isCreatedWithBounds,
                                                     NSNumber *zoomLevel) {
-  /// Dummy image is used as image is required field of FGMPlatformGroundOverlay and converting
-  /// image back to bitmap image is not currently supported.
+  // Image is mandatory field on FGMPlatformGroundOverlay (and it should be kept
+  // non-nullable), therefore image must be set for the object. The image is
+  // description either contains set of bytes, or path to asset. This info is
+  // converted to format google maps uses (BitmapDescription), and the original
+  // data is not stored on native code. Therefore placeholder image is used for
+  // the image field.
   FGMPlatformBitmap *placeholderImage =
       [FGMPlatformBitmap makeWithBitmap:[FGMPlatformBitmapDefaultMarker makeWithHue:0]];
   if (isCreatedWithBounds) {
