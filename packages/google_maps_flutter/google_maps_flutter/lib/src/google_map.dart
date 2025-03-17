@@ -87,7 +87,7 @@ class AndroidGoogleMapsFlutter {
 class GoogleMap extends StatefulWidget {
   /// Creates a widget displaying data from Google Maps services.
   ///
-  /// [AssertionError] will be thrown if [initialCameraPosition] is null;
+  /// The map's camera will start centered on [initialCameraPosition].
   const GoogleMap({
     super.key,
     required this.initialCameraPosition,
@@ -110,8 +110,6 @@ class GoogleMap extends StatefulWidget {
     this.myLocationEnabled = false,
     this.myLocationButtonEnabled = true,
     this.layoutDirection,
-
-    /// If no padding is specified default padding will be 0.
     this.padding = EdgeInsets.zero,
     this.indoorViewEnabled = false,
     this.trafficEnabled = false,
@@ -202,6 +200,8 @@ class GoogleMap extends StatefulWidget {
   final bool fortyFiveDegreeImageryEnabled;
 
   /// Padding to be set on map. See https://developers.google.com/maps/documentation/android-sdk/map#map_padding for more details.
+  ///
+  /// If no padding is specified, the default padding is 0.
   final EdgeInsets padding;
 
   /// Markers to be placed on the map.
@@ -223,6 +223,9 @@ class GoogleMap extends StatefulWidget {
   final Set<TileOverlay> tileOverlays;
 
   /// Cluster Managers to be initialized for the map.
+  ///
+  /// On the web, an extra step is required to enable clusters.
+  /// See https://pub.dev/packages/google_maps_flutter_web.
   final Set<ClusterManager> clusterManagers;
 
   /// Called when the camera starts moving.
@@ -260,6 +263,8 @@ class GoogleMap extends StatefulWidget {
   /// chevron if the device is moving.
   /// * The My Location button animates to focus on the user's current location
   /// if the user's location is currently known.
+  ///
+  /// This feature is not present in the Google Maps SDK for the web.
   ///
   /// Enabling this feature requires adding location permissions to both native
   /// platforms of your app.

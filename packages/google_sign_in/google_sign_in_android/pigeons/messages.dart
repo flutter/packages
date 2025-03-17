@@ -33,6 +33,7 @@ class InitParams {
     this.clientId,
     this.serverClientId,
     this.forceCodeForRefreshToken = false,
+    this.forceAccountName,
   });
 
   final List<String> scopes;
@@ -41,6 +42,7 @@ class InitParams {
   final String? clientId;
   final String? serverClientId;
   final bool forceCodeForRefreshToken;
+  final String? forceAccountName;
 }
 
 /// Pigeon version of GoogleSignInUserData.

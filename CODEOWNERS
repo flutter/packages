@@ -27,7 +27,7 @@ packages/interactive_media_ads/**                        @bparrishMines
 packages/in_app_purchase/**                              @bparrishMines
 packages/local_auth/**                                   @stuartmorgan
 packages/metrics_center/**                               @christopherfujino
-packages/multicast_dns/**                                @jmagman
+packages/multicast_dns/**                                @vashworth
 packages/palette_generator/**                            @gspencergoog
 packages/path_provider/**                                @stuartmorgan
 packages/pigeon/**                                       @tarrinneal
@@ -90,22 +90,22 @@ packages/webview_flutter/webview_flutter_android/**      @bparrishMines
 
 # - Darwin
 packages/camera/camera_avfoundation/**                   @hellohuanlin
-packages/file_selector/file_selector_ios/**              @jmagman
-packages/file_selector/file_selector_macos/**            @jmagman
+packages/file_selector/file_selector_ios/**              @vashworth
+packages/file_selector/file_selector_macos/**            @vashworth
 packages/google_maps_flutter/google_maps_flutter_ios/**  @cbracken
 packages/google_sign_in/google_sign_in_ios/**            @loic-sharma
-packages/image_picker/image_picker_ios/**                @loic-sharma
-packages/image_picker/image_picker_macos/**              @jmagman
+packages/image_picker/image_picker_ios/**                @loic-sharma @vashworth
+packages/image_picker/image_picker_macos/**              @vashworth
 packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu
-packages/ios_platform_images/**                          @jmagman
+packages/ios_platform_images/**                          @vashworth
 packages/local_auth/local_auth_darwin/**                 @louisehsu
-packages/path_provider/path_provider_foundation/**       @jmagman
+packages/path_provider/path_provider_foundation/**       @hellohuanlin
 packages/pigeon/**/ios/**/*                              @hellohuanlin @louisehsu
 packages/pointer_interceptor/pointer_interceptor_ios/**  @louisehsu
-packages/quick_actions/quick_actions_ios/**              @jmagman
+packages/quick_actions/quick_actions_ios/**              @vashworth
 packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
-packages/url_launcher/url_launcher_ios/**                @jmagman
-packages/url_launcher/url_launcher_macos/**              @jmagman
+packages/url_launcher/url_launcher_ios/**                @loic-sharma
+packages/url_launcher/url_launcher_macos/**              @loic-sharma
 packages/video_player/video_player_avfoundation/**       @hellohuanlin
 packages/webview_flutter/webview_flutter_wkwebview/**    @cbracken
 

@@ -33,6 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic) FCPPlatformImageFileFormat fileFormat;
 @property(assign, nonatomic) CGFloat minimumAvailableZoomFactor;
 @property(assign, nonatomic) CGFloat maximumAvailableZoomFactor;
+@property(assign, nonatomic) CGFloat minimumExposureOffset;
+@property(assign, nonatomic) CGFloat maximumExposureOffset;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.

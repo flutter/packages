@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Overrides the default implementation of setting torch mode.
 /// @param mode The torch mode being set
 @property(nonatomic, copy) void (^setTorchModeStub)(AVCaptureTorchMode mode);
+@property(nonatomic, copy) AVCaptureTorchMode (^getTorchModeStub)(void);
 @property(nonatomic, assign) BOOL flashModeSupported;
 
 // Focus

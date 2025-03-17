@@ -81,6 +81,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (navigatorKey.currentState?.canPop() ?? false) {
       return true;
     }
+    if (currentConfiguration.matches.isEmpty) {
+      return false;
+    }
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
       if (walker.navigatorKey.currentState?.canPop() ?? false) {

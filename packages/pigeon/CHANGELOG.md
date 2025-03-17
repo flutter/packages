@@ -1,3 +1,7 @@
+## 24.2.2
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 24.2.1
 
 * [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in
