@@ -253,7 +253,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes a single class decode method to [indent].
   void writeClassEquality(
-    T generatorOptions,
+    InternalOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {

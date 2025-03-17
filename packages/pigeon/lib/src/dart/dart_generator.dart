@@ -334,7 +334,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   @override
   void writeClassEquality(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
