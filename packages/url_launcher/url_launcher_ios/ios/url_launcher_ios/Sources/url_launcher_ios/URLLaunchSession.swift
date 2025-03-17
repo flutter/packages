@@ -55,7 +55,7 @@ final class URLLaunchSession: NSObject, SFSafariViewControllerDelegate {
   /// - Parameter controller: The Safari view controller.
   func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
     if !isLoadCompleted {
-      completion(.success(.failedToLoad))
+      completion(.success(.dismissed))
     }
     controller.dismiss(animated: true, completion: nil)
     didFinish?()

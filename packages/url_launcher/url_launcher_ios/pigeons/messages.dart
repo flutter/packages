@@ -27,11 +27,14 @@ enum InAppLoadResult {
   /// The URL was successfully loaded.
   success,
 
-  /// The URL did not load successfully (or the user closed the view controller before it loaded).
+  /// The URL did not load successfully.
   failedToLoad,
 
   /// The URL could not be launched because it is invalid.
   invalidUrl,
+
+  /// The controller was closed before loading.
+  dismissed,
 }
 
 @HostApi()

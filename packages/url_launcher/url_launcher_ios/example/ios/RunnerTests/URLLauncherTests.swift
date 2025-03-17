@@ -139,7 +139,7 @@ final class URLLauncherTests: XCTestCase {
     plugin.openUrlInSafariViewController(url: "https://flutter.dev") { result in
       switch result {
       case .success(let details):
-        XCTAssertEqual(details, .failedToLoad)
+        XCTAssertEqual(details, .dismissed)
       case .failure(let error):
         XCTFail("Unexpected error: \(error)")
       }
