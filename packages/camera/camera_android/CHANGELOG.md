@@ -1,6 +1,6 @@
 ## 0.10.10+1
 
-* Fixes Android Platform `mediaRecorder.stop` throws exceptiq did not get caught
+* Fixes Android Platform `mediaRecorder.stop` uncaught exception.
 
 ## 0.10.10
 
