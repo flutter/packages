@@ -1,3 +1,7 @@
+## 2.11.0
+
+* Adds support for ground overlays.
+
 ## 2.10.1
 
 * Updates READMEs and API docs.
