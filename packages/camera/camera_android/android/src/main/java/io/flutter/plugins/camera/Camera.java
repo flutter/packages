@@ -855,10 +855,17 @@ class Camera
     try {
       closeRenderer();
       captureSession.abortCaptures();
-      mediaRecorder.stop();
-    } catch (CameraAccessException | RuntimeException e) {
+    } catch (CameraAccessException e) {
       // Ignore exceptions and try to continue (changes are camera session already aborted capture).
     }
+
+    try {
+      mediaRecorder.stop();
+    } catch (RuntimeException e) {
+      // Ignore exceptions and try to continue (a RuntimeException is intentionally thrown to the application
+      // , if no valid audio/ video data has been received when stop() is called).
+    }
+
     mediaRecorder.reset();
     try {
       startPreview();
