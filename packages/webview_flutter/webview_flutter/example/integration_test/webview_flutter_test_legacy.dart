@@ -412,7 +412,9 @@ Future<void> main() async {
 
       isPaused = await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(true));
-    });
+    },
+        // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
+        skip: Platform.isIOS);
 
     testWidgets('Changes to initialMediaPlaybackPolicy are ignored',
         (WidgetTester tester) async {
@@ -470,7 +472,9 @@ Future<void> main() async {
 
       isPaused = await controller.runJavascriptReturningResult('isPaused();');
       expect(isPaused, _webviewBool(false));
-    });
+    },
+        // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
+        skip: Platform.isIOS);
 
     testWidgets('Video plays inline when allowsInlineMediaPlayback is true',
         (WidgetTester tester) async {
