@@ -16,10 +16,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// The underlying instance of `AVCaptureVideoDataOutput`.
 @property(nonatomic, readonly) AVCaptureVideoDataOutput *avOutput;
 
+/// Corresponds to the `alwaysDiscardsLateVideoFrames` property of `AVCaptureVideoDataOutput`
 @property(nonatomic) BOOL alwaysDiscardsLateVideoFrames;
 
+/// Corresponds to the `videoSettings` property of `AVCaptureVideoDataOutput`
 @property(nonatomic, copy, null_resettable) NSDictionary<NSString *, id> *videoSettings;
 
+/// Corresponds to the `setSampleBufferDelegate` method of `AVCaptureVideoDataOutput`
 - (void)setSampleBufferDelegate:
             (nullable id<AVCaptureVideoDataOutputSampleBufferDelegate>)sampleBufferDelegate
                           queue:(nullable dispatch_queue_t)sampleBufferCallbackQueue;

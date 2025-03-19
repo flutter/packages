@@ -10,10 +10,19 @@ NS_ASSUME_NONNULL_BEGIN
 /// `AVCaptureConnection` in tests.
 @protocol FLTCaptureConnection <NSObject>
 
+/// Corresponds to the `videoMirrored` property of `AVCaptureConnection`
 @property(nonatomic, getter=isVideoMirrored) BOOL videoMirrored;
+
+/// Corresponds to the `videoOrientation` property of `AVCaptureConnection`
 @property(nonatomic) AVCaptureVideoOrientation videoOrientation;
+
+/// Corresponds to the `inputPorts` property of `AVCaptureConnection`
 @property(nonatomic, readonly) NSArray<AVCaptureInputPort *> *inputPorts;
+
+/// Corresponds to the `supportsVideoMirroring` property of `AVCaptureConnection`
 @property(nonatomic, readonly, getter=isVideoMirroringSupported) BOOL supportsVideoMirroring;
+
+/// Corresponds to the `supportsVideoOrientation` property of `AVCaptureConnection`
 @property(nonatomic, readonly, getter=isVideoOrientationSupported) BOOL supportsVideoOrientation;
 
 @end

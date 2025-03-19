@@ -16,10 +16,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// The underlying instance of `AVCapturePhotoOutput`.
 @property(nonatomic, readonly) AVCapturePhotoOutput *avOutput;
 
+/// Corresponds to the `availablePhotoCodecTypes` property of `AVCapturePhotoOutput`
 @property(nonatomic, readonly) NSArray<AVVideoCodecType> *availablePhotoCodecTypes;
+
+/// Corresponds to the `highResolutionCaptureEnabled` property of `AVCapturePhotoOutput`
 @property(nonatomic, assign) BOOL highResolutionCaptureEnabled;
+
+/// Corresponds to the `supportedFlashModes` property of `AVCapturePhotoOutput`
 @property(nonatomic, readonly) NSArray<NSNumber *> *supportedFlashModes;
 
+/// Corresponds to the `capturePhotoWithSettings` method of `AVCapturePhotoOutput`
 - (void)capturePhotoWithSettings:(AVCapturePhotoSettings *)settings
                         delegate:(NSObject<AVCapturePhotoCaptureDelegate> *)delegate;
 
