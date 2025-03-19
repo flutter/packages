@@ -318,24 +318,12 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
       // get a type converter for values in iterable
       String entriesTypeDecoder = '(e) => e';
       String convertToNotNull = '';
-      String formatIterableType = '';
-      String asParameterType = ' as ${parameterElement.type}';
-
-      if (parameterElement.hasDefaultValue) {
-        asParameterType += '?';
-      }
 
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType) &&
             helper is _TypeHelperWithHelper) {
           if (!iterableType.isNullableType) {
-            if (parameterElement.type.isDartCoreList) {
-              formatIterableType = '?.toList()';
-            } else if (parameterElement.type.isDartCoreSet) {
-              formatIterableType = '?.toSet()';
-            }
-            convertToNotNull =
-                '.cast<$iterableType>()$formatIterableType$asParameterType';
+            convertToNotNull = '.cast<$iterableType>()';
           }
           entriesTypeDecoder = helper.helperName(iterableType);
         }
@@ -346,24 +334,28 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
       String fallBack = '';
       if (const TypeChecker.fromRuntime(List)
           .isAssignableFromType(parameterElement.type)) {
-        iterableCaster += '?.toList()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
+          iterableCaster += '?.toList()';
           fallBack = '?? const []';
+        } else {
+          iterableCaster += '.toList()';
         }
       } else if (const TypeChecker.fromRuntime(Set)
           .isAssignableFromType(parameterElement.type)) {
-        iterableCaster += '?.toSet()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
+          iterableCaster += '?.toSet()';
           fallBack = '?? const {}';
+        } else {
+          iterableCaster += '.toSet()';
         }
       }
 
       return '''
-(state.uri.queryParametersAll[
+state.uri.queryParametersAll[
         ${escapeDartString(parameterElement.name.kebab)}]
-        ?.map($entriesTypeDecoder)$convertToNotNull)$iterableCaster$fallBack''';
+        ?.map($entriesTypeDecoder)$convertToNotNull$iterableCaster$fallBack''';
     }
     return '''
 state.uri.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
