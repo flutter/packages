@@ -46,18 +46,14 @@ void main() {
 
   group('equality method', () {
     final List<Object?> correctList = <Object?>['a', 2, 'three'];
-    final List<Object?> matchingList = <Object?>['a', 2, 'three'];
+    final List<Object?> matchingList = correctList.toList();
     final List<Object?> differentList = <Object?>['a', 2, 'three', 4.0];
     final Map<String, Object?> correctMap = <String, Object?>{
       'a': 1,
       'b': 2,
       'c': 'three'
     };
-    final Map<String, Object?> matchingMap = <String, Object?>{
-      'a': 1,
-      'b': 2,
-      'c': 'three'
-    };
+    final Map<String, Object?> matchingMap = <String, Object?>{...correctMap};
     final Map<String, Object?> differentKeyMap = <String, Object?>{
       'a': 1,
       'b': 2,
