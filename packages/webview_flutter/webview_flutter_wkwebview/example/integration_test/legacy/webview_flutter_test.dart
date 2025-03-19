@@ -339,172 +339,145 @@ Future<void> main() async {
     expect(customUserAgent2, defaultPlatformUserAgent);
   });
 
-  group('Video playback policy', () {
-    late String videoTestBase64;
-    setUpAll(() async {
-      final ByteData videoData =
-          await rootBundle.load('assets/sample_video.mp4');
-      final String base64VideoData =
-          base64Encode(Uint8List.view(videoData.buffer));
-      final String videoTest = '''
-        <!DOCTYPE html><html>
-        <head><title>Video auto play</title>
-          <script type="text/javascript">
-            function play() {
-              var video = document.getElementById("video");
-              video.play();
-              video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
-            }
-            function videoTimeUpdateHandler(e) {
-              var video = document.getElementById("video");
-              VideoTestTime.postMessage(video.currentTime);
-            }
-            function isPaused() {
-              var video = document.getElementById("video");
-              return video.paused;
-            }
-            function isFullScreen() {
-              var video = document.getElementById("video");
-              return video.webkitDisplayingFullscreen;
-            }
-          </script>
-        </head>
-        <body onload="play();">
-        <video controls playsinline autoplay id="video">
-          <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
-        </video>
-        </body>
-        </html>
-      ''';
-      videoTestBase64 = base64Encode(const Utf8Encoder().convert(videoTest));
-    });
+  group('Video playback policy', () async {
+    testWidgets(
+      'Auto media playback',
+      (WidgetTester tester) async {
+        final String videoTestBase64 = await getTestVideoBase64();
+        Completer<WebViewController> controllerCompleter =
+            Completer<WebViewController>();
+        Completer<void> pageLoaded = Completer<void>();
 
-    testWidgets('Auto media playback', (WidgetTester tester) async {
-      Completer<WebViewController> controllerCompleter =
-          Completer<WebViewController>();
-      Completer<void> pageLoaded = Completer<void>();
-
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebView(
-            key: GlobalKey(),
-            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-            onWebViewCreated: (WebViewController controller) {
-              controllerCompleter.complete(controller);
-            },
-            javascriptMode: JavascriptMode.unrestricted,
-            onPageFinished: (String url) {
-              pageLoaded.complete(null);
-            },
-            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebView(
+              key: GlobalKey(),
+              initialUrl:
+                  'data:text/html;charset=utf-8;base64,$videoTestBase64',
+              onWebViewCreated: (WebViewController controller) {
+                controllerCompleter.complete(controller);
+              },
+              javascriptMode: JavascriptMode.unrestricted,
+              onPageFinished: (String url) {
+                pageLoaded.complete(null);
+              },
+              initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+            ),
           ),
-        ),
-      );
-      WebViewController controller = await controllerCompleter.future;
-      await pageLoaded.future;
+        );
+        WebViewController controller = await controllerCompleter.future;
+        await pageLoaded.future;
 
-      await Future<void>.delayed(const Duration(seconds: 5));
-      String isPaused =
-          await controller.runJavascriptReturningResult('isPaused();');
-      expect(isPaused, _webviewBool(false));
+        await Future<void>.delayed(const Duration(seconds: 5));
+        String isPaused =
+            await controller.runJavascriptReturningResult('isPaused();');
+        expect(isPaused, _webviewBool(false));
 
-      controllerCompleter = Completer<WebViewController>();
-      pageLoaded = Completer<void>();
+        controllerCompleter = Completer<WebViewController>();
+        pageLoaded = Completer<void>();
 
-      // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebView(
-            key: GlobalKey(),
-            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-            onWebViewCreated: (WebViewController controller) {
-              controllerCompleter.complete(controller);
-            },
-            javascriptMode: JavascriptMode.unrestricted,
-            onPageFinished: (String url) {
-              pageLoaded.complete(null);
-            },
+        // We change the key to re-create a new webview as we change the initialMediaPlaybackPolicy
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebView(
+              key: GlobalKey(),
+              initialUrl:
+                  'data:text/html;charset=utf-8;base64,$videoTestBase64',
+              onWebViewCreated: (WebViewController controller) {
+                controllerCompleter.complete(controller);
+              },
+              javascriptMode: JavascriptMode.unrestricted,
+              onPageFinished: (String url) {
+                pageLoaded.complete(null);
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      controller = await controllerCompleter.future;
-      await pageLoaded.future;
+        controller = await controllerCompleter.future;
+        await pageLoaded.future;
 
-      isPaused = await controller.runJavascriptReturningResult('isPaused();');
-      await Future<void>.delayed(const Duration(seconds: 5));
-      expect(isPaused, _webviewBool(true));
-    },
-        // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
-        skip: Platform.isIOS);
+        isPaused = await controller.runJavascriptReturningResult('isPaused();');
+        await Future<void>.delayed(const Duration(seconds: 5));
+        expect(isPaused, _webviewBool(true));
+      },
+      // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
+      // skip: Platform.isIOS
+    );
 
-    testWidgets('Changes to initialMediaPlaybackPolicy are ignored',
-        (WidgetTester tester) async {
-      final Completer<WebViewController> controllerCompleter =
-          Completer<WebViewController>();
-      Completer<void> pageLoaded = Completer<void>();
+    testWidgets(
+      'Changes to initialMediaPlaybackPolicy are ignored',
+      (WidgetTester tester) async {
+        final String videoTestBase64 = await getTestVideoBase64();
+        final Completer<WebViewController> controllerCompleter =
+            Completer<WebViewController>();
+        Completer<void> pageLoaded = Completer<void>();
 
-      final GlobalKey key = GlobalKey();
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebView(
-            key: key,
-            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-            onWebViewCreated: (WebViewController controller) {
-              controllerCompleter.complete(controller);
-            },
-            javascriptMode: JavascriptMode.unrestricted,
-            onPageFinished: (String url) {
-              pageLoaded.complete(null);
-            },
-            initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+        final GlobalKey key = GlobalKey();
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebView(
+              key: key,
+              initialUrl:
+                  'data:text/html;charset=utf-8;base64,$videoTestBase64',
+              onWebViewCreated: (WebViewController controller) {
+                controllerCompleter.complete(controller);
+              },
+              javascriptMode: JavascriptMode.unrestricted,
+              onPageFinished: (String url) {
+                pageLoaded.complete(null);
+              },
+              initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+            ),
           ),
-        ),
-      );
-      final WebViewController controller = await controllerCompleter.future;
-      await pageLoaded.future;
+        );
+        final WebViewController controller = await controllerCompleter.future;
+        await pageLoaded.future;
 
-      String isPaused =
-          await controller.runJavascriptReturningResult('isPaused();');
+        String isPaused =
+            await controller.runJavascriptReturningResult('isPaused();');
 
-      await Future<void>.delayed(const Duration(seconds: 5));
-      expect(isPaused, _webviewBool(false));
+        await Future<void>.delayed(const Duration(seconds: 5));
+        expect(isPaused, _webviewBool(false));
 
-      pageLoaded = Completer<void>();
+        pageLoaded = Completer<void>();
 
-      await tester.pumpWidget(
-        Directionality(
-          textDirection: TextDirection.ltr,
-          child: WebView(
-            key: key,
-            initialUrl: 'data:text/html;charset=utf-8;base64,$videoTestBase64',
-            onWebViewCreated: (WebViewController controller) {
-              controllerCompleter.complete(controller);
-            },
-            javascriptMode: JavascriptMode.unrestricted,
-            onPageFinished: (String url) {
-              pageLoaded.complete(null);
-            },
+        await tester.pumpWidget(
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: WebView(
+              key: key,
+              initialUrl:
+                  'data:text/html;charset=utf-8;base64,$videoTestBase64',
+              onWebViewCreated: (WebViewController controller) {
+                controllerCompleter.complete(controller);
+              },
+              javascriptMode: JavascriptMode.unrestricted,
+              onPageFinished: (String url) {
+                pageLoaded.complete(null);
+              },
+            ),
           ),
-        ),
-      );
+        );
 
-      await controller.reload();
+        await controller.reload();
 
-      await pageLoaded.future;
+        await pageLoaded.future;
 
-      isPaused = await controller.runJavascriptReturningResult('isPaused();');
-      await Future<void>.delayed(const Duration(seconds: 5));
-      expect(isPaused, _webviewBool(false));
-    },
-        // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
-        skip: Platform.isIOS);
+        isPaused = await controller.runJavascriptReturningResult('isPaused();');
+        await Future<void>.delayed(const Duration(seconds: 5));
+        expect(isPaused, _webviewBool(false));
+      },
+      // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
+      // skip: Platform.isIOS
+    );
 
     testWidgets('Video plays inline when allowsInlineMediaPlayback is true',
         (WidgetTester tester) async {
+      final String videoTestBase64 = await getTestVideoBase64();
       final Completer<WebViewController> controllerCompleter =
           Completer<WebViewController>();
       final Completer<void> pageLoaded = Completer<void>();
@@ -556,6 +529,7 @@ Future<void> main() async {
     testWidgets(
         'Video plays full screen when allowsInlineMediaPlayback is false',
         (WidgetTester tester) async {
+      final String videoTestBase64 = await getTestVideoBase64();
       final Completer<WebViewController> controllerCompleter =
           Completer<WebViewController>();
       final Completer<void> pageLoaded = Completer<void>();
@@ -1325,4 +1299,40 @@ class ClassWithCallbackClass {
   }
 
   late final CopyableObjectWithCallback callbackClass;
+}
+
+Future<String> getTestVideoBase64() async {
+  final ByteData videoData = await rootBundle.load('assets/sample_video.mp4');
+  final String base64VideoData = base64Encode(Uint8List.view(videoData.buffer));
+  final String videoTest = '''
+        <!DOCTYPE html><html>
+        <head><title>Video auto play</title>
+          <script type="text/javascript">
+            function play() {
+              var video = document.getElementById("video");
+              video.play();
+              video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
+            }
+            function videoTimeUpdateHandler(e) {
+              var video = document.getElementById("video");
+              VideoTestTime.postMessage(video.currentTime);
+            }
+            function isPaused() {
+              var video = document.getElementById("video");
+              return video.paused;
+            }
+            function isFullScreen() {
+              var video = document.getElementById("video");
+              return video.webkitDisplayingFullscreen;
+            }
+          </script>
+        </head>
+        <body onload="play();">
+        <video controls playsinline autoplay id="video">
+          <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
+        </video>
+        </body>
+        </html>
+      ''';
+  return base64Encode(const Utf8Encoder().convert(videoTest));
 }
