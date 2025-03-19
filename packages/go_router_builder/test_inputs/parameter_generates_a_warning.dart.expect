@@ -1,0 +1,23 @@
+RouteBase get $myRoute => GoRouteData.$route(
+      path: '/product/:id',
+      factory: $MyRouteExtension._fromState,
+    );
+
+extension $MyRouteExtension on MyRoute {
+  static MyRoute _fromState(GoRouterState state) => MyRoute(
+        int.parse(state.pathParameters['id']!)
+      );
+
+  String get location => GoRouteData.$location(
+    '/product/${Uri.encodeComponent(id.toString())}',
+  );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}

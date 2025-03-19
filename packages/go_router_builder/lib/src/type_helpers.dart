@@ -418,8 +418,11 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
           'state.uri.queryParameters, '
           '${helperName(paramType)})';
     }
+
+    final String nullAbleSuffix = paramType.isNullableType ? '' : '!';
+
     return '${helperName(paramType)}'
-        '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})!';
+        '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})$nullAbleSuffix';
   }
 }
 
