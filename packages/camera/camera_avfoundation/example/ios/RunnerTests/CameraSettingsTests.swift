@@ -101,11 +101,10 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func recommendedVideoSettingsForAssetWriter(
-    withFileType fileType: AVFileType, for output: AVCaptureVideoDataOutput
+    withFileType fileType: AVFileType, for output: FLTCaptureVideoDataOutput
   ) -> [String: Any]? {
     return [:]
   }
-
 }
 
 final class CameraSettingsTests: XCTestCase {
@@ -156,6 +155,7 @@ final class CameraSettingsTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
+      permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in mockDevice },
       captureSessionFactory: { mockSession },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory()
