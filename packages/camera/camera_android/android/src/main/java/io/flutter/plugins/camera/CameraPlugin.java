@@ -19,9 +19,6 @@ import io.flutter.view.TextureRegistry;
  *
  * <p>Instantiate this in an add to app scenario to gracefully handle activity and context changes.
  * See {@code io.flutter.plugins.camera.MainActivity} for an example.
- *
- * <p>Call {@link #registerWith(io.flutter.plugin.common.PluginRegistry.Registrar)} to register an
- * implementation of this that uses the stable {@code io.flutter.plugin.common} package.
  */
 public final class CameraPlugin implements FlutterPlugin, ActivityAware {
 
@@ -35,24 +32,6 @@ public final class CameraPlugin implements FlutterPlugin, ActivityAware {
    * <p>See {@code io.flutter.plugins.camera.MainActivity} for an example.
    */
   public CameraPlugin() {}
-
-  /**
-   * Registers a plugin implementation that uses the stable {@code io.flutter.plugin.common}
-   * package.
-   *
-   * <p>Calling this automatically initializes the plugin. However plugins initialized this way
-   * won't react to changes in activity or context, unlike {@link CameraPlugin}.
-   */
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    CameraPlugin plugin = new CameraPlugin();
-    plugin.maybeStartListening(
-        registrar.activity(),
-        registrar.messenger(),
-        registrar::addRequestPermissionsResultListener,
-        registrar.view());
-  }
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
