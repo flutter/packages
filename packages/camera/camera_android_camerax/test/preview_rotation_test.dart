@@ -3,11 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:camera_android_camerax/camera_android_camerax.dart';
-import 'package:camera_android_camerax/src/camera_selector.dart';
-import 'package:camera_android_camerax/src/camerax_library.g.dart';
+import 'package:camera_android_camerax/src/camerax_library.dart';
 import 'package:camera_android_camerax/src/camerax_proxy.dart';
-import 'package:camera_android_camerax/src/device_orientation_manager.dart';
-import 'package:camera_android_camerax/src/fallback_strategy.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -45,8 +42,8 @@ void main() {
         .thenAnswer((_) async => <MockCameraInfo>[mockCameraInfo]);
     when(mockCameraSelector.filter(<MockCameraInfo>[mockCameraInfo]))
         .thenAnswer((_) async => <MockCameraInfo>[mockCameraInfo]);
-    when(mockCameraInfo.getSensorRotationDegrees())
-        .thenAnswer((_) async => sensorRotationDegrees);
+    when(mockCameraInfo.sensorRotationDegrees)
+        .thenReturn(sensorRotationDegrees);
 
     // Mock additional ProcessCameraProvider operation that is irrelevant
     // for the tests in this file.
@@ -390,7 +387,7 @@ void main() {
           in expectedRotationPerDeviceOrientation.keys) {
         final DeviceOrientationChangedEvent testEvent =
             DeviceOrientationChangedEvent(currentDeviceOrientation);
-        DeviceOrientationManager.deviceOrientationChangedStreamController
+        AndroidCameraCameraX.deviceOrientationChangedStreamController
             .add(testEvent);
 
         await tester.pumpAndSettle();
@@ -410,7 +407,7 @@ void main() {
                 'When the device orientation is $currentDeviceOrientation, expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
       }
 
-      await DeviceOrientationManager.deviceOrientationChangedStreamController
+      await AndroidCameraCameraX.deviceOrientationChangedStreamController
           .close();
     });
 
