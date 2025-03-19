@@ -262,17 +262,17 @@ public class PreviewTest {
       surfaceProducerHandlesCropAndRotation_returnsIfSurfaceProducerHandlesCropAndRotation() {
     final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
     final TextureRegistry.SurfaceProducer mockSurfaceProducer =
-            mock(TextureRegistry.SurfaceProducer.class);
+        mock(TextureRegistry.SurfaceProducer.class);
     when(mockSurfaceProducer.id()).thenReturn(0L);
     when(mockTextureRegistry.createSurfaceProducer()).thenReturn(mockSurfaceProducer);
     final PigeonApiPreview api =
-            new TestProxyApiRegistrar() {
-              @NonNull
-              @Override
-              TextureRegistry getTextureRegistry() {
-                return mockTextureRegistry;
-              }
-            }.getPigeonApiPreview();
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          TextureRegistry getTextureRegistry() {
+            return mockTextureRegistry;
+          }
+        }.getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
     final SystemServicesManager systemServicesManager = mock(SystemServicesManager.class);
