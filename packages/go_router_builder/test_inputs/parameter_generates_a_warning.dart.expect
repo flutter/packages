@@ -5,12 +5,12 @@ RouteBase get $myRoute => GoRouteData.$route(
 
 extension $MyRouteExtension on MyRoute {
   static MyRoute _fromState(GoRouterState state) => MyRoute(
-        int.parse(state.pathParameters['id']!)
+        int.parse(state.pathParameters['id']!),
       );
 
   String get location => GoRouteData.$location(
-    '/product/${Uri.encodeComponent(id.toString())}',
-  );
+      '/product/${Uri.encodeComponent(id.toString())}',
+    );
 
   void go(BuildContext context) => context.go(location);
 

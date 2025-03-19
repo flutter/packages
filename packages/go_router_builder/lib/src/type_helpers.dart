@@ -419,7 +419,7 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
           '${helperName(paramType)})';
     }
 
-    final String nullAbleSuffix = paramType.isNullableType ? '' : '!';
+    final String nullAbleSuffix = paramType.isNullableType ? '!' : '';
 
     return '${helperName(paramType)}'
         '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})$nullAbleSuffix';
