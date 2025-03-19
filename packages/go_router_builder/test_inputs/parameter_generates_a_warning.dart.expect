@@ -9,8 +9,8 @@ extension $MyRouteExtension on MyRoute {
       );
 
   String get location => GoRouteData.$location(
-      '/product/${Uri.encodeComponent(id.toString())}',
-    );
+        '/product/${Uri.encodeComponent(id.toString())}',
+      );
 
   void go(BuildContext context) => context.go(location);
 

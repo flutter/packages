@@ -92,7 +92,7 @@ extension $AllTypesBaseRouteExtension on AllTypesBaseRoute {
 extension $BigIntRouteExtension on BigIntRoute {
   static BigIntRoute _fromState(GoRouterState state) => BigIntRoute(
         requiredBigIntField:
-            BigInt.parse(state.pathParameters['requiredBigIntField']!)!,
+            BigInt.parse(state.pathParameters['requiredBigIntField']!),
         bigIntField: _$convertMapValue(
             'big-int-field', state.uri.queryParameters, BigInt.tryParse),
       );
@@ -117,7 +117,7 @@ extension $BigIntRouteExtension on BigIntRoute {
 extension $BoolRouteExtension on BoolRoute {
   static BoolRoute _fromState(GoRouterState state) => BoolRoute(
         requiredBoolField:
-            _$boolConverter(state.pathParameters['requiredBoolField']!)!,
+            _$boolConverter(state.pathParameters['requiredBoolField']!),
         boolField: _$convertMapValue(
             'bool-field', state.uri.queryParameters, _$boolConverter),
         boolFieldWithDefaultValue: _$convertMapValue(
@@ -150,7 +150,7 @@ extension $BoolRouteExtension on BoolRoute {
 extension $DateTimeRouteExtension on DateTimeRoute {
   static DateTimeRoute _fromState(GoRouterState state) => DateTimeRoute(
         requiredDateTimeField:
-            DateTime.parse(state.pathParameters['requiredDateTimeField']!)!,
+            DateTime.parse(state.pathParameters['requiredDateTimeField']!),
         dateTimeField: _$convertMapValue(
             'date-time-field', state.uri.queryParameters, DateTime.tryParse),
       );
@@ -176,7 +176,7 @@ extension $DateTimeRouteExtension on DateTimeRoute {
 extension $DoubleRouteExtension on DoubleRoute {
   static DoubleRoute _fromState(GoRouterState state) => DoubleRoute(
         requiredDoubleField:
-            double.parse(state.pathParameters['requiredDoubleField']!)!,
+            double.parse(state.pathParameters['requiredDoubleField']!),
         doubleField: _$convertMapValue(
             'double-field', state.uri.queryParameters, double.tryParse),
         doubleFieldWithDefaultValue: _$convertMapValue(
@@ -208,7 +208,7 @@ extension $DoubleRouteExtension on DoubleRoute {
 
 extension $IntRouteExtension on IntRoute {
   static IntRoute _fromState(GoRouterState state) => IntRoute(
-        requiredIntField: int.parse(state.pathParameters['requiredIntField']!)!,
+        requiredIntField: int.parse(state.pathParameters['requiredIntField']!),
         intField: _$convertMapValue(
             'int-field', state.uri.queryParameters, int.tryParse),
         intFieldWithDefaultValue: _$convertMapValue(
@@ -239,7 +239,7 @@ extension $IntRouteExtension on IntRoute {
 
 extension $NumRouteExtension on NumRoute {
   static NumRoute _fromState(GoRouterState state) => NumRoute(
-        requiredNumField: num.parse(state.pathParameters['requiredNumField']!)!,
+        requiredNumField: num.parse(state.pathParameters['requiredNumField']!),
         numField: _$convertMapValue(
             'num-field', state.uri.queryParameters, num.tryParse),
         numFieldWithDefaultValue: _$convertMapValue(
@@ -379,7 +379,7 @@ extension $StringRouteExtension on StringRoute {
 
 extension $UriRouteExtension on UriRoute {
   static UriRoute _fromState(GoRouterState state) => UriRoute(
-        requiredUriField: Uri.parse(state.pathParameters['requiredUriField']!)!,
+        requiredUriField: Uri.parse(state.pathParameters['requiredUriField']!),
         uriField: _$convertMapValue(
             'uri-field', state.uri.queryParameters, Uri.tryParse),
       );

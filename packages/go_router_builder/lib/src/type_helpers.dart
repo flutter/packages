@@ -419,7 +419,10 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
           '${helperName(paramType)})';
     }
 
-    final String nullAbleSuffix = paramType.isNullableType ? '!' : '';
+    final String nullAbleSuffix = paramType.isNullableType ||
+            (paramType.isEnum && !paramType.isNullableType)
+        ? '!'
+        : '';
 
     return '${helperName(paramType)}'
         '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})$nullAbleSuffix';
@@ -428,7 +431,7 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
 
 /// Extension helpers on [DartType].
 extension DartTypeExtension on DartType {
-  /// Convenient helper for nullability checks.
+  /// Convenient helper for nullability checks.parameterElement.isRequired
   String get ensureNotNull => isNullableType ? '!' : '';
 }
 
