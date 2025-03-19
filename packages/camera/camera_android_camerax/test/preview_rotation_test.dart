@@ -59,14 +59,18 @@ void main() {
           {required MockProcessCameraProvider mockProcessCameraProvider,
           required CameraSelector Function({
             LensFacing? requireLensFacing,
+            // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
             PigeonInstanceManager? pigeon_instanceManager,
           }) createCameraSelector,
           required bool handlesCropAndRotation,
           required Future<String> Function() getUiOrientation}) =>
       CameraXProxy(
         getInstanceProcessCameraProvider: ({
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) async =>
             mockProcessCameraProvider,
@@ -74,7 +78,9 @@ void main() {
         newPreview: ({
           int? targetRotation,
           ResolutionSelector? resolutionSelector,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           final MockPreview preview = MockPreview();
@@ -87,7 +93,9 @@ void main() {
           int? targetRotation,
           CameraXFlashMode? flashMode,
           ResolutionSelector? resolutionSelector,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) =>
             MockImageCapture(),
@@ -95,7 +103,9 @@ void main() {
           int? aspectRatio,
           int? targetVideoEncodingBitRate,
           QualitySelector? qualitySelector,
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) =>
             MockRecorder(),
