@@ -84,6 +84,12 @@ class MDnsClient {
   /// for the mDNS query. If not provided, defaults to either `224.0.0.251` or
   /// or `FF02::FB`.
   ///
+  /// The [onError] function allows to provide a callback function, called in
+  /// case of a stream error. If omitted any errors on the stream are considered
+  /// unhandled, and will be passed to the current [Zone]'s error handler. By
+  /// default unhandled async errors are treated as if they were uncaught top-level
+  /// errors.
+  ///
   /// Subsequent calls to this method are ignored while the mDNS client is in
   /// started state.
   Future<void> start({
@@ -91,6 +97,7 @@ class MDnsClient {
     NetworkInterfacesFactory? interfacesFactory,
     int mDnsPort = mDnsPort,
     InternetAddress? mDnsAddress,
+    Function? onError,
   }) async {
     listenAddress ??= InternetAddress.anyIPv4;
     interfacesFactory ??= allInterfacesFactory;
@@ -152,7 +159,10 @@ class MDnsClient {
       // Join multicast on this interface.
       incoming.joinMulticast(_mDnsAddress!, interface);
     }
-    incoming.listen((RawSocketEvent event) => _handleIncoming(event, incoming));
+    incoming.listen(
+      (RawSocketEvent event) => _handleIncoming(event, incoming),
+      onError: onError,
+    );
     _started = true;
     _starting = false;
   }
