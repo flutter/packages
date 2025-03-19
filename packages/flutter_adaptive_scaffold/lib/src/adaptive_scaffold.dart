@@ -94,6 +94,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.leadingUnextendedNavRail,
     this.leadingExtendedNavRail,
     this.trailingNavRail,
+    this.navigationRailPadding,
     this.smallBody,
     this.body,
     this.mediumLargeBody,
@@ -147,6 +148,9 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Option to display a trailing widget below the destinations of the
   /// navigation rail at the largest breakpoint.
   final Widget? trailingNavRail;
+
+  /// Option to apply custom padding to the navigation rail.
+  final EdgeInsetsGeometry? navigationRailPadding;
 
   /// The alignment of the destinations in the navigation rail.
   final double? groupAlignment;
@@ -343,7 +347,7 @@ class AdaptiveScaffold extends StatefulWidget {
     int? selectedIndex,
     bool extended = false,
     Color? backgroundColor,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
+    EdgeInsetsGeometry? padding,
     Widget? leading,
     Widget? trailing,
     void Function(int)? onDestinationSelected,
@@ -359,7 +363,7 @@ class AdaptiveScaffold extends StatefulWidget {
     }
     return Builder(builder: (BuildContext context) {
       return Padding(
-        padding: padding,
+        padding: padding ?? const EdgeInsets.all(8.0),
         child: SizedBox(
           width: width,
           height: MediaQuery.sizeOf(context).height,
@@ -608,6 +612,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 width: widget.navigationRailWidth,
                 leading: widget.leadingUnextendedNavRail,
                 trailing: widget.trailingNavRail,
+                padding: widget.navigationRailPadding,
                 selectedIndex: widget.selectedIndex,
                 destinations: destinations,
                 onDestinationSelected: widget.onSelectedIndexChange,
@@ -627,6 +632,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 extended: true,
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
+                padding: widget.navigationRailPadding,
                 selectedIndex: widget.selectedIndex,
                 destinations: destinations,
                 onDestinationSelected: widget.onSelectedIndexChange,
@@ -646,6 +652,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 extended: true,
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
+                padding: widget.navigationRailPadding,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
                     .map((NavigationDestination destination) =>
@@ -666,6 +673,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 extended: true,
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
+                padding: widget.navigationRailPadding,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
                     .map((NavigationDestination destination) =>
