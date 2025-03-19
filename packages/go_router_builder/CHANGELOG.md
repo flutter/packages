@@ -1,3 +1,7 @@
+## 2.8.3
+
+- Fix parameter generates a warning
+
 ## 2.8.2
 
 - Fixes an issue when enum params are not required
