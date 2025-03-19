@@ -225,30 +225,6 @@ class Camera
             dartMessenger,
             videoCaptureSettings.resolutionPreset);
 
-    Integer recordingFps = null;
-
-    if (videoCaptureSettings.fps != null && videoCaptureSettings.fps.intValue() > 0) {
-      recordingFps = videoCaptureSettings.fps;
-    } else {
-
-      if (SdkCapabilityChecker.supportsEncoderProfiles()) {
-        EncoderProfiles encoderProfiles = getRecordingProfile();
-        if (encoderProfiles != null && encoderProfiles.getVideoProfiles().size() > 0) {
-          recordingFps = encoderProfiles.getVideoProfiles().get(0).getFrameRate();
-        }
-      } else {
-        CamcorderProfile camcorderProfile = getRecordingProfileLegacy();
-        recordingFps = null != camcorderProfile ? camcorderProfile.videoFrameRate : null;
-      }
-    }
-
-    if (recordingFps != null && recordingFps.intValue() > 0) {
-
-      final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
-      fpsRange.setValue(new Range<Integer>(recordingFps, recordingFps));
-      this.cameraFeatures.setFpsRange(fpsRange);
-    }
-
     // Create capture callback.
     captureTimeouts = new CaptureTimeoutsWrapper(3000, 3000);
     captureProps = new CameraCaptureProperties();
@@ -324,6 +300,32 @@ class Camera
                     ? getDeviceOrientationManager().getVideoOrientation()
                     : getDeviceOrientationManager().getVideoOrientation(lockedOrientation))
             .build();
+  }
+
+  private void setFpsCameraFeature(CameraProperties cameraProperties) {
+    Integer recordingFps = null;
+
+    if (videoCaptureSettings.fps != null && videoCaptureSettings.fps.intValue() > 0) {
+      recordingFps = videoCaptureSettings.fps;
+    } else {
+
+      if (SdkCapabilityChecker.supportsEncoderProfiles()) {
+        EncoderProfiles encoderProfiles = getRecordingProfile();
+        if (encoderProfiles != null && encoderProfiles.getVideoProfiles().size() > 0) {
+          recordingFps = encoderProfiles.getVideoProfiles().get(0).getFrameRate();
+        }
+      } else {
+        CamcorderProfile camcorderProfile = getRecordingProfileLegacy();
+        recordingFps = null != camcorderProfile ? camcorderProfile.videoFrameRate : null;
+      }
+    }
+
+    if (recordingFps != null && recordingFps.intValue() > 0) {
+      
+      final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
+      fpsRange.setValue(new Range<Integer>(recordingFps, recordingFps));
+      this.cameraFeatures.setFpsRange(fpsRange);
+    }
   }
 
   @SuppressLint("MissingPermission")
@@ -851,6 +853,9 @@ class Camera
     // Re-create autofocus feature so it's using continuous capture focus mode now.
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, false));
+    // Reset to non recording fps range (the default)
+    cameraFeatures.setFpsRange(cameraFeatureFactory.createFpsRangeFeature(cameraProperties));
+
     recordingVideo = false;
     try {
       closeRenderer();
@@ -1252,6 +1257,8 @@ class Camera
     // Re-create autofocus feature so it's using video focus mode now.
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
+    // Update camera features with the desired fps range
+    setFpsCameraFeature(cameraProperties);
   }
 
   private void setStreamHandler(EventChannel imageStreamChannel) {
@@ -1375,6 +1382,7 @@ class Camera
             videoCaptureSettings.resolutionPreset);
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
+    setFpsCameraFeature(cameraProperties);
     try {
       open(imageFormatGroup);
     } catch (CameraAccessException e) {
