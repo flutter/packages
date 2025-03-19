@@ -629,19 +629,16 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
     if (!pathParameters.contains(parameterName) &&
         (paramType.isNullableType || parameterElement.hasDefaultValue)) {
       decode = 'state.${_stateValueAccess(parameterElement, pathParameters)}';
-      decode = '$convertMapValueHelperName('
+      return '$convertMapValueHelperName('
           '${escapeDartString(parameterName.kebab)}, '
           'state.uri.queryParameters, '
           '${helperName(paramType)})';
     } else {
-      decode = '${helperName(paramType)}'
-          '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})!';
-      if (customDecoder != null) {
-        decode = '$customDecoder($decode)';
-      }
-      decode = '${helperName(paramType)}($decode)';
+      decode = _fieldWithEncoder(
+          'state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''}',
+          customDecoder);
+      return '${helperName(paramType)}($decode)!';
     }
-    return decode;
   }
 }
 
