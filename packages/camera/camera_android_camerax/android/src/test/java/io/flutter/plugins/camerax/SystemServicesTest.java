@@ -5,10 +5,8 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
@@ -27,7 +25,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
 public class SystemServicesTest {
@@ -162,30 +159,6 @@ public class SystemServicesTest {
     assertThrows(RuntimeException.class, () -> api.getTempFilePath(instance, prefix, suffix));
 
     mockedStaticFile.close();
-  }
-
-  @Test
-  @Config(sdk = 28)
-  public void isPreviewPreTransformed_returnsTrueWhenRunningBelowSdk29() {
-    final SystemServicesManagerProxyApi api =
-        new TestProxyApiRegistrar().getPigeonApiSystemServicesManager();
-
-    final SystemServicesManager instance =
-        new SystemServicesManagerProxyApi.SystemServicesManagerImpl(api);
-
-    assertTrue(api.isPreviewPreTransformed(instance));
-  }
-
-  @Test
-  @Config(sdk = 29)
-  public void isPreviewPreTransformed_returnsTrueWhenRunningSdk28() {
-    final SystemServicesManagerProxyApi api =
-        new TestProxyApiRegistrar().getPigeonApiSystemServicesManager();
-
-    final SystemServicesManager instance =
-        new SystemServicesManagerProxyApi.SystemServicesManagerImpl(api);
-
-    assertFalse(api.isPreviewPreTransformed(instance));
   }
 
   @Test

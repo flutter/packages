@@ -12,7 +12,6 @@ import 'package:camera_android_camerax/src/camerax_proxy.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show BinaryMessenger, DeviceOrientation, PlatformException, Uint8List;
-import 'package:flutter/widgets.dart' show Texture, Widget;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -134,6 +133,14 @@ void main() {
       // ignore: non_constant_identifier_names
       PigeonInstanceManager? pigeon_instanceManager,
     })? fromQualitySelector,
+    Preview Function({
+      int? targetRotation,
+      ResolutionSelector? resolutionSelector,
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+    })? newPreview,
   }) {
     late final CameraXProxy proxy;
     final AspectRatioStrategy ratio_4_3FallbackAutoStrategyAspectRatioStrategy =
@@ -167,18 +174,21 @@ void main() {
 
         return MockCameraSelector();
       },
-      newPreview: ({
-        int? targetRotation,
-        ResolutionSelector? resolutionSelector,
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
-      }) {
-        final MockPreview mockPreview = MockPreview();
-        when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
-        return mockPreview;
-      },
+      newPreview: newPreview ??
+          ({
+            int? targetRotation,
+            ResolutionSelector? resolutionSelector,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) {
+            final MockPreview mockPreview = MockPreview();
+            when(mockPreview.surfaceProducerHandlesCropAndRotation())
+                .thenAnswer((_) async => false);
+            when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
+            return mockPreview;
+          },
       newImageCapture: ({
         int? targetRotation,
         CameraXFlashMode? flashMode,
@@ -1811,7 +1821,7 @@ void main() {
   });
 
   test(
-      'createCamera sets sensor and device orientations needed to correct preview rotation as expected',
+      'createCamera sets sensor orientation, handlesCropAndRotation, initialDeviceOrientation as expected',
       () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -1822,6 +1832,7 @@ void main() {
         sensorOrientation: testSensorOrientation);
     const bool enableAudio = true;
     const ResolutionPreset testResolutionPreset = ResolutionPreset.veryHigh;
+    const bool testHandlesCropAndRotation = true;
 
     // Mock/Detached objects for (typically attached) objects created by
     // createCamera.
@@ -1833,8 +1844,23 @@ void main() {
     // The proxy needed for this test is the same as testing resolution
     // presets except for mocking the retrieval of the sensor and current
     // UI orientation.
-    camera.proxy =
-        getProxyForTestingResolutionPreset(mockProcessCameraProvider);
+    camera.proxy = getProxyForTestingResolutionPreset(
+      mockProcessCameraProvider,
+      newPreview: ({
+        int? targetRotation,
+        ResolutionSelector? resolutionSelector,
+        // ignore: non_constant_identifier_names
+        BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) {
+        final MockPreview mockPreview = MockPreview();
+        when(mockPreview.surfaceProducerHandlesCropAndRotation())
+            .thenAnswer((_) async => testHandlesCropAndRotation);
+        when(mockPreview.resolutionSelector).thenReturn(resolutionSelector);
+        return mockPreview;
+      },
+    );
 
     when(mockProcessCameraProvider.bindToLifecycle(any, any))
         .thenAnswer((_) async => mockCamera);
@@ -1845,7 +1871,7 @@ void main() {
     await camera.createCamera(testCameraDescription, testResolutionPreset,
         enableAudio: enableAudio);
 
-    expect(camera.sensorOrientation, testSensorOrientation);
+    expect(camera.sensorOrientationDegrees, testSensorOrientation);
   });
 
   test(
@@ -2384,6 +2410,8 @@ void main() {
     expect(camera.cameraControl, equals(mockCameraControl));
   });
 
+  // Further `buildPreview` testing concerning the Widget that it returns is
+  // located in preview_rotation_test.dart.
   test(
       'buildPreview throws an exception if the preview is not bound to the lifecycle',
       () async {
@@ -2396,22 +2424,6 @@ void main() {
 
     expect(
         () => camera.buildPreview(cameraId), throwsA(isA<CameraException>()));
-  });
-
-  test(
-      'buildPreview returns a Texture once the preview is bound to the lifecycle if it is backed by a SurfaceTexture',
-      () async {
-    final AndroidCameraCameraX camera = AndroidCameraCameraX();
-    const int cameraId = 37;
-
-    // Tell camera that createCamera has been called and thus, preview has been
-    // bound to the lifecycle of the camera.
-    camera.previewInitiallyBound = true;
-
-    final Widget widget = camera.buildPreview(cameraId);
-
-    expect(widget is Texture, isTrue);
-    expect((widget as Texture).textureId, cameraId);
   });
 
   group('video recording', () {

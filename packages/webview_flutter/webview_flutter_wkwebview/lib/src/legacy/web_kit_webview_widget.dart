@@ -193,10 +193,10 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
           return NavigationResponsePolicy.allow;
         },
         didReceiveAuthenticationChallenge: (_, __, ___) async {
-          return AuthenticationChallengeResponse(
-            disposition:
-                UrlSessionAuthChallengeDisposition.performDefaultHandling,
-          );
+          return <Object?>[
+            UrlSessionAuthChallengeDisposition.performDefaultHandling,
+            null,
+          ];
         },
       );
     },
@@ -751,7 +751,7 @@ class WebViewWidgetProxy {
       WKWebView webView,
       WKNavigationResponse navigationResponse,
     ) decidePolicyForNavigationResponse,
-    required Future<AuthenticationChallengeResponse> Function(
+    required Future<List<Object?>> Function(
       WKNavigationDelegate,
       WKWebView webView,
       URLAuthenticationChallenge challenge,

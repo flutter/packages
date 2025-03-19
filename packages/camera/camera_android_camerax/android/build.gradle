@@ -27,7 +27,7 @@ apply plugin: 'kotlin-android'
 android {
     namespace 'io.flutter.plugins.camerax'
     // CameraX dependencies require compilation against version 33 or later.
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11

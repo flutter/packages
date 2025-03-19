@@ -68,9 +68,21 @@ class PreviewProxyApi extends PigeonApiPreview {
         surfaceProducers.remove(pigeon_instance);
     if (surfaceProducer != null) {
       surfaceProducer.release();
+      return;
     }
+    throw new IllegalStateException("releaseFlutterSurfaceTexture() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
   }
 
+  @Override
+  public boolean surfaceProducerHandlesCropAndRotation(@NonNull Preview pigeon_instance) {
+    final TextureRegistry.SurfaceProducer surfaceProducer =
+            surfaceProducers.remove(pigeon_instance);
+    if (surfaceProducer != null) {
+      return surfaceProducer.handlesCropAndRotation();
+    }
+    throw new IllegalStateException(
+            "surfaceProducerHandlesCropAndRotation() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
+  }
   @Nullable
   @Override
   public androidx.camera.core.ResolutionInfo getResolutionInfo(Preview pigeon_instance) {

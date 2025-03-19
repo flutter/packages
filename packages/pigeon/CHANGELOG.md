@@ -1,3 +1,14 @@
+## 25.0.0
+
+* **Breaking Change** Removes `oneLanguage` field from `PigeonOptions`.
+* Separates internal options classes from user facing options.
+* Adds `mergeDefinitionFileOptions` parameter to `runWithOptions` method.
+* Relocates `injectOverflowTypes` to non-public facing method.
+
+## 24.2.2
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 24.2.1
 
 * [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in

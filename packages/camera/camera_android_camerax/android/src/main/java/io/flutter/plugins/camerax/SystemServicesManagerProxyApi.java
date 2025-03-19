@@ -89,9 +89,4 @@ public class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManage
               "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e));
     }
   }
-
-  @Override
-  public boolean isPreviewPreTransformed(@NonNull SystemServicesManager pigeon_instance) {
-    return pigeon_instance.isPreviewPreTransformed();
-  }
 }

@@ -109,6 +109,9 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
+@property(assign, nonatomic) FCPPlatformExposureMode exposureMode;
+@property(assign, nonatomic) FCPPlatformFocusMode focusMode;
+@property(assign, nonatomic) FCPPlatformFlashMode flashMode;
 @property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
@@ -404,8 +407,8 @@ static void selectBestFormatForRequestedFrameRate(
   }
 
   // If the flash is in torch mode, no capture-level flash setting is needed.
-  if (_flashMode != FCPPlatformFlashModeTorch) {
-    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(_flashMode)];
+  if (self.flashMode != FCPPlatformFlashModeTorch) {
+    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(self.flashMode)];
   }
   NSError *error;
   NSString *path = [self getTemporaryFilePathWithExtension:extension
@@ -987,8 +990,10 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)applyExposureMode {
   [_captureDevice lockForConfiguration:nil];
-  switch (_exposureMode) {
+  switch (self.exposureMode) {
     case FCPPlatformExposureModeLocked:
+      // AVCaptureExposureModeAutoExpose automatically adjusts the exposure one time, and then
+      // locks exposure for the device
       [_captureDevice setExposureMode:AVCaptureExposureModeAutoExpose];
       break;
     case FCPPlatformExposureModeAuto:
@@ -1016,6 +1021,7 @@ static void selectBestFormatForRequestedFrameRate(
   [captureDevice lockForConfiguration:nil];
   switch (focusMode) {
     case FCPPlatformFocusModeLocked:
+      // AVCaptureFocusModeAutoFocus automatically adjusts the focus one time, and then locks focus
       if ([captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
         [captureDevice setFocusMode:AVCaptureFocusModeAutoFocus];
       }
@@ -1248,6 +1254,14 @@ static void selectBestFormatForRequestedFrameRate(
   return _captureDevice.maxAvailableVideoZoomFactor;
 }
 
+- (CGFloat)minimumExposureOffset {
+  return _captureDevice.minExposureTargetBias;
+}
+
+- (CGFloat)maximumExposureOffset {
+  return _captureDevice.maxExposureTargetBias;
+}
+
 - (BOOL)setupWriterForPath:(NSString *)path {
   NSError *error = nil;
   NSURL *outputURL;
@@ -1320,7 +1334,7 @@ static void selectBestFormatForRequestedFrameRate(
     [_audioOutput setSampleBufferDelegate:self queue:_captureSessionQueue];
   }
 
-  if (_flashMode == FCPPlatformFlashModeTorch) {
+  if (self.flashMode == FCPPlatformFlashModeTorch) {
     [self.captureDevice lockForConfiguration:nil];
     [self.captureDevice setTorchMode:AVCaptureTorchModeOn];
     [self.captureDevice unlockForConfiguration];

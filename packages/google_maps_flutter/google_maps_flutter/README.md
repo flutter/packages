@@ -12,6 +12,15 @@ A Flutter plugin that provides a [Google Maps](https://developers.google.com/map
 
 [web-support]: https://docs.flutter.dev/reference/supported-platforms
 
+**Important:** Not all functionality is supported on all platforms.
+To check details, please read the README files
+of the endorsed platform packages:
+
+* [`google_maps_flutter_android` README](https://pub.dev/packages/google_maps_flutter_android)
+* [`google_maps_flutter_ios` README](https://pub.dev/packages/google_maps_flutter_ios)
+* [`google_maps_flutter_web` README](https://pub.dev/packages/google_maps_flutter_web)
+
+
 ## Getting Started
 
 * Get an API key at <https://cloud.google.com/maps-platform/>.
@@ -30,86 +39,72 @@ For more details, see [Getting started with Google Maps Platform](https://develo
 
 ### Android
 
-1. Set the `minSdkVersion` in `android/app/build.gradle`:
+1. Specify your API key in the application manifest `android/app/src/main/AndroidManifest.xml`:
 
-```groovy
-android {
-    defaultConfig {
-        minSdkVersion 20
-    }
-}
-```
+   ```xml
+   <manifest ...
+     <application ...
+       <meta-data android:name="com.google.android.geo.API_KEY"
+                  android:value="YOUR KEY HERE"/>
+   ```
 
-This means that app will only be available for users that run Android SDK 20 or higher.
-
-2. Specify your API key in the application manifest `android/app/src/main/AndroidManifest.xml`:
-
-```xml
-<manifest ...
-  <application ...
-    <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="YOUR KEY HERE"/>
-```
-
-#### Display Mode
-
-The Android implementation supports multiple
-[platform view display modes](https://docs.flutter.dev/platform-integration/android/platform-views).
-For details, see [the Android README](https://pub.dev/packages/google_maps_flutter_android#display-mode).
-
-#### Cloud-based map styling
-
-Cloud-based map styling works on Android only if `AndroidMapRenderer.latest` map renderer has been initialized.
-For details, see [the Android README](https://pub.dev/packages/google_maps_flutter_android#map-renderer).
+2. Read about Android-specific features and limitations in the
+   [`google_maps_flutter_android` README](https://pub.dev/packages/google_maps_flutter_android).
 
 ### iOS
 
-To set up, specify your API key in the application delegate `ios/Runner/AppDelegate.m`:
+1. Specify your API key in the application delegate `ios/Runner/AppDelegate.m`:
 
-```objectivec
-#include "AppDelegate.h"
-#include "GeneratedPluginRegistrant.h"
-#import "GoogleMaps/GoogleMaps.h"
+   ```objectivec
+   #include "AppDelegate.h"
+   #include "GeneratedPluginRegistrant.h"
+   #import "GoogleMaps/GoogleMaps.h"
 
-@implementation AppDelegate
+   @implementation AppDelegate
 
-- (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  [GMSServices provideAPIKey:@"YOUR KEY HERE"];
-  [GeneratedPluginRegistrant registerWithRegistry:self];
-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
-}
-@end
-```
+   - (BOOL)application:(UIApplication *)application
+       didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+     [GMSServices provideAPIKey:@"YOUR KEY HERE"];
+     [GeneratedPluginRegistrant registerWithRegistry:self];
+     return [super application:application didFinishLaunchingWithOptions:launchOptions];
+   }
+   @end
+   ```
 
-Or in your swift code, specify your API key in the application delegate `ios/Runner/AppDelegate.swift`:
+   Or in your Swift code, specify your API key
+   in the application delegate `ios/Runner/AppDelegate.swift`:
 
-```swift
-import UIKit
-import Flutter
-import GoogleMaps
+   ```swift
+   import UIKit
+   import Flutter
+   import GoogleMaps
 
-@UIApplicationMain
-@objc class AppDelegate: FlutterAppDelegate {
-  override func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
-    GMSServices.provideAPIKey("YOUR KEY HERE")
-    GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
-}
-```
+   @UIApplicationMain
+   @objc class AppDelegate: FlutterAppDelegate {
+     override func application(
+       _ application: UIApplication,
+       didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+     ) -> Bool {
+       GMSServices.provideAPIKey("YOUR KEY HERE")
+       GeneratedPluginRegistrant.register(with: self)
+       return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+     }
+   }
+   ```
+
+2. Read about iOS-specific features and limitations in the
+   [`google_maps_flutter_ios` README](https://pub.dev/packages/google_maps_flutter_ios).
 
 ### Web
 
-You'll need to modify the `web/index.html` file of your Flutter Web application
-to include the Google Maps JS SDK.
+1. Add the following to the `<head>` section of `web/index.html`:
 
-Check [the `google_maps_flutter_web` README](https://pub.dev/packages/google_maps_flutter_web)
-for the latest information on how to prepare your App to use Google Maps on the
-web.
+   ```html
+   <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY"></script>
+   ```
+
+2. Read about iOS-specific features and limitations in the
+   [`google_maps_flutter_web` README](https://pub.dev/packages/google_maps_flutter_web).
 
 ### All
 

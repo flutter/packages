@@ -386,9 +386,9 @@ abstract class SystemServicesManager {
   @async
   CameraPermissionsError? requestCameraPermissions(bool enableAudio);
 
+  /// Returns a path to be used to create a temp file in the current cache
+  /// directory.
   String getTempFilePath(String prefix, String suffix);
-
-  bool isPreviewPreTransformed();
 }
 
 /// Contains data when an attempt to retrieve camera permissions fails.
@@ -450,6 +450,10 @@ abstract class Preview extends UseCase {
 
   /// Sets the target rotation.
   void setTargetRotation(int rotation);
+
+  /// Returns whether or not the preview's surface producer handles correctly
+  /// rotating the camera preview automatically.
+  bool surfaceProducerHandlesCropAndRotation();
 }
 
 /// A use case that provides camera stream suitable for video application.

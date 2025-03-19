@@ -3,11 +3,11 @@ description: Android implementation of the camera plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/camera/camera_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+camera%22
 
-version: 0.10.10
+version: 0.10.10+1
 
 environment:
-  sdk: ^3.5.0
-  flutter: ">=3.24.0"
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
 
 flutter:
   plugin:

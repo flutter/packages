@@ -6,7 +6,6 @@ package io.flutter.plugins.camerax;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.io.File;
@@ -44,14 +43,10 @@ public abstract class SystemServicesManager {
         (CameraPermissionsError error) -> listener.onResult(error == null, error));
   }
 
+  /** Returns a path to be used to create a temp file in the current cache directory. */
   @NonNull
   public String getTempFilePath(@NonNull String prefix, @NonNull String suffix) throws IOException {
     final File path = File.createTempFile(prefix, suffix, getContext().getCacheDir());
     return path.toString();
-  }
-
-  @NonNull
-  public Boolean isPreviewPreTransformed() {
-    return Build.VERSION.SDK_INT < 29;
   }
 }

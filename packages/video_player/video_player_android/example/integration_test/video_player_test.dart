@@ -43,64 +43,64 @@ void main() {
   });
 
   testWidgets('initializes at the start', (_) async {
-    final int textureId = (await player.create(DataSource(
+    final int playerId = (await player.create(DataSource(
       sourceType: DataSourceType.asset,
       asset: _videoAssetKey,
     )))!;
 
     expect(
-      await _getDuration(player, textureId),
+      await _getDuration(player, playerId),
       const Duration(seconds: 7, milliseconds: 540),
     );
 
-    await player.dispose(textureId);
+    await player.dispose(playerId);
   });
 
   testWidgets('can be played', (WidgetTester tester) async {
-    final int textureId = (await player.create(DataSource(
+    final int playerId = (await player.create(DataSource(
       sourceType: DataSourceType.asset,
       asset: _videoAssetKey,
     )))!;
 
-    await player.play(textureId);
+    await player.play(playerId);
     await tester.pumpAndSettle(_playDuration);
 
-    expect(await player.getPosition(textureId), greaterThan(Duration.zero));
-    await player.dispose(textureId);
+    expect(await player.getPosition(playerId), greaterThan(Duration.zero));
+    await player.dispose(playerId);
   });
 
   testWidgets('can seek', (WidgetTester tester) async {
-    final int textureId = (await player.create(DataSource(
+    final int playerId = (await player.create(DataSource(
       sourceType: DataSourceType.asset,
       asset: _videoAssetKey,
     )))!;
 
-    await player.seekTo(textureId, const Duration(seconds: 3));
+    await player.seekTo(playerId, const Duration(seconds: 3));
     await tester.pumpAndSettle(_playDuration);
 
     expect(
-      await player.getPosition(textureId),
+      await player.getPosition(playerId),
       greaterThanOrEqualTo(const Duration(seconds: 3)),
     );
-    await player.dispose(textureId);
+    await player.dispose(playerId);
   });
 
   testWidgets('can pause', (WidgetTester tester) async {
-    final int textureId = (await player.create(DataSource(
+    final int playerId = (await player.create(DataSource(
       sourceType: DataSourceType.asset,
       asset: _videoAssetKey,
     )))!;
 
-    await player.play(textureId);
+    await player.play(playerId);
     await tester.pumpAndSettle(_playDuration);
 
-    await player.pause(textureId);
+    await player.pause(playerId);
     await tester.pumpAndSettle(_playDuration);
-    final Duration pausedDuration = await player.getPosition(textureId);
+    final Duration pausedDuration = await player.getPosition(playerId);
     await tester.pumpAndSettle(_playDuration);
 
-    expect(await player.getPosition(textureId), pausedDuration);
-    await player.dispose(textureId);
+    expect(await player.getPosition(playerId), pausedDuration);
+    await player.dispose(playerId);
   });
 
   testWidgets('can play a video from a file', (WidgetTester tester) async {
@@ -112,45 +112,45 @@ void main() {
       ),
     );
 
-    final int textureId = (await player.create(DataSource(
+    final int playerId = (await player.create(DataSource(
       sourceType: DataSourceType.file,
       uri: file.path,
     )))!;
 
-    await player.play(textureId);
+    await player.play(playerId);
     await tester.pumpAndSettle(_playDuration);
 
-    expect(await player.getPosition(textureId), greaterThan(Duration.zero));
+    expect(await player.getPosition(playerId), greaterThan(Duration.zero));
     await directory.delete(recursive: true);
-    await player.dispose(textureId);
+    await player.dispose(playerId);
   });
 
   testWidgets('can play a video from network', (WidgetTester tester) async {
-    final int textureId = (await player.create(DataSource(
+    final int playerId = (await player.create(DataSource(
       sourceType: DataSourceType.network,
       uri: getUrlForAssetAsNetworkSource(_videoAssetKey),
     )))!;
 
-    await player.play(textureId);
-    await player.seekTo(textureId, const Duration(seconds: 5));
+    await player.play(playerId);
+    await player.seekTo(playerId, const Duration(seconds: 5));
     await tester.pumpAndSettle(_playDuration);
-    await player.pause(textureId);
+    await player.pause(playerId);
 
-    expect(await player.getPosition(textureId), greaterThan(Duration.zero));
+    expect(await player.getPosition(playerId), greaterThan(Duration.zero));
 
-    final DurationRange range = await _getBufferingRange(player, textureId);
+    final DurationRange range = await _getBufferingRange(player, playerId);
     expect(range.start, Duration.zero);
     expect(range.end, greaterThan(Duration.zero));
 
-    await player.dispose(textureId);
+    await player.dispose(playerId);
   });
 }
 
 Future<Duration> _getDuration(
   AndroidVideoPlayer player,
-  int textureId,
+  int playerId,
 ) {
-  return player.videoEventsFor(textureId).firstWhere((VideoEvent event) {
+  return player.videoEventsFor(playerId).firstWhere((VideoEvent event) {
     return event.eventType == VideoEventType.initialized;
   }).then((VideoEvent event) {
     return event.duration!;
@@ -159,9 +159,9 @@ Future<Duration> _getDuration(
 
 Future<DurationRange> _getBufferingRange(
   AndroidVideoPlayer player,
-  int textureId,
+  int playerId,
 ) {
-  return player.videoEventsFor(textureId).firstWhere((VideoEvent event) {
+  return player.videoEventsFor(playerId).firstWhere((VideoEvent event) {
     return event.eventType == VideoEventType.bufferingUpdate;
   }).then((VideoEvent event) {
     return event.buffered!.first;
