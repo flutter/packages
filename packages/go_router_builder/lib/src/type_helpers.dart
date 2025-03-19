@@ -334,21 +334,17 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
       String fallBack = '';
       if (const TypeChecker.fromRuntime(List)
           .isAssignableFromType(parameterElement.type)) {
+        iterableCaster += '.toList()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
-          iterableCaster += '?.toList()';
           fallBack = '?? const []';
-        } else {
-          iterableCaster += '.toList()';
         }
       } else if (const TypeChecker.fromRuntime(Set)
           .isAssignableFromType(parameterElement.type)) {
+        iterableCaster += '.toSet()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
-          iterableCaster += '?.toSet()';
           fallBack = '?? const {}';
-        } else {
-          iterableCaster += '.toSet()';
         }
       }
 
