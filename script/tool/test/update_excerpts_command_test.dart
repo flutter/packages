@@ -4,32 +4,29 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/update_excerpts_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
 void runAllTests(MockPlatform platform) {
-  late FileSystem fileSystem;
   late Directory packagesDir;
   late CommandRunner<void> runner;
 
   setUp(() {
-    fileSystem = MemoryFileSystem(
-        style: platform.isWindows
-            ? FileSystemStyle.windows
-            : FileSystemStyle.posix);
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    final RecordingProcessRunner processRunner;
+    final GitDir gitDir;
+    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks(platform: platform);
     runner = CommandRunner<void>('', '')
       ..addCommand(UpdateExcerptsCommand(
         packagesDir,
         platform: platform,
-        processRunner: RecordingProcessRunner(),
-        gitDir: MockGitDir(),
+        processRunner: processRunner,
+        gitDir: gitDir,
       ));
   });
 

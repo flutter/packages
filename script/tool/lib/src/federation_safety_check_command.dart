@@ -59,9 +59,8 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
   @override
   Future<void> initializeRun() async {
     final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
-    final String baseSha = await gitVersionFinder.getBaseSha();
     print('Validating changes relative to "$baseSha"\n');
-    for (final String path in await gitVersionFinder.getChangedFiles()) {
+    for (final String path in changedFiles) {
       // Git output always uses Posix paths.
       final List<String> allComponents = p.posix.split(path);
       final int packageIndex = allComponents.indexOf('packages');

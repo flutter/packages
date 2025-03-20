@@ -21,6 +21,7 @@ class CustomTestCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   });
 
   @override

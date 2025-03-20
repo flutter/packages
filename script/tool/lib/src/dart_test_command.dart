@@ -27,6 +27,7 @@ class DartTestCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addOption(
       kEnableExperiment,

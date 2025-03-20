@@ -45,6 +45,7 @@ class NativeTestCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
     Abi? abi,
   })  : _abi = abi ?? Abi.current(),
         _xcode = Xcode(processRunner: processRunner, log: true) {
