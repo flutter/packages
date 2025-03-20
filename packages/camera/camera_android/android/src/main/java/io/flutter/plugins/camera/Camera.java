@@ -367,15 +367,17 @@ class Camera
             cameraDevice = new DefaultCameraDeviceWrapper(device);
             try {
               // only send initialization if we werent already recording and switching cameras
-              Runnable onSuccess = recordingVideo
+              Runnable onSuccess =
+                  recordingVideo
                       ? null
-                      : () -> dartMessenger.sendCameraInitializedEvent(
-                          resolutionFeature.getPreviewSize().getWidth(),
-                          resolutionFeature.getPreviewSize().getHeight(),
-                          cameraFeatures.getExposureLock().getValue(),
-                          cameraFeatures.getAutoFocus().getValue(),
-                          cameraFeatures.getExposurePoint().checkIsSupported(),
-                          cameraFeatures.getFocusPoint().checkIsSupported());
+                      : () ->
+                          dartMessenger.sendCameraInitializedEvent(
+                              resolutionFeature.getPreviewSize().getWidth(),
+                              resolutionFeature.getPreviewSize().getHeight(),
+                              cameraFeatures.getExposureLock().getValue(),
+                              cameraFeatures.getAutoFocus().getValue(),
+                              cameraFeatures.getExposurePoint().checkIsSupported(),
+                              cameraFeatures.getFocusPoint().checkIsSupported());
               startPreview(onSuccess);
             } catch (Exception e) {
               String message =
@@ -1152,7 +1154,8 @@ class Camera
         null, (code, message) -> dartMessenger.sendCameraErrorEvent(message));
   }
 
-  public void startPreview(@Nullable Runnable onSuccessCallback) throws CameraAccessException, InterruptedException {
+  public void startPreview(@Nullable Runnable onSuccessCallback)
+      throws CameraAccessException, InterruptedException {
     // If recording is already in progress, the camera is being flipped, so send it through the VideoRenderer to keep the correct orientation.
     if (recordingVideo) {
       startPreviewWithVideoRendererStream(onSuccessCallback);
@@ -1161,10 +1164,12 @@ class Camera
     }
   }
 
-  private void startRegularPreview(@Nullable Runnable onSuccessCallback) throws CameraAccessException {
+  private void startRegularPreview(@Nullable Runnable onSuccessCallback)
+      throws CameraAccessException {
     if (pictureImageReader == null || pictureImageReader.getSurface() == null) return;
     Log.i(TAG, "startPreview");
-    createCaptureSession(CameraDevice.TEMPLATE_PREVIEW, onSuccessCallback, pictureImageReader.getSurface());
+    createCaptureSession(
+        CameraDevice.TEMPLATE_PREVIEW, onSuccessCallback, pictureImageReader.getSurface());
   }
 
   private void startPreviewWithVideoRendererStream(@Nullable Runnable onSuccessCallback)
@@ -1193,7 +1198,8 @@ class Camera
     }
     videoRenderer.setRotation(rotation);
 
-    createCaptureSession(CameraDevice.TEMPLATE_RECORD, onSuccessCallback, videoRenderer.getInputSurface());
+    createCaptureSession(
+        CameraDevice.TEMPLATE_RECORD, onSuccessCallback, videoRenderer.getInputSurface());
   }
 
   public void startPreviewWithImageStream(EventChannel imageStreamChannel)
