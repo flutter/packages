@@ -154,6 +154,13 @@ class PlatformAuthorizationResult extends AuthorizeResult {
 
 @HostApi()
 abstract class CredentialManagerApi {
+  /// Returns the server client ID parsed from google-services.json by the
+  /// google-services Gradle script, if any.
+  ///
+  /// This is not part of CredentialManager, but is included here for
+  /// convenience since CredentialManager requires a server client ID.
+  String? getGoogleServicesJsonServerClientId();
+
   @async
   GetCredentialResult getCredential(GetCredentialRequestParams params);
 

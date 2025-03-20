@@ -33,12 +33,12 @@ void main() {
 
   group('GoogleSignInTokenData', () {
     test('can be compared by == operator', () {
-      final GoogleSignInTokenData firstInstance = GoogleSignInTokenData(
+      const GoogleSignInTokenData firstInstance = GoogleSignInTokenData(
         accessToken: 'accessToken',
         idToken: 'idToken',
         serverAuthCode: 'serverAuthCode',
       );
-      final GoogleSignInTokenData secondInstance = GoogleSignInTokenData(
+      const GoogleSignInTokenData secondInstance = GoogleSignInTokenData(
         accessToken: 'accessToken',
         idToken: 'idToken',
         serverAuthCode: 'serverAuthCode',
@@ -49,7 +49,7 @@ void main() {
 
   group('GoogleSignInUserData', () {
     test('can be compared by == operator', () {
-      final GoogleSignInUserData firstInstance = GoogleSignInUserData(
+      const GoogleSignInUserData firstInstance = GoogleSignInUserData(
         email: 'email',
         id: 'id',
         displayName: 'displayName',
@@ -57,7 +57,7 @@ void main() {
         idToken: 'idToken',
         serverAuthCode: 'serverAuthCode',
       );
-      final GoogleSignInUserData secondInstance = GoogleSignInUserData(
+      const GoogleSignInUserData secondInstance = GoogleSignInUserData(
         email: 'email',
         id: 'id',
         displayName: 'displayName',

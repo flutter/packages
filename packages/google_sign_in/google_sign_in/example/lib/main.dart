@@ -7,26 +7,25 @@
 import 'dart:async';
 import 'dart:convert' show json;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 
 import 'src/sign_in_button.dart';
 
+/// To run this example, replace this value with your client ID, and/or
+/// update the relevant configuration files, as described in the README.
+String? clientId;
+
+/// To run this example, replace this value with your server client ID, and/or
+/// update the relevant configuration files, as described in the README.
+String? serverClientId;
+
 /// The scopes required by this application.
-// #docregion Initialize
 const List<String> scopes = <String>[
   'email',
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
-
-GoogleSignIn _googleSignIn = GoogleSignIn(
-  // Optional clientId
-  // clientId: 'your-client_id.apps.googleusercontent.com',
-  scopes: scopes,
-);
-// #enddocregion Initialize
 
 void main() {
   runApp(
@@ -50,40 +49,63 @@ class _SignInDemoState extends State<SignInDemo> {
   GoogleSignInAccount? _currentUser;
   bool _isAuthorized = false; // has granted permissions?
   String _contactText = '';
+  String _errorMessage = '';
+  String _serverAuthCode = '';
 
   @override
   void initState() {
     super.initState();
 
-    _googleSignIn.onCurrentUserChanged
-        .listen((GoogleSignInAccount? account) async {
-// #docregion CanAccessScopes
-      // In mobile, being authenticated means being authorized...
-      bool isAuthorized = account != null;
-      // However, on web...
-      if (kIsWeb && account != null) {
-        isAuthorized = await _googleSignIn.canAccessScopes(scopes);
-      }
-// #enddocregion CanAccessScopes
+    final GoogleSignIn signIn = GoogleSignIn.instance;
+    unawaited(signIn
+        .initialize(clientId: clientId, serverClientId: serverClientId)
+        .then((_) {
+      GoogleSignIn.instance.authenticationEvents
+          .listen(_handleAuthenticationEvent);
 
-      setState(() {
-        _currentUser = account;
-        _isAuthorized = isAuthorized;
-      });
+      /// This example always uses the stream-based approach to determining
+      /// which UI state to show, rather than using the future returned here,
+      /// if any, to conditionally skip directly to the signed-in state.
+      signIn.attemptLightweightAuthentication();
+    }));
+  }
 
-      // Now that we know that the user can access the required scopes, the app
-      // can call the REST API.
-      if (isAuthorized) {
-        unawaited(_handleGetContact(account!));
-      }
+  Future<void> _handleAuthenticationEvent(
+      GoogleSignInAuthenticationEvent event) async {
+    GoogleSignInAccount? user;
+    String error = '';
+    switch (event) {
+      case GoogleSignInAuthenticationEventSignIn():
+        user = event.user;
+      case GoogleSignInAuthenticationEventSignOut():
+        user = null;
+      case GoogleSignInAuthenticationEventException():
+        user = null;
+        final GoogleSignInException e = event.exception;
+        error = 'GoogleSignInException ${e.code}: ${e.description}';
+    }
+
+    // #docregion CanAccessScopes
+    // Check for existing authorization.
+    bool isAuthorized = false;
+    if (user != null) {
+      final GoogleSignInClientAuthorization? authorization =
+          await user.authorizationClient.authorizationForScopes(scopes);
+      isAuthorized = authorization != null;
+    }
+    // #enddocregion CanAccessScopes
+
+    setState(() {
+      _currentUser = user;
+      _isAuthorized = isAuthorized;
+      _errorMessage = error;
     });
 
-    // In the web, _googleSignIn.signInSilently() triggers the One Tap UX.
-    //
-    // It is recommended by Google Identity Services to render both the One Tap UX
-    // and the Google Sign In button together to "reduce friction and improve
-    // sign-in rates" ([docs](https://developers.google.com/identity/gsi/web/guides/display-button#html)).
-    _googleSignIn.signInSilently();
+    // Now that we know that the user can access the required scopes, the app
+    // can call the REST API.
+    if (user != null && isAuthorized) {
+      unawaited(_handleGetContact(user));
+    }
   }
 
   // Calls the People API REST endpoint for the signed-in user to retrieve information.
@@ -91,10 +113,18 @@ class _SignInDemoState extends State<SignInDemo> {
     setState(() {
       _contactText = 'Loading contact info...';
     });
+    final Map<String, String>? headers =
+        await user.authorizationClient.authorizationHeaders(scopes);
+    if (headers == null) {
+      setState(() {
+        _contactText = 'Failed to construct authorization headers.';
+      });
+      return;
+    }
     final http.Response response = await http.get(
       Uri.parse('https://people.googleapis.com/v1/people/me/connections'
           '?requestMask.includeField=person.names'),
-      headers: await user.authHeaders,
+      headers: headers,
     );
     if (response.statusCode != 200) {
       setState(() {
@@ -143,87 +173,125 @@ class _SignInDemoState extends State<SignInDemo> {
   // #docregion SignIn
   Future<void> _handleSignIn() async {
     try {
-      await _googleSignIn.signIn();
-    } catch (error) {
-      print(error);
+      await GoogleSignIn.instance.authenticate();
+    } catch (e) {
+      _errorMessage = e.toString();
     }
   }
   // #enddocregion SignIn
 
   // Prompts the user to authorize `scopes`.
   //
-  // This action is **required** in platforms that don't perform Authentication
-  // and Authorization at the same time (like the web).
+  // On the web, this must be called from an user interaction (button click).
+  // #docregion RequestScopes
+  Future<void> _handleAuthorizeScopes(GoogleSignInAccount user) async {
+    try {
+      // The returned tokens are ignored here since _handleGetContact uses the
+      // authorizationHeaders method to re-read the token cached here.
+      await user.authorizationClient.authorizeScopes(scopes);
+
+      // #enddocregion RequestScopes
+      setState(() {
+        _isAuthorized = true;
+        _errorMessage = '';
+      });
+      // #docregion RequestScopes
+      unawaited(_handleGetContact(_currentUser!));
+      // #enddocregion RequestScopes
+    } on GoogleSignInException catch (e) {
+      _errorMessage = 'GoogleSignInException ${e.code}: ${e.description}';
+    }
+  }
+
+  // Requests a server auth code for the authorized scopes.
   //
   // On the web, this must be called from an user interaction (button click).
   // #docregion RequestScopes
-  Future<void> _handleAuthorizeScopes() async {
-    final bool isAuthorized = await _googleSignIn.requestScopes(scopes);
-    // #enddocregion RequestScopes
-    setState(() {
-      _isAuthorized = isAuthorized;
-    });
-    // #docregion RequestScopes
-    if (isAuthorized) {
-      unawaited(_handleGetContact(_currentUser!));
+  Future<void> _handleGetAuthCode(GoogleSignInAccount user) async {
+    try {
+      final GoogleSignInServerAuthorization? serverAuth =
+          await user.authorizationClient.authorizeServer(scopes);
+
+      // #enddocregion RequestScopes
+      setState(() {
+        _serverAuthCode = serverAuth == null ? '' : serverAuth.serverAuthCode;
+      });
+    } on GoogleSignInException catch (e) {
+      _errorMessage = 'GoogleSignInException ${e.code}: ${e.description}';
     }
-    // #enddocregion RequestScopes
   }
 
-  Future<void> _handleSignOut() => _googleSignIn.disconnect();
+  Future<void> _handleSignOut() async {
+    // Disconnect instead of just signing out, to reset the example state as
+    // much as possible.
+    await GoogleSignIn.instance.disconnect();
+  }
 
   Widget _buildBody() {
     final GoogleSignInAccount? user = _currentUser;
-    if (user != null) {
-      // The user is Authenticated
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          ListTile(
-            leading: GoogleUserCircleAvatar(
-              identity: user,
-            ),
-            title: Text(user.displayName ?? ''),
-            subtitle: Text(user.email),
-          ),
-          const Text('Signed in successfully.'),
-          if (_isAuthorized) ...<Widget>[
-            // The user has Authorized all required scopes
-            Text(_contactText),
-            ElevatedButton(
-              child: const Text('REFRESH'),
-              onPressed: () => _handleGetContact(user),
-            ),
-          ],
-          if (!_isAuthorized) ...<Widget>[
-            // The user has NOT Authorized all required scopes.
-            // (Mobile users may never see this button!)
-            const Text('Additional permissions needed to read your contacts.'),
-            ElevatedButton(
-              onPressed: _handleAuthorizeScopes,
-              child: const Text('REQUEST PERMISSIONS'),
-            ),
-          ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        if (user != null)
+          ..._buildAuthenticatedWidgets(user)
+        else
+          ..._buildUnauthenticatedWidgets(),
+        if (_errorMessage.isNotEmpty) Text(_errorMessage),
+      ],
+    );
+  }
+
+  /// Returns the list of widgets to include if the user is authenticated.
+  List<Widget> _buildAuthenticatedWidgets(GoogleSignInAccount user) {
+    return <Widget>[
+      // The user is Authenticated.
+      ListTile(
+        leading: GoogleUserCircleAvatar(
+          identity: user,
+        ),
+        title: Text(user.displayName ?? ''),
+        subtitle: Text(user.email),
+      ),
+      const Text('Signed in successfully.'),
+      if (_isAuthorized) ...<Widget>[
+        // The user has Authorized all required scopes.
+        if (_contactText.isNotEmpty) Text(_contactText),
+        ElevatedButton(
+          child: const Text('REFRESH'),
+          onPressed: () => _handleGetContact(user),
+        ),
+        if (_serverAuthCode.isEmpty)
           ElevatedButton(
-            onPressed: _handleSignOut,
-            child: const Text('SIGN OUT'),
-          ),
-        ],
-      );
-    } else {
-      // The user is NOT Authenticated
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: <Widget>[
-          const Text('You are not currently signed in.'),
-          // This method is used to separate mobile from web code with conditional exports.
-          // See: src/sign_in_button.dart
-          buildSignInButton(
-            onPressed: _handleSignIn,
-          ),
-        ],
-      );
-    }
+            child: const Text('REQUEST SERVER CODE'),
+            onPressed: () => _handleGetAuthCode(user),
+          )
+        else
+          Text('Server auth code:\n$_serverAuthCode'),
+      ] else ...<Widget>[
+        // The user has NOT Authorized all required scopes.
+        const Text('Authorization needed to read your contacts.'),
+        ElevatedButton(
+          onPressed: () => _handleAuthorizeScopes(user),
+          child: const Text('REQUEST PERMISSIONS'),
+        ),
+      ],
+      ElevatedButton(
+        onPressed: _handleSignOut,
+        child: const Text('SIGN OUT'),
+      ),
+    ];
+  }
+
+  /// Returns the list of widgets to include if the user is not authenticated.
+  List<Widget> _buildUnauthenticatedWidgets() {
+    return <Widget>[
+      const Text('You are not currently signed in.'),
+      // This method is used to separate mobile from web code with conditional exports.
+      // See: src/sign_in_button.dart
+      buildSignInButton(
+        onPressed: _handleSignIn,
+      ),
+    ];
   }
 
   @override

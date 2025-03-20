@@ -151,24 +151,25 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     }
 
     @Override
+    public @Nullable String getGoogleServicesJsonServerClientId() {
+      @SuppressLint("DiscouragedApi")
+      int webClientIdIdentifier =
+          context
+              .getResources()
+              .getIdentifier("default_web_client_id", "string", context.getPackageName());
+      if (webClientIdIdentifier != 0) {
+        return context.getString(webClientIdIdentifier);
+      }
+      return null;
+    }
+
+    @Override
     public void getCredential(
         @NonNull GetCredentialRequestParams params,
         @NonNull Function1<? super Result<? extends GetCredentialResult>, Unit> callback) {
       try {
         String serverClientId = params.getServerClientId();
-        if (isNullOrEmpty(serverClientId)) {
-          // If the required server client ID wasn't explicitly provided, check whether it was in
-          // a google-services.json parsed by the google-services Gradle script.
-          @SuppressLint("DiscouragedApi")
-          int webClientIdIdentifier =
-              context
-                  .getResources()
-                  .getIdentifier("default_web_client_id", "string", context.getPackageName());
-          if (webClientIdIdentifier != 0) {
-            serverClientId = context.getString(webClientIdIdentifier);
-          }
-        }
-        if (isNullOrEmpty(serverClientId)) {
+        if (serverClientId == null || serverClientId.isEmpty()) {
           ResultUtilsKt.completeWithGetCredentialFailure(
               callback,
               new GetCredentialFailure(
@@ -297,7 +298,8 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
               params.getServerClientIdForForcedRefreshToken(), true);
         }
         if (params.getAccountEmail() != null) {
-          authorizationRequestBuilder.setAccount(new Account(params.getAccountEmail(), "com.google"));
+          authorizationRequestBuilder.setAccount(
+              new Account(params.getAccountEmail(), "com.google"));
         }
         AuthorizationRequest authorizationRequest = authorizationRequestBuilder.build();
         Identity.getAuthorizationClient(context)
@@ -310,7 +312,8 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                       if (activity == null) {
                         ResultUtilsKt.completeWithAuthorizeFailure(
                             callback,
-                            new AuthorizeFailure(AuthorizeFailureType.NO_ACTIVITY, null, null));
+                            new AuthorizeFailure(
+                                AuthorizeFailureType.NO_ACTIVITY, "No activity available", null));
                         return;
                       }
                       // Prompt for access. `callback` will be resolved in onActivityResult.
@@ -391,10 +394,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         }
       }
       return false;
-    }
-
-    private static boolean isNullOrEmpty(@Nullable String s) {
-      return s == null || s.isEmpty();
     }
   }
 }

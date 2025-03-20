@@ -3,23 +3,12 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart' show visibleForTesting;
-import 'package:flutter/services.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 
 import 'src/messages.g.dart';
-
-// These are magic string values that match the previous implementation on
-// Android, docs in the app-facing package, and/or implementations on other
-// platforms.
-// TODO(stuartmorgan): Replace these with structured errors defined in the
-// platform interface when reworking the API surface.
-const String _errorCodeSignInCanceled = 'sign_in_canceled';
-const String _errorCodeSignInRequired = 'sign_in_required';
-const String _errorCodeSignInFailed = 'sign_in_failed';
-const String _errorCodeUserRecoverableAuth = 'user_recoverable_auth';
-const String _errorCodeIncorrectConfiguration = 'incorrect_configuration';
 
 /// Android implementation of [GoogleSignInPlatform].
 class GoogleSignInAndroid extends GoogleSignInPlatform {
@@ -37,9 +26,6 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   String? _serverClientId;
   String? _hostedDomain;
-  List<String> _desiredScopes = <String>[];
-  bool _forceCodeForRefreshToken = false;
-  String? _forcedAccountName;
 
   /// Registers this class as the default instance of [GoogleSignInPlatform].
   static void registerWith() {
@@ -47,68 +33,29 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> init({
-    List<String> scopes = const <String>[],
-    SignInOption signInOption = SignInOption.standard,
-    String? hostedDomain,
-    String? clientId,
-    String? forceAccountName,
-  }) {
-    return initWithParams(SignInInitParameters(
-      signInOption: signInOption,
-      scopes: scopes,
-      hostedDomain: hostedDomain,
-      clientId: clientId,
-      forceAccountName: forceAccountName,
-    ));
-  }
-
-  @override
-  Future<void> initWithParams(SignInInitParameters params) async {
-    _desiredScopes = params.scopes;
-    _serverClientId = params.serverClientId;
+  Future<void> init(InitParameters params) async {
+    _hostedDomain = params.hostedDomain;
+    _serverClientId = params.serverClientId ??
+        await _credentialManaagerApi.getGoogleServicesJsonServerClientId();
     // The clientId parameter is not supported on Android.
     // Android apps are identified by their package name and the SHA-1 of their signing key.
-    _hostedDomain = params.hostedDomain;
-    _forceCodeForRefreshToken = params.forceCodeForRefreshToken;
-    _forcedAccountName = params.forceAccountName;
-    // TODO(stuartmorgan): Consider adding a prepareGetCredentials call here.
   }
 
   @override
-  Future<GoogleSignInUserData?> signInSilently() async {
-    // Attempt to authorize without user interaction.
+  Future<AuthenticationResults?> attemptLightweightAuthentication(
+      AttemptLightweightAuthenticationParameters params) async {
     final PlatformGoogleIdTokenCredential? credential = await _authenticate(
       filterToAuthorized: true,
       autoSelectEnabled: true,
     );
-    if (credential == null) {
-      return null;
-    }
-
-    // For behavioral compatibility with the current plugin API, also attempt
-    // to authorize scopes silently.
-    // TODO(stuartmorgan): Restructure the plugin API to eliminate the need for
-    // this; see https://github.com/flutter/flutter/issues/119300.
-    final PlatformAuthorizationResult? authorization = await _authorize(
-        promptIfUnauthorized: false,
-        scopes: _desiredScopes,
-        accountEmail: _forcedAccountName);
-    if (authorization == null) {
-      return null;
-    }
-
-    return GoogleSignInUserData(
-        email: credential.id,
-        id: credential.id,
-        idToken: credential.idToken,
-        serverAuthCode: authorization.serverAuthCode,
-        displayName: credential.displayName,
-        photoUrl: credential.profilePictureUri);
+    return credential == null
+        ? null
+        : _authenticationResultFromPlatformCredential(credential);
   }
 
   @override
-  Future<GoogleSignInUserData?> signIn() async {
+  Future<AuthenticationResults> authenticate(
+      AuthenticateParameters params) async {
     // Attempt to authorize without user interaction.
     PlatformGoogleIdTokenCredential? credential = await _authenticate(
       filterToAuthorized: true,
@@ -118,37 +65,56 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     credential ??= credential = await _authenticate(
       filterToAuthorized: false,
       autoSelectEnabled: false,
-      throwGoogleSignInCompatExceptions: true,
+      throwForNoAuth: true,
     );
+    // It's not clear from the documentation if this can happen; if it does,
+    // no information is available
     if (credential == null) {
-      return null;
+      throw const GoogleSignInException(
+          code: GoogleSignInExceptionCode.unknownError,
+          description: 'Authenticate returned no credential without an error');
     }
-
-    // For behavioral compatibility with the current plugin API, also attempt
-    // to authorize scopes.
-    // TODO(stuartmorgan): Restructure the plugin API to eliminate the need for
-    // this; see https://github.com/flutter/flutter/issues/119300.
-    final PlatformAuthorizationResult? authorization = await _authorize(
-        promptIfUnauthorized: true,
-        scopes: _desiredScopes,
-        accountEmail: _forcedAccountName);
-    if (authorization == null) {
-      return null;
-    }
-
-    return GoogleSignInUserData(
-        email: credential.id,
-        id: credential.id,
-        idToken: credential.idToken,
-        serverAuthCode: authorization.serverAuthCode,
-        displayName: credential.displayName,
-        photoUrl: credential.profilePictureUri);
+    return _authenticationResultFromPlatformCredential(credential);
   }
 
-  Future<PlatformGoogleIdTokenCredential?> _authenticate(
-      {required bool filterToAuthorized,
-      required bool autoSelectEnabled,
-      bool throwGoogleSignInCompatExceptions = false}) async {
+  @override
+  Future<void> signOut(SignOutParams params) {
+    return _credentialManaagerApi.clearCredentialState();
+  }
+
+  @override
+  Future<void> disconnect(DisconnectParams params) async {
+    // TODO(stuartmorgan): Implement this once Credential Manager adds the
+    // necessary API (or temporarily implement it with the deprecated SDK).
+
+    await signOut(const SignOutParams());
+  }
+
+  @override
+  Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
+      ClientAuthorizationTokensForScopesParameters params) async {
+    final (:String? accessToken, :String? serverAuthCode) =
+        await _authorize(params.request, requestOfflineAccess: false);
+    return accessToken == null
+        ? null
+        : ClientAuthorizationTokenData(accessToken: accessToken);
+  }
+
+  @override
+  Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
+      ServerAuthorizationTokensForScopesParameters params) async {
+    final (:String? accessToken, :String? serverAuthCode) =
+        await _authorize(params.request, requestOfflineAccess: true);
+    return serverAuthCode == null
+        ? null
+        : ServerAuthorizationTokenData(serverAuthCode: serverAuthCode);
+  }
+
+  Future<PlatformGoogleIdTokenCredential?> _authenticate({
+    required bool filterToAuthorized,
+    required bool autoSelectEnabled,
+    bool throwForNoAuth = false,
+  }) async {
     final GetCredentialResult authnResult =
         await _credentialManaagerApi.getCredential(GetCredentialRequestParams(
             filterToAuthorized: filterToAuthorized,
@@ -156,162 +122,134 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
             serverClientId: _serverClientId));
     switch (authnResult) {
       case GetCredentialFailure():
-        if (throwGoogleSignInCompatExceptions) {
-          switch (authnResult.type) {
-            // Most failures don't map directly to an existing failure, so use
-            // the previous Google Sign-In's catch-all for most cases.
-            case GetCredentialFailureType.unexpectedCredentialType:
-            case GetCredentialFailureType.interrupted:
-            case GetCredentialFailureType.noCredential:
-            case GetCredentialFailureType.providerConfigurationIssue:
-            case GetCredentialFailureType.unsupported:
-            case GetCredentialFailureType.unknown:
-              throw PlatformException(
-                  code: _errorCodeSignInFailed, message: authnResult.message);
-            case GetCredentialFailureType.canceled:
-              throw PlatformException(
-                  code: _errorCodeSignInCanceled, message: authnResult.message);
-            case GetCredentialFailureType.missingServerClientId:
-              throw PlatformException(
-                  code: _errorCodeIncorrectConfiguration,
-                  message: 'serverClientId must be provided on Android');
-          }
+        String? message = authnResult.message;
+        final GoogleSignInExceptionCode code;
+        switch (authnResult.type) {
+          case GetCredentialFailureType.noCredential:
+            if (throwForNoAuth) {
+              code = GoogleSignInExceptionCode.unknownError;
+              message = 'No credential available: $message';
+            } else {
+              return null;
+            }
+          case GetCredentialFailureType.unexpectedCredentialType:
+            // This should not actually be possible in practice, so it is
+            // grouped under providerConfigurationError instead of given a
+            // distinct code.
+            code = GoogleSignInExceptionCode.providerConfigurationError;
+            message = 'Unexpected credential type: $message';
+          case GetCredentialFailureType.interrupted:
+            code = GoogleSignInExceptionCode.interrupted;
+          case GetCredentialFailureType.providerConfigurationIssue:
+            code = GoogleSignInExceptionCode.providerConfigurationError;
+          case GetCredentialFailureType.unsupported:
+            code = GoogleSignInExceptionCode.providerConfigurationError;
+            message = 'Credential Manager not supported. $message';
+          case GetCredentialFailureType.canceled:
+            code = GoogleSignInExceptionCode.canceled;
+          case GetCredentialFailureType.missingServerClientId:
+            code = GoogleSignInExceptionCode.clientConfigurationError;
+            message = 'serverClientId must be provided on Android';
+          case GetCredentialFailureType.unknown:
+            code = GoogleSignInExceptionCode.unknownError;
         }
-        return null;
+        throw GoogleSignInException(
+            code: code, description: message, details: authnResult.details);
       case GetCredentialSuccess():
         return authnResult.credential;
     }
   }
 
-  Future<PlatformAuthorizationResult?> _authorize(
-      {required bool promptIfUnauthorized,
-      required List<String> scopes,
-      String? accountEmail,
-      bool throwGoogleSignInCompatExceptions = false}) async {
-    final AuthorizeResult authzResult = await _authorizationClientApi.authorize(
+  Future<({String? accessToken, String? serverAuthCode})> _authorize(
+      AuthorizationRequestDetails request,
+      {required bool requestOfflineAccess}) async {
+    final AuthorizeResult result = await _authorizationClientApi.authorize(
         PlatformAuthorizationRequest(
-          scopes: scopes,
-          hostedDomain: _hostedDomain,
-          serverClientIdForForcedRefreshToken:
-              _forceCodeForRefreshToken ? _serverClientId : null,
-          accountEmail: accountEmail,
-        ),
-        promptIfUnauthorized: promptIfUnauthorized);
-    switch (authzResult) {
+            scopes: request.scopes,
+            accountEmail: request.email,
+            hostedDomain: _hostedDomain,
+            serverClientIdForForcedRefreshToken:
+                requestOfflineAccess ? _serverClientId : null),
+        promptIfUnauthorized: request.promptIfUnauthorized);
+    switch (result) {
       case AuthorizeFailure():
-        if (throwGoogleSignInCompatExceptions) {
-          switch (authzResult.type) {
-            case AuthorizeFailureType.unauthorized:
-              // This is the closest error code in the legacy system, since it
-              // would be resolved by calling signIn if the user allowed access.
-              throw PlatformException(
-                  code: _errorCodeSignInRequired, message: authzResult.message);
-            case AuthorizeFailureType.noActivity:
-              throw PlatformException(
-                  code: _errorCodeUserRecoverableAuth,
-                  message: authzResult.message);
-            // Map everything else to the catch-all error for now.
-            case AuthorizeFailureType.authorizeFailure:
-            case AuthorizeFailureType.pendingIntentException:
-            case AuthorizeFailureType.apiException:
-              throw PlatformException(
-                  code: _errorCodeSignInFailed, message: authzResult.message);
-          }
+        final GoogleSignInExceptionCode code;
+        switch (result.type) {
+          case AuthorizeFailureType.unauthorized:
+            // This indicates that there was no existing authorization and
+            // prompting wasn't allowed, so just return null.
+            return (accessToken: null, serverAuthCode: null);
+          case AuthorizeFailureType.pendingIntentException:
+            code = GoogleSignInExceptionCode.canceled;
+          case AuthorizeFailureType.authorizeFailure:
+          case AuthorizeFailureType.apiException:
+            code = GoogleSignInExceptionCode.unknownError;
+          case AuthorizeFailureType.noActivity:
+            code = GoogleSignInExceptionCode.uiUnavailable;
         }
-        return null;
+        throw GoogleSignInException(
+            code: code, description: result.message, details: result.details);
       case PlatformAuthorizationResult():
-        return authzResult;
+        final String? accessToken = result.accessToken;
+        if (accessToken == null) {
+          return (accessToken: null, serverAuthCode: null);
+        }
+        return (
+          accessToken: accessToken,
+          serverAuthCode: result.serverAuthCode,
+        );
     }
   }
 
-  @override
-  Future<GoogleSignInTokenData> getTokens(
-      {required String email, bool? shouldRecoverAuth = true}) async {
-    final bool promptIfUnauthorized = shouldRecoverAuth ?? false;
-    // TODO(stuartmorgan): Eliminate or restructure this method in the new API,
-    // since it mixes tokens from different steps.
-    // See https://github.com/flutter/flutter/issues/119300.
-    final PlatformAuthorizationResult? authorization = await _authorize(
-        promptIfUnauthorized: promptIfUnauthorized,
-        scopes: _desiredScopes,
-        accountEmail: email,
-        throwGoogleSignInCompatExceptions: true);
-    if (authorization == null) {
-      // This is explicitly documented behavior in the app-facing package,
-      // unfortunately, so replicate it here.
-      throw PlatformException(
-          code: promptIfUnauthorized
-              ? 'failed_to_recover_auth'
-              : 'user_recoverable_auth');
-    }
+  AuthenticationResults _authenticationResultFromPlatformCredential(
+      PlatformGoogleIdTokenCredential credential) {
+    // GoogleIdTokenCredential's ID field is documented to return the
+    // email address, not what the other platform SDKs call an ID.
+    // The account ID returned by other platform SDKs and the legacy
+    // Google Sign In for Android SDK is no longer directly exposed, so it
+    // need to be extracted from the token. See
+    // https://stackoverflow.com/a/78064720.
+    // The ID should always be availabe from the token, but if for some reason
+    // it can't be extracted, use the email address instead as a reasonable
+    // fallback method of identifying the account.
+    final String email = credential.id;
+    final String userId = _idFromIdToken(credential.idToken) ?? email;
 
-    return GoogleSignInTokenData(
-      // idToken isn't available here; the app-facing code already caches it
-      // for that reason, so for now just rely on that. After an API rework,
-      // that shouldn't be necessary.
-      accessToken: authorization.accessToken,
-      serverAuthCode: authorization.serverAuthCode,
+    return AuthenticationResults(
+      user: GoogleSignInUserData(
+          email: email,
+          id: userId,
+          displayName: credential.displayName,
+          photoUrl: credential.profilePictureUri),
+      authenticationTokens:
+          AuthenticationTokenData(idToken: credential.idToken),
     );
   }
+}
 
-  @override
-  Future<void> signOut() {
-    return _credentialManaagerApi.clearCredentialState();
-  }
+/// A codec that can encode/decode JWT payloads.
+///
+/// See https://www.rfc-editor.org/rfc/rfc7519#section-3
+final Codec<Object?, String> _jwtCodec = json.fuse(utf8).fuse(base64);
 
-  @override
-  Future<void> disconnect() async {
-    // This was a Google Sign-In API that does not appear to have a Credential
-    // Manager equivalent; just sign out instead.
-    return signOut();
-  }
-
-  @override
-  Future<bool> isSignedIn() async {
-    // TODO(stuartmorgan): Eliminate or restructure this method in the new API,
-    // since this concept doesn't seem to exist any more.
-    // See https://github.com/flutter/flutter/issues/119300.
-    // For now, attempt a silent sign-in and see if it works.
-    return (await _authenticate(
-            filterToAuthorized: true, autoSelectEnabled: true)) !=
-        null;
-  }
-
-  @override
-  Future<void> clearAuthCache({required String token}) async {
-    // This was a Google Sign-In API that does not appear to have a Credential
-    // Manager equivalent.
-  }
-
-  @override
-  Future<bool> requestScopes(List<String> scopes) async {
-    final AuthorizeResult result = await _authorizationClientApi.authorize(
-        PlatformAuthorizationRequest(
-            scopes: scopes, hostedDomain: _hostedDomain),
-        promptIfUnauthorized: true);
-    switch (result) {
-      case AuthorizeFailure():
-        // TODO(stuartmorgan): Look into how failure should be communicated better.
-        return false;
-      case PlatformAuthorizationResult():
-        return true;
+/// Extracts the user ID from an idToken.
+///
+/// See https://stackoverflow.com/a/78064720
+String? _idFromIdToken(String idToken) {
+  final RegExp jwtTokenRegexp = RegExp(
+      r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$');
+  final RegExpMatch? match = jwtTokenRegexp.firstMatch(idToken);
+  final String? payload = match?.namedGroup('payload');
+  if (payload != null) {
+    try {
+      final Map<String, Object?>? contents =
+          _jwtCodec.decode(base64.normalize(payload)) as Map<String, Object?>?;
+      if (contents != null) {
+        return contents['sub'] as String?;
+      }
+    } catch (_) {
+      return null;
     }
   }
-
-  @override
-  Future<bool> canAccessScopes(
-    List<String> scopes, {
-    String? accessToken,
-  }) async {
-    final AuthorizeResult result = await _authorizationClientApi.authorize(
-        PlatformAuthorizationRequest(
-            scopes: scopes, hostedDomain: _hostedDomain),
-        promptIfUnauthorized: false);
-    switch (result) {
-      case AuthorizeFailure():
-        return false;
-      case PlatformAuthorizationResult():
-        return true;
-    }
-  }
+  return null;
 }
