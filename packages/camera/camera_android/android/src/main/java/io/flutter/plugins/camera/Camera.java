@@ -303,9 +303,8 @@ class Camera
   }
 
   /**
-   * Updates the FpsRange camera features with the appropriate FPS range. It sets
-   * the minimum and maximum fps range to the same value, as that's what is recommended
-   * for video recording.
+   * Updates the FpsRange camera features with the appropriate FPS range. It sets the minimum and
+   * maximum fps range to the same value, as that's what is recommended for video recording.
    */
   private void setFpsCameraFeatureForRecording(CameraProperties cameraProperties) {
     Integer recordingFps = null;
