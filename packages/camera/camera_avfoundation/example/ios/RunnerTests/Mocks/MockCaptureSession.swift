@@ -4,7 +4,7 @@
 
 /// Mock implementation of `FLTCaptureSession` protocol which allows injecting a custom
 /// implementation.
-class MockCaptureSession: NSObject, FLTCaptureSession {
+final class MockCaptureSession: NSObject, FLTCaptureSession {
   var setSessionPresetStub: ((AVCaptureSession.Preset) -> Void)?
   var beginConfigurationStub: (() -> Void)?
   var commitConfigurationStub: (() -> Void)?
