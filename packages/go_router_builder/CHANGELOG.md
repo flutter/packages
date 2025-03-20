@@ -1,6 +1,6 @@
 ## 2.8.3
 
-- Fix parameter generates a warning
+- Fixes warnings in generated code of iterable parameters.
 
 ## 2.8.2
 
