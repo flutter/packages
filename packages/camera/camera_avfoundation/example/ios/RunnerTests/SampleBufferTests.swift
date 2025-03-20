@@ -74,7 +74,7 @@ final class CameraSampleBufferTests: XCTestCase {
     let adaptor = MockAssetWriterInputPixelBufferAdaptor()
     let input = MockAssetWriterInput()
 
-    let configuration = createTestCameraConfiguration()
+    let configuration = CameraTestsUtils.createTestCameraConfiguration()
     configuration.mediaSettings = FCPPlatformMediaSettings.make(
       with: .medium,
       framesPerSecond: nil,
@@ -98,7 +98,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
   func testSampleBufferCallbackQueueMustBeCaptureSessionQueue() {
     let captureSessionQueue = DispatchQueue(label: "testing")
-    let camera = createCameraWithCaptureSessionQueue(captureSessionQueue)
+    let camera = CameraTestsUtils.createCameraWithCaptureSessionQueue(captureSessionQueue)
     XCTAssertEqual(
       captureSessionQueue, camera.captureVideoOutput.avOutput.sampleBufferCallbackQueue,
       "Sample buffer callback queue must be the capture session queue.")
@@ -106,7 +106,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
   func testCopyPixelBuffer() {
     let (camera, _, _, _, connectionMock) = createCamera()
-    let capturedSampleBuffer = createTestSampleBuffer()
+    let capturedSampleBuffer = CameraTestsUtils.createTestSampleBuffer()
     let capturedPixelBuffer = CMSampleBufferGetImageBuffer(capturedSampleBuffer)!
     // Mimic sample buffer callback when captured a new video sample.
     camera.captureOutput(
@@ -120,7 +120,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
   func testDidOutputSampleBuffer_mustNotChangeSampleBufferRetainCountAfterPauseResumeRecording() {
     let (camera, _, _, _, connectionMock) = createCamera()
-    let sampleBuffer = createTestSampleBuffer()
+    let sampleBuffer = CameraTestsUtils.createTestSampleBuffer()
 
     let initialRetainCount = CFGetRetainCount(sampleBuffer)
 
@@ -149,8 +149,8 @@ final class CameraSampleBufferTests: XCTestCase {
       return status
     }
 
-    let videoSample = createTestSampleBuffer()
-    let audioSample = createTestAudioSampleBuffer()
+    let videoSample = CameraTestsUtils.createTestSampleBuffer()
+    let audioSample = CameraTestsUtils.createTestAudioSampleBuffer()
 
     var writtenSamples: [String] = []
     adaptorMock.appendPixelBufferStub = { buffer, time in
@@ -177,8 +177,8 @@ final class CameraSampleBufferTests: XCTestCase {
   func testDidOutputSampleBufferSampleTimesMustBeNumericAfterPauseResume() {
     let (camera, writerMock, adaptorMock, inputMock, connectionMock) = createCamera()
 
-    let videoSample = createTestSampleBuffer()
-    let audioSample = createTestAudioSampleBuffer()
+    let videoSample = CameraTestsUtils.createTestSampleBuffer()
+    let audioSample = CameraTestsUtils.createTestAudioSampleBuffer()
 
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
@@ -220,7 +220,7 @@ final class CameraSampleBufferTests: XCTestCase {
   func testDidOutputSampleBufferMustNotAppendSampleWhenReadyForMoreMediaDataIsFalse() {
     let (camera, _, adaptorMock, inputMock, connectionMock) = createCamera()
 
-    let videoSample = createTestSampleBuffer()
+    let videoSample = CameraTestsUtils.createTestSampleBuffer()
 
     var sampleAppended = false
     adaptorMock.appendPixelBufferStub = { buffer, time in
@@ -273,7 +273,7 @@ final class CameraSampleBufferTests: XCTestCase {
   func testStartWritingShouldNotBeCalledBetweenSampleCreationAndAppending() {
     let (camera, writerMock, adaptorMock, inputMock, connectionMock) = createCamera()
 
-    let videoSample = createTestSampleBuffer()
+    let videoSample = CameraTestsUtils.createTestSampleBuffer()
 
     var startWritingCalled = false
     writerMock.startWritingStub = {
@@ -303,7 +303,7 @@ final class CameraSampleBufferTests: XCTestCase {
   }
 
   func testStartVideoRecordingWithCompletionShouldNotDisableMixWithOthers() {
-    let cam = createCameraWithCaptureSessionQueue(DispatchQueue(label: "testing"))
+    let cam = CameraTestsUtils.createCameraWithCaptureSessionQueue(DispatchQueue(label: "testing"))
 
     try? AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
     cam.startVideoRecording(completion: { error in }, messengerForStreaming: nil)

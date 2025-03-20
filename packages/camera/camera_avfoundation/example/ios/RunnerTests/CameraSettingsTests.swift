@@ -118,7 +118,7 @@ final class CameraSettingsTests: XCTestCase {
     )
     let injectedWrapper = TestMediaSettingsAVWrapper(test: self)
 
-    let configuration = createTestCameraConfiguration()
+    let configuration = CameraTestsUtils.createTestCameraConfiguration()
     configuration.mediaSettingsWrapper = injectedWrapper
     configuration.mediaSettings = settings
     let camera = FLTCam(configuration: configuration, error: nil)
@@ -192,7 +192,7 @@ final class CameraSettingsTests: XCTestCase {
       enableAudio: testEnableAudio
     )
 
-    let configuration = createTestCameraConfiguration()
+    let configuration = CameraTestsUtils.createTestCameraConfiguration()
     configuration.mediaSettings = settings
     let camera = FLTCam(configuration: configuration, error: nil)
 
