@@ -4,13 +4,10 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-import 'src/method_channel_google_sign_in.dart';
 import 'src/types.dart';
 
-export 'src/method_channel_google_sign_in.dart';
 export 'src/types.dart';
 
 /// The interface that implementations of google_sign_in must implement.
@@ -27,32 +24,19 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  /// Only mock implementations should set this to `true`.
+  /// The instance of [GoogleSignInPlatform] to use.
   ///
-  /// Mockito mocks implement this class with `implements` which is forbidden
-  /// (see class docs). This property provides a backdoor for mocks to skip the
-  /// verification that the class isn't implemented with `implements`.
-  @visibleForTesting
-  @Deprecated('Use MockPlatformInterfaceMixin instead')
-  bool get isMock => false;
-
-  /// The default instance of [GoogleSignInPlatform] to use.
-  ///
-  /// Platform-specific plugins should override this with their own
+  /// Platform-implementations should override this with their own
   /// platform-specific class that extends [GoogleSignInPlatform] when they
   /// register themselves.
   ///
   /// Defaults to [MethodChannelGoogleSignIn].
   static GoogleSignInPlatform get instance => _instance;
 
-  static GoogleSignInPlatform _instance = MethodChannelGoogleSignIn();
+  static GoogleSignInPlatform _instance = _PlaceholderImplementation();
 
-  // TODO(amirh): Extract common platform interface logic.
-  // https://github.com/flutter/flutter/issues/43368
   static set instance(GoogleSignInPlatform instance) {
-    if (!instance.isMock) {
-      PlatformInterface.verify(instance, _token);
-    }
+    PlatformInterface.verify(instance, _token);
     _instance = instance;
   }
 
@@ -158,3 +142,5 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   /// to the `onCurrentUserChanged` Stream of the plugin.
   Stream<GoogleSignInUserData?>? get userDataEvents => null;
 }
+
+class _PlaceholderImplementation extends GoogleSignInPlatform {}
