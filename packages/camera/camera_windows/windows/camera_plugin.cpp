@@ -4,6 +4,8 @@
 
 #include "camera_plugin.h"
 
+#include <flutter/event_channel.h>
+#include <flutter/event_stream_handler_functions.h>
 #include <flutter/flutter_view.h>
 #include <flutter/method_channel.h>
 #include <flutter/plugin_registrar_windows.h>
@@ -17,11 +19,13 @@
 #include <cassert>
 #include <chrono>
 #include <memory>
+#include <sstream>
 
 #include "capture_device_info.h"
 #include "com_heap_ptr.h"
 #include "messages.g.h"
 #include "string_utils.h"
+#include "task_runner_window.h"
 
 namespace camera_windows {
 using flutter::EncodableList;
@@ -131,7 +135,8 @@ CameraPlugin::CameraPlugin(flutter::TextureRegistrar* texture_registrar,
                            flutter::BinaryMessenger* messenger)
     : texture_registrar_(texture_registrar),
       messenger_(messenger),
-      camera_factory_(std::make_unique<CameraFactoryImpl>()) {}
+      camera_factory_(std::make_unique<CameraFactoryImpl>()),
+      task_runner_(std::make_shared<TaskRunnerWindow>()) {}
 
 CameraPlugin::CameraPlugin(flutter::TextureRegistrar* texture_registrar,
                            flutter::BinaryMessenger* messenger,
@@ -223,8 +228,8 @@ void CameraPlugin::Create(const std::string& camera_name,
 
   if (camera->AddPendingIntResult(PendingResultType::kCreateCamera,
                                   std::move(result))) {
-    bool initialized =
-        camera->InitCamera(texture_registrar_, messenger_, settings);
+    bool initialized = camera->InitCamera(texture_registrar_, messenger_,
+                                          settings, task_runner_);
     if (initialized) {
       cameras_.push_back(std::move(camera));
     }
@@ -339,6 +344,44 @@ void CameraPlugin::StopVideoRecording(
     assert(cc);
     cc->StopRecord();
   }
+}
+
+ErrorOr<std::string> CameraPlugin::StartImageStream(int64_t camera_id) {
+  Camera* camera = GetCameraByCameraId(camera_id);
+  if (!camera) {
+    return FlutterError("camera_error", "Camera not created");
+  }
+
+  CaptureController* cc = camera->GetCaptureController();
+  assert(cc);
+
+  if (cc->IsStreaming()) {
+    return FlutterError("camera_error",
+                        "Images from camera are already streaming");
+  }
+
+  std::ostringstream event_channel_name;
+  event_channel_name << "plugins.flutter.io/camera_windows/imageStream/"
+                     << camera_id;
+
+  auto frame_event_channel =
+      flutter::EventChannel(messenger_, event_channel_name.str(),
+                            &flutter::StandardMethodCodec::GetInstance());
+
+  auto event_channel_handler =
+      std::make_unique<flutter::StreamHandlerFunctions<>>(
+          [cc](auto arguments, auto events) {
+            cc->StartImageStream(std::move(events));
+            return nullptr;
+          },
+          [cc](auto arguments) {
+            cc->StopImageStream();
+            return nullptr;
+          });
+
+  frame_event_channel.SetStreamHandler(std::move(event_channel_handler));
+
+  return event_channel_name.str();
 }
 
 void CameraPlugin::TakePicture(

@@ -6,6 +6,7 @@
 #define PACKAGES_CAMERA_CAMERA_WINDOWS_WINDOWS_CAPTURE_CONTROLLER_H_
 
 #include <d3d11.h>
+#include <flutter/event_channel.h>
 #include <flutter/texture_registrar.h>
 #include <mfapi.h>
 #include <mfcaptureengine.h>
@@ -24,6 +25,7 @@
 #include "photo_handler.h"
 #include "preview_handler.h"
 #include "record_handler.h"
+#include "task_runner.h"
 #include "texture_handler.h"
 
 namespace camera_windows {
@@ -67,9 +69,12 @@ class CaptureController {
   // device_id:         A string that holds information of camera device id to
   //                    be captured.
   // media_settings:    Settings controlling capture behavior.
-  virtual bool InitCaptureDevice(
-      TextureRegistrar* texture_registrar, const std::string& device_id,
-      const PlatformMediaSettings& media_settings) = 0;
+  // task_runner:       A task runner for posting image frames via a platform
+  //                    thread.
+  virtual bool InitCaptureDevice(TextureRegistrar* texture_registrar,
+                                 const std::string& device_id,
+                                 const PlatformMediaSettings& media_settings,
+                                 std::shared_ptr<TaskRunner> task_runner) = 0;
 
   // Returns preview frame width
   virtual uint32_t GetPreviewWidth() const = 0;
@@ -91,6 +96,16 @@ class CaptureController {
 
   // Stops the current video recording.
   virtual void StopRecord() = 0;
+
+  // Starts image streaming.
+  virtual void StartImageStream(
+      std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink) = 0;
+
+  // Stops the current image streaming.
+  virtual void StopImageStream() = 0;
+
+  // Returns true if an image stream is currently running.
+  virtual bool IsStreaming() const = 0;
 
   // Captures a still photo.
   virtual void TakePicture(const std::string& file_path) = 0;
@@ -117,7 +132,8 @@ class CaptureControllerImpl : public CaptureController,
   // CaptureController
   bool InitCaptureDevice(TextureRegistrar* texture_registrar,
                          const std::string& device_id,
-                         const PlatformMediaSettings& media_settings) override;
+                         const PlatformMediaSettings& media_settings,
+                         std::shared_ptr<TaskRunner> task_runner) override;
   uint32_t GetPreviewWidth() const override { return preview_frame_width_; }
   uint32_t GetPreviewHeight() const override { return preview_frame_height_; }
   void StartPreview() override;
@@ -125,6 +141,13 @@ class CaptureControllerImpl : public CaptureController,
   void ResumePreview() override;
   void StartRecord(const std::string& file_path) override;
   void StopRecord() override;
+  void StartImageStream(
+      std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink)
+      override;
+  void StopImageStream() override;
+  bool IsStreaming() const override {
+    return static_cast<bool>(image_stream_sink_);
+  }
   void TakePicture(const std::string& file_path) override;
 
   // CaptureEngineObserver
@@ -219,8 +242,10 @@ class CaptureControllerImpl : public CaptureController,
   std::unique_ptr<PreviewHandler> preview_handler_;
   std::unique_ptr<PhotoHandler> photo_handler_;
   std::unique_ptr<TextureHandler> texture_handler_;
+  std::shared_ptr<TaskRunner> task_runner_;
+  std::shared_ptr<flutter::EventSink<flutter::EncodableValue>>
+      image_stream_sink_;
   CaptureControllerListener* capture_controller_listener_;
-
   std::string video_device_id_;
   CaptureEngineState capture_engine_state_ =
       CaptureEngineState::kNotInitialized;
