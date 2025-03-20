@@ -302,7 +302,12 @@ class Camera
             .build();
   }
 
-  private void setFpsCameraFeature(CameraProperties cameraProperties) {
+  /**
+   * Updates the FpsRange camera features with the appropriate FPS range. It sets
+   * the minimum and maximum fps range to the same value, as that's what is recommended
+   * for video recording.
+   */
+  private void setFpsCameraFeatureForRecording(CameraProperties cameraProperties) {
     Integer recordingFps = null;
 
     if (videoCaptureSettings.fps != null && videoCaptureSettings.fps.intValue() > 0) {
@@ -1258,7 +1263,7 @@ class Camera
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
     // Update camera features with the desired fps range
-    setFpsCameraFeature(cameraProperties);
+    setFpsCameraFeatureForRecording(cameraProperties);
   }
 
   private void setStreamHandler(EventChannel imageStreamChannel) {
@@ -1382,7 +1387,7 @@ class Camera
             videoCaptureSettings.resolutionPreset);
     cameraFeatures.setAutoFocus(
         cameraFeatureFactory.createAutoFocusFeature(cameraProperties, true));
-    setFpsCameraFeature(cameraProperties);
+    setFpsCameraFeatureForRecording(cameraProperties);
     try {
       open(imageFormatGroup);
     } catch (CameraAccessException e) {
