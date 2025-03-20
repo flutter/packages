@@ -881,7 +881,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
 }
 
 class _VideoPlayerWithRotation extends StatelessWidget {
-  const _VideoPlayerWithRotation({required this.rotation, required this.child});
+  const _VideoPlayerWithRotation({required this.rotation, required this.child})
+      : assert(rotation % 90 == 0, 'Rotation must be a multiple of 90');
+
   final int rotation;
   final Widget child;
 
@@ -889,9 +891,6 @@ class _VideoPlayerWithRotation extends StatelessWidget {
   Widget build(BuildContext context) {
     if (rotation == 0) {
       return child;
-    }
-    if (rotation % 90 != 0) {
-      throw ArgumentError('Rotation must be a multiple of 90');
     }
     return RotatedBox(
       quarterTurns: rotation ~/ 90,
