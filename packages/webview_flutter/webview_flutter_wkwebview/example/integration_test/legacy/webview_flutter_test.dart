@@ -1191,13 +1191,13 @@ Future<void> main() async {
   );
 }
 
-// JavaScript booleans evaluate to different string values on Android and iOS.
-// This utility method returns the string boolean value of the current platform.
-String _webviewBool(bool value) {
-  if (defaultTargetPlatform == TargetPlatform.iOS) {
-    return value ? '1' : '0';
+// JavaScript booleans evaluate to different string values on different devices.
+// This utility method returns a matcher that match on either representation.
+Matcher _webviewBool(bool value) {
+  if (value) {
+    return anyOf('true', '1');
   }
-  return value ? 'true' : 'false';
+  return anyOf('false', '0');
 }
 
 /// Returns the value used for the HTTP User-Agent: request header in subsequent HTTP requests.
