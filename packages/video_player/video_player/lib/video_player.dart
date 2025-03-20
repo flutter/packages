@@ -888,9 +888,11 @@ class _VideoPlayerWithRotation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    assert(rotation % 90 == 0, 'Rotation must be a multiple of 90');
-    if (rotation % 90 != 0 || rotation == 0) {
+    if (rotation == 0) {
       return child;
+    }
+    if (rotation % 90 != 0) {
+      throw ArgumentError('Rotation must be a multiple of 90');
     }
     return RotatedBox(
       quarterTurns: rotation ~/ 90,
