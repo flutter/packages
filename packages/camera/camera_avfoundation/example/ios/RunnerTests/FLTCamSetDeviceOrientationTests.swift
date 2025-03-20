@@ -9,7 +9,7 @@ import XCTest
 
 final class FLTCamSetDeviceOrientationTests: XCTestCase {
   private func createCamera() -> (FLTCam, MockCaptureConnection, MockCaptureConnection) {
-    let configuration = createTestCameraConfiguration()
+    let configuration = CameraTestsUtils.createTestCameraConfiguration()
     let camera = FLTCam(configuration: configuration, error: nil)
 
     let mockCapturePhotoOutput = MockCapturePhotoOutput()
