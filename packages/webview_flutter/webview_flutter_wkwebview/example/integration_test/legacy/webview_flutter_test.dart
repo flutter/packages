@@ -404,7 +404,7 @@ Future<void> main() async {
         expect(isPaused, _webviewBool(true));
       },
       // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
-      // skip: Platform.isIOS
+      skip: Platform.isIOS
     );
 
     testWidgets(
@@ -472,7 +472,7 @@ Future<void> main() async {
         expect(isPaused, _webviewBool(false));
       },
       // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
-      // skip: Platform.isIOS
+      skip: Platform.isIOS
     );
 
     testWidgets('Video plays inline when allowsInlineMediaPlayback is true',
