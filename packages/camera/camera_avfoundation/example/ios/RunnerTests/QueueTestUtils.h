@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// This method is needed for comaptibility of Swift tests with Objective-C code.
 /// In Swift, the API for settinng key-value pairs on a queue is different, so Swift tests
 /// need to call this method to set the key-value pair on the queue in a way that's
-/// compatible withn the existing Objective-C code.
-extern void FLTdispatchQueueSetSpecific(dispatch_queue_t queue, const void *key);
+/// compatible with the existing Objective-C code.
+extern void FLTDispatchQueueSetSpecific(dispatch_queue_t queue, const void *key);
 
 NS_ASSUME_NONNULL_END
