@@ -291,7 +291,46 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      writeClassEquality(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
+  }
+
+  @override
+  void writeClassEquality(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeScoped('override fun equals(other: Any?): Boolean {', '}', () {
+      indent.writeScoped('if (other !is ${classDefinition.name}) {', '}', () {
+        indent.writeln('return false');
+      });
+      indent.writeScoped('if (this === other) {', '}', () {
+        indent.writeln('return true');
+      });
+      indent.write('return ');
+      indent.format(classDefinition.fields
+          .map((NamedType field) => field.type.baseName == 'List' ||
+                  field.type.baseName == 'Float64List' ||
+                  field.type.baseName == 'Int32List' ||
+                  field.type.baseName == 'Int64List' ||
+                  field.type.baseName == 'Uint8List' ||
+                  field.type.baseName == 'Map'
+              ? 'deepEquals${generatorOptions.fileSpecificClassNameComponent}(${field.name}, other.${field.name})'
+              : '${field.name} == other.${field.name}')
+          .join('\n&& '));
+    });
+
+    indent.newln();
+    indent.writeln('override fun hashCode(): Int = toList().hashCode()');
   }
 
   void _writeDataClassSignature(
@@ -507,7 +546,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.newln();
     if (root.containsEventChannel) {
       indent.writeln(
-          'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName());');
+          'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName())');
       indent.newln();
     }
   }
@@ -1219,6 +1258,36 @@ if (wrapped == null) {
     });
   }
 
+  void _writeDeepEquals(InternalKotlinOptions generatorOptions, Indent indent) {
+    indent.format('''
+private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?, b: Any?): Boolean {
+  if (a is ByteArray && b is ByteArray) {
+      return a.contentEquals(b)
+  }
+  if (a is IntArray && b is IntArray) {
+      return a.contentEquals(b)
+  }
+  if (a is LongArray && b is LongArray) {
+      return a.contentEquals(b)
+  }
+  if (a is DoubleArray && b is DoubleArray) {
+      return a.contentEquals(b)
+  }
+  if (a is Array<*> && b is Array<*>) {
+    return a.size == b.size &&
+        a.indices.all{ deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it]) }
+  }
+  if (a is Map<*, *> && b is Map<*, *>) {
+    return a.size == b.size && a.keys.all {
+        (b as Map<Any?, Any?>).containsKey(it) &&
+        deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it])
+    }
+  }
+  return a == b;
+}
+    ''');
+  }
+
   @override
   void writeGeneralUtilities(
     InternalKotlinOptions generatorOptions,
@@ -1235,6 +1304,13 @@ if (wrapped == null) {
     }
     if (generatorOptions.includeErrorClass) {
       _writeErrorClass(generatorOptions, indent);
+    }
+    if (root.classes.isNotEmpty &&
+        root.classes.any((Class dataClass) => dataClass.fields.any(
+            (NamedType field) =>
+                field.type.baseName.startsWith('List') ||
+                field.type.baseName.startsWith('Map')))) {
+      _writeDeepEquals(generatorOptions, indent);
     }
   }
 
