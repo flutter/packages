@@ -214,6 +214,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         indent.writeln('$datatype ${field.name};');
         indent.newln();
       }
+      _writeToList(indent, classDefinition);
+      indent.newln();
       writeClassEncode(
         generatorOptions,
         root,
@@ -223,6 +225,14 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       );
       indent.newln();
       writeClassDecode(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
+      indent.newln();
+      writeClassEquality(
         generatorOptions,
         root,
         indent,
@@ -248,6 +258,17 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
   }
 
+  void _writeToList(Indent indent, Class classDefinition) {
+    indent.writeScoped('List<Object?> _toList() {', '}', () {
+      indent.writeScoped('return <Object?>[', '];', () {
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
+          indent.writeln('${field.name},');
+        }
+      });
+    });
+  }
+
   @override
   void writeClassEncode(
     InternalDartOptions generatorOptions,
@@ -259,14 +280,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.write('Object encode() ');
     indent.addScoped('{', '}', () {
       indent.write(
-        'return <Object?>',
+        'return _toList();',
       );
-      indent.addScoped('[', '];', () {
-        for (final NamedType field
-            in getFieldsInSerializationOrder(classDefinition)) {
-          indent.writeln('${field.name},');
-        }
-      });
     });
   }
 
@@ -315,6 +330,48 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         });
       });
     });
+  }
+
+  @override
+  void writeClassEquality(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeln('@override');
+    indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
+    indent.writeScoped('bool operator ==(Object other) {', '}', () {
+      indent.writeScoped(
+          'if (other is! ${classDefinition.name} || other.runtimeType != runtimeType) {',
+          '}', () {
+        indent.writeln('return false;');
+      });
+      indent.writeScoped('if (identical(this, other)) {', '}', () {
+        indent.writeln('return true;');
+      });
+      indent.writeScoped('return ', '', () {
+        indent.format(
+            classDefinition.fields
+                .map((NamedType field) => field.type.baseName == 'List' ||
+                        field.type.baseName == 'Float64List' ||
+                        field.type.baseName == 'Int32List' ||
+                        field.type.baseName == 'Int64List' ||
+                        field.type.baseName == 'Uint8List' ||
+                        field.type.baseName == 'Map'
+                    ? '_deepEquals(${field.name}, other.${field.name})'
+                    : '${field.name} == other.${field.name}')
+                .join('\n&& '),
+            trailingNewline: false);
+        indent.addln(';');
+      }, addTrailingNewline: false);
+    });
+    indent.newln();
+    indent.writeln('@override');
+    indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
+    indent.writeln('int get hashCode => Object.hashAll(_toList())');
+    indent.addln(';');
   }
 
   @override
@@ -1031,6 +1088,13 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         generatorOptions.testOut != null) {
       _writeWrapResponse(generatorOptions, root, indent);
     }
+    if (root.classes.isNotEmpty &&
+        root.classes.any((Class dataClass) => dataClass.fields.any(
+            (NamedType field) =>
+                field.type.baseName.startsWith('List') ||
+                field.type.baseName.startsWith('Map')))) {
+      _writeDeepEquals(indent);
+    }
   }
 
   /// Writes [wrapResponse] method.
@@ -1048,6 +1112,25 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
       indent.writeln(
           'return <Object?>[error.code, error.message, error.details];');
     });
+  }
+
+  void _writeDeepEquals(Indent indent) {
+    indent.format(r'''
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
+    return a.length == b.length && keys.every((Object? key) =>
+        (b as Map<Object?, Object?>).containsKey(key) &&
+        _deepEquals(a[key], b[key]));
+  }
+  return a == b;
+}
+    ''');
   }
 
   void _writeCreateConnectionError(Indent indent) {

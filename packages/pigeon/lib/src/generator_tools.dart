@@ -14,7 +14,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '25.0.0';
+const String pigeonVersion = '25.1.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -119,7 +119,7 @@ class Indent {
       _sink.write(begin + newline);
     }
     nest(nestCount, func);
-    if (end != null) {
+    if (end != null && end.isNotEmpty) {
       _sink.write(str() + end);
       if (addTrailingNewline) {
         _sink.write(newline);
@@ -130,12 +130,18 @@ class Indent {
   /// Like `addScoped` but writes the current indentation level.
   void writeScoped(
     String? begin,
-    String end,
+    String? end,
     Function func, {
+    int nestCount = 1,
     bool addTrailingNewline = true,
   }) {
-    addScoped(str() + (begin ?? ''), end, func,
-        addTrailingNewline: addTrailingNewline);
+    addScoped(
+      str() + (begin ?? ''),
+      end,
+      func,
+      nestCount: nestCount,
+      addTrailingNewline: addTrailingNewline,
+    );
   }
 
   /// Scoped increase of the indent level.
