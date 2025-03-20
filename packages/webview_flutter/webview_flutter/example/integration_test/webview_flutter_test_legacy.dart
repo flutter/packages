@@ -380,7 +380,7 @@ Future<void> main() async {
         expect(isPaused, _webviewBool(true));
       },
       // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
-      skip: Platform.isIOS
+      retry: Platform.isIOS ? 2 : null,
     );
 
     testWidgets(
@@ -445,7 +445,7 @@ Future<void> main() async {
         expect(isPaused, _webviewBool(false));
       },
       // Flakes on iOS: https://github.com/flutter/flutter/issues/164632
-      skip: Platform.isIOS
+      retry: Platform.isIOS ? 2 : null,
     );
 
     testWidgets('Video plays inline when allowsInlineMediaPlayback is true',
@@ -1313,6 +1313,7 @@ Future<String> getTestVideoBase64() async {
             function play() {
               var video = document.getElementById("video");
               video.play();
+              video.removeEventListener('timeupdate', videoTimeUpdateHandler);
               video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
             }
             function videoTimeUpdateHandler(e) {

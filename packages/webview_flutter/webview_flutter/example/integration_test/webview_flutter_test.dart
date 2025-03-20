@@ -1036,6 +1036,7 @@ Future<String> getTestVideoBase64() async {
             function play() {
               var video = document.getElementById("video");
               video.play();
+              video.removeEventListener('timeupdate', videoTimeUpdateHandler);
               video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
             }
             function videoTimeUpdateHandler(e) {
