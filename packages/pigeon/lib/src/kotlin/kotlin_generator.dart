@@ -1308,8 +1308,9 @@ private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?
     if (root.classes.isNotEmpty &&
         root.classes.any((Class dataClass) => dataClass.fields.any(
             (NamedType field) =>
-                field.type.baseName.startsWith('List') ||
-                field.type.baseName.startsWith('Map')))) {
+                _kotlinTypeForBuiltinDartType(field.type) != null &&
+                (field.type.baseName.contains('List') ||
+                    field.type.baseName.startsWith('Map'))))) {
       _writeDeepEquals(generatorOptions, indent);
     }
   }
