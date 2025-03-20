@@ -50,6 +50,7 @@ class WebKitWebViewControllerCreationParams
     },
     this.allowsInlineMediaPlayback = false,
     this.limitsNavigationsToAppBoundDomains = false,
+    this.readAccessURLProvider = path.dirname,
     @visibleForTesting PigeonInstanceManager? instanceManager,
   }) : _instanceManager = instanceManager ?? PigeonInstanceManager.instance {
     _configuration = webKitProxy.newWKWebViewConfiguration();
@@ -92,6 +93,7 @@ class WebKitWebViewControllerCreationParams
     },
     bool allowsInlineMediaPlayback = false,
     bool limitsNavigationsToAppBoundDomains = false,
+    String Function(String) readAccessURLProvider = path.dirname,
     @visibleForTesting PigeonInstanceManager? instanceManager,
   }) : this(
           webKitProxy: webKitProxy,
@@ -99,6 +101,7 @@ class WebKitWebViewControllerCreationParams
           allowsInlineMediaPlayback: allowsInlineMediaPlayback,
           limitsNavigationsToAppBoundDomains:
               limitsNavigationsToAppBoundDomains,
+          readAccessURLProvider: readAccessURLProvider,
           instanceManager: instanceManager,
         );
 
@@ -126,6 +129,19 @@ class WebKitWebViewControllerCreationParams
   /// native library.
   @visibleForTesting
   final WebKitProxy webKitProxy;
+
+  /// Specifies the path to a file or directory containing content
+  /// that can be accessed by the system when using the [loadFile] method.
+  /// The argument of the function, matches the path provided to
+  /// [loadFile] method.
+  ///
+  /// Refer to the related issue for details on the use case:
+  /// https://github.com/flutter/flutter/issues/136479
+  ///
+  /// Should not return an empty string.
+  /// If not set, it defaults to the parent directory of the specified file,
+  /// allowing access to other resources in parent folder (e.g., *.css, *.js).
+  final String Function(String) readAccessURLProvider;
 
   // Maintains instances used to communicate with the native objects they
   // represent.
@@ -373,7 +389,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   Future<void> loadFile(String absoluteFilePath) {
     return _webView.loadFileUrl(
       absoluteFilePath,
-      path.dirname(absoluteFilePath),
+      _webKitParams.readAccessURLProvider(absoluteFilePath),
     );
   }
 
