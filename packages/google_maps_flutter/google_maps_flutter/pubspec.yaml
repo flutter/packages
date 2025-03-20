@@ -21,9 +21,9 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter_android: ^2.15.0
-  google_maps_flutter_ios: ^2.14.0
-  google_maps_flutter_platform_interface: ^2.10.0
+  google_maps_flutter_android: ^2.16.0
+  google_maps_flutter_ios: ^2.15.0
+  google_maps_flutter_platform_interface: ^2.11.0
   google_maps_flutter_web: ^0.5.12
 
 dev_dependencies:
@@ -41,3 +41,10 @@ topics:
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /example/web/index.html
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  google_maps_flutter_android:
+    path: ../google_maps_flutter_android
+  google_maps_flutter_ios:
+    path: ../google_maps_flutter_ios
