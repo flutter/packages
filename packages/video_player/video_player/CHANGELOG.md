@@ -1,5 +1,6 @@
 ## 2.9.4
 
+* Reduces the position update interval from 500ms to 100ms.
 * Fix layout issue caused by Transform.rotate not affecting space calculation. 
 
 ## 2.9.3

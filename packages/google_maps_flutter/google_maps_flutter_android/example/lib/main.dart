@@ -10,6 +10,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import 'animate_camera.dart';
 import 'clustering.dart';
+import 'ground_overlay.dart';
 import 'lite_mode.dart';
 import 'map_click.dart';
 import 'map_coordinates.dart';
@@ -43,6 +44,7 @@ final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
   const SnapshotPage(),
   const LiteModePage(),
   const TileOverlayPage(),
+  const GroundOverlayPage(),
   const ClusteringPage(),
   const MapIdPage(),
 ];

@@ -20,10 +20,14 @@ class IntEvent extends PlatformEvent {
 
   int data;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       data,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static IntEvent decode(Object result) {
@@ -32,6 +36,22 @@ class IntEvent extends PlatformEvent {
       data: result[0]! as int,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! IntEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return data == other.data;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class StringEvent extends PlatformEvent {
@@ -41,10 +61,14 @@ class StringEvent extends PlatformEvent {
 
   String data;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       data,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static StringEvent decode(Object result) {
@@ -53,6 +77,22 @@ class StringEvent extends PlatformEvent {
       data: result[0]! as String,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! StringEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return data == other.data;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
