@@ -339,7 +339,7 @@ Future<void> main() async {
     expect(customUserAgent2, defaultPlatformUserAgent);
   });
 
-  group('Video playback policy', () async {
+  group('Video playback policy', () {
     testWidgets(
       'Auto media playback',
       (WidgetTester tester) async {
