@@ -1,3 +1,8 @@
+## 0.9.18+11
+
+* Backfills unit tests for the `FLTCam` class.
+* Refactors implementation to allow mocking of `AVCaptureVideoDataOutput` in tests.
+
 ## 0.9.18+10
 
 * Backfills unit tests for the `FLTCam` class.

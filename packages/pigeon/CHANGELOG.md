@@ -1,3 +1,7 @@
+## 25.1.0
+
+* [dart] Adds equality methods to generated data classes.
+
 ## 25.0.0
 
 * **Breaking Change** Removes `oneLanguage` field from `PigeonOptions`.
@@ -11,8 +15,7 @@
 
 ## 24.2.1
 
-* [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in
-  an async method.
+* [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in an async method.
 
 ## 24.2.0
 

@@ -251,6 +251,15 @@ abstract class StructuredGenerator<InternalOptions>
     required String dartPackageName,
   }) {}
 
+  /// Writes a single class decode method to [indent].
+  void writeClassEquality(
+    InternalOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {}
+
   /// Writes all apis to [indent].
   ///
   /// Can be overridden to add extra code before/after classes.
