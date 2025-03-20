@@ -321,7 +321,7 @@ class Camera
     }
 
     if (recordingFps != null && recordingFps.intValue() > 0) {
-      
+
       final FpsRangeFeature fpsRange = new FpsRangeFeature(cameraProperties);
       fpsRange.setValue(new Range<Integer>(recordingFps, recordingFps));
       this.cameraFeatures.setFpsRange(fpsRange);
