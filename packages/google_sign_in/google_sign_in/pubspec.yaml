@@ -47,3 +47,10 @@ false_secrets:
   - /example/ios/RunnerTests/GoogleService-Info.plist
   - /example/ios/RunnerTests/GoogleSignInTests.m
   - /example/macos/Runner/Info.plist
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  google_sign_in_android: {path: ../../../packages/google_sign_in/google_sign_in_android}
+  google_sign_in_ios: {path: ../../../packages/google_sign_in/google_sign_in_ios}
+  google_sign_in_platform_interface: {path: ../../../packages/google_sign_in/google_sign_in_platform_interface}
+  google_sign_in_web: {path: ../../../packages/google_sign_in/google_sign_in_web}
