@@ -1,3 +1,7 @@
+## 0.3.2+9
+
+* Optional error callback for `MDnsClient::start` to prevent uncatched exceptions.
+
 ## 0.3.2+8
 
 * Fixes stack overflows ocurring during the parsing of domain names in MDNS messages.
