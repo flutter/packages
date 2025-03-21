@@ -32,6 +32,9 @@ enum InAppLoadResult {
 
   /// The URL could not be launched because it is invalid.
   invalidUrl,
+
+  /// The controller was closed before loading.
+  dismissed,
 }
 
 @HostApi()
