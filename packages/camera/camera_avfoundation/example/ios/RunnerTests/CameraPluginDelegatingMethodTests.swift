@@ -255,8 +255,9 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     let expectation = expectation(description: "Call completed")
 
     var startImageStreamCalled = false
-    mockCamera.startImageStreamStub = { _ in
+    mockCamera.startImageStreamStub = { messenger, completion in
       startImageStreamCalled = true
+      completion(nil)
     }
 
     cameraPlugin.startImageStream { error in
