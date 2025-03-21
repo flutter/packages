@@ -75,7 +75,7 @@ final class CameraInitRaceConditionsTests: XCTestCase {
 
     waitForExpectations(timeout: 30, handler: nil)
 
-    // Start stream and wait for its completion
+    // Start stream and wait for its completion.
     let startStreamExpectation = expectation(
       description: "startImageStream's result block must be called")
     cameraPlugin.startImageStream(completion: {
