@@ -5,6 +5,7 @@
 @import GoogleMapsUtils;
 
 #import "GoogleMapController.h"
+#import "GoogleMapController_Test.h"
 
 #import "FGMGroundOverlayController.h"
 #import "FGMMarkerUserData.h"
@@ -77,17 +78,12 @@
 @property(nonatomic, copy) NSObject<FlutterBinaryMessenger> *messenger;
 /// The suffix this instance was registered under with Pigeon.
 @property(nonatomic, copy) NSString *pigeonSuffix;
-/// The transaction wrapper to use for camera animations.
-@property(nonatomic, strong) id<FGMCATransactionProtocol> transactionWrapper;
 @end
 
 #pragma mark -
 
 /// Private declarations of the FGMMapInspector.
 @interface FGMMapInspector ()
-- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
-                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                         pigeonSuffix:(NSString *)suffix;
 
 /// The map controller this inspector corresponds to.
 @property(nonatomic, weak) FLTGoogleMapController *controller;
@@ -508,6 +504,7 @@
 
 #pragma mark -
 
+/// Private declarations of the FGMMapCallHandler.
 @implementation FGMMapCallHandler
 
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
@@ -738,6 +735,7 @@
 
 #pragma mark -
 
+/// Private declarations of the FGMMapInspector.
 @implementation FGMMapInspector
 
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller

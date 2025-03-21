@@ -10,16 +10,26 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Exposes internal properties of FGMMapCallHandler for unit testing.
-@interface FGMMapCallHandler (Test)
+/// Implementation of the Pigeon maps API.
+///
+/// This is a separate object from the maps controller because the Pigeon API registration keeps a
+/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
+/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
+/// the target of the registration.
+@interface FGMMapCallHandler : NSObject <FGMMapsApi>
 
-/// Transaction wrapper for CATransaction to allow mocking in tests.
+/// The transaction wrapper to use for camera animations.
 @property(nonatomic, strong) id<FGMCATransactionProtocol> transactionWrapper;
 
 @end
 
-/// Exposes internal properties of FGMMapInspector for unit testing.
-@interface FGMMapInspector (Test)
+/// Implementation of the Pigeon maps inspector API.
+///
+/// This is a separate object from the maps controller because the Pigeon API registration keeps a
+/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
+/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
+/// the target of the registration.
+@interface FGMMapInspector : NSObject <FGMMapsInspectorApi>
 
 /// Initializes a Pigeon API for inpector with a map controller.
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
