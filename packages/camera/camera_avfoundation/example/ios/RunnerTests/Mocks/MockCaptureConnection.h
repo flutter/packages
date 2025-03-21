@@ -19,6 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign, getter=isVideoMirroringSupported) BOOL supportsVideoMirroring;
 @property(nonatomic, assign, getter=isVideoOrientationSupported) BOOL supportsVideoOrientation;
 
+// Stub that is called when the corresponding public method is called.
+@property(nonatomic, copy) void (^setVideoOrientationStub)(AVCaptureVideoOrientation);
+
 @end
 
 NS_ASSUME_NONNULL_END

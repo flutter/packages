@@ -191,6 +191,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return _events(mapId).whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   Stream<MapTapEvent> onTap({required int mapId}) {
     return _events(mapId).whereType<MapTapEvent>();
   }
@@ -335,6 +340,31 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) {
+    assert(
+        groundOverlayUpdates.groundOverlaysToAdd.every(
+            (GroundOverlay groundOverlay) =>
+                groundOverlay.position == null ||
+                groundOverlay.zoomLevel != null),
+        'On iOS zoom level must be set when position is set for ground overlays.');
+
+    return _hostApi(mapId).updateGroundOverlays(
+      groundOverlayUpdates.groundOverlaysToAdd
+          .map(_platformGroundOverlayFromGroundOverlay)
+          .toList(),
+      groundOverlayUpdates.groundOverlaysToChange
+          .map(_platformGroundOverlayFromGroundOverlay)
+          .toList(),
+      groundOverlayUpdates.groundOverlayIdsToRemove
+          .map((GroundOverlayId id) => id.value)
+          .toList(),
+    );
+  }
+
+  @override
   Future<void> clearTileCache(
     TileOverlayId tileOverlayId, {
     required int mapId,
@@ -448,6 +478,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     required MapWidgetConfiguration widgetConfiguration,
     MapObjects mapObjects = const MapObjects(),
   }) {
+    assert(
+        mapObjects.groundOverlays.every((GroundOverlay groundOverlay) =>
+            groundOverlay.position == null || groundOverlay.zoomLevel != null),
+        'On iOS zoom level must be set when position is set for ground overlays.');
+
     final PlatformMapViewCreationParams creationParams =
         PlatformMapViewCreationParams(
       initialCameraPosition: _platformCameraPositionFromCameraPosition(
@@ -468,6 +503,9 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
           .toList(),
       initialClusterManagers: mapObjects.clusterManagers
           .map(_platformClusterManagerFromClusterManager)
+          .toList(),
+      initialGroundOverlays: mapObjects.groundOverlays
+          .map(_platformGroundOverlayFromGroundOverlay)
           .toList(),
     );
 
@@ -631,6 +669,27 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       zIndex: marker.zIndex,
       markerId: marker.markerId.value,
       clusterManagerId: marker.clusterManagerId?.value,
+    );
+  }
+
+  static PlatformGroundOverlay _platformGroundOverlayFromGroundOverlay(
+      GroundOverlay groundOverlay) {
+    return PlatformGroundOverlay(
+      groundOverlayId: groundOverlay.groundOverlayId.value,
+      anchor: groundOverlay.anchor != null
+          ? _platformPointFromOffset(groundOverlay.anchor!)
+          : null,
+      image: platformBitmapFromBitmapDescriptor(groundOverlay.image),
+      position: groundOverlay.position != null
+          ? _platformLatLngFromLatLng(groundOverlay.position!)
+          : null,
+      bounds: _platformLatLngBoundsFromLatLngBounds(groundOverlay.bounds),
+      visible: groundOverlay.visible,
+      zIndex: groundOverlay.zIndex,
+      bearing: groundOverlay.bearing,
+      clickable: groundOverlay.clickable,
+      transparency: groundOverlay.transparency,
+      zoomLevel: groundOverlay.zoomLevel,
     );
   }
 
@@ -940,6 +999,12 @@ class HostMapMessageHandler implements MapsCallbackApi {
   @override
   void onPolylineTap(String polylineId) {
     streamController.add(PolylineTapEvent(mapId, PolylineId(polylineId)));
+  }
+
+  @override
+  void onGroundOverlayTap(String groundOverlayId) {
+    streamController
+        .add(GroundOverlayTapEvent(mapId, GroundOverlayId(groundOverlayId)));
   }
 
   @override

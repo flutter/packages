@@ -1,3 +1,7 @@
+## 1.0.48
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 1.0.47
 
 * Adds compatibility with `intl` 0.20.0.
