@@ -5,7 +5,6 @@
 final class MockFLTCam: FLTCam {
   var setOnFrameAvailableStub: ((() -> Void) -> Void)?
   var setDartApiStub: ((FCPCameraEventApi) -> Void)?
-  var setExposureModeStub: ((FCPPlatformExposureMode) -> Void)?
   var setFocusModeStub: ((FCPPlatformFocusMode) -> Void)?
   var getMinimumAvailableZoomFactorStub: (() -> CGFloat)?
   var getMaximumAvailableZoomFactorStub: (() -> CGFloat)?
@@ -24,6 +23,7 @@ final class MockFLTCam: FLTCam {
   var lockCaptureStub: ((FCPPlatformDeviceOrientation) -> Void)?
   var unlockCaptureOrientationStub: (() -> Void)?
   var setFlashModeStub: ((FCPPlatformFlashMode, ((FlutterError?) -> Void)?) -> Void)?
+  var setExposureModeStub: ((FCPPlatformExposureMode) -> Void)?
   var receivedImageStreamDataStub: (() -> Void)?
   var pausePreviewStub: (() -> Void)?
   var resumePreviewStub: (() -> Void)?
@@ -51,26 +51,6 @@ final class MockFLTCam: FLTCam {
     }
     set {
       setDartApiStub?(newValue)
-    }
-  }
-
-  /// The `setExposureMode` ObjC method is converted to property accessor in Swift translation
-  override var exposureMode: FCPPlatformExposureMode {
-    get {
-      return super.exposureMode
-    }
-    set {
-      setExposureModeStub?(newValue)
-    }
-  }
-
-  /// The `setFocusMode` ObjC method is converted to property accessor in Swift translation
-  override var focusMode: FCPPlatformFocusMode {
-    get {
-      return super.focusMode
-    }
-    set {
-      setFocusModeStub?(newValue)
     }
   }
 
@@ -151,6 +131,14 @@ final class MockFLTCam: FLTCam {
 
   override func unlockCaptureOrientation() {
     unlockCaptureOrientationStub?()
+  }
+
+  override func setExposureMode(_ mode: FCPPlatformExposureMode) {
+    setExposureModeStub?(mode)
+  }
+
+  override func setFocusMode(_ mode: FCPPlatformFocusMode) {
+    setFocusModeStub?(mode)
   }
 
   override func setFlashMode(

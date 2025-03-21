@@ -2,11 +2,11 @@ name: google_maps_flutter
 description: A Flutter plugin for integrating Google Maps in iOS and Android applications.
 repository: https://github.com/flutter/packages/tree/main/packages/google_maps_flutter/google_maps_flutter
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+maps%22
-version: 2.10.1
+version: 2.11.0
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
 
 flutter:
   plugin:
@@ -21,10 +21,10 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter_android: ^2.13.0
-  google_maps_flutter_ios: ^2.12.0
-  google_maps_flutter_platform_interface: ^2.9.0
-  google_maps_flutter_web: ^0.5.10
+  google_maps_flutter_android: ^2.15.0
+  google_maps_flutter_ios: ^2.14.0
+  google_maps_flutter_platform_interface: ^2.10.0
+  google_maps_flutter_web: ^0.5.12
 
 dev_dependencies:
   flutter_test:

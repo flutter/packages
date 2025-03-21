@@ -161,7 +161,9 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   @override
   Future<List<XFile>> getMedia({required MediaOptions options}) async {
     const XTypeGroup typeGroup = XTypeGroup(
-        label: 'images and videos', extensions: <String>['image/*', 'video/*']);
+      label: 'Images and videos',
+      mimeTypes: <String>['image/*', 'video/*'],
+    );
 
     List<XFile> files;
 

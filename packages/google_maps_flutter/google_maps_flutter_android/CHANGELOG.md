@@ -1,3 +1,7 @@
+## 2.15.0
+
+* Adds support for ground overlay.
+  
 ## 2.14.14
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.
