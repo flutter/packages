@@ -1,10 +1,16 @@
+
+## 2.8.3
+
+- Adds support for classes that support fromJson/toJson. [#117261](https://github.com/flutter/flutter/issues/117261)
+- Adds annotation that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781)
+
 ## 2.8.2
 
 - Fixes an issue when enum params are not required
 
 ## 2.8.1
 
-- Fixes an issue when navigate to router with invalid params 
+- Fixes an issue when navigate to router with invalid params
 
 ## 2.8.0
 
