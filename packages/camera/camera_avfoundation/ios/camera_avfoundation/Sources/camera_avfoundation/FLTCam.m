@@ -847,7 +847,10 @@ static void selectBestFormatForRequestedFrameRate(
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
   if (!_isRecording) {
     if (messenger != nil) {
-      [self startImageStreamWithMessenger:messenger withCompletion:nil];
+      // Start image stream without waiting for result.
+      [self startImageStreamWithMessenger:messenger
+                           withCompletion:^(FlutterError *_Nullable error){
+                           }];
     }
 
     NSError *error;
