@@ -31,6 +31,18 @@ data class IntEvent(val data: Long) : PlatformEvent() {
         data,
     )
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is IntEvent) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return data == other.data
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
@@ -47,6 +59,18 @@ data class StringEvent(val data: String) : PlatformEvent() {
         data,
     )
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is StringEvent) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return data == other.data
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 private open class EventChannelMessagesPigeonCodec : StandardMessageCodec() {

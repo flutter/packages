@@ -1091,8 +1091,10 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     if (root.classes.isNotEmpty &&
         root.classes.any((Class dataClass) => dataClass.fields.any(
             (NamedType field) =>
-                field.type.baseName.startsWith('List') ||
-                field.type.baseName.startsWith('Map')))) {
+                !field.type.isClass &&
+                !field.type.isEnum &&
+                (field.type.baseName.contains('List') ||
+                    field.type.baseName.startsWith('Map'))))) {
       _writeDeepEquals(indent);
     }
   }
