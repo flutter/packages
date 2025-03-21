@@ -1,6 +1,6 @@
 ## 3.18.5
 
-* Fixes crash when sending undefined message via javascript channel.
+* Fixes crash when sending undefined message via JavaScript channel.
 
 ## 3.18.4
 

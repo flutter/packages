@@ -278,7 +278,7 @@ Future<void> main() async {
     await expectLater(channelCompleter.future, completion('hello'));
   });
 
-  testWidgets('JavascriptChannel can receive undefined',
+  testWidgets('JavaScriptChannel can receive undefined',
       (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
     final PlatformWebViewController controller = PlatformWebViewController(
