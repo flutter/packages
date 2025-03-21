@@ -1,6 +1,16 @@
+## 0.9.18+12
+
+* Fix race condition when starting image stream.
+
+## 0.9.18+11
+
+* Backfills unit tests for the `FLTCam` class.
+* Refactors implementation to allow mocking of `AVCaptureVideoDataOutput` in tests.
+
 ## 0.9.18+10
 
-* Fix race condition when starting image stream
+* Backfills unit tests for the `FLTCam` class.
+* Makes `exposureMode`, `focusMode`, and `flashMode` properties of `FLTCam` private.
 
 ## 0.9.18+9
 

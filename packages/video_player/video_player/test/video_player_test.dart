@@ -757,6 +757,45 @@ void main() {
     });
 
     group('caption', () {
+      test('works when position updates', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+          closedCaptionFile: _loadClosedCaption(),
+        );
+
+        await controller.initialize();
+        await controller.play();
+
+        // Optionally record caption changes for later verification.
+        final Map<int, String> recordedCaptions = <int, String>{};
+
+        controller.addListener(() {
+          // Record the caption for the current position (in milliseconds).
+          final int ms = controller.value.position.inMilliseconds;
+          recordedCaptions[ms] = controller.value.caption.text;
+        });
+
+        const Duration updateInterval = Duration(milliseconds: 100);
+        const int totalDurationMs = 350;
+
+        // Simulate continuous playback by incrementing in 50ms steps.
+        for (int ms = 0; ms <= totalDurationMs; ms += 50) {
+          fakeVideoPlayerPlatform._positions[controller.textureId] =
+              Duration(milliseconds: ms);
+          await Future<void>.delayed(updateInterval);
+        }
+
+        // Now, given your closed caption file and the 100ms update interval,
+        // you expect:
+        //   • at 100ms: caption should be 'one'
+        //   • at 250ms: no caption (i.e. '')
+        //   • at 300ms: caption should be 'two'
+        expect(recordedCaptions[100], 'one');
+        expect(recordedCaptions[250], '');
+        expect(recordedCaptions[300], 'two');
+      });
+
       test('works when seeking', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
@@ -993,6 +1032,41 @@ void main() {
         await tester.runAsync(controller.dispose);
       });
     });
+  });
+
+  test('updates position', () async {
+    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+      _localhostUri,
+      videoPlayerOptions: VideoPlayerOptions(),
+    );
+
+    await controller.initialize();
+
+    const Duration updatesInterval = Duration(milliseconds: 100);
+
+    final List<Duration> positions = <Duration>[];
+    final Completer<void> intervalUpdateCompleter = Completer<void>();
+
+    // Listen for position updates
+    controller.addListener(() {
+      positions.add(controller.value.position);
+      if (positions.length >= 3 && !intervalUpdateCompleter.isCompleted) {
+        intervalUpdateCompleter.complete();
+      }
+    });
+    await controller.play();
+    for (int i = 0; i < 3; i++) {
+      await Future<void>.delayed(updatesInterval);
+      fakeVideoPlayerPlatform._positions[controller.textureId] =
+          Duration(milliseconds: i * updatesInterval.inMilliseconds);
+    }
+
+    // Wait for at least 3 position updates
+    await intervalUpdateCompleter.future;
+
+    // Verify that the intervals between updates are approximately correct
+    expect(positions[1] - positions[0], greaterThanOrEqualTo(updatesInterval));
+    expect(positions[2] - positions[1], greaterThanOrEqualTo(updatesInterval));
   });
 
   group('DurationRange', () {

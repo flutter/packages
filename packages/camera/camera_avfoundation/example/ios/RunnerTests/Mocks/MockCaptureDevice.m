@@ -35,6 +35,13 @@
   }
 }
 
+- (AVCaptureTorchMode)torchMode {
+  if (self.getTorchModeStub) {
+    return self.getTorchModeStub();
+  }
+  return AVCaptureTorchModeOff;
+}
+
 - (BOOL)isFocusModeSupported:(AVCaptureFocusMode)mode {
   if (self.isFocusModeSupportedStub) {
     return self.isFocusModeSupportedStub(mode);
@@ -104,7 +111,11 @@
 }
 
 - (BOOL)isExposureModeSupported:(AVCaptureExposureMode)mode {
-  return self.exposureModeSupported;
+  if (self.isExposureModeSupportedStub) {
+    return self.isExposureModeSupportedStub(mode);
+  } else {
+    return NO;
+  }
 }
 
 @synthesize device;

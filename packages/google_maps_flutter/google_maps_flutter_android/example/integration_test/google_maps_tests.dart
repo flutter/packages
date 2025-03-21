@@ -4,7 +4,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -21,6 +20,12 @@ const double _kInitialZoomLevel = 5;
 const CameraPosition _kInitialCameraPosition =
     CameraPosition(target: _kInitialMapCenter, zoom: _kInitialZoomLevel);
 const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+
+// The tolerance value for floating-point comparisons in the tests.
+// This value was selected as the minimum possible value that the test passes.
+// There are multiple float conversions and calculations when data is converted
+// between Dart and platform implementations.
+const double _floatTolerance = 1e-8;
 
 void googleMapsTests() {
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
@@ -995,7 +1000,7 @@ void googleMapsTests() {
   },
       // TODO(cyanglaz): un-skip the test when we can test this on CI with API key enabled.
       // https://github.com/flutter/flutter/issues/57057
-      skip: Platform.isAndroid);
+      skip: true);
 
   testWidgets(
     'set tileOverlay correctly',
@@ -1445,6 +1450,261 @@ void googleMapsTests() {
     ));
 
     await tester.pumpAndSettle();
+  });
+
+  group('GroundOverlay', () {
+    final LatLngBounds kGroundOverlayBounds = LatLngBounds(
+      southwest: const LatLng(37.77483, -122.41942),
+      northeast: const LatLng(37.78183, -122.39105),
+    );
+
+    final GroundOverlay groundOverlayBounds1 = GroundOverlay.fromBounds(
+      groundOverlayId: const GroundOverlayId('bounds_1'),
+      bounds: kGroundOverlayBounds,
+      image: AssetMapBitmap(
+        'assets/red_square.png',
+        imagePixelRatio: 1.0,
+        bitmapScaling: MapBitmapScaling.none,
+      ),
+    );
+
+    final GroundOverlay groundOverlayPosition1 = GroundOverlay.fromPosition(
+        groundOverlayId: const GroundOverlayId('position_1'),
+        position: kGroundOverlayBounds.northeast,
+        width: 100,
+        height: 100,
+        anchor: const Offset(0.1, 0.2),
+        image: AssetMapBitmap(
+          'assets/red_square.png',
+          imagePixelRatio: 1.0,
+          bitmapScaling: MapBitmapScaling.none,
+        ));
+
+    void expectGroundOverlayEquals(
+        GroundOverlay source, GroundOverlay response) {
+      expect(response.groundOverlayId, source.groundOverlayId);
+      expect(
+        response.transparency,
+        moreOrLessEquals(source.transparency, epsilon: _floatTolerance),
+      );
+      expect(
+        response.bearing,
+        moreOrLessEquals(source.bearing, epsilon: _floatTolerance),
+      );
+
+      // Only test bounds if it was given in the original object
+      if (source.bounds != null) {
+        expect(response.bounds, source.bounds);
+      }
+
+      // Only test position if it was given in the original object
+      if (source.position != null) {
+        expect(response.position, source.position);
+      }
+
+      expect(response.clickable, source.clickable);
+      expect(response.zIndex, source.zIndex);
+
+      expect(response.width, source.width);
+      expect(response.height, source.height);
+      if (source.position != null) {
+        expect(
+          response.anchor?.dx,
+          moreOrLessEquals(source.anchor!.dx, epsilon: _floatTolerance),
+        );
+        expect(
+          response.anchor?.dy,
+          moreOrLessEquals(source.anchor!.dy, epsilon: _floatTolerance),
+        );
+      }
+    }
+
+    testWidgets('set ground overlays correctly', (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final GroundOverlay groundOverlayBounds2 = GroundOverlay.fromBounds(
+        groundOverlayId: const GroundOverlayId('bounds_2'),
+        bounds: groundOverlayBounds1.bounds!,
+        image: groundOverlayBounds1.image,
+      );
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ExampleGoogleMap(
+            initialCameraPosition: _kInitialCameraPosition,
+            groundOverlays: <GroundOverlay>{
+              groundOverlayBounds1,
+              groundOverlayBounds2,
+              groundOverlayPosition1,
+            },
+            onMapCreated: (ExampleGoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      if (inspector.supportsGettingGroundOverlayInfo()) {
+        final GroundOverlay groundOverlayBoundsInfo1 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayBoundsInfo2 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds2.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayPositionInfo1 =
+            (await inspector.getGroundOverlayInfo(groundOverlayPosition1.mapsId,
+                mapId: mapId))!;
+
+        expectGroundOverlayEquals(
+          groundOverlayBounds1,
+          groundOverlayBoundsInfo1,
+        );
+        expectGroundOverlayEquals(
+          groundOverlayBounds2,
+          groundOverlayBoundsInfo2,
+        );
+        expectGroundOverlayEquals(
+          groundOverlayPosition1,
+          groundOverlayPositionInfo1,
+        );
+      }
+    });
+
+    testWidgets('update ground overlays correctly',
+        (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ExampleGoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            groundOverlays: <GroundOverlay>{
+              groundOverlayBounds1,
+              groundOverlayPosition1
+            },
+            onMapCreated: (ExampleGoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      final GroundOverlay groundOverlayBounds1New =
+          groundOverlayBounds1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        transparencyParam: 0.5,
+        visibleParam: false,
+        zIndexParam: 10,
+      );
+
+      final GroundOverlay groundOverlayPosition1New =
+          groundOverlayPosition1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        transparencyParam: 0.5,
+        visibleParam: false,
+        zIndexParam: 10,
+      );
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ExampleGoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            groundOverlays: <GroundOverlay>{
+              groundOverlayBounds1New,
+              groundOverlayPosition1New
+            },
+            onMapCreated: (ExampleGoogleMapController controller) {
+              fail('update: OnMapCreated should get called only once.');
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      if (inspector.supportsGettingGroundOverlayInfo()) {
+        final GroundOverlay groundOverlayBounds1Info = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayPosition1Info =
+            (await inspector.getGroundOverlayInfo(groundOverlayPosition1.mapsId,
+                mapId: mapId))!;
+
+        expectGroundOverlayEquals(
+          groundOverlayBounds1New,
+          groundOverlayBounds1Info,
+        );
+        expectGroundOverlayEquals(
+          groundOverlayPosition1New,
+          groundOverlayPosition1Info,
+        );
+      }
+    });
+
+    testWidgets('remove ground overlays correctly',
+        (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ExampleGoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            groundOverlays: <GroundOverlay>{
+              groundOverlayBounds1,
+              groundOverlayPosition1
+            },
+            onMapCreated: (ExampleGoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: ExampleGoogleMap(
+            key: key,
+            initialCameraPosition: _kInitialCameraPosition,
+            onMapCreated: (ExampleGoogleMapController controller) {
+              fail('OnMapCreated should get called only once.');
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      if (inspector.supportsGettingGroundOverlayInfo()) {
+        final GroundOverlay? groundOverlayBounds1Info = await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId);
+        final GroundOverlay? groundOverlayPositionInfo = await inspector
+            .getGroundOverlayInfo(groundOverlayPosition1.mapsId, mapId: mapId);
+
+        expect(groundOverlayBounds1Info, isNull);
+        expect(groundOverlayPositionInfo, isNull);
+      }
+    });
   });
 }
 

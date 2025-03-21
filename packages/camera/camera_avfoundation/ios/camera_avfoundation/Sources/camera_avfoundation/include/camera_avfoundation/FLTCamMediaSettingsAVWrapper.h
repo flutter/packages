@@ -8,6 +8,7 @@
 #import "FLTAssetWriter.h"
 #import "FLTCaptureDevice.h"
 #import "FLTCaptureSession.h"
+#import "FLTCaptureVideoDataOutput.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -107,12 +108,13 @@ NS_ASSUME_NONNULL_BEGIN
  * @abstract Specifies the recommended video settings for `AVCaptureVideoDataOutput`.
  * @param fileType Specifies the UTI of the file type to be written (see AVMediaFormat.h for a list
  * of file format UTIs).
- * @param output The `AVCaptureVideoDataOutput` instance.
+ * @param output The `FLTCaptureVideoDataOutput` instance.
  * @result A fully populated dictionary of keys and values that are compatible with AVAssetWriter.
  */
 - (nullable NSDictionary<NSString *, id> *)
     recommendedVideoSettingsForAssetWriterWithFileType:(AVFileType)fileType
-                                             forOutput:(AVCaptureVideoDataOutput *)output;
+                                             forOutput:
+                                                 (NSObject<FLTCaptureVideoDataOutput> *)output;
 @end
 
 NS_ASSUME_NONNULL_END
