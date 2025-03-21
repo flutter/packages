@@ -517,7 +517,10 @@ Future<void> main() async {
         await tester.pump();
 
         // Makes sure we get the correct event that indicates the video is actually playing.
-        await videoPlaying.future;
+        await videoPlaying.future.timeout(
+          const Duration(seconds: 10),
+          onTimeout: () => fail('Timed out waiting for video to play.'),
+        );
 
         final String fullScreen =
             await controller.runJavascriptReturningResult('isFullScreen();');
@@ -573,7 +576,10 @@ Future<void> main() async {
         await tester.pump();
 
         // Makes sure we get the correct event that indicates the video is actually playing.
-        await videoPlaying.future;
+        await videoPlaying.future.timeout(
+          const Duration(seconds: 10),
+          onTimeout: () => fail('Timed out waiting for video to play.'),
+        );
 
         final String fullScreen =
             await controller.runJavascriptReturningResult('isFullScreen();');
