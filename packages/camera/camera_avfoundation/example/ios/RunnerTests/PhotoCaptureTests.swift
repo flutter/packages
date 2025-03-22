@@ -10,7 +10,7 @@ import XCTest
 /// Includes test cases related to photo capture operations for FLTCam class.
 final class PhotoCaptureTests: XCTestCase {
   private func createCam(with captureSessionQueue: DispatchQueue) -> FLTCam {
-    let configuration = CameraTestsUtils.createTestCameraConfiguration()
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
     return FLTCam(configuration: configuration, error: nil)
   }
@@ -166,7 +166,7 @@ final class PhotoCaptureTests: XCTestCase {
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
-    let configuration = CameraTestsUtils.createTestCameraConfiguration()
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
     configuration.captureDeviceFactory = { captureDeviceMock }
     let cam = FLTCam(configuration: configuration, error: nil)

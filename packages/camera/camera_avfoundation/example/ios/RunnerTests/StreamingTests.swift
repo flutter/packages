@@ -29,11 +29,11 @@ private class MockImageStreamHandler: FLTImageStreamHandler {
 final class StreamingTests: XCTestCase {
   private func createCamera() -> (FLTCam, CMSampleBuffer) {
     let captureSessionQueue = DispatchQueue(label: "testing")
-    let configuration = CameraTestsUtils.createTestCameraConfiguration()
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
 
     let camera = FLTCam(configuration: configuration, error: nil)
-    let sampleBuffer = CameraTestsUtils.createTestSampleBuffer()
+    let sampleBuffer = CameraTestUtils.createTestSampleBuffer()
 
     return (camera, sampleBuffer)
   }
