@@ -75,6 +75,11 @@ public class WebChromeClientProxyApi extends PigeonApiWebChromeClient {
       api.onGeolocationPermissionsHidePrompt(this, reply -> null);
     }
 
+    @Override
+    public Bitmap getDefaultVideoPoster() {
+      return Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888);
+    }
+
     @SuppressWarnings("LambdaLast")
     @Override
     public boolean onShowFileChooser(
