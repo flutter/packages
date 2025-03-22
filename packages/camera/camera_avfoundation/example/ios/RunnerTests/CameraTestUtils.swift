@@ -5,7 +5,7 @@
 import Foundation
 
 /// Utils for creating default class instances used in tests
-enum CameraTestsUtils {
+enum CameraTestUtils {
   /// This method provides a convenient way to create media settings with minimal configuration.
   /// Audio is enabled by default, while other parameters use platform-specific defaults.
   static func getDefaultMediaSettings(resolutionPreset: FCPPlatformResolutionPreset)
