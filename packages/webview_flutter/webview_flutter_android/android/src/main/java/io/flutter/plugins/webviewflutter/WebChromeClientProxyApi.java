@@ -5,6 +5,7 @@
 package io.flutter.plugins.webviewflutter;
 
 import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Message;
 import android.view.View;
