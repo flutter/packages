@@ -1,6 +1,8 @@
-## NEXT
+## 0.3.4
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates the simple table sample to demonstrate different types of selection: single-cell
+selection, and multi-cell selection.
 
 ## 0.3.3
 
