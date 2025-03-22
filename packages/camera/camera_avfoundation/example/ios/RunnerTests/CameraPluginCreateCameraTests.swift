@@ -109,7 +109,7 @@ final class CameraPluginCreateCameraTests: XCTestCase {
       // Permission is granted
       completion?(nil)
     }
-    mockCaptureSession.canSetSessionPreset = true
+    mockCaptureSession.canSetSessionPresetStub = { _ in true }
 
     cameraPlugin.createCamera(
       withName: "camera_name",
