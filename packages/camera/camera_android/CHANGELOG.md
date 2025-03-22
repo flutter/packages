@@ -1,3 +1,7 @@
+## 0.10.10+2
+
+* Don't set the FPS range unless video recording. It can cause dark image previews on some devices becuse the auto exposure algorithm is more constrained after fixing a min & max FPS value. 
+
 ## 0.10.10+1
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.
