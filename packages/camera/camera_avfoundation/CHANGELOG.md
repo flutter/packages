@@ -1,7 +1,7 @@
 ## 0.9.18+12
 
 * Migrates test utils and mocks to Swift.
-* Adds Swift method names to `FLTCaptureSession`.
+* Renames the methods of Objective-C type `FLTCaptureSession` when exported to Swift.
 
 ## 0.9.18+11
 
