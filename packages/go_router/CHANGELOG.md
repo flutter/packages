@@ -1,4 +1,4 @@
-## 14.8.2-dec
+## 14.8.2-dev
 
 - Fixes `PopScope.onPopInvokedWithResult` getting called twice when popping a route when `GoRouteData.onExit` is not null
 
