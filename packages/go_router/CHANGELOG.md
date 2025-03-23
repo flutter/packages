@@ -1,3 +1,7 @@
+## 14.8.2-dec
+
+- Fixes `PopScope.onPopInvokedWithResult` getting called twice when popping a route when `GoRouteData.onExit` is not null
+
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
