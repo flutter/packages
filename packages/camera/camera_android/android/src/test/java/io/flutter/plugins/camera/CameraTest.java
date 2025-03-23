@@ -165,7 +165,8 @@ public class CameraTest {
     mockHandler = mock(Handler.class);
 
     mockActivity = mock(Activity.class);
-    TextureRegistry.SurfaceTextureEntry mockFlutterTexture = mock(TextureRegistry.SurfaceTextureEntry.class);
+    TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
+        mock(TextureRegistry.SurfaceTextureEntry.class);
     when(mockFlutterTexture.surfaceTexture()).thenReturn(mock(SurfaceTexture.class));
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
