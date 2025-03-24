@@ -218,7 +218,8 @@ class AndroidCamera extends CameraPlatform {
   Future<XFile> stopVideoRecording(int cameraId) async {
     final String? path = await _hostApi.stopVideoRecording();
     if (path == null) {
-      throw StateError('Video recording error, No valid audio/video data was generated');
+      throw StateError(
+          'Video recording error, No valid audio/video data was generated');
     }
     return XFile(path);
   }
