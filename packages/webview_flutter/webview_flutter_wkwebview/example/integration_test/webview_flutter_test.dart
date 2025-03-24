@@ -278,7 +278,7 @@ Future<void> main() async {
     await expectLater(channelCompleter.future, completion('hello'));
   });
 
-  testWidgets('JavaScriptChannel can receive undefined',
+  testWidgets('JavaScriptChannel can receive undefined and null',
       (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
     final PlatformWebViewController controller = PlatformWebViewController(
@@ -291,12 +291,12 @@ Future<void> main() async {
     unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
     unawaited(controller.setPlatformNavigationDelegate(delegate));
 
-    final Completer<String> channelCompleter = Completer<String>();
+    final List<String> messages = <String>[];
     await controller.addJavaScriptChannel(
       JavaScriptChannelParams(
         name: 'Channel',
         onMessageReceived: (JavaScriptMessage message) {
-          channelCompleter.complete(message.message);
+          messages.add(message.message);
         },
       ),
     );
@@ -316,7 +316,10 @@ Future<void> main() async {
     await pageFinished.future;
 
     await controller.runJavaScript('Channel.postMessage(undefined);');
-    await expectLater(channelCompleter.future, completion(''));
+    await controller.runJavaScript('Channel.postMessage(null);');
+
+    await tester.pumpAndSettle();
+    expect(messages, <String>['undefined', 'null']);
   });
 
   testWidgets('resize webview', (WidgetTester tester) async {
