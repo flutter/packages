@@ -175,4 +175,22 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
             GoogleMapsFlutterAndroid.clusterFromPlatformCluster(cluster!))
         .toList();
   }
+
+  @override
+  bool supportsGettingGameraPosition() => true;
+
+  @override
+  Future<CameraPosition> getCameraPosition({required int mapId}) async {
+    final PlatformCameraPosition cameraPosition =
+        await _inspectorProvider(mapId)!.getCameraPosition();
+    return CameraPosition(
+      target: LatLng(
+        cameraPosition.target.latitude,
+        cameraPosition.target.longitude,
+      ),
+      bearing: cameraPosition.bearing,
+      tilt: cameraPosition.tilt,
+      zoom: cameraPosition.zoom,
+    );
+  }
 }
