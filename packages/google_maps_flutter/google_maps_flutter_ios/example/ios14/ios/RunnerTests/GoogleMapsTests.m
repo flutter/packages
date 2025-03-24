@@ -7,7 +7,6 @@
 @import XCTest;
 @import GoogleMaps;
 
-#import <GoogleMapController_Test.h>
 #import <OCMock/OCMock.h>
 #import "FGMCATransactionWrapper.h"
 #import "PartiallyMockedMapView.h"
