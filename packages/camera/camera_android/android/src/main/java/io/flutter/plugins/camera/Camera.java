@@ -376,7 +376,7 @@ class Camera
             try {
               startPreview();
               if (!recordingVideo) { // only send initialization if we werent already recording and
-                                     // switching cameras
+                // switching cameras
                 dartMessenger.sendCameraInitializedEvent(
                     resolutionFeature.getPreviewSize().getWidth(),
                     resolutionFeature.getPreviewSize().getHeight(),
@@ -889,7 +889,8 @@ class Camera
     String path = captureFile.getAbsolutePath();
     captureFile = null;
 
-    // if there was an RuntimeException during stopping the video recording, return null to let the user know.
+    // if there was an RuntimeException during stopping the video recording, return null to let the
+    // user know.
     if (haveCaptureError) {
       return null;
     }
