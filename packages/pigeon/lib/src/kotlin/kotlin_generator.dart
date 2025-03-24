@@ -318,12 +318,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       });
       indent.write('return ');
       indent.format(classDefinition.fields
-          .map((NamedType field) => field.type.baseName == 'List' ||
-                  field.type.baseName == 'Float64List' ||
-                  field.type.baseName == 'Int32List' ||
-                  field.type.baseName == 'Int64List' ||
-                  field.type.baseName == 'Uint8List' ||
-                  field.type.baseName == 'Map'
+          .map((NamedType field) => isCollectionType(field.type)
               ? 'deepEquals${generatorOptions.fileSpecificClassNameComponent}(${field.name}, other.${field.name})'
               : '${field.name} == other.${field.name}')
           .join('\n&& '));
@@ -1306,11 +1301,8 @@ private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?
       _writeErrorClass(generatorOptions, indent);
     }
     if (root.classes.isNotEmpty &&
-        root.classes.any((Class dataClass) => dataClass.fields.any(
-            (NamedType field) =>
-                _kotlinTypeForBuiltinDartType(field.type) != null &&
-                (field.type.baseName.contains('List') ||
-                    field.type.baseName.startsWith('Map'))))) {
+        root.classes.any((Class dataClass) => dataClass.fields
+            .any((NamedType field) => isCollectionType(field.type)))) {
       _writeDeepEquals(generatorOptions, indent);
     }
   }

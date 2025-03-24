@@ -861,3 +861,11 @@ String makeClearChannelName(String dartPackageName) {
     dartPackageName: dartPackageName,
   );
 }
+
+/// Whether the type is a collection.
+bool isCollectionType(TypeDeclaration type) {
+  return !type.isClass &&
+      !type.isEnum &&
+      !type.isProxyApi &&
+      (type.baseName.contains('List') || type.baseName.startsWith('Map'));
+}
