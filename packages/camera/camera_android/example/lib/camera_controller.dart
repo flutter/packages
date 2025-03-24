@@ -333,6 +333,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   /// Stops the video recording and returns the file where it was saved.
   ///
   /// Throws a [CameraException] if the capture failed.
+  /// Throws a [StateError] if no valid audio/video data was generated.
   Future<XFile> stopVideoRecording() async {
     if (value.isStreamingImages) {
       await stopImageStream();
