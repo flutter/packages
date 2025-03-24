@@ -1,6 +1,6 @@
 ## 0.10.10+2
 
-* Don't set the FPS range unless video recording. It can cause dark image previews on some devices becuse the auto exposure algorithm is more constrained after fixing a min & max FPS value. 
+* Don't set the FPS range unless video recording. It can cause dark image previews on some devices becuse the auto exposure algorithm is more constrained after fixing the min/max FPS range to the same value. This change has the side effect that providing the `fps` parameter will not affect the camera preview when not video recording. And if you need a lower frame rate in your image streaming handler, you can skip frames by checking the time it passed since the last frame.
 
 ## 0.10.10+1
 
