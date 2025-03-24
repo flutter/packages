@@ -863,7 +863,7 @@ void main() {
       final WKUserScript userScript =
           verify(mockUserContentController.addUserScript(captureAny))
               .captured
-              .toList().first as WKUserScript;
+              .single as WKUserScript;
       expect(userScript.source, 'window.name = webkit.messageHandlers.name;');
       expect(
         userScript.injectionTime,
@@ -1008,7 +1008,7 @@ void main() {
       final WKUserScript userScript =
           verify(mockUserContentController.addUserScript(captureAny))
               .captured
-              .toList().first as WKUserScript;
+              .single as WKUserScript;
       expect(userScript.source, 'window.name2 = webkit.messageHandlers.name2;');
       expect(
         userScript.injectionTime,

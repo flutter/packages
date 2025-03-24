@@ -443,7 +443,6 @@ class WebKitWebViewController extends PlatformWebViewController {
         webKitParams.name,
       ),
     ]);
-    await _injectPostMessageOverride(webKitParams.name);
   }
 
   @override
@@ -762,47 +761,6 @@ window.addEventListener("error", function(e) {
       ''',
       injectionTime: UserScriptInjectionTime.atDocumentStart,
       isForMainFrameOnly: true,
-    );
-
-    final WKUserContentController controller =
-        await _webView.configuration.getUserContentController();
-    await controller.addUserScript(overrideScript);
-  }
-
-  Future<void> _injectPostMessageOverride(String channelName) async {
-    final WKUserScript overrideScript =
-        _webKitParams.webKitProxy.newWKUserScript(
-      source: '''
-var _flutter_webview_plugin_overrides = _flutter_webview_plugin_overrides || {};
-
-_flutter_webview_plugin_overrides.originalPostMessageFunctions = _flutter_webview_plugin_overrides.originalPostMessageFunctions || {};
-
-(function() {
-  if (window.webkit && window.webkit.messageHandlers) {
-    const handlerName = "$channelName";
-    const handler = window.webkit.messageHandlers[handlerName];
-    
-    if (handler && 
-        typeof handler.postMessage === 'function' &&
-        !_flutter_webview_plugin_overrides.originalPostMessageFunctions[handlerName]) {
-      
-      _flutter_webview_plugin_overrides.originalPostMessageFunctions[handlerName] = handler.postMessage;
-
-      handler.postMessage = function(data) {
-        if (data === undefined) {
-          return _flutter_webview_plugin_overrides.originalPostMessageFunctions[handlerName].call(this, "undefined");
-        }
-        if (data === null) {
-          return _flutter_webview_plugin_overrides.originalPostMessageFunctions[handlerName].call(this, "null");
-        }
-        return _flutter_webview_plugin_overrides.originalPostMessageFunctions[handlerName].call(this, data);
-      };
-    }
-  }
-})();
-      ''',
-      injectionTime: UserScriptInjectionTime.atDocumentStart,
-      isForMainFrameOnly: false,
     );
 
     final WKUserContentController controller =
