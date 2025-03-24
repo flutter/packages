@@ -6,18 +6,21 @@ import 'ast.dart';
 import 'generator_tools.dart';
 
 /// The internal options used by the generator.
-abstract class InternalOptions {}
+abstract class PigeonInternalOptions {
+  /// Constructor.
+  const PigeonInternalOptions();
+}
 
 /// An abstract base class of generators.
 ///
 /// This provides the structure that is common across generators for different languages.
-abstract class Generator<InternalOptions> {
+abstract class Generator<PigeonInternalOptions> {
   /// Constructor.
   const Generator();
 
   /// Generates files for specified language with specified [generatorOptions]
   void generate(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     StringSink sink, {
     required String dartPackageName,
@@ -25,14 +28,14 @@ abstract class Generator<InternalOptions> {
 }
 
 /// An abstract base class that enforces code generation across platforms.
-abstract class StructuredGenerator<InternalOptions>
-    extends Generator<InternalOptions> {
+abstract class StructuredGenerator<PigeonInternalOptions>
+    extends Generator<PigeonInternalOptions> {
   /// Constructor.
   const StructuredGenerator();
 
   @override
   void generate(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     StringSink sink, {
     required String dartPackageName,
@@ -123,7 +126,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Adds specified headers to [indent].
   void writeFilePrologue(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -131,7 +134,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes specified imports to [indent].
   void writeFileImports(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -141,7 +144,7 @@ abstract class StructuredGenerator<InternalOptions>
   ///
   /// This method is not required, and does not need to be overridden.
   void writeOpenNamespace(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -151,7 +154,7 @@ abstract class StructuredGenerator<InternalOptions>
   ///
   /// This method is not required, and does not need to be overridden.
   void writeCloseNamespace(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -161,7 +164,7 @@ abstract class StructuredGenerator<InternalOptions>
   ///
   /// This method is not required, and does not need to be overridden.
   void writeGeneralUtilities(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -171,7 +174,7 @@ abstract class StructuredGenerator<InternalOptions>
   ///
   /// Can be overridden to add extra code before/after enums.
   void writeEnums(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -189,7 +192,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes a single Enum to [indent]. This is needed in most generators.
   void writeEnum(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -200,7 +203,7 @@ abstract class StructuredGenerator<InternalOptions>
   ///
   /// Can be overridden to add extra code before/after apis.
   void writeDataClasses(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -218,7 +221,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes the custom codec to [indent].
   void writeGeneralCodec(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -226,7 +229,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes a single data class to [indent].
   void writeDataClass(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -235,7 +238,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes a single class encode method to [indent].
   void writeClassEncode(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -244,7 +247,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes a single class decode method to [indent].
   void writeClassDecode(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -253,7 +256,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes a single class decode method to [indent].
   void writeClassEquality(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -264,7 +267,7 @@ abstract class StructuredGenerator<InternalOptions>
   ///
   /// Can be overridden to add extra code before/after classes.
   void writeApis(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -309,7 +312,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes a single Flutter Api to [indent].
   void writeFlutterApi(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
     AstFlutterApi api, {
@@ -318,7 +321,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes a single Host Api to [indent].
   void writeHostApi(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
     AstHostApi api, {
@@ -327,7 +330,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes the implementation of an `InstanceManager` to [indent].
   void writeInstanceManager(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -336,7 +339,7 @@ abstract class StructuredGenerator<InternalOptions>
   /// Writes the implementation of the API for the `InstanceManager` to
   /// [indent].
   void writeInstanceManagerApi(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -353,14 +356,14 @@ abstract class StructuredGenerator<InternalOptions>
   /// needs to create its own codec (it has methods/fields/constructor that use
   /// a data class) it should extend this codec and not `StandardMessageCodec`.
   void writeProxyApiBaseCodec(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
   ) {}
 
   /// Writes a single Proxy Api to [indent].
   void writeProxyApi(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
     AstProxyApi api, {
@@ -369,7 +372,7 @@ abstract class StructuredGenerator<InternalOptions>
 
   /// Writes a single event channel Api to [indent].
   void writeEventChannelApi(
-    InternalOptions generatorOptions,
+    PigeonInternalOptions generatorOptions,
     Root root,
     Indent indent,
     AstEventChannelApi api, {
