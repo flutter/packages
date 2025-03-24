@@ -499,6 +499,21 @@ void main() {
       expect(file.path, '/test/path.mp4');
     });
 
+    test('Should stop a video recording with a error when no file is returned',
+        () async {
+      // Arrange
+      when(mockCameraApi.stopVideoRecording()).thenThrow(StateError(
+          'Video recording error, No valid audio/video data was generated'));
+
+      // Act & assert
+      expect(
+          () => camera.stopVideoRecording(cameraId),
+          throwsA(isA<StateError>().having(
+              (StateError e) => e.message,
+              'message',
+              'Video recording error, No valid audio/video data was generated')));
+    });
+
     test('Should pause a video recording', () async {
       // Arrange
       // Act

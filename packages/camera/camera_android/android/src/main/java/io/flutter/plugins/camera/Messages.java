@@ -942,6 +942,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
     /** Success case callback method for handling returns. */
@@ -950,6 +951,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for void API method returns. */
   public interface VoidResult {
     /** Success case callback method for handling returns. */
@@ -958,6 +960,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /**
    * Handles calls from Dart to the native side.
    *
@@ -967,81 +970,108 @@ public class Messages {
     /** Returns the list of available cameras. */
     @NonNull
     List<PlatformCameraDescription> getAvailableCameras();
+
     /** Creates a new camera with the given name and settings and returns its ID. */
     void create(
         @NonNull String cameraName,
         @NonNull PlatformMediaSettings mediaSettings,
         @NonNull Result<Long> result);
+
     /** Initializes the camera with the given ID for the given image format. */
     void initialize(@NonNull PlatformImageFormatGroup imageFormat);
+
     /** Disposes of the camera with the given ID. */
     void dispose();
+
     /** Locks the camera with the given ID to the given orientation. */
     void lockCaptureOrientation(@NonNull PlatformDeviceOrientation orientation);
+
     /** Unlocks the orientation for the camera with the given ID. */
     void unlockCaptureOrientation();
+
     /** Takes a picture on the camera with the given ID and returns a path to the resulting file. */
     void takePicture(@NonNull Result<String> result);
+
     /** Starts recording a video on the camera with the given ID. */
     void startVideoRecording(@NonNull Boolean enableStream);
+
     /**
      * Ends video recording on the camera with the given ID and returns the path to the resulting
-     * file.
+     * file. return null if no valid audio/video data was generated.
      */
-    @NonNull
+    @Nullable
     String stopVideoRecording();
+
     /** Pauses video recording on the camera with the given ID. */
     void pauseVideoRecording();
+
     /** Resumes previously paused video recording on the camera with the given ID. */
     void resumeVideoRecording();
+
     /** Begins streaming frames from the camera. */
     void startImageStream();
+
     /** Stops streaming frames from the camera. */
     void stopImageStream();
+
     /** Sets the flash mode of the camera with the given ID. */
     void setFlashMode(@NonNull PlatformFlashMode flashMode, @NonNull VoidResult result);
+
     /** Sets the exposure mode of the camera with the given ID. */
     void setExposureMode(@NonNull PlatformExposureMode exposureMode, @NonNull VoidResult result);
+
     /**
      * Sets the exposure point of the camera with the given ID.
      *
      * <p>A null value resets to the default exposure point.
      */
     void setExposurePoint(@Nullable PlatformPoint point, @NonNull VoidResult result);
+
     /** Returns the minimum exposure offset of the camera with the given ID. */
     @NonNull
     Double getMinExposureOffset();
+
     /** Returns the maximum exposure offset of the camera with the given ID. */
     @NonNull
     Double getMaxExposureOffset();
+
     /** Returns the exposure step size of the camera with the given ID. */
     @NonNull
     Double getExposureOffsetStepSize();
+
     /**
      * Sets the exposure offset of the camera with the given ID and returns the actual exposure
      * offset.
      */
     void setExposureOffset(@NonNull Double offset, @NonNull Result<Double> result);
+
     /** Sets the focus mode of the camera with the given ID. */
     void setFocusMode(@NonNull PlatformFocusMode focusMode);
+
     /**
      * Sets the focus point of the camera with the given ID.
      *
      * <p>A null value resets to the default focus point.
      */
     void setFocusPoint(@Nullable PlatformPoint point, @NonNull VoidResult result);
+
     /** Returns the maximum zoom level of the camera with the given ID. */
     @NonNull
     Double getMaxZoomLevel();
+
     /** Returns the minimum zoom level of the camera with the given ID. */
     @NonNull
     Double getMinZoomLevel();
+
     /** Sets the zoom level of the camera with the given ID. */
     void setZoomLevel(@NonNull Double zoom, @NonNull VoidResult result);
+
     /** Pauses streaming of preview frames. */
     void pausePreview();
+
     /** Resumes previously paused streaming of preview frames. */
     void resumePreview();
+
     /**
      * Changes the camera while recording video.
      *
@@ -1053,6 +1083,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Sets up an instance of `CameraApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable CameraApi api) {
       setUp(binaryMessenger, "", api);
@@ -1780,6 +1811,7 @@ public class Messages {
       }
     }
   }
+
   /**
    * Handles calls from native side to Dart that are not camera-specific.
    *
@@ -1803,6 +1835,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Called when the device's physical orientation changes. */
     public void deviceOrientationChanged(
         @NonNull PlatformDeviceOrientation orientationArg, @NonNull VoidResult result) {
@@ -1829,6 +1862,7 @@ public class Messages {
           });
     }
   }
+
   /**
    * Handles device-specific calls from native side to Dart.
    *
@@ -1852,6 +1886,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Called when the camera is initialized. */
     public void initialized(
         @NonNull PlatformCameraState initialStateArg, @NonNull VoidResult result) {
@@ -1876,6 +1911,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when an error occurs in the camera. */
     public void error(@NonNull String messageArg, @NonNull VoidResult result) {
       final String channelName =
@@ -1899,6 +1935,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when the camera closes. */
     public void closed(@NonNull VoidResult result) {
       final String channelName =

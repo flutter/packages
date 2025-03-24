@@ -153,8 +153,8 @@ abstract class CameraApi {
   void startVideoRecording(bool enableStream);
 
   /// Ends video recording on the camera with the given ID and returns the path
-  /// to the resulting file.
-  String stopVideoRecording();
+  /// to the resulting file. return null if no valid audio/video data was generated.
+  String? stopVideoRecording();
 
   /// Pauses video recording on the camera with the given ID.
   void pauseVideoRecording();

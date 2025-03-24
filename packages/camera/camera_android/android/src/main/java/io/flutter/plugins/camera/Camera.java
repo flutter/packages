@@ -107,8 +107,10 @@ class Camera
   private CameraProperties cameraProperties;
   private final CameraFeatureFactory cameraFeatureFactory;
   private final Activity activity;
+
   /** A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture. */
   private final CameraCaptureCallback cameraCaptureCallback;
+
   /** A {@link Handler} for running tasks in the background. */
   Handler backgroundHandler;
 
@@ -119,12 +121,15 @@ class Camera
   CameraCaptureSession captureSession;
   @VisibleForTesting ImageReader pictureImageReader;
   ImageStreamReader imageStreamReader;
+
   /** {@link CaptureRequest.Builder} for the camera preview */
   CaptureRequest.Builder previewRequestBuilder;
 
   @VisibleForTesting MediaRecorder mediaRecorder;
+
   /** True when recording video. */
   boolean recordingVideo;
+
   /** True when the preview is paused. */
   @VisibleForTesting boolean pausedPreview;
 
@@ -132,6 +137,7 @@ class Camera
 
   /** Holds the current capture timeouts */
   private CaptureTimeoutsWrapper captureTimeouts;
+
   /** Holds the last known capture properties */
   private CameraCaptureProperties captureProps;
 
@@ -294,8 +300,10 @@ class Camera
 
     MediaRecorderBuilder mediaRecorderBuilder;
 
-    // TODO(camsim99): Revert changes that allow legacy code to be used when recordingProfile is null
-    // once this has largely been fixed on the Android side. https://github.com/flutter/flutter/issues/119668
+    // TODO(camsim99): Revert changes that allow legacy code to be used when recordingProfile is
+    // null
+    // once this has largely been fixed on the Android side.
+    // https://github.com/flutter/flutter/issues/119668
     if (SdkCapabilityChecker.supportsEncoderProfiles() && getRecordingProfile() != null) {
       mediaRecorderBuilder =
           new MediaRecorderBuilder(
@@ -367,7 +375,8 @@ class Camera
             cameraDevice = new DefaultCameraDeviceWrapper(device);
             try {
               startPreview();
-              if (!recordingVideo) { // only send initialization if we werent already recording and switching cameras
+              if (!recordingVideo) { // only send initialization if we werent already recording and
+                                     // switching cameras
                 dartMessenger.sendCameraInitializedEvent(
                     resolutionFeature.getPreviewSize().getWidth(),
                     resolutionFeature.getPreviewSize().getHeight(),
@@ -859,11 +868,16 @@ class Camera
       // Ignore exceptions and try to continue (changes are camera session already aborted capture).
     }
 
+    boolean haveCaptureError = false;
+
     try {
       mediaRecorder.stop();
+    } catch (IllegalStateException e) {
+      // Ignore exceptions and try to continue (changes are camera session already aborted capture).
     } catch (RuntimeException e) {
-      // Ignore exceptions and try to continue (a RuntimeException is intentionally thrown to the application
-      // , if no valid audio/ video data has been received when stop() is called).
+      // We marked that mediaRecorder.stop() is failed when no valid audio/video data has been
+      // received when stop() is called, so we should reset mediaRecorder and start preview.
+      haveCaptureError = true;
     }
 
     mediaRecorder.reset();
@@ -874,6 +888,11 @@ class Camera
     }
     String path = captureFile.getAbsolutePath();
     captureFile = null;
+
+    // if there was an RuntimeException during stopping the video recording, return null to let the user know.
+    if (haveCaptureError) {
+      return null;
+    }
     return path;
   }
 
@@ -1158,7 +1177,8 @@ class Camera
   }
 
   public void startPreview() throws CameraAccessException, InterruptedException {
-    // If recording is already in progress, the camera is being flipped, so send it through the VideoRenderer to keep the correct orientation.
+    // If recording is already in progress, the camera is being flipped, so send it through the
+    // VideoRenderer to keep the correct orientation.
     if (recordingVideo) {
       startPreviewWithVideoRendererStream();
     } else {
@@ -1362,7 +1382,8 @@ class Camera
           "setDescriptionWhileRecordingFailed", "Device was not recording", null);
     }
 
-    // See VideoRenderer.java; support for this EGL extension is required to switch camera while recording.
+    // See VideoRenderer.java; support for this EGL extension is required to switch camera while
+    // recording.
     if (!SdkCapabilityChecker.supportsEglRecordableAndroid()) {
       throw new Messages.FlutterError(
           "setDescriptionWhileRecordingFailed",

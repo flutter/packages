@@ -148,27 +148,14 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<String> stopVideoRecording() => (super.noSuchMethod(
+  _i4.Future<String?> stopVideoRecording() => (super.noSuchMethod(
         Invocation.method(
           #stopVideoRecording,
           [],
         ),
-        returnValue: _i4.Future<String>.value(_i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #stopVideoRecording,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i4.Future<String>.value(_i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #stopVideoRecording,
-            [],
-          ),
-        )),
-      ) as _i4.Future<String>);
+        returnValue: _i4.Future<String?>.value(),
+        returnValueForMissingStub: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
 
   @override
   _i4.Future<void> pauseVideoRecording() => (super.noSuchMethod(
