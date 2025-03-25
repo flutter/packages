@@ -87,7 +87,7 @@ class DartOptions {
 }
 
 /// Options that control how Dart code will be generated.
-class InternalDartOptions {
+class InternalDartOptions extends PigeonInternalOptions {
   /// Constructor for InternalDartOptions.
   const InternalDartOptions({
     this.copyrightHeader,
@@ -354,12 +354,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeScoped('return ', '', () {
         indent.format(
             classDefinition.fields
-                .map((NamedType field) => field.type.baseName == 'List' ||
-                        field.type.baseName == 'Float64List' ||
-                        field.type.baseName == 'Int32List' ||
-                        field.type.baseName == 'Int64List' ||
-                        field.type.baseName == 'Uint8List' ||
-                        field.type.baseName == 'Map'
+                .map((NamedType field) => isCollectionType(field.type)
                     ? '_deepEquals(${field.name}, other.${field.name})'
                     : '${field.name} == other.${field.name}')
                 .join('\n&& '),
@@ -1089,10 +1084,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
       _writeWrapResponse(generatorOptions, root, indent);
     }
     if (root.classes.isNotEmpty &&
-        root.classes.any((Class dataClass) => dataClass.fields.any(
-            (NamedType field) =>
-                field.type.baseName.startsWith('List') ||
-                field.type.baseName.startsWith('Map')))) {
+        root.classes.any((Class dataClass) => dataClass.fields
+            .any((NamedType field) => isCollectionType(field.type)))) {
       _writeDeepEquals(indent);
     }
   }
