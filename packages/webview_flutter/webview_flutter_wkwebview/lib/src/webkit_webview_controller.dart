@@ -905,8 +905,13 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
             (WeakReference<void Function(JavaScriptMessage)> weakReference) {
               return (_, __, WKScriptMessage message) {
                 if (weakReference.target != null) {
+                  // When message.body is null, return '(null)' for consistency
+                  // with previous implementations.
                   weakReference.target!(
-                    JavaScriptMessage(message: message.body?.toString() ?? ''),
+                    JavaScriptMessage(
+                        message: message.body == null
+                            ? '(null)'
+                            : message.body!.toString()),
                   );
                 }
               };

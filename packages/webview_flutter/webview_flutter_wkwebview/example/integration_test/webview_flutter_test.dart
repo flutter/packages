@@ -316,7 +316,7 @@ Future<void> main() async {
     await pageFinished.future;
 
     await controller.runJavaScript('Channel.postMessage(undefined);');
-    await expectLater(channelCompleter.future, completion(''));
+    await expectLater(channelCompleter.future, completion('(null)'));
   });
 
   testWidgets('resize webview', (WidgetTester tester) async {
