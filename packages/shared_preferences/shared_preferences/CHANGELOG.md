@@ -1,6 +1,8 @@
+## 2.5.3
+* Fixes a bug in the example app.
+
 ## 2.5.2
 
-* Fixes a bug in the example app.
 * Fixes `setState` returning `Future` on `example/main.dart` error in example code.
 
 ## 2.5.1
