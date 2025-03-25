@@ -36,7 +36,7 @@ final class CameraSessionPresetsTests: XCTestCase {
       return CMVideoDimensions(width: 1, height: 1)
     }
     configuration.videoCaptureSession = videoSessionMock
-    configuration.mediaSettings = CameraTestUtils.getDefaultMediaSettings(
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.max)
 
     let _ = FLTCam(configuration: configuration, error: nil)
@@ -59,7 +59,7 @@ final class CameraSessionPresetsTests: XCTestCase {
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.videoCaptureSession = videoSessionMock
-    configuration.mediaSettings = CameraTestUtils.getDefaultMediaSettings(
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.max)
     configuration.captureDeviceFactory = { MockCaptureDevice() }
 
@@ -84,7 +84,7 @@ final class CameraSessionPresetsTests: XCTestCase {
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.videoCaptureSession = videoSessionMock
-    configuration.mediaSettings = CameraTestUtils.getDefaultMediaSettings(
+    configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.ultraHigh)
 
     let _ = FLTCam(configuration: configuration, error: nil)

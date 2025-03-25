@@ -8,7 +8,7 @@ import Foundation
 enum CameraTestUtils {
   /// This method provides a convenient way to create media settings with minimal configuration.
   /// Audio is enabled by default, while other parameters use platform-specific defaults.
-  static func getDefaultMediaSettings(resolutionPreset: FCPPlatformResolutionPreset)
+  static func createDefaultMediaSettings(resolutionPreset: FCPPlatformResolutionPreset)
     -> FCPPlatformMediaSettings
   {
     return FCPPlatformMediaSettings.make(
@@ -51,7 +51,8 @@ enum CameraTestUtils {
     }
 
     let configuration = FLTCamConfiguration(
-      mediaSettings: getDefaultMediaSettings(resolutionPreset: FCPPlatformResolutionPreset.medium),
+      mediaSettings: createDefaultMediaSettings(
+        resolutionPreset: FCPPlatformResolutionPreset.medium),
       mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
       captureDeviceFactory: { captureDeviceMock },
       captureSessionFactory: { videoSessionMock },
