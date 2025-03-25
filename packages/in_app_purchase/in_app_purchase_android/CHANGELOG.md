@@ -1,3 +1,7 @@
+## 0.4.0+1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 0.4.0
 
 * Updates Google Play Billing Library from 6.2.0 to 7.1.1.

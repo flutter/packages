@@ -149,6 +149,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
     required this.observers,
     this.restorationScopeId,
     this.initialLocation,
+    this.preload,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
@@ -163,6 +164,9 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   /// The navigator observers.
   final String? observers;
 
+  /// The preload parameter.
+  final String? preload;
+
   @override
   Iterable<String> classDeclarations() => <String>[];
 
@@ -173,7 +177,8 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
       '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
       '${initialLocation == null ? '' : 'initialLocation: $initialLocation,'}'
-      '${observers == null ? '' : 'observers: $observers,'}';
+      '${observers == null ? '' : 'observers: $observers,'}'
+      '${preload == null ? '' : 'preload: $preload,'}';
 
   @override
   String get routeDataClassName => 'StatefulShellBranchData';
@@ -226,8 +231,9 @@ class GoRouteConfig extends RouteBaseConfig {
         // Enum types are encoded using a map, so we need a nullability check
         // here to ensure it matches Uri.encodeComponent nullability
         final DartType? type = _field(pathParameter)?.returnType;
+
         final String value =
-            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${type?.isEnum ?? false ? '!' : ''})}';
+            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${(type?.isEnum ?? false) ? '!' : (type?.isNullableType ?? false) ? "?? ''" : ''})}';
         return MapEntry<String, String>(pathParameter, value);
       }),
     );
@@ -532,6 +538,10 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$observers',
           ),
+          preload: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$preload',
+          ),
         );
       case 'TypedGoRoute':
         final ConstantReader pathValue = reader.read('path');
@@ -743,7 +753,7 @@ const String _convertMapValueHelper = '''
 T? $convertMapValueHelperName<T>(
   String key,
   Map<String, String> map,
-  T Function(String) converter,
+  T? Function(String) converter,
 ) {
   final value = map[key];
   return value == null ? null : converter(value);
@@ -765,8 +775,8 @@ bool $boolConverterHelperName(String value) {
 
 const String _enumConverterHelper = '''
 extension<T extends Enum> on Map<T, String> {
-  T $enumExtensionHelperName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T? $enumExtensionHelperName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }''';
 
 const String _iterableEqualsHelper = '''

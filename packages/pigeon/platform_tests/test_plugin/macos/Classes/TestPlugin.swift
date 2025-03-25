@@ -513,6 +513,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(anotherEnum))
   }
 
+  func defaultIsMainThread() -> Bool {
+    return Thread.isMainThread
+  }
+
+  func taskQueueIsBackgroundThread() -> Bool {
+    return !Thread.isMainThread
+  }
+
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void) {
     flutterAPI.noop { response in
       switch response {

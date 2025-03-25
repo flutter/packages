@@ -56,15 +56,6 @@ void main() {
     testWidgets(
       'live stream duration != 0',
       (WidgetTester tester) async {
-        // This test requires network access, and won't pass until a LUCI recipe
-        // change is made.
-        // TODO(camsim99): Remove once https://github.com/flutter/flutter/issues/160797 is fixed.
-        if (!kIsWeb && Platform.isAndroid) {
-          markTestSkipped(
-              'Skipping due to https://github.com/flutter/flutter/issues/160797');
-          return;
-        }
-
         final VideoPlayerController networkController =
             VideoPlayerController.networkUrl(
           Uri.parse(

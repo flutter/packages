@@ -21,6 +21,8 @@ const String _integrationTestFlag = 'integration';
 
 const String _iOSDestinationFlag = 'ios-destination';
 
+const String _xcodeWarningsExceptionsFlag = 'xcode-warnings-exceptions';
+
 const int _exitNoIOSSimulators = 3;
 
 /// The error message logged when a FlutterTestRunner test is not annotated with
@@ -65,6 +67,14 @@ class NativeTestCommand extends PackageLoopingCommand {
         help: 'Runs native unit tests', defaultsTo: true);
     argParser.addFlag(_integrationTestFlag,
         help: 'Runs native integration (UI) tests', defaultsTo: true);
+
+    argParser.addMultiOption(
+      _xcodeWarningsExceptionsFlag,
+      help: 'A list of packages that are allowed to have Xcode warnings.\n\n'
+          'Alternately, a list of one or more YAML files that contain a list '
+          'of packages to allow Xcode warnings.',
+      defaultsTo: <String>[],
+    );
   }
 
   // The ABI of the host.
@@ -99,6 +109,8 @@ this command.
   Map<String, _PlatformDetails> _platforms = <String, _PlatformDetails>{};
 
   List<String> _requestedPlatforms = <String>[];
+
+  Set<String> _xcodeWarningsExceptions = <String>{};
 
   @override
   Future<void> initializeRun() async {
@@ -151,6 +163,8 @@ this command.
         destination,
       ];
     }
+
+    _xcodeWarningsExceptions = getYamlListArg(_xcodeWarningsExceptionsFlag);
   }
 
   @override
@@ -487,7 +501,8 @@ this command.
         extraFlags: <String>[
           if (testTarget != null) '-only-testing:$testTarget',
           ...extraFlags,
-          'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+          if (!_xcodeWarningsExceptions.contains(plugin.directory.basename))
+            'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
         ],
       );
 

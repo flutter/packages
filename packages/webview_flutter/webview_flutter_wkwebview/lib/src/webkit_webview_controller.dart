@@ -235,7 +235,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           final JavaScriptAlertDialogRequest request =
               JavaScriptAlertDialogRequest(
             message: message,
-            url: await frame.request.getUrl() ?? '',
+            url: await frame.request?.getUrl() ?? '',
           );
           await callback.call(request);
           return;
@@ -253,7 +253,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           final JavaScriptConfirmDialogRequest request =
               JavaScriptConfirmDialogRequest(
             message: message,
-            url: await frame.request.getUrl() ?? '',
+            url: await frame.request?.getUrl() ?? '',
           );
           final bool result = await callback.call(request);
           return result;
@@ -274,7 +274,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           final JavaScriptTextInputDialogRequest request =
               JavaScriptTextInputDialogRequest(
                   message: prompt,
-                  url: await frame.request.getUrl() ?? '',
+                  url: await frame.request?.getUrl() ?? '',
                   defaultText: defaultText);
           final String result = await callback.call(request);
           return result;
@@ -564,6 +564,25 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) async {
+    // Attempt to set the value that requires iOS 14+.
+    try {
+      final WKWebpagePreferences webpagePreferences =
+          await _webView.configuration.getDefaultWebpagePreferences();
+      switch (javaScriptMode) {
+        case JavaScriptMode.disabled:
+          await webpagePreferences.setAllowsContentJavaScript(false);
+        case JavaScriptMode.unrestricted:
+          await webpagePreferences.setAllowsContentJavaScript(true);
+      }
+      return;
+    } on PlatformException catch (exception) {
+      if (exception.code != 'PigeonUnsupportedOperationError') {
+        rethrow;
+      }
+    } catch (exception) {
+      rethrow;
+    }
+
     final WKPreferences preferences =
         await _webView.configuration.getPreferences();
     switch (javaScriptMode) {
@@ -1194,32 +1213,33 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           final String host = protectionSpace.host;
           final String? realm = protectionSpace.realm;
 
-          final Completer<AuthenticationChallengeResponse> responseCompleter =
-              Completer<AuthenticationChallengeResponse>();
+          final Completer<List<Object?>> responseCompleter =
+              Completer<List<Object?>>();
 
           callback(
             HttpAuthRequest(
               host: host,
               realm: realm,
               onProceed: (WebViewCredential credential) {
-                final AuthenticationChallengeResponse response =
-                    proxy.newAuthenticationChallengeResponse(
-                  disposition: UrlSessionAuthChallengeDisposition.useCredential,
-                  credential: URLCredential.withUser(
-                    user: credential.user,
-                    password: credential.password,
-                    persistence: UrlCredentialPersistence.forSession,
-                  ),
+                responseCompleter.complete(
+                  <Object?>[
+                    UrlSessionAuthChallengeDisposition.useCredential,
+                    <String, Object?>{
+                      'user': credential.user,
+                      'password': credential.password,
+                      'persistence': UrlCredentialPersistence.forSession,
+                    },
+                  ],
                 );
-                responseCompleter.complete(response);
               },
               onCancel: () {
-                final AuthenticationChallengeResponse response =
-                    proxy.newAuthenticationChallengeResponse(
-                  disposition: UrlSessionAuthChallengeDisposition
-                      .cancelAuthenticationChallenge,
+                responseCompleter.complete(
+                  <Object?>[
+                    UrlSessionAuthChallengeDisposition
+                        .cancelAuthenticationChallenge,
+                    null,
+                  ],
                 );
-                responseCompleter.complete(response);
               },
             ),
           );
@@ -1227,10 +1247,10 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           return responseCompleter.future;
         }
 
-        return AuthenticationChallengeResponse(
-          disposition:
-              UrlSessionAuthChallengeDisposition.performDefaultHandling,
-        );
+        return <Object?>[
+          UrlSessionAuthChallengeDisposition.performDefaultHandling,
+          null,
+        ];
       },
     );
   }

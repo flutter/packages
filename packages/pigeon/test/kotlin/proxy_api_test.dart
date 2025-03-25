@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/ast.dart';
-import 'package:pigeon/kotlin_generator.dart';
+import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/kotlin/kotlin_generator.dart';
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
@@ -86,7 +86,8 @@ void main() {
       final StringBuffer sink = StringBuffer();
       const KotlinGenerator generator = KotlinGenerator();
       generator.generate(
-        const KotlinOptions(fileSpecificClassNameComponent: 'MyFile'),
+        const InternalKotlinOptions(
+            fileSpecificClassNameComponent: 'MyFile', kotlinOut: ''),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -188,7 +189,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -227,7 +228,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -274,7 +275,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -302,7 +303,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -404,7 +405,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -431,6 +432,88 @@ void main() {
             r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.name('
             r'validTypeArg,enumTypeArg,proxyApiTypeArg,nullableValidTypeArg,'
             r'nullableEnumTypeArg,nullableProxyApiTypeArg), pigeon_identifierArg)',
+          ),
+        );
+      });
+
+      test('host platform constructor callback method', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'aCallbackMethod',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                  location: ApiLocation.flutter,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const KotlinGenerator generator = KotlinGenerator();
+        generator.generate(
+          const InternalKotlinOptions(
+              errorClassName: 'TestError', kotlinOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+        expect(
+          collapsedCode,
+          contains(
+            'if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) { callback(Result.success(Unit))',
+          ),
+        );
+      });
+
+      test(
+          'host platform constructor calls new instance error for required callbacks',
+          () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'aCallbackMethod',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                  location: ApiLocation.flutter,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const KotlinGenerator generator = KotlinGenerator();
+        generator.generate(
+          const InternalKotlinOptions(
+              errorClassName: 'TestError', kotlinOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+        expect(
+          collapsedCode,
+          contains(
+            r'Result.failure( TestError("new-instance-error"',
           ),
         );
       });
@@ -513,7 +596,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -609,7 +692,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -661,7 +744,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -759,7 +842,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -808,7 +891,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -890,7 +973,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const KotlinGenerator generator = KotlinGenerator();
         generator.generate(
-          const KotlinOptions(),
+          const InternalKotlinOptions(kotlinOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,

@@ -695,6 +695,17 @@ NSObject<FlutterMessageCodec> *FLTGetCoreTestsCodec(void);
 - (void)echoAnotherAsyncNullableEnum:(nullable FLTAnotherEnumBox *)anotherEnumBoxed
                           completion:(void (^)(FLTAnotherEnumBox *_Nullable,
                                                FlutterError *_Nullable))completion;
+/// Returns true if the handler is run on a main thread, which should be
+/// true since there is no TaskQueue annotation.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSNumber *)defaultIsMainThreadWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// Returns true if the handler is run on a non-main thread, which should be
+/// true for any platform with TaskQueue support.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSNumber *)taskQueueIsBackgroundThreadWithError:
+    (FlutterError *_Nullable *_Nonnull)error;
 - (void)callFlutterNoopWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)callFlutterThrowErrorWithCompletion:(void (^)(id _Nullable,
                                                       FlutterError *_Nullable))completion;

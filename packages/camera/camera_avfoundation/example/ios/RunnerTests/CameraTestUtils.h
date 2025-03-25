@@ -9,39 +9,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Creates an `FLTCam` that runs its capture session operations on a given queue.
-/// @param captureSessionQueue the capture session queue
-/// @param mediaSettings media settings configuration parameters
-/// @param mediaSettingsAVWrapper provider to perform media settings operations (for unit test
-/// dependency injection).
-/// @param captureDeviceFactory a callback to create capture device instances
-/// @return an FLTCam object.
-extern FLTCam *_Nullable FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
-    dispatch_queue_t _Nullable captureSessionQueue,
-    FCPPlatformMediaSettings *_Nullable mediaSettings,
-    FLTCamMediaSettingsAVWrapper *_Nullable mediaSettingsAVWrapper,
-    CaptureDeviceFactory _Nullable captureDeviceFactory,
-    id<FLTDeviceOrientationProviding> _Nullable deviceOrientationProvider);
+/// This method provides a convenient way to create media settings with minimal configuration.
+/// Audio is enabled by default, while other parameters use platform-specific defaults.
+extern FCPPlatformMediaSettings *FCPGetDefaultMediaSettings(
+    FCPPlatformResolutionPreset resolutionPreset);
+
+/// Creates a test `FLTCamConfiguration` with a default mock setup.
+extern FLTCamConfiguration *FLTCreateTestCameraConfiguration(void);
 
 extern FLTCam *FLTCreateCamWithCaptureSessionQueue(dispatch_queue_t captureSessionQueue);
 
-/// Creates an `FLTCam` with a given captureSession and resolutionPreset
-/// @param captureSession AVCaptureSession for video
-/// @param resolutionPreset preset for camera's captureSession resolution
-/// @return an FLTCam object.
-extern FLTCam *FLTCreateCamWithVideoCaptureSession(AVCaptureSession *captureSession,
-                                                   FCPPlatformResolutionPreset resolutionPreset);
-
-/// Creates an `FLTCam` with a given captureSession and resolutionPreset.
-/// Allows to inject a capture device and a block to compute the video dimensions.
-/// @param captureSession AVCaptureSession for video
-/// @param resolutionPreset preset for camera's captureSession resolution
-/// @param captureDevice AVCaptureDevice to be used
-/// @param videoDimensionsForFormat custom code to determine video dimensions
-/// @return an FLTCam object.
-extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
-    AVCaptureSession *captureSession, FCPPlatformResolutionPreset resolutionPreset,
-    AVCaptureDevice *captureDevice, VideoDimensionsForFormat videoDimensionsForFormat);
+/// Creates an `FLTCam` with a test configuration.
+extern FLTCam *FLTCreateCamWithConfiguration(FLTCamConfiguration *configuration);
 
 /// Creates a test sample buffer.
 /// @return a test sample buffer.
@@ -50,5 +29,12 @@ extern CMSampleBufferRef FLTCreateTestSampleBuffer(void);
 /// Creates a test audio sample buffer.
 /// @return a test audio sample buffer.
 extern CMSampleBufferRef FLTCreateTestAudioSampleBuffer(void);
+
+/// Calls `dispatch_queue_set_specific` with a key that is used to identify the queue.
+/// This method is needed for comaptibility of Swift tests with Objective-C code.
+/// In Swift, the API for settinng key-value pairs on a queue is different, so Swift tests
+/// need to call this method to set the key-value pair on the queue in a way that's
+/// compatible withn the existing Objective-C code.
+extern void FLTdispatchQueueSetSpecific(dispatch_queue_t queue, const void *key);
 
 NS_ASSUME_NONNULL_END

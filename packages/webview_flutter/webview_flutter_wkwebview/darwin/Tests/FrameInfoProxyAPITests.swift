@@ -28,6 +28,16 @@ class FrameInfoProxyAPITests: XCTestCase {
 
     XCTAssertEqual(value?.value, instance!.request)
   }
+
+  @MainActor func testNilRequest() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
+
+    let instance = TestFrameInfoWithNilRequest()
+    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertNil(value)
+  }
 }
 
 class TestFrameInfo: WKFrameInfo {
@@ -38,4 +48,7 @@ class TestFrameInfo: WKFrameInfo {
   override var request: URLRequest {
     return URLRequest(url: URL(string: "https://google.com")!)
   }
+}
+
+class TestFrameInfoWithNilRequest: WKFrameInfo {
 }

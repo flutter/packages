@@ -4,19 +4,23 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'messages.g.dart';
 
-// TODO(FirentisTFW): Remove the ignore and rename parameters when adding support for platform views.
-// ignore_for_file: avoid_renaming_method_parameters
-
 /// An iOS implementation of [VideoPlayerPlatform] that uses the
 /// Pigeon-generated [VideoPlayerApi].
 class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   final AVFoundationVideoPlayerApi _api = AVFoundationVideoPlayerApi();
+
+  /// A map that associates player ID with a view state.
+  /// This is used to determine which view type to use when building a view.
+  @visibleForTesting
+  final Map<int, VideoPlayerViewState> playerViewStates =
+      <int, VideoPlayerViewState>{};
 
   /// Registers this class as the default instance of [VideoPlayerPlatform].
   static void registerWith() {
@@ -29,12 +33,31 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> dispose(int textureId) {
-    return _api.dispose(textureId);
+  Future<void> dispose(int playerId) async {
+    await _api.dispose(playerId);
+    playerViewStates.remove(playerId);
   }
 
   @override
   Future<int?> create(DataSource dataSource) async {
+    return createWithOptions(
+      VideoCreationOptions(
+        dataSource: dataSource,
+        // Texture view was the only supported view type before
+        // createWithOptions was introduced.
+        viewType: VideoViewType.textureView,
+      ),
+    );
+  }
+
+  @override
+  Future<int?> createWithOptions(VideoCreationOptions options) async {
+    final DataSource dataSource = options.dataSource;
+    // Platform views are not supported on macOS yet. Use texture view instead.
+    final VideoViewType viewType = defaultTargetPlatform == TargetPlatform.macOS
+        ? VideoViewType.textureView
+        : options.viewType;
+
     String? asset;
     String? packageName;
     String? uri;
@@ -53,58 +76,67 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.contentUri:
         uri = dataSource.uri;
     }
-    final CreationOptions options = CreationOptions(
+    final CreationOptions pigeonCreationOptions = CreationOptions(
       asset: asset,
       packageName: packageName,
       uri: uri,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
+      viewType: _platformVideoViewTypeFromVideoViewType(viewType),
     );
 
-    return _api.create(options);
+    final int playerId = await _api.create(pigeonCreationOptions);
+    playerViewStates[playerId] = switch (viewType) {
+      // playerId is also the textureId when using texture view.
+      VideoViewType.textureView =>
+        VideoPlayerTextureViewState(textureId: playerId),
+      VideoViewType.platformView => const VideoPlayerPlatformViewState(),
+    };
+
+    return playerId;
   }
 
   @override
-  Future<void> setLooping(int textureId, bool looping) {
-    return _api.setLooping(looping, textureId);
+  Future<void> setLooping(int playerId, bool looping) {
+    return _api.setLooping(looping, playerId);
   }
 
   @override
-  Future<void> play(int textureId) {
-    return _api.play(textureId);
+  Future<void> play(int playerId) {
+    return _api.play(playerId);
   }
 
   @override
-  Future<void> pause(int textureId) {
-    return _api.pause(textureId);
+  Future<void> pause(int playerId) {
+    return _api.pause(playerId);
   }
 
   @override
-  Future<void> setVolume(int textureId, double volume) {
-    return _api.setVolume(volume, textureId);
+  Future<void> setVolume(int playerId, double volume) {
+    return _api.setVolume(volume, playerId);
   }
 
   @override
-  Future<void> setPlaybackSpeed(int textureId, double speed) {
+  Future<void> setPlaybackSpeed(int playerId, double speed) {
     assert(speed > 0);
 
-    return _api.setPlaybackSpeed(speed, textureId);
+    return _api.setPlaybackSpeed(speed, playerId);
   }
 
   @override
-  Future<void> seekTo(int textureId, Duration position) {
-    return _api.seekTo(position.inMilliseconds, textureId);
+  Future<void> seekTo(int playerId, Duration position) {
+    return _api.seekTo(position.inMilliseconds, playerId);
   }
 
   @override
-  Future<Duration> getPosition(int textureId) async {
-    final int position = await _api.getPosition(textureId);
+  Future<Duration> getPosition(int playerId) async {
+    final int position = await _api.getPosition(playerId);
     return Duration(milliseconds: position);
   }
 
   @override
-  Stream<VideoEvent> videoEventsFor(int textureId) {
-    return _eventChannelFor(textureId)
+  Stream<VideoEvent> videoEventsFor(int playerId) {
+    return _eventChannelFor(playerId)
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
@@ -143,17 +175,48 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Widget buildView(int textureId) {
-    return Texture(textureId: textureId);
-  }
-
-  @override
   Future<void> setMixWithOthers(bool mixWithOthers) {
     return _api.setMixWithOthers(mixWithOthers);
   }
 
-  EventChannel _eventChannelFor(int textureId) {
-    return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
+  @override
+  Widget buildView(int playerId) {
+    return buildViewWithOptions(
+      VideoViewOptions(playerId: playerId),
+    );
+  }
+
+  @override
+  Widget buildViewWithOptions(VideoViewOptions options) {
+    final int playerId = options.playerId;
+    final VideoPlayerViewState? viewState = playerViewStates[playerId];
+
+    return switch (viewState) {
+      VideoPlayerTextureViewState(:final int textureId) =>
+        Texture(textureId: textureId),
+      VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
+      null => throw Exception(
+          'Could not find corresponding view type for playerId: $playerId',
+        ),
+    };
+  }
+
+  Widget _buildPlatformView(int playerId) {
+    final PlatformVideoViewCreationParams creationParams =
+        PlatformVideoViewCreationParams(playerId: playerId);
+
+    return IgnorePointer(
+      // IgnorePointer so that GestureDetector can be used above the platform view.
+      child: UiKitView(
+        viewType: 'plugins.flutter.dev/video_player_ios',
+        creationParams: creationParams,
+        creationParamsCodec: AVFoundationVideoPlayerApi.pigeonChannelCodec,
+      ),
+    );
+  }
+
+  EventChannel _eventChannelFor(int playerId) {
+    return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
   }
 
   static const Map<VideoFormat, String> _videoFormatStringMap =
@@ -171,4 +234,47 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       Duration(milliseconds: pair[1] as int),
     );
   }
+}
+
+PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
+  VideoViewType viewType,
+) {
+  return switch (viewType) {
+    VideoViewType.textureView => PlatformVideoViewType.textureView,
+    VideoViewType.platformView => PlatformVideoViewType.platformView,
+  };
+}
+
+/// Base class representing the state of a video player view.
+@visibleForTesting
+@immutable
+sealed class VideoPlayerViewState {
+  const VideoPlayerViewState();
+}
+
+/// Represents the state of a video player view that uses a texture.
+@visibleForTesting
+final class VideoPlayerTextureViewState extends VideoPlayerViewState {
+  /// Creates a new instance of [VideoPlayerTextureViewState].
+  const VideoPlayerTextureViewState({
+    required this.textureId,
+  });
+
+  /// The ID of the texture used by the video player.
+  final int textureId;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is VideoPlayerTextureViewState && other.textureId == textureId;
+
+  @override
+  int get hashCode => textureId.hashCode;
+}
+
+/// Represents the state of a video player view that uses a platform view.
+@visibleForTesting
+final class VideoPlayerPlatformViewState extends VideoPlayerViewState {
+  /// Creates a new instance of [VideoPlayerPlatformViewState].
+  const VideoPlayerPlatformViewState();
 }

@@ -5,7 +5,9 @@
 @import GoogleMapsUtils;
 
 #import "GoogleMapController.h"
+#import "GoogleMapController_Test.h"
 
+#import "FGMGroundOverlayController.h"
 #import "FGMMarkerUserData.h"
 #import "FLTGoogleMapHeatmapController.h"
 #import "FLTGoogleMapJSONConversions.h"
@@ -64,21 +66,12 @@
 
 #pragma mark -
 
-/// Implementation of the Pigeon maps API.
-///
-/// This is a separate object from the maps controller because the Pigeon API registration keeps a
-/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
-/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
-/// the target of the registration.
-@interface FGMMapCallHandler : NSObject <FGMMapsApi>
+/// Private declarations of the FGMMapCallHandler.
+@interface FGMMapCallHandler ()
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
                             messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                          pigeonSuffix:(NSString *)suffix;
-@end
 
-/// Private declarations.
-// This is separate in case the above is made public in the future (e.g., for unit testing).
-@interface FGMMapCallHandler ()
 /// The map controller this inspector corresponds to.
 @property(nonatomic, weak) FLTGoogleMapController *controller;
 /// The messenger this instance was registered with by Pigeon.
@@ -89,21 +82,9 @@
 
 #pragma mark -
 
-/// Implementation of the Pigeon maps inspector API.
-///
-/// This is a separate object from the maps controller because the Pigeon API registration keeps a
-/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
-/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
-/// the target of the registration.
-@interface FGMMapInspector : NSObject <FGMMapsInspectorApi>
-- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
-                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                         pigeonSuffix:(NSString *)suffix;
-@end
-
-/// Private declarations.
-// This is separate in case the above is made public in the future (e.g., for unit testing).
+/// Private declarations of the FGMMapInspector.
 @interface FGMMapInspector ()
+
 /// The map controller this inspector corresponds to.
 @property(nonatomic, weak) FLTGoogleMapController *controller;
 /// The messenger this instance was registered with by Pigeon.
@@ -129,6 +110,7 @@
 // The controller that handles heatmaps
 @property(nonatomic, strong) FLTHeatmapsController *heatmapsController;
 @property(nonatomic, strong) FLTTileOverlaysController *tileOverlaysController;
+@property(nonatomic, strong) FLTGroundOverlaysController *groundOverlaysController;
 // The resulting error message, if any, from the last attempt to set the map style.
 // This is used to provide access to errors after the fact, since the map style is generally set at
 // creation time and there's no mechanism to return non-fatal error details during platform view
@@ -204,6 +186,10 @@
         [[FLTTileOverlaysController alloc] initWithMapView:_mapView
                                            callbackHandler:_dartCallbackHandler
                                                  registrar:registrar];
+    _groundOverlaysController =
+        [[FLTGroundOverlaysController alloc] initWithMapView:_mapView
+                                             callbackHandler:_dartCallbackHandler
+                                                   registrar:registrar];
     [_clusterManagersController addClusterManagers:creationParameters.initialClusterManagers];
     [_markersController addMarkers:creationParameters.initialMarkers];
     [_polygonsController addPolygons:creationParameters.initialPolygons];
@@ -211,6 +197,7 @@
     [_circlesController addCircles:creationParameters.initialCircles];
     [_heatmapsController addHeatmaps:creationParameters.initialHeatmaps];
     [_tileOverlaysController addTileOverlays:creationParameters.initialTileOverlays];
+    [_groundOverlaysController addGroundOverlays:creationParameters.initialGroundOverlays];
 
     // Invoke clustering after markers are added.
     [_clusterManagersController invokeClusteringForEachClusterManager];
@@ -423,6 +410,8 @@
     [self.polygonsController didTapPolygonWithIdentifier:overlayId];
   } else if ([self.circlesController hasCircleWithIdentifier:overlayId]) {
     [self.circlesController didTapCircleWithIdentifier:overlayId];
+  } else if ([self.groundOverlaysController hasGroundOverlaysWithIdentifier:overlayId]) {
+    [self.groundOverlaysController didTapGroundOverlayWithIdentifier:overlayId];
   }
 }
 
@@ -515,6 +504,7 @@
 
 #pragma mark -
 
+/// Private declarations of the FGMMapCallHandler.
 @implementation FGMMapCallHandler
 
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
@@ -525,6 +515,7 @@
     _controller = controller;
     _messenger = messenger;
     _pigeonSuffix = suffix;
+    _transactionWrapper = [[FGMCATransactionWrapper alloc] init];
   }
   return self;
 }
@@ -602,6 +593,15 @@
   [self.controller.tileOverlaysController removeTileOverlayWithIdentifiers:idsToRemove];
 }
 
+- (void)updateGroundOverlaysByAdding:(nonnull NSArray<FGMPlatformGroundOverlay *> *)toAdd
+                            changing:(nonnull NSArray<FGMPlatformGroundOverlay *> *)toChange
+                            removing:(nonnull NSArray<NSString *> *)idsToRemove
+                               error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  [self.controller.groundOverlaysController addGroundOverlays:toAdd];
+  [self.controller.groundOverlaysController changeGroundOverlays:toChange];
+  [self.controller.groundOverlaysController removeGroundOverlaysWithIdentifiers:idsToRemove];
+}
+
 - (nullable FGMPlatformLatLng *)
     latLngForScreenCoordinate:(nonnull FGMPlatformPoint *)screenCoordinate
                         error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
@@ -656,6 +656,7 @@
 }
 
 - (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
+                       duration:(nullable NSNumber *)durationMilliseconds
                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(cameraUpdate);
   if (!update) {
@@ -664,7 +665,11 @@
                                  details:nil];
     return;
   }
+  FGMCATransactionWrapper *transaction = durationMilliseconds ? self.transactionWrapper : nil;
+  [transaction begin];
+  [transaction setAnimationDuration:[durationMilliseconds doubleValue] / 1000];
   [self.controller.mapView animateWithCameraUpdate:update];
+  [transaction commit];
 }
 
 - (nullable NSNumber *)currentZoomLevel:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
@@ -730,6 +735,7 @@
 
 #pragma mark -
 
+/// Private declarations of the FGMMapInspector.
 @implementation FGMMapInspector
 
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
@@ -820,6 +826,17 @@
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   return [FGMPlatformZoomRange makeWithMin:@(self.controller.mapView.minZoom)
                                        max:@(self.controller.mapView.maxZoom)];
+}
+
+- (nullable FGMPlatformGroundOverlay *)
+    groundOverlayWithIdentifier:(NSString *)groundOverlayId
+                          error:(FlutterError *_Nullable __autoreleasing *)error {
+  return [self.controller.groundOverlaysController groundOverlayWithIdentifier:groundOverlayId];
+}
+
+- (nullable FGMPlatformCameraPosition *)cameraPosition:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return FGMGetPigeonCameraPositionForPosition(self.controller.mapView.camera);
 }
 
 @end

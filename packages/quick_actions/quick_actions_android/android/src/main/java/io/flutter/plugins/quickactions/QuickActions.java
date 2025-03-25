@@ -20,7 +20,6 @@ import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
 import io.flutter.plugins.quickactions.Messages.AndroidQuickActionsApi;
 import io.flutter.plugins.quickactions.Messages.FlutterError;
-import io.flutter.plugins.quickactions.Messages.Result;
 import io.flutter.plugins.quickactions.Messages.ShortcutItemMessage;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 final class QuickActions implements AndroidQuickActionsApi {
-  protected static final String EXTRA_ACTION = "some unique action key";
+  static final String EXTRA_ACTION = "some unique action key";
 
   private final Context context;
   private Activity activity;
@@ -56,9 +55,9 @@ final class QuickActions implements AndroidQuickActionsApi {
 
   @Override
   public void setShortcutItems(
-      @NonNull List<ShortcutItemMessage> itemsList, @NonNull Result<Void> result) {
+      @NonNull List<ShortcutItemMessage> itemsList, @NonNull Messages.VoidResult result) {
     if (!isVersionAllowed()) {
-      result.success(null);
+      result.success();
       return;
     }
     List<ShortcutInfoCompat> shortcuts = shortcutItemMessageToShortcutInfo(itemsList);
@@ -82,7 +81,7 @@ final class QuickActions implements AndroidQuickActionsApi {
           uiThreadExecutor.execute(
               () -> {
                 if (didSucceed) {
-                  result.success(null);
+                  result.success();
                 } else {
                   result.error(
                       new FlutterError(

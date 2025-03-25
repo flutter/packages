@@ -1441,9 +1441,6 @@ public class GeneratedCameraXLibrary {
     @NonNull
     String getTempFilePath(@NonNull String prefix, @NonNull String suffix);
 
-    @NonNull
-    Boolean isPreviewPreTransformed();
-
     /** The codec used by SystemServicesHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return SystemServicesHostApiCodec.INSTANCE;
@@ -1500,29 +1497,6 @@ public class GeneratedCameraXLibrary {
                 String suffixArg = (String) args.get(1);
                 try {
                   String output = api.getTempFilePath(prefixArg, suffixArg);
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  ArrayList<Object> wrappedError = wrapError(exception);
-                  wrapped = wrappedError;
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger,
-                "dev.flutter.pigeon.SystemServicesHostApi.isPreviewPreTransformed",
-                getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<Object>();
-                try {
-                  Boolean output = api.isPreviewPreTransformed();
                   wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
@@ -1761,6 +1735,9 @@ public class GeneratedCameraXLibrary {
 
     void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation);
 
+    @NonNull
+    Boolean surfaceProducerHandlesCropAndRotation();
+
     /** The codec used by PreviewHostApi. */
     static @NonNull MessageCodec<Object> getCodec() {
       return PreviewHostApiCodec.INSTANCE;
@@ -1888,6 +1865,29 @@ public class GeneratedCameraXLibrary {
                       (identifierArg == null) ? null : identifierArg.longValue(),
                       (rotationArg == null) ? null : rotationArg.longValue());
                   wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  ArrayList<Object> wrappedError = wrapError(exception);
+                  wrapped = wrappedError;
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.PreviewHostApi.surfaceProducerHandlesCropAndRotation",
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<Object>();
+                try {
+                  Boolean output = api.surfaceProducerHandlesCropAndRotation();
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   ArrayList<Object> wrappedError = wrapError(exception);
                   wrapped = wrappedError;

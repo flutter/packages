@@ -448,7 +448,7 @@ abstract class WKFrameInfo extends NSObject {
   late bool isMainFrame;
 
   /// The frame’s current request.
-  late URLRequest request;
+  late URLRequest? request;
 }
 
 /// Information about an error condition including a domain, a domain-specific
@@ -650,6 +650,9 @@ abstract class WKWebViewConfiguration extends NSObject {
 
   /// The media types that require a user gesture to begin playing.
   void setMediaTypesRequiringUserActionForPlayback(AudiovisualMediaType type);
+
+  /// The default preferences to use when loading and rendering content.
+  WKWebpagePreferences getDefaultWebpagePreferences();
 }
 
 /// An object for managing interactions between JavaScript code and your web
@@ -719,18 +722,18 @@ abstract class WKNavigationDelegate extends NSObject {
   /// Asks the delegate for permission to navigate to new content based on the
   /// specified action information.
   @async
-  NavigationActionPolicy Function(
+  late NavigationActionPolicy Function(
     WKWebView webView,
     WKNavigationAction navigationAction,
-  )? decidePolicyForNavigationAction;
+  ) decidePolicyForNavigationAction;
 
   /// Asks the delegate for permission to navigate to new content after the
   /// response to the navigation request is known.
   @async
-  NavigationResponsePolicy Function(
+  late NavigationResponsePolicy Function(
     WKWebView webView,
     WKNavigationResponse navigationResponse,
-  )? decidePolicyForNavigationResponse;
+  ) decidePolicyForNavigationResponse;
 
   /// Tells the delegate that an error occurred during navigation.
   void Function(WKWebView webView, NSError error)? didFailNavigation;
@@ -742,12 +745,25 @@ abstract class WKNavigationDelegate extends NSObject {
   /// Tells the delegate that the web view’s content process was terminated.
   void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
+  // TODO(bparrishMines): This method should return an
+  // `AuthenticationChallengeResponse` once the cause of
+  // https://github.com/flutter/flutter/issues/162437 can be found and fixed.
   /// Asks the delegate to respond to an authentication challenge.
+  ///
+  /// This return value expects a List with:
+  ///
+  /// 1. `UrlSessionAuthChallengeDisposition`
+  /// 2. A nullable map to instantiate a `URLCredential`. The map structure is
+  /// [
+  ///   "user": "<nonnull String username>",
+  ///   "password": "<nonnull String user password>",
+  ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
+  /// ]
   @async
-  AuthenticationChallengeResponse Function(
+  late List<Object?> Function(
     WKWebView webView,
     URLAuthenticationChallenge challenge,
-  )? didReceiveAuthenticationChallenge;
+  ) didReceiveAuthenticationChallenge;
 }
 
 /// The root class of most Objective-C class hierarchies, from which subclasses
@@ -981,12 +997,12 @@ abstract class WKUIDelegate extends NSObject {
   /// Determines whether a web resource, which the security origin object
   /// describes, can access to the device’s microphone audio and camera video.
   @async
-  PermissionDecision Function(
+  late PermissionDecision Function(
     WKWebView webView,
     WKSecurityOrigin origin,
     WKFrameInfo frame,
     MediaCaptureType type,
-  )? requestMediaCapturePermission;
+  ) requestMediaCapturePermission;
 
   /// Displays a JavaScript alert panel.
   @async
@@ -998,11 +1014,11 @@ abstract class WKUIDelegate extends NSObject {
 
   /// Displays a JavaScript confirm panel.
   @async
-  bool Function(
+  late bool Function(
     WKWebView webView,
     String message,
     WKFrameInfo frame,
-  )? runJavaScriptConfirmPanel;
+  ) runJavaScriptConfirmPanel;
 
   /// Displays a JavaScript text input panel.
   @async
@@ -1091,11 +1107,28 @@ abstract class URLAuthenticationChallenge extends NSObject {
 }
 
 /// A value that identifies the location of a resource, such as an item on a
-/// remote server or the path to a local file..
+/// remote server or the path to a local file.
 ///
 /// See https://developer.apple.com/documentation/foundation/url.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'URL'))
 abstract class URL extends NSObject {
   /// The absolute string for the URL.
   String getAbsoluteString();
+}
+
+/// An object that specifies the behaviors to use when loading and rendering
+/// page content.
+///
+/// See https://developer.apple.com/documentation/webkit/wkwebpagepreferences.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    minIosApi: '13.0.0',
+    minMacosApi: '10.15.0',
+  ),
+)
+abstract class WKWebpagePreferences extends NSObject {
+  /// A Boolean value that indicates whether JavaScript from web content is
+  /// allowed to run.
+  void setAllowsContentJavaScript(bool allow);
 }

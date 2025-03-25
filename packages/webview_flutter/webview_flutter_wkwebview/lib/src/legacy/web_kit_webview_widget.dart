@@ -193,10 +193,10 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
           return NavigationResponsePolicy.allow;
         },
         didReceiveAuthenticationChallenge: (_, __, ___) async {
-          return AuthenticationChallengeResponse(
-            disposition:
-                UrlSessionAuthChallengeDisposition.performDefaultHandling,
-          );
+          return <Object?>[
+            UrlSessionAuthChallengeDisposition.performDefaultHandling,
+            null,
+          ];
         },
       );
     },
@@ -510,6 +510,25 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   }
 
   Future<void> _setJavaScriptMode(JavascriptMode mode) async {
+    // Attempt to set the value that requires iOS 14+.
+    try {
+      final WKWebpagePreferences webpagePreferences =
+          await webView.configuration.getDefaultWebpagePreferences();
+      switch (mode) {
+        case JavascriptMode.disabled:
+          await webpagePreferences.setAllowsContentJavaScript(false);
+        case JavascriptMode.unrestricted:
+          await webpagePreferences.setAllowsContentJavaScript(true);
+      }
+      return;
+    } on PlatformException catch (exception) {
+      if (exception.code != 'PigeonUnsupportedOperationError') {
+        rethrow;
+      }
+    } catch (exception) {
+      rethrow;
+    }
+
     final WKPreferences preferences =
         await webView.configuration.getPreferences();
     switch (mode) {
@@ -699,7 +718,15 @@ class WebViewWidgetProxy {
       WKNavigationAction navigationAction,
     )? onCreateWebView,
   }) {
-    return WKUIDelegate(onCreateWebView: onCreateWebView);
+    return WKUIDelegate(
+      onCreateWebView: onCreateWebView,
+      requestMediaCapturePermission: (_, __, ___, ____, _____) async {
+        return PermissionDecision.deny;
+      },
+      runJavaScriptConfirmPanel: (_, __, ___, ____) async {
+        return false;
+      },
+    );
   }
 
   /// Constructs a [WKNavigationDelegate].
@@ -724,7 +751,7 @@ class WebViewWidgetProxy {
       WKWebView webView,
       WKNavigationResponse navigationResponse,
     ) decidePolicyForNavigationResponse,
-    required Future<AuthenticationChallengeResponse> Function(
+    required Future<List<Object?>> Function(
       WKNavigationDelegate,
       WKWebView webView,
       URLAuthenticationChallenge challenge,
