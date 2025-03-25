@@ -638,7 +638,7 @@ void runTests() {
 
       /// Completer to track when the camera has come to rest.
       Completer<void>? cameraIdleCompleter;
-
+      print('await pumpWidget');
       await tester.pumpWidget(Directionality(
         textDirection: TextDirection.ltr,
         child: GoogleMap(
@@ -658,6 +658,7 @@ void runTests() {
 
       final GoogleMapController controller = await controllerCompleter.future;
 
+      print('await pumpAndSettle');
       await tester.pumpAndSettle();
       // TODO(cyanglaz): Remove this after we added `mapRendered` callback, and
       // `mapControllerCompleter.complete(controller)` above should happen in
@@ -670,6 +671,7 @@ void runTests() {
 
       final CameraUpdate cameraUpdate =
           _getCameraUpdateForType(_cameraUpdateTypeVariants.currentValue!);
+      print('await animateCamera');
       await controller.animateCamera(cameraUpdate);
 
       // If platform supportes getting camera position, check that the camera
@@ -679,9 +681,11 @@ void runTests() {
         // Immediately after calling animateCamera, check that the camera hasn't
         // reached its final position. This relies on the assumption that the
         // camera move is animated and won't complete instantly.
+        print('await getCameraPosition1');
         beforeFinishedPosition =
             await inspector.getCameraPosition(mapId: controller.mapId);
 
+        print('await _checkCameraUpdateByType1');
         await _checkCameraUpdateByType(
             _cameraUpdateTypeVariants.currentValue!,
             beforeFinishedPosition,
@@ -692,14 +696,18 @@ void runTests() {
 
       // Wait for the animation to complete (onCameraIdle).
       expect(cameraIdleCompleter.isCompleted, isFalse);
+      print('await cameraIdleCompleter');
       await cameraIdleCompleter.future;
 
       // If platform supportes getting camera position, check that the camera
       // has moved as expected.
       if (inspector.supportsGettingGameraPosition()) {
         // After onCameraIdle event, the camera should be at the final position.
+        print('await getCameraPosition2');
         final CameraPosition afterFinishedPosition =
             await inspector.getCameraPosition(mapId: controller.mapId);
+
+        print('await _checkCameraUpdateByType2');
         await _checkCameraUpdateByType(
             _cameraUpdateTypeVariants.currentValue!,
             afterFinishedPosition,
