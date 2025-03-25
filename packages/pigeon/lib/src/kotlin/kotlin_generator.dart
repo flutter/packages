@@ -317,11 +317,14 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
         indent.writeln('return true');
       });
       indent.write('return ');
-      indent.format(classDefinition.fields
-          .map((NamedType field) => isCollectionType(field.type)
-              ? 'deepEquals${generatorOptions.fileSpecificClassNameComponent}(${field.name}, other.${field.name})'
-              : '${field.name} == other.${field.name}')
-          .join('\n&& '));
+      indent.format(
+        classDefinition.fields
+            .map((NamedType field) => isCollectionType(field.type)
+                ? 'deepEquals${generatorOptions.fileSpecificClassNameComponent}(${field.name}, other.${field.name})'
+                : '${field.name} == other.${field.name}')
+            .join('\n&& '),
+        leadingSpace: false,
+      );
     });
 
     indent.newln();

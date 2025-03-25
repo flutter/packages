@@ -867,5 +867,5 @@ bool isCollectionType(TypeDeclaration type) {
   return !type.isClass &&
       !type.isEnum &&
       !type.isProxyApi &&
-      (type.baseName.contains('List') || type.baseName.startsWith('Map'));
+      (type.baseName.contains('List') || type.baseName == 'Map');
 }
