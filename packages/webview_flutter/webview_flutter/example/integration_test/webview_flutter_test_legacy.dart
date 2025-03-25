@@ -318,48 +318,10 @@ Future<void> main() async {
   });
 
   group('Video playback policy', () {
-    late String videoTestBase64;
-    setUpAll(() async {
-      final ByteData videoData =
-          await rootBundle.load('assets/sample_video.mp4');
-      final String base64VideoData =
-          base64Encode(Uint8List.view(videoData.buffer));
-      final String videoTest = '''
-        <!DOCTYPE html><html>
-        <head><title>Video auto play</title>
-          <script type="text/javascript">
-            function play() {
-              var video = document.getElementById("video");
-              video.play();
-              video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
-            }
-            function videoTimeUpdateHandler(e) {
-              var video = document.getElementById("video");
-              VideoTestTime.postMessage(video.currentTime);
-            }
-            function isPaused() {
-              var video = document.getElementById("video");
-              return video.paused;
-            }
-            function isFullScreen() {
-              var video = document.getElementById("video");
-              return video.webkitDisplayingFullscreen;
-            }
-          </script>
-        </head>
-        <body onload="play();">
-        <video controls playsinline autoplay id="video">
-          <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
-        </video>
-        </body>
-        </html>
-      ''';
-      videoTestBase64 = base64Encode(const Utf8Encoder().convert(videoTest));
-    });
-
     testWidgets(
       'Auto media playback',
       (WidgetTester tester) async {
+        final String videoTestBase64 = await getTestVideoBase64();
         Completer<WebViewController> controllerCompleter =
             Completer<WebViewController>();
         Completer<void> pageLoaded = Completer<void>();
@@ -424,6 +386,7 @@ Future<void> main() async {
     testWidgets(
       'Changes to initialMediaPlaybackPolicy are ignored',
       (WidgetTester tester) async {
+        final String videoTestBase64 = await getTestVideoBase64();
         final Completer<WebViewController> controllerCompleter =
             Completer<WebViewController>();
         Completer<void> pageLoaded = Completer<void>();
@@ -487,6 +450,7 @@ Future<void> main() async {
 
     testWidgets('Video plays inline when allowsInlineMediaPlayback is true',
         (WidgetTester tester) async {
+      final String videoTestBase64 = await getTestVideoBase64();
       final Completer<WebViewController> controllerCompleter =
           Completer<WebViewController>();
       final Completer<void> pageLoaded = Completer<void>();
@@ -1337,4 +1301,40 @@ class ResizableWebViewState extends State<ResizableWebView> {
       ),
     );
   }
+}
+
+Future<String> getTestVideoBase64() async {
+  final ByteData videoData = await rootBundle.load('assets/sample_video.mp4');
+  final String base64VideoData = base64Encode(Uint8List.view(videoData.buffer));
+  final String videoTest = '''
+        <!DOCTYPE html><html>
+        <head><title>Video auto play</title>
+          <script type="text/javascript">
+            function play() {
+              var video = document.getElementById("video");
+              video.play();
+              video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
+            }
+            function videoTimeUpdateHandler(e) {
+              var video = document.getElementById("video");
+              VideoTestTime.postMessage(video.currentTime);
+            }
+            function isPaused() {
+              var video = document.getElementById("video");
+              return video.paused;
+            }
+            function isFullScreen() {
+              var video = document.getElementById("video");
+              return video.webkitDisplayingFullscreen;
+            }
+          </script>
+        </head>
+        <body onload="play();">
+        <video controls playsinline autoplay id="video">
+          <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
+        </video>
+        </body>
+        </html>
+      ''';
+  return base64Encode(const Utf8Encoder().convert(videoTest));
 }
