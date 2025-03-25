@@ -86,14 +86,43 @@ class DartOptions {
   }
 }
 
+/// Options that control how Dart code will be generated.
+class InternalDartOptions extends PigeonInternalOptions {
+  /// Constructor for InternalDartOptions.
+  const InternalDartOptions({
+    this.copyrightHeader,
+    this.dartOut,
+    this.testOut,
+  });
+
+  /// Creates InternalDartOptions from DartOptions.
+  InternalDartOptions.fromDartOptions(
+    DartOptions options, {
+    Iterable<String>? copyrightHeader,
+    String? dartOut,
+    String? testOut,
+  })  : copyrightHeader = copyrightHeader ?? options.copyrightHeader,
+        dartOut = (dartOut ?? options.sourceOutPath)!,
+        testOut = testOut ?? options.testOutPath;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// Path to output generated Dart file.
+  final String? dartOut;
+
+  /// Path to output generated Test file for tests.
+  final String? testOut;
+}
+
 /// Class that manages all Dart code generation.
-class DartGenerator extends StructuredGenerator<DartOptions> {
+class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   /// Instantiates a Dart Generator.
   const DartGenerator();
 
   @override
   void writeFilePrologue(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -111,7 +140,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   @override
   void writeFileImports(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -134,7 +163,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   @override
   void writeEnum(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -155,7 +184,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
 
   @override
   void writeDataClass(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -185,6 +214,8 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
         indent.writeln('$datatype ${field.name};');
         indent.newln();
       }
+      _writeToList(indent, classDefinition);
+      indent.newln();
       writeClassEncode(
         generatorOptions,
         root,
@@ -194,6 +225,14 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
       );
       indent.newln();
       writeClassDecode(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
+      indent.newln();
+      writeClassEquality(
         generatorOptions,
         root,
         indent,
@@ -219,20 +258,9 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
     });
   }
 
-  @override
-  void writeClassEncode(
-    DartOptions generatorOptions,
-    Root root,
-    Indent indent,
-    Class classDefinition, {
-    required String dartPackageName,
-  }) {
-    indent.write('Object encode() ');
-    indent.addScoped('{', '}', () {
-      indent.write(
-        'return <Object?>',
-      );
-      indent.addScoped('[', '];', () {
+  void _writeToList(Indent indent, Class classDefinition) {
+    indent.writeScoped('List<Object?> _toList() {', '}', () {
+      indent.writeScoped('return <Object?>[', '];', () {
         for (final NamedType field
             in getFieldsInSerializationOrder(classDefinition)) {
           indent.writeln('${field.name},');
@@ -242,8 +270,24 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   }
 
   @override
+  void writeClassEncode(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.write('Object encode() ');
+    indent.addScoped('{', '}', () {
+      indent.write(
+        'return _toList();',
+      );
+    });
+  }
+
+  @override
   void writeClassDecode(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -289,8 +333,45 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   }
 
   @override
+  void writeClassEquality(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeln('@override');
+    indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
+    indent.writeScoped('bool operator ==(Object other) {', '}', () {
+      indent.writeScoped(
+          'if (other is! ${classDefinition.name} || other.runtimeType != runtimeType) {',
+          '}', () {
+        indent.writeln('return false;');
+      });
+      indent.writeScoped('if (identical(this, other)) {', '}', () {
+        indent.writeln('return true;');
+      });
+      indent.writeScoped('return ', '', () {
+        indent.format(
+            classDefinition.fields
+                .map((NamedType field) => isCollectionType(field.type)
+                    ? '_deepEquals(${field.name}, other.${field.name})'
+                    : '${field.name} == other.${field.name}')
+                .join('\n&& '),
+            trailingNewline: false);
+        indent.addln(';');
+      }, addTrailingNewline: false);
+    });
+    indent.newln();
+    indent.writeln('@override');
+    indent.writeln('// ignore: avoid_equals_and_hash_code_on_mutable_classes');
+    indent.writeln('int get hashCode => Object.hashAll(_toList())');
+    indent.addln(';');
+  }
+
+  @override
   void writeGeneralCodec(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -416,7 +497,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   /// }
   @override
   void writeFlutterApi(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
     AstFlutterApi api, {
@@ -493,7 +574,7 @@ class DartGenerator extends StructuredGenerator<DartOptions> {
   /// a code, a message, and details in that order.
   @override
   void writeHostApi(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
     AstHostApi api, {
@@ -541,7 +622,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
   @override
   void writeEventChannelApi(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
     AstEventChannelApi api, {
@@ -568,7 +649,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
   @override
   void writeInstanceManager(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -586,7 +667,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
   @override
   void writeInstanceManagerApi(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -787,7 +868,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
   @override
   void writeProxyApiBaseCodec(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
   ) {
@@ -796,7 +877,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
   @override
   void writeProxyApi(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
     AstProxyApi api, {
@@ -910,15 +991,15 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
   /// path of the generated Dart code to be tested. [testOutPath] is where the
   /// test code will be generated.
   void generateTest(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     StringSink sink, {
     required String dartPackageName,
     required String dartOutputPackageName,
   }) {
     final Indent indent = Indent(sink);
-    final String sourceOutPath = generatorOptions.sourceOutPath ?? '';
-    final String testOutPath = generatorOptions.testOutPath ?? '';
+    final String sourceOutPath = generatorOptions.dartOut ?? '';
+    final String testOutPath = generatorOptions.testOut ?? '';
     _writeTestPrologue(generatorOptions, root, indent);
     _writeTestImports(generatorOptions, root, indent);
     final String relativeDartPath =
@@ -962,7 +1043,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
   }
 
   /// Writes file header to sink.
-  void _writeTestPrologue(DartOptions opt, Root root, Indent indent) {
+  void _writeTestPrologue(InternalDartOptions opt, Root root, Indent indent) {
     if (opt.copyrightHeader != null) {
       addLines(indent, opt.copyrightHeader!, linePrefix: '// ');
     }
@@ -975,7 +1056,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
   }
 
   /// Writes file imports to sink.
-  void _writeTestImports(DartOptions opt, Root root, Indent indent) {
+  void _writeTestImports(InternalDartOptions opt, Root root, Indent indent) {
     indent.writeln("import 'dart:async';");
     indent.writeln(
       "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
@@ -989,7 +1070,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
   @override
   void writeGeneralUtilities(
-    DartOptions generatorOptions,
+    InternalDartOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -999,13 +1080,18 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     }
     if (root.containsFlutterApi ||
         root.containsProxyApi ||
-        generatorOptions.testOutPath != null) {
+        generatorOptions.testOut != null) {
       _writeWrapResponse(generatorOptions, root, indent);
+    }
+    if (root.classes.isNotEmpty &&
+        root.classes.any((Class dataClass) => dataClass.fields
+            .any((NamedType field) => isCollectionType(field.type)))) {
+      _writeDeepEquals(indent);
     }
   }
 
   /// Writes [wrapResponse] method.
-  void _writeWrapResponse(DartOptions opt, Root root, Indent indent) {
+  void _writeWrapResponse(InternalDartOptions opt, Root root, Indent indent) {
     indent.newln();
     indent.writeScoped(
         'List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {',
@@ -1019,6 +1105,25 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
       indent.writeln(
           'return <Object?>[error.code, error.message, error.details];');
     });
+  }
+
+  void _writeDeepEquals(Indent indent) {
+    indent.format(r'''
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
+    return a.length == b.length && keys.every((Object? key) =>
+        (b as Map<Object?, Object?>).containsKey(key) &&
+        _deepEquals(a[key], b[key]));
+  }
+  return a == b;
+}
+    ''');
   }
 
   void _writeCreateConnectionError(Indent indent) {

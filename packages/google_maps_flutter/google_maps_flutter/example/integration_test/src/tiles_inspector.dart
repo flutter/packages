@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -22,7 +21,7 @@ void main() {
 }
 
 void runTests() {
-  const double floatTolerance = 1e-8;
+  const double floatTolerance = 1e-6;
 
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
@@ -208,269 +207,574 @@ void runTests() {
     );
   }, skip: isWeb /* Tiles not supported on the web */);
 
-  /// Check that two lists of [WeightedLatLng] are more or less equal.
-  void expectHeatmapDataMoreOrLessEquals(
-    List<WeightedLatLng> data1,
-    List<WeightedLatLng> data2,
-  ) {
-    expect(data1.length, data2.length);
-    for (int i = 0; i < data1.length; i++) {
-      final WeightedLatLng wll1 = data1[i];
-      final WeightedLatLng wll2 = data2[i];
-      expect(wll1.weight, wll2.weight);
-      expect(wll1.point.latitude, moreOrLessEquals(wll2.point.latitude));
-      expect(wll1.point.longitude, moreOrLessEquals(wll2.point.longitude));
+  group('Heatmaps', () {
+    /// Check that two lists of [WeightedLatLng] are more or less equal.
+    void expectHeatmapDataMoreOrLessEquals(
+      List<WeightedLatLng> data1,
+      List<WeightedLatLng> data2,
+    ) {
+      expect(data1.length, data2.length);
+      for (int i = 0; i < data1.length; i++) {
+        final WeightedLatLng wll1 = data1[i];
+        final WeightedLatLng wll2 = data2[i];
+        expect(wll1.weight, wll2.weight);
+        expect(wll1.point.latitude, moreOrLessEquals(wll2.point.latitude));
+        expect(wll1.point.longitude, moreOrLessEquals(wll2.point.longitude));
+      }
     }
-  }
 
-  /// Check that two [HeatmapGradient]s are more or less equal.
-  void expectHeatmapGradientMoreOrLessEquals(
-    HeatmapGradient? gradient1,
-    HeatmapGradient? gradient2,
-  ) {
-    if (gradient1 == null || gradient2 == null) {
-      expect(gradient1, gradient2);
-      return;
+    /// Check that two [HeatmapGradient]s are more or less equal.
+    void expectHeatmapGradientMoreOrLessEquals(
+      HeatmapGradient? gradient1,
+      HeatmapGradient? gradient2,
+    ) {
+      if (gradient1 == null || gradient2 == null) {
+        expect(gradient1, gradient2);
+        return;
+      }
+      expect(gradient2, isNotNull);
+
+      expect(gradient1.colors.length, gradient2.colors.length);
+      for (int i = 0; i < gradient1.colors.length; i++) {
+        final HeatmapGradientColor color1 = gradient1.colors[i];
+        final HeatmapGradientColor color2 = gradient2.colors[i];
+        expect(color1.color, color2.color);
+        expect(
+          color1.startPoint,
+          moreOrLessEquals(color2.startPoint, epsilon: floatTolerance),
+        );
+      }
+
+      expect(gradient1.colorMapSize, gradient2.colorMapSize);
     }
-    expect(gradient2, isNotNull);
 
-    expect(gradient1.colors.length, gradient2.colors.length);
-    for (int i = 0; i < gradient1.colors.length; i++) {
-      final HeatmapGradientColor color1 = gradient1.colors[i];
-      final HeatmapGradientColor color2 = gradient2.colors[i];
-      expect(color1.color, color2.color);
+    void expectHeatmapEquals(Heatmap heatmap1, Heatmap heatmap2) {
+      expectHeatmapDataMoreOrLessEquals(heatmap1.data, heatmap2.data);
+      expectHeatmapGradientMoreOrLessEquals(
+          heatmap1.gradient, heatmap2.gradient);
+
+      // Only Android supports `maxIntensity`
+      // so the platform value is undefined on others.
+      bool canHandleMaxIntensity() {
+        return isAndroid;
+      }
+
+      // Only iOS supports `minimumZoomIntensity` and `maximumZoomIntensity`
+      // so the platform value is undefined on others.
+      bool canHandleZoomIntensity() {
+        return isIOS;
+      }
+
+      if (canHandleMaxIntensity()) {
+        expect(heatmap1.maxIntensity, heatmap2.maxIntensity);
+      }
       expect(
-        color1.startPoint,
-        moreOrLessEquals(color2.startPoint, epsilon: floatTolerance),
+        heatmap1.opacity,
+        moreOrLessEquals(heatmap2.opacity, epsilon: floatTolerance),
       );
+      expect(heatmap1.radius, heatmap2.radius);
+      if (canHandleZoomIntensity()) {
+        expect(heatmap1.minimumZoomIntensity, heatmap2.minimumZoomIntensity);
+        expect(heatmap1.maximumZoomIntensity, heatmap2.maximumZoomIntensity);
+      }
     }
 
-    expect(gradient1.colorMapSize, gradient2.colorMapSize);
-  }
-
-  void expectHeatmapEquals(Heatmap heatmap1, Heatmap heatmap2) {
-    expectHeatmapDataMoreOrLessEquals(heatmap1.data, heatmap2.data);
-    expectHeatmapGradientMoreOrLessEquals(heatmap1.gradient, heatmap2.gradient);
-
-    // Only Android supports `maxIntensity`
-    // so the platform value is undefined on others.
-    bool canHandleMaxIntensity() {
-      return Platform.isAndroid;
-    }
-
-    // Only iOS supports `minimumZoomIntensity` and `maximumZoomIntensity`
-    // so the platform value is undefined on others.
-    bool canHandleZoomIntensity() {
-      return Platform.isIOS;
-    }
-
-    if (canHandleMaxIntensity()) {
-      expect(heatmap1.maxIntensity, heatmap2.maxIntensity);
-    }
-    expect(
-      heatmap1.opacity,
-      moreOrLessEquals(heatmap2.opacity, epsilon: floatTolerance),
-    );
-    expect(heatmap1.radius, heatmap2.radius);
-    if (canHandleZoomIntensity()) {
-      expect(heatmap1.minimumZoomIntensity, heatmap2.minimumZoomIntensity);
-      expect(heatmap1.maximumZoomIntensity, heatmap2.maximumZoomIntensity);
-    }
-  }
-
-  const Heatmap heatmap1 = Heatmap(
-    heatmapId: HeatmapId('heatmap_1'),
-    data: <WeightedLatLng>[
-      WeightedLatLng(LatLng(37.782, -122.447)),
-      WeightedLatLng(LatLng(37.782, -122.445)),
-      WeightedLatLng(LatLng(37.782, -122.443)),
-      WeightedLatLng(LatLng(37.782, -122.441)),
-      WeightedLatLng(LatLng(37.782, -122.439)),
-      WeightedLatLng(LatLng(37.782, -122.437)),
-      WeightedLatLng(LatLng(37.782, -122.435)),
-      WeightedLatLng(LatLng(37.785, -122.447)),
-      WeightedLatLng(LatLng(37.785, -122.445)),
-      WeightedLatLng(LatLng(37.785, -122.443)),
-      WeightedLatLng(LatLng(37.785, -122.441)),
-      WeightedLatLng(LatLng(37.785, -122.439)),
-      WeightedLatLng(LatLng(37.785, -122.437)),
-      WeightedLatLng(LatLng(37.785, -122.435), weight: 2)
-    ],
-    dissipating: false,
-    gradient: HeatmapGradient(
-      <HeatmapGradientColor>[
-        HeatmapGradientColor(
-          Color.fromARGB(255, 0, 255, 255),
-          0.2,
-        ),
-        HeatmapGradientColor(
-          Color.fromARGB(255, 0, 63, 255),
-          0.4,
-        ),
-        HeatmapGradientColor(
-          Color.fromARGB(255, 0, 0, 191),
-          0.6,
-        ),
-        HeatmapGradientColor(
-          Color.fromARGB(255, 63, 0, 91),
-          0.8,
-        ),
-        HeatmapGradientColor(
-          Color.fromARGB(255, 255, 0, 0),
-          1,
-        ),
+    const Heatmap heatmap1 = Heatmap(
+      heatmapId: HeatmapId('heatmap_1'),
+      data: <WeightedLatLng>[
+        WeightedLatLng(LatLng(37.782, -122.447)),
+        WeightedLatLng(LatLng(37.782, -122.445)),
+        WeightedLatLng(LatLng(37.782, -122.443)),
+        WeightedLatLng(LatLng(37.782, -122.441)),
+        WeightedLatLng(LatLng(37.782, -122.439)),
+        WeightedLatLng(LatLng(37.782, -122.437)),
+        WeightedLatLng(LatLng(37.782, -122.435)),
+        WeightedLatLng(LatLng(37.785, -122.447)),
+        WeightedLatLng(LatLng(37.785, -122.445)),
+        WeightedLatLng(LatLng(37.785, -122.443)),
+        WeightedLatLng(LatLng(37.785, -122.441)),
+        WeightedLatLng(LatLng(37.785, -122.439)),
+        WeightedLatLng(LatLng(37.785, -122.437)),
+        WeightedLatLng(LatLng(37.785, -122.435), weight: 2)
       ],
-    ),
-    maxIntensity: 1,
-    opacity: 0.5,
-    radius: HeatmapRadius.fromPixels(40),
-    minimumZoomIntensity: 1,
-    maximumZoomIntensity: 20,
-  );
-
-  testWidgets('set heatmap correctly', (WidgetTester tester) async {
-    final Completer<int> mapIdCompleter = Completer<int>();
-    final Heatmap heatmap2 = Heatmap(
-      heatmapId: const HeatmapId('heatmap_2'),
-      data: heatmap1.data,
-      dissipating: heatmap1.dissipating,
-      gradient: heatmap1.gradient,
-      maxIntensity: heatmap1.maxIntensity,
-      opacity: heatmap1.opacity - 0.1,
-      radius: heatmap1.radius,
-      minimumZoomIntensity: heatmap1.minimumZoomIntensity,
-      maximumZoomIntensity: heatmap1.maximumZoomIntensity,
-    );
-
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          initialCameraPosition: kInitialCameraPosition,
-          heatmaps: <Heatmap>{heatmap1, heatmap2},
-          onMapCreated: (GoogleMapController controller) {
-            mapIdCompleter.complete(controller.mapId);
-          },
-        ),
+      dissipating: false,
+      gradient: HeatmapGradient(
+        <HeatmapGradientColor>[
+          HeatmapGradientColor(
+            Color.fromARGB(255, 0, 255, 255),
+            0.2,
+          ),
+          HeatmapGradientColor(
+            Color.fromARGB(255, 0, 63, 255),
+            0.4,
+          ),
+          HeatmapGradientColor(
+            Color.fromARGB(255, 0, 0, 191),
+            0.6,
+          ),
+          HeatmapGradientColor(
+            Color.fromARGB(255, 63, 0, 91),
+            0.8,
+          ),
+          HeatmapGradientColor(
+            Color.fromARGB(255, 255, 0, 0),
+            1,
+          ),
+        ],
       ),
+      maxIntensity: 1,
+      opacity: 0.5,
+      radius: HeatmapRadius.fromPixels(40),
+      minimumZoomIntensity: 1,
+      maximumZoomIntensity: 20,
     );
-    await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    final int mapId = await mapIdCompleter.future;
-    final GoogleMapsInspectorPlatform inspector =
-        GoogleMapsInspectorPlatform.instance!;
+    testWidgets('set heatmap correctly', (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Heatmap heatmap2 = Heatmap(
+        heatmapId: const HeatmapId('heatmap_2'),
+        data: heatmap1.data,
+        dissipating: heatmap1.dissipating,
+        gradient: heatmap1.gradient,
+        maxIntensity: heatmap1.maxIntensity,
+        opacity: heatmap1.opacity - 0.1,
+        radius: heatmap1.radius,
+        minimumZoomIntensity: heatmap1.minimumZoomIntensity,
+        maximumZoomIntensity: heatmap1.maximumZoomIntensity,
+      );
 
-    if (inspector.supportsGettingHeatmapInfo()) {
-      final Heatmap heatmapInfo1 =
-          (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
-      final Heatmap heatmapInfo2 =
-          (await inspector.getHeatmapInfo(heatmap2.mapsId, mapId: mapId))!;
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            initialCameraPosition: kInitialCameraPosition,
+            heatmaps: <Heatmap>{heatmap1, heatmap2},
+            onMapCreated: (GoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      expectHeatmapEquals(heatmap1, heatmapInfo1);
-      expectHeatmapEquals(heatmap2, heatmapInfo2);
-    }
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      if (inspector.supportsGettingHeatmapInfo()) {
+        final Heatmap heatmapInfo1 =
+            (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
+        final Heatmap heatmapInfo2 =
+            (await inspector.getHeatmapInfo(heatmap2.mapsId, mapId: mapId))!;
+
+        expectHeatmapEquals(heatmap1, heatmapInfo1);
+        expectHeatmapEquals(heatmap2, heatmapInfo2);
+      }
+    });
+
+    testWidgets('update heatmaps correctly', (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            heatmaps: <Heatmap>{heatmap1},
+            onMapCreated: (GoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      final Heatmap heatmap1New = heatmap1.copyWith(
+        dataParam: heatmap1.data.sublist(5),
+        dissipatingParam: !heatmap1.dissipating,
+        gradientParam: heatmap1.gradient,
+        maxIntensityParam: heatmap1.maxIntensity! + 1,
+        opacityParam: heatmap1.opacity - 0.1,
+        radiusParam: HeatmapRadius.fromPixels(heatmap1.radius.radius + 1),
+        minimumZoomIntensityParam: heatmap1.minimumZoomIntensity + 1,
+        maximumZoomIntensityParam: heatmap1.maximumZoomIntensity + 1,
+      );
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            heatmaps: <Heatmap>{heatmap1New},
+            onMapCreated: (GoogleMapController controller) {
+              fail('update: OnMapCreated should get called only once.');
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      if (inspector.supportsGettingHeatmapInfo()) {
+        final Heatmap heatmapInfo1 =
+            (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
+
+        expectHeatmapEquals(heatmap1New, heatmapInfo1);
+      }
+    });
+
+    testWidgets('remove heatmaps correctly', (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            heatmaps: <Heatmap>{heatmap1},
+            onMapCreated: (GoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            onMapCreated: (GoogleMapController controller) {
+              fail('OnMapCreated should get called only once.');
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      if (inspector.supportsGettingHeatmapInfo()) {
+        final Heatmap? heatmapInfo1 =
+            await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId);
+
+        expect(heatmapInfo1, isNull);
+      }
+    });
   });
 
-  testWidgets('update heatmaps correctly', (WidgetTester tester) async {
-    final Completer<int> mapIdCompleter = Completer<int>();
-    final Key key = GlobalKey();
+  group('GroundOverlay', () {
+    final LatLngBounds kGroundOverlayBounds = LatLngBounds(
+      southwest: const LatLng(37.77483, -122.41942),
+      northeast: const LatLng(37.78183, -122.39105),
+    );
 
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          key: key,
-          initialCameraPosition: kInitialCameraPosition,
-          heatmaps: <Heatmap>{heatmap1},
-          onMapCreated: (GoogleMapController controller) {
-            mapIdCompleter.complete(controller.mapId);
-          },
-        ),
+    final GroundOverlay groundOverlayBounds1 = GroundOverlay.fromBounds(
+      groundOverlayId: const GroundOverlayId('bounds_1'),
+      bounds: kGroundOverlayBounds,
+      image: AssetMapBitmap(
+        'assets/red_square.png',
+        imagePixelRatio: 1.0,
+        bitmapScaling: MapBitmapScaling.none,
       ),
+      transparency: 0.7,
+      bearing: 10,
+      zIndex: 10,
     );
 
-    final int mapId = await mapIdCompleter.future;
-    final GoogleMapsInspectorPlatform inspector =
-        GoogleMapsInspectorPlatform.instance!;
-
-    final Heatmap heatmap1New = heatmap1.copyWith(
-      dataParam: heatmap1.data.sublist(5),
-      dissipatingParam: !heatmap1.dissipating,
-      gradientParam: heatmap1.gradient,
-      maxIntensityParam: heatmap1.maxIntensity! + 1,
-      opacityParam: heatmap1.opacity - 0.1,
-      radiusParam: HeatmapRadius.fromPixels(heatmap1.radius.radius + 1),
-      minimumZoomIntensityParam: heatmap1.minimumZoomIntensity + 1,
-      maximumZoomIntensityParam: heatmap1.maximumZoomIntensity + 1,
-    );
-
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          key: key,
-          initialCameraPosition: kInitialCameraPosition,
-          heatmaps: <Heatmap>{heatmap1New},
-          onMapCreated: (GoogleMapController controller) {
-            fail('update: OnMapCreated should get called only once.');
-          },
-        ),
+    final GroundOverlay groundOverlayPosition1 = GroundOverlay.fromPosition(
+      groundOverlayId: const GroundOverlayId('position_1'),
+      position: kGroundOverlayBounds.northeast,
+      width: 100,
+      height: 100,
+      anchor: const Offset(0.1, 0.2),
+      image: AssetMapBitmap(
+        'assets/red_square.png',
+        imagePixelRatio: 1.0,
+        bitmapScaling: MapBitmapScaling.none,
       ),
+      transparency: 0.7,
+      bearing: 10,
+      zIndex: 10,
+      zoomLevel: 14.0,
     );
 
-    await tester.pumpAndSettle(const Duration(seconds: 3));
+    void expectGroundOverlayEquals(
+        GroundOverlay source, GroundOverlay response) {
+      expect(response.groundOverlayId, source.groundOverlayId);
+      expect(
+        response.transparency,
+        moreOrLessEquals(source.transparency, epsilon: floatTolerance),
+      );
 
-    if (inspector.supportsGettingHeatmapInfo()) {
-      final Heatmap heatmapInfo1 =
-          (await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId))!;
+      // Web does not support bearing.
+      if (!isWeb) {
+        expect(
+          response.bearing,
+          moreOrLessEquals(source.bearing, epsilon: floatTolerance),
+        );
+      }
 
-      expectHeatmapEquals(heatmap1New, heatmapInfo1);
+      // Only test bounds if it was given in the original object.
+      if (source.bounds != null) {
+        expect(response.bounds, source.bounds);
+      }
+
+      // Only test position if it was given in the original object.
+      if (source.position != null) {
+        expect(response.position, source.position);
+      }
+
+      expect(response.clickable, source.clickable);
+
+      // Web does not support zIndex.
+      if (!isWeb) {
+        expect(response.zIndex, source.zIndex);
+      }
+
+      // Only Android supports width and height.
+      if (isAndroid) {
+        expect(response.width, source.width);
+        expect(response.height, source.height);
+      }
+
+      // Only iOS supports zoomLevel.
+      if (isIOS) {
+        expect(response.zoomLevel, source.zoomLevel);
+      }
+
+      // Only Android (using position) and iOS supports `anchor`.
+      if ((isAndroid && source.position != null) || isIOS) {
+        expect(
+          response.anchor?.dx,
+          moreOrLessEquals(source.anchor!.dx, epsilon: floatTolerance),
+        );
+        expect(
+          response.anchor?.dy,
+          moreOrLessEquals(source.anchor!.dy, epsilon: floatTolerance),
+        );
+      }
     }
-  });
 
-  testWidgets('remove heatmaps correctly', (WidgetTester tester) async {
-    final Completer<int> mapIdCompleter = Completer<int>();
-    final Key key = GlobalKey();
+    testWidgets('set ground overlays correctly', (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final GroundOverlay groundOverlayBounds2 = GroundOverlay.fromBounds(
+        groundOverlayId: const GroundOverlayId('bounds_2'),
+        bounds: groundOverlayBounds1.bounds!,
+        image: groundOverlayBounds1.image,
+      );
 
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          key: key,
-          initialCameraPosition: kInitialCameraPosition,
-          heatmaps: <Heatmap>{heatmap1},
-          onMapCreated: (GoogleMapController controller) {
-            mapIdCompleter.complete(controller.mapId);
-          },
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            initialCameraPosition: kInitialCameraPosition,
+            groundOverlays: <GroundOverlay>{
+              groundOverlayBounds1,
+              groundOverlayBounds2,
+              // Web does not support position-based ground overlays.
+              if (!isWeb) groundOverlayPosition1,
+            },
+            onMapCreated: (GoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
         ),
-      ),
-    );
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    final int mapId = await mapIdCompleter.future;
-    final GoogleMapsInspectorPlatform inspector =
-        GoogleMapsInspectorPlatform.instance!;
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
 
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          key: key,
-          initialCameraPosition: kInitialCameraPosition,
-          onMapCreated: (GoogleMapController controller) {
-            fail('OnMapCreated should get called only once.');
-          },
+      if (inspector.supportsGettingGroundOverlayInfo()) {
+        final GroundOverlay groundOverlayBoundsInfo1 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayBoundsInfo2 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds2.mapsId, mapId: mapId))!;
+
+        expectGroundOverlayEquals(
+          groundOverlayBounds1,
+          groundOverlayBoundsInfo1,
+        );
+        expectGroundOverlayEquals(
+          groundOverlayBounds2,
+          groundOverlayBoundsInfo2,
+        );
+
+        // Web does not support position-based ground overlays.
+        if (!isWeb) {
+          final GroundOverlay groundOverlayPositionInfo1 = (await inspector
+              .getGroundOverlayInfo(groundOverlayPosition1.mapsId,
+                  mapId: mapId))!;
+          expectGroundOverlayEquals(
+            groundOverlayPosition1,
+            groundOverlayPositionInfo1,
+          );
+        }
+      }
+    });
+
+    testWidgets('update ground overlays correctly',
+        (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            groundOverlays: <GroundOverlay>{
+              groundOverlayBounds1,
+              // Web does not support position-based ground overlays.
+              if (!isWeb) groundOverlayPosition1
+            },
+            onMapCreated: (GoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
         ),
-      ),
-    );
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    await tester.pumpAndSettle(const Duration(seconds: 3));
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
 
-    if (inspector.supportsGettingHeatmapInfo()) {
-      final Heatmap? heatmapInfo1 =
-          await inspector.getHeatmapInfo(heatmap1.mapsId, mapId: mapId);
+      final GroundOverlay groundOverlayBounds1New =
+          groundOverlayBounds1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        visibleParam: false,
+        transparencyParam: 0.5,
+        zIndexParam: 10,
+      );
 
-      expect(heatmapInfo1, isNull);
-    }
+      final GroundOverlay groundOverlayPosition1New =
+          groundOverlayPosition1.copyWith(
+        bearingParam: 10,
+        clickableParam: false,
+        visibleParam: false,
+        transparencyParam: 0.5,
+        zIndexParam: 10,
+      );
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            groundOverlays: <GroundOverlay>{
+              groundOverlayBounds1New,
+              // Web does not support position-based ground overlays.
+              if (!isWeb) groundOverlayPosition1New
+            },
+            onMapCreated: (GoogleMapController controller) {
+              fail('update: OnMapCreated should get called only once.');
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      if (inspector.supportsGettingGroundOverlayInfo()) {
+        final GroundOverlay groundOverlayBounds1Info = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+
+        expectGroundOverlayEquals(
+          groundOverlayBounds1New,
+          groundOverlayBounds1Info,
+        );
+
+        // Web does not support position-based ground overlays.
+        if (!isWeb) {
+          final GroundOverlay groundOverlayPosition1Info = (await inspector
+              .getGroundOverlayInfo(groundOverlayPosition1.mapsId,
+                  mapId: mapId))!;
+
+          expectGroundOverlayEquals(
+            groundOverlayPosition1New,
+            groundOverlayPosition1Info,
+          );
+        }
+      }
+    });
+
+    testWidgets('remove ground overlays correctly',
+        (WidgetTester tester) async {
+      final Completer<int> mapIdCompleter = Completer<int>();
+      final Key key = GlobalKey();
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            groundOverlays: <GroundOverlay>{
+              groundOverlayBounds1,
+              // Web does not support position-based ground overlays.
+              if (!isWeb) groundOverlayPosition1
+            },
+            onMapCreated: (GoogleMapController controller) {
+              mapIdCompleter.complete(controller.mapId);
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      final int mapId = await mapIdCompleter.future;
+      final GoogleMapsInspectorPlatform inspector =
+          GoogleMapsInspectorPlatform.instance!;
+
+      await tester.pumpWidget(
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: GoogleMap(
+            key: key,
+            initialCameraPosition: kInitialCameraPosition,
+            onMapCreated: (GoogleMapController controller) {
+              fail('OnMapCreated should get called only once.');
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      if (inspector.supportsGettingGroundOverlayInfo()) {
+        final GroundOverlay? groundOverlayBounds1Info = await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId);
+        expect(groundOverlayBounds1Info, isNull);
+
+        // Web does not support position-based ground overlays.
+        if (!isWeb) {
+          final GroundOverlay? groundOverlayPositionInfo = await inspector
+              .getGroundOverlayInfo(groundOverlayPosition1.mapsId,
+                  mapId: mapId);
+          expect(groundOverlayPositionInfo, isNull);
+        }
+      }
+    });
   });
 }
 

@@ -1,3 +1,8 @@
+## 2.8.2
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to
+  disappear after an app is suspended and resumed.
+
 ## 2.8.1
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.

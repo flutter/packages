@@ -25,9 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// The API instance used to communicate with the Dart side of the plugin. Once initially set, this
 /// should only ever be accessed on the main thread.
 @property(nonatomic) FCPCameraEventApi *dartAPI;
-@property(assign, nonatomic) FCPPlatformExposureMode exposureMode;
-@property(assign, nonatomic) FCPPlatformFocusMode focusMode;
-@property(assign, nonatomic) FCPPlatformFlashMode flashMode;
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
 @property(assign, nonatomic) FCPPlatformImageFileFormat fileFormat;
@@ -65,16 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setFlashMode:(FCPPlatformFlashMode)mode
       withCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)setExposureMode:(FCPPlatformExposureMode)mode;
-- (void)setFocusMode:(FCPPlatformFocusMode)mode;
-- (void)applyFocusMode;
-
-/// Acknowledges the receipt of one image stream frame.
-///
-/// This should be called each time a frame is received. Failing to call it may
-/// cause later frames to be dropped instead of streamed.
-- (void)receivedImageStreamData;
-
-/// Applies FocusMode on the AVCaptureDevice.
+/// Sets FocusMode on the current AVCaptureDevice.
 ///
 /// If the @c focusMode is set to FocusModeAuto the AVCaptureDevice is configured to use
 /// AVCaptureFocusModeContinuousModeAutoFocus when supported, otherwise it is set to
@@ -84,10 +72,15 @@ NS_ASSUME_NONNULL_BEGIN
 /// AVCaptureFocusModeAutoFocus. If AVCaptureFocusModeAutoFocus is not supported focus mode will not
 /// be set.
 ///
-/// @param focusMode The focus mode that should be applied to the @captureDevice instance.
-/// @param captureDevice The AVCaptureDevice to which the @focusMode will be applied.
-- (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
-              onDevice:(NSObject<FLTCaptureDevice> *)captureDevice;
+/// @param mode The focus mode that should be applied.
+- (void)setFocusMode:(FCPPlatformFocusMode)mode;
+
+/// Acknowledges the receipt of one image stream frame.
+///
+/// This should be called each time a frame is received. Failing to call it may
+/// cause later frames to be dropped instead of streamed.
+- (void)receivedImageStreamData;
+
 - (void)pausePreview;
 - (void)resumePreview;
 - (void)setDescriptionWhileRecording:(NSString *)cameraName
