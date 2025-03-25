@@ -9,6 +9,7 @@ import 'package:path/path.dart' as p;
 import 'package:pub_semver/pub_semver.dart';
 
 import 'core.dart';
+import 'git_version_finder.dart';
 import 'output_utils.dart';
 import 'package_command.dart';
 import 'repository_package.dart';
@@ -226,6 +227,17 @@ abstract class PackageLoopingCommand extends PackageCommand {
   /// The suggested indentation for printed output.
   String get indentation => hasLongOutput ? '' : '  ';
 
+  /// The base SHA used to calculate changed files.
+  ///
+  /// This is guaranteed to be populated before [initializeRun] is called.
+  late String baseSha;
+
+  /// The repo-relative paths (using Posix separators) of all files changed
+  /// relative to [baseSha].
+  ///
+  /// This is guaranteed to be populated before [initializeRun] is called.
+  late List<String> changedFiles;
+
   // ----------------------------------------
 
   @override
@@ -263,6 +275,11 @@ abstract class PackageLoopingCommand extends PackageCommand {
         : getDartSdkForFlutterSdk(minFlutterVersion);
 
     final DateTime runStart = DateTime.now();
+
+    // Populate the list of changed files for subclasses to use.
+    final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
+    baseSha = await gitVersionFinder.getBaseSha();
+    changedFiles = await gitVersionFinder.getChangedFiles();
 
     await initializeRun();
 

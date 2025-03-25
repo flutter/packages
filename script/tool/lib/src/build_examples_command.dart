@@ -48,6 +48,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addFlag(platformLinux);
     argParser.addFlag(platformMacOS);
