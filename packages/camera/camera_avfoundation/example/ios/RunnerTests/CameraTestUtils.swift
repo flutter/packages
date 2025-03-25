@@ -21,7 +21,7 @@ enum CameraTestUtils {
 
   /// Creates a test `FLTCamConfiguration` with a default mock setup.
   static func createTestCameraConfiguration() -> FLTCamConfiguration {
-    let captureSessionQueue = DispatchQueue(__label: "capture_session_queue", attr: nil)
+    let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
 
     let videoSessionMock = MockCaptureSession()
     videoSessionMock.canSetSessionPresetStub = { _ in true }
