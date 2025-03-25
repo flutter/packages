@@ -87,7 +87,8 @@ enum CameraTestUtils {
 
     var formatDescription: CMFormatDescription?
     CMVideoFormatDescriptionCreateForImageBuffer(
-      allocator: kCFAllocatorDefault, imageBuffer: pixelBuffer!,
+      allocator: kCFAllocatorDefault,
+      imageBuffer: pixelBuffer!,
       formatDescriptionOut: &formatDescription)
 
     var timingInfo = CMSampleTimingInfo(
@@ -97,9 +98,11 @@ enum CameraTestUtils {
 
     var sampleBuffer: CMSampleBuffer?
     CMSampleBufferCreateReadyWithImageBuffer(
-      allocator: kCFAllocatorDefault, imageBuffer: pixelBuffer!,
+      allocator: kCFAllocatorDefault,
+      imageBuffer: pixelBuffer!,
       formatDescription: formatDescription!,
-      sampleTiming: &timingInfo, sampleBufferOut: &sampleBuffer)
+      sampleTiming: &timingInfo,
+      sampleBufferOut: &sampleBuffer)
 
     return sampleBuffer!
   }
@@ -109,9 +112,15 @@ enum CameraTestUtils {
   static func createTestAudioSampleBuffer() -> CMSampleBuffer? {
     var blockBuffer: CMBlockBuffer?
     CMBlockBufferCreateWithMemoryBlock(
-      allocator: kCFAllocatorDefault, memoryBlock: nil, blockLength: 100,
-      blockAllocator: kCFAllocatorDefault, customBlockSource: nil, offsetToData: 0, dataLength: 100,
-      flags: kCMBlockBufferAssureMemoryNowFlag, blockBufferOut: &blockBuffer)
+      allocator: kCFAllocatorDefault,
+      memoryBlock: nil,
+      blockLength: 100,
+      blockAllocator: kCFAllocatorDefault,
+      customBlockSource: nil,
+      offsetToData: 0,
+      dataLength: 100,
+      flags: kCMBlockBufferAssureMemoryNowFlag,
+      blockBufferOut: &blockBuffer)
 
     guard let blockBuffer = blockBuffer else { return nil }
 
@@ -128,15 +137,23 @@ enum CameraTestUtils {
       mReserved: 0)
 
     CMAudioFormatDescriptionCreate(
-      allocator: kCFAllocatorDefault, asbd: &basicDescription, layoutSize: 0, layout: nil,
-      magicCookieSize: 0, magicCookie: nil, extensions: nil,
+      allocator: kCFAllocatorDefault,
+      asbd: &basicDescription,
+      layoutSize: 0,
+      layout: nil,
+      magicCookieSize: 0,
+      magicCookie: nil,
+      extensions: nil,
       formatDescriptionOut: &formatDescription)
 
     var sampleBuffer: CMSampleBuffer?
     CMAudioSampleBufferCreateReadyWithPacketDescriptions(
-      allocator: kCFAllocatorDefault, dataBuffer: blockBuffer,
+      allocator: kCFAllocatorDefault,
+      dataBuffer: blockBuffer,
       formatDescription: formatDescription!,
-      sampleCount: 1, presentationTimeStamp: .zero, packetDescriptions: nil,
+      sampleCount: 1,
+      presentationTimeStamp: .zero,
+      packetDescriptions: nil,
       sampleBufferOut: &sampleBuffer)
 
     return sampleBuffer
