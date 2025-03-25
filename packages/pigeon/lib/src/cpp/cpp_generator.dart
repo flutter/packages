@@ -98,7 +98,7 @@ class CppOptions {
 /// Options that control how C++ code will be generated.
 ///
 /// For internal use only.
-class InternalCppOptions {
+class InternalCppOptions extends PigeonInternalOptions {
   /// Creates a [InternalCppOptions] object.
   const InternalCppOptions({
     required this.headerIncludePath,

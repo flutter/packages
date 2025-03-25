@@ -14,7 +14,7 @@ import 'ast.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '25.1.0';
+const String pigeonVersion = '25.2.0';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -860,4 +860,12 @@ String makeClearChannelName(String dartPackageName) {
     methodName: 'clear',
     dartPackageName: dartPackageName,
   );
+}
+
+/// Whether the type is a collection.
+bool isCollectionType(TypeDeclaration type) {
+  return !type.isClass &&
+      !type.isEnum &&
+      !type.isProxyApi &&
+      (type.baseName.contains('List') || type.baseName == 'Map');
 }

@@ -1,3 +1,7 @@
+## 25.2.0
+
+* [kotlin] Adds equality methods to generated data classes.
+
 ## 25.1.0
 
 * [dart] Adds equality methods to generated data classes.
