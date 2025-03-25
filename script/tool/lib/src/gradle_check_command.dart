@@ -426,14 +426,15 @@ for more details.''';
     final String? compileSdkLine = gradleLines
         .firstWhereOrNull((String line) => linePattern.hasMatch(line));
     if (compileSdkLine == null) {
-       // Equals regex not found check for method pattern.
+      // Equals regex not found check for method pattern.
       final RegExp compileSpacePattern = RegExp(r'^\s*compileSdk');
-      final String? methodAssignmentLine = gradleLines
-        .firstWhereOrNull((String line) => compileSpacePattern.hasMatch(line));
+      final String? methodAssignmentLine = gradleLines.firstWhereOrNull(
+          (String line) => compileSpacePattern.hasMatch(line));
       if (methodAssignmentLine == null) {
         printError('${indentation}No compileSdk or compileSdkVersion found.');
       } else {
-        printError('${indentation}No compileSdk = found. Please use property assignment.');
+        printError(
+            '${indentation}No "compileSdk =" found. Please use property assignment.');
       }
       return false;
     }

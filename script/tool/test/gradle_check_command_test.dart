@@ -1110,7 +1110,8 @@ dependencies {
           includeLanguageVersion: true, usePropertyAssignment: false);
       writeFakeManifest(package);
       final RepositoryPackage example = package.getExamples().first;
-      writeFakeExampleBuildGradles(example, pluginName: packageName, usePropertyAssignment: false);
+      writeFakeExampleBuildGradles(example,
+          pluginName: packageName, usePropertyAssignment: false);
       writeFakeManifest(example, isApp: true);
 
       Error? commandError;
@@ -1123,7 +1124,7 @@ dependencies {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('No compileSdk = found. Please use property assignment.'),
+          contains('No "compileSdk =" found. Please use property assignment.'),
         ]),
       );
     });
