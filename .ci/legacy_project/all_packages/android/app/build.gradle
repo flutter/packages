@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace = "com.example.all_packages"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
         applicationId "com.example.all_packages"
