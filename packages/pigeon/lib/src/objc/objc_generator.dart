@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:path/path.dart' as path;
+
 import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib.dart' show Error;
-import '../types/task_queue.dart';
+import '../pigeon_lib.dart';
 
 /// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
@@ -44,7 +45,7 @@ class ObjcOptions {
     this.fileSpecificClassNameComponent,
   });
 
-  /// The path to the header that will get placed in the source filed (example:
+  /// The path to the header that will get placed in the source file (example:
   /// "foo.h").
   final String? headerIncludePath;
 
@@ -91,15 +92,62 @@ class ObjcOptions {
   }
 }
 
+/// Options that control how Objective-C code will be generated.
+class InternalObjcOptions {
+  /// Parametric constructor for InternalObjcOptions.
+  const InternalObjcOptions({
+    required this.headerIncludePath,
+    required this.objcHeaderOut,
+    required this.objcSourceOut,
+    this.prefix,
+    this.copyrightHeader,
+    this.fileSpecificClassNameComponent,
+  });
+
+  /// Creates InternalObjcOptions from ObjcOptions.
+  InternalObjcOptions.fromObjcOptions(
+    ObjcOptions options, {
+    required this.objcHeaderOut,
+    required this.objcSourceOut,
+    String? fileSpecificClassNameComponent,
+    Iterable<String>? copyrightHeader,
+  })  : headerIncludePath =
+            options.headerIncludePath ?? path.basename(objcHeaderOut),
+        prefix = options.prefix,
+        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
+        fileSpecificClassNameComponent =
+            options.fileSpecificClassNameComponent ??
+                fileSpecificClassNameComponent;
+
+  /// The path to the header that will get placed in the source file (example:
+  /// "foo.h").
+  final String headerIncludePath;
+
+  /// Path to the ".h" Objective-C file will be generated.
+  final String objcHeaderOut;
+
+  /// Path to the ".m" Objective-C file will be generated.
+  final String objcSourceOut;
+
+  /// Prefix that will be appended before all generated classes and protocols.
+  final String? prefix;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// A String to augment class names to avoid cross file collisions.
+  final String? fileSpecificClassNameComponent;
+}
+
 /// Class that manages all Objc code generation.
-class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
+class ObjcGenerator extends Generator<OutputFileOptions<InternalObjcOptions>> {
   /// Instantiates a Objc Generator.
   const ObjcGenerator();
 
   /// Generates Objc file of type specified in [generatorOptions]
   @override
   void generate(
-    OutputFileOptions<ObjcOptions> generatorOptions,
+    OutputFileOptions<InternalObjcOptions> generatorOptions,
     Root root,
     StringSink sink, {
     required String dartPackageName,
@@ -123,13 +171,13 @@ class ObjcGenerator extends Generator<OutputFileOptions<ObjcOptions>> {
 }
 
 /// Generates Objc .h file.
-class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
+class ObjcHeaderGenerator extends StructuredGenerator<InternalObjcOptions> {
   /// Constructor.
   const ObjcHeaderGenerator();
 
   @override
   void writeFilePrologue(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -144,7 +192,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFileImports(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -162,7 +210,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeEnum(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -199,7 +247,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeDataClasses(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -220,7 +268,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeDataClass(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -236,7 +284,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeClassEncode(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -245,7 +293,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeClassDecode(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -254,7 +302,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeGeneralCodec(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -266,7 +314,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeApis(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -278,7 +326,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFlutterApi(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -319,7 +367,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeHostApi(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -403,13 +451,13 @@ class ObjcHeaderGenerator extends StructuredGenerator<ObjcOptions> {
 }
 
 /// Generates Objc .m file.
-class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
+class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
   /// Constructor.
   const ObjcSourceGenerator();
 
   @override
   void writeFilePrologue(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -424,7 +472,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeFileImports(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -446,7 +494,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeEnum(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -473,7 +521,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeDataClasses(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -496,7 +544,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeDataClass(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -528,7 +576,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeClassEncode(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -547,7 +595,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
 
   @override
   void writeClassDecode(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -594,7 +642,7 @@ class ObjcSourceGenerator extends StructuredGenerator<ObjcOptions> {
   }
 
   void _writeCodecOverflowUtilities(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     List<EnumeratedType> types, {
@@ -689,7 +737,7 @@ if (self.wrapped == nil) {
 
   @override
   void writeGeneralCodec(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -812,7 +860,7 @@ if (self.wrapped == nil) {
 
   @override
   void writeFlutterApi(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     AstFlutterApi api, {
@@ -841,7 +889,7 @@ if (self.wrapped == nil) {
 
   @override
   void writeHostApi(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent,
     AstHostApi api, {
@@ -906,7 +954,7 @@ if (self.wrapped == nil) {
 
   @override
   void writeGeneralUtilities(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -961,7 +1009,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
 }''');
   }
 
-  void _writeChannelApiBinding(ObjcOptions generatorOptions, Root root,
+  void _writeChannelApiBinding(InternalObjcOptions generatorOptions, Root root,
       Indent indent, String apiName, Method func, String channel) {
     void unpackArgs(String variable) {
       indent.writeln('NSArray<id> *args = $variable;');
@@ -1101,7 +1149,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
   }
 
   void _writeChannelAllocation(
-    ObjcOptions generatorOptions,
+    InternalObjcOptions generatorOptions,
     Indent indent,
     Api api,
     Method func,
@@ -1139,7 +1187,7 @@ taskQueue:$taskQueue
   }
 
   void _writeObjcSourceDataClassExtension(
-    ObjcOptions languageOptions,
+    InternalObjcOptions languageOptions,
     Indent indent,
     Class classDefinition, {
     String? returnType,
@@ -1161,7 +1209,7 @@ taskQueue:$taskQueue
   }
 
   void _writeObjcSourceClassInitializer(
-    ObjcOptions languageOptions,
+    InternalObjcOptions languageOptions,
     Root root,
     Indent indent,
     Class classDefinition,
@@ -1187,7 +1235,7 @@ taskQueue:$taskQueue
 }
 
 void _writeMethod(
-  ObjcOptions languageOptions,
+  InternalObjcOptions languageOptions,
   Root root,
   Indent indent,
   Api api,
@@ -1289,7 +1337,7 @@ void _writeMethod(
 /// Example '+ (instancetype)makeWithFoo:(NSString *)foo'
 void _writeObjcSourceClassInitializerDeclaration(
   Indent indent,
-  ObjcOptions generatorOptions,
+  InternalObjcOptions generatorOptions,
   Root root,
   Class classDefinition,
   String? prefix,
@@ -1337,7 +1385,7 @@ String _className(String? prefix, String className) {
 
 /// Calculates callback block signature for async methods.
 String _callbackForType(
-    TypeDeclaration type, _ObjcType objcType, ObjcOptions options) {
+    TypeDeclaration type, _ObjcType objcType, InternalObjcOptions options) {
   if (type.isVoid) {
     return 'void (^)(FlutterError *_Nullable)';
   } else if (type.isEnum) {
@@ -1569,7 +1617,7 @@ Iterable<String> _getSelectorComponents(
 /// [func.parameters].
 String _makeObjcSignature({
   required Method func,
-  required ObjcOptions options,
+  required InternalObjcOptions options,
   required String returnType,
   required String lastArgType,
   required String lastArgName,
@@ -1608,7 +1656,8 @@ String _makeObjcSignature({
 
 /// Generates the ".h" file for the AST represented by [root] to [sink] with the
 /// provided [options].
-void generateObjcHeader(ObjcOptions options, Root root, Indent indent) {}
+void generateObjcHeader(
+    InternalObjcOptions options, Root root, Indent indent) {}
 
 String _arrayValue(NamedType field, String? prefix) {
   if (field.type.isEnum && !field.type.isNullable) {
@@ -1660,7 +1709,7 @@ void _writeInitializers(Indent indent) {
 
 /// Looks through the AST for features that aren't supported by the ObjC
 /// generator.
-List<Error> validateObjc(ObjcOptions options, Root root) {
+List<Error> validateObjc(InternalObjcOptions options, Root root) {
   final List<Error> errors = <Error>[];
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
@@ -1698,7 +1747,7 @@ String _getEnumToEnumBox(
 }
 
 void _writeDataClassDeclaration(
-  ObjcOptions generatorOptions,
+  InternalObjcOptions generatorOptions,
   Root root,
   Indent indent,
   Class classDefinition,

@@ -101,11 +101,10 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func recommendedVideoSettingsForAssetWriter(
-    withFileType fileType: AVFileType, for output: AVCaptureVideoDataOutput
+    withFileType fileType: AVFileType, for output: FLTCaptureVideoDataOutput
   ) -> [String: Any]? {
     return [:]
   }
-
 }
 
 final class CameraSettingsTests: XCTestCase {
