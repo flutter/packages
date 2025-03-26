@@ -700,8 +700,12 @@ void runTests() {
 
       // Wait for the animation to complete (onCameraIdle).
       expect(cameraIdleCompleter.isCompleted, isFalse);
+
       print('await cameraIdleCompleter');
-      await cameraIdleCompleter.future;
+      await cameraIdleCompleter.future.timeout(
+        const Duration(minutes: 2),
+        onTimeout: () => fail('Timed out waiting for map to idle'),
+      );
 
       // If platform supportes getting camera position, check that the camera
       // has moved as expected.
