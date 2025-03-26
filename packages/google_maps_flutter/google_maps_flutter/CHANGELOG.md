@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Adds support for animating the camera with a duration.
+
 ## 2.11.0
 
 * Adds support for ground overlays.

@@ -90,7 +90,7 @@ class JavaOptions {
 }
 
 /// Options that control how Java code will be generated.
-class InternalJavaOptions {
+class InternalJavaOptions extends PigeonInternalOptions {
   /// Creates a [InternalJavaOptions] object
   const InternalJavaOptions({
     required this.javaOut,
