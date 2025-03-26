@@ -911,7 +911,7 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
                     JavaScriptMessage(
                         message: message.body == null
                             ? '(null)'
-                            : message.body!.toString()),
+                            : message.body.toString()),
                   );
                 }
               };

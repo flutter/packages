@@ -18,7 +18,7 @@
 ///       ) {
 ///         weakReference.target?.onJavascriptChannelMessage(
 ///           message.name,
-///           message.body?.toString() ?? '',
+///           message.body.toString(),
 ///         );
 ///       };
 ///     },
