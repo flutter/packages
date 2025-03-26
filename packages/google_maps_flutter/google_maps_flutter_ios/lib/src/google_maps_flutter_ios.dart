@@ -1024,6 +1024,12 @@ class HostMapMessageHandler implements MapsCallbackApi {
     streamController
         .add(MapTapEvent(mapId, _latLngFromPlatformLatLng(position)));
   }
+
+  @override
+  void onActiveLevelChanged(String activeLevelShortName) {
+    streamController
+        .add(MapActiveLevelChangedEvent(mapId, activeLevelShortName));
+  }
 }
 
 LatLng _latLngFromPlatformLatLng(PlatformLatLng latLng) {
