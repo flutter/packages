@@ -645,6 +645,7 @@ void runTests() {
           key: key,
           initialCameraPosition: kInitialCameraPosition,
           onCameraIdle: () {
+            print('onCameraIdle');
             if (cameraIdleCompleter != null &&
                 !cameraIdleCompleter.isCompleted) {
               cameraIdleCompleter.complete();
@@ -694,6 +695,9 @@ void runTests() {
             (Matcher matcher) => isNot(matcher));
       }
 
+      print('await pumpAndSettle');
+      await tester.pumpAndSettle();
+
       // Wait for the animation to complete (onCameraIdle).
       expect(cameraIdleCompleter.isCompleted, isFalse);
       print('await cameraIdleCompleter');
@@ -715,6 +719,7 @@ void runTests() {
             controller,
             (Matcher matcher) => matcher);
       }
+      print('done');
     },
     variant: _cameraUpdateTypeVariants,
     // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
