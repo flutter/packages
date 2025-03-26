@@ -366,6 +366,7 @@
 }
 
 - (void)mapView:(GMSMapView *)mapView idleAtCameraPosition:(GMSCameraPosition *)position {
+  abort();
   [self.dartCallbackHandler didIdleCameraWithCompletion:^(FlutterError *_Nullable _){
   }];
 }
