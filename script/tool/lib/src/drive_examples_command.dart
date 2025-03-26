@@ -479,7 +479,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             '--enable-experiment=$enableExperiment',
           if (logsDirectory != null) '--debug-logs-dir=${logsDirectory.path}',
           target,
-          if (example.directory.path.contains('in_app_purchase/example')) '-v',
+          if (example.directory.path.contains('in_app_purchase/example') || example.directory.path.contains('google_maps_flutter/example')) '-v',
         ],
         workingDir: example.directory,
       );
