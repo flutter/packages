@@ -4,10 +4,10 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/podspec_check_command.dart';
+import 'package:git/git.dart';
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
@@ -75,22 +75,21 @@ end
 
 void main() {
   group('PodspecCheckCommand', () {
-    FileSystem fileSystem;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late MockPlatform mockPlatform;
     late RecordingProcessRunner processRunner;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-
       mockPlatform = MockPlatform(isMacOS: true);
-      processRunner = RecordingProcessRunner();
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final PodspecCheckCommand command = PodspecCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner =

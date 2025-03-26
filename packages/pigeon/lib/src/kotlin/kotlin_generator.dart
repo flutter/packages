@@ -98,6 +98,53 @@ class KotlinOptions {
   }
 }
 
+///
+class InternalKotlinOptions extends PigeonInternalOptions {
+  /// Creates a [InternalKotlinOptions] object
+  const InternalKotlinOptions({
+    this.package,
+    required this.kotlinOut,
+    this.copyrightHeader,
+    this.errorClassName,
+    this.includeErrorClass = true,
+    this.fileSpecificClassNameComponent,
+  });
+
+  /// Creates InternalKotlinOptions from KotlinOptions.
+  InternalKotlinOptions.fromKotlinOptions(
+    KotlinOptions options, {
+    required this.kotlinOut,
+    Iterable<String>? copyrightHeader,
+  })  : package = options.package,
+        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
+        errorClassName = options.errorClassName,
+        includeErrorClass = options.includeErrorClass,
+        fileSpecificClassNameComponent =
+            options.fileSpecificClassNameComponent ??
+                kotlinOut.split('/').lastOrNull?.split('.').first;
+
+  /// The package where the generated class will live.
+  final String? package;
+
+  /// Path to the kotlin file that will be generated.
+  final String kotlinOut;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// The name of the error class used for passing custom error parameters.
+  final String? errorClassName;
+
+  /// Whether to include the error class in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Kotlin file in the same directory.
+  final bool includeErrorClass;
+
+  /// A String to augment class names to avoid cross file collisions.
+  final String? fileSpecificClassNameComponent;
+}
+
 /// Options that control how Kotlin code will be generated for a specific
 /// ProxyApi.
 class KotlinProxyApiOptions {
@@ -128,13 +175,13 @@ class KotlinEventChannelOptions {
 }
 
 /// Class that manages all Kotlin code generation.
-class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
+class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   /// Instantiates a Kotlin Generator.
   const KotlinGenerator();
 
   @override
   void writeFilePrologue(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -149,7 +196,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeFileImports(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -172,7 +219,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeEnum(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -208,7 +255,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeDataClass(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -244,7 +291,44 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      writeClassEquality(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
+  }
+
+  @override
+  void writeClassEquality(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeScoped('override fun equals(other: Any?): Boolean {', '}', () {
+      indent.writeScoped('if (other !is ${classDefinition.name}) {', '}', () {
+        indent.writeln('return false');
+      });
+      indent.writeScoped('if (this === other) {', '}', () {
+        indent.writeln('return true');
+      });
+      indent.write('return ');
+      indent.format(
+        classDefinition.fields
+            .map((NamedType field) => isCollectionType(field.type)
+                ? 'deepEquals${generatorOptions.fileSpecificClassNameComponent}(${field.name}, other.${field.name})'
+                : '${field.name} == other.${field.name}')
+            .join('\n&& '),
+        leadingSpace: false,
+      );
+    });
+
+    indent.newln();
+    indent.writeln('override fun hashCode(): Int = toList().hashCode()');
   }
 
   void _writeDataClassSignature(
@@ -276,7 +360,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeClassEncode(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -297,7 +381,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeClassDecode(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -343,7 +427,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeApis(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -359,7 +443,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeGeneralCodec(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -460,13 +544,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.newln();
     if (root.containsEventChannel) {
       indent.writeln(
-          'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName());');
+          'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName())');
       indent.newln();
     }
   }
 
   void _writeCodecOverflowUtilities(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     List<EnumeratedType> types, {
@@ -540,7 +624,7 @@ if (wrapped == null) {
   /// }
   @override
   void writeFlutterApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     AstFlutterApi api, {
@@ -610,7 +694,7 @@ if (wrapped == null) {
   ///
   @override
   void writeHostApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     AstHostApi api, {
@@ -684,7 +768,7 @@ if (wrapped == null) {
 
   @override
   void writeInstanceManager(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -695,7 +779,7 @@ if (wrapped == null) {
 
   @override
   void writeInstanceManagerApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -808,7 +892,7 @@ if (wrapped == null) {
 
   @override
   void writeProxyApiBaseCodec(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
   ) {
@@ -862,7 +946,7 @@ if (wrapped == null) {
                 val instance: Any? = registrar.instanceManager.getInstance(identifier)
                 if (instance == null) {
                   Log.e(
-                    "${proxyApiCodecName(const KotlinOptions())}",
+                    "${proxyApiCodecName(const InternalKotlinOptions(kotlinOut: ''))}",
                     "Failed to find instance with identifier: \$identifier"
                   )
                 }
@@ -944,7 +1028,7 @@ if (wrapped == null) {
 
   @override
   void writeProxyApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     AstProxyApi api, {
@@ -1041,7 +1125,7 @@ if (wrapped == null) {
 
   @override
   void writeEventChannelApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     AstEventChannelApi api, {
@@ -1117,7 +1201,7 @@ if (wrapped == null) {
     });
   }
 
-  void _writeWrapError(KotlinOptions generatorOptions, Indent indent) {
+  void _writeWrapError(InternalKotlinOptions generatorOptions, Indent indent) {
     indent.newln();
     indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
@@ -1141,7 +1225,7 @@ if (wrapped == null) {
     });
   }
 
-  void _writeErrorClass(KotlinOptions generatorOptions, Indent indent) {
+  void _writeErrorClass(InternalKotlinOptions generatorOptions, Indent indent) {
     indent.newln();
     indent.writeln('/**');
     indent.writeln(
@@ -1161,7 +1245,7 @@ if (wrapped == null) {
   }
 
   void _writeCreateConnectionError(
-      KotlinOptions generatorOptions, Indent indent) {
+      InternalKotlinOptions generatorOptions, Indent indent) {
     final String errorClassName = _getErrorClassName(generatorOptions);
     indent.newln();
     indent.write(
@@ -1172,9 +1256,39 @@ if (wrapped == null) {
     });
   }
 
+  void _writeDeepEquals(InternalKotlinOptions generatorOptions, Indent indent) {
+    indent.format('''
+private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?, b: Any?): Boolean {
+  if (a is ByteArray && b is ByteArray) {
+      return a.contentEquals(b)
+  }
+  if (a is IntArray && b is IntArray) {
+      return a.contentEquals(b)
+  }
+  if (a is LongArray && b is LongArray) {
+      return a.contentEquals(b)
+  }
+  if (a is DoubleArray && b is DoubleArray) {
+      return a.contentEquals(b)
+  }
+  if (a is Array<*> && b is Array<*>) {
+    return a.size == b.size &&
+        a.indices.all{ deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it]) }
+  }
+  if (a is Map<*, *> && b is Map<*, *>) {
+    return a.size == b.size && a.keys.all {
+        (b as Map<Any?, Any?>).containsKey(it) &&
+        deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it])
+    }
+  }
+  return a == b;
+}
+    ''');
+  }
+
   @override
   void writeGeneralUtilities(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -1188,6 +1302,11 @@ if (wrapped == null) {
     }
     if (generatorOptions.includeErrorClass) {
       _writeErrorClass(generatorOptions, indent);
+    }
+    if (root.classes.isNotEmpty &&
+        root.classes.any((Class dataClass) => dataClass.fields
+            .any((NamedType field) => isCollectionType(field.type)))) {
+      _writeDeepEquals(generatorOptions, indent);
     }
   }
 
@@ -1341,7 +1460,7 @@ if (wrapped == null) {
 
   void _writeFlutterMethod(
     Indent indent, {
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
     required String name,
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
@@ -1435,7 +1554,7 @@ if (wrapped == null) {
 
   void _writeProxyApiRegistrar(
     Indent indent, {
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
     required Iterable<AstProxyApi> allProxyApis,
   }) {
     final String registrarName = proxyApiRegistrarName(generatorOptions);
@@ -1687,7 +1806,7 @@ if (wrapped == null) {
     required String kotlinApiName,
     required String dartPackageName,
     required String fullKotlinClassName,
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
   }) {
     indent.writeln('@Suppress("LocalVariableName")');
     indent.writeScoped(
@@ -1876,7 +1995,7 @@ if (wrapped == null) {
   void _writeProxyApiNewInstanceMethod(
     Indent indent,
     AstProxyApi api, {
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
     required TypeDeclaration apiAsTypeDeclaration,
     required String newInstanceMethodName,
     required String dartPackageName,
@@ -1991,7 +2110,7 @@ if (wrapped == null) {
   void _writeProxyApiFlutterMethods(
     Indent indent,
     AstProxyApi api, {
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
     required TypeDeclaration apiAsTypeDeclaration,
     required String dartPackageName,
   }) {
@@ -2097,7 +2216,7 @@ if (wrapped == null) {
   );
 }
 
-String _getErrorClassName(KotlinOptions generatorOptions) =>
+String _getErrorClassName(InternalKotlinOptions generatorOptions) =>
     generatorOptions.errorClassName ?? 'FlutterError';
 
 String _getArgumentName(int count, NamedType argument) =>
