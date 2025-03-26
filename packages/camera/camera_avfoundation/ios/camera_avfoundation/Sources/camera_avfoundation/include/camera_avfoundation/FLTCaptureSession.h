@@ -24,15 +24,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)canSetSessionPreset:(AVCaptureSessionPreset)preset;
 - (void)addInputWithNoConnections:(NSObject<FLTCaptureInput> *)input;
 - (void)addOutputWithNoConnections:(AVCaptureOutput *)output;
-- (void)addConnection:(AVCaptureConnection *)connection NS_SWIFT_NAME(addConnection(connection:));
-- (void)addInput:(NSObject<FLTCaptureInput> *)input NS_SWIFT_NAME(addInput(input:));
-- (void)addOutput:(AVCaptureOutput *)output NS_SWIFT_NAME(addOutput(output:));
-- (void)removeInput:(NSObject<FLTCaptureInput> *)input NS_SWIFT_NAME(removeInput(input:));
-- (void)removeOutput:(AVCaptureOutput *)output NS_SWIFT_NAME(removeOutput(output:));
-- (BOOL)canAddInput:(NSObject<FLTCaptureInput> *)input NS_SWIFT_NAME(canAddInput(input:));
-- (BOOL)canAddOutput:(AVCaptureOutput *)output NS_SWIFT_NAME(canAddOutput(output:));
-- (BOOL)canAddConnection:(AVCaptureConnection *)connection
-    NS_SWIFT_NAME(canAddConnection(connection:));
+// Methods renamed in Swift for consistency with AVCaptureSession Swift interface.
+- (void)addConnection:(AVCaptureConnection *)connection NS_SWIFT_NAME(addConnection(_:));
+- (void)addInput:(NSObject<FLTCaptureInput> *)input NS_SWIFT_NAME(addInput(_:));
+- (void)addOutput:(AVCaptureOutput *)output NS_SWIFT_NAME(addOutput(_:));
+- (void)removeInput:(NSObject<FLTCaptureInput> *)input NS_SWIFT_NAME(removeInput(_:));
+- (void)removeOutput:(AVCaptureOutput *)output NS_SWIFT_NAME(removeOutput(_:));
+- (BOOL)canAddInput:(NSObject<FLTCaptureInput> *)input NS_SWIFT_NAME(canAddInput(_:));
+- (BOOL)canAddOutput:(AVCaptureOutput *)output NS_SWIFT_NAME(canAddOutput(_:));
+- (BOOL)canAddConnection:(AVCaptureConnection *)connection NS_SWIFT_NAME(canAddConnection(_:));
 
 @end
 

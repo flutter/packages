@@ -50,25 +50,25 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
 
   func addOutputWithNoConnections(_ output: AVCaptureOutput) {}
 
-  func addConnection(connection: AVCaptureConnection) {}
+  func addConnection(_: AVCaptureConnection) {}
 
-  func addInput(input: FLTCaptureInput) {}
+  func addInput(_: FLTCaptureInput) {}
 
-  func addOutput(output: AVCaptureOutput) {}
+  func addOutput(_: AVCaptureOutput) {}
 
-  func removeInput(input: FLTCaptureInput) {}
+  func removeInput(_: FLTCaptureInput) {}
 
-  func removeOutput(output: AVCaptureOutput) {}
+  func removeOutput(_: AVCaptureOutput) {}
 
-  func canAddInput(input: FLTCaptureInput) -> Bool {
+  func canAddInput(_: FLTCaptureInput) -> Bool {
     return true
   }
 
-  func canAddOutput(output: AVCaptureOutput) -> Bool {
+  func canAddOutput(_: AVCaptureOutput) -> Bool {
     return true
   }
 
-  func canAddConnection(connection: AVCaptureConnection) -> Bool {
+  func canAddConnection(_: AVCaptureConnection) -> Bool {
     return true
   }
 }
