@@ -1,3 +1,7 @@
+## 0.4.0+2
+
+* GooglePlayPurchaseParam add possibility set selected offerToken
+
 ## 0.4.0+1
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.
