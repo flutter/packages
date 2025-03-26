@@ -10,6 +10,7 @@ import 'dart:mirrors';
 import 'package:yaml/yaml.dart' as yaml;
 
 import 'ast.dart';
+import 'generator.dart';
 
 /// The current version of pigeon.
 ///
@@ -794,7 +795,7 @@ enum FileType {
 /// Options for [Generator]s that have multiple output file types.
 ///
 /// Specifies which file to write as well as wraps all language options.
-class OutputFileOptions<T> {
+class OutputFileOptions<T extends InternalOptions> extends InternalOptions {
   /// Constructor.
   OutputFileOptions({required this.fileType, required this.languageOptions});
 

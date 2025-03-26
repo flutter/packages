@@ -93,7 +93,7 @@ class ObjcOptions {
 }
 
 /// Options that control how Objective-C code will be generated.
-class InternalObjcOptions extends PigeonInternalOptions {
+class InternalObjcOptions extends InternalOptions {
   /// Parametric constructor for InternalObjcOptions.
   const InternalObjcOptions({
     required this.headerIncludePath,

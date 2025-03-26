@@ -74,7 +74,7 @@ class GObjectOptions {
 }
 
 /// Options that control how GObject code will be generated.
-class InternalGObjectOptions extends PigeonInternalOptions {
+class InternalGObjectOptions extends InternalOptions {
   /// Creates a [InternalGObjectOptions] object
   const InternalGObjectOptions({
     required this.headerIncludePath,
