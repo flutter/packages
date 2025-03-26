@@ -2,4 +2,5 @@
 override_platforms:
   chrome:
     settings:
+      executable: chrome
       arguments: --no-sandbox
