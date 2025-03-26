@@ -719,6 +719,10 @@ abstract class MapsCallbackApi {
   @ObjCSelector('didLongPressAtPosition:')
   void onLongPress(PlatformLatLng position);
 
+  /// Called when the user changes the active level on indoor maps.
+  @ObjCSelector('didChangeActiveLevel:')
+  void onActiveLevelChanged(String activeLevelShortName);
+
   /// Called when a marker is tapped.
   @ObjCSelector('didTapMarkerWithIdentifier:')
   void onMarkerTap(String markerId);

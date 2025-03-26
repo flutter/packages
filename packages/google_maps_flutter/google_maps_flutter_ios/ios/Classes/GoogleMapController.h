@@ -16,7 +16,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 // Defines map overlay controllable from Flutter.
-@interface FLTGoogleMapController : NSObject <GMSMapViewDelegate, FlutterPlatformView>
+@interface FLTGoogleMapController : NSObject <GMSMapViewDelegate, GMSIndoorDisplayDelegate, FlutterPlatformView>
 - (instancetype)initWithFrame:(CGRect)frame
                viewIdentifier:(int64_t)viewId
            creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters

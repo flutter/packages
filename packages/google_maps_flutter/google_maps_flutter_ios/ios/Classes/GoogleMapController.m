@@ -427,6 +427,12 @@
                                         }];
 }
 
+- (void)didChangeActiveLevel:(GMSIndoorLevel *)level {
+    [self.dartCallbackHandler didChangeActiveLevel:level.shortName
+                                        completion:^(FlutterError *_Nullable _){
+                                        }];
+}
+
 - (void)interpretMapConfiguration:(FGMPlatformMapConfiguration *)config {
   FGMPlatformCameraTargetBounds *cameraTargetBounds = config.cameraTargetBounds;
   if (cameraTargetBounds) {
