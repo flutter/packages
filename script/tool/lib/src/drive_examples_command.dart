@@ -455,6 +455,20 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           ],
           workingDir: example.directory,
         );
+        if (logsDirectory != null) {
+          final ProcessResult logsResult = await processRunner.run('xcrun', <String>[
+            'simctl',
+            'spawn',
+            deviceFlags[1],
+            'log',
+            'show',
+            '--last',
+            '12m'
+          ]);
+          logsDirectory.childFile('device_logs.txt')
+            ..createSync()
+            ..writeAsStringSync(logsResult.stdout.toString());
+        }
       });
       final int exitCode = await processRunner.runAndStream(
         flutterCommand,
@@ -465,6 +479,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             '--enable-experiment=$enableExperiment',
           if (logsDirectory != null) '--debug-logs-dir=${logsDirectory.path}',
           target,
+          if (example.directory.path.contains('in_app_purchase/example')) '-v',
         ],
         workingDir: example.directory,
       );
