@@ -738,6 +738,9 @@ abstract class MapsCallbackApi {
   /// Called when the map, not a specifc map object, is long pressed.
   void onLongPress(PlatformLatLng position);
 
+  /// Called when the user changes the active level on indoor maps.
+  void onActiveLevelChanged(String activeLevelShortName);
+
   /// Called when a marker is tapped.
   void onMarkerTap(String markerId);
 

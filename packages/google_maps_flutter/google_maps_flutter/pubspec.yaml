@@ -46,6 +46,7 @@ dev_dependencies:
   plugin_platform_interface: ^2.1.7
   stream_transform: ^2.0.0
 
+
 topics:
   - google-maps
   - google-maps-flutter
