@@ -127,6 +127,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
+    this.onActiveLevelChanged,
     this.cloudMapId,
   });
 
@@ -283,6 +284,9 @@ class GoogleMap extends StatefulWidget {
 
   /// Called every time a [GoogleMap] is long pressed.
   final ArgumentCallback<LatLng>? onLongPress;
+
+  /// Called every time the active level of an indoor map changes.
+  final ArgumentCallback<String>? onActiveLevelChanged;
 
   /// True if a "My Location" layer should be shown on the map.
   ///
@@ -632,6 +636,14 @@ class _GoogleMapState extends State<GoogleMap> {
     final ArgumentCallback<LatLng>? onLongPress = widget.onLongPress;
     if (onLongPress != null) {
       onLongPress(position);
+    }
+  }
+
+  void onActiveLevelChanged(String levelShortName) {
+    final ArgumentCallback<String>? onActiveLevelChanged =
+        widget.onActiveLevelChanged;
+    if (onActiveLevelChanged != null) {
+      onActiveLevelChanged(levelShortName);
     }
   }
 
