@@ -153,8 +153,8 @@ const List<String> repoLevelNonCodeImpactingFiles = <String>[
   'README.md',
   // This deliberate lists specific files rather than excluding the whole
   // .github directory since it's better to have false negatives than to
-  // accidentally skip tests if something is added here that could affect
-  // packages.
+  // accidentally skip tests if something is later added to the directory
+  // that could affect packages.
   '.github/PULL_REQUEST_TEMPLATE.md',
   '.github/dependabot.yml',
   '.github/labeler.yml',
