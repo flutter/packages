@@ -4,8 +4,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math' as math;
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -178,28 +176,20 @@ void main() {
     addTearDown(controller.dispose);
     controller.textureId = 1;
     await tester.pumpWidget(VideoPlayer(controller));
-    final Transform actualRotationCorrection =
-        find.byType(Transform).evaluate().single.widget as Transform;
-    final Float64List actualRotationCorrectionStorage =
-        actualRotationCorrection.transform.storage;
-    final Float64List expectedMatrixStorage =
-        Matrix4.rotationZ(math.pi).storage;
-    expect(actualRotationCorrectionStorage.length,
-        equals(expectedMatrixStorage.length));
-    for (int i = 0; i < actualRotationCorrectionStorage.length; i++) {
-      expect(actualRotationCorrectionStorage[i],
-          moreOrLessEquals(expectedMatrixStorage[i]));
-    }
+    final RotatedBox actualRotationCorrection =
+        find.byType(RotatedBox).evaluate().single.widget as RotatedBox;
+    final int actualQuarterTurns = actualRotationCorrection.quarterTurns;
+    expect(actualQuarterTurns, equals(2));
   });
 
-  testWidgets('no transform when rotationCorrection is zero',
+  testWidgets('no RotatedBox when rotationCorrection is zero',
       (WidgetTester tester) async {
     final FakeController controller =
         FakeController.value(const VideoPlayerValue(duration: Duration.zero));
     addTearDown(controller.dispose);
     controller.textureId = 1;
     await tester.pumpWidget(VideoPlayer(controller));
-    expect(find.byType(Transform), findsNothing);
+    expect(find.byType(RotatedBox), findsNothing);
   });
 
   group('ClosedCaption widget', () {

@@ -4,16 +4,15 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/custom_test_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late MockPlatform mockPlatform;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
@@ -21,14 +20,15 @@ void main() {
 
   group('posix', () {
     setUp(() {
-      fileSystem = MemoryFileSystem();
       mockPlatform = MockPlatform();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-      processRunner = RecordingProcessRunner();
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final CustomTestCommand analyzeCommand = CustomTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>(
@@ -219,14 +219,15 @@ void main() {
 
   group('Windows', () {
     setUp(() {
-      fileSystem = MemoryFileSystem(style: FileSystemStyle.windows);
       mockPlatform = MockPlatform(isWindows: true);
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-      processRunner = RecordingProcessRunner();
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final CustomTestCommand analyzeCommand = CustomTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>(
