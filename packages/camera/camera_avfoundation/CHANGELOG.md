@@ -1,3 +1,8 @@
+## 0.9.18+12
+
+* Migrates test utils and mocks to Swift.
+* Renames the methods of Objective-C type `FLTCaptureSession` when exported to Swift.
+
 ## 0.9.18+11
 
 * Backfills unit tests for the `FLTCam` class.
