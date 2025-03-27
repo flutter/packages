@@ -79,7 +79,7 @@ class SwiftOptions {
 }
 
 /// Options that control how Swift code will be generated.
-class InternalSwiftOptions extends PigeonInternalOptions {
+class InternalSwiftOptions extends InternalOptions {
   /// Creates a [InternalSwiftOptions] object
   const InternalSwiftOptions({
     this.copyrightHeader,
