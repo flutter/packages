@@ -33,7 +33,7 @@ class AdUnitWidget extends StatefulWidget {
     super.key,
     required AdUnitConfiguration configuration,
     @visibleForTesting String? adClient,
-    @visibleForTesting void Function()? onInjected, 
+    @visibleForTesting void Function()? onInjected,
   })  : _adClient = adClient ?? adSense.adClient,
         _onInjected = onInjected,
         _adUnitConfiguration = configuration {
@@ -61,18 +61,19 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   @override
   bool get wantKeepAlive => true;
 
-  web.ResizeObserver get _adSenseResizeObserver => web.ResizeObserver(
-      (JSArray<web.ResizeObserverEntry> entries, web.ResizeObserver observer) {
-    for (final web.ResizeObserverEntry entry in entries.toDart) {
-      final web.Element target = entry.target;
-      if (target.isConnected) {
-        // First time resized since attached to DOM -> attachment callback from Flutter docs by David
-        _onElementAttached(target as web.HTMLElement);
-        widget._onInjected?.call();
-        observer.disconnect();
-      }
-    }
-  }.toJS);
+  web.ResizeObserver get _adSenseResizeObserver =>
+      web.ResizeObserver((JSArray<web.ResizeObserverEntry> entries,
+          web.ResizeObserver observer) {
+        for (final web.ResizeObserverEntry entry in entries.toDart) {
+          final web.Element target = entry.target;
+          if (target.isConnected) {
+            // First time resized since attached to DOM -> attachment callback from Flutter docs by David
+            _onElementAttached(target as web.HTMLElement);
+            widget._onInjected?.call();
+            observer.disconnect();
+          }
+        }
+      }.toJS);
 
   @override
   Widget build(BuildContext context) {

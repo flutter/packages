@@ -214,7 +214,8 @@ void main() async {
 }
 
 // Pumps an AdUnit Widget into a given tester, with some parameters
-Future<void> pumpAdWidget(Widget adUnit, WidgetTester tester, CallbackTracker tracker) async {
+Future<void> pumpAdWidget(
+    Widget adUnit, WidgetTester tester, CallbackTracker tracker) async {
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(
