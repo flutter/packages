@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import '../../google_maps_flutter_platform_interface.dart';
+import '../types/indoor_level.dart';
 import '../types/tile_overlay_updates.dart';
 import '../types/utils/map_configuration_serialization.dart';
 import 'serialization.dart';
@@ -257,7 +258,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(MapActiveLevelChangedEvent(
           mapId,
-          arguments['activeLevelShortName']! as String,
+          IndoorLevel.fromJson(arguments),
         ));
       case 'tileOverlay#getTile':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);

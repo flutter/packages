@@ -1032,9 +1032,13 @@ class HostMapMessageHandler implements MapsCallbackApi {
   }
 
   @override
-  void onActiveLevelChanged(String activeLevelShortName) {
-    streamController
-        .add(MapActiveLevelChangedEvent(mapId, activeLevelShortName));
+  void onActiveLevelChanged(PlatformIndoorLevel? activeLevel) {
+    streamController.add(MapActiveLevelChangedEvent(
+        mapId,
+        activeLevel == null
+            ? null
+            : IndoorLevel(
+                name: activeLevel.name, shortName: activeLevel.shortName)));
   }
 }
 
