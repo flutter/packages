@@ -14,6 +14,7 @@ class AdsManagerDelegateImpl: NSObject, IMAAdsManagerDelegate {
   }
 
   func adsManager(_ adsManager: IMAAdsManager, didReceive event: IMAAdEvent) {
+    print("Swift: \(event.typeString)")
     api.didReceiveAdEvent(pigeonInstance: self, adsManager: adsManager, event: event) { _ in }
   }
 

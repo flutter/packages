@@ -321,7 +321,13 @@ private class InteractiveMediaAdsLibraryPigeonInstanceManagerApi {
         let args = message as! [Any?]
         let identifierArg = args[0] as! Int64
         do {
-          let _: AnyObject? = try instanceManager.removeInstance(withIdentifier: identifierArg)
+          let o: AnyObject? = try instanceManager.removeInstance(withIdentifier: identifierArg)
+          print("GBC Object:")
+          if let o = o {
+            print(o)
+          } else {
+            print("null")
+          }
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
