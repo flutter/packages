@@ -6,13 +6,22 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 import '../in_app_purchase_storekit.dart';
 
 import '../store_kit_wrappers.dart';
+import '../store_kit_2_wrappers.dart';
 
 /// Contains InApp Purchase features that are only available on iOS.
 class InAppPurchaseStoreKitPlatformAddition
     extends InAppPurchasePlatformAddition {
+  /// Synchronizes your app’s transaction information and subscription status
+  /// with information from the App Store.
+  /// Storekit 2 only
+  Future<void> sync() {
+    return AppStore().sync();
+  }
+
   /// Present Code Redemption Sheet.
   ///
   /// Available on devices running iOS 14 and iPadOS 14 and later.
+  /// Available for StoreKit 1 and 2
   Future<void> presentCodeRedemptionSheet() {
     return SKPaymentQueueWrapper().presentCodeRedemptionSheet();
   }

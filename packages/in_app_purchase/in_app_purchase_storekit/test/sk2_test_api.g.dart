@@ -127,6 +127,8 @@ abstract class TestInAppPurchase2Api {
 
   Future<String> countryCode();
 
+  Future<void> sync();
+
   static void setUp(TestInAppPurchase2Api? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
     messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
@@ -311,6 +313,25 @@ abstract class TestInAppPurchase2Api {
           try {
             final String output = await api.countryCode();
             return <Object?>[output];
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.sync$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(pigeonVar_channel, (Object? message) async {
+          try {
+            await api.sync();
+            return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           }          catch (e) {

@@ -15,4 +15,8 @@ final class AppStore {
   Future<bool> canMakePayments() {
     return _hostApi.canMakePayments();
   }
+
+  Future<void> sync() {
+    return _hostApi.sync();
+  }
 }

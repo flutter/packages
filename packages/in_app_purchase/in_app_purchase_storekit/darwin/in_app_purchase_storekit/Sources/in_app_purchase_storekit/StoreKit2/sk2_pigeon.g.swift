@@ -526,6 +526,7 @@ protocol InAppPurchase2API {
   func stopListeningToTransactions() throws
   func restorePurchases(completion: @escaping (Result<Void, Error>) -> Void)
   func countryCode(completion: @escaping (Result<String, Error>) -> Void)
+  func sync(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -669,6 +670,21 @@ class InAppPurchase2APISetup {
       }
     } else {
       countryCodeChannel.setMessageHandler(nil)
+    }
+    let syncChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.sync\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      syncChannel.setMessageHandler { _, reply in
+        api.sync { result in
+          switch result {
+          case .success:
+            reply(wrapResult(nil))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      syncChannel.setMessageHandler(nil)
     }
   }
 }

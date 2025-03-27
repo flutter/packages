@@ -156,6 +156,16 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  func sync(completion: @escaping (Result<Void, any Error>) -> Void) {
+    Task {
+      do {
+        try await AppStore.sync();
+      } catch {
+        fatalError("Failed to sync to the AppStore: \(error)")
+      }
+    }
+  }
+
   /// This Task listens  to Transation.updates as shown here
   /// https://developer.apple.com/documentation/storekit/transaction/3851206-updates
   /// This function should be called as soon as the app starts to avoid missing any Transactions done outside of the app.
