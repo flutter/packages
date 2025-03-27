@@ -11,10 +11,10 @@ final class FLTCamExposureTests: XCTestCase {
     let mockDevice = MockCaptureDevice()
     let mockDeviceOrientationProvider = MockDeviceOrientationProvider()
 
-    let configuration = FLTCreateTestCameraConfiguration()
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureDeviceFactory = { mockDevice }
     configuration.deviceOrientationProvider = mockDeviceOrientationProvider
-    let camera = FLTCreateCamWithConfiguration(configuration)
+    let camera = FLTCam(configuration: configuration, error: nil)
 
     return (camera, mockDevice, mockDeviceOrientationProvider)
   }
