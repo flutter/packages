@@ -20,7 +20,7 @@ class MockCaptureDevice: NSObject, FLTCaptureDevice {
   var lockForConfigurationStub: (() throws -> Void)?
 
   var device: AVCaptureDevice {
-    fatalError("Unimplemented")
+    preconditionFailure("Attempted to access unimplemented property: device")
   }
 
   var uniqueID = ""

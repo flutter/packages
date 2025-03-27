@@ -8,7 +8,7 @@ final class MockAssetWriterInput: NSObject, FLTAssetWriterInput {
   var appendStub: ((CMSampleBuffer) -> Bool)?
 
   var input: AVAssetWriterInput {
-    fatalError("Unimplemented")
+    preconditionFailure("Attempted to access unimplemented property: input")
   }
 
   var expectsMediaDataInRealTime = false

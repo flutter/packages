@@ -6,7 +6,7 @@
 /// implementation.
 final class MockCaptureInput: NSObject, FLTCaptureInput {
   var input: AVCaptureInput {
-    fatalError("Unimplemented")
+    preconditionFailure("Attempted to access unimplemented property: input")
   }
 
   var ports: [AVCaptureInput.Port] = []
