@@ -46,6 +46,29 @@ class FlutterError(
     val details: Any? = null
 ) : Throwable()
 
+private fun deepEqualsMessages(a: Any?, b: Any?): Boolean {
+  if (a is ByteArray && b is ByteArray) {
+    return a.contentEquals(b)
+  }
+  if (a is IntArray && b is IntArray) {
+    return a.contentEquals(b)
+  }
+  if (a is LongArray && b is LongArray) {
+    return a.contentEquals(b)
+  }
+  if (a is DoubleArray && b is DoubleArray) {
+    return a.contentEquals(b)
+  }
+  if (a is Array<*> && b is Array<*>) {
+    return a.size == b.size && a.indices.all { deepEqualsMessages(a[it], b[it]) }
+  }
+  if (a is Map<*, *> && b is Map<*, *>) {
+    return a.size == b.size &&
+        a.keys.all { (b as Map<Any?, Any?>).containsKey(it) && deepEqualsMessages(a[it], b[it]) }
+  }
+  return a == b
+}
+
 enum class Code(val raw: Int) {
   ONE(0),
   TWO(1);
@@ -82,6 +105,21 @@ data class MessageData(
         data,
     )
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is MessageData) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return name == other.name &&
+        description == other.description &&
+        code == other.code &&
+        deepEqualsMessages(data, other.data)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 private open class MessagesPigeonCodec : StandardMessageCodec() {
