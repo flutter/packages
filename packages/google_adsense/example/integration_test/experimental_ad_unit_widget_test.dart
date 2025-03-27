@@ -225,7 +225,11 @@ Future<void> pumpAdWidget(Widget adUnit, WidgetTester tester, CallbackTracker tr
     ),
   );
 
+  final Stopwatch timer = Stopwatch()..start();
   while (!tracker.allCalled) {
+    if (timer.elapsedMilliseconds > 1000) {
+      fail('timeout while waiting for ad widget to be injected');
+    }
     // Pump until all the widgets have had their platform views injected into the dom.
     await tester.pump();
   }
