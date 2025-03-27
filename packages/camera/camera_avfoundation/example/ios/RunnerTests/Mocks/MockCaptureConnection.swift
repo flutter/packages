@@ -4,11 +4,10 @@
 
 /// A mock implementation of `FLTCaptureConnection` that allows injecting a custom implementation.
 class MockCaptureConnection: NSObject, FLTCaptureConnection {
-
   var setVideoOrientationStub: ((AVCaptureVideoOrientation) -> Void)?
 
   var connection: AVCaptureConnection {
-    fatalError("Unimplemented")
+    preconditionFailure("Attempted to access unimplemented property: connection")
   }
   var isVideoMirrored = false
   var _videoOrientation = AVCaptureVideoOrientation.portrait
