@@ -220,6 +220,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MapActiveLevelChangedEvent> onActiveLevelChanged(
+      {required int mapId}) {
+    return _events(mapId).whereType<MapActiveLevelChangedEvent>();
+  }
+
+  @override
   Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
     return _events(mapId).whereType<ClusterTapEvent>();
   }
