@@ -8,7 +8,7 @@ class MockCaptureDeviceFormat: NSObject, FLTCaptureDeviceFormat {
 
   /// The format associated with the capture device.
   var format: AVCaptureDevice.Format {
-    fatalError("Unimplemented")
+    preconditionFailure("Attempted to access unimplemented property: format")
   }
 
   var _formatDescription: CMVideoFormatDescription?
