@@ -17,6 +17,6 @@ class FloorController {
     }
 
     void onActiveLevelChanged(IndoorLevel indoorLevel) {
-        flutterApi.onActiveLevelChanged(Convert.indoorLevelToPigeon(indoorLevel), new NoOpVoidResult());
+        flutterApi.onActiveLevelChanged(indoorLevel == null ? null : Convert.indoorLevelToPigeon(indoorLevel), new NoOpVoidResult());
     }
 }
