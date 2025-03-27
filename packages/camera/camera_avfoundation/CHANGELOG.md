@@ -1,3 +1,7 @@
+## 0.9.18+12
+
+* Fix race condition when starting image stream.
+
 ## 0.9.18+11
 
 * Backfills unit tests for the `FLTCam` class.

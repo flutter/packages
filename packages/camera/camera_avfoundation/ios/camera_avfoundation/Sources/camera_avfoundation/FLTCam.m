@@ -847,7 +847,10 @@ static void selectBestFormatForRequestedFrameRate(
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
   if (!_isRecording) {
     if (messenger != nil) {
-      [self startImageStreamWithMessenger:messenger];
+      // Start image stream without waiting for result.
+      [self startImageStreamWithMessenger:messenger
+                           withCompletion:^(FlutterError *_Nullable error){
+                           }];
     }
 
     NSError *error;
@@ -1176,14 +1179,17 @@ static void selectBestFormatForRequestedFrameRate(
   [_captureDevice unlockForConfiguration];
 }
 
-- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger {
+- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                       withCompletion:(void (^)(FlutterError *))completion {
   [self startImageStreamWithMessenger:messenger
                    imageStreamHandler:[[FLTImageStreamHandler alloc]
-                                          initWithCaptureSessionQueue:_captureSessionQueue]];
+                                          initWithCaptureSessionQueue:_captureSessionQueue]
+                       withCompletion:completion];
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler {
+                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
+                       withCompletion:(void (^)(FlutterError *))completion {
   if (!_isStreamingImages) {
     id<FLTEventChannel> eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
@@ -1205,6 +1211,7 @@ static void selectBestFormatForRequestedFrameRate(
 
                                       strongSelf.isStreamingImages = YES;
                                       strongSelf.streamingPendingFramesCount = 0;
+                                      completion(nil);
                                     });
                                   }];
   } else {
