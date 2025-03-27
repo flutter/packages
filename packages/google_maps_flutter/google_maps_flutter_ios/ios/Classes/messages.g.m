@@ -216,6 +216,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FGMPlatformIndoorLevel ()
++ (FGMPlatformIndoorLevel *)fromList:(NSArray<id> *)list;
++ (nullable FGMPlatformIndoorLevel *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @interface FGMPlatformLatLngBounds ()
 + (FGMPlatformLatLngBounds *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformLatLngBounds *)nullableFromList:(NSArray<id> *)list;
@@ -1045,6 +1051,31 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FGMPlatformIndoorLevel
++ (instancetype)makeWithName:(nullable NSString *)name
+    shortName:(nullable NSString *)shortName {
+  FGMPlatformIndoorLevel* pigeonResult = [[FGMPlatformIndoorLevel alloc] init];
+  pigeonResult.name = name;
+  pigeonResult.shortName = shortName;
+  return pigeonResult;
+}
++ (FGMPlatformIndoorLevel *)fromList:(NSArray<id> *)list {
+  FGMPlatformIndoorLevel *pigeonResult = [[FGMPlatformIndoorLevel alloc] init];
+  pigeonResult.name = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.shortName = GetNullableObjectAtIndex(list, 1);
+  return pigeonResult;
+}
++ (nullable FGMPlatformIndoorLevel *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FGMPlatformIndoorLevel fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.name ?: [NSNull null],
+    self.shortName ?: [NSNull null],
+  ];
+}
+@end
+
 @implementation FGMPlatformLatLngBounds
 + (instancetype)makeWithNortheast:(FGMPlatformLatLng *)northeast
     southwest:(FGMPlatformLatLng *)southwest {
@@ -1667,36 +1698,38 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 155: 
       return [FGMPlatformLatLng fromList:[self readValue]];
     case 156: 
-      return [FGMPlatformLatLngBounds fromList:[self readValue]];
+      return [FGMPlatformIndoorLevel fromList:[self readValue]];
     case 157: 
-      return [FGMPlatformCameraTargetBounds fromList:[self readValue]];
+      return [FGMPlatformLatLngBounds fromList:[self readValue]];
     case 158: 
-      return [FGMPlatformGroundOverlay fromList:[self readValue]];
+      return [FGMPlatformCameraTargetBounds fromList:[self readValue]];
     case 159: 
-      return [FGMPlatformMapViewCreationParams fromList:[self readValue]];
+      return [FGMPlatformGroundOverlay fromList:[self readValue]];
     case 160: 
-      return [FGMPlatformMapConfiguration fromList:[self readValue]];
+      return [FGMPlatformMapViewCreationParams fromList:[self readValue]];
     case 161: 
-      return [FGMPlatformPoint fromList:[self readValue]];
+      return [FGMPlatformMapConfiguration fromList:[self readValue]];
     case 162: 
-      return [FGMPlatformSize fromList:[self readValue]];
+      return [FGMPlatformPoint fromList:[self readValue]];
     case 163: 
-      return [FGMPlatformTileLayer fromList:[self readValue]];
+      return [FGMPlatformSize fromList:[self readValue]];
     case 164: 
-      return [FGMPlatformZoomRange fromList:[self readValue]];
+      return [FGMPlatformTileLayer fromList:[self readValue]];
     case 165: 
-      return [FGMPlatformBitmap fromList:[self readValue]];
+      return [FGMPlatformZoomRange fromList:[self readValue]];
     case 166: 
-      return [FGMPlatformBitmapDefaultMarker fromList:[self readValue]];
+      return [FGMPlatformBitmap fromList:[self readValue]];
     case 167: 
-      return [FGMPlatformBitmapBytes fromList:[self readValue]];
+      return [FGMPlatformBitmapDefaultMarker fromList:[self readValue]];
     case 168: 
-      return [FGMPlatformBitmapAsset fromList:[self readValue]];
+      return [FGMPlatformBitmapBytes fromList:[self readValue]];
     case 169: 
-      return [FGMPlatformBitmapAssetImage fromList:[self readValue]];
+      return [FGMPlatformBitmapAsset fromList:[self readValue]];
     case 170: 
-      return [FGMPlatformBitmapAssetMap fromList:[self readValue]];
+      return [FGMPlatformBitmapAssetImage fromList:[self readValue]];
     case 171: 
+      return [FGMPlatformBitmapAssetMap fromList:[self readValue]];
+    case 172: 
       return [FGMPlatformBitmapBytesMap fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1793,53 +1826,56 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformLatLng class]]) {
     [self writeByte:155];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformIndoorLevel class]]) {
     [self writeByte:156];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformCameraTargetBounds class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformLatLngBounds class]]) {
     [self writeByte:157];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformGroundOverlay class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformCameraTargetBounds class]]) {
     [self writeByte:158];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapViewCreationParams class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformGroundOverlay class]]) {
     [self writeByte:159];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapViewCreationParams class]]) {
     [self writeByte:160];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformMapConfiguration class]]) {
     [self writeByte:161];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformSize class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformPoint class]]) {
     [self writeByte:162];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformSize class]]) {
     [self writeByte:163];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
     [self writeByte:164];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmap class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
     [self writeByte:165];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapDefaultMarker class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmap class]]) {
     [self writeByte:166];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapBytes class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapDefaultMarker class]]) {
     [self writeByte:167];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapAsset class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapBytes class]]) {
     [self writeByte:168];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapAsset class]]) {
     [self writeByte:169];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
     [self writeByte:170];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapBytesMap class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
     [self writeByte:171];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FGMPlatformBitmapBytesMap class]]) {
+    [self writeByte:172];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -2467,14 +2503,14 @@ void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObj
     } 
   }];
 }
-- (void)didChangeActiveLevel:(NSString *)arg_activeLevelShortName completion:(void (^)(FlutterError *_Nullable))completion {
+- (void)didChangeActiveLevel:(nullable FGMPlatformIndoorLevel *)arg_activeLevel completion:(void (^)(FlutterError *_Nullable))completion {
   NSString *channelName = [NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onActiveLevelChanged", _messageChannelSuffix];
   FlutterBasicMessageChannel *channel =
     [FlutterBasicMessageChannel
       messageChannelWithName:channelName
       binaryMessenger:self.binaryMessenger
       codec:FGMGetMessagesCodec()];
-  [channel sendMessage:@[arg_activeLevelShortName ?: [NSNull null]] reply:^(NSArray<id> *reply) {
+  [channel sendMessage:@[arg_activeLevel ?: [NSNull null]] reply:^(NSArray<id> *reply) {
     if (reply != nil) {
       if (reply.count > 1) {
         completion([FlutterError errorWithCode:reply[0] message:reply[1] details:reply[2]]);

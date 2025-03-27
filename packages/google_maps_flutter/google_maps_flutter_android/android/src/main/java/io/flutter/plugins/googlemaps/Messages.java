@@ -3364,6 +3364,89 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of IndoorLevel.
+   *
+   * Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformIndoorLevel {
+    private @Nullable String name;
+
+    public @Nullable String getName() {
+      return name;
+    }
+
+    public void setName(@Nullable String setterArg) {
+      this.name = setterArg;
+    }
+
+    private @Nullable String shortName;
+
+    public @Nullable String getShortName() {
+      return shortName;
+    }
+
+    public void setShortName(@Nullable String setterArg) {
+      this.shortName = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) { return true; }
+      if (o == null || getClass() != o.getClass()) { return false; }
+      PlatformIndoorLevel that = (PlatformIndoorLevel) o;
+      return Objects.equals(name, that.name) && Objects.equals(shortName, that.shortName);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, shortName);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String name;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setName(@Nullable String setterArg) {
+        this.name = setterArg;
+        return this;
+      }
+
+      private @Nullable String shortName;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setShortName(@Nullable String setterArg) {
+        this.shortName = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformIndoorLevel build() {
+        PlatformIndoorLevel pigeonReturn = new PlatformIndoorLevel();
+        pigeonReturn.setName(name);
+        pigeonReturn.setShortName(shortName);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(2);
+      toListResult.add(name);
+      toListResult.add(shortName);
+      return toListResult;
+    }
+
+    static @NonNull PlatformIndoorLevel fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformIndoorLevel pigeonResult = new PlatformIndoorLevel();
+      Object name = pigeonVar_list.get(0);
+      pigeonResult.setName((String) name);
+      Object shortName = pigeonVar_list.get(1);
+      pigeonResult.setShortName((String) shortName);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of LatLngBounds.
    *
    * Generated class from Pigeon that represents data sent in messages.
@@ -5920,36 +6003,38 @@ public class Messages {
         case (byte) 158:
           return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 159:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformIndoorLevel.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 160:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 161:
-          return PlatformGroundOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 162:
-          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformGroundOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 163:
-          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 164:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 165:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 166:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 167:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 168:
-          return PlatformBitmap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 169:
-          return PlatformBitmapDefaultMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 170:
-          return PlatformBitmapBytes.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapDefaultMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 171:
-          return PlatformBitmapAsset.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapBytes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 172:
-          return PlatformBitmapAssetImage.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapAsset.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 173:
-          return PlatformBitmapAssetMap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapAssetImage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 174:
+          return PlatformBitmapAssetMap.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 175:
           return PlatformBitmapBytesMap.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -6048,53 +6133,56 @@ public class Messages {
       } else if (value instanceof PlatformLatLng) {
         stream.write(158);
         writeValue(stream, ((PlatformLatLng) value).toList());
-      } else if (value instanceof PlatformLatLngBounds) {
+      } else if (value instanceof PlatformIndoorLevel) {
         stream.write(159);
+        writeValue(stream, ((PlatformIndoorLevel) value).toList());
+      } else if (value instanceof PlatformLatLngBounds) {
+        stream.write(160);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(160);
+        stream.write(161);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformGroundOverlay) {
-        stream.write(161);
+        stream.write(162);
         writeValue(stream, ((PlatformGroundOverlay) value).toList());
       } else if (value instanceof PlatformCameraTargetBounds) {
-        stream.write(162);
+        stream.write(163);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
       } else if (value instanceof PlatformMapViewCreationParams) {
-        stream.write(163);
+        stream.write(164);
         writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(164);
+        stream.write(165);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(165);
+        stream.write(166);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(166);
+        stream.write(167);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(167);
+        stream.write(168);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformBitmap) {
-        stream.write(168);
+        stream.write(169);
         writeValue(stream, ((PlatformBitmap) value).toList());
       } else if (value instanceof PlatformBitmapDefaultMarker) {
-        stream.write(169);
+        stream.write(170);
         writeValue(stream, ((PlatformBitmapDefaultMarker) value).toList());
       } else if (value instanceof PlatformBitmapBytes) {
-        stream.write(170);
+        stream.write(171);
         writeValue(stream, ((PlatformBitmapBytes) value).toList());
       } else if (value instanceof PlatformBitmapAsset) {
-        stream.write(171);
+        stream.write(172);
         writeValue(stream, ((PlatformBitmapAsset) value).toList());
       } else if (value instanceof PlatformBitmapAssetImage) {
-        stream.write(172);
+        stream.write(173);
         writeValue(stream, ((PlatformBitmapAssetImage) value).toList());
       } else if (value instanceof PlatformBitmapAssetMap) {
-        stream.write(173);
+        stream.write(174);
         writeValue(stream, ((PlatformBitmapAssetMap) value).toList());
       } else if (value instanceof PlatformBitmapBytesMap) {
-        stream.write(174);
+        stream.write(175);
         writeValue(stream, ((PlatformBitmapBytesMap) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -6900,13 +6988,13 @@ public class Messages {
           });
     }
     /** Called when the user changes the active level on indoor maps. */
-    public void onActiveLevelChanged(@NonNull String activeLevelShortNameArg, @NonNull VoidResult result) {
+    public void onActiveLevelChanged(@Nullable PlatformIndoorLevel activeLevelArg, @NonNull VoidResult result) {
       final String channelName = "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onActiveLevelChanged" + messageChannelSuffix;
       BasicMessageChannel<Object> channel =
           new BasicMessageChannel<>(
               binaryMessenger, channelName, getCodec());
       channel.send(
-          new ArrayList<>(Collections.singletonList(activeLevelShortNameArg)),
+          new ArrayList<>(Collections.singletonList(activeLevelArg)),
           channelReply -> {
             if (channelReply instanceof List) {
               List<Object> listReply = (List<Object>) channelReply;

@@ -16,6 +16,7 @@ export 'ground_overlay.dart';
 export 'ground_overlay_updates.dart';
 export 'heatmap.dart';
 export 'heatmap_updates.dart';
+export 'indoor_level.dart';
 export 'joint_type.dart';
 export 'location.dart';
 export 'map_configuration.dart';

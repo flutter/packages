@@ -1,7 +1,12 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static io.flutter.plugins.googlemaps.Convert.indoorLevelToPigeon;
+
 import androidx.annotation.NonNull;
+
+import com.google.android.gms.maps.model.IndoorLevel;
+
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 
 class FloorController {
@@ -11,7 +16,7 @@ class FloorController {
         this.flutterApi = flutterApi;
     }
 
-    void onActiveLevelChanged(String floorShortName) {
-        flutterApi.onActiveLevelChanged(floorShortName, new NoOpVoidResult());
+    void onActiveLevelChanged(IndoorLevel indoorLevel) {
+        flutterApi.onActiveLevelChanged(Convert.indoorLevelToPigeon(indoorLevel), new NoOpVoidResult());
     }
 }

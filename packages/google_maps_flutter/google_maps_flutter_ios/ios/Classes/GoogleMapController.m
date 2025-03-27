@@ -429,7 +429,7 @@
 }
 
 - (void)didChangeActiveLevel:(GMSIndoorLevel *)level {
-    [self.dartCallbackHandler didChangeActiveLevel:level.shortName
+    [self.dartCallbackHandler didChangeActiveLevel:FGMGetPigeonIndoorLevelForIndoorLevel(level)
                                         completion:^(FlutterError *_Nullable _){
                                         }];
 }

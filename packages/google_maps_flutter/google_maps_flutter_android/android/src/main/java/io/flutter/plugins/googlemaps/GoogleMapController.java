@@ -398,7 +398,7 @@ class GoogleMapController
   public void onIndoorLevelActivated(IndoorBuilding building) {
     if (building != null) {
       IndoorLevel activeLevel = building.getLevels().get(building.getActiveLevelIndex());
-      floorController.onActiveLevelChanged(activeLevel.getShortName());
+      floorController.onActiveLevelChanged(activeLevel);
     }
   }
 

@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.Dash;
 import com.google.android.gms.maps.model.Dot;
 import com.google.android.gms.maps.model.Gap;
 import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.IndoorLevel;
 import com.google.android.gms.maps.model.JointType;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -406,6 +407,13 @@ class Convert {
 
   static LatLng latLngFromPigeon(Messages.PlatformLatLng latLng) {
     return new LatLng(latLng.getLatitude(), latLng.getLongitude());
+  }
+
+  static Messages.PlatformIndoorLevel indoorLevelToPigeon(IndoorLevel indoorLevel) {
+    return new Messages.PlatformIndoorLevel.Builder()
+            .setName(indoorLevel.getName())
+            .setShortName(indoorLevel.getShortName())
+            .build();
   }
 
   static Messages.PlatformCluster clusterToPigeon(

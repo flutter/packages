@@ -27,6 +27,10 @@ FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord)
   return [FGMPlatformLatLng makeWithLatitude:coord.latitude longitude:coord.longitude];
 }
 
+FGMPlatformIndoorLevel *FGMGetPigeonIndoorLevelForIndoorLevel(GMSIndoorLevel *level) {
+    return [FGMPlatformIndoorLevel makeWithName:level.name shortName:level.shortName];
+}
+
 GMSCoordinateBounds *FGMGetCoordinateBoundsForPigeonLatLngBounds(FGMPlatformLatLngBounds *bounds) {
   return [[GMSCoordinateBounds alloc]
       initWithCoordinate:FGMGetCoordinateForPigeonLatLng(bounds.northeast)

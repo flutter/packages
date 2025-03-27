@@ -286,7 +286,7 @@ class GoogleMap extends StatefulWidget {
   final ArgumentCallback<LatLng>? onLongPress;
 
   /// Called every time the active level of an indoor map changes.
-  final ArgumentCallback<String>? onActiveLevelChanged;
+  final ArgumentCallback<IndoorLevel?>? onActiveLevelChanged;
 
   /// True if a "My Location" layer should be shown on the map.
   ///
@@ -639,11 +639,11 @@ class _GoogleMapState extends State<GoogleMap> {
     }
   }
 
-  void onActiveLevelChanged(String levelShortName) {
-    final ArgumentCallback<String>? onActiveLevelChanged =
+  void onActiveLevelChanged(IndoorLevel? activeLevel) {
+    final ArgumentCallback<IndoorLevel?>? onActiveLevelChanged =
         widget.onActiveLevelChanged;
     if (onActiveLevelChanged != null) {
-      onActiveLevelChanged(levelShortName);
+      onActiveLevelChanged(activeLevel);
     }
   }
 
