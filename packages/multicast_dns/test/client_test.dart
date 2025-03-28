@@ -158,6 +158,35 @@ void main() {
       });
     }
   });
+
+  test('Calls onError callback in case of socket error', () async {
+    final FakeRawDatagramSocketThatSendsError datagramSocket =
+        FakeRawDatagramSocketThatSendsError();
+    final MDnsClient client = MDnsClient(
+      rawDatagramSocketFactory: (
+        dynamic host,
+        int port, {
+        bool reuseAddress = true,
+        bool reusePort = true,
+        int ttl = 1,
+      }) async {
+        return datagramSocket;
+      },
+    );
+
+    final Completer<void> onErrorCalledCompleter = Completer<void>();
+    await client.start(
+      mDnsPort: 1234,
+      interfacesFactory: (InternetAddressType type) async =>
+          <NetworkInterface>[],
+      onError: (Object e) {
+        expect(e, 'Error');
+        onErrorCalledCompleter.complete();
+      },
+    );
+
+    await onErrorCalledCompleter.future.timeout(const Duration(seconds: 5));
+  });
 }
 
 class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
@@ -193,6 +222,27 @@ class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
   @override
   void setRawOption(RawSocketOption option) {
     // nothing to do here
+  }
+}
+
+class FakeRawDatagramSocketThatSendsError extends Fake
+    implements RawDatagramSocket {
+  @override
+  InternetAddress address = InternetAddress.anyIPv4;
+
+  @override
+  StreamSubscription<RawSocketEvent> listen(
+    void Function(RawSocketEvent event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
+    return Stream<RawSocketEvent>.error('Error').listen(
+      onData,
+      onError: onError,
+      cancelOnError: cancelOnError,
+      onDone: onDone,
+    );
   }
 }
 
