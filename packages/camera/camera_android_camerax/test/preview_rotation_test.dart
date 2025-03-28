@@ -3,14 +3,11 @@
 // found in the LICENSE file.
 
 import 'package:camera_android_camerax/camera_android_camerax.dart';
-import 'package:camera_android_camerax/src/camera_selector.dart';
-import 'package:camera_android_camerax/src/camerax_library.g.dart';
+import 'package:camera_android_camerax/src/camerax_library.dart';
 import 'package:camera_android_camerax/src/camerax_proxy.dart';
-import 'package:camera_android_camerax/src/device_orientation_manager.dart';
-import 'package:camera_android_camerax/src/fallback_strategy.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart' show RotatedBox, Texture;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -45,8 +42,8 @@ void main() {
         .thenAnswer((_) async => <MockCameraInfo>[mockCameraInfo]);
     when(mockCameraSelector.filter(<MockCameraInfo>[mockCameraInfo]))
         .thenAnswer((_) async => <MockCameraInfo>[mockCameraInfo]);
-    when(mockCameraInfo.getSensorRotationDegrees())
-        .thenAnswer((_) async => sensorRotationDegrees);
+    when(mockCameraInfo.sensorRotationDegrees)
+        .thenReturn(sensorRotationDegrees);
 
     // Mock additional ProcessCameraProvider operation that is irrelevant
     // for the tests in this file.
@@ -60,67 +57,261 @@ void main() {
   /// the `availableCameras` and `createCameraWithSettings` methods.
   CameraXProxy getProxyForCreatingTestCamera(
           {required MockProcessCameraProvider mockProcessCameraProvider,
-          required CameraSelector Function(int) createCameraSelector,
+          required CameraSelector Function({
+            LensFacing? requireLensFacing,
+            // ignore: non_constant_identifier_names
+            BinaryMessenger? pigeon_binaryMessenger,
+            // ignore: non_constant_identifier_names
+            PigeonInstanceManager? pigeon_instanceManager,
+          }) createCameraSelector,
           required bool handlesCropAndRotation,
-          required Future<DeviceOrientation> Function() getUiOrientation}) =>
+          required Future<String> Function() getUiOrientation}) =>
       CameraXProxy(
-        getProcessCameraProvider: () async => mockProcessCameraProvider,
-        createCameraSelector: createCameraSelector,
-        previewSurfaceProducerHandlesCropAndRotation: (_) =>
-            Future<bool>.value(handlesCropAndRotation),
-        getUiOrientation: getUiOrientation,
-        createPreview: (_, __) => MockPreview(),
-        createImageCapture: (_, __) => MockImageCapture(),
-        createRecorder: (_) => MockRecorder(),
-        createVideoCapture: (_) async => MockVideoCapture(),
-        createImageAnalysis: (_, __) => MockImageAnalysis(),
-        createResolutionStrategy: (
-                {bool highestAvailable = false,
-                Size? boundSize,
-                int? fallbackRule}) =>
-            MockResolutionStrategy(),
-        createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
-        createFallbackStrategy: (
-                {required VideoQuality quality,
-                required VideoResolutionFallbackRule fallbackRule}) =>
-            MockFallbackStrategy(),
-        createQualitySelector: (
-                {required VideoQuality videoQuality,
-                required FallbackStrategy fallbackStrategy}) =>
-            MockQualitySelector(),
-        createCameraStateObserver: (_) => MockObserver(),
-        requestCameraPermissions: (_) => Future<void>.value(),
-        startListeningForDeviceOrientationChange: (_, __) {},
-        setPreviewSurfaceProvider: (_) => Future<int>.value(
-            3), // 3 is a random Flutter SurfaceTexture ID for testing
-        createAspectRatioStrategy: (int aspectRatio, int fallbackRule) =>
-            MockAspectRatioStrategy(),
-        createResolutionFilterWithOnePreferredSize:
-            (Size preferredResolution) => MockResolutionFilter(),
+        getInstanceProcessCameraProvider: ({
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) async =>
+            mockProcessCameraProvider,
+        newCameraSelector: createCameraSelector,
+        newPreview: ({
+          int? targetRotation,
+          ResolutionSelector? resolutionSelector,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final MockPreview preview = MockPreview();
+          when(preview.surfaceProducerHandlesCropAndRotation()).thenAnswer(
+            (_) async => handlesCropAndRotation,
+          );
+          return preview;
+        },
+        newImageCapture: ({
+          int? targetRotation,
+          CameraXFlashMode? flashMode,
+          ResolutionSelector? resolutionSelector,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) =>
+            MockImageCapture(),
+        newRecorder: ({
+          int? aspectRatio,
+          int? targetVideoEncodingBitRate,
+          QualitySelector? qualitySelector,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) =>
+            MockRecorder(),
+        withOutputVideoCapture: ({
+          required VideoOutput videoOutput,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockVideoCapture();
+        },
+        newImageAnalysis: ({
+          int? targetRotation,
+          ResolutionSelector? resolutionSelector,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockImageAnalysis();
+        },
+        newResolutionStrategy: ({
+          required CameraSize boundSize,
+          required ResolutionStrategyFallbackRule fallbackRule,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockResolutionStrategy();
+        },
+        newResolutionSelector: ({
+          AspectRatioStrategy? aspectRatioStrategy,
+          ResolutionStrategy? resolutionStrategy,
+          ResolutionFilter? resolutionFilter,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockResolutionSelector();
+        },
+        lowerQualityOrHigherThanFallbackStrategy: ({
+          required VideoQuality quality,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockFallbackStrategy();
+        },
+        lowerQualityThanFallbackStrategy: ({
+          required VideoQuality quality,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockFallbackStrategy();
+        },
+        fromCamera2CameraInfo: ({
+          required CameraInfo cameraInfo,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final MockCamera2CameraInfo camera2cameraInfo =
+              MockCamera2CameraInfo();
+          when(
+            camera2cameraInfo.getCameraCharacteristic(any),
+          ).thenAnswer((_) async => 90);
+          return camera2cameraInfo;
+        },
+        fromQualitySelector: ({
+          required VideoQuality quality,
+          FallbackStrategy? fallbackStrategy,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockQualitySelector();
+        },
+        newObserver: <T>({
+          required void Function(Observer<T>, T) onChanged,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return Observer<T>.detached(
+            onChanged: onChanged,
+            pigeon_instanceManager: PigeonInstanceManager(
+              onWeakReferenceRemoved: (_) {},
+            ),
+          );
+        },
+        newSystemServicesManager: ({
+          required void Function(
+            SystemServicesManager,
+            String,
+          ) onCameraError,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockSystemServicesManager();
+        },
+        newDeviceOrientationManager: ({
+          required void Function(
+            DeviceOrientationManager,
+            String,
+          ) onDeviceOrientationChanged,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final MockDeviceOrientationManager manager =
+              MockDeviceOrientationManager();
+          when(manager.getUiOrientation()).thenAnswer(
+            (_) => getUiOrientation(),
+          );
+          return manager;
+        }, // 3 is a random Flutter SurfaceTexture ID for testing
+        newAspectRatioStrategy: ({
+          required AspectRatio preferredAspectRatio,
+          required AspectRatioStrategyFallbackRule fallbackRule,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final MockAspectRatioStrategy mockAspectRatioStrategy =
+              MockAspectRatioStrategy();
+          when(mockAspectRatioStrategy.getFallbackRule()).thenAnswer(
+            (_) async => fallbackRule,
+          );
+          when(mockAspectRatioStrategy.getPreferredAspectRatio()).thenAnswer(
+            (_) async => preferredAspectRatio,
+          );
+          return mockAspectRatioStrategy;
+        },
+        createWithOnePreferredSizeResolutionFilter: ({
+          required CameraSize preferredSize,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockResolutionFilter();
+        },
       );
 
   /// Returns function that a CameraXProxy can use to select the front camera.
-  MockCameraSelector Function(int cameraSelectorLensDirection)
-      createCameraSelectorForFrontCamera(
-          MockCameraSelector mockCameraSelector) {
-    return (int cameraSelectorLensDirection) {
-      switch (cameraSelectorLensDirection) {
-        case CameraSelector.lensFacingFront:
+  MockCameraSelector Function({
+    LensFacing? requireLensFacing,
+    // ignore: non_constant_identifier_names
+    BinaryMessenger? pigeon_binaryMessenger,
+    // ignore: non_constant_identifier_names
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) createCameraSelectorForFrontCamera(MockCameraSelector mockCameraSelector) {
+    return ({
+      LensFacing? requireLensFacing,
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      switch (requireLensFacing) {
+        case LensFacing.front:
           return mockCameraSelector;
-        default:
+        case LensFacing.back:
+        case LensFacing.external:
+        case LensFacing.unknown:
+        case null:
           return MockCameraSelector();
       }
     };
   }
 
   /// Returns function that a CameraXProxy can use to select the back camera.
-  MockCameraSelector Function(int cameraSelectorLensDirection)
-      createCameraSelectorForBackCamera(MockCameraSelector mockCameraSelector) {
-    return (int cameraSelectorLensDirection) {
-      switch (cameraSelectorLensDirection) {
-        case CameraSelector.lensFacingBack:
+  MockCameraSelector Function({
+    LensFacing? requireLensFacing,
+    // ignore: non_constant_identifier_names
+    BinaryMessenger? pigeon_binaryMessenger,
+    // ignore: non_constant_identifier_names
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) createCameraSelectorForBackCamera(MockCameraSelector mockCameraSelector) {
+    return ({
+      LensFacing? requireLensFacing,
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+    }) {
+      switch (requireLensFacing) {
+        case LensFacing.back:
           return mockCameraSelector;
-        default:
+        case LensFacing.front:
+        case LensFacing.external:
+        case LensFacing.unknown:
+        case null:
           return MockCameraSelector();
       }
     };
@@ -148,10 +339,17 @@ void main() {
             sensorRotationDegrees: /* irrelevant for test */ 90);
     camera.proxy = getProxyForCreatingTestCamera(
         mockProcessCameraProvider: mockProcessCameraProvider,
-        createCameraSelector: (_) => mockCameraSelector,
+        createCameraSelector: ({
+          LensFacing? requireLensFacing,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) =>
+            mockCameraSelector,
         handlesCropAndRotation: true,
-        /* irrelevant for test */ getUiOrientation: () =>
-            Future<DeviceOrientation>.value(DeviceOrientation.landscapeLeft));
+        /* irrelevant for test */ getUiOrientation: () async =>
+            _serializeDeviceOrientation(DeviceOrientation.landscapeLeft));
 
     // Get and create test camera.
     final List<CameraDescription> availableCameras =
@@ -178,8 +376,13 @@ void main() {
       late AndroidCameraCameraX camera;
       late int cameraId;
       late MockCameraSelector mockFrontCameraSelector;
-      late MockCameraSelector Function(int cameraSelectorLensDirection)
-          proxyCreateCameraSelectorForFrontCamera;
+      late MockCameraSelector Function({
+        LensFacing? requireLensFacing,
+        // ignore: non_constant_identifier_names
+        BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) proxyCreateCameraSelectorForFrontCamera;
       late MockProcessCameraProvider mockProcessCameraProviderForFrontCamera;
       late MediaSettings testMediaSettings;
 
@@ -210,8 +413,8 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
             handlesCropAndRotation: false,
-            getUiOrientation: () =>
-                Future<DeviceOrientation>.value(DeviceOrientation.portraitUp));
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(DeviceOrientation.portraitUp));
 
         // Get and create test front camera.
         final List<CameraDescription> availableCameras =
@@ -243,8 +446,8 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
             handlesCropAndRotation: false,
-            getUiOrientation: () => Future<DeviceOrientation>.value(
-                DeviceOrientation.landscapeRight));
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(DeviceOrientation.landscapeRight));
 
         // Get and create test front camera.
         final List<CameraDescription> availableCameras =
@@ -276,8 +479,8 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
             handlesCropAndRotation: false,
-            getUiOrientation: () => Future<DeviceOrientation>.value(
-                DeviceOrientation.portraitDown));
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(DeviceOrientation.portraitDown));
 
         // Get and create test front camera.
         final List<CameraDescription> availableCameras =
@@ -310,8 +513,8 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
             handlesCropAndRotation: false,
-            getUiOrientation: () => Future<DeviceOrientation>.value(
-                DeviceOrientation.landscapeLeft));
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(DeviceOrientation.landscapeLeft));
 
         // Get and create test front camera.
         final List<CameraDescription> availableCameras =
@@ -345,8 +548,13 @@ void main() {
       // Create and set up mock CameraSelector and mock ProcessCameraProvider for test front camera
       // with sensor orientation degrees 90.
       final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-      final MockCameraSelector Function(int cameraSelectorLensDirection)
-          proxyCreateCameraSelectorForFrontCamera =
+      final MockCameraSelector Function({
+        LensFacing? requireLensFacing,
+        // ignore: non_constant_identifier_names
+        BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) proxyCreateCameraSelectorForFrontCamera =
           createCameraSelectorForFrontCamera(mockFrontCameraSelector);
       final MockProcessCameraProvider mockProcessCameraProviderForFrontCamera =
           setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
@@ -363,8 +571,8 @@ void main() {
           createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
           handlesCropAndRotation: false,
           getUiOrientation: /* initial device orientation irrelevant for test */
-              () => Future<DeviceOrientation>.value(
-                  DeviceOrientation.landscapeLeft));
+              () async =>
+                  _serializeDeviceOrientation(DeviceOrientation.landscapeLeft));
 
       // Get and create test front camera.
       final List<CameraDescription> availableCameras =
@@ -390,7 +598,7 @@ void main() {
           in expectedRotationPerDeviceOrientation.keys) {
         final DeviceOrientationChangedEvent testEvent =
             DeviceOrientationChangedEvent(currentDeviceOrientation);
-        DeviceOrientationManager.deviceOrientationChangedStreamController
+        AndroidCameraCameraX.deviceOrientationChangedStreamController
             .add(testEvent);
 
         await tester.pumpAndSettle();
@@ -410,7 +618,7 @@ void main() {
                 'When the device orientation is $currentDeviceOrientation, expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
       }
 
-      await DeviceOrientationManager.deviceOrientationChangedStreamController
+      await AndroidCameraCameraX.deviceOrientationChangedStreamController
           .close();
     });
 
@@ -422,8 +630,13 @@ void main() {
       late AndroidCameraCameraX camera;
       late int cameraId;
       late MockCameraSelector mockBackCameraSelector;
-      late MockCameraSelector Function(int cameraSelectorLensDirection)
-          proxyCreateCameraSelectorForBackCamera;
+      late MockCameraSelector Function({
+        LensFacing? requireLensFacing,
+        // ignore: non_constant_identifier_names
+        BinaryMessenger? pigeon_binaryMessenger,
+        // ignore: non_constant_identifier_names
+        PigeonInstanceManager? pigeon_instanceManager,
+      }) proxyCreateCameraSelectorForBackCamera;
       late MediaSettings testMediaSettings;
       late DeviceOrientation testInitialDeviceOrientation;
 
@@ -459,8 +672,8 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProviderForBackCamera,
             createCameraSelector: proxyCreateCameraSelectorForBackCamera,
             handlesCropAndRotation: false,
-            getUiOrientation: () =>
-                Future<DeviceOrientation>.value(testInitialDeviceOrientation));
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(testInitialDeviceOrientation));
 
         // Get and create test back camera.
         final List<CameraDescription> availableCameras =
@@ -500,8 +713,8 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProviderForBackCamera,
             createCameraSelector: proxyCreateCameraSelectorForBackCamera,
             handlesCropAndRotation: false,
-            getUiOrientation: () =>
-                Future<DeviceOrientation>.value(testInitialDeviceOrientation));
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(testInitialDeviceOrientation));
 
         // Get and create test back camera.
         final List<CameraDescription> availableCameras =
@@ -559,15 +772,20 @@ void main() {
                 sensorRotationDegrees: testSensorOrientation);
 
         // Set up front camera selection and initial device orientation as landscape right.
-        final MockCameraSelector Function(int cameraSelectorLensDirection)
-            proxyCreateCameraSelectorForFrontCamera =
+        final MockCameraSelector Function({
+          LensFacing? requireLensFacing,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForFrontCamera(mockFrontCameraSelector);
         camera.proxy = getProxyForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
             handlesCropAndRotation: false,
-            getUiOrientation: () =>
-                Future<DeviceOrientation>.value(testInitialDeviceOrientation));
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(testInitialDeviceOrientation));
 
         // Get and create test camera.
         final List<CameraDescription> availableCameras =
@@ -602,15 +820,20 @@ void main() {
                 sensorRotationDegrees: testSensorOrientation);
 
         // Set up front camera selection and initial device orientation as landscape right.
-        final MockCameraSelector Function(int cameraSelectorLensDirection)
-            proxyCreateCameraSelectorForFrontCamera =
+        final MockCameraSelector Function({
+          LensFacing? requireLensFacing,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForBackCamera(mockBackCameraSelector);
         camera.proxy = getProxyForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
             handlesCropAndRotation: false,
-            getUiOrientation: () =>
-                Future<DeviceOrientation>.value(testInitialDeviceOrientation));
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(testInitialDeviceOrientation));
 
         // Get and create test camera.
         final List<CameraDescription> availableCameras =
@@ -634,4 +857,17 @@ void main() {
       });
     });
   });
+}
+
+String _serializeDeviceOrientation(DeviceOrientation orientation) {
+  switch (orientation) {
+    case DeviceOrientation.portraitUp:
+      return 'PORTRAIT_UP';
+    case DeviceOrientation.landscapeLeft:
+      return 'LANDSCAPE_LEFT';
+    case DeviceOrientation.portraitDown:
+      return 'PORTRAIT_DOWN';
+    case DeviceOrientation.landscapeRight:
+      return 'LANDSCAPE_RIGHT';
+  }
 }
