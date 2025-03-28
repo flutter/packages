@@ -341,7 +341,7 @@ targets:
 
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     dimensions:
       kvm: "1"
     properties:
@@ -367,7 +367,7 @@ targets:
 
   - name: Linux_android custom_package_tests stable
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     dimensions:
       kvm: "1"
     properties:

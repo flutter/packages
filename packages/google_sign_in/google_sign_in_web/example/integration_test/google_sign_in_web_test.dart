@@ -107,6 +107,17 @@ void main() {
       }, throwsAssertionError);
     });
 
+    testWidgets('asserts forceAccountName must be null', (_) async {
+      expect(() async {
+        await plugin.initWithParams(
+          const SignInInitParameters(
+            clientId: 'some-non-null-client-id',
+            forceAccountName: 'fakeEmailAddress@example.com',
+          ),
+        );
+      }, throwsAssertionError);
+    });
+
     testWidgets('must be called for most of the API to work', (_) async {
       expect(() async {
         await plugin.signInSilently();

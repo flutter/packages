@@ -5,10 +5,16 @@
 import 'ast.dart';
 import 'generator_tools.dart';
 
+/// The internal options used by the generator.
+abstract class InternalOptions {
+  /// Constructor.
+  const InternalOptions();
+}
+
 /// An abstract base class of generators.
 ///
 /// This provides the structure that is common across generators for different languages.
-abstract class Generator<T> {
+abstract class Generator<T extends InternalOptions> {
   /// Constructor.
   const Generator();
 
@@ -22,7 +28,8 @@ abstract class Generator<T> {
 }
 
 /// An abstract base class that enforces code generation across platforms.
-abstract class StructuredGenerator<T> extends Generator<T> {
+abstract class StructuredGenerator<T extends InternalOptions>
+    extends Generator<T> {
   /// Constructor.
   const StructuredGenerator();
 
@@ -240,6 +247,15 @@ abstract class StructuredGenerator<T> extends Generator<T> {
 
   /// Writes a single class decode method to [indent].
   void writeClassDecode(
+    T generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {}
+
+  /// Writes a single class decode method to [indent].
+  void writeClassEquality(
     T generatorOptions,
     Root root,
     Indent indent,

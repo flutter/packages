@@ -22,5 +22,6 @@
 /// @param error the capture error.
 /// @param photoDataProvider a closure that provides photo data.
 - (void)handlePhotoCaptureResultWithError:(NSError *)error
-                        photoDataProvider:(NSObject<FLTWritableData> * (^)(void))photoDataProvider;
+                        photoDataProvider:(NSObject<FLTWritableData> * (^)(void))photoDataProvider
+    NS_SWIFT_NAME(handlePhotoCaptureResult(error:photoDataProvider:));
 @end

@@ -147,4 +147,16 @@ abstract class GoogleMapsInspectorPlatform extends PlatformInterface {
       {required int mapId, required ClusterManagerId clusterManagerId}) {
     throw UnimplementedError('getClusters() has not been implemented.');
   }
+
+  /// If the platform supports getting camera position.
+  bool supportsGettingGameraPosition() => false;
+
+  /// Returns current camera position.
+  ///
+  /// The returned object will be synthesized from platform data, so will not
+  /// be the same Dart object as the original [CameraPosition] provided to the
+  /// platform interface with map initialization or with [CameraUpdate].
+  Future<CameraPosition> getCameraPosition({required int mapId}) {
+    throw UnimplementedError('getCameraPosition() has not been implemented.');
+  }
 }

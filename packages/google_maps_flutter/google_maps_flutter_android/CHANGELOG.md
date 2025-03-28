@@ -1,3 +1,19 @@
+## 2.16.0
+
+* Adds support for animating the camera with a duration.
+
+## 2.15.0
+
+* Adds support for ground overlay.
+
+## 2.14.14
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.14.13
+
+* Updates READMEs and API docs.
+
 ## 2.14.12
 
 * Updates androidx.annotation:annotation to 1.9.1.

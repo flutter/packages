@@ -102,7 +102,7 @@ class WebKitProxy {
       WKNavigationDelegate,
       WKWebView,
     )? webViewWebContentProcessDidTerminate,
-    required Future<AuthenticationChallengeResponse> Function(
+    required Future<List<Object?>> Function(
       WKNavigationDelegate,
       WKWebView,
       URLAuthenticationChallenge,

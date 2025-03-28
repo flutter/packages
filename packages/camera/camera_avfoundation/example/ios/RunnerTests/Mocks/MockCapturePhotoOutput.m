@@ -12,8 +12,13 @@
   }
 }
 
-- (nullable AVCaptureConnection *)connectionWithMediaType:(nonnull AVMediaType)mediaType {
-  return nil;
+- (nullable NSObject<FLTCaptureConnection> *)connectionWithMediaType:
+    (nonnull AVMediaType)mediaType {
+  if (self.connectionWithMediaTypeStub) {
+    return self.connectionWithMediaTypeStub(mediaType);
+  } else {
+    return NULL;
+  }
 }
 
 @end

@@ -5,20 +5,21 @@
 // Sources.
 #import "camera_avfoundation/CameraPlugin.h"
 #import "camera_avfoundation/CameraPlugin_Test.h"
-#import "camera_avfoundation/FLTCam.h"
 #import "camera_avfoundation/FLTCamConfiguration.h"
+#import "camera_avfoundation/FLTCam_Test.h"
+#import "camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "camera_avfoundation/FLTThreadSafeEventChannel.h"
 
 // Mocks, protocols.
 #import "MockCameraDeviceDiscoverer.h"
-#import "MockCaptureDevice.h"
-#import "MockCaptureSession.h"
+#import "MockCaptureConnection.h"
+#import "MockCaptureDeviceFormat.h"
+#import "MockCapturePhotoOutput.h"
 #import "MockDeviceOrientationProvider.h"
-#import "MockEventChannel.h"
 #import "MockFlutterBinaryMessenger.h"
 #import "MockFlutterTextureRegistry.h"
 #import "MockGlobalEventApi.h"
 
 // Utils.
-#import "CameraTestUtils.h"
 #import "ExceptionCatcher.h"
+#import "QueueTestUtils.h"

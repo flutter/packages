@@ -1,3 +1,15 @@
+## 2.4.8
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.4.7
+
+* Updates datastore to 1.1.3.
+
+## 2.4.6
+
+* Ensures that platform messages on background queues are handled in order.
+
 ## 2.4.5
 
 * Bumps gradle-plugin to 2.1.10.

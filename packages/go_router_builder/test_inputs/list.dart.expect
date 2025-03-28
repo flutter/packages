@@ -5,15 +5,23 @@ RouteBase get $listRoute => GoRouteData.$route(
 
 extension $ListRouteExtension on ListRoute {
   static ListRoute _fromState(GoRouterState state) => ListRoute(
-        ids: state.uri.queryParametersAll['ids']?.map(int.parse).toList() ??
+        ids: (state.uri.queryParametersAll['ids']
+                    ?.map(int.parse)
+                    .cast<int>()
+                    ?.toList() as List<int>)
+                ?.toList() ??
             const [],
-        nullableIds: state.uri.queryParametersAll['nullable-ids']
-            ?.map(int.parse)
-            .toList(),
-        idsWithDefaultValue: state
-                .uri.queryParametersAll['ids-with-default-value']
+        nullableIds: (state.uri.queryParametersAll['nullable-ids']
                 ?.map(int.parse)
-                .toList() ??
+                .cast<int>()
+                ?.toList() as List<int>?)
+            ?.toList(),
+        idsWithDefaultValue: (state
+                    .uri.queryParametersAll['ids-with-default-value']
+                    ?.map(int.parse)
+                    .cast<int>()
+                    ?.toList() as List<int>?)
+                ?.toList() ??
             const <int>[0],
       );
 

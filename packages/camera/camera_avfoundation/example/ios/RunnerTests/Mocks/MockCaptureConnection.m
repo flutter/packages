@@ -6,4 +6,12 @@
 
 @implementation MockCaptureConnection
 
+- (void)setVideoOrientation:(AVCaptureVideoOrientation)videoOrientation {
+  if (self.setVideoOrientationStub) {
+    _setVideoOrientationStub(videoOrientation);
+  } else {
+    _videoOrientation = videoOrientation;
+  }
+}
+
 @end

@@ -3100,7 +3100,6 @@ class HostIntegrationCoreApiSetup {
         name:
           "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread\(channelSuffix)",
         binaryMessenger: binaryMessenger, codec: codec, taskQueue: taskQueue)
-
     if let api = api {
       taskQueueIsBackgroundThreadChannel.setMessageHandler { _, reply in
         do {

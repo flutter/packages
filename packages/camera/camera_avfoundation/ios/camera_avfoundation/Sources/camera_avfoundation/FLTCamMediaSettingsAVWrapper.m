@@ -55,8 +55,9 @@
 
 - (nullable NSDictionary<NSString *, id> *)
     recommendedVideoSettingsForAssetWriterWithFileType:(AVFileType)fileType
-                                             forOutput:(AVCaptureVideoDataOutput *)output {
-  return [output recommendedVideoSettingsForAssetWriterWithOutputFileType:fileType];
+                                             forOutput:
+                                                 (NSObject<FLTCaptureVideoDataOutput> *)output {
+  return [output.avOutput recommendedVideoSettingsForAssetWriterWithOutputFileType:fileType];
 }
 
 @end
