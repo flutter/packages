@@ -6,7 +6,7 @@
 
 - [ ] I read the [Contributor Guide] and followed the process outlined there for submitting PRs.
 - [ ] I read the [Tree Hygiene] page, which explains my responsibilities.
-- [ ] I read and followed the [relevant style guides] and ran the auto-formatter. (Unlike the flutter/flutter repo, the flutter/packages repo does use `dart format`.)
+- [ ] I read and followed the [relevant style guides] and ran [the auto-formatter].
 - [ ] I signed the [CLA].
 - [ ] The title of the PR starts with the name of the package surrounded by square brackets, e.g. `[shared_preferences]`
 - [ ] I [linked to at least one issue that this PR fixes] in the description above.
@@ -24,6 +24,7 @@ If you need help, consider asking for advice on the #hackers-new channel on [Dis
 [Contributor Guide]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md
 [Tree Hygiene]: https://github.com/flutter/flutter/blob/master/docs/contributing/Tree-hygiene.md
 [relevant style guides]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md#style
+[the auto-formatter]: https://github.com/flutter/packages/blob/main/script/tool/README.md#format-code
 [CLA]: https://cla.developers.google.com/
 [Discord]: https://github.com/flutter/flutter/blob/master/docs/contributing/Chat.md
 [linked to at least one issue that this PR fixes]: https://github.com/flutter/flutter/blob/master/docs/contributing/Tree-hygiene.md#overview
