@@ -41,7 +41,7 @@ class MockCaptureDevice: NSObject, FLTCaptureDevice {
   var isTorchAvailable = false
   var torchMode: AVCaptureDevice.TorchMode {
     get {
-      getTorchModeStub?() ?? AVCaptureDevice.TorchMode.off
+      getTorchModeStub?() ?? .off
     }
     set {
       setTorchModeStub?(newValue)

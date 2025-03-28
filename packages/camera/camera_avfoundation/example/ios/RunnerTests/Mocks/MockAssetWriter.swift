@@ -10,7 +10,7 @@ final class MockAssetWriter: NSObject, FLTAssetWriter {
   var finishWritingStub: ((() -> Void) -> Void)?
 
   var status: AVAssetWriter.Status {
-    return statusStub?() ?? AVAssetWriter.Status.unknown
+    return statusStub?() ?? .unknown
   }
 
   var error: Error? = nil
