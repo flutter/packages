@@ -22,6 +22,7 @@ class IOSAdsManager extends PlatformAdsManager {
   // This must maintain a reference to the delegate because the native
   // `IMAAdsManagerDelegate.delegate` property is only a weak reference.
   // Therefore, this would be garbage collected without this explicit reference.
+  @pragma('vm:entry-point')
   // ignore: unused_field
   late IOSAdsManagerDelegate _delegate;
 
