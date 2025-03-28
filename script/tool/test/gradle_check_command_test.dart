@@ -44,6 +44,7 @@ void main() {
     bool commentNamespace = false,
     bool warningsConfigured = true,
     bool useDeprecatedCompileSdkVersion = false,
+    bool usePropertyAssignment = true,
     String compileSdk = '33',
   }) {
     final File buildGradle = package
@@ -90,10 +91,10 @@ apply plugin: 'com.android.library'
 ${includeLanguageVersion ? javaSection : ''}
 android {
 ${includeNamespace ? namespace : ''}
-    ${useDeprecatedCompileSdkVersion ? 'compileSdkVersion' : 'compileSdk'} $compileSdk
+    ${useDeprecatedCompileSdkVersion ? 'compileSdkVersion' : 'compileSdk'} ${usePropertyAssignment ? '=' : ''} $compileSdk
 
     defaultConfig {
-        minSdkVersion 30
+        minSdk ${usePropertyAssignment ? '=' : ''} 30
     }
 ${warningsConfigured ? warningConfig : ''}
     compileOptions {
@@ -224,6 +225,7 @@ include ":app"
     required bool includeNamespace,
     required bool commentNamespace,
     required bool includeNameSpaceAsDeclaration,
+    required bool usePropertyAssignment,
   }) {
     final File buildGradle = package
         .platformDirectory(FlutterPlatform.android)
@@ -244,7 +246,7 @@ apply from: "\$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     ${includeNamespace ? namespace : ''}
-    compileSdk flutter.compileSdkVersion
+    compileSdk ${usePropertyAssignment ? '=' : ''} flutter.compileSdkVersion
 
     lintOptions {
         disable 'InvalidPackage'
@@ -278,6 +280,7 @@ dependencies {
     bool includeBuildArtifactHub = true,
     bool includeSettingsArtifactHub = true,
     bool includeSettingsDocumentationArtifactHub = true,
+    bool usePropertyAssignment = true,
   }) {
     writeFakeExampleTopLevelBuildGradle(
       package,
@@ -289,7 +292,8 @@ dependencies {
     writeFakeExampleAppBuildGradle(package,
         includeNamespace: includeNamespace,
         commentNamespace: commentNamespace,
-        includeNameSpaceAsDeclaration: includeNameSpaceAsDeclaration);
+        includeNameSpaceAsDeclaration: includeNameSpaceAsDeclaration,
+        usePropertyAssignment: usePropertyAssignment);
     writeFakeExampleSettingsGradle(
       package,
       includeArtifactHub: includeSettingsArtifactHub,
@@ -1094,6 +1098,33 @@ dependencies {
         containsAllInOrder(<Matcher>[
           contains('Please replace the deprecated "compileSdkVersion" setting '
               'with the newer "compileSdk"'),
+        ]),
+      );
+    });
+
+    test('fails if compileSdk uses the method assignment', () async {
+      const String packageName = 'a_package';
+      final RepositoryPackage package =
+          createFakePackage(packageName, packagesDir, isFlutter: true);
+      writeFakePluginBuildGradle(package,
+          includeLanguageVersion: true, usePropertyAssignment: false);
+      writeFakeManifest(package);
+      final RepositoryPackage example = package.getExamples().first;
+      writeFakeExampleBuildGradles(example,
+          pluginName: packageName, usePropertyAssignment: false);
+      writeFakeManifest(example, isApp: true);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['gradle-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('No "compileSdk =" found. Please use property assignment.'),
         ]),
       );
     });
