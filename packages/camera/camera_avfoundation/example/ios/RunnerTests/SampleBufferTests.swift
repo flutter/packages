@@ -74,7 +74,7 @@ final class CameraSampleBufferTests: XCTestCase {
     let adaptor = MockAssetWriterInputPixelBufferAdaptor()
     let input = MockAssetWriterInput()
 
-    let configuration = FLTCreateTestCameraConfiguration()
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.mediaSettings = FCPPlatformMediaSettings.make(
       with: .medium,
       framesPerSecond: nil,
@@ -91,14 +91,14 @@ final class CameraSampleBufferTests: XCTestCase {
     }
 
     return (
-      FLTCreateCamWithConfiguration(configuration), assetWriter, adaptor, input,
+      FLTCam(configuration: configuration, error: nil), assetWriter, adaptor, input,
       MockCaptureConnection()
     )
   }
 
   func testSampleBufferCallbackQueueMustBeCaptureSessionQueue() {
     let captureSessionQueue = DispatchQueue(label: "testing")
-    let camera = FLTCreateCamWithCaptureSessionQueue(captureSessionQueue)
+    let camera = CameraTestUtils.createCameraWithCaptureSessionQueue(captureSessionQueue)
     XCTAssertEqual(
       captureSessionQueue, camera.captureVideoOutput.avOutput.sampleBufferCallbackQueue,
       "Sample buffer callback queue must be the capture session queue.")
@@ -106,7 +106,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
   func testCopyPixelBuffer() {
     let (camera, _, _, _, connectionMock) = createCamera()
-    let capturedSampleBuffer = FLTCreateTestSampleBuffer().takeRetainedValue()
+    let capturedSampleBuffer = CameraTestUtils.createTestSampleBuffer()
     let capturedPixelBuffer = CMSampleBufferGetImageBuffer(capturedSampleBuffer)!
     // Mimic sample buffer callback when captured a new video sample.
     camera.captureOutput(
@@ -120,7 +120,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
   func testDidOutputSampleBuffer_mustNotChangeSampleBufferRetainCountAfterPauseResumeRecording() {
     let (camera, _, _, _, connectionMock) = createCamera()
-    let sampleBuffer = FLTCreateTestSampleBuffer().takeRetainedValue()
+    let sampleBuffer = CameraTestUtils.createTestSampleBuffer()
 
     let initialRetainCount = CFGetRetainCount(sampleBuffer)
 
@@ -144,21 +144,22 @@ final class CameraSampleBufferTests: XCTestCase {
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
       status = .writing
+      return true
     }
     writerMock.statusStub = {
       return status
     }
 
-    let videoSample = FLTCreateTestSampleBuffer().takeRetainedValue()
-    let audioSample = FLTCreateTestAudioSampleBuffer().takeRetainedValue()
+    let videoSample = CameraTestUtils.createTestSampleBuffer()
+    let audioSample = CameraTestUtils.createTestAudioSampleBuffer()
 
     var writtenSamples: [String] = []
-    adaptorMock.appendPixelBufferStub = { buffer, time in
+    adaptorMock.appendStub = { buffer, time in
       writtenSamples.append("video")
       return true
     }
     inputMock.readyForMoreMediaData = true
-    inputMock.appendSampleBufferStub = { buffer in
+    inputMock.appendStub = { buffer in
       writtenSamples.append("audio")
       return true
     }
@@ -177,19 +178,20 @@ final class CameraSampleBufferTests: XCTestCase {
   func testDidOutputSampleBufferSampleTimesMustBeNumericAfterPauseResume() {
     let (camera, writerMock, adaptorMock, inputMock, connectionMock) = createCamera()
 
-    let videoSample = FLTCreateTestSampleBuffer().takeRetainedValue()
-    let audioSample = FLTCreateTestAudioSampleBuffer().takeRetainedValue()
+    let videoSample = CameraTestUtils.createTestSampleBuffer()
+    let audioSample = CameraTestUtils.createTestAudioSampleBuffer()
 
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
       status = .writing
+      return true
     }
     writerMock.statusStub = {
       return status
     }
 
     var videoAppended = false
-    adaptorMock.appendPixelBufferStub = { buffer, time in
+    adaptorMock.appendStub = { buffer, time in
       XCTAssert(CMTIME_IS_NUMERIC(time))
       videoAppended = true
       return true
@@ -197,8 +199,8 @@ final class CameraSampleBufferTests: XCTestCase {
 
     var audioAppended = false
     inputMock.readyForMoreMediaData = true
-    inputMock.appendSampleBufferStub = { buffer in
-      let sampleTime = CMSampleBufferGetPresentationTimeStamp(buffer!)
+    inputMock.appendStub = { buffer in
+      let sampleTime = CMSampleBufferGetPresentationTimeStamp(buffer)
       XCTAssert(CMTIME_IS_NUMERIC(sampleTime))
       audioAppended = true
       return true
@@ -220,10 +222,10 @@ final class CameraSampleBufferTests: XCTestCase {
   func testDidOutputSampleBufferMustNotAppendSampleWhenReadyForMoreMediaDataIsFalse() {
     let (camera, _, adaptorMock, inputMock, connectionMock) = createCamera()
 
-    let videoSample = FLTCreateTestSampleBuffer().takeRetainedValue()
+    let videoSample = CameraTestUtils.createTestSampleBuffer()
 
     var sampleAppended = false
-    adaptorMock.appendPixelBufferStub = { buffer, time in
+    adaptorMock.appendStub = { buffer, time in
       sampleAppended = true
       return true
     }
@@ -249,6 +251,7 @@ final class CameraSampleBufferTests: XCTestCase {
     var status = AVAssetWriter.Status.unknown
     writerMock.startWritingStub = {
       status = .writing
+      return true
     }
     writerMock.statusStub = {
       return status
@@ -258,7 +261,7 @@ final class CameraSampleBufferTests: XCTestCase {
         writerMock.status == .writing,
         "Cannot call finishWritingWithCompletionHandler when status is not AVAssetWriter.Status.writing."
       )
-      handler?()
+      handler()
     }
 
     camera.startVideoRecording(completion: { error in }, messengerForStreaming: nil)
@@ -273,15 +276,17 @@ final class CameraSampleBufferTests: XCTestCase {
   func testStartWritingShouldNotBeCalledBetweenSampleCreationAndAppending() {
     let (camera, writerMock, adaptorMock, inputMock, connectionMock) = createCamera()
 
-    let videoSample = FLTCreateTestSampleBuffer().takeRetainedValue()
+    let videoSample = CameraTestUtils.createTestSampleBuffer()
 
     var startWritingCalled = false
     writerMock.startWritingStub = {
       startWritingCalled = true
+      return true
+
     }
 
     var videoAppended = false
-    adaptorMock.appendPixelBufferStub = { buffer, time in
+    adaptorMock.appendStub = { buffer, time in
       videoAppended = true
       return true
     }
@@ -303,7 +308,7 @@ final class CameraSampleBufferTests: XCTestCase {
   }
 
   func testStartVideoRecordingWithCompletionShouldNotDisableMixWithOthers() {
-    let cam = FLTCreateCamWithCaptureSessionQueue(DispatchQueue(label: "testing"))
+    let cam = CameraTestUtils.createCameraWithCaptureSessionQueue(DispatchQueue(label: "testing"))
 
     try? AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
     cam.startVideoRecording(completion: { error in }, messengerForStreaming: nil)
