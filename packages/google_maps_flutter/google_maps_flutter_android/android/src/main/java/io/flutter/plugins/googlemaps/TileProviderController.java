@@ -54,7 +54,8 @@ class TileProviderController implements TileProvider {
           new Messages.PlatformPoint.Builder().setX((long) x).setY((long) y).build();
       handler.post(() -> flutterApi.getTileOverlayTile(tileOverlayId, location, (long) zoom, this));
       try {
-        // `flutterApi.getTileOverlayTile` is async, so use a `countDownLatch` to make it synchronized.
+        // `flutterApi.getTileOverlayTile` is async, so use a `countDownLatch` to make it
+        // synchronized.
         countDownLatch.await();
       } catch (InterruptedException e) {
         Log.e(

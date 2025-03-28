@@ -20,6 +20,7 @@ import java.util.Map;
 public class HeatmapsController {
   /** Mapping from Heatmap ID to HeatmapController. */
   private final Map<String, HeatmapController> heatmapIdToController;
+
   /** The GoogleMap to which the heatmaps are added. */
   private GoogleMap googleMap;
 

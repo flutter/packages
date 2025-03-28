@@ -429,10 +429,11 @@
 }
 
 - (void)didChangeActiveLevel:(GMSIndoorLevel *)level {
-    FGMPlatformIndoorLevel *pigeonLevel = (level != nil) ? FGMGetPigeonIndoorLevelForIndoorLevel(level) : nil;
-    [self.dartCallbackHandler didChangeActiveLevel:pigeonLevel
-                                        completion:^(FlutterError *_Nullable _){
-                                        }];
+  FGMPlatformIndoorLevel *pigeonLevel =
+      (level != nil) ? FGMGetPigeonIndoorLevelForIndoorLevel(level) : nil;
+  [self.dartCallbackHandler didChangeActiveLevel:pigeonLevel
+                                      completion:^(FlutterError *_Nullable _){
+                                      }];
 }
 
 - (void)interpretMapConfiguration:(FGMPlatformMapConfiguration *)config {

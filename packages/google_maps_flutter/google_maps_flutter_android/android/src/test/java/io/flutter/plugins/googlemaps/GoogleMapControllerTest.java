@@ -212,7 +212,8 @@ public class GoogleMapControllerTest {
     googleMapController.setInitialClusterManagers(initialClusterManagers);
     googleMapController.onMapReady(mockGoogleMap);
 
-    // Verify if the ClusterManagersController.addClusterManagers method is called with initial cluster managers.
+    // Verify if the ClusterManagersController.addClusterManagers method is called with initial
+    // cluster managers.
     verify(mockClusterManagersController, times(1)).addClusterManagers(any());
   }
 
