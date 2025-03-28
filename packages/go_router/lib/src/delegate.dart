@@ -151,6 +151,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         match.buildState(_configuration, currentConfiguration),
       );
       if (onExitResult) {
+        route.didPop(result);
         _completeRouteMatch(result, match);
       }
     });
