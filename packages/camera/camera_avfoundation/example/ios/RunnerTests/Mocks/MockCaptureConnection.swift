@@ -3,24 +3,17 @@
 // found in the LICENSE file.
 
 /// A mock implementation of `FLTCaptureConnection` that allows injecting a custom implementation.
-class MockCaptureConnection: NSObject, FLTCaptureConnection {
+final class MockCaptureConnection: NSObject, FLTCaptureConnection {
   var setVideoOrientationStub: ((AVCaptureVideoOrientation) -> Void)?
 
   var connection: AVCaptureConnection {
     preconditionFailure("Attempted to access unimplemented property: connection")
   }
   var isVideoMirrored = false
-  var _videoOrientation = AVCaptureVideoOrientation.portrait
   var videoOrientation: AVCaptureVideoOrientation {
-    get {
-      return _videoOrientation
-    }
+    get { AVCaptureVideoOrientation.portrait }
     set {
-      if let stub = setVideoOrientationStub {
-        stub(newValue)
-      } else {
-        _videoOrientation = newValue
-      }
+      setVideoOrientationStub?(newValue)
     }
   }
   var inputPorts: [AVCaptureInput.Port] = []
