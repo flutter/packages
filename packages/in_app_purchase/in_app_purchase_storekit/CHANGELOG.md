@@ -1,6 +1,6 @@
 ## 0.3.22
 
-* Adds 'sync()' and 'countryCode'
+* Adds `sync()` and `countryCode()`.
 
 ## 0.3.21
 

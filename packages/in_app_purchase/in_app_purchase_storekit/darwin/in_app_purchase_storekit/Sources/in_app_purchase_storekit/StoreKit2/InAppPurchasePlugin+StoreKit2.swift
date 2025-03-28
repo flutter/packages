@@ -147,7 +147,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
 
 /// Wrapper method around StoreKit2's countryCode() method
 /// https://developer.apple.com/documentation/storekit/storefront/countrycode
-  func countryCode(completion: @escaping (Result<String, any Error>) -> Void) {
+  func countryCode(completion: @escaping (Result<String, Error>) -> Void) {
     Task {
       guard let currentStorefront = try await Storefront.current else {
         completion(.failure(fatalError("Could not get current Storefront.")))
@@ -156,7 +156,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
-  func sync(completion: @escaping (Result<Void, any Error>) -> Void) {
+  func sync(completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
       do {
         try await AppStore.sync();
