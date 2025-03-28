@@ -1,3 +1,8 @@
+## 0.9.18+13
+
+* Migrates test utils and mocks to Swift.
+* Aligns `FLTCaptureDevice` more closely with the `AVCaptureDevice` interface.
+
 ## 0.9.18+12
 
 * Migrates test utils and mocks to Swift.
