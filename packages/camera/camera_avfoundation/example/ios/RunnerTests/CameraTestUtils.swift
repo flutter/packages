@@ -40,7 +40,6 @@ enum CameraTestUtils {
     captureDeviceFormatMock2.videoSupportedFrameRateRanges = [frameRateRangeMock2]
 
     let captureDeviceMock = MockCaptureDevice()
-    captureDeviceMock.lockForConfigurationStub = { _ in true }
     captureDeviceMock.formats = [captureDeviceFormatMock1, captureDeviceFormatMock2]
 
     var currentFormat: FLTCaptureDeviceFormat = captureDeviceFormatMock1
