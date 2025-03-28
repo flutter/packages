@@ -3,10 +3,10 @@
 // found in the LICENSE file.
 
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
-import '../in_app_purchase_storekit.dart';
 
-import '../store_kit_wrappers.dart';
+import '../in_app_purchase_storekit.dart';
 import '../store_kit_2_wrappers.dart';
+import '../store_kit_wrappers.dart';
 
 /// Contains InApp Purchase features that are only available on iOS.
 class InAppPurchaseStoreKitPlatformAddition
