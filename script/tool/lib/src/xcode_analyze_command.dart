@@ -47,6 +47,14 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
       'Runs Xcode analysis on the iOS and/or macOS example apps.';
 
   @override
+  bool shouldIgnoreFile(String path) {
+    return repoLevelNonCodeImpactingFiles.contains(path) ||
+        path.endsWith('/AUTHORS') ||
+        path.endsWith('/CHANGELOG.md') ||
+        path.endsWith('/README.md');
+  }
+
+  @override
   Future<void> initializeRun() async {
     if (!(getBoolArg(platformIOS) || getBoolArg(platformMacOS))) {
       printError('At least one platform flag must be provided.');

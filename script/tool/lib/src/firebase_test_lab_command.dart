@@ -122,6 +122,14 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
   }
 
   @override
+  bool shouldIgnoreFile(String path) {
+    return repoLevelNonCodeImpactingFiles.contains(path) ||
+        path.endsWith('/AUTHORS') ||
+        path.endsWith('/CHANGELOG.md') ||
+        path.endsWith('/README.md');
+  }
+
+  @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final List<PackageResult> results = <PackageResult>[];
     for (final RepositoryPackage example in package.getExamples()) {

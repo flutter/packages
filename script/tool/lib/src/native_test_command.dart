@@ -114,6 +114,16 @@ this command.
   Set<String> _xcodeWarningsExceptions = <String>{};
 
   @override
+  bool shouldIgnoreFile(String path) {
+    return repoLevelNonCodeImpactingFiles.contains(path) ||
+        path.endsWith('/AUTHORS') ||
+        path.endsWith('/CHANGELOG.md') ||
+        path.endsWith('/README.md');
+    // It may seem tempting to filter out *.dart, but that would skip critical
+    // testing since native integration tests run the full compiled application.
+  }
+
+  @override
   Future<void> initializeRun() async {
     _platforms = <String, _PlatformDetails>{
       platformAndroid: _PlatformDetails('Android', _testAndroid),
