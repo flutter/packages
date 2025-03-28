@@ -66,7 +66,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return everything
   }
 
-  func throwError() throws -> Any? {
+  func throwError() throws -> AnyHashable? {
     throw PigeonError(code: "code", message: "message", details: "details")
   }
 
@@ -74,7 +74,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     throw PigeonError(code: "code", message: "message", details: "details")
   }
 
-  func throwFlutterError() throws -> Any? {
+  func throwFlutterError() throws -> AnyHashable? {
     throw PigeonError(code: "code", message: "message", details: "details")
   }
 
@@ -98,11 +98,11 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aUint8List
   }
 
-  func echo(_ anObject: Any) -> Any {
+  func echo(_ anObject: AnyHashable) -> AnyHashable {
     return anObject
   }
 
-  func echo(_ list: [Any?]) throws -> [Any?] {
+  func echo(_ list: [AnyHashable?]) throws -> [AnyHashable?] {
     return list
   }
 
@@ -122,7 +122,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return classList
   }
 
-  func echo(_ map: [AnyHashable?: Any?]) throws -> [AnyHashable?: Any?] {
+  func echo(_ map: [AnyHashable?: AnyHashable?]) throws -> [AnyHashable?: AnyHashable?] {
     return map
   }
 
@@ -216,7 +216,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return aNullableUint8List
   }
 
-  func echo(_ aNullableObject: Any?) -> Any? {
+  func echo(_ aNullableObject: AnyHashable?) -> AnyHashable? {
     return aNullableObject
   }
 
@@ -232,7 +232,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return anInt
   }
 
-  func echoNullable(_ aNullableList: [Any?]?) throws -> [Any?]? {
+  func echoNullable(_ aNullableList: [AnyHashable?]?) throws -> [AnyHashable?]? {
     return aNullableList
   }
 
@@ -252,7 +252,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     return classList
   }
 
-  func echoNullable(_ map: [AnyHashable?: Any?]?) throws -> [AnyHashable?: Any?]? {
+  func echoNullable(_ map: [AnyHashable?: AnyHashable?]?) throws -> [AnyHashable?: AnyHashable?]? {
     return map
   }
 
@@ -310,7 +310,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(Void()))
   }
 
-  func throwAsyncError(completion: @escaping (Result<Any?, Error>) -> Void) {
+  func throwAsyncError(completion: @escaping (Result<AnyHashable?, Error>) -> Void) {
     completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
@@ -318,7 +318,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
-  func throwAsyncFlutterError(completion: @escaping (Result<Any?, Error>) -> Void) {
+  func throwAsyncFlutterError(completion: @escaping (Result<AnyHashable?, Error>) -> Void) {
     completion(.failure(PigeonError(code: "code", message: "message", details: "details")))
   }
 
@@ -363,11 +363,15 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(aUint8List))
   }
 
-  func echoAsync(_ anObject: Any, completion: @escaping (Result<Any, Error>) -> Void) {
+  func echoAsync(
+    _ anObject: AnyHashable, completion: @escaping (Result<AnyHashable, Error>) -> Void
+  ) {
     completion(.success(anObject))
   }
 
-  func echoAsync(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
+  func echoAsync(
+    _ list: [AnyHashable?], completion: @escaping (Result<[AnyHashable?], Error>) -> Void
+  ) {
     completion(.success(list))
   }
 
@@ -383,7 +387,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func echoAsync(
-    _ map: [AnyHashable?: Any?], completion: @escaping (Result<[AnyHashable?: Any?], Error>) -> Void
+    _ map: [AnyHashable?: AnyHashable?],
+    completion: @escaping (Result<[AnyHashable?: AnyHashable?], Error>) -> Void
   ) {
     completion(.success(map))
   }
@@ -448,11 +453,15 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     completion(.success(aUint8List))
   }
 
-  func echoAsyncNullable(_ anObject: Any?, completion: @escaping (Result<Any?, Error>) -> Void) {
+  func echoAsyncNullable(
+    _ anObject: AnyHashable?, completion: @escaping (Result<AnyHashable?, Error>) -> Void
+  ) {
     completion(.success(anObject))
   }
 
-  func echoAsyncNullable(_ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void) {
+  func echoAsyncNullable(
+    _ list: [AnyHashable?]?, completion: @escaping (Result<[AnyHashable?]?, Error>) -> Void
+  ) {
     completion(.success(list))
   }
 
@@ -470,8 +479,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func echoAsyncNullable(
-    _ map: [AnyHashable?: Any?]?,
-    completion: @escaping (Result<[AnyHashable?: Any?]?, Error>) -> Void
+    _ map: [AnyHashable?: AnyHashable?]?,
+    completion: @escaping (Result<[AnyHashable?: AnyHashable?]?, Error>) -> Void
   ) {
     completion(.success(map))
   }
@@ -533,7 +542,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterThrowError(completion: @escaping (Result<Any?, Error>) -> Void) {
+  func callFlutterThrowError(completion: @escaping (Result<AnyHashable?, Error>) -> Void) {
     flutterAPI.throwError { response in
       switch response {
       case .success(let res):
@@ -692,7 +701,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     }
   }
 
-  func callFlutterEcho(_ list: [Any?], completion: @escaping (Result<[Any?], Error>) -> Void) {
+  func callFlutterEcho(
+    _ list: [AnyHashable?], completion: @escaping (Result<[AnyHashable?], Error>) -> Void
+  ) {
     flutterAPI.echo(list) { response in
       switch response {
       case .success(let res):
@@ -757,7 +768,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEcho(
-    _ map: [AnyHashable?: Any?], completion: @escaping (Result<[AnyHashable?: Any?], Error>) -> Void
+    _ map: [AnyHashable?: AnyHashable?],
+    completion: @escaping (Result<[AnyHashable?: AnyHashable?], Error>) -> Void
   ) {
     flutterAPI.echo(map) { response in
       switch response {
@@ -967,7 +979,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEchoNullable(
-    _ list: [Any?]?, completion: @escaping (Result<[Any?]?, Error>) -> Void
+    _ list: [AnyHashable?]?, completion: @escaping (Result<[AnyHashable?]?, Error>) -> Void
   ) {
     flutterAPI.echoNullable(list) { response in
       switch response {
@@ -1034,8 +1046,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func callFlutterEchoNullable(
-    _ map: [AnyHashable?: Any?]?,
-    completion: @escaping (Result<[AnyHashable?: Any?]?, Error>) -> Void
+    _ map: [AnyHashable?: AnyHashable?]?,
+    completion: @escaping (Result<[AnyHashable?: AnyHashable?]?, Error>) -> Void
   ) {
     flutterAPI.echoNullable(map) { response in
       switch response {
@@ -1267,7 +1279,9 @@ class SendEvents: StreamEventsStreamHandler {
       ClassEvent(value: EventAllNullableTypes(aNullableInt: 0)),
     ]
 
-  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {
+  override func onListen(
+    withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>
+  ) {
     var count = 0
     if !timerActive {
       timerActive = true
@@ -1320,19 +1334,19 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
     class ProxyApiTestClassDelegate: PigeonApiDelegateProxyApiTestClass {
       func pigeonDefaultConstructor(
         pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
-        aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?],
-        aMap: [String?: Any?],
+        aString: String, aUint8List: FlutterStandardTypedData, aList: [AnyHashable?],
+        aMap: [String?: AnyHashable?],
         anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
         aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
-        aNullableUint8List: FlutterStandardTypedData?, aNullableList: [Any?]?,
-        aNullableMap: [String?: Any?]?, aNullableEnum: ProxyApiTestEnum?,
+        aNullableUint8List: FlutterStandardTypedData?, aNullableList: [AnyHashable?]?,
+        aNullableMap: [String?: AnyHashable?]?, aNullableEnum: ProxyApiTestEnum?,
         aNullableProxyApi: ProxyApiSuperClass?, boolParam: Bool, intParam: Int64,
         doubleParam: Double, stringParam: String, aUint8ListParam: FlutterStandardTypedData,
-        listParam: [Any?], mapParam: [String?: Any?], enumParam: ProxyApiTestEnum,
+        listParam: [AnyHashable?], mapParam: [String?: AnyHashable?], enumParam: ProxyApiTestEnum,
         proxyApiParam: ProxyApiSuperClass, nullableBoolParam: Bool?, nullableIntParam: Int64?,
         nullableDoubleParam: Double?, nullableStringParam: String?,
-        nullableUint8ListParam: FlutterStandardTypedData?, nullableListParam: [Any?]?,
-        nullableMapParam: [String?: Any?]?, nullableEnumParam: ProxyApiTestEnum?,
+        nullableUint8ListParam: FlutterStandardTypedData?, nullableListParam: [AnyHashable?]?,
+        nullableMapParam: [String?: AnyHashable?]?, nullableEnumParam: ProxyApiTestEnum?,
         nullableProxyApiParam: ProxyApiSuperClass?
       ) throws -> ProxyApiTestClass {
         return ProxyApiTestClass()
@@ -1340,11 +1354,12 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func namedConstructor(
         pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
-        aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
+        aString: String, aUint8List: FlutterStandardTypedData, aList: [AnyHashable?],
+        aMap: [String?: AnyHashable?],
         anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
         aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
-        aNullableUint8List: FlutterStandardTypedData?, aNullableList: [Any?]?,
-        aNullableMap: [String?: Any?]?, aNullableEnum: ProxyApiTestEnum?,
+        aNullableUint8List: FlutterStandardTypedData?, aNullableList: [AnyHashable?]?,
+        aNullableMap: [String?: AnyHashable?]?, aNullableEnum: ProxyApiTestEnum?,
         aNullableProxyApi: ProxyApiSuperClass?
       ) throws -> ProxyApiTestClass {
         return ProxyApiTestClass()
@@ -1366,7 +1381,7 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
       }
 
       func throwError(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-        throws -> Any?
+        throws -> AnyHashable?
       {
         throw ProxyApiTestsError(code: "code", message: "message", details: "details")
       }
@@ -1379,7 +1394,7 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func throwFlutterError(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass
-      ) throws -> Any? {
+      ) throws -> AnyHashable? {
         throw ProxyApiTestsError(code: "code", message: "message", details: "details")
       }
 
@@ -1417,14 +1432,16 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
       }
 
       func echoObject(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any
-      ) throws -> Any {
+        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+        anObject: AnyHashable
+      ) throws -> AnyHashable {
         return anObject
       }
 
       func echoList(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]
-      ) throws -> [Any?] {
+        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+        aList: [AnyHashable?]
+      ) throws -> [AnyHashable?] {
         return aList
       }
 
@@ -1437,8 +1454,8 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func echoMap(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aMap: [String?: Any?]
-      ) throws -> [String?: Any?] {
+        aMap: [String?: AnyHashable?]
+      ) throws -> [String?: AnyHashable?] {
         return aMap
       }
 
@@ -1500,22 +1517,22 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func echoNullableObject(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aNullableObject: Any?
-      ) throws -> Any? {
+        aNullableObject: AnyHashable?
+      ) throws -> AnyHashable? {
         return aNullableObject
       }
 
       func echoNullableList(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aNullableList: [Any?]?
-      ) throws -> [Any?]? {
+        aNullableList: [AnyHashable?]?
+      ) throws -> [AnyHashable?]? {
         return aNullableList
       }
 
       func echoNullableMap(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aNullableMap: [String?: Any?]?
-      ) throws -> [String?: Any?]? {
+        aNullableMap: [String?: AnyHashable?]?
+      ) throws -> [String?: AnyHashable?]? {
         return aNullableMap
       }
 
@@ -1579,22 +1596,25 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
       }
 
       func echoAsyncObject(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any,
-        completion: @escaping (Result<Any, Error>) -> Void
+        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+        anObject: AnyHashable,
+        completion: @escaping (Result<AnyHashable, Error>) -> Void
       ) {
         completion(.success(anObject))
       }
 
       func echoAsyncList(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
-        completion: @escaping (Result<[Any?], Error>) -> Void
+        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+        aList: [AnyHashable?],
+        completion: @escaping (Result<[AnyHashable?], Error>) -> Void
       ) {
         completion(.success(aList))
       }
 
       func echoAsyncMap(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void
+        aMap: [String?: AnyHashable?],
+        completion: @escaping (Result<[String?: AnyHashable?], Error>) -> Void
       ) {
         completion(.success(aMap))
       }
@@ -1609,7 +1629,7 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func throwAsyncError(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        completion: @escaping (Result<Any?, Error>) -> Void
+        completion: @escaping (Result<AnyHashable?, Error>) -> Void
       ) {
         completion(
           .failure(ProxyApiTestsError(code: "code", message: "message", details: "details")))
@@ -1625,7 +1645,7 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func throwAsyncFlutterError(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        completion: @escaping (Result<Any?, Error>) -> Void
+        completion: @escaping (Result<AnyHashable?, Error>) -> Void
       ) {
         completion(
           .failure(ProxyApiTestsError(code: "code", message: "message", details: "details")))
@@ -1671,23 +1691,24 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func echoAsyncNullableObject(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        anObject: Any?,
-        completion: @escaping (Result<Any?, Error>) -> Void
+        anObject: AnyHashable?,
+        completion: @escaping (Result<AnyHashable?, Error>) -> Void
       ) {
         completion(.success(anObject))
       }
 
       func echoAsyncNullableList(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aList: [Any?]?,
-        completion: @escaping (Result<[Any?]?, Error>) -> Void
+        aList: [AnyHashable?]?,
+        completion: @escaping (Result<[AnyHashable?]?, Error>) -> Void
       ) {
         completion(.success(aList))
       }
 
       func echoAsyncNullableMap(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void
+        aMap: [String?: AnyHashable?]?,
+        completion: @escaping (Result<[String?: AnyHashable?]?, Error>) -> Void
       ) {
         completion(.success(aMap))
       }
@@ -1733,7 +1754,7 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func callFlutterThrowError(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        completion: @escaping (Result<Any?, Error>) -> Void
+        completion: @escaping (Result<AnyHashable?, Error>) -> Void
       ) {
         pigeonApi.flutterThrowError(pigeonInstance: pigeonInstance) { response in
           switch response {
@@ -1836,8 +1857,9 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
       }
 
       func callFlutterEchoList(
-        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
-        completion: @escaping (Result<[Any?], Error>) -> Void
+        pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+        aList: [AnyHashable?],
+        completion: @escaping (Result<[AnyHashable?], Error>) -> Void
       ) {
         pigeonApi.flutterEchoList(pigeonInstance: pigeonInstance, aList: aList) { response in
           switch response {
@@ -1867,7 +1889,8 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func callFlutterEchoMap(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aMap: [String?: Any?], completion: @escaping (Result<[String?: Any?], Error>) -> Void
+        aMap: [String?: AnyHashable?],
+        completion: @escaping (Result<[String?: AnyHashable?], Error>) -> Void
       ) {
         pigeonApi.flutterEchoMap(pigeonInstance: pigeonInstance, aMap: aMap) { response in
           switch response {
@@ -2008,8 +2031,8 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func callFlutterEchoNullableList(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aList: [Any?]?,
-        completion: @escaping (Result<[Any?]?, Error>) -> Void
+        aList: [AnyHashable?]?,
+        completion: @escaping (Result<[AnyHashable?]?, Error>) -> Void
       ) {
         pigeonApi.flutterEchoNullableList(pigeonInstance: pigeonInstance, aList: aList) {
           response in
@@ -2024,7 +2047,8 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
 
       func callFlutterEchoNullableMap(
         pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-        aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void
+        aMap: [String?: AnyHashable?]?,
+        completion: @escaping (Result<[String?: AnyHashable?]?, Error>) -> Void
       ) {
         pigeonApi.flutterEchoNullableMap(pigeonInstance: pigeonInstance, aMap: aMap) {
           response in

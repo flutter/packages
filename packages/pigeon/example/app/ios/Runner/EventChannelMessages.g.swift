@@ -14,13 +14,119 @@ import Foundation
   #error("Unsupported platform.")
 #endif
 
-private func isNullish(_ value: Any?) -> Bool {
+private func isNullish(_ value: AnyHashable?) -> Bool {
   return value is NSNull || value == nil
 }
 
-private func nilOrValue<T>(_ value: Any?) -> T? {
+private func nilOrValue<T>(_ value: AnyHashable?) -> T? {
   if value is NSNull { return nil }
   return value as! T?
+}
+
+func deepEqualsEventChannelMessages(_ lhs: AnyHashable?, _ rhs: AnyHashable?) -> Bool {
+  switch (lhs, rhs) {
+  case (nil, nil):
+    return true
+
+  case (nil, _), (_, nil):
+    return false
+
+  case is (Void, Void):
+    return true
+
+  case let (lhsHashable, rhsHashable) as (AnyHashable, AnyHashable):
+    return lhsHashable == rhsHashable
+
+  case let (lhsBool, rhsBool) as (Bool, Bool):
+    return lhsBool == rhsBool
+
+  case let (lhsInt, rhsInt) as (Int, Int):
+    return lhsInt == rhsInt
+
+  case let (lhsInt8, rhsInt8) as (Int8, Int8):
+    return lhsInt8 == rhsInt8
+
+  case let (lhsInt16, rhsInt16) as (Int16, Int16):
+    return lhsInt16 == rhsInt16
+
+  case let (lhsInt32, rhsInt32) as (Int32, Int32):
+    return lhsInt32 == rhsInt32
+
+  case let (lhsInt64, rhsInt64) as (Int64, Int64):
+    return lhsInt64 == rhsInt64
+
+  case let (lhsUInt, rhsUInt) as (UInt, UInt):
+    return lhsUInt == rhsUInt
+
+  case let (lhsUInt8, rhsUInt8) as (UInt8, UInt8):
+    return lhsUInt8 == rhsUInt8
+
+  case let (lhsUInt16, rhsUInt16) as (UInt16, UInt16):
+    return lhsUInt16 == rhsUInt16
+
+  case let (lhsUInt32, rhsUInt32) as (UInt32, UInt32):
+    return lhsUInt32 == rhsUInt32
+
+  case let (lhsUInt64, rhsUInt64) as (UInt64, UInt64):
+    return lhsUInt64 == rhsUInt64
+
+  case let (lhsFloat, rhsFloat) as (Float, Float):
+    return lhsFloat == rhsFloat
+
+  case let (lhsDouble, rhsDouble) as (Double, Double):
+    return lhsDouble == rhsDouble
+
+  case let (lhsString, rhsString) as (String, String):
+    return lhsString == rhsString
+
+  case let (lhsFlutterStandardTypedData, rhsFlutterStandardTypedData)
+    as (FlutterStandardTypedData, FlutterStandardTypedData):
+    return lhsFlutterStandardTypedData == rhsFlutterStandardTypedData
+
+  case let (lhsData, rhsData) as (Data, Data):
+    return lhsData == rhsData
+
+  case let (lhsArray, rhsArray) as ([AnyHashable], [AnyHashable]):
+    guard lhsArray.count == rhsArray.count else { return false }
+    for (index, element) in lhsArray.enumerated() {
+      if !deepEqualsEventChannelMessages(element, rhsArray[index]) {
+        return false
+      }
+    }
+    return true
+
+  case let (lhsDictionary, rhsDictionary)
+    as ([AnyHashable: AnyHashable], [AnyHashable: AnyHashable]):
+    guard lhsDictionary.count == rhsDictionary.count else { return false }
+    for (key, lhsValue) in lhsDictionary {
+      guard let rhsValue = rhsDictionary[key] else { return false }
+      if !deepEqualsEventChannelMessages(lhsValue, rhsValue) {
+        return false
+      }
+    }
+    return true
+
+  default:
+    return false
+  }
+
+}
+
+func deepHashEventChannelMessages(value: AnyHashable?, hasher: inout Hasher) {
+  if let valueArray = value as? [AnyHashable] {
+    for item in valueArray { deepHashEventChannelMessages(value: item, hasher: &hasher) }
+    return
+  }
+
+  if let valueDict = value as? [AnyHashable: AnyHashable] {
+    for key in valueDict.keys {
+      hasher.combine(key)
+      deepHashEventChannelMessages(value: valueDict[key]!, hasher: &hasher)
+    }
+    return
+  }
+
+  return hasher.combine(valueHashable)
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
@@ -30,50 +136,62 @@ protocol PlatformEvent {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct IntEvent: PlatformEvent {
+struct IntEvent: Hashable, PlatformEvent {
   var data: Int64
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeonVar_list: [Any?]) -> IntEvent? {
+  static func fromList(_ pigeonVar_list: [AnyHashable?]) -> IntEvent? {
     let data = pigeonVar_list[0] as! Int64
 
     return IntEvent(
       data: data
     )
   }
-  func toList() -> [Any?] {
+  func toList() -> [AnyHashable?] {
     return [
       data
     ]
   }
+  static func == (lhs: IntEvent, rhs: IntEvent) -> Bool {
+    return deepEqualsEventChannelMessages(lhs.data, rhs.data)
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelMessages(value: data, hasher: &hasher)
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct StringEvent: PlatformEvent {
+struct StringEvent: Hashable, PlatformEvent {
   var data: String
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeonVar_list: [Any?]) -> StringEvent? {
+  static func fromList(_ pigeonVar_list: [AnyHashable?]) -> StringEvent? {
     let data = pigeonVar_list[0] as! String
 
     return StringEvent(
       data: data
     )
   }
-  func toList() -> [Any?] {
+  func toList() -> [AnyHashable?] {
     return [
       data
     ]
   }
+  static func == (lhs: StringEvent, rhs: StringEvent) -> Bool {
+    return deepEqualsEventChannelMessages(lhs.data, rhs.data)
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelMessages(value: data, hasher: &hasher)
+  }
 }
 
 private class EventChannelMessagesPigeonCodecReader: FlutterStandardReader {
-  override func readValue(ofType type: UInt8) -> Any? {
+  override func readValue(ofType type: UInt8) -> AnyHashable? {
     switch type {
     case 129:
-      return IntEvent.fromList(self.readValue() as! [Any?])
+      return IntEvent.fromList(self.readValue() as! [AnyHashable?])
     case 130:
-      return StringEvent.fromList(self.readValue() as! [Any?])
+      return StringEvent.fromList(self.readValue() as! [AnyHashable?])
     default:
       return super.readValue(ofType: type)
     }
@@ -120,7 +238,7 @@ private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
     self.wrapper = wrapper
   }
 
-  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
+  func onListen(withArguments arguments: AnyHashable?, eventSink events: @escaping FlutterEventSink)
     -> FlutterError?
   {
     pigeonSink = PigeonEventSink<ReturnType>(events)
@@ -128,7 +246,7 @@ private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
     return nil
   }
 
-  func onCancel(withArguments arguments: Any?) -> FlutterError? {
+  func onCancel(withArguments arguments: AnyHashable?) -> FlutterError? {
     pigeonSink = nil
     wrapper.onCancel(withArguments: arguments)
     return nil
@@ -136,8 +254,8 @@ private class PigeonStreamHandler<ReturnType>: NSObject, FlutterStreamHandler {
 }
 
 class PigeonEventChannelWrapper<ReturnType> {
-  func onListen(withArguments arguments: Any?, sink: PigeonEventSink<ReturnType>) {}
-  func onCancel(withArguments arguments: Any?) {}
+  func onListen(withArguments arguments: AnyHashable?, sink: PigeonEventSink<ReturnType>) {}
+  func onCancel(withArguments arguments: AnyHashable?) {}
 }
 
 class PigeonEventSink<ReturnType> {
@@ -151,7 +269,7 @@ class PigeonEventSink<ReturnType> {
     sink(value)
   }
 
-  func error(code: String, message: String?, details: Any?) {
+  func error(code: String, message: String?, details: AnyHashable?) {
     sink(FlutterError(code: code, message: message, details: details))
   }
 

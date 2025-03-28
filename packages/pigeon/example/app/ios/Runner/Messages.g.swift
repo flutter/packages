@@ -32,11 +32,11 @@ final class PigeonError: Error {
   }
 }
 
-private func wrapResult(_ result: Any?) -> [Any?] {
+private func wrapResult(_ result: AnyHashable?) -> [AnyHashable?] {
   return [result]
 }
 
-private func wrapError(_ error: Any) -> [Any?] {
+private func wrapError(_ error: Any) -> [AnyHashable?] {
   if let pigeonError = error as? PigeonError {
     return [
       pigeonError.code,
@@ -64,13 +64,119 @@ private func createConnectionError(withChannelName channelName: String) -> Pigeo
     details: "")
 }
 
-private func isNullish(_ value: Any?) -> Bool {
+private func isNullish(_ value: AnyHashable?) -> Bool {
   return value is NSNull || value == nil
 }
 
-private func nilOrValue<T>(_ value: Any?) -> T? {
+private func nilOrValue<T>(_ value: AnyHashable?) -> T? {
   if value is NSNull { return nil }
   return value as! T?
+}
+
+func deepEqualsMessages(_ lhs: AnyHashable?, _ rhs: AnyHashable?) -> Bool {
+  switch (lhs, rhs) {
+  case (nil, nil):
+    return true
+
+  case (nil, _), (_, nil):
+    return false
+
+  case is (Void, Void):
+    return true
+
+  case let (lhsHashable, rhsHashable) as (AnyHashable, AnyHashable):
+    return lhsHashable == rhsHashable
+
+  case let (lhsBool, rhsBool) as (Bool, Bool):
+    return lhsBool == rhsBool
+
+  case let (lhsInt, rhsInt) as (Int, Int):
+    return lhsInt == rhsInt
+
+  case let (lhsInt8, rhsInt8) as (Int8, Int8):
+    return lhsInt8 == rhsInt8
+
+  case let (lhsInt16, rhsInt16) as (Int16, Int16):
+    return lhsInt16 == rhsInt16
+
+  case let (lhsInt32, rhsInt32) as (Int32, Int32):
+    return lhsInt32 == rhsInt32
+
+  case let (lhsInt64, rhsInt64) as (Int64, Int64):
+    return lhsInt64 == rhsInt64
+
+  case let (lhsUInt, rhsUInt) as (UInt, UInt):
+    return lhsUInt == rhsUInt
+
+  case let (lhsUInt8, rhsUInt8) as (UInt8, UInt8):
+    return lhsUInt8 == rhsUInt8
+
+  case let (lhsUInt16, rhsUInt16) as (UInt16, UInt16):
+    return lhsUInt16 == rhsUInt16
+
+  case let (lhsUInt32, rhsUInt32) as (UInt32, UInt32):
+    return lhsUInt32 == rhsUInt32
+
+  case let (lhsUInt64, rhsUInt64) as (UInt64, UInt64):
+    return lhsUInt64 == rhsUInt64
+
+  case let (lhsFloat, rhsFloat) as (Float, Float):
+    return lhsFloat == rhsFloat
+
+  case let (lhsDouble, rhsDouble) as (Double, Double):
+    return lhsDouble == rhsDouble
+
+  case let (lhsString, rhsString) as (String, String):
+    return lhsString == rhsString
+
+  case let (lhsFlutterStandardTypedData, rhsFlutterStandardTypedData)
+    as (FlutterStandardTypedData, FlutterStandardTypedData):
+    return lhsFlutterStandardTypedData == rhsFlutterStandardTypedData
+
+  case let (lhsData, rhsData) as (Data, Data):
+    return lhsData == rhsData
+
+  case let (lhsArray, rhsArray) as ([AnyHashable], [AnyHashable]):
+    guard lhsArray.count == rhsArray.count else { return false }
+    for (index, element) in lhsArray.enumerated() {
+      if !deepEqualsMessages(element, rhsArray[index]) {
+        return false
+      }
+    }
+    return true
+
+  case let (lhsDictionary, rhsDictionary)
+    as ([AnyHashable: AnyHashable], [AnyHashable: AnyHashable]):
+    guard lhsDictionary.count == rhsDictionary.count else { return false }
+    for (key, lhsValue) in lhsDictionary {
+      guard let rhsValue = rhsDictionary[key] else { return false }
+      if !deepEqualsMessages(lhsValue, rhsValue) {
+        return false
+      }
+    }
+    return true
+
+  default:
+    return false
+  }
+
+}
+
+func deepHashMessages(value: AnyHashable?, hasher: inout Hasher) {
+  if let valueArray = value as? [AnyHashable] {
+    for item in valueArray { deepHashMessages(value: item, hasher: &hasher) }
+    return
+  }
+
+  if let valueDict = value as? [AnyHashable: AnyHashable] {
+    for key in valueDict.keys {
+      hasher.combine(key)
+      deepHashMessages(value: valueDict[key]!, hasher: &hasher)
+    }
+    return
+  }
+
+  return hasher.combine(valueHashable)
 }
 
 enum Code: Int {
@@ -79,14 +185,14 @@ enum Code: Int {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct MessageData {
+struct MessageData: Hashable {
   var name: String? = nil
   var description: String? = nil
   var code: Code
   var data: [String: String]
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
-  static func fromList(_ pigeonVar_list: [Any?]) -> MessageData? {
+  static func fromList(_ pigeonVar_list: [AnyHashable?]) -> MessageData? {
     let name: String? = nilOrValue(pigeonVar_list[0])
     let description: String? = nilOrValue(pigeonVar_list[1])
     let code = pigeonVar_list[2] as! Code
@@ -99,7 +205,7 @@ struct MessageData {
       data: data
     )
   }
-  func toList() -> [Any?] {
+  func toList() -> [AnyHashable?] {
     return [
       name,
       description,
@@ -107,10 +213,22 @@ struct MessageData {
       data,
     ]
   }
+  static func == (lhs: MessageData, rhs: MessageData) -> Bool {
+    return deepEqualsMessages(lhs.name, rhs.name)
+      && deepEqualsMessages(lhs.description, rhs.description)
+      && deepEqualsMessages(lhs.code, rhs.code)
+      && deepEqualsMessages(lhs.data, rhs.data)
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashMessages(value: name, hasher: &hasher)
+    deepHashMessages(value: description, hasher: &hasher)
+    deepHashMessages(value: code, hasher: &hasher)
+    deepHashMessages(value: data, hasher: &hasher)
+  }
 }
 
 private class MessagesPigeonCodecReader: FlutterStandardReader {
-  override func readValue(ofType type: UInt8) -> Any? {
+  override func readValue(ofType type: UInt8) -> AnyHashable? {
     switch type {
     case 129:
       let enumResultAsInt: Int? = nilOrValue(self.readValue() as! Int?)
@@ -119,7 +237,7 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
       }
       return nil
     case 130:
-      return MessageData.fromList(self.readValue() as! [Any?])
+      return MessageData.fromList(self.readValue() as! [AnyHashable?])
     default:
       return super.readValue(ofType: type)
     }
@@ -190,7 +308,7 @@ class ExampleHostApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let aArg = args[0] as! Int64
         let bArg = args[1] as! Int64
         do {
@@ -208,7 +326,7 @@ class ExampleHostApiSetup {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       sendMessageChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let messageArg = args[0] as! MessageData
         api.sendMessage(message: messageArg) { result in
           switch result {
@@ -246,8 +364,8 @@ class MessageFlutterApi: MessageFlutterApiProtocol {
       "dev.flutter.pigeon.pigeon_example_package.MessageFlutterApi.flutterMethod\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([aStringArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+    channel.sendMessage([aStringArg] as [AnyHashable?]) { response in
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }

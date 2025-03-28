@@ -73,6 +73,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
   return value as! T?
 }
+
 /// Handles the callback when an object is deallocated.
 protocol ProxyApiTestsPigeonInternalFinalizerDelegate: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
@@ -313,7 +314,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
       binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       removeStrongReferenceChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let identifierArg = args[0] as! Int64
         do {
           let _: AnyObject? = try instanceManager.removeInstance(withIdentifier: identifierArg)
@@ -352,7 +353,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([identifierArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -618,26 +619,27 @@ class ProxyApiTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable
 protocol PigeonApiDelegateProxyApiTestClass {
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
-    aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
-    anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
-    aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
-    aNullableUint8List: FlutterStandardTypedData?, aNullableList: [Any?]?,
-    aNullableMap: [String?: Any?]?, aNullableEnum: ProxyApiTestEnum?,
+    aString: String, aUint8List: FlutterStandardTypedData, aList: [AnyHashable?],
+    aMap: [String?: AnyHashable?], anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass,
+    aNullableBool: Bool?, aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
+    aNullableUint8List: FlutterStandardTypedData?, aNullableList: [AnyHashable?]?,
+    aNullableMap: [String?: AnyHashable?]?, aNullableEnum: ProxyApiTestEnum?,
     aNullableProxyApi: ProxyApiSuperClass?, boolParam: Bool, intParam: Int64, doubleParam: Double,
-    stringParam: String, aUint8ListParam: FlutterStandardTypedData, listParam: [Any?],
-    mapParam: [String?: Any?], enumParam: ProxyApiTestEnum, proxyApiParam: ProxyApiSuperClass,
-    nullableBoolParam: Bool?, nullableIntParam: Int64?, nullableDoubleParam: Double?,
-    nullableStringParam: String?, nullableUint8ListParam: FlutterStandardTypedData?,
-    nullableListParam: [Any?]?, nullableMapParam: [String?: Any?]?,
-    nullableEnumParam: ProxyApiTestEnum?, nullableProxyApiParam: ProxyApiSuperClass?
+    stringParam: String, aUint8ListParam: FlutterStandardTypedData, listParam: [AnyHashable?],
+    mapParam: [String?: AnyHashable?], enumParam: ProxyApiTestEnum,
+    proxyApiParam: ProxyApiSuperClass, nullableBoolParam: Bool?, nullableIntParam: Int64?,
+    nullableDoubleParam: Double?, nullableStringParam: String?,
+    nullableUint8ListParam: FlutterStandardTypedData?, nullableListParam: [AnyHashable?]?,
+    nullableMapParam: [String?: AnyHashable?]?, nullableEnumParam: ProxyApiTestEnum?,
+    nullableProxyApiParam: ProxyApiSuperClass?
   ) throws -> ProxyApiTestClass
   func namedConstructor(
     pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
-    aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
-    anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
-    aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
-    aNullableUint8List: FlutterStandardTypedData?, aNullableList: [Any?]?,
-    aNullableMap: [String?: Any?]?, aNullableEnum: ProxyApiTestEnum?,
+    aString: String, aUint8List: FlutterStandardTypedData, aList: [AnyHashable?],
+    aMap: [String?: AnyHashable?], anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass,
+    aNullableBool: Bool?, aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
+    aNullableUint8List: FlutterStandardTypedData?, aNullableList: [AnyHashable?]?,
+    aNullableMap: [String?: AnyHashable?]?, aNullableEnum: ProxyApiTestEnum?,
     aNullableProxyApi: ProxyApiSuperClass?
   ) throws -> ProxyApiTestClass
   func attachedField(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
@@ -648,13 +650,13 @@ protocol PigeonApiDelegateProxyApiTestClass {
   func noop(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
   /// Returns an error, to test error handling.
   func throwError(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass) throws
-    -> Any?
+    -> AnyHashable?
   /// Returns an error from a void function, to test error handling.
   func throwErrorFromVoid(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
     throws
   /// Returns a Flutter error, to test error handling.
   func throwFlutterError(pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass)
-    throws -> Any?
+    throws -> AnyHashable?
   /// Returns passed in int.
   func echoInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64
@@ -678,12 +680,12 @@ protocol PigeonApiDelegateProxyApiTestClass {
   ) throws -> FlutterStandardTypedData
   /// Returns the passed in generic Object.
   func echoObject(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any
-  ) throws -> Any
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: AnyHashable
+  ) throws -> AnyHashable
   /// Returns the passed list, to test serialization and deserialization.
   func echoList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]
-  ) throws -> [Any?]
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [AnyHashable?]
+  ) throws -> [AnyHashable?]
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
   func echoProxyApiList(
@@ -692,8 +694,9 @@ protocol PigeonApiDelegateProxyApiTestClass {
   ) throws -> [ProxyApiTestClass]
   /// Returns the passed map, to test serialization and deserialization.
   func echoMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?]
-  ) throws -> [String?: Any?]
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aMap: [String?: AnyHashable?]
+  ) throws -> [String?: AnyHashable?]
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
   func echoProxyApiMap(
@@ -735,17 +738,19 @@ protocol PigeonApiDelegateProxyApiTestClass {
   ) throws -> FlutterStandardTypedData?
   /// Returns the passed in generic Object.
   func echoNullableObject(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableObject: Any?
-  ) throws -> Any?
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aNullableObject: AnyHashable?
+  ) throws -> AnyHashable?
   /// Returns the passed list, to test serialization and deserialization.
   func echoNullableList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aNullableList: [Any?]?
-  ) throws -> [Any?]?
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aNullableList: [AnyHashable?]?
+  ) throws -> [AnyHashable?]?
   /// Returns the passed map, to test serialization and deserialization.
   func echoNullableMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aNullableMap: [String?: Any?]?
-  ) throws -> [String?: Any?]?
+    aNullableMap: [String?: AnyHashable?]?
+  ) throws -> [String?: AnyHashable?]?
   func echoNullableEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aNullableEnum: ProxyApiTestEnum?
@@ -783,16 +788,17 @@ protocol PigeonApiDelegateProxyApiTestClass {
     completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncObject(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any,
-    completion: @escaping (Result<Any, Error>) -> Void)
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: AnyHashable,
+    completion: @escaping (Result<AnyHashable, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsyncList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
-    completion: @escaping (Result<[Any?], Error>) -> Void)
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [AnyHashable?],
+    completion: @escaping (Result<[AnyHashable?], Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], Error>) -> Void)
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aMap: [String?: AnyHashable?],
+    completion: @escaping (Result<[String?: AnyHashable?], Error>) -> Void)
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   func echoAsyncEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
@@ -800,7 +806,7 @@ protocol PigeonApiDelegateProxyApiTestClass {
   /// Responds with an error from an async function returning a value.
   func throwAsyncError(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping (Result<AnyHashable?, Error>) -> Void)
   /// Responds with an error from an async void function.
   func throwAsyncErrorFromVoid(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
@@ -808,7 +814,7 @@ protocol PigeonApiDelegateProxyApiTestClass {
   /// Responds with a Flutter error from an async function returning a value.
   func throwAsyncFlutterError(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping (Result<AnyHashable?, Error>) -> Void)
   /// Returns passed in int asynchronously.
   func echoAsyncNullableInt(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anInt: Int64?,
@@ -832,16 +838,17 @@ protocol PigeonApiDelegateProxyApiTestClass {
     completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
   /// Returns the passed in generic Object asynchronously.
   func echoAsyncNullableObject(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, anObject: Any?,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    anObject: AnyHashable?, completion: @escaping (Result<AnyHashable?, Error>) -> Void)
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsyncNullableList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]?,
-    completion: @escaping (Result<[Any?]?, Error>) -> Void)
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aList: [AnyHashable?]?, completion: @escaping (Result<[AnyHashable?]?, Error>) -> Void)
   /// Returns the passed map, to test asynchronous serialization and deserialization.
   func echoAsyncNullableMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
+    aMap: [String?: AnyHashable?]?,
+    completion: @escaping (Result<[String?: AnyHashable?]?, Error>) -> Void)
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   func echoAsyncNullableEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
@@ -855,7 +862,7 @@ protocol PigeonApiDelegateProxyApiTestClass {
     completion: @escaping (Result<Void, Error>) -> Void)
   func callFlutterThrowError(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, Error>) -> Void)
+    completion: @escaping (Result<AnyHashable?, Error>) -> Void)
   func callFlutterThrowErrorFromVoid(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     completion: @escaping (Result<Void, Error>) -> Void)
@@ -876,15 +883,16 @@ protocol PigeonApiDelegateProxyApiTestClass {
     aUint8List: FlutterStandardTypedData,
     completion: @escaping (Result<FlutterStandardTypedData, Error>) -> Void)
   func callFlutterEchoList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?],
-    completion: @escaping (Result<[Any?], Error>) -> Void)
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [AnyHashable?],
+    completion: @escaping (Result<[AnyHashable?], Error>) -> Void)
   func callFlutterEchoProxyApiList(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aList: [ProxyApiTestClass?], completion: @escaping (Result<[ProxyApiTestClass?], Error>) -> Void
   )
   func callFlutterEchoMap(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aMap: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], Error>) -> Void)
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aMap: [String?: AnyHashable?],
+    completion: @escaping (Result<[String?: AnyHashable?], Error>) -> Void)
   func callFlutterEchoProxyApiMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     aMap: [String?: ProxyApiTestClass?],
@@ -913,11 +921,12 @@ protocol PigeonApiDelegateProxyApiTestClass {
     aUint8List: FlutterStandardTypedData?,
     completion: @escaping (Result<FlutterStandardTypedData?, Error>) -> Void)
   func callFlutterEchoNullableList(
-    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass, aList: [Any?]?,
-    completion: @escaping (Result<[Any?]?, Error>) -> Void)
+    pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
+    aList: [AnyHashable?]?, completion: @escaping (Result<[AnyHashable?]?, Error>) -> Void)
   func callFlutterEchoNullableMap(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
-    aMap: [String?: Any?]?, completion: @escaping (Result<[String?: Any?]?, Error>) -> Void)
+    aMap: [String?: AnyHashable?]?,
+    completion: @escaping (Result<[String?: AnyHashable?]?, Error>) -> Void)
   func callFlutterEchoNullableEnum(
     pigeonApi: PigeonApiProxyApiTestClass, pigeonInstance: ProxyApiTestClass,
     anEnum: ProxyApiTestEnum?, completion: @escaping (Result<ProxyApiTestEnum?, Error>) -> Void)
@@ -942,7 +951,7 @@ protocol PigeonApiProtocolProxyApiTestClass {
   /// Responds with an error from an async function returning a value.
   func flutterThrowError(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, ProxyApiTestsError>) -> Void)
+    completion: @escaping (Result<AnyHashable?, ProxyApiTestsError>) -> Void)
   /// Responds with an error from an async void function.
   func flutterThrowErrorFromVoid(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
@@ -969,8 +978,8 @@ protocol PigeonApiProtocolProxyApiTestClass {
     completion: @escaping (Result<FlutterStandardTypedData, ProxyApiTestsError>) -> Void)
   /// Returns the passed list, to test serialization and deserialization.
   func flutterEchoList(
-    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?],
-    completion: @escaping (Result<[Any?], ProxyApiTestsError>) -> Void)
+    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [AnyHashable?],
+    completion: @escaping (Result<[AnyHashable?], ProxyApiTestsError>) -> Void)
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
   func flutterEchoProxyApiList(
@@ -978,8 +987,8 @@ protocol PigeonApiProtocolProxyApiTestClass {
     completion: @escaping (Result<[ProxyApiTestClass?], ProxyApiTestsError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
   func flutterEchoMap(
-    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], ProxyApiTestsError>) -> Void)
+    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: AnyHashable?],
+    completion: @escaping (Result<[String?: AnyHashable?], ProxyApiTestsError>) -> Void)
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
   func flutterEchoProxyApiMap(
@@ -1016,12 +1025,12 @@ protocol PigeonApiProtocolProxyApiTestClass {
     completion: @escaping (Result<FlutterStandardTypedData?, ProxyApiTestsError>) -> Void)
   /// Returns the passed list, to test serialization and deserialization.
   func flutterEchoNullableList(
-    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?]?,
-    completion: @escaping (Result<[Any?]?, ProxyApiTestsError>) -> Void)
+    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [AnyHashable?]?,
+    completion: @escaping (Result<[AnyHashable?]?, ProxyApiTestsError>) -> Void)
   /// Returns the passed map, to test serialization and deserialization.
   func flutterEchoNullableMap(
-    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?]?,
-    completion: @escaping (Result<[String?: Any?]?, ProxyApiTestsError>) -> Void)
+    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: AnyHashable?]?,
+    completion: @escaping (Result<[String?: AnyHashable?]?, ProxyApiTestsError>) -> Void)
   /// Returns the passed enum to test serialization and deserialization.
   func flutterEchoNullableEnum(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass, anEnum anEnumArg: ProxyApiTestEnum?,
@@ -1077,15 +1086,15 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonIdentifierArg = args[0] as! Int64
         let aBoolArg = args[1] as! Bool
         let anIntArg = args[2] as! Int64
         let aDoubleArg = args[3] as! Double
         let aStringArg = args[4] as! String
         let aUint8ListArg = args[5] as! FlutterStandardTypedData
-        let aListArg = args[6] as! [Any?]
-        let aMapArg = args[7] as! [String?: Any?]
+        let aListArg = args[6] as! [AnyHashable?]
+        let aMapArg = args[7] as! [String?: AnyHashable?]
         let anEnumArg = args[8] as! ProxyApiTestEnum
         let aProxyApiArg = args[9] as! ProxyApiSuperClass
         let aNullableBoolArg: Bool? = nilOrValue(args[10])
@@ -1093,8 +1102,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let aNullableDoubleArg: Double? = nilOrValue(args[12])
         let aNullableStringArg: String? = nilOrValue(args[13])
         let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[14])
-        let aNullableListArg: [Any?]? = nilOrValue(args[15])
-        let aNullableMapArg: [String?: Any?]? = nilOrValue(args[16])
+        let aNullableListArg: [AnyHashable?]? = nilOrValue(args[15])
+        let aNullableMapArg: [String?: AnyHashable?]? = nilOrValue(args[16])
         let aNullableEnumArg: ProxyApiTestEnum? = nilOrValue(args[17])
         let aNullableProxyApiArg: ProxyApiSuperClass? = nilOrValue(args[18])
         let boolParamArg = args[19] as! Bool
@@ -1102,8 +1111,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let doubleParamArg = args[21] as! Double
         let stringParamArg = args[22] as! String
         let aUint8ListParamArg = args[23] as! FlutterStandardTypedData
-        let listParamArg = args[24] as! [Any?]
-        let mapParamArg = args[25] as! [String?: Any?]
+        let listParamArg = args[24] as! [AnyHashable?]
+        let mapParamArg = args[25] as! [String?: AnyHashable?]
         let enumParamArg = args[26] as! ProxyApiTestEnum
         let proxyApiParamArg = args[27] as! ProxyApiSuperClass
         let nullableBoolParamArg: Bool? = nilOrValue(args[28])
@@ -1111,8 +1120,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let nullableDoubleParamArg: Double? = nilOrValue(args[30])
         let nullableStringParamArg: String? = nilOrValue(args[31])
         let nullableUint8ListParamArg: FlutterStandardTypedData? = nilOrValue(args[32])
-        let nullableListParamArg: [Any?]? = nilOrValue(args[33])
-        let nullableMapParamArg: [String?: Any?]? = nilOrValue(args[34])
+        let nullableListParamArg: [AnyHashable?]? = nilOrValue(args[33])
+        let nullableMapParamArg: [String?: AnyHashable?]? = nilOrValue(args[34])
         let nullableEnumParamArg: ProxyApiTestEnum? = nilOrValue(args[35])
         let nullableProxyApiParamArg: ProxyApiSuperClass? = nilOrValue(args[36])
         do {
@@ -1149,15 +1158,15 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       namedConstructorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonIdentifierArg = args[0] as! Int64
         let aBoolArg = args[1] as! Bool
         let anIntArg = args[2] as! Int64
         let aDoubleArg = args[3] as! Double
         let aStringArg = args[4] as! String
         let aUint8ListArg = args[5] as! FlutterStandardTypedData
-        let aListArg = args[6] as! [Any?]
-        let aMapArg = args[7] as! [String?: Any?]
+        let aListArg = args[6] as! [AnyHashable?]
+        let aMapArg = args[7] as! [String?: AnyHashable?]
         let anEnumArg = args[8] as! ProxyApiTestEnum
         let aProxyApiArg = args[9] as! ProxyApiSuperClass
         let aNullableBoolArg: Bool? = nilOrValue(args[10])
@@ -1165,8 +1174,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let aNullableDoubleArg: Double? = nilOrValue(args[12])
         let aNullableStringArg: String? = nilOrValue(args[13])
         let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[14])
-        let aNullableListArg: [Any?]? = nilOrValue(args[15])
-        let aNullableMapArg: [String?: Any?]? = nilOrValue(args[16])
+        let aNullableListArg: [AnyHashable?]? = nilOrValue(args[15])
+        let aNullableMapArg: [String?: AnyHashable?]? = nilOrValue(args[16])
         let aNullableEnumArg: ProxyApiTestEnum? = nilOrValue(args[17])
         let aNullableProxyApiArg: ProxyApiSuperClass? = nilOrValue(args[18])
         do {
@@ -1193,7 +1202,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       attachedFieldChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let pigeonIdentifierArg = args[1] as! Int64
         do {
@@ -1213,7 +1222,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       staticAttachedFieldChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
@@ -1232,7 +1241,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       noopChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         do {
           try api.pigeonDelegate.noop(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
@@ -1249,7 +1258,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwErrorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         do {
           let result = try api.pigeonDelegate.throwError(
@@ -1267,7 +1276,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwErrorFromVoidChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         do {
           try api.pigeonDelegate.throwErrorFromVoid(
@@ -1285,7 +1294,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwFlutterErrorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         do {
           let result = try api.pigeonDelegate.throwFlutterError(
@@ -1303,7 +1312,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg = args[1] as! Int64
         do {
@@ -1322,7 +1331,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg = args[1] as! Double
         do {
@@ -1341,7 +1350,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg = args[1] as! Bool
         do {
@@ -1360,7 +1369,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg = args[1] as! String
         do {
@@ -1379,7 +1388,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg = args[1] as! FlutterStandardTypedData
         do {
@@ -1398,7 +1407,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoObjectChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anObjectArg = args[1]!
         do {
@@ -1417,9 +1426,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aListArg = args[1] as! [Any?]
+        let aListArg = args[1] as! [AnyHashable?]
         do {
           let result = try api.pigeonDelegate.echoList(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aList: aListArg)
@@ -1436,7 +1445,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoProxyApiListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aListArg = args[1] as! [ProxyApiTestClass]
         do {
@@ -1455,9 +1464,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aMapArg = args[1] as! [String?: Any?]
+        let aMapArg = args[1] as! [String?: AnyHashable?]
         do {
           let result = try api.pigeonDelegate.echoMap(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aMap: aMapArg)
@@ -1474,7 +1483,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoProxyApiMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aMapArg = args[1] as! [String: ProxyApiTestClass]
         do {
@@ -1493,7 +1502,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoEnumChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg = args[1] as! ProxyApiTestEnum
         do {
@@ -1512,7 +1521,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoProxyApiChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aProxyApiArg = args[1] as! ProxyApiSuperClass
         do {
@@ -1531,7 +1540,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableIntArg: Int64? = nilOrValue(args[1])
         do {
@@ -1550,7 +1559,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableDoubleArg: Double? = nilOrValue(args[1])
         do {
@@ -1569,7 +1578,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableBoolArg: Bool? = nilOrValue(args[1])
         do {
@@ -1588,7 +1597,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableStringArg: String? = nilOrValue(args[1])
         do {
@@ -1607,7 +1616,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[1])
         do {
@@ -1627,9 +1636,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableObjectChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aNullableObjectArg: Any? = args[1]
+        let aNullableObjectArg: AnyHashable? = args[1]
         do {
           let result = try api.pigeonDelegate.echoNullableObject(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableObject: aNullableObjectArg)
@@ -1646,9 +1655,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aNullableListArg: [Any?]? = nilOrValue(args[1])
+        let aNullableListArg: [AnyHashable?]? = nilOrValue(args[1])
         do {
           let result = try api.pigeonDelegate.echoNullableList(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableList: aNullableListArg)
@@ -1665,9 +1674,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aNullableMapArg: [String?: Any?]? = nilOrValue(args[1])
+        let aNullableMapArg: [String?: AnyHashable?]? = nilOrValue(args[1])
         do {
           let result = try api.pigeonDelegate.echoNullableMap(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, aNullableMap: aNullableMapArg)
@@ -1684,7 +1693,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableEnumChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableEnumArg: ProxyApiTestEnum? = nilOrValue(args[1])
         do {
@@ -1703,7 +1712,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoNullableProxyApiChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aNullableProxyApiArg: ProxyApiSuperClass? = nilOrValue(args[1])
         do {
@@ -1723,7 +1732,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       noopAsyncChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.noopAsync(pigeonApi: api, pigeonInstance: pigeonInstanceArg) { result in
           switch result {
@@ -1742,7 +1751,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg = args[1] as! Int64
         api.pigeonDelegate.echoAsyncInt(
@@ -1764,7 +1773,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg = args[1] as! Double
         api.pigeonDelegate.echoAsyncDouble(
@@ -1786,7 +1795,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg = args[1] as! Bool
         api.pigeonDelegate.echoAsyncBool(
@@ -1808,7 +1817,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg = args[1] as! String
         api.pigeonDelegate.echoAsyncString(
@@ -1830,7 +1839,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg = args[1] as! FlutterStandardTypedData
         api.pigeonDelegate.echoAsyncUint8List(
@@ -1852,7 +1861,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncObjectChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anObjectArg = args[1]!
         api.pigeonDelegate.echoAsyncObject(
@@ -1874,9 +1883,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aListArg = args[1] as! [Any?]
+        let aListArg = args[1] as! [AnyHashable?]
         api.pigeonDelegate.echoAsyncList(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, aList: aListArg
         ) { result in
@@ -1896,9 +1905,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aMapArg = args[1] as! [String?: Any?]
+        let aMapArg = args[1] as! [String?: AnyHashable?]
         api.pigeonDelegate.echoAsyncMap(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, aMap: aMapArg
         ) { result in
@@ -1918,7 +1927,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncEnumChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg = args[1] as! ProxyApiTestEnum
         api.pigeonDelegate.echoAsyncEnum(
@@ -1940,7 +1949,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncErrorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.throwAsyncError(pigeonApi: api, pigeonInstance: pigeonInstanceArg) {
           result in
@@ -1960,7 +1969,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncErrorFromVoidChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.throwAsyncErrorFromVoid(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg
@@ -1981,7 +1990,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       throwAsyncFlutterErrorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.throwAsyncFlutterError(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
         { result in
@@ -2001,7 +2010,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg: Int64? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableInt(
@@ -2023,7 +2032,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg: Double? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableDouble(
@@ -2045,7 +2054,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg: Bool? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableBool(
@@ -2067,7 +2076,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg: String? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableString(
@@ -2090,7 +2099,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableUint8List(
@@ -2112,9 +2121,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableObjectChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let anObjectArg: Any? = args[1]
+        let anObjectArg: AnyHashable? = args[1]
         api.pigeonDelegate.echoAsyncNullableObject(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, anObject: anObjectArg
         ) { result in
@@ -2134,9 +2143,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aListArg: [Any?]? = nilOrValue(args[1])
+        let aListArg: [AnyHashable?]? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableList(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, aList: aListArg
         ) { result in
@@ -2156,9 +2165,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aMapArg: [String?: Any?]? = nilOrValue(args[1])
+        let aMapArg: [String?: AnyHashable?]? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableMap(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, aMap: aMapArg
         ) { result in
@@ -2178,7 +2187,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoAsyncNullableEnumChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg: ProxyApiTestEnum? = nilOrValue(args[1])
         api.pigeonDelegate.echoAsyncNullableEnum(
@@ -2215,7 +2224,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       echoStaticStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let aStringArg = args[0] as! String
         do {
           let result = try api.pigeonDelegate.echoStaticString(pigeonApi: api, aString: aStringArg)
@@ -2249,7 +2258,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterNoopChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.callFlutterNoop(pigeonApi: api, pigeonInstance: pigeonInstanceArg) {
           result in
@@ -2269,7 +2278,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterThrowErrorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.callFlutterThrowError(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
         { result in
@@ -2290,7 +2299,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterThrowErrorFromVoidChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.callFlutterThrowErrorFromVoid(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg
@@ -2311,7 +2320,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg = args[1] as! Bool
         api.pigeonDelegate.callFlutterEchoBool(
@@ -2333,7 +2342,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg = args[1] as! Int64
         api.pigeonDelegate.callFlutterEchoInt(
@@ -2355,7 +2364,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg = args[1] as! Double
         api.pigeonDelegate.callFlutterEchoDouble(
@@ -2377,7 +2386,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg = args[1] as! String
         api.pigeonDelegate.callFlutterEchoString(
@@ -2400,7 +2409,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg = args[1] as! FlutterStandardTypedData
         api.pigeonDelegate.callFlutterEchoUint8List(
@@ -2422,9 +2431,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aListArg = args[1] as! [Any?]
+        let aListArg = args[1] as! [AnyHashable?]
         api.pigeonDelegate.callFlutterEchoList(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, aList: aListArg
         ) { result in
@@ -2445,7 +2454,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoProxyApiListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aListArg = args[1] as! [ProxyApiTestClass?]
         api.pigeonDelegate.callFlutterEchoProxyApiList(
@@ -2467,9 +2476,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aMapArg = args[1] as! [String?: Any?]
+        let aMapArg = args[1] as! [String?: AnyHashable?]
         api.pigeonDelegate.callFlutterEchoMap(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, aMap: aMapArg
         ) { result in
@@ -2490,7 +2499,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoProxyApiMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aMapArg = args[1] as! [String?: ProxyApiTestClass?]
         api.pigeonDelegate.callFlutterEchoProxyApiMap(
@@ -2512,7 +2521,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoEnumChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg = args[1] as! ProxyApiTestEnum
         api.pigeonDelegate.callFlutterEchoEnum(
@@ -2534,7 +2543,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoProxyApiChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aProxyApiArg = args[1] as! ProxyApiSuperClass
         api.pigeonDelegate.callFlutterEchoProxyApi(
@@ -2557,7 +2566,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableBoolChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aBoolArg: Bool? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableBool(
@@ -2580,7 +2589,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableIntChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anIntArg: Int64? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableInt(
@@ -2603,7 +2612,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableDoubleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aDoubleArg: Double? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableDouble(
@@ -2626,7 +2635,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg: String? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableString(
@@ -2649,7 +2658,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableUint8ListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aUint8ListArg: FlutterStandardTypedData? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableUint8List(
@@ -2672,9 +2681,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableListChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aListArg: [Any?]? = nilOrValue(args[1])
+        let aListArg: [AnyHashable?]? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableList(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, aList: aListArg
         ) { result in
@@ -2695,9 +2704,9 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableMapChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
-        let aMapArg: [String?: Any?]? = nilOrValue(args[1])
+        let aMapArg: [String?: AnyHashable?]? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableMap(
           pigeonApi: api, pigeonInstance: pigeonInstanceArg, aMap: aMapArg
         ) { result in
@@ -2718,7 +2727,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableEnumChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let anEnumArg: ProxyApiTestEnum? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableEnum(
@@ -2741,7 +2750,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoNullableProxyApiChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aProxyApiArg: ProxyApiSuperClass? = nilOrValue(args[1])
         api.pigeonDelegate.callFlutterEchoNullableProxyApi(
@@ -2763,7 +2772,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterNoopAsyncChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         api.pigeonDelegate.callFlutterNoopAsync(pigeonApi: api, pigeonInstance: pigeonInstanceArg) {
           result in
@@ -2784,7 +2793,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       callFlutterEchoAsyncStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiTestClass
         let aStringArg = args[1] as! String
         api.pigeonDelegate.callFlutterEchoAsyncString(
@@ -2847,7 +2856,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -2865,7 +2874,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
   /// Responds with an error from an async function returning a value.
   func flutterThrowError(
     pigeonInstance pigeonInstanceArg: ProxyApiTestClass,
-    completion: @escaping (Result<Any?, ProxyApiTestsError>) -> Void
+    completion: @escaping (Result<AnyHashable?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -2882,7 +2891,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -2892,7 +2901,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        let result: Any? = listResponse[0]
+        let result: AnyHashable? = listResponse[0]
         completion(.success(result))
       }
     }
@@ -2918,7 +2927,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -2953,7 +2962,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aBoolArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -2995,7 +3004,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, anIntArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3037,7 +3046,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aDoubleArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3079,7 +3088,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3121,7 +3130,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3145,8 +3154,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
 
   /// Returns the passed list, to test serialization and deserialization.
   func flutterEchoList(
-    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?],
-    completion: @escaping (Result<[Any?], ProxyApiTestsError>) -> Void
+    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [AnyHashable?],
+    completion: @escaping (Result<[AnyHashable?], ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3163,7 +3172,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3179,7 +3188,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
-        let result = listResponse[0] as! [Any?]
+        let result = listResponse[0] as! [AnyHashable?]
         completion(.success(result))
       }
     }
@@ -3206,7 +3215,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3230,8 +3239,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
 
   /// Returns the passed map, to test serialization and deserialization.
   func flutterEchoMap(
-    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?],
-    completion: @escaping (Result<[String?: Any?], ProxyApiTestsError>) -> Void
+    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: AnyHashable?],
+    completion: @escaping (Result<[String?: AnyHashable?], ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3248,7 +3257,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3264,7 +3273,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
               code: "null-error",
               message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
-        let result = listResponse[0] as! [String?: Any?]
+        let result = listResponse[0] as! [String?: AnyHashable?]
         completion(.success(result))
       }
     }
@@ -3292,7 +3301,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3334,7 +3343,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3376,7 +3385,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aProxyApiArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3418,7 +3427,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aBoolArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3454,7 +3463,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, anIntArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3490,7 +3499,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aDoubleArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3526,7 +3535,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3562,7 +3571,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3580,8 +3589,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
 
   /// Returns the passed list, to test serialization and deserialization.
   func flutterEchoNullableList(
-    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [Any?]?,
-    completion: @escaping (Result<[Any?]?, ProxyApiTestsError>) -> Void
+    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aList aListArg: [AnyHashable?]?,
+    completion: @escaping (Result<[AnyHashable?]?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3598,7 +3607,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aListArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3608,7 +3617,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        let result: [Any?]? = nilOrValue(listResponse[0])
+        let result: [AnyHashable?]? = nilOrValue(listResponse[0])
         completion(.success(result))
       }
     }
@@ -3616,8 +3625,8 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
 
   /// Returns the passed map, to test serialization and deserialization.
   func flutterEchoNullableMap(
-    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: Any?]?,
-    completion: @escaping (Result<[String?: Any?]?, ProxyApiTestsError>) -> Void
+    pigeonInstance pigeonInstanceArg: ProxyApiTestClass, aMap aMapArg: [String?: AnyHashable?]?,
+    completion: @escaping (Result<[String?: AnyHashable?]?, ProxyApiTestsError>) -> Void
   ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
@@ -3634,7 +3643,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aMapArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3644,7 +3653,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(ProxyApiTestsError(code: code, message: message, details: details)))
       } else {
-        let result: [String?: Any?]? = nilOrValue(listResponse[0])
+        let result: [String?: AnyHashable?]? = nilOrValue(listResponse[0])
         completion(.success(result))
       }
     }
@@ -3670,7 +3679,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, anEnumArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3707,7 +3716,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aProxyApiArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3744,7 +3753,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3779,7 +3788,7 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, aStringArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -3836,7 +3845,7 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
@@ -3855,7 +3864,7 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       aSuperMethodChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
+        let args = message as! [AnyHashable?]
         let pigeonInstanceArg = args[0] as! ProxyApiSuperClass
         do {
           try api.pigeonDelegate.aSuperMethod(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
@@ -3892,7 +3901,7 @@ final class PigeonApiProxyApiSuperClass: PigeonApiProtocolProxyApiSuperClass {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        guard let listResponse = response as? [Any?] else {
+        guard let listResponse = response as? [AnyHashable?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
         }
@@ -3950,7 +3959,7 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        guard let listResponse = response as? [Any?] else {
+        guard let listResponse = response as? [AnyHashable?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
         }
@@ -3984,7 +3993,7 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
     let channel = FlutterBasicMessageChannel(
       name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
+      guard let listResponse = response as? [AnyHashable?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
       }
@@ -4038,7 +4047,7 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
         binaryMessenger: binaryMessenger, codec: codec)
       if let api = api {
         pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
-          let args = message as! [Any?]
+          let args = message as! [AnyHashable?]
           let pigeonIdentifierArg = args[0] as! Int64
           do {
             api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
@@ -4078,7 +4087,7 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
         binaryMessenger: binaryMessenger, codec: codec)
       if let api = api {
         aMethodChannel.setMessageHandler { message, reply in
-          let args = message as! [Any?]
+          let args = message as! [AnyHashable?]
           let pigeonInstanceArg = args[0] as! ClassWithApiRequirement
           do {
             try api.pigeonDelegate.aMethod(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
@@ -4134,7 +4143,7 @@ final class PigeonApiClassWithApiRequirement: PigeonApiProtocolClassWithApiRequi
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        guard let listResponse = response as? [Any?] else {
+        guard let listResponse = response as? [AnyHashable?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
         }

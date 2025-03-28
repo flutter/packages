@@ -274,7 +274,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
           indent.writeln('return nil');
         } else {
           indent.writeln(
-              'return ${customType.name}.fromList(self.readValue() as! [Any?])');
+              'return ${customType.name}.fromList(self.readValue() as! [AnyHashable?])');
         }
       });
     }
@@ -394,8 +394,8 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
   }) {
     final String privateString = private ? 'private ' : '';
     final String extendsString = classDefinition.superClass != null
-        ? ': ${classDefinition.superClass!.name}'
-        : '';
+        ? ': Hashable, ${classDefinition.superClass!.name}'
+        : ': Hashable';
     if (classDefinition.isSwiftClass) {
       indent.write(
           '${privateString}class ${classDefinition.name}$extendsString ');
@@ -456,9 +456,9 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 
       indent.format('''
 // swift-format-ignore: AlwaysUseLowerCamelCase
-static func fromList(_ ${varNamePrefix}list: [Any?]) -> Any? {
+static func fromList(_ ${varNamePrefix}list: [AnyHashable?]) -> AnyHashable? {
   let type = ${varNamePrefix}list[0] as! Int
-  let wrapped: Any? = ${varNamePrefix}list[1]
+  let wrapped: AnyHashable? = ${varNamePrefix}list[1]
 
   let wrapper = $_overflowClassName(
     type: type,
@@ -469,7 +469,7 @@ static func fromList(_ ${varNamePrefix}list: [Any?]) -> Any? {
 }
 ''');
 
-      indent.writeScoped('func unwrap() -> Any? {', '}', () {
+      indent.writeScoped('func unwrap() -> AnyHashable? {', '}', () {
         indent.format('''
 if (wrapped == nil) {
   return nil;
@@ -481,7 +481,7 @@ if (wrapped == nil) {
                 () {
               if (types[i].type == CustomTypes.customClass) {
                 indent.writeln(
-                    'return ${types[i].name}.fromList(wrapped as! [Any?]);');
+                    'return ${types[i].name}.fromList(wrapped as! [AnyHashable?]);');
               } else if (types[i].type == CustomTypes.customEnum) {
                 indent.writeln(
                     'return ${types[i].name}(rawValue: wrapped as! Int);');
@@ -535,6 +535,13 @@ if (wrapped == nil) {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      writeClassEquality(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
   }
 
@@ -575,7 +582,7 @@ if (wrapped == nil) {
     Class classDefinition, {
     required String dartPackageName,
   }) {
-    indent.write('func toList() -> [Any?] ');
+    indent.write('func toList() -> [AnyHashable?] ');
     indent.addScoped('{', '}', () {
       indent.write('return ');
       indent.addScoped('[', ']', () {
@@ -591,6 +598,43 @@ if (wrapped == nil) {
   }
 
   @override
+  void writeClassEquality(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeScoped(
+        'static func == (lhs: ${classDefinition.name}, rhs: ${classDefinition.name}) -> Bool {',
+        '}', () {
+      if (classDefinition.isSwiftClass) {
+        indent.writeScoped('if (lhs === rhs) {', '}', () {
+          indent.writeln('return true');
+        });
+      }
+      indent.write('return ');
+      indent.format(
+        classDefinition.fields
+            .map((NamedType field) =>
+                'deepEquals${generatorOptions.fileSpecificClassNameComponent}(lhs.${field.name}, rhs.${field.name})')
+            .join('\n&& '),
+        leadingSpace: false,
+      );
+    });
+
+    indent.writeScoped('func hash(into hasher: inout Hasher) {', '}', () {
+      indent.format(
+        classDefinition.fields
+            .map((NamedType field) =>
+                'deepHash${generatorOptions.fileSpecificClassNameComponent}(value: ${field.name}, hasher: &hasher)')
+            .join('\n'),
+        leadingSpace: false,
+      );
+    });
+  }
+
+  @override
   void writeClassDecode(
     InternalSwiftOptions generatorOptions,
     Root root,
@@ -601,7 +645,7 @@ if (wrapped == nil) {
     final String className = classDefinition.name;
     indent.writeln('// swift-format-ignore: AlwaysUseLowerCamelCase');
     indent.write(
-        'static func fromList(_ ${varNamePrefix}list: [Any?]) -> $className? ');
+        'static func fromList(_ ${varNamePrefix}list: [AnyHashable?]) -> $className? ');
 
     indent.addScoped('{', '}', () {
       enumerate(getFieldsInSerializationOrder(classDefinition),
@@ -1372,7 +1416,8 @@ if (wrapped == nil) {
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
   return value as! T?
-}''');
+}
+''');
   }
 
   void _writeCreateConnectionError(
@@ -1384,6 +1429,115 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.writeln(
           'return ${_getErrorClassName(generatorOptions)}(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")');
     });
+  }
+
+  void _writeDeepEquals(InternalSwiftOptions generatorOptions, Indent indent) {
+    indent.format('''
+func deepEquals${generatorOptions.fileSpecificClassNameComponent}(_ lhs: AnyHashable?, _ rhs: AnyHashable?) -> Bool {
+  switch (lhs, rhs) {
+  case (nil, nil):
+    return true
+
+  case (nil, _), (_, nil):
+    return false
+
+  case is (Void, Void):
+    return true
+
+  case let (lhsHashable, rhsHashable) as (AnyHashable, AnyHashable):
+    return lhsHashable == rhsHashable
+
+  case let (lhsBool, rhsBool) as (Bool, Bool):
+    return lhsBool == rhsBool
+
+  case let (lhsInt, rhsInt) as (Int, Int):
+    return lhsInt == rhsInt
+
+  case let (lhsInt8, rhsInt8) as (Int8, Int8):
+    return lhsInt8 == rhsInt8
+
+  case let (lhsInt16, rhsInt16) as (Int16, Int16):
+    return lhsInt16 == rhsInt16
+
+  case let (lhsInt32, rhsInt32) as (Int32, Int32):
+    return lhsInt32 == rhsInt32
+
+  case let (lhsInt64, rhsInt64) as (Int64, Int64):
+    return lhsInt64 == rhsInt64
+
+  case let (lhsUInt, rhsUInt) as (UInt, UInt):
+    return lhsUInt == rhsUInt
+
+  case let (lhsUInt8, rhsUInt8) as (UInt8, UInt8):
+    return lhsUInt8 == rhsUInt8
+
+  case let (lhsUInt16, rhsUInt16) as (UInt16, UInt16):
+    return lhsUInt16 == rhsUInt16
+
+  case let (lhsUInt32, rhsUInt32) as (UInt32, UInt32):
+    return lhsUInt32 == rhsUInt32
+
+  case let (lhsUInt64, rhsUInt64) as (UInt64, UInt64):
+    return lhsUInt64 == rhsUInt64
+
+  case let (lhsFloat, rhsFloat) as (Float, Float):
+    return lhsFloat == rhsFloat
+
+  case let (lhsDouble, rhsDouble) as (Double, Double):
+    return lhsDouble == rhsDouble
+
+  case let (lhsString, rhsString) as (String, String):
+    return lhsString == rhsString
+
+  case let (lhsFlutterStandardTypedData, rhsFlutterStandardTypedData) as (FlutterStandardTypedData, FlutterStandardTypedData):
+    return lhsFlutterStandardTypedData == rhsFlutterStandardTypedData
+
+  case let (lhsData, rhsData) as (Data, Data):
+    return lhsData == rhsData
+
+  case let (lhsArray, rhsArray) as ([AnyHashable], [AnyHashable]):
+    guard lhsArray.count == rhsArray.count else { return false }
+    for (index, element) in lhsArray.enumerated() {
+      if !deepEquals${generatorOptions.fileSpecificClassNameComponent}(element, rhsArray[index]) {
+        return false
+      }
+    }
+    return true
+
+  case let (lhsDictionary, rhsDictionary) as ([AnyHashable: AnyHashable], [AnyHashable: AnyHashable]):
+    guard lhsDictionary.count == rhsDictionary.count else { return false }
+    for (key, lhsValue) in lhsDictionary {
+      guard let rhsValue = rhsDictionary[key] else { return false }
+      if !deepEquals${generatorOptions.fileSpecificClassNameComponent}(lhsValue, rhsValue) {
+        return false
+      }
+    }
+    return true
+
+  default:
+    return false
+  }
+
+}
+
+func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: AnyHashable?, hasher: inout Hasher) {
+  if let valueArray = value as? [AnyHashable] {
+     for item in valueArray { deepHash${generatorOptions.fileSpecificClassNameComponent}(value: item, hasher: &hasher) }
+     return
+  }
+
+  if let valueDict = value as? [AnyHashable: AnyHashable] {
+    for key in valueDict.keys { 
+      hasher.combine(key)
+      deepHash${generatorOptions.fileSpecificClassNameComponent}(value: valueDict[key]!, hasher: &hasher)
+    }
+    return
+  }
+
+  return hasher.combine(value)
+}
+
+    ''');
   }
 
   @override
@@ -1407,6 +1561,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
     _writeIsNullish(indent);
     _writeNilOrValue(indent);
+    if (root.classes.isNotEmpty) {
+      _writeDeepEquals(generatorOptions, indent);
+    }
   }
 
   @override
@@ -1548,7 +1705,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
     indent.addScoped('{ response in', '}', () {
       indent.writeScoped(
-          'guard let listResponse = response as? [Any?] else {', '}', () {
+          'guard let listResponse = response as? [AnyHashable?] else {', '}',
+          () {
         indent.writeln(
             'completion(.failure(createConnectionError(withChannelName: channelName)))');
         indent.writeln('return');
@@ -1644,7 +1802,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.addScoped('{ $messageVarName, reply in', '}', () {
         final List<String> methodArgument = <String>[];
         if (components.arguments.isNotEmpty) {
-          indent.writeln('let args = message as! [Any?]');
+          indent.writeln('let args = message as! [AnyHashable?]');
           enumerate(components.arguments,
               (int index, _SwiftFunctionArgument arg) {
             final String argName = _getSafeArgumentName(index, arg.namedType);
@@ -2763,11 +2921,11 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
   if (type.typeArguments.isEmpty) {
     if (type.baseName == 'List') {
-      return '[Any?]';
+      return '[AnyHashable?]';
     } else if (type.baseName == 'Map') {
-      return '[AnyHashable?: Any?]';
+      return '[AnyHashable?: AnyHashable?]';
     } else {
-      return 'Any';
+      return 'AnyHashable';
     }
   } else {
     if (type.baseName == 'List') {
@@ -2795,7 +2953,7 @@ String? _swiftTypeForBuiltinDartType(
     'Int64List': 'FlutterStandardTypedData',
     'Float32List': 'FlutterStandardTypedData',
     'Float64List': 'FlutterStandardTypedData',
-    'Object': 'Any',
+    'Object': 'AnyHashable',
   };
   if (mapKey && type.baseName == 'Object') {
     return 'AnyHashable';
