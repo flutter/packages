@@ -192,4 +192,12 @@ void main() {
       }
     });
   });
+
+  group('billing configuration', () {
+    test('country_code', () async {
+      const String expectedCountryCode = 'ABC';
+      final String countryCode = await iapStoreKitPlatform.countryCode();
+      expect(countryCode, expectedCountryCode);
+    });
+  });
 }
