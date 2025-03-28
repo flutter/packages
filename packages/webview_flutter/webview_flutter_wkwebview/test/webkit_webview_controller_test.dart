@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:path/path.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/src/common/platform_webview.dart';
 import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart';
@@ -58,6 +59,7 @@ void main() {
       MockURLRequest Function({required String url})? createURLRequest,
       PigeonInstanceManager? instanceManager,
       MockWKWebpagePreferences? mockWebpagePreferences,
+      String Function(String) readAccessURLProvider = dirname,
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
           mockWebViewConfiguration ?? MockWKWebViewConfiguration();
@@ -170,6 +172,7 @@ void main() {
             );
           },
         ),
+        readAccessURLProvider: readAccessURLProvider,
         instanceManager: instanceManager ?? TestInstanceManager(),
       );
 
@@ -339,6 +342,17 @@ void main() {
 
       await controller.loadFile('/path/to/file.html');
       verify(mockWebView.loadFileUrl('/path/to/file.html', '/path/to'));
+    });
+
+    test('loadFile with custom readAccessUrl', () async {
+      final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+          createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+          readAccessURLProvider: (String path) => dirname(dirname(path)));
+
+      await controller.loadFile('/path/to/file.html');
+      verify(mockWebView.loadFileUrl('/path/to/file.html', '/path'));
     });
 
     test('loadFlutterAsset', () async {
