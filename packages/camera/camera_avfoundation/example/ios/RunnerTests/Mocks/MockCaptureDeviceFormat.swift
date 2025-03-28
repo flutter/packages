@@ -4,7 +4,7 @@
 
 /// A mock implementation of `FLTCaptureDeviceFormat` that allows mocking the class
 /// properties.
-class MockCaptureDeviceFormat: NSObject, FLTCaptureDeviceFormat {
+final class MockCaptureDeviceFormat: NSObject, FLTCaptureDeviceFormat {
 
   /// The format associated with the capture device.
   var format: AVCaptureDevice.Format {

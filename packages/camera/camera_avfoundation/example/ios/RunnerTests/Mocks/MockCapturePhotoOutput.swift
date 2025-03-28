@@ -6,7 +6,7 @@ import AVFoundation
 
 /// Mock implementation of `FLTCapturePhotoOutput` protocol which allows injecting a custom
 /// implementation.
-class MockCapturePhotoOutput: NSObject, FLTCapturePhotoOutput {
+final class MockCapturePhotoOutput: NSObject, FLTCapturePhotoOutput {
   var avOutput = AVCapturePhotoOutput()
   var availablePhotoCodecTypes: [AVVideoCodecType] = []
   var highResolutionCaptureEnabled = false

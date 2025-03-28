@@ -4,7 +4,7 @@
 
 /// A mock implementation of `FCPCameraGlobalEventApi` that captures received
 /// `deviceOrientationChanged` events and exposes whether they were received to the testing code.
-class MockGlobalEventApi: FCPCameraGlobalEventApi {
+final class MockGlobalEventApi: FCPCameraGlobalEventApi {
 
   /// Whether the `deviceOrientationChanged` callback was called.
   var deviceOrientationChangedCalled = false
@@ -13,7 +13,8 @@ class MockGlobalEventApi: FCPCameraGlobalEventApi {
   var lastOrientation = FCPPlatformDeviceOrientation.portraitUp
 
   override func deviceOrientationChangedOrientation(
-    _ orientation: FCPPlatformDeviceOrientation, completion: @escaping (FlutterError?) -> Void
+    _ orientation: FCPPlatformDeviceOrientation,
+    completion: @escaping (FlutterError?) -> Void
   ) {
     deviceOrientationChangedCalled = true
     lastOrientation = orientation

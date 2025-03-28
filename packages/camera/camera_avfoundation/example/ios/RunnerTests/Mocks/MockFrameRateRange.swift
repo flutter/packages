@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 /// A mock implementation of `FLTFrameRateRange` that allows mocking the class properties.
-class MockFrameRateRange: NSObject, FLTFrameRateRange {
+final class MockFrameRateRange: NSObject, FLTFrameRateRange {
   var minFrameRate: Float
   var maxFrameRate: Float
 
