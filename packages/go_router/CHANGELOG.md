@@ -1,7 +1,11 @@
+## 14.9.0
+- Adds new top level `onEnter` callback with access to current and next route states.
+- Deprecates top level `redirect` in favor of `onEnter`.
+
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
- 
+
 ## 14.8.0
 
 - Adds `preload` parameter to `StatefulShellBranchData.$branch`.
