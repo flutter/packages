@@ -39,24 +39,26 @@ CameraImpl::~CameraImpl() {
 
 bool CameraImpl::InitCamera(flutter::TextureRegistrar* texture_registrar,
                             flutter::BinaryMessenger* messenger,
-                            const PlatformMediaSettings& media_settings) {
+                            const PlatformMediaSettings& media_settings,
+                            std::shared_ptr<TaskRunner> task_runner) {
   auto capture_controller_factory =
       std::make_unique<CaptureControllerFactoryImpl>();
   return InitCamera(std::move(capture_controller_factory), texture_registrar,
-                    messenger, media_settings);
+                    messenger, media_settings, task_runner);
 }
 
 bool CameraImpl::InitCamera(
     std::unique_ptr<CaptureControllerFactory> capture_controller_factory,
     flutter::TextureRegistrar* texture_registrar,
     flutter::BinaryMessenger* messenger,
-    const PlatformMediaSettings& media_settings) {
+    const PlatformMediaSettings& media_settings,
+    std::shared_ptr<TaskRunner> task_runner) {
   assert(!device_id_.empty());
   messenger_ = messenger;
   capture_controller_ =
       capture_controller_factory->CreateCaptureController(this);
   return capture_controller_->InitCaptureDevice(texture_registrar, device_id_,
-                                                media_settings);
+                                                media_settings, task_runner);
 }
 
 bool CameraImpl::AddPendingVoidResult(
