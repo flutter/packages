@@ -7,13 +7,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
 
 import 'consumable_store.dart';
 import 'example_payment_queue_delegate.dart';
 
-void main() {
-  InAppPurchaseStoreKitPlatform.enableStoreKit2();
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await InAppPurchaseStoreKitPlatform.enableStoreKit2();
   // When using the Android plugin directly it is mandatory to register
   // the plugin as default instance as part of initializing the app.
   InAppPurchaseStoreKitPlatform.registerPlatform();
@@ -221,7 +222,9 @@ class _MyAppState extends State<_MyApp> {
       return const Card();
     }
     const ListTile productHeader = ListTile(title: Text('Products for Sale'));
+    const ListTile promoHeader = ListTile(title: Text('Products in promo'));
     final List<ListTile> productList = <ListTile>[];
+    final List<ListTile> promoList = <ListTile>[];
     if (_notFoundIds.isNotEmpty) {
       productList.add(ListTile(
           title: Text('[${_notFoundIds.join(", ")}] not found',
@@ -244,6 +247,7 @@ class _MyAppState extends State<_MyApp> {
     productList.addAll(_products.map(
       (ProductDetails productDetails) {
         final PurchaseDetails? previousPurchase = purchases[productDetails.id];
+        _buildPromoList(promoList, productDetails);
         return ListTile(
             title: Text(
               productDetails.title,
@@ -280,8 +284,81 @@ class _MyAppState extends State<_MyApp> {
     ));
 
     return Card(
-        child: Column(
-            children: <Widget>[productHeader, const Divider()] + productList));
+      child: Column(
+        children: <Widget>[
+          productHeader,
+          const Divider(),
+          ...productList,
+          promoHeader,
+          const Divider(),
+          ...promoList,
+        ],
+      ),
+    );
+  }
+
+  void _buildPromoList(
+    List<ListTile> promoList,
+    ProductDetails productDetails,
+  ) {
+    if (productDetails is AppStoreProduct2Details) {
+      final SK2SubscriptionInfo? subscription =
+          productDetails.sk2Product.subscription;
+      final List<SK2SubscriptionOffer> offers =
+          subscription?.promotionalOffers ?? <SK2SubscriptionOffer>[];
+      promoList.addAll(offers.map(
+        (SK2SubscriptionOffer offer) => _buildPromoTile(productDetails, offer),
+      ));
+    }
+  }
+
+  ListTile _buildPromoTile(
+    ProductDetails productDetails,
+    SK2SubscriptionOffer offer,
+  ) {
+    return ListTile(
+      title: Text(
+        '${productDetails.title} [${offer.type.name}]',
+      ),
+      subtitle: Text(
+        productDetails.description,
+      ),
+      trailing: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          late PurchaseParam purchaseParam;
+          if (offer.type == SK2SubscriptionOfferType.winBack) {
+            purchaseParam = Sk2PurchaseParam(
+              productDetails: productDetails,
+              winBackOfferId: offer.id,
+            );
+          } else if (offer.type == SK2SubscriptionOfferType.promotional) {
+            purchaseParam = Sk2PurchaseParam(
+              productDetails: productDetails,
+              promotionalOffer: SK2PromotionalOffer(
+                offerId: offer.id ?? '',
+                signature: SK2SubscriptionOfferSignature(
+                  keyID: 'keyID',
+                  nonce: '1ac96421-947d-45e9-a0a0-5bb3a6937284',
+                  timestamp: DateTime.now().millisecondsSinceEpoch,
+                  signature: 'dmFsaWRzaWduYXR1cmU=',
+                ),
+              ),
+            );
+          } else {
+            purchaseParam = Sk2PurchaseParam(
+              productDetails: productDetails,
+            );
+          }
+
+          _iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+        },
+        child: Text('${productDetails.currencySymbol} ${offer.price}'),
+      ),
+    );
   }
 
   Card _buildConsumableBox() {
