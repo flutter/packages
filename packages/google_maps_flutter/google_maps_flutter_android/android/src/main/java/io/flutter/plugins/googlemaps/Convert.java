@@ -326,7 +326,8 @@ class Convert {
       return (zoom.getOut()) ? CameraUpdateFactory.zoomOut() : CameraUpdateFactory.zoomIn();
     }
     throw new IllegalArgumentException(
-        "PlatformCameraUpdate's cameraUpdate field must be one of the PlatformCameraUpdate... case classes.");
+        "PlatformCameraUpdate's cameraUpdate field must be one of the PlatformCameraUpdate... case"
+            + " classes.");
   }
 
   private static double toDouble(Object o) {
@@ -411,9 +412,9 @@ class Convert {
 
   static Messages.PlatformIndoorLevel indoorLevelToPigeon(IndoorLevel indoorLevel) {
     return new Messages.PlatformIndoorLevel.Builder()
-            .setName(indoorLevel.getName())
-            .setShortName(indoorLevel.getShortName())
-            .build();
+        .setName(indoorLevel.getName())
+        .setShortName(indoorLevel.getShortName())
+        .build();
   }
 
   static Messages.PlatformCluster clusterToPigeon(
@@ -969,7 +970,8 @@ class Convert {
       @NonNull GroundOverlay groundOverlay) {
     Messages.PlatformDoublePair.Builder anchorBuilder = new Messages.PlatformDoublePair.Builder();
 
-    // Position is overlays anchor point. Calculate normalized anchor point based on position and bounds.
+    // Position is overlays anchor point. Calculate normalized anchor point based on position and
+    // bounds.
     LatLng position = groundOverlay.getPosition();
     LatLngBounds bounds = groundOverlay.getBounds();
 

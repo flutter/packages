@@ -28,10 +28,10 @@ FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord)
 }
 
 FGMPlatformIndoorLevel *FGMGetPigeonIndoorLevelForIndoorLevel(GMSIndoorLevel *level) {
-    if (level == nil) {
-        return nil;
-    }
-    return [FGMPlatformIndoorLevel makeWithName:level.name shortName:level.shortName];
+  if (level == nil) {
+    return nil;
+  }
+  return [FGMPlatformIndoorLevel makeWithName:level.name shortName:level.shortName];
 }
 
 GMSCoordinateBounds *FGMGetCoordinateBoundsForPigeonLatLngBounds(FGMPlatformLatLngBounds *bounds) {

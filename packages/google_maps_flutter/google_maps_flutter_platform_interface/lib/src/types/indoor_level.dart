@@ -22,6 +22,7 @@ class IndoorLevel {
     }
     assert(json is Map<String, dynamic>);
     final Map<String, dynamic> map = json as Map<String, dynamic>;
-    return IndoorLevel(name: map['name'] as String?, shortName: map['shortName'] as String?);
+    return IndoorLevel(
+        name: map['name'] as String?, shortName: map['shortName'] as String?);
   }
 }

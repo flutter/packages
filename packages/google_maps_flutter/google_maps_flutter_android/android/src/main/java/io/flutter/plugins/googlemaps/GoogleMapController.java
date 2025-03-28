@@ -152,21 +152,21 @@ class GoogleMapController
   // Constructor for testing purposes only
   @VisibleForTesting
   GoogleMapController(
-          int id,
-          Context context,
-          BinaryMessenger binaryMessenger,
-          MapsCallbackApi flutterApi,
-          LifecycleProvider lifecycleProvider,
-          GoogleMapOptions options,
-          ClusterManagersController clusterManagersController,
-          MarkersController markersController,
-          PolygonsController polygonsController,
-          PolylinesController polylinesController,
-          CirclesController circlesController,
-          FloorController floorController,
-          HeatmapsController heatmapController,
-          TileOverlaysController tileOverlaysController,
-          GroundOverlaysController groundOverlaysController) {
+      int id,
+      Context context,
+      BinaryMessenger binaryMessenger,
+      MapsCallbackApi flutterApi,
+      LifecycleProvider lifecycleProvider,
+      GoogleMapOptions options,
+      ClusterManagersController clusterManagersController,
+      MarkersController markersController,
+      PolygonsController polygonsController,
+      PolylinesController polylinesController,
+      CirclesController circlesController,
+      FloorController floorController,
+      HeatmapsController heatmapController,
+      TileOverlaysController tileOverlaysController,
+      GroundOverlaysController groundOverlaysController) {
     this.id = id;
     this.context = context;
     this.binaryMessenger = binaryMessenger;
@@ -392,6 +392,7 @@ class GoogleMapController
 
   @Nullable private IndoorBuilding previousBuilding;
   private boolean isFirstFocus = true;
+
   @Override
   public void onIndoorBuildingFocused() {
     if (googleMap != null) {
