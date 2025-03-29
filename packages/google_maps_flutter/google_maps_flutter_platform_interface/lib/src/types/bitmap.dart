@@ -330,6 +330,12 @@ abstract class BitmapDescriptor {
     );
   }
 
+  /// Returns the asset name used to create this BitmapDescriptor, if available.
+  /// Returns null if this BitmapDescriptor was not created from an asset.
+  String? getAssetName() {
+    return null;
+  }
+
   /// Convert the object to a Json format.
   Object toJson();
 }
@@ -389,6 +395,11 @@ class AssetBitmap extends BitmapDescriptor {
   final String? package;
 
   @override
+  String? getAssetName() {
+    return name;
+  }
+
+  @override
   Object toJson() => <Object>[
         BitmapDescriptor._fromAsset,
         name,
@@ -416,6 +427,11 @@ class AssetImageBitmap extends BitmapDescriptor {
 
   /// Size of the image if using mipmaps.
   final Size? size;
+
+  @override
+  String? getAssetName() {
+    return name;
+  }
 
   @override
   Object toJson() => <Object>[
@@ -764,6 +780,11 @@ class AssetMapBitmap extends MapBitmap {
         bitmapScaling: bitmapScaling,
         width: width ?? configuration.size?.width,
         height: height ?? configuration.size?.height);
+  }
+
+  @override
+  String? getAssetName() {
+    return assetName;
   }
 
   @override
