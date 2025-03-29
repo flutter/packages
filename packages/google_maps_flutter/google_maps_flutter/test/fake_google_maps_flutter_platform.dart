@@ -131,7 +131,28 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   Future<void> animateCamera(
     CameraUpdate cameraUpdate, {
     required int mapId,
-  }) async {}
+  }) async {
+    mapInstances[mapId]?.animateCameraConfiguration =
+        CameraUpdateWithConfiguration(
+      cameraUpdate: cameraUpdate,
+      configuration: null,
+    );
+    await _fakeDelay();
+  }
+
+  @override
+  Future<void> animateCameraWithConfiguration(
+    CameraUpdate cameraUpdate,
+    CameraUpdateAnimationConfiguration configuration, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]?.animateCameraConfiguration =
+        CameraUpdateWithConfiguration(
+      cameraUpdate: cameraUpdate,
+      configuration: configuration,
+    );
+    await _fakeDelay();
+  }
 
   @override
   Future<void> moveCamera(
@@ -337,6 +358,7 @@ class PlatformMapStateRecorder {
   MapWidgetConfiguration widgetConfiguration;
   MapObjects mapObjects;
   MapConfiguration mapConfiguration;
+  CameraUpdateWithConfiguration? animateCameraConfiguration;
 
   final List<MarkerUpdates> markerUpdates = <MarkerUpdates>[];
   final List<PolygonUpdates> polygonUpdates = <PolygonUpdates>[];
@@ -348,4 +370,15 @@ class PlatformMapStateRecorder {
       <ClusterManagerUpdates>[];
   final List<GroundOverlayUpdates> groundOverlayUpdates =
       <GroundOverlayUpdates>[];
+}
+
+/// Helper class to store animateCameraWithConfiguration data.
+class CameraUpdateWithConfiguration {
+  CameraUpdateWithConfiguration({
+    required this.cameraUpdate,
+    required this.configuration,
+  });
+
+  final CameraUpdate cameraUpdate;
+  final CameraUpdateAnimationConfiguration? configuration;
 }
