@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import '../../google_maps_flutter_platform_interface.dart';
+import '../types/indoor_level.dart';
 
 /// Generic Event coming from the native side of Maps.
 ///
@@ -174,6 +175,14 @@ class MapLongPressEvent extends _PositionedMapEvent<void> {
   ///
   /// The `position` of this event is the LatLng where the Map was long pressed.
   MapLongPressEvent(int mapId, LatLng position) : super(mapId, position, null);
+}
+
+/// An event fired when the active level of an indoor map changes.
+class MapActiveLevelChangedEvent extends MapEvent<IndoorLevel?> {
+  /// Build a ActiveLevelChanged Event triggered from the map represented by `mapId`.
+  ///
+  /// The `value` of this event is an [IndoorLevel] object with the current name and shortName of the newly selected level.
+  MapActiveLevelChangedEvent(super.mapId, super.value);
 }
 
 /// An event fired when a cluster icon managed by [ClusterManager] is tapped.

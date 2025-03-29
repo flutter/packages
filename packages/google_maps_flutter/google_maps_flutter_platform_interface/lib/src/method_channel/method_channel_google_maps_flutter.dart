@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import '../../google_maps_flutter_platform_interface.dart';
+import '../types/indoor_level.dart';
 import '../types/tile_overlay_updates.dart';
 import '../types/utils/map_configuration_serialization.dart';
 import 'serialization.dart';
@@ -168,6 +169,12 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MapActiveLevelChangedEvent> onActiveLevelChanged(
+      {required int mapId}) {
+    return _events(mapId).whereType<MapActiveLevelChangedEvent>();
+  }
+
+  @override
   Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
     return _events(mapId).whereType<ClusterTapEvent>();
   }
@@ -246,6 +253,12 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
         _mapEventStreamController.add(MapLongPressEvent(
           mapId,
           LatLng.fromJson(arguments['position'])!,
+        ));
+      case 'map#onActiveLevelChanged':
+        final Map<String, Object?> arguments = _getArgumentDictionary(call);
+        _mapEventStreamController.add(MapActiveLevelChangedEvent(
+          mapId,
+          IndoorLevel.fromJson(arguments),
         ));
       case 'tileOverlay#getTile':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);

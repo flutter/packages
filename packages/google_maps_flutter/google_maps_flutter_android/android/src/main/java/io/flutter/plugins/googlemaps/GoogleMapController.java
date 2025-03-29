@@ -33,6 +33,8 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.GroundOverlay;
+import com.google.android.gms.maps.model.IndoorBuilding;
+import com.google.android.gms.maps.model.IndoorLevel;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -67,6 +69,7 @@ class GoogleMapController
         MapsApi,
         MapsInspectorApi,
         OnMapReadyCallback,
+        GoogleMap.OnIndoorStateChangeListener,
         PlatformView {
 
   private static final String TAG = "GoogleMapController";
@@ -93,6 +96,7 @@ class GoogleMapController
   private final PolygonsController polygonsController;
   private final PolylinesController polylinesController;
   private final CirclesController circlesController;
+  private final FloorController floorController;
   private final HeatmapsController heatmapsController;
   private final TileOverlaysController tileOverlaysController;
   private final GroundOverlaysController groundOverlaysController;
@@ -139,6 +143,7 @@ class GoogleMapController
     this.polygonsController = new PolygonsController(flutterApi, density);
     this.polylinesController = new PolylinesController(flutterApi, assetManager, density);
     this.circlesController = new CirclesController(flutterApi, density);
+    this.floorController = new FloorController(flutterApi);
     this.heatmapsController = new HeatmapsController();
     this.tileOverlaysController = new TileOverlaysController(flutterApi);
     this.groundOverlaysController = new GroundOverlaysController(flutterApi, assetManager, density);
@@ -158,6 +163,7 @@ class GoogleMapController
       PolygonsController polygonsController,
       PolylinesController polylinesController,
       CirclesController circlesController,
+      FloorController floorController,
       HeatmapsController heatmapController,
       TileOverlaysController tileOverlaysController,
       GroundOverlaysController groundOverlaysController) {
@@ -166,6 +172,7 @@ class GoogleMapController
     this.binaryMessenger = binaryMessenger;
     this.flutterApi = flutterApi;
     this.options = options;
+    this.floorController = floorController;
     this.mapView = new MapView(context, options);
     this.density = context.getResources().getDisplayMetrics().density;
     this.lifecycleProvider = lifecycleProvider;
@@ -383,6 +390,33 @@ class GoogleMapController
     groundOverlaysController.onGroundOverlayTap(groundOverlay.getId());
   }
 
+  @Nullable private IndoorBuilding previousBuilding;
+  private boolean isFirstFocus = true;
+
+  @Override
+  public void onIndoorBuildingFocused() {
+    if (googleMap != null) {
+      IndoorBuilding currentBuilding = googleMap.getFocusedBuilding();
+      if (previousBuilding != null && currentBuilding == null) {
+        floorController.onActiveLevelChanged(null);
+      }
+
+      if (currentBuilding != null) {
+        if (!isFirstFocus) {
+          onIndoorLevelActivated(currentBuilding);
+        }
+        isFirstFocus = false;
+      }
+      previousBuilding = currentBuilding;
+    }
+  }
+
+  @Override
+  public void onIndoorLevelActivated(IndoorBuilding building) {
+    IndoorLevel activeLevel = building.getLevels().get(building.getActiveLevelIndex());
+    floorController.onActiveLevelChanged(activeLevel);
+  }
+
   @Override
   public void dispose() {
     if (disposed) {
@@ -416,6 +450,7 @@ class GoogleMapController
     googleMap.setOnMapClickListener(listener);
     googleMap.setOnMapLongClickListener(listener);
     googleMap.setOnGroundOverlayClickListener(listener);
+    googleMap.setOnIndoorStateChangeListener(listener);
   }
 
   @VisibleForTesting
