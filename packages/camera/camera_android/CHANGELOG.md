@@ -1,3 +1,7 @@
+## 0.10.10+2
+
+* Wait for the creation of the capture session when initializing the camera to avoid thread race conditions.
+
 ## 0.10.10+1
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.
