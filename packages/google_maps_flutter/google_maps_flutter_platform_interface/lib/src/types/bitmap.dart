@@ -233,14 +233,15 @@ abstract class BitmapDescriptor {
     if (!mipmaps && devicePixelRatio != null) {
       return AssetImageBitmap(name: assetName, scale: devicePixelRatio);
     }
-    final AssetImage assetImage = AssetImage(assetName, package: package, bundle: bundle);
-    final AssetBundleImageKey assetBundleImageKey = await assetImage.obtainKey(configuration);
+    final AssetImage assetImage =
+        AssetImage(assetName, package: package, bundle: bundle);
+    final AssetBundleImageKey assetBundleImageKey =
+        await assetImage.obtainKey(configuration);
     final Size? size = kIsWeb ? configuration.size : null;
     return AssetImageBitmap(
-      name: assetBundleImageKey.name,
-      scale: assetBundleImageKey.scale,
-      size: size
-    );
+        name: assetBundleImageKey.name,
+        scale: assetBundleImageKey.scale,
+        size: size);
   }
 
   /// Creates a BitmapDescriptor using an array of bytes that must be encoded
@@ -392,7 +393,7 @@ class AssetBitmap extends BitmapDescriptor {
 
   /// Optional package of the asset.
   final String? package;
-  
+
   @override
   String? getAssetName() {
     return name;
@@ -426,7 +427,7 @@ class AssetImageBitmap extends BitmapDescriptor {
 
   /// Size of the image if using mipmaps.
   final Size? size;
-  
+
   @override
   String? getAssetName() {
     return name;
