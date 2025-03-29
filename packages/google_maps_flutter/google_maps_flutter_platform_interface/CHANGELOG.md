@@ -1,3 +1,7 @@
+## 2.11.2
+
+* Update the `BitmapDescriptor` to add `getAssetName` functions for retrieving asset information.
+
 ## 2.11.1
 
 * Updates READMEs and API docs.
