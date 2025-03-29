@@ -1,3 +1,7 @@
+## 1.2.0
+
+* Add an auto render strategy to reduce Impeller engine rendering overhead.
+
 ## 1.1.18
 
 * Allow transition between placeholder and loaded image to have an animation.
