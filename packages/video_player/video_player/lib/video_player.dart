@@ -436,6 +436,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           .setMixWithOthers(videoPlayerOptions!.mixWithOthers);
     }
 
+    if (videoPlayerOptions?.preferredAudioLanguage != null) {
+      await _videoPlayerPlatform.setPreferredAudioLanguage(
+          videoPlayerOptions!.preferredAudioLanguage);
+    }
+
     _textureId = (await _videoPlayerPlatform.create(dataSourceDescription)) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
