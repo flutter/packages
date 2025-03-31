@@ -3,6 +3,10 @@
 * Fixes stack overflows ocurring during the parsing of domain names in MDNS messages.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
+## 0.3.2+8
+
+* Update MDnsClient to flag the cache consumption
+
 ## 0.3.2+7
 
 * Optimized Socket Binding: Always bind to 0.0.0.0 for simplicity and efficiency.

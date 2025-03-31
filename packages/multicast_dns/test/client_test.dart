@@ -158,6 +158,37 @@ void main() {
       });
     }
   });
+
+  test('Caching is now optional', () async {
+    final FakeRawDatagramSocket datagramSocket = FakeRawDatagramSocket();
+    datagramSocket.address = InternetAddress.anyIPv4;
+
+    final MDnsClient noCacheClient = MDnsClient(
+      rawDatagramSocketFactory: (dynamic host, int port,
+          {bool reuseAddress = true,
+          bool reusePort = true,
+          int ttl = 1}) async {
+        return datagramSocket;
+      },
+      cache: false,
+    );
+
+    final MDnsClient defaultClient = MDnsClient(rawDatagramSocketFactory:
+        (dynamic host, int port,
+            {bool reuseAddress = true,
+            bool reusePort = true,
+            int ttl = 1}) async {
+      return datagramSocket;
+    });
+
+    await noCacheClient.start();
+    await defaultClient.start();
+    noCacheClient.stop();
+    noCacheClient.stop();
+
+    expect(noCacheClient.cache, false);
+    expect(defaultClient.cache, true);
+  });
 }
 
 class FakeRawDatagramSocket extends Fake implements RawDatagramSocket {
