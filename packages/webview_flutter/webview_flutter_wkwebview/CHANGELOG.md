@@ -1,6 +1,7 @@
 ## 3.19.0
 
-* Adds support for the `allowsLinkPreview` property.
+* Adds support to disable a preview of the destination for a link. See
+  `WebKitWebViewController.setAllowsLinkPreview`.
 
 ## 3.18.5
 

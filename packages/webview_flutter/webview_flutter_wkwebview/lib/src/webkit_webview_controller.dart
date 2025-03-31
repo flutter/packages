@@ -598,7 +598,13 @@ class WebKitWebViewController extends PlatformWebViewController {
     return _webView.setCustomUserAgent(userAgent);
   }
 
-  @override
+  /// If you set this property’s value to true, an iOS user can press links to
+  /// preview link destinations and detected data such as addresses and phone
+  /// numbers.
+  ///
+  /// This property is available on devices that support 3D Touch.
+  ///
+  /// Defaults to true.
   Future<void> setAllowsLinkPreview(bool allow) {
     return _webView.setAllowsLinkPreview(allow);
   }
