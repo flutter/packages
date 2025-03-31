@@ -96,7 +96,6 @@
 * Adds support for `PlatformNavigationDelegate.setOnHttpAuthRequest`.
 * Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
 
->>>>>>> c97691715ffb76de778e538985a80ef04c188271
 ## 3.9.4
 
 * Updates to Pigeon 13.
