@@ -711,7 +711,9 @@ void runTests() {
     variant: _cameraUpdateTypeVariants,
     // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
     // available for LUCI, https://github.com/flutter/flutter/issues/131071
-    skip: isAndroid,
+    skip: isAndroid ||
+        // Hanging in CI, https://github.com/flutter/flutter/issues/166139
+        isIOS,
   );
 
   /// Tests animating the camera with specified durations to verify timing
