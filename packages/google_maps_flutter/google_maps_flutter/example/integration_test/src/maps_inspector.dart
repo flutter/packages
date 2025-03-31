@@ -868,7 +868,10 @@ void runTests() {
     // https://github.com/flutter/flutter/issues/159265
     // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
     // available for LUCI, https://github.com/flutter/flutter/issues/131071
-    skip: kIsWeb || isAndroid,
+    skip: kIsWeb ||
+        isAndroid ||
+        // Hanging in CI, https://github.com/flutter/flutter/issues/166139
+        isIOS,
   );
 }
 
