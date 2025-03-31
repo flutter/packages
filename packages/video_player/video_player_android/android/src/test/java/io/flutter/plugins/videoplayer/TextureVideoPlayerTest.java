@@ -102,6 +102,7 @@ public final class TextureVideoPlayerTest {
     mockExoPlayer = mock(ExoPlayer.class);
     producerLifecycle.onSurfaceAvailable();
 
+    verify(mockExoPlayer).setVideoSurface(any());
     verify(mockExoPlayer).seekTo(10L);
     verify(mockExoPlayer).setRepeatMode(Player.REPEAT_MODE_ALL);
     verify(mockExoPlayer).setVolume(0.5f);

@@ -27,8 +27,8 @@ android {
     }
 
     namespace 'io.flutter.plugins.inapppurchase'
-    
-    compileSdk 34
+
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
         minSdk 21

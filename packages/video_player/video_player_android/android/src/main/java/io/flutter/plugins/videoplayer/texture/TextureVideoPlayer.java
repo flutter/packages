@@ -87,6 +87,7 @@ public final class TextureVideoPlayer extends VideoPlayer
   public void onSurfaceAvailable() {
     if (savedStateDuring != null) {
       exoPlayer = createVideoPlayer();
+      exoPlayer.setVideoSurface(surfaceProducer.getSurface());
       savedStateDuring.restore(exoPlayer);
       savedStateDuring = null;
     }

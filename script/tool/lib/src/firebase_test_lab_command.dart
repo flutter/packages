@@ -23,6 +23,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addOption(
       _gCloudProjectArg,

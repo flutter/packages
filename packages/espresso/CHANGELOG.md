@@ -1,3 +1,7 @@
+## 0.4.0+6
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 0.4.0+5
 
 * Bumps com.squareup.okhttp3, com.google.code.gson, and com.google.truth.
