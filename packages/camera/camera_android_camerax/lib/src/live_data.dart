@@ -104,14 +104,12 @@ class _LiveDataHostApiImpl extends LiveDataHostApi {
       LiveData<T> instance) async {
     LiveDataSupportedTypeData? typeData;
     switch (T) {
-      case CameraState:
+      case const (CameraState):
         typeData =
             LiveDataSupportedTypeData(value: LiveDataSupportedType.cameraState);
-        break;
-      case ZoomState:
+      case const (ZoomState):
         typeData =
             LiveDataSupportedTypeData(value: LiveDataSupportedType.zoomState);
-        break;
       default:
         throw ArgumentError(LiveData.unsupportedLiveDataTypeErrorMessage);
     }
@@ -187,7 +185,7 @@ class LiveDataFlutterApiImpl implements LiveDataFlutterApi {
       // This ignore statement is safe beause this error will be useful when
       // a new LiveDataSupportedType is being added, but the logic in this method
       // has not yet been updated.
-      // ignore: no_default_cases
+      // ignore: no_default_cases, unreachable_switch_default
       default:
         throw ArgumentError(LiveData.unsupportedLiveDataTypeErrorMessage);
     }

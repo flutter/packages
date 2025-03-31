@@ -25,15 +25,14 @@ void main() {
       final List<String> arguments =
           invocation.positionalArguments[0]! as List<String>;
       gitDirCommands.add(arguments);
-      final MockProcessResult mockProcessResult = MockProcessResult();
+      String? gitStdOut;
       if (arguments[0] == 'diff') {
-        when<String?>(mockProcessResult.stdout as String?)
-            .thenReturn(gitDiffResponse);
+        gitStdOut = gitDiffResponse;
       } else if (arguments[0] == 'merge-base') {
-        when<String?>(mockProcessResult.stdout as String?)
-            .thenReturn(mergeBaseResponse);
+        gitStdOut = mergeBaseResponse;
       }
-      return Future<ProcessResult>.value(mockProcessResult);
+      return Future<ProcessResult>.value(
+          ProcessResult(0, 0, gitStdOut ?? '', ''));
     });
   });
 
@@ -55,18 +54,6 @@ file2/file2.cc
     final List<String> changedFiles = await finder.getChangedFiles();
 
     expect(changedFiles, equals(<String>['file1/file1.cc', 'file2/file2.cc']));
-  });
-
-  test('get correct pubspec change based on git diff', () async {
-    gitDiffResponse = '''
-file1/pubspec.yaml
-file2/file2.cc
-''';
-    final GitVersionFinder finder =
-        GitVersionFinder(gitDir, baseSha: 'some base sha');
-    final List<String> changedFiles = await finder.getChangedPubSpecs();
-
-    expect(changedFiles, equals(<String>['file1/pubspec.yaml']));
   });
 
   test('use correct base sha if not specified', () async {
@@ -128,5 +115,3 @@ file2/file2.cc
     verify(gitDir.runCommand(<String>['diff', '--name-only', customBaseSha]));
   });
 }
-
-class MockProcessResult extends Mock implements ProcessResult {}

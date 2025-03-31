@@ -1,6 +1,11 @@
 # Flutter Markdown
 [![pub package](https://img.shields.io/pub/v/flutter_markdown.svg)](https://pub.dartlang.org/packages/flutter_markdown)
 
+## To be discontinued
+
+**This project will be discontinued on April 30, 2025**, and will not receive further updates after that point. Community members interested in collaborating on a community-maintained fork can coordinate in [this issue](https://github.com/flutter/flutter/issues/162966).
+
+---
 
 A markdown renderer for Flutter. It supports the
 [original format](https://daringfireball.net/projects/markdown/), but no inline
@@ -71,6 +76,15 @@ By default, Markdown uses the formatting from the current material design theme,
 but it's possible to create your own custom styling. Use the MarkdownStyle class
 to pass in your own style. If you don't want to use Markdown outside of material
 design, use the MarkdownRaw class.
+
+## Selection
+
+By default, Markdown is not selectable. A caller may use the following ways to
+customize the selection behavior of Markdown:
+
+* Set `selectable` to true, and use `onTapText` and `onSelectionChanged` to
+  handle tapping and selecting events.
+* Set `selectable` to false, and wrap Markdown with [`SelectionArea`](https://api.flutter.dev/flutter/material/SelectionArea-class.html) or [`SelectionRegion`](https://api.flutter.dev/flutter/widgets/SelectableRegion-class.html).
 
 ## Emoji Support
 

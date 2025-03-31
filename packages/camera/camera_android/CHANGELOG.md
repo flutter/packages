@@ -1,3 +1,114 @@
+## 0.10.10+2
+
+* Don't set the FPS range unless video recording. It can cause dark image previews on some devices becuse the auto exposure algorithm is more constrained after fixing the min/max FPS range to the same value. This change has the side effect that providing the `fps` parameter will not affect the camera preview when not video recording. And if you need a lower frame rate in your image streaming handler, you can skip frames by checking the time it passed since the last frame.
+
+## 0.10.10+1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 0.10.10
+
+* Adds API support query for image streaming.
+
+## 0.10.9+17
+
+* Updates annotations lib to 1.9.1.
+
+## 0.10.9+16
+
+* Updates annotations lib to 1.9.0.
+
+## 0.10.9+15
+
+* Converts Dart to native platform calls to Pigeon.
+
+## 0.10.9+14
+
+* Converts native to Dart platform calls to Pigeon.
+
+## 0.10.9+13
+
+* Converts `getAvailableCameras` to Pigeon.
+
+## 0.10.9+12
+
+* Updates Java compatibility version to 11.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.10.9+11
+
+* Updates annotations lib to 1.8.2.
+
+## 0.10.9+10
+
+* Updates annotations lib to 1.8.1.
+
+## 0.10.9+9
+
+* Updates lint checks to ignore NewerVersionAvailable.
+
+## 0.10.9+8
+
+* Removes unused code related to `maxVideoDuration`.
+
+## 0.10.9+7
+
+* Updates Android Gradle plugin to 8.5.0.
+
+## 0.10.9+6
+
+* Reverts changes to support Impeller.
+
+## 0.10.9+5
+
+* Updates annotations lib to 1.8.0.
+
+## 0.10.9+4
+
+* [Supports Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+
+## 0.10.9+3
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes support for apps using the v1 Android embedding.
+
+## 0.10.9+2
+
+* Updates `README.md` to reflect the fact that the `camera_android_camerax` camera plugin implementation
+  is the endorsed Android implementation for `camera: ^0.11.0`.
+
+## 0.10.9+1
+
+* Changes the visibility of a number of fields to `@VisibleForTesting` in order simplify testing.
+
+## 0.10.9
+
+* Adds support to control video FPS and bitrate. See `CameraController.withSettings`.
+
+## 0.10.8+18
+
+* Updates annotations lib to 1.7.1.
+
+## 0.10.8+17
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates compileSdk version to 34.
+* Updates `README.md` to encourage developers to opt into `camera_android_camerax`.
+
+## 0.10.8+16
+
+* Fixes new lint warnings.
+
+## 0.10.8+15
+
+* Updates example app to use non-deprecated video_player method.
+
+## 0.10.8+14
+
+* Fixes `pausePreview` null pointer error. `pausePreview` should not be called
+  when camera is closed or not configured.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 0.10.8+13
 
 * Updates annotations lib to 1.7.0.

@@ -7,6 +7,7 @@ cmake_policy(VERSION 3.10...3.24)
 set(PLUGIN_NAME "${PROJECT_NAME}_plugin")
 
 list(APPEND PLUGIN_SOURCES
+  "messages.g.cc"
   "url_launcher_plugin.cc"
 )
 

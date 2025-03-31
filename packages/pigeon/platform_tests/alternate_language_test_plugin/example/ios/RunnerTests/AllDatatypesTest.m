@@ -17,14 +17,14 @@
 @implementation AllDatatypesTest
 
 - (void)testAllNull {
-  AllNullableTypes *everything = [[AllNullableTypes alloc] init];
+  FLTAllNullableTypes *everything = [[FLTAllNullableTypes alloc] init];
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FlutterIntegrationCoreApiGetCodec()];
-  FlutterIntegrationCoreApi *api =
-      [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTGetCoreTestsCodec()];
+  FLTFlutterIntegrationCoreApi *api =
+      [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoAllNullableTypes:everything
-                 completion:^(AllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
+                 completion:^(FLTAllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
                    XCTAssertNil(result.aNullableBool);
                    XCTAssertNil(result.aNullableInt);
                    XCTAssertNil(result.aNullableDouble);
@@ -33,15 +33,21 @@
                    XCTAssertNil(result.aNullable4ByteArray);
                    XCTAssertNil(result.aNullable8ByteArray);
                    XCTAssertNil(result.aNullableFloatArray);
-                   XCTAssertNil(result.aNullableList);
-                   XCTAssertNil(result.aNullableMap);
+                   XCTAssertNil(result.list);
+                   XCTAssertNil(result.boolList);
+                   XCTAssertNil(result.intList);
+                   XCTAssertNil(result.doubleList);
+                   XCTAssertNil(result.stringList);
+                   XCTAssertNil(result.objectList);
+                   XCTAssertNil(result.map);
+                   XCTAssertNil(result.objectMap);
                    [expectation fulfill];
                  }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
 }
 
 - (void)testAllEquals {
-  AllNullableTypes *everything = [[AllNullableTypes alloc] init];
+  FLTAllNullableTypes *everything = [[FLTAllNullableTypes alloc] init];
   everything.aNullableBool = @NO;
   everything.aNullableInt = @(1);
   everything.aNullableDouble = @(2.0);
@@ -54,16 +60,29 @@
       typedDataWithInt64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
   everything.aNullableFloatArray = [FlutterStandardTypedData
       typedDataWithFloat64:[@"12345678" dataUsingEncoding:NSUTF8StringEncoding]];
-  everything.aNullableList = @[ @(1), @(2) ];
-  everything.aNullableMap = @{@"hello" : @(1234)};
-  everything.nullableMapWithObject = @{@"hello" : @(1234), @"goodbye" : @"world"};
+  everything.list = @[ @"string", @1 ];
+  everything.boolList = @[ @YES, @NO ];
+  everything.intList = @[ @1, @2 ];
+  everything.doubleList = @[ @1.1, @2.2 ];
+  everything.stringList = @[ @"string", @"another one" ];
+  everything.objectList = @[ @"string", @1 ];
+  everything.listList = @[ @[ @"string" ], @[ @"another one" ] ];
+  everything.mapList = @[
+    @{@"hello" : @(1234), @"goodbye" : @"world"}, @{@"hello" : @(1234), @"goodbye" : @"world"}
+  ];
+  everything.map = @{@"hello" : @(1234), @"goodbye" : @"world"};
+  everything.stringMap = @{@"hello" : @"you", @"goodbye" : @"world"};
+  everything.intMap = @{@(1) : @(0), @(2) : @(-2)};
+  everything.objectMap = @{@"hello" : @(1234), @"goodbye" : @"world"};
+  everything.listMap = @{@(1234) : @[ @"string", @"another one" ]};
+  everything.mapMap = @{@(1234) : @{@"goodbye" : @"world"}};
   EchoBinaryMessenger *binaryMessenger =
-      [[EchoBinaryMessenger alloc] initWithCodec:FlutterIntegrationCoreApiGetCodec()];
-  FlutterIntegrationCoreApi *api =
-      [[FlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
+      [[EchoBinaryMessenger alloc] initWithCodec:FLTGetCoreTestsCodec()];
+  FLTFlutterIntegrationCoreApi *api =
+      [[FLTFlutterIntegrationCoreApi alloc] initWithBinaryMessenger:binaryMessenger];
   XCTestExpectation *expectation = [self expectationWithDescription:@"callback"];
   [api echoAllNullableTypes:everything
-                 completion:^(AllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
+                 completion:^(FLTAllNullableTypes *_Nonnull result, FlutterError *_Nullable error) {
                    XCTAssertEqual(result.aNullableBool, everything.aNullableBool);
                    XCTAssertEqual(result.aNullableInt, everything.aNullableInt);
                    XCTAssertEqual(result.aNullableDouble, everything.aNullableDouble);
@@ -76,13 +95,27 @@
                                          everything.aNullable8ByteArray.data);
                    XCTAssertEqualObjects(result.aNullableFloatArray.data,
                                          everything.aNullableFloatArray.data);
-                   XCTAssertEqualObjects(result.aNullableList, everything.aNullableList);
-                   XCTAssertEqualObjects(result.aNullableMap, everything.aNullableMap);
-                   XCTAssertEqualObjects(result.nullableMapWithObject,
-                                         everything.nullableMapWithObject);
+                   XCTAssertEqualObjects(result.list, everything.list);
+                   XCTAssertEqualObjects(result.boolList, everything.boolList);
+                   XCTAssertEqualObjects(result.intList, everything.intList);
+                   XCTAssertEqualObjects(result.doubleList, everything.doubleList);
+                   XCTAssertEqualObjects(result.stringList, everything.stringList);
+                   XCTAssertEqualObjects(result.objectList, everything.objectList);
+                   XCTAssertEqualObjects(result.listList, everything.listList);
+                   XCTAssertEqualObjects(result.mapList, everything.mapList);
+                   XCTAssertEqualObjects(result.map, everything.map);
+                   XCTAssertEqualObjects(result.stringMap, everything.stringMap);
+                   XCTAssertEqualObjects(result.intMap, everything.intMap);
+                   XCTAssertEqualObjects(result.objectMap, everything.objectMap);
+                   XCTAssertEqualObjects(result.listMap, everything.listMap);
+                   XCTAssertEqualObjects(result.mapMap, everything.mapMap);
                    [expectation fulfill];
                  }];
   [self waitForExpectations:@[ expectation ] timeout:1.0];
+}
+
+- (void)unusedClassesExist {
+  XCTAssert([[FLTUnusedClass alloc] init] != nil);
 }
 
 @end

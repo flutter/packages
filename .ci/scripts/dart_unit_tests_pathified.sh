@@ -6,7 +6,7 @@ set -e
 
 # Pathify the dependencies on changed packages (excluding major version
 # changes, which won't affect clients).
-./script/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
+.ci/scripts/tool_runner.sh make-deps-path-based --target-dependencies-with-non-breaking-updates
 # This uses --run-on-dirty-packages rather than --packages-for-branch
 # since only the packages changed by 'make-deps-path-based' need to be
 # re-checked.

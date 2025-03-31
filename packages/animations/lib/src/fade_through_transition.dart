@@ -201,7 +201,7 @@ class FadeThroughTransition extends StatelessWidget {
   Widget build(BuildContext context) {
     return _ZoomedFadeInFadeOut(
       animation: animation,
-      child: Container(
+      child: ColoredBox(
         color: fillColor ?? Theme.of(context).canvasColor,
         child: _ZoomedFadeInFadeOut(
           animation: ReverseAnimation(secondaryAnimation),

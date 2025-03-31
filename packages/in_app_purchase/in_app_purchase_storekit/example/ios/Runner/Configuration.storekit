@@ -1,4 +1,14 @@
 {
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
   "identifier" : "6073E9A3",
   "nonRenewingSubscriptions" : [
 
@@ -33,10 +43,83 @@
       "productID" : "upgrade",
       "referenceName" : "upgrade",
       "type" : "NonConsumable"
+    },
+    {
+      "displayPrice" : "0.49",
+      "familyShareable" : false,
+      "internalID" : "491F25B6",
+      "localizations" : [
+        {
+          "description" : "A consumable product.",
+          "displayName" : "Consumable",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "consumable_discounted",
+      "referenceName" : "consumable_discounted",
+      "type" : "Consumable"
     }
   ],
   "settings" : {
-
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : {
+          "index" : 2,
+          "type" : "generic"
+        },
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : {
+          "index" : 1,
+          "type" : "purchase"
+        },
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : {
+          "index" : 2,
+          "type" : "generic"
+        },
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
   },
   "subscriptionGroups" : [
     {
@@ -44,10 +127,13 @@
       "localizations" : [
 
       ],
-      "name" : "Example Subscriptions",
+      "name" : "Silver Subscriptions",
       "subscriptions" : [
         {
           "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
 
           ],
           "displayPrice" : "4.99",
@@ -66,16 +152,31 @@
           "recurringSubscriptionPeriod" : "P1W",
           "referenceName" : "subscription_silver",
           "subscriptionGroupID" : "D0FEE8D8",
-          "type" : "RecurringSubscription"
-        },
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "5D664105",
+      "localizations" : [
+
+      ],
+      "name" : "Gold Subscription",
+      "subscriptions" : [
         {
           "adHocOffers" : [
 
           ],
+          "codeOffers" : [
+
+          ],
           "displayPrice" : "5.99",
           "familyShareable" : false,
-          "groupNumber" : 2,
-          "internalID" : "0BC7FF5E",
+          "groupNumber" : 1,
+          "internalID" : "12B805AE",
           "introductoryOffer" : null,
           "localizations" : [
             {
@@ -87,14 +188,59 @@
           "productID" : "subscription_gold",
           "recurringSubscriptionPeriod" : "P1M",
           "referenceName" : "subscription_gold",
-          "subscriptionGroupID" : "D0FEE8D8",
-          "type" : "RecurringSubscription"
+          "subscriptionGroupID" : "5D664105",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "3B74452E",
+      "localizations" : [
+
+      ],
+      "name" : "Discounted Subscriptions",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "0.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "ECFBF793",
+          "introductoryOffer" : {
+            "displayPrice" : "0.99",
+            "internalID" : "62DAF06C",
+            "paymentMode" : "payUpFront",
+            "subscriptionPeriod" : "P1M"
+          },
+          "localizations" : [
+            {
+              "description" : "",
+              "displayName" : "",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "subscription_discounted",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "subscription_discounted",
+          "subscriptionGroupID" : "3B74452E",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
         }
       ]
     }
   ],
   "version" : {
-    "major" : 1,
-    "minor" : 1
+    "major" : 4,
+    "minor" : 0
   }
 }

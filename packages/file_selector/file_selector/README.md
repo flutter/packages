@@ -8,11 +8,9 @@ A Flutter plugin that manages files and interactions with file dialogs.
 
 |             | Android | iOS     | Linux | macOS  | Web | Windows     |
 |-------------|---------|---------|-------|--------|-----|-------------|
-| **Support** | SDK 19+ | iOS 11+ | Any   | 10.14+ | Any | Windows 10+ |
+| **Support** | SDK 19+ | iOS 12+ | Any   | 10.14+ | Any | Windows 10+ |
 
-## Usage
-
-To use this plugin, add `file_selector` as a [dependency in your pubspec.yaml file](https://flutter.dev/platform-plugins/).
+## Setup
 
 ### macOS
 

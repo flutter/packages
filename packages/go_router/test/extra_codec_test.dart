@@ -32,6 +32,8 @@ void main() {
         return null;
       },
     );
+
+    addTearDown(router.dispose);
     final SimpleDependency dependency = SimpleDependency();
     addTearDown(() => dependency.dispose());
 
@@ -72,6 +74,7 @@ void main() {
     expect(find.text(initialString), findsOneWidget);
 
     await tester.restartAndRestore();
+    addTearDown(tester.binding.restorationManager.dispose);
 
     await tester.pumpAndSettle();
     expect(find.text(initialString), findsOneWidget);

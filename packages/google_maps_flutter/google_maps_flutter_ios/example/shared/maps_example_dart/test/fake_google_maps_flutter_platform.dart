@@ -95,6 +95,24 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateClusterManagers(
+    ClusterManagerUpdates clusterManagerUpdates, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]?.clusterManagerUpdates.add(clusterManagerUpdates);
+    await _fakeDelay();
+  }
+
+  @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]?.groundOverlayUpdates.add(groundOverlayUpdates);
+    await _fakeDelay();
+  }
+
+  @override
   Future<void> clearTileCache(
     TileOverlayId tileOverlayId, {
     required int mapId,
@@ -103,6 +121,13 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   @override
   Future<void> animateCamera(
     CameraUpdate cameraUpdate, {
+    required int mapId,
+  }) async {}
+
+  @override
+  Future<void> animateCameraWithConfiguration(
+    CameraUpdate cameraUpdate,
+    CameraUpdateAnimationConfiguration configuration, {
     required int mapId,
   }) async {}
 
@@ -242,6 +267,16 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
+    return mapEventStreamController.stream.whereType<ClusterTapEvent>();
+  }
+
+  @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return mapEventStreamController.stream.whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   void dispose({required int mapId}) {
     disposed = true;
   }
@@ -282,6 +317,10 @@ class PlatformMapStateRecorder {
     this.mapObjects = const MapObjects(),
     this.mapConfiguration = const MapConfiguration(),
   }) {
+    clusterManagerUpdates.add(ClusterManagerUpdates.from(
+        const <ClusterManager>{}, mapObjects.clusterManagers));
+    groundOverlayUpdates.add(GroundOverlayUpdates.from(
+        const <GroundOverlay>{}, mapObjects.groundOverlays));
     markerUpdates.add(MarkerUpdates.from(const <Marker>{}, mapObjects.markers));
     polygonUpdates
         .add(PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons));
@@ -300,4 +339,8 @@ class PlatformMapStateRecorder {
   final List<PolylineUpdates> polylineUpdates = <PolylineUpdates>[];
   final List<CircleUpdates> circleUpdates = <CircleUpdates>[];
   final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
+  final List<ClusterManagerUpdates> clusterManagerUpdates =
+      <ClusterManagerUpdates>[];
+  final List<GroundOverlayUpdates> groundOverlayUpdates =
+      <GroundOverlayUpdates>[];
 }

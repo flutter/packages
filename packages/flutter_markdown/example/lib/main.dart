@@ -54,6 +54,7 @@
 /// parsing of Markdown syntax and building of the formatted output. The demos
 /// in this example app illustrate some of the potentials of the
 /// flutter_markdown package.
+library;
 
 import 'package:flutter/material.dart';
 import 'screens/demo_screen.dart';

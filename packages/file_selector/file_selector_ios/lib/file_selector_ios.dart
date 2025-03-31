@@ -21,10 +21,8 @@ class FileSelectorIOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String> path = (await _hostApi.openFile(FileSelectorConfig(
-            utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups),
-            allowMultiSelection: false)))
-        .cast<String>();
+    final List<String> path = await _hostApi.openFile(FileSelectorConfig(
+        utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups)));
     return path.isEmpty ? null : XFile(path.first);
   }
 
@@ -34,10 +32,9 @@ class FileSelectorIOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String> pathList = (await _hostApi.openFile(FileSelectorConfig(
-            utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups),
-            allowMultiSelection: true)))
-        .cast<String>();
+    final List<String> pathList = await _hostApi.openFile(FileSelectorConfig(
+        utis: _allowedUtiListFromTypeGroups(acceptedTypeGroups),
+        allowMultiSelection: true));
     return pathList.map((String path) => XFile(path)).toList();
   }
 

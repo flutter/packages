@@ -4,17 +4,17 @@
 
 import 'package:file/file.dart';
 import 'package:file/memory.dart';
+import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
 
 import '../util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late Directory packagesDir;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks();
   });
 
   group('displayName', () {
@@ -48,7 +48,7 @@ void main() {
 
     test('always uses Posix-style paths', () async {
       final Directory windowsPackagesDir = createPackagesDirectory(
-          fileSystem: MemoryFileSystem(style: FileSystemStyle.windows));
+          MemoryFileSystem(style: FileSystemStyle.windows));
 
       expect(
         RepositoryPackage(windowsPackagesDir.childDirectory('foo')).displayName,
@@ -218,6 +218,17 @@ void main() {
     test('returns true for Flutter package', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, isFlutter: true);
+      expect(package.requiresFlutter(), true);
+    });
+
+    test('returns true for a dev dependency on Flutter', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      final File pubspecFile = package.pubspecFile;
+      final Pubspec pubspec = package.parsePubspec();
+      pubspec.devDependencies['flutter'] = SdkDependency('flutter');
+      pubspecFile.writeAsStringSync(pubspec.toString());
+
       expect(package.requiresFlutter(), true);
     });
 

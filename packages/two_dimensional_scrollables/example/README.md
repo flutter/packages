@@ -1,3 +1,3 @@
-# TableView Example
+# TableView and TreeView Examples
 
-A sample application that utilizes the TableView API.
+A sample application that utilizes the TableView and TreeView APIs.

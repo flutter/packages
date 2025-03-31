@@ -104,10 +104,10 @@ const int kLimitedElementWaitingTime = 30;
   }
   [pickButton tap];
 
-  [self handlePermissionInterruption];
-
   // Find an image and tap on it.
-  XCUIElement *aImage = [self.app.scrollViews.firstMatch.images elementBoundByIndex:1];
+  NSPredicate *imagePredicate = [NSPredicate predicateWithFormat:@"label BEGINSWITH 'Photo, '"];
+  XCUIElementQuery *imageQuery = [self.app.images matchingPredicate:imagePredicate];
+  XCUIElement *aImage = imageQuery.firstMatch;
   os_log_error(OS_LOG_DEFAULT, "description before picking image %@", self.app.debugDescription);
   if (![aImage waitForExistenceWithTimeout:kLimitedElementWaitingTime]) {
     os_log_error(OS_LOG_DEFAULT, "%@", self.app.debugDescription);
@@ -115,25 +115,6 @@ const int kLimitedElementWaitingTime = 30;
             @(kLimitedElementWaitingTime));
   }
 
-  [aImage tap];
-
-  // Find and tap on the `Done` button.
-  XCUIElement *doneButton = self.app.buttons[@"Done"].firstMatch;
-  if (![doneButton waitForExistenceWithTimeout:kLimitedElementWaitingTime]) {
-    os_log_error(OS_LOG_DEFAULT, "%@", self.app.debugDescription);
-    XCTSkip(@"Permissions popup could not fired so the test is skipped...");
-  }
-  [doneButton tap];
-
-  // Find an image and tap on it to have access to selected photos.
-  aImage = [self.app.scrollViews.firstMatch.images elementBoundByIndex:1];
-
-  os_log_error(OS_LOG_DEFAULT, "description before picking image %@", self.app.debugDescription);
-  if (![aImage waitForExistenceWithTimeout:kLimitedElementWaitingTime]) {
-    os_log_error(OS_LOG_DEFAULT, "%@", self.app.debugDescription);
-    XCTFail(@"Failed due to not able to find an image with %@ seconds",
-            @(kLimitedElementWaitingTime));
-  }
   [aImage tap];
 
   // Find the picked image.

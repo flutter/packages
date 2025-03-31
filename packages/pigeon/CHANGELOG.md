@@ -1,3 +1,301 @@
+## 25.2.0
+
+* [kotlin] Adds equality methods to generated data classes.
+
+## 25.1.0
+
+* [dart] Adds equality methods to generated data classes.
+
+## 25.0.0
+
+* **Breaking Change** Removes `oneLanguage` field from `PigeonOptions`.
+* Separates internal options classes from user facing options.
+* Adds `mergeDefinitionFileOptions` parameter to `runWithOptions` method.
+* Relocates `injectOverflowTypes` to non-public facing method.
+
+## 24.2.2
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 24.2.1
+
+* [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in an async method.
+
+## 24.2.0
+
+* Adjusts task queues to use a shared task queue for all methods in a single
+  API instance, to give the same ordering guarantees as non-task-queue usage.
+* [swift] Adds task queue support to the Swift generator.
+
+## 24.1.1
+
+* [swift, kotlin] Adds an error message when a ProxyAPI callback method that returns a non-null
+  value is nullable.
+* [swift, kotlin] Adds an error message in the `ProxyApiBaseCodec` when an instance could not be
+  retrieved when reading a value.
+* [swift, kotlin] Fixes ProxyAPI platform APIs not calling completion when creating a new instance.
+
+## 24.1.0
+
+* [kotlin, swift] Adds annotation options to omit shared classes used in Event Channels.
+
+## 24.0.0
+
+* **Breaking Change** Relocates some files in `lib` that were not intended for direct client use to `lib/src`.
+
+## 23.0.0
+
+* **Breaking Change** [swift] Fixes a compile error about PigeonError's sendability conformance in Swift 6.
+  * PigeonError's init now requires the "details" argument to be Sendable.
+
+## 22.7.4
+
+* [dart] Fixes bug with multi-instance event channel support.
+
+## 22.7.3
+
+* Adds compatibility with `analyzer` 7.x.*.
+
+## 22.7.2
+
+* Updates README to discuss best practices for using Pigeon-generated code.
+
+## 22.7.1
+
+* [swift] Adds support for platform checks of imports of ProxyApis.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 22.7.0
+
+* [swift, kotlin] Adds event channel support.
+* [swift, kotlin] Adds `sealed` class inheritance support.
+* [swift] Updates codec class names to be upper camel case.
+
+## 22.6.4
+
+* [swift] Fixes the channel names of the named constructors of ProxyApis.
+
+## 22.6.3
+
+* Replaces deprecated collection method usage.
+
+## 22.6.2
+
+* Removes the `@protected` annotation from the InstanceManager field of the
+  `PigeonInternalProxyApiBaseClass`.
+
+## 22.6.1
+
+* [gobject] Moves class declarations to the header to work around a bug in some
+  versions of glib.
+
+## 22.6.0
+
+* [swift] Adds `includeErrorClass` to `SwiftOptions`.
+
+## 22.5.0
+
+* [swift] Adds implementation for `@ProxyApi`.
+
+## 22.4.2
+
+* Updates `README.md` to replace the deprecated `flutter pub run pigeon` command with `dart run pigeon`.
+
+## 22.4.1
+
+* [dart] Fixes bug where special handling of ints is ignored if no custom types are used.
+
+## 22.4.0
+
+* Adds support for non-nullable types in collections.
+
+## 22.3.0
+
+* Adds support for enums and classes in collections.
+
+## 22.2.0
+
+* [kotlin] Adds implementation for `@ProxyApi`.
+
+## 22.1.0
+
+* Allows generation of classes that aren't referenced in an API.
+
+## 22.0.0
+
+* [dart] Changes codec to send int64 instead of int32.
+* **Breaking Change** [swift] Changes generic `map` to nullable keys of `AnyHashable` to conform to other platforms.
+* Adds tests to validate collections of ints.
+
+## 21.2.0
+
+* Removes restriction on number of custom types.
+* [java] Fixes bug with multiple enums.
+* [java] Removes `Object` from generics.
+* [objc] Fixes bug with multiple enums per data class.
+* Updates `varPrefix` and `classMemberNamePrefix`.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 21.1.0
+
+* Adds GObject (Linux) support.
+
+## 21.0.0
+
+* **Breaking Change** [cpp] Fixes style of enum names. References to enum values
+  will need to be updated to `EnumType.kValue` style, instead of the previous
+  `EnumType.value`.
+
+## 20.0.2
+
+* [java] Adds `equals` and `hashCode` support for data classes.
+* [swift] Fully-qualifies types in Equatable extension test.
+
+## 20.0.1
+
+* [cpp] Fixes handling of null class arguments.
+
+## 20.0.0
+
+* Moves all codec logic to single custom codec per file.
+* **Breaking Change** Limits the number of total custom types to 126.
+  * If more than 126 custom types are needed, consider breaking up your definition files.
+* Fixes bug that prevented collection subtypes from being added properly.
+* [swift] Adds `@unchecked Sendable` to codec method.
+* [objc] [cpp] Fixes bug that prevented setting custom header import path.
+
+## 19.0.2
+
+* [kotlin] Adds the `@JvmOverloads` to the `HostApi` setUp method. This prevents the calling Java code from having to provide an empty `String` as Kotlin provides it by default
+
+## 19.0.1
+
+* [dart] Updates `PigeonInstanceMangerApi` to use the shared api channel code.
+
+## 19.0.0
+
+* **Breaking Change** [swift] Removes `FlutterError` in favor of `PigeonError`.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 18.0.1
+
+* Fixes unnecessary calls of `toList` and `fromList` when encoding/decoding data classes.
+* [kotlin] Changes to some code to make it more idiomatic.
+* Removes collisions with the word `list`.
+
+## 18.0.0
+
+* Adds message channel suffix option to all APIs.
+* **Breaking Change** [dart] Changes `FlutterApi` `setup` to `setUp`.
+
+## 17.3.0
+
+* [swift] Adds `@SwiftClass` annotation to allow choice between `struct` and `class` for data classes.
+* [cpp] Adds support for recursive data class definitions.
+
+## 17.2.0
+
+* [dart] Adds implementation for `@ProxyApi`.
+
+## 17.1.3
+
+* [objc] Fixes double prefixes added to enum names.
+
+## 17.1.2
+
+* [swift] Separates message call code generation into separate methods.
+
+## 17.1.1
+
+* Removes heap allocation in generated C++ code.
+
+## 17.1.0
+
+* [kotlin] Adds `includeErrorClass` to `KotlinOptions`.
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+
+## 17.0.0
+
+* **Breaking Change** [kotlin] Converts Kotlin enum case generation to SCREAMING_SNAKE_CASE.
+  * Updates `writeEnum` function to adhere to Kotlin naming conventions.
+  * Improves handling of complex names with enhanced regex patterns.
+  * Expands unit tests for comprehensive name conversion validation.
+  * **Migration Note**: This change modifies the naming convention of Kotlin enum cases generated from the Pigeon package. It is recommended to review the impact on your existing codebase and update any dependent code accordingly.
+
+## 16.0.5
+
+* Adds ProxyApi to AST generation.
+
+## 16.0.4
+
+* [swift] Improve style of Swift output.
+
+## 16.0.3
+
+* [kotlin] Separates message call code generation into separate methods.
+
+## 16.0.2
+
+* [dart] Separates message call code generation into separate methods.
+
+## 16.0.1
+
+* [dart] Fixes test generation for missing wrapResponse method if only host Api.
+
+## 16.0.0
+
+* [java] Adds `VoidResult` type for `Void` returns.
+* **Breaking Change** [java] Updates all `Void` return types to use new `VoidResult`.
+
+## 15.0.3
+
+* Fixes new lint warnings.
+
+## 15.0.2
+
+* Prevents optional and non-positional parameters in Flutter APIs.
+* [dart] Fixes named parameters in test output of host API methods.
+
+## 15.0.1
+
+* [java] Adds @CanIgnoreReturnValue annotation to class builder.
+
+## 15.0.0
+
+* **Breaking Change** [kotlin] Updates Flutter API to use new errorClassName.
+
+## 14.0.1
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Updates issue_tracker link.
+
+## 14.0.0
+
+* **Breaking change** [dart] Renames locally defined host API variables.
+  * [dart] Host api static field `codec` changed to `pigeonChannelCodec`.
+* [dart] Adds named parameters to host API methods.
+* [dart] Adds optional parameters to host API methods.
+* [dart] Adds default values for class constructors and host API methods.
+* Adds `isEnum` and `isClass` to `TypeDeclaration`s.
+* [cpp] Fixes `FlutterError` generation being tied to ErrorOr.
+
+## 13.1.2
+
+* Adds compatibility with `analyzer` 6.x.
+
+## 13.1.1
+
+* [kotlin] Removes unnecessary `;`s in generated code.
+
+## 13.1.0
+
+* [swift] Fixes Flutter Api void return error handling.
+  * This shouldn't be breaking for anyone, but if you were incorrectly getting
+    success responses, you may now be failing (correctly).
+* Adds method channel name to error response when channel fails to connect.
+* Reduces code generation duplication.
+* Changes some methods to only be generated if needed.
+
 ## 13.0.0
 
 * **Breaking Change** [objc] Eliminates boxing of non-nullable primitive types
@@ -14,8 +312,6 @@
     `myGeneratedClass.aBoolProperty = @NO` can silently set `aBoolProperty` to
     `YES`. Any data class or Flutter API interactions involving `bool`s should
     be carefully audited by hand when updating.
-
-
 
 ## 12.0.1
 
@@ -142,7 +438,7 @@
 * [java] Adds a `GeneratedApi.FlutterError` exception for passing custom error details (code, message, details).
 * [kotlin] Adds a `FlutterError` exception for passing custom error details (code, message, details).
 * [kotlin] Adds an `errorClassName` option in `KotlinOptions` for custom error class names.
-* [java] Removes legacy try catch from async apis.
+* [java] Removes legacy try catch from async APIs.
 * [java] Removes legacy null check on non-nullable method arguments.
 * [cpp] Fixes wrong order of items in `FlutterError`.
 * Adds `FlutterError` handling integration tests for all platforms.
@@ -195,7 +491,7 @@
 
 ## 7.2.1
 
-* [kotlin] Fixes Flutter api int errors with updated casting.
+* [kotlin] Fixes Flutter API int errors with updated casting.
 
 ## 7.2.0
 
@@ -221,7 +517,7 @@
 
 ## 7.1.2
 
-* [swift] Adds error handling to sync host api methods.
+* [swift] Adds error handling to sync host API methods.
 
 ## 7.1.1
 
@@ -335,7 +631,7 @@
 
 ## 4.2.4
 
-* [kotlin] Fixes Kotlin generated sync host api error.
+* [kotlin] Fixes Kotlin generated sync host API error.
 
 ## 4.2.3
 
@@ -814,7 +1110,7 @@ class Foo {
 
 ## 0.1.0-experimental.11
 
-* Fixed setting an api to null in Java.
+* Fixed setting an API to null in Java.
 
 ## 0.1.0-experimental.10
 

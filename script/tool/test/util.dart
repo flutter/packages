@@ -14,6 +14,7 @@ import 'package:flutter_plugin_tools/src/common/file_utils.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/common/process_runner.dart';
 import 'package:flutter_plugin_tools/src/common/repository_package.dart';
+import 'package:git/git.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
 import 'package:platform/platform.dart';
@@ -31,19 +32,11 @@ const String _defaultFlutterConstraint = '>=2.5.0';
 String getFlutterCommand(Platform platform) =>
     platform.isWindows ? 'flutter.bat' : 'flutter';
 
-/// Creates a packages directory in the given location.
-///
-/// If [parentDir] is set the packages directory will be created there,
-/// otherwise [fileSystem] must be provided and it will be created an arbitrary
-/// location in that filesystem.
-Directory createPackagesDirectory(
-    {Directory? parentDir, FileSystem? fileSystem}) {
-  assert(parentDir != null || fileSystem != null,
-      'One of parentDir or fileSystem must be provided');
-  assert(fileSystem == null || fileSystem is MemoryFileSystem,
-      'If using a real filesystem, parentDir must be provided');
+/// Creates a packages directory at an arbitrary location in the given
+/// filesystem.
+Directory createPackagesDirectory(FileSystem fileSystem) {
   final Directory packagesDir =
-      (parentDir ?? fileSystem!.currentDirectory).childDirectory('packages');
+      fileSystem.currentDirectory.childDirectory('packages');
   packagesDir.createSync();
   return packagesDir;
 }
@@ -306,16 +299,13 @@ String _pluginPlatformSection(
         if (support.hasDartCode) {
           lines.add('        dartPluginClass: FakeDartPlugin');
         }
-        break;
       case platformWeb:
         lines.addAll(<String>[
           '        pluginClass: FakePlugin',
           '        fileName: ${packageName}_web.dart',
         ]);
-        break;
       default:
         assert(false, 'Unrecognized platform: $platform');
-        break;
     }
     entry = '${lines.join('\n')}\n';
   }
@@ -329,8 +319,8 @@ String _pluginPlatformSection(
 Future<List<String>> runCapturingPrint(
   CommandRunner<void> runner,
   List<String> args, {
-  Function(Error error)? errorHandler,
-  Function(Exception error)? exceptionHandler,
+  void Function(Error error)? errorHandler,
+  void Function(Exception error)? exceptionHandler,
 }) async {
   final List<String> prints = <String>[];
   final ZoneSpecification spec = ZoneSpecification(
@@ -496,4 +486,46 @@ class ProcessCall {
     final List<String> command = <String>[executable, ...args];
     return '"${command.join(' ')}" in $workingDir';
   }
+}
+
+/// Sets up standard mocking common to most command unit test setUp methods,
+/// including a packages directory in an in-memory filesystem, and a mock
+/// process handling (including git commands sent by GitDir).
+///
+/// The returned GitDir instance forwards to a mock process runner, as described
+/// in [createForwardingMockGitDir]. This process runner is separate, so that
+/// tests can easily treat most git commands called as internal implementation
+/// details, and assert on the exact list of non-git commands that are run.
+({
+  Directory packagesDir,
+  RecordingProcessRunner processRunner,
+  RecordingProcessRunner gitProcessRunner,
+  GitDir gitDir,
+}) configureBaseCommandMocks({
+  Platform? platform,
+  RecordingProcessRunner? customProcessRunner,
+  RecordingProcessRunner? customGitProcessRunner,
+}) {
+  final FileSystem fileSystem = MemoryFileSystem(
+      style: (platform?.isWindows ?? false)
+          ? FileSystemStyle.windows
+          : FileSystemStyle.posix);
+  final Directory packagesDir = createPackagesDirectory(fileSystem);
+
+  final RecordingProcessRunner processRunner =
+      customProcessRunner ?? RecordingProcessRunner();
+
+  final RecordingProcessRunner gitProcessRunner =
+      customGitProcessRunner ?? RecordingProcessRunner();
+  final GitDir gitDir = createForwardingMockGitDir(
+    packagesDir: packagesDir,
+    processRunner: gitProcessRunner,
+  );
+
+  return (
+    packagesDir: packagesDir,
+    processRunner: processRunner,
+    gitProcessRunner: gitProcessRunner,
+    gitDir: gitDir,
+  );
 }

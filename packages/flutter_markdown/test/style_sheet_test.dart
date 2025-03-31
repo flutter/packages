@@ -62,8 +62,6 @@ void defineTests() {
         expect(
             style.code!.fontSize, cTheme.textTheme.textStyle.fontSize! * 0.85);
         expect(style.code!.fontFamily, 'monospace');
-        expect(
-            style.code!.backgroundColor, CupertinoColors.systemGrey6.darkColor);
 
         // H1
         expect(style.h1!.color, cTheme.textTheme.textStyle.color);
@@ -152,7 +150,7 @@ void defineTests() {
         expect(
             style.code!.fontSize, theme.textTheme.bodyMedium!.fontSize! * 0.85);
         expect(style.code!.fontFamily, 'monospace');
-        expect(style.code!.backgroundColor, theme.cardColor);
+        expect(style.code!.backgroundColor, theme.cardTheme.color);
 
         // H1
         expect(style.h1, theme.textTheme.headlineSmall);
@@ -233,8 +231,8 @@ void defineTests() {
           ),
         );
 
-        final RichText widget = tester.widget(find.byType(RichText));
-        expect(widget.text.style!.color, CupertinoColors.link.color);
+        final Text widget = tester.widget(find.byType(Text));
+        expect(widget.textSpan!.style!.color, CupertinoColors.link.color);
       },
     );
 
@@ -326,6 +324,7 @@ void defineTests() {
           Column,
           Padding,
           Wrap,
+          Text,
           RichText,
         ]);
         expectTextStrings(widgets, <String>['Header']);
@@ -395,6 +394,66 @@ void defineTests() {
           ),
           true,
         );
+      },
+    );
+
+    testWidgets(
+      'deprecated textScaleFactor is converted to linear scaler',
+      (WidgetTester tester) async {
+        const double scaleFactor = 2.0;
+        final MarkdownStyleSheet style = MarkdownStyleSheet(
+          textScaleFactor: scaleFactor,
+        );
+
+        expect(style.textScaler, const TextScaler.linear(scaleFactor));
+        expect(style.textScaleFactor, scaleFactor);
+      },
+    );
+
+    testWidgets(
+      'deprecated textScaleFactor is null when a scaler is provided',
+      (WidgetTester tester) async {
+        const TextScaler scaler = TextScaler.linear(2.0);
+        final MarkdownStyleSheet style = MarkdownStyleSheet(
+          textScaler: scaler,
+        );
+
+        expect(style.textScaler, scaler);
+        expect(style.textScaleFactor, null);
+      },
+    );
+
+    testWidgets(
+      'copyWith textScaler overwrites both textScaler and textScaleFactor',
+      (WidgetTester tester) async {
+        final MarkdownStyleSheet original = MarkdownStyleSheet(
+          textScaleFactor: 2.0,
+        );
+
+        const TextScaler newScaler = TextScaler.linear(3.0);
+        final MarkdownStyleSheet copy = original.copyWith(
+          textScaler: newScaler,
+        );
+
+        expect(copy.textScaler, newScaler);
+        expect(copy.textScaleFactor, null);
+      },
+    );
+
+    testWidgets(
+      'copyWith textScaleFactor overwrites both textScaler and textScaleFactor',
+      (WidgetTester tester) async {
+        final MarkdownStyleSheet original = MarkdownStyleSheet(
+          textScaleFactor: 2.0,
+        );
+
+        const double newScaleFactor = 3.0;
+        final MarkdownStyleSheet copy = original.copyWith(
+          textScaleFactor: newScaleFactor,
+        );
+
+        expect(copy.textScaler, const TextScaler.linear(newScaleFactor));
+        expect(copy.textScaleFactor, newScaleFactor);
       },
     );
   });

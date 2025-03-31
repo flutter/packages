@@ -1,3 +1,38 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 6.3.2
+
+* Updates to Pigeon v22.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 6.3.1
+
+* Fixes a compile error when comforming UIApplication to Launcher in iOS 18 Beta 3.
+
+## 6.3.0
+
+* Adds Swift Package Manager compatibility.
+
+## 6.2.5
+
+* Adds explicit imports for UIKit.
+* Updates minimum iOS version to 12.0 and minimum Flutter version to 3.16.6.
+
+## 6.2.4
+
+* Adds privacy manifest.
+
+## 6.2.3
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 6.2.2
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes lint warnings.
+
 ## 6.2.1
 
 * Migrates plugin from Objective-C to Swift.

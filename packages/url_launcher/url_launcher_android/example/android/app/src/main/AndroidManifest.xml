@@ -24,7 +24,8 @@
     android:label="url_launcher_example">
     <activity
       android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
-      android:hardwareAccelerated="true"
+        android:exported="true"
+        android:hardwareAccelerated="true"
       android:name="io.flutter.embedding.android.FlutterActivity"
       android:theme="@android:style/Theme.Black.NoTitleBar"
       android:windowSoftInputMode="adjustResize">

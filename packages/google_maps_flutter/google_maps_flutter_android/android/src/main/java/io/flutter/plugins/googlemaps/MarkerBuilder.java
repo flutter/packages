@@ -7,21 +7,51 @@ package io.flutter.plugins.googlemaps;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterItem;
 
-class MarkerBuilder implements MarkerOptionsSink {
+class MarkerBuilder implements MarkerOptionsSink, ClusterItem {
   private final MarkerOptions markerOptions;
+  private String clusterManagerId;
+  private String markerId;
   private boolean consumeTapEvents;
 
-  MarkerBuilder() {
+  MarkerBuilder(String markerId, String clusterManagerId) {
     this.markerOptions = new MarkerOptions();
+    this.markerId = markerId;
+    this.clusterManagerId = clusterManagerId;
   }
 
   MarkerOptions build() {
     return markerOptions;
   }
 
+  /** Update existing markerOptions with builder values */
+  void update(MarkerOptions markerOptionsToUpdate) {
+    markerOptionsToUpdate.alpha(markerOptions.getAlpha());
+    markerOptionsToUpdate.anchor(markerOptions.getAnchorU(), markerOptions.getAnchorV());
+    markerOptionsToUpdate.draggable(markerOptions.isDraggable());
+    markerOptionsToUpdate.flat(markerOptions.isFlat());
+    markerOptionsToUpdate.icon(markerOptions.getIcon());
+    markerOptionsToUpdate.infoWindowAnchor(
+        markerOptions.getInfoWindowAnchorU(), markerOptions.getInfoWindowAnchorV());
+    markerOptionsToUpdate.title(markerOptions.getTitle());
+    markerOptionsToUpdate.snippet(markerOptions.getSnippet());
+    markerOptionsToUpdate.position(markerOptions.getPosition());
+    markerOptionsToUpdate.rotation(markerOptions.getRotation());
+    markerOptionsToUpdate.visible(markerOptions.isVisible());
+    markerOptionsToUpdate.zIndex(markerOptions.getZIndex());
+  }
+
   boolean consumeTapEvents() {
     return consumeTapEvents;
+  }
+
+  String clusterManagerId() {
+    return clusterManagerId;
+  }
+
+  String markerId() {
+    return markerId;
   }
 
   @Override
@@ -83,5 +113,25 @@ class MarkerBuilder implements MarkerOptionsSink {
   @Override
   public void setZIndex(float zIndex) {
     markerOptions.zIndex(zIndex);
+  }
+
+  @Override
+  public LatLng getPosition() {
+    return markerOptions.getPosition();
+  }
+
+  @Override
+  public String getTitle() {
+    return markerOptions.getTitle();
+  }
+
+  @Override
+  public String getSnippet() {
+    return markerOptions.getSnippet();
+  }
+
+  @Override
+  public Float getZIndex() {
+    return markerOptions.getZIndex();
   }
 }

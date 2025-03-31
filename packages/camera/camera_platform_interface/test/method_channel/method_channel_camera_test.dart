@@ -643,30 +643,6 @@ void main() {
         ]);
       });
 
-      test('Should pass maxVideoDuration when starting recording a video',
-          () async {
-        // Arrange
-        final MethodChannelMock channel = MethodChannelMock(
-          channelName: 'plugins.flutter.io/camera',
-          methods: <String, dynamic>{'startVideoRecording': null},
-        );
-
-        // Act
-        await camera.startVideoRecording(
-          cameraId,
-          maxVideoDuration: const Duration(seconds: 10),
-        );
-
-        // Assert
-        expect(channel.log, <Matcher>[
-          isMethodCall('startVideoRecording', arguments: <String, Object?>{
-            'cameraId': cameraId,
-            'maxVideoDuration': 10000,
-            'enableStream': false,
-          }),
-        ]);
-      });
-
       test('Should stop a video recording and return the file', () async {
         // Arrange
         final MethodChannelMock channel = MethodChannelMock(
@@ -1152,6 +1128,46 @@ void main() {
         expect(channel.log, <Matcher>[
           isMethodCall('startImageStream', arguments: null),
           isMethodCall('stopImageStream', arguments: null),
+        ]);
+      });
+
+      test('Should set the ImageFileFormat to heif', () async {
+        // Arrange
+        final MethodChannelMock channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{'setImageFileFormat': 'heif'},
+        );
+
+        // Act
+        await camera.setImageFileFormat(cameraId, ImageFileFormat.heif);
+
+        // Assert
+        expect(channel.log, <Matcher>[
+          isMethodCall('setImageFileFormat', arguments: <String, Object?>{
+            'cameraId': cameraId,
+            'fileFormat': 'heif',
+          }),
+        ]);
+      });
+
+      test('Should set the ImageFileFormat to jpeg', () async {
+        // Arrange
+        final MethodChannelMock channel = MethodChannelMock(
+          channelName: 'plugins.flutter.io/camera',
+          methods: <String, dynamic>{
+            'setImageFileFormat': 'jpeg',
+          },
+        );
+
+        // Act
+        await camera.setImageFileFormat(cameraId, ImageFileFormat.jpeg);
+
+        // Assert
+        expect(channel.log, <Matcher>[
+          isMethodCall('setImageFileFormat', arguments: <String, Object?>{
+            'cameraId': cameraId,
+            'fileFormat': 'jpeg',
+          }),
         ]);
       });
     });

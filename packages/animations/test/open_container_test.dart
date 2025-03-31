@@ -37,7 +37,7 @@ void main() {
       ));
 
       // Closed container has the expected properties.
-      final StatefulElement srcMaterialElement = tester.firstElement(
+      final Element srcMaterialElement = tester.firstElement(
         find.ancestor(
           of: find.text('Closed'),
           matching: find.byType(Material),
@@ -62,7 +62,7 @@ void main() {
       await tester.pump();
 
       // On the first frame of the animation everything still looks like before.
-      final StatefulElement destMaterialElement = tester.firstElement(
+      final Element destMaterialElement = tester.firstElement(
         find.ancestor(
           of: find.text('Closed'),
           matching: find.byType(Material),
@@ -162,7 +162,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 1));
       expect(find.text('Closed'), findsNothing); // No longer in the tree.
       expect(find.text('Open'), findsOneWidget);
-      final StatefulElement finalMaterialElement = tester.firstElement(
+      final Element finalMaterialElement = tester.firstElement(
         find.ancestor(
           of: find.text('Open'),
           matching: find.byType(Material),
@@ -213,7 +213,7 @@ void main() {
       // Open container has the expected properties.
       expect(find.text('Closed'), findsNothing);
       expect(find.text('Open'), findsOneWidget);
-      final StatefulElement initialMaterialElement = tester.firstElement(
+      final Element initialMaterialElement = tester.firstElement(
         find.ancestor(
           of: find.text('Open'),
           matching: find.byType(Material),
@@ -237,7 +237,7 @@ void main() {
 
       expect(find.text('Closed'), findsOneWidget);
       expect(find.text('Open'), findsOneWidget);
-      final StatefulElement materialElement = tester.firstElement(
+      final Element materialElement = tester.firstElement(
         find.ancestor(
           of: find.text('Open'),
           matching: find.byType(Material),
@@ -328,7 +328,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 1));
       expect(find.text('Open'), findsNothing); // No longer in the tree.
       expect(find.text('Closed'), findsOneWidget);
-      final StatefulElement finalMaterialElement = tester.firstElement(
+      final Element finalMaterialElement = tester.firstElement(
         find.ancestor(
           of: find.text('Closed'),
           matching: find.byType(Material),
@@ -380,7 +380,7 @@ void main() {
     ));
 
     // Closed container has the expected properties.
-    final StatefulElement srcMaterialElement = tester.firstElement(
+    final Element srcMaterialElement = tester.firstElement(
       find.ancestor(
         of: find.text('Closed'),
         matching: find.byType(Material),
@@ -405,7 +405,7 @@ void main() {
     await tester.pump();
 
     // On the first frame of the animation everything still looks like before.
-    final StatefulElement destMaterialElement = tester.firstElement(
+    final Element destMaterialElement = tester.firstElement(
       find.ancestor(
         of: find.text('Closed'),
         matching: find.byType(Material),
@@ -509,7 +509,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Closed'), findsNothing); // No longer in the tree.
     expect(find.text('Open'), findsOneWidget);
-    final StatefulElement finalMaterialElement = tester.firstElement(
+    final Element finalMaterialElement = tester.firstElement(
       find.ancestor(
         of: find.text('Open'),
         matching: find.byType(Material),
@@ -558,7 +558,7 @@ void main() {
     // Open container has the expected properties.
     expect(find.text('Closed'), findsNothing);
     expect(find.text('Open'), findsOneWidget);
-    final StatefulElement initialMaterialElement = tester.firstElement(
+    final Element initialMaterialElement = tester.firstElement(
       find.ancestor(
         of: find.text('Open'),
         matching: find.byType(Material),
@@ -583,7 +583,7 @@ void main() {
 
     expect(find.text('Closed'), findsOneWidget);
     expect(find.text('Open'), findsOneWidget);
-    final StatefulElement materialElement = tester.firstElement(
+    final Element materialElement = tester.firstElement(
       find.ancestor(
         of: find.text('Open'),
         matching: find.byType(Material),
@@ -684,7 +684,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 1));
     expect(find.text('Open'), findsNothing); // No longer in the tree.
     expect(find.text('Closed'), findsOneWidget);
-    final StatefulElement finalMaterialElement = tester.firstElement(
+    final Element finalMaterialElement = tester.firstElement(
       find.ancestor(
         of: find.text('Closed'),
         matching: find.byType(Material),

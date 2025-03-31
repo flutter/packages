@@ -1,3 +1,8 @@
+## 0.2.1+2
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes `getMedia` mime types.
+
 ## 0.2.1+1
 
 * Adds pub topics to package metadata.

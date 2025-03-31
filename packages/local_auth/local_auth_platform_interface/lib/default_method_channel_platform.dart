@@ -46,13 +46,10 @@ class DefaultLocalAuthPlatform extends LocalAuthPlatform {
       switch (value) {
         case 'face':
           biometrics.add(BiometricType.face);
-          break;
         case 'fingerprint':
           biometrics.add(BiometricType.fingerprint);
-          break;
         case 'iris':
           biometrics.add(BiometricType.iris);
-          break;
         case 'undefined':
           // Sentinel value for the case when nothing is enrolled, but hardware
           // support for biometrics is available.

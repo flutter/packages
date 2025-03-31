@@ -1,0 +1,13 @@
+<svg viewBox="0 0 150 150"  xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="radial"
+      cx="50%" cy="50%" fx="50%" fy="15%" r="50%">
+      <stop offset="0%" style="stop-color: red;"/>
+      <stop offset="50%" style="stop-color: green;"/>
+      <stop offset="100%" style="stop-color: blue;"/>
+    </radialGradient>
+   
+    </defs>
+    <rect x="10" y="10" width="120" height="120"
+      style="fill: url(#radial); stroke: black;"/>
+</svg>

@@ -7,6 +7,7 @@ import 'package:meta/meta.dart';
 
 import 'configuration.dart';
 import 'misc/errors.dart';
+import 'route.dart';
 
 /// The route state during routing.
 ///
@@ -25,6 +26,7 @@ class GoRouterState {
     this.extra,
     this.error,
     required this.pageKey,
+    this.topRoute,
   });
   final RouteConfiguration _configuration;
 
@@ -74,6 +76,13 @@ class GoRouterState {
   /// ```
   final ValueKey<String> pageKey;
 
+  /// The current matched top route associated with this state.
+  ///
+  /// If this state represents a [ShellRoute], the top [GoRoute] will be the current
+  /// matched location associated with the [ShellRoute]. This allows the [ShellRoute]'s
+  /// associated GoRouterState to be uniquely identified using [GoRoute.name]
+  final GoRoute? topRoute;
+
   /// Gets the [GoRouterState] from context.
   ///
   /// The returned [GoRouterState] will depends on which [GoRoute] or
@@ -89,11 +98,11 @@ class GoRouterState {
   ///
   /// This method cannot be called during [GoRoute.pageBuilder] or
   /// [ShellRoute.pageBuilder] since there is no [GoRouterState] to be
-  /// associated with.
+  /// associated with yet.
   ///
   /// To access GoRouterState from a widget.
   ///
-  /// ```
+  /// ```dart
   /// GoRoute(
   ///   path: '/:id'
   ///   builder: (_, __) => MyWidget(),
@@ -107,25 +116,40 @@ class GoRouterState {
   /// }
   /// ```
   static GoRouterState of(BuildContext context) {
-    final ModalRoute<Object?>? route = ModalRoute.of(context);
-    if (route == null) {
-      throw GoError('There is no modal route above the current context.');
+    ModalRoute<Object?>? route;
+    GoRouterStateRegistryScope? scope;
+    while (true) {
+      route = ModalRoute.of(context);
+      if (route == null) {
+        throw _noGoRouterStateError;
+      }
+      final RouteSettings settings = route.settings;
+      if (settings is Page<Object?>) {
+        scope = context
+            .dependOnInheritedWidgetOfExactType<GoRouterStateRegistryScope>();
+        if (scope == null) {
+          throw _noGoRouterStateError;
+        }
+        final GoRouterState? state = scope.notifier!
+            ._createPageRouteAssociation(
+                route.settings as Page<Object?>, route);
+        if (state != null) {
+          return state;
+        }
+      }
+      final NavigatorState? state = Navigator.maybeOf(context);
+      if (state == null) {
+        throw _noGoRouterStateError;
+      }
+      context = state.context;
     }
-    final RouteSettings settings = route.settings;
-    if (settings is! Page<Object?>) {
-      throw GoError(
-          'The parent route must be a page route to have a GoRouterState');
-    }
-    final GoRouterStateRegistryScope? scope = context
-        .dependOnInheritedWidgetOfExactType<GoRouterStateRegistryScope>();
-    if (scope == null) {
-      throw GoError(
-          'There is no GoRouterStateRegistryScope above the current context.');
-    }
-    final GoRouterState state =
-        scope.notifier!._createPageRouteAssociation(settings, route);
-    return state;
   }
+
+  static GoError get _noGoRouterStateError => GoError(
+        'There is no GoRouterState above the current context. '
+        'This method should only be called under the sub tree of a '
+        'RouteBase.builder.',
+      );
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
@@ -133,9 +157,14 @@ class GoRouterState {
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, String> queryParameters = const <String, String>{},
+    String? fragment,
   }) {
+    // Generate base location using configuration, with optional path and query parameters
+    // Then conditionally append fragment if it exists and is not empty
     return _configuration.namedLocation(name,
-        pathParameters: pathParameters, queryParameters: queryParameters);
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+        fragment: fragment);
   }
 
   @override
@@ -198,10 +227,12 @@ class GoRouterStateRegistry extends ChangeNotifier {
   final Map<Route<Object?>, Page<Object?>> _routePageAssociation =
       <ModalRoute<Object?>, Page<Object?>>{};
 
-  GoRouterState _createPageRouteAssociation(
+  GoRouterState? _createPageRouteAssociation(
       Page<Object?> page, ModalRoute<Object?> route) {
     assert(route.settings == page);
-    assert(registry.containsKey(page));
+    if (!registry.containsKey(page)) {
+      return null;
+    }
     final Page<Object?>? oldPage = _routePageAssociation[route];
     if (oldPage == null) {
       // This is a new association.

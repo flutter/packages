@@ -6,21 +6,22 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_android/src/android_proxy.dart';
-import 'package:webview_flutter_android/src/android_webview.dart'
+import 'package:webview_flutter_android/src/android_webkit.g.dart'
     as android_webview;
+import 'package:webview_flutter_android/src/android_webkit_constants.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_navigation_delegate_test.mocks.dart';
-import 'test_android_webview.g.dart';
 
-@GenerateMocks(<Type>[TestInstanceManagerHostApi])
+@GenerateMocks(<Type>[
+  android_webview.HttpAuthHandler,
+  android_webview.DownloadListener,
+])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  // Mocks the call to clear the native InstanceManager.
-  TestInstanceManagerHostApi.setup(MockTestInstanceManagerHostApi());
 
   group('AndroidNavigationDelegate', () {
     test('onPageFinished', () {
@@ -32,7 +33,8 @@ void main() {
           .setOnPageFinished((String url) => callbackUrl = url);
 
       CapturingWebViewClient.lastCreatedDelegate.onPageFinished!(
-        android_webview.WebView.detached(),
+        CapturingWebViewClient(),
+        TestWebView(),
         'https://www.google.com',
       );
 
@@ -48,11 +50,40 @@ void main() {
           .setOnPageStarted((String url) => callbackUrl = url);
 
       CapturingWebViewClient.lastCreatedDelegate.onPageStarted!(
-        android_webview.WebView.detached(),
+        CapturingWebViewClient(),
+        TestWebView(),
         'https://www.google.com',
       );
 
       expect(callbackUrl, 'https://www.google.com');
+    });
+
+    test('onHttpError from onReceivedHttpError', () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      late final HttpResponseError callbackError;
+      androidNavigationDelegate.setOnHttpError(
+          (HttpResponseError httpError) => callbackError = httpError);
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpError!(
+          CapturingWebViewClient(),
+          TestWebView(),
+          android_webview.WebResourceRequest.pigeon_detached(
+            url: 'https://www.google.com',
+            isForMainFrame: false,
+            isRedirect: true,
+            hasGesture: true,
+            method: 'GET',
+            requestHeaders: const <String, String>{'X-Mock': 'mocking'},
+            pigeon_instanceManager: TestInstanceManager(),
+          ),
+          android_webview.WebResourceResponse.pigeon_detached(
+            statusCode: 401,
+            pigeon_instanceManager: TestInstanceManager(),
+          ));
+
+      expect(callbackError.response?.statusCode, 401);
     });
 
     test('onWebResourceError from onReceivedRequestError', () {
@@ -64,23 +95,25 @@ void main() {
           (WebResourceError error) => callbackError = error);
 
       CapturingWebViewClient.lastCreatedDelegate.onReceivedRequestError!(
-        android_webview.WebView.detached(),
-        android_webview.WebResourceRequest(
+        CapturingWebViewClient(),
+        TestWebView(),
+        android_webview.WebResourceRequest.pigeon_detached(
           url: 'https://www.google.com',
           isForMainFrame: false,
           isRedirect: true,
           hasGesture: true,
           method: 'GET',
-          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+          requestHeaders: const <String, String>{'X-Mock': 'mocking'},
+          pigeon_instanceManager: TestInstanceManager(),
         ),
-        android_webview.WebResourceError(
-          errorCode: android_webview.WebViewClient.errorFileNotFound,
+        android_webview.WebResourceError.pigeon_detached(
+          errorCode: WebViewClientConstants.errorFileNotFound,
           description: 'Page not found.',
+          pigeon_instanceManager: TestInstanceManager(),
         ),
       );
 
-      expect(callbackError.errorCode,
-          android_webview.WebViewClient.errorFileNotFound);
+      expect(callbackError.errorCode, WebViewClientConstants.errorFileNotFound);
       expect(callbackError.description, 'Page not found.');
       expect(callbackError.errorType, WebResourceErrorType.fileNotFound);
       expect(callbackError.isForMainFrame, false);
@@ -95,14 +128,14 @@ void main() {
           (WebResourceError error) => callbackError = error);
 
       CapturingWebViewClient.lastCreatedDelegate.onReceivedError!(
-        android_webview.WebView.detached(),
-        android_webview.WebViewClient.errorFileNotFound,
+        CapturingWebViewClient(),
+        TestWebView(),
+        WebViewClientConstants.errorFileNotFound,
         'Page not found.',
         'https://www.google.com',
       );
 
-      expect(callbackError.errorCode,
-          android_webview.WebViewClient.errorFileNotFound);
+      expect(callbackError.errorCode, WebViewClientConstants.errorFileNotFound);
       expect(callbackError.description, 'Page not found.');
       expect(callbackError.errorType, WebResourceErrorType.fileNotFound);
       expect(callbackError.isForMainFrame, true);
@@ -122,14 +155,80 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(),
-        android_webview.WebResourceRequest(
+        CapturingWebViewClient(),
+        TestWebView(),
+        android_webview.WebResourceRequest.pigeon_detached(
           url: 'https://www.google.com',
           isForMainFrame: true,
           isRedirect: true,
           hasGesture: true,
           method: 'GET',
-          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+          requestHeaders: const <String, String>{'X-Mock': 'mocking'},
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+      );
+
+      expect(callbackNavigationRequest, isNull);
+    });
+
+    test(
+        'onNavigationRequest from requestLoading should be called when request is for main frame',
+        () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      NavigationRequest? callbackNavigationRequest;
+      androidNavigationDelegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        callbackNavigationRequest = navigationRequest;
+        return NavigationDecision.prevent;
+      });
+
+      androidNavigationDelegate.setOnLoadRequest((_) async {});
+
+      CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
+        CapturingWebViewClient(),
+        TestWebView(),
+        android_webview.WebResourceRequest.pigeon_detached(
+          url: 'https://www.google.com',
+          isForMainFrame: true,
+          isRedirect: true,
+          hasGesture: true,
+          method: 'GET',
+          requestHeaders: const <String, String>{'X-Mock': 'mocking'},
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+      );
+
+      expect(callbackNavigationRequest, isNotNull);
+    });
+
+    test(
+        'onNavigationRequest from requestLoading should not be called when request is not for main frame',
+        () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      NavigationRequest? callbackNavigationRequest;
+      androidNavigationDelegate
+          .setOnNavigationRequest((NavigationRequest navigationRequest) {
+        callbackNavigationRequest = navigationRequest;
+        return NavigationDecision.prevent;
+      });
+
+      androidNavigationDelegate.setOnLoadRequest((_) async {});
+
+      CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
+        CapturingWebViewClient(),
+        TestWebView(),
+        android_webview.WebResourceRequest.pigeon_detached(
+          url: 'https://www.google.com',
+          isForMainFrame: false,
+          isRedirect: true,
+          hasGesture: true,
+          method: 'GET',
+          requestHeaders: const <String, String>{'X-Mock': 'mocking'},
+          pigeon_instanceManager: TestInstanceManager(),
         ),
       );
 
@@ -149,14 +248,16 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(),
-        android_webview.WebResourceRequest(
+        CapturingWebViewClient(),
+        TestWebView(),
+        android_webview.WebResourceRequest.pigeon_detached(
           url: 'https://www.google.com',
           isForMainFrame: true,
           isRedirect: true,
           hasGesture: true,
           method: 'GET',
-          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+          requestHeaders: const <String, String>{'X-Mock': 'mocking'},
+          pigeon_instanceManager: TestInstanceManager(),
         ),
       );
 
@@ -183,14 +284,16 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(),
-        android_webview.WebResourceRequest(
+        CapturingWebViewClient(),
+        TestWebView(),
+        android_webview.WebResourceRequest.pigeon_detached(
           url: 'https://www.google.com',
           isForMainFrame: true,
           isRedirect: true,
           hasGesture: true,
           method: 'GET',
-          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+          requestHeaders: const <String, String>{'X-Mock': 'mocking'},
+          pigeon_instanceManager: TestInstanceManager(),
         ),
       );
 
@@ -221,14 +324,16 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.requestLoading!(
-        android_webview.WebView.detached(),
-        android_webview.WebResourceRequest(
+        CapturingWebViewClient(),
+        TestWebView(),
+        android_webview.WebResourceRequest.pigeon_detached(
           url: 'https://www.google.com',
           isForMainFrame: true,
           isRedirect: true,
           hasGesture: true,
           method: 'GET',
-          requestHeaders: <String, String>{'X-Mock': 'mocking'},
+          requestHeaders: const <String, String>{'X-Mock': 'mocking'},
+          pigeon_instanceManager: TestInstanceManager(),
         ),
       );
 
@@ -253,7 +358,8 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(),
+        CapturingWebViewClient(),
+        TestWebView(),
         'https://www.google.com',
       );
 
@@ -273,7 +379,8 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(),
+        CapturingWebViewClient(),
+        TestWebView(),
         'https://www.google.com',
       );
 
@@ -300,7 +407,8 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(),
+        CapturingWebViewClient(),
+        TestWebView(),
         'https://www.google.com',
       );
 
@@ -331,7 +439,8 @@ void main() {
       });
 
       CapturingWebViewClient.lastCreatedDelegate.urlLoading!(
-        android_webview.WebView.detached(),
+        CapturingWebViewClient(),
+        TestWebView(),
         'https://www.google.com',
       );
 
@@ -369,6 +478,7 @@ void main() {
       });
 
       CapturingDownloadListener.lastCreatedListener.onDownloadStart(
+        MockDownloadListener(),
         '',
         '',
         '',
@@ -399,6 +509,7 @@ void main() {
       });
 
       CapturingDownloadListener.lastCreatedListener.onDownloadStart(
+        MockDownloadListener(),
         'https://www.google.com',
         '',
         '',
@@ -433,6 +544,7 @@ void main() {
       });
 
       CapturingDownloadListener.lastCreatedListener.onDownloadStart(
+        MockDownloadListener(),
         'https://www.google.com',
         '',
         '',
@@ -446,27 +558,72 @@ void main() {
       expect(callbackNavigationRequest.url, 'https://www.google.com');
       expect(completer.isCompleted, true);
     });
-  });
 
-  test('onUrlChange', () {
-    final AndroidNavigationDelegate androidNavigationDelegate =
-        AndroidNavigationDelegate(_buildCreationParams());
+    test('onUrlChange', () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
 
-    late final AndroidUrlChange urlChange;
-    androidNavigationDelegate.setOnUrlChange(
-      (UrlChange change) {
-        urlChange = change as AndroidUrlChange;
-      },
-    );
+      late final AndroidUrlChange urlChange;
+      androidNavigationDelegate.setOnUrlChange(
+        (UrlChange change) {
+          urlChange = change as AndroidUrlChange;
+        },
+      );
 
-    CapturingWebViewClient.lastCreatedDelegate.doUpdateVisitedHistory!(
-      android_webview.WebView.detached(),
-      'https://www.google.com',
-      false,
-    );
+      CapturingWebViewClient.lastCreatedDelegate.doUpdateVisitedHistory!(
+        CapturingWebViewClient(),
+        TestWebView(),
+        'https://www.google.com',
+        false,
+      );
 
-    expect(urlChange.url, 'https://www.google.com');
-    expect(urlChange.isReload, isFalse);
+      expect(urlChange.url, 'https://www.google.com');
+      expect(urlChange.isReload, isFalse);
+    });
+
+    test('onReceivedHttpAuthRequest emits host and realm', () {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      String? callbackHost;
+      String? callbackRealm;
+      androidNavigationDelegate.setOnHttpAuthRequest((HttpAuthRequest request) {
+        callbackHost = request.host;
+        callbackRealm = request.realm;
+      });
+
+      const String expectedHost = 'expectedHost';
+      const String expectedRealm = 'expectedRealm';
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpAuthRequest!(
+        CapturingWebViewClient(),
+        TestWebView(),
+        android_webview.HttpAuthHandler.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+        ),
+        expectedHost,
+        expectedRealm,
+      );
+
+      expect(callbackHost, expectedHost);
+      expect(callbackRealm, expectedRealm);
+    });
+
+    test('onReceivedHttpAuthRequest calls cancel by default', () {
+      AndroidNavigationDelegate(_buildCreationParams());
+
+      final MockHttpAuthHandler mockAuthHandler = MockHttpAuthHandler();
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpAuthRequest!(
+        CapturingWebViewClient(),
+        TestWebView(),
+        mockAuthHandler,
+        'host',
+        'realm',
+      );
+
+      verify(mockAuthHandler.cancel());
+    });
   });
 }
 
@@ -475,9 +632,9 @@ AndroidNavigationDelegateCreationParams _buildCreationParams() {
       .fromPlatformNavigationDelegateCreationParams(
     const PlatformNavigationDelegateCreationParams(),
     androidWebViewProxy: const AndroidWebViewProxy(
-      createAndroidWebChromeClient: CapturingWebChromeClient.new,
-      createAndroidWebViewClient: CapturingWebViewClient.new,
-      createDownloadListener: CapturingDownloadListener.new,
+      newWebChromeClient: CapturingWebChromeClient.new,
+      newWebViewClient: CapturingWebViewClient.new,
+      newDownloadListener: CapturingDownloadListener.new,
     ),
   );
 }
@@ -488,14 +645,17 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
   CapturingWebViewClient({
     super.onPageFinished,
     super.onPageStarted,
+    super.onReceivedHttpError,
     super.onReceivedError,
+    super.onReceivedHttpAuthRequest,
+    super.onReceivedRequestErrorCompat,
+    super.doUpdateVisitedHistory,
     super.onReceivedRequestError,
     super.requestLoading,
     super.urlLoading,
-    super.doUpdateVisitedHistory,
-    super.binaryMessenger,
-    super.instanceManager,
-  }) : super.detached() {
+  }) : super.pigeon_detached(
+            pigeon_instanceManager: android_webview.PigeonInstanceManager(
+                onWeakReferenceRemoved: (_) {})) {
     lastCreatedDelegate = this;
   }
 
@@ -521,11 +681,15 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
     super.onHideCustomView,
     super.onPermissionRequest,
     super.onConsoleMessage,
-    super.binaryMessenger,
-    super.instanceManager,
-  }) : super.detached() {
+    super.onJsAlert,
+    super.onJsConfirm,
+    super.onJsPrompt,
+  }) : super.pigeon_detached(
+            pigeon_instanceManager: android_webview.PigeonInstanceManager(
+                onWeakReferenceRemoved: (_) {})) {
     lastCreatedDelegate = this;
   }
+
   static CapturingWebChromeClient lastCreatedDelegate =
       CapturingWebChromeClient();
 }
@@ -534,11 +698,27 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
 class CapturingDownloadListener extends android_webview.DownloadListener {
   CapturingDownloadListener({
     required super.onDownloadStart,
-    super.binaryMessenger,
-    super.instanceManager,
-  }) : super.detached() {
+  }) : super.pigeon_detached(
+            pigeon_instanceManager: android_webview.PigeonInstanceManager(
+                onWeakReferenceRemoved: (_) {})) {
     lastCreatedListener = this;
   }
+
   static CapturingDownloadListener lastCreatedListener =
-      CapturingDownloadListener(onDownloadStart: (_, __, ___, ____, _____) {});
+      CapturingDownloadListener(
+    onDownloadStart: (_, __, ___, ____, _____, ______) {},
+  );
+}
+
+class TestWebView extends android_webview.WebView {
+  TestWebView()
+      : super.pigeon_detached(
+          pigeon_instanceManager: android_webview.PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          ),
+        );
+}
+
+class TestInstanceManager extends android_webview.PigeonInstanceManager {
+  TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
 }

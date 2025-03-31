@@ -6,6 +6,7 @@ import 'package:camera_android_camerax/src/camerax_library.g.dart';
 import 'package:camera_android_camerax/src/instance_manager.dart';
 import 'package:camera_android_camerax/src/preview.dart';
 import 'package:camera_android_camerax/src/resolution_selector.dart';
+import 'package:camera_android_camerax/src/surface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -33,13 +34,13 @@ void main() {
       );
       Preview.detached(
         instanceManager: instanceManager,
-        targetRotation: 90,
+        initialTargetRotation: Surface.rotation90,
         resolutionSelector: MockResolutionSelector(),
       );
 
       verifyNever(mockApi.create(argThat(isA<int>()), argThat(isA<int>()),
           argThat(isA<ResolutionSelector>())));
-    });
+    }, skip: 'Flaky test: https://github.com/flutter/flutter/issues/164132');
 
     test('create calls create on the Java side', () async {
       final MockTestPreviewHostApi mockApi = MockTestPreviewHostApi();
@@ -48,7 +49,7 @@ void main() {
       final InstanceManager instanceManager = InstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
-      const int targetRotation = 90;
+      const int targetRotation = Surface.rotation90;
       final MockResolutionSelector mockResolutionSelector =
           MockResolutionSelector();
       const int mockResolutionSelectorId = 24;
@@ -61,7 +62,7 @@ void main() {
 
       Preview(
         instanceManager: instanceManager,
-        targetRotation: targetRotation,
+        initialTargetRotation: targetRotation,
         resolutionSelector: mockResolutionSelector,
       );
 
@@ -69,6 +70,31 @@ void main() {
           argThat(isA<int>()),
           argThat(equals(targetRotation)),
           argThat(equals(mockResolutionSelectorId))));
+    });
+
+    test(
+        'setTargetRotation makes call to set target rotation for Preview instance',
+        () async {
+      final MockTestPreviewHostApi mockApi = MockTestPreviewHostApi();
+      TestPreviewHostApi.setup(mockApi);
+
+      final InstanceManager instanceManager = InstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
+      const int targetRotation = Surface.rotation180;
+      final Preview preview = Preview.detached(
+        instanceManager: instanceManager,
+      );
+      instanceManager.addHostCreatedInstance(
+        preview,
+        0,
+        onCopy: (_) => Preview.detached(instanceManager: instanceManager),
+      );
+
+      await preview.setTargetRotation(targetRotation);
+
+      verify(mockApi.setTargetRotation(
+          instanceManager.getIdentifier(preview), targetRotation));
     });
 
     test(
@@ -143,6 +169,20 @@ void main() {
       expect(previewResolutionInfo.height, equals(resolutionHeight));
 
       verify(mockApi.getResolutionInfo(instanceManager.getIdentifier(preview)));
+    });
+
+    test(
+        'surfaceProducerHandlesCropAndRotation makes call to check if Android surface producer automatically corrects camera preview rotation',
+        () async {
+      final MockTestPreviewHostApi mockApi = MockTestPreviewHostApi();
+      TestPreviewHostApi.setup(mockApi);
+      final Preview preview = Preview.detached();
+
+      when(mockApi.surfaceProducerHandlesCropAndRotation()).thenReturn(true);
+
+      expect(await preview.surfaceProducerHandlesCropAndRotation(), true);
+
+      verify(mockApi.surfaceProducerHandlesCropAndRotation());
     });
   });
 }

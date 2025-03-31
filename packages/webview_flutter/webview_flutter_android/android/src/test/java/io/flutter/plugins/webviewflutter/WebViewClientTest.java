@@ -4,136 +4,148 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.net.Uri;
+import android.webkit.HttpAuthHandler;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import androidx.annotation.NonNull;
-import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCompatImpl;
-import io.flutter.plugins.webviewflutter.WebViewClientHostApiImpl.WebViewClientCreator;
-import java.util.HashMap;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
+import io.flutter.plugins.webviewflutter.WebViewClientProxyApi.WebViewClientImpl;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class WebViewClientTest {
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-  @Mock public WebViewClientFlutterApiImpl mockFlutterApi;
-
-  @Mock public WebView mockWebView;
-
-  @Mock public WebViewClientCompatImpl mockWebViewClient;
-
-  InstanceManager instanceManager;
-  WebViewClientHostApiImpl hostApiImpl;
-  WebViewClientCompatImpl webViewClient;
-
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-
-    final WebViewClientCreator webViewClientCreator =
-        new WebViewClientCreator() {
-          @Override
-          @NonNull
-          public WebViewClient createWebViewClient(
-              @NonNull WebViewClientFlutterApiImpl flutterApi) {
-            webViewClient = (WebViewClientCompatImpl) super.createWebViewClient(flutterApi);
-            return webViewClient;
-          }
-        };
-
-    hostApiImpl =
-        new WebViewClientHostApiImpl(instanceManager, webViewClientCreator, mockFlutterApi);
-    hostApiImpl.create(1L);
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
-  }
-
   @Test
   public void onPageStarted() {
-    webViewClient.onPageStarted(mockWebView, "https://www.google.com", null);
-    verify(mockFlutterApi)
-        .onPageStarted(eq(webViewClient), eq(mockWebView), eq("https://www.google.com"), any());
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final WebView webView = mock(WebView.class);
+    final String url = "myString";
+    instance.onPageStarted(webView, url, null);
+
+    verify(mockApi).onPageStarted(eq(instance), eq(webView), eq(url), any());
   }
 
   @Test
   public void onReceivedError() {
-    webViewClient.onReceivedError(mockWebView, 32, "description", "https://www.google.com");
-    verify(mockFlutterApi)
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final Long errorCode = 0L;
+    final String description = "myString";
+    final String failingUrl = "myString1";
+    instance.onReceivedError(webView, errorCode.intValue(), description, failingUrl);
+
+    verify(mockApi)
         .onReceivedError(
-            eq(webViewClient),
-            eq(mockWebView),
-            eq(32L),
-            eq("description"),
-            eq("https://www.google.com"),
-            any());
+            eq(instance), eq(webView), eq(errorCode), eq(description), eq(failingUrl), any());
   }
 
   @Test
   public void urlLoading() {
-    webViewClient.shouldOverrideUrlLoading(mockWebView, "https://www.google.com");
-    verify(mockFlutterApi)
-        .urlLoading(eq(webViewClient), eq(mockWebView), eq("https://www.google.com"), any());
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final String url = "myString";
+    instance.shouldOverrideUrlLoading(webView, url);
+
+    verify(mockApi).urlLoading(eq(instance), eq(webView), eq(url), any());
   }
 
   @Test
-  public void convertWebResourceRequestWithNullHeaders() {
-    final Uri mockUri = mock(Uri.class);
-    when(mockUri.toString()).thenReturn("");
+  public void urlLoadingForMainFrame() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 
-    final WebResourceRequest mockRequest = mock(WebResourceRequest.class);
-    when(mockRequest.getMethod()).thenReturn("method");
-    when(mockRequest.getUrl()).thenReturn(mockUri);
-    when(mockRequest.isForMainFrame()).thenReturn(true);
-    when(mockRequest.getRequestHeaders()).thenReturn(null);
+    final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
+    instance.setReturnValueForShouldOverrideUrlLoading(false);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final String url = "myString";
+    instance.shouldOverrideUrlLoading(webView, url);
 
-    final GeneratedAndroidWebView.WebResourceRequestData data =
-        WebViewClientFlutterApiImpl.createWebResourceRequestData(mockRequest);
-    assertEquals(data.getRequestHeaders(), new HashMap<String, String>());
+    verify(mockApi).urlLoading(eq(instance), eq(webView), eq(url), any());
   }
 
   @Test
-  public void setReturnValueForShouldOverrideUrlLoading() {
-    final WebViewClientHostApiImpl webViewClientHostApi =
-        new WebViewClientHostApiImpl(
-            instanceManager,
-            new WebViewClientCreator() {
-              @NonNull
-              @Override
-              public WebViewClient createWebViewClient(
-                  @NonNull WebViewClientFlutterApiImpl flutterApi) {
-                return mockWebViewClient;
-              }
-            },
-            mockFlutterApi);
+  public void urlLoadingForMainFrameWithOverride() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 
-    instanceManager.addDartCreatedInstance(mockWebViewClient, 2);
-    webViewClientHostApi.setSynchronousReturnValueForShouldOverrideUrlLoading(2L, false);
+    final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
+    instance.setReturnValueForShouldOverrideUrlLoading(true);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final String url = "myString";
 
-    verify(mockWebViewClient).setReturnValueForShouldOverrideUrlLoading(false);
+    assertTrue(instance.shouldOverrideUrlLoading(webView, url));
+    verify(mockApi).urlLoading(eq(instance), eq(webView), eq(url), any());
+  }
+
+  @Test
+  public void urlLoadingNotForMainFrame() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final android.webkit.WebResourceRequest request = mock(WebResourceRequest.class);
+    when(request.isForMainFrame()).thenReturn(false);
+    instance.shouldOverrideUrlLoading(webView, request);
+
+    verify(mockApi).requestLoading(eq(instance), eq(webView), eq(request), any());
+  }
+
+  @Test
+  public void urlLoadingNotForMainFrameWithOverride() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final android.webkit.WebResourceRequest request = mock(WebResourceRequest.class);
+    when(request.isForMainFrame()).thenReturn(false);
+
+    assertFalse(instance.shouldOverrideUrlLoading(webView, request));
+    verify(mockApi).requestLoading(eq(instance), eq(webView), eq(request), any());
   }
 
   @Test
   public void doUpdateVisitedHistory() {
-    webViewClient.doUpdateVisitedHistory(mockWebView, "https://www.google.com", true);
-    verify(mockFlutterApi)
-        .doUpdateVisitedHistory(
-            eq(webViewClient), eq(mockWebView), eq("https://www.google.com"), eq(true), any());
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final String url = "myString";
+    final Boolean isReload = true;
+    instance.doUpdateVisitedHistory(webView, url, isReload);
+
+    verify(mockApi).doUpdateVisitedHistory(eq(instance), eq(webView), eq(url), eq(isReload), any());
+  }
+
+  @Test
+  public void onReceivedHttpError() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientImpl instance = new WebViewClientImpl(mockApi);
+    final android.webkit.WebView webView = mock(WebView.class);
+    final HttpAuthHandler handler = mock(HttpAuthHandler.class);
+    final String host = "myString";
+    final String realm = "myString1";
+    instance.onReceivedHttpAuthRequest(webView, handler, host, realm);
+
+    verify(mockApi)
+        .onReceivedHttpAuthRequest(
+            eq(instance), eq(webView), eq(handler), eq(host), eq(realm), any());
   }
 }

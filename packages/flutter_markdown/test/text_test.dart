@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -71,6 +72,7 @@ void defineTests() {
           MarkdownBody,
           Column,
           Wrap,
+          Text,
           RichText,
         ]);
         expectTextStrings(widgets, <String>['Hello']);
@@ -97,6 +99,7 @@ void defineTests() {
         MarkdownBody,
         Column,
         Wrap,
+        Text,
         RichText,
       ]);
       expectTextStrings(widgets, <String>['aaa bbb']);
@@ -120,7 +123,7 @@ void defineTests() {
           tester,
         );
         expectWidgetTypes(
-            widgets, <Type>[MarkdownBody, Column, Wrap, RichText]);
+            widgets, <Type>[MarkdownBody, Column, Wrap, Text, RichText]);
         expectTextStrings(widgets, <String>['line 1\nline 2']);
       },
     );
@@ -141,7 +144,7 @@ void defineTests() {
           tester,
         );
         expectWidgetTypes(
-            widgets, <Type>[MarkdownBody, Column, Wrap, RichText]);
+            widgets, <Type>[MarkdownBody, Column, Wrap, Text, RichText]);
         expectTextStrings(widgets, <String>['line 1\nline 2']);
       },
     );
@@ -164,6 +167,7 @@ void defineTests() {
           MarkdownBody,
           Column,
           Wrap,
+          Text,
           RichText,
         ]);
         expectTextStrings(widgets, <String>['line 1. line 2.']);
@@ -188,6 +192,7 @@ void defineTests() {
           MarkdownBody,
           Column,
           Wrap,
+          Text,
           RichText,
         ]);
         expectTextStrings(widgets, <String>['line 1. line 2.']);
@@ -212,7 +217,7 @@ void defineTests() {
           tester,
         );
         expectWidgetTypes(
-            widgets, <Type>[MarkdownBody, Column, Wrap, RichText]);
+            widgets, <Type>[MarkdownBody, Column, Wrap, Text, RichText]);
         expectTextStrings(widgets, <String>['line 1.\nline 2.']);
       },
     );
@@ -278,6 +283,106 @@ void defineTests() {
         expect(textTapResults == 'Text has been tapped.', true);
       },
     );
+
+    testWidgets(
+      'Selectable without onSelectionChanged',
+      (WidgetTester tester) async {
+        const String data = '# abc def ghi\njkl opq';
+
+        await tester.pumpWidget(
+          const MaterialApp(
+            home: Material(
+              child: MarkdownBody(
+                data: data,
+                selectable: true,
+              ),
+            ),
+          ),
+        );
+
+        // Find the positions before character 'd' and 'f'.
+        final Offset dPos = positionInRenderedText(tester, 'abc def ghi', 4);
+        final Offset fPos = positionInRenderedText(tester, 'abc def ghi', 6);
+        // Select from 'd' until 'f'.
+        final TestGesture firstGesture =
+            await tester.startGesture(dPos, kind: PointerDeviceKind.mouse);
+        addTearDown(firstGesture.removePointer);
+        await tester.pump();
+        await firstGesture.moveTo(fPos);
+        await firstGesture.up();
+        await tester.pump();
+
+        // Find the positions before character 'j' and 'o'.
+        final Offset jPos = positionInRenderedText(tester, 'jkl opq', 0);
+        final Offset oPos = positionInRenderedText(tester, 'jkl opq', 4);
+        // Select from 'j' until 'o'.
+        final TestGesture secondGesture =
+            await tester.startGesture(jPos, kind: PointerDeviceKind.mouse);
+        addTearDown(secondGesture.removePointer);
+        await tester.pump();
+        await secondGesture.moveTo(oPos);
+        await secondGesture.up();
+        await tester.pump();
+
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'header with line of text and onSelectionChanged callback',
+      (WidgetTester tester) async {
+        const String data = '# abc def ghi\njkl opq';
+        String? selectableText;
+        String? selectedText;
+        void onSelectionChanged(String? text, TextSelection selection,
+            SelectionChangedCause? cause) {
+          selectableText = text;
+          selectedText = text != null ? selection.textInside(text) : null;
+        }
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Material(
+              child: MarkdownBody(
+                data: data,
+                selectable: true,
+                onSelectionChanged: onSelectionChanged,
+              ),
+            ),
+          ),
+        );
+
+        // Find the positions before character 'd' and 'f'.
+        final Offset dPos = positionInRenderedText(tester, 'abc def ghi', 4);
+        final Offset fPos = positionInRenderedText(tester, 'abc def ghi', 6);
+        // Select from 'd' until 'f'.
+        final TestGesture firstGesture =
+            await tester.startGesture(dPos, kind: PointerDeviceKind.mouse);
+        addTearDown(firstGesture.removePointer);
+        await tester.pump();
+        await firstGesture.moveTo(fPos);
+        await firstGesture.up();
+        await tester.pump();
+
+        expect(selectableText, 'abc def ghi');
+        expect(selectedText, 'de');
+
+        // Find the positions before character 'j' and 'o'.
+        final Offset jPos = positionInRenderedText(tester, 'jkl opq', 0);
+        final Offset oPos = positionInRenderedText(tester, 'jkl opq', 4);
+        // Select from 'j' until 'o'.
+        final TestGesture secondGesture =
+            await tester.startGesture(jPos, kind: PointerDeviceKind.mouse);
+        addTearDown(secondGesture.removePointer);
+        await tester.pump();
+        await secondGesture.moveTo(oPos);
+        await secondGesture.up();
+        await tester.pump();
+
+        expect(selectableText, 'jkl opq');
+        expect(selectedText, 'jkl ');
+      },
+    );
   });
 
   group('Strikethrough', () {
@@ -297,6 +402,7 @@ void defineTests() {
         MarkdownBody,
         Column,
         Wrap,
+        Text,
         RichText,
       ]);
       expectTextStrings(widgets, <String>['strikethrough']);

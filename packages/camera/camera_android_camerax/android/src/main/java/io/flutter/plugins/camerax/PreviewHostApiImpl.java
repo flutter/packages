@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import android.graphics.SurfaceTexture;
 import android.util.Size;
 import android.view.Surface;
 import androidx.annotation.NonNull;
@@ -25,7 +24,7 @@ public class PreviewHostApiImpl implements PreviewHostApi {
   private final TextureRegistry textureRegistry;
 
   @VisibleForTesting public @NonNull CameraXProxy cameraXProxy = new CameraXProxy();
-  @VisibleForTesting public @Nullable TextureRegistry.SurfaceTextureEntry flutterSurfaceTexture;
+  @VisibleForTesting public @Nullable TextureRegistry.SurfaceProducer flutterSurfaceProducer;
 
   public PreviewHostApiImpl(
       @NonNull BinaryMessenger binaryMessenger,
@@ -61,13 +60,12 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    */
   @Override
   public @NonNull Long setSurfaceProvider(@NonNull Long identifier) {
-    Preview preview = (Preview) Objects.requireNonNull(instanceManager.getInstance(identifier));
-    flutterSurfaceTexture = textureRegistry.createSurfaceTexture();
-    SurfaceTexture surfaceTexture = flutterSurfaceTexture.surfaceTexture();
-    Preview.SurfaceProvider surfaceProvider = createSurfaceProvider(surfaceTexture);
+    Preview preview = getPreviewInstance(identifier);
+    flutterSurfaceProducer = textureRegistry.createSurfaceProducer();
+    Preview.SurfaceProvider surfaceProvider = createSurfaceProvider(flutterSurfaceProducer);
     preview.setSurfaceProvider(surfaceProvider);
 
-    return flutterSurfaceTexture.id();
+    return flutterSurfaceProducer.id();
   }
 
   /**
@@ -76,13 +74,35 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    */
   @VisibleForTesting
   public @NonNull Preview.SurfaceProvider createSurfaceProvider(
-      @NonNull SurfaceTexture surfaceTexture) {
+      @NonNull TextureRegistry.SurfaceProducer surfaceProducer) {
     return new Preview.SurfaceProvider() {
       @Override
       public void onSurfaceRequested(@NonNull SurfaceRequest request) {
-        surfaceTexture.setDefaultBufferSize(
+        // Set callback for surfaceProducer to invalidate Surfaces that it produces when they
+        // get destroyed.
+        surfaceProducer.setCallback(
+            new TextureRegistry.SurfaceProducer.Callback() {
+              @Override
+              public void onSurfaceAvailable() {
+                // Do nothing. The Preview.SurfaceProvider will handle this whenever a new
+                // Surface is needed.
+              }
+
+              @Override
+              // TODO(bparrishMines): Replace with onSurfaceCleanup once available on stable. See
+              // https://github.com/flutter/flutter/issues/161256.
+              @SuppressWarnings({"deprecation", "removal"})
+              public void onSurfaceDestroyed() {
+                // Invalidate the SurfaceRequest so that CameraX knows to to make a new request
+                // for a surface.
+                request.invalidate();
+              }
+            });
+
+        // Provide surface.
+        surfaceProducer.setSize(
             request.getResolution().getWidth(), request.getResolution().getHeight());
-        Surface flutterSurface = cameraXProxy.createSurface(surfaceTexture);
+        Surface flutterSurface = surfaceProducer.getSurface();
         request.provideSurface(
             flutterSurface,
             Executors.newSingleThreadExecutor(),
@@ -133,16 +153,19 @@ public class PreviewHostApiImpl implements PreviewHostApi {
    */
   @Override
   public void releaseFlutterSurfaceTexture() {
-    if (flutterSurfaceTexture != null) {
-      flutterSurfaceTexture.release();
+    if (flutterSurfaceProducer != null) {
+      flutterSurfaceProducer.release();
+      return;
     }
+    throw new IllegalStateException(
+        "releaseFlutterSurfaceTexture() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
   }
 
   /** Returns the resolution information for the specified {@link Preview}. */
   @Override
   public @NonNull GeneratedCameraXLibrary.ResolutionInfo getResolutionInfo(
       @NonNull Long identifier) {
-    Preview preview = (Preview) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    Preview preview = getPreviewInstance(identifier);
     Size resolution = preview.getResolutionInfo().getResolution();
 
     GeneratedCameraXLibrary.ResolutionInfo.Builder resolutionInfo =
@@ -150,5 +173,27 @@ public class PreviewHostApiImpl implements PreviewHostApi {
             .setWidth(Long.valueOf(resolution.getWidth()))
             .setHeight(Long.valueOf(resolution.getHeight()));
     return resolutionInfo.build();
+  }
+
+  /** Dynamically sets the target rotation of the {@link Preview}. */
+  @Override
+  public void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation) {
+    Preview preview = getPreviewInstance(identifier);
+    preview.setTargetRotation(rotation.intValue());
+  }
+
+  @NonNull
+  @Override
+  public Boolean surfaceProducerHandlesCropAndRotation() {
+    if (flutterSurfaceProducer != null) {
+      return flutterSurfaceProducer.handlesCropAndRotation();
+    }
+    throw new IllegalStateException(
+        "surfaceProducerHandlesCropAndRotation() cannot be called if the flutterSurfaceProducer for the camera preview has not yet been initialized.");
+  }
+
+  /** Retrieves the {@link Preview} instance associated with the specified {@code identifier}. */
+  private Preview getPreviewInstance(@NonNull Long identifier) {
+    return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
 }

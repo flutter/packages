@@ -9,12 +9,12 @@ set -e
 # work in legacy versions.
 #
 # This requires the --lib-only flag below.
-./script/tool_runner.sh remove-dev-dependencies
+.ci/scripts/tool_runner.sh remove-dev-dependencies
 
 # This uses --run-on-dirty-packages rather than --packages-for-branch
 # since only the packages changed by 'make-deps-path-based' need to be
 # re-checked.
-./script/tool_runner.sh analyze --lib-only \
+.ci/scripts/tool_runner.sh analyze --lib-only \
     --skip-if-not-supporting-flutter-version="$CHANNEL" \
     --custom-analysis=script/configs/custom_analysis.yaml
 

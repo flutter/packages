@@ -22,7 +22,7 @@ public class ObserverHostApiImpl implements ObserverHostApi {
   private final InstanceManager instanceManager;
   private final ObserverProxy observerProxy;
 
-  /** Proxy for constructors and static method of {@link Observer}. */
+  /** Proxy for constructor of {@link Observer}. */
   @VisibleForTesting
   public static class ObserverProxy {
 
@@ -77,7 +77,7 @@ public class ObserverHostApiImpl implements ObserverHostApi {
    *
    * @param binaryMessenger used to communicate with Dart over asynchronous messages
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link Observer}
+   * @param proxy proxy for constructor of {@link Observer}
    */
   @VisibleForTesting
   ObserverHostApiImpl(

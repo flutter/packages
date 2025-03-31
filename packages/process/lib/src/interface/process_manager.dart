@@ -57,11 +57,13 @@ abstract class ProcessManager {
   /// The following code uses `start` to grep for `main` in the
   /// file `test.dart` on Linux.
   ///
-  ///     ProcessManager mgr = new LocalProcessManager();
-  ///     mgr.start(['grep', '-i', 'main', 'test.dart']).then((process) {
-  ///       stdout.addStream(process.stdout);
-  ///       stderr.addStream(process.stderr);
-  ///     });
+  /// ```dart
+  /// ProcessManager mgr = new LocalProcessManager();
+  /// mgr.start(['grep', '-i', 'main', 'test.dart']).then((process) {
+  ///   stdout.addStream(process.stdout);
+  ///   stderr.addStream(process.stderr);
+  /// });
+  /// ```
   ///
   /// If [mode] is [ProcessStartMode.normal] (the default) a child
   /// process will be started with `stdin`, `stdout` and `stderr`
@@ -130,11 +132,13 @@ abstract class ProcessManager {
   /// The following code uses `run` to grep for `main` in the
   /// file `test.dart` on Linux.
   ///
-  ///     ProcessManager mgr = new LocalProcessManager();
-  ///     mgr.run('grep', ['-i', 'main', 'test.dart']).then((result) {
-  ///       stdout.write(result.stdout);
-  ///       stderr.write(result.stderr);
-  ///     });
+  /// ```dart
+  /// ProcessManager mgr = new LocalProcessManager();
+  /// mgr.run('grep', ['-i', 'main', 'test.dart']).then((result) {
+  ///   stdout.write(result.stdout);
+  ///   stderr.write(result.stderr);
+  /// });
+  /// ```
   Future<ProcessResult> run(
     List<Object> command, {
     String? workingDirectory,

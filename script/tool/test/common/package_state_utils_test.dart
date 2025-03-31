@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/git_version_finder.dart';
 import 'package:flutter_plugin_tools/src/common/package_state_utils.dart';
 import 'package:test/fake.dart';
@@ -11,12 +10,11 @@ import 'package:test/test.dart';
 import '../util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late Directory packagesDir;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks();
   });
 
   group('checkPackageChangeState', () {
@@ -62,6 +60,8 @@ void main() {
 
       const List<String> changedFiles = <String>[
         'packages/a_plugin/CHANGELOG.md',
+        // Dev-facing docs.
+        'packages/a_plugin/CONTRIBUTING.md',
         // Analysis.
         'packages/a_plugin/example/android/lint-baseline.xml',
         // Tests.
@@ -229,6 +229,27 @@ void main() {
       expect(state.hasChanges, true);
       expect(state.needsVersionChange, false);
       expect(state.needsChangelogChange, true);
+    });
+
+    test(
+        'requires neither a changelog nor version change for README.md when '
+        'code example is present in a federated plugin implementation',
+        () async {
+      final RepositoryPackage package = createFakePlugin(
+          'a_plugin_android', packagesDir.childDirectory('a_plugin'),
+          extraFiles: <String>['example/lib/main.dart']);
+
+      const List<String> changedFiles = <String>[
+        'packages/a_plugin/a_plugin_android/example/README.md',
+      ];
+
+      final PackageChangeState state = await checkPackageChangeState(package,
+          changedPaths: changedFiles,
+          relativePackagePath: 'packages/a_plugin/a_plugin_android');
+
+      expect(state.hasChanges, true);
+      expect(state.needsVersionChange, false);
+      expect(state.needsChangelogChange, false);
     });
 
     test(

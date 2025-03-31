@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="375" height="407" viewBox="0 0 375 407">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_2344" data-name="Rectangle 2344" width="375" height="407" transform="translate(0 177)" fill="#fff" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="_4" data-name="4" transform="translate(0 -177)" clip-path="url(#clip-path)">
+    <g id="Polygon_19" data-name="Polygon 19" transform="translate(15 177)" fill="#fff">
+      <path d="M 345.2359313964844 395.5 L 0.7640888690948486 395.5 L 173.0000152587891 1.248977780342102 L 345.2359313964844 395.5 Z" stroke="none"/>
+      <path d="M 173.0000152587891 2.497894287109375 L 1.52813720703125 395 L 344.4718933105469 395 L 173.0000152587891 2.497894287109375 M 173.0000152587891 0 L 346 396 L 3.0517578125e-05 396 L 173.0000152587891 0 Z" stroke="none" fill="#707070"/>
+    </g>
+    <g id="Ellipse_659" data-name="Ellipse 659" transform="translate(42 269)" fill="#fff" stroke="#707070" stroke-width="1">
+      <ellipse cx="147" cy="152" rx="147" ry="152" stroke="none"/>
+      <ellipse cx="147" cy="152" rx="146.5" ry="151.5" fill="none"/>
+    </g>
+  </g>
+</svg>

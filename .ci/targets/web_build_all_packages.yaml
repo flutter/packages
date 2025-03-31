@@ -10,3 +10,10 @@ tasks:
   - name: build all_packages app for Web release
     script: .ci/scripts/build_all_packages_app.sh
     args: ["web", "release"]
+  - name: (Wasm) create all_packages app
+    script: .ci/scripts/create_all_packages_app.sh
+    args: ["--wasm"]
+    infra_step: true # Note infra steps failing prevents "always" from running.
+  - name: (Wasm) build all_packages app for Web release
+    script: .ci/scripts/build_all_packages_app.sh
+    args: ["web", "release", "--wasm"]

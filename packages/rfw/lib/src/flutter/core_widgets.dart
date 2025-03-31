@@ -8,6 +8,7 @@
 
 // This file is hand-formatted.
 
+// ignore: unnecessary_import, see https://github.com/flutter/flutter/pull/138881
 import 'dart:ui' show FontFeature;
 
 import 'package:flutter/gestures.dart' show DragStartBehavior;
@@ -26,6 +27,7 @@ import 'runtime.dart';
 ///  * [Align]
 ///  * [AspectRatio]
 ///  * [Center]
+///  * [ClipRRect]
 ///  * [ColoredBox]
 ///  * [Column]
 ///  * [Container] (actually uses [AnimatedContainer])
@@ -268,6 +270,15 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
     );
   },
 
+  'ClipRRect': (BuildContext context, DataSource source) {
+    return ClipRRect(
+      borderRadius: ArgumentDecoders.borderRadius(source, ['borderRadius']) ?? BorderRadius.zero,
+      // CustomClipper<RRect> clipper,
+      clipBehavior: ArgumentDecoders.enumValue<Clip>(Clip.values, source, ['clipBehavior']) ?? Clip.antiAlias,
+      child: source.optionalChild(['child']),
+    );
+  },
+
   'ColoredBox': (BuildContext context, DataSource source) {
     return ColoredBox(
       color: ArgumentDecoders.color(source, ['color']) ?? const Color(0xFF000000),
@@ -488,6 +499,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       opacity: source.v<double>(['opacity']) ?? 0.0,
       onEnd: source.voidHandler(['onEnd']),
       alwaysIncludeSemantics: source.v<bool>(['alwaysIncludeSemantics']) ?? true,
+      child: source.optionalChild(['child']),
     );
   },
 
@@ -638,6 +650,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       }
       text = builder.toString();
     }
+    final double? textScaleFactor = source.v<double>(['textScaleFactor']);
     return Text(
       text,
       style: ArgumentDecoders.textStyle(source, ['style']),
@@ -647,7 +660,7 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
       locale: ArgumentDecoders.locale(source, ['locale']),
       softWrap: source.v<bool>(['softWrap']),
       overflow: ArgumentDecoders.enumValue<TextOverflow>(TextOverflow.values, source, ['overflow']),
-      textScaleFactor: source.v<double>(['textScaleFactor']),  // ignore: deprecated_member_use
+      textScaler: textScaleFactor == null ? null : TextScaler.linear(textScaleFactor),
       maxLines: source.v<int>(['maxLines']),
       semanticsLabel: source.v<String>(['semanticsLabel']),
       textWidthBasis: ArgumentDecoders.enumValue<TextWidthBasis>(TextWidthBasis.values, source, ['textWidthBasis']),

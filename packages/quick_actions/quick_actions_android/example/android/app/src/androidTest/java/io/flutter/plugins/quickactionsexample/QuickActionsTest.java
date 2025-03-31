@@ -102,6 +102,7 @@ public class QuickActionsTest {
     Intent dynamicShortcutIntent = dynamicShortcut.getIntent();
     AtomicReference<QuickActionsTestActivity> initialActivity = new AtomicReference<>();
     scenario.onActivity(initialActivity::set);
+    clearAnySystemDialog(context);
     String appReadySentinel = " has launched";
 
     // Act
@@ -150,5 +151,11 @@ public class QuickActionsTest {
         ActivityScenario.launch(QuickActionsTestActivity.class);
     scenario.moveToState(Lifecycle.State.STARTED);
     return scenario;
+  }
+
+  // Broadcast a request to clear any system dialog that blocks the application from obtaining
+  // focus. See https://github.com/flutter/flutter/issues/140987
+  private void clearAnySystemDialog(Context context) {
+    context.sendBroadcast(new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
   }
 }

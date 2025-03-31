@@ -16,5 +16,5 @@ should add it to your `pubspec.yaml` as usual.
 If you would like to contribute to the plugin, check out our [contribution guide][3].
 
 [1]: https://pub.dev/packages/quick_actions
-[2]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://github.com/flutter/packages/blob/main/CONTRIBUTING.md

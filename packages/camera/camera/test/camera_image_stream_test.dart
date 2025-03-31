@@ -28,7 +28,7 @@ void main() {
         ResolutionPreset.max);
 
     expect(
-      () => cameraController.startImageStream((CameraImage image) => null),
+      () => cameraController.startImageStream((CameraImage image) {}),
       throwsA(
         isA<CameraException>()
             .having(
@@ -60,7 +60,7 @@ void main() {
         cameraController.value.copyWith(isRecordingVideo: true);
 
     expect(
-        () => cameraController.startImageStream((CameraImage image) => null),
+        () => cameraController.startImageStream((CameraImage image) {}),
         throwsA(isA<CameraException>().having(
           (CameraException error) => error.description,
           'A video recording is already started.',
@@ -81,7 +81,7 @@ void main() {
     cameraController.value =
         cameraController.value.copyWith(isStreamingImages: true);
     expect(
-        () => cameraController.startImageStream((CameraImage image) => null),
+        () => cameraController.startImageStream((CameraImage image) {}),
         throwsA(isA<CameraException>().having(
           (CameraException error) => error.description,
           'A camera has started streaming images.',
@@ -98,10 +98,13 @@ void main() {
         ResolutionPreset.max);
     await cameraController.initialize();
 
-    await cameraController.startImageStream((CameraImage image) => null);
+    await cameraController.startImageStream((CameraImage image) {});
 
-    expect(mockPlatform.streamCallLog,
-        <String>['onStreamedFrameAvailable', 'listen']);
+    expect(mockPlatform.streamCallLog, <String>[
+      'supportsImageStreaming',
+      'onStreamedFrameAvailable',
+      'listen'
+    ]);
   });
 
   test('stopImageStream() throws $CameraException when uninitialized', () {
@@ -157,11 +160,16 @@ void main() {
             sensorOrientation: 90),
         ResolutionPreset.max);
     await cameraController.initialize();
-    await cameraController.startImageStream((CameraImage image) => null);
+    await cameraController.startImageStream((CameraImage image) {});
     await cameraController.stopImageStream();
 
-    expect(mockPlatform.streamCallLog,
-        <String>['onStreamedFrameAvailable', 'listen', 'cancel']);
+    expect(mockPlatform.streamCallLog, <String>[
+      'supportsImageStreaming',
+      'onStreamedFrameAvailable',
+      'listen',
+      'supportsImageStreaming',
+      'cancel'
+    ]);
   });
 
   test('startVideoRecording() can stream images', () async {
@@ -175,7 +183,7 @@ void main() {
     await cameraController.initialize();
 
     await cameraController.startVideoRecording(
-        onAvailable: (CameraImage image) => null);
+        onAvailable: (CameraImage image) {});
 
     expect(
         mockPlatform.streamCallLog.contains('startVideoCapturing with stream'),
@@ -215,11 +223,10 @@ class MockStreamingCameraPlatform extends MockCameraPlatform {
   }
 
   @override
-  Future<XFile> startVideoRecording(int cameraId,
-      {Duration? maxVideoDuration}) {
+  Future<void> startVideoRecording(int cameraId, {Duration? maxVideoDuration}) {
     streamCallLog.add('startVideoRecording');
-    return super
-        .startVideoRecording(cameraId, maxVideoDuration: maxVideoDuration);
+    // Ignore maxVideoDuration, as it is unimplemented and deprecated.
+    return super.startVideoRecording(cameraId);
   }
 
   @override
@@ -234,6 +241,12 @@ class MockStreamingCameraPlatform extends MockCameraPlatform {
 
   void _onFrameStreamListen() {
     streamCallLog.add('listen');
+  }
+
+  @override
+  bool supportsImageStreaming() {
+    streamCallLog.add('supportsImageStreaming');
+    return true;
   }
 
   FutureOr<void> _onFrameStreamCancel() async {

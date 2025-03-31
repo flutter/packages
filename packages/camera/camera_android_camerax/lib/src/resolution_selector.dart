@@ -9,6 +9,7 @@ import 'aspect_ratio_strategy.dart';
 import 'camerax_library.g.dart';
 import 'instance_manager.dart';
 import 'java_object.dart';
+import 'resolution_filter.dart';
 import 'resolution_strategy.dart';
 
 /// A set of requirements and priorities used to select a resolution for a
@@ -20,6 +21,7 @@ class ResolutionSelector extends JavaObject {
   /// Construct a [ResolutionSelector].
   ResolutionSelector({
     this.resolutionStrategy,
+    this.resolutionFilter,
     this.aspectRatioStrategy,
     super.binaryMessenger,
     super.instanceManager,
@@ -28,7 +30,8 @@ class ResolutionSelector extends JavaObject {
           binaryMessenger: binaryMessenger,
         ),
         super.detached() {
-    _api.createFromInstances(this, resolutionStrategy, aspectRatioStrategy);
+    _api.createFromInstances(
+        this, resolutionStrategy, resolutionFilter, aspectRatioStrategy);
   }
 
   /// Instantiates a [ResolutionSelector] without creating and attaching to an
@@ -38,6 +41,7 @@ class ResolutionSelector extends JavaObject {
   /// library or to create a copy for an [InstanceManager].
   ResolutionSelector.detached({
     this.resolutionStrategy,
+    this.resolutionFilter,
     this.aspectRatioStrategy,
     super.binaryMessenger,
     super.instanceManager,
@@ -52,6 +56,9 @@ class ResolutionSelector extends JavaObject {
   /// Determines how the UseCase will choose the resolution of the captured
   /// image.
   final ResolutionStrategy? resolutionStrategy;
+
+  /// Filter for CameraX to automatically select a desirable resolution.
+  final ResolutionFilter? resolutionFilter;
 
   /// Determines how the UseCase will choose the aspect ratio of the captured
   /// image.
@@ -81,10 +88,12 @@ class _ResolutionSelectorHostApiImpl extends ResolutionSelectorHostApi {
   final InstanceManager instanceManager;
 
   /// Creates a [ResolutionSelector] on the native side with the
-  /// [ResolutionStrategy] and [AspectRatioStrategy] if specified.
+  /// [ResolutionStrategy], [ResolutionFilter], and [AspectRatioStrategy] if
+  /// specified.
   Future<void> createFromInstances(
     ResolutionSelector instance,
     ResolutionStrategy? resolutionStrategy,
+    ResolutionFilter? resolutionFilter,
     AspectRatioStrategy? aspectRatioStrategy,
   ) {
     return create(
@@ -100,6 +109,9 @@ class _ResolutionSelectorHostApiImpl extends ResolutionSelectorHostApi {
       resolutionStrategy == null
           ? null
           : instanceManager.getIdentifier(resolutionStrategy)!,
+      resolutionFilter == null
+          ? null
+          : instanceManager.getIdentifier(resolutionFilter)!,
       aspectRatioStrategy == null
           ? null
           : instanceManager.getIdentifier(aspectRatioStrategy)!,

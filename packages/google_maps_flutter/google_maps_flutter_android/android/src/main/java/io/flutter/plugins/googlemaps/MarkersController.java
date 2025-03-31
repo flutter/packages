@@ -4,100 +4,123 @@
 
 package io.flutter.plugins.googlemaps;
 
-import com.google.android.gms.maps.GoogleMap;
+import android.content.res.AssetManager;
+import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import io.flutter.plugin.common.MethodChannel;
+import com.google.maps.android.collections.MarkerManager;
+import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 class MarkersController {
+  private final HashMap<String, MarkerBuilder> markerIdToMarkerBuilder;
+  private final HashMap<String, MarkerController> markerIdToController;
+  private final HashMap<String, String> googleMapsMarkerIdToDartMarkerId;
+  private final @NonNull MapsCallbackApi flutterApi;
+  private MarkerManager.Collection markerCollection;
+  private final ClusterManagersController clusterManagersController;
+  private final AssetManager assetManager;
+  private final float density;
+  private final Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
 
-  private final Map<String, MarkerController> markerIdToController;
-  private final Map<String, String> googleMapsMarkerIdToDartMarkerId;
-  private final MethodChannel methodChannel;
-  private GoogleMap googleMap;
-
-  MarkersController(MethodChannel methodChannel) {
+  MarkersController(
+      @NonNull MapsCallbackApi flutterApi,
+      ClusterManagersController clusterManagersController,
+      AssetManager assetManager,
+      float density,
+      Convert.BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper) {
+    this.markerIdToMarkerBuilder = new HashMap<>();
     this.markerIdToController = new HashMap<>();
     this.googleMapsMarkerIdToDartMarkerId = new HashMap<>();
-    this.methodChannel = methodChannel;
+    this.flutterApi = flutterApi;
+    this.clusterManagersController = clusterManagersController;
+    this.assetManager = assetManager;
+    this.density = density;
+    this.bitmapDescriptorFactoryWrapper = bitmapDescriptorFactoryWrapper;
   }
 
-  void setGoogleMap(GoogleMap googleMap) {
-    this.googleMap = googleMap;
+  void setCollection(MarkerManager.Collection markerCollection) {
+    this.markerCollection = markerCollection;
   }
 
-  void addMarkers(List<Object> markersToAdd) {
-    if (markersToAdd != null) {
-      for (Object markerToAdd : markersToAdd) {
-        addMarker(markerToAdd);
-      }
+  void addMarkers(@NonNull List<Messages.PlatformMarker> markersToAdd) {
+    for (Messages.PlatformMarker markerToAdd : markersToAdd) {
+      addMarker(markerToAdd);
     }
   }
 
-  void changeMarkers(List<Object> markersToChange) {
-    if (markersToChange != null) {
-      for (Object markerToChange : markersToChange) {
-        changeMarker(markerToChange);
-      }
+  void changeMarkers(@NonNull List<Messages.PlatformMarker> markersToChange) {
+    for (Messages.PlatformMarker markerToChange : markersToChange) {
+      changeMarker(markerToChange);
     }
   }
 
-  void removeMarkers(List<Object> markerIdsToRemove) {
-    if (markerIdsToRemove == null) {
+  void removeMarkers(@NonNull List<String> markerIdsToRemove) {
+    for (String markerId : markerIdsToRemove) {
+      removeMarker(markerId);
+    }
+  }
+
+  private void removeMarker(String markerId) {
+    final MarkerBuilder markerBuilder = markerIdToMarkerBuilder.remove(markerId);
+    if (markerBuilder == null) {
       return;
     }
-    for (Object rawMarkerId : markerIdsToRemove) {
-      if (rawMarkerId == null) {
-        continue;
-      }
-      String markerId = (String) rawMarkerId;
-      final MarkerController markerController = markerIdToController.remove(markerId);
-      if (markerController != null) {
-        markerController.remove();
-        googleMapsMarkerIdToDartMarkerId.remove(markerController.getGoogleMapsMarkerId());
-      }
+    final MarkerController markerController = markerIdToController.remove(markerId);
+    final String clusterManagerId = markerBuilder.clusterManagerId();
+    if (clusterManagerId != null) {
+      // Remove marker from clusterManager.
+      clusterManagersController.removeItem(markerBuilder);
+    } else if (markerController != null && this.markerCollection != null) {
+      // Remove marker from map and markerCollection
+      markerController.removeFromCollection(markerCollection);
     }
-  }
 
-  void showMarkerInfoWindow(String markerId, MethodChannel.Result result) {
-    MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
-      markerController.showInfoWindow();
-      result.success(null);
-    } else {
-      result.error("Invalid markerId", "showInfoWindow called with invalid markerId", null);
+      googleMapsMarkerIdToDartMarkerId.remove(markerController.getGoogleMapsMarkerId());
     }
   }
 
-  void hideMarkerInfoWindow(String markerId, MethodChannel.Result result) {
+  void showMarkerInfoWindow(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
-    if (markerController != null) {
-      markerController.hideInfoWindow();
-      result.success(null);
-    } else {
-      result.error("Invalid markerId", "hideInfoWindow called with invalid markerId", null);
+    if (markerController == null) {
+      throw new Messages.FlutterError(
+          "Invalid markerId", "showInfoWindow called with invalid markerId", null);
     }
+    markerController.showInfoWindow();
   }
 
-  void isInfoWindowShown(String markerId, MethodChannel.Result result) {
+  void hideMarkerInfoWindow(String markerId) {
     MarkerController markerController = markerIdToController.get(markerId);
-    if (markerController != null) {
-      result.success(markerController.isInfoWindowShown());
-    } else {
-      result.error("Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
+    if (markerController == null) {
+      throw new Messages.FlutterError(
+          "Invalid markerId", "hideInfoWindow called with invalid markerId", null);
     }
+    markerController.hideInfoWindow();
   }
 
-  boolean onMarkerTap(String googleMarkerId) {
+  boolean isInfoWindowShown(String markerId) {
+    MarkerController markerController = markerIdToController.get(markerId);
+    if (markerController == null) {
+      throw new Messages.FlutterError(
+          "Invalid markerId", "isInfoWindowShown called with invalid markerId", null);
+    }
+    return markerController.isInfoWindowShown();
+  }
+
+  boolean onMapsMarkerTap(String googleMarkerId) {
     String markerId = googleMapsMarkerIdToDartMarkerId.get(googleMarkerId);
     if (markerId == null) {
       return false;
     }
-    methodChannel.invokeMethod("marker#onTap", Convert.markerIdToJson(markerId));
+    return onMarkerTap(markerId);
+  }
+
+  boolean onMarkerTap(String markerId) {
+    flutterApi.onMarkerTap(markerId, new NoOpVoidResult());
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
       return markerController.consumeTapEvents();
@@ -110,10 +133,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", markerId);
-    data.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("marker#onDragStart", data);
+    flutterApi.onMarkerDragStart(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   void onMarkerDrag(String googleMarkerId, LatLng latLng) {
@@ -121,10 +141,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", markerId);
-    data.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("marker#onDrag", data);
+    flutterApi.onMarkerDrag(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   void onMarkerDragEnd(String googleMarkerId, LatLng latLng) {
@@ -132,10 +149,7 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    final Map<String, Object> data = new HashMap<>();
-    data.put("markerId", markerId);
-    data.put("position", Convert.latLngToJson(latLng));
-    methodChannel.invokeMethod("marker#onDragEnd", data);
+    flutterApi.onMarkerDragEnd(markerId, Convert.latLngToPigeon(latLng), new NoOpVoidResult());
   }
 
   void onInfoWindowTap(String googleMarkerId) {
@@ -143,40 +157,89 @@ class MarkersController {
     if (markerId == null) {
       return;
     }
-    methodChannel.invokeMethod("infoWindow#onTap", Convert.markerIdToJson(markerId));
+    flutterApi.onInfoWindowTap(markerId, new NoOpVoidResult());
   }
 
-  private void addMarker(Object marker) {
-    if (marker == null) {
+  /**
+   * Called each time clusterManager adds new visible marker to the map. Creates markerController
+   * for marker for realtime marker updates.
+   */
+  public void onClusterItemRendered(MarkerBuilder markerBuilder, Marker marker) {
+    String markerId = markerBuilder.markerId();
+    if (markerIdToMarkerBuilder.get(markerId) == markerBuilder) {
+      createControllerForMarker(markerBuilder.markerId(), marker, markerBuilder.consumeTapEvents());
+    }
+  }
+
+  private void addMarker(@NonNull Messages.PlatformMarker marker) {
+    String markerId = marker.getMarkerId();
+    String clusterManagerId = marker.getClusterManagerId();
+    MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId);
+    Convert.interpretMarkerOptions(
+        marker, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
+    addMarker(markerBuilder);
+  }
+
+  private void addMarker(MarkerBuilder markerBuilder) {
+    if (markerBuilder == null) {
       return;
     }
-    MarkerBuilder markerBuilder = new MarkerBuilder();
-    String markerId = Convert.interpretMarkerOptions(marker, markerBuilder);
-    MarkerOptions options = markerBuilder.build();
-    addMarker(markerId, options, markerBuilder.consumeTapEvents());
+    String markerId = markerBuilder.markerId();
+
+    // Store marker builder for future marker rebuilds when used under clusters.
+    markerIdToMarkerBuilder.put(markerId, markerBuilder);
+
+    if (markerBuilder.clusterManagerId() == null) {
+      addMarkerToCollection(markerId, markerBuilder);
+    } else {
+      addMarkerBuilderForCluster(markerBuilder);
+    }
   }
 
-  private void addMarker(String markerId, MarkerOptions markerOptions, boolean consumeTapEvents) {
-    final Marker marker = googleMap.addMarker(markerOptions);
+  private void addMarkerToCollection(String markerId, MarkerBuilder markerBuilder) {
+    MarkerOptions options = markerBuilder.build();
+    final Marker marker = markerCollection.addMarker(options);
+    createControllerForMarker(markerId, marker, markerBuilder.consumeTapEvents());
+  }
+
+  private void addMarkerBuilderForCluster(MarkerBuilder markerBuilder) {
+    clusterManagersController.addItem(markerBuilder);
+  }
+
+  private void createControllerForMarker(String markerId, Marker marker, boolean consumeTapEvents) {
     MarkerController controller = new MarkerController(marker, consumeTapEvents);
     markerIdToController.put(markerId, controller);
     googleMapsMarkerIdToDartMarkerId.put(marker.getId(), markerId);
   }
 
-  private void changeMarker(Object marker) {
-    if (marker == null) {
+  private void changeMarker(@NonNull Messages.PlatformMarker marker) {
+    String markerId = marker.getMarkerId();
+
+    MarkerBuilder markerBuilder = markerIdToMarkerBuilder.get(markerId);
+    if (markerBuilder == null) {
       return;
     }
-    String markerId = getMarkerId(marker);
+
+    String clusterManagerId = marker.getClusterManagerId();
+    String oldClusterManagerId = markerBuilder.clusterManagerId();
+
+    // If the cluster ID on the updated marker has changed, the marker needs to
+    // be removed and re-added to update its cluster manager state.
+    if (!(Objects.equals(clusterManagerId, oldClusterManagerId))) {
+      removeMarker(markerId);
+      addMarker(marker);
+      return;
+    }
+
+    // Update marker builder.
+    Convert.interpretMarkerOptions(
+        marker, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
+
+    // Update existing marker on map.
     MarkerController markerController = markerIdToController.get(markerId);
     if (markerController != null) {
-      Convert.interpretMarkerOptions(marker, markerController);
+      Convert.interpretMarkerOptions(
+          marker, markerController, assetManager, density, bitmapDescriptorFactoryWrapper);
     }
-  }
-
-  @SuppressWarnings("unchecked")
-  private static String getMarkerId(Object marker) {
-    Map<String, Object> markerMap = (Map<String, Object>) marker;
-    return (String) markerMap.get("markerId");
   }
 }

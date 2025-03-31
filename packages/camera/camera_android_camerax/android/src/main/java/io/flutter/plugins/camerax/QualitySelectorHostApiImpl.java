@@ -30,7 +30,7 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
 
   private final QualitySelectorProxy proxy;
 
-  /** Proxy for constructors and static method of {@link QualitySelector}. */
+  /** Proxy for constructor of {@link QualitySelector}. */
   @VisibleForTesting
   public static class QualitySelectorProxy {
     /** Creates an instance of {@link QualitySelector}. */
@@ -73,7 +73,7 @@ public class QualitySelectorHostApiImpl implements QualitySelectorHostApi {
    * Constructs a {@link QualitySelectorHostApiImpl}.
    *
    * @param instanceManager maintains instances stored to communicate with attached Dart objects
-   * @param proxy proxy for constructors and static method of {@link QualitySelector}
+   * @param proxy proxy for constructor of {@link QualitySelector}
    */
   QualitySelectorHostApiImpl(
       @NonNull InstanceManager instanceManager, @NonNull QualitySelectorProxy proxy) {

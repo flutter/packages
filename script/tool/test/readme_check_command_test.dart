@@ -4,10 +4,10 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/readme_check_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -15,21 +15,20 @@ import 'util.dart';
 
 void main() {
   late CommandRunner<void> runner;
-  late RecordingProcessRunner processRunner;
-  late FileSystem fileSystem;
   late MockPlatform mockPlatform;
   late Directory packagesDir;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
     mockPlatform = MockPlatform();
-    packagesDir = fileSystem.currentDirectory.childDirectory('packages');
-    createPackagesDirectory(parentDir: packagesDir.parent);
-    processRunner = RecordingProcessRunner();
+    final RecordingProcessRunner processRunner;
+    final GitDir gitDir;
+    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks(platform: mockPlatform);
     final ReadmeCheckCommand command = ReadmeCheckCommand(
       packagesDir,
       processRunner: processRunner,
       platform: mockPlatform,
+      gitDir: gitDir,
     );
 
     runner = CommandRunner<void>(
@@ -119,7 +118,7 @@ a specialized package that includes platform-specific implementation code for
 Android and/or iOS.
 
 For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
+[online documentation](https://docs.flutter.dev), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 ''');
 
@@ -697,7 +696,7 @@ A B C
           contains('Dart code block at line 3 is not managed by code-excerpt.'),
           // Ensure that the failure message links to instructions.
           contains(
-              'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages'),
+              'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md'),
           contains('Missing code-excerpt management for code block'),
         ]),
       );

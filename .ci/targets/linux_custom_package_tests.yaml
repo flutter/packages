@@ -3,5 +3,5 @@ tasks:
     script: .ci/scripts/prepare_tool.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
   - name: custom tests
-    script: script/tool_runner.sh
+    script: .ci/scripts/tool_runner.sh
     args: ["custom-test"]

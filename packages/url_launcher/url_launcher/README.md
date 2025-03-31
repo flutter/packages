@@ -8,13 +8,9 @@ A Flutter plugin for launching a URL.
 
 |             | Android | iOS   | Linux | macOS  | Web | Windows     |
 |-------------|---------|-------|-------|--------|-----|-------------|
-| **Support** | SDK 16+ | 11.0+ | Any   | 10.14+ | Any | Windows 10+ |
+| **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Windows 10+ |
 
-## Usage
-
-To use this plugin, add `url_launcher` as a [dependency in your pubspec.yaml file](https://flutter.dev/platform-plugins/).
-
-### Example
+## Example
 
 <?code-excerpt "lib/basic.dart (basic-example)"?>
 ```dart
@@ -98,6 +94,13 @@ See
 [the Android documentation](https://developer.android.com/training/package-visibility/use-cases)
 for examples of other queries.
 
+### Web
+
+Some web browsers may have limitations (e.g. a launch must be triggered by a
+user action). Check
+[package:url_launcher_web](https://pub.dev/packages/url_launcher_web#limitations-on-the-web-platform)
+for more web-specific information.
+
 ## Supported URL schemes
 
 The provided URL is passed directly to the host platform for handling. The
@@ -165,19 +168,6 @@ String? encodeQueryParameters(Map<String, String> params) {
   );
 
   launchUrl(emailLaunchUri);
-```
-
-Encoding for `sms` is slightly different:
-
-<?code-excerpt "lib/encoding.dart (sms)"?>
-```dart
-final Uri smsLaunchUri = Uri(
-  scheme: 'sms',
-  path: '0118 999 881 999 119 7253',
-  queryParameters: <String, String>{
-    'body': Uri.encodeComponent('Example Subject & Symbols are allowed!'),
-  },
-);
 ```
 
 ### URLs not handled by `Uri`

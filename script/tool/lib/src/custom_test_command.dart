@@ -8,7 +8,6 @@ import 'common/package_looping_command.dart';
 import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
-const String _scriptName = 'run_tests.dart';
 const String _legacyScriptName = 'run_tests.sh';
 
 /// A command to run custom, package-local tests on packages.
@@ -22,6 +21,7 @@ class CustomTestCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   });
 
   @override
@@ -32,13 +32,14 @@ class CustomTestCommand extends PackageLoopingCommand {
 
   @override
   final String description = 'Runs package-specific custom tests defined in '
-      "a package's tool/$_scriptName file.\n\n"
+      "a package's custom test script.\n\n"
       'This command requires "dart" to be in your path.';
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final File script =
-        package.directory.childDirectory('tool').childFile(_scriptName);
+    final File script = package.customTestScript;
+    final String relativeScriptPath =
+        getRelativePosixPath(script, from: package.directory);
     final File legacyScript = package.directory.childFile(_legacyScriptName);
     String? customSkipReason;
     bool ranTests = false;
@@ -52,7 +53,7 @@ class CustomTestCommand extends PackageLoopingCommand {
       }
 
       final int testExitCode = await processRunner.runAndStream(
-          'dart', <String>['run', 'tool/$_scriptName'],
+          'dart', <String>['run', relativeScriptPath],
           workingDir: package.directory);
       if (testExitCode != 0) {
         return PackageResult.fail();
@@ -64,7 +65,7 @@ class CustomTestCommand extends PackageLoopingCommand {
     if (legacyScript.existsSync()) {
       if (platform.isWindows) {
         customSkipReason = '$_legacyScriptName is not supported on Windows. '
-            'Please migrate to $_scriptName.';
+            'Please migrate to $relativeScriptPath.';
       } else {
         final int exitCode = await processRunner.runAndStream(
             legacyScript.path, <String>[],
@@ -77,7 +78,8 @@ class CustomTestCommand extends PackageLoopingCommand {
     }
 
     if (!ranTests) {
-      return PackageResult.skip(customSkipReason ?? 'No custom tests');
+      return PackageResult.skip(
+          customSkipReason ?? 'No $relativeScriptPath file');
     }
 
     return PackageResult.success();

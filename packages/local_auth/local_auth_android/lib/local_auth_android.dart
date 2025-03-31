@@ -44,7 +44,7 @@ class LocalAuthAndroid extends LocalAuthPlatform {
         _pigeonStringsFromAuthMessages(localizedReason, authMessages));
     // TODO(stuartmorgan): Replace this with structured errors, coordinated
     // across all platform implementations, per
-    // https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages#platform-exception-handling
+    // https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#platform-exception-handling
     // The PlatformExceptions thrown here are for compatibiilty with the
     // previous Java implementation.
     switch (result) {
@@ -95,12 +95,9 @@ class LocalAuthAndroid extends LocalAuthPlatform {
 
   @override
   Future<List<BiometricType>> getEnrolledBiometrics() async {
-    final List<AuthClassificationWrapper?> result =
-        await _api.getEnrolledBiometrics();
-    return result
-        .cast<AuthClassificationWrapper>()
-        .map((AuthClassificationWrapper entry) {
-      switch (entry.value) {
+    final List<AuthClassification> result = await _api.getEnrolledBiometrics();
+    return result.map((AuthClassification value) {
+      switch (value) {
         case AuthClassification.weak:
           return BiometricType.weak;
         case AuthClassification.strong:

@@ -278,30 +278,6 @@ class FileSystemUtils {
       i += 1;
     }
   }
-
-  /// Escapes [path].
-  ///
-  /// On Windows it replaces all '\' with '\\'. On other platforms, it returns the
-  /// path unchanged.
-  String escapePath(String path) =>
-      isWindows ? path.replaceAll(r'\', r'\\') : path;
-
-  /// Returns true if the file system [entity] has not been modified since the
-  /// latest modification to [referenceFile].
-  ///
-  /// Returns true, if [entity] does not exist.
-  ///
-  /// Returns false, if [entity] exists, but [referenceFile] does not.
-  bool isOlderThanReference({
-    required FileSystemEntity entity,
-    required File referenceFile,
-  }) {
-    if (!entity.existsSync()) {
-      return true;
-    }
-    return referenceFile.existsSync() &&
-        referenceFile.statSync().modified.isAfter(entity.statSync().modified);
-  }
 }
 
 /// Creates `destDir` if needed, then recursively copies `srcDir` to

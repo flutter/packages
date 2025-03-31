@@ -46,6 +46,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
           code: 'unsupported-options',
           message: 'Games sign in is not supported on iOS');
     }
+    if (params.forceAccountName != null) {
+      throw ArgumentError('Force account name is not supported on iOS');
+    }
     return _api.init(InitParams(
       scopes: params.scopes,
       hostedDomain: params.hostedDomain,
@@ -86,7 +89,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   }
 
   @override
-  Future<void> clearAuthCache({String? token}) async {
+  Future<void> clearAuthCache({required String token}) async {
     // There's nothing to be done here on iOS since the expired/invalid
     // tokens are refreshed automatically by getTokens.
   }

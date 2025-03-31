@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 
 /// Error codes that may occur during the camera initialization,
 /// configuration or video streaming.
@@ -78,18 +78,17 @@ class CameraErrorCode {
   /// Returns a camera error code based on the media error.
   ///
   /// See: https://developer.mozilla.org/en-US/docs/Web/API/MediaError/code
-  static CameraErrorCode fromMediaError(html.MediaError error) {
-    switch (error.code) {
-      case html.MediaError.MEDIA_ERR_ABORTED:
-        return const CameraErrorCode._('mediaErrorAborted');
-      case html.MediaError.MEDIA_ERR_NETWORK:
-        return const CameraErrorCode._('mediaErrorNetwork');
-      case html.MediaError.MEDIA_ERR_DECODE:
-        return const CameraErrorCode._('mediaErrorDecode');
-      case html.MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-        return const CameraErrorCode._('mediaErrorSourceNotSupported');
-      default:
-        return const CameraErrorCode._('mediaErrorUnknown');
+  static CameraErrorCode fromMediaError(web.MediaError error) {
+    if (error.code == web.MediaError.MEDIA_ERR_ABORTED) {
+      return const CameraErrorCode._('mediaErrorAborted');
+    } else if (error.code == web.MediaError.MEDIA_ERR_NETWORK) {
+      return const CameraErrorCode._('mediaErrorNetwork');
+    } else if (error.code == web.MediaError.MEDIA_ERR_DECODE) {
+      return const CameraErrorCode._('mediaErrorDecode');
+    } else if (error.code == web.MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED) {
+      return const CameraErrorCode._('mediaErrorSourceNotSupported');
+    } else {
+      return const CameraErrorCode._('mediaErrorUnknown');
     }
   }
 }

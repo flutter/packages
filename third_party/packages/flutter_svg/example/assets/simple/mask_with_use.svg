@@ -1,0 +1,10 @@
+<svg viewBox="0 0 59 84"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+        <path id="a" d="M0 0h62v86H0z"/>
+    </defs>
+    <g transform="translate(0 -2)" fill="none" fill-rule="evenodd">
+        <mask id="b" fill="#ddd"><use xlink:href="#a"/></mask>
+    </g>
+</svg>

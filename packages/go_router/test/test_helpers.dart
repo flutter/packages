@@ -45,16 +45,17 @@ class GoRouterNamedLocationSpy extends GoRouter {
   String? name;
   Map<String, String>? pathParameters;
   Map<String, dynamic>? queryParameters;
+  String? fragment;
 
   @override
-  String namedLocation(
-    String name, {
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, dynamic> queryParameters = const <String, dynamic>{},
-  }) {
+  String namedLocation(String name,
+      {Map<String, String> pathParameters = const <String, String>{},
+      Map<String, dynamic> queryParameters = const <String, dynamic>{},
+      String? fragment}) {
     this.name = name;
     this.pathParameters = pathParameters;
     this.queryParameters = queryParameters;
+    this.fragment = fragment;
     return '';
   }
 }
@@ -85,6 +86,7 @@ class GoRouterGoNamedSpy extends GoRouter {
   Map<String, String>? pathParameters;
   Map<String, dynamic>? queryParameters;
   Object? extra;
+  String? fragment;
 
   @override
   void goNamed(
@@ -92,11 +94,13 @@ class GoRouterGoNamedSpy extends GoRouter {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    String? fragment,
   }) {
     this.name = name;
     this.pathParameters = pathParameters;
     this.queryParameters = queryParameters;
     this.extra = extra;
+    this.fragment = fragment;
   }
 }
 
@@ -188,6 +192,7 @@ Future<GoRouter> createRouter(
     requestFocus: requestFocus,
     overridePlatformDefaultLocation: overridePlatformDefaultLocation,
   );
+  addTearDown(goRouter.dispose);
   await tester.pumpWidget(
     MaterialApp.router(
       restorationScopeId:
@@ -221,6 +226,7 @@ Future<GoRouter> createRouterWithRoutingConfig(
     requestFocus: requestFocus,
     overridePlatformDefaultLocation: overridePlatformDefaultLocation,
   );
+  addTearDown(goRouter.dispose);
   await tester.pumpWidget(
     MaterialApp.router(
       restorationScopeId:
@@ -336,6 +342,12 @@ class DummyRestorableStatefulWidgetState
   }
 
   @override
+  void dispose() {
+    _counter.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => Container();
 }
 
@@ -355,14 +367,6 @@ StatefulShellRouteBuilder mockStackedShellBuilder = (BuildContext context,
     GoRouterState state, StatefulNavigationShell navigationShell) {
   return navigationShell;
 };
-
-RouteMatch createRouteMatch(RouteBase route, String location) {
-  return RouteMatch(
-    route: route,
-    matchedLocation: location,
-    pageKey: ValueKey<String>(location),
-  );
-}
 
 /// A routing config that is never going to change.
 class ConstantRoutingConfig extends ValueListenable<RoutingConfig> {

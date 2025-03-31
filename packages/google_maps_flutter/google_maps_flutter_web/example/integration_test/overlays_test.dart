@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
+import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,9 +11,12 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart'
     hide GoogleMapController;
+// ignore: implementation_imports
+import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:web/web.dart';
 
 @GenerateNiceMocks(<MockSpec<dynamic>>[MockSpec<TileProvider>()])
 import 'overlays_test.mocks.dart';
@@ -30,21 +33,21 @@ void main() {
 
   group('TileOverlaysController', () {
     late TileOverlaysController controller;
-    late gmaps.GMap map;
+    late gmaps.Map map;
     late List<MockTileProvider> tileProviders;
     late List<TileOverlay> tileOverlays;
 
     /// Queries the current overlay map types for tiles at x = 0, y = 0, zoom =
     /// 0.
     void probeTiles() {
-      for (final gmaps.MapType? mapType in map.overlayMapTypes!.array!) {
-        mapType?.getTile!(gmaps.Point(0, 0), 0, html.document);
+      for (final gmaps.MapType? mapType in map.overlayMapTypes.array.toDart) {
+        mapType?.getTile(gmaps.Point(0, 0), 0, document);
       }
     }
 
     setUp(() {
       controller = TileOverlaysController();
-      map = gmaps.GMap(html.DivElement());
+      map = gmaps.Map(createDivElement());
       controller.googleMap = map;
 
       tileProviders = <MockTileProvider>[

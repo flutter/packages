@@ -154,8 +154,6 @@ class VersionCheckCommand extends PackageLoopingCommand {
   final PubVersionFinder _pubVersionFinder;
 
   late final GitVersionFinder _gitVersionFinder;
-  late final String _mergeBase;
-  late final List<String> _changedFiles;
 
   late final Set<String> _prLabels = _getPRLabels();
 
@@ -177,8 +175,6 @@ class VersionCheckCommand extends PackageLoopingCommand {
   @override
   Future<void> initializeRun() async {
     _gitVersionFinder = await retrieveVersionFinder();
-    _mergeBase = await _gitVersionFinder.getBaseSha();
-    _changedFiles = await _gitVersionFinder.getChangedFiles();
   }
 
   @override
@@ -210,20 +206,16 @@ class VersionCheckCommand extends PackageLoopingCommand {
     switch (versionState) {
       case _CurrentVersionState.unchanged:
         versionChanged = false;
-        break;
       case _CurrentVersionState.validIncrease:
       case _CurrentVersionState.validRevert:
       case _CurrentVersionState.newPackage:
         versionChanged = true;
-        break;
       case _CurrentVersionState.invalidChange:
         versionChanged = true;
         errors.add('Disallowed version change.');
-        break;
       case _CurrentVersionState.unknown:
         versionChanged = false;
         errors.add('Unable to determine previous version.');
-        break;
     }
 
     if (!(await _validateChangelogVersion(package,
@@ -283,7 +275,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
     final String gitPath = path.style == p.Style.windows
         ? p.posix.joinAll(path.split(relativePath))
         : relativePath;
-    return _gitVersionFinder.getPackageVersion(gitPath, gitRef: _mergeBase);
+    return _gitVersionFinder.getPackageVersion(gitPath, gitRef: baseSha);
   }
 
   /// Returns the state of the verison of [package] relative to the comparison
@@ -307,7 +299,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
             '$indentation${pubspec.name}: Current largest version on pub: $previousVersion');
       }
     } else {
-      previousVersionSource = _mergeBase;
+      previousVersionSource = baseSha;
       previousVersion =
           await _getPreviousVersionFromGit(package) ?? Version.none;
     }
@@ -362,7 +354,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
           '${indentation}Breaking changes to platform interfaces are not '
           'allowed without explicit justification.\n'
           '${indentation}See '
-          'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages '
+          'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md '
           'for more information.');
       return _CurrentVersionState.invalidChange;
     }
@@ -396,6 +388,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
     }
     // Remove all leading mark down syntax from the version line.
     String? versionString = firstLineWithText?.split(' ').last;
+    String? leadingMarkdown = firstLineWithText?.split(' ').first;
 
     final String badNextErrorMessage = '${indentation}When bumping the version '
         'for release, the NEXT section should be incorporated into the new '
@@ -417,15 +410,18 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       // CHANGELOG. That means the next version entry in the CHANGELOG should
       // pass the normal validation.
       versionString = null;
+      leadingMarkdown = null;
       while (iterator.moveNext()) {
         if (iterator.current.trim().startsWith('## ')) {
           versionString = iterator.current.trim().split(' ').last;
+          leadingMarkdown = iterator.current.trim().split(' ').first;
           break;
         }
       }
     }
 
-    if (versionString == null) {
+    final bool validLeadingMarkdown = leadingMarkdown == '##';
+    if (versionString == null || !validLeadingMarkdown) {
       printError('${indentation}Unable to find a version in CHANGELOG.md');
       print('${indentation}The current version should be on a line starting '
           'with "## ", either on the first non-empty line or after a "## NEXT" '
@@ -535,7 +531,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
   /// This should only be called if the version did not change.
   Future<String?> _checkForMissingChangeError(RepositoryPackage package) async {
     // Find the relative path to the current package, as it would appear at the
-    // beginning of a path reported by getChangedFiles() (which always uses
+    // beginning of a path reported by changedFiles (which always uses
     // Posix paths).
     final Directory gitRoot =
         packagesDir.fileSystem.directory((await gitDir).path);
@@ -543,7 +539,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         getRelativePosixPath(package.directory, from: gitRoot);
 
     final PackageChangeState state = await checkPackageChangeState(package,
-        changedPaths: _changedFiles,
+        changedPaths: changedFiles,
         relativePackagePath: relativePackagePath,
         git: await retrieveVersionFinder());
 

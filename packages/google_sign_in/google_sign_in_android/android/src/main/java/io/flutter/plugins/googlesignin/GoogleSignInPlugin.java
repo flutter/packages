@@ -9,6 +9,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,37 +27,22 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.android.gms.tasks.Task;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.googlesignin.Messages.FlutterError;
 import io.flutter.plugins.googlesignin.Messages.GoogleSignInApi;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 /** Google sign-in plugin for Flutter. */
 public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
   private Delegate delegate;
   private @Nullable BinaryMessenger messenger;
   private ActivityPluginBinding activityPluginBinding;
-
-  @SuppressWarnings("deprecation")
-  public static void registerWith(
-      @NonNull io.flutter.plugin.common.PluginRegistry.Registrar registrar) {
-    GoogleSignInPlugin instance = new GoogleSignInPlugin();
-    instance.initInstance(registrar.messenger(), registrar.context(), new GoogleSignInWrapper());
-    instance.setUpRegistrar(registrar);
-  }
 
   @VisibleForTesting
   public void initInstance(
@@ -64,19 +51,13 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       @NonNull GoogleSignInWrapper googleSignInWrapper) {
     this.messenger = messenger;
     delegate = new Delegate(context, googleSignInWrapper);
-    GoogleSignInApi.setup(messenger, delegate);
-  }
-
-  @VisibleForTesting
-  @SuppressWarnings("deprecation")
-  public void setUpRegistrar(@NonNull PluginRegistry.Registrar registrar) {
-    delegate.setUpRegistrar(registrar);
+    GoogleSignInApi.setUp(messenger, delegate);
   }
 
   private void dispose() {
     delegate = null;
     if (messenger != null) {
-      GoogleSignInApi.setup(messenger, null);
+      GoogleSignInApi.setUp(messenger, null);
       messenger = null;
     }
   }
@@ -125,217 +106,16 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     disposeActivity();
   }
 
-  // TODO(stuartmorgan): Remove this, and convert the unit tests to IDelegate tests. This is left
-  // here only to allow the existing tests to continue to work unchanged during the Pigeon migration
-  // to ensure that the refactoring didn't change any behavior, and is not actually used by the
-  // plugin.
-  @VisibleForTesting
-  void onMethodCall(
-      @NonNull io.flutter.plugin.common.MethodCall call, @NonNull MethodChannel.Result result) {
-    switch (call.method) {
-      case "init":
-        String signInOption = Objects.requireNonNull(call.argument("signInOption"));
-        List<String> requestedScopes = Objects.requireNonNull(call.argument("scopes"));
-        String hostedDomain = call.argument("hostedDomain");
-        String clientId = call.argument("clientId");
-        String serverClientId = call.argument("serverClientId");
-        boolean forceCodeForRefreshToken =
-            Objects.requireNonNull(call.argument("forceCodeForRefreshToken"));
-        delegate.init(
-            result,
-            signInOption,
-            requestedScopes,
-            hostedDomain,
-            clientId,
-            serverClientId,
-            forceCodeForRefreshToken);
-        break;
-
-      case "signInSilently":
-        delegate.signInSilently(result);
-        break;
-
-      case "signIn":
-        delegate.signIn(result);
-        break;
-
-      case "getTokens":
-        String email = Objects.requireNonNull(call.argument("email"));
-        boolean shouldRecoverAuth = Objects.requireNonNull(call.argument("shouldRecoverAuth"));
-        delegate.getTokens(result, email, shouldRecoverAuth);
-        break;
-
-      case "signOut":
-        delegate.signOut(result);
-        break;
-
-      case "clearAuthCache":
-        String token = Objects.requireNonNull(call.argument("token"));
-        delegate.clearAuthCache(result, token);
-        break;
-
-      case "disconnect":
-        delegate.disconnect(result);
-        break;
-
-      case "isSignedIn":
-        delegate.isSignedIn(result);
-        break;
-
-      case "requestScopes":
-        List<String> scopes = Objects.requireNonNull(call.argument("scopes"));
-        delegate.requestScopes(result, scopes);
-        break;
-
-      default:
-        result.notImplemented();
-    }
-  }
-
-  /**
-   * A delegate interface that exposes all of the sign-in functionality for other plugins to use.
-   * The below {@link Delegate} implementation should be used by any clients unless they need to
-   * override some of these functions, such as for testing.
-   */
-  public interface IDelegate {
-    /** Initializes this delegate so that it is ready to perform other operations. */
-    void init(
-        @NonNull MethodChannel.Result result,
-        @NonNull String signInOption,
-        @NonNull List<String> requestedScopes,
-        @Nullable String hostedDomain,
-        @Nullable String clientId,
-        @Nullable String serverClientId,
-        boolean forceCodeForRefreshToken);
-
-    /**
-     * Returns the account information for the user who is signed in to this app. If no user is
-     * signed in, tries to sign the user in without displaying any user interface.
-     */
-    void signInSilently(@NonNull MethodChannel.Result result);
-
-    /**
-     * Signs the user in via the sign-in user interface, including the OAuth consent flow if scopes
-     * were requested.
-     */
-    void signIn(@NonNull MethodChannel.Result result);
-
-    /**
-     * Gets an OAuth access token with the scopes that were specified during initialization for the
-     * user with the specified email address.
-     *
-     * <p>If shouldRecoverAuth is set to true and user needs to recover authentication for method to
-     * complete, the method will attempt to recover authentication and rerun method.
-     */
-    void getTokens(
-        final @NonNull MethodChannel.Result result,
-        final @NonNull String email,
-        final boolean shouldRecoverAuth);
-
-    /**
-     * Clears the token from any client cache forcing the next {@link #getTokens} call to fetch a
-     * new one.
-     */
-    void clearAuthCache(final @NonNull MethodChannel.Result result, final @NonNull String token);
-
-    /**
-     * Signs the user out. Their credentials may remain valid, meaning they'll be able to silently
-     * sign back in.
-     */
-    void signOut(@NonNull MethodChannel.Result result);
-
-    /** Signs the user out, and revokes their credentials. */
-    void disconnect(@NonNull MethodChannel.Result result);
-
-    /** Checks if there is a signed in user. */
-    void isSignedIn(@NonNull MethodChannel.Result result);
-
-    /** Prompts the user to grant an additional Oauth scopes. */
-    void requestScopes(
-        final @NonNull MethodChannel.Result result, final @NonNull List<String> scopes);
-  }
-
-  /**
-   * Helper class for supporting the legacy IDelegate interface based on raw method channels, which
-   * handles converting any FlutterErrors (or other {@code Throwable}s in case any non- FlutterError
-   * exceptions slip through) thrown by the new code paths into {@code error} callbacks.
-   *
-   * @param <T> The Result type of the result to convert from.
-   */
-  private abstract static class ErrorConvertingMethodChannelResult<T>
-      implements Messages.Result<T> {
-    final @NonNull MethodChannel.Result result;
-
-    public ErrorConvertingMethodChannelResult(@NonNull MethodChannel.Result result) {
-      this.result = result;
-    }
-
-    @Override
-    public void error(@NonNull Throwable error) {
-      if (error instanceof FlutterError) {
-        FlutterError flutterError = (FlutterError) error;
-        result.error(flutterError.code, flutterError.getMessage(), flutterError.details);
-      } else {
-        result.error("exception", error.getMessage(), null);
-      }
-    }
-  }
-
-  /**
-   * Helper class for supporting the legacy IDelegate interface based on raw method channels, which
-   * handles converting responses from methods that return {@code Messages.UserData}.
-   */
-  private static class UserDataMethodChannelResult
-      extends ErrorConvertingMethodChannelResult<Messages.UserData> {
-    public UserDataMethodChannelResult(MethodChannel.Result result) {
-      super(result);
-    }
-
-    @Override
-    public void success(Messages.UserData data) {
-      Map<String, Object> response = new HashMap<>();
-      response.put("email", data.getEmail());
-      response.put("id", data.getId());
-      response.put("idToken", data.getIdToken());
-      response.put("serverAuthCode", data.getServerAuthCode());
-      response.put("displayName", data.getDisplayName());
-      if (data.getPhotoUrl() != null) {
-        response.put("photoUrl", data.getPhotoUrl());
-      }
-      result.success(response);
-    }
-  }
-
-  /**
-   * Helper class for supporting the legacy IDelegate interface based on raw method channels, which
-   * handles converting responses from methods that return {@code Void}.
-   */
-  private static class VoidMethodChannelResult extends ErrorConvertingMethodChannelResult<Void> {
-    public VoidMethodChannelResult(MethodChannel.Result result) {
-      super(result);
-    }
-
-    @Override
-    public void success(Void unused) {
-      result.success(null);
-    }
-  }
-
   /**
    * Delegate class that does the work for the Google sign-in plugin. This is exposed as a dedicated
    * class for use in other plugins that wrap basic sign-in functionality.
    *
    * <p>All methods in this class assume that they are run to completion before any other method is
-   * invoked. In this context, "run to completion" means that their {@link MethodChannel.Result}
-   * argument has been completed (either successfully or in error). This class provides no
-   * synchronization constructs to guarantee such behavior; callers are responsible for providing
-   * such guarantees.
+   * invoked. In this context, "run to completion" means that their {@link Messages.Result} argument
+   * has been completed (either successfully or in error). This class provides no synchronization
+   * constructs to guarantee such behavior; callers are responsible for providing such guarantees.
    */
-  // TODO(stuartmorgan): Remove this in a breaking change, replacing it with something using
-  // structured types rather than strings and dictionaries left over from the pre-Pigeon method
-  // channel implementation.
-  public static class Delegate
-      implements IDelegate, PluginRegistry.ActivityResultListener, GoogleSignInApi {
+  public static class Delegate implements PluginRegistry.ActivityResultListener, GoogleSignInApi {
     private static final int REQUEST_CODE_SIGNIN = 53293;
     private static final int REQUEST_CODE_RECOVER_AUTH = 53294;
     @VisibleForTesting static final int REQUEST_CODE_REQUEST_SCOPE = 53295;
@@ -350,17 +130,9 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     private static final String ERROR_FAILURE_TO_RECOVER_AUTH = "failed_to_recover_auth";
     private static final String ERROR_USER_RECOVERABLE_AUTH = "user_recoverable_auth";
 
-    private static final String DEFAULT_SIGN_IN = "SignInOption.standard";
-    private static final String DEFAULT_GAMES_SIGN_IN = "SignInOption.games";
-
     private final @NonNull Context context;
-    // Only set registrar for v1 embedder.
-    @SuppressWarnings("deprecation")
-    private PluginRegistry.Registrar registrar;
     // Only set activity for v2 embedder. Always access activity from getActivity() method.
     private @Nullable Activity activity;
-    // TODO(stuartmorgan): See whether this can be replaced with background channels.
-    private final BackgroundTaskRunner backgroundTaskRunner = new BackgroundTaskRunner(1);
     private final GoogleSignInWrapper googleSignInWrapper;
 
     private GoogleSignInClient signInClient;
@@ -372,25 +144,19 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       this.googleSignInWrapper = googleSignInWrapper;
     }
 
-    @SuppressWarnings("deprecation")
-    public void setUpRegistrar(@NonNull PluginRegistry.Registrar registrar) {
-      this.registrar = registrar;
-      registrar.addActivityResultListener(this);
-    }
-
     public void setActivity(@Nullable Activity activity) {
       this.activity = activity;
     }
 
     // Only access activity with this method.
     public @Nullable Activity getActivity() {
-      return registrar != null ? registrar.activity() : activity;
+      return activity;
     }
 
     private void checkAndSetPendingOperation(
         String method,
         Messages.Result<Messages.UserData> userDataResult,
-        Messages.Result<Void> voidResult,
+        Messages.VoidResult voidResult,
         Messages.Result<Boolean> boolResult,
         Messages.Result<String> stringResult,
         Object data) {
@@ -408,7 +174,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     }
 
     private void checkAndSetPendingVoidOperation(
-        String method, @NonNull Messages.Result<Void> result) {
+        String method, @NonNull Messages.VoidResult result) {
       checkAndSetPendingOperation(method, null, result, null, null, null);
     }
 
@@ -454,7 +220,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         // https://developers.google.com/android/guides/client-auth
         // https://developers.google.com/identity/sign-in/android/start#configure-a-google-api-project
         String serverClientId = params.getServerClientId();
-        if (!Strings.isNullOrEmpty(params.getClientId()) && Strings.isNullOrEmpty(serverClientId)) {
+        if (!isNullOrEmpty(params.getClientId()) && isNullOrEmpty(serverClientId)) {
           Log.w(
               "google_sign_in",
               "clientId is not supported on Android and is interpreted as serverClientId. "
@@ -462,7 +228,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           serverClientId = params.getClientId();
         }
 
-        if (Strings.isNullOrEmpty(serverClientId)) {
+        if (isNullOrEmpty(serverClientId)) {
           // Only requests a clientId if google-services.json was present and parsed
           // by the google-services Gradle script.
           // TODO(jackson): Perhaps we should provide a mechanism to override this
@@ -476,7 +242,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
             serverClientId = context.getString(webClientIdIdentifier);
           }
         }
-        if (!Strings.isNullOrEmpty(serverClientId)) {
+        if (!isNullOrEmpty(serverClientId)) {
           optionsBuilder.requestIdToken(serverClientId);
           optionsBuilder.requestServerAuthCode(
               serverClientId, params.getForceCodeForRefreshToken());
@@ -485,50 +251,18 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         for (String scope : requestedScopes) {
           optionsBuilder.requestScopes(new Scope(scope));
         }
-        if (!Strings.isNullOrEmpty(params.getHostedDomain())) {
+        if (!isNullOrEmpty(params.getHostedDomain())) {
           optionsBuilder.setHostedDomain(params.getHostedDomain());
+        }
+
+        String forceAccountName = params.getForceAccountName();
+        if (!isNullOrEmpty(forceAccountName)) {
+          optionsBuilder.setAccountName(forceAccountName);
         }
 
         signInClient = googleSignInWrapper.getClient(context, optionsBuilder.build());
       } catch (Exception e) {
         throw new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null);
-      }
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void init(
-        @NonNull MethodChannel.Result result,
-        @NonNull String signInOption,
-        @NonNull List<String> requestedScopes,
-        @Nullable String hostedDomain,
-        @Nullable String clientId,
-        @Nullable String serverClientId,
-        boolean forceCodeForRefreshToken) {
-      try {
-        Messages.SignInType type;
-        switch (signInOption) {
-          case DEFAULT_GAMES_SIGN_IN:
-            type = Messages.SignInType.GAMES;
-            break;
-          case DEFAULT_SIGN_IN:
-            type = Messages.SignInType.STANDARD;
-            break;
-          default:
-            throw new IllegalStateException("Unknown signInOption");
-        }
-        init(
-            new Messages.InitParams.Builder()
-                .setSignInType(type)
-                .setScopes(requestedScopes)
-                .setHostedDomain(hostedDomain)
-                .setClientId(clientId)
-                .setServerClientId(serverClientId)
-                .setForceCodeForRefreshToken(forceCodeForRefreshToken)
-                .build());
-        result.success(null);
-      } catch (FlutterError e) {
-        result.error(e.code, e.getMessage(), e.details);
       }
     }
 
@@ -548,12 +282,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       }
     }
 
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void signInSilently(@NonNull MethodChannel.Result result) {
-      signInSilently(new UserDataMethodChannelResult(result));
-    }
-
     /**
      * Signs the user in via the sign-in user interface, including the OAuth consent flow if scopes
      * were requested.
@@ -569,18 +297,12 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       getActivity().startActivityForResult(signInIntent, REQUEST_CODE_SIGNIN);
     }
 
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void signIn(@NonNull MethodChannel.Result result) {
-      signIn(new UserDataMethodChannelResult(result));
-    }
-
     /**
      * Signs the user out. Their credentials may remain valid, meaning they'll be able to silently
      * sign back in.
      */
     @Override
-    public void signOut(@NonNull Messages.Result<Void> result) {
+    public void signOut(@NonNull Messages.VoidResult result) {
       checkAndSetPendingVoidOperation("signOut", result);
 
       signInClient
@@ -595,15 +317,9 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
               });
     }
 
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void signOut(@NonNull MethodChannel.Result result) {
-      signOut(new VoidMethodChannelResult(result));
-    }
-
     /** Signs the user out, and revokes their credentials. */
     @Override
-    public void disconnect(@NonNull Messages.Result<Void> result) {
+    public void disconnect(@NonNull Messages.VoidResult result) {
       checkAndSetPendingVoidOperation("disconnect", result);
 
       signInClient
@@ -618,23 +334,11 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
               });
     }
 
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void disconnect(@NonNull MethodChannel.Result result) {
-      signOut(new VoidMethodChannelResult(result));
-    }
-
     /** Checks if there is a signed in user. */
     @NonNull
     @Override
     public Boolean isSignedIn() {
       return GoogleSignIn.getLastSignedInAccount(context) != null;
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void isSignedIn(final @NonNull MethodChannel.Result result) {
-      result.success(isSignedIn());
     }
 
     @Override
@@ -664,19 +368,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
 
       googleSignInWrapper.requestPermissions(
           getActivity(), REQUEST_CODE_REQUEST_SCOPE, account, wrappedScopes.toArray(new Scope[0]));
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void requestScopes(@NonNull MethodChannel.Result result, @NonNull List<String> scopes) {
-      requestScopes(
-          scopes,
-          new ErrorConvertingMethodChannelResult<Boolean>(result) {
-            @Override
-            public void success(Boolean value) {
-              result.success(value);
-            }
-          });
     }
 
     private void onSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -728,7 +419,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     }
 
     private void finishWithSuccess() {
-      Objects.requireNonNull(pendingOperation.voidResult).success(null);
+      Objects.requireNonNull(pendingOperation.voidResult).success();
       pendingOperation = null;
     }
 
@@ -743,24 +434,31 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     }
 
     private void finishWithError(String errorCode, String errorMessage) {
-      Messages.Result<?> result;
-      if (pendingOperation.userDataResult != null) {
-        result = pendingOperation.userDataResult;
-      } else if (pendingOperation.boolResult != null) {
-        result = pendingOperation.boolResult;
-      } else if (pendingOperation.stringResult != null) {
-        result = pendingOperation.stringResult;
+      if (pendingOperation.voidResult != null) {
+        Objects.requireNonNull(pendingOperation.voidResult)
+            .error(new FlutterError(errorCode, errorMessage, null));
       } else {
-        result = pendingOperation.voidResult;
+        Messages.Result<?> result;
+        if (pendingOperation.userDataResult != null) {
+          result = pendingOperation.userDataResult;
+        } else if (pendingOperation.boolResult != null) {
+          result = pendingOperation.boolResult;
+        } else {
+          result = pendingOperation.stringResult;
+        }
+        Objects.requireNonNull(result).error(new FlutterError(errorCode, errorMessage, null));
       }
-      Objects.requireNonNull(result).error(new FlutterError(errorCode, errorMessage, null));
       pendingOperation = null;
+    }
+
+    private static boolean isNullOrEmpty(@Nullable String s) {
+      return s == null || s.isEmpty();
     }
 
     private static class PendingOperation {
       final @NonNull String method;
       final @Nullable Messages.Result<Messages.UserData> userDataResult;
-      final @Nullable Messages.Result<Void> voidResult;
+      final @Nullable Messages.VoidResult voidResult;
       final @Nullable Messages.Result<Boolean> boolResult;
       final @Nullable Messages.Result<String> stringResult;
       final @Nullable Object data;
@@ -768,7 +466,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       PendingOperation(
           @NonNull String method,
           @Nullable Messages.Result<Messages.UserData> userDataResult,
-          @Nullable Messages.Result<Void> voidResult,
+          @Nullable Messages.VoidResult voidResult,
           @Nullable Messages.Result<Boolean> boolResult,
           @Nullable Messages.Result<String> stringResult,
           @Nullable Object data) {
@@ -785,42 +483,25 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       }
     }
 
-    /** Clears the token kept in the client side cache. */
+    /**
+     * Clears the token kept in the client side cache.
+     *
+     * <p>Runs on a background task queue.
+     */
     @Override
-    public void clearAuthCache(@NonNull String token, @NonNull Messages.Result<Void> result) {
-      Callable<Void> clearTokenTask =
-          () -> {
-            GoogleAuthUtil.clearToken(context, token);
-            return null;
-          };
-
-      backgroundTaskRunner.runInBackground(
-          clearTokenTask,
-          clearTokenFuture -> {
-            try {
-              result.success(clearTokenFuture.get());
-            } catch (ExecutionException e) {
-              @Nullable Throwable cause = e.getCause();
-              result.error(
-                  new FlutterError(
-                      ERROR_REASON_EXCEPTION, cause == null ? null : cause.getMessage(), null));
-            } catch (InterruptedException e) {
-              result.error(new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null));
-              Thread.currentThread().interrupt();
-            }
-          });
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void clearAuthCache(
-        final @NonNull MethodChannel.Result result, final @NonNull String token) {
-      clearAuthCache(token, new VoidMethodChannelResult(result));
+    public void clearAuthCache(@NonNull String token) {
+      try {
+        GoogleAuthUtil.clearToken(context, token);
+      } catch (Exception e) {
+        throw new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null);
+      }
     }
 
     /**
      * Gets an OAuth access token with the scopes that were specified during initialization for the
      * user with the specified email address.
+     *
+     * <p>Runs on a background task queue.
      *
      * <p>If shouldRecoverAuth is set to true and user needs to recover authentication for method to
      * complete, the method will attempt to recover authentication and rerun method.
@@ -830,72 +511,39 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         @NonNull String email,
         @NonNull Boolean shouldRecoverAuth,
         @NonNull Messages.Result<String> result) {
-      Callable<String> getTokenTask =
-          () -> {
-            Account account = new Account(email, "com.google");
-            String scopesStr = "oauth2:" + Joiner.on(' ').join(requestedScopes);
-            return GoogleAuthUtil.getToken(context, account, scopesStr);
-          };
-
-      // Background task runner has a single thread effectively serializing
-      // the getToken calls. 1p apps can then enjoy the token cache if multiple
-      // getToken calls are coming in.
-      backgroundTaskRunner.runInBackground(
-          getTokenTask,
-          tokenFuture -> {
-            try {
-              result.success(tokenFuture.get());
-            } catch (ExecutionException e) {
-              if (e.getCause() instanceof UserRecoverableAuthException) {
-                if (shouldRecoverAuth && pendingOperation == null) {
-                  Activity activity = getActivity();
-                  if (activity == null) {
-                    result.error(
-                        new FlutterError(
-                            ERROR_USER_RECOVERABLE_AUTH,
-                            "Cannot recover auth because app is not in foreground. "
-                                + e.getLocalizedMessage(),
-                            null));
-                  } else {
-                    checkAndSetPendingAccessTokenOperation("getTokens", result, email);
-                    Intent recoveryIntent =
-                        ((UserRecoverableAuthException) e.getCause()).getIntent();
-                    activity.startActivityForResult(recoveryIntent, REQUEST_CODE_RECOVER_AUTH);
-                  }
-                } else {
+      try {
+        Account account = new Account(email, "com.google");
+        String scopesStr = "oauth2:" + String.join(" ", requestedScopes);
+        String token = GoogleAuthUtil.getToken(context, account, scopesStr);
+        result.success(token);
+      } catch (UserRecoverableAuthException e) {
+        // This method runs in a background task queue; hop to the main thread for interactions with
+        // plugin state and activities.
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(
+            () -> {
+              if (shouldRecoverAuth && pendingOperation == null) {
+                Activity activity = getActivity();
+                if (activity == null) {
                   result.error(
-                      new FlutterError(ERROR_USER_RECOVERABLE_AUTH, e.getLocalizedMessage(), null));
+                      new FlutterError(
+                          ERROR_USER_RECOVERABLE_AUTH,
+                          "Cannot recover auth because app is not in foreground. "
+                              + e.getLocalizedMessage(),
+                          null));
+                } else {
+                  checkAndSetPendingAccessTokenOperation("getTokens", result, email);
+                  Intent recoveryIntent = e.getIntent();
+                  activity.startActivityForResult(recoveryIntent, REQUEST_CODE_RECOVER_AUTH);
                 }
               } else {
-                @Nullable Throwable cause = e.getCause();
                 result.error(
-                    new FlutterError(
-                        ERROR_REASON_EXCEPTION, cause == null ? null : cause.getMessage(), null));
+                    new FlutterError(ERROR_USER_RECOVERABLE_AUTH, e.getLocalizedMessage(), null));
               }
-            } catch (InterruptedException e) {
-              result.error(new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null));
-              Thread.currentThread().interrupt();
-            }
-          });
-    }
-
-    // IDelegate version, for backwards compatibility.
-    @Override
-    public void getTokens(
-        @NonNull final MethodChannel.Result result,
-        @NonNull final String email,
-        final boolean shouldRecoverAuth) {
-      getAccessToken(
-          email,
-          shouldRecoverAuth,
-          new ErrorConvertingMethodChannelResult<String>(result) {
-            @Override
-            public void success(String value) {
-              HashMap<String, String> tokenResult = new HashMap<>();
-              tokenResult.put("accessToken", value);
-              result.success(tokenResult);
-            }
-          });
+            });
+      } catch (Exception e) {
+        result.error(new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null));
+      }
     }
 
     @Override

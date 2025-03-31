@@ -6,5 +6,6 @@ framework module google_maps_flutter_ios {
 
   explicit module Test {
     header "GoogleMapController_Test.h"
+    header "GoogleMapMarkerController_Test.h"
   }
 }

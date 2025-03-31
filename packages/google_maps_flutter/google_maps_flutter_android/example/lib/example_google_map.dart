@@ -82,11 +82,17 @@ class ExampleGoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onCircleTap(mapId: mapId)
         .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value));
+    GoogleMapsFlutterPlatform.instance.onGroundOverlayTap(mapId: mapId).listen(
+        (GroundOverlayTapEvent e) =>
+            _googleMapState.onGroundOverlayTap(e.value));
     GoogleMapsFlutterPlatform.instance
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
     GoogleMapsFlutterPlatform.instance.onLongPress(mapId: mapId).listen(
         (MapLongPressEvent e) => _googleMapState.onLongPress(e.position));
+    GoogleMapsFlutterPlatform.instance
+        .onClusterTap(mapId: mapId)
+        .listen((ClusterTapEvent e) => _googleMapState.onClusterTap(e.value));
   }
 
   /// Updates configuration options of the map user interface.
@@ -99,6 +105,20 @@ class ExampleGoogleMapController {
   Future<void> _updateMarkers(MarkerUpdates markerUpdates) {
     return GoogleMapsFlutterPlatform.instance
         .updateMarkers(markerUpdates, mapId: mapId);
+  }
+
+  /// Updates cluster manager configuration.
+  Future<void> _updateClusterManagers(
+      ClusterManagerUpdates clusterManagerUpdates) {
+    return GoogleMapsFlutterPlatform.instance
+        .updateClusterManagers(clusterManagerUpdates, mapId: mapId);
+  }
+
+  /// Updates ground overlay configuration.
+  Future<void> _updateGroundOverlays(
+      GroundOverlayUpdates groundOverlayUpdates) {
+    return GoogleMapsFlutterPlatform.instance
+        .updateGroundOverlays(groundOverlayUpdates, mapId: mapId);
   }
 
   /// Updates polygon configuration.
@@ -133,21 +153,16 @@ class ExampleGoogleMapController {
   }
 
   /// Starts an animated change of the map camera position.
-  Future<void> animateCamera(CameraUpdate cameraUpdate) {
-    return GoogleMapsFlutterPlatform.instance
-        .animateCamera(cameraUpdate, mapId: mapId);
+  Future<void> animateCamera(CameraUpdate cameraUpdate, {Duration? duration}) {
+    return GoogleMapsFlutterPlatform.instance.animateCameraWithConfiguration(
+        cameraUpdate, CameraUpdateAnimationConfiguration(duration: duration),
+        mapId: mapId);
   }
 
   /// Changes the map camera position.
   Future<void> moveCamera(CameraUpdate cameraUpdate) {
     return GoogleMapsFlutterPlatform.instance
         .moveCamera(cameraUpdate, mapId: mapId);
-  }
-
-  /// Sets the styling of the base map.
-  Future<void> setMapStyle(String? mapStyle) {
-    return GoogleMapsFlutterPlatform.instance
-        .setMapStyle(mapStyle, mapId: mapId);
   }
 
   /// Return [LatLngBounds] defining the region that is visible in a map.
@@ -195,6 +210,11 @@ class ExampleGoogleMapController {
     return GoogleMapsFlutterPlatform.instance.takeSnapshot(mapId: mapId);
   }
 
+  /// Returns the last style error, if any.
+  Future<String?> getStyleError() {
+    return GoogleMapsFlutterPlatform.instance.getStyleError(mapId: mapId);
+  }
+
   /// Disposes of the platform resources
   void dispose() {
     GoogleMapsFlutterPlatform.instance.dispose(mapId: mapId);
@@ -238,13 +258,16 @@ class ExampleGoogleMap extends StatefulWidget {
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
     this.circles = const <Circle>{},
+    this.clusterManagers = const <ClusterManager>{},
     this.onCameraMoveStarted,
     this.tileOverlays = const <TileOverlay>{},
+    this.groundOverlays = const <GroundOverlay>{},
     this.onCameraMove,
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
     this.cloudMapId,
+    this.style,
   });
 
   /// Callback method for when the map is ready to be used.
@@ -312,6 +335,12 @@ class ExampleGoogleMap extends StatefulWidget {
   /// Tile overlays to be placed on the map.
   final Set<TileOverlay> tileOverlays;
 
+  /// Cluster Managers to be placed for the map.
+  final Set<ClusterManager> clusterManagers;
+
+  /// Ground overlays to be initialized for the map.
+  final Set<GroundOverlay> groundOverlays;
+
   /// Called when the camera starts moving.
   final VoidCallback? onCameraMoveStarted;
 
@@ -353,6 +382,9 @@ class ExampleGoogleMap extends StatefulWidget {
   /// for more details.
   final String? cloudMapId;
 
+  /// The locally configured style for the map.
+  final String? style;
+
   /// Creates a [State] for this [ExampleGoogleMap].
   @override
   State createState() => _ExampleGoogleMapState();
@@ -368,6 +400,10 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
   Map<PolygonId, Polygon> _polygons = <PolygonId, Polygon>{};
   Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
+  Map<ClusterManagerId, ClusterManager> _clusterManagers =
+      <ClusterManagerId, ClusterManager>{};
+  Map<GroundOverlayId, GroundOverlay> _groundOverlays =
+      <GroundOverlayId, GroundOverlay>{};
   late MapConfiguration _mapConfiguration;
 
   @override
@@ -387,6 +423,8 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
         polygons: widget.polygons,
         polylines: widget.polylines,
         circles: widget.circles,
+        clusterManagers: widget.clusterManagers,
+        groundOverlays: widget.groundOverlays,
       ),
       mapConfiguration: _mapConfiguration,
     );
@@ -396,10 +434,12 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
   void initState() {
     super.initState();
     _mapConfiguration = _configurationFromMapWidget(widget);
+    _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
     _markers = keyByMarkerId(widget.markers);
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
     _circles = keyByCircleId(widget.circles);
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   @override
@@ -413,11 +453,13 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
   void didUpdateWidget(ExampleGoogleMap oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateOptions();
+    _updateClusterManagers();
     _updateMarkers();
     _updatePolygons();
     _updatePolylines();
     _updateCircles();
     _updateTileOverlays();
+    _updateGroundOverlays();
   }
 
   Future<void> _updateOptions() async {
@@ -436,6 +478,20 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     unawaited(controller._updateMarkers(
         MarkerUpdates.from(_markers.values.toSet(), widget.markers)));
     _markers = keyByMarkerId(widget.markers);
+  }
+
+  Future<void> _updateClusterManagers() async {
+    final ExampleGoogleMapController controller = await _controller.future;
+    unawaited(controller._updateClusterManagers(ClusterManagerUpdates.from(
+        _clusterManagers.values.toSet(), widget.clusterManagers)));
+    _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
+  }
+
+  Future<void> _updateGroundOverlays() async {
+    final ExampleGoogleMapController controller = await _controller.future;
+    unawaited(controller._updateGroundOverlays(GroundOverlayUpdates.from(
+        _groundOverlays.values.toSet(), widget.groundOverlays)));
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   Future<void> _updatePolygons() async {
@@ -504,6 +560,10 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     _circles[circleId]!.onTap?.call();
   }
 
+  void onGroundOverlayTap(GroundOverlayId groundOverlayId) {
+    _groundOverlays[groundOverlayId]!.onTap?.call();
+  }
+
   void onInfoWindowTap(MarkerId markerId) {
     _markers[markerId]!.infoWindow.onTap?.call();
   }
@@ -514,6 +574,12 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
 
   void onLongPress(LatLng position) {
     widget.onLongPress?.call(position);
+  }
+
+  void onClusterTap(Cluster cluster) {
+    final ClusterManager? clusterManager =
+        _clusterManagers[cluster.clusterManagerId];
+    clusterManager?.onClusterTap?.call(cluster);
   }
 }
 
@@ -539,5 +605,6 @@ MapConfiguration _configurationFromMapWidget(ExampleGoogleMap map) {
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
     cloudMapId: map.cloudMapId,
+    style: map.style,
   );
 }

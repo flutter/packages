@@ -7,7 +7,6 @@ import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/output_utils.dart';
 import 'package:flutter_plugin_tools/src/common/package_looping_command.dart';
@@ -77,17 +76,16 @@ String _filenameForType(_ResultFileType type) {
 }
 
 void main() {
-  late FileSystem fileSystem;
   late MockPlatform mockPlatform;
   late Directory packagesDir;
   late Directory thirdPartyPackagesDir;
 
   setUp(() {
+    mockPlatform = MockPlatform();
+    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks(platform: mockPlatform);
     // Correct color handling is part of the behavior being tested here.
     useColorForOutput = true;
-    fileSystem = MemoryFileSystem();
-    mockPlatform = MockPlatform();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     thirdPartyPackagesDir = packagesDir.parent
         .childDirectory('third_party')
         .childDirectory('packages');
@@ -106,7 +104,6 @@ void main() {
     PackageLoopingType packageLoopingType = PackageLoopingType.topLevelOnly,
     bool failsDuringInit = false,
     bool warnsDuringInit = false,
-    bool warnsDuringCleanup = false,
     bool captureOutput = false,
     String? customFailureListHeader,
     String? customFailureListFooter,
@@ -117,12 +114,12 @@ void main() {
         .thenAnswer((Invocation invocation) {
       final List<String> arguments =
           invocation.positionalArguments[0]! as List<String>;
-      final MockProcessResult mockProcessResult = MockProcessResult();
+      String? gitStdOut;
       if (arguments[0] == 'diff') {
-        when<String?>(mockProcessResult.stdout as String?)
-            .thenReturn(gitDiffResponse);
+        gitStdOut = gitDiffResponse;
       }
-      return Future<io.ProcessResult>.value(mockProcessResult);
+      return Future<io.ProcessResult>.value(
+          io.ProcessResult(0, 0, gitStdOut ?? '', ''));
     });
 
     return TestPackageLoopingCommand(
@@ -132,7 +129,6 @@ void main() {
       packageLoopingType: packageLoopingType,
       failsDuringInit: failsDuringInit,
       warnsDuringInit: warnsDuringInit,
-      warnsDuringCleanup: warnsDuringCleanup,
       customFailureListHeader: customFailureListHeader,
       customFailureListFooter: customFailureListFooter,
       captureOutput: captureOutput,
@@ -835,7 +831,6 @@ void main() {
 
       final TestPackageLoopingCommand command = createTestCommand(
         hasLongOutput: false,
-        warnsDuringCleanup: true,
         warnsDuringInit: true,
       );
       final List<String> output = await runCommand(command);
@@ -866,7 +861,6 @@ class TestPackageLoopingCommand extends PackageLoopingCommand {
     this.customFailureListFooter,
     this.failsDuringInit = false,
     this.warnsDuringInit = false,
-    this.warnsDuringCleanup = false,
     this.captureOutput = false,
     super.processRunner,
     super.gitDir,
@@ -880,7 +874,6 @@ class TestPackageLoopingCommand extends PackageLoopingCommand {
 
   final bool failsDuringInit;
   final bool warnsDuringInit;
-  final bool warnsDuringCleanup;
 
   @override
   bool hasLongOutput;
@@ -950,5 +943,3 @@ class TestPackageLoopingCommand extends PackageLoopingCommand {
     capturedOutput.addAll(output);
   }
 }
-
-class MockProcessResult extends Mock implements io.ProcessResult {}

@@ -66,5 +66,3 @@ class MockQuickActionsPlatform extends Mock
   Future<void> setShortcutItems(List<ShortcutItem>? items) async => super
       .noSuchMethod(Invocation.method(#setShortcutItems, <Object?>[items]));
 }
-
-class MockQuickActions extends QuickActions {}

@@ -8,10 +8,11 @@ set(PLUGIN_NAME "${PROJECT_NAME}_plugin")
 
 list(APPEND PLUGIN_SOURCES
   "file_selector_plugin.cc"
+  "messages.g.cc"
 )
 
 add_library(${PLUGIN_NAME} SHARED
-  "file_selector_plugin.cc"
+  ${PLUGIN_SOURCES}
 )
 apply_standard_settings(${PLUGIN_NAME})
 set_target_properties(${PLUGIN_NAME} PROPERTIES

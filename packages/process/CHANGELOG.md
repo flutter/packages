@@ -1,3 +1,18 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 5.0.3
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 5.0.2
+
+* Removes mention of the removed record/replay feature from README.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Fixes new lint warnings.
+
 ## 5.0.1
 
 * Transfers the package source from https://github.com/google/process.dart to

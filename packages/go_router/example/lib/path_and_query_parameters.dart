@@ -28,28 +28,25 @@ class Family {
 /// Person data class.
 class Person {
   /// Creates a person.
-  const Person({required this.name, required this.age});
+  const Person({required this.name});
 
   /// The first name of the person.
   final String name;
-
-  /// The age of the person.
-  final int age;
 }
 
 const Map<String, Family> _families = <String, Family>{
   'f1': Family(
     name: 'Doe',
     people: <String, Person>{
-      'p1': Person(name: 'Jane', age: 23),
-      'p2': Person(name: 'John', age: 6),
+      'p1': Person(name: 'Jane'),
+      'p2': Person(name: 'John'),
     },
   ),
   'f2': Family(
     name: 'Wong',
     people: <String, Person>{
-      'p1': Person(name: 'June', age: 51),
-      'p2': Person(name: 'Xin', age: 44),
+      'p1': Person(name: 'June'),
+      'p2': Person(name: 'Xin'),
     },
   ),
 };

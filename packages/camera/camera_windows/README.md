@@ -61,7 +61,7 @@ disposing of the camera is the only way to reset the situation.
 <!-- Links -->
 
 [camera]: https://pub.dev/packages/camera
-[endorsed-federated-plugin]: https://flutter.dev/docs/development/packages-and-plugins/developing-packages#endorsed-federated-plugin
+[endorsed-federated-plugin]: https://flutter.dev/to/endorsed-federated-plugin
 [install]: https://pub.dev/packages/camera_windows/install
 [camera-control-issue]: https://github.com/flutter/flutter/issues/97537
 [device-orientation-issue]: https://github.com/flutter/flutter/issues/97540

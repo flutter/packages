@@ -17,7 +17,15 @@ void main() {
 
   testWidgets('getApplicationDocumentsDirectory', (WidgetTester tester) async {
     final Directory result = await getApplicationDocumentsDirectory();
-    _verifySampleFile(result, 'applicationDocuments');
+    if (Platform.isMacOS) {
+      // _verifySampleFile causes hangs in driver when sandboxing is disabled
+      // because the path changes from an app specific directory to
+      // ~/Documents, which requires additional permissions to access on macOS.
+      // Instead, validate that a non-empty path was returned.
+      expect(result.path, isNotEmpty);
+    } else {
+      _verifySampleFile(result, 'applicationDocuments');
+    }
   });
 
   testWidgets('getApplicationSupportDirectory', (WidgetTester tester) async {
@@ -117,6 +125,13 @@ void _verifySampleFile(Directory? directory, String name) {
 
   file.writeAsStringSync('Hello world!');
   expect(file.readAsStringSync(), 'Hello world!');
-  expect(directory.listSync(), isNotEmpty);
+  // This check intentionally avoids using Directory.listSync on Android due to
+  // https://github.com/dart-lang/sdk/issues/54287.
+  if (Platform.isAndroid) {
+    expect(
+        Process.runSync('ls', <String>[directory.path]).stdout, contains(name));
+  } else {
+    expect(directory.listSync(), isNotEmpty);
+  }
   file.deleteSync();
 }

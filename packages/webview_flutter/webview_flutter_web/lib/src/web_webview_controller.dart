@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:html' as html;
+import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
+import 'package:web/web.dart' as web;
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'content_type.dart';
@@ -38,7 +39,7 @@ class WebWebViewControllerCreationParams
 
   /// The underlying element used as the WebView.
   @visibleForTesting
-  final html.IFrameElement iFrame = html.IFrameElement()
+  final web.HTMLIFrameElement iFrame = web.HTMLIFrameElement()
     ..id = 'webView${_nextIFrameId++}'
     ..style.width = '100%'
     ..style.height = '100%'
@@ -59,7 +60,6 @@ class WebWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> loadHtmlString(String html, {String? baseUrl}) async {
-    // ignore: unsafe_html
     _webWebViewParams.iFrame.src = Uri.dataFromString(
       html,
       mimeType: 'text/html',
@@ -77,7 +77,6 @@ class WebWebViewController extends PlatformWebViewController {
     if (params.headers.isEmpty &&
         (params.body == null || params.body!.isEmpty) &&
         params.method == LoadRequestMethod.get) {
-      // ignore: unsafe_html
       _webWebViewParams.iFrame.src = params.uri.toString();
     } else {
       await _updateIFrameFromXhr(params);
@@ -86,22 +85,20 @@ class WebWebViewController extends PlatformWebViewController {
 
   /// Performs an AJAX request defined by [params].
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
-    final html.HttpRequest httpReq =
+    final web.Response response =
         await _webWebViewParams.httpRequestFactory.request(
       params.uri.toString(),
       method: params.method.serialize(),
       requestHeaders: params.headers,
       sendData: params.body,
-    );
+    ) as web.Response;
 
-    final String header =
-        httpReq.getResponseHeader('content-type') ?? 'text/html';
+    final String header = response.headers.get('content-type') ?? 'text/html';
     final ContentType contentType = ContentType.parse(header);
     final Encoding encoding = Encoding.getByName(contentType.charset) ?? utf8;
 
-    // ignore: unsafe_html
     _webWebViewParams.iFrame.src = Uri.dataFromString(
-      httpReq.responseText ?? '',
+      (await response.text().toDart).toDart,
       mimeType: contentType.mimeType,
       encoding: encoding,
     ).toString();

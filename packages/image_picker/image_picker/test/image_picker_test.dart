@@ -431,7 +431,16 @@ void main() {
             imageQuality: 70,
           );
           await picker.pickMultiImage(
-              maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
+            maxWidth: 10.0,
+            maxHeight: 20.0,
+            imageQuality: 70,
+          );
+          await picker.pickMultiImage(
+            maxWidth: 10.0,
+            maxHeight: 20.0,
+            imageQuality: 70,
+            limit: 5,
+          );
 
           verifyInOrder(<Object>[
             mockPlatform.getMultiImageWithOptions(
@@ -529,6 +538,29 @@ void main() {
                 named: 'options',
               ),
             ),
+            mockPlatform.getMultiImageWithOptions(
+              options: argThat(
+                isInstanceOf<MultiImagePickerOptions>()
+                    .having(
+                        (MultiImagePickerOptions options) =>
+                            options.imageOptions.maxWidth,
+                        'maxWidth',
+                        equals(10.0))
+                    .having(
+                        (MultiImagePickerOptions options) =>
+                            options.imageOptions.maxWidth,
+                        'maxHeight',
+                        equals(10.0))
+                    .having(
+                        (MultiImagePickerOptions options) =>
+                            options.imageOptions.imageQuality,
+                        'imageQuality',
+                        equals(70))
+                    .having((MultiImagePickerOptions options) => options.limit,
+                        'limit', equals(5)),
+                named: 'options',
+              ),
+            ),
           ]);
         });
 
@@ -541,6 +573,24 @@ void main() {
 
           expect(
             () => picker.pickMultiImage(maxHeight: -1.0),
+            throwsArgumentError,
+          );
+        });
+
+        test('does not accept a limit argument lower than 2', () {
+          final ImagePicker picker = ImagePicker();
+          expect(
+            () => picker.pickMultiImage(limit: -1),
+            throwsArgumentError,
+          );
+
+          expect(
+            () => picker.pickMultiImage(limit: 0),
+            throwsArgumentError,
+          );
+
+          expect(
+            () => picker.pickMultiImage(limit: 1),
             throwsArgumentError,
           );
         });
@@ -620,7 +670,15 @@ void main() {
             imageQuality: 70,
           );
           await picker.pickMedia(
-              maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
+            maxWidth: 10.0,
+            maxHeight: 20.0,
+            imageQuality: 70,
+          );
+          await picker.pickMedia(
+            maxWidth: 10.0,
+            maxHeight: 20.0,
+            imageQuality: 70,
+          );
 
           verifyInOrder(<Object>[
             mockPlatform.getMedia(
@@ -793,7 +851,16 @@ void main() {
             imageQuality: 70,
           );
           await picker.pickMultipleMedia(
-              maxWidth: 10.0, maxHeight: 20.0, imageQuality: 70);
+            maxWidth: 10.0,
+            maxHeight: 20.0,
+            imageQuality: 70,
+          );
+          await picker.pickMultipleMedia(
+            maxWidth: 10.0,
+            maxHeight: 20.0,
+            imageQuality: 70,
+            limit: 5,
+          );
 
           verifyInOrder(<Object>[
             mockPlatform.getMedia(
@@ -885,6 +952,27 @@ void main() {
                 named: 'options',
               ),
             ),
+            mockPlatform.getMedia(
+              options: argThat(
+                isInstanceOf<MediaOptions>()
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxWidth',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) => options.imageOptions.maxWidth,
+                        'maxHeight',
+                        equals(10.0))
+                    .having(
+                        (MediaOptions options) =>
+                            options.imageOptions.imageQuality,
+                        'imageQuality',
+                        equals(70))
+                    .having((MediaOptions options) => options.limit, 'limit',
+                        equals(5)),
+                named: 'options',
+              ),
+            ),
           ]);
         });
 
@@ -897,6 +985,24 @@ void main() {
 
           expect(
             () => picker.pickMultipleMedia(maxHeight: -1.0),
+            throwsArgumentError,
+          );
+        });
+
+        test('does not accept a limit argument lower than 2', () {
+          final ImagePicker picker = ImagePicker();
+          expect(
+            () => picker.pickMultipleMedia(limit: -1),
+            throwsArgumentError,
+          );
+
+          expect(
+            () => picker.pickMultipleMedia(limit: 0),
+            throwsArgumentError,
+          );
+
+          expect(
+            () => picker.pickMultipleMedia(limit: 1),
             throwsArgumentError,
           );
         });

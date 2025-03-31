@@ -18,20 +18,20 @@ class Surface extends JavaObject {
   /// Rotation constant to signify the natural orientation.
   ///
   /// See https://developer.android.com/reference/android/view/Surface.html#ROTATION_0.
-  static const int ROTATION_0 = 0;
+  static const int rotation0 = 0;
 
   /// Rotation constant to signify a 90 degrees rotation.
   ///
   /// See https://developer.android.com/reference/android/view/Surface.html#ROTATION_90.
-  static const int ROTATION_90 = 1;
+  static const int rotation90 = 1;
 
   /// Rotation constant to signify a 180 degrees rotation.
   ///
   /// See https://developer.android.com/reference/android/view/Surface.html#ROTATION_180.
-  static const int ROTATION_180 = 2;
+  static const int rotation180 = 2;
 
   /// Rotation constant to signify a 270 degrees rotation.
   ///
   /// See https://developer.android.com/reference/android/view/Surface.html#ROTATION_270.
-  static const int ROTATION_270 = 3;
+  static const int rotation270 = 3;
 }

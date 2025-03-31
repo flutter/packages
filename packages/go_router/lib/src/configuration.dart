@@ -36,12 +36,9 @@ class RouteConfiguration {
     for (final RouteBase route in routes) {
       late bool subRouteIsTopLevel;
       if (route is GoRoute) {
-        if (isTopLevel) {
-          assert(route.path.startsWith('/'),
-              'top-level path must start with "/": $route');
-        } else {
-          assert(!route.path.startsWith('/') && !route.path.endsWith('/'),
-              'sub-route path may not start or end with "/": $route');
+        if (route.path != '/') {
+          assert(!route.path.endsWith('/'),
+              'route path may not end with "/" except for the top "/" route. Found: $route');
         }
         subRouteIsTopLevel = false;
       } else if (route is ShellRouteBase) {
@@ -150,7 +147,8 @@ class RouteConfiguration {
                 'The default location of a StatefulShellBranch cannot be '
                 'a parameterized route');
           } else {
-            final RouteMatchList matchList = findMatch(branch.initialLocation!);
+            final RouteMatchList matchList =
+                findMatch(Uri.parse(branch.initialLocation!));
             assert(
                 !matchList.isError,
                 'initialLocation (${matchList.uri}) of StatefulShellBranch must '
@@ -216,6 +214,7 @@ class RouteConfiguration {
       matchedLocation: matchList.uri.path,
       extra: matchList.extra,
       pageKey: const ValueKey<String>('topLevel'),
+      topRoute: matchList.lastOrNull?.route,
     );
   }
 
@@ -254,12 +253,14 @@ class RouteConfiguration {
     String name, {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    String? fragment,
   }) {
     assert(() {
       log('getting location for name: '
           '"$name"'
           '${pathParameters.isEmpty ? '' : ', pathParameters: $pathParameters'}'
-          '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}');
+          '${queryParameters.isEmpty ? '' : ', queryParameters: $queryParameters'}'
+          '${fragment != null ? ', fragment: $fragment' : ''}');
       return true;
     }());
     assert(_nameToPath.containsKey(name), 'unknown route name: $name');
@@ -286,18 +287,18 @@ class RouteConfiguration {
     final String location = patternToPath(path, encodedParams);
     return Uri(
             path: location,
-            queryParameters: queryParameters.isEmpty ? null : queryParameters)
+            queryParameters: queryParameters.isEmpty ? null : queryParameters,
+            fragment: fragment)
         .toString();
   }
 
   /// Finds the routes that matched the given URL.
-  RouteMatchList findMatch(String location, {Object? extra}) {
-    final Uri uri = Uri.parse(canonicalUri(location));
-
+  RouteMatchList findMatch(Uri uri, {Object? extra}) {
     final Map<String, String> pathParameters = <String, String>{};
-    final List<RouteMatch>? matches = _getLocRouteMatches(uri, pathParameters);
+    final List<RouteMatchBase> matches =
+        _getLocRouteMatches(uri, pathParameters);
 
-    if (matches == null) {
+    if (matches.isEmpty) {
       return _errorRouteMatchList(
         uri,
         GoException('no routes for location: $uri'),
@@ -313,14 +314,13 @@ class RouteConfiguration {
 
   /// Reparse the input RouteMatchList
   RouteMatchList reparse(RouteMatchList matchList) {
-    RouteMatchList result =
-        findMatch(matchList.uri.toString(), extra: matchList.extra);
+    RouteMatchList result = findMatch(matchList.uri, extra: matchList.extra);
 
     for (final ImperativeRouteMatch imperativeMatch
         in matchList.matches.whereType<ImperativeRouteMatch>()) {
       final ImperativeRouteMatch match = ImperativeRouteMatch(
           pageKey: imperativeMatch.pageKey,
-          matches: findMatch(imperativeMatch.matches.uri.toString(),
+          matches: findMatch(imperativeMatch.matches.uri,
               extra: imperativeMatch.matches.extra),
           completer: imperativeMatch.completer);
       result = result.push(match);
@@ -328,96 +328,20 @@ class RouteConfiguration {
     return result;
   }
 
-  List<RouteMatch>? _getLocRouteMatches(
+  List<RouteMatchBase> _getLocRouteMatches(
       Uri uri, Map<String, String> pathParameters) {
-    final List<RouteMatch>? result = _getLocRouteRecursively(
-      location: uri.path,
-      remainingLocation: uri.path,
-      matchedLocation: '',
-      matchedPath: '',
-      pathParameters: pathParameters,
-      routes: _routingConfig.value.routes,
-    );
-    return result;
-  }
-
-  List<RouteMatch>? _getLocRouteRecursively({
-    required String location,
-    required String remainingLocation,
-    required String matchedLocation,
-    required String matchedPath,
-    required Map<String, String> pathParameters,
-    required List<RouteBase> routes,
-  }) {
-    List<RouteMatch>? result;
-    late Map<String, String> subPathParameters;
-    // find the set of matches at this level of the tree
-    for (final RouteBase route in routes) {
-      subPathParameters = <String, String>{};
-
-      final RouteMatch? match = RouteMatch.match(
+    for (final RouteBase route in _routingConfig.value.routes) {
+      final List<RouteMatchBase> result = RouteMatchBase.match(
+        rootNavigatorKey: navigatorKey,
         route: route,
-        remainingLocation: remainingLocation,
-        matchedLocation: matchedLocation,
-        matchedPath: matchedPath,
-        pathParameters: subPathParameters,
+        uri: uri,
+        pathParameters: pathParameters,
       );
-
-      if (match == null) {
-        continue;
+      if (result.isNotEmpty) {
+        return result;
       }
-
-      if (match.route is GoRoute &&
-          match.matchedLocation.toLowerCase() == location.toLowerCase()) {
-        // If it is a complete match, then return the matched route
-        // NOTE: need a lower case match because matchedLocation is canonicalized to match
-        // the path case whereas the location can be of any case and still match
-        result = <RouteMatch>[match];
-      } else if (route.routes.isEmpty) {
-        // If it is partial match but no sub-routes, bail.
-        continue;
-      } else {
-        // Otherwise, recurse
-        final String childRestLoc;
-        final String newParentSubLoc;
-        final String newParentPath;
-        if (match.route is ShellRouteBase) {
-          childRestLoc = remainingLocation;
-          newParentSubLoc = matchedLocation;
-          newParentPath = matchedPath;
-        } else {
-          assert(location.startsWith(match.matchedLocation));
-          assert(remainingLocation.isNotEmpty);
-
-          childRestLoc = location.substring(match.matchedLocation.length +
-              (match.matchedLocation == '/' ? 0 : 1));
-          newParentSubLoc = match.matchedLocation;
-          newParentPath =
-              concatenatePaths(matchedPath, (match.route as GoRoute).path);
-        }
-
-        final List<RouteMatch>? subRouteMatch = _getLocRouteRecursively(
-          location: location,
-          remainingLocation: childRestLoc,
-          matchedLocation: newParentSubLoc,
-          matchedPath: newParentPath,
-          pathParameters: subPathParameters,
-          routes: route.routes,
-        );
-
-        // If there's no sub-route matches, there is no match for this location
-        if (subRouteMatch == null) {
-          continue;
-        }
-        result = <RouteMatch>[match, ...subRouteMatch];
-      }
-      // Should only reach here if there is a match.
-      break;
     }
-    if (result != null) {
-      pathParameters.addAll(subPathParameters);
-    }
-    return result;
+    return const <RouteMatchBase>[];
   }
 
   /// Processes redirects by returning a new [RouteMatchList] representing the new
@@ -468,8 +392,16 @@ class RouteConfiguration {
           return prevMatchList;
         }
 
+        final List<RouteMatchBase> routeMatches = <RouteMatchBase>[];
+        prevMatchList.visitRouteMatches((RouteMatchBase match) {
+          if (match.route.redirect != null) {
+            routeMatches.add(match);
+          }
+          return true;
+        });
         final FutureOr<String?> routeLevelRedirectResult =
-            _getRouteLevelRedirect(context, prevMatchList, 0);
+            _getRouteLevelRedirect(context, prevMatchList, routeMatches, 0);
+
         if (routeLevelRedirectResult is String?) {
           return processRouteLevelRedirect(routeLevelRedirectResult);
         }
@@ -499,35 +431,22 @@ class RouteConfiguration {
   FutureOr<String?> _getRouteLevelRedirect(
     BuildContext context,
     RouteMatchList matchList,
+    List<RouteMatchBase> routeMatches,
     int currentCheckIndex,
   ) {
-    if (currentCheckIndex >= matchList.matches.length) {
+    if (currentCheckIndex >= routeMatches.length) {
       return null;
     }
-    final RouteMatch match = matchList.matches[currentCheckIndex];
+    final RouteMatchBase match = routeMatches[currentCheckIndex];
     FutureOr<String?> processRouteRedirect(String? newLocation) =>
         newLocation ??
-        _getRouteLevelRedirect(context, matchList, currentCheckIndex + 1);
+        _getRouteLevelRedirect(
+            context, matchList, routeMatches, currentCheckIndex + 1);
     final RouteBase route = match.route;
-    FutureOr<String?> routeRedirectResult;
-    if (route is GoRoute && route.redirect != null) {
-      final RouteMatchList effectiveMatchList =
-          match is ImperativeRouteMatch ? match.matches : matchList;
-      routeRedirectResult = route.redirect!(
-        context,
-        GoRouterState(
-          this,
-          uri: effectiveMatchList.uri,
-          matchedLocation: match.matchedLocation,
-          name: route.name,
-          path: route.path,
-          fullPath: effectiveMatchList.fullPath,
-          extra: effectiveMatchList.extra,
-          pathParameters: effectiveMatchList.pathParameters,
-          pageKey: match.pageKey,
-        ),
-      );
-    }
+    final FutureOr<String?> routeRedirectResult = route.redirect!.call(
+      context,
+      match.buildState(this, matchList),
+    );
     if (routeRedirectResult is String?) {
       return processRouteRedirect(routeRedirectResult);
     }
@@ -540,7 +459,7 @@ class RouteConfiguration {
     List<RouteMatchList> redirectHistory,
   ) {
     try {
-      final RouteMatchList newMatch = findMatch(newLocation);
+      final RouteMatchList newMatch = findMatch(Uri.parse(newLocation));
       _addRedirect(redirectHistory, newMatch, previousLocation);
       return newMatch;
     } on GoException catch (e) {
@@ -604,7 +523,8 @@ class RouteConfiguration {
   String debugKnownRoutes() {
     final StringBuffer sb = StringBuffer();
     sb.writeln('Full paths for routes:');
-    _debugFullPathsFor(_routingConfig.value.routes, '', 0, sb);
+    _debugFullPathsFor(
+        _routingConfig.value.routes, '', const <_DecorationType>[], sb);
 
     if (_nameToPath.isNotEmpty) {
       sb.writeln('known full paths for route names:');
@@ -617,15 +537,50 @@ class RouteConfiguration {
   }
 
   void _debugFullPathsFor(List<RouteBase> routes, String parentFullpath,
-      int depth, StringBuffer sb) {
-    for (final RouteBase route in routes) {
+      List<_DecorationType> parentDecoration, StringBuffer sb) {
+    for (final (int index, RouteBase route) in routes.indexed) {
+      final List<_DecorationType> decoration =
+          _getDecoration(parentDecoration, index, routes.length);
+      final String decorationString =
+          decoration.map((_DecorationType e) => e.toString()).join();
+      String path = parentFullpath;
       if (route is GoRoute) {
-        final String fullPath = concatenatePaths(parentFullpath, route.path);
-        sb.writeln('  => ${''.padLeft(depth * 2)}$fullPath');
-        _debugFullPathsFor(route.routes, fullPath, depth + 1, sb);
+        path = concatenatePaths(parentFullpath, route.path);
+        final String? screenName =
+            route.builder?.runtimeType.toString().split('=> ').last;
+        sb.writeln('$decorationString$path '
+            '${screenName == null ? '' : '($screenName)'}');
       } else if (route is ShellRouteBase) {
-        _debugFullPathsFor(route.routes, parentFullpath, depth, sb);
+        sb.writeln('$decorationString (ShellRoute)');
       }
+      _debugFullPathsFor(route.routes, path, decoration, sb);
+    }
+  }
+
+  List<_DecorationType> _getDecoration(
+    List<_DecorationType> parentDecoration,
+    int index,
+    int length,
+  ) {
+    final Iterable<_DecorationType> newDecoration =
+        parentDecoration.map((_DecorationType e) {
+      switch (e) {
+        // swap
+        case _DecorationType.branch:
+          return _DecorationType.parentBranch;
+        case _DecorationType.leaf:
+          return _DecorationType.none;
+        // no swap
+        case _DecorationType.parentBranch:
+          return _DecorationType.parentBranch;
+        case _DecorationType.none:
+          return _DecorationType.none;
+      }
+    });
+    if (index == length - 1) {
+      return <_DecorationType>[...newDecoration, _DecorationType.leaf];
+    } else {
+      return <_DecorationType>[...newDecoration, _DecorationType.branch];
     }
   }
 
@@ -653,4 +608,19 @@ class RouteConfiguration {
       }
     }
   }
+}
+
+enum _DecorationType {
+  parentBranch('│ '),
+  branch('├─'),
+  leaf('└─'),
+  none('  '),
+  ;
+
+  const _DecorationType(this.value);
+
+  final String value;
+
+  @override
+  String toString() => value;
 }

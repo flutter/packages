@@ -1,3 +1,43 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 1.1.2
+
+* Adds comment for the limit parameter.
+
+## 1.1.1
+
+* Updates documentation to note that Android Photo Picker use is not optional on Android 13+.
+
+## 1.1.0
+
+* Adds limit parameter to `MediaOptions` and `MultiImagePickerOptions` which limits
+  the number of media that can be selected. 
+    * Currently supported only on iOS and Android.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 1.0.8
+
+* Updates minimum supported SDK version to Flutter 3.13/Dart 3.1.
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Clients on versions of Flutter that still support iOS 11 can continue to use this
+  package with iOS 11, but will not receive any further updates to the iOS implementation.
+* Updates minimum iOS implementation version to include a privacy manifest.
+
+## 1.0.7
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 1.0.6
+
+* Fixes new lint warnings.
+
+## 1.0.5
+
+* Updates example app to use non-deprecated video_player method.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 1.0.4
 
 * Updates README to fix broken link.

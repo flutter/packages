@@ -4,10 +4,10 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/xcode_analyze_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -17,19 +17,22 @@ import 'util.dart';
 // doing all the process mocking and validation.
 void main() {
   group('test xcode_analyze_command', () {
-    late FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       mockPlatform = MockPlatform(isMacOS: true);
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-      processRunner = RecordingProcessRunner();
-      final XcodeAnalyzeCommand command = XcodeAnalyzeCommand(packagesDir,
-          processRunner: processRunner, platform: mockPlatform);
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
+      final XcodeAnalyzeCommand command = XcodeAnalyzeCommand(
+        packagesDir,
+        processRunner: processRunner,
+        platform: mockPlatform,
+        gitDir: gitDir,
+      );
 
       runner = CommandRunner<void>(
           'xcode_analyze_command', 'Test for xcode_analyze_command');
@@ -106,6 +109,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'ios/Runner.xcworkspace',
@@ -146,6 +150,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'ios/Runner.xcworkspace',
@@ -244,6 +249,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'macos/Runner.xcworkspace',
@@ -278,6 +284,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'macos/Runner.xcworkspace',
@@ -350,6 +357,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'ios/Runner.xcworkspace',
@@ -366,6 +374,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'macos/Runner.xcworkspace',
@@ -406,6 +415,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'macos/Runner.xcworkspace',
@@ -445,6 +455,7 @@ void main() {
                   'xcrun',
                   const <String>[
                     'xcodebuild',
+                    'clean',
                     'analyze',
                     '-workspace',
                     'ios/Runner.xcworkspace',

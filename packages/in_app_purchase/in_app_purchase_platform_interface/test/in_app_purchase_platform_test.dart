@@ -119,6 +119,18 @@ void main() {
         throwsUnimplementedError,
       );
     });
+
+    test(
+        'Default implementation of countryCode should throw unimplemented error',
+        () {
+      final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+          ExtendsInAppPurchasePlatform();
+
+      expect(
+        () => inAppPurchasePlatform.countryCode(),
+        throwsUnimplementedError,
+      );
+    });
   });
 
   group('$InAppPurchasePlatformAddition', () {

@@ -60,6 +60,7 @@ class MapUiBodyState extends State<MapUiBody> {
   bool _myLocationButtonEnabled = true;
   late ExampleGoogleMapController _controller;
   bool _nightMode = false;
+  String _mapStyle = '';
 
   @override
   void initState() {
@@ -244,27 +245,16 @@ class MapUiBodyState extends State<MapUiBody> {
     return rootBundle.loadString(path);
   }
 
-  void _setMapStyle(String mapStyle) {
-    setState(() {
-      _nightMode = true;
-      _controller.setMapStyle(mapStyle);
-    });
-  }
-
-  // Should only be called if _isMapCreated is true.
   Widget _nightModeToggler() {
-    assert(_isMapCreated);
     return TextButton(
       child: Text('${_nightMode ? 'disable' : 'enable'} night mode'),
-      onPressed: () {
-        if (_nightMode) {
-          setState(() {
-            _nightMode = false;
-            _controller.setMapStyle(null);
-          });
-        } else {
-          _getFileData('assets/night_mode.json').then(_setMapStyle);
-        }
+      onPressed: () async {
+        _nightMode = !_nightMode;
+        final String style =
+            _nightMode ? await _getFileData('assets/night_mode.json') : '';
+        setState(() {
+          _mapStyle = style;
+        });
       },
     );
   }
@@ -279,6 +269,7 @@ class MapUiBodyState extends State<MapUiBody> {
       cameraTargetBounds: _cameraTargetBounds,
       minMaxZoomPreference: _minMaxZoomPreference,
       mapType: _mapType,
+      style: _mapStyle,
       rotateGesturesEnabled: _rotateGesturesEnabled,
       scrollGesturesEnabled: _scrollGesturesEnabled,
       tiltGesturesEnabled: _tiltGesturesEnabled,
@@ -352,6 +343,12 @@ class MapUiBodyState extends State<MapUiBody> {
     setState(() {
       _controller = controller;
       _isMapCreated = true;
+    });
+    // Log any style errors to the console for debugging.
+    _controller.getStyleError().then((String? error) {
+      if (error != null) {
+        debugPrint(error);
+      }
     });
   }
 }

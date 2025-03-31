@@ -1,3 +1,17 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 1.1.0
+
+* Adds localizedSubtitle field for iOS quick actions.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 1.0.6
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+
 ## 1.0.5
 
 * Adds pub topics to package metadata.

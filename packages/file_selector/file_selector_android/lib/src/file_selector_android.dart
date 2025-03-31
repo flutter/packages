@@ -8,6 +8,7 @@ import 'package:file_selector_platform_interface/file_selector_platform_interfac
 import 'package:flutter/cupertino.dart';
 
 import 'file_selector_api.g.dart';
+import 'types/native_illegal_argument_exception.dart';
 
 /// An implementation of [FileSelectorPlatform] for Android.
 class FileSelectorAndroid extends FileSelectorPlatform {
@@ -40,14 +41,11 @@ class FileSelectorAndroid extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<FileResponse?> files = await _api.openFiles(
+    final List<FileResponse> files = await _api.openFiles(
       initialDirectory,
       _fileTypesFromTypeGroups(acceptedTypeGroups),
     );
-    return files
-        .cast<FileResponse>()
-        .map<XFile>(_xFileFromFileResponse)
-        .toList();
+    return files.map<XFile>(_xFileFromFileResponse).toList();
   }
 
   @override
@@ -59,6 +57,9 @@ class FileSelectorAndroid extends FileSelectorPlatform {
   }
 
   XFile _xFileFromFileResponse(FileResponse file) {
+    if (file.fileSelectorNativeException != null) {
+      _resolveErrorCodeAndMaybeThrow(file.fileSelectorNativeException!);
+    }
     return XFile.fromData(
       file.bytes,
       // Note: The name parameter is not used by XFile. The XFile.name returns
@@ -97,5 +98,20 @@ class FileSelectorAndroid extends FileSelectorPlatform {
       mimeTypes: mimeTypes.toList(),
       extensions: extensions.toList(),
     );
+  }
+
+  /// Translates a [FileSelectorExceptionCode] to its corresponding error and
+  /// handles throwing.
+  void _resolveErrorCodeAndMaybeThrow(
+      FileSelectorNativeException fileSelectorNativeException) {
+    switch (fileSelectorNativeException.fileSelectorExceptionCode) {
+      case FileSelectorExceptionCode.illegalArgumentException:
+        throw NativeIllegalArgumentException(
+            fileSelectorNativeException.message);
+      case (FileSelectorExceptionCode.illegalStateException ||
+            FileSelectorExceptionCode.ioException ||
+            FileSelectorExceptionCode.securityException):
+      // unused for now
+    }
   }
 }

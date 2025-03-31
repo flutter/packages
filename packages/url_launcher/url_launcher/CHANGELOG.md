@@ -1,3 +1,42 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 6.3.1
+
+* Removes incorrect SMS instructions from README.
+* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+
+## 6.3.0
+
+* Adds `BrowserConfiguration` parameter, to configure in-app browser views, such as Android Custom Tabs or SFSafariViewController.
+* Adds `showTitle` to `BrowserConfiguration`, to allow showing webpage titles in in-app browser views.
+* Updates minimum supported SDK version to Flutter 3.16/Dart 3.2.
+
+## 6.2.6
+
+* Updates minimum iOS implementation version to include a privacy manifest.
+
+## 6.2.5
+
+* Removes use of deprecated `renderView` API.
+
+## 6.2.4
+
+* Updates support matrix in README to indicate that iOS 11 is no longer supported.
+* Clients on versions of Flutter that still support iOS 11 can continue to use this
+  package with iOS 11, but will not receive any further updates to the iOS implementation.
+* Fixes a grammar error in the comments of `launchUrl` method.
+
+## 6.2.3
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 6.2.2
+
+* Adds a link about web limitations to the `url_launcher_web` package in the
+  `url_launcher` `README.md` and `launchUrl` method.
+
 ## 6.2.1
 
 * Fixes incorrect types in `supportsLaunchMode` and

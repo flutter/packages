@@ -4,4 +4,4 @@
 # found in the LICENSE file.
 set -e
 
-xvfb-run ./script/tool_runner.sh "$@"
+xvfb-run .ci/scripts/tool_runner.sh "$@"

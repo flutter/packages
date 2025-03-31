@@ -3,13 +3,13 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:html' as html;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/foundation.dart' show kDebugMode, visibleForTesting;
 import 'package:flutter_web_plugins/flutter_web_plugins.dart' show Registrar;
 import 'package:url_launcher_platform_interface/link.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
+import 'package:web/web.dart' as html;
 
 import 'src/link.dart';
 
@@ -66,9 +66,12 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
 
   /// Opens the given [url] in the specified [webOnlyWindowName].
   ///
-  /// Returns the newly created window.
+  /// Always returns `true`, except for disallowed schemes. Because `noopener`
+  /// is used as a window feature, it can not be detected if the window was
+  /// opened successfully.
+  /// See https://html.spec.whatwg.org/multipage/nav-history-apis.html#window-open-steps.
   @visibleForTesting
-  html.WindowBase? openNewWindow(String url, {String? webOnlyWindowName}) {
+  bool openNewWindow(String url, {String? webOnlyWindowName}) {
     final String? scheme = _getUrlScheme(url);
     // Actively disallow opening some schemes, like javascript.
     // See https://github.com/flutter/flutter/issues/136657
@@ -76,15 +79,16 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
       if (kDebugMode) {
         print('Disallowed URL with scheme: $scheme');
       }
-      return null;
+      return false;
     }
     // Some schemes need to be opened on the _top window context on Safari.
     // See https://github.com/flutter/flutter/issues/51461
     final String target = webOnlyWindowName ??
         ((_isSafari && _isSafariTargetTopScheme(scheme)) ? '_top' : '');
 
-    // ignore: unsafe_html
-    return _window.open(url, target, 'noopener,noreferrer');
+    _window.open(url, target, 'noopener,noreferrer');
+
+    return true;
   }
 
   @override
@@ -109,7 +113,7 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
   @override
   Future<bool> launchUrl(String url, LaunchOptions options) async {
     final String? windowName = options.webOnlyWindowName;
-    return openNewWindow(url, webOnlyWindowName: windowName) != null;
+    return openNewWindow(url, webOnlyWindowName: windowName);
   }
 
   @override

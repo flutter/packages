@@ -8,42 +8,44 @@ import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/publish_command.dart';
+import 'package:git/git.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
   late MockPlatform platform;
   late Directory packagesDir;
-  late MockGitDir gitDir;
   late TestProcessRunner processRunner;
   late PublishCommand command;
   late CommandRunner<void> commandRunner;
   late MockStdin mockStdin;
-  late FileSystem fileSystem;
   // Map of package name to mock response.
   late Map<String, Map<String, dynamic>> mockHttpResponses;
 
   void createMockCredentialFile() {
-    fileSystem.file(command.credentialsPath)
+    packagesDir.fileSystem.file(command.credentialsPath)
       ..createSync(recursive: true)
       ..writeAsStringSync('some credential');
   }
 
   setUp(() async {
     platform = MockPlatform(isLinux: true);
-    platform.environment['HOME'] = '/home';
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
     processRunner = TestProcessRunner();
+    final GitDir gitDir;
+    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks(
+      platform: platform,
+      customProcessRunner: processRunner,
+      customGitProcessRunner: processRunner,
+    );
+    platform.environment['HOME'] = '/home';
 
     mockHttpResponses = <String, Map<String, dynamic>>{};
     final MockClient mockClient = MockClient((http.Request request) async {
@@ -55,19 +57,6 @@ void main() {
       }
       // Default to simulating the plugin never having been published.
       return http.Response('', 404);
-    });
-
-    gitDir = MockGitDir();
-    when(gitDir.path).thenReturn(packagesDir.parent.path);
-    when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')))
-        .thenAnswer((Invocation invocation) {
-      final List<String> arguments =
-          invocation.positionalArguments[0]! as List<String>;
-      // Route git calls through the process runner, to make mock output
-      // consistent with outer processes. Attach the first argument to the
-      // command to make targeting the mock results easier.
-      final String gitCommand = arguments.removeAt(0);
-      return processRunner.run('git-$gitCommand', arguments);
     });
 
     mockStdin = MockStdin();
@@ -137,6 +126,91 @@ void main() {
           containsAllInOrder(<Matcher>[
             contains(
                 'Unable to find URL for remote upstream; cannot push tags'),
+          ]));
+    });
+  });
+
+  group('pre-publish script', () {
+    test('runs if present', () async {
+      final RepositoryPackage package =
+          createFakePackage('foo', packagesDir, examples: <String>[]);
+      package.prePublishScript.createSync(recursive: true);
+
+      final List<String> output =
+          await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running pre-publish hook tool/pre_publish.dart...'),
+        ]),
+      );
+      expect(
+          processRunner.recordedCalls,
+          containsAllInOrder(<ProcessCall>[
+            ProcessCall(
+                'dart',
+                const <String>[
+                  'pub',
+                  'get',
+                ],
+                package.directory.path),
+            ProcessCall(
+                'dart',
+                const <String>[
+                  'run',
+                  'tool/pre_publish.dart',
+                ],
+                package.directory.path),
+          ]));
+    });
+
+    test('causes command failure if it fails', () async {
+      final RepositoryPackage package = createFakePackage('foo', packagesDir,
+          isFlutter: true, examples: <String>[]);
+      package.prePublishScript.createSync(recursive: true);
+
+      processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1),
+            <String>['run']), // run tool/pre_publish.dart
+      ];
+
+      Error? commandError;
+      final List<String> output =
+          await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Pre-publish script failed.'),
+        ]),
+      );
+      expect(
+          processRunner.recordedCalls,
+          containsAllInOrder(<ProcessCall>[
+            ProcessCall(
+                getFlutterCommand(platform),
+                const <String>[
+                  'pub',
+                  'get',
+                ],
+                package.directory.path),
+            ProcessCall(
+                'dart',
+                const <String>[
+                  'run',
+                  'tool/pre_publish.dart',
+                ],
+                package.directory.path),
           ]));
     });
   });
@@ -273,7 +347,8 @@ void main() {
         '--server=bar'
       ]);
 
-      final File credentialFile = fileSystem.file(command.credentialsPath);
+      final File credentialFile =
+          packagesDir.fileSystem.file(command.credentialsPath);
       expect(credentialFile.existsSync(), true);
       expect(credentialFile.readAsStringSync(), credentials);
     });
@@ -349,6 +424,33 @@ void main() {
         ),
       );
     });
+
+    test('skips publish with --tag-for-auto-publish', () async {
+      const String packageName = 'a_package';
+      createFakePackage(packageName, packagesDir);
+
+      final List<String> output =
+          await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=$packageName',
+        '--tag-for-auto-publish',
+      ]);
+
+      // There should be no variant of any command containing "publish".
+      expect(
+          processRunner.recordedCalls
+              .map((ProcessCall call) => call.toString()),
+          isNot(contains(contains('publish'))));
+      // The output should indicate that it was tagged, not published.
+      expect(
+        output,
+        containsAllInOrder(
+          <Matcher>[
+            contains('Tagged a_package successfully!'),
+          ],
+        ),
+      );
+    });
   });
 
   group('Tags release', () {
@@ -389,6 +491,18 @@ void main() {
           processRunner.recordedCalls,
           isNot(contains(
               const ProcessCall('git-tag', <String>['foo-v0.0.1'], null))));
+    });
+
+    test('when passed --tag-for-auto-publish', () async {
+      createFakePlugin('foo', packagesDir, examples: <String>[]);
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+        '--tag-for-auto-publish',
+      ]);
+
+      expect(processRunner.recordedCalls,
+          contains(const ProcessCall('git-tag', <String>['foo-v0.0.1'], null)));
     });
   });
 
@@ -439,6 +553,21 @@ void main() {
           ]));
     });
 
+    test('when passed --tag-for-auto-publish', () async {
+      createFakePlugin('foo', packagesDir, examples: <String>[]);
+      await runCapturingPrint(commandRunner, <String>[
+        'publish',
+        '--packages=foo',
+        '--skip-confirmation',
+        '--tag-for-auto-publish',
+      ]);
+
+      expect(
+          processRunner.recordedCalls,
+          contains(const ProcessCall(
+              'git-push', <String>['upstream', 'foo-v0.0.1'], null)));
+    });
+
     test('to upstream by default, dry run', () async {
       final RepositoryPackage plugin =
           createFakePlugin('foo', packagesDir, examples: <String>[]);
@@ -485,6 +614,62 @@ void main() {
           containsAllInOrder(<Matcher>[
             contains('Published foo successfully!'),
           ]));
+    });
+  });
+
+  group('--already-tagged', () {
+    test('passes when HEAD has the expected tag', () async {
+      createFakePlugin('foo', packagesDir, examples: <String>[]);
+
+      processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess()), // Skip the initializeRun call.
+        FakeProcessInfo(MockProcess(stdout: 'foo-v0.0.1\n'),
+            <String>['--points-at', 'HEAD'])
+      ];
+
+      await runCapturingPrint(commandRunner,
+          <String>['publish', '--packages=foo', '--already-tagged']);
+    });
+
+    test('fails if HEAD does not have the expected tag', () async {
+      createFakePlugin('foo', packagesDir, examples: <String>[]);
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(commandRunner,
+          <String>['publish', '--packages=foo', '--already-tagged'],
+          errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('The current checkout is not already tagged "foo-v0.0.1"'),
+            contains('missing tag'),
+          ]));
+    });
+
+    test('does not create or push tags', () async {
+      createFakePlugin('foo', packagesDir, examples: <String>[]);
+
+      processRunner.mockProcessesForExecutable['git-tag'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess()), // Skip the initializeRun call.
+        FakeProcessInfo(MockProcess(stdout: 'foo-v0.0.1\n'),
+            <String>['--points-at', 'HEAD'])
+      ];
+
+      await runCapturingPrint(commandRunner,
+          <String>['publish', '--packages=foo', '--already-tagged']);
+
+      expect(
+          processRunner.recordedCalls,
+          isNot(contains(
+              const ProcessCall('git-tag', <String>['foo-v0.0.1'], null))));
+      expect(
+          processRunner.recordedCalls
+              .map((ProcessCall call) => call.executable),
+          isNot(contains('git-push')));
     });
   });
 

@@ -8,11 +8,21 @@ import 'types.dart';
 
 /// Converts an (app-facing) [WebViewConfiguration] to a (platform interface)
 /// [InAppWebViewConfiguration].
-InAppWebViewConfiguration convertConfiguration(WebViewConfiguration config) {
+InAppWebViewConfiguration convertWebViewConfiguration(
+    WebViewConfiguration config) {
   return InAppWebViewConfiguration(
     enableJavaScript: config.enableJavaScript,
     enableDomStorage: config.enableDomStorage,
     headers: config.headers,
+  );
+}
+
+/// Converts an (app-facing) [BrowserConfiguration] to a (platform interface)
+/// [InAppBrowserConfiguration].
+InAppBrowserConfiguration convertBrowserConfiguration(
+    BrowserConfiguration config) {
+  return InAppBrowserConfiguration(
+    showTitle: config.showTitle,
   );
 }
 

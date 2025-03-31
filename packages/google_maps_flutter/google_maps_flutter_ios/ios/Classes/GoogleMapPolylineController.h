@@ -5,21 +5,29 @@
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
 
+#import "messages.g.h"
+
 // Defines polyline controllable by Flutter.
 @interface FLTGoogleMapPolylineController : NSObject
-- (instancetype)initPolylineWithPath:(GMSMutablePath *)path
-                          identifier:(NSString *)identifier
-                             mapView:(GMSMapView *)mapView;
+- (instancetype)initWithPath:(GMSMutablePath *)path
+                  identifier:(NSString *)identifier
+                     mapView:(GMSMapView *)mapView;
 - (void)removePolyline;
+
+/// Sets the pattern on polyline controller
+///
+/// @param styles The styles for repeating pattern sections.
+/// @param lengths The lengths for repeating pattern sections.
+- (void)setPattern:(NSArray<GMSStrokeStyle *> *)styles lengths:(NSArray<NSNumber *> *)lengths;
 @end
 
 @interface FLTPolylinesController : NSObject
-- (instancetype)init:(FlutterMethodChannel *)methodChannel
-             mapView:(GMSMapView *)mapView
-           registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-- (void)addPolylines:(NSArray *)polylinesToAdd;
-- (void)changePolylines:(NSArray *)polylinesToChange;
-- (void)removePolylineWithIdentifiers:(NSArray *)identifiers;
+- (instancetype)initWithMapView:(GMSMapView *)mapView
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (void)addPolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToAdd;
+- (void)changePolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToChange;
+- (void)removePolylineWithIdentifiers:(NSArray<NSString *> *)identifiers;
 - (void)didTapPolylineWithIdentifier:(NSString *)identifier;
 - (bool)hasPolylineWithIdentifier:(NSString *)identifier;
 @end

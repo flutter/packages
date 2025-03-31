@@ -5,8 +5,10 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,6 +25,50 @@ Iterable<Widget> selfAndDescendantWidgetsOf(Finder start, WidgetTester tester) {
     startElement.widget,
     ...descendants,
   ];
+}
+
+// Returns the RenderEditable displaying the given text.
+RenderEditable findRenderEditableWithText(WidgetTester tester, String text) {
+  final Iterable<RenderObject> roots =
+      tester.renderObjectList(find.byType(EditableText));
+  expect(roots, isNotEmpty);
+
+  late RenderEditable renderEditable;
+  void recursiveFinder(RenderObject child) {
+    if (child is RenderEditable && child.plainText == text) {
+      renderEditable = child;
+      return;
+    }
+    child.visitChildren(recursiveFinder);
+  }
+
+  for (final RenderObject root in roots) {
+    root.visitChildren(recursiveFinder);
+  }
+
+  expect(renderEditable, isNotNull);
+  return renderEditable;
+}
+
+// Returns the [textOffset] position in rendered [text].
+Offset positionInRenderedText(
+    WidgetTester tester, String text, int textOffset) {
+  final RenderEditable renderEditable =
+      findRenderEditableWithText(tester, text);
+  final Iterable<TextSelectionPoint> textOffsetPoints =
+      renderEditable.getEndpointsForSelection(
+    TextSelection.collapsed(offset: textOffset),
+  );
+  // Map the points to global positions.
+  final List<TextSelectionPoint> endpoints =
+      textOffsetPoints.map<TextSelectionPoint>((TextSelectionPoint point) {
+    return TextSelectionPoint(
+      renderEditable.localToGlobal(point.point),
+      point.direction,
+    );
+  }).toList();
+  expect(endpoints.length, 1);
+  return endpoints[0].point + const Offset(kIsWeb ? 1.0 : 0.0, -2.0);
 }
 
 void expectWidgetTypes(Iterable<Widget> widgets, List<Type> expected) {
@@ -50,7 +96,7 @@ void expectTextStrings(Iterable<Widget> widgets, List<String> strings) {
 String _extractTextFromTextSpan(TextSpan span) {
   String text = span.text ?? '';
   if (span.children != null) {
-    for (final TextSpan child in span.children! as Iterable<TextSpan>) {
+    for (final TextSpan child in span.children!.toList().cast<TextSpan>()) {
       text += _extractTextFromTextSpan(child);
     }
   }
@@ -111,16 +157,16 @@ class MarkdownLink {
 /// Verify a valid link structure has been created. This routine checks for the
 /// link text and the associated [TapGestureRecognizer] on the text span.
 void expectValidLink(String linkText) {
-  final Finder richTextFinder = find.byType(RichText);
-  expect(richTextFinder, findsOneWidget);
-  final RichText richText = richTextFinder.evaluate().first.widget as RichText;
+  final Finder textFinder = find.byType(Text);
+  expect(textFinder, findsOneWidget);
+  final Text text = textFinder.evaluate().first.widget as Text;
 
   // Verify the link text.
-  expect(richText.text, isNotNull);
-  expect(richText.text, isA<TextSpan>());
+  expect(text.textSpan, isNotNull);
+  expect(text.textSpan, isA<TextSpan>());
 
   // Verify the link text is a onTap gesture recognizer.
-  final TextSpan textSpan = richText.text as TextSpan;
+  final TextSpan textSpan = text.textSpan! as TextSpan;
   expectLinkTextSpan(textSpan, linkText);
 }
 
@@ -138,16 +184,16 @@ void expectLinkTextSpan(TextSpan textSpan, String linkText) {
 }
 
 void expectInvalidLink(String linkText) {
-  final Finder richTextFinder = find.byType(RichText);
-  expect(richTextFinder, findsOneWidget);
-  final RichText richText = richTextFinder.evaluate().first.widget as RichText;
+  final Finder textFinder = find.byType(Text);
+  expect(textFinder, findsOneWidget);
+  final Text text = textFinder.evaluate().first.widget as Text;
 
-  expect(richText.text, isNotNull);
-  expect(richText.text, isA<TextSpan>());
-  final String text = richText.text.toPlainText();
-  expect(text, linkText);
+  expect(text.textSpan, isNotNull);
+  expect(text.textSpan, isA<TextSpan>());
+  final String plainText = text.textSpan!.toPlainText();
+  expect(plainText, linkText);
 
-  final TextSpan textSpan = richText.text as TextSpan;
+  final TextSpan textSpan = text.textSpan! as TextSpan;
   expect(textSpan.recognizer, isNull);
 }
 
@@ -158,7 +204,7 @@ void expectTableSize(int rows, int columns) {
 
   expect(table.children.length, rows);
   for (int index = 0; index < rows; index++) {
-    expect(_ambiguate(table.children[index].children)!.length, columns);
+    expect(table.children[index].children.length, columns);
   }
 }
 
@@ -169,9 +215,7 @@ void expectLinkTap(MarkdownLink? actual, MarkdownLink expected) {
 }
 
 String dumpRenderView() {
-  // TODO(goderbauer): Migrate to rootElement once v3.9.0 is the oldest supported Flutter version.
-  // ignore: deprecated_member_use
-  return WidgetsBinding.instance.renderViewElement!.toStringDeep().replaceAll(
+  return WidgetsBinding.instance.rootElement!.toStringDeep().replaceAll(
         RegExp(r'SliverChildListDelegate#\d+', multiLine: true),
         'SliverChildListDelegate',
       );
@@ -219,9 +263,3 @@ class TestAssetBundle extends CachingAssetBundle {
     }
   }
 }
-
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;

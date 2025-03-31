@@ -6,6 +6,7 @@ import 'dart:convert';
 
 import 'package:file/file.dart';
 import 'package:file/local.dart';
+import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/xcode.dart';
 import 'package:test/test.dart';
 
@@ -161,8 +162,10 @@ void main() {
 
       final int exitCode = await xcode.runXcodeBuild(
         directory,
+        'ios',
         workspace: 'A.xcworkspace',
         scheme: 'AScheme',
+        hostPlatform: MockPlatform(),
       );
 
       expect(exitCode, 0);
@@ -186,11 +189,12 @@ void main() {
     test('handles all arguments', () async {
       final Directory directory = const LocalFileSystem().currentDirectory;
 
-      final int exitCode = await xcode.runXcodeBuild(directory,
+      final int exitCode = await xcode.runXcodeBuild(directory, 'ios',
           actions: <String>['action1', 'action2'],
           workspace: 'A.xcworkspace',
           scheme: 'AScheme',
           configuration: 'Debug',
+          hostPlatform: MockPlatform(),
           extraFlags: <String>['-a', '-b', 'c=d']);
 
       expect(exitCode, 0);
@@ -225,8 +229,10 @@ void main() {
 
       final int exitCode = await xcode.runXcodeBuild(
         directory,
+        'ios',
         workspace: 'A.xcworkspace',
         scheme: 'AScheme',
+        hostPlatform: MockPlatform(),
       );
 
       expect(exitCode, 1);
@@ -242,6 +248,43 @@ void main() {
                   'A.xcworkspace',
                   '-scheme',
                   'AScheme',
+                ],
+                directory.path),
+          ]));
+    });
+
+    test('sets CODE_SIGN_ENTITLEMENTS for macos tests', () async {
+      final FileSystem fileSystem = MemoryFileSystem();
+      final Directory directory = fileSystem.currentDirectory;
+      directory
+          .childDirectory('macos')
+          .childDirectory('Runner')
+          .childFile('DebugProfile.entitlements')
+          .createSync(recursive: true);
+
+      final int exitCode = await xcode.runXcodeBuild(
+        directory,
+        'macos',
+        workspace: 'A.xcworkspace',
+        scheme: 'AScheme',
+        hostPlatform: MockPlatform(),
+        actions: <String>['test'],
+      );
+
+      expect(exitCode, 0);
+      expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+                'xcrun',
+                const <String>[
+                  'xcodebuild',
+                  'test',
+                  '-workspace',
+                  'A.xcworkspace',
+                  '-scheme',
+                  'AScheme',
+                  'CODE_SIGN_ENTITLEMENTS=/.tmp_rand0/flutter_disable_sandbox_entitlement.rand0/DebugProfileWithDisabledSandboxing.entitlements'
                 ],
                 directory.path),
           ]));

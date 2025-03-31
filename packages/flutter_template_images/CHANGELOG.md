@@ -1,3 +1,12 @@
+## 5.0.0
+
+* Removes `app_shared` and `skeleton`, which are [no longer used](https://github.com/flutter/flutter/issues/160692).
+
+## 4.3.0
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Creates a copy of `app_shared` named `app` (`app_shared` will no longer be used).
+
 ## 4.2.1
 
 * Adds pub topics to package metadata.

@@ -29,7 +29,7 @@
 - (void)sendOnChannel:(nonnull NSString *)channel
               message:(NSData *_Nullable)message
           binaryReply:(FlutterBinaryReply _Nullable)callback {
-  NSArray *args = [self.codec decode:message];
+  NSArray<id> *args = [self.codec decode:message];
   callback([self.codec encode:args]);
 }
 

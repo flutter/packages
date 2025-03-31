@@ -6,9 +6,9 @@ import 'dart:convert';
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/update_dependency_command.dart';
+import 'package:git/git.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
@@ -18,19 +18,19 @@ import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  FileSystem fileSystem;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
   late CommandRunner<void> runner;
   Future<http.Response> Function(http.Request request)? mockHttpResponse;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    processRunner = RecordingProcessRunner();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    final GitDir gitDir;
+    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks();
     final UpdateDependencyCommand command = UpdateDependencyCommand(
       packagesDir,
       processRunner: processRunner,
+      gitDir: gitDir,
       httpClient:
           MockClient((http.Request request) => mockHttpResponse!(request)),
     );
@@ -775,6 +775,73 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
             gradleWrapperPropertiesFile.readAsStringSync();
         expect(
             updatedGradleWrapperPropertiesContents,
+            contains(
+                r'distributionUrl=https\://services.gradle.org/distributions/'
+                'gradle-$newGradleVersion-all.zip'));
+      });
+
+      test(
+          'succeeds if example app has android/gradle and android/app/gradle directory structure',
+          () async {
+        final RepositoryPackage package =
+            createFakePlugin('fake_plugin', packagesDir, extraFiles: <String>[
+          'example/android/gradle/wrapper/gradle-wrapper.properties',
+          'example/android/app/gradle/wrapper/gradle-wrapper.properties'
+        ]);
+        const String newGradleVersion = '9.9';
+
+        final File gradleWrapperPropertiesFile = package.directory
+            .childDirectory('example')
+            .childDirectory('android')
+            .childDirectory('gradle')
+            .childDirectory('wrapper')
+            .childFile('gradle-wrapper.properties');
+
+        final File gradleAppWrapperPropertiesFile = package.directory
+            .childDirectory('example')
+            .childDirectory('android')
+            .childDirectory('app')
+            .childDirectory('gradle')
+            .childDirectory('wrapper')
+            .childFile('gradle-wrapper.properties');
+
+        gradleWrapperPropertiesFile.writeAsStringSync(r'''
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
+''');
+
+        gradleAppWrapperPropertiesFile.writeAsStringSync(r'''
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
+''');
+
+        await runCapturingPrint(runner, <String>[
+          'update-dependency',
+          '--packages',
+          package.displayName,
+          '--android-dependency',
+          'gradle',
+          '--version',
+          newGradleVersion,
+        ]);
+
+        final String updatedGradleWrapperPropertiesContents =
+            gradleWrapperPropertiesFile.readAsStringSync();
+        final String updatedGradleAppWrapperPropertiesContents =
+            gradleAppWrapperPropertiesFile.readAsStringSync();
+        expect(
+            updatedGradleWrapperPropertiesContents,
+            contains(
+                r'distributionUrl=https\://services.gradle.org/distributions/'
+                'gradle-$newGradleVersion-all.zip'));
+        expect(
+            updatedGradleAppWrapperPropertiesContents,
             contains(
                 r'distributionUrl=https\://services.gradle.org/distributions/'
                 'gradle-$newGradleVersion-all.zip'));

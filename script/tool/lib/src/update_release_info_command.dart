@@ -7,7 +7,6 @@ import 'package:file/file.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
-import 'common/git_version_finder.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/package_state_utils.dart';
@@ -76,11 +75,6 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
   // If null, either there is no version change, or it is dynamic (`minimal`).
   _VersionIncrementType? _versionChange;
 
-  // The cache of changed files, for dynamic version change determination.
-  //
-  // Only set for `minimal` version change.
-  late final List<String> _changedFiles;
-
   @override
   final String name = 'update-release-info';
 
@@ -100,23 +94,13 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
     switch (getStringArg(_versionTypeFlag)) {
       case _versionMinor:
         _versionChange = _VersionIncrementType.minor;
-        break;
       case _versionBugfix:
         _versionChange = _VersionIncrementType.bugfix;
-        break;
       case _versionMinimal:
-        final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
-        // If the line below fails with "Not a valid object name FETCH_HEAD"
-        // run "git fetch", FETCH_HEAD is a temporary reference that only exists
-        // after a fetch. This can happen when a branch is made locally and
-        // pushed but never fetched.
-        _changedFiles = await gitVersionFinder.getChangedFiles();
         // Anothing other than a fixed change is null.
         _versionChange = null;
-        break;
       case _versionNext:
         _versionChange = null;
-        break;
       default:
         throw UnimplementedError('Unimplemented version change type');
     }
@@ -137,8 +121,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       final String relativePackagePath =
           getRelativePosixPath(package.directory, from: gitRoot);
       final PackageChangeState state = await checkPackageChangeState(package,
-          changedPaths: _changedFiles,
-          relativePackagePath: relativePackagePath);
+          changedPaths: changedFiles, relativePackagePath: relativePackagePath);
 
       if (!state.hasChanges) {
         return PackageResult.skip('No changes to package');
@@ -169,10 +152,8 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
     switch (updateOutcome) {
       case _ChangelogUpdateOutcome.addedSection:
         print('${indentation}Added a $nextVersionString section.');
-        break;
       case _ChangelogUpdateOutcome.updatedSection:
         print('${indentation}Updated NEXT section.');
-        break;
       case _ChangelogUpdateOutcome.failed:
         return PackageResult.fail(<String>['Could not update CHANGELOG.md.']);
     }
@@ -217,7 +198,6 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
             ].forEach(newChangelog.writeln);
             state = _ChangelogUpdateState.finishedUpdating;
           }
-          break;
         case _ChangelogUpdateState.findingFirstListItem:
           final RegExpMatch? match = listItemPattern.firstMatch(line);
           if (match != null) {
@@ -239,11 +219,9 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
             printError('  Existing NEXT section has unrecognized format.');
             return _ChangelogUpdateOutcome.failed;
           }
-          break;
         case _ChangelogUpdateState.finishedUpdating:
           // Once changes are done, add the rest of the lines as-is.
           newChangelog.writeln(line);
-          break;
       }
     }
 
@@ -259,7 +237,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
   /// any missing periods.
   ///
   /// E.g., 'A line\nAnother line.' will become:
-  /// ```
+  /// ```none
   /// [ '* A line.', '* Another line.' ]
   /// ```
   Iterable<String> _changelogAdditionsAsList({String listMarker = '*'}) {

@@ -1,3 +1,22 @@
+## 2.5.0
+
+* Adds a sign-in field to allow Android clients to explicitly specify an account name.
+  This capability is only available within Android for the underlying libraries.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.4.5
+
+* Updates minimum required plugin_platform_interface version to 2.1.7.
+
+## 2.4.4
+
+* Updates `clearAuthCache` override to match base class declaration.
+
+## 2.4.3
+
+* Updates minimum supported SDK version to Flutter 3.10/Dart 3.0.
+* Drop dependency on `package:quiver`.
+
 ## 2.4.2
 
 * Adds pub topics to package metadata.

@@ -37,8 +37,7 @@ public class VideoCaptureHostApiImpl implements VideoCaptureHostApi {
   @Override
   @NonNull
   public Long getOutput(@NonNull Long identifier) {
-    VideoCapture<Recorder> videoCapture =
-        Objects.requireNonNull(instanceManager.getInstance(identifier));
+    VideoCapture<Recorder> videoCapture = getVideoCaptureInstance(identifier);
     Recorder recorder = videoCapture.getOutput();
     return Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(recorder));
   }
@@ -48,5 +47,19 @@ public class VideoCaptureHostApiImpl implements VideoCaptureHostApi {
   public VideoCaptureFlutterApiImpl getVideoCaptureFlutterApiImpl(
       @NonNull BinaryMessenger binaryMessenger, @NonNull InstanceManager instanceManager) {
     return new VideoCaptureFlutterApiImpl(binaryMessenger, instanceManager);
+  }
+
+  /** Dynamically sets the target rotation of the {@link VideoCapture}. */
+  @Override
+  public void setTargetRotation(@NonNull Long identifier, @NonNull Long rotation) {
+    VideoCapture<Recorder> videoCapture = getVideoCaptureInstance(identifier);
+    videoCapture.setTargetRotation(rotation.intValue());
+  }
+
+  /**
+   * Retrieves the {@link VideoCapture} instance associated with the specified {@code identifier}.
+   */
+  private VideoCapture<Recorder> getVideoCaptureInstance(@NonNull Long identifier) {
+    return Objects.requireNonNull(instanceManager.getInstance(identifier));
   }
 }

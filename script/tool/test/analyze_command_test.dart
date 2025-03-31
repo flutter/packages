@@ -4,29 +4,29 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/analyze_command.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late MockPlatform mockPlatform;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
   late CommandRunner<void> runner;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
     mockPlatform = MockPlatform();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-    processRunner = RecordingProcessRunner();
+    final GitDir gitDir;
+    (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks(platform: mockPlatform);
     final AnalyzeCommand analyzeCommand = AnalyzeCommand(
       packagesDir,
       processRunner: processRunner,
+      gitDir: gitDir,
       platform: mockPlatform,
     );
 
@@ -271,6 +271,23 @@ void main() {
             ProcessCall('dart', const <String>['analyze', '--fatal-infos'],
                 plugin.path),
           ]));
+    });
+
+    test('ignores analysis options in the plugin .symlinks directory',
+        () async {
+      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir,
+          extraFiles: <String>['analysis_options.yaml']);
+      final RepositoryPackage includingPackage =
+          createFakePlugin('bar', packagesDir);
+      // Simulate the local state of having built 'bar' if it includes 'foo'.
+      includingPackage.directory
+          .childDirectory('example')
+          .childDirectory('ios')
+          .childLink('.symlinks')
+          .createSync(plugin.directory.path, recursive: true);
+
+      await runCapturingPrint(
+          runner, <String>['analyze', '--custom-analysis', 'foo']);
     });
 
     test('takes an allow config file', () async {

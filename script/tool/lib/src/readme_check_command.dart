@@ -10,8 +10,8 @@ import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
 
-const String _instructionWikiUrl =
-    'https://github.com/flutter/flutter/wiki/Contributing-to-Plugins-and-Packages';
+const String _instructionUrl =
+    'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md';
 
 /// A command to enforce README conventions across the repository.
 class ReadmeCheckCommand extends PackageLoopingCommand {
@@ -180,7 +180,7 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
       printError(
           '\n${indentation}For each block listed above, add <?code-excerpt ...> '
           'tag on the previous line, as explained at\n'
-          '$_instructionWikiUrl');
+          '$_instructionUrl');
       errorSummary ??= 'Missing code-excerpt management for code block';
     }
 

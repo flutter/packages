@@ -4,54 +4,49 @@
 
 package io.flutter.plugins.webviewflutter;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import android.view.View;
-import io.flutter.plugin.common.BinaryMessenger;
-import io.flutter.plugins.webviewflutter.GeneratedAndroidWebView.ViewFlutterApi;
-import java.util.Objects;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 public class ViewTest {
+  @Test
+  public void scrollTo() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
 
-  @Rule public MockitoRule mockitoRule = MockitoJUnit.rule();
+    final View instance = mock(View.class);
+    final long x = 0L;
+    final long y = 1L;
+    api.scrollTo(instance, x, y);
 
-  @Mock public View mockView;
-
-  @Mock public BinaryMessenger mockBinaryMessenger;
-
-  @Mock public ViewFlutterApi mockFlutterApi;
-
-  InstanceManager instanceManager;
-
-  @Before
-  public void setUp() {
-    instanceManager = InstanceManager.create(identifier -> {});
-  }
-
-  @After
-  public void tearDown() {
-    instanceManager.stopFinalizationListener();
+    verify(instance).scrollTo((int) x, (int) y);
   }
 
   @Test
-  public void flutterApiCreate() {
-    final ViewFlutterApiImpl flutterApi =
-        new ViewFlutterApiImpl(mockBinaryMessenger, instanceManager);
-    flutterApi.setApi(mockFlutterApi);
+  public void scrollBy() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
 
-    flutterApi.create(mockView, reply -> {});
+    final View instance = mock(View.class);
+    final long x = 0L;
+    final long y = 1L;
+    api.scrollBy(instance, x, y);
 
-    final long instanceIdentifier =
-        Objects.requireNonNull(instanceManager.getIdentifierForStrongReference(mockView));
-    verify(mockFlutterApi).create(eq(instanceIdentifier), any());
+    verify(instance).scrollBy((int) x, (int) y);
+  }
+
+  @Test
+  public void getScrollPosition() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
+
+    final View instance = mock(View.class);
+    final WebViewPoint value = new WebViewPoint(0L, 1L);
+    when(instance.getScrollX()).thenReturn((int) value.getX());
+    when(instance.getScrollY()).thenReturn((int) value.getY());
+
+    assertEquals(value.getX(), api.getScrollPosition(instance).getX());
+    assertEquals(value.getY(), api.getScrollPosition(instance).getY());
   }
 }

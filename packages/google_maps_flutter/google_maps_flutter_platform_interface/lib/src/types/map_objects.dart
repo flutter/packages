@@ -20,12 +20,18 @@ class MapObjects {
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
     this.circles = const <Circle>{},
+    this.heatmaps = const <Heatmap>{},
     this.tileOverlays = const <TileOverlay>{},
+    this.clusterManagers = const <ClusterManager>{},
+    this.groundOverlays = const <GroundOverlay>{},
   });
 
   final Set<Marker> markers;
   final Set<Polygon> polygons;
   final Set<Polyline> polylines;
   final Set<Circle> circles;
+  final Set<Heatmap> heatmaps;
   final Set<TileOverlay> tileOverlays;
+  final Set<ClusterManager> clusterManagers;
+  final Set<GroundOverlay> groundOverlays;
 }

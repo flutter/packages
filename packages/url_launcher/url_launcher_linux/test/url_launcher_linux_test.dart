@@ -4,134 +4,42 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:url_launcher_linux/src/messages.g.dart';
 import 'package:url_launcher_linux/url_launcher_linux.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-
   group('UrlLauncherLinux', () {
-    const MethodChannel channel =
-        MethodChannel('plugins.flutter.io/url_launcher_linux');
-    final List<MethodCall> log = <MethodCall>[];
-    _ambiguate(TestDefaultBinaryMessengerBinding.instance)!
-        .defaultBinaryMessenger
-        .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-      log.add(methodCall);
-
-      // Return null explicitly instead of relying on the implicit null
-      // returned by the method channel if no return statement is specified.
-      return null;
-    });
-
-    tearDown(() {
-      log.clear();
-    });
-
     test('registers instance', () {
       UrlLauncherLinux.registerWith();
       expect(UrlLauncherPlatform.instance, isA<UrlLauncherLinux>());
     });
 
-    test('canLaunch', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.canLaunch('http://example.com/');
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('canLaunch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-          })
-        ],
-      );
+    test('canLaunch passes true', () async {
+      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi();
+      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+
+      final bool canLaunch = await launcher.canLaunch('http://example.com/');
+
+      expect(canLaunch, true);
     });
 
-    test('canLaunch should return false if platform returns null', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
+    test('canLaunch passes false', () async {
+      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi(canLaunch: false);
+      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+
       final bool canLaunch = await launcher.canLaunch('http://example.com/');
 
       expect(canLaunch, false);
     });
 
     test('launch', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{},
-          })
-        ],
-      );
-    });
+      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi();
+      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+      const String url = 'http://example.com/';
 
-    test('launch with headers', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: true,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: const <String, String>{'key': 'value'},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': false,
-            'headers': <String, String>{'key': 'value'},
-          })
-        ],
-      );
-    });
-
-    test('launch universal links only', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
-      await launcher.launch(
-        'http://example.com/',
-        useSafariVC: false,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: true,
-        headers: const <String, String>{},
-      );
-      expect(
-        log,
-        <Matcher>[
-          isMethodCall('launch', arguments: <String, Object>{
-            'url': 'http://example.com/',
-            'enableJavaScript': false,
-            'enableDomStorage': false,
-            'universalLinksOnly': true,
-            'headers': <String, String>{},
-          })
-        ],
-      );
-    });
-
-    test('launch should return false if platform returns null', () async {
-      final UrlLauncherLinux launcher = UrlLauncherLinux();
       final bool launched = await launcher.launch(
-        'http://example.com/',
+        url,
         useSafariVC: true,
         useWebView: false,
         enableJavaScript: false,
@@ -140,7 +48,54 @@ void main() {
         headers: const <String, String>{},
       );
 
-      expect(launched, false);
+      expect(launched, true);
+      expect(api.argument, url);
+    });
+
+    test('launch should throw if platform returns an error', () async {
+      final _FakeUrlLauncherApi api = _FakeUrlLauncherApi(error: 'An error');
+      final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+
+      await expectLater(
+          launcher.launch(
+            'http://example.com/',
+            useSafariVC: true,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          throwsA(isA<PlatformException>()
+              .having((PlatformException e) => e.code, 'code', 'Launch Error')
+              .having((PlatformException e) => e.message, 'message',
+                  contains('Failed to launch URL: An error'))));
+    });
+
+    group('launchUrl', () {
+      test('passes URL', () async {
+        final _FakeUrlLauncherApi api = _FakeUrlLauncherApi();
+        final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+        const String url = 'http://example.com/';
+
+        final bool launched =
+            await launcher.launchUrl(url, const LaunchOptions());
+
+        expect(launched, true);
+        expect(api.argument, url);
+      });
+
+      test('throws if platform returns an error', () async {
+        final _FakeUrlLauncherApi api = _FakeUrlLauncherApi(error: 'An error');
+        final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
+
+        await expectLater(
+            launcher.launchUrl('http://example.com/', const LaunchOptions()),
+            throwsA(isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'Launch Error')
+                .having((PlatformException e) => e.message, 'message',
+                    contains('Failed to launch URL: An error'))));
+      });
     });
 
     group('supportsMode', () {
@@ -186,8 +141,35 @@ void main() {
   });
 }
 
-/// This allows a value of type T or T? to be treated as a value of type T?.
-///
-/// We use this so that APIs that have become non-nullable can still be used
-/// with `!` and `?` on the stable branch.
-T? _ambiguate<T>(T? value) => value;
+class _FakeUrlLauncherApi implements UrlLauncherApi {
+  _FakeUrlLauncherApi({this.canLaunch = true, this.error});
+
+  /// The value to return from canLaunch.
+  final bool canLaunch;
+
+  /// The error to return from launchUrl, if any.
+  final String? error;
+
+  /// The argument that was passed to an API call.
+  String? argument;
+
+  @override
+  Future<bool> canLaunchUrl(String url) async {
+    argument = url;
+    return canLaunch;
+  }
+
+  @override
+  Future<String?> launchUrl(String url) async {
+    argument = url;
+    return error;
+  }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
+}
