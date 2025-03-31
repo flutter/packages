@@ -72,9 +72,6 @@ class SslErrorProxyApi extends PigeonApiSslError {
       case INVALID:
         nativeError = SslError.SSL_INVALID;
         break;
-      case MAX_ERROR:
-        nativeError = SslError.SSL_MAX_ERROR;
-        break;
       case NOT_YET_VALID:
         nativeError = SslError.SSL_NOTYETVALID;
         break;
