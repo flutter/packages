@@ -98,7 +98,7 @@ class AndroidWebViewProxy {
       WebViewClient,
       WebView,
       String,
-      String,
+      String?,
       String,
     )? onReceivedLoginRequest,
     void Function(

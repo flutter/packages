@@ -467,9 +467,9 @@ class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
 ///
 /// By default each function calls the default constructor of the class it
 /// intends to return.
-class AndroidWebkitProxy {
-  /// Constructs an [AndroidWebkitProxy].
-  const AndroidWebkitProxy({
+class AndroidWebkitGProxy {
+  /// Constructs an [AndroidWebkitGProxy].
+  const AndroidWebkitGProxy({
     this.newWebView = WebView.new,
     this.newJavaScriptChannel = JavaScriptChannel.new,
     this.newWebViewClient = WebViewClient.new,
@@ -591,7 +591,7 @@ class AndroidWebkitProxy {
       WebViewClient,
       WebView,
       String,
-      String,
+      String?,
       String,
     )? onReceivedLoginRequest,
     void Function(
@@ -3748,7 +3748,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
     WebViewClient pigeon_instance,
     WebView view,
     String realm,
-    String account,
+    String? account,
     String args,
   )? onReceivedLoginRequest;
 
@@ -3894,7 +3894,7 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
       WebViewClient pigeon_instance,
       WebView view,
       String realm,
-      String account,
+      String? account,
       String args,
     )? onReceivedLoginRequest,
     void Function(
@@ -4558,16 +4558,14 @@ class WebViewClient extends PigeonInternalProxyApiBaseClass {
           assert(arg_realm != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null String.');
           final String? arg_account = (args[3] as String?);
-          assert(arg_account != null,
-              'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null String.');
           final String? arg_args = (args[4] as String?);
           assert(arg_args != null,
               'Argument for dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedLoginRequest was null, expected non-null String.');
           try {
             (onReceivedLoginRequest ??
                     arg_pigeon_instance!.onReceivedLoginRequest)
-                ?.call(arg_pigeon_instance!, arg_view!, arg_realm!,
-                    arg_account!, arg_args!);
+                ?.call(arg_pigeon_instance!, arg_view!, arg_realm!, arg_account,
+                    arg_args!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

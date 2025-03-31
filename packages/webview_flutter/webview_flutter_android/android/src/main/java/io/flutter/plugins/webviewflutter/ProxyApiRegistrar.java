@@ -56,6 +56,28 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
             + Log.getStackTraceString(exception));
   }
 
+  /** Creates an exception when the `unknown` enum value is passed to a host method. */
+  @NonNull
+  IllegalArgumentException createUnknownEnumException(@NonNull Object enumValue) {
+    return new IllegalArgumentException(
+        String.format("%s doesn't represent a native value.", enumValue));
+  }
+
+  /** Creates the error message when a method is called on an unsupported version. */
+  @NonNull
+  String createUnsupportedVersionMessage(
+      @NonNull String method, @NonNull String versionRequirements) {
+    return String.format("%s requires %s.", method, versionRequirements);
+  }
+
+  /** Creates an exception when a method is called on an unsupported version. */
+  @NonNull
+  UnsupportedOperationException createUnsupportedVersionError(
+      @NonNull String method, @NonNull String versionRequirements) {
+    return new UnsupportedOperationException(
+        createUnsupportedVersionMessage(method, versionRequirements));
+  }
+
   @NonNull
   @Override
   public PigeonApiWebResourceRequest getPigeonApiWebResourceRequest() {
@@ -181,6 +203,36 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   @Override
   public PigeonApiHttpAuthHandler getPigeonApiHttpAuthHandler() {
     return new HttpAuthHandlerProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiClientCertRequest getPigeonApiClientCertRequest() {
+    return new ClientCertRequestProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiSslErrorHandler getPigeonApiSslErrorHandler() {
+    return new SslErrorHandlerProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiSslError getPigeonApiSslError() {
+    return new SslErrorProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiSslCertificateDName getPigeonApiSslCertificateDName() {
+    return new SslCertificateDNameProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiSslCertificate getPigeonApiSslCertificate() {
+    return new SslCertificateProxyApi(this);
   }
 
   @NonNull

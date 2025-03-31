@@ -25,19 +25,19 @@ import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeHttpAuthHandler_1 extends _i1.SmartFake
     implements _i2.HttpAuthHandler {
   _FakeHttpAuthHandler_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeDownloadListener_2 extends _i1.SmartFake
     implements _i2.DownloadListener {
   _FakeDownloadListener_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [HttpAuthHandler].
@@ -49,52 +49,43 @@ class MockHttpAuthHandler extends _i1.Mock implements _i2.HttpAuthHandler {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_0(
-              this,
-              Invocation.getter(#pigeon_instanceManager),
-            ),
-          )
-          as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<bool> useHttpAuthUsernamePassword() =>
-      (super.noSuchMethod(
-            Invocation.method(#useHttpAuthUsernamePassword, []),
-            returnValue: _i3.Future<bool>.value(false),
-          )
-          as _i3.Future<bool>);
+  _i3.Future<bool> useHttpAuthUsernamePassword() => (super.noSuchMethod(
+        Invocation.method(#useHttpAuthUsernamePassword, []),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
 
   @override
-  _i3.Future<void> cancel() =>
-      (super.noSuchMethod(
-            Invocation.method(#cancel, []),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> cancel() => (super.noSuchMethod(
+        Invocation.method(#cancel, []),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<void> proceed(String? username, String? password) =>
       (super.noSuchMethod(
-            Invocation.method(#proceed, [username, password]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#proceed, [username, password]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i2.HttpAuthHandler pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeHttpAuthHandler_1(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
-          )
-          as _i2.HttpAuthHandler);
+  _i2.HttpAuthHandler pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(#pigeon_copy, []),
+        returnValue: _FakeHttpAuthHandler_1(
+          this,
+          Invocation.method(#pigeon_copy, []),
+        ),
+      ) as _i2.HttpAuthHandler);
 }
 
 /// A class which mocks [DownloadListener].
@@ -107,20 +98,17 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
 
   @override
   void Function(_i2.DownloadListener, String, String, String, String, int)
-  get onDownloadStart =>
-      (super.noSuchMethod(
+      get onDownloadStart => (super.noSuchMethod(
             Invocation.getter(#onDownloadStart),
-            returnValue:
-                (
-                  _i2.DownloadListener pigeon_instance,
-                  String url,
-                  String userAgent,
-                  String contentDisposition,
-                  String mimetype,
-                  int contentLength,
-                ) {},
-          )
-          as void Function(
+            returnValue: (
+              _i2.DownloadListener pigeon_instance,
+              String url,
+              String userAgent,
+              String contentDisposition,
+              String mimetype,
+              int contentLength,
+            ) {},
+          ) as void Function(
             _i2.DownloadListener,
             String,
             String,
@@ -130,24 +118,20 @@ class MockDownloadListener extends _i1.Mock implements _i2.DownloadListener {
           ));
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_0(
-              this,
-              Invocation.getter(#pigeon_instanceManager),
-            ),
-          )
-          as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
 
   @override
-  _i2.DownloadListener pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeDownloadListener_2(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
-          )
-          as _i2.DownloadListener);
+  _i2.DownloadListener pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(#pigeon_copy, []),
+        returnValue: _FakeDownloadListener_2(
+          this,
+          Invocation.method(#pigeon_copy, []),
+        ),
+      ) as _i2.DownloadListener);
 }

@@ -96,12 +96,6 @@ enum SslErrorType {
   /// A generic error occurred.
   invalid,
 
-  /// The number of different SSL errors.
-  ///
-  /// Deprecated: This constant is not necessary for using the SslError API and
-  /// can change from release to release..
-  maxError,
-
   /// The certificate is not yet valid.
   notYetValid,
 
@@ -515,7 +509,7 @@ abstract class WebViewClient {
   void Function(
     WebView view,
     String realm,
-    String account,
+    String? account,
     String args,
   )? onReceivedLoginRequest;
 
