@@ -397,4 +397,19 @@ class PlatformWebView {
 
     throw UnimplementedError('${webView.runtimeType} is not supported.');
   }
+
+  /// If you set this property’s value to true, an iOS user can press links to
+  /// preview link destinations and detected data such as addresses and phone
+  /// numbers.
+  Future<void> setAllowsLinkPreview(bool allow) {
+    final WKWebView webView = nativeWebView;
+    switch (webView) {
+      case UIViewWKWebView():
+        return webView.setAllowsLinkPreview(allow);
+      case NSViewWKWebView():
+        return webView.setAllowsLinkPreview(allow);
+    }
+
+    throw UnimplementedError('${webView.runtimeType} is not supported.');
+  }
 }
