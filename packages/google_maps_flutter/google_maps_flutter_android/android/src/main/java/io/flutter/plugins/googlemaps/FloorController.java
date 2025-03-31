@@ -1,6 +1,5 @@
 package io.flutter.plugins.googlemaps;
 
-
 import androidx.annotation.NonNull;
 import com.google.android.gms.maps.model.IndoorLevel;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
