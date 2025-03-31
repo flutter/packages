@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MockCapturePhotoOutput : NSObject <FLTCapturePhotoOutput>
 
 // Properties re-declared as read/write so a mocked value can be set during testing.
-@property(nonatomic, strong) AVCapturePhotoOutput *photoOutput;
+@property(nonatomic, strong) AVCapturePhotoOutput *avOutput;
 @property(nonatomic, strong) NSArray<AVVideoCodecType> *availablePhotoCodecTypes;
 @property(nonatomic, assign) BOOL highResolutionCaptureEnabled;
 @property(nonatomic, strong) NSArray<NSNumber *> *supportedFlashModes;
@@ -20,6 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
 // Stub that is called when the corresponding public method is called.
 @property(nonatomic, copy) void (^capturePhotoWithSettingsStub)
     (AVCapturePhotoSettings *, NSObject<AVCapturePhotoCaptureDelegate> *);
+
+// Stub that is called when the corresponding public method is called.
+@property(nonatomic, copy) NSObject<FLTCaptureConnection> * (^connectionWithMediaTypeStub)
+    (AVMediaType);
 
 @end
 

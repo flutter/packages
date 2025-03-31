@@ -49,6 +49,29 @@ class FlutterError(
     val details: Any? = null
 ) : Throwable()
 
+private fun deepEqualsCoreTests(a: Any?, b: Any?): Boolean {
+  if (a is ByteArray && b is ByteArray) {
+    return a.contentEquals(b)
+  }
+  if (a is IntArray && b is IntArray) {
+    return a.contentEquals(b)
+  }
+  if (a is LongArray && b is LongArray) {
+    return a.contentEquals(b)
+  }
+  if (a is DoubleArray && b is DoubleArray) {
+    return a.contentEquals(b)
+  }
+  if (a is Array<*> && b is Array<*>) {
+    return a.size == b.size && a.indices.all { deepEqualsCoreTests(a[it], b[it]) }
+  }
+  if (a is Map<*, *> && b is Map<*, *>) {
+    return a.size == b.size &&
+        a.keys.all { (b as Map<Any?, Any?>).containsKey(it) && deepEqualsCoreTests(a[it], b[it]) }
+  }
+  return a == b
+}
+
 enum class AnEnum(val raw: Int) {
   ONE(0),
   TWO(1),
@@ -87,6 +110,18 @@ data class UnusedClass(val aField: Any? = null) {
         aField,
     )
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is UnusedClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return aField == other.aField
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 /**
@@ -218,6 +253,45 @@ data class AllTypes(
         mapMap,
     )
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is AllTypes) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return aBool == other.aBool &&
+        anInt == other.anInt &&
+        anInt64 == other.anInt64 &&
+        aDouble == other.aDouble &&
+        deepEqualsCoreTests(aByteArray, other.aByteArray) &&
+        deepEqualsCoreTests(a4ByteArray, other.a4ByteArray) &&
+        deepEqualsCoreTests(a8ByteArray, other.a8ByteArray) &&
+        deepEqualsCoreTests(aFloatArray, other.aFloatArray) &&
+        anEnum == other.anEnum &&
+        anotherEnum == other.anotherEnum &&
+        aString == other.aString &&
+        anObject == other.anObject &&
+        deepEqualsCoreTests(list, other.list) &&
+        deepEqualsCoreTests(stringList, other.stringList) &&
+        deepEqualsCoreTests(intList, other.intList) &&
+        deepEqualsCoreTests(doubleList, other.doubleList) &&
+        deepEqualsCoreTests(boolList, other.boolList) &&
+        deepEqualsCoreTests(enumList, other.enumList) &&
+        deepEqualsCoreTests(objectList, other.objectList) &&
+        deepEqualsCoreTests(listList, other.listList) &&
+        deepEqualsCoreTests(mapList, other.mapList) &&
+        deepEqualsCoreTests(map, other.map) &&
+        deepEqualsCoreTests(stringMap, other.stringMap) &&
+        deepEqualsCoreTests(intMap, other.intMap) &&
+        deepEqualsCoreTests(enumMap, other.enumMap) &&
+        deepEqualsCoreTests(objectMap, other.objectMap) &&
+        deepEqualsCoreTests(listMap, other.listMap) &&
+        deepEqualsCoreTests(mapMap, other.mapMap)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 /**
@@ -361,6 +435,48 @@ data class AllNullableTypes(
         recursiveClassMap,
     )
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is AllNullableTypes) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        deepEqualsCoreTests(aNullableByteArray, other.aNullableByteArray) &&
+        deepEqualsCoreTests(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        deepEqualsCoreTests(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        deepEqualsCoreTests(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        allNullableTypes == other.allNullableTypes &&
+        deepEqualsCoreTests(list, other.list) &&
+        deepEqualsCoreTests(stringList, other.stringList) &&
+        deepEqualsCoreTests(intList, other.intList) &&
+        deepEqualsCoreTests(doubleList, other.doubleList) &&
+        deepEqualsCoreTests(boolList, other.boolList) &&
+        deepEqualsCoreTests(enumList, other.enumList) &&
+        deepEqualsCoreTests(objectList, other.objectList) &&
+        deepEqualsCoreTests(listList, other.listList) &&
+        deepEqualsCoreTests(mapList, other.mapList) &&
+        deepEqualsCoreTests(recursiveClassList, other.recursiveClassList) &&
+        deepEqualsCoreTests(map, other.map) &&
+        deepEqualsCoreTests(stringMap, other.stringMap) &&
+        deepEqualsCoreTests(intMap, other.intMap) &&
+        deepEqualsCoreTests(enumMap, other.enumMap) &&
+        deepEqualsCoreTests(objectMap, other.objectMap) &&
+        deepEqualsCoreTests(listMap, other.listMap) &&
+        deepEqualsCoreTests(mapMap, other.mapMap) &&
+        deepEqualsCoreTests(recursiveClassMap, other.recursiveClassMap)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 /**
@@ -493,6 +609,45 @@ data class AllNullableTypesWithoutRecursion(
         mapMap,
     )
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is AllNullableTypesWithoutRecursion) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        deepEqualsCoreTests(aNullableByteArray, other.aNullableByteArray) &&
+        deepEqualsCoreTests(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        deepEqualsCoreTests(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        deepEqualsCoreTests(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        deepEqualsCoreTests(list, other.list) &&
+        deepEqualsCoreTests(stringList, other.stringList) &&
+        deepEqualsCoreTests(intList, other.intList) &&
+        deepEqualsCoreTests(doubleList, other.doubleList) &&
+        deepEqualsCoreTests(boolList, other.boolList) &&
+        deepEqualsCoreTests(enumList, other.enumList) &&
+        deepEqualsCoreTests(objectList, other.objectList) &&
+        deepEqualsCoreTests(listList, other.listList) &&
+        deepEqualsCoreTests(mapList, other.mapList) &&
+        deepEqualsCoreTests(map, other.map) &&
+        deepEqualsCoreTests(stringMap, other.stringMap) &&
+        deepEqualsCoreTests(intMap, other.intMap) &&
+        deepEqualsCoreTests(enumMap, other.enumMap) &&
+        deepEqualsCoreTests(objectMap, other.objectMap) &&
+        deepEqualsCoreTests(listMap, other.listMap) &&
+        deepEqualsCoreTests(mapMap, other.mapMap)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 /**
@@ -544,6 +699,24 @@ data class AllClassesWrapper(
         nullableClassMap,
     )
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is AllClassesWrapper) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return allNullableTypes == other.allNullableTypes &&
+        allNullableTypesWithoutRecursion == other.allNullableTypesWithoutRecursion &&
+        allTypes == other.allTypes &&
+        deepEqualsCoreTests(classList, other.classList) &&
+        deepEqualsCoreTests(nullableClassList, other.nullableClassList) &&
+        deepEqualsCoreTests(classMap, other.classMap) &&
+        deepEqualsCoreTests(nullableClassMap, other.nullableClassMap)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 /**
@@ -564,6 +737,18 @@ data class TestMessage(val testList: List<Any?>? = null) {
         testList,
     )
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is TestMessage) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return deepEqualsCoreTests(testList, other.testList)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
 }
 
 private open class CoreTestsPigeonCodec : StandardMessageCodec() {

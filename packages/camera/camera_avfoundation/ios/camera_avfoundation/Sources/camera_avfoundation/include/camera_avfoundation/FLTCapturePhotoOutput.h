@@ -5,24 +5,29 @@
 @import Foundation;
 @import AVFoundation;
 
-#import "FLTCapturePhotoOutput.h"
+#import "FLTCaptureOutput.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// A protocol which is a direct passthrough to `AVCapturePhotoOutput`. It exists to allow mocking
 /// `AVCapturePhotoOutput` in tests.
-@protocol FLTCapturePhotoOutput <NSObject>
+@protocol FLTCapturePhotoOutput <FLTCaptureOutput>
 
 /// The underlying instance of `AVCapturePhotoOutput`.
-@property(nonatomic, readonly) AVCapturePhotoOutput *photoOutput;
+@property(nonatomic, readonly) AVCapturePhotoOutput *avOutput;
 
+/// Corresponds to the `availablePhotoCodecTypes` property of `AVCapturePhotoOutput`
 @property(nonatomic, readonly) NSArray<AVVideoCodecType> *availablePhotoCodecTypes;
+
+/// Corresponds to the `highResolutionCaptureEnabled` property of `AVCapturePhotoOutput`
 @property(nonatomic, assign) BOOL highResolutionCaptureEnabled;
+
+/// Corresponds to the `supportedFlashModes` property of `AVCapturePhotoOutput`
 @property(nonatomic, readonly) NSArray<NSNumber *> *supportedFlashModes;
 
+/// Corresponds to the `capturePhotoWithSettings` method of `AVCapturePhotoOutput`
 - (void)capturePhotoWithSettings:(AVCapturePhotoSettings *)settings
                         delegate:(NSObject<AVCapturePhotoCaptureDelegate> *)delegate;
-- (nullable AVCaptureConnection *)connectionWithMediaType:(AVMediaType)mediaType;
 
 @end
 

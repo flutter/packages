@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
@@ -104,6 +105,62 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   }
 
   @override
+  bool supportsGettingGroundOverlayInfo() => true;
+
+  @override
+  Future<GroundOverlay?> getGroundOverlayInfo(GroundOverlayId groundOverlayId,
+      {required int mapId}) async {
+    final PlatformGroundOverlay? groundOverlayInfo =
+        await _inspectorProvider(mapId)!
+            .getGroundOverlayInfo(groundOverlayId.value);
+
+    if (groundOverlayInfo == null) {
+      return null;
+    }
+
+    // Create dummy image to represent the image of the ground overlay.
+    final BytesMapBitmap dummyImage = BytesMapBitmap(
+      Uint8List.fromList(<int>[0]),
+      bitmapScaling: MapBitmapScaling.none,
+    );
+
+    final PlatformLatLng? position = groundOverlayInfo.position;
+    final PlatformLatLngBounds? bounds = groundOverlayInfo.bounds;
+
+    if (position != null) {
+      return GroundOverlay.fromPosition(
+        groundOverlayId: groundOverlayId,
+        position: LatLng(position.latitude, position.longitude),
+        image: dummyImage,
+        zIndex: groundOverlayInfo.zIndex,
+        bearing: groundOverlayInfo.bearing,
+        transparency: groundOverlayInfo.transparency,
+        visible: groundOverlayInfo.visible,
+        clickable: groundOverlayInfo.clickable,
+        anchor:
+            Offset(groundOverlayInfo.anchor!.x, groundOverlayInfo.anchor!.y),
+        zoomLevel: groundOverlayInfo.zoomLevel,
+      );
+    } else if (bounds != null) {
+      return GroundOverlay.fromBounds(
+        groundOverlayId: groundOverlayId,
+        bounds: LatLngBounds(
+            southwest:
+                LatLng(bounds.southwest.latitude, bounds.southwest.longitude),
+            northeast:
+                LatLng(bounds.northeast.latitude, bounds.northeast.longitude)),
+        image: dummyImage,
+        zIndex: groundOverlayInfo.zIndex,
+        bearing: groundOverlayInfo.bearing,
+        transparency: groundOverlayInfo.transparency,
+        visible: groundOverlayInfo.visible,
+        clickable: groundOverlayInfo.clickable,
+      );
+    }
+    return null;
+  }
+
+  @override
   Future<bool> isCompassEnabled({required int mapId}) async {
     return _inspectorProvider(mapId)!.isCompassEnabled();
   }
@@ -140,5 +197,23 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
         .map((PlatformCluster cluster) =>
             GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster))
         .toList();
+  }
+
+  @override
+  bool supportsGettingGameraPosition() => true;
+
+  @override
+  Future<CameraPosition> getCameraPosition({required int mapId}) async {
+    final PlatformCameraPosition cameraPosition =
+        await _inspectorProvider(mapId)!.getCameraPosition();
+    return CameraPosition(
+      target: LatLng(
+        cameraPosition.target.latitude,
+        cameraPosition.target.longitude,
+      ),
+      bearing: cameraPosition.bearing,
+      tilt: cameraPosition.tilt,
+      zoom: cameraPosition.zoom,
+    );
   }
 }
