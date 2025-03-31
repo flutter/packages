@@ -1474,7 +1474,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
       params as AndroidNavigationDelegateCreationParams;
 
   late final android_webview.WebChromeClient _webChromeClient =
-      _androidParams.androidWebViewProxy.newWebChromeClient();
+      _androidParams.androidWebViewProxy.newWebChromeClient(
+        onJsConfirm: (_, __, ___, ____) async => false,
+        onShowFileChooser: (_, __, ___) async => <String>[],
+  );
 
   /// Gets the native [android_webview.WebChromeClient] that is bridged by this [AndroidNavigationDelegate].
   ///

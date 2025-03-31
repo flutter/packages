@@ -247,18 +247,21 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
   @visibleForTesting
   late final android_webview.WebChromeClient webChromeClient =
       android_webview.WebChromeClient(
-          onProgressChanged: withWeakReferenceTo(
-    this,
-    (WeakReference<WebViewAndroidPlatformController> weakReference) {
-      return (_, __, int progress) {
-        final WebViewAndroidPlatformController? controller =
-            weakReference.target;
-        if (controller != null && controller._hasProgressTracking) {
-          controller.callbacksHandler.onProgress(progress);
-        }
-      };
-    },
-  ));
+    onProgressChanged: withWeakReferenceTo(
+      this,
+      (WeakReference<WebViewAndroidPlatformController> weakReference) {
+        return (_, __, int progress) {
+          final WebViewAndroidPlatformController? controller =
+              weakReference.target;
+          if (controller != null && controller._hasProgressTracking) {
+            controller.callbacksHandler.onProgress(progress);
+          }
+        };
+      },
+    ),
+    onJsConfirm: (_, __, ___, ____) async => false,
+    onShowFileChooser: (_, __, ___) async => <String>[],
+  );
 
   /// Manages the JavaScript storage APIs.
   final android_webview.WebStorage webStorage;

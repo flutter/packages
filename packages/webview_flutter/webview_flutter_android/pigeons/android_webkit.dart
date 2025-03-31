@@ -588,7 +588,7 @@ abstract class WebChromeClient {
   late List<String> Function(
     WebView webView,
     FileChooserParams params,
-  )? onShowFileChooser;
+  ) onShowFileChooser;
 
   /// Notify the host application that web content is requesting permission to
   /// access the specified resources and the permission currently isn't granted
@@ -629,7 +629,7 @@ abstract class WebChromeClient {
   /// Notify the host application that the web page wants to display a
   /// JavaScript `confirm()` dialog.
   @async
-  late bool Function(WebView webView, String url, String message)? onJsConfirm;
+  late bool Function(WebView webView, String url, String message) onJsConfirm;
 
   /// Notify the host application that the web page wants to display a
   /// JavaScript `prompt()` dialog.
