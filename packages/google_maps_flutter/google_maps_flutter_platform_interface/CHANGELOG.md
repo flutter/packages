@@ -5,7 +5,6 @@
 ## 2.11.0
 
 * Adds support for animating the camera with a duration.
-* Updates READMEs and API docs.
 
 ## 2.10.0
 
