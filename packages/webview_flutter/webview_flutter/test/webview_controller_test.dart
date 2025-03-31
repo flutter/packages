@@ -336,18 +336,6 @@ void main() {
     );
   });
 
-  test('setAllowsLinkPreview', () async {
-    final MockPlatformWebViewController mockPlatformWebViewController =
-        MockPlatformWebViewController();
-
-    final WebViewController webViewController = WebViewController.fromPlatform(
-      mockPlatformWebViewController,
-    );
-
-    await webViewController.setAllowsLinkPreview(false);
-    verify(mockPlatformWebViewController.setAllowsLinkPreview(false));
-  });
-
   test('setUserAgent', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
@@ -415,6 +403,62 @@ void main() {
     verify(mockPlatformWebViewController.setOnConsoleMessage(onConsoleMessage));
   });
 
+  test('setOnJavaScriptAlertDialog', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    Future<void> onJavaScriptAlertDialog(
+        JavaScriptAlertDialogRequest request) async {
+      return;
+    }
+
+    await webViewController.setOnJavaScriptAlertDialog(onJavaScriptAlertDialog);
+    verify(mockPlatformWebViewController
+        .setOnJavaScriptAlertDialog(onJavaScriptAlertDialog));
+  });
+
+  test('setOnJavaScriptConfirmDialog', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    Future<bool> onJavaScriptConfirmDialog(
+        JavaScriptConfirmDialogRequest request) async {
+      return true;
+    }
+
+    await webViewController
+        .setOnJavaScriptConfirmDialog(onJavaScriptConfirmDialog);
+    verify(mockPlatformWebViewController
+        .setOnJavaScriptConfirmDialog(onJavaScriptConfirmDialog));
+  });
+
+  test('setOnJavaScriptTextInputDialog', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    Future<String> onJavaScriptTextInputDialog(
+        JavaScriptTextInputDialogRequest request) async {
+      return 'text';
+    }
+
+    await webViewController
+        .setOnJavaScriptTextInputDialog(onJavaScriptTextInputDialog);
+    verify(mockPlatformWebViewController
+        .setOnJavaScriptTextInputDialog(onJavaScriptTextInputDialog));
+  });
+
   test('getUserAgent', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
@@ -429,6 +473,24 @@ void main() {
       mockPlatformWebViewController,
     );
     await expectLater(webViewController.getUserAgent(), completion(userAgent));
+  });
+
+  test('setOnScrollPositionChange', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    void onScrollPositionChange(ScrollPositionChange change) {}
+
+    await webViewController.setOnScrollPositionChange(onScrollPositionChange);
+
+    verify(
+      mockPlatformWebViewController
+          .setOnScrollPositionChange(onScrollPositionChange),
+    );
   });
 }
 
