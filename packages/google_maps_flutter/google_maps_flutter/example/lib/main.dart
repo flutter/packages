@@ -12,6 +12,7 @@ import 'animate_camera.dart';
 import 'clustering.dart';
 import 'ground_overlay.dart';
 import 'heatmap.dart';
+import 'indoor_level.dart';
 import 'lite_mode.dart';
 import 'map_click.dart';
 import 'map_coordinates.dart';
@@ -49,6 +50,7 @@ final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
   const ClusteringPage(),
   const MapIdPage(),
   const HeatmapPage(),
+  const IndoorLevelPage(),
 ];
 
 /// MapsDemo is the Main Application.
