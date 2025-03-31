@@ -447,6 +447,7 @@ void main() {
       expect(descriptor.assetName, 'red_square.png');
       expect(descriptor.bitmapScaling, MapBitmapScaling.auto);
       expect(descriptor.imagePixelRatio, 1.0);
+      expect(descriptor.getAssetName(), 'red_square.png');
     });
 
     test('construct with imagePixelRatio', () async {
@@ -598,6 +599,13 @@ void main() {
       expect(descriptor.bitmapScaling, MapBitmapScaling.auto);
       expect(descriptor.imagePixelRatio, 1.0);
       expect(descriptor.height, 200.0);
+    });
+
+    test('getAssetName returns null for non-asset descriptors', () {
+      final BitmapDescriptor descriptor = BytesMapBitmap(
+        Uint8List.fromList(<int>[1, 2, 3]),
+      );
+      expect(descriptor.getAssetName(), isNull);
     });
   },
       // TODO(stuartmorgan): Investigate timeout on web.
