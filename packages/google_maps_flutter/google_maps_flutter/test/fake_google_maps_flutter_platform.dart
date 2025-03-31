@@ -290,6 +290,13 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MapActiveLevelChangedEvent> onActiveLevelChanged(
+      {required int mapId}) {
+    return mapEventStreamController.stream
+        .whereType<MapActiveLevelChangedEvent>();
+  }
+
+  @override
   Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
     return mapEventStreamController.stream.whereType<ClusterTapEvent>();
   }

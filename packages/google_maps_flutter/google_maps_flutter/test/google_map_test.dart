@@ -579,4 +579,29 @@ void main() {
 
     expect(map.mapConfiguration.style, '');
   });
+
+  testWidgets('Can listen to active level change events',
+      (WidgetTester tester) async {
+    const IndoorLevel expectedIndoorLevel =
+        IndoorLevel(name: '1', shortName: '1');
+    IndoorLevel? selectedIndoorLevel;
+
+    final GoogleMap map = GoogleMap(
+      initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+      onActiveLevelChanged: (IndoorLevel? indoorLevel) {
+        selectedIndoorLevel = indoorLevel;
+      },
+    );
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: map,
+      ),
+    );
+
+    map.onActiveLevelChanged?.call(expectedIndoorLevel);
+
+    expect(selectedIndoorLevel, expectedIndoorLevel);
+  });
 }
