@@ -149,10 +149,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   /// https://developer.apple.com/documentation/storekit/storefront/countrycode
   func countryCode(completion: @escaping (Result<String, Error>) -> Void) {
     Task {
-      guard let currentStorefront = try await Storefront.current else {
+      guard let currentStorefront = await Storefront.current else {
         completion(.failure(fatalError("Could not get current Storefront.")))
       }
-      return completion(.success(try await currentStorefront.countryCode))
+      return completion(.success(currentStorefront.countryCode))
     }
   }
 
