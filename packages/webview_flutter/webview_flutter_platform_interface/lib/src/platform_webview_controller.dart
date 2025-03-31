@@ -17,7 +17,7 @@ import 'webview_platform.dart' show WebViewPlatform;
 /// changes. Extending this class (using `extends`) ensures that the subclass
 /// will get the default implementation, while platform implementations that
 /// `implements` this interface will be broken by newly added
-/// [PlatformWebViewCookieManager] methods.
+/// [PlatformWebViewController] methods.
 abstract class PlatformWebViewController extends PlatformInterface {
   /// Creates a new [PlatformWebViewController]
   factory PlatformWebViewController(
@@ -261,18 +261,13 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'setUserAgent is not implemented on the current platform');
   }
 
-  /// Whether to display a preview of the destination for the link
-  ///
-  /// This is not supported by all platforms, so it defaults to a noop
-  Future<void> setAllowsLinkPreview(bool allow) async {}
-
   /// Sets a callback that notifies the host application that web content is
   /// requesting permission to access the specified resources.
   Future<void> setOnPlatformPermissionRequest(
     void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) {
     throw UnimplementedError(
-      'setOnPermissionRequest is not implemented on the current platform',
+      'setOnPlatformPermissionRequest is not implemented on the current platform',
     );
   }
 
@@ -289,6 +284,44 @@ abstract class PlatformWebViewController extends PlatformInterface {
       void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage) {
     throw UnimplementedError(
       'setOnConsoleMessage is not implemented on the current platform',
+    );
+  }
+
+  /// Sets the listener for content offset changes.
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) {
+    throw UnimplementedError(
+        'setOnScrollPositionChange is not implemented on the current platform');
+  }
+
+  /// Sets a callback that notifies the host application that the web page
+  /// wants to display a JavaScript alert() dialog.
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(JavaScriptAlertDialogRequest request)
+          onJavaScriptAlertDialog) async {
+    throw UnimplementedError(
+      'setOnJavaScriptAlertDialog is not implemented on the current platform',
+    );
+  }
+
+  /// Sets a callback that notifies the host application that the web page
+  /// wants to display a JavaScript confirm() dialog.
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(JavaScriptConfirmDialogRequest request)
+          onJavaScriptConfirmDialog) async {
+    throw UnimplementedError(
+      'setOnJavaScriptConfirmDialog is not implemented on the current platform',
+    );
+  }
+
+  /// Sets a callback that notifies the host application that the web page
+  /// wants to display a JavaScript prompt() dialog.
+  Future<void> setOnJavaScriptTextInputDialog(
+      Future<String> Function(JavaScriptTextInputDialogRequest request)
+          onJavaScriptTextInputDialog) async {
+    throw UnimplementedError(
+      'setOnJavaScriptTextInputDialog is not implemented on the current platform',
     );
   }
 }
