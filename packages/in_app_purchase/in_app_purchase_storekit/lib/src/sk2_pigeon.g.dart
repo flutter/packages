@@ -18,7 +18,8 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse(
+    {Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -27,29 +28,33 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
         a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
     final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
-    return a.length == b.length && keys.every((Object? key) =>
-        (b as Map<Object?, Object?>).containsKey(key) &&
-        _deepEquals(a[key], b[key]));
+    return a.length == b.length &&
+        keys.every((Object? key) =>
+            (b as Map<Object?, Object?>).containsKey(key) &&
+            _deepEquals(a[key], b[key]));
   }
   return a == b;
 }
-    
 
 enum SK2ProductTypeMessage {
   /// A consumable in-app purchase.
   consumable,
+
   /// A non-consumable in-app purchase.
   nonConsumable,
+
   /// A non-renewing subscription.
   nonRenewable,
+
   /// An auto-renewable subscription.
   autoRenewable,
 }
@@ -112,7 +117,8 @@ class SK2SubscriptionOfferMessage {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SK2SubscriptionOfferMessage decode(Object result) {
     result as List<Object?>;
@@ -129,25 +135,24 @@ class SK2SubscriptionOfferMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2SubscriptionOfferMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2SubscriptionOfferMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return 
-      id == other.id
-      && price == other.price
-      && type == other.type
-      && period == other.period
-      && periodCount == other.periodCount
-      && paymentMode == other.paymentMode;
+    return id == other.id &&
+        price == other.price &&
+        type == other.type &&
+        period == other.period &&
+        periodCount == other.periodCount &&
+        paymentMode == other.paymentMode;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class SK2SubscriptionPeriodMessage {
@@ -170,7 +175,8 @@ class SK2SubscriptionPeriodMessage {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SK2SubscriptionPeriodMessage decode(Object result) {
     result as List<Object?>;
@@ -183,21 +189,19 @@ class SK2SubscriptionPeriodMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2SubscriptionPeriodMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2SubscriptionPeriodMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return 
-      value == other.value
-      && unit == other.unit;
+    return value == other.value && unit == other.unit;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class SK2SubscriptionInfoMessage {
@@ -225,12 +229,14 @@ class SK2SubscriptionInfoMessage {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SK2SubscriptionInfoMessage decode(Object result) {
     result as List<Object?>;
     return SK2SubscriptionInfoMessage(
-      promotionalOffers: (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage>(),
+      promotionalOffers:
+          (result[0] as List<Object?>?)!.cast<SK2SubscriptionOfferMessage>(),
       subscriptionGroupID: result[1]! as String,
       subscriptionPeriod: result[2]! as SK2SubscriptionPeriodMessage,
     );
@@ -239,22 +245,21 @@ class SK2SubscriptionInfoMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2SubscriptionInfoMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2SubscriptionInfoMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return 
-      _deepEquals(promotionalOffers, other.promotionalOffers)
-      && subscriptionGroupID == other.subscriptionGroupID
-      && subscriptionPeriod == other.subscriptionPeriod;
+    return _deepEquals(promotionalOffers, other.promotionalOffers) &&
+        subscriptionGroupID == other.subscriptionGroupID &&
+        subscriptionPeriod == other.subscriptionPeriod;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// A Pigeon message class representing a Product
@@ -309,7 +314,8 @@ class SK2ProductMessage {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SK2ProductMessage decode(Object result) {
     result as List<Object?>;
@@ -334,21 +340,19 @@ class SK2ProductMessage {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      id == other.id
-      && displayName == other.displayName
-      && description == other.description
-      && price == other.price
-      && displayPrice == other.displayPrice
-      && type == other.type
-      && subscription == other.subscription
-      && priceLocale == other.priceLocale;
+    return id == other.id &&
+        displayName == other.displayName &&
+        description == other.description &&
+        price == other.price &&
+        displayPrice == other.displayPrice &&
+        type == other.type &&
+        subscription == other.subscription &&
+        priceLocale == other.priceLocale;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class SK2PriceLocaleMessage {
@@ -369,7 +373,8 @@ class SK2PriceLocaleMessage {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SK2PriceLocaleMessage decode(Object result) {
     result as List<Object?>;
@@ -388,15 +393,13 @@ class SK2PriceLocaleMessage {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      currencyCode == other.currencyCode
-      && currencySymbol == other.currencySymbol;
+    return currencyCode == other.currencyCode &&
+        currencySymbol == other.currencySymbol;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class SK2ProductPurchaseOptionsMessage {
@@ -417,7 +420,8 @@ class SK2ProductPurchaseOptionsMessage {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SK2ProductPurchaseOptionsMessage decode(Object result) {
     result as List<Object?>;
@@ -430,21 +434,20 @@ class SK2ProductPurchaseOptionsMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SK2ProductPurchaseOptionsMessage || other.runtimeType != runtimeType) {
+    if (other is! SK2ProductPurchaseOptionsMessage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return 
-      appAccountToken == other.appAccountToken
-      && quantity == other.quantity;
+    return appAccountToken == other.appAccountToken &&
+        quantity == other.quantity;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class SK2TransactionMessage {
@@ -501,7 +504,8 @@ class SK2TransactionMessage {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SK2TransactionMessage decode(Object result) {
     result as List<Object?>;
@@ -529,24 +533,22 @@ class SK2TransactionMessage {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      id == other.id
-      && originalId == other.originalId
-      && productId == other.productId
-      && purchaseDate == other.purchaseDate
-      && expirationDate == other.expirationDate
-      && purchasedQuantity == other.purchasedQuantity
-      && appAccountToken == other.appAccountToken
-      && restoring == other.restoring
-      && receiptData == other.receiptData
-      && error == other.error
-      && jsonRepresentation == other.jsonRepresentation;
+    return id == other.id &&
+        originalId == other.originalId &&
+        productId == other.productId &&
+        purchaseDate == other.purchaseDate &&
+        expirationDate == other.expirationDate &&
+        purchasedQuantity == other.purchasedQuantity &&
+        appAccountToken == other.appAccountToken &&
+        restoring == other.restoring &&
+        receiptData == other.receiptData &&
+        error == other.error &&
+        jsonRepresentation == other.jsonRepresentation;
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class SK2ErrorMessage {
@@ -571,7 +573,8 @@ class SK2ErrorMessage {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static SK2ErrorMessage decode(Object result) {
     result as List<Object?>;
@@ -591,18 +594,15 @@ class SK2ErrorMessage {
     if (identical(this, other)) {
       return true;
     }
-    return 
-      code == other.code
-      && domain == other.domain
-      && _deepEquals(userInfo, other.userInfo);
+    return code == other.code &&
+        domain == other.domain &&
+        _deepEquals(userInfo, other.userInfo);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -611,43 +611,43 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is SK2ProductTypeMessage) {
+    } else if (value is SK2ProductTypeMessage) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is SK2SubscriptionOfferTypeMessage) {
+    } else if (value is SK2SubscriptionOfferTypeMessage) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is SK2SubscriptionOfferPaymentModeMessage) {
+    } else if (value is SK2SubscriptionOfferPaymentModeMessage) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is SK2SubscriptionPeriodUnitMessage) {
+    } else if (value is SK2SubscriptionPeriodUnitMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is SK2ProductPurchaseResultMessage) {
+    } else if (value is SK2ProductPurchaseResultMessage) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is SK2SubscriptionOfferMessage) {
+    } else if (value is SK2SubscriptionOfferMessage) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2SubscriptionPeriodMessage) {
+    } else if (value is SK2SubscriptionPeriodMessage) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2SubscriptionInfoMessage) {
+    } else if (value is SK2SubscriptionInfoMessage) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2ProductMessage) {
+    } else if (value is SK2ProductMessage) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2PriceLocaleMessage) {
+    } else if (value is SK2PriceLocaleMessage) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2ProductPurchaseOptionsMessage) {
+    } else if (value is SK2ProductPurchaseOptionsMessage) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2TransactionMessage) {
+    } else if (value is SK2TransactionMessage) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    }    else if (value is SK2ErrorMessage) {
+    } else if (value is SK2ErrorMessage) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
     } else {
@@ -658,36 +658,44 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SK2ProductTypeMessage.values[value];
-      case 130: 
+      case 130:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : SK2SubscriptionOfferTypeMessage.values[value];
-      case 131: 
+        return value == null
+            ? null
+            : SK2SubscriptionOfferTypeMessage.values[value];
+      case 131:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : SK2SubscriptionOfferPaymentModeMessage.values[value];
-      case 132: 
+        return value == null
+            ? null
+            : SK2SubscriptionOfferPaymentModeMessage.values[value];
+      case 132:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : SK2SubscriptionPeriodUnitMessage.values[value];
-      case 133: 
+        return value == null
+            ? null
+            : SK2SubscriptionPeriodUnitMessage.values[value];
+      case 133:
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : SK2ProductPurchaseResultMessage.values[value];
-      case 134: 
+        return value == null
+            ? null
+            : SK2ProductPurchaseResultMessage.values[value];
+      case 134:
         return SK2SubscriptionOfferMessage.decode(readValue(buffer)!);
-      case 135: 
+      case 135:
         return SK2SubscriptionPeriodMessage.decode(readValue(buffer)!);
-      case 136: 
+      case 136:
         return SK2SubscriptionInfoMessage.decode(readValue(buffer)!);
-      case 137: 
+      case 137:
         return SK2ProductMessage.decode(readValue(buffer)!);
-      case 138: 
+      case 138:
         return SK2PriceLocaleMessage.decode(readValue(buffer)!);
-      case 139: 
+      case 139:
         return SK2ProductPurchaseOptionsMessage.decode(readValue(buffer)!);
-      case 140: 
+      case 140:
         return SK2TransactionMessage.decode(readValue(buffer)!);
-      case 141: 
+      case 141:
         return SK2ErrorMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -699,9 +707,11 @@ class InAppPurchase2API {
   /// Constructor for [InAppPurchase2API].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  InAppPurchase2API({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+  InAppPurchase2API(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+        pigeonVar_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -709,8 +719,10 @@ class InAppPurchase2API {
   final String pigeonVar_messageChannelSuffix;
 
   Future<bool> canMakePayments() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.canMakePayments$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -737,13 +749,16 @@ class InAppPurchase2API {
   }
 
   Future<List<SK2ProductMessage>> products(List<String> identifiers) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.products$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[identifiers]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[identifiers]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -760,18 +775,23 @@ class InAppPurchase2API {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<SK2ProductMessage>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<SK2ProductMessage>();
     }
   }
 
-  Future<SK2ProductPurchaseResultMessage> purchase(String id, {SK2ProductPurchaseOptionsMessage? options}) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.purchase$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+  Future<SK2ProductPurchaseResultMessage> purchase(String id,
+      {SK2ProductPurchaseOptionsMessage? options}) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.purchase$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[id, options]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[id, options]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -793,8 +813,10 @@ class InAppPurchase2API {
   }
 
   Future<List<SK2TransactionMessage>> transactions() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.transactions$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.transactions$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -816,18 +838,22 @@ class InAppPurchase2API {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<SK2TransactionMessage>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<SK2TransactionMessage>();
     }
   }
 
   Future<void> finish(int id) async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.finish$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[id]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[id]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -844,8 +870,10 @@ class InAppPurchase2API {
   }
 
   Future<void> startListeningToTransactions() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.startListeningToTransactions$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.startListeningToTransactions$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -867,8 +895,10 @@ class InAppPurchase2API {
   }
 
   Future<void> stopListeningToTransactions() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.stopListeningToTransactions$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.stopListeningToTransactions$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -890,8 +920,10 @@ class InAppPurchase2API {
   }
 
   Future<void> restorePurchases() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.restorePurchases$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.restorePurchases$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -913,8 +945,10 @@ class InAppPurchase2API {
   }
 
   Future<String> countryCode() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.countryCode$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.countryCode$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -941,8 +975,10 @@ class InAppPurchase2API {
   }
 
   Future<void> sync() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.sync$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.sync$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -969,20 +1005,29 @@ abstract class InAppPurchase2CallbackAPI {
 
   void onTransactionsUpdated(List<SK2TransactionMessage> newTransactions);
 
-  static void setUp(InAppPurchase2CallbackAPI? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(
+    InAppPurchase2CallbackAPI? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix =
+        messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
     {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated$messageChannelSuffix', pigeonChannelCodec,
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated$messageChannelSuffix',
+          pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated was null.');
+              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final List<SK2TransactionMessage>? arg_newTransactions = (args[0] as List<Object?>?)?.cast<SK2TransactionMessage>();
+          final List<SK2TransactionMessage>? arg_newTransactions =
+              (args[0] as List<Object?>?)?.cast<SK2TransactionMessage>();
           assert(arg_newTransactions != null,
               'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2CallbackAPI.onTransactionsUpdated was null, expected non-null List<SK2TransactionMessage>.');
           try {
@@ -990,8 +1035,9 @@ abstract class InAppPurchase2CallbackAPI {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
