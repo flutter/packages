@@ -456,7 +456,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
                 ) {
                   weakReference.target?.onJavascriptChannelMessage(
                     message.name,
-                    message.body!.toString(),
+                    message.body.toString(),
                   );
                 };
               },
