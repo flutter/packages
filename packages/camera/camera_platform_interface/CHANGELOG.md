@@ -3,9 +3,6 @@
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 * Introduces a new CameraLensType enum to provide lens type information about the camera (e.g.: ultra-wide, telephoto, ...)
 
-
-
-
 ## 2.8.0
 
 * Deprecates `maxVideoDuration`/`maxDuration`, as it was never implemented on
