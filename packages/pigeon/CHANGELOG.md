@@ -1,3 +1,7 @@
+## 25.3.0
+
+* [swift] Adds equality methods to generated data classes.
+
 ## 25.2.0
 
 * [kotlin] Adds equality methods to generated data classes.
