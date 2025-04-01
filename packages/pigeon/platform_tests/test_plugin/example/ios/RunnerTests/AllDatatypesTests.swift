@@ -19,24 +19,7 @@ class AllDatatypesTests: XCTestCase {
     api.echoNullable(everything) { result in
       switch result {
       case .success(let res):
-        XCTAssertNotNil(res)
-        XCTAssertNil(res!.aNullableBool)
-        XCTAssertNil(res!.aNullableInt)
-        XCTAssertNil(res!.aNullableDouble)
-        XCTAssertNil(res!.aNullableString)
-        XCTAssertNil(res!.aNullableByteArray)
-        XCTAssertNil(res!.aNullable4ByteArray)
-        XCTAssertNil(res!.aNullable8ByteArray)
-        XCTAssertNil(res!.aNullableFloatArray)
-        XCTAssertNil(res!.list)
-        XCTAssertNil(res!.boolList)
-        XCTAssertNil(res!.intList)
-        XCTAssertNil(res!.doubleList)
-        XCTAssertNil(res!.stringList)
-        XCTAssertNil(res!.listList)
-        XCTAssertNil(res!.map)
-        XCTAssertNil(res!.stringMap)
-        XCTAssertNil(res!.intMap)
+        XCTAssert(everything == res!)
         expectation.fulfill()
       case .failure(_):
         return
@@ -78,48 +61,10 @@ class AllDatatypesTests: XCTestCase {
 
     let expectation = XCTestExpectation(description: "callback")
 
-    api.echoNullable(everything) { result in
-      switch result {
+    api.echoNullable(everything) { res in
+      switch res {
       case .success(let res):
-        XCTAssertNotNil(res)
-        XCTAssertEqual(res!.aNullableBool, everything.aNullableBool)
-        XCTAssertEqual(res!.aNullableInt, everything.aNullableInt)
-        XCTAssertEqual(res!.aNullableDouble, everything.aNullableDouble)
-        XCTAssertEqual(res!.aNullableString, everything.aNullableString)
-        XCTAssertEqual(res!.aNullableByteArray, everything.aNullableByteArray)
-        XCTAssertEqual(res!.aNullable4ByteArray, everything.aNullable4ByteArray)
-        XCTAssertEqual(res!.aNullable8ByteArray, everything.aNullable8ByteArray)
-        XCTAssertEqual(res!.aNullableFloatArray, everything.aNullableFloatArray)
-        XCTAssert(equalsList(res!.list, everything.list))
-        XCTAssert(equalsList(res!.stringList, everything.stringList))
-        XCTAssert(equalsList(res!.intList, everything.intList))
-        XCTAssert(equalsList(res!.doubleList, everything.doubleList))
-        XCTAssert(equalsList(res!.boolList, everything.boolList))
-        XCTAssert(equalsList(res!.objectList, everything.objectList))
-        if res!.listList != nil {
-          for (index, list) in res!.listList!.enumerated() {
-            XCTAssert(equalsList(list, everything.listList![index]))
-          }
-        }
-        if res!.mapList != nil {
-          for (index, map) in res!.mapList!.enumerated() {
-            XCTAssert(equalsDictionary(map, everything.mapList![index]))
-          }
-        }
-        XCTAssert(equalsDictionary(res!.map, everything.map))
-        XCTAssert(equalsDictionary(res!.stringMap, everything.stringMap))
-        XCTAssert(equalsDictionary(res!.intMap, everything.intMap))
-        XCTAssert(equalsDictionary(res!.objectMap, everything.objectMap))
-        if res!.listMap != nil {
-          for (index, list) in res!.listMap! {
-            XCTAssert(equalsList(list, everything.listMap![index]!))
-          }
-        }
-        if res!.mapMap != nil {
-          for (index, map) in res!.mapMap! {
-            XCTAssert(equalsDictionary(map, everything.mapMap![index]!))
-          }
-        }
+        XCTAssert(everything == res!)
         expectation.fulfill()
         return
       case .failure(_):
