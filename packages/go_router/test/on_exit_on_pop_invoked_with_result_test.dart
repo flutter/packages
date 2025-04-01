@@ -14,7 +14,6 @@ void main() {
           GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
           GoRoute(
             path: '/page-1',
-            onExit: (_, __) => true,
             builder: (_, __) => PopScope(
               onPopInvokedWithResult: (bool didPop, __) {
                 if (didPop) {

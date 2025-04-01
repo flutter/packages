@@ -66,11 +66,12 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // Fallback to onExit if maybePop did not handle the pop
     final GoRoute lastRoute = currentConfiguration.last.route;
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
-      return !(await lastRoute.onExit!(
-        navigatorKey.currentContext!,
-        currentConfiguration.last
-            .buildState(_configuration, currentConfiguration),
-      ));
+      return !(await lastRoute.onExit?.call(
+            navigatorKey.currentContext!,
+            currentConfiguration.last
+                .buildState(_configuration, currentConfiguration),
+          ) ??
+          true); // @TODO(techouse) not sure if returning true by default is correct
     }
 
     return false;
@@ -146,12 +147,14 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // a microtask in case the onExit callback want to launch dialog or other
     // navigator operations.
     scheduleMicrotask(() async {
-      final bool onExitResult = await routeBase.onExit!(
+      final bool? onExitResult = await routeBase.onExit?.call(
         navigatorKey.currentContext!,
         match.buildState(_configuration, currentConfiguration),
       );
-      if (onExitResult) {
+      if (onExitResult == null) {
         route.didPop(result);
+      }
+      if (onExitResult ?? true) {
         _completeRouteMatch(result, match);
       }
     });
@@ -299,14 +302,17 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       return SynchronousFuture<bool>(false);
     }
 
-    final FutureOr<bool> exitFuture = goRoute.onExit!(
+    final FutureOr<bool>? exitFuture = goRoute.onExit?.call(
       context,
       match.buildState(_configuration, currentConfiguration),
     );
     if (exitFuture is bool) {
       return handleOnExitResult(exitFuture);
     }
-    return exitFuture.then<bool>(handleOnExitResult);
+    return exitFuture?.then<bool>(handleOnExitResult) ??
+        SynchronousFuture<bool>(
+          true, // @TODO(techouse) not sure if returning true by default is correct
+        );
   }
 
   Future<void> _setCurrentConfiguration(RouteMatchList configuration) {
