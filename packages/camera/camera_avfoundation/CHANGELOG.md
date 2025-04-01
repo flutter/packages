@@ -1,3 +1,7 @@
+## 0.9.19
+
+* Adds lensType in the PlatformCameraDescription
+
 ## 0.9.18+13
 
 * Migrates test utils and mocks to Swift.
@@ -65,7 +69,6 @@
 
 ## 0.9.17+6
 
-* Adds lensType in the PlatformCameraDescription
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.9.17+5
@@ -76,7 +79,6 @@
 
 * Updates Pigeon for non-nullable collection type support.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Adds lensType in the PlatformCameraDescription
 
 ## 0.9.17+3
 
