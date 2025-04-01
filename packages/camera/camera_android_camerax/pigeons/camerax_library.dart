@@ -406,10 +406,7 @@ abstract class DeviceOrientationManager {
 
   late void Function(String orientation) onDeviceOrientationChanged;
 
-  void startListeningForDeviceOrientationChange(
-    bool isFrontFacing,
-    int sensorOrientation,
-  );
+  void startListeningForDeviceOrientationChange();
 
   void stopListeningForDeviceOrientationChange();
 

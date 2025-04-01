@@ -22,7 +22,7 @@ public class DeviceOrientationManagerApiTest {
         new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
 
     final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
-    api.startListeningForDeviceOrientationChange(instance, false, 0L);
+    api.startListeningForDeviceOrientationChange(instance);
 
     verify(instance).start();
   }

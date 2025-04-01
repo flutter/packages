@@ -2727,11 +2727,7 @@ abstract class PigeonApiDeviceOrientationManager(
 ) {
   abstract fun pigeon_defaultConstructor(): DeviceOrientationManager
 
-  abstract fun startListeningForDeviceOrientationChange(
-      pigeon_instance: DeviceOrientationManager,
-      isFrontFacing: Boolean,
-      sensorOrientation: Long
-  )
+  abstract fun startListeningForDeviceOrientationChange(pigeon_instance: DeviceOrientationManager)
 
   abstract fun stopListeningForDeviceOrientationChange(pigeon_instance: DeviceOrientationManager)
 
@@ -2780,12 +2776,9 @@ abstract class PigeonApiDeviceOrientationManager(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as DeviceOrientationManager
-            val isFrontFacingArg = args[1] as Boolean
-            val sensorOrientationArg = args[2] as Long
             val wrapped: List<Any?> =
                 try {
-                  api.startListeningForDeviceOrientationChange(
-                      pigeon_instanceArg, isFrontFacingArg, sensorOrientationArg)
+                  api.startListeningForDeviceOrientationChange(pigeon_instanceArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
@@ -2959,6 +2952,10 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
   /** Sets the target rotation. */
   abstract fun setTargetRotation(pigeon_instance: androidx.camera.core.Preview, rotation: Long)
 
+  /**
+   * Returns whether or not the preview's surface producer handles correctly rotating the camera
+   * preview automatically.
+   */
   abstract fun surfaceProducerHandlesCropAndRotation(
       pigeon_instance: androidx.camera.core.Preview
   ): Boolean

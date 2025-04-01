@@ -2947,10 +2947,7 @@ class DeviceOrientationManager extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  Future<void> startListeningForDeviceOrientationChange(
-    bool isFrontFacing,
-    int sensorOrientation,
-  ) async {
+  Future<void> startListeningForDeviceOrientationChange() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecDeviceOrientationManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -2962,8 +2959,8 @@ class DeviceOrientationManager extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
-        .send(<Object?>[this, isFrontFacing, sensorOrientation]);
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -3335,6 +3332,8 @@ class Preview extends UseCase {
     }
   }
 
+  /// Returns whether or not the preview's surface producer handles correctly
+  /// rotating the camera preview automatically.
   Future<bool> surfaceProducerHandlesCropAndRotation() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecPreview;
