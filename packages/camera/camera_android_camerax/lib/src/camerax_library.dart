@@ -117,7 +117,7 @@ class CameraInfo extends camerax.CameraInfo {
 /// lifecycle.
 ///
 /// This is a wrapper around the native class to better support the generic
-/// type. Java has type erasure;
+/// type. Java has type erasure.
 ///
 /// See https://developer.android.com/reference/androidx/lifecycle/LiveData.
 class LiveData<T> extends camerax.LiveData {

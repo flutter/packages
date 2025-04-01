@@ -620,6 +620,9 @@ enum ResolutionStrategyFallbackRule {
 
   /// When the specified bound size is unavailable, CameraX falls back to select
   /// the closest lower resolution size.
+  ///
+  /// If CameraX still cannot find any available resolution, it will fallback to
+  /// select other higher resolutions.
   closestLowerThenHigher,
 
   /// CameraX doesn't select an alternate size when the specified bound size is

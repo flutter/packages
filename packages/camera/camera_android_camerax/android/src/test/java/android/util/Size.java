@@ -5,7 +5,7 @@
 package android.util;
 
 // Creates an implementation of Range that can be used with unittests and the JVM.
-// Typically android.util.Range does nothing when not used with an Android environment.
+// Typically android.util.Size does nothing when not used with an Android environment.
 
 public final class Size {
   private final int width;

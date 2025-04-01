@@ -919,8 +919,7 @@ void main() {
       }) {
         final MockDeviceOrientationManager manager =
             MockDeviceOrientationManager();
-        when(manager.startListeningForDeviceOrientationChange(any, any))
-            .thenAnswer(
+        when(manager.startListeningForDeviceOrientationChange()).thenAnswer(
           (_) async {
             startedListeningForDeviceOrientationChanges = true;
           },
@@ -1792,13 +1791,6 @@ void main() {
         case ResolutionPreset.max:
           expectedVideoQuality = VideoQuality.highest;
       }
-
-      // const VideoResolutionFallbackRule expectedFallbackRule =
-      //     VideoResolutionFallbackRule.lowerQualityOrHigherThan;
-      // final FallbackStrategy expectedFallbackStrategy =
-      //     FallbackStrategy.detached(
-      //         quality: expectedVideoQuality,
-      //         fallbackRule: expectedFallbackRule);
 
       expect(
         await camera.recorder!.getQualitySelector(),

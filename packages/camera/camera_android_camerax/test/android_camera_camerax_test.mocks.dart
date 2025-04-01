@@ -2160,15 +2160,9 @@ class MockDeviceOrientationManager extends _i1.Mock
       ) as _i2.PigeonInstanceManager);
 
   @override
-  _i5.Future<void> startListeningForDeviceOrientationChange(
-    bool? isFrontFacing,
-    int? sensorOrientation,
-  ) =>
+  _i5.Future<void> startListeningForDeviceOrientationChange() =>
       (super.noSuchMethod(
-        Invocation.method(#startListeningForDeviceOrientationChange, [
-          isFrontFacing,
-          sensorOrientation,
-        ]),
+        Invocation.method(#startListeningForDeviceOrientationChange, []),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);

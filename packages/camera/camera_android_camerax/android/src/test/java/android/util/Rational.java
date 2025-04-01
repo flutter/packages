@@ -5,7 +5,7 @@
 package android.util;
 
 // Creates an implementation of Rational that can be used with unittests and the JVM.
-// Typically android.util.Range does nothing when not used with an Android environment.
+// Typically android.util.Rational does nothing when not used with an Android environment.
 
 public final class Rational {
   private final int numerator;
