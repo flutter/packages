@@ -1642,6 +1642,8 @@ void main() {
       await tester.pumpAndSettle();
     },
     variant: _cameraUpdateTypeVariants,
+    // Hanging in CI, https://github.com/flutter/flutter/issues/166139
+    skip: true,
   );
 
   /// Tests animating the camera with specified durations to verify timing
@@ -1786,6 +1788,8 @@ void main() {
       await tester.pumpAndSettle();
     },
     variant: _cameraUpdateTypeVariants,
+    // Hanging in CI, https://github.com/flutter/flutter/issues/166139
+    skip: true,
   );
 }
 
