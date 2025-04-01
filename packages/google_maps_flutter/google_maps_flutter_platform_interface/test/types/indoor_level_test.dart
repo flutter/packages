@@ -20,7 +20,7 @@ void main() {
     test('fromJson', () {
       const String expectedName = 'some-name';
       const String expectedShortName = 'some-short-name';
-      final IndoorLevel? indoorLevel = IndoorLevel.fromJson({
+      final IndoorLevel? indoorLevel = IndoorLevel.fromJson(<String, String>{
         'name': expectedName,
         'shortName': expectedShortName,
       });

@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import '../../google_maps_flutter_platform_interface.dart';
-import '../types/indoor_level.dart';
 
 /// Generic Event coming from the native side of Maps.
 ///
