@@ -8,10 +8,10 @@ import 'dart:io' as io;
 import 'package:args/command_runner.dart';
 import 'package:fake_async/fake_async.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/drive_examples_command.dart';
+import 'package:git/git.dart';
 import 'package:mockito/mockito.dart';
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
@@ -24,19 +24,22 @@ const String _fakeAndroidDevice = 'emulator-1234';
 
 void main() {
   group('test drive_example_command', () {
-    late FileSystem fileSystem;
     late Platform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       mockPlatform = MockPlatform();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-      processRunner = RecordingProcessRunner();
-      final DriveExamplesCommand command = DriveExamplesCommand(packagesDir,
-          processRunner: processRunner, platform: mockPlatform);
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
+      final DriveExamplesCommand command = DriveExamplesCommand(
+        packagesDir,
+        processRunner: processRunner,
+        platform: mockPlatform,
+        gitDir: gitDir,
+      );
 
       runner = CommandRunner<void>(
           'drive_examples_command', 'Test for drive_example_command');

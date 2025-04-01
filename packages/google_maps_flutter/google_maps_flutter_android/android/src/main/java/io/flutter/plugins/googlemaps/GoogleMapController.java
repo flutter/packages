@@ -26,6 +26,7 @@ import androidx.annotation.VisibleForTesting;
 import androidx.lifecycle.DefaultLifecycleObserver;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
@@ -976,12 +977,18 @@ class GoogleMapController
   }
 
   @Override
-  public void animateCamera(@NonNull Messages.PlatformCameraUpdate cameraUpdate) {
+  public void animateCamera(
+      @NonNull Messages.PlatformCameraUpdate cameraUpdate, @Nullable Long durationMilliseconds) {
     if (googleMap == null) {
       throw new FlutterError(
           "GoogleMap uninitialized", "animateCamera called prior to map initialization", null);
     }
-    googleMap.animateCamera(Convert.cameraUpdateFromPigeon(cameraUpdate, density));
+    CameraUpdate update = Convert.cameraUpdateFromPigeon(cameraUpdate, density);
+    if (durationMilliseconds != null) {
+      googleMap.animateCamera(update, durationMilliseconds.intValue(), null);
+    } else {
+      googleMap.animateCamera(update);
+    }
   }
 
   @Override
@@ -1098,6 +1105,11 @@ class GoogleMapController
   @Override
   public @NonNull Boolean isTrafficEnabled() {
     return Objects.requireNonNull(googleMap).isTrafficEnabled();
+  }
+
+  @Override
+  public @NonNull Messages.PlatformCameraPosition getCameraPosition() {
+    return Convert.cameraPositionToPigeon(Objects.requireNonNull(googleMap).getCameraPosition());
   }
 
   @Override

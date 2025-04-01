@@ -5,6 +5,7 @@
 @import GoogleMapsUtils;
 
 #import "GoogleMapController.h"
+#import "GoogleMapController_Test.h"
 
 #import "FGMGroundOverlayController.h"
 #import "FGMMarkerUserData.h"
@@ -65,21 +66,12 @@
 
 #pragma mark -
 
-/// Implementation of the Pigeon maps API.
-///
-/// This is a separate object from the maps controller because the Pigeon API registration keeps a
-/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
-/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
-/// the target of the registration.
-@interface FGMMapCallHandler : NSObject <FGMMapsApi>
+/// Private declarations of the FGMMapCallHandler.
+@interface FGMMapCallHandler ()
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
                             messenger:(NSObject<FlutterBinaryMessenger> *)messenger
                          pigeonSuffix:(NSString *)suffix;
-@end
 
-/// Private declarations.
-// This is separate in case the above is made public in the future (e.g., for unit testing).
-@interface FGMMapCallHandler ()
 /// The map controller this inspector corresponds to.
 @property(nonatomic, weak) FLTGoogleMapController *controller;
 /// The messenger this instance was registered with by Pigeon.
@@ -90,21 +82,9 @@
 
 #pragma mark -
 
-/// Implementation of the Pigeon maps inspector API.
-///
-/// This is a separate object from the maps controller because the Pigeon API registration keeps a
-/// strong reference to the implementor, but as the FlutterPlatformView, the lifetime of the
-/// FLTGoogleMapController instance is what needs to trigger Pigeon unregistration, so can't be
-/// the target of the registration.
-@interface FGMMapInspector : NSObject <FGMMapsInspectorApi>
-- (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
-                            messenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                         pigeonSuffix:(NSString *)suffix;
-@end
-
-/// Private declarations.
-// This is separate in case the above is made public in the future (e.g., for unit testing).
+/// Private declarations of the FGMMapInspector.
 @interface FGMMapInspector ()
+
 /// The map controller this inspector corresponds to.
 @property(nonatomic, weak) FLTGoogleMapController *controller;
 /// The messenger this instance was registered with by Pigeon.
@@ -524,6 +504,7 @@
 
 #pragma mark -
 
+/// Private declarations of the FGMMapCallHandler.
 @implementation FGMMapCallHandler
 
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
@@ -534,6 +515,7 @@
     _controller = controller;
     _messenger = messenger;
     _pigeonSuffix = suffix;
+    _transactionWrapper = [[FGMCATransactionWrapper alloc] init];
   }
   return self;
 }
@@ -674,6 +656,7 @@
 }
 
 - (void)animateCameraWithUpdate:(nonnull FGMPlatformCameraUpdate *)cameraUpdate
+                       duration:(nullable NSNumber *)durationMilliseconds
                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(cameraUpdate);
   if (!update) {
@@ -682,7 +665,11 @@
                                  details:nil];
     return;
   }
+  FGMCATransactionWrapper *transaction = durationMilliseconds ? self.transactionWrapper : nil;
+  [transaction begin];
+  [transaction setAnimationDuration:[durationMilliseconds doubleValue] / 1000];
   [self.controller.mapView animateWithCameraUpdate:update];
+  [transaction commit];
 }
 
 - (nullable NSNumber *)currentZoomLevel:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
@@ -748,6 +735,7 @@
 
 #pragma mark -
 
+/// Private declarations of the FGMMapInspector.
 @implementation FGMMapInspector
 
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
@@ -844,6 +832,11 @@
     groundOverlayWithIdentifier:(NSString *)groundOverlayId
                           error:(FlutterError *_Nullable __autoreleasing *)error {
   return [self.controller.groundOverlaysController groundOverlayWithIdentifier:groundOverlayId];
+}
+
+- (nullable FGMPlatformCameraPosition *)cameraPosition:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  return FGMGetPigeonCameraPositionForPosition(self.controller.mapView.camera);
 }
 
 @end

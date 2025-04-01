@@ -30,6 +30,22 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
+    return a.length == b.length &&
+        keys.every((Object? key) =>
+            (b as Map<Object?, Object?>).containsKey(key) &&
+            _deepEquals(a[key], b[key]));
+  }
+  return a == b;
+}
+
 enum NullFieldsSearchReplyType {
   success,
   failure,
@@ -45,11 +61,15 @@ class NullFieldsSearchRequest {
 
   int identifier;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       query,
       identifier,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static NullFieldsSearchRequest decode(Object result) {
@@ -59,6 +79,22 @@ class NullFieldsSearchRequest {
       identifier: result[1]! as int,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NullFieldsSearchRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return query == other.query && identifier == other.identifier;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class NullFieldsSearchReply {
@@ -80,7 +116,7 @@ class NullFieldsSearchReply {
 
   NullFieldsSearchReplyType? type;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       result,
       error,
@@ -88,6 +124,10 @@ class NullFieldsSearchReply {
       request,
       type,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static NullFieldsSearchReply decode(Object result) {
@@ -100,6 +140,26 @@ class NullFieldsSearchReply {
       type: result[4] as NullFieldsSearchReplyType?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NullFieldsSearchReply || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return result == other.result &&
+        error == other.error &&
+        _deepEquals(indices, other.indices) &&
+        request == other.request &&
+        type == other.type;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {

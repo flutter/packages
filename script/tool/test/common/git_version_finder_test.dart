@@ -56,18 +56,6 @@ file2/file2.cc
     expect(changedFiles, equals(<String>['file1/file1.cc', 'file2/file2.cc']));
   });
 
-  test('get correct pubspec change based on git diff', () async {
-    gitDiffResponse = '''
-file1/pubspec.yaml
-file2/file2.cc
-''';
-    final GitVersionFinder finder =
-        GitVersionFinder(gitDir, baseSha: 'some base sha');
-    final List<String> changedFiles = await finder.getChangedPubSpecs();
-
-    expect(changedFiles, equals(<String>['file1/pubspec.yaml']));
-  });
-
   test('use correct base sha if not specified', () async {
     mergeBaseResponse = 'shaqwiueroaaidf12312jnadf123nd';
     gitDiffResponse = '''

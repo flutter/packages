@@ -1,3 +1,7 @@
+## 3.18.5
+
+* Fixes crash when sending undefined message via JavaScript channel.
+
 ## 3.18.4
 
 * Fixes crash when native `WKFrameInfo.request` is nil.

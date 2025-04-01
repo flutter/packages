@@ -11,10 +11,10 @@ final class FLTCamExposureTests: XCTestCase {
     let mockDevice = MockCaptureDevice()
     let mockDeviceOrientationProvider = MockDeviceOrientationProvider()
 
-    let configuration = FLTCreateTestCameraConfiguration()
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureDeviceFactory = { mockDevice }
     configuration.deviceOrientationProvider = mockDeviceOrientationProvider
-    let camera = FLTCreateCamWithConfiguration(configuration)
+    let camera = FLTCam(configuration: configuration, error: nil)
 
     return (camera, mockDevice, mockDeviceOrientationProvider)
   }
@@ -62,9 +62,9 @@ final class FLTCamExposureTests: XCTestCase {
   func testSetExposurePoint_setsExposurePointOfInterest() {
     let (camera, mockDevice, mockDeviceOrientationProvider) = createCamera()
     // UI is currently in landscape left orientation.
-    mockDeviceOrientationProvider.orientation = .landscapeLeft
+    mockDeviceOrientationProvider.orientationStub = { .landscapeLeft }
     // Exposure point of interest is supported.
-    mockDevice.exposurePointOfInterestSupported = true
+    mockDevice.isExposurePointOfInterestSupported = true
 
     // Verify the focus point of interest has been set.
     var setPoint = CGPoint.zero
@@ -87,9 +87,9 @@ final class FLTCamExposureTests: XCTestCase {
   func testSetExposurePoint_returnsError_ifNotSupported() {
     let (camera, mockDevice, mockDeviceOrientationProvider) = createCamera()
     // UI is currently in landscape left orientation.
-    mockDeviceOrientationProvider.orientation = .landscapeLeft
+    mockDeviceOrientationProvider.orientationStub = { .landscapeLeft }
     // Exposure point of interest is not supported.
-    mockDevice.exposurePointOfInterestSupported = false
+    mockDevice.isExposurePointOfInterestSupported = false
 
     let expectation = expectation(description: "Completion with error")
 

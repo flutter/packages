@@ -6,6 +6,7 @@
 #import "FLTCaptureConnection.h"
 #import "FLTCaptureDevice.h"
 #import "FLTCapturePhotoOutput.h"
+#import "FLTCaptureVideoDataOutput.h"
 #import "FLTDeviceOrientationProviding.h"
 #import "FLTSavePhotoDelegate.h"
 
@@ -26,7 +27,7 @@
 @interface FLTCam ()
 
 /// The output for video capturing.
-@property(readonly, nonatomic) AVCaptureVideoDataOutput *captureVideoOutput;
+@property(strong, nonatomic) NSObject<FLTCaptureVideoDataOutput> *captureVideoOutput;
 
 /// The output for photo capturing. Exposed setter for unit tests.
 @property(strong, nonatomic) NSObject<FLTCapturePhotoOutput> *capturePhotoOutput;

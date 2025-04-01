@@ -11,9 +11,9 @@ final class FLTCamZoomTests: XCTestCase {
   private func createCamera() -> (FLTCam, MockCaptureDevice) {
     let mockDevice = MockCaptureDevice()
 
-    let configuration = FLTCreateTestCameraConfiguration()
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureDeviceFactory = { mockDevice }
-    let camera = FLTCreateCamWithConfiguration(configuration)
+    let camera = FLTCam(configuration: configuration, error: nil)
 
     return (camera, mockDevice)
   }
@@ -28,7 +28,7 @@ final class FLTCamZoomTests: XCTestCase {
 
     var setVideoZoomFactorCalled = false
     mockDevice.setVideoZoomFactorStub = { zoom in
-      XCTAssertEqual(zoom, Float(targetZoom))
+      XCTAssertEqual(zoom, targetZoom)
       setVideoZoomFactorCalled = true
     }
 
@@ -85,7 +85,7 @@ final class FLTCamZoomTests: XCTestCase {
 
     let targetZoom = CGFloat(1.0)
 
-    mockDevice.maxAvailableVideoZoomFactor = Float(targetZoom)
+    mockDevice.maxAvailableVideoZoomFactor = CGFloat(targetZoom)
 
     XCTAssertEqual(camera.maximumAvailableZoomFactor, targetZoom)
   }
@@ -95,7 +95,7 @@ final class FLTCamZoomTests: XCTestCase {
 
     let targetZoom = CGFloat(1.0)
 
-    mockDevice.minAvailableVideoZoomFactor = Float(targetZoom)
+    mockDevice.minAvailableVideoZoomFactor = CGFloat(targetZoom)
 
     XCTAssertEqual(camera.minimumAvailableZoomFactor, targetZoom)
   }
