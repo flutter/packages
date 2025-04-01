@@ -29,4 +29,24 @@ void main() {
       expect(options.allowRemotePlayback, isTrue);
     },
   );
+
+  group('VideoPlayerOptions poster', () {
+    test(
+      'defaults to null',
+      () {
+        const VideoPlayerWebOptions options = VideoPlayerWebOptions();
+        expect(options.poster, null);
+      },
+    );
+
+    test(
+      'with a value',
+      () {
+        const VideoPlayerWebOptions options = VideoPlayerWebOptions(
+          poster: 'https://example.com/poster.jpg',
+        );
+        expect(options.poster, 'https://example.com/poster.jpg');
+      },
+    );
+  });
 }
