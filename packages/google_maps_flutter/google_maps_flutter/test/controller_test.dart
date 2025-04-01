@@ -15,62 +15,62 @@ import 'fake_google_maps_flutter_platform.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
- testWidgets('Subscriptions are canceled on dispose',
-        (WidgetTester tester) async {
-      GoogleMapsFlutterPlatform.instance = FakeGoogleMapsFlutterPlatform();
+  testWidgets('Subscriptions are canceled on dispose',
+      (WidgetTester tester) async {
+    GoogleMapsFlutterPlatform.instance = FakeGoogleMapsFlutterPlatform();
 
-      final FakePlatformViewsController fakePlatformViewsController =
-          FakePlatformViewsController();
+    final FakePlatformViewsController fakePlatformViewsController =
+        FakePlatformViewsController();
 
-      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-        SystemChannels.platform_views,
-        fakePlatformViewsController.fakePlatformViewsMethodHandler,
-      );
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform_views,
+      fakePlatformViewsController.fakePlatformViewsMethodHandler,
+    );
 
-      final ValueNotifier<GoogleMapController?> controllerNotifier =
-          ValueNotifier<GoogleMapController?>(null);
+    final ValueNotifier<GoogleMapController?> controllerNotifier =
+        ValueNotifier<GoogleMapController?>(null);
 
-      final GoogleMap googleMap = GoogleMap(
-        onMapCreated: (GoogleMapController controller) {
-          controllerNotifier.value = controller;
-        },
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(0, 0),
-        ),
-      );
+    final GoogleMap googleMap = GoogleMap(
+      onMapCreated: (GoogleMapController controller) {
+        controllerNotifier.value = controller;
+      },
+      initialCameraPosition: const CameraPosition(
+        target: LatLng(0, 0),
+      ),
+    );
 
-      await tester.pumpWidget(Directionality(
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: googleMap,
+    ));
+
+    await tester.pump();
+
+    final GoogleMapController? controller = controllerNotifier.value;
+
+    if (controller != null) {
+      final TrackableStreamSubscription<MarkerDragEndEvent> subscription =
+          TrackableStreamSubscription<MarkerDragEndEvent>();
+
+      controller.addDebugTrackSubscription(subscription);
+      expect(subscription.isCanceled, false);
+
+      await tester.pumpWidget(const Directionality(
         textDirection: TextDirection.ltr,
-        child: googleMap,
+        child: SizedBox(),
       ));
 
-      await tester.pump();
+      await tester.binding.runAsync(() async {
+        await tester.pump();
+      });
 
-      final GoogleMapController? controller = controllerNotifier.value;
+      expect(subscription.isCanceled, true);
 
-      if (controller != null) {
-        final TrackableStreamSubscription<MarkerDragEndEvent>
-          subscription = TrackableStreamSubscription<MarkerDragEndEvent>();
-
-        controller.addDebugTrackSubscription(subscription);
-        expect(subscription.isCanceled, false);
-
-        await tester.pumpWidget(const Directionality(
-          textDirection: TextDirection.ltr,
-          child: SizedBox(),
-        ));
-
-        await tester.binding.runAsync(() async {
-          await tester.pump();
-        });
-
-        expect(subscription.isCanceled, true);
-
-        controllerNotifier.dispose();
-      } else {
-        fail('GoogleMapController not created');
-      }
-    });
+      controllerNotifier.dispose();
+    } else {
+      fail('GoogleMapController not created');
+    }
+  });
 }
 
 class FakePlatformViewsController {
