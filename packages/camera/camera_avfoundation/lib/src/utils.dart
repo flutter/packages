@@ -13,7 +13,8 @@ CameraDescription cameraDescriptionFromPlatform(
   return CameraDescription(
       name: camera.name,
       lensDirection: cameraLensDirectionFromPlatform(camera.lensDirection),
-      sensorOrientation: 90);
+      sensorOrientation: 90,
+      lensType: cameraLensTypeFromPlatform(camera.lensType));
 }
 
 /// Converts a Pigeon [PlatformCameraLensDirection] to a [CameraLensDirection].
@@ -23,6 +24,20 @@ CameraLensDirection cameraLensDirectionFromPlatform(
     PlatformCameraLensDirection.front => CameraLensDirection.front,
     PlatformCameraLensDirection.back => CameraLensDirection.back,
     PlatformCameraLensDirection.external => CameraLensDirection.external,
+  };
+}
+
+/// Converts a Pigeon [PlatformCameraLensType] to a [CameraLensType].
+CameraLensType cameraLensTypeFromPlatform(PlatformCameraLensType type) {
+  return switch (type) {
+    PlatformCameraLensType.wide => CameraLensType.wide,
+    PlatformCameraLensType.telephoto => CameraLensType.telephoto,
+    PlatformCameraLensType.ultraWide => CameraLensType.ultraWide,
+    PlatformCameraLensType.dual => CameraLensType.dual,
+    PlatformCameraLensType.dualWide => CameraLensType.dualWide,
+    PlatformCameraLensType.triple => CameraLensType.triple,
+    PlatformCameraLensType.continuity => CameraLensType.continuity,
+    PlatformCameraLensType.unknown => CameraLensType.unknown,
   };
 }
 
