@@ -76,8 +76,7 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Override
   public boolean surfaceProducerHandlesCropAndRotation(@NonNull Preview pigeon_instance) {
-    final TextureRegistry.SurfaceProducer surfaceProducer =
-        surfaceProducers.remove(pigeon_instance);
+    final TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.get(pigeon_instance);
     if (surfaceProducer != null) {
       return surfaceProducer.handlesCropAndRotation();
     }
