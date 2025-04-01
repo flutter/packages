@@ -29,6 +29,9 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   @Nullable private CameraPermissionsManager.PermissionsRegistry permissionsRegistry;
 
+  // PreviewProxyApi maintains a state to track SurfaceProducers provided by the Flutter engine.
+  @NonNull private final PreviewProxyApi previewProxyApi = new PreviewProxyApi(this);
+
   public ProxyApiRegistrar(
       @NonNull BinaryMessenger binaryMessenger,
       @NonNull Context context,
@@ -198,7 +201,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiPreview getPigeonApiPreview() {
-    return new PreviewProxyApi(this);
+    return previewProxyApi;
   }
 
   @NonNull
