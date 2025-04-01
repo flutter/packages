@@ -35,6 +35,7 @@ android {
     }
 
     kotlinOptions {
+        // This must match the Java version provided in compileOptions.
         jvmTarget = '11'
     }
 

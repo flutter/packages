@@ -5,11 +5,11 @@
 package io.flutter.plugins.camerax
 
 /**
- * ResultCompat.
+ * Provides Java compatible helper functions for the [kotlin.Result] class.
  *
- * It is intended to solve the problem of being unable to obtain [kotlin.Result] in Java.
- *
- * [kotlin.Result] has a weird quirk when it is passed to Java where it seems to wrap itself.
+ * The Kotlin Result class in used in the pigeon generated Kotlin code and there is no equivalent
+ * class in Java. The Result class can have weird behavior when passed to Java (e.g. it has a weird
+ * quirk where it seems to wrap itself).
  */
 @Suppress("UNCHECKED_CAST")
 class ResultCompat<T>(val result: Result<T>) {
