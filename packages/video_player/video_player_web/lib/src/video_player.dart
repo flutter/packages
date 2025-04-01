@@ -260,6 +260,10 @@ class VideoPlayer {
     if (!options.allowRemotePlayback) {
       _videoElement.disableRemotePlayback = true;
     }
+
+    if (options.poster != null) {
+      _videoElement.poster = options.poster!;
+    }
   }
 
   void _resetOptions() {
