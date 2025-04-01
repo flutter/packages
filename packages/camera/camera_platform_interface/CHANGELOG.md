@@ -1,7 +1,7 @@
-## 2.10.0
+## 2.9.0
 
-* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
-* Introduces a new CameraLensType enum to provide lens type information about the camera (e.g.: ultra-wide, telephoto, ...)
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Introduces a new CameraLensType enum to provide lens type information about the camera (e.g. ultra-wide, telephoto, ...).
 
 ## 2.8.0
 

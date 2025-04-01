@@ -65,8 +65,8 @@
 
 ## 0.9.17+6
 
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 * Adds lensType in the PlatformCameraDescription
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.9.17+5
 
