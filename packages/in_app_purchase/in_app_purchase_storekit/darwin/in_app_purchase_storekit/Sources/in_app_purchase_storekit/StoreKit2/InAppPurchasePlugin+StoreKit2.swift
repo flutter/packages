@@ -150,7 +150,11 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   func countryCode(completion: @escaping (Result<String, Error>) -> Void) {
     Task {
       guard let currentStorefront = await Storefront.current else {
-        return completion(.failure(fatalError("Could not get current Storefront.")))
+        let error = PigeonError(
+          code: "storekit2_failed_to_fetch_country_code",
+          message: "Storekit has failed to fetch the country code.",
+          details: "Storekit has failed to fetch the country code.")
+        return completion(.failure(error))
       }
       return completion(.success(currentStorefront.countryCode))
     }
