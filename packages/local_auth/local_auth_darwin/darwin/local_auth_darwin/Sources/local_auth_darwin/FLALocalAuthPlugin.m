@@ -242,6 +242,8 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 /// The Flutter view provider.
 @property(nonatomic, strong) NSObject<FLAViewProvider> *viewProvider;
+
+@property(nonatomic, strong, nullable) LAContext *currentContext;
 @end
 
 @implementation FLALocalAuthPlugin
@@ -278,9 +280,11 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
                      completion:(nonnull void (^)(FLADAuthResultDetails *_Nullable,
                                                   FlutterError *_Nullable))completion {
   id<FLADAuthContext> context = [self.authContextFactory createAuthContext];
+  self.currentContext = context;
   NSError *authError = nil;
   self.lastCallState = nil;
   context.localizedFallbackTitle = strings.localizedFallbackTitle;
+  
 
   LAPolicy policy = options.biometricOnly ? LAPolicyDeviceOwnerAuthenticationWithBiometrics
                                           : LAPolicyDeviceOwnerAuthentication;
@@ -348,6 +352,14 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
     }
   }
   return biometrics;
+}
+
+- (nullable NSNumber *)stopAuthenticationWithError:
+    (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  if (self.currentContext == NULL) { return @NO; }
+  [self.currentContext invalidate];
+
+  return @YES;
 }
 
 - (nullable NSNumber *)isDeviceSupportedWithError:
