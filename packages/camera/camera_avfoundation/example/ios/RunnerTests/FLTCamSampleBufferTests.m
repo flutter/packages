@@ -429,7 +429,8 @@
   [cam pauseVideoRecording];
   [cam resumeVideoRecording];
   [cam captureOutput:nil
-      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(20, 1), CMTimeMake(2, 1))
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(20, 1),
+                                                                     CMTimeMake(2, 1))
              fromConnection:connectionMock];
   XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
   [cam captureOutput:cam.captureVideoOutput
@@ -445,7 +446,8 @@
              fromConnection:connectionMock];
   XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
   [cam captureOutput:nil
-      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(30, 1), CMTimeMake(2, 1))
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(30, 1),
+                                                                     CMTimeMake(2, 1))
              fromConnection:connectionMock];
   XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
   [cam captureOutput:cam.captureVideoOutput
@@ -453,7 +455,8 @@
              fromConnection:connectionMock];
   XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
   [cam captureOutput:nil
-      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(32, 1), CMTimeMake(2, 1))
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(32, 1),
+                                                                     CMTimeMake(2, 1))
              fromConnection:connectionMock];
   XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, CMTimeMake(2, 1)));
 }
@@ -506,14 +509,16 @@
       didOutputSampleBuffer:FLTCreateTestSampleBufferWithTiming(CMTimeMake(1, 1), kCMTimeInvalid)
              fromConnection:connectionMock];
   [cam captureOutput:nil
-      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(1, 1), CMTimeMake(1, 1))
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(1, 1),
+                                                                     CMTimeMake(1, 1))
              fromConnection:connectionMock];
 
   [NSNotificationCenter.defaultCenter postNotificationName:AVCaptureSessionWasInterruptedNotification object:cam.audioCaptureSession];
 
   appendedTime = kCMTimeInvalid;
   [cam captureOutput:nil
-      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(11, 1), CMTimeMake(1, 1))
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(11, 1),
+                                                                     CMTimeMake(1, 1))
              fromConnection:connectionMock];
   XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
   [cam captureOutput:cam.captureVideoOutput
@@ -522,7 +527,8 @@
   XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, CMTimeMake(2, 1)));
   appendedTime = kCMTimeInvalid;
   [cam captureOutput:nil
-      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(12, 1), CMTimeMake(1, 1))
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(12, 1),
+                                                                     CMTimeMake(1, 1))
              fromConnection:connectionMock];
   XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, CMTimeMake(2, 1)));
 }

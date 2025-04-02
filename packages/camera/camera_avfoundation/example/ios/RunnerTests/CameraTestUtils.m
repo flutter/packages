@@ -205,17 +205,20 @@ CMSampleBufferRef FLTCreateTestSampleBuffer(void) {
 
 CMSampleBufferRef FLTCreateTestAudioSampleBufferWithTiming(CMTime timestamp, CMTime duration) {
   CMBlockBufferRef blockBuffer;
-  CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, NULL, duration.value, kCFAllocatorDefault, NULL, 0,
-                                     duration.value, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
+  CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, NULL, duration.value, kCFAllocatorDefault,
+                                     NULL, 0, duration.value, kCMBlockBufferAssureMemoryNowFlag,
+                                     &blockBuffer);
 
   CMFormatDescriptionRef formatDescription;
-  AudioStreamBasicDescription basicDescription = {duration.timescale, kAudioFormatLinearPCM, 0, 1, 1, 1, 1, 8};
+  AudioStreamBasicDescription basicDescription = {
+    duration.timescale, kAudioFormatLinearPCM, 0, 1, 1, 1, 1, 8};
   CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &basicDescription, 0, NULL, 0, NULL, NULL,
                                  &formatDescription);
 
   CMSampleBufferRef sampleBuffer;
-  CMAudioSampleBufferCreateReadyWithPacketDescriptions(
-      kCFAllocatorDefault, blockBuffer, formatDescription, duration.value, timestamp, NULL, &sampleBuffer);
+  CMAudioSampleBufferCreateReadyWithPacketDescriptions(kCFAllocatorDefault, blockBuffer,
+                                                       formatDescription, duration.value, timestamp,
+                                                       NULL, &sampleBuffer);
 
   CFRelease(blockBuffer);
   CFRelease(formatDescription);

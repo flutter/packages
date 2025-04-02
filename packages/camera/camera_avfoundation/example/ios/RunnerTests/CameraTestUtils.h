@@ -57,6 +57,7 @@ extern CMSampleBufferRef FLTCreateTestAudioSampleBuffer(void);
 
 /// Creates a test audio sample buffer with timing.
 /// @return a test audio sample buffer.
-extern CMSampleBufferRef FLTCreateTestAudioSampleBufferWithTiming(CMTime timestamp, CMTime duration);
+extern CMSampleBufferRef FLTCreateTestAudioSampleBufferWithTiming(CMTime timestamp,
+                                                                  CMTime duration);
 
 NS_ASSUME_NONNULL_END

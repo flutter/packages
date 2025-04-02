@@ -312,7 +312,7 @@ static void selectBestFormatForRequestedFrameRate(
 
   // Handle video and audio interruptions and errors.
   // https://github.com/flutter/flutter/issues/151253
-  for (AVCaptureSession *session in @[_videoCaptureSession, _audioCaptureSession]) {
+  for (AVCaptureSession *session in @[ _videoCaptureSession, _audioCaptureSession ]) {
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(captureSessionWasInterrupted:)
                                                name:AVCaptureSessionWasInterruptedNotification
@@ -332,7 +332,9 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (void)captureSessionRuntimeError:(NSNotification *)notification {
-  [self reportErrorMessage:[NSString stringWithFormat:@"%@", notification.userInfo[AVCaptureSessionErrorKey]]];
+  [self reportErrorMessage:[NSString
+                                stringWithFormat:@"%@",
+                                                 notification.userInfo[AVCaptureSessionErrorKey]]];
 }
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
@@ -736,7 +738,8 @@ static void selectBestFormatForRequestedFrameRate(
       });
     }
   }
-  if (_isRecording && !_isRecordingPaused && _videoCaptureSession.running && _audioCaptureSession.running) {
+  if (_isRecording && !_isRecordingPaused && _videoCaptureSession.running &&
+      _audioCaptureSession.running) {
     if (_videoWriter.status == AVAssetWriterStatusFailed) {
       [self reportErrorMessage:[NSString stringWithFormat:@"%@", _videoWriter.error]];
       return;
