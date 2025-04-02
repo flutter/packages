@@ -391,11 +391,14 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     Indent indent,
     Class classDefinition, {
     bool private = false,
+    bool hashable = true,
   }) {
     final String privateString = private ? 'private ' : '';
     final String extendsString = classDefinition.superClass != null
         ? ': ${classDefinition.superClass!.name}'
-        : ': Hashable';
+        : hashable
+            ? ': Hashable'
+            : '';
     if (classDefinition.isSwiftClass) {
       indent.write(
           '${privateString}class ${classDefinition.name}$extendsString ');
@@ -444,7 +447,12 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     final Class overflowClass =
         Class(name: _overflowClassName, fields: overflowFields);
     indent.newln();
-    _writeDataClassSignature(indent, overflowClass, private: true);
+    _writeDataClassSignature(
+      indent,
+      overflowClass,
+      private: true,
+      hashable: false,
+    );
     indent.addScoped('', '}', () {
       writeClassEncode(
         generatorOptions,
