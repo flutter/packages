@@ -56,8 +56,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
-@property(readonly, nonatomic) AVCaptureSession *videoCaptureSession;
-@property(readonly, nonatomic) AVCaptureSession *audioCaptureSession;
 
 @property(readonly, nonatomic) AVCaptureInput *captureVideoInput;
 /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
@@ -74,8 +72,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(assign, nonatomic) BOOL isFirstVideoSample;
 @property(assign, nonatomic) BOOL isRecording;
 @property(assign, nonatomic) BOOL isRecordingPaused;
-@property(assign, nonatomic) BOOL videoIsDisconnected;
-@property(assign, nonatomic) BOOL audioIsDisconnected;
+@property(assign, nonatomic) BOOL isRecordingDisconnected;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
 /// Number of frames currently pending processing.
@@ -85,10 +82,10 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(assign, nonatomic) int maxStreamingPendingFramesCount;
 
 @property(assign, nonatomic) UIDeviceOrientation lockedCaptureOrientation;
-@property(assign, nonatomic) CMTime lastVideoSampleTime;
-@property(assign, nonatomic) CMTime lastAudioSampleTime;
-@property(assign, nonatomic) CMTime videoTimeOffset;
-@property(assign, nonatomic) CMTime audioTimeOffset;
+@property(assign, nonatomic) CMTime recordingTimeOffset;
+@property(assign, nonatomic) CMTime lastSampleEndTime;
+@property(nonatomic) AVCaptureOutput *outputForOffsetAdjusting;
+@property(assign, nonatomic) CMTime lastAppendedVideoSampleTime;
 @property(nonatomic) CMMotionManager *motionManager;
 @property AVAssetWriterInputPixelBufferAdaptor *videoAdaptor;
 /// All FLTCam's state access and capture session related operations should be on run on this queue.
@@ -313,7 +310,29 @@ static void selectBestFormatForRequestedFrameRate(
 
   [self updateOrientation];
 
+  // Handle video and audio interruptions and errors.
+  // https://github.com/flutter/flutter/issues/151253
+  for (AVCaptureSession *session in @[_videoCaptureSession, _audioCaptureSession]) {
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(captureSessionWasInterrupted:)
+                                               name:AVCaptureSessionWasInterruptedNotification
+                                             object:session];
+
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(captureSessionRuntimeError:)
+                                               name:AVCaptureSessionRuntimeErrorNotification
+                                             object:session];
+  }
+
   return self;
+}
+
+- (void)captureSessionWasInterrupted:(NSNotification *)notification {
+  _isRecordingDisconnected = YES;
+}
+
+- (void)captureSessionRuntimeError:(NSNotification *)notification {
+  [self reportErrorMessage:[NSString stringWithFormat:@"%@", notification.userInfo[AVCaptureSessionErrorKey]]];
 }
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
@@ -717,78 +736,71 @@ static void selectBestFormatForRequestedFrameRate(
       });
     }
   }
-  if (_isRecording && !_isRecordingPaused) {
+  if (_isRecording && !_isRecordingPaused && _videoCaptureSession.running && _audioCaptureSession.running) {
     if (_videoWriter.status == AVAssetWriterStatusFailed) {
       [self reportErrorMessage:[NSString stringWithFormat:@"%@", _videoWriter.error]];
       return;
     }
 
-    // ignore audio samples until the first video sample arrives to avoid black frames
-    // https://github.com/flutter/flutter/issues/57831
-    if (_isFirstVideoSample && output != _captureVideoOutput) {
-      return;
+    // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
+    // https://github.com/flutter/flutter/issues/132073
+    if (output == _captureVideoOutput) {
+      if (!_videoWriterInput.readyForMoreMediaData) {
+        return;
+      }
+    } else {
+      // ignore audio samples until the first video sample arrives to avoid black frames
+      // https://github.com/flutter/flutter/issues/57831
+      if (_isFirstVideoSample || !_audioWriterInput.readyForMoreMediaData) {
+        return;
+      }
+      _outputForOffsetAdjusting = output;
     }
 
-    CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+    CMTime sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 
     if (_isFirstVideoSample) {
-      [_videoWriter startSessionAtSourceTime:currentSampleTime];
+      [_videoWriter startSessionAtSourceTime:sampleTime];
       // fix sample times not being numeric when pause/resume happens before first sample buffer
       // arrives
       // https://github.com/flutter/flutter/issues/132014
-      _lastVideoSampleTime = currentSampleTime;
-      _lastAudioSampleTime = currentSampleTime;
+      _isRecordingDisconnected = NO;
       _isFirstVideoSample = NO;
     }
 
-    if (output == _captureVideoOutput) {
-      if (_videoIsDisconnected) {
-        _videoIsDisconnected = NO;
+    CMTime currentSampleEndTime = sampleTime;
+    CMTime dur = CMSampleBufferGetDuration(sampleBuffer);
+    if (CMTIME_IS_NUMERIC(dur)) {
+      currentSampleEndTime = CMTimeAdd(currentSampleEndTime, dur);
+    }
 
-        if (_videoTimeOffset.value == 0) {
-          _videoTimeOffset = CMTimeSubtract(currentSampleTime, _lastVideoSampleTime);
-        } else {
-          CMTime offset = CMTimeSubtract(currentSampleTime, _lastVideoSampleTime);
-          _videoTimeOffset = CMTimeAdd(_videoTimeOffset, offset);
-        }
-
-        return;
+    // Use a single time offset for both video and audio.
+    // https://github.com/flutter/flutter/issues/149978
+    if (_isRecordingDisconnected) {
+      if (output == _outputForOffsetAdjusting) {
+        CMTime offset = CMTimeSubtract(currentSampleEndTime, _lastSampleEndTime);
+        _recordingTimeOffset = CMTimeAdd(_recordingTimeOffset, offset);
+        _lastSampleEndTime = currentSampleEndTime;
+        _isRecordingDisconnected = NO;
       }
+      return;
+    }
 
-      _lastVideoSampleTime = currentSampleTime;
+    if (output == _outputForOffsetAdjusting) {
+      _lastSampleEndTime = currentSampleEndTime;
+    }
 
+    if (output == _captureVideoOutput) {
       CVPixelBufferRef nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-      CMTime nextSampleTime = CMTimeSubtract(_lastVideoSampleTime, _videoTimeOffset);
-      // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
-      // https://github.com/flutter/flutter/issues/132073
-      if (_videoWriterInput.readyForMoreMediaData) {
+      CMTime nextSampleTime = CMTimeSubtract(sampleTime, _recordingTimeOffset);
+      if (CMTIME_COMPARE_INLINE(nextSampleTime, >, _lastAppendedVideoSampleTime)) {
         [_videoAdaptor appendPixelBuffer:nextBuffer withPresentationTime:nextSampleTime];
+        _lastAppendedVideoSampleTime = nextSampleTime;
       }
     } else {
-      CMTime dur = CMSampleBufferGetDuration(sampleBuffer);
-
-      if (dur.value > 0) {
-        currentSampleTime = CMTimeAdd(currentSampleTime, dur);
-      }
-
-      if (_audioIsDisconnected) {
-        _audioIsDisconnected = NO;
-
-        if (_audioTimeOffset.value == 0) {
-          _audioTimeOffset = CMTimeSubtract(currentSampleTime, _lastAudioSampleTime);
-        } else {
-          CMTime offset = CMTimeSubtract(currentSampleTime, _lastAudioSampleTime);
-          _audioTimeOffset = CMTimeAdd(_audioTimeOffset, offset);
-        }
-
-        return;
-      }
-
-      _lastAudioSampleTime = currentSampleTime;
-
-      if (_audioTimeOffset.value != 0) {
+      if (_recordingTimeOffset.value != 0) {
         CMSampleBufferRef adjustedSampleBuffer =
-            [self copySampleBufferWithAdjustedTime:sampleBuffer by:_audioTimeOffset];
+            [self copySampleBufferWithAdjustedTime:sampleBuffer by:_recordingTimeOffset];
         [self newAudioSample:adjustedSampleBuffer];
         CFRelease(adjustedSampleBuffer);
       } else {
@@ -820,10 +832,8 @@ static void selectBestFormatForRequestedFrameRate(
     }
     return;
   }
-  if (_videoWriterInput.readyForMoreMediaData) {
-    if (![_videoWriterInput appendSampleBuffer:sampleBuffer]) {
-      [self reportErrorMessage:@"Unable to write to video input"];
-    }
+  if (![_videoWriterInput appendSampleBuffer:sampleBuffer]) {
+    [self reportErrorMessage:@"Unable to write to video input"];
   }
 }
 
@@ -834,10 +844,8 @@ static void selectBestFormatForRequestedFrameRate(
     }
     return;
   }
-  if (_audioWriterInput.readyForMoreMediaData) {
-    if (![_audioWriterInput appendSampleBuffer:sampleBuffer]) {
-      [self reportErrorMessage:@"Unable to write to audio input"];
-    }
+  if (![_audioWriterInput appendSampleBuffer:sampleBuffer]) {
+    [self reportErrorMessage:@"Unable to write to audio input"];
   }
 }
 
@@ -862,6 +870,7 @@ static void selectBestFormatForRequestedFrameRate(
     CFRelease(_latestPixelBuffer);
   }
   [_motionManager stopAccelerometerUpdates];
+  [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
@@ -907,10 +916,10 @@ static void selectBestFormatForRequestedFrameRate(
     _isFirstVideoSample = YES;
     _isRecording = YES;
     _isRecordingPaused = NO;
-    _videoTimeOffset = CMTimeMake(0, 1);
-    _audioTimeOffset = CMTimeMake(0, 1);
-    _videoIsDisconnected = NO;
-    _audioIsDisconnected = NO;
+    _isRecordingDisconnected = NO;
+    _recordingTimeOffset = CMTimeMake(0, 1);
+    _outputForOffsetAdjusting = _captureVideoOutput;
+    _lastAppendedVideoSampleTime = kCMTimeNegativeInfinity;
     completion(nil);
   } else {
     completion([FlutterError errorWithCode:@"Error"
@@ -950,8 +959,7 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)pauseVideoRecording {
   _isRecordingPaused = YES;
-  _videoIsDisconnected = YES;
-  _audioIsDisconnected = YES;
+  _isRecordingDisconnected = YES;
 }
 
 - (void)resumeVideoRecording {

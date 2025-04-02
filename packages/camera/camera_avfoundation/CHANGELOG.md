@@ -1,3 +1,8 @@
+## 0.9.18+14
+
+* Handle video and audio interruptions and errors.
+* Use a single time offset for both video and audio.
+
 ## 0.9.18+1
 
 * Refactors implementations to reduce usage of OCMock in internal testing.

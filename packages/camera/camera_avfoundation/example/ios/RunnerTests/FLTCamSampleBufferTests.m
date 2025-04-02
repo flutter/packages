@@ -361,4 +361,170 @@
             @"Category should be PlayAndRecord.");
 }
 
+- (void)testDidOutputSampleBufferMustUseSingleOffsetForVideoAndAudio {
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
+
+  id connectionMock = OCMClassMock([AVCaptureConnection class]);
+
+  id writerMock = OCMClassMock([AVAssetWriter class]);
+  OCMStub([writerMock alloc]).andReturn(writerMock);
+  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
+      .andReturn(writerMock);
+  __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
+  OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
+    status = AVAssetWriterStatusWriting;
+  });
+  OCMStub([writerMock status]).andDo(^(NSInvocation *invocation) {
+    [invocation setReturnValue:&status];
+  });
+
+  __block CMTime appendedTime;
+
+  id adaptorMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
+  OCMStub([adaptorMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
+                                                  sourcePixelBufferAttributes:OCMOCK_ANY])
+      .andReturn(adaptorMock);
+  OCMStub([adaptorMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
+      .ignoringNonObjectArgs()
+      .andDo(^(NSInvocation *invocation) {
+        [invocation getArgument:&appendedTime atIndex:3];
+      });
+
+  id inputMock = OCMClassMock([AVAssetWriterInput class]);
+  OCMStub([inputMock assetWriterInputWithMediaType:OCMOCK_ANY outputSettings:OCMOCK_ANY])
+      .andReturn(inputMock);
+  OCMStub([inputMock isReadyForMoreMediaData]).andReturn(YES);
+  OCMStub([inputMock appendSampleBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
+    CMSampleBufferRef sampleBuffer;
+    [invocation getArgument:&sampleBuffer atIndex:2];
+    appendedTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+  });
+
+  [cam
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
+
+  appendedTime = kCMTimeInvalid;
+  [cam pauseVideoRecording];
+  [cam resumeVideoRecording];
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:FLTCreateTestSampleBufferWithTiming(CMTimeMake(1, 1), kCMTimeInvalid)
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, CMTimeMake(1, 1)));
+
+  appendedTime = kCMTimeInvalid;
+  [cam pauseVideoRecording];
+  [cam resumeVideoRecording];
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:FLTCreateTestSampleBufferWithTiming(CMTimeMake(11, 1), kCMTimeInvalid)
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:FLTCreateTestSampleBufferWithTiming(CMTimeMake(12, 1), kCMTimeInvalid)
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, CMTimeMake(2, 1)));
+
+  appendedTime = kCMTimeInvalid;
+  [cam pauseVideoRecording];
+  [cam resumeVideoRecording];
+  [cam captureOutput:nil
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(20, 1), CMTimeMake(2, 1))
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:FLTCreateTestSampleBufferWithTiming(CMTimeMake(23, 1), kCMTimeInvalid)
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, CMTimeMake(3, 1)));
+
+  appendedTime = kCMTimeInvalid;
+  [cam pauseVideoRecording];
+  [cam resumeVideoRecording];
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:FLTCreateTestSampleBufferWithTiming(CMTimeMake(28, 1), kCMTimeInvalid)
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
+  [cam captureOutput:nil
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(30, 1), CMTimeMake(2, 1))
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:FLTCreateTestSampleBufferWithTiming(CMTimeMake(33, 1), kCMTimeInvalid)
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
+  [cam captureOutput:nil
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(32, 1), CMTimeMake(2, 1))
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, CMTimeMake(2, 1)));
+}
+
+- (void)testDidOutputSampleBufferMustConnectVideoAfterSessionInterruption {
+  FLTCam *cam = FLTCreateCamWithCaptureSessionQueue(dispatch_queue_create("testing", NULL));
+
+  id connectionMock = OCMClassMock([AVCaptureConnection class]);
+
+  id writerMock = OCMClassMock([AVAssetWriter class]);
+  OCMStub([writerMock alloc]).andReturn(writerMock);
+  OCMStub([writerMock initWithURL:OCMOCK_ANY fileType:OCMOCK_ANY error:[OCMArg setTo:nil]])
+      .andReturn(writerMock);
+  __block AVAssetWriterStatus status = AVAssetWriterStatusUnknown;
+  OCMStub([writerMock startWriting]).andDo(^(NSInvocation *invocation) {
+    status = AVAssetWriterStatusWriting;
+  });
+  OCMStub([writerMock status]).andDo(^(NSInvocation *invocation) {
+    [invocation setReturnValue:&status];
+  });
+
+  __block CMTime appendedTime;
+
+  id adaptorMock = OCMClassMock([AVAssetWriterInputPixelBufferAdaptor class]);
+  OCMStub([adaptorMock assetWriterInputPixelBufferAdaptorWithAssetWriterInput:OCMOCK_ANY
+                                                  sourcePixelBufferAttributes:OCMOCK_ANY])
+      .andReturn(adaptorMock);
+  OCMStub([adaptorMock appendPixelBuffer:[OCMArg anyPointer] withPresentationTime:kCMTimeZero])
+      .ignoringNonObjectArgs()
+      .andDo(^(NSInvocation *invocation) {
+        [invocation getArgument:&appendedTime atIndex:3];
+      });
+
+  id inputMock = OCMClassMock([AVAssetWriterInput class]);
+  OCMStub([inputMock assetWriterInputWithMediaType:OCMOCK_ANY outputSettings:OCMOCK_ANY])
+      .andReturn(inputMock);
+  OCMStub([inputMock isReadyForMoreMediaData]).andReturn(YES);
+  OCMStub([inputMock appendSampleBuffer:[OCMArg anyPointer]]).andDo(^(NSInvocation *invocation) {
+    CMSampleBufferRef sampleBuffer;
+    [invocation getArgument:&sampleBuffer atIndex:2];
+    appendedTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+  });
+
+  [cam
+      startVideoRecordingWithCompletion:^(FlutterError *_Nullable error) {
+      }
+                  messengerForStreaming:nil];
+
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:FLTCreateTestSampleBufferWithTiming(CMTimeMake(1, 1), kCMTimeInvalid)
+             fromConnection:connectionMock];
+  [cam captureOutput:nil
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(1, 1), CMTimeMake(1, 1))
+             fromConnection:connectionMock];
+
+  [NSNotificationCenter.defaultCenter postNotificationName:AVCaptureSessionWasInterruptedNotification object:cam.audioCaptureSession];
+
+  appendedTime = kCMTimeInvalid;
+  [cam captureOutput:nil
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(11, 1), CMTimeMake(1, 1))
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, kCMTimeInvalid));
+  [cam captureOutput:cam.captureVideoOutput
+      didOutputSampleBuffer:FLTCreateTestSampleBufferWithTiming(CMTimeMake(12, 1), kCMTimeInvalid)
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, CMTimeMake(2, 1)));
+  appendedTime = kCMTimeInvalid;
+  [cam captureOutput:nil
+      didOutputSampleBuffer:FLTCreateTestAudioSampleBufferWithTiming(CMTimeMake(12, 1), CMTimeMake(1, 1))
+             fromConnection:connectionMock];
+  XCTAssert(CMTIME_COMPARE_INLINE(appendedTime, ==, CMTimeMake(2, 1)));
+}
+
 @end

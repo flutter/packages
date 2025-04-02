@@ -47,8 +47,16 @@ extern FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
 /// @return a test sample buffer.
 extern CMSampleBufferRef FLTCreateTestSampleBuffer(void);
 
+/// Creates a test sample buffer with timing.
+/// @return a test sample buffer.
+extern CMSampleBufferRef FLTCreateTestSampleBufferWithTiming(CMTime timestamp, CMTime duration);
+
 /// Creates a test audio sample buffer.
 /// @return a test audio sample buffer.
 extern CMSampleBufferRef FLTCreateTestAudioSampleBuffer(void);
+
+/// Creates a test audio sample buffer with timing.
+/// @return a test audio sample buffer.
+extern CMSampleBufferRef FLTCreateTestAudioSampleBufferWithTiming(CMTime timestamp, CMTime duration);
 
 NS_ASSUME_NONNULL_END

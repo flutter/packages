@@ -54,10 +54,12 @@ FLTCam *FLTCreateCamWithCaptureSessionQueueAndMediaSettings(
 
   OCMStub([videoSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([videoSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
+  OCMStub([videoSessionMock isRunning]).andReturn(YES);
 
   id audioSessionMock = OCMClassMock([AVCaptureSession class]);
   OCMStub([audioSessionMock addInputWithNoConnections:[OCMArg any]]);
   OCMStub([audioSessionMock canSetSessionPreset:[OCMArg any]]).andReturn(YES);
+  OCMStub([audioSessionMock isRunning]).andReturn(YES);
 
   id frameRateRangeMock1 = OCMClassMock([AVFrameRateRange class]);
   OCMStub([frameRateRangeMock1 minFrameRate]).andReturn(3);
@@ -178,7 +180,7 @@ FLTCam *FLTCreateCamWithVideoDimensionsForFormat(
                           error:nil];
 }
 
-CMSampleBufferRef FLTCreateTestSampleBuffer(void) {
+CMSampleBufferRef FLTCreateTestSampleBufferWithTiming(CMTime timestamp, CMTime duration) {
   CVPixelBufferRef pixelBuffer;
   CVPixelBufferCreate(kCFAllocatorDefault, 100, 100, kCVPixelFormatType_32BGRA, NULL, &pixelBuffer);
 
@@ -186,7 +188,7 @@ CMSampleBufferRef FLTCreateTestSampleBuffer(void) {
   CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer,
                                                &formatDescription);
 
-  CMSampleTimingInfo timingInfo = {CMTimeMake(1, 44100), kCMTimeZero, kCMTimeInvalid};
+  CMSampleTimingInfo timingInfo = {duration, timestamp, kCMTimeInvalid};
 
   CMSampleBufferRef sampleBuffer;
   CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer, formatDescription,
@@ -197,21 +199,29 @@ CMSampleBufferRef FLTCreateTestSampleBuffer(void) {
   return sampleBuffer;
 }
 
-CMSampleBufferRef FLTCreateTestAudioSampleBuffer(void) {
+CMSampleBufferRef FLTCreateTestSampleBuffer(void) {
+  return FLTCreateTestSampleBufferWithTiming(kCMTimeZero, CMTimeMake(1, 44100));
+}
+
+CMSampleBufferRef FLTCreateTestAudioSampleBufferWithTiming(CMTime timestamp, CMTime duration) {
   CMBlockBufferRef blockBuffer;
-  CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, NULL, 100, kCFAllocatorDefault, NULL, 0,
-                                     100, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
+  CMBlockBufferCreateWithMemoryBlock(kCFAllocatorDefault, NULL, duration.value, kCFAllocatorDefault, NULL, 0,
+                                     duration.value, kCMBlockBufferAssureMemoryNowFlag, &blockBuffer);
 
   CMFormatDescriptionRef formatDescription;
-  AudioStreamBasicDescription basicDescription = {44100, kAudioFormatLinearPCM, 0, 1, 1, 1, 1, 8};
+  AudioStreamBasicDescription basicDescription = {duration.timescale, kAudioFormatLinearPCM, 0, 1, 1, 1, 1, 8};
   CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &basicDescription, 0, NULL, 0, NULL, NULL,
                                  &formatDescription);
 
   CMSampleBufferRef sampleBuffer;
   CMAudioSampleBufferCreateReadyWithPacketDescriptions(
-      kCFAllocatorDefault, blockBuffer, formatDescription, 1, kCMTimeZero, NULL, &sampleBuffer);
+      kCFAllocatorDefault, blockBuffer, formatDescription, duration.value, timestamp, NULL, &sampleBuffer);
 
   CFRelease(blockBuffer);
   CFRelease(formatDescription);
   return sampleBuffer;
+}
+
+CMSampleBufferRef FLTCreateTestAudioSampleBuffer(void) {
+  return FLTCreateTestAudioSampleBufferWithTiming(kCMTimeZero, CMTimeMake(1, 44100));
 }
