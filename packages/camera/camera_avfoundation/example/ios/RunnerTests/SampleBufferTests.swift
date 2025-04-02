@@ -448,7 +448,9 @@ final class CameraSampleBufferTests: XCTestCase {
     appendVideoSample(1)
     appendAudioSample(1)
 
-    NotificationCenter.default.post(name: AVCaptureSession.wasInterruptedNotification, object: camera.audioCaptureSession.captureSession)
+    NotificationCenter.default.post(
+      name: AVCaptureSession.wasInterruptedNotification,
+      object: camera.audioCaptureSession.captureSession)
 
     appendedTime = .invalid
     appendAudioSample(11)
