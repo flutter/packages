@@ -792,6 +792,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
   }
 
+  /// Sets preferred audio language
+  Future<void> setPreferredAudioLanguage(String? preferredAudioLanguage) {
+    return _videoPlayerPlatform
+        .setPreferredAudioLanguage(preferredAudioLanguage);
+  }
+
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;
 }
 

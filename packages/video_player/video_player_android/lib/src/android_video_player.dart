@@ -131,6 +131,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setPreferredAudioLanguage(String? preferredAudioLanguage) {
+    return _api.setPreferredAudioLanguage(preferredAudioLanguage!);
+  }
+
+  @override
   Stream<VideoEvent> videoEventsFor(int playerId) {
     return _eventChannelFor(playerId)
         .receiveBroadcastStream()
