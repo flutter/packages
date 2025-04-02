@@ -1,4 +1,4 @@
-## 0.3.2+9
+## 0.3.3
 
 * Adds an optional error callback for `MDnsClient::start` to prevent uncaught exceptions.
 

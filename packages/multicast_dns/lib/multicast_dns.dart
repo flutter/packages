@@ -84,11 +84,9 @@ class MDnsClient {
   /// for the mDNS query. If not provided, defaults to either `224.0.0.251` or
   /// or `FF02::FB`.
   ///
-  /// The [onError] function allows to provide a callback function, called in
-  /// case of a stream error. If omitted any errors on the stream are considered
-  /// unhandled, and will be passed to the current [Zone]'s error handler. By
-  /// default unhandled async errors are treated as if they were uncaught top-level
-  /// errors.
+  /// If provided, [onError] will be called in case of a stream error. If
+  /// omitted any errors on the stream are considered unhandled, and will be
+  /// passed to the current [Zone]'s error handler.
   ///
   /// Subsequent calls to this method are ignored while the mDNS client is in
   /// started state.
