@@ -87,7 +87,7 @@ class DartOptions {
 }
 
 /// Options that control how Dart code will be generated.
-class InternalDartOptions extends PigeonInternalOptions {
+class InternalDartOptions extends InternalOptions {
   /// Constructor for InternalDartOptions.
   const InternalDartOptions({
     this.copyrightHeader,

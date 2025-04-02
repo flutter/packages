@@ -99,7 +99,7 @@ class KotlinOptions {
 }
 
 ///
-class InternalKotlinOptions extends PigeonInternalOptions {
+class InternalKotlinOptions extends InternalOptions {
   /// Creates a [InternalKotlinOptions] object
   const InternalKotlinOptions({
     this.package,
