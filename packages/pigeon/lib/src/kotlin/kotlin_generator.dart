@@ -8,7 +8,7 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib.dart' show TaskQueueType;
+import '../types/task_queue.dart';
 import 'templates.dart';
 
 /// Documentation open symbol.
@@ -98,6 +98,53 @@ class KotlinOptions {
   }
 }
 
+///
+class InternalKotlinOptions extends InternalOptions {
+  /// Creates a [InternalKotlinOptions] object
+  const InternalKotlinOptions({
+    this.package,
+    required this.kotlinOut,
+    this.copyrightHeader,
+    this.errorClassName,
+    this.includeErrorClass = true,
+    this.fileSpecificClassNameComponent,
+  });
+
+  /// Creates InternalKotlinOptions from KotlinOptions.
+  InternalKotlinOptions.fromKotlinOptions(
+    KotlinOptions options, {
+    required this.kotlinOut,
+    Iterable<String>? copyrightHeader,
+  })  : package = options.package,
+        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
+        errorClassName = options.errorClassName,
+        includeErrorClass = options.includeErrorClass,
+        fileSpecificClassNameComponent =
+            options.fileSpecificClassNameComponent ??
+                kotlinOut.split('/').lastOrNull?.split('.').first;
+
+  /// The package where the generated class will live.
+  final String? package;
+
+  /// Path to the kotlin file that will be generated.
+  final String kotlinOut;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// The name of the error class used for passing custom error parameters.
+  final String? errorClassName;
+
+  /// Whether to include the error class in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Kotlin file in the same directory.
+  final bool includeErrorClass;
+
+  /// A String to augment class names to avoid cross file collisions.
+  final String? fileSpecificClassNameComponent;
+}
+
 /// Options that control how Kotlin code will be generated for a specific
 /// ProxyApi.
 class KotlinProxyApiOptions {
@@ -115,14 +162,26 @@ class KotlinProxyApiOptions {
   final int? minAndroidApi;
 }
 
+/// Options for Kotlin implementation of Event Channels.
+class KotlinEventChannelOptions {
+  /// Construct a [KotlinEventChannelOptions].
+  const KotlinEventChannelOptions({this.includeSharedClasses = true});
+
+  /// Whether to include the shared Event Channel classes in generation.
+  ///
+  /// This should only ever be set to false if you have another generated
+  /// Kotlin file with Event Channels in the same directory.
+  final bool includeSharedClasses;
+}
+
 /// Class that manages all Kotlin code generation.
-class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
+class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
   /// Instantiates a Kotlin Generator.
   const KotlinGenerator();
 
   @override
   void writeFilePrologue(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -137,7 +196,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeFileImports(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -160,7 +219,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeEnum(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -196,7 +255,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeDataClass(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -232,7 +291,44 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      writeClassEquality(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
+  }
+
+  @override
+  void writeClassEquality(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeScoped('override fun equals(other: Any?): Boolean {', '}', () {
+      indent.writeScoped('if (other !is ${classDefinition.name}) {', '}', () {
+        indent.writeln('return false');
+      });
+      indent.writeScoped('if (this === other) {', '}', () {
+        indent.writeln('return true');
+      });
+      indent.write('return ');
+      indent.format(
+        classDefinition.fields
+            .map((NamedType field) => isCollectionType(field.type)
+                ? 'deepEquals${generatorOptions.fileSpecificClassNameComponent}(${field.name}, other.${field.name})'
+                : '${field.name} == other.${field.name}')
+            .join('\n&& '),
+        leadingSpace: false,
+      );
+    });
+
+    indent.newln();
+    indent.writeln('override fun hashCode(): Int = toList().hashCode()');
   }
 
   void _writeDataClassSignature(
@@ -264,7 +360,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeClassEncode(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -285,7 +381,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeClassDecode(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -331,7 +427,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeApis(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -347,7 +443,7 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
 
   @override
   void writeGeneralCodec(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -448,13 +544,13 @@ class KotlinGenerator extends StructuredGenerator<KotlinOptions> {
     indent.newln();
     if (root.containsEventChannel) {
       indent.writeln(
-          'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName());');
+          'val ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec = StandardMethodCodec(${generatorOptions.fileSpecificClassNameComponent}$_codecName())');
       indent.newln();
     }
   }
 
   void _writeCodecOverflowUtilities(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     List<EnumeratedType> types, {
@@ -528,7 +624,7 @@ if (wrapped == null) {
   /// }
   @override
   void writeFlutterApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     AstFlutterApi api, {
@@ -598,7 +694,7 @@ if (wrapped == null) {
   ///
   @override
   void writeHostApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     AstHostApi api, {
@@ -642,6 +738,13 @@ if (wrapped == null) {
         indent.addScoped('{', '}', () {
           indent.writeln(
               r'val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""');
+          String? serialBackgroundQueue;
+          if (api.methods.any((Method m) =>
+              m.taskQueueType == TaskQueueType.serialBackgroundThread)) {
+            serialBackgroundQueue = 'taskQueue';
+            indent.writeln(
+                'val $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue()');
+          }
           for (final Method method in api.methods) {
             _writeHostMethodMessageHandler(
               indent,
@@ -652,6 +755,10 @@ if (wrapped == null) {
               parameters: method.parameters,
               returnType: method.returnType,
               isAsynchronous: method.isAsynchronous,
+              serialBackgroundQueue:
+                  method.taskQueueType == TaskQueueType.serialBackgroundThread
+                      ? serialBackgroundQueue
+                      : null,
             );
           }
         });
@@ -661,7 +768,7 @@ if (wrapped == null) {
 
   @override
   void writeInstanceManager(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -672,7 +779,7 @@ if (wrapped == null) {
 
   @override
   void writeInstanceManagerApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -785,7 +892,7 @@ if (wrapped == null) {
 
   @override
   void writeProxyApiBaseCodec(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
   ) {
@@ -835,7 +942,15 @@ if (wrapped == null) {
           override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
             return when (type) {
               $proxyApiCodecInstanceManagerKey.toByte() -> {
-                return registrar.instanceManager.getInstance(readValue(buffer) as Long)
+                val identifier: Long = readValue(buffer) as Long
+                val instance: Any? = registrar.instanceManager.getInstance(identifier)
+                if (instance == null) {
+                  Log.e(
+                    "${proxyApiCodecName(const InternalKotlinOptions(kotlinOut: ''))}",
+                    "Failed to find instance with identifier: \$identifier"
+                  )
+                }
+                return instance
               }
               else -> super.readValueOfType(type, buffer)
             }
@@ -913,7 +1028,7 @@ if (wrapped == null) {
 
   @override
   void writeProxyApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     AstProxyApi api, {
@@ -1010,7 +1125,7 @@ if (wrapped == null) {
 
   @override
   void writeEventChannelApi(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
     AstEventChannelApi api, {
@@ -1018,8 +1133,8 @@ if (wrapped == null) {
   }) {
     indent.newln();
     indent.format('''
-        private class PigeonStreamHandler<T>(
-            val wrapper: PigeonEventChannelWrapper<T>
+        private class ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<T>(
+            val wrapper: ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T>
         ) : EventChannel.StreamHandler {
           var pigeonSink: PigeonEventSink<T>? = null
 
@@ -1034,12 +1149,15 @@ if (wrapped == null) {
           }
         }
 
-        interface PigeonEventChannelWrapper<T> {
+        interface ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<T> {
           open fun onListen(p0: Any?, sink: PigeonEventSink<T>) {}
 
           open fun onCancel(p0: Any?) {}
         }
+        ''');
 
+    if (api.kotlinOptions?.includeSharedClasses ?? true) {
+      indent.format('''
         class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
           fun success(value: T) {
             sink.success(value)
@@ -1048,24 +1166,25 @@ if (wrapped == null) {
           fun error(errorCode: String, errorMessage: String?, errorDetails: Any?) {
             sink.error(errorCode, errorMessage, errorDetails)
           }
-  
-          fun endOfStream() { 
+
+          fun endOfStream() {
             sink.endOfStream()
           }
         }
       ''');
+    }
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
-        abstract class ${toUpperCamelCase(func.name)}StreamHandler : PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
+        abstract class ${toUpperCamelCase(func.name)}StreamHandler : ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper<${_kotlinTypeForDartType(func.returnType)}> {
           companion object {
             fun register(messenger: BinaryMessenger, streamHandler: ${toUpperCamelCase(func.name)}StreamHandler, instanceName: String = "") {
               var channelName: String = "${makeChannelName(api, func, dartPackageName)}"
               if (instanceName.isNotEmpty()) {
                 channelName += ".\$instanceName"
               }
-              val internalStreamHandler = PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
+              val internalStreamHandler = ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
               EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec).setStreamHandler(internalStreamHandler)
             }
           }
@@ -1082,7 +1201,7 @@ if (wrapped == null) {
     });
   }
 
-  void _writeWrapError(KotlinOptions generatorOptions, Indent indent) {
+  void _writeWrapError(InternalKotlinOptions generatorOptions, Indent indent) {
     indent.newln();
     indent.write('private fun wrapError(exception: Throwable): List<Any?> ');
     indent.addScoped('{', '}', () {
@@ -1106,7 +1225,7 @@ if (wrapped == null) {
     });
   }
 
-  void _writeErrorClass(KotlinOptions generatorOptions, Indent indent) {
+  void _writeErrorClass(InternalKotlinOptions generatorOptions, Indent indent) {
     indent.newln();
     indent.writeln('/**');
     indent.writeln(
@@ -1126,7 +1245,7 @@ if (wrapped == null) {
   }
 
   void _writeCreateConnectionError(
-      KotlinOptions generatorOptions, Indent indent) {
+      InternalKotlinOptions generatorOptions, Indent indent) {
     final String errorClassName = _getErrorClassName(generatorOptions);
     indent.newln();
     indent.write(
@@ -1137,9 +1256,39 @@ if (wrapped == null) {
     });
   }
 
+  void _writeDeepEquals(InternalKotlinOptions generatorOptions, Indent indent) {
+    indent.format('''
+private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?, b: Any?): Boolean {
+  if (a is ByteArray && b is ByteArray) {
+      return a.contentEquals(b)
+  }
+  if (a is IntArray && b is IntArray) {
+      return a.contentEquals(b)
+  }
+  if (a is LongArray && b is LongArray) {
+      return a.contentEquals(b)
+  }
+  if (a is DoubleArray && b is DoubleArray) {
+      return a.contentEquals(b)
+  }
+  if (a is Array<*> && b is Array<*>) {
+    return a.size == b.size &&
+        a.indices.all{ deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it]) }
+  }
+  if (a is Map<*, *> && b is Map<*, *>) {
+    return a.size == b.size && a.keys.all {
+        (b as Map<Any?, Any?>).containsKey(it) &&
+        deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it])
+    }
+  }
+  return a == b;
+}
+    ''');
+  }
+
   @override
   void writeGeneralUtilities(
-    KotlinOptions generatorOptions,
+    InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -1153,6 +1302,11 @@ if (wrapped == null) {
     }
     if (generatorOptions.includeErrorClass) {
       _writeErrorClass(generatorOptions, indent);
+    }
+    if (root.classes.isNotEmpty &&
+        root.classes.any((Class dataClass) => dataClass.fields
+            .any((NamedType field) => isCollectionType(field.type)))) {
+      _writeDeepEquals(generatorOptions, indent);
     }
   }
 
@@ -1225,24 +1379,18 @@ if (wrapped == null) {
     required TypeDeclaration returnType,
     String setHandlerCondition = 'api != null',
     bool isAsynchronous = false,
+    String? serialBackgroundQueue,
     String Function(List<String> safeArgNames, {required String apiVarName})?
         onCreateCall,
   }) {
     indent.write('run ');
     indent.addScoped('{', '}', () {
-      String? taskQueue;
-      if (taskQueueType != TaskQueueType.serial) {
-        taskQueue = 'taskQueue';
-        indent.writeln(
-            'val $taskQueue = binaryMessenger.makeBackgroundTaskQueue()');
-      }
-
       indent.write(
         'val channel = BasicMessageChannel<Any?>(binaryMessenger, "$channelName", codec',
       );
 
-      if (taskQueue != null) {
-        indent.addln(', $taskQueue)');
+      if (serialBackgroundQueue != null) {
+        indent.addln(', $serialBackgroundQueue)');
       } else {
         indent.addln(')');
       }
@@ -1312,7 +1460,7 @@ if (wrapped == null) {
 
   void _writeFlutterMethod(
     Indent indent, {
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
     required String name,
     required List<Parameter> parameters,
     required TypeDeclaration returnType,
@@ -1406,7 +1554,7 @@ if (wrapped == null) {
 
   void _writeProxyApiRegistrar(
     Indent indent, {
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
     required Iterable<AstProxyApi> allProxyApis,
   }) {
     final String registrarName = proxyApiRegistrarName(generatorOptions);
@@ -1658,7 +1806,7 @@ if (wrapped == null) {
     required String kotlinApiName,
     required String dartPackageName,
     required String fullKotlinClassName,
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
   }) {
     indent.writeln('@Suppress("LocalVariableName")');
     indent.writeScoped(
@@ -1847,7 +1995,7 @@ if (wrapped == null) {
   void _writeProxyApiNewInstanceMethod(
     Indent indent,
     AstProxyApi api, {
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
     required TypeDeclaration apiAsTypeDeclaration,
     required String newInstanceMethodName,
     required String dartPackageName,
@@ -1896,58 +2044,63 @@ if (wrapped == null) {
               '''
               callback(
                   Result.failure(
-                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-              return''',
+                      $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))''',
             );
           },
+          addTrailingNewline: false,
         );
         indent.writeScoped(
-          'if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+          ' else if (pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
           '}',
           () {
-            indent.writeln('Result.success(Unit)');
-            indent.writeln('return');
+            indent.writeln('callback(Result.success(Unit))');
           },
+          addTrailingNewline: false,
         );
-        if (api.hasCallbackConstructor()) {
-          indent.writeln(
-            'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
-          );
-          enumerate(api.unattachedFields, (int index, ApiField field) {
-            final String argName = _getSafeArgumentName(index, field);
+        indent.writeScoped(' else {', '}', () {
+          if (api.hasCallbackConstructor()) {
             indent.writeln(
-              'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+              'val ${classMemberNamePrefix}identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(${classMemberNamePrefix}instanceArg)',
             );
-          });
+            enumerate(api.unattachedFields, (int index, ApiField field) {
+              final String argName = _getSafeArgumentName(index, field);
+              indent.writeln(
+                'val $argName = ${field.name}(${classMemberNamePrefix}instanceArg)',
+              );
+            });
 
-          indent
-              .writeln('val binaryMessenger = pigeonRegistrar.binaryMessenger');
-          indent.writeln('val codec = pigeonRegistrar.codec');
-          _writeFlutterMethodMessageCall(
-            indent,
-            returnType: returnType,
-            channelName: channelName,
-            errorClassName: errorClassName,
-            parameters: <Parameter>[
-              Parameter(
-                name: '${classMemberNamePrefix}identifier',
-                type: const TypeDeclaration(
-                  baseName: 'int',
-                  isNullable: false,
+            indent.writeln(
+                'val binaryMessenger = pigeonRegistrar.binaryMessenger');
+            indent.writeln('val codec = pigeonRegistrar.codec');
+            _writeFlutterMethodMessageCall(
+              indent,
+              returnType: returnType,
+              channelName: channelName,
+              errorClassName: errorClassName,
+              parameters: <Parameter>[
+                Parameter(
+                  name: '${classMemberNamePrefix}identifier',
+                  type: const TypeDeclaration(
+                    baseName: 'int',
+                    isNullable: false,
+                  ),
                 ),
-              ),
-              ...api.unattachedFields.map(
-                (ApiField field) {
-                  return Parameter(name: field.name, type: field.type);
-                },
-              ),
-            ],
-          );
-        } else {
-          indent.writeln(
-            'throw IllegalStateException("Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.")',
-          );
-        }
+                ...api.unattachedFields.map(
+                  (ApiField field) {
+                    return Parameter(name: field.name, type: field.type);
+                  },
+                ),
+              ],
+            );
+          } else {
+            indent.format(
+              '''
+              callback(
+                  Result.failure(
+                      $errorClassName("new-instance-error", "Attempting to create a new Dart instance of ${api.name}, but the class has a nonnull callback method.", "")))''',
+            );
+          }
+        });
       },
     );
     indent.newln();
@@ -1957,7 +2110,7 @@ if (wrapped == null) {
   void _writeProxyApiFlutterMethods(
     Indent indent,
     AstProxyApi api, {
-    required KotlinOptions generatorOptions,
+    required InternalKotlinOptions generatorOptions,
     required TypeDeclaration apiAsTypeDeclaration,
     required String dartPackageName,
   }) {
@@ -2063,7 +2216,7 @@ if (wrapped == null) {
   );
 }
 
-String _getErrorClassName(KotlinOptions generatorOptions) =>
+String _getErrorClassName(InternalKotlinOptions generatorOptions) =>
     generatorOptions.errorClassName ?? 'FlutterError';
 
 String _getArgumentName(int count, NamedType argument) =>

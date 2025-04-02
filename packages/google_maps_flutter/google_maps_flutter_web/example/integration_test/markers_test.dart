@@ -493,5 +493,48 @@ void main() {
       expect(event, isA<InfoWindowTapEvent>());
       expect((event as InfoWindowTapEvent).value, equals(const MarkerId('1')));
     });
+
+    testWidgets('markers with anchor work', (WidgetTester tester) async {
+      const double width = 20;
+      const double height = 30;
+      const Offset defaultOffset = Offset(0.5, 1);
+      const Offset anchorOffset = Offset(0, 0.5);
+      final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
+      final Marker marker1 = Marker(
+        markerId: const MarkerId('1'),
+        icon: BytesMapBitmap(
+          bytes,
+          width: width,
+          height: height,
+        ),
+      );
+      final Marker marker2 = Marker(
+        markerId: const MarkerId('2'),
+        icon: BytesMapBitmap(
+          bytes,
+          width: width,
+          height: height,
+        ),
+        anchor: anchorOffset,
+      );
+      final Set<Marker> markers = <Marker>{marker1, marker2};
+
+      await controller.addMarkers(markers);
+      expect(controller.markers.length, 2);
+
+      final gmaps.Icon? icon1 =
+          controller.markers[const MarkerId('1')]?.marker?.icon as gmaps.Icon?;
+      expect(icon1, isNotNull);
+      final gmaps.Icon? icon2 =
+          controller.markers[const MarkerId('2')]?.marker?.icon as gmaps.Icon?;
+      expect(icon2, isNotNull);
+
+      expect(icon1!.anchor, isNotNull);
+      expect(icon2!.anchor, isNotNull);
+      expect(icon1.anchor!.x, width * defaultOffset.dx);
+      expect(icon1.anchor!.y, height * defaultOffset.dy);
+      expect(icon2.anchor!.x, width * anchorOffset.dx);
+      expect(icon2.anchor!.y, height * anchorOffset.dy);
+    });
   });
 }

@@ -33,6 +33,7 @@ import 'web_kit_webview_widget_test.mocks.dart';
   JavascriptChannelRegistry,
   WebViewPlatformCallbacksHandler,
   WebViewWidgetProxy,
+  WKWebpagePreferences,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +51,8 @@ void main() {
           websiteDataStore: MockWKWebsiteDataStore(),
           navigationDelegate: MockWKNavigationDelegate(),
           callbacksHandler: MockWebViewPlatformCallbacksHandler(),
-          javascriptChannelRegistry: MockJavascriptChannelRegistry());
+          javascriptChannelRegistry: MockJavascriptChannelRegistry(),
+          webpagePreferences: MockWKWebpagePreferences());
 
       when(
         mocks.webViewWidgetProxy.createWebView(
@@ -86,6 +88,9 @@ void main() {
       );
       when(mocks.webViewConfiguration.getPreferences())
           .thenAnswer((_) => Future<WKPreferences>.value(mocks.preferences));
+      when(mocks.webViewConfiguration.getDefaultWebpagePreferences())
+          .thenAnswer((_) =>
+              Future<WKWebpagePreferences>.value(mocks.webpagePreferences));
 
       when(mocks.webView.scrollView).thenReturn(mocks.scrollView);
 
@@ -331,7 +336,7 @@ void main() {
             ),
           );
 
-          verify(mocks.preferences.setJavaScriptEnabled(true));
+          verify(mocks.webpagePreferences.setAllowsContentJavaScript(true));
         });
 
         testWidgets('userAgent', (WidgetTester tester) async {
@@ -1498,6 +1503,7 @@ class _WebViewMocks {
     required this.navigationDelegate,
     required this.callbacksHandler,
     required this.javascriptChannelRegistry,
+    required this.webpagePreferences,
   });
 
   final MockUIViewWKWebView webView;
@@ -1511,6 +1517,7 @@ class _WebViewMocks {
   final MockWKNavigationDelegate navigationDelegate;
   final MockWebViewPlatformCallbacksHandler callbacksHandler;
   final MockJavascriptChannelRegistry javascriptChannelRegistry;
+  final MockWKWebpagePreferences webpagePreferences;
 }
 
 // Test InstanceManager that sets `onWeakReferenceRemoved` as a noop.

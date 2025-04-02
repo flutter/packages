@@ -453,31 +453,17 @@ Future<int> _runCommandLineTests({bool ciMode = false}) async {
   final List<List<String>> testArguments = <List<String>>[
     // Test with no arguments.
     <String>[],
-    // Test one_language flag. With this flag specified, java_out can be
-    // generated without dart_out.
-    <String>[
-      '--input',
-      'pigeons/message.dart',
-      '--one_language',
-      '--java_out',
-      tempOutput
-    ],
     // Test dartOut in ConfigurePigeon overrides output.
     <String>['--input', 'pigeons/configure_pigeon_dart_out.dart'],
     // Make sure AST generation exits correctly.
-    <String>[
-      '--input',
-      'pigeons/message.dart',
-      '--one_language',
-      '--ast_out',
-      tempOutput
-    ],
+    <String>['--input', 'pigeons/message.dart', '--ast_out', tempOutput],
     // Test writing a file in a directory that doesn't exist.
     <String>[
       '--input',
       'pigeons/message.dart',
       '--dart_out',
       '$tempDir/subdirectory/does/not/exist/message.g.dart',
+      '--package_name=message',
     ],
   ];
 

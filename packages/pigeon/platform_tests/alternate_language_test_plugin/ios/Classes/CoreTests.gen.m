@@ -696,6 +696,11 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   messageChannelSuffix = messageChannelSuffix.length > 0
                              ? [NSString stringWithFormat:@".%@", messageChannelSuffix]
                              : @"";
+#if TARGET_OS_IOS
+  NSObject<FlutterTaskQueue> *taskQueue = [binaryMessenger makeBackgroundTaskQueue];
+#else
+  NSObject<FlutterTaskQueue> *taskQueue = nil;
+#endif
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   {
@@ -3314,6 +3319,60 @@ void SetUpFLTHostIntegrationCoreApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                                             FlutterError *_Nullable error) {
                                  callback(wrapResult(output, error));
                                }];
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns true if the handler is run on a main thread, which should be
+  /// true since there is no TaskQueue annotation.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.pigeon_integration_tests."
+                                                   @"HostIntegrationCoreApi.defaultIsMainThread",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(defaultIsMainThreadWithError:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(defaultIsMainThreadWithError:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        NSNumber *output = [api defaultIsMainThreadWithError:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  /// Returns true if the handler is run on a non-main thread, which should be
+  /// true for any platform with TaskQueue support.
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.pigeon_integration_tests."
+                                             @"HostIntegrationCoreApi.taskQueueIsBackgroundThread",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FLTGetCoreTestsCodec()
+#ifdef TARGET_OS_IOS
+              taskQueue:taskQueue
+#endif
+    ];
+
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(taskQueueIsBackgroundThreadWithError:)],
+                @"FLTHostIntegrationCoreApi api (%@) doesn't respond to "
+                @"@selector(taskQueueIsBackgroundThreadWithError:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        NSNumber *output = [api taskQueueIsBackgroundThreadWithError:&error];
+        callback(wrapResult(output, error));
       }];
     } else {
       [channel setMessageHandler:nil];

@@ -6,19 +6,19 @@ import '../generator_tools.dart';
 import 'kotlin_generator.dart';
 
 /// Name of the Kotlin `InstanceManager`.
-String kotlinInstanceManagerClassName(KotlinOptions options) =>
+String kotlinInstanceManagerClassName(InternalKotlinOptions options) =>
     '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}InstanceManager';
 
 /// The name of the registrar containing all the ProxyApi implementations.
-String proxyApiRegistrarName(KotlinOptions options) =>
+String proxyApiRegistrarName(InternalKotlinOptions options) =>
     '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiRegistrar';
 
 /// The name of the codec that handles ProxyApis.
-String proxyApiCodecName(KotlinOptions options) =>
+String proxyApiCodecName(InternalKotlinOptions options) =>
     '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiBaseCodec';
 
 /// The Kotlin `InstanceManager`.
-String instanceManagerTemplate(KotlinOptions options) {
+String instanceManagerTemplate(InternalKotlinOptions options) {
   return '''
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.

@@ -1,3 +1,15 @@
+## 2.0.27
+
+* Bumps flutter supported version to 3.27 and use flutter.compileSdkVersion.
+
+## 2.0.26
+
+* Removes flutter.compileSdkVersion for 35 to support flutter versions prior to 3.27.
+
+## 2.0.25
+
+* Updates compileSdk 35 to flutter.compileSdkVersion.
+
 ## 2.0.24
 
 * Updates annotation to 1.9.1.

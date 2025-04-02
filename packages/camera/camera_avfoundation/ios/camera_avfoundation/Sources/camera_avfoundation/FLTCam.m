@@ -9,8 +9,10 @@
 @import Flutter;
 #import <libkern/OSAtomic.h>
 
-#import "./include/camera_avfoundation/FLTCaptureDeviceControlling.h"
+#import "./include/camera_avfoundation/FLTCaptureConnection.h"
+#import "./include/camera_avfoundation/FLTCaptureDevice.h"
 #import "./include/camera_avfoundation/FLTDeviceOrientationProviding.h"
+#import "./include/camera_avfoundation/FLTEventChannel.h"
 #import "./include/camera_avfoundation/FLTSavePhotoDelegate.h"
 #import "./include/camera_avfoundation/FLTThreadSafeEventChannel.h"
 #import "./include/camera_avfoundation/QueueUtils.h"
@@ -57,15 +59,16 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 @property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
 
-@property(readonly, nonatomic) AVCaptureInput *captureVideoInput;
+@property(readonly, nonatomic) NSObject<FLTCaptureInput> *captureVideoInput;
 /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
 /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
 @property(readwrite, nonatomic) CVPixelBufferRef latestPixelBuffer;
 @property(readonly, nonatomic) CGSize captureSize;
-@property(strong, nonatomic) AVAssetWriter *videoWriter;
-@property(strong, nonatomic) AVAssetWriterInput *videoWriterInput;
-@property(strong, nonatomic) AVAssetWriterInput *audioWriterInput;
-@property(strong, nonatomic) AVAssetWriterInputPixelBufferAdaptor *assetWriterPixelBufferAdaptor;
+@property(strong, nonatomic) NSObject<FLTAssetWriter> *videoWriter;
+@property(strong, nonatomic) NSObject<FLTAssetWriterInput> *videoWriterInput;
+@property(strong, nonatomic) NSObject<FLTAssetWriterInput> *audioWriterInput;
+@property(strong, nonatomic)
+    NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
 @property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(strong, nonatomic) NSString *videoRecordingPath;
@@ -87,7 +90,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic) AVCaptureOutput *outputForOffsetAdjusting;
 @property(assign, nonatomic) CMTime lastAppendedVideoSampleTime;
 @property(nonatomic) CMMotionManager *motionManager;
-@property AVAssetWriterInputPixelBufferAdaptor *videoAdaptor;
+@property NSObject<FLTAssetWriterInputPixelBufferAdaptor> *videoAdaptor;
 /// All FLTCam's state access and capture session related operations should be on run on this queue.
 @property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
 /// The queue on which `latestPixelBuffer` property is accessed.
@@ -102,7 +105,13 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
-@property(readonly, nonatomic) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
+@property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
+@property(assign, nonatomic) FCPPlatformExposureMode exposureMode;
+@property(assign, nonatomic) FCPPlatformFocusMode focusMode;
+@property(assign, nonatomic) FCPPlatformFlashMode flashMode;
+@property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
+@property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
+@property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
 /// Reports the given error message to the Dart side of the plugin.
 ///
 /// Can be called from any thread.
@@ -113,52 +122,12 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 
 NSString *const errorMethod = @"error";
 
-- (instancetype)initWithCameraName:(NSString *)cameraName
-                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                       orientation:(UIDeviceOrientation)orientation
-               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                             error:(NSError **)error {
-  return [self initWithCameraName:cameraName
-                    mediaSettings:mediaSettings
-           mediaSettingsAVWrapper:mediaSettingsAVWrapper
-                      orientation:orientation
-              videoCaptureSession:[[AVCaptureSession alloc] init]
-              audioCaptureSession:[[AVCaptureSession alloc] init]
-              captureSessionQueue:captureSessionQueue
-                            error:error];
-}
-
-- (instancetype)initWithCameraName:(NSString *)cameraName
-                     mediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-            mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                       orientation:(UIDeviceOrientation)orientation
-               videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-               audioCaptureSession:(AVCaptureSession *)audioCaptureSession
-               captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                             error:(NSError **)error {
-  return [self initWithMediaSettings:mediaSettings
-      mediaSettingsAVWrapper:mediaSettingsAVWrapper
-      orientation:orientation
-      videoCaptureSession:videoCaptureSession
-      audioCaptureSession:videoCaptureSession
-      captureSessionQueue:captureSessionQueue
-      captureDeviceFactory:^id<FLTCaptureDeviceControlling>(void) {
-        AVCaptureDevice *device = [AVCaptureDevice deviceWithUniqueID:cameraName];
-        return [[FLTDefaultCaptureDeviceController alloc] initWithDevice:device];
-      }
-      videoDimensionsForFormat:^CMVideoDimensions(AVCaptureDeviceFormat *format) {
-        return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
-      }
-      deviceOrientationProvider:[[FLTDefaultDeviceOrientationProvider alloc] init]
-      error:error];
-}
-
 // Returns frame rate supported by format closest to targetFrameRate.
-static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targetFrameRate) {
+static double bestFrameRateForFormat(NSObject<FLTCaptureDeviceFormat> *format,
+                                     double targetFrameRate) {
   double bestFrameRate = 0;
   double minDistance = DBL_MAX;
-  for (AVFrameRateRange *range in format.videoSupportedFrameRateRanges) {
+  for (NSObject<FLTFrameRateRange> *range in format.videoSupportedFrameRateRanges) {
     double frameRate = MIN(MAX(targetFrameRate, range.minFrameRate), range.maxFrameRate);
     double distance = fabs(frameRate - targetFrameRate);
     if (distance < minDistance) {
@@ -175,17 +144,17 @@ static double bestFrameRateForFormat(AVCaptureDeviceFormat *format, double targe
 // as activeFormat and also updates mediaSettings.framesPerSecond to value which
 // bestFrameRateForFormat returned for that format.
 static void selectBestFormatForRequestedFrameRate(
-    AVCaptureDevice *captureDevice, FCPPlatformMediaSettings *mediaSettings,
+    NSObject<FLTCaptureDevice> *captureDevice, FCPPlatformMediaSettings *mediaSettings,
     VideoDimensionsForFormat videoDimensionsForFormat) {
   CMVideoDimensions targetResolution = videoDimensionsForFormat(captureDevice.activeFormat);
   double targetFrameRate = mediaSettings.framesPerSecond.doubleValue;
   FourCharCode preferredSubType =
       CMFormatDescriptionGetMediaSubType(captureDevice.activeFormat.formatDescription);
-  AVCaptureDeviceFormat *bestFormat = captureDevice.activeFormat;
+  NSObject<FLTCaptureDeviceFormat> *bestFormat = captureDevice.activeFormat;
   double bestFrameRate = bestFrameRateForFormat(bestFormat, targetFrameRate);
   double minDistance = fabs(bestFrameRate - targetFrameRate);
   BOOL isBestSubTypePreferred = YES;
-  for (AVCaptureDeviceFormat *format in captureDevice.formats) {
+  for (NSObject<FLTCaptureDeviceFormat> *format in captureDevice.formats) {
     CMVideoDimensions resolution = videoDimensionsForFormat(format);
     if (resolution.width != targetResolution.width ||
         resolution.height != targetResolution.height) {
@@ -207,40 +176,35 @@ static void selectBestFormatForRequestedFrameRate(
   mediaSettings.framesPerSecond = @(bestFrameRate);
 }
 
-- (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
-               mediaSettingsAVWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsAVWrapper
-                          orientation:(UIDeviceOrientation)orientation
-                  videoCaptureSession:(AVCaptureSession *)videoCaptureSession
-                  audioCaptureSession:(AVCaptureSession *)audioCaptureSession
-                  captureSessionQueue:(dispatch_queue_t)captureSessionQueue
-                 captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
-             videoDimensionsForFormat:(VideoDimensionsForFormat)videoDimensionsForFormat
-            deviceOrientationProvider:(id<FLTDeviceOrientationProviding>)deviceOrientationProvider
+- (instancetype)initWithConfiguration:(nonnull FLTCamConfiguration *)configuration
                                 error:(NSError **)error {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
-  _mediaSettings = mediaSettings;
-  _mediaSettingsAVWrapper = mediaSettingsAVWrapper;
+  _mediaSettings = configuration.mediaSettings;
+  _mediaSettingsAVWrapper = configuration.mediaSettingsWrapper;
 
-  _captureSessionQueue = captureSessionQueue;
+  _captureSessionQueue = configuration.captureSessionQueue;
   _pixelBufferSynchronizationQueue =
       dispatch_queue_create("io.flutter.camera.pixelBufferSynchronizationQueue", NULL);
   _photoIOQueue = dispatch_queue_create("io.flutter.camera.photoIOQueue", NULL);
-  _videoCaptureSession = videoCaptureSession;
-  _audioCaptureSession = audioCaptureSession;
-  _captureDeviceFactory = captureDeviceFactory;
-  _captureDevice = captureDeviceFactory();
-  _videoDimensionsForFormat = videoDimensionsForFormat;
+  _videoCaptureSession = configuration.videoCaptureSession;
+  _audioCaptureSession = configuration.audioCaptureSession;
+  _captureDeviceFactory = configuration.captureDeviceFactory;
+  _captureDevice = _captureDeviceFactory();
+  _captureDeviceInputFactory = configuration.captureDeviceInputFactory;
+  _videoDimensionsForFormat = configuration.videoDimensionsForFormat;
   _flashMode = _captureDevice.hasFlash ? FCPPlatformFlashModeAuto : FCPPlatformFlashModeOff;
   _exposureMode = FCPPlatformExposureModeAuto;
   _focusMode = FCPPlatformFocusModeAuto;
   _lockedCaptureOrientation = UIDeviceOrientationUnknown;
-  _deviceOrientation = orientation;
+  _deviceOrientation = configuration.orientation;
   _videoFormat = kCVPixelFormatType_32BGRA;
   _inProgressSavePhotoDelegates = [NSMutableDictionary dictionary];
   _fileFormat = FCPPlatformImageFileFormatJpeg;
   _videoCaptureSession.automaticallyConfiguresApplicationAudioSession = NO;
   _audioCaptureSession.automaticallyConfiguresApplicationAudioSession = NO;
+  _assetWriterFactory = configuration.assetWriterFactory;
+  _inputPixelBufferAdaptorFactory = configuration.inputPixelBufferAdaptorFactory;
 
   // To limit memory consumption, limit the number of frames pending processing.
   // After some testing, 4 was determined to be the best maximum value.
@@ -257,21 +221,22 @@ static void selectBestFormatForRequestedFrameRate(
   }
 
   [_videoCaptureSession addInputWithNoConnections:_captureVideoInput];
-  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
+  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput.avOutput];
   [_videoCaptureSession addConnection:connection];
 
-  _capturePhotoOutput = [AVCapturePhotoOutput new];
+  _capturePhotoOutput =
+      [[FLTDefaultCapturePhotoOutput alloc] initWithPhotoOutput:[AVCapturePhotoOutput new]];
   [_capturePhotoOutput setHighResolutionCaptureEnabled:YES];
-  [_videoCaptureSession addOutput:_capturePhotoOutput];
+  [_videoCaptureSession addOutput:_capturePhotoOutput.avOutput];
 
   _motionManager = [[CMMotionManager alloc] init];
   [_motionManager startAccelerometerUpdates];
 
-  _deviceOrientationProvider = deviceOrientationProvider;
+  _deviceOrientationProvider = configuration.deviceOrientationProvider;
 
   if (_mediaSettings.framesPerSecond) {
     // The frame rate can be changed only on a locked for configuration device.
-    if ([mediaSettingsAVWrapper lockDevice:_captureDevice error:error]) {
+    if ([_mediaSettingsAVWrapper lockDevice:_captureDevice error:error]) {
       [_mediaSettingsAVWrapper beginConfigurationForSession:_videoCaptureSession];
 
       // Possible values for presets are hard-coded in FLT interface having
@@ -292,8 +257,8 @@ static void selectBestFormatForRequestedFrameRate(
       int fpsNominator = floor([_mediaSettings.framesPerSecond doubleValue] * 10.0);
       CMTime duration = CMTimeMake(10, fpsNominator);
 
-      [mediaSettingsAVWrapper setMinFrameDuration:duration onDevice:_captureDevice];
-      [mediaSettingsAVWrapper setMaxFrameDuration:duration onDevice:_captureDevice];
+      [_mediaSettingsAVWrapper setMinFrameDuration:duration onDevice:_captureDevice];
+      [_mediaSettingsAVWrapper setMaxFrameDuration:duration onDevice:_captureDevice];
 
       [_mediaSettingsAVWrapper commitConfigurationForSession:_videoCaptureSession];
       [_mediaSettingsAVWrapper unlockDevice:_captureDevice];
@@ -312,16 +277,16 @@ static void selectBestFormatForRequestedFrameRate(
 
   // Handle video and audio interruptions and errors.
   // https://github.com/flutter/flutter/issues/151253
-  for (AVCaptureSession *session in @[ _videoCaptureSession, _audioCaptureSession ]) {
+  for (NSObject<FLTCaptureSession> *session in @[ _videoCaptureSession, _audioCaptureSession ]) {
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(captureSessionWasInterrupted:)
                                                name:AVCaptureSessionWasInterruptedNotification
-                                             object:session];
+                                             object:session.captureSession];
 
     [NSNotificationCenter.defaultCenter addObserver:self
                                            selector:@selector(captureSessionRuntimeError:)
                                                name:AVCaptureSessionRuntimeErrorNotification
-                                             object:session];
+                                             object:session.captureSession];
   }
 
   return self;
@@ -339,7 +304,8 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
   // Setup video capture input.
-  _captureVideoInput = [_captureDevice createInput:error];
+  _captureVideoInput = [_captureDeviceInputFactory deviceInputWithDevice:_captureDevice
+                                                                   error:error];
 
   // Test the return value of the `deviceInputWithDevice` method to see whether an error occurred.
   // Don’t just test to see whether the error pointer was set to point to an error.
@@ -350,7 +316,8 @@ static void selectBestFormatForRequestedFrameRate(
   }
 
   // Setup video capture output.
-  _captureVideoOutput = [AVCaptureVideoDataOutput new];
+  _captureVideoOutput = [[FLTDefaultCaptureVideoDataOutput alloc]
+      initWithCaptureVideoOutput:[AVCaptureVideoDataOutput new]];
   _captureVideoOutput.videoSettings =
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)};
   [_captureVideoOutput setAlwaysDiscardsLateVideoFrames:YES];
@@ -359,7 +326,7 @@ static void selectBestFormatForRequestedFrameRate(
   // Setup video capture connection.
   AVCaptureConnection *connection =
       [AVCaptureConnection connectionWithInputPorts:_captureVideoInput.ports
-                                             output:_captureVideoOutput];
+                                             output:_captureVideoOutput.avOutput];
   if ([_captureDevice position] == AVCaptureDevicePositionFront) {
     connection.videoMirrored = YES;
   }
@@ -429,12 +396,13 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (void)updateOrientation:(UIDeviceOrientation)orientation
-         forCaptureOutput:(AVCaptureOutput *)captureOutput {
+         forCaptureOutput:(NSObject<FLTCaptureOutput> *)captureOutput {
   if (!captureOutput) {
     return;
   }
 
-  AVCaptureConnection *connection = [captureOutput connectionWithMediaType:AVMediaTypeVideo];
+  NSObject<FLTCaptureConnection> *connection =
+      [captureOutput connectionWithMediaType:AVMediaTypeVideo];
   if (connection && connection.isVideoOrientationSupported) {
     connection.videoOrientation = [self getVideoOrientationForDeviceOrientation:orientation];
   }
@@ -462,8 +430,8 @@ static void selectBestFormatForRequestedFrameRate(
   }
 
   // If the flash is in torch mode, no capture-level flash setting is needed.
-  if (_flashMode != FCPPlatformFlashModeTorch) {
-    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(_flashMode)];
+  if (self.flashMode != FCPPlatformFlashModeTorch) {
+    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(self.flashMode)];
   }
   NSError *error;
   NSString *path = [self getTemporaryFilePathWithExtension:extension
@@ -552,7 +520,7 @@ static void selectBestFormatForRequestedFrameRate(
                       withError:(NSError **)error {
   switch (resolutionPreset) {
     case FCPPlatformResolutionPresetMax: {
-      AVCaptureDeviceFormat *bestFormat =
+      NSObject<FLTCaptureDeviceFormat> *bestFormat =
           [self highestResolutionFormatForCaptureDevice:_captureDevice];
       if (bestFormat) {
         _videoCaptureSession.sessionPreset = AVCaptureSessionPresetInputPriority;
@@ -617,14 +585,14 @@ static void selectBestFormatForRequestedFrameRate(
 
 /// Finds the highest available resolution in terms of pixel count for the given device.
 /// Preferred are formats with the same subtype as current activeFormat.
-- (AVCaptureDeviceFormat *)highestResolutionFormatForCaptureDevice:
-    (AVCaptureDevice *)captureDevice {
+- (NSObject<FLTCaptureDeviceFormat> *)highestResolutionFormatForCaptureDevice:
+    (NSObject<FLTCaptureDevice> *)captureDevice {
   FourCharCode preferredSubType =
       CMFormatDescriptionGetMediaSubType(_captureDevice.activeFormat.formatDescription);
-  AVCaptureDeviceFormat *bestFormat = nil;
+  NSObject<FLTCaptureDeviceFormat> *bestFormat = nil;
   NSUInteger maxPixelCount = 0;
   BOOL isBestSubTypePreferred = NO;
-  for (AVCaptureDeviceFormat *format in _captureDevice.formats) {
+  for (NSObject<FLTCaptureDeviceFormat> *format in _captureDevice.formats) {
     CMVideoDimensions res = self.videoDimensionsForFormat(format);
     NSUInteger height = res.height;
     NSUInteger width = res.width;
@@ -643,8 +611,8 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)captureOutput:(AVCaptureOutput *)output
     didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-           fromConnection:(AVCaptureConnection *)connection {
-  if (output == _captureVideoOutput) {
+           fromConnection:(NSObject<FLTCaptureConnection> *)connection {
+  if (output == _captureVideoOutput.avOutput) {
     CVPixelBufferRef newBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
     CFRetain(newBuffer);
 
@@ -747,7 +715,7 @@ static void selectBestFormatForRequestedFrameRate(
 
     // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
     // https://github.com/flutter/flutter/issues/132073
-    if (output == _captureVideoOutput) {
+    if (output == _captureVideoOutput.avOutput) {
       if (!_videoWriterInput.readyForMoreMediaData) {
         return;
       }
@@ -793,7 +761,7 @@ static void selectBestFormatForRequestedFrameRate(
       _lastSampleEndTime = currentSampleEndTime;
     }
 
-    if (output == _captureVideoOutput) {
+    if (output == _captureVideoOutput.avOutput) {
       CVPixelBufferRef nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
       CMTime nextSampleTime = CMTimeSubtract(sampleTime, _recordingTimeOffset);
       if (CMTIME_COMPARE_INLINE(nextSampleTime, >, _lastAppendedVideoSampleTime)) {
@@ -855,13 +823,13 @@ static void selectBestFormatForRequestedFrameRate(
 - (void)close {
   [self stop];
   for (AVCaptureInput *input in [_videoCaptureSession inputs]) {
-    [_videoCaptureSession removeInput:input];
+    [_videoCaptureSession removeInput:[[FLTDefaultCaptureInput alloc] initWithInput:input]];
   }
   for (AVCaptureOutput *output in [_videoCaptureSession outputs]) {
     [_videoCaptureSession removeOutput:output];
   }
   for (AVCaptureInput *input in [_audioCaptureSession inputs]) {
-    [_audioCaptureSession removeInput:input];
+    [_audioCaptureSession removeInput:[[FLTDefaultCaptureInput alloc] initWithInput:input]];
   }
   for (AVCaptureOutput *output in [_audioCaptureSession outputs]) {
     [_audioCaptureSession removeOutput:output];
@@ -921,7 +889,7 @@ static void selectBestFormatForRequestedFrameRate(
     _isRecordingPaused = NO;
     _isRecordingDisconnected = NO;
     _recordingTimeOffset = CMTimeMake(0, 1);
-    _outputForOffsetAdjusting = _captureVideoOutput;
+    _outputForOffsetAdjusting = _captureVideoOutput.avOutput;
     _lastAppendedVideoSampleTime = kCMTimeNegativeInfinity;
     completion(nil);
   } else {
@@ -1035,8 +1003,10 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)applyExposureMode {
   [_captureDevice lockForConfiguration:nil];
-  switch (_exposureMode) {
+  switch (self.exposureMode) {
     case FCPPlatformExposureModeLocked:
+      // AVCaptureExposureModeAutoExpose automatically adjusts the exposure one time, and then
+      // locks exposure for the device
       [_captureDevice setExposureMode:AVCaptureExposureModeAutoExpose];
       break;
     case FCPPlatformExposureModeAuto:
@@ -1060,10 +1030,11 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (void)applyFocusMode:(FCPPlatformFocusMode)focusMode
-              onDevice:(id<FLTCaptureDeviceControlling>)captureDevice {
+              onDevice:(NSObject<FLTCaptureDevice> *)captureDevice {
   [captureDevice lockForConfiguration:nil];
   switch (focusMode) {
     case FCPPlatformFocusModeLocked:
+      // AVCaptureFocusModeAutoFocus automatically adjusts the focus one time, and then locks focus
       if ([captureDevice isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
         [captureDevice setFocusMode:AVCaptureFocusModeAutoFocus];
       }
@@ -1098,7 +1069,7 @@ static void selectBestFormatForRequestedFrameRate(
 
   _captureDevice = self.captureDeviceFactory();
 
-  AVCaptureConnection *oldConnection =
+  NSObject<FLTCaptureConnection> *oldConnection =
       [_captureVideoOutput connectionWithMediaType:AVMediaTypeVideo];
 
   // Stop video capture from the old output.
@@ -1107,7 +1078,7 @@ static void selectBestFormatForRequestedFrameRate(
   // Remove the old video capture connections.
   [_videoCaptureSession beginConfiguration];
   [_videoCaptureSession removeInput:_captureVideoInput];
-  [_videoCaptureSession removeOutput:_captureVideoOutput];
+  [_videoCaptureSession removeOutput:_captureVideoOutput.avOutput];
 
   NSError *error = nil;
   AVCaptureConnection *newConnection = [self createConnection:&error];
@@ -1127,11 +1098,11 @@ static void selectBestFormatForRequestedFrameRate(
                                    message:@"Unable switch video input"
                                    details:nil]);
   [_videoCaptureSession addInputWithNoConnections:_captureVideoInput];
-  if (![_videoCaptureSession canAddOutput:_captureVideoOutput])
+  if (![_videoCaptureSession canAddOutput:_captureVideoOutput.avOutput])
     completion([FlutterError errorWithCode:@"VideoError"
                                    message:@"Unable switch video output"
                                    details:nil]);
-  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput];
+  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput.avOutput];
   if (![_videoCaptureSession canAddConnection:newConnection])
     completion([FlutterError errorWithCode:@"VideoError"
                                    message:@"Unable switch video connection"
@@ -1225,7 +1196,7 @@ static void selectBestFormatForRequestedFrameRate(
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                    imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler {
   if (!_isStreamingImages) {
-    FlutterEventChannel *eventChannel = [FlutterEventChannel
+    id<FLTEventChannel> eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
              binaryMessenger:messenger];
     FLTThreadSafeEventChannel *threadSafeEventChannel =
@@ -1296,6 +1267,14 @@ static void selectBestFormatForRequestedFrameRate(
   return _captureDevice.maxAvailableVideoZoomFactor;
 }
 
+- (CGFloat)minimumExposureOffset {
+  return _captureDevice.minExposureTargetBias;
+}
+
+- (CGFloat)maximumExposureOffset {
+  return _captureDevice.maxExposureTargetBias;
+}
+
 - (BOOL)setupWriterForPath:(NSString *)path {
   NSError *error = nil;
   NSURL *outputURL;
@@ -1307,9 +1286,8 @@ static void selectBestFormatForRequestedFrameRate(
 
   [self setUpCaptureSessionForAudioIfNeeded];
 
-  _videoWriter = [[AVAssetWriter alloc] initWithURL:outputURL
-                                           fileType:AVFileTypeMPEG4
-                                              error:&error];
+  _videoWriter = _assetWriterFactory(outputURL, AVFileTypeMPEG4, &error);
+
   NSParameterAssert(_videoWriter);
   if (error) {
     [self reportErrorMessage:error.description];
@@ -1337,11 +1315,8 @@ static void selectBestFormatForRequestedFrameRate(
   _videoWriterInput =
       [_mediaSettingsAVWrapper assetWriterVideoInputWithOutputSettings:videoSettings];
 
-  _videoAdaptor = [AVAssetWriterInputPixelBufferAdaptor
-      assetWriterInputPixelBufferAdaptorWithAssetWriterInput:_videoWriterInput
-                                 sourcePixelBufferAttributes:@{
-                                   (NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)
-                                 }];
+  _videoAdaptor = _inputPixelBufferAdaptorFactory(
+      _videoWriterInput, @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)});
 
   NSParameterAssert(_videoWriterInput);
 
@@ -1372,7 +1347,7 @@ static void selectBestFormatForRequestedFrameRate(
     [_audioOutput setSampleBufferDelegate:self queue:_captureSessionQueue];
   }
 
-  if (_flashMode == FCPPlatformFlashModeTorch) {
+  if (self.flashMode == FCPPlatformFlashModeTorch) {
     [self.captureDevice lockForConfiguration:nil];
     [self.captureDevice setTorchMode:AVCaptureTorchModeOn];
     [self.captureDevice unlockForConfiguration];
@@ -1427,9 +1402,10 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   NSError *error = nil;
   // Create a device input with the device and add it to the session.
   // Setup the audio input.
-  AVCaptureDevice *audioDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
-  AVCaptureDeviceInput *audioInput = [AVCaptureDeviceInput deviceInputWithDevice:audioDevice
-                                                                           error:&error];
+  NSObject<FLTCaptureDevice> *audioDevice = [[FLTDefaultCaptureDevice alloc]
+      initWithDevice:[AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio]];
+  NSObject<FLTCaptureInput> *audioInput =
+      [_captureDeviceInputFactory deviceInputWithDevice:audioDevice error:&error];
   if (error) {
     [self reportErrorMessage:error.description];
   }

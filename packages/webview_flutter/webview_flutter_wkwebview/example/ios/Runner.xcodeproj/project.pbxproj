@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -40,6 +40,7 @@
 		8F1488FE2D2DE27000191744 /* HTTPCookieProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488C82D2DE27000191744 /* HTTPCookieProxyAPITests.swift */; };
 		8F1488FF2D2DE27000191744 /* NavigationActionProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1488CB2D2DE27000191744 /* NavigationActionProxyAPITests.swift */; };
 		8F1489012D2DE91C00191744 /* AuthenticationChallengeResponseProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F1489002D2DE91C00191744 /* AuthenticationChallengeResponseProxyAPITests.swift */; };
+		8FC45F712D5C0C1E004E03E8 /* WebpagePreferencesProxyAPITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FC45F702D5C0C1E004E03E8 /* WebpagePreferencesProxyAPITests.swift */; };
 		904EA421B6925EC8D52ABE1B /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 573E8F1472CA1578A7CBDB63 /* libPods-RunnerTests.a */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
@@ -125,6 +126,7 @@
 		8F1488E12D2DE27000191744 /* WebViewProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WebViewProxyAPITests.swift; path = ../../darwin/Tests/WebViewProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F1489002D2DE91C00191744 /* AuthenticationChallengeResponseProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AuthenticationChallengeResponseProxyAPITests.swift; path = ../../darwin/Tests/AuthenticationChallengeResponseProxyAPITests.swift; sourceTree = SOURCE_ROOT; };
 		8F66D9D72D1362BE000835F9 /* RunnerTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RunnerTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		8FC45F702D5C0C1E004E03E8 /* WebpagePreferencesProxyAPITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebpagePreferencesProxyAPITests.swift; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -170,6 +172,7 @@
 		68BDCAEA23C3F7CB00D9C032 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				8FC45F702D5C0C1E004E03E8 /* WebpagePreferencesProxyAPITests.swift */,
 				8F1489002D2DE91C00191744 /* AuthenticationChallengeResponseProxyAPITests.swift */,
 				8F1488C52D2DE27000191744 /* ErrorProxyAPITests.swift */,
 				8F1488C62D2DE27000191744 /* FrameInfoProxyAPITests.swift */,
@@ -395,7 +398,7 @@
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -539,6 +542,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8FC45F712D5C0C1E004E03E8 /* WebpagePreferencesProxyAPITests.swift in Sources */,
 				8F1488E22D2DE27000191744 /* ScriptMessageHandlerProxyAPITests.swift in Sources */,
 				8F1488E32D2DE27000191744 /* TestProxyApiRegistrar.swift in Sources */,
 				8F1488E42D2DE27000191744 /* URLRequestProxyAPITests.swift in Sources */,
@@ -918,7 +922,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};

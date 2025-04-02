@@ -1,0 +1,5 @@
+RouteBase get $statefulShellBranchWithPreloadData =>
+    StatefulShellBranchData.$branch(
+      initialLocation: StatefulShellBranchWithPreloadData.$initialLocation,
+      preload: StatefulShellBranchWithPreloadData.$preload,
+    );

@@ -2,11 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:path/path.dart' as path;
+
 import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import '../pigeon_lib.dart' show TaskQueueType;
+import '../types/task_queue.dart';
 
 /// Documentation open symbol.
 const String _docCommentPrefix = '/**';
@@ -87,14 +89,53 @@ class JavaOptions {
   }
 }
 
+/// Options that control how Java code will be generated.
+class InternalJavaOptions extends InternalOptions {
+  /// Creates a [InternalJavaOptions] object
+  const InternalJavaOptions({
+    required this.javaOut,
+    this.className,
+    this.package,
+    this.copyrightHeader,
+    this.useGeneratedAnnotation,
+  });
+
+  /// Creates InternalJavaOptions from JavaOptions.
+  InternalJavaOptions.fromJavaOptions(
+    JavaOptions options, {
+    required this.javaOut,
+    Iterable<String>? copyrightHeader,
+  })  : className = options.className ?? path.basenameWithoutExtension(javaOut),
+        package = options.package,
+        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
+        useGeneratedAnnotation = options.useGeneratedAnnotation;
+
+  /// Path to the java file that will be generated.
+  final String javaOut;
+
+  /// The name of the class that will house all the generated classes.
+  final String? className;
+
+  /// The package where the generated class will live.
+  final String? package;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// Determines if the `javax.annotation.Generated` is used in the output. This
+  /// is false by default since that dependency isn't available in plugins by
+  /// default .
+  final bool? useGeneratedAnnotation;
+}
+
 /// Class that manages all Java code generation.
-class JavaGenerator extends StructuredGenerator<JavaOptions> {
+class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
   /// Instantiates a Java Generator.
   const JavaGenerator();
 
   @override
   void writeFilePrologue(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -109,7 +150,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeFileImports(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -149,7 +190,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeOpenNamespace(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -167,7 +208,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeEnum(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -206,7 +247,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeDataClass(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -250,7 +291,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   void _writeClassField(
-      JavaOptions generatorOptions, Indent indent, NamedType field) {
+      InternalJavaOptions generatorOptions, Indent indent, NamedType field) {
     final HostDatatype hostDatatype = getFieldHostDatatype(
         field, (TypeDeclaration x) => _javaTypeForBuiltinDartType(x));
     final String nullability =
@@ -281,7 +322,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   void _writeDataClassSignature(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Indent indent,
     Class classDefinition,
     void Function() dataClassBody, {
@@ -360,7 +401,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   void _writeClassBuilder(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition,
@@ -402,7 +443,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeClassEncode(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -424,7 +465,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeClassDecode(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -452,7 +493,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
 
   @override
   void writeGeneralCodec(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -561,7 +602,7 @@ class JavaGenerator extends StructuredGenerator<JavaOptions> {
   }
 
   void _writeCodecOverflowUtilities(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent,
     List<EnumeratedType> types, {
@@ -640,7 +681,7 @@ if (wrapped == null) {
   /// }
   @override
   void writeFlutterApi(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent,
     AstFlutterApi api, {
@@ -775,7 +816,7 @@ if (wrapped == null) {
 
   @override
   void writeApis(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -799,7 +840,7 @@ if (wrapped == null) {
   /// }
   @override
   void writeHostApi(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent,
     AstHostApi api, {
@@ -835,15 +876,21 @@ if (wrapped == null) {
       indent.addScoped('{', '}', () {
         indent.writeln(
             'messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;');
+        String? serialBackgroundQueue;
+        if (api.methods.any((Method m) =>
+            m.taskQueueType == TaskQueueType.serialBackgroundThread)) {
+          serialBackgroundQueue = 'taskQueue';
+          indent.writeln(
+              'BinaryMessenger.TaskQueue $serialBackgroundQueue = binaryMessenger.makeBackgroundTaskQueue();');
+        }
         for (final Method method in api.methods) {
-          _writeMethodSetUp(
-            generatorOptions,
-            root,
-            indent,
-            api,
-            method,
-            dartPackageName: dartPackageName,
-          );
+          _writeHostMethodMessageHandler(
+              generatorOptions, root, indent, api, method,
+              dartPackageName: dartPackageName,
+              serialBackgroundQueue:
+                  method.taskQueueType == TaskQueueType.serialBackgroundThread
+                      ? serialBackgroundQueue
+                      : null);
         }
       });
     });
@@ -852,7 +899,7 @@ if (wrapped == null) {
   /// Write a method in the interface.
   /// Example:
   ///   int add(int x, int y);
-  void _writeInterfaceMethod(JavaOptions generatorOptions, Root root,
+  void _writeInterfaceMethod(InternalJavaOptions generatorOptions, Root root,
       Indent indent, Api api, final Method method) {
     final String resultType = _getResultType(method.returnType);
     final String nullableType = method.isAsynchronous
@@ -887,34 +934,27 @@ if (wrapped == null) {
     indent.writeln('$returnType ${method.name}(${argSignature.join(', ')});');
   }
 
-  /// Write a static setUp function in the interface.
-  /// Example:
-  ///   static void setUp(BinaryMessenger binaryMessenger, Foo api) {...}
-  void _writeMethodSetUp(
-    JavaOptions generatorOptions,
+  /// Write a single method's handler for the setUp function.
+  void _writeHostMethodMessageHandler(
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent,
     Api api,
     final Method method, {
     required String dartPackageName,
+    String? serialBackgroundQueue,
   }) {
     final String channelName = makeChannelName(api, method, dartPackageName);
     indent.write('');
     indent.addScoped('{', '}', () {
-      String? taskQueue;
-      if (method.taskQueueType != TaskQueueType.serial) {
-        taskQueue = 'taskQueue';
-        indent.writeln(
-            'BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();');
-      }
       indent.writeln('BasicMessageChannel<Object> channel =');
       indent.nest(2, () {
         indent.writeln('new BasicMessageChannel<>(');
         indent.nest(2, () {
           indent.write(
               'binaryMessenger, "$channelName" + messageChannelSuffix, getCodec()');
-          if (taskQueue != null) {
-            indent.addln(', $taskQueue);');
+          if (serialBackgroundQueue != null) {
+            indent.addln(', $serialBackgroundQueue);');
           } else {
             indent.addln(');');
           }
@@ -1103,7 +1143,7 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
   // clients who use CheckReturnValue, without having to force Pigeon clients
   // to take a new dependency on error_prone_annotations.
   void _writeCanIgnoreReturnValueAnnotation(
-      JavaOptions opt, Root root, Indent indent) {
+      InternalJavaOptions opt, Root root, Indent indent) {
     indent.newln();
     indent.writeln('@Target(METHOD)');
     indent.writeln('@Retention(CLASS)');
@@ -1112,7 +1152,7 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 
   @override
   void writeGeneralUtilities(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -1134,7 +1174,7 @@ protected static ArrayList<Object> wrapError(@NonNull Throwable exception) {
 
   @override
   void writeCloseNamespace(
-    JavaOptions generatorOptions,
+    InternalJavaOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
