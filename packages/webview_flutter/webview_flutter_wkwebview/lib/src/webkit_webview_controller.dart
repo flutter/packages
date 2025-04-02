@@ -552,6 +552,34 @@ class WebKitWebViewController extends PlatformWebViewController {
     return _webView.setAllowsBackForwardNavigationGestures(enabled);
   }
 
+  /// Whether to allow previews for link destinations and detected data such as
+  /// addresses and phone numbers.
+  ///
+  /// This property is available on devices that support 3D Touch.
+  ///
+  /// Defaults to true.
+  Future<void> setAllowsLinkPreview(bool allow) {
+    return _webView.setAllowsLinkPreview(allow);
+  }
+
+  /// Sets the listener for canGoBack changes.
+  Future<void> setOnCanGoBackChange(
+      void Function(bool) onCanGoBackChangeCallback) async {
+    _onCanGoBackChangeCallback = onCanGoBackChangeCallback;
+  }
+
+  /// Whether to enable tools for debugging the current WKWebView content.
+  ///
+  /// It needs to be activated in each WKWebView where you want to enable it.
+  ///
+  /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
+  /// the default value is set to false.
+  ///
+  /// Defaults to true in previous versions.
+  Future<void> setInspectable(bool inspectable) {
+    return _webView.setInspectable(inspectable);
+  }
+
   @override
   Future<void> setBackgroundColor(Color color) {
     return Future.wait(<Future<void>>[
@@ -598,17 +626,6 @@ class WebKitWebViewController extends PlatformWebViewController {
     return _webView.setCustomUserAgent(userAgent);
   }
 
-  /// If you set this property’s value to true, an iOS user can press links to
-  /// preview link destinations and detected data such as addresses and phone
-  /// numbers.
-  ///
-  /// This property is available on devices that support 3D Touch.
-  ///
-  /// Defaults to true.
-  Future<void> setAllowsLinkPreview(bool allow) {
-    return _webView.setAllowsLinkPreview(allow);
-  }
-
   @override
   Future<void> enableZoom(bool enabled) async {
     if (_zoomEnabled == enabled) {
@@ -644,12 +661,6 @@ class WebKitWebViewController extends PlatformWebViewController {
     final WKUserContentController controller =
         await _webView.configuration.getUserContentController();
     await controller.addUserScript(userScript);
-  }
-
-  /// Sets the listener for canGoBack changes.
-  Future<void> setOnCanGoBackChange(
-      void Function(bool) onCanGoBackChangeCallback) async {
-    _onCanGoBackChangeCallback = onCanGoBackChangeCallback;
   }
 
   /// Sets a callback that notifies the host application of any log messages
@@ -849,18 +860,6 @@ window.addEventListener("error", function(e) {
       throw UnimplementedError(
           'setOnScrollPositionChange is not implemented on macOS');
     }
-  }
-
-  /// Whether to enable tools for debugging the current WKWebView content.
-  ///
-  /// It needs to be activated in each WKWebView where you want to enable it.
-  ///
-  /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
-  /// the default value is set to false.
-  ///
-  /// Defaults to true in previous versions.
-  Future<void> setInspectable(bool inspectable) {
-    return _webView.setInspectable(inspectable);
   }
 
   @override
