@@ -365,38 +365,38 @@ final class CameraSampleBufferTests: XCTestCase {
         from: connectionMock)
     }
 
-    appendedTime = .invalid;
+    appendedTime = .invalid
     camera.pauseVideoRecording()
     camera.resumeVideoRecording()
-    appendVideoSample(1);
+    appendVideoSample(1)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 1, timescale: 1))
 
-    appendedTime = .invalid;
+    appendedTime = .invalid
     camera.pauseVideoRecording()
     camera.resumeVideoRecording()
-    appendVideoSample(11);
+    appendVideoSample(11)
     XCTAssertEqual(appendedTime, .invalid)
-    appendVideoSample(12);
+    appendVideoSample(12)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 2, timescale: 1))
 
-    appendedTime = .invalid;
+    appendedTime = .invalid
     camera.pauseVideoRecording()
     camera.resumeVideoRecording()
-    appendAudioSample(20);
+    appendAudioSample(20)
     XCTAssertEqual(appendedTime, .invalid)
-    appendVideoSample(23);
+    appendVideoSample(23)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 3, timescale: 1))
 
-    appendedTime = .invalid;
+    appendedTime = .invalid
     camera.pauseVideoRecording()
     camera.resumeVideoRecording()
-    appendVideoSample(28);
+    appendVideoSample(28)
     XCTAssertEqual(appendedTime, .invalid)
-    appendAudioSample(30);
+    appendAudioSample(30)
     XCTAssertEqual(appendedTime, .invalid)
-    appendVideoSample(33);
+    appendVideoSample(33)
     XCTAssertEqual(appendedTime, .invalid)
-    appendAudioSample(32);
+    appendAudioSample(32)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 2, timescale: 1))
   }
 
@@ -445,18 +445,18 @@ final class CameraSampleBufferTests: XCTestCase {
         from: connectionMock)
     }
 
-    appendVideoSample(1);
-    appendAudioSample(1);
+    appendVideoSample(1)
+    appendAudioSample(1)
 
     NotificationCenter.default.post(name: AVCaptureSession.wasInterruptedNotification, object: camera.audioCaptureSession.captureSession)
 
-    appendedTime = .invalid;
-    appendAudioSample(11);
+    appendedTime = .invalid
+    appendAudioSample(11)
     XCTAssertEqual(appendedTime, .invalid)
-    appendVideoSample(12);
+    appendVideoSample(12)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 2, timescale: 1))
-    appendedTime = .invalid;
-    appendAudioSample(12);
+    appendedTime = .invalid
+    appendAudioSample(12)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 2, timescale: 1))
   }
 }

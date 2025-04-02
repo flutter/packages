@@ -80,7 +80,9 @@ enum CameraTestUtils {
 
   /// Creates a test sample buffer.
   /// @return a test sample buffer.
-  static func createTestSampleBuffer(timestamp: CMTime = CMTime.zero, duration: CMTime = CMTimeMake(value: 1, timescale: 44100)) -> CMSampleBuffer {
+  static func createTestSampleBuffer(
+    timestamp: CMTime = CMTime.zero, duration: CMTime = CMTimeMake(value: 1, timescale: 44100)
+  ) -> CMSampleBuffer {
     var pixelBuffer: CVPixelBuffer?
     CVPixelBufferCreate(kCFAllocatorDefault, 100, 100, kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
 
@@ -108,7 +110,9 @@ enum CameraTestUtils {
 
   /// Creates a test audio sample buffer.
   /// @return a test audio sample buffer.
-  static func createTestAudioSampleBuffer(timestamp: CMTime = .zero, duration: CMTime = CMTimeMake(value: 1, timescale: 44100)) -> CMSampleBuffer? {
+  static func createTestAudioSampleBuffer(
+    timestamp: CMTime = .zero, duration: CMTime = CMTimeMake(value: 1, timescale: 44100)
+  ) -> CMSampleBuffer? {
     var blockBuffer: CMBlockBuffer?
     CMBlockBufferCreateWithMemoryBlock(
       allocator: kCFAllocatorDefault,

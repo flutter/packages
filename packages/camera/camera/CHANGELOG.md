@@ -1,3 +1,7 @@
+## 0.11.1+1
+
+* Fixes delivering errors from onCameraError.
+
 ## 0.11.1
 
 * Adds API support query for image streaming.

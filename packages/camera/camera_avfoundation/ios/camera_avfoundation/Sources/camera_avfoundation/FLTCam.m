@@ -298,8 +298,8 @@ static void selectBestFormatForRequestedFrameRate(
 
 - (void)captureSessionRuntimeError:(NSNotification *)notification {
   [self reportErrorMessage:[NSString
-                                stringWithFormat:@"%@",
-                                                 notification.userInfo[AVCaptureSessionErrorKey]]];
+                               stringWithFormat:@"%@",
+                                                notification.userInfo[AVCaptureSessionErrorKey]]];
 }
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
