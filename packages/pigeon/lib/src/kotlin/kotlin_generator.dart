@@ -1274,7 +1274,7 @@ private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?
         deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it])
     }
   }
-  return a == b;
+  return a == b
 }
     ''');
   }
