@@ -48,34 +48,34 @@ public class LiveDataProxyApi extends PigeonApiLiveData {
 
   @NonNull
   @Override
-  public LiveDataSupportedType type(@NonNull LiveDataWrapper pigeon_instance) {
-    return pigeon_instance.getGenericType();
+  public LiveDataSupportedType type(@NonNull LiveDataWrapper pigeonInstance) {
+    return pigeonInstance.getGenericType();
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  public void observe(@NonNull LiveDataWrapper pigeon_instance, @NonNull Observer<?> observer) {
+  public void observe(@NonNull LiveDataWrapper pigeonInstance, @NonNull Observer<?> observer) {
     final LifecycleOwner lifecycleOwner = getPigeonRegistrar().getLifecycleOwner();
     if (lifecycleOwner == null) {
       throw new IllegalStateException("LifecycleOwner must be set to observe a LiveData instance.");
     }
 
-    final LiveData<Object> castedLiveData = (LiveData<Object>) pigeon_instance.getLiveData();
+    final LiveData<Object> castedLiveData = (LiveData<Object>) pigeonInstance.getLiveData();
     castedLiveData.observe(lifecycleOwner, (Observer<Object>) observer);
   }
 
   @Override
-  public void removeObservers(@NonNull LiveDataWrapper pigeon_instance) {
+  public void removeObservers(@NonNull LiveDataWrapper pigeonInstance) {
     if (getPigeonRegistrar().getLifecycleOwner() == null) {
       throw new IllegalStateException("LifecycleOwner must be set to remove LiveData observers.");
     }
 
-    pigeon_instance.getLiveData().removeObservers(getPigeonRegistrar().getLifecycleOwner());
+    pigeonInstance.getLiveData().removeObservers(getPigeonRegistrar().getLifecycleOwner());
   }
 
   @Nullable
   @Override
-  public Object getValue(@NonNull LiveDataWrapper pigeon_instance) {
-    return pigeon_instance.getLiveData().getValue();
+  public Object getValue(@NonNull LiveDataWrapper pigeonInstance) {
+    return pigeonInstance.getLiveData().getValue();
   }
 }

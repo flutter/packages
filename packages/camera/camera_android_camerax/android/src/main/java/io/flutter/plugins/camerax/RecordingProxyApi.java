@@ -18,22 +18,22 @@ class RecordingProxyApi extends PigeonApiRecording {
   }
 
   @Override
-  public void close(Recording pigeon_instance) {
-    pigeon_instance.close();
+  public void close(Recording pigeonInstance) {
+    pigeonInstance.close();
   }
 
   @Override
-  public void pause(Recording pigeon_instance) {
-    pigeon_instance.pause();
+  public void pause(Recording pigeonInstance) {
+    pigeonInstance.pause();
   }
 
   @Override
-  public void resume(Recording pigeon_instance) {
-    pigeon_instance.resume();
+  public void resume(Recording pigeonInstance) {
+    pigeonInstance.resume();
   }
 
   @Override
-  public void stop(Recording pigeon_instance) {
-    pigeon_instance.stop();
+  public void stop(Recording pigeonInstance) {
+    pigeonInstance.stop();
   }
 }

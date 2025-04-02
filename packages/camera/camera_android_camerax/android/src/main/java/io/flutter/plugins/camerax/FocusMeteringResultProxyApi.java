@@ -18,7 +18,7 @@ class FocusMeteringResultProxyApi extends PigeonApiFocusMeteringResult {
   }
 
   @Override
-  public boolean isFocusSuccessful(FocusMeteringResult pigeon_instance) {
-    return pigeon_instance.isFocusSuccessful();
+  public boolean isFocusSuccessful(FocusMeteringResult pigeonInstance) {
+    return pigeonInstance.isFocusSuccessful();
   }
 }

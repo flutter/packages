@@ -62,7 +62,7 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
   @NonNull
   @Override
   public List<CameraInfo> filter(
-      @NonNull CameraSelector pigeon_instance, @NonNull List<? extends CameraInfo> cameraInfos) {
-    return pigeon_instance.filter((List<CameraInfo>) cameraInfos);
+      @NonNull CameraSelector pigeonInstance, @NonNull List<? extends CameraInfo> cameraInfos) {
+    return pigeonInstance.filter((List<CameraInfo>) cameraInfos);
   }
 }

@@ -18,7 +18,7 @@ class MeteringPointProxyApi extends PigeonApiMeteringPoint {
   }
 
   @Override
-  public double getSize(MeteringPoint pigeon_instance) {
-    return pigeon_instance.getSize();
+  public double getSize(MeteringPoint pigeonInstance) {
+    return pigeonInstance.getSize();
   }
 }

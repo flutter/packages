@@ -26,12 +26,12 @@ class VideoCaptureProxyApi extends PigeonApiVideoCapture {
 
   @NonNull
   @Override
-  public VideoOutput getOutput(VideoCapture<?> pigeon_instance) {
-    return pigeon_instance.getOutput();
+  public VideoOutput getOutput(VideoCapture<?> pigeonInstance) {
+    return pigeonInstance.getOutput();
   }
 
   @Override
-  public void setTargetRotation(VideoCapture<?> pigeon_instance, long rotation) {
-    pigeon_instance.setTargetRotation((int) rotation);
+  public void setTargetRotation(VideoCapture<?> pigeonInstance, long rotation) {
+    pigeonInstance.setTargetRotation((int) rotation);
   }
 }

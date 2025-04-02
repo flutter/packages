@@ -52,15 +52,15 @@ class ResolutionStrategyProxyApi extends PigeonApiResolutionStrategy {
 
   @Nullable
   @Override
-  public Size getBoundSize(@NonNull ResolutionStrategy pigeon_instance) {
-    return pigeon_instance.getBoundSize();
+  public Size getBoundSize(@NonNull ResolutionStrategy pigeonInstance) {
+    return pigeonInstance.getBoundSize();
   }
 
   @NonNull
   @Override
   public ResolutionStrategyFallbackRule getFallbackRule(
-      @NonNull ResolutionStrategy pigeon_instance) {
-    switch (pigeon_instance.getFallbackRule()) {
+      @NonNull ResolutionStrategy pigeonInstance) {
+    switch (pigeonInstance.getFallbackRule()) {
       case ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER:
         return ResolutionStrategyFallbackRule.CLOSEST_HIGHER;
       case ResolutionStrategy.FALLBACK_RULE_CLOSEST_HIGHER_THEN_LOWER:

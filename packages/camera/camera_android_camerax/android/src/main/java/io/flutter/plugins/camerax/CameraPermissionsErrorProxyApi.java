@@ -19,13 +19,13 @@ public class CameraPermissionsErrorProxyApi extends PigeonApiCameraPermissionsEr
 
   @NonNull
   @Override
-  public String errorCode(@NonNull CameraPermissionsError pigeon_instance) {
-    return pigeon_instance.getErrorCode();
+  public String errorCode(@NonNull CameraPermissionsError pigeonInstance) {
+    return pigeonInstance.getErrorCode();
   }
 
   @NonNull
   @Override
-  public String description(@NonNull CameraPermissionsError pigeon_instance) {
-    return pigeon_instance.getDescription();
+  public String description(@NonNull CameraPermissionsError pigeonInstance) {
+    return pigeonInstance.getDescription();
   }
 }

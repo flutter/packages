@@ -50,22 +50,21 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Override
   public long setSurfaceProvider(
-      @NonNull Preview pigeon_instance, @NonNull SystemServicesManager systemServicesManager) {
+      @NonNull Preview pigeonInstance, @NonNull SystemServicesManager systemServicesManager) {
     final TextureRegistry.SurfaceProducer surfaceProducer =
         getPigeonRegistrar().getTextureRegistry().createSurfaceProducer();
     final Preview.SurfaceProvider surfaceProvider =
         createSurfaceProvider(surfaceProducer, systemServicesManager);
 
-    pigeon_instance.setSurfaceProvider(surfaceProvider);
-    surfaceProducers.put(pigeon_instance, surfaceProducer);
+    pigeonInstance.setSurfaceProvider(surfaceProvider);
+    surfaceProducers.put(pigeonInstance, surfaceProducer);
 
     return surfaceProducer.id();
   }
 
   @Override
-  public void releaseSurfaceProvider(@NonNull Preview pigeon_instance) {
-    final TextureRegistry.SurfaceProducer surfaceProducer =
-        surfaceProducers.remove(pigeon_instance);
+  public void releaseSurfaceProvider(@NonNull Preview pigeonInstance) {
+    final TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.remove(pigeonInstance);
     if (surfaceProducer != null) {
       surfaceProducer.release();
       return;
@@ -75,8 +74,8 @@ class PreviewProxyApi extends PigeonApiPreview {
   }
 
   @Override
-  public boolean surfaceProducerHandlesCropAndRotation(@NonNull Preview pigeon_instance) {
-    final TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.get(pigeon_instance);
+  public boolean surfaceProducerHandlesCropAndRotation(@NonNull Preview pigeonInstance) {
+    final TextureRegistry.SurfaceProducer surfaceProducer = surfaceProducers.get(pigeonInstance);
     if (surfaceProducer != null) {
       return surfaceProducer.handlesCropAndRotation();
     }
@@ -86,13 +85,13 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Nullable
   @Override
-  public androidx.camera.core.ResolutionInfo getResolutionInfo(Preview pigeon_instance) {
-    return pigeon_instance.getResolutionInfo();
+  public androidx.camera.core.ResolutionInfo getResolutionInfo(Preview pigeonInstance) {
+    return pigeonInstance.getResolutionInfo();
   }
 
   @Override
-  public void setTargetRotation(Preview pigeon_instance, long rotation) {
-    pigeon_instance.setTargetRotation((int) rotation);
+  public void setTargetRotation(Preview pigeonInstance, long rotation) {
+    pigeonInstance.setTargetRotation((int) rotation);
   }
 
   @NonNull
@@ -162,7 +161,7 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Nullable
   @Override
-  public ResolutionSelector resolutionSelector(@NonNull Preview pigeon_instance) {
-    return pigeon_instance.getResolutionSelector();
+  public ResolutionSelector resolutionSelector(@NonNull Preview pigeonInstance) {
+    return pigeonInstance.getResolutionSelector();
   }
 }

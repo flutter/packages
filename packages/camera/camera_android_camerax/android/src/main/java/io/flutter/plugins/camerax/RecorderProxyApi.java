@@ -51,24 +51,24 @@ class RecorderProxyApi extends PigeonApiRecorder {
   }
 
   @Override
-  public long getAspectRatio(Recorder pigeon_instance) {
-    return pigeon_instance.getAspectRatio();
+  public long getAspectRatio(Recorder pigeonInstance) {
+    return pigeonInstance.getAspectRatio();
   }
 
   @Override
-  public long getTargetVideoEncodingBitRate(Recorder pigeon_instance) {
-    return pigeon_instance.getTargetVideoEncodingBitRate();
+  public long getTargetVideoEncodingBitRate(Recorder pigeonInstance) {
+    return pigeonInstance.getTargetVideoEncodingBitRate();
   }
 
   @NonNull
   @Override
-  public PendingRecording prepareRecording(Recorder pigeon_instance, @NonNull String path) {
+  public PendingRecording prepareRecording(Recorder pigeonInstance, @NonNull String path) {
     final File temporaryCaptureFile = openTempFile(path);
     final FileOutputOptions fileOutputOptions =
         new FileOutputOptions.Builder(temporaryCaptureFile).build();
 
     final PendingRecording pendingRecording =
-        pigeon_instance.prepareRecording(getPigeonRegistrar().getContext(), fileOutputOptions);
+        pigeonInstance.prepareRecording(getPigeonRegistrar().getContext(), fileOutputOptions);
     if (ContextCompat.checkSelfPermission(
             getPigeonRegistrar().getContext(), Manifest.permission.RECORD_AUDIO)
         == PackageManager.PERMISSION_GRANTED) {
@@ -89,7 +89,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
 
   @NonNull
   @Override
-  public QualitySelector getQualitySelector(@NonNull Recorder pigeon_instance) {
-    return pigeon_instance.getQualitySelector();
+  public QualitySelector getQualitySelector(@NonNull Recorder pigeonInstance) {
+    return pigeonInstance.getQualitySelector();
   }
 }

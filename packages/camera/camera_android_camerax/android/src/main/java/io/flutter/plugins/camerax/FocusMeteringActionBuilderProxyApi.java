@@ -32,28 +32,28 @@ class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBui
   }
 
   @Override
-  public void addPoint(FocusMeteringAction.Builder pigeon_instance, @NonNull MeteringPoint point) {
-    pigeon_instance.addPoint(point);
+  public void addPoint(FocusMeteringAction.Builder pigeonInstance, @NonNull MeteringPoint point) {
+    pigeonInstance.addPoint(point);
   }
 
   @Override
   public void addPointWithMode(
-      FocusMeteringAction.Builder pigeon_instance,
+      FocusMeteringAction.Builder pigeonInstance,
       @NonNull MeteringPoint point,
       @NonNull MeteringMode mode) {
-    pigeon_instance.addPoint(point, getNativeMeteringMode(mode));
+    pigeonInstance.addPoint(point, getNativeMeteringMode(mode));
   }
 
   @Override
-  public void disableAutoCancel(FocusMeteringAction.Builder pigeon_instance) {
-    pigeon_instance.disableAutoCancel();
+  public void disableAutoCancel(FocusMeteringAction.Builder pigeonInstance) {
+    pigeonInstance.disableAutoCancel();
   }
 
   @NonNull
   @Override
   public androidx.camera.core.FocusMeteringAction build(
-      FocusMeteringAction.Builder pigeon_instance) {
-    return pigeon_instance.build();
+      FocusMeteringAction.Builder pigeonInstance) {
+    return pigeonInstance.build();
   }
 
   int getNativeMeteringMode(@NonNull MeteringMode mode) {

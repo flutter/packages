@@ -18,14 +18,11 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
-
 /// Immutable class for describing width and height dimensions in pixels.
 ///
 /// See https://developer.android.com/reference/android/util/Size.html.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.util.Size',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.util.Size'),
 )
 abstract class CameraSize {
   CameraSize();
@@ -116,10 +113,7 @@ enum CameraStateType {
 }
 
 /// The types (T) properly wrapped to be used as a LiveData<T>.
-enum LiveDataSupportedType {
-  cameraState,
-  zoomState,
-}
+enum LiveDataSupportedType { cameraState, zoomState }
 
 /// Immutable class for describing the range of two integer values.
 ///
@@ -127,9 +121,7 @@ enum LiveDataSupportedType {
 ///
 /// See https://developer.android.com/reference/android/util/Range.html.
 @ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'android.util.Range<*>',
-  ),
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.util.Range<*>'),
 )
 abstract class CameraIntegerRange {
   CameraIntegerRange();
@@ -332,10 +324,7 @@ abstract class ProcessCameraProvider {
   List<CameraInfo> getAvailableCameraInfos();
 
   /// Binds the collection of `UseCase` to a `LifecycleOwner`.
-  Camera bindToLifecycle(
-    CameraSelector cameraSelector,
-    List<UseCase> useCases,
-  );
+  Camera bindToLifecycle(CameraSelector cameraSelector, List<UseCase> useCases);
 
   /// Returns true if the `UseCase` is bound to a lifecycle.
   bool isBound(UseCase useCase);

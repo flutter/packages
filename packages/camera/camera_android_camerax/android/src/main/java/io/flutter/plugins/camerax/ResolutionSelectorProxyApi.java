@@ -42,19 +42,19 @@ class ResolutionSelectorProxyApi extends PigeonApiResolutionSelector {
 
   @Nullable
   @Override
-  public ResolutionFilter resolutionFilter(@NonNull ResolutionSelector pigeon_instance) {
-    return pigeon_instance.getResolutionFilter();
+  public ResolutionFilter resolutionFilter(@NonNull ResolutionSelector pigeonInstance) {
+    return pigeonInstance.getResolutionFilter();
   }
 
   @Nullable
   @Override
-  public ResolutionStrategy resolutionStrategy(@NonNull ResolutionSelector pigeon_instance) {
-    return pigeon_instance.getResolutionStrategy();
+  public ResolutionStrategy resolutionStrategy(@NonNull ResolutionSelector pigeonInstance) {
+    return pigeonInstance.getResolutionStrategy();
   }
 
   @NonNull
   @Override
-  public AspectRatioStrategy getAspectRatioStrategy(@NonNull ResolutionSelector pigeon_instance) {
-    return pigeon_instance.getAspectRatioStrategy();
+  public AspectRatioStrategy getAspectRatioStrategy(@NonNull ResolutionSelector pigeonInstance) {
+    return pigeonInstance.getAspectRatioStrategy();
   }
 }

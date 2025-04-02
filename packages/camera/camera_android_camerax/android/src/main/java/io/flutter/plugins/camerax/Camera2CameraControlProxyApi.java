@@ -43,11 +43,11 @@ class Camera2CameraControlProxyApi extends PigeonApiCamera2CameraControl {
 
   @Override
   public void addCaptureRequestOptions(
-      @NonNull Camera2CameraControl pigeon_instance,
+      @NonNull Camera2CameraControl pigeonInstance,
       @NonNull CaptureRequestOptions bundle,
       @NonNull Function1<? super Result<Unit>, Unit> callback) {
     final ListenableFuture<Void> addCaptureRequestOptionsFuture =
-        pigeon_instance.addCaptureRequestOptions(bundle);
+        pigeonInstance.addCaptureRequestOptions(bundle);
 
     Futures.addCallback(
         addCaptureRequestOptionsFuture,

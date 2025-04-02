@@ -20,14 +20,14 @@ class MeteringPointFactoryProxyApi extends PigeonApiMeteringPointFactory {
 
   @NonNull
   @Override
-  public MeteringPoint createPoint(MeteringPointFactory pigeon_instance, double x, double y) {
-    return pigeon_instance.createPoint((float) x, (float) y);
+  public MeteringPoint createPoint(MeteringPointFactory pigeonInstance, double x, double y) {
+    return pigeonInstance.createPoint((float) x, (float) y);
   }
 
   @NonNull
   @Override
   public MeteringPoint createPointWithSize(
-      MeteringPointFactory pigeon_instance, double x, double y, double size) {
-    return pigeon_instance.createPoint((float) x, (float) y, (float) size);
+      MeteringPointFactory pigeonInstance, double x, double y, double size) {
+    return pigeonInstance.createPoint((float) x, (float) y, (float) size);
   }
 }

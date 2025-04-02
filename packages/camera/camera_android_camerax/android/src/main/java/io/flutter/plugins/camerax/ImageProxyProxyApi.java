@@ -21,28 +21,28 @@ class ImageProxyProxyApi extends PigeonApiImageProxy {
   }
 
   @Override
-  public long format(ImageProxy pigeon_instance) {
-    return pigeon_instance.getFormat();
+  public long format(ImageProxy pigeonInstance) {
+    return pigeonInstance.getFormat();
   }
 
   @Override
-  public long width(ImageProxy pigeon_instance) {
-    return pigeon_instance.getWidth();
+  public long width(ImageProxy pigeonInstance) {
+    return pigeonInstance.getWidth();
   }
 
   @Override
-  public long height(ImageProxy pigeon_instance) {
-    return pigeon_instance.getHeight();
+  public long height(ImageProxy pigeonInstance) {
+    return pigeonInstance.getHeight();
   }
 
   @NonNull
   @Override
-  public List<PlaneProxy> getPlanes(ImageProxy pigeon_instance) {
-    return Arrays.asList(pigeon_instance.getPlanes());
+  public List<PlaneProxy> getPlanes(ImageProxy pigeonInstance) {
+    return Arrays.asList(pigeonInstance.getPlanes());
   }
 
   @Override
-  public void close(ImageProxy pigeon_instance) {
-    pigeon_instance.close();
+  public void close(ImageProxy pigeonInstance) {
+    pigeonInstance.close();
   }
 }

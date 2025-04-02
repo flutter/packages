@@ -20,8 +20,8 @@ class PlaneProxyProxyApi extends PigeonApiPlaneProxy {
 
   @NonNull
   @Override
-  public byte[] buffer(PlaneProxy pigeon_instance) {
-    final ByteBuffer buffer = pigeon_instance.getBuffer();
+  public byte[] buffer(PlaneProxy pigeonInstance) {
+    final ByteBuffer buffer = pigeonInstance.getBuffer();
 
     byte[] bytes = new byte[buffer.remaining()];
     buffer.get(bytes, 0, bytes.length);
@@ -30,12 +30,12 @@ class PlaneProxyProxyApi extends PigeonApiPlaneProxy {
   }
 
   @Override
-  public long pixelStride(PlaneProxy pigeon_instance) {
-    return pigeon_instance.getPixelStride();
+  public long pixelStride(PlaneProxy pigeonInstance) {
+    return pigeonInstance.getPixelStride();
   }
 
   @Override
-  public long rowStride(PlaneProxy pigeon_instance) {
-    return pigeon_instance.getRowStride();
+  public long rowStride(PlaneProxy pigeonInstance) {
+    return pigeonInstance.getRowStride();
   }
 }

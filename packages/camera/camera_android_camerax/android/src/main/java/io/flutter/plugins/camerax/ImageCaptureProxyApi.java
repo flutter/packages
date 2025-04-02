@@ -67,7 +67,7 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
 
   @Override
   public void setFlashMode(
-      @NonNull ImageCapture pigeon_instance, @NonNull CameraXFlashMode flashMode) {
+      @NonNull ImageCapture pigeonInstance, @NonNull CameraXFlashMode flashMode) {
     int nativeFlashMode = -1;
     switch (flashMode) {
       case AUTO:
@@ -79,12 +79,12 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
       case ON:
         nativeFlashMode = ImageCapture.FLASH_MODE_ON;
     }
-    pigeon_instance.setFlashMode(nativeFlashMode);
+    pigeonInstance.setFlashMode(nativeFlashMode);
   }
 
   @Override
   public void takePicture(
-      @NonNull ImageCapture pigeon_instance,
+      @NonNull ImageCapture pigeonInstance,
       @NonNull Function1<? super Result<String>, Unit> callback) {
     final File outputDir = getPigeonRegistrar().getContext().getCacheDir();
     File temporaryCaptureFile;
@@ -100,19 +100,19 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
     final ImageCapture.OnImageSavedCallback onImageSavedCallback =
         createOnImageSavedCallback(temporaryCaptureFile, callback);
 
-    pigeon_instance.takePicture(
+    pigeonInstance.takePicture(
         outputFileOptions, Executors.newSingleThreadExecutor(), onImageSavedCallback);
   }
 
   @Override
-  public void setTargetRotation(ImageCapture pigeon_instance, long rotation) {
-    pigeon_instance.setTargetRotation((int) rotation);
+  public void setTargetRotation(ImageCapture pigeonInstance, long rotation) {
+    pigeonInstance.setTargetRotation((int) rotation);
   }
 
   @Nullable
   @Override
-  public ResolutionSelector resolutionSelector(@NonNull ImageCapture pigeon_instance) {
-    return pigeon_instance.getResolutionSelector();
+  public ResolutionSelector resolutionSelector(@NonNull ImageCapture pigeonInstance) {
+    return pigeonInstance.getResolutionSelector();
   }
 
   ImageCapture.OutputFileOptions createImageCaptureOutputFileOptions(@NonNull File file) {

@@ -34,10 +34,10 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
 
   @Override
   public void enableTorch(
-      @NonNull CameraControl pigeon_instance,
+      @NonNull CameraControl pigeonInstance,
       boolean torch,
       @NonNull Function1<? super Result<Unit>, Unit> callback) {
-    final ListenableFuture<Void> enableTorchFuture = pigeon_instance.enableTorch(torch);
+    final ListenableFuture<Void> enableTorchFuture = pigeonInstance.enableTorch(torch);
 
     Futures.addCallback(
         enableTorchFuture,
@@ -55,11 +55,11 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
 
   @Override
   public void setZoomRatio(
-      @NonNull CameraControl pigeon_instance,
+      @NonNull CameraControl pigeonInstance,
       double ratio,
       @NonNull Function1<? super Result<Unit>, Unit> callback) {
     float ratioAsFloat = (float) ratio;
-    final ListenableFuture<Void> setZoomRatioFuture = pigeon_instance.setZoomRatio(ratioAsFloat);
+    final ListenableFuture<Void> setZoomRatioFuture = pigeonInstance.setZoomRatio(ratioAsFloat);
 
     Futures.addCallback(
         setZoomRatioFuture,
@@ -84,11 +84,11 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
 
   @Override
   public void startFocusAndMetering(
-      @NonNull CameraControl pigeon_instance,
+      @NonNull CameraControl pigeonInstance,
       @NonNull FocusMeteringAction action,
       @NonNull Function1<? super Result<FocusMeteringResult>, Unit> callback) {
     ListenableFuture<FocusMeteringResult> focusMeteringResultFuture =
-        pigeon_instance.startFocusAndMetering(action);
+        pigeonInstance.startFocusAndMetering(action);
 
     Futures.addCallback(
         focusMeteringResultFuture,
@@ -112,10 +112,10 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
 
   @Override
   public void cancelFocusAndMetering(
-      @NonNull CameraControl pigeon_instance,
+      @NonNull CameraControl pigeonInstance,
       @NonNull Function1<? super Result<Unit>, Unit> callback) {
     final ListenableFuture<Void> cancelFocusAndMeteringFuture =
-        pigeon_instance.cancelFocusAndMetering();
+        pigeonInstance.cancelFocusAndMetering();
 
     Futures.addCallback(
         cancelFocusAndMeteringFuture,
@@ -133,11 +133,11 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
 
   @Override
   public void setExposureCompensationIndex(
-      @NonNull CameraControl pigeon_instance,
+      @NonNull CameraControl pigeonInstance,
       long index,
       @NonNull Function1<? super Result<Long>, Unit> callback) {
     final ListenableFuture<Integer> setExposureCompensationIndexFuture =
-        pigeon_instance.setExposureCompensationIndex((int) index);
+        pigeonInstance.setExposureCompensationIndex((int) index);
 
     Futures.addCallback(
         setExposureCompensationIndexFuture,

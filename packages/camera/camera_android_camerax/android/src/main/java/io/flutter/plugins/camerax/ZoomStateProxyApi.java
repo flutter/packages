@@ -18,12 +18,12 @@ class ZoomStateProxyApi extends PigeonApiZoomState {
   }
 
   @Override
-  public double minZoomRatio(ZoomState pigeon_instance) {
-    return pigeon_instance.getMinZoomRatio();
+  public double minZoomRatio(ZoomState pigeonInstance) {
+    return pigeonInstance.getMinZoomRatio();
   }
 
   @Override
-  public double maxZoomRatio(ZoomState pigeon_instance) {
-    return pigeon_instance.getMaxZoomRatio();
+  public double maxZoomRatio(ZoomState pigeonInstance) {
+    return pigeonInstance.getMaxZoomRatio();
   }
 }

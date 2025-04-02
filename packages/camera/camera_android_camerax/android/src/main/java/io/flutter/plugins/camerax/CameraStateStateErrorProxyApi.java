@@ -19,8 +19,8 @@ class CameraStateStateErrorProxyApi extends PigeonApiCameraStateStateError {
 
   @NonNull
   @Override
-  public CameraStateErrorCode code(CameraState.StateError pigeon_instance) {
-    switch (pigeon_instance.getCode()) {
+  public CameraStateErrorCode code(CameraState.StateError pigeonInstance) {
+    switch (pigeonInstance.getCode()) {
       case CameraState.ERROR_CAMERA_DISABLED:
         return CameraStateErrorCode.CAMERA_DISABLED;
       case CameraState.ERROR_CAMERA_FATAL_ERROR:

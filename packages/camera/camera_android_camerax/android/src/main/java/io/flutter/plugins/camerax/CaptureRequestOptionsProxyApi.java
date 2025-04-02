@@ -53,7 +53,7 @@ class CaptureRequestOptionsProxyApi extends PigeonApiCaptureRequestOptions {
   @Nullable
   @Override
   public Object getCaptureRequestOption(
-      @NonNull CaptureRequestOptions pigeon_instance, @NonNull CaptureRequest.Key<?> key) {
-    return pigeon_instance.getCaptureRequestOption(key);
+      @NonNull CaptureRequestOptions pigeonInstance, @NonNull CaptureRequest.Key<?> key) {
+    return pigeonInstance.getCaptureRequestOption(key);
   }
 }

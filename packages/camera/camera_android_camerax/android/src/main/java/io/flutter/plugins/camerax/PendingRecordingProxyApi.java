@@ -28,8 +28,8 @@ class PendingRecordingProxyApi extends PigeonApiPendingRecording {
   @NonNull
   @Override
   public Recording start(
-      PendingRecording pigeon_instance, @NonNull VideoRecordEventListener listener) {
-    return pigeon_instance.start(
+      PendingRecording pigeonInstance, @NonNull VideoRecordEventListener listener) {
+    return pigeonInstance.start(
         ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()), listener::onEvent);
   }
 }

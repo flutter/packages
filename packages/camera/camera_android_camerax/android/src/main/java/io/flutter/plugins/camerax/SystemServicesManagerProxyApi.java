@@ -67,21 +67,21 @@ public class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManage
 
   @Override
   public void requestCameraPermissions(
-      @NonNull SystemServicesManager pigeon_instance,
+      @NonNull SystemServicesManager pigeonInstance,
       boolean enableAudio,
       @NonNull Function1<? super Result<? extends CameraPermissionsError>, Unit> callback) {
-    pigeon_instance.requestCameraPermissions(
+    pigeonInstance.requestCameraPermissions(
         enableAudio, (isSuccessful, error) -> ResultCompat.success(error, callback));
   }
 
   @NonNull
   @Override
   public String getTempFilePath(
-      @NonNull SystemServicesManager pigeon_instance,
+      @NonNull SystemServicesManager pigeonInstance,
       @NonNull String prefix,
       @NonNull String suffix) {
     try {
-      return pigeon_instance.getTempFilePath(prefix, suffix);
+      return pigeonInstance.getTempFilePath(prefix, suffix);
     } catch (IOException e) {
       throw new RuntimeException(
           "getTempFilePath_failure",

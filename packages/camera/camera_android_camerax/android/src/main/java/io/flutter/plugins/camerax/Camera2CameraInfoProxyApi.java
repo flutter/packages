@@ -32,15 +32,15 @@ class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
 
   @NonNull
   @Override
-  public String getCameraId(Camera2CameraInfo pigeon_instance) {
-    return pigeon_instance.getCameraId();
+  public String getCameraId(Camera2CameraInfo pigeonInstance) {
+    return pigeonInstance.getCameraId();
   }
 
   @Nullable
   @Override
   public Object getCameraCharacteristic(
-      Camera2CameraInfo pigeon_instance, @NonNull CameraCharacteristics.Key<?> key) {
-    final Object result = pigeon_instance.getCameraCharacteristic(key);
+      Camera2CameraInfo pigeonInstance, @NonNull CameraCharacteristics.Key<?> key) {
+    final Object result = pigeonInstance.getCameraCharacteristic(key);
     if (result == null) {
       return null;
     }

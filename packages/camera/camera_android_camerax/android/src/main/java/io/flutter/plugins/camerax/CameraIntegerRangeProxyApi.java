@@ -24,12 +24,12 @@ class CameraIntegerRangeProxyApi extends PigeonApiCameraIntegerRange {
   }
 
   @Override
-  public long lower(android.util.Range<?> pigeon_instance) {
-    return (Integer) pigeon_instance.getLower();
+  public long lower(android.util.Range<?> pigeonInstance) {
+    return (Integer) pigeonInstance.getLower();
   }
 
   @Override
-  public long upper(android.util.Range<?> pigeon_instance) {
-    return (Integer) pigeon_instance.getUpper();
+  public long upper(android.util.Range<?> pigeonInstance) {
+    return (Integer) pigeonInstance.getUpper();
   }
 }

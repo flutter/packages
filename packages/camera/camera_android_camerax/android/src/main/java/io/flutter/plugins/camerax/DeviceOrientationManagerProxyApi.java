@@ -30,24 +30,24 @@ public class DeviceOrientationManagerProxyApi extends PigeonApiDeviceOrientation
 
   @Override
   public void startListeningForDeviceOrientationChange(
-      @NonNull DeviceOrientationManager pigeon_instance) {
-    pigeon_instance.start();
+      @NonNull DeviceOrientationManager pigeonInstance) {
+    pigeonInstance.start();
   }
 
   @Override
   public void stopListeningForDeviceOrientationChange(
-      @NonNull DeviceOrientationManager pigeon_instance) {
-    pigeon_instance.stop();
+      @NonNull DeviceOrientationManager pigeonInstance) {
+    pigeonInstance.stop();
   }
 
   @Override
-  public long getDefaultDisplayRotation(@NonNull DeviceOrientationManager pigeon_instance) {
-    return pigeon_instance.getDefaultRotation();
+  public long getDefaultDisplayRotation(@NonNull DeviceOrientationManager pigeonInstance) {
+    return pigeonInstance.getDefaultRotation();
   }
 
   @NonNull
   @Override
-  public String getUiOrientation(@NonNull DeviceOrientationManager pigeon_instance) {
-    return pigeon_instance.getUIOrientation().toString();
+  public String getUiOrientation(@NonNull DeviceOrientationManager pigeonInstance) {
+    return pigeonInstance.getUIOrientation().toString();
   }
 }

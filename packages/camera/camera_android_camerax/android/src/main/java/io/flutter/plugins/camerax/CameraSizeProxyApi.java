@@ -24,12 +24,12 @@ class CameraSizeProxyApi extends PigeonApiCameraSize {
   }
 
   @Override
-  public long width(@NonNull Size pigeon_instance) {
-    return pigeon_instance.getWidth();
+  public long width(@NonNull Size pigeonInstance) {
+    return pigeonInstance.getWidth();
   }
 
   @Override
-  public long height(Size pigeon_instance) {
-    return pigeon_instance.getHeight();
+  public long height(Size pigeonInstance) {
+    return pigeonInstance.getHeight();
   }
 }

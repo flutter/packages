@@ -60,8 +60,8 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
   @NonNull
   @Override
   public AspectRatioStrategyFallbackRule getFallbackRule(
-      @NonNull AspectRatioStrategy pigeon_instance) {
-    switch (pigeon_instance.getFallbackRule()) {
+      @NonNull AspectRatioStrategy pigeonInstance) {
+    switch (pigeonInstance.getFallbackRule()) {
       case AspectRatioStrategy.FALLBACK_RULE_AUTO:
         return AspectRatioStrategyFallbackRule.AUTO;
       case AspectRatioStrategy.FALLBACK_RULE_NONE:
@@ -73,8 +73,8 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
 
   @NonNull
   @Override
-  public AspectRatio getPreferredAspectRatio(@NonNull AspectRatioStrategy pigeon_instance) {
-    switch (pigeon_instance.getPreferredAspectRatio()) {
+  public AspectRatio getPreferredAspectRatio(@NonNull AspectRatioStrategy pigeonInstance) {
+    switch (pigeonInstance.getPreferredAspectRatio()) {
       case androidx.camera.core.AspectRatio.RATIO_16_9:
         return AspectRatio.RATIO16TO9;
       case androidx.camera.core.AspectRatio.RATIO_4_3:

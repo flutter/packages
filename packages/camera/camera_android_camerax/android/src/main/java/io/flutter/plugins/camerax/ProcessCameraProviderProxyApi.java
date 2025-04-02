@@ -54,19 +54,19 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
 
   @NonNull
   @Override
-  public List<CameraInfo> getAvailableCameraInfos(ProcessCameraProvider pigeon_instance) {
-    return pigeon_instance.getAvailableCameraInfos();
+  public List<CameraInfo> getAvailableCameraInfos(ProcessCameraProvider pigeonInstance) {
+    return pigeonInstance.getAvailableCameraInfos();
   }
 
   @NonNull
   @Override
   public Camera bindToLifecycle(
-      @NonNull ProcessCameraProvider pigeon_instance,
+      @NonNull ProcessCameraProvider pigeonInstance,
       @NonNull CameraSelector cameraSelector,
       @NonNull List<? extends UseCase> useCases) {
     final LifecycleOwner lifecycleOwner = getPigeonRegistrar().getLifecycleOwner();
     if (lifecycleOwner != null) {
-      return pigeon_instance.bindToLifecycle(
+      return pigeonInstance.bindToLifecycle(
           lifecycleOwner, cameraSelector, useCases.toArray(new UseCase[0]));
     }
 
@@ -75,18 +75,18 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
   }
 
   @Override
-  public boolean isBound(ProcessCameraProvider pigeon_instance, @NonNull UseCase useCase) {
-    return pigeon_instance.isBound(useCase);
+  public boolean isBound(ProcessCameraProvider pigeonInstance, @NonNull UseCase useCase) {
+    return pigeonInstance.isBound(useCase);
   }
 
   @Override
   public void unbind(
-      ProcessCameraProvider pigeon_instance, @NonNull List<? extends UseCase> useCases) {
-    pigeon_instance.unbind(useCases.toArray(new UseCase[0]));
+      ProcessCameraProvider pigeonInstance, @NonNull List<? extends UseCase> useCases) {
+    pigeonInstance.unbind(useCases.toArray(new UseCase[0]));
   }
 
   @Override
-  public void unbindAll(ProcessCameraProvider pigeon_instance) {
-    pigeon_instance.unbindAll();
+  public void unbindAll(ProcessCameraProvider pigeonInstance) {
+    pigeonInstance.unbindAll();
   }
 }

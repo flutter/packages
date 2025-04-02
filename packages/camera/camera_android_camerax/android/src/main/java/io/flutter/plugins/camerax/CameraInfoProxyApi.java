@@ -19,27 +19,27 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
   }
 
   @Override
-  public long sensorRotationDegrees(CameraInfo pigeon_instance) {
-    return pigeon_instance.getSensorRotationDegrees();
+  public long sensorRotationDegrees(CameraInfo pigeonInstance) {
+    return pigeonInstance.getSensorRotationDegrees();
   }
 
   @NonNull
   @Override
-  public ExposureState exposureState(CameraInfo pigeon_instance) {
-    return pigeon_instance.getExposureState();
+  public ExposureState exposureState(CameraInfo pigeonInstance) {
+    return pigeonInstance.getExposureState();
   }
 
   @NonNull
   @Override
-  public LiveDataProxyApi.LiveDataWrapper getCameraState(CameraInfo pigeon_instance) {
+  public LiveDataProxyApi.LiveDataWrapper getCameraState(CameraInfo pigeonInstance) {
     return new LiveDataProxyApi.LiveDataWrapper(
-        pigeon_instance.getCameraState(), LiveDataSupportedType.CAMERA_STATE);
+        pigeonInstance.getCameraState(), LiveDataSupportedType.CAMERA_STATE);
   }
 
   @NonNull
   @Override
-  public LiveDataProxyApi.LiveDataWrapper getZoomState(CameraInfo pigeon_instance) {
+  public LiveDataProxyApi.LiveDataWrapper getZoomState(CameraInfo pigeonInstance) {
     return new LiveDataProxyApi.LiveDataWrapper(
-        pigeon_instance.getZoomState(), LiveDataSupportedType.ZOOM_STATE);
+        pigeonInstance.getZoomState(), LiveDataSupportedType.ZOOM_STATE);
   }
 }

@@ -20,7 +20,7 @@ class ResolutionInfoProxyApi extends PigeonApiResolutionInfo {
 
   @NonNull
   @Override
-  public android.util.Size resolution(ResolutionInfo pigeon_instance) {
-    return pigeon_instance.getResolution();
+  public android.util.Size resolution(ResolutionInfo pigeonInstance) {
+    return pigeonInstance.getResolution();
   }
 }

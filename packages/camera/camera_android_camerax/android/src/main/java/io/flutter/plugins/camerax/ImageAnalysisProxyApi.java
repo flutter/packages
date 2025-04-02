@@ -44,19 +44,18 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
 
   @Override
   public void setAnalyzer(
-      ImageAnalysis pigeon_instance,
-      @NonNull androidx.camera.core.ImageAnalysis.Analyzer analyzer) {
+      ImageAnalysis pigeonInstance, @NonNull androidx.camera.core.ImageAnalysis.Analyzer analyzer) {
     getPigeonRegistrar()
         .getInstanceManager()
         .setClearFinalizedWeakReferencesInterval(
             CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS);
-    pigeon_instance.setAnalyzer(
+    pigeonInstance.setAnalyzer(
         ContextCompat.getMainExecutor(getPigeonRegistrar().getContext()), analyzer);
   }
 
   @Override
-  public void clearAnalyzer(ImageAnalysis pigeon_instance) {
-    pigeon_instance.clearAnalyzer();
+  public void clearAnalyzer(ImageAnalysis pigeonInstance) {
+    pigeonInstance.clearAnalyzer();
     getPigeonRegistrar()
         .getInstanceManager()
         .setClearFinalizedWeakReferencesInterval(
@@ -64,13 +63,13 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   }
 
   @Override
-  public void setTargetRotation(ImageAnalysis pigeon_instance, long rotation) {
-    pigeon_instance.setTargetRotation((int) rotation);
+  public void setTargetRotation(ImageAnalysis pigeonInstance, long rotation) {
+    pigeonInstance.setTargetRotation((int) rotation);
   }
 
   @Nullable
   @Override
-  public ResolutionSelector resolutionSelector(@NonNull ImageAnalysis pigeon_instance) {
-    return pigeon_instance.getResolutionSelector();
+  public ResolutionSelector resolutionSelector(@NonNull ImageAnalysis pigeonInstance) {
+    return pigeonInstance.getResolutionSelector();
   }
 }

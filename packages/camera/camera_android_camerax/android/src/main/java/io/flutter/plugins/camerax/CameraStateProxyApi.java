@@ -21,8 +21,8 @@ class CameraStateProxyApi extends PigeonApiCameraState {
 
   @NonNull
   @Override
-  public CameraStateType type(CameraState pigeon_instance) {
-    switch (pigeon_instance.getType()) {
+  public CameraStateType type(CameraState pigeonInstance) {
+    switch (pigeonInstance.getType()) {
       case PENDING_OPEN:
         return CameraStateType.PENDING_OPEN;
       case OPENING:
@@ -40,7 +40,7 @@ class CameraStateProxyApi extends PigeonApiCameraState {
 
   @Nullable
   @Override
-  public StateError error(CameraState pigeon_instance) {
-    return pigeon_instance.getError();
+  public StateError error(CameraState pigeonInstance) {
+    return pigeonInstance.getError();
   }
 }

@@ -20,12 +20,12 @@ class ExposureStateProxyApi extends PigeonApiExposureState {
 
   @NonNull
   @Override
-  public Range<?> exposureCompensationRange(ExposureState pigeon_instance) {
-    return pigeon_instance.getExposureCompensationRange();
+  public Range<?> exposureCompensationRange(ExposureState pigeonInstance) {
+    return pigeonInstance.getExposureCompensationRange();
   }
 
   @Override
-  public double exposureCompensationStep(ExposureState pigeon_instance) {
-    return pigeon_instance.getExposureCompensationStep().doubleValue();
+  public double exposureCompensationStep(ExposureState pigeonInstance) {
+    return pigeonInstance.getExposureCompensationStep().doubleValue();
   }
 }
