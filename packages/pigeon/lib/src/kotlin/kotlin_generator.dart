@@ -1296,9 +1296,7 @@ private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?
     if (generatorOptions.includeErrorClass) {
       _writeErrorClass(generatorOptions, indent);
     }
-    if (root.classes.isNotEmpty &&
-        root.classes.any((Class dataClass) => dataClass.fields
-            .any((NamedType field) => isCollectionType(field.type)))) {
+    if (root.classes.isNotEmpty) {
       _writeDeepEquals(generatorOptions, indent);
     }
   }

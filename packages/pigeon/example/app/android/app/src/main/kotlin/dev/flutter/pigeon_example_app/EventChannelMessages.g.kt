@@ -12,6 +12,31 @@ import io.flutter.plugin.common.StandardMethodCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
+private fun deepEqualsEventChannelMessages(a: Any?, b: Any?): Boolean {
+  if (a is ByteArray && b is ByteArray) {
+    return a.contentEquals(b)
+  }
+  if (a is IntArray && b is IntArray) {
+    return a.contentEquals(b)
+  }
+  if (a is LongArray && b is LongArray) {
+    return a.contentEquals(b)
+  }
+  if (a is DoubleArray && b is DoubleArray) {
+    return a.contentEquals(b)
+  }
+  if (a is Array<*> && b is Array<*>) {
+    return a.size == b.size && a.indices.all { deepEqualsEventChannelMessages(a[it], b[it]) }
+  }
+  if (a is Map<*, *> && b is Map<*, *>) {
+    return a.size == b.size &&
+        a.keys.all {
+          (b as Map<Any?, Any?>).containsKey(it) && deepEqualsEventChannelMessages(a[it], b[it])
+        }
+  }
+  return a == b
+}
+
 /**
  * Generated class from Pigeon that represents data sent in messages. This class should not be
  * extended by any user class outside of the generated file.
