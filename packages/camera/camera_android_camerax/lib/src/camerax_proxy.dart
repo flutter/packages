@@ -76,8 +76,7 @@ class CameraXProxy {
   final void Function({
     BinaryMessenger? pigeonBinaryMessenger,
     PigeonInstanceManager? pigeonInstanceManager,
-  })
-  setUpGenericsProxy;
+  }) setUpGenericsProxy;
 
   /// Constructs [CameraSize].
   final CameraSize Function({
@@ -85,8 +84,7 @@ class CameraXProxy {
     required int height,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newCameraSize;
+  }) newCameraSize;
 
   /// Constructs [CameraIntegerRange].
   final CameraIntegerRange Function({
@@ -94,41 +92,36 @@ class CameraXProxy {
     required int upper,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newCameraIntegerRange;
+  }) newCameraIntegerRange;
 
   /// Constructs [Observer].
   final Observer<T> Function<T>({
     required void Function(Observer<T>, T) onChanged,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newObserver;
+  }) newObserver;
 
   /// Constructs [CameraSelector].
   final CameraSelector Function({
     LensFacing? requireLensFacing,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newCameraSelector;
+  }) newCameraSelector;
 
   /// Constructs [SystemServicesManager].
   final SystemServicesManager Function({
     required void Function(SystemServicesManager, String) onCameraError,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newSystemServicesManager;
+  }) newSystemServicesManager;
 
   /// Constructs [DeviceOrientationManager].
   final DeviceOrientationManager Function({
     required void Function(DeviceOrientationManager, String)
-    onDeviceOrientationChanged,
+        onDeviceOrientationChanged,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newDeviceOrientationManager;
+  }) newDeviceOrientationManager;
 
   /// Constructs [Preview].
   final Preview Function({
@@ -136,16 +129,14 @@ class CameraXProxy {
     ResolutionSelector? resolutionSelector,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newPreview;
+  }) newPreview;
 
   /// Constructs [VideoCapture].
   final VideoCapture Function({
     required VideoOutput videoOutput,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  withOutputVideoCapture;
+  }) withOutputVideoCapture;
 
   /// Constructs [Recorder].
   final Recorder Function({
@@ -154,16 +145,14 @@ class CameraXProxy {
     QualitySelector? qualitySelector,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newRecorder;
+  }) newRecorder;
 
   /// Constructs [VideoRecordEventListener].
   final VideoRecordEventListener Function({
     required void Function(VideoRecordEventListener, VideoRecordEvent) onEvent,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newVideoRecordEventListener;
+  }) newVideoRecordEventListener;
 
   /// Constructs [ImageCapture].
   final ImageCapture Function({
@@ -172,8 +161,7 @@ class CameraXProxy {
     ResolutionSelector? resolutionSelector,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newImageCapture;
+  }) newImageCapture;
 
   /// Constructs [ResolutionStrategy].
   final ResolutionStrategy Function({
@@ -181,8 +169,7 @@ class CameraXProxy {
     required ResolutionStrategyFallbackRule fallbackRule,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newResolutionStrategy;
+  }) newResolutionStrategy;
 
   /// Constructs [ResolutionSelector].
   final ResolutionSelector Function({
@@ -191,8 +178,7 @@ class CameraXProxy {
     ResolutionFilter? resolutionFilter,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newResolutionSelector;
+  }) newResolutionSelector;
 
   /// Constructs [AspectRatioStrategy].
   final AspectRatioStrategy Function({
@@ -200,8 +186,7 @@ class CameraXProxy {
     required AspectRatioStrategyFallbackRule fallbackRule,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newAspectRatioStrategy;
+  }) newAspectRatioStrategy;
 
   /// Constructs [ImageAnalysis].
   final ImageAnalysis Function({
@@ -209,16 +194,14 @@ class CameraXProxy {
     ResolutionSelector? resolutionSelector,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newImageAnalysis;
+  }) newImageAnalysis;
 
   /// Constructs [Analyzer].
   final Analyzer Function({
     required void Function(Analyzer, ImageProxy) analyze,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newAnalyzer;
+  }) newAnalyzer;
 
   /// Constructs [QualitySelector].
   final QualitySelector Function({
@@ -226,8 +209,7 @@ class CameraXProxy {
     FallbackStrategy? fallbackStrategy,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  fromQualitySelector;
+  }) fromQualitySelector;
 
   /// Constructs [QualitySelector].
   final QualitySelector Function({
@@ -235,48 +217,42 @@ class CameraXProxy {
     FallbackStrategy? fallbackStrategy,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  fromOrderedListQualitySelector;
+  }) fromOrderedListQualitySelector;
 
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({
     required VideoQuality quality,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  higherQualityOrLowerThanFallbackStrategy;
+  }) higherQualityOrLowerThanFallbackStrategy;
 
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({
     required VideoQuality quality,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  higherQualityThanFallbackStrategy;
+  }) higherQualityThanFallbackStrategy;
 
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({
     required VideoQuality quality,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  lowerQualityOrHigherThanFallbackStrategy;
+  }) lowerQualityOrHigherThanFallbackStrategy;
 
   /// Constructs [FallbackStrategy].
   final FallbackStrategy Function({
     required VideoQuality quality,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  lowerQualityThanFallbackStrategy;
+  }) lowerQualityThanFallbackStrategy;
 
   /// Constructs [FocusMeteringActionBuilder].
   final FocusMeteringActionBuilder Function({
     required MeteringPoint point,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newFocusMeteringActionBuilder;
+  }) newFocusMeteringActionBuilder;
 
   /// Constructs [FocusMeteringActionBuilder].
   FocusMeteringActionBuilder Function({
@@ -284,40 +260,35 @@ class CameraXProxy {
     required MeteringMode mode,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  withModeFocusMeteringActionBuilder;
+  }) withModeFocusMeteringActionBuilder;
 
   /// Constructs [CaptureRequestOptions].
   CaptureRequestOptions Function({
     required Map<CaptureRequestKey, Object?> options,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newCaptureRequestOptions;
+  }) newCaptureRequestOptions;
 
   /// Constructs [Camera2CameraControl].
   Camera2CameraControl Function({
     required CameraControl cameraControl,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  fromCamera2CameraControl;
+  }) fromCamera2CameraControl;
 
   /// Constructs [ResolutionFilter].
   final ResolutionFilter Function({
     required CameraSize preferredSize,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  createWithOnePreferredSizeResolutionFilter;
+  }) createWithOnePreferredSizeResolutionFilter;
 
   /// Constructs [Camera2CameraInfo].
   final Camera2CameraInfo Function({
     required CameraInfo cameraInfo,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  fromCamera2CameraInfo;
+  }) fromCamera2CameraInfo;
 
   /// Constructs [DisplayOrientedMeteringPointFactory].
   DisplayOrientedMeteringPointFactory Function({
@@ -326,15 +297,13 @@ class CameraXProxy {
     required double height,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  newDisplayOrientedMeteringPointFactory;
+  }) newDisplayOrientedMeteringPointFactory;
 
   /// Calls to [ProcessCameraProvider.getInstance].
   final Future<ProcessCameraProvider> Function({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  getInstanceProcessCameraProvider;
+  }) getInstanceProcessCameraProvider;
 
   /// Calls to [QualitySelector.getResolution].
   final Future<CameraSize?> Function(
@@ -342,8 +311,7 @@ class CameraXProxy {
     VideoQuality, {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-  })
-  getResolutionQualitySelector;
+  }) getResolutionQualitySelector;
 
   /// Calls to [CameraSelector.defaultBackCamera].
   final CameraSelector Function() defaultBackCameraCameraSelector;
@@ -353,26 +321,26 @@ class CameraXProxy {
 
   /// Calls to [ResolutionStrategy.highestAvailableStrategy].
   final ResolutionStrategy Function()
-  highestAvailableStrategyResolutionStrategy;
+      highestAvailableStrategyResolutionStrategy;
 
   /// Calls to [AspectRatioStrategy.ratio_16_9FallbackAutoStrategy].
   final AspectRatioStrategy Function()
-  ratio_16_9FallbackAutoStrategyAspectRatioStrategy;
+      ratio_16_9FallbackAutoStrategyAspectRatioStrategy;
 
   /// Calls to [AspectRatioStrategy.ratio_4_3FallbackAutoStrategy].
   final AspectRatioStrategy Function()
-  ratio_4_3FallbackAutoStrategyAspectRatioStrategy;
+      ratio_4_3FallbackAutoStrategyAspectRatioStrategy;
 
   /// Calls to [CaptureRequest.controlAELock].
   CaptureRequestKey Function() controlAELockCaptureRequest;
 
   /// Calls to [CameraCharacteristics.infoSupportedHardwareLevel].
   final CameraCharacteristicsKey Function()
-  infoSupportedHardwareLevelCameraCharacteristics;
+      infoSupportedHardwareLevelCameraCharacteristics;
 
   /// Calls to [CameraCharacteristics.sensorOrientation].
   final CameraCharacteristicsKey Function()
-  sensorOrientationCameraCharacteristics;
+      sensorOrientationCameraCharacteristics;
 
   static CameraSelector _defaultBackCameraCameraSelector() =>
       CameraSelector.defaultBackCamera;
@@ -384,19 +352,19 @@ class CameraXProxy {
       ResolutionStrategy.highestAvailableStrategy;
 
   static AspectRatioStrategy
-  _ratio_16_9FallbackAutoStrategyAspectRatioStrategy() =>
-      AspectRatioStrategy.ratio_16_9FallbackAutoStrategy;
+      _ratio_16_9FallbackAutoStrategyAspectRatioStrategy() =>
+          AspectRatioStrategy.ratio_16_9FallbackAutoStrategy;
 
   static AspectRatioStrategy
-  _ratio_4_3FallbackAutoStrategyAspectRatioStrategy() =>
-      AspectRatioStrategy.ratio_4_3FallbackAutoStrategy;
+      _ratio_4_3FallbackAutoStrategyAspectRatioStrategy() =>
+          AspectRatioStrategy.ratio_4_3FallbackAutoStrategy;
 
   static CaptureRequestKey _controlAELockCaptureRequest() =>
       CaptureRequest.controlAELock;
 
   static CameraCharacteristicsKey
-  _infoSupportedHardwareLevelCameraCharacteristics() =>
-      CameraCharacteristics.infoSupportedHardwareLevel;
+      _infoSupportedHardwareLevelCameraCharacteristics() =>
+          CameraCharacteristics.infoSupportedHardwareLevel;
 
   static CameraCharacteristicsKey _sensorOrientationCameraCharacteristics() =>
       CameraCharacteristics.sensorOrientation;
