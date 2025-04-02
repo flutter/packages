@@ -866,9 +866,12 @@ void runTests() {
     variant: _cameraUpdateTypeVariants,
     // TODO(jokerttu): Remove skip once the web implementation is available,
     // https://github.com/flutter/flutter/issues/159265
-    // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
-    // available for LUCI, https://github.com/flutter/flutter/issues/131071
-    skip: kIsWeb || isAndroid,
+    skip: kIsWeb ||
+        // TODO(stuartmorgan): Remove skip for Android platform once Maps API key is
+        // available for LUCI, https://github.com/flutter/flutter/issues/131071
+        isAndroid ||
+        // Hanging in CI, https://github.com/flutter/flutter/issues/166139
+        isIOS,
   );
 }
 
