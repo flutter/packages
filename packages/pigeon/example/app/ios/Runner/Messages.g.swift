@@ -169,16 +169,10 @@ struct MessageData: Hashable {
     ]
   }
   static func == (lhs: MessageData, rhs: MessageData) -> Bool {
-    return deepEqualsMessages(lhs.name, rhs.name)
-      && deepEqualsMessages(lhs.description, rhs.description)
-      && deepEqualsMessages(lhs.code, rhs.code)
-      && deepEqualsMessages(lhs.data, rhs.data)
+    return deepEqualsMessages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashMessages(value: name, hasher: &hasher)
-    deepHashMessages(value: description, hasher: &hasher)
-    deepHashMessages(value: code, hasher: &hasher)
-    deepHashMessages(value: data, hasher: &hasher)
+    deepHashMessages(value: toList(), hasher: &hasher)
   }
 }
 

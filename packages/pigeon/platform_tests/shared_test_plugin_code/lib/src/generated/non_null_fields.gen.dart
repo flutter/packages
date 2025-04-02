@@ -85,7 +85,7 @@ class NonNullFieldSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return query == other.query;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -131,7 +131,7 @@ class ExtraData {
     if (identical(this, other)) {
       return true;
     }
-    return detailA == other.detailA && detailB == other.detailB;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -192,11 +192,7 @@ class NonNullFieldSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return result == other.result &&
-        error == other.error &&
-        _deepEquals(indices, other.indices) &&
-        extraData == other.extraData &&
-        type == other.type;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override

@@ -68,7 +68,7 @@ class FlutterSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return query == other.query;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -114,7 +114,7 @@ class FlutterSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return result == other.result && error == other.error;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -155,7 +155,7 @@ class FlutterSearchRequests {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(requests, other.requests);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -196,7 +196,7 @@ class FlutterSearchReplies {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(replies, other.replies);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override

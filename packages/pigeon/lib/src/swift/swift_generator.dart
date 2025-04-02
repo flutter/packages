@@ -621,24 +621,13 @@ if (wrapped == nil) {
           indent.writeln('return true');
         });
       }
-      indent.write('return ');
-      indent.format(
-        classDefinition.fields
-            .map((NamedType field) =>
-                'deepEquals${generatorOptions.fileSpecificClassNameComponent}(lhs.${field.name}, rhs.${field.name})')
-            .join('\n&& '),
-        leadingSpace: false,
-      );
+      indent.write(
+          'return deepEquals${generatorOptions.fileSpecificClassNameComponent}(lhs.toList(), rhs.toList())');
     });
 
     indent.writeScoped('func hash(into hasher: inout Hasher) {', '}', () {
-      indent.format(
-        classDefinition.fields
-            .map((NamedType field) =>
-                'deepHash${generatorOptions.fileSpecificClassNameComponent}(value: ${field.name}, hasher: &hasher)')
-            .join('\n'),
-        leadingSpace: false,
-      );
+      indent.writeln(
+          'deepHash${generatorOptions.fileSpecificClassNameComponent}(value: toList(), hasher: &hasher)');
     });
   }
 

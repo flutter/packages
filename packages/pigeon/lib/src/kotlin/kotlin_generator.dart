@@ -316,15 +316,8 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.writeScoped('if (this === other) {', '}', () {
         indent.writeln('return true');
       });
-      indent.write('return ');
-      indent.format(
-        classDefinition.fields
-            .map((NamedType field) => isCollectionType(field.type)
-                ? 'deepEquals${generatorOptions.fileSpecificClassNameComponent}(${field.name}, other.${field.name})'
-                : '${field.name} == other.${field.name}')
-            .join('\n&& '),
-        leadingSpace: false,
-      );
+      indent.write(
+          'return deepEquals${generatorOptions.fileSpecificClassNameComponent}(toList(), other.toList())');
     });
 
     indent.newln();

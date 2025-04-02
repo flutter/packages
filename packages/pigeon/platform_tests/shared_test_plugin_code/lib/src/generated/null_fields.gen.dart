@@ -89,7 +89,7 @@ class NullFieldsSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return query == other.query && identifier == other.identifier;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -150,11 +150,7 @@ class NullFieldsSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return result == other.result &&
-        error == other.error &&
-        _deepEquals(indices, other.indices) &&
-        request == other.request &&
-        type == other.type;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override

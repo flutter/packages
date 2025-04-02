@@ -98,10 +98,7 @@ class MessageData {
     if (identical(this, other)) {
       return true;
     }
-    return name == other.name &&
-        description == other.description &&
-        code == other.code &&
-        _deepEquals(data, other.data);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override

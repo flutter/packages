@@ -30,6 +30,22 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
+    return a.length == b.length &&
+        keys.every((Object? key) =>
+            (b as Map<Object?, Object?>).containsKey(key) &&
+            _deepEquals(a[key], b[key]));
+  }
+  return a == b;
+}
+
 /// This comment is to test enum documentation comments.
 ///
 /// This comment also tests multiple line comments.
@@ -92,7 +108,7 @@ class MessageSearchRequest {
     if (identical(this, other)) {
       return true;
     }
-    return query == other.query && anInt == other.anInt && aBool == other.aBool;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -149,9 +165,7 @@ class MessageSearchReply {
     if (identical(this, other)) {
       return true;
     }
-    return result == other.result &&
-        error == other.error &&
-        state == other.state;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -194,7 +208,7 @@ class MessageNested {
     if (identical(this, other)) {
       return true;
     }
-    return request == other.request;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override

@@ -351,16 +351,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeScoped('if (identical(this, other)) {', '}', () {
         indent.writeln('return true;');
       });
-      indent.writeScoped('return ', '', () {
-        indent.format(
-            classDefinition.fields
-                .map((NamedType field) => isCollectionType(field.type)
-                    ? '_deepEquals(${field.name}, other.${field.name})'
-                    : '${field.name} == other.${field.name}')
-                .join('\n&& '),
-            trailingNewline: false);
-        indent.addln(';');
-      }, addTrailingNewline: false);
+      indent.writeln('return _deepEquals(encode(), other.encode());');
     });
     indent.newln();
     indent.writeln('@override');
@@ -1083,9 +1074,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         generatorOptions.testOut != null) {
       _writeWrapResponse(generatorOptions, root, indent);
     }
-    if (root.classes.isNotEmpty &&
-        root.classes.any((Class dataClass) => dataClass.fields
-            .any((NamedType field) => isCollectionType(field.type)))) {
+    if (root.classes.isNotEmpty) {
       _writeDeepEquals(indent);
     }
   }

@@ -91,7 +91,7 @@ class UnusedClass {
     if (identical(this, other)) {
       return true;
     }
-    return aField == other.aField;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -270,34 +270,7 @@ class AllTypes {
     if (identical(this, other)) {
       return true;
     }
-    return aBool == other.aBool &&
-        anInt == other.anInt &&
-        anInt64 == other.anInt64 &&
-        aDouble == other.aDouble &&
-        _deepEquals(aByteArray, other.aByteArray) &&
-        _deepEquals(a4ByteArray, other.a4ByteArray) &&
-        _deepEquals(a8ByteArray, other.a8ByteArray) &&
-        _deepEquals(aFloatArray, other.aFloatArray) &&
-        anEnum == other.anEnum &&
-        anotherEnum == other.anotherEnum &&
-        aString == other.aString &&
-        anObject == other.anObject &&
-        _deepEquals(list, other.list) &&
-        _deepEquals(stringList, other.stringList) &&
-        _deepEquals(intList, other.intList) &&
-        _deepEquals(doubleList, other.doubleList) &&
-        _deepEquals(boolList, other.boolList) &&
-        _deepEquals(enumList, other.enumList) &&
-        _deepEquals(objectList, other.objectList) &&
-        _deepEquals(listList, other.listList) &&
-        _deepEquals(mapList, other.mapList) &&
-        _deepEquals(map, other.map) &&
-        _deepEquals(stringMap, other.stringMap) &&
-        _deepEquals(intMap, other.intMap) &&
-        _deepEquals(enumMap, other.enumMap) &&
-        _deepEquals(objectMap, other.objectMap) &&
-        _deepEquals(listMap, other.listMap) &&
-        _deepEquals(mapMap, other.mapMap);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -495,37 +468,7 @@ class AllNullableTypes {
     if (identical(this, other)) {
       return true;
     }
-    return aNullableBool == other.aNullableBool &&
-        aNullableInt == other.aNullableInt &&
-        aNullableInt64 == other.aNullableInt64 &&
-        aNullableDouble == other.aNullableDouble &&
-        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
-        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
-        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
-        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
-        aNullableEnum == other.aNullableEnum &&
-        anotherNullableEnum == other.anotherNullableEnum &&
-        aNullableString == other.aNullableString &&
-        aNullableObject == other.aNullableObject &&
-        allNullableTypes == other.allNullableTypes &&
-        _deepEquals(list, other.list) &&
-        _deepEquals(stringList, other.stringList) &&
-        _deepEquals(intList, other.intList) &&
-        _deepEquals(doubleList, other.doubleList) &&
-        _deepEquals(boolList, other.boolList) &&
-        _deepEquals(enumList, other.enumList) &&
-        _deepEquals(objectList, other.objectList) &&
-        _deepEquals(listList, other.listList) &&
-        _deepEquals(mapList, other.mapList) &&
-        _deepEquals(recursiveClassList, other.recursiveClassList) &&
-        _deepEquals(map, other.map) &&
-        _deepEquals(stringMap, other.stringMap) &&
-        _deepEquals(intMap, other.intMap) &&
-        _deepEquals(enumMap, other.enumMap) &&
-        _deepEquals(objectMap, other.objectMap) &&
-        _deepEquals(listMap, other.listMap) &&
-        _deepEquals(mapMap, other.mapMap) &&
-        _deepEquals(recursiveClassMap, other.recursiveClassMap);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -709,34 +652,7 @@ class AllNullableTypesWithoutRecursion {
     if (identical(this, other)) {
       return true;
     }
-    return aNullableBool == other.aNullableBool &&
-        aNullableInt == other.aNullableInt &&
-        aNullableInt64 == other.aNullableInt64 &&
-        aNullableDouble == other.aNullableDouble &&
-        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
-        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
-        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
-        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
-        aNullableEnum == other.aNullableEnum &&
-        anotherNullableEnum == other.anotherNullableEnum &&
-        aNullableString == other.aNullableString &&
-        aNullableObject == other.aNullableObject &&
-        _deepEquals(list, other.list) &&
-        _deepEquals(stringList, other.stringList) &&
-        _deepEquals(intList, other.intList) &&
-        _deepEquals(doubleList, other.doubleList) &&
-        _deepEquals(boolList, other.boolList) &&
-        _deepEquals(enumList, other.enumList) &&
-        _deepEquals(objectList, other.objectList) &&
-        _deepEquals(listList, other.listList) &&
-        _deepEquals(mapList, other.mapList) &&
-        _deepEquals(map, other.map) &&
-        _deepEquals(stringMap, other.stringMap) &&
-        _deepEquals(intMap, other.intMap) &&
-        _deepEquals(enumMap, other.enumMap) &&
-        _deepEquals(objectMap, other.objectMap) &&
-        _deepEquals(listMap, other.listMap) &&
-        _deepEquals(mapMap, other.mapMap);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -815,14 +731,7 @@ class AllClassesWrapper {
     if (identical(this, other)) {
       return true;
     }
-    return allNullableTypes == other.allNullableTypes &&
-        allNullableTypesWithoutRecursion ==
-            other.allNullableTypesWithoutRecursion &&
-        allTypes == other.allTypes &&
-        _deepEquals(classList, other.classList) &&
-        _deepEquals(nullableClassList, other.nullableClassList) &&
-        _deepEquals(classMap, other.classMap) &&
-        _deepEquals(nullableClassMap, other.nullableClassMap);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -864,7 +773,7 @@ class TestMessage {
     if (identical(this, other)) {
       return true;
     }
-    return _deepEquals(testList, other.testList);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override

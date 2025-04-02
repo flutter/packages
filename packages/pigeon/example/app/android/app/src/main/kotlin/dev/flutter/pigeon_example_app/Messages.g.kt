@@ -113,10 +113,7 @@ data class MessageData(
     if (this === other) {
       return true
     }
-    return name == other.name &&
-        description == other.description &&
-        code == other.code &&
-        deepEqualsMessages(data, other.data)
+    return deepEqualsMessages(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()

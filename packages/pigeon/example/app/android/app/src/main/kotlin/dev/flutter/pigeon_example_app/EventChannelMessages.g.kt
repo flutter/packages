@@ -39,7 +39,7 @@ data class IntEvent(val data: Long) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return data == other.data
+    return deepEqualsEventChannelMessages(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -67,7 +67,7 @@ data class StringEvent(val data: String) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return data == other.data
+    return deepEqualsEventChannelMessages(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()

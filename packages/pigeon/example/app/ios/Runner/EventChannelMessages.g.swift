@@ -108,10 +108,10 @@ struct IntEvent: PlatformEvent {
     ]
   }
   static func == (lhs: IntEvent, rhs: IntEvent) -> Bool {
-    return deepEqualsEventChannelMessages(lhs.data, rhs.data)
+    return deepEqualsEventChannelMessages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelMessages(value: data, hasher: &hasher)
+    deepHashEventChannelMessages(value: toList(), hasher: &hasher)
   }
 }
 
@@ -133,10 +133,10 @@ struct StringEvent: PlatformEvent {
     ]
   }
   static func == (lhs: StringEvent, rhs: StringEvent) -> Bool {
-    return deepEqualsEventChannelMessages(lhs.data, rhs.data)
+    return deepEqualsEventChannelMessages(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
-    deepHashEventChannelMessages(value: data, hasher: &hasher)
+    deepHashEventChannelMessages(value: toList(), hasher: &hasher)
   }
 }
 
