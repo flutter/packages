@@ -26,6 +26,14 @@ android {
     namespace 'io.flutter.plugins.cameraexample'
     compileSdk flutter.compileSdkVersion
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
 
     defaultConfig {
         applicationId "io.flutter.plugins.cameraexample"
