@@ -1,6 +1,7 @@
 ## 25.3.0
 
 * [swift] Adds equality methods to generated data classes.
+* [dart, kotlin] Shortens equality methods.
 
 ## 25.2.0
 
