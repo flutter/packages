@@ -1,3 +1,7 @@
+## 0.11.2
+
+* Updates `camera_avfoundation` dependency to ^0.9.19 to include support for querying available lens types on iOS.
+
 ## 0.11.1
 
 * Adds API support query for image streaming.
