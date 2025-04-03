@@ -199,6 +199,12 @@ abstract class InAppPurchase2API {
 
   @async
   void restorePurchases();
+
+  @async
+  String countryCode();
+
+  @async
+  void sync();
 }
 
 @FlutterApi()
