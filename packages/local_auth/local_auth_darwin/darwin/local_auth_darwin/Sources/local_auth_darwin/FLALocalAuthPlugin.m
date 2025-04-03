@@ -243,6 +243,7 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 /// The Flutter view provider.
 @property(nonatomic, strong) NSObject<FLAViewProvider> *viewProvider;
 
+/// The auth context to cancel.
 @property(nonatomic, strong, nullable) LAContext *currentContext;
 @end
 
