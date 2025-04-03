@@ -356,12 +356,12 @@ final class CameraSampleBufferTests: XCTestCase {
         from: connectionMock)
     }
 
-    let appendAudioSample = { (time: Int64) in
+    let appendAudioSample = { (time: Int64, duration: Int64) in
       camera.captureOutput(
         nil,
         didOutputSampleBuffer: CameraTestUtils.createTestAudioSampleBuffer(
           timestamp: CMTimeMake(value: time, timescale: 1),
-          duration: CMTimeMake(value: 2, timescale: 1)),
+          duration: CMTimeMake(value: duration, timescale: 1)),
         from: connectionMock)
     }
 
@@ -382,7 +382,7 @@ final class CameraSampleBufferTests: XCTestCase {
     appendedTime = .invalid
     camera.pauseVideoRecording()
     camera.resumeVideoRecording()
-    appendAudioSample(20)
+    appendAudioSample(20, 2)
     XCTAssertEqual(appendedTime, .invalid)
     appendVideoSample(23)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 3, timescale: 1))
@@ -392,11 +392,11 @@ final class CameraSampleBufferTests: XCTestCase {
     camera.resumeVideoRecording()
     appendVideoSample(28)
     XCTAssertEqual(appendedTime, .invalid)
-    appendAudioSample(30)
+    appendAudioSample(30, 2)
     XCTAssertEqual(appendedTime, .invalid)
     appendVideoSample(33)
     XCTAssertEqual(appendedTime, .invalid)
-    appendAudioSample(32)
+    appendAudioSample(32, 2)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 2, timescale: 1))
   }
 
@@ -436,29 +436,29 @@ final class CameraSampleBufferTests: XCTestCase {
         from: connectionMock)
     }
 
-    let appendAudioSample = { (time: Int64) in
+    let appendAudioSample = { (time: Int64, duration: Int64) in
       camera.captureOutput(
         nil,
         didOutputSampleBuffer: CameraTestUtils.createTestAudioSampleBuffer(
           timestamp: CMTimeMake(value: time, timescale: 1),
-          duration: CMTimeMake(value: 1, timescale: 1)),
+          duration: CMTimeMake(value: duration, timescale: 1)),
         from: connectionMock)
     }
 
     appendVideoSample(1)
-    appendAudioSample(1)
+    appendAudioSample(1, 1)
 
     NotificationCenter.default.post(
       name: AVCaptureSession.wasInterruptedNotification,
       object: camera.audioCaptureSession.captureSession)
 
     appendedTime = .invalid
-    appendAudioSample(11)
+    appendAudioSample(11, 1)
     XCTAssertEqual(appendedTime, .invalid)
     appendVideoSample(12)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 2, timescale: 1))
     appendedTime = .invalid
-    appendAudioSample(12)
+    appendAudioSample(12, 1)
     XCTAssertEqual(appendedTime, CMTimeMake(value: 2, timescale: 1))
   }
 }

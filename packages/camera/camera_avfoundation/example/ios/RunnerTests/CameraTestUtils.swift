@@ -95,7 +95,7 @@ enum CameraTestUtils {
     var timingInfo = CMSampleTimingInfo(
       duration: duration,
       presentationTimeStamp: timestamp,
-      decodeTimeStamp: CMTime.invalid)
+      decodeTimeStamp: .invalid)
 
     var sampleBuffer: CMSampleBuffer?
     CMSampleBufferCreateReadyWithImageBuffer(
@@ -112,7 +112,7 @@ enum CameraTestUtils {
   /// @return a test audio sample buffer.
   static func createTestAudioSampleBuffer(
     timestamp: CMTime = .zero, duration: CMTime = CMTimeMake(value: 1, timescale: 44100)
-  ) -> CMSampleBuffer? {
+  ) -> CMSampleBuffer {
     var blockBuffer: CMBlockBuffer?
     CMBlockBufferCreateWithMemoryBlock(
       allocator: kCFAllocatorDefault,
@@ -124,8 +124,6 @@ enum CameraTestUtils {
       dataLength: Int(duration.value),
       flags: kCMBlockBufferAssureMemoryNowFlag,
       blockBufferOut: &blockBuffer)
-
-    guard let blockBuffer = blockBuffer else { return nil }
 
     var formatDescription: CMFormatDescription?
     var basicDescription = AudioStreamBasicDescription(
@@ -152,7 +150,7 @@ enum CameraTestUtils {
     var sampleBuffer: CMSampleBuffer?
     CMAudioSampleBufferCreateReadyWithPacketDescriptions(
       allocator: kCFAllocatorDefault,
-      dataBuffer: blockBuffer,
+      dataBuffer: blockBuffer!,
       formatDescription: formatDescription!,
       sampleCount: CMItemCount(duration.value),
       presentationTimeStamp: timestamp,
