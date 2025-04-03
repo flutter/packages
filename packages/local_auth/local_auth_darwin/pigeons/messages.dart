@@ -101,6 +101,12 @@ abstract class LocalAuthApi {
   /// without additional setup.
   List<AuthBiometric> getEnrolledBiometrics();
 
+  /// Cancels any in-progress authentication.
+  ///
+  /// Returns true only if authentication was in progress, and was successfully
+  /// cancelled.
+  bool stopAuthentication();
+
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
   @async
