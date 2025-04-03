@@ -344,11 +344,14 @@ class AndroidCameraCameraX extends CameraPlatform {
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
   ) async {
-    // TODO(bparrishMines): Failure to get permissions isn't actually handled.
-    // Must obtain proper permissions before attempting to access a camera.
-    await systemServicesManager.requestCameraPermissions(
+    final CameraPermissionsError? error =
+        await systemServicesManager.requestCameraPermissions(
       mediaSettings?.enableAudio ?? false,
     );
+
+    if (error != null) {
+      throw CameraException(error.errorCode, error.description);
+    }
 
     // Save CameraSelector that matches cameraDescription.
     final LensFacing cameraSelectorLensDirection =
