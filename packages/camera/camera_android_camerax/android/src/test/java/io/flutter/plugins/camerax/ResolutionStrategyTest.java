@@ -17,7 +17,8 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class ResolutionStrategyTest {
   @Test
-  public void pigeon_defaultConstructor_createsExpectedResolutionStrategyInstanceWhenArgumentsValid() {
+  public void
+      pigeon_defaultConstructor_createsExpectedResolutionStrategyInstanceWhenArgumentsValid() {
     final PigeonApiResolutionStrategy api =
         new TestProxyApiRegistrar().getPigeonApiResolutionStrategy();
 
