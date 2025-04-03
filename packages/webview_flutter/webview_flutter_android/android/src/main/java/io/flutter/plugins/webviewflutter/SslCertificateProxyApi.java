@@ -67,13 +67,12 @@ class SslCertificateProxyApi extends PigeonApiSslCertificate {
       @NonNull SslCertificate pigeon_instance) {
     if (getPigeonRegistrar().sdkIsAtLeast(Build.VERSION_CODES.Q)) {
       return pigeon_instance.getX509Certificate();
-    }
-    {
+    } else {
       Log.d(
           "SslCertificateProxyApi",
           getPigeonRegistrar()
               .createUnsupportedVersionMessage(
-                  "X509Certificate.getX509Certificate", "Build.VERSION_CODES.Q"));
+                  "SslCertificate.getX509Certificate", "Build.VERSION_CODES.Q"));
       return null;
     }
   }
