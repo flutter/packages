@@ -2,6 +2,7 @@ group 'io.flutter.plugins.camerax'
 version '1.0'
 
 buildscript {
+    ext.kotlin_version = '1.9.10'
     repositories {
         google()
         mavenCentral()
@@ -9,6 +10,7 @@ buildscript {
 
     dependencies {
         classpath 'com.android.tools.build:gradle:8.5.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -20,6 +22,7 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     namespace 'io.flutter.plugins.camerax'
@@ -29,6 +32,11 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        // This must match the Java version provided in compileOptions.
+        jvmTarget = '11'
     }
 
     defaultConfig {
@@ -65,7 +73,8 @@ dependencies {
     implementation "androidx.camera:camera-video:${camerax_version}"
     implementation 'com.google.guava:guava:33.4.0-android'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-inline:5.0.0'
+    testImplementation "org.mockito:mockito-core:5.15.2"
+    testImplementation 'org.mockito:mockito-inline:5.1.0'
     testImplementation 'androidx.test:core:1.4.0'
     testImplementation 'org.robolectric:robolectric:4.10.3'
 }
