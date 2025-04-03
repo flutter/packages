@@ -1,3 +1,7 @@
+## 2.15.1
+
+* Fixes regression in displaying info windows.
+
 ## 2.15.0
 
 * Adds support for animating the camera with a duration.
