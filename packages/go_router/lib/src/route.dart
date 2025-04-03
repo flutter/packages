@@ -275,6 +275,7 @@ class GoRoute extends RouteBase {
     super.parentNavigatorKey,
     super.redirect,
     this.onExit,
+    this.caseSensitive = false,
     super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
@@ -436,6 +437,9 @@ class GoRoute extends RouteBase {
   /// );
   /// ```
   final ExitCallback? onExit;
+
+  /// Whether the path is case sensitive or not.
+  final bool caseSensitive;
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.
   /// Match this route against a location.
