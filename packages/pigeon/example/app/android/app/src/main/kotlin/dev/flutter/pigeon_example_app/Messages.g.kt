@@ -62,6 +62,9 @@ private fun deepEqualsMessages(a: Any?, b: Any?): Boolean {
   if (a is Array<*> && b is Array<*>) {
     return a.size == b.size && a.indices.all { deepEqualsMessages(a[it], b[it]) }
   }
+  if (a is List<*> && b is List<*>) {
+    return a.size == b.size && a.indices.all { deepEqualsMessages(a[it], b[it]) }
+  }
   if (a is Map<*, *> && b is Map<*, *>) {
     return a.size == b.size &&
         a.keys.all { (b as Map<Any?, Any?>).containsKey(it) && deepEqualsMessages(a[it], b[it]) }
