@@ -888,7 +888,7 @@ static void selectBestFormatForRequestedFrameRate(
     _isRecording = YES;
     _isRecordingPaused = NO;
     _isRecordingDisconnected = NO;
-    _recordingTimeOffset = CMTimeMake(0, 1);
+    _recordingTimeOffset = kCMTimeZero;
     _outputForOffsetAdjusting = _captureVideoOutput.avOutput;
     _lastAppendedVideoSampleTime = kCMTimeNegativeInfinity;
     completion(nil);
