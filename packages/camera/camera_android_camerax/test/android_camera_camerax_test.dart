@@ -900,13 +900,7 @@ void main() {
             mockSystemServicesManager.requestCameraPermissions(any),
           ).thenAnswer((_) async {
             cameraPermissionsRequested = true;
-            return CameraPermissionsError.pigeon_detached(
-              errorCode: '',
-              description: '',
-              pigeon_instanceManager: PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
+            return null;
           });
           return mockSystemServicesManager;
         },
