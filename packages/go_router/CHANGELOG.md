@@ -1,3 +1,7 @@
+## 14.9.0
+
+- Adds `caseSensitive` parameter to `GoRouter` (default to `false`).
+
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
