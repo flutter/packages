@@ -85,6 +85,8 @@ enum InAppLoadResult: Int {
   case failedToLoad = 1
   /// The URL could not be launched because it is invalid.
   case invalidUrl = 2
+  /// The controller was closed before loading.
+  case dismissed = 3
 }
 
 private class messagesPigeonCodecReader: FlutterStandardReader {
