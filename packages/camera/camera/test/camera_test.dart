@@ -1452,7 +1452,8 @@ void main() {
       await cameraController.initialize();
 
       expect(cameraController.value.hasError, isTrue);
-      expect(cameraController.value.errorDescription, mockOnCameraErrorEvent.description);
+      expect(cameraController.value.errorDescription,
+          mockOnCameraErrorEvent.description);
     });
   });
 }
