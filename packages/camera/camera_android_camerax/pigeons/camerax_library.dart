@@ -196,6 +196,8 @@ abstract class JavaObjectFlutterApi {
 abstract class CameraInfoHostApi {
   int getSensorRotationDegrees(int identifier);
 
+  int getLensFacing(int identifier);
+
   int getCameraState(int identifier);
 
   int getExposureState(int identifier);
