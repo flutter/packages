@@ -285,7 +285,6 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
   NSError *authError = nil;
   self.lastCallState = nil;
   context.localizedFallbackTitle = strings.localizedFallbackTitle;
-  
 
   LAPolicy policy = options.biometricOnly ? LAPolicyDeviceOwnerAuthenticationWithBiometrics
                                           : LAPolicyDeviceOwnerAuthentication;
@@ -357,7 +356,9 @@ typedef void (^FLADAuthCompletion)(FLADAuthResultDetails *_Nullable, FlutterErro
 
 - (nullable NSNumber *)stopAuthenticationWithError:
     (FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  if (self.currentContext == NULL) { return @NO; }
+  if (self.currentContext == NULL) {
+    return @NO;
+  }
   [self.currentContext invalidate];
 
   return @YES;

@@ -334,13 +334,18 @@ void SetUpFLADLocalAuthApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
   /// Returns true only if authentication was in progress, and was successfully
   /// cancelled.
   {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.stopAuthentication", messageChannelSuffix]
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.local_auth_darwin."
+                                                   @"LocalAuthApi.stopAuthentication",
+                                                   messageChannelSuffix]
         binaryMessenger:binaryMessenger
-        codec:FLADGetMessagesCodec()];
+                  codec:FLADGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(stopAuthenticationWithError:)], @"FLADLocalAuthApi api (%@) doesn't respond to @selector(stopAuthenticationWithError:)", api);
+      NSCAssert(
+          [api respondsToSelector:@selector(stopAuthenticationWithError:)],
+          @"FLADLocalAuthApi api (%@) doesn't respond to @selector(stopAuthenticationWithError:)",
+          api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
         NSNumber *output = [api stopAuthenticationWithError:&error];
