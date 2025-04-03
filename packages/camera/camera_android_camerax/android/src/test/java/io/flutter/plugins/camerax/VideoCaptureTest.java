@@ -22,7 +22,7 @@ import org.robolectric.RobolectricTestRunner;
 public class VideoCaptureTest {
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Test
-  public void withOutput() {
+  public void withOutput_createsVideoCaptureWithVideoOutput() {
     final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
 
     final VideoCapture<VideoOutput> instance = mock(VideoCapture.class);
@@ -40,7 +40,7 @@ public class VideoCaptureTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void getOutput() {
+  public void getOutput_returnsAssociatedRecorder() {
     final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
 
     final VideoCapture<VideoOutput> instance = mock(VideoCapture.class);

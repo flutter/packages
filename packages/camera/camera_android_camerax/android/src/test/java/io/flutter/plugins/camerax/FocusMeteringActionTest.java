@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class FocusMeteringActionTest {
   @Test
-  public void meteringPointsAe() {
+  public void meteringPointsAe_returnsExpectedAeMeteringPoints() {
     final PigeonApiFocusMeteringAction api =
         new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
 
@@ -28,7 +28,7 @@ public class FocusMeteringActionTest {
   }
 
   @Test
-  public void meteringPointsAf() {
+  public void meteringPointsAf_returnsExpectedAfMeteringPoints() {
     final PigeonApiFocusMeteringAction api =
         new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
 
@@ -41,7 +41,7 @@ public class FocusMeteringActionTest {
   }
 
   @Test
-  public void meteringPointsAwb() {
+  public void meteringPointsAwb_returnsExpectedAwbMeteringPoints() {
     final PigeonApiFocusMeteringAction api =
         new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
 
@@ -54,7 +54,7 @@ public class FocusMeteringActionTest {
   }
 
   @Test
-  public void isAutoCancelEnabled() {
+  public void isAutoCancelEnabled_callsIsAutoCancelEnabledOnInstance() {
     final PigeonApiFocusMeteringAction api =
         new TestProxyApiRegistrar().getPigeonApiFocusMeteringAction();
 

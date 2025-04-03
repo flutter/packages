@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class ImageProxyTest {
   @Test
-  public void format() {
+  public void format_returnsExpectedFormat() {
     final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
 
     final ImageProxy instance = mock(ImageProxy.class);
@@ -28,7 +28,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void width() {
+  public void width_returnsExpectedWidth() {
     final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
 
     final ImageProxy instance = mock(ImageProxy.class);
@@ -39,7 +39,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void height() {
+  public void height_returnsExpectedHeight() {
     final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
 
     final ImageProxy instance = mock(ImageProxy.class);
@@ -50,7 +50,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void getPlanes() {
+  public void getPlanes_returnsExpectedPlanes() {
     final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
 
     final ImageProxy instance = mock(ImageProxy.class);
@@ -61,7 +61,7 @@ public class ImageProxyTest {
   }
 
   @Test
-  public void close() {
+  public void close_callsCloseOnInstance() {
     final PigeonApiImageProxy api = new TestProxyApiRegistrar().getPigeonApiImageProxy();
 
     final ImageProxy instance = mock(ImageProxy.class);

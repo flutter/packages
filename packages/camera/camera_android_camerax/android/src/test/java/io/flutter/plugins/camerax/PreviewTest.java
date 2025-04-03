@@ -31,7 +31,7 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class PreviewTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsPreviewWithCorrectConfiguration() {
     final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
@@ -44,7 +44,7 @@ public class PreviewTest {
   }
 
   @Test
-  public void resolutionSelector() {
+  public void resolutionSelector_returnsExpectedResolutionSelector() {
     final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
@@ -56,7 +56,7 @@ public class PreviewTest {
   }
 
   @Test
-  public void setSurfaceProvider() {
+  public void setSurfaceProvider_createsSurfaceProviderAndReturnsTextureEntryId() {
     final TextureRegistry mockTextureRegistry = mock(TextureRegistry.class);
     final TextureRegistry.SurfaceProducer mockSurfaceProducer =
         mock(TextureRegistry.SurfaceProducer.class);
@@ -236,7 +236,7 @@ public class PreviewTest {
   }
 
   @Test
-  public void getResolutionInfo() {
+  public void getResolutionInfo_returnsExpectedResolutionInfo() {
     final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);
@@ -247,7 +247,7 @@ public class PreviewTest {
   }
 
   @Test
-  public void setTargetRotation() {
+  public void setTargetRotation_returnsExpectedTargetRotation() {
     final PigeonApiPreview api = new TestProxyApiRegistrar().getPigeonApiPreview();
 
     final Preview instance = mock(Preview.class);

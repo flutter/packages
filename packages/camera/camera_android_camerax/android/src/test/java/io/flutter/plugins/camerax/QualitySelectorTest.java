@@ -20,7 +20,7 @@ import org.mockito.stubbing.Answer;
 
 public class QualitySelectorTest {
   @Test
-  public void from() {
+  public void from_createsExpectedQualitySelectorWhenOneQualitySpecified() {
     final PigeonApiQualitySelector api = new TestProxyApiRegistrar().getPigeonApiQualitySelector();
 
     final QualitySelector mockQualitySelector = mock(QualitySelector.class);
@@ -37,7 +37,7 @@ public class QualitySelectorTest {
   }
 
   @Test
-  public void fromOrderedList() {
+  public void fromOrderedList_createsExpectedQualitySelectorWhenOrderedListOfQualitiesSpecified() {
     final PigeonApiQualitySelector api = new TestProxyApiRegistrar().getPigeonApiQualitySelector();
 
     final QualitySelector mockQualitySelector = mock(QualitySelector.class);

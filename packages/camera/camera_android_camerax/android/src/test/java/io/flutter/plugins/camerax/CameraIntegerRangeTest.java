@@ -12,7 +12,7 @@ import org.junit.Test;
 public class CameraIntegerRangeTest {
   @SuppressWarnings("unchecked")
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsInstanceWithConstructorValues() {
     final PigeonApiCameraIntegerRange api =
         new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
 
@@ -25,7 +25,7 @@ public class CameraIntegerRangeTest {
   }
 
   @Test
-  public void lower() {
+  public void lower_returnsValueOfLowerFromInstance() {
     final PigeonApiCameraIntegerRange api =
         new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
 
@@ -36,7 +36,7 @@ public class CameraIntegerRangeTest {
   }
 
   @Test
-  public void upper() {
+  public void upper_returnsValueOfUpperFromInstance() {
     final PigeonApiCameraIntegerRange api =
         new TestProxyApiRegistrar().getPigeonApiCameraIntegerRange();
 

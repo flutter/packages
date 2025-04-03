@@ -36,7 +36,7 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class ProcessCameraProviderTest {
   @Test
-  public void getInstanceTest() {
+  public void getInstance_returnsExpectedProcessCameraProviderInFutureCallback() {
     final PigeonApiProcessCameraProvider api =
         new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
 
@@ -74,7 +74,7 @@ public class ProcessCameraProviderTest {
   }
 
   @Test
-  public void getAvailableCameraInfos() {
+  public void getAvailableCameraInfos_returnsExpectedCameraInfos() {
     final PigeonApiProcessCameraProvider api =
         new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
 
@@ -86,7 +86,7 @@ public class ProcessCameraProviderTest {
   }
 
   @Test
-  public void bindToLifecycle() {
+  public void bindToLifecycle_callsBindToLifecycleWithSelectorsAndUseCases() {
     final PigeonApiProcessCameraProvider api =
         new TestProxyApiRegistrar() {
           @Nullable
@@ -109,7 +109,7 @@ public class ProcessCameraProviderTest {
   }
 
   @Test
-  public void isBound() {
+  public void isBound_returnsExpectedIsBound() {
     final PigeonApiProcessCameraProvider api =
         new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
 
@@ -122,7 +122,7 @@ public class ProcessCameraProviderTest {
   }
 
   @Test
-  public void unbind() {
+  public void unbind_callsUnBindOnInstance() {
     final PigeonApiProcessCameraProvider api =
         new TestProxyApiRegistrar().getPigeonApiProcessCameraProvider();
 

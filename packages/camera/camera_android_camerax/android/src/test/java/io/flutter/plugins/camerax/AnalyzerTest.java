@@ -16,14 +16,14 @@ import org.junit.Test;
 
 public class AnalyzerTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_makesCallToCreateAnalyzerInstance() {
     final PigeonApiAnalyzer api = new TestProxyApiRegistrar().getPigeonApiAnalyzer();
 
     assertTrue(api.pigeon_defaultConstructor() instanceof AnalyzerProxyApi.AnalyzerImpl);
   }
 
   @Test
-  public void analyze() {
+  public void analyze_makesCallToDartAnalyze() {
     final AnalyzerProxyApi mockApi = mock(AnalyzerProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 

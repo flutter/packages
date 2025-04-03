@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class AspectRatioStrategyTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsExpectedAspectRatioStrategyInstance() {
     final PigeonApiAspectRatioStrategy api =
         new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
@@ -26,7 +26,7 @@ public class AspectRatioStrategyTest {
   }
 
   @Test
-  public void getFallbackRule() {
+  public void getFallbackRule_returnsFallbackRuleOfInstance() {
     final PigeonApiAspectRatioStrategy api =
         new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 
@@ -39,7 +39,7 @@ public class AspectRatioStrategyTest {
   }
 
   @Test
-  public void getPreferredAspectRatio() {
+  public void getPreferredAspectRatio_returnAspectRatioOfInstance() {
     final PigeonApiAspectRatioStrategy api =
         new TestProxyApiRegistrar().getPigeonApiAspectRatioStrategy();
 

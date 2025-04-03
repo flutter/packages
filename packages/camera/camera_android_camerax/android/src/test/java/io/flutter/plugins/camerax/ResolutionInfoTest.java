@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class ResolutionInfoTest {
   @Test
-  public void resolution() {
+  public void resolution_returnsExpectedResolution() {
     final PigeonApiResolutionInfo api = new TestProxyApiRegistrar().getPigeonApiResolutionInfo();
 
     final ResolutionInfo instance = mock(ResolutionInfo.class);

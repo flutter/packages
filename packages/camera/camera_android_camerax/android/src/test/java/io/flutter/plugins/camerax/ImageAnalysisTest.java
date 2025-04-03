@@ -27,7 +27,7 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class ImageAnalysisTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsExpectedImageAnalysisInstance() {
     final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
@@ -40,7 +40,7 @@ public class ImageAnalysisTest {
   }
 
   @Test
-  public void resolutionSelector() {
+  public void resolutionSelector_returnsExpectedResolutionSelector() {
     final PigeonApiImageAnalysis api = new TestProxyApiRegistrar().getPigeonApiImageAnalysis();
 
     final ImageAnalysis instance = mock(ImageAnalysis.class);

@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class CameraStateTest {
   @Test
-  public void type() {
+  public void type_returnsExpectedType() {
     final PigeonApiCameraState api = new TestProxyApiRegistrar().getPigeonApiCameraState();
 
     final CameraState instance = mock(CameraState.class);
@@ -24,7 +24,7 @@ public class CameraStateTest {
   }
 
   @Test
-  public void error() {
+  public void error_returnsExpectedError() {
     final PigeonApiCameraState api = new TestProxyApiRegistrar().getPigeonApiCameraState();
 
     final CameraState instance = mock(CameraState.class);

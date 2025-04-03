@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class CameraSelectorTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsCameraSelectorInstanceWithLensFacing() {
     final PigeonApiCameraSelector api = new TestProxyApiRegistrar().getPigeonApiCameraSelector();
 
     final CameraSelector selector =
@@ -26,7 +26,7 @@ public class CameraSelectorTest {
   }
 
   @Test
-  public void filter() {
+  public void filter_callsFilterWithMethodParameters() {
     final PigeonApiCameraSelector api = new TestProxyApiRegistrar().getPigeonApiCameraSelector();
 
     final CameraSelector instance = mock(CameraSelector.class);

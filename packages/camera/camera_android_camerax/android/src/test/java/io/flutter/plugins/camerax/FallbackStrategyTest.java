@@ -16,7 +16,7 @@ import org.mockito.stubbing.Answer;
 
 public class FallbackStrategyTest {
   @Test
-  public void higherQualityOrLowerThan() {
+  public void higherQualityOrLowerThan_makesExpectedFallbackStrategyWithHigherQualityOrLowerThan() {
     final PigeonApiFallbackStrategy api =
         new TestProxyApiRegistrar().getPigeonApiFallbackStrategy();
 
@@ -34,7 +34,7 @@ public class FallbackStrategyTest {
   }
 
   @Test
-  public void higherQualityThan() {
+  public void higherQualityThan_makesExpectedFallbackStrategyWithHigherQualityThan() {
     final PigeonApiFallbackStrategy api =
         new TestProxyApiRegistrar().getPigeonApiFallbackStrategy();
 
@@ -52,7 +52,7 @@ public class FallbackStrategyTest {
   }
 
   @Test
-  public void lowerQualityOrHigherThan() {
+  public void lowerQualityOrHigherThan_makesExpectedFallbackStrategyWithLowerQualityOrHigherThan() {
     final PigeonApiFallbackStrategy api =
         new TestProxyApiRegistrar().getPigeonApiFallbackStrategy();
 
@@ -70,7 +70,7 @@ public class FallbackStrategyTest {
   }
 
   @Test
-  public void lowerQualityThan() {
+  public void lowerQualityThan_makesExpectedFallbackStrategyWithLowerQualityThan() {
     final PigeonApiFallbackStrategy api =
         new TestProxyApiRegistrar().getPigeonApiFallbackStrategy();
 

@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class PlaneProxyTest {
   @Test
-  public void pixelStride() {
+  public void pixelStride_returnsExpectedPixelStride() {
     final PigeonApiPlaneProxy api = new TestProxyApiRegistrar().getPigeonApiPlaneProxy();
 
     final PlaneProxy instance = mock(PlaneProxy.class);
@@ -24,7 +24,7 @@ public class PlaneProxyTest {
   }
 
   @Test
-  public void rowStride() {
+  public void rowStride_returnsExpectedRowStride() {
     final PigeonApiPlaneProxy api = new TestProxyApiRegistrar().getPigeonApiPlaneProxy();
 
     final PlaneProxy instance = mock(PlaneProxy.class);

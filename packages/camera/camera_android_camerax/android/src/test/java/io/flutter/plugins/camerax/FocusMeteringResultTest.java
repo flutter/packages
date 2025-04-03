@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class FocusMeteringResultTest {
   @Test
-  public void isFocusSuccessful() {
+  public void isFocusSuccessful_returnsExpectedResult() {
     final PigeonApiFocusMeteringResult api =
         new TestProxyApiRegistrar().getPigeonApiFocusMeteringResult();
 

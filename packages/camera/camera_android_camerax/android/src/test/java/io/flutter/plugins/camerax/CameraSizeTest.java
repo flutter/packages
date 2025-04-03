@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class CameraSizeTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsSizeInstanceWithWidthAndHeight() {
     final PigeonApiCameraSize api = new TestProxyApiRegistrar().getPigeonApiCameraSize();
 
     final int width = 6;
@@ -25,7 +25,7 @@ public class CameraSizeTest {
   }
 
   @Test
-  public void width() {
+  public void width_returnsWidthValueFromInstance() {
     final PigeonApiCameraSize api = new TestProxyApiRegistrar().getPigeonApiCameraSize();
 
     final Size instance = mock(Size.class);
@@ -36,7 +36,7 @@ public class CameraSizeTest {
   }
 
   @Test
-  public void height() {
+  public void height_returnsHeightValueFromInstance() {
     final PigeonApiCameraSize api = new TestProxyApiRegistrar().getPigeonApiCameraSize();
 
     final Size instance = mock(Size.class);

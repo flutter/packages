@@ -16,7 +16,7 @@ import org.junit.Test;
 public class ExposureStateTest {
   @SuppressWarnings("unchecked")
   @Test
-  public void exposureCompensationRange() {
+  public void exposureCompensationRange_returnsExpectedRange() {
     final PigeonApiExposureState api = new TestProxyApiRegistrar().getPigeonApiExposureState();
 
     final ExposureState instance = mock(ExposureState.class);
@@ -27,7 +27,7 @@ public class ExposureStateTest {
   }
 
   @Test
-  public void exposureCompensationStep() {
+  public void exposureCompensationStep_returnsExpectedStep() {
     final PigeonApiExposureState api = new TestProxyApiRegistrar().getPigeonApiExposureState();
 
     final ExposureState instance = mock(ExposureState.class);

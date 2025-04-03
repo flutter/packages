@@ -17,7 +17,7 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class ResolutionStrategyTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsExpectedResolutionStrategyInstanceWhenArgumentsValid() {
     final PigeonApiResolutionStrategy api =
         new TestProxyApiRegistrar().getPigeonApiResolutionStrategy();
 
@@ -31,7 +31,7 @@ public class ResolutionStrategyTest {
   }
 
   @Test
-  public void getBoundSize() {
+  public void getBoundSize_returnsExpectedSize() {
     final PigeonApiResolutionStrategy api =
         new TestProxyApiRegistrar().getPigeonApiResolutionStrategy();
 
@@ -43,7 +43,7 @@ public class ResolutionStrategyTest {
   }
 
   @Test
-  public void getFallbackRule() {
+  public void getFallbackRule_returnsExpectedFallbackRule() {
     final PigeonApiResolutionStrategy api =
         new TestProxyApiRegistrar().getPigeonApiResolutionStrategy();
 

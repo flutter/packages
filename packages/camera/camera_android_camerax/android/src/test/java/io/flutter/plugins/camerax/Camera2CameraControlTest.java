@@ -26,7 +26,7 @@ import org.mockito.stubbing.Answer;
 
 public class Camera2CameraControlTest {
   @Test
-  public void from() {
+  public void from_createsInstanceFromCameraControlInstance() {
     final PigeonApiCamera2CameraControl api =
         new TestProxyApiRegistrar().getPigeonApiCamera2CameraControl();
 

@@ -19,7 +19,7 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class ResolutionSelectorTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsExpectedResolutionSelectorInstance() {
     final PigeonApiResolutionSelector api =
         new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
 
@@ -36,7 +36,7 @@ public class ResolutionSelectorTest {
   }
 
   @Test
-  public void resolutionFilter() {
+  public void resolutionFilter_returnsExpectedResolutionFilter() {
     final PigeonApiResolutionSelector api =
         new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
 
@@ -49,7 +49,7 @@ public class ResolutionSelectorTest {
   }
 
   @Test
-  public void resolutionStrategy() {
+  public void resolutionStrategy_returnsExpectedResolutionStrategy() {
     final PigeonApiResolutionSelector api =
         new TestProxyApiRegistrar().getPigeonApiResolutionSelector();
 

@@ -17,7 +17,7 @@ import org.junit.Test;
 
 public class DeviceOrientationManagerApiTest {
   @Test
-  public void startListeningForDeviceOrientationChange() {
+  public void startListeningForDeviceOrientationChange_callsStartOnInstance() {
     final PigeonApiDeviceOrientationManager api =
         new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
 
@@ -28,7 +28,7 @@ public class DeviceOrientationManagerApiTest {
   }
 
   @Test
-  public void stopListeningForDeviceOrientationChange() {
+  public void stopListeningForDeviceOrientationChange_callsStopOnInstance() {
     final PigeonApiDeviceOrientationManager api =
         new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
 
@@ -39,7 +39,7 @@ public class DeviceOrientationManagerApiTest {
   }
 
   @Test
-  public void getDefaultDisplayRotation() {
+  public void getDefaultDisplayRotation_returnsExpectedRotation() {
     final PigeonApiDeviceOrientationManager api =
         new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
 
@@ -51,7 +51,7 @@ public class DeviceOrientationManagerApiTest {
   }
 
   @Test
-  public void getUiOrientation() {
+  public void getUiOrientation_returnsExpectedOrientation() {
     final PigeonApiDeviceOrientationManager api =
         new TestProxyApiRegistrar().getPigeonApiDeviceOrientationManager();
 
@@ -64,7 +64,7 @@ public class DeviceOrientationManagerApiTest {
   }
 
   @Test
-  public void onDeviceOrientationChanged() {
+  public void onDeviceOrientationChanged_shouldSendMessageWhenOrientationIsUpdated() {
     final DeviceOrientationManagerProxyApi mockApi = mock(DeviceOrientationManagerProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 

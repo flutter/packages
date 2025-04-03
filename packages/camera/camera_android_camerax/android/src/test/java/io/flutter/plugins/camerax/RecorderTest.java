@@ -22,7 +22,7 @@ import org.robolectric.RobolectricTestRunner;
 @RunWith(RobolectricTestRunner.class)
 public class RecorderTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsExpectedRecorderInstance() {
     final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
 
     final long aspectRatio = 5;
@@ -37,7 +37,7 @@ public class RecorderTest {
   }
 
   @Test
-  public void getAspectRatioTest() {
+  public void getAspectRatio_returnsExpectedAspectRatio() {
     final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
 
     final Recorder instance = mock(Recorder.class);
@@ -48,7 +48,7 @@ public class RecorderTest {
   }
 
   @Test
-  public void getTargetVideoEncodingBitRateTest() {
+  public void getTargetVideoEncodingBitRate_returnsExpectedBitRate() {
     final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
 
     final Recorder instance = mock(Recorder.class);
@@ -59,7 +59,7 @@ public class RecorderTest {
   }
 
   @Test
-  public void getQualitySelector() {
+  public void getQualitySelector_returnsExpectedQualitySelector() {
     final PigeonApiRecorder api = new TestProxyApiRegistrar().getPigeonApiRecorder();
 
     final Recorder instance = mock(Recorder.class);

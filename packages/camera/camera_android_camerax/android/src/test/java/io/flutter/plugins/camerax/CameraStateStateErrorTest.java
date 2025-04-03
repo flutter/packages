@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class CameraStateStateErrorTest {
   @Test
-  public void code() {
+  public void code_returnsCodeValueFromInstance() {
     final PigeonApiCameraStateStateError api =
         new TestProxyApiRegistrar().getPigeonApiCameraStateStateError();
 

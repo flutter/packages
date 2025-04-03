@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class MeteringPointTest {
   @Test
-  public void getSize() {
+  public void getSize_returnsExpectedSize() {
     final PigeonApiMeteringPoint api = new TestProxyApiRegistrar().getPigeonApiMeteringPoint();
 
     final MeteringPoint instance = mock(MeteringPoint.class);

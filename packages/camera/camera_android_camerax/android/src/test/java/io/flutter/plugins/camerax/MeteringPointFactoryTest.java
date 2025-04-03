@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class MeteringPointFactoryTest {
   @Test
-  public void createPoint() {
+  public void createPoint_createsExpectedMeteringPointWithoutSizeSpecified() {
     final PigeonApiMeteringPointFactory api =
         new TestProxyApiRegistrar().getPigeonApiMeteringPointFactory();
 
@@ -28,7 +28,7 @@ public class MeteringPointFactoryTest {
   }
 
   @Test
-  public void createPointWithSize() {
+  public void createPointWithSize_createsExpectedMeteringPointWithSizeSpecified() {
     final PigeonApiMeteringPointFactory api =
         new TestProxyApiRegistrar().getPigeonApiMeteringPointFactory();
 

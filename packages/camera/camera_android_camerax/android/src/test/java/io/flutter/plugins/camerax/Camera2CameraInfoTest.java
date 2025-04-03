@@ -18,7 +18,7 @@ import org.mockito.stubbing.Answer;
 
 public class Camera2CameraInfoTest {
   @Test
-  public void from() {
+  public void from_createsInstanceFromCameraInfoInstance() {
     final PigeonApiCamera2CameraInfo api =
         new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
 
@@ -49,7 +49,7 @@ public class Camera2CameraInfoTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void getCameraCharacteristic() {
+  public void getCameraCharacteristic_returnsCorrespondingValueOfKey() {
     final PigeonApiCamera2CameraInfo api =
         new TestProxyApiRegistrar().getPigeonApiCamera2CameraInfo();
 

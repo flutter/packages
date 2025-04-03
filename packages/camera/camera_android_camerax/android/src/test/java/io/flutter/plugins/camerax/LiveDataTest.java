@@ -20,7 +20,7 @@ import org.junit.Test;
 
 public class LiveDataTest {
   @Test
-  public void type() {
+  public void type_returnsExpectedType() {
     final PigeonApiLiveData api = new TestProxyApiRegistrar().getPigeonApiLiveData();
 
     final LiveDataSupportedType value =
@@ -32,7 +32,7 @@ public class LiveDataTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void observe() {
+  public void observe_callsObserveOnInstanceWithLifeCycleOwner() {
     final PigeonApiLiveData api =
         new TestProxyApiRegistrar() {
           @Nullable
@@ -54,7 +54,7 @@ public class LiveDataTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void removeObservers() {
+  public void removeObservers_callsRemoveObserversOnInstance() {
     final PigeonApiLiveData api =
         new TestProxyApiRegistrar() {
           @Nullable
@@ -75,7 +75,7 @@ public class LiveDataTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void getValue() {
+  public void getValue_returnsExpectedResult() {
     final PigeonApiLiveData api = new TestProxyApiRegistrar().getPigeonApiLiveData();
 
     final LiveData<String> liveData = mock(LiveData.class);

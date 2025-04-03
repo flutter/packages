@@ -20,7 +20,7 @@ import org.mockito.stubbing.Answer;
 
 public class PendingRecordingTest {
   @Test
-  public void start() {
+  public void start_callsStartOnInstance() {
     final PigeonApiPendingRecording api =
         new TestProxyApiRegistrar().getPigeonApiPendingRecording();
 

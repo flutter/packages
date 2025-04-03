@@ -12,7 +12,7 @@ import org.junit.Test;
 
 public class RecordingTest {
   @Test
-  public void close() {
+  public void close_callsCloseOnInstance() {
     final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
     final Recording instance = mock(Recording.class);
@@ -22,7 +22,7 @@ public class RecordingTest {
   }
 
   @Test
-  public void pause() {
+  public void pause_callsPauseOnInstance() {
     final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
     final Recording instance = mock(Recording.class);
@@ -32,7 +32,7 @@ public class RecordingTest {
   }
 
   @Test
-  public void resume() {
+  public void resume_callsResumeOnInstance() {
     final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
     final Recording instance = mock(Recording.class);
@@ -42,7 +42,7 @@ public class RecordingTest {
   }
 
   @Test
-  public void stop() {
+  public void stop_callsStopOnInstance() {
     final PigeonApiRecording api = new TestProxyApiRegistrar().getPigeonApiRecording();
 
     final Recording instance = mock(Recording.class);

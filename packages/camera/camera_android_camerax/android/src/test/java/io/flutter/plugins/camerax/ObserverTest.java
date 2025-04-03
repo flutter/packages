@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class ObserverTest {
   @Test
-  public void onChanged() {
+  public void onChanged_makesExpectedCallToDartCallback() {
     final ObserverProxyApi mockApi = mock(ObserverProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 

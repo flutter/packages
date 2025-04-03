@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class ZoomStateTest {
   @Test
-  public void minZoomRatio() {
+  public void minZoomRatio_returnsExpectedMinZoomRatio() {
     final PigeonApiZoomState api = new TestProxyApiRegistrar().getPigeonApiZoomState();
 
     final ZoomState instance = mock(ZoomState.class);
@@ -24,7 +24,7 @@ public class ZoomStateTest {
   }
 
   @Test
-  public void maxZoomRatio() {
+  public void maxZoomRatio_returnsExpectedMaxZoomRatio() {
     final PigeonApiZoomState api = new TestProxyApiRegistrar().getPigeonApiZoomState();
 
     final ZoomState instance = mock(ZoomState.class);

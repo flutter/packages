@@ -16,7 +16,7 @@ import org.junit.Test;
 
 public class VideoRecordEventListenerTest {
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_createsExpectedVideoRecordEvent() {
     final PigeonApiVideoRecordEventListener api =
         new TestProxyApiRegistrar().getPigeonApiVideoRecordEventListener();
 
@@ -26,7 +26,7 @@ public class VideoRecordEventListenerTest {
   }
 
   @Test
-  public void onEvent() {
+  public void onEvent_makesCallToDartCallback() {
     final VideoRecordEventListenerProxyApi mockApi = mock(VideoRecordEventListenerProxyApi.class);
     when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
 

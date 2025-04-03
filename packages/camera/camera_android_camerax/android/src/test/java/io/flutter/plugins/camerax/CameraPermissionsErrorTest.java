@@ -10,7 +10,7 @@ import org.junit.Test;
 
 public class CameraPermissionsErrorTest {
   @Test
-  public void errorCode() {
+  public void errorCode_returnsValueOfErrorCodeFromInstance() {
     final PigeonApiCameraPermissionsError api =
         new TestProxyApiRegistrar().getPigeonApiCameraPermissionsError();
 
@@ -21,7 +21,7 @@ public class CameraPermissionsErrorTest {
   }
 
   @Test
-  public void description() {
+  public void description_returnsValueOfDescriptionFromInstance() {
     final PigeonApiCameraPermissionsError api =
         new TestProxyApiRegistrar().getPigeonApiCameraPermissionsError();
 

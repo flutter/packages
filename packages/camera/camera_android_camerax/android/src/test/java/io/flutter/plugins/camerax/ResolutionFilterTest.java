@@ -14,7 +14,7 @@ import org.junit.Test;
 
 public class ResolutionFilterTest {
   @Test
-  public void createWithOnePreferredSize() {
+  public void createWithOnePreferredSize_createsExpectedResolutionFilterInstance() {
     final PigeonApiResolutionFilter api =
         new TestProxyApiRegistrar().getPigeonApiResolutionFilter();
 

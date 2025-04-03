@@ -18,7 +18,7 @@ import org.junit.Test;
 public class CaptureRequestOptionsTest {
   @SuppressWarnings("unchecked")
   @Test
-  public void pigeon_defaultConstructor() {
+  public void pigeon_defaultConstructor_buildsExpectedCaptureKeyRequestOptions() {
     final CaptureRequestOptions.Builder mockBuilder = mock(CaptureRequestOptions.Builder.class);
     final CaptureRequestOptions mockOptions = mock(CaptureRequestOptions.class);
     when(mockBuilder.build()).thenReturn(mockOptions);
@@ -41,7 +41,7 @@ public class CaptureRequestOptionsTest {
 
   @SuppressWarnings("unchecked")
   @Test
-  public void getCaptureRequestOption() {
+  public void getCaptureRequestOption_returnsExpectedCorrespondingRequestOption() {
     final PigeonApiCaptureRequestOptions api =
         new TestProxyApiRegistrar().getPigeonApiCaptureRequestOptions();
 

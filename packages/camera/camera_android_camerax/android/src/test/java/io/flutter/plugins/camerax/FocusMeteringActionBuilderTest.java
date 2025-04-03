@@ -15,7 +15,7 @@ import org.junit.Test;
 
 public class FocusMeteringActionBuilderTest {
   @Test
-  public void addPoint() {
+  public void addPoint_callsAddPointWithoutModeOnInstance() {
     final PigeonApiFocusMeteringActionBuilder api =
         new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
 
@@ -27,7 +27,7 @@ public class FocusMeteringActionBuilderTest {
   }
 
   @Test
-  public void addPointWithMode() {
+  public void addPointWithMode_callsAddPointWithModeOnInstance() {
     final PigeonApiFocusMeteringActionBuilder api =
         new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
 
@@ -40,7 +40,7 @@ public class FocusMeteringActionBuilderTest {
   }
 
   @Test
-  public void disableAutoCancel() {
+  public void disableAutoCancel_callsDisableAutoCancelOnInstance() {
     final PigeonApiFocusMeteringActionBuilder api =
         new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
 
@@ -51,7 +51,7 @@ public class FocusMeteringActionBuilderTest {
   }
 
   @Test
-  public void build() {
+  public void build_returnExpectedFocusMeteringAction() {
     final PigeonApiFocusMeteringActionBuilder api =
         new TestProxyApiRegistrar().getPigeonApiFocusMeteringActionBuilder();
 
