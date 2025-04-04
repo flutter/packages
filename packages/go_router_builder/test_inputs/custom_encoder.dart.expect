@@ -6,7 +6,7 @@ RouteBase get $customParameterRoute => GoRouteData.$route(
 extension $CustomParameterRouteExtension on CustomParameterRoute {
   static CustomParameterRoute _fromState(GoRouterState state) =>
       CustomParameterRoute(
-        param: int.parse(fromBase64(state.uri.queryParameters['param']!)),
+        param: int.parse(fromBase64(state.uri.queryParameters['param']!))!,
       );
 
   String get location => GoRouteData.$location(
@@ -34,14 +34,16 @@ RouteBase get $customParameterComplexRoute => GoRouteData.$route(
 extension $CustomParameterComplexRouteExtension on CustomParameterComplexRoute {
   static CustomParameterComplexRoute _fromState(GoRouterState state) =>
       CustomParameterComplexRoute(
-        id: int.parse(fromBase64(state.pathParameters['id']!)),
+        id: int.parse(fromBase64(state.pathParameters['id']!))!,
         dir: state.uri.queryParameters['dir'] ?? '',
-        list: state.uri.queryParametersAll['list']
-                ?.map((e) => Uri.parse(fromBase64(e)))
-                .toList() ??
+        list: (state.uri.queryParametersAll['list']
+                    ?.map((e) => Uri.parse(fromBase64(e)))
+                    .cast<Uri>()
+                    ?.toList() as List<Uri>?)
+                ?.toList() ??
             const <Uri>[],
         enumTest: _$EnumTestEnumMap
-            ._$fromName(fromBase64(state.uri.queryParameters['enum-test']!)),
+            ._$fromName(fromBase64(state.uri.queryParameters['enum-test']!))!,
       );
 
   String get location => GoRouteData.$location(
@@ -71,8 +73,8 @@ const _$EnumTestEnumMap = {
 };
 
 extension<T extends Enum> on Map<T, String> {
-  T _$fromName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T? _$fromName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
 }
 
 bool _$iterablesEqual<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {

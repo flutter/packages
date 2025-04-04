@@ -8,7 +8,7 @@ extension $GoodJsonExtension on GoodJson {
         id: (String json0) {
           return JsonExample.fromJson(
               jsonDecode(json0) as Map<String, dynamic>);
-        }(state.uri.queryParameters['id']!),
+        }(state.uri.queryParameters['id']!)!,
       );
 
   String get location => GoRouteData.$location(

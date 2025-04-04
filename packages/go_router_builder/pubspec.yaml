@@ -37,3 +37,7 @@ topics:
   - deep-linking
   - go-router
   - navigation
+
+dependency_overrides:
+  go_router:
+    path: ../go_router
