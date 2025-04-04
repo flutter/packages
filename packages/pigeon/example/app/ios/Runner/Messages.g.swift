@@ -109,7 +109,7 @@ func deepEqualsMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
     return true
 
   default:
-    return String(describing: cleanLhs) == String(describing: cleanRhs)
+    return false
   }
 }
 

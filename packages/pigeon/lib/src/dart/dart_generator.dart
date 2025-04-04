@@ -1105,13 +1105,13 @@ bool _deepEquals(Object? a, Object? b) {
         .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((Entry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(key) &&
-        _deepEquals(value, b[key]));
+    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
+        (b as Map<Object?, Object?>).containsKey(entry.key) &&
+        _deepEquals(entry.value, b[entry.key]));
   }
   return a == b;
 }
-    ''');
+''');
   }
 
   void _writeCreateConnectionError(Indent indent) {
