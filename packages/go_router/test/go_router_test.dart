@@ -755,6 +755,7 @@ void main() {
         ),
         GoRoute(
           path: '/family/:fid',
+          caseSensitive: false,
           builder: (BuildContext context, GoRouterState state) =>
               FamilyScreen(state.pathParameters['fid']!),
         ),
@@ -795,7 +796,6 @@ void main() {
         ),
         GoRoute(
           path: '/family/:fid',
-          caseSensitive: true,
           builder: (BuildContext context, GoRouterState state) =>
               FamilyScreen(state.pathParameters['fid']!),
         ),
