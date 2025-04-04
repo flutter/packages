@@ -57,6 +57,7 @@ public abstract class VideoPlayer {
 
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
+    setPreferredAudioLanguage(exoPlayer, options.preferredAudioLanguage);
 
     return exoPlayer;
   }
@@ -73,6 +74,17 @@ public abstract class VideoPlayer {
     exoPlayer.setAudioAttributes(
         new AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(),
         !isMixMode);
+  }
+
+  private static void setPreferredAudioLanguage(ExoPlayer exoPlayer, String preferredAudioLanguage) {
+    if (preferredAudioLanguage != null) {
+      exoPlayer.setTrackSelectionParameters(
+          exoPlayer
+              .getTrackSelectionParameters()
+              .buildUpon()
+              .setPreferredAudioLanguage(preferredAudioLanguage)
+              .build());
+    }
   }
 
   void play() {

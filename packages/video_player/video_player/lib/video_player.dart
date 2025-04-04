@@ -436,6 +436,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           .setMixWithOthers(videoPlayerOptions!.mixWithOthers);
     }
 
+    if (videoPlayerOptions?.preferredAudioLanguage != null) {
+      await _videoPlayerPlatform.setPreferredAudioLanguage(
+          videoPlayerOptions!.preferredAudioLanguage);
+    }
+
     _textureId = (await _videoPlayerPlatform.create(dataSourceDescription)) ??
         kUninitializedTextureId;
     _creatingCompleter!.complete(null);
@@ -785,6 +790,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!_isDisposed) {
       super.removeListener(listener);
     }
+  }
+
+  /// Sets preferred audio language
+  Future<void> setPreferredAudioLanguage(String? preferredAudioLanguage) {
+    return _videoPlayerPlatform
+        .setPreferredAudioLanguage(preferredAudioLanguage);
   }
 
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;

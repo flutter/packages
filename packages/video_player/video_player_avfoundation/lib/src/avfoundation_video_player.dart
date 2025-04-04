@@ -180,6 +180,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setPreferredAudioLanguage(String? language) {
+    return _api.setPreferredAudioLanguage(language);
+  }
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(
       VideoViewOptions(playerId: playerId),

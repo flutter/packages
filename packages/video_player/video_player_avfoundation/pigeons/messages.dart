@@ -24,6 +24,11 @@ enum PlatformVideoViewType {
   platformView,
 }
 
+class PreferredAudioLanguageMessage {
+  PreferredAudioLanguageMessage({this.preferredAudioLanguage});
+  String? preferredAudioLanguage;
+}
+
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   const PlatformVideoViewCreationParams({
@@ -73,4 +78,6 @@ abstract class AVFoundationVideoPlayerApi {
   void pause(int playerId);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
+  @ObjCSelector('setPreferredAudioLanguage:')
+  void setPreferredAudioLanguage(String? language);
 }

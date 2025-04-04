@@ -1,3 +1,7 @@
+## 2.8.3
+
+* Adds support for preferred audio language by passing preferredAudioLanguage string parameter (for example 'en' or 'fr') via VideoPlayerOptions when initializing VideoPlayerController.
+
 ## 2.8.2
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to

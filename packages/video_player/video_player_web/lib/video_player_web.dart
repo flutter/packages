@@ -163,4 +163,9 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   /// Sets the audio mode to mix with other sources (ignored).
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) => Future<void>.value();
+
+  /// Sets the preferred audio language (ignored)
+  @override
+  Future<void> setPreferredAudioLanguage(String? preferredAudioLanguage) =>
+      Future<void>.value();
 }
