@@ -7,7 +7,12 @@ T? maybeEnum<T extends Enum>(String? needle, List<T> haystack) {
   if (needle == null) {
     return null;
   }
-  return haystack.byName(needle);
+  for (T enumValue in haystack) {
+    if (enumValue.name == needle) {
+      return enumValue;
+    }
+  }
+  return null;
 }
 
 /// The type of several functions from the library, that don't receive
