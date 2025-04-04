@@ -41,6 +41,12 @@ enum RenderingStrategy {
 
   /// Draw the vector graphic as a picture.
   picture,
+
+  /// Draw the vector graphic using an automatic mode.
+  ///
+  /// For small images, it attempts to generate a raster cache.
+  /// If no raster cache is available, it falls back to picture mode rendering.
+  auto,
 }
 
 /// The signature that [VectorGraphic.errorBuilder] uses to report exceptions.
@@ -476,6 +482,14 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           opacity: widget.opacity,
           scale: scale,
         );
+      } else if (widget.strategy == RenderingStrategy.auto) {
+        child = _RawAutoVectorGraphicWidget(
+          pictureInfo: pictureInfo,
+          assetKey: _pictureInfo!.key,
+          colorFilter: widget.colorFilter,
+          opacity: widget.opacity,
+          scale: scale,
+        );
       } else {
         child = _RawPictureVectorGraphicWidget(
           pictureInfo: pictureInfo,
@@ -580,6 +594,48 @@ class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
   void updateRenderObject(
     BuildContext context,
     covariant RenderVectorGraphic renderObject,
+  ) {
+    renderObject
+      ..pictureInfo = pictureInfo
+      ..assetKey = assetKey
+      ..colorFilter = colorFilter
+      ..devicePixelRatio = MediaQuery.maybeOf(context)?.devicePixelRatio ?? 1.0
+      ..opacity = opacity
+      ..scale = scale;
+  }
+}
+
+class _RawAutoVectorGraphicWidget extends SingleChildRenderObjectWidget {
+  const _RawAutoVectorGraphicWidget({
+    required this.pictureInfo,
+    required this.colorFilter,
+    required this.opacity,
+    required this.scale,
+    required this.assetKey,
+  });
+
+  final PictureInfo pictureInfo;
+  final ColorFilter? colorFilter;
+  final double scale;
+  final Animation<double>? opacity;
+  final Object assetKey;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) {
+    return RenderAutoVectorGraphic(
+      pictureInfo,
+      assetKey,
+      colorFilter,
+      MediaQuery.maybeOf(context)?.devicePixelRatio ?? 1.0,
+      opacity,
+      scale,
+    );
+  }
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    covariant RenderAutoVectorGraphic renderObject,
   ) {
     renderObject
       ..pictureInfo = pictureInfo
