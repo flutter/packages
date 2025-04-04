@@ -280,4 +280,16 @@ class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
     return PigeonApiWKWebpagePreferences(
       pigeonRegistrar: registrar, delegate: WebpagePreferencesProxyAPIDelegate())
   }
+  
+  func pigeonApiGetTrustResultResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiGetTrustResultResponse {
+    return PigeonApiGetTrustResultResponse(pigeonRegistrar: registrar, delegate: GetTrustResultResponseProxyAPIDelegate())
+  }
+  
+  func pigeonApiSecTrust(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiSecTrust {
+    return PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: SecTrustProxyAPIDelegate())
+  }
+  
+  func pigeonApiSecCertificate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiSecCertificate {
+    return PigeonApiSecCertificate(pigeonRegistrar: registrar, delegate: SecCertificateProxyAPIDelegate())
+  }
 }
