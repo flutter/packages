@@ -653,6 +653,13 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onReceivedRequestError,
     super.requestLoading,
     super.urlLoading,
+    super.onFormResubmission,
+    super.onLoadResource,
+    super.onPageCommitVisible,
+    super.onReceivedClientCertRequest,
+    super.onReceivedLoginRequest,
+    super.onReceivedSslError,
+    super.onScaleChanged,
   }) : super.pigeon_detached(
             pigeon_instanceManager: android_webview.PigeonInstanceManager(
                 onWeakReferenceRemoved: (_) {})) {
@@ -674,7 +681,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
 class CapturingWebChromeClient extends android_webview.WebChromeClient {
   CapturingWebChromeClient({
     super.onProgressChanged,
-    super.onShowFileChooser,
+    required super.onShowFileChooser,
     super.onGeolocationPermissionsShowPrompt,
     super.onGeolocationPermissionsHidePrompt,
     super.onShowCustomView,
@@ -682,7 +689,7 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
     super.onPermissionRequest,
     super.onConsoleMessage,
     super.onJsAlert,
-    super.onJsConfirm,
+    required super.onJsConfirm,
     super.onJsPrompt,
   }) : super.pigeon_detached(
             pigeon_instanceManager: android_webview.PigeonInstanceManager(
@@ -691,7 +698,10 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
   }
 
   static CapturingWebChromeClient lastCreatedDelegate =
-      CapturingWebChromeClient();
+      CapturingWebChromeClient(
+    onJsConfirm: (_, __, ___, ____) async => false,
+    onShowFileChooser: (_, __, ___) async => <String>[],
+  );
 }
 
 // Records the last created instance of itself.
