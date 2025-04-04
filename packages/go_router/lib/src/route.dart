@@ -275,7 +275,7 @@ class GoRoute extends RouteBase {
     super.parentNavigatorKey,
     super.redirect,
     this.onExit,
-    this.caseSensitive = false,
+    this.caseSensitive = true,
     super.routes = const <RouteBase>[],
   })  : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
         assert(name == null || name.isNotEmpty, 'GoRoute name cannot be empty'),
