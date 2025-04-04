@@ -362,6 +362,14 @@ class PlatformLatLng {
   final double longitude;
 }
 
+/// Pigeon equivalent of IndoorLevel.
+class PlatformIndoorLevel {
+  PlatformIndoorLevel({required this.name, required this.shortName});
+
+  final String? name;
+  final String? shortName;
+}
+
 /// Pigeon equivalent of LatLngBounds.
 class PlatformLatLngBounds {
   PlatformLatLngBounds({required this.northeast, required this.southwest});
@@ -737,6 +745,9 @@ abstract class MapsCallbackApi {
 
   /// Called when the map, not a specifc map object, is long pressed.
   void onLongPress(PlatformLatLng position);
+
+  /// Called when the user changes the active level on indoor maps.
+  void onActiveLevelChanged(PlatformIndoorLevel? activeLevel);
 
   /// Called when a marker is tapped.
   void onMarkerTap(String markerId);

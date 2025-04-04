@@ -121,5 +121,33 @@ void main() {
       expect((await markerDragEndStream.next).value.value,
           equals('drag-end-marker'));
     });
+
+    test('active level change events to correct stream', () async {
+      const int mapId = 1;
+      const String expectedName = 'some-name';
+      const String expectedShortName = 'some-short-name';
+      final Map<dynamic, dynamic> jsonActiveLevelChangedEvent =
+          <dynamic, dynamic>{
+        'mapId': mapId,
+        'name': expectedName,
+        'shortName': expectedShortName,
+      };
+
+      final MethodChannelGoogleMapsFlutter maps =
+          MethodChannelGoogleMapsFlutter();
+      maps.ensureChannelInitialized(mapId);
+
+      final StreamQueue<MapActiveLevelChangedEvent>
+          mapActiveLevelChangedStream = StreamQueue<MapActiveLevelChangedEvent>(
+              maps.onActiveLevelChanged(mapId: mapId));
+
+      await sendPlatformMessage(
+          mapId, 'map#onActiveLevelChanged', jsonActiveLevelChangedEvent);
+
+      final IndoorLevel? nextStreamValue =
+          (await mapActiveLevelChangedStream.next).value;
+      expect(nextStreamValue?.name, expectedName);
+      expect(nextStreamValue?.shortName, expectedShortName);
+    });
   });
 }

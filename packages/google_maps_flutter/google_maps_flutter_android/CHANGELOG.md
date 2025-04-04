@@ -1,3 +1,7 @@
+## 2.17.0
+
+* Adds `onActiveLevelChanged` callback to `GoogleMap` to listen for indoor building active floor changes.
+
 ## 2.16.0
 
 * Adds support for animating the camera with a duration.

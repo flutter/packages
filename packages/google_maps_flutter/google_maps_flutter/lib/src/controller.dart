@@ -83,6 +83,10 @@ class GoogleMapController {
     GoogleMapsFlutterPlatform.instance.onLongPress(mapId: mapId).listen(
         (MapLongPressEvent e) => _googleMapState.onLongPress(e.position));
     GoogleMapsFlutterPlatform.instance
+        .onActiveLevelChanged(mapId: mapId)
+        .listen((MapActiveLevelChangedEvent e) =>
+            _googleMapState.onActiveLevelChanged(e.value));
+    GoogleMapsFlutterPlatform.instance
         .onClusterTap(mapId: mapId)
         .listen((ClusterTapEvent e) => _googleMapState.onClusterTap(e.value));
   }
