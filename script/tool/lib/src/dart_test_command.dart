@@ -66,6 +66,24 @@ class DartTestCommand extends PackageLoopingCommand {
       PackageLoopingType.includeAllSubpackages;
 
   @override
+  bool shouldIgnoreFile(String path) {
+    return repoLevelNonCodeImpactingFiles.contains(path) ||
+        // Native code, which is not part of Dart unit testing.
+        path.endsWith('.c') ||
+        path.endsWith('.cc') ||
+        path.endsWith('.cpp') ||
+        path.endsWith('.h') ||
+        path.endsWith('.m') ||
+        path.endsWith('.swift') ||
+        path.endsWith('.java') ||
+        path.endsWith('.kt') ||
+        // Package metadata that doesn't impact Dart unit tests.
+        path.endsWith('/AUTHORS') ||
+        path.endsWith('/CHANGELOG.md') ||
+        path.endsWith('/README.md');
+  }
+
+  @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     if (!package.testDirectory.existsSync()) {
       return PackageResult.skip('No test/ directory.');

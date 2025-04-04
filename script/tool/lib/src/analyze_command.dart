@@ -6,6 +6,7 @@ import 'dart:io' as io;
 
 import 'package:file/file.dart';
 
+import 'common/core.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/repository_package.dart';
@@ -90,6 +91,24 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return true;
     }
     return false;
+  }
+
+  @override
+  bool shouldIgnoreFile(String path) {
+    return repoLevelNonCodeImpactingFiles.contains(path) ||
+        // Native code, which is not part of Dart analysis.
+        path.endsWith('.c') ||
+        path.endsWith('.cc') ||
+        path.endsWith('.cpp') ||
+        path.endsWith('.h') ||
+        path.endsWith('.m') ||
+        path.endsWith('.swift') ||
+        path.endsWith('.java') ||
+        path.endsWith('.kt') ||
+        // Package metadata that doesn't impact analysis.
+        path.endsWith('/AUTHORS') ||
+        path.endsWith('/CHANGELOG.md') ||
+        path.endsWith('/README.md');
   }
 
   @override

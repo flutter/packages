@@ -109,6 +109,20 @@ abstract class PackageLoopingCommand extends PackageCommand {
   /// The package currently being run by [runForPackage].
   PackageEnumerationEntry? _currentPackageEntry;
 
+  /// When running against a merge base, this is called before [initializeRun]
+  /// for every changed file, to see if that file is a file that is guaranteed
+  /// *not* to require running this command.
+  ///
+  /// If every changed file returns true, then the command will be skipped.
+  /// Because this causes tests not to run, subclasses should be very
+  /// consevative about what returns true; for anything borderline it is much
+  /// better to err on the side of running tests unnecessarily than to risk
+  /// losing test coverage.
+  ///
+  /// [path] is a POSIX-style path regardless of the host platforrm, and is
+  /// relative to the git repo root.
+  bool shouldIgnoreFile(String path) => false;
+
   /// Called during [run] before any calls to [runForPackage]. This provides an
   /// opportunity to fail early if the command can't be run (e.g., because the
   /// arguments are invalid), and to set up any run-level state.
@@ -280,6 +294,14 @@ abstract class PackageLoopingCommand extends PackageCommand {
     final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
     baseSha = await gitVersionFinder.getBaseSha();
     changedFiles = await gitVersionFinder.getChangedFiles();
+
+    // Check whether the command needs to run.
+    if (changedFiles.isNotEmpty && changedFiles.every(shouldIgnoreFile)) {
+      _printColorized(
+          'SKIPPING ALL PACKAGES: No changed files affect this command',
+          Styles.DARK_GRAY);
+      return true;
+    }
 
     await initializeRun();
 
