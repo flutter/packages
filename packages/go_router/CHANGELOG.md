@@ -1,6 +1,9 @@
-## 14.9.0
+## 15.0.0
 
-- Adds `caseSensitive` parameter to `GoRouter` (default to `false`).
+- **BREAKING CHANGE**
+  - URLs are now case sensitive.
+  - Adds `caseSensitive` parameter to `GoRouter` (default to `true`).
+  - See [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes)
 
 ## 14.8.1
 
