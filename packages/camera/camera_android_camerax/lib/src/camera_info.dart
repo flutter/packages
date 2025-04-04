@@ -38,6 +38,10 @@ class CameraInfo extends JavaObject {
   Future<int> getSensorRotationDegrees() =>
       _api.getSensorRotationDegreesFromInstance(this);
 
+  /// Gets lens facing of the camera.
+  Future<int> getLensFacing() =>
+      _api.getLensFacingFromInstance(this);
+
   /// Starts listening for the camera closing.
   Future<LiveData<CameraState>> getCameraState() =>
       _api.getCameraStateFromInstance(this);
@@ -69,6 +73,14 @@ class _CameraInfoHostApiImpl extends CameraInfoHostApi {
     final int sensorRotationDegrees = await getSensorRotationDegrees(
         instanceManager.getIdentifier(instance)!);
     return sensorRotationDegrees;
+  }
+
+  /// Gets the lens facing of the specified [CameraInfo] instance.
+  Future<int> getLensFacingFromInstance(
+      CameraInfo instance,
+      ) async {
+    final int lensFacing = await getLensFacing(instanceManager.getIdentifier(instance)!);
+    return lensFacing;
   }
 
   /// Gets the [LiveData<CameraState>] that represents the state of the camera

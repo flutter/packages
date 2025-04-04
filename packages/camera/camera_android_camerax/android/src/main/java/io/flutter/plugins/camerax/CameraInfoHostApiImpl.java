@@ -43,6 +43,17 @@ public class CameraInfoHostApiImpl implements CameraInfoHostApi {
   }
 
   /**
+   * Returns the lens facing of the {@link androidx.camera.core.Camera} that is
+   * represented by the {@link CameraInfo} with the specified identifier.
+   */
+  @Override
+  @NonNull
+  public Long getLensFacing(@NonNull Long identifier) {
+    CameraInfo cameraInfo =
+            (CameraInfo) Objects.requireNonNull(instanceManager.getInstance(identifier));
+    return Long.valueOf(cameraInfo.getLensFacing());
+
+  /**
    * Retrieves the {@link LiveData} of the {@link CameraState} that is tied to the {@link
    * androidx.camera.core.Camera} that is represented by the {@link CameraInfo} with the specified
    * identifier.
