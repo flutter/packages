@@ -12,10 +12,12 @@ final class MockCaptureSession: NSObject, FLTCaptureSession {
   var stopRunningStub: (() -> Void)?
   var canSetSessionPresetStub: ((AVCaptureSession.Preset) -> Bool)?
 
+  var captureSession = AVCaptureSession()
   var _sessionPreset = AVCaptureSession.Preset.high
   var inputs = [AVCaptureInput]()
   var outputs = [AVCaptureOutput]()
   var automaticallyConfiguresApplicationAudioSession = false
+  var running = true
 
   var sessionPreset: AVCaptureSession.Preset {
     get {

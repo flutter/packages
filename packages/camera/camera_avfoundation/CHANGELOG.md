@@ -1,3 +1,8 @@
+## 0.9.18+14
+
+* Handle video and audio interruptions and errors.
+* Use a single time offset for both video and audio.
+
 ## 0.9.18+13
 
 * Migrates test utils and mocks to Swift.
