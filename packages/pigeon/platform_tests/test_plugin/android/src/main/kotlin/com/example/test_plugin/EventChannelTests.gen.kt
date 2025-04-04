@@ -49,8 +49,9 @@ private fun deepEqualsEventChannelTests(a: Any?, b: Any?): Boolean {
   }
   if (a is Map<*, *> && b is Map<*, *>) {
     return a.size == b.size &&
-        a.keys.all {
-          (b as Map<Any?, Any?>).containsKey(it) && deepEqualsEventChannelTests(a[it], b[it])
+        a.all {
+          (b as Map<Any?, Any?>).containsKey(it.key) &&
+              deepEqualsEventChannelTests(it.value, b[it.key])
         }
   }
   return a == b

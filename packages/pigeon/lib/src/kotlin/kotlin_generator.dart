@@ -1273,9 +1273,9 @@ private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?
         a.indices.all{ deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it]) }
   }
   if (a is Map<*, *> && b is Map<*, *>) {
-    return a.size == b.size && a.keys.all {
-        (b as Map<Any?, Any?>).containsKey(it) &&
-        deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it])
+    return a.size == b.size && a.all {
+        (b as Map<Any?, Any?>).containsKey(it.key) &&
+        deepEquals${generatorOptions.fileSpecificClassNameComponent}(it.value, b[it.key])
     }
   }
   return a == b

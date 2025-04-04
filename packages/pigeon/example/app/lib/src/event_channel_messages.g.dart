@@ -18,11 +18,10 @@ bool _deepEquals(Object? a, Object? b) {
             .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
-    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
     return a.length == b.length &&
-        keys.every((Object? key) =>
+        a.entries.every((Entry<Object?, Object?> entry) =>
             (b as Map<Object?, Object?>).containsKey(key) &&
-            _deepEquals(a[key], b[key]));
+            _deepEquals(value, b[key]));
   }
   return a == b;
 }

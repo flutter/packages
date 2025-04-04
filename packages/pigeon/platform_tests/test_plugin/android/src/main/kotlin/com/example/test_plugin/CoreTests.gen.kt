@@ -70,7 +70,9 @@ private fun deepEqualsCoreTests(a: Any?, b: Any?): Boolean {
   }
   if (a is Map<*, *> && b is Map<*, *>) {
     return a.size == b.size &&
-        a.keys.all { (b as Map<Any?, Any?>).containsKey(it) && deepEqualsCoreTests(a[it], b[it]) }
+        a.all {
+          (b as Map<Any?, Any?>).containsKey(it.key) && deepEqualsCoreTests(it.value, b[it.key])
+        }
   }
   return a == b
 }
