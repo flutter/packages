@@ -59,15 +59,14 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   /** Creates an exception when the `unknown` enum value is passed to a host method. */
   @NonNull
   IllegalArgumentException createUnknownEnumException(@NonNull Object enumValue) {
-    return new IllegalArgumentException(
-        String.format("%s doesn't represent a native value.", enumValue));
+    return new IllegalArgumentException(enumValue + " doesn't represent a native value.");
   }
 
   /** Creates the error message when a method is called on an unsupported version. */
   @NonNull
   String createUnsupportedVersionMessage(
       @NonNull String method, @NonNull String versionRequirements) {
-    return String.format("%s requires %s.", method, versionRequirements);
+    return method + " requires " + versionRequirements + ".";
   }
 
   /** Creates an exception when a method is called on an unsupported version. */
