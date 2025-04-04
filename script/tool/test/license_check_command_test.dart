@@ -4,33 +4,28 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/license_check_command.dart';
-import 'package:mockito/mockito.dart';
+import 'package:git/git.dart';
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
   group('LicenseCheckCommand', () {
     late CommandRunner<void> runner;
-    late FileSystem fileSystem;
     late Platform platform;
+    late Directory packagesDir;
     late Directory root;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       platform = MockPlatformWithSeparator();
-      final Directory packagesDir =
-          fileSystem.currentDirectory.childDirectory('packages');
+      final GitDir gitDir;
+      (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: platform);
       root = packagesDir.parent;
-
-      final MockGitDir gitDir = MockGitDir();
-      when(gitDir.path).thenReturn(packagesDir.parent.path);
 
       final LicenseCheckCommand command = LicenseCheckCommand(
         packagesDir,
@@ -115,6 +110,7 @@ void main() {
         'GeneratedPluginRegistrant.m',
         'generated_plugin_registrant.cc',
         'generated_plugin_registrant.cpp',
+        'web_plugin_registrant.dart',
         // Ignored path suffixes.
         'foo.g.dart',
         'foo.mocks.dart',
@@ -159,6 +155,24 @@ void main() {
       for (final String filePath in submoduleFiles) {
         expect(output, isNot(contains('Checking $filePath')));
       }
+    });
+
+    test('ignores FlutterGeneratedPluginSwiftPackage', () async {
+      final Directory packageDir = root
+          .childDirectory('FlutterGeneratedPluginSwiftPackage')
+        ..createSync();
+      packageDir.childFile('Package.swift').createSync();
+      packageDir
+          .childDirectory('Sources')
+          .childDirectory('FlutterGeneratedPluginSwiftPackage')
+          .childFile('FlutterGeneratedPluginSwiftPackage.swift')
+          .createSync(recursive: true);
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['license-check']);
+
+      expect(output,
+          isNot(contains('Checking FlutterGeneratedPluginSwiftPackage')));
     });
 
     test('passes if all checked files have license blocks', () async {

@@ -1,0 +1,13 @@
+dartdoc:
+  categories:
+    "Initialization":
+      markdown: doc/initialization.md
+    "H5 Games Ads":
+      markdown: doc/h5.md
+    "Ad Units":
+      markdown: doc/ad_unit_widget.md
+  categoryOrder:
+    - "Initialization"
+    - "H5 Games Ads"
+    - "Ad Units"
+  showUndocumentedCategories: true

@@ -4,9 +4,9 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/pubspec_check_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -136,21 +136,20 @@ false_secrets:
 void main() {
   group('test pubspec_check_command', () {
     late CommandRunner<void> runner;
-    late RecordingProcessRunner processRunner;
-    late FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       mockPlatform = MockPlatform();
-      packagesDir = fileSystem.currentDirectory.childDirectory('packages');
-      createPackagesDirectory(parentDir: packagesDir.parent);
-      processRunner = RecordingProcessRunner();
+      final RecordingProcessRunner processRunner;
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final PubspecCheckCommand command = PubspecCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>(
@@ -1674,7 +1673,8 @@ ${_topicsSection()}
         );
       });
 
-      test('passes when a pinned dependency is on the pinned allow list',
+      test(
+          'passes when an exactly-pinned dependency is on the pinned allow list',
           () async {
         final RepositoryPackage package =
             createFakePackage('a_package', packagesDir);
@@ -1683,6 +1683,34 @@ ${_topicsSection()}
 ${_headerSection('a_package')}
 ${_environmentSection()}
 ${_dependenciesSection(<String>['allow_pinned: 1.0.0'])}
+${_topicsSection()}
+''');
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'pubspec-check',
+          '--allow-pinned-dependencies',
+          'allow_pinned'
+        ]);
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for a_package...'),
+            contains('No issues found!'),
+          ]),
+        );
+      });
+
+      test(
+          'passes when an explicit-range-pinned dependency is on the pinned allow list',
+          () async {
+        final RepositoryPackage package =
+            createFakePackage('a_package', packagesDir);
+
+        package.pubspecFile.writeAsStringSync('''
+${_headerSection('a_package')}
+${_environmentSection()}
+${_dependenciesSection(<String>['allow_pinned: ">=1.0.0 <=1.3.1"'])}
 ${_topicsSection()}
 ''');
 
@@ -1740,6 +1768,7 @@ ${_topicsSection()}
           'build_runner',
           'integration_test',
           'flutter_test',
+          'leak_tracker_flutter_testing',
           'mockito',
           'pigeon',
           'test',
@@ -1821,21 +1850,20 @@ ${_topicsSection()}
 
   group('test pubspec_check_command on Windows', () {
     late CommandRunner<void> runner;
-    late RecordingProcessRunner processRunner;
-    late FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
 
     setUp(() {
-      fileSystem = MemoryFileSystem(style: FileSystemStyle.windows);
       mockPlatform = MockPlatform(isWindows: true);
-      packagesDir = fileSystem.currentDirectory.childDirectory('packages');
-      createPackagesDirectory(parentDir: packagesDir.parent);
-      processRunner = RecordingProcessRunner();
+      final RecordingProcessRunner processRunner;
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final PubspecCheckCommand command = PubspecCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>(

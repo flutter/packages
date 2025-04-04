@@ -1,3 +1,49 @@
+## 3.18.5
+
+* Fixes crash when sending undefined message via JavaScript channel.
+
+## 3.18.4
+
+* Fixes crash when native `WKFrameInfo.request` is nil.
+
+## 3.18.3
+
+* Fixes crash where the native `AuthenticationChallengeResponse` could not be found for auth
+  requests.
+
+## 3.18.2
+
+* Updates generated pigeon code to ensure the internal wrapper immediately sends constructor calls.
+
+## 3.18.1
+
+* Fixes bug that would allow the API wrapper to return `null` when a non-null value was required in
+  a callback method.
+* Changes default method to enable JavaScript for web content to
+  `WKWebpagePreferences.allowsContentJavaScript`. 
+
+## 3.18.0
+
+* Updates internal API wrapper to use ProxyApis.
+
+## 3.17.0
+
+* Adds a change listener for the `canGoBack` property. See
+  `WebKitWebViewController.setOnCanGoBackChange`.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 3.16.3
+
+* Fixes re-registering existing channels while removing Javascript channels.
+
+## 3.16.2
+
+* Updates README to remove contributor-focused documentation.
+
+## 3.16.1
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
 ## 3.16.0
 
 * Supports NTLM for authentication.

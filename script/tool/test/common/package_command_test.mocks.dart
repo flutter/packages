@@ -244,12 +244,16 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
   _i6.Future<_i10.ProcessResult> runCommand(
     Iterable<String>? args, {
     bool? throwOnError = true,
+    bool? echoOutput = false,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
           #runCommand,
           [args],
-          {#throwOnError: throwOnError},
+          {
+            #throwOnError: throwOnError,
+            #echoOutput: echoOutput,
+          },
         ),
         returnValue: _i6.Future<_i10.ProcessResult>.value(
             _i5.dummyValue<_i10.ProcessResult>(
@@ -257,7 +261,10 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
           Invocation.method(
             #runCommand,
             [args],
-            {#throwOnError: throwOnError},
+            {
+              #throwOnError: throwOnError,
+              #echoOutput: echoOutput,
+            },
           ),
         )),
       ) as _i6.Future<_i10.ProcessResult>);
@@ -274,7 +281,7 @@ class MockGitDir extends _i1.Mock implements _i4.GitDir {
   @override
   _i6.Future<_i2.Commit?> updateBranch(
     String? branchName,
-    _i6.Future<dynamic> Function(_i10.Directory)? populater,
+    _i6.Future<void> Function(_i10.Directory)? populater,
     String? commitMessage,
   ) =>
       (super.noSuchMethod(

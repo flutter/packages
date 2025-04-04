@@ -86,7 +86,6 @@ class UrlLauncherPlugin extends UrlLauncherPlatform {
     final String target = webOnlyWindowName ??
         ((_isSafari && _isSafariTargetTopScheme(scheme)) ? '_top' : '');
 
-    // ignore: unsafe_html
     _window.open(url, target, 'noopener,noreferrer');
 
     return true;

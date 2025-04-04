@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:collection/collection.dart';
 import 'package:file/file.dart';
 import 'package:meta/meta.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -19,7 +20,10 @@ final Version minKotlinVersion = Version(1, 7, 10);
 /// A command to enforce gradle file conventions and best practices.
 class GradleCheckCommand extends PackageLoopingCommand {
   /// Creates an instance of the gradle check command.
-  GradleCheckCommand(super.packagesDir);
+  GradleCheckCommand(
+    super.packagesDir, {
+    super.gitDir,
+  });
 
   @override
   final String name = 'gradle-check';
@@ -127,6 +131,9 @@ class GradleCheckCommand extends PackageLoopingCommand {
     if (!_validateGradleDrivenLintConfig(package, lines)) {
       succeeded = false;
     }
+    if (!_validateCompileSdkUsage(package, lines)) {
+      succeeded = false;
+    }
     return succeeded;
   }
 
@@ -198,23 +205,16 @@ class GradleCheckCommand extends PackageLoopingCommand {
     return succeeded;
   }
 
-  /// String printed as example of valid example root settings.gradle repository
+  /// String printed as a valid example of settings.gradle repository
   /// configuration that enables artifact hub env variable.
   @visibleForTesting
-  static String exampleRootSettingsArtifactHubString = '''
-// See $artifactHubDocumentationString for more info.
-buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
-    }
-  }
-  dependencies {
-    classpath "gradle.plugin.com.google.cloud.artifactregistry:artifactregistry-gradle-plugin:2.2.1"
-  }
+  static String exampleSettingsArtifactHubString = '''
+plugins {
+    id "dev.flutter.flutter-plugin-loader" version "1.0.0"
+    // ...other plugins
+    id "com.google.cloud.artifactregistry.gradle-plugin" version "2.2.1"
 }
-apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
-''';
+  ''';
 
   /// Validates that [gradleLines] reads and uses a artifiact hub repository
   /// when ARTIFACT_HUB_REPOSITORY is set.
@@ -224,28 +224,29 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
       RepositoryPackage example, List<String> gradleLines) {
     final RegExp documentationPresentRegex = RegExp(
         r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure');
-    final RegExp artifactRegistryDefinitionRegex = RegExp(
-        r'classpath.*gradle\.plugin\.com\.google\.cloud\.artifactregistry:artifactregistry-gradle-plugin');
     final RegExp artifactRegistryPluginApplyRegex = RegExp(
-        r'apply.*plugin.*com\.google\.cloud\.artifactregistry\.gradle-plugin');
+        r'id.*com\.google\.cloud\.artifactregistry\.gradle-plugin.*version.*\b\d+\.\d+\.\d+\b');
 
     final bool documentationPresent = gradleLines
         .any((String line) => documentationPresentRegex.hasMatch(line));
-    final bool artifactRegistryDefined = gradleLines
-        .any((String line) => artifactRegistryDefinitionRegex.hasMatch(line));
-    final bool artifactRegistryPluginApplied = gradleLines
+    final bool declarativeArtifactRegistryApplied = gradleLines
         .any((String line) => artifactRegistryPluginApplyRegex.hasMatch(line));
+    final bool validArtifactConfiguration =
+        documentationPresent && declarativeArtifactRegistryApplied;
 
-    if (!(documentationPresent &&
-        artifactRegistryDefined &&
-        artifactRegistryPluginApplied)) {
-      printError('Failed Artifact Hub validation. Include the following in '
-          'example root settings.gradle:\n$exampleRootSettingsArtifactHubString');
+    if (!validArtifactConfiguration) {
+      printError('Failed Artifact Hub validation.');
+      if (!documentationPresent) {
+        printError(
+            'The link to the Artifact Hub documentation is missing. Include the following in '
+            'example root settings.gradle:\n// See $artifactHubDocumentationString for more info.');
+      }
+      if (!declarativeArtifactRegistryApplied) {
+        printError('Include the following in '
+            'example root settings.gradle:\n$exampleSettingsArtifactHubString');
+      }
     }
-
-    return documentationPresent &&
-        artifactRegistryDefined &&
-        artifactRegistryPluginApplied;
+    return validArtifactConfiguration;
   }
 
   /// Validates the top-level build.gradle for an example app (e.g.,
@@ -293,12 +294,16 @@ apply plugin: "com.google.cloud.artifactregistry.gradle-plugin"
   /// compatibility with apps that use AGP 8+.
   bool _validateNamespace(RepositoryPackage package, String gradleContents,
       {required bool isExample}) {
-    final RegExp namespaceRegex =
-        RegExp('^\\s*namespace\\s+[\'"](.*?)[\'"]', multiLine: true);
-    final RegExpMatch? namespaceMatch =
-        namespaceRegex.firstMatch(gradleContents);
+    // Regex to validate that either of the following namespace definitions
+    // are found (where the single quotes can be single or double):
+    //  - namespace 'dev.flutter.foo'
+    //  - namespace = 'dev.flutter.foo'
+    final RegExp nameSpaceRegex =
+        RegExp('^\\s*namespace\\s+=?\\s*[\'"](.*?)[\'"]', multiLine: true);
+    final RegExpMatch? nameSpaceRegexMatch =
+        nameSpaceRegex.firstMatch(gradleContents);
 
-    if (namespaceMatch == null) {
+    if (nameSpaceRegexMatch == null) {
       const String errorMessage = '''
 build.gradle must set a "namespace":
 
@@ -316,7 +321,7 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
       return false;
     } else {
       return _validateNamespaceMatchesManifest(package,
-          isExample: isExample, namespace: namespaceMatch.group(1)!);
+          isExample: isExample, namespace: nameSpaceRegexMatch.group(1)!);
     }
   }
 
@@ -413,6 +418,56 @@ for more details.''';
         warningsAsErrors true
 ''');
       return false;
+    }
+    return true;
+  }
+
+  bool _validateCompileSdkUsage(
+      RepositoryPackage package, List<String> gradleLines) {
+    final RegExp linePattern = RegExp(r'^\s*compileSdk.*\s+=');
+    final RegExp legacySettingPattern = RegExp(r'^\s*compileSdkVersion');
+    final String? compileSdkLine = gradleLines
+        .firstWhereOrNull((String line) => linePattern.hasMatch(line));
+    if (compileSdkLine == null) {
+      // Equals regex not found check for method pattern.
+      final RegExp compileSpacePattern = RegExp(r'^\s*compileSdk');
+      final String? methodAssignmentLine = gradleLines.firstWhereOrNull(
+          (String line) => compileSpacePattern.hasMatch(line));
+      if (methodAssignmentLine == null) {
+        printError('${indentation}No compileSdk or compileSdkVersion found.');
+      } else {
+        printError(
+            '${indentation}No "compileSdk =" found. Please use property assignment.');
+      }
+      return false;
+    }
+    if (legacySettingPattern.hasMatch(compileSdkLine)) {
+      printError('${indentation}Please replace the deprecated '
+          '"compileSdkVersion" setting with the newer "compileSdk"');
+      return false;
+    }
+    if (compileSdkLine.contains('flutter.compileSdkVersion')) {
+      final Pubspec pubspec = package.parsePubspec();
+      final VersionConstraint? flutterConstraint =
+          pubspec.environment['flutter'];
+      final Version? minFlutterVersion =
+          flutterConstraint != null && flutterConstraint is VersionRange
+              ? flutterConstraint.min
+              : null;
+      if (minFlutterVersion == null) {
+        printError('${indentation}Unable to find a Flutter SDK version '
+            'constraint. Use of flutter.compileSdkVersion requires a minimum '
+            'Flutter version of 3.27');
+        return false;
+      }
+      if (minFlutterVersion < Version(3, 27, 0)) {
+        printError('${indentation}Use of flutter.compileSdkVersion requires a '
+            'minimum Flutter version of 3.27, but this package currently '
+            'supports $minFlutterVersion.\n'
+            "${indentation}Please update the package's minimum Flutter SDK "
+            'version to at least 3.27.');
+        return false;
+      }
     }
     return true;
   }

@@ -1,0 +1,15 @@
+name: "path_parsing"
+description:
+    "A pure Dart parsing library for SVG paths."
+
+third_party {
+  identifier {
+    type: "Git"
+    value: "https://github.com/dnfield/dart_path_parsing/"
+    primary_source: true
+    version: "6785396f6c5528c720adb14833b196e529e78998"
+  }
+  version: "6785396f6c5528c720adb14833b196e529e78998"
+  last_upgrade_date { year: 2024 month: 10 day: 24 }
+  license_type: NOTICE
+}

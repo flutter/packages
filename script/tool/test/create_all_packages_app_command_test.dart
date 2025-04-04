@@ -6,7 +6,6 @@ import 'dart:io' as io;
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/create_all_packages_app_command.dart';
 import 'package:platform/platform.dart';
@@ -20,17 +19,15 @@ void main() {
   late CommandRunner<void> runner;
   late CreateAllPackagesAppCommand command;
   late Platform mockPlatform;
-  late FileSystem fileSystem;
   late Directory testRoot;
   late Directory packagesDir;
   late RecordingProcessRunner processRunner;
 
   setUp(() {
     mockPlatform = MockPlatform(isMacOS: true);
-    fileSystem = MemoryFileSystem();
-    testRoot = fileSystem.systemTempDirectory.createTempSync();
-    packagesDir = testRoot.childDirectory('packages');
-    processRunner = RecordingProcessRunner();
+    (:packagesDir, :processRunner, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks(platform: mockPlatform);
+    testRoot = packagesDir.parent;
 
     command = CreateAllPackagesAppCommand(
       packagesDir,
@@ -75,7 +72,7 @@ android {
     defaultConfig {
         applicationId "dev.flutter.packages.foo.example"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 32
+        targetSdkVersion 35
     }
 }
 
@@ -222,7 +219,7 @@ project 'Runner', {
     });
 
     test(
-        'pubspec special-cases camera_android to remove it from deps but not overrides',
+        'pubspec special-cases camera_android_camerax to remove it from deps but not overrides',
         () async {
       writeFakeFlutterCreateOutput(testRoot);
       final Directory cameraDir = packagesDir.childDirectory('camera');
@@ -241,16 +238,16 @@ project 'Runner', {
       expect(cameraDependency, isA<PathDependency>());
       expect((cameraDependency! as PathDependency).path,
           endsWith('/packages/camera/camera'));
-      expect(cameraCameraXDependency, isA<PathDependency>());
-      expect((cameraCameraXDependency! as PathDependency).path,
-          endsWith('/packages/camera/camera_android_camerax'));
-      expect(cameraAndroidDependency, null);
-
-      final Dependency? cameraAndroidOverride =
-          pubspec.dependencyOverrides['camera_android'];
-      expect(cameraAndroidOverride, isA<PathDependency>());
-      expect((cameraAndroidOverride! as PathDependency).path,
+      expect(cameraAndroidDependency, isA<PathDependency>());
+      expect((cameraAndroidDependency! as PathDependency).path,
           endsWith('/packages/camera/camera_android'));
+      expect(cameraCameraXDependency, null);
+
+      final Dependency? cameraCameraXOverride =
+          pubspec.dependencyOverrides['camera_android_camerax'];
+      expect(cameraCameraXOverride, isA<PathDependency>());
+      expect((cameraCameraXOverride! as PathDependency).path,
+          endsWith('/packages/camera/camera_android_camerax'));
     });
 
     test('legacy files are copied when requested', () async {
@@ -342,7 +339,6 @@ android {
           buildGradle,
           containsAll(<Matcher>[
             contains('This is the legacy file'),
-            contains('minSdkVersion 21'),
             contains('compileSdk 34'),
           ]));
     });
@@ -357,7 +353,7 @@ android {
       final Pubspec generatedPubspec = command.app.parsePubspec();
 
       const String dartSdkKey = 'sdk';
-      expect(generatedPubspec.environment?[dartSdkKey].toString(),
+      expect(generatedPubspec.environment[dartSdkKey].toString(),
           existingSdkConstraint);
     });
 
@@ -376,9 +372,7 @@ android {
       expect(
           buildGradle,
           containsAll(<Matcher>[
-            contains('minSdkVersion 21'),
             contains('compileSdk 34'),
-            contains('multiDexEnabled true'),
             contains('androidx.lifecycle:lifecycle-runtime'),
           ]));
     });
@@ -533,7 +527,7 @@ android {
 
     test('handles --output-dir', () async {
       final Directory customOutputDir =
-          fileSystem.systemTempDirectory.createTempSync();
+          testRoot.fileSystem.systemTempDirectory.createTempSync();
       writeFakeFlutterCreateOutput(customOutputDir);
       createFakePlugin('plugina', packagesDir);
 

@@ -1,3 +1,77 @@
+## 0.9.18+13
+
+* Migrates test utils and mocks to Swift.
+* Aligns `FLTCaptureDevice` more closely with the `AVCaptureDevice` interface.
+
+## 0.9.18+12
+
+* Migrates test utils and mocks to Swift.
+* Renames the methods of Objective-C type `FLTCaptureSession` when exported to Swift.
+
+## 0.9.18+11
+
+* Backfills unit tests for the `FLTCam` class.
+* Refactors implementation to allow mocking of `AVCaptureVideoDataOutput` in tests.
+
+## 0.9.18+10
+
+* Backfills unit tests for the `FLTCam` class.
+* Makes `exposureMode`, `focusMode`, and `flashMode` properties of `FLTCam` private.
+
+## 0.9.18+9
+
+* Backfills unit tests for `CameraPlugin` class.
+* Adds `minimumExposureOffset` and `maximumExposureOffset` methods to `FLTCam` class.
+
+## 0.9.18+8
+
+* Migrates unit tests to Swift.
+
+## 0.9.18+7
+
+* Fixes crash when setting `activeFormat` on `FLTCaptureDevice`.
+
+## 0.9.18+6
+
+* Refactors implementations to remove remaining usage of OCMock in internal testing.
+
+## 0.9.18+5
+
+* Migrates unit tests to Swift.
+
+## 0.9.18+4
+
+* Refactors implementations to reduce usage of OCMock in internal testing.
+
+## 0.9.18+3
+
+* Refactors implementations to reduce usage of OCMock in internal testing.
+
+## 0.9.18+2
+
+* Refactors implementations to reduce usage of OCMock in internal testing.
+
+## 0.9.18+1
+
+* Refactors implementations to reduce usage of OCMock in internal testing.
+
+## 0.9.18
+
+* Adds API support query for image streaming.
+
+## 0.9.17+7
+
+* Fixes changing global audio session category to be collision free across plugins.
+
+## 0.9.17+6
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Removes OCMock usage from permission tests
+
+## 0.9.17+5
+
+* Adds ability to use any supported FPS and fixes crash when using unsupported FPS.
+
 ## 0.9.17+4
 
 * Updates Pigeon for non-nullable collection type support.
@@ -13,7 +87,7 @@
 
 ## 0.9.17+1
 
-* Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO
+* Fixes a crash due to appending sample buffers when readyForMoreMediaData is NO.
 
 ## 0.9.17
 

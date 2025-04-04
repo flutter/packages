@@ -7,5 +7,7 @@
 # This contains the declaration of the test classes wrapped by the ProxyApi tests and the
 # implemetations of their APIs.
 !ProxyApiTestApiImpls.kt
-# Including this makes it easier to review code generation changes.
+
+# Including these makes it easier to review code generation changes.
 !ProxyApiTests.gen.kt
+!EventChannelTests.gen.kt

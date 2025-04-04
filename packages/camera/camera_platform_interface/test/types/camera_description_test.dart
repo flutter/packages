@@ -30,11 +30,13 @@ void main() {
         name: 'Test',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 90,
+        lensType: CameraLensType.ultraWide,
       );
 
       expect(description.name, 'Test');
       expect(description.lensDirection, CameraLensDirection.front);
       expect(description.sensorOrientation, 90);
+      expect(description.lensType, CameraLensType.ultraWide);
     });
 
     test('equals should return true if objects are the same', () {
@@ -42,11 +44,13 @@ void main() {
         name: 'Test',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 90,
+        lensType: CameraLensType.ultraWide,
       );
       const CameraDescription secondDescription = CameraDescription(
         name: 'Test',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 90,
+        lensType: CameraLensType.ultraWide,
       );
 
       expect(firstDescription == secondDescription, true);
@@ -57,11 +61,13 @@ void main() {
         name: 'Test',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 90,
+        lensType: CameraLensType.ultraWide,
       );
       const CameraDescription secondDescription = CameraDescription(
         name: 'Testing',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 90,
+        lensType: CameraLensType.ultraWide,
       );
 
       expect(firstDescription == secondDescription, false);
@@ -72,11 +78,13 @@ void main() {
         name: 'Test',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 90,
+        lensType: CameraLensType.ultraWide,
       );
       const CameraDescription secondDescription = CameraDescription(
         name: 'Test',
         lensDirection: CameraLensDirection.back,
         sensorOrientation: 90,
+        lensType: CameraLensType.ultraWide,
       );
 
       expect(firstDescription == secondDescription, false);
@@ -87,11 +95,13 @@ void main() {
         name: 'Test',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 0,
+        lensType: CameraLensType.ultraWide,
       );
       const CameraDescription secondDescription = CameraDescription(
         name: 'Test',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 90,
+        lensType: CameraLensType.ultraWide,
       );
 
       expect(firstDescription == secondDescription, true);
@@ -103,11 +113,26 @@ void main() {
         name: 'Test',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 0,
+        lensType: CameraLensType.ultraWide,
       );
-      final int expectedHashCode =
-          Object.hash(description.name, description.lensDirection);
+      final int expectedHashCode = Object.hash(
+          description.name, description.lensDirection, description.lensType);
 
       expect(description.hashCode, expectedHashCode);
+    });
+
+    test('toString should return correct string representation', () {
+      const CameraDescription description = CameraDescription(
+        name: 'Test',
+        lensDirection: CameraLensDirection.front,
+        sensorOrientation: 90,
+        lensType: CameraLensType.ultraWide,
+      );
+
+      expect(
+        description.toString(),
+        'CameraDescription(Test, CameraLensDirection.front, 90, CameraLensType.ultraWide)',
+      );
     });
   });
 }

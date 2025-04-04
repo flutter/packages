@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
+import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 
 /// The signature for a print handler for commands that allow overriding the
@@ -84,6 +85,8 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 22, 0): Version(3, 4, 0),
   Version(3, 22, 3): Version(3, 4, 4),
   Version(3, 24, 0): Version(3, 5, 0),
+  Version(3, 24, 5): Version(3, 5, 4),
+  Version(3, 27, 0): Version(3, 6, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter
@@ -127,3 +130,13 @@ const int exitCommandFoundErrors = 1;
 
 /// A exit code for [ToolExit] for a failure to run due to invalid arguments.
 const int exitInvalidArguments = 2;
+
+/// The directory to which to write logs and other artifacts, if set in CI.
+Directory? ciLogsDirectory(Platform platform, FileSystem fileSystem) {
+  final String? logsDirectoryPath = platform.environment['FLUTTER_LOGS_DIR'];
+  Directory? logsDirectory;
+  if (logsDirectoryPath != null) {
+    logsDirectory = fileSystem.directory(logsDirectoryPath);
+  }
+  return logsDirectory;
+}

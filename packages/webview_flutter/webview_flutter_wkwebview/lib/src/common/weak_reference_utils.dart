@@ -5,7 +5,7 @@
 /// Helper method for creating callbacks methods with a weak reference.
 ///
 /// Example:
-/// ```
+/// ```dart
 /// final JavascriptChannelRegistry javascriptChannelRegistry = ...
 ///
 /// final WKScriptMessageHandler handler = WKScriptMessageHandler(
@@ -18,7 +18,7 @@
 ///       ) {
 ///         weakReference.target?.onJavascriptChannelMessage(
 ///           message.name,
-///           message.body!.toString(),
+///           message.body.toString(),
 ///         );
 ///       };
 ///     },

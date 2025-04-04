@@ -25,8 +25,11 @@ import 'package:web/web.dart' as web;
 
 void main() {
   group('loadWebSdk (no TrustedTypes)', () {
-    final web.HTMLDivElement target =
-        web.document.createElement('div') as web.HTMLDivElement;
+    final web.HTMLDivElement target = web.HTMLDivElement();
+
+    tearDown(() {
+      target.replaceChildren(<JSObject>[].toJS);
+    });
 
     test('Injects script into desired target', () async {
       // This test doesn't simulate the callback that completes the future, and
@@ -34,7 +37,7 @@ void main() {
       unawaited(loadWebSdk(target: target));
 
       // Target now should have a child that is a script element
-      final web.Node? injected = target.firstChild;
+      final web.Node? injected = target.firstElementChild;
       expect(injected, isNotNull);
       expect(injected, isA<web.HTMLScriptElement>());
 
@@ -53,6 +56,73 @@ void main() {
       });
 
       await expectLater(loadFuture, completes);
+    });
+
+    group('`nonce` parameter', () {
+      test('can be set', () async {
+        const String expectedNonce = 'some-random-nonce';
+        unawaited(loadWebSdk(target: target, nonce: expectedNonce));
+
+        // Target now should have a child that is a script element
+        final web.HTMLScriptElement script =
+            target.firstElementChild! as web.HTMLScriptElement;
+        expect(script.nonce, expectedNonce);
+      });
+
+      test('defaults to a nonce set in other script of the page', () async {
+        const String expectedNonce = 'another-random-nonce';
+        final web.HTMLScriptElement otherScript = web.HTMLScriptElement()
+          ..nonce = expectedNonce;
+        web.document.head?.appendChild(otherScript);
+
+        // This test doesn't simulate the callback that completes the future, and
+        // the code being tested runs synchronously.
+        unawaited(loadWebSdk(target: target));
+
+        // Target now should have a child that is a script element
+        final web.HTMLScriptElement script =
+            target.firstElementChild! as web.HTMLScriptElement;
+        expect(script.nonce, expectedNonce);
+
+        otherScript.remove();
+      });
+
+      test('when explicitly set overrides the default', () async {
+        const String expectedNonce = 'third-random-nonce';
+        final web.HTMLScriptElement otherScript = web.HTMLScriptElement()
+          ..nonce = 'this-is-the-wrong-nonce';
+        web.document.head?.appendChild(otherScript);
+
+        // This test doesn't simulate the callback that completes the future, and
+        // the code being tested runs synchronously.
+        unawaited(loadWebSdk(target: target, nonce: expectedNonce));
+
+        // Target now should have a child that is a script element
+        final web.HTMLScriptElement script =
+            target.firstElementChild! as web.HTMLScriptElement;
+        expect(script.nonce, expectedNonce);
+
+        otherScript.remove();
+      });
+
+      test('when null disables the feature', () async {
+        final web.HTMLScriptElement otherScript = web.HTMLScriptElement()
+          ..nonce = 'this-is-the-wrong-nonce';
+        web.document.head?.appendChild(otherScript);
+
+        // This test doesn't simulate the callback that completes the future, and
+        // the code being tested runs synchronously.
+        unawaited(loadWebSdk(target: target, nonce: null));
+
+        // Target now should have a child that is a script element
+        final web.HTMLScriptElement script =
+            target.firstElementChild! as web.HTMLScriptElement;
+
+        expect(script.nonce, isEmpty);
+        expect(script.hasAttribute('nonce'), isFalse);
+
+        otherScript.remove();
+      });
     });
   });
 }

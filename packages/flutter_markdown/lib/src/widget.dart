@@ -10,7 +10,7 @@ import 'package:flutter/rendering.dart';
 import 'package:markdown/markdown.dart' as md;
 
 import '../flutter_markdown.dart';
-import '_functions_io.dart' if (dart.library.html) '_functions_web.dart';
+import '_functions_io.dart' if (dart.library.js_interop) '_functions_web.dart';
 
 /// Signature for callbacks used by [MarkdownWidget] when
 /// [MarkdownWidget.selectable] is set to true and the user changes selection.
@@ -31,6 +31,21 @@ typedef MarkdownOnSelectionChangedCallback = void Function(
 /// Used by [MarkdownWidget.onTapLink].
 typedef MarkdownTapLinkCallback = void Function(
     String text, String? href, String title);
+
+/// Signature for custom image builders used by [MarkdownWidget.sizedImageBuilder].
+///
+/// This signature allows for custom rendering of images within the Markdown
+/// content when size information is available. It takes a
+/// [MarkdownImageConfig] object as a parameter, which contains information
+/// about the image, including:
+/// - `uri`: The URI of the image.
+/// - `title`: The title of the image.
+/// - `alt`: The alternative text for the image.
+/// - 'height': The height of the image.
+/// - 'width': The width of the image.
+///
+/// Used by [MarkdownWidget.sizedImageBuilder]
+typedef MarkdownSizedImageBuilder = Widget Function(MarkdownImageConfig config);
 
 /// Signature for custom image widget.
 ///
@@ -220,7 +235,8 @@ abstract class MarkdownWidget extends StatefulWidget {
     this.blockSyntaxes,
     this.inlineSyntaxes,
     this.extensionSet,
-    this.imageBuilder,
+    @Deprecated('Use sizedImageBuilder instead') this.imageBuilder,
+    this.sizedImageBuilder,
     this.checkboxBuilder,
     this.bulletBuilder,
     this.builders = const <String, MarkdownElementBuilder>{},
@@ -277,8 +293,12 @@ abstract class MarkdownWidget extends StatefulWidget {
   /// Defaults to [md.ExtensionSet.gitHubFlavored]
   final md.ExtensionSet? extensionSet;
 
-  /// Call when build an image widget.
+  /// {@macro flutter_markdown.builder.MarkdownBuilder.imageBuilder}
+  @Deprecated('Use sizedImageBuilder instead')
   final MarkdownImageBuilder? imageBuilder;
+
+  /// {@macro flutter_markdown.builder.MarkdownBuilder.sizedImageBuilder}
+  final MarkdownSizedImageBuilder? sizedImageBuilder;
 
   /// Call when build a checkbox widget.
   final MarkdownCheckboxBuilder? checkboxBuilder;
@@ -391,6 +411,7 @@ class _MarkdownWidgetState extends State<MarkdownWidget>
       styleSheet: styleSheet,
       imageDirectory: widget.imageDirectory,
       imageBuilder: widget.imageBuilder,
+      sizedImageBuilder: widget.sizedImageBuilder,
       checkboxBuilder: widget.checkboxBuilder,
       bulletBuilder: widget.bulletBuilder,
       builders: widget.builders,
@@ -467,7 +488,8 @@ class MarkdownBody extends MarkdownWidget {
     super.blockSyntaxes,
     super.inlineSyntaxes,
     super.extensionSet,
-    super.imageBuilder,
+    @Deprecated('Use sizedImageBuilder instead.') super.imageBuilder,
+    super.sizedImageBuilder,
     super.checkboxBuilder,
     super.bulletBuilder,
     super.builders,
@@ -522,7 +544,8 @@ class Markdown extends MarkdownWidget {
     super.blockSyntaxes,
     super.inlineSyntaxes,
     super.extensionSet,
-    super.imageBuilder,
+    @Deprecated('Use sizedImageBuilder instead.') super.imageBuilder,
+    super.sizedImageBuilder,
     super.checkboxBuilder,
     super.bulletBuilder,
     super.builders,

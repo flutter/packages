@@ -5,7 +5,6 @@
 library google_maps_flutter;
 
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -30,6 +29,8 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         Cluster,
         ClusterManager,
         ClusterManagerId,
+        GroundOverlay,
+        GroundOverlayId,
         Heatmap,
         HeatmapGradient,
         HeatmapGradientColor,

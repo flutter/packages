@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 
 import 'ad_display_container.dart';
 import 'ads_manager_delegate.dart';
+import 'ads_rendering_settings.dart';
 import 'ads_request.dart';
 import 'platform_interface/platform_interface.dart';
 
@@ -145,8 +146,8 @@ class AdsManager {
   final PlatformAdsManager platform;
 
   /// Initializes the ad experience using default rendering settings.
-  Future<void> init() {
-    return platform.init(AdsManagerInitParams());
+  Future<void> init({AdsRenderingSettings? settings}) {
+    return platform.init(settings: settings?.platform);
   }
 
   /// Starts playing the ads.

@@ -334,6 +334,46 @@ void defineTests() {
     );
 
     testWidgets(
+      'should gracefully handle image URLs with empty scheme',
+      (WidgetTester tester) async {
+        const String data = '![alt](://img#x50)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        expect(find.byType(Image), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'should gracefully handle image URLs with invalid scheme',
+      (WidgetTester tester) async {
+        const String data = '![alt](ttps://img#x50)';
+        await tester.pumpWidget(
+          boilerplate(
+            const Markdown(data: data),
+          ),
+        );
+
+        // On the web, any URI with an unrecognized scheme is treated as a network image.
+        // Thus the error builder of the Image widget is called.
+        // On non-web, any URI with an unrecognized scheme is treated as a file image.
+        // However, constructing a file from an invalid URI will throw an exception.
+        // Thus the Image widget is never created, nor is its error builder called.
+        if (kIsWeb) {
+          expect(find.byType(Image), findsOneWidget);
+        } else {
+          expect(find.byType(Image), findsNothing);
+        }
+
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
       'should gracefully handle width parsing failures',
       (WidgetTester tester) async {
         const String data = '![alt](https://img#x50)';
@@ -415,8 +455,64 @@ void defineTests() {
             find.byType(Container),
             matchesGoldenFile(
                 'assets/images/golden/image_test/custom_builder_asset_logo.png'));
+        imageCache.clear();
       },
       skip: kIsWeb, // Goldens are platform-specific.
+    );
+
+    testWidgets(
+      'custom image builder test width and height',
+      (WidgetTester tester) async {
+        const double height = 200;
+        const double width = 100;
+        const String data = '![alt](https://img.png#${width}x$height)';
+        Widget builder(MarkdownImageConfig config) =>
+            Image.asset('assets/logo.png',
+                width: config.width, height: config.height);
+
+        await tester.pumpWidget(
+          boilerplate(
+            MaterialApp(
+              home: DefaultAssetBundle(
+                bundle: TestAssetBundle(),
+                child: Center(
+                  child: Container(
+                    color: Colors.white,
+                    width: 500,
+                    child: Markdown(
+                      data: data,
+                      sizedImageBuilder: builder,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final Iterable<Widget> widgets = tester.allWidgets;
+        final Image image =
+            widgets.firstWhere((Widget widget) => widget is Image) as Image;
+
+        expect(image.image.runtimeType, AssetImage);
+        expect((image.image as AssetImage).assetName, 'assets/logo.png');
+        expect(image.width, width);
+        expect(image.height, height);
+
+        await tester.runAsync(() async {
+          final Element element = tester.element(find.byType(Markdown));
+          await precacheImage(image.image, element);
+        });
+
+        await tester.pumpAndSettle();
+
+        await expectLater(
+            find.byType(Container),
+            matchesGoldenFile(
+                'assets/images/golden/image_test/custom_image_builder_test.png'));
+        imageCache.clear();
+      },
+      skip: kIsWeb,
     );
   });
 }

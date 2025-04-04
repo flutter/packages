@@ -153,9 +153,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     return targets;
   }
 
-  /// If [pubspecFile] has any dependencies on packages in [localDependencies],
-  /// adds dependency_overrides entries to redirect them to the local version
-  /// using path-based dependencies.
+  /// If [pubspecFile] has any non-path dependencies on packages in
+  /// [localDependencies], adds dependency_overrides entries to redirect them to
+  /// the local version using path-based dependencies.
   ///
   /// Returns true if any overrides were added.
   ///
@@ -183,11 +183,13 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     final Pubspec pubspec = Pubspec.parse(pubspecContents);
     final Iterable<String> combinedDependencies = <String>[
       // Filter out any dependencies with version constraint that wouldn't allow
-      // the target if published.
+      // the target if published, and anything that is already path-based.
       ...<MapEntry<String, Dependency>>[
         ...pubspec.dependencies.entries,
         ...pubspec.devDependencies.entries,
       ]
+          .where((MapEntry<String, Dependency> element) =>
+              element.value is! PathDependency)
           .where((MapEntry<String, Dependency> element) =>
               allowsVersion(element.value, versions[element.key]))
           .map((MapEntry<String, Dependency> entry) => entry.key),
@@ -197,18 +199,16 @@ class MakeDepsPathBasedCommand extends PackageCommand {
         .where(
             (String packageName) => localDependencies.containsKey(packageName))
         .toList();
-    // Sort the combined list to avoid sort_pub_dependencies lint violations.
-    packagesToOverride.sort();
 
     if (packagesToOverride.isEmpty) {
       return false;
     }
 
     // Find the relative path to the common base.
-    final String commonBasePath = packagesDir.path;
+    final String repoRootPath = packagesDir.parent.path;
     final int packageDepth = path
-        .split(path.relative(package.directory.absolute.path,
-            from: commonBasePath))
+        .split(
+            path.relative(package.directory.absolute.path, from: repoRootPath))
         .length;
     final List<String> relativeBasePathComponents =
         List<String>.filled(packageDepth, '..');
@@ -217,35 +217,60 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     final YamlEditor editablePubspec = YamlEditor(pubspecContents);
     final YamlNode root = editablePubspec.parseAt(<String>[]);
     const String dependencyOverridesKey = 'dependency_overrides';
-    // Ensure that there's a `dependencyOverridesKey` entry to update.
-    if ((root as YamlMap)[dependencyOverridesKey] == null) {
-      editablePubspec.update(<String>[dependencyOverridesKey], YamlMap());
-    }
-    for (final String packageName in packagesToOverride) {
-      // Find the relative path from the common base to the local package.
-      final List<String> repoRelativePathComponents = path.split(path.relative(
-          localDependencies[packageName]!.path,
-          from: commonBasePath));
-      editablePubspec.update(<String>[
-        dependencyOverridesKey,
-        packageName
-      ], <String, String>{
-        'path': p.posix.joinAll(<String>[
+
+    // Add in any existing overrides, then sort the combined list to avoid
+    // sort_pub_dependencies lint violations.
+    final YamlMap? existingOverrides =
+        (root as YamlMap)[dependencyOverridesKey] as YamlMap?;
+    final List<String> allDependencyOverrides = <String>{
+      ...existingOverrides?.keys.cast<String>() ?? <String>[],
+      ...packagesToOverride,
+    }.toList();
+    allDependencyOverrides.sort();
+
+    // Build a fresh overrides section, to ensure that new entries are sorted
+    // with any existing entries. This does mean comments will be removed, but
+    // since this command's changes will always be reverted anyway, that
+    // shouldn't be an issue, whereas lint violations will cause analysis
+    // failures.
+    // This uses string concatenation rather than YamlMap because the latter
+    // doesn't guarantee any particular output order for its entries.
+    final List<String> newOverrideLines = <String>[];
+    for (final String packageName in allDependencyOverrides) {
+      final String overrideValue;
+      if (packagesToOverride.contains(packageName)) {
+        // Create a new override.
+
+        // Find the relative path from the common base to the local package.
+        final List<String> repoRelativePathComponents = path.split(
+            path.relative(localDependencies[packageName]!.path,
+                from: repoRootPath));
+        final String pathValue = p.posix.joinAll(<String>[
           ...relativeBasePathComponents,
           ...repoRelativePathComponents,
-        ])
-      });
+        ]);
+        overrideValue = '{path: $pathValue}';
+      } else {
+        // Re-use the pre-existing override.
+        overrideValue = existingOverrides![packageName].toString();
+      }
+      newOverrideLines.add('  $packageName: $overrideValue');
     }
+    // Create an empty section as a placeholder to replace.
+    editablePubspec.update(<String>[dependencyOverridesKey], YamlMap());
+    String newContent = editablePubspec.toString();
 
     // Add the warning if it's not already there.
-    String newContent = editablePubspec.toString();
-    if (!newContent.contains(_dependencyOverrideWarningComment)) {
-      newContent = newContent.replaceFirst('$dependencyOverridesKey:', '''
-
-$_dependencyOverrideWarningComment
-$dependencyOverridesKey:
+    final String warningComment =
+        newContent.contains(_dependencyOverrideWarningComment)
+            ? ''
+            : '$_dependencyOverrideWarningComment\n';
+    // Replace the placeholder with the new section.
+    newContent =
+        newContent.replaceFirst(RegExp('$dependencyOverridesKey:\\s*{}\\n'), '''
+$warningComment$dependencyOverridesKey:
+${newOverrideLines.join('\n')}
 ''');
-    }
 
     // Write the new pubspec.
     package.pubspecFile.writeAsStringSync(newContent);
@@ -301,7 +326,7 @@ $dependencyOverridesKey:
       if (!package.pubspecFile.existsSync()) {
         final String directoryName = p.posix.joinAll(path.split(path.relative(
             package.directory.absolute.path,
-            from: packagesDir.path)));
+            from: packagesDir.parent.path)));
         print('  Skipping $directoryName; deleted.');
         continue;
       }

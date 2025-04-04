@@ -27,26 +27,33 @@ void main() {
       );
     });
 
-    test('serializeDeviceOrientation() should serialize correctly', () {
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitUp),
-          'portraitUp');
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitDown),
-          'portraitDown');
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeRight),
-          'landscapeRight');
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
-          'landscapeLeft');
+    test('deviceOrientationFromPlatform() should convert correctly', () {
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
+          DeviceOrientation.portraitUp);
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
+          DeviceOrientation.portraitDown);
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeRight),
+          DeviceOrientation.landscapeRight);
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeLeft),
+          DeviceOrientation.landscapeLeft);
     });
 
-    test('deserializeDeviceOrientation() should deserialize correctly', () {
-      expect(deserializeDeviceOrientation('portraitUp'),
-          DeviceOrientation.portraitUp);
-      expect(deserializeDeviceOrientation('portraitDown'),
-          DeviceOrientation.portraitDown);
-      expect(deserializeDeviceOrientation('landscapeRight'),
-          DeviceOrientation.landscapeRight);
-      expect(deserializeDeviceOrientation('landscapeLeft'),
-          DeviceOrientation.landscapeLeft);
+    test('exposureModeFromPlatform() should convert correctly', () {
+      expect(exposureModeFromPlatform(PlatformExposureMode.auto),
+          ExposureMode.auto);
+      expect(exposureModeFromPlatform(PlatformExposureMode.locked),
+          ExposureMode.locked);
+    });
+
+    test('focusModeFromPlatform() should convert correctly', () {
+      expect(focusModeFromPlatform(PlatformFocusMode.auto), FocusMode.auto);
+      expect(focusModeFromPlatform(PlatformFocusMode.locked), FocusMode.locked);
     });
   });
 }

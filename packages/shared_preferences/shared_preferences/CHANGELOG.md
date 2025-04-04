@@ -1,3 +1,35 @@
+## 2.5.3
+* Fixes a bug in the example app.
+
+## 2.5.2
+
+* Fixes `setState` returning `Future` on `example/main.dart` error in example code.
+
+## 2.5.1
+
+* Exposes `SharedPreferencesOptions`.
+
+## 2.5.0
+
+* Adds shared preferences devtools extension.
+
+## 2.4.0
+
+* Adds migration tool to move from legacy `SharedPreferences` to `SharedPreferencesAsync`.
+* Adds clarifying comment about `allowList` handling with an updated prefix.
+
+## 2.3.5
+
+* Adds information about Android SharedPreferences support.
+
+## 2.3.4
+
+* Security update, requires shared_preferences_android to be 2.3.4.
+
+## 2.3.3
+
+* Clarifies scope of prefix handling in README.
+
 ## 2.3.2
 
 * Removes outdated testing information from README.

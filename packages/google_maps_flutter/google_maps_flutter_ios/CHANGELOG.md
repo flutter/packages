@@ -1,3 +1,24 @@
+## 2.15.1
+
+* Fixes regression in displaying info windows.
+
+## 2.15.0
+
+* Adds support for animating the camera with a duration.
+
+## 2.14.0
+
+* Adds support for ground overlay.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.13.2
+
+* Updates most objects passed from Dart to native to use typed data.
+
+## 2.13.1
+
+* Updates Pigeon for non-nullable collection type support.
+
 ## 2.13.0
 
 * Updates map configuration and platform view creation parameters to use Pigeon.

@@ -1,3 +1,67 @@
+## 0.2.3+10
+
+* Fixes `AdEventType`s not triggering on iOS in release mode.
+
+## 0.2.3+9
+
+* Bumps gradle from 8.0.0 to 8.9.0.
+
+## 0.2.3+8
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 0.2.3+7
+
+* Bumps gradle-plugin to 2.1.10.
+
+## 0.2.3+6
+
+* Adds internal wrapper for iOS native `IMAAdPodInfo`.
+
+## 0.2.3+5
+
+* Bumps gradle-plugin to 2.1.0.
+
+## 0.2.3+4
+
+* Adds remaining methods for internal wrapper of the iOS native `IMAAdDisplayContainer`.
+
+## 0.2.3+3
+
+* Adds internal wrapper for Android native `CompanionAdSlot` and `CompanionAdSlot.ClickListener`.
+
+## 0.2.3+2
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.35.1 to 3.36.0.
+
+## 0.2.3+1
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
+
+## 0.2.3
+
+* Adds parameters to control the rendering of ads. See `AdsManager.init`.
+
+## 0.2.2+15
+
+* Adds remaining methods for internal wrapper of the Android native `BaseManager`.
+
+## 0.2.2+14
+
+* Adds internal wrapper for iOS native `IMACompanionAdSlot` and `IMACompanionDelegate`.
+
+## 0.2.2+13
+
+* Adds internal wrapper for Android native `Ad`.
+
+## 0.2.2+12
+
+* Adds internal wrapper for iOS native `IMACompanionAd`.
+
+## 0.2.2+11
+
+* Adds internal wrapper for Android native `UniversalAdId`.
+
 ## 0.2.2+10
 
 * Fixes bug where Android would show the last frame of the previous Ad before playing the current

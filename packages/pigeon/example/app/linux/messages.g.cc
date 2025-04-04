@@ -118,11 +118,6 @@ pigeon_example_package_message_data_new_from_list(FlValue* values) {
   return pigeon_example_package_message_data_new(name, description, code, data);
 }
 
-G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageCodec,
-                     pigeon_example_package_message_codec,
-                     PIGEON_EXAMPLE_PACKAGE, MESSAGE_CODEC,
-                     FlStandardMessageCodec)
-
 struct _PigeonExamplePackageMessageCodec {
   FlStandardMessageCodec parent_instance;
 };
@@ -467,10 +462,6 @@ pigeon_example_package_example_host_api_send_message_response_new_error(
                                                        : fl_value_new_null());
   return self;
 }
-
-G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApi,
-                     pigeon_example_package_example_host_api,
-                     PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API, GObject)
 
 struct _PigeonExamplePackageExampleHostApi {
   GObject parent_instance;

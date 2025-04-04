@@ -1,0 +1,24 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg viewBox="0 0 800 400" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <desc>Example radgrad01 - fill a rectangle by referencing a
+           radial gradient paint server</desc>
+  <g>
+    <defs>
+      <radialGradient id="MyGradientR">
+        <stop offset="0%" stop-color="red" />
+        <stop offset="50%" stop-color="blue" />
+        <stop offset="100%" stop-color="red" />
+      </radialGradient>
+      <radialGradient id="MyGradient" gradientUnits="userSpaceOnUse" cx="400" cy="200" r="300" fx="400" fy="200" xlink:href="#MyGradientR" />
+    </defs>
+
+    <!-- Outline the drawing area in blue -->
+    <rect fill="none" stroke="blue" x="1" y="1" width="798" height="398"/>
+
+    <!-- The rectangle is filled using a radial gradient paint server -->
+    <rect fill="url(#MyGradient)" stroke="black" stroke-width="5" x="100" y="100" width="600" height="200"/>
+  </g>
+</svg>

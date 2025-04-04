@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 3.2.2
+
+* Updates to Pigeon v22.
+
 ## 3.2.1
 
 * Adds privacy manifest.

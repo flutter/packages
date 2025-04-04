@@ -10,7 +10,7 @@ import 'package:flutter/services.dart' show MethodCall;
 ///
 /// Example usage:
 ///
-/// ```
+/// ```dart
 /// GoogleSignIn googleSignIn;
 /// FakeSignInBackend fakeSignInBackend;
 ///

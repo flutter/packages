@@ -2,12 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(bparrishMines): Uncomment this file once
-// https://github.com/flutter/packages/pull/6602 lands. This file uses the
-// Swift ProxyApi feature from pigeon.
 // ignore_for_file: avoid_unused_constructor_parameters
 
-/*
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
@@ -313,10 +309,31 @@ enum UIElementType {
   swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
 )
 abstract class IMAAdDisplayContainer extends NSObject {
-  IMAAdDisplayContainer(
-    UIView adContainer,
-    UIViewController? adContainerViewController,
-  );
+  /// Initializes IMAAdDisplayContainer for rendering the ad and displaying the
+  /// sad UI.
+  IMAAdDisplayContainer(UIViewController? adContainerViewController);
+
+  /// View containing the video display and ad related UI.
+  ///
+  /// This view must be present in the view hierarchy in order to make ad or
+  /// stream requests.
+  late UIView adContainer;
+
+  /// List of companion ad slots.
+  late List<IMACompanionAdSlot>? companionSlots;
+
+  /// View controller containing the ad container.
+  void setAdContainerViewController(UIViewController? controller);
+
+  /// View controller containing the ad container.
+  UIViewController? getAdContainerViewController();
+
+  /// Registers a view that overlays or obstructs this container as “friendly”
+  /// for viewability measurement purposes.
+  void registerFriendlyObstruction(IMAFriendlyObstruction friendlyObstruction);
+
+  /// Unregisters all previously registered friendly obstructions.
+  void unregisterAllFriendlyObstructions();
 }
 
 /// An object that manages the content for a rectangular area on the screen.
@@ -573,7 +590,7 @@ abstract class NSObject {}
 ///
 /// See https://developers.google.com/ad-manager/dynamic-ad-insertion/sdk/ios/reference/Classes/IMAFriendlyObstruction.html.
 @ProxyApi()
-abstract class IMAFriendlyObstruction {
+abstract class IMAFriendlyObstruction extends NSObject {
   /// Initializes a friendly obstruction.
   IMAFriendlyObstruction();
 
@@ -590,4 +607,118 @@ abstract class IMAFriendlyObstruction {
   /// spaces.
   late final String? detailedReason;
 }
-*/
+
+/// An object that holds data corresponding to the companion ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMACompanionAd.
+@ProxyApi()
+abstract class IMACompanionAd extends NSObject {
+  /// The value for the resource of this companion.
+  late final String? resourceValue;
+
+  /// The API needed to execute this ad, or nil if unavailable.
+  late final String? apiFramework;
+
+  /// The width of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int width;
+
+  /// The height of the companion in pixels.
+  ///
+  /// 0 if unavailable.
+  late final int height;
+}
+
+/// Ad slot for companion ads.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMACompanionAdSlot.
+@ProxyApi()
+abstract class IMACompanionAdSlot {
+  /// Initializes an instance of a IMACompanionAdSlot with fluid size.
+  IMACompanionAdSlot();
+
+  /// Initializes an instance of a IMACompanionAdSlot with design ad width and
+  /// height.
+  ///
+  /// `width` and `height` are in pixels.
+  IMACompanionAdSlot.size(int width, int height);
+
+  /// The view the companion will be rendered in.
+  ///
+  /// Display this view in your application before video ad starts.
+  late final UIView view;
+
+  /// The IMACompanionDelegate for receiving events from the companion ad slot.
+  ///
+  /// This instance only creates a weak reference to the delegate, so the Dart
+  /// instance should create an explicit reference to receive callbacks.
+  void setDelegate(IMACompanionDelegate? delegate);
+}
+
+/// Delegate to receive events from the companion ad slot.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Protocols/IMACompanionDelegate.html.
+@ProxyApi()
+abstract class IMACompanionDelegate extends NSObject {
+  IMACompanionDelegate();
+
+  /// Called when the slot is either filled or not filled.
+  late void Function(
+    IMACompanionAdSlot slot,
+    bool filled,
+  )? companionAdSlotFilled;
+
+  /// Called when the slot is clicked on by the user and will successfully
+  /// navigate away.
+  late void Function(IMACompanionAdSlot slot)? companionSlotWasClicked;
+}
+
+/// Simple data object containing podding metadata.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdPodInfo.html.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
+)
+abstract class IMAAdPodInfo {
+  /// The position of this ad within an ad pod.
+  ///
+  /// Will be 1 for standalone ads.
+  late final int adPosition;
+
+  /// The maximum duration of the pod in seconds.
+  ///
+  /// For unknown duration, -1 is returned.
+  late final double maxDuration;
+
+  /// Returns the index of the ad pod.
+  ///
+  /// Client side: For a preroll pod, returns 0. For midrolls, returns 1, 2,…,
+  /// N. For a postroll pod, returns -1. Defaults to 0 if this ad is not part of
+  /// a pod, or this pod is not part of a playlist.
+  ///
+  /// DAI VOD: Returns the index of the ad pod. For a preroll pod, returns 0.
+  /// For midrolls, returns 1, 2,…,N. For a postroll pod, returns N+1…N+X.
+  /// Defaults to 0 if this ad is not part of a pod, or this pod is not part of
+  /// a playlist.
+  ///
+  /// DAI live stream: For a preroll pod, returns 0. For midrolls, returns the
+  /// break ID. Returns -2 if pod index cannot be determined (internal error).
+  late final int podIndex;
+
+  /// The position of the pod in the content in seconds.
+  ///
+  /// Pre-roll returns 0, post-roll returns -1 and mid-rolls return the
+  /// scheduled time of the pod.
+  late final double timeOffset;
+
+  /// Total number of ads in the pod this ad belongs to.
+  ///
+  /// Will be 1 for standalone ads.
+  late final int totalAds;
+
+  /// Specifies whether the ad is a bumper.
+  ///
+  /// Bumpers are short videos used to open and close ad breaks.
+  late final bool isBumper;
+}

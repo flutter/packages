@@ -1,5 +1,15 @@
-## NEXT
+## 0.2.4+3
 
+* Updates README to indicate that this package will be discontinued.
+
+## 0.2.4+2
+
+* Replaces usage of deprecated `loadBuffer`.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.2.4+1
+
+* Updates to Pigeon v22.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 0.2.4

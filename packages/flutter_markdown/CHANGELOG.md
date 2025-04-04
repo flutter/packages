@@ -1,3 +1,42 @@
+## 0.7.7
+
+* Introduces `MarkdownImageConfig` for `sizedImageBuilder` builder.
+
+## 0.7.6+2
+
+* Updates README to indicate that this package will be discontinued.
+
+## 0.7.6+1
+
+* Adds horizontal scrolling for table when using `tableColumnWidth: IntrinsicColumnWidth()`.
+
+## 0.7.6
+
+* Adds styleSheet option `tableScrollbarThumbVisibility` for setting the `thumbVisibility` on tables' `ScrollBar`.
+
+## 0.7.5
+
+* Makes table column custom alignment work even when text wraps.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes some memory leaks.
+
+## 0.7.4+3
+
+* Passes a default error builder to image widgets.
+
+## 0.7.4+2
+
+* Fixes pub.dev detection of WebAssembly support.
+
+## 0.7.4+1
+
+* Makes it so that custom blocks are not limited to being a Column or
+  SizedBox.
+
+## 0.7.4
+
+* Makes paragraphs in blockquotes soft-wrap like a normal `<blockquote>` instead of hard-wrapping like a `<pre>` block.
+
 ## 0.7.3+2
 
 * Resolves an issue where code blocks in markdown were not highlighted during selection.

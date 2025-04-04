@@ -7,8 +7,14 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut: 'darwin/Classes/messages.g.h',
-  objcSourceOut: 'darwin/Classes/messages.g.m',
+  objcHeaderOut:
+      'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit_objc/include/in_app_purchase_storekit_objc/messages.g.h',
+  objcSourceOut:
+      'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit_objc/messages.g.m',
+  objcOptions: ObjcOptions(
+    prefix: 'FIA',
+    headerIncludePath: './include/in_app_purchase_storekit_objc/messages.g.h',
+  ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 class SKPaymentTransactionMessage {
@@ -91,7 +97,7 @@ class SKErrorMessage {
 
   final int code;
   final String domain;
-  final Map<String?, Object?>? userInfo;
+  final Map<String, Object>? userInfo;
 }
 
 class SKPaymentDiscountMessage {
@@ -123,8 +129,8 @@ class SKStorefrontMessage {
 class SKProductsResponseMessage {
   const SKProductsResponseMessage(
       {required this.products, required this.invalidProductIdentifiers});
-  final List<SKProductMessage?>? products;
-  final List<String?>? invalidProductIdentifiers;
+  final List<SKProductMessage>? products;
+  final List<String>? invalidProductIdentifiers;
 }
 
 class SKProductMessage {
@@ -150,7 +156,7 @@ class SKProductMessage {
   final String price;
   final SKProductSubscriptionPeriodMessage? subscriptionPeriod;
   final SKProductDiscountMessage? introductoryPrice;
-  final List<SKProductDiscountMessage?>? discounts;
+  final List<SKProductDiscountMessage>? discounts;
 }
 
 class SKPriceLocaleMessage {
@@ -261,4 +267,6 @@ abstract class InAppPurchaseAPI {
   void removePaymentQueueDelegate();
 
   void showPriceConsentIfNeeded();
+
+  bool supportsStoreKit2();
 }

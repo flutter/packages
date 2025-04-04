@@ -70,14 +70,6 @@ abstract class CameraApi {
   @async
   String stopVideoRecording(int cameraId);
 
-  /// Starts the image stream for the given camera.
-  @async
-  void startImageStream(int cameraId);
-
-  /// Stops the image stream for the given camera.
-  @async
-  void stopImageStream(int cameraId);
-
   /// Starts the preview stream for the given camera.
   @async
   void pausePreview(int cameraId);
@@ -85,4 +77,13 @@ abstract class CameraApi {
   /// Resumes the preview stream for the given camera.
   @async
   void resumePreview(int cameraId);
+}
+
+@FlutterApi()
+abstract class CameraEventApi {
+  /// Called when the camera instance is closing on the native side.
+  void cameraClosing();
+
+  /// Called when a camera error occurs on the native side.
+  void error(String errorMessage);
 }

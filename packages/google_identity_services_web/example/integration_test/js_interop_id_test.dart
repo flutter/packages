@@ -61,25 +61,24 @@ void main() async {
           utils.createExpectConfigValue(config as JSObject);
 
       expectConfigValue('client_id', 'testing_1-2-3');
-      expectConfigValue('auto_select', isFalse);
+      expectConfigValue('auto_select', false);
       expectConfigValue('callback', utils.isAJs('function'));
       expectConfigValue('login_uri', 'https://www.example.com/login');
       expectConfigValue('native_callback', utils.isAJs('function'));
-      expectConfigValue('cancel_on_tap_outside', isFalse);
-      expectConfigValue('allowed_parent_origin', isA<JSArray<JSString>>());
+      expectConfigValue('cancel_on_tap_outside', false);
+      expectConfigValue(
+          'allowed_parent_origin', <String>['allowed', 'another']);
       expectConfigValue('prompt_parent_id', 'some_dom_id');
       expectConfigValue('nonce', 's0m3_r4ndOM_vALu3');
       expectConfigValue('context', 'signin');
       expectConfigValue('state_cookie_domain', 'subdomain.example.com');
       expectConfigValue('ux_mode', 'popup');
       expectConfigValue(
-          'allowed_parent_origin', <String>['allowed', 'another']);
-      expectConfigValue(
           'intermediate_iframe_close_callback', utils.isAJs('function'));
-      expectConfigValue('itp_support', isTrue);
+      expectConfigValue('itp_support', true);
       expectConfigValue('login_hint', 'login-hint@example.com');
       expectConfigValue('hd', 'hd_value');
-      expectConfigValue('use_fedcm_for_prompt', isTrue);
+      expectConfigValue('use_fedcm_for_prompt', true);
     });
   });
 

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs, unreachable_from_main
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences_android/shared_preferences_android.dart';
@@ -11,6 +11,14 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 void main() {
   runApp(const MyApp());
 }
+
+// #docregion Android_Options
+const SharedPreferencesAsyncAndroidOptions options =
+    SharedPreferencesAsyncAndroidOptions(
+        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+        originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+            fileName: 'the_name_of_a_file'));
+// #enddocregion Android_Options
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

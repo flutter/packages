@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 0.9.3+2
+
+* Updates Pigeon to resolve a compilation failure with some versions of glib.
+
+## 0.9.3+1
+
+* Fixes a regression in 0.9.3 with handling of canceled dialogs.
+
 ## 0.9.3
 
 * Updates method channel implementation to use Pigeon.

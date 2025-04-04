@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="5"
+     height="3"
+     viewBox="0 0 5 3">
+    <defs/>
+    <path id="black_stripe"
+          fill="#abcdef"
+          fill-opacity="1"
+          fill-rule="nonzero"
+          stroke="none"
+          visibility="visible"
+          d="M 0 0 L 5 0 L 5 3 L 0 3 Z" />
+</svg>

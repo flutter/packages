@@ -9,6 +9,7 @@
 
 #import <OCMock/OCMock.h>
 #import <google_maps_flutter_ios/GoogleMapPolylineController_Test.h>
+#import <google_maps_flutter_ios/messages.g.h>
 #import "PartiallyMockedMapView.h"
 
 @interface GoogleMapsPolylinesControllerTests : XCTestCase
@@ -20,13 +21,22 @@
 ///
 ///  @return An object of FLTGoogleMapPolylineController
 - (FLTGoogleMapPolylineController *)polylineControllerWithMockedMap {
-  NSDictionary<NSString *, id> *polyline = @{
-    @"points" : @[
-      @[ @(52.4816), @(-3.1791) ], @[ @(54.043), @(-2.9925) ], @[ @(54.1396), @(-4.2739) ],
-      @[ @(53.4153), @(-4.0829) ]
-    ],
-    @"polylineId" : @"polyline_id_0",
-  };
+  FGMPlatformPolyline *polyline = [FGMPlatformPolyline
+      makeWithPolylineId:@"polyline_id_0"
+       consumesTapEvents:NO
+                   color:0
+                geodesic:NO
+               jointType:FGMPlatformJointTypeRound
+                patterns:@[]
+                  points:@[
+                    [FGMPlatformLatLng makeWithLatitude:52.4816 longitude:-3.1791],
+                    [FGMPlatformLatLng makeWithLatitude:54.043 longitude:-2.9925],
+                    [FGMPlatformLatLng makeWithLatitude:54.1396 longitude:-4.2739],
+                    [FGMPlatformLatLng makeWithLatitude:53.4153 longitude:-4.0829],
+                  ]
+                 visible:NO
+                   width:1
+                  zIndex:0];
 
   CGRect frame = CGRectMake(0, 0, 100, 100);
   GMSCameraPosition *camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
@@ -37,12 +47,11 @@
 
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
 
-  GMSMutablePath *path = [FLTPolylinesController pathForPolyline:polyline];
-  NSString *identifier = polyline[@"polylineId"];
+  GMSMutablePath *path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(polyline.points));
 
   FLTGoogleMapPolylineController *polylineControllerWithMockedMap =
       [[FLTGoogleMapPolylineController alloc] initWithPath:path
-                                                identifier:identifier
+                                                identifier:polyline.polylineId
                                                    mapView:mapView];
 
   return polylineControllerWithMockedMap;
@@ -50,7 +59,7 @@
 
 - (void)testSetPatterns {
   NSArray<GMSStrokeStyle *> *styles = @[
-    [GMSStrokeStyle solidColor:[UIColor clearColor]], [GMSStrokeStyle solidColor:[UIColor redColor]]
+    [GMSStrokeStyle solidColor:UIColor.clearColor], [GMSStrokeStyle solidColor:UIColor.redColor]
   ];
 
   NSArray<NSNumber *> *lengths = @[ @10, @10 ];
@@ -63,19 +72,6 @@
 
   // `GMSStyleSpan` doesn't implement `isEqual` so cannot be compared by value at present.
   XCTAssertNotNil(polylineController.polyline.spans);
-}
-
-- (void)testStrokeStylesFromPatterns {
-  NSArray<NSArray<id> *> *patterns = @[ @[ @"gap", @10 ], @[ @"dash", @10 ] ];
-  UIColor *strokeColor = [UIColor redColor];
-
-  NSArray<GMSStrokeStyle *> *patternStrokeStyle =
-      [FLTGoogleMapJSONConversions strokeStylesFromPatterns:patterns strokeColor:strokeColor];
-
-  XCTAssertEqual([patternStrokeStyle count], 2);
-
-  // None of the parameters of `patternStrokeStyle` is observable, so we limit to testing
-  // the length of this output array.
 }
 
 @end

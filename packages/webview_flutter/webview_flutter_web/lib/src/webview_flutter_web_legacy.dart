@@ -36,7 +36,6 @@ class WebWebViewPlatform implements WebViewPlatform {
         iFrame.style.border = 'none';
         final String? initialUrl = creationParams.initialUrl;
         if (initialUrl != null) {
-          // ignore: unsafe_html
           iFrame.src = initialUrl;
         }
         if (onWebViewPlatformCreated != null) {
@@ -127,7 +126,6 @@ class WebWebViewPlatformController implements WebViewPlatformController {
 
   @override
   Future<void> loadUrl(String url, Map<String, String>? headers) async {
-    // ignore: unsafe_html
     _element.src = url;
   }
 
@@ -176,7 +174,6 @@ class WebWebViewPlatformController implements WebViewPlatformController {
     String html, {
     String? baseUrl,
   }) async {
-    // ignore: unsafe_html
     _element.src = Uri.dataFromString(
       html,
       mimeType: 'text/html',

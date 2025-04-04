@@ -1,3 +1,45 @@
+## 4.3.4
+
+* Bumps gradle from 8.0.0 to 8.9.0.
+
+## 4.3.3
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 4.3.2
+
+* Bumps gradle-plugin to 2.1.10.
+
+## 4.3.1
+
+* Bumps gradle-plugin to 2.1.0.
+
+## 4.3.0
+
+* Adds support for disabling content URL access within WebView and disabling the Geolocation API.
+  See `AndroidWebViewController.setAllowContentAccess` and
+  `AndroidWebViewController.setGeolocationEnabled`.
+
+## 4.2.0
+
+* Adds support for configuring file access permissions. See `AndroidWebViewController.setAllowFileAccess`.
+
+## 4.1.0
+
+* Updates internal API wrapper to use `ProxyApi`s.
+
+## 4.0.3
+
+* Bumps androidx.annotation:annotation from 1.8.2 to 1.9.1.
+
+## 4.0.2
+
+* Updates README to remove contributor-focused documentation.
+
+## 4.0.1
+
+* Adds `missing_code_block_language_in_doc_comment` lint.
+
 ## 4.0.0
 
 * Bumps androidx.webkit:webkit from 1.12.0 to 1.12.1.

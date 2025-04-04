@@ -1,3 +1,46 @@
+## 2.8.2
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to
+  disappear after an app is suspended and resumed.
+
+## 2.8.1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.8.0
+
+* Adds support for platform views as an optional way of displaying a video.
+* Suppresses deprecation and removal warnings for
+  `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
+
+## 2.7.17
+
+* Replaces deprecated Android embedder APIs (`onSurfaceCreated` -> `onSurfaceAvailable`).
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
+## 2.7.16
+
+* Updates internal Pigeon API to use newer features.
+
+## 2.7.15
+
+* Changes the rotation correction calculation for Android API 29+ to use
+  the one that is reported by the video's format instead of the unapplied
+  rotation degrees that Exoplayer does not report on Android API 21+.
+* Changes the rotation correction calculation for Android APIs 21-28 to 0
+  because the Impeller backend used on those API versions correctly rotates
+  the video being played automatically.
+
+## 2.7.14
+
+* Removes SSL workaround for API 19, which is no longer supported.
+
+## 2.7.13
+
+* When `AndroidVideoPlayer` attempts to operate on a `textureId` that is not
+  active (i.e. it was previously disposed or never created), the resulting
+  platform exception is more informative than a "NullPointerException".
+
 ## 2.7.12
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/156451) where

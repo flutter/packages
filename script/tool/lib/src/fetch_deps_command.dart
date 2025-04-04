@@ -27,6 +27,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addFlag(_dartFlag, defaultsTo: true, help: 'Run "pub get"');
     argParser.addFlag(_supportingTargetPlatformsOnlyFlag,
@@ -87,10 +88,8 @@ class FetchDepsCommand extends PackageLoopingCommand {
         flutterCommand,
         <String>[
           'precache',
-          if (precacheIOS)
-            '--ios',
-          if (precacheMacOS)
-            '--macos',
+          if (precacheIOS) '--ios',
+          if (precacheMacOS) '--macos',
         ],
       );
       if (precacheExitCode != 0) {

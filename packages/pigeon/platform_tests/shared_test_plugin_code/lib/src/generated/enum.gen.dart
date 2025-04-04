@@ -54,10 +54,14 @@ class DataWithEnum {
   /// This comment is to test field documentation comments.
   EnumState? state;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       state,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static DataWithEnum decode(Object result) {
@@ -66,6 +70,22 @@ class DataWithEnum {
       state: result[0] as EnumState?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! DataWithEnum || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return state == other.state;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -126,8 +146,10 @@ class EnumApi2Host {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[data]);
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[data]) as List<Object?>?;
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

@@ -1,0 +1,4 @@
+# _TolerantComparator uses methods that don't compile on web.
+# TODO(stuartmorgan): Restructure to allow other tests to run; see
+# https://github.com/flutter/flutter/issues/157741
+test_on: vm

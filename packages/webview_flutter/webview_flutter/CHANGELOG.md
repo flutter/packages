@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 4.10.0
 
 * Updates minimum supported `webview_flutter_android` from 3.16.0 to 4.0.0.

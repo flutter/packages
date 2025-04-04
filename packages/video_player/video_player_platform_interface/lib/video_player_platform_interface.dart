@@ -44,67 +44,81 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Clears one video.
-  Future<void> dispose(int textureId) {
+  Future<void> dispose(int playerId) {
     throw UnimplementedError('dispose() has not been implemented.');
   }
 
-  /// Creates an instance of a video player and returns its textureId.
+  /// Creates an instance of a video player and returns its playerId.
+  @Deprecated('Use createWithOptions() instead.')
   Future<int?> create(DataSource dataSource) {
     throw UnimplementedError('create() has not been implemented.');
   }
 
+  /// Creates an instance of a video player based on creation options
+  /// and returns its playerId.
+  Future<int?> createWithOptions(VideoCreationOptions options) {
+    return create(options.dataSource);
+  }
+
   /// Returns a Stream of [VideoEventType]s.
-  Stream<VideoEvent> videoEventsFor(int textureId) {
+  Stream<VideoEvent> videoEventsFor(int playerId) {
     throw UnimplementedError('videoEventsFor() has not been implemented.');
   }
 
   /// Sets the looping attribute of the video.
-  Future<void> setLooping(int textureId, bool looping) {
+  Future<void> setLooping(int playerId, bool looping) {
     throw UnimplementedError('setLooping() has not been implemented.');
   }
 
   /// Starts the video playback.
-  Future<void> play(int textureId) {
+  Future<void> play(int playerId) {
     throw UnimplementedError('play() has not been implemented.');
   }
 
   /// Stops the video playback.
-  Future<void> pause(int textureId) {
+  Future<void> pause(int playerId) {
     throw UnimplementedError('pause() has not been implemented.');
   }
 
   /// Sets the volume to a range between 0.0 and 1.0.
-  Future<void> setVolume(int textureId, double volume) {
+  Future<void> setVolume(int playerId, double volume) {
     throw UnimplementedError('setVolume() has not been implemented.');
   }
 
   /// Sets the video position to a [Duration] from the start.
-  Future<void> seekTo(int textureId, Duration position) {
+  Future<void> seekTo(int playerId, Duration position) {
     throw UnimplementedError('seekTo() has not been implemented.');
   }
 
   /// Sets the playback speed to a [speed] value indicating the playback rate.
-  Future<void> setPlaybackSpeed(int textureId, double speed) {
+  Future<void> setPlaybackSpeed(int playerId, double speed) {
     throw UnimplementedError('setPlaybackSpeed() has not been implemented.');
   }
 
   /// Gets the video position as [Duration] from the start.
-  Future<Duration> getPosition(int textureId) {
+  Future<Duration> getPosition(int playerId) {
     throw UnimplementedError('getPosition() has not been implemented.');
   }
 
-  /// Returns a widget displaying the video with a given textureID.
-  Widget buildView(int textureId) {
+  /// Returns a widget displaying the video with a given playerId.
+  @Deprecated('Use buildViewWithOptions() instead.')
+  Widget buildView(int playerId) {
     throw UnimplementedError('buildView() has not been implemented.');
   }
 
-  /// Sets the audio mode to mix with other sources
+  /// Returns a widget displaying the video based on given options.
+  Widget buildViewWithOptions(VideoViewOptions options) {
+    // Default implementation for backwards compatibility.
+    return buildView(options.playerId);
+  }
+
+  /// Sets the audio mode to mix with other sources.
   Future<void> setMixWithOthers(bool mixWithOthers) {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
 
-  /// Sets additional options on web
-  Future<void> setWebOptions(int textureId, VideoPlayerWebOptions options) {
+  /// Sets additional options on web.
+  Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
   }
 }
@@ -196,6 +210,15 @@ enum VideoFormat {
 
   /// Any format other than the other ones defined in this enum.
   other,
+}
+
+/// The type of video view to be used.
+enum VideoViewType {
+  /// Texture will be used to render video.
+  textureView,
+
+  /// Platform view will be used to render video.
+  platformView,
 }
 
 /// Event emitted from the platform implementation.
@@ -475,4 +498,32 @@ class VideoPlayerWebOptionsControls {
 
     return controlsList.join(' ');
   }
+}
+
+/// [VideoViewOptions] contains configuration options for a video view.
+@immutable
+class VideoViewOptions {
+  /// Constructs an instance of [VideoViewOptions].
+  const VideoViewOptions({
+    required this.playerId,
+  });
+
+  /// The identifier of the video player.
+  final int playerId;
+}
+
+/// [VideoCreationOptions] contains creation options for a video player.
+@immutable
+class VideoCreationOptions {
+  /// Constructs an instance of [VideoCreationOptions].
+  const VideoCreationOptions({
+    required this.dataSource,
+    required this.viewType,
+  });
+
+  /// The data source used to create the player.
+  final DataSource dataSource;
+
+  /// The type of view to be used for displaying the video player
+  final VideoViewType viewType;
 }

@@ -1,6 +1,59 @@
+## 14.8.1
+
+- Secured canPop method for the lack of matches in routerDelegate's configuration.
+ 
+## 14.8.0
+
+- Adds `preload` parameter to `StatefulShellBranchData.$branch`.
+
+## 14.7.2
+
+- Add missing `await` keyword to `onTap` callback in `navigation.md`.
+
+## 14.7.1
+
+- Fixes return type of current state getter on `GoRouter` and `GoRouterDelegate` to be non-nullable.
+
+## 14.7.0
+
+- Adds fragment support to GoRouter, enabling direct specification and automatic handling of fragments in routes.
+
+## 14.6.4
+
+- Rephrases readme.
+
+## 14.6.3
+
+- Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+- Updates readme.
+
+## 14.6.2
+
+- Replaces deprecated collection method usage.
+
+## 14.6.1
+
+- Fixed `PopScope`, and `WillPopScop` was not handled properly in the Root routes.
+
+## 14.6.0
+
+- Allows going to a path relatively by prefixing `./`
+
+## 14.5.0
+
+- Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
+
+## 14.4.1
+
+- Adds `missing_code_block_language_in_doc_comment` lint.
+
+## 14.4.0
+
+- Adds current state getter on `GoRouter` that returns the current `GoRouterState`.
+
 ## 14.3.0
 
-- Added missing implementation for the routerNeglect parameter in GoRouter.
+- Adds missing implementation for the routerNeglect parameter in GoRouter.
 
 ## 14.2.9
 
@@ -8,7 +61,7 @@
 
 ## 14.2.8
 
-- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView.
 
 ## 14.2.7
 
@@ -1112,3 +1165,4 @@
 ## 0.1.0
 
 - squatting on the package name (I'm not too proud to admit it)
+

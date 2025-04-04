@@ -58,7 +58,7 @@ abstract class ImagePickerApi {
       int? imageQuality, bool requestFullMetadata);
   @async
   @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:limit:')
-  List<String?> pickMultiImage(
+  List<String> pickMultiImage(
       MaxSize maxSize, int? imageQuality, bool requestFullMetadata, int? limit);
   @async
   @ObjCSelector('pickVideoWithSource:maxDuration:')
@@ -67,5 +67,5 @@ abstract class ImagePickerApi {
   /// Selects images and videos and returns their paths.
   @async
   @ObjCSelector('pickMediaWithMediaSelectionOptions:')
-  List<String?> pickMedia(MediaSelectionOptions mediaSelectionOptions);
+  List<String> pickMedia(MediaSelectionOptions mediaSelectionOptions);
 }

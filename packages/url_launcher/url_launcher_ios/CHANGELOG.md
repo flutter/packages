@@ -1,5 +1,11 @@
-## NEXT
+## 6.3.3
 
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Ensures the completion callback is invoked if the user dismisses the Safari view before the initial URL load completes.
+
+## 6.3.2
+
+* Updates to Pigeon v22.
 * Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
 
 ## 6.3.1

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/interactive_media_ads.dart';
@@ -11,12 +13,25 @@ import 'test_stubs.dart';
 
 void main() {
   test('init', () async {
+    final AdsRenderingSettings adsRenderingSettings =
+        AdsRenderingSettings.fromPlatform(
+      TestAdsRenderingSettings(
+        const PlatformAdsRenderingSettingsCreationParams(),
+      ),
+    );
+
+    final Completer<PlatformAdsRenderingSettings> settingsCompleter =
+        Completer<PlatformAdsRenderingSettings>();
+
     final TestAdsManager platformManager = TestAdsManager(
-      onInit: expectAsync1((_) async {}),
+      onInit: ({PlatformAdsRenderingSettings? settings}) async {
+        settingsCompleter.complete(settings);
+      },
     );
 
     final AdsManager manager = createAdsManager(platformManager);
-    await manager.init();
+    await manager.init(settings: adsRenderingSettings);
+    expect(await settingsCompleter.future, adsRenderingSettings.platform);
   });
 
   test('start', () async {
