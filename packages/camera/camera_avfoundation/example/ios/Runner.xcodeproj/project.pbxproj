@@ -36,7 +36,6 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		97DB234D2D566D0700CEFE66 /* CameraPreviewPauseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DB234C2D566D0700CEFE66 /* CameraPreviewPauseTests.swift */; };
-		E0CDBAC227CD9729002561D9 /* QueueTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E0CDBAC127CD9729002561D9 /* QueueTestUtils.m */; };
 		E11D6A8F2D81B81D0031E6C5 /* MockCaptureVideoDataOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11D6A8E2D81B81D0031E6C5 /* MockCaptureVideoDataOutput.swift */; };
 		E11D6A912D82C7740031E6C5 /* FLTCamExposureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11D6A902D82C7740031E6C5 /* FLTCamExposureTests.swift */; };
 		E12C4FF62D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12C4FF52D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift */; };
@@ -131,8 +130,6 @@
 		9DDC4CE84A8B378AE4A8CD9C /* libPods-RunnerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-RunnerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8F314CD1C64E9257EBC811D /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		B61D98BBC8FB276D1C4A7BB2 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
-		E0CDBAC027CD9729002561D9 /* QueueTestUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QueueTestUtils.h; sourceTree = "<group>"; };
-		E0CDBAC127CD9729002561D9 /* QueueTestUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = QueueTestUtils.m; sourceTree = "<group>"; };
 		E11D6A8E2D81B81D0031E6C5 /* MockCaptureVideoDataOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCaptureVideoDataOutput.swift; sourceTree = "<group>"; };
 		E11D6A902D82C7740031E6C5 /* FLTCamExposureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamExposureTests.swift; sourceTree = "<group>"; };
 		E12C4FF52D68C69000515E70 /* CameraPluginDelegatingMethodTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPluginDelegatingMethodTests.swift; sourceTree = "<group>"; };
@@ -147,12 +144,12 @@
 		E142F13F2D85AD7900824824 /* MockCaptureConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCaptureConnection.swift; sourceTree = "<group>"; };
 		E142F1412D85AFA400824824 /* MockGlobalEventApi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockGlobalEventApi.swift; sourceTree = "<group>"; };
 		E15139172D80980900FEE47B /* FLTCamSetDeviceOrientationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamSetDeviceOrientationTests.swift; sourceTree = "<group>"; };
+		E15BC7E32D86D08700F66474 /* MockFlutterTextureRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFlutterTextureRegistry.swift; sourceTree = "<group>"; };
+		E15BC7E52D86D17D00F66474 /* MockFlutterBinaryMessenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFlutterBinaryMessenger.swift; sourceTree = "<group>"; };
 		E15BC7E72D86D29F00F66474 /* MockAssetWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAssetWriter.swift; sourceTree = "<group>"; };
 		E15BC7E92D86D41F00F66474 /* MockAssetWriterInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAssetWriterInput.swift; sourceTree = "<group>"; };
 		E15BC7EB2D86D50200F66474 /* MockAssetWriterInputPixelBufferAdaptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAssetWriterInputPixelBufferAdaptor.swift; sourceTree = "<group>"; };
 		E15BC7ED2D86D85500F66474 /* MockCaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCaptureDevice.swift; sourceTree = "<group>"; };
-		E15BC7E32D86D08700F66474 /* MockFlutterTextureRegistry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFlutterTextureRegistry.swift; sourceTree = "<group>"; };
-		E15BC7E52D86D17D00F66474 /* MockFlutterBinaryMessenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFlutterBinaryMessenger.swift; sourceTree = "<group>"; };
 		E16602942D8471C0003CFE12 /* FLTCamZoomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamZoomTests.swift; sourceTree = "<group>"; };
 		E1A5F4E22D80259C0005BA64 /* FLTCamSetFlashModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FLTCamSetFlashModeTests.swift; sourceTree = "<group>"; };
 		E1ABED702D943DC700AED9CC /* MockCaptureDeviceInputFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockCaptureDeviceInputFactory.swift; sourceTree = "<group>"; };
@@ -190,8 +187,6 @@
 			children = (
 				7F29EB3F2D281C6D00740257 /* Mocks */,
 				03BB766C2665316900CE5A93 /* Info.plist */,
-				E0CDBAC027CD9729002561D9 /* QueueTestUtils.h */,
-				E0CDBAC127CD9729002561D9 /* QueueTestUtils.m */,
 				E142681E2D8566230046CBBC /* CameraTestUtils.swift */,
 				979B3DF92D5B6BA2009BDE1A /* ExceptionCatcher.h */,
 				979B3DFA2D5B6BC7009BDE1A /* ExceptionCatcher.m */,
@@ -565,7 +560,6 @@
 				E15139182D80980900FEE47B /* FLTCamSetDeviceOrientationTests.swift in Sources */,
 				972CA92B2D5A1D8C004B846F /* CameraPropertiesTests.swift in Sources */,
 				E15BC7E42D86D08700F66474 /* MockFlutterTextureRegistry.swift in Sources */,
-				E0CDBAC227CD9729002561D9 /* QueueTestUtils.m in Sources */,
 				978296CF2D5F744B0009BDD3 /* PhotoCaptureTests.swift in Sources */,
 				979B3E002D5B9E6C009BDE1A /* CameraMethodChannelTests.swift in Sources */,
 				E142F13C2D8596F100824824 /* MockCaptureDeviceFormat.swift in Sources */,
