@@ -316,15 +316,8 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.writeScoped('if (this === other) {', '}', () {
         indent.writeln('return true');
       });
-      indent.write('return ');
-      indent.format(
-        classDefinition.fields
-            .map((NamedType field) => isCollectionType(field.type)
-                ? 'deepEquals${generatorOptions.fileSpecificClassNameComponent}(${field.name}, other.${field.name})'
-                : '${field.name} == other.${field.name}')
-            .join('\n&& '),
-        leadingSpace: false,
-      );
+      indent.write(
+          'return deepEquals${generatorOptions.fileSpecificClassNameComponent}(toList(), other.toList())');
     });
 
     indent.newln();
@@ -1275,13 +1268,17 @@ private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?
     return a.size == b.size &&
         a.indices.all{ deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it]) }
   }
+  if (a is List<*> && b is List<*>) {
+    return a.size == b.size &&
+        a.indices.all{ deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it]) }
+  }
   if (a is Map<*, *> && b is Map<*, *>) {
-    return a.size == b.size && a.keys.all {
-        (b as Map<Any?, Any?>).containsKey(it) &&
-        deepEquals${generatorOptions.fileSpecificClassNameComponent}(a[it], b[it])
+    return a.size == b.size && a.all {
+        (b as Map<Any?, Any?>).containsKey(it.key) &&
+        deepEquals${generatorOptions.fileSpecificClassNameComponent}(it.value, b[it.key])
     }
   }
-  return a == b;
+  return a == b
 }
     ''');
   }
@@ -1303,9 +1300,7 @@ private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?
     if (generatorOptions.includeErrorClass) {
       _writeErrorClass(generatorOptions, indent);
     }
-    if (root.classes.isNotEmpty &&
-        root.classes.any((Class dataClass) => dataClass.fields
-            .any((NamedType field) => isCollectionType(field.type)))) {
+    if (root.classes.isNotEmpty) {
       _writeDeepEquals(generatorOptions, indent);
     }
   }

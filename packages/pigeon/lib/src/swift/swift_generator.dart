@@ -391,11 +391,14 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     Indent indent,
     Class classDefinition, {
     bool private = false,
+    bool hashable = true,
   }) {
     final String privateString = private ? 'private ' : '';
     final String extendsString = classDefinition.superClass != null
         ? ': ${classDefinition.superClass!.name}'
-        : '';
+        : hashable
+            ? ': Hashable'
+            : '';
     if (classDefinition.isSwiftClass) {
       indent.write(
           '${privateString}class ${classDefinition.name}$extendsString ');
@@ -444,7 +447,12 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     final Class overflowClass =
         Class(name: _overflowClassName, fields: overflowFields);
     indent.newln();
-    _writeDataClassSignature(indent, overflowClass, private: true);
+    _writeDataClassSignature(
+      indent,
+      overflowClass,
+      private: true,
+      hashable: false,
+    );
     indent.addScoped('', '}', () {
       writeClassEncode(
         generatorOptions,
@@ -535,6 +543,13 @@ if (wrapped == nil) {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      writeClassEquality(
+        generatorOptions,
+        root,
+        indent,
+        classDefinition,
+        dartPackageName: dartPackageName,
+      );
     });
   }
 
@@ -587,6 +602,32 @@ if (wrapped == nil) {
           indent.writeln('${field.name}$separator');
         }
       });
+    });
+  }
+
+  @override
+  void writeClassEquality(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    indent.writeScoped(
+        'static func == (lhs: ${classDefinition.name}, rhs: ${classDefinition.name}) -> Bool {',
+        '}', () {
+      if (classDefinition.isSwiftClass) {
+        indent.writeScoped('if (lhs === rhs) {', '}', () {
+          indent.writeln('return true');
+        });
+      }
+      indent.write(
+          'return deepEquals${generatorOptions.fileSpecificClassNameComponent}(lhs.toList(), rhs.toList())');
+    });
+
+    indent.writeScoped('func hash(into hasher: inout Hasher) {', '}', () {
+      indent.writeln(
+          'deepHash${generatorOptions.fileSpecificClassNameComponent}(value: toList(), hasher: &hasher)');
     });
   }
 
@@ -1372,7 +1413,8 @@ if (wrapped == nil) {
 private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
   return value as! T?
-}''');
+}
+''');
   }
 
   void _writeCreateConnectionError(
@@ -1384,6 +1426,73 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.writeln(
           'return ${_getErrorClassName(generatorOptions)}(code: "channel-error", message: "Unable to establish connection on channel: \'\\(channelName)\'.", details: "")');
     });
+  }
+
+  void _writeDeepEquals(InternalSwiftOptions generatorOptions, Indent indent) {
+    indent.format('''
+func deepEquals${generatorOptions.fileSpecificClassNameComponent}(_ lhs: Any?, _ rhs: Any?) -> Bool {
+  let cleanLhs = nilOrValue(lhs) as Any?
+  let cleanRhs = nilOrValue(rhs) as Any?
+  switch (cleanLhs, cleanRhs) {
+  case (nil, nil):
+    return true
+
+  case (nil, _), (_, nil):
+    return false
+
+  case is (Void, Void):
+    return true
+
+  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
+    return cleanLhsHashable == cleanRhsHashable
+
+  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
+    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
+    for (index, element) in cleanLhsArray.enumerated() {
+      if !deepEquals${generatorOptions.fileSpecificClassNameComponent}(element, cleanRhsArray[index]) {
+        return false
+      }
+    }
+    return true
+
+  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
+    for (key, cleanLhsValue) in cleanLhsDictionary {
+      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
+      if !deepEquals${generatorOptions.fileSpecificClassNameComponent}(cleanLhsValue, cleanRhsDictionary[key]!) {
+        return false
+      }
+    }
+    return true
+
+  default:
+    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
+    return false
+  }
+}
+
+func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: Any?, hasher: inout Hasher) {
+  if let valueList = value as? [AnyHashable] {
+     for item in valueList { deepHash${generatorOptions.fileSpecificClassNameComponent}(value: item, hasher: &hasher) }
+     return
+  }
+
+  if let valueDict = value as? [AnyHashable: AnyHashable] {
+    for key in valueDict.keys { 
+      hasher.combine(key)
+      deepHash${generatorOptions.fileSpecificClassNameComponent}(value: valueDict[key]!, hasher: &hasher)
+    }
+    return
+  }
+
+  if let hashableValue = value as? AnyHashable {
+    hasher.combine(hashableValue.hashValue)
+  }
+
+  return hasher.combine(String(describing: value))
+}
+
+    ''');
   }
 
   @override
@@ -1407,6 +1516,9 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 
     _writeIsNullish(indent);
     _writeNilOrValue(indent);
+    if (root.classes.isNotEmpty) {
+      _writeDeepEquals(generatorOptions, indent);
+    }
   }
 
   @override
