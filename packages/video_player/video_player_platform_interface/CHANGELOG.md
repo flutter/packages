@@ -1,3 +1,7 @@
+## 6.3.1
+
+* Add html 5 video poster support as a VideoPlayerWebOptions.
+
 ## 6.3.0
 
 * Adds support for platform views as an optional way of displaying a video.
