@@ -19,7 +19,7 @@ bool _deepEquals(Object? a, Object? b) {
   }
   if (a is Map && b is Map) {
     return a.length == b.length &&
-        a.entries.every((Entry<Object?, Object?> entry) =>
+        a.entries.every((MapEntry<Object?, Object?> entry) =>
             (b as Map<Object?, Object?>).containsKey(entry.key) &&
             _deepEquals(entry.value, b[entry.key]));
   }
