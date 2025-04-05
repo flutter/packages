@@ -7,9 +7,9 @@ T? maybeEnum<T extends Enum>(String? needle, List<T> haystack) {
   if (needle == null) {
     return null;
   }
-  for (T enumValue in haystack) {
-    if (enumValue.name == needle) {
-      return enumValue;
+  for (final T value in haystack) {
+    if (value.name == needle) {
+      return value;
     }
   }
   return null;
