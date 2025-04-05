@@ -3,11 +3,19 @@
 // found in the LICENSE file.
 
 /// Attempts to retrieve an enum value from [haystack] if [needle] is not null.
+/// Returns null if [needle] is null or if the enum value is not found in
+/// [haystack].
 T? maybeEnum<T extends Enum>(String? needle, List<T> haystack) {
   if (needle == null) {
     return null;
   }
-  return haystack.byName(needle);
+  
+  try {
+    return haystack.byName(needle);
+  } on ArgumentError catch (_) {
+    // Ignore the error and return null.
+    return null;
+  }
 }
 
 /// The type of several functions from the library, that don't receive
