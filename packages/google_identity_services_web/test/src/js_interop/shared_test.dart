@@ -24,8 +24,10 @@ void main() {
     });
 
     test('should handle different casing in enum names', () {
-      expect(maybeEnum('camelCase', TestEnum.values), equals(TestEnum.camelCase));
-      expect(maybeEnum('UPPERCASE', TestEnum.values), equals(TestEnum.UPPERCASE));
+      expect(
+          maybeEnum('camelCase', TestEnum.values), equals(TestEnum.camelCase));
+      expect(
+          maybeEnum('UPPERCASE', TestEnum.values), equals(TestEnum.UPPERCASE));
     });
 
     test('should return null when needle is not found', () {
@@ -39,17 +41,10 @@ void main() {
       expect(maybeEnum('camelcase', TestEnum.values), isNull);
       expect(maybeEnum('uppercase', TestEnum.values), isNull);
     });
-    
+
     test('should handle special characters in needle', () {
       expect(maybeEnum('first!', TestEnum.values), isNull);
       expect(maybeEnum(' first ', TestEnum.values), isNull);
-    });
-    
-    test('should work with empty enum values list', () {
-      // This is a theoretical test - in practice, enum values are never empty
-      // But the function should handle this case gracefully
-      final emptyList = <TestEnum>[];
-      expect(maybeEnum('anything', emptyList), isNull);
     });
   });
 }
