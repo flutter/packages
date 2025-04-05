@@ -1,3 +1,7 @@
+## 0.9.18+15
+
+* Migrates the CameraPlugin class to Swift.
+
 ## 0.9.18+14
 
 * Creates Swift Package Manager target for Swift implementation.
