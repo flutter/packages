@@ -1196,12 +1196,12 @@ abstract class SecTrust extends NSObject {
   /// Returns an opaque cookie containing exceptions to trust policies that will
   /// allow future evaluations of the current certificate to succeed.
   @static
-  Uint8List copyExceptions(SecTrust trust);
+  Uint8List? copyExceptions(SecTrust trust);
 
   /// Sets a list of exceptions that should be ignored when the certificate is
   /// evaluated.
   @static
-  bool setExceptions(SecTrust trust, Uint8List exceptions);
+  bool setExceptions(SecTrust trust, Uint8List? exceptions);
 
   /// Returns the result code from the most recent trust evaluation.
   @static
@@ -1209,7 +1209,7 @@ abstract class SecTrust extends NSObject {
 
   /// Certificates used to evaluate trust.
   @static
-  List<String> copyCertificateChain(SecTrust trust);
+  List<SecCertificate>? copyCertificateChain(SecTrust trust);
 }
 
 /// An abstract Core Foundation-type object representing an X.509 certificate.

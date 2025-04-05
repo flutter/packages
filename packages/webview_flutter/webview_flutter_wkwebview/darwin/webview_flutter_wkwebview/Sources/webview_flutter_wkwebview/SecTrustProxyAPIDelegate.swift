@@ -19,24 +19,56 @@ import Foundation
 /// or handle method calls on the associated native class or an instance of that class.
 class SecTrustProxyAPIDelegate : PigeonApiDelegateSecTrust {
   func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> Bool {
-    var error: Unmanaged<CFError>?
+    var error: CFError?
     let result = SecTrustEvaluateWithError(trust.value, &error)
+    if let error = error {
+      throw PigeonError(code: CFErrorGetDomain(error) as String, message: CFErrorCopyDescription(error) as String, details: nil)
+    }
     return result
   }
 
-  func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData {
-    return SecTrust.copyExceptions(trust: trust)
+  func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData? {
+    let data = SecTrustCopyExceptions(trust.value)
+    if let data = data {
+      return FlutterStandardTypedData(bytes: data as Data)
+    }
+    
+    return nil
   }
 
-  func setExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, exceptions: FlutterStandardTypedData) throws -> Bool {
-    return SecTrust.setExceptions(trust: trust, exceptions: exceptions)
+  func setExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, exceptions: FlutterStandardTypedData?) throws -> Bool {
+    let data: CFData? = exceptions != nil ? exceptions!.data as CFData : nil
+    return SecTrustSetExceptions(trust.value, data)
   }
 
   func getTrustResult(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> GetTrustResultResponse {
-    return SecTrust.getTrustResult(trust: trust)
+    var result = SecTrustResultType.invalid
+    let status = SecTrustGetTrustResult(trust.value, &result)
+    return GetTrustResultResponse(result: result, resultCode: status)
   }
 
-  func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> [String] {
-    return SecTrust.copyCertificateChain(trust: trust)
+  func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> [SecCertificateWrapper]? {
+    if #available(iOS 15.0, *) {
+      let array = SecTrustCopyCertificateChain(trust.value) as Array?
+      if let array = array {
+        var certificateList: [SecCertificateWrapper] = []
+        for certificate in array {
+          certificateList.append(SecCertificateWrapper(value: certificate as! SecCertificate))
+        }
+        return certificateList
+      }
+    } else {
+      let count = SecTrustGetCertificateCount(trust.value)
+      if count > 0 {
+        var certificateList: [SecCertificateWrapper] = []
+        for index in 0..<count {
+          let certificate = SecTrustGetCertificateAtIndex(trust.value, index)
+          certificateList.append(SecCertificateWrapper(value: certificate!))
+        }
+        return certificateList
+      }
+    }
+    
+    return nil
   }
 }

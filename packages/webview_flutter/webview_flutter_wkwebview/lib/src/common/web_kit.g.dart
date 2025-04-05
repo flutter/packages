@@ -643,7 +643,7 @@ class WebKitGProxy {
   }) evaluateWithErrorSecTrust;
 
   /// Calls to [SecTrust.copyExceptions].
-  final Future<Uint8List> Function(
+  final Future<Uint8List?> Function(
     SecTrust, {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
@@ -652,7 +652,7 @@ class WebKitGProxy {
   /// Calls to [SecTrust.setExceptions].
   final Future<bool> Function(
     SecTrust,
-    Uint8List, {
+    Uint8List?, {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) setExceptionsSecTrust;
@@ -665,7 +665,7 @@ class WebKitGProxy {
   }) getTrustResultSecTrust;
 
   /// Calls to [SecTrust.copyCertificateChain].
-  final Future<List<String>> Function(
+  final Future<List<SecCertificate>?> Function(
     SecTrust, {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
@@ -8373,7 +8373,7 @@ class SecTrust extends NSObject {
 
   /// Returns an opaque cookie containing exceptions to trust policies that will
   /// allow future evaluations of the current certificate to succeed.
-  static Future<Uint8List> copyExceptions(
+  static Future<Uint8List?> copyExceptions(
     SecTrust trust, {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
@@ -8402,13 +8402,8 @@ class SecTrust extends NSObject {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as Uint8List?)!;
+      return (pigeonVar_replyList[0] as Uint8List?);
     }
   }
 
@@ -8416,7 +8411,7 @@ class SecTrust extends NSObject {
   /// evaluated.
   static Future<bool> setExceptions(
     SecTrust trust,
-    Uint8List exceptions, {
+    Uint8List? exceptions, {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) async {
@@ -8495,7 +8490,7 @@ class SecTrust extends NSObject {
   }
 
   /// Certificates used to evaluate trust.
-  static Future<List<String>> copyCertificateChain(
+  static Future<List<SecCertificate>?> copyCertificateChain(
     SecTrust trust, {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
@@ -8524,13 +8519,8 @@ class SecTrust extends NSObject {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<String>();
+      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<SecCertificate>();
     }
   }
 

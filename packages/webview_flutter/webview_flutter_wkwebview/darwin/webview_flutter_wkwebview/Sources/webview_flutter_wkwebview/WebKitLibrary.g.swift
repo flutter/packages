@@ -9738,14 +9738,14 @@ protocol PigeonApiDelegateSecTrust {
   func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> Bool
   /// Returns an opaque cookie containing exceptions to trust policies that will
   /// allow future evaluations of the current certificate to succeed.
-  func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData
+  func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData?
   /// Sets a list of exceptions that should be ignored when the certificate is
   /// evaluated.
-  func setExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, exceptions: FlutterStandardTypedData) throws -> Bool
+  func setExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, exceptions: FlutterStandardTypedData?) throws -> Bool
   /// Returns the result code from the most recent trust evaluation.
   func getTrustResult(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> GetTrustResultResponse
   /// Certificates used to evaluate trust.
-  func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> [String]
+  func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> [SecCertificateWrapper]?
 }
 
 protocol PigeonApiProtocolSecTrust {
@@ -9804,7 +9804,7 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
       setExceptionsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let trustArg = args[0] as! SecTrustWrapper
-        let exceptionsArg = args[1] as! FlutterStandardTypedData
+        let exceptionsArg: FlutterStandardTypedData? = nilOrValue(args[1])
         do {
           let result = try api.pigeonDelegate.setExceptions(pigeonApi: api, trust: trustArg, exceptions: exceptionsArg)
           reply(wrapResult(result))
@@ -9899,11 +9899,11 @@ class SecTrustProxyAPIDelegate : PigeonApiDelegateSecTrust {
     return SecTrust.evaluateWithError(trust: trust)
   }
 
-  func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData {
+  func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData? {
     return SecTrust.copyExceptions(trust: trust)
   }
 
-  func setExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, exceptions: FlutterStandardTypedData) throws -> Bool {
+  func setExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, exceptions: FlutterStandardTypedData?) throws -> Bool {
     return SecTrust.setExceptions(trust: trust, exceptions: exceptions)
   }
 
@@ -9911,7 +9911,7 @@ class SecTrustProxyAPIDelegate : PigeonApiDelegateSecTrust {
     return SecTrust.getTrustResult(trust: trust)
   }
 
-  func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> [String] {
+  func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> [SecCertificateWrapper]? {
     return SecTrust.copyCertificateChain(trust: trust)
   }
 
