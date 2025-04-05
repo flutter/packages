@@ -11,8 +11,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
@@ -36,7 +36,10 @@ public class ImageStreamReader {
 
   private final ImageReader imageReader;
   private final ImageStreamReaderUtils imageStreamReaderUtils;
-  @VisibleForTesting(otherwise = VisibleForTesting.NONE) @Nullable public Handler handler;
+
+  @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+  @Nullable
+  public Handler handler;
 
   /**
    * This solves a memory issue, when the main thread hangs (e.g. when pausing the debugger) while
@@ -108,7 +111,7 @@ public class ImageStreamReader {
       @NonNull CameraCaptureProperties captureProps,
       @NonNull EventChannel.EventSink imageStreamSink) {
     try {
-        Log.d(TAG, "onImageAvailable");
+      Log.d(TAG, "onImageAvailable");
       // The limit was chosen so it would not drop frames for reasonable lags of the main thread.
       if (numImagesInTransit >= ImageStreamReader.MAX_IMAGES_IN_TRANSIT) {
         Log.d(TAG, "Dropping frame due to images pending on main thread.");
@@ -134,7 +137,8 @@ public class ImageStreamReader {
       imageBuffer.put(
           "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
 
-      final Handler handler = this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
+      final Handler handler =
+          this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
       ++numImagesInTransit;
       boolean postResult =
           handler.post(
@@ -148,7 +152,8 @@ public class ImageStreamReader {
     } catch (IllegalStateException e) {
       // Handle "buffer is inaccessible" errors that can happen on some devices from
       // ImageStreamReaderUtils.yuv420ThreePlanesToNV21()
-      final Handler handler = this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
+      final Handler handler =
+          this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
       handler.post(
           () ->
               imageStreamSink.error(

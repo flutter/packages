@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camera.media;
 
-
 import android.graphics.ImageFormat;
 import android.media.Image;
 import java.nio.ByteBuffer;
