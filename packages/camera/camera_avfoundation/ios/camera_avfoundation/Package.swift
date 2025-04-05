@@ -12,20 +12,29 @@ let package = Package(
     .iOS("12.0")
   ],
   products: [
-    .library(name: "camera-avfoundation", targets: ["camera_avfoundation"])
+    .library(
+      name: "camera-avfoundation", targets: ["camera_avfoundation", "camera_avfoundation_objc"])
   ],
   dependencies: [],
   targets: [
     .target(
       name: "camera_avfoundation",
+      dependencies: ["camera_avfoundation_objc"],
+      path: "Sources/camera_avfoundation",
+      resources: [
+        .process("Resources")
+      ]
+    ),
+    .target(
+      name: "camera_avfoundation_objc",
       dependencies: [],
-      exclude: ["include/camera_avfoundation-umbrella.h", "include/CameraPlugin.modulemap"],
+      path: "Sources/camera_avfoundation_objc",
       resources: [
         .process("Resources")
       ],
       cSettings: [
         .headerSearchPath("include/camera_avfoundation")
       ]
-    )
+    ),
   ]
 )
