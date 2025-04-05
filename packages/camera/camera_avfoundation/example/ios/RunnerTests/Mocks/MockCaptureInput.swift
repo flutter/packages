@@ -2,6 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import camera_avfoundation
+
+#if canImport(camera_avfoundation_objc)
+  import camera_avfoundation_objc
+#endif
+
 /// A mocked implementation of FLTCaptureInput which allows injecting a custom
 /// implementation.
 final class MockCaptureInput: NSObject, FLTCaptureInput {
