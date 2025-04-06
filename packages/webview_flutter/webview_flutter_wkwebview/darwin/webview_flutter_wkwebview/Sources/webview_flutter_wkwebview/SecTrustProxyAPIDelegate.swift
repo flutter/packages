@@ -55,7 +55,7 @@ class SecTrustProxyAPIDelegate : PigeonApiDelegateSecTrust {
   }
 
   func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> [SecCertificateWrapper]? {
-    if #available(iOS 15.0, *) {
+    if #available(iOS 15.0, macOS 12.0, *) {
       let array = secTrustCopyCertificateChain(trust.value) as Array?
       if let array = array {
         var certificateList: [SecCertificateWrapper] = []
@@ -100,12 +100,9 @@ class SecTrustProxyAPIDelegate : PigeonApiDelegateSecTrust {
   }
   
   // Overridable for testing.
+  @available(iOS 15.0, macOS 12.0, *)
   internal func secTrustCopyCertificateChain(_ trust: SecTrust) -> CFArray? {
-    if #available(iOS 15.0, *) {
-      return SecTrustCopyCertificateChain(trust)
-    }
-    
-    return nil
+    return SecTrustCopyCertificateChain(trust)
   }
   
   // Overridable for testing.
