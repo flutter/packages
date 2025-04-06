@@ -215,7 +215,8 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
       let assetFilePath = registrar.assetManager.lookupKeyForAsset(key)
       throw PigeonError(
         code: "FWFURLParsingError",
-        message: "Failed to find asset with filepath: `\(String(describing: assetFilePath))`.", details: nil)
+        message: "Failed to find asset with filepath: `\(String(describing: assetFilePath))`.",
+        details: nil)
     }
   }
 

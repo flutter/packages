@@ -4,6 +4,8 @@
 
 import XCTest
 
+@testable import webview_flutter_wkwebview
+
 #if os(iOS)
   import Flutter
 #elseif os(macOS)
@@ -12,30 +14,29 @@ import XCTest
   #error("Unsupported platform.")
 #endif
 
-@testable import webview_flutter_wkwebview
-
 class SecCertificateProxyAPITests: XCTestCase {
   func createDummyCertificate() -> SecCertificate {
     let url = FlutterAssetManager().urlForAsset("assets/test_cert.der")!
     let certificateData = NSData(contentsOf: url)
-    
+
     return SecCertificateCreateWithData(nil, certificateData!)!
   }
-  
+
   func testCopyData() {
     let registrar = TestProxyApiRegistrar()
     let delegate = TestSecCertificateProxyAPIDelegate()
     let api = PigeonApiSecCertificate(pigeonRegistrar: registrar, delegate: delegate)
 
-    let value = try? api.pigeonDelegate.copyData(pigeonApi: api, certificate: SecCertificateWrapper(value: createDummyCertificate()))
+    let value = try? api.pigeonDelegate.copyData(
+      pigeonApi: api, certificate: SecCertificateWrapper(value: createDummyCertificate()))
 
     XCTAssertEqual(value?.data, delegate.data)
   }
 }
 
-class TestSecCertificateProxyAPIDelegate : SecCertificateProxyAPIDelegate {
+class TestSecCertificateProxyAPIDelegate: SecCertificateProxyAPIDelegate {
   let data = Data()
-  
+
   override func secCertificateCopyData(_ certificate: SecCertificate) -> CFData {
     return data as CFData
   }

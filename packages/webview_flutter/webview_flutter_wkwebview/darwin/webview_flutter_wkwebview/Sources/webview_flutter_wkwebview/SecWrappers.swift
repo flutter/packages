@@ -9,7 +9,7 @@
 /// code. All instances of `SecTrust`should be replaced with this.
 class SecTrustWrapper {
   let value: SecTrust
-  
+
   init(value: SecTrust) {
     self.value = value
   }
@@ -22,9 +22,8 @@ class SecTrustWrapper {
 /// code. All instances of `SecCertificate`should be replaced with this.
 class SecCertificateWrapper {
   let value: SecCertificate
-  
+
   init(value: SecCertificate) {
     self.value = value
   }
 }
-

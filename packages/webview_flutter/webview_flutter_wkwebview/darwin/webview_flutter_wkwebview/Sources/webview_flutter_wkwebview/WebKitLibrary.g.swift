@@ -6,8 +6,9 @@
 
 import Foundation
 import WebKit
+
 #if !os(macOS)
-import UIKit
+  import UIKit
 #endif
 
 #if os(iOS)
@@ -63,7 +64,9 @@ private func wrapError(_ error: Any) -> [Any?] {
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
-  return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
+  return PigeonError(
+    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
+    details: "")
 }
 
 private func isNullish(_ value: Any?) -> Bool {
@@ -80,7 +83,6 @@ protocol WebKitLibraryPigeonInternalFinalizerDelegate: AnyObject {
   func onDeinit(identifier: Int64)
 }
 
-
 // Attaches to an object to receive a callback when the object is deallocated.
 internal final class WebKitLibraryPigeonInternalFinalizer {
   private static let associatedObjectKey = malloc(1)!
@@ -96,7 +98,8 @@ internal final class WebKitLibraryPigeonInternalFinalizer {
   }
 
   internal static func attach(
-    to instance: AnyObject, identifier: Int64, delegate: WebKitLibraryPigeonInternalFinalizerDelegate
+    to instance: AnyObject, identifier: Int64,
+    delegate: WebKitLibraryPigeonInternalFinalizerDelegate
   ) {
     let finalizer = WebKitLibraryPigeonInternalFinalizer(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
@@ -110,7 +113,6 @@ internal final class WebKitLibraryPigeonInternalFinalizer {
     delegate?.onDeinit(identifier: identifier)
   }
 }
-
 
 /// Maintains instances used to communicate with the corresponding objects in Dart.
 ///
@@ -215,7 +217,8 @@ final class WebKitLibraryPigeonInstanceManager {
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
-    WebKitLibraryPigeonInternalFinalizer.attach(to: instance, identifier: identifier, delegate: finalizerDelegate)
+    WebKitLibraryPigeonInternalFinalizer.attach(
+      to: instance, identifier: identifier, delegate: finalizerDelegate)
   }
 
   /// Retrieves the identifier paired with an instance.
@@ -292,7 +295,6 @@ final class WebKitLibraryPigeonInstanceManager {
   }
 }
 
-
 private class WebKitLibraryPigeonInstanceManagerApi {
   /// The codec used for serializing messages.
   var codec: FlutterStandardMessageCodec { WebKitLibraryPigeonCodec.shared }
@@ -305,9 +307,14 @@ private class WebKitLibraryPigeonInstanceManagerApi {
   }
 
   /// Sets up an instance of `WebKitLibraryPigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: WebKitLibraryPigeonInstanceManager?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, instanceManager: WebKitLibraryPigeonInstanceManager?
+  ) {
     let codec = WebKitLibraryPigeonCodec.shared
-    let removeStrongReferenceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.PigeonInternalInstanceManager.removeStrongReference", binaryMessenger: binaryMessenger, codec: codec)
+    let removeStrongReferenceChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.PigeonInternalInstanceManager.removeStrongReference",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       removeStrongReferenceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -322,7 +329,9 @@ private class WebKitLibraryPigeonInstanceManagerApi {
     } else {
       removeStrongReferenceChannel.setMessageHandler(nil)
     }
-    let clearChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.PigeonInternalInstanceManager.clear", binaryMessenger: binaryMessenger, codec: codec)
+    let clearChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.PigeonInternalInstanceManager.clear",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       clearChannel.setMessageHandler { _, reply in
         do {
@@ -338,9 +347,13 @@ private class WebKitLibraryPigeonInstanceManagerApi {
   }
 
   /// Sends a message to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
-  func removeStrongReference(identifier identifierArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.PigeonInternalInstanceManager.removeStrongReference"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func removeStrongReference(
+    identifier identifierArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.PigeonInternalInstanceManager.removeStrongReference"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([identifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -363,111 +376,141 @@ protocol WebKitLibraryPigeonProxyApiDelegate {
   func pigeonApiURLRequest(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLRequest
   /// An implementation of [PigeonApiHTTPURLResponse] used to add a new Dart instance of
   /// `HTTPURLResponse` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiHTTPURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiHTTPURLResponse
+  func pigeonApiHTTPURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiHTTPURLResponse
   /// An implementation of [PigeonApiURLResponse] used to add a new Dart instance of
   /// `URLResponse` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLResponse
+  func pigeonApiURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiURLResponse
   /// An implementation of [PigeonApiWKUserScript] used to add a new Dart instance of
   /// `WKUserScript` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKUserScript(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKUserScript
+  func pigeonApiWKUserScript(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKUserScript
   /// An implementation of [PigeonApiWKNavigationAction] used to add a new Dart instance of
   /// `WKNavigationAction` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKNavigationAction(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKNavigationAction
+  func pigeonApiWKNavigationAction(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKNavigationAction
   /// An implementation of [PigeonApiWKNavigationResponse] used to add a new Dart instance of
   /// `WKNavigationResponse` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKNavigationResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKNavigationResponse
+  func pigeonApiWKNavigationResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKNavigationResponse
   /// An implementation of [PigeonApiWKFrameInfo] used to add a new Dart instance of
   /// `WKFrameInfo` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKFrameInfo(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKFrameInfo
+  func pigeonApiWKFrameInfo(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKFrameInfo
   /// An implementation of [PigeonApiNSError] used to add a new Dart instance of
   /// `NSError` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiNSError(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSError
   /// An implementation of [PigeonApiWKScriptMessage] used to add a new Dart instance of
   /// `WKScriptMessage` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKScriptMessage(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKScriptMessage
+  func pigeonApiWKScriptMessage(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKScriptMessage
   /// An implementation of [PigeonApiWKSecurityOrigin] used to add a new Dart instance of
   /// `WKSecurityOrigin` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKSecurityOrigin(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKSecurityOrigin
+  func pigeonApiWKSecurityOrigin(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKSecurityOrigin
   /// An implementation of [PigeonApiHTTPCookie] used to add a new Dart instance of
   /// `HTTPCookie` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiHTTPCookie(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiHTTPCookie
   /// An implementation of [PigeonApiAuthenticationChallengeResponse] used to add a new Dart instance of
   /// `AuthenticationChallengeResponse` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiAuthenticationChallengeResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiAuthenticationChallengeResponse
+  func pigeonApiAuthenticationChallengeResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiAuthenticationChallengeResponse
   /// An implementation of [PigeonApiWKWebsiteDataStore] used to add a new Dart instance of
   /// `WKWebsiteDataStore` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKWebsiteDataStore(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebsiteDataStore
+  func pigeonApiWKWebsiteDataStore(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKWebsiteDataStore
   /// An implementation of [PigeonApiUIView] used to add a new Dart instance of
   /// `UIView` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiUIView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIView
   /// An implementation of [PigeonApiUIScrollView] used to add a new Dart instance of
   /// `UIScrollView` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiUIScrollView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIScrollView
+  func pigeonApiUIScrollView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiUIScrollView
   /// An implementation of [PigeonApiWKWebViewConfiguration] used to add a new Dart instance of
   /// `WKWebViewConfiguration` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKWebViewConfiguration(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebViewConfiguration
+  func pigeonApiWKWebViewConfiguration(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKWebViewConfiguration
   /// An implementation of [PigeonApiWKUserContentController] used to add a new Dart instance of
   /// `WKUserContentController` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKUserContentController(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKUserContentController
+  func pigeonApiWKUserContentController(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKUserContentController
   /// An implementation of [PigeonApiWKPreferences] used to add a new Dart instance of
   /// `WKPreferences` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKPreferences(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKPreferences
+  func pigeonApiWKPreferences(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKPreferences
   /// An implementation of [PigeonApiWKScriptMessageHandler] used to add a new Dart instance of
   /// `WKScriptMessageHandler` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKScriptMessageHandler(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKScriptMessageHandler
+  func pigeonApiWKScriptMessageHandler(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKScriptMessageHandler
   /// An implementation of [PigeonApiWKNavigationDelegate] used to add a new Dart instance of
   /// `WKNavigationDelegate` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKNavigationDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKNavigationDelegate
+  func pigeonApiWKNavigationDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKNavigationDelegate
   /// An implementation of [PigeonApiNSObject] used to add a new Dart instance of
   /// `NSObject` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiNSObject(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSObject
   /// An implementation of [PigeonApiUIViewWKWebView] used to add a new Dart instance of
   /// `UIViewWKWebView` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiUIViewWKWebView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIViewWKWebView
+  func pigeonApiUIViewWKWebView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiUIViewWKWebView
   /// An implementation of [PigeonApiNSViewWKWebView] used to add a new Dart instance of
   /// `NSViewWKWebView` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiNSViewWKWebView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiNSViewWKWebView
+  func pigeonApiNSViewWKWebView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiNSViewWKWebView
   /// An implementation of [PigeonApiWKWebView] used to add a new Dart instance of
   /// `WKWebView` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiWKWebView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebView
   /// An implementation of [PigeonApiWKUIDelegate] used to add a new Dart instance of
   /// `WKUIDelegate` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKUIDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKUIDelegate
+  func pigeonApiWKUIDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKUIDelegate
   /// An implementation of [PigeonApiWKHTTPCookieStore] used to add a new Dart instance of
   /// `WKHTTPCookieStore` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKHTTPCookieStore(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKHTTPCookieStore
+  func pigeonApiWKHTTPCookieStore(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKHTTPCookieStore
   /// An implementation of [PigeonApiUIScrollViewDelegate] used to add a new Dart instance of
   /// `UIScrollViewDelegate` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiUIScrollViewDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIScrollViewDelegate
+  func pigeonApiUIScrollViewDelegate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiUIScrollViewDelegate
   /// An implementation of [PigeonApiURLCredential] used to add a new Dart instance of
   /// `URLCredential` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiURLCredential(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLCredential
+  func pigeonApiURLCredential(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiURLCredential
   /// An implementation of [PigeonApiURLProtectionSpace] used to add a new Dart instance of
   /// `URLProtectionSpace` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiURLProtectionSpace(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLProtectionSpace
+  func pigeonApiURLProtectionSpace(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiURLProtectionSpace
   /// An implementation of [PigeonApiURLAuthenticationChallenge] used to add a new Dart instance of
   /// `URLAuthenticationChallenge` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiURLAuthenticationChallenge(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLAuthenticationChallenge
+  func pigeonApiURLAuthenticationChallenge(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiURLAuthenticationChallenge
   /// An implementation of [PigeonApiURL] used to add a new Dart instance of
   /// `URL` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiURL(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURL
   /// An implementation of [PigeonApiWKWebpagePreferences] used to add a new Dart instance of
   /// `WKWebpagePreferences` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiWKWebpagePreferences(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebpagePreferences
+  func pigeonApiWKWebpagePreferences(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKWebpagePreferences
   /// An implementation of [PigeonApiGetTrustResultResponse] used to add a new Dart instance of
   /// `GetTrustResultResponse` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiGetTrustResultResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiGetTrustResultResponse
+  func pigeonApiGetTrustResultResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiGetTrustResultResponse
   /// An implementation of [PigeonApiSecTrust] used to add a new Dart instance of
   /// `SecTrust` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiSecTrust(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiSecTrust
   /// An implementation of [PigeonApiSecCertificate] used to add a new Dart instance of
   /// `SecCertificate` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiSecCertificate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiSecCertificate
+  func pigeonApiSecCertificate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiSecCertificate
 }
 
 extension WebKitLibraryPigeonProxyApiDelegate {
-  func pigeonApiURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURLResponse {
-    return PigeonApiURLResponse(pigeonRegistrar: registrar, delegate: PigeonApiDelegateURLResponse())
+  func pigeonApiURLResponse(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiURLResponse
+  {
+    return PigeonApiURLResponse(
+      pigeonRegistrar: registrar, delegate: PigeonApiDelegateURLResponse())
   }
   func pigeonApiWKWebView(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiWKWebView {
     return PigeonApiWKWebView(pigeonRegistrar: registrar, delegate: PigeonApiDelegateWKWebView())
@@ -512,43 +555,72 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
   }
 
   func setUp() {
-    WebKitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)
-    PigeonApiURLRequest.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLRequest(self))
-    PigeonApiWKUserScript.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKUserScript(self))
-    PigeonApiHTTPCookie.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiHTTPCookie(self))
-    PigeonApiAuthenticationChallengeResponse.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiAuthenticationChallengeResponse(self))
-    PigeonApiWKWebsiteDataStore.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKWebsiteDataStore(self))
-    PigeonApiUIView.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIView(self))
-    PigeonApiUIScrollView.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIScrollView(self))
-    PigeonApiWKWebViewConfiguration.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKWebViewConfiguration(self))
-    PigeonApiWKUserContentController.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKUserContentController(self))
-    PigeonApiWKPreferences.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKPreferences(self))
-    PigeonApiWKScriptMessageHandler.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKScriptMessageHandler(self))
-    PigeonApiWKNavigationDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKNavigationDelegate(self))
-    PigeonApiNSObject.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiNSObject(self))
-    PigeonApiUIViewWKWebView.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIViewWKWebView(self))
-    PigeonApiNSViewWKWebView.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiNSViewWKWebView(self))
-    PigeonApiWKUIDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKUIDelegate(self))
-    PigeonApiWKHTTPCookieStore.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKHTTPCookieStore(self))
-    PigeonApiUIScrollViewDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIScrollViewDelegate(self))
-    PigeonApiURLCredential.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLCredential(self))
-    PigeonApiURLAuthenticationChallenge.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLAuthenticationChallenge(self))
-    PigeonApiURL.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURL(self))
-    PigeonApiWKWebpagePreferences.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKWebpagePreferences(self))
-    PigeonApiSecTrust.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiSecTrust(self))
-    PigeonApiSecCertificate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiSecCertificate(self))
+    WebKitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, instanceManager: instanceManager)
+    PigeonApiURLRequest.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLRequest(self))
+    PigeonApiWKUserScript.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKUserScript(self))
+    PigeonApiHTTPCookie.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiHTTPCookie(self))
+    PigeonApiAuthenticationChallengeResponse.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger,
+      api: apiDelegate.pigeonApiAuthenticationChallengeResponse(self))
+    PigeonApiWKWebsiteDataStore.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKWebsiteDataStore(self))
+    PigeonApiUIView.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIView(self))
+    PigeonApiUIScrollView.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIScrollView(self))
+    PigeonApiWKWebViewConfiguration.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKWebViewConfiguration(self))
+    PigeonApiWKUserContentController.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKUserContentController(self))
+    PigeonApiWKPreferences.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKPreferences(self))
+    PigeonApiWKScriptMessageHandler.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKScriptMessageHandler(self))
+    PigeonApiWKNavigationDelegate.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKNavigationDelegate(self))
+    PigeonApiNSObject.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiNSObject(self))
+    PigeonApiUIViewWKWebView.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIViewWKWebView(self))
+    PigeonApiNSViewWKWebView.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiNSViewWKWebView(self))
+    PigeonApiWKUIDelegate.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKUIDelegate(self))
+    PigeonApiWKHTTPCookieStore.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKHTTPCookieStore(self))
+    PigeonApiUIScrollViewDelegate.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIScrollViewDelegate(self))
+    PigeonApiURLCredential.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLCredential(self))
+    PigeonApiURLAuthenticationChallenge.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURLAuthenticationChallenge(self))
+    PigeonApiURL.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiURL(self))
+    PigeonApiWKWebpagePreferences.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiWKWebpagePreferences(self))
+    PigeonApiSecTrust.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiSecTrust(self))
+    PigeonApiSecCertificate.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiSecCertificate(self))
   }
   func tearDown() {
-    WebKitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)
+    WebKitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiURLRequest.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKUserScript.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiHTTPCookie.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiAuthenticationChallengeResponse.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiAuthenticationChallengeResponse.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKWebsiteDataStore.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiUIView.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiUIScrollView.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKWebViewConfiguration.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiWKUserContentController.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiWKUserContentController.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKPreferences.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKScriptMessageHandler.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKNavigationDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
@@ -559,7 +631,8 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
     PigeonApiWKHTTPCookieStore.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiUIScrollViewDelegate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiURLCredential.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
-    PigeonApiURLAuthenticationChallenge.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiURLAuthenticationChallenge.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: nil)
     PigeonApiURL.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiWKWebpagePreferences.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiSecTrust.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
@@ -602,11 +675,19 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
     }
 
     override func writeValue(_ value: Any) {
-      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any] || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String || value is KeyValueObservingOptions || value is KeyValueChange || value is KeyValueChangeKey || value is UserScriptInjectionTime || value is AudiovisualMediaType || value is WebsiteDataType || value is NavigationActionPolicy || value is NavigationResponsePolicy || value is HttpCookiePropertyKey || value is NavigationType || value is PermissionDecision || value is MediaCaptureType || value is UrlSessionAuthChallengeDisposition || value is UrlCredentialPersistence || value is DartSecTrustResultType {
+      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any]
+        || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String
+        || value is KeyValueObservingOptions || value is KeyValueChange
+        || value is KeyValueChangeKey || value is UserScriptInjectionTime
+        || value is AudiovisualMediaType || value is WebsiteDataType
+        || value is NavigationActionPolicy || value is NavigationResponsePolicy
+        || value is HttpCookiePropertyKey || value is NavigationType || value is PermissionDecision
+        || value is MediaCaptureType || value is UrlSessionAuthChallengeDisposition
+        || value is UrlCredentialPersistence || value is DartSecTrustResultType
+      {
         super.writeValue(value)
         return
       }
-
 
       if let instance = value as? URLRequestWrapper {
         pigeonRegistrar.apiDelegate.pigeonApiURLRequest(pigeonRegistrar).pigeonNewInstance(
@@ -614,10 +695,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? HTTPURLResponse {
         pigeonRegistrar.apiDelegate.pigeonApiHTTPURLResponse(pigeonRegistrar).pigeonNewInstance(
@@ -625,10 +706,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? URLResponse {
         pigeonRegistrar.apiDelegate.pigeonApiURLResponse(pigeonRegistrar).pigeonNewInstance(
@@ -636,10 +717,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKUserScript {
         pigeonRegistrar.apiDelegate.pigeonApiWKUserScript(pigeonRegistrar).pigeonNewInstance(
@@ -647,10 +728,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKNavigationAction {
         pigeonRegistrar.apiDelegate.pigeonApiWKNavigationAction(pigeonRegistrar).pigeonNewInstance(
@@ -658,21 +739,22 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKNavigationResponse {
-        pigeonRegistrar.apiDelegate.pigeonApiWKNavigationResponse(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiWKNavigationResponse(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKFrameInfo {
         pigeonRegistrar.apiDelegate.pigeonApiWKFrameInfo(pigeonRegistrar).pigeonNewInstance(
@@ -680,10 +762,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? NSError {
         pigeonRegistrar.apiDelegate.pigeonApiNSError(pigeonRegistrar).pigeonNewInstance(
@@ -691,10 +773,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKScriptMessage {
         pigeonRegistrar.apiDelegate.pigeonApiWKScriptMessage(pigeonRegistrar).pigeonNewInstance(
@@ -702,10 +784,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKSecurityOrigin {
         pigeonRegistrar.apiDelegate.pigeonApiWKSecurityOrigin(pigeonRegistrar).pigeonNewInstance(
@@ -713,10 +795,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? HTTPCookie {
         pigeonRegistrar.apiDelegate.pigeonApiHTTPCookie(pigeonRegistrar).pigeonNewInstance(
@@ -724,21 +806,22 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? AuthenticationChallengeResponse {
-        pigeonRegistrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKWebsiteDataStore {
         pigeonRegistrar.apiDelegate.pigeonApiWKWebsiteDataStore(pigeonRegistrar).pigeonNewInstance(
@@ -746,43 +829,47 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
       #if !os(macOS)
-      if let instance = value as? UIScrollView {
-        pigeonRegistrar.apiDelegate.pigeonApiUIScrollView(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
-        super.writeByte(128)
-        super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
-        return
-      }
+        if let instance = value as? UIScrollView {
+          pigeonRegistrar.apiDelegate.pigeonApiUIScrollView(pigeonRegistrar).pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+          super.writeByte(128)
+          super.writeValue(
+            pigeonRegistrar.instanceManager.identifierWithStrongReference(
+              forInstance: instance as AnyObject)!)
+          return
+        }
       #endif
 
       if let instance = value as? WKWebViewConfiguration {
-        pigeonRegistrar.apiDelegate.pigeonApiWKWebViewConfiguration(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiWKWebViewConfiguration(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKUserContentController {
-        pigeonRegistrar.apiDelegate.pigeonApiWKUserContentController(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiWKUserContentController(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKPreferences {
         pigeonRegistrar.apiDelegate.pigeonApiWKPreferences(pigeonRegistrar).pigeonNewInstance(
@@ -790,64 +877,70 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKScriptMessageHandler {
-        pigeonRegistrar.apiDelegate.pigeonApiWKScriptMessageHandler(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiWKScriptMessageHandler(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKNavigationDelegate {
-        pigeonRegistrar.apiDelegate.pigeonApiWKNavigationDelegate(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiWKNavigationDelegate(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
       #if !os(macOS)
-      if let instance = value as? WKWebView {
-        pigeonRegistrar.apiDelegate.pigeonApiUIViewWKWebView(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
-        super.writeByte(128)
-        super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
-        return
-      }
+        if let instance = value as? WKWebView {
+          pigeonRegistrar.apiDelegate.pigeonApiUIViewWKWebView(pigeonRegistrar).pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+          super.writeByte(128)
+          super.writeValue(
+            pigeonRegistrar.instanceManager.identifierWithStrongReference(
+              forInstance: instance as AnyObject)!)
+          return
+        }
       #endif
       #if !os(macOS)
-      if let instance = value as? UIView {
-        pigeonRegistrar.apiDelegate.pigeonApiUIView(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
-        super.writeByte(128)
-        super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
-        return
-      }
+        if let instance = value as? UIView {
+          pigeonRegistrar.apiDelegate.pigeonApiUIView(pigeonRegistrar).pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+          super.writeByte(128)
+          super.writeValue(
+            pigeonRegistrar.instanceManager.identifierWithStrongReference(
+              forInstance: instance as AnyObject)!)
+          return
+        }
       #endif
       #if !os(iOS)
-      if let instance = value as? WKWebView {
-        pigeonRegistrar.apiDelegate.pigeonApiNSViewWKWebView(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
-        super.writeByte(128)
-        super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
-        return
-      }
+        if let instance = value as? WKWebView {
+          pigeonRegistrar.apiDelegate.pigeonApiNSViewWKWebView(pigeonRegistrar).pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+          super.writeByte(128)
+          super.writeValue(
+            pigeonRegistrar.instanceManager.identifierWithStrongReference(
+              forInstance: instance as AnyObject)!)
+          return
+        }
       #endif
 
       if let instance = value as? WKWebView {
@@ -856,10 +949,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKUIDelegate {
         pigeonRegistrar.apiDelegate.pigeonApiWKUIDelegate(pigeonRegistrar).pigeonNewInstance(
@@ -867,10 +960,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? WKHTTPCookieStore {
         pigeonRegistrar.apiDelegate.pigeonApiWKHTTPCookieStore(pigeonRegistrar).pigeonNewInstance(
@@ -878,20 +971,23 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
       #if !os(macOS)
-      if let instance = value as? UIScrollViewDelegate {
-        pigeonRegistrar.apiDelegate.pigeonApiUIScrollViewDelegate(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
-        super.writeByte(128)
-        super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
-        return
-      }
+        if let instance = value as? UIScrollViewDelegate {
+          pigeonRegistrar.apiDelegate.pigeonApiUIScrollViewDelegate(pigeonRegistrar)
+            .pigeonNewInstance(
+              pigeonInstance: instance
+            ) { _ in }
+          super.writeByte(128)
+          super.writeValue(
+            pigeonRegistrar.instanceManager.identifierWithStrongReference(
+              forInstance: instance as AnyObject)!)
+          return
+        }
       #endif
 
       if let instance = value as? URLCredential {
@@ -900,10 +996,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? URLProtectionSpace {
         pigeonRegistrar.apiDelegate.pigeonApiURLProtectionSpace(pigeonRegistrar).pigeonNewInstance(
@@ -911,21 +1007,22 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? URLAuthenticationChallenge {
-        pigeonRegistrar.apiDelegate.pigeonApiURLAuthenticationChallenge(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiURLAuthenticationChallenge(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? URL {
         pigeonRegistrar.apiDelegate.pigeonApiURL(pigeonRegistrar).pigeonNewInstance(
@@ -933,32 +1030,34 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if #available(iOS 13.0.0, macOS 10.15.0, *), let instance = value as? WKWebpagePreferences {
-        pigeonRegistrar.apiDelegate.pigeonApiWKWebpagePreferences(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiWKWebpagePreferences(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? GetTrustResultResponse {
-        pigeonRegistrar.apiDelegate.pigeonApiGetTrustResultResponse(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
+        pigeonRegistrar.apiDelegate.pigeonApiGetTrustResultResponse(pigeonRegistrar)
+          .pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? SecTrustWrapper {
         pigeonRegistrar.apiDelegate.pigeonApiSecTrust(pigeonRegistrar).pigeonNewInstance(
@@ -966,10 +1065,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? SecCertificateWrapper {
         pigeonRegistrar.apiDelegate.pigeonApiSecCertificate(pigeonRegistrar).pigeonNewInstance(
@@ -977,10 +1076,10 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
-
 
       if let instance = value as? NSObject {
         pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar).pigeonNewInstance(
@@ -988,12 +1087,13 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
         return
       }
 
-
-      if let instance = value as AnyObject?, pigeonRegistrar.instanceManager.containsInstance(instance)
+      if let instance = value as AnyObject?,
+        pigeonRegistrar.instanceManager.containsInstance(instance)
       {
         super.writeByte(128)
         super.writeValue(
@@ -1011,11 +1111,13 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
   }
 
   override func reader(with data: Data) -> FlutterStandardReader {
-    return WebKitLibraryPigeonInternalProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
+    return WebKitLibraryPigeonInternalProxyApiCodecReader(
+      data: data, pigeonRegistrar: pigeonRegistrar)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return WebKitLibraryPigeonInternalProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+    return WebKitLibraryPigeonInternalProxyApiCodecWriter(
+      data: data, pigeonRegistrar: pigeonRegistrar)
   }
 }
 
@@ -1476,27 +1578,36 @@ class WebKitLibraryPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable
 }
 
 protocol PigeonApiDelegateURLRequest {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws -> URLRequestWrapper
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws
+    -> URLRequestWrapper
   /// The URL being requested.
   func getUrl(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String?
   /// The HTTP request method.
-  func setHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, method: String?) throws
+  func setHttpMethod(
+    pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, method: String?) throws
   /// The HTTP request method.
-  func getHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String?
+  func getHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws
+    -> String?
   /// The request body.
-  func setHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, body: FlutterStandardTypedData?) throws
+  func setHttpBody(
+    pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper,
+    body: FlutterStandardTypedData?) throws
   /// The request body.
-  func getHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> FlutterStandardTypedData?
+  func getHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws
+    -> FlutterStandardTypedData?
   /// A dictionary containing all of the HTTP header fields for a request.
-  func setAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, fields: [String: String]?) throws
+  func setAllHttpHeaderFields(
+    pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, fields: [String: String]?)
+    throws
   /// A dictionary containing all of the HTTP header fields for a request.
-  func getAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> [String: String]?
+  func getAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper)
+    throws -> [String: String]?
 }
 
 protocol PigeonApiProtocolURLRequest {
 }
 
-final class PigeonApiURLRequest: PigeonApiProtocolURLRequest  {
+final class PigeonApiURLRequest: PigeonApiProtocolURLRequest {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateURLRequest
   ///An implementation of [NSObject] used to access callback methods
@@ -1504,17 +1615,23 @@ final class PigeonApiURLRequest: PigeonApiProtocolURLRequest  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLRequest) {
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLRequest)
+  {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiURLRequest?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiURLRequest?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -1522,8 +1639,8 @@ final class PigeonApiURLRequest: PigeonApiProtocolURLRequest  {
         let urlArg = args[1] as! String
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, url: urlArg),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, url: urlArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1532,13 +1649,16 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let getUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getUrl", binaryMessenger: binaryMessenger, codec: codec)
+    let getUrlChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getUrl",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! URLRequestWrapper
         do {
-          let result = try api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getUrl(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -1547,14 +1667,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getUrlChannel.setMessageHandler(nil)
     }
-    let setHttpMethodChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.setHttpMethod", binaryMessenger: binaryMessenger, codec: codec)
+    let setHttpMethodChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.setHttpMethod",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setHttpMethodChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! URLRequestWrapper
         let methodArg: String? = nilOrValue(args[1])
         do {
-          try api.pigeonDelegate.setHttpMethod(pigeonApi: api, pigeonInstance: pigeonInstanceArg, method: methodArg)
+          try api.pigeonDelegate.setHttpMethod(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, method: methodArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1563,13 +1686,16 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setHttpMethodChannel.setMessageHandler(nil)
     }
-    let getHttpMethodChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getHttpMethod", binaryMessenger: binaryMessenger, codec: codec)
+    let getHttpMethodChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getHttpMethod",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHttpMethodChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! URLRequestWrapper
         do {
-          let result = try api.pigeonDelegate.getHttpMethod(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getHttpMethod(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -1578,14 +1704,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getHttpMethodChannel.setMessageHandler(nil)
     }
-    let setHttpBodyChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.setHttpBody", binaryMessenger: binaryMessenger, codec: codec)
+    let setHttpBodyChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.setHttpBody",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setHttpBodyChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! URLRequestWrapper
         let bodyArg: FlutterStandardTypedData? = nilOrValue(args[1])
         do {
-          try api.pigeonDelegate.setHttpBody(pigeonApi: api, pigeonInstance: pigeonInstanceArg, body: bodyArg)
+          try api.pigeonDelegate.setHttpBody(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, body: bodyArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1594,13 +1723,16 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setHttpBodyChannel.setMessageHandler(nil)
     }
-    let getHttpBodyChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getHttpBody", binaryMessenger: binaryMessenger, codec: codec)
+    let getHttpBodyChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getHttpBody",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getHttpBodyChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! URLRequestWrapper
         do {
-          let result = try api.pigeonDelegate.getHttpBody(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getHttpBody(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -1609,14 +1741,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getHttpBodyChannel.setMessageHandler(nil)
     }
-    let setAllHttpHeaderFieldsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.setAllHttpHeaderFields", binaryMessenger: binaryMessenger, codec: codec)
+    let setAllHttpHeaderFieldsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.setAllHttpHeaderFields",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setAllHttpHeaderFieldsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! URLRequestWrapper
         let fieldsArg: [String: String]? = nilOrValue(args[1])
         do {
-          try api.pigeonDelegate.setAllHttpHeaderFields(pigeonApi: api, pigeonInstance: pigeonInstanceArg, fields: fieldsArg)
+          try api.pigeonDelegate.setAllHttpHeaderFields(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, fields: fieldsArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -1625,13 +1760,16 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setAllHttpHeaderFieldsChannel.setMessageHandler(nil)
     }
-    let getAllHttpHeaderFieldsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getAllHttpHeaderFields", binaryMessenger: binaryMessenger, codec: codec)
+    let getAllHttpHeaderFieldsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.getAllHttpHeaderFields",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAllHttpHeaderFieldsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! URLRequestWrapper
         do {
-          let result = try api.pigeonDelegate.getAllHttpHeaderFields(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getAllHttpHeaderFields(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -1643,21 +1781,26 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of URLRequest and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: URLRequestWrapper, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: URLRequestWrapper, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.URLRequest.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1675,197 +1818,16 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `URLRequest`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class RequestProxyAPIDelegate : PigeonApiDelegateURLRequest {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiURLRequest, url: String) throws -> URLRequestWrapper {
-    return URLRequest(,url: url)
-  }
-
-  func getUrl(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String? {
-    return pigeonInstance.url
-  }
-
-  func setHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, method: String?) throws {
-    pigeonInstance.httpMethod = method: method
-  }
-
-  func getHttpMethod(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> String? {
-    return pigeonInstance.httpMethod
-  }
-
-  func setHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, body: FlutterStandardTypedData?) throws {
-    pigeonInstance.httpBody = body: body
-  }
-
-  func getHttpBody(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> FlutterStandardTypedData? {
-    return pigeonInstance.httpBody
-  }
-
-  func setAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper, fields: [String: String]?) throws {
-    pigeonInstance.allHttpHeaderFields = fields: fields
-  }
-
-  func getAllHttpHeaderFields(pigeonApi: PigeonApiURLRequest, pigeonInstance: URLRequestWrapper) throws -> [String: String]? {
-    return pigeonInstance.allHttpHeaderFields
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class RequestProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, url: "myString")
-    XCTAssertNotNil(instance)
-  }
-
-  func testGetUrl() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
-
-    let instance = TestRequest()
-    let value = api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getUrlCalled)
-    XCTAssertEqual(value, instance.getUrl())
-  }
-
-  func testSetHttpMethod() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
-
-    let instance = TestRequest()
-    let method = "myString"
-    api.pigeonDelegate.setHttpMethod(pigeonApi: api, pigeonInstance: instance, method: method)
-
-    XCTAssertEqual(instance.setHttpMethodArgs, [method])
-  }
-
-  func testGetHttpMethod() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
-
-    let instance = TestRequest()
-    let value = api.pigeonDelegate.getHttpMethod(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getHttpMethodCalled)
-    XCTAssertEqual(value, instance.getHttpMethod())
-  }
-
-  func testSetHttpBody() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
-
-    let instance = TestRequest()
-    let body = byteArrayOf(0xA1.toByte())
-    api.pigeonDelegate.setHttpBody(pigeonApi: api, pigeonInstance: instance, body: body)
-
-    XCTAssertEqual(instance.setHttpBodyArgs, [body])
-  }
-
-  func testGetHttpBody() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
-
-    let instance = TestRequest()
-    let value = api.pigeonDelegate.getHttpBody(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getHttpBodyCalled)
-    XCTAssertEqual(value, instance.getHttpBody())
-  }
-
-  func testSetAllHttpHeaderFields() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
-
-    let instance = TestRequest()
-    let fields = ["myString": "myString"]
-    api.pigeonDelegate.setAllHttpHeaderFields(pigeonApi: api, pigeonInstance: instance, fields: fields)
-
-    XCTAssertEqual(instance.setAllHttpHeaderFieldsArgs, [fields])
-  }
-
-  func testGetAllHttpHeaderFields() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLRequest(registrar)
-
-    let instance = TestRequest()
-    let value = api.pigeonDelegate.getAllHttpHeaderFields(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getAllHttpHeaderFieldsCalled)
-    XCTAssertEqual(value, instance.getAllHttpHeaderFields())
-  }
-
-}
-class TestRequest: URLRequest {
-  var getUrlCalled = false
-  var setHttpMethodArgs: [AnyHashable?]? = nil
-  var getHttpMethodCalled = false
-  var setHttpBodyArgs: [AnyHashable?]? = nil
-  var getHttpBodyCalled = false
-  var setAllHttpHeaderFieldsArgs: [AnyHashable?]? = nil
-  var getAllHttpHeaderFieldsCalled = false
-
-
-  override func getUrl() {
-    getUrlCalled = true
-  }
-  override func setHttpMethod() {
-    setHttpMethodArgs = [method]
-  }
-  override func getHttpMethod() {
-    getHttpMethodCalled = true
-  }
-  override func setHttpBody() {
-    setHttpBodyArgs = [body]
-  }
-  override func getHttpBody() {
-    getHttpBodyCalled = true
-  }
-  override func setAllHttpHeaderFields() {
-    setAllHttpHeaderFieldsArgs = [fields]
-  }
-  override func getAllHttpHeaderFields() {
-    getAllHttpHeaderFieldsCalled = true
-  }
-}
-*/
-
 protocol PigeonApiDelegateHTTPURLResponse {
   /// The response’s HTTP status code.
-  func statusCode(pigeonApi: PigeonApiHTTPURLResponse, pigeonInstance: HTTPURLResponse) throws -> Int64
+  func statusCode(pigeonApi: PigeonApiHTTPURLResponse, pigeonInstance: HTTPURLResponse) throws
+    -> Int64
 }
 
 protocol PigeonApiProtocolHTTPURLResponse {
 }
 
-final class PigeonApiHTTPURLResponse: PigeonApiProtocolHTTPURLResponse  {
+final class PigeonApiHTTPURLResponse: PigeonApiProtocolHTTPURLResponse {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateHTTPURLResponse
   ///An implementation of [URLResponse] used to access callback methods
@@ -1873,27 +1835,36 @@ final class PigeonApiHTTPURLResponse: PigeonApiProtocolHTTPURLResponse  {
     return pigeonRegistrar.apiDelegate.pigeonApiURLResponse(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateHTTPURLResponse) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateHTTPURLResponse
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of HTTPURLResponse and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: HTTPURLResponse, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: HTTPURLResponse, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-      let statusCodeArg = try! pigeonDelegate.statusCode(pigeonApi: self, pigeonInstance: pigeonInstance)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let statusCodeArg = try! pigeonDelegate.statusCode(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPURLResponse.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPURLResponse.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg, statusCodeArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -1911,60 +1882,13 @@ final class PigeonApiHTTPURLResponse: PigeonApiProtocolHTTPURLResponse  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `HTTPURLResponse`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ResponseProxyAPIDelegate : PigeonApiDelegateHTTPURLResponse {
-  func statusCode(pigeonApi: PigeonApiHTTPURLResponse, pigeonInstance: HTTPURLResponse) throws -> Int64 {
-    return pigeonInstance.statusCode
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ResponseProxyAPITests: XCTestCase {
-  func testStatusCode() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiHTTPURLResponse(registrar)
-
-    let instance = TestResponse()
-    let value = try? api.pigeonDelegate.statusCode(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.statusCode)
-  }
-
-}
-*/
-
 open class PigeonApiDelegateURLResponse {
 }
 
 protocol PigeonApiProtocolURLResponse {
 }
 
-final class PigeonApiURLResponse: PigeonApiProtocolURLResponse  {
+final class PigeonApiURLResponse: PigeonApiProtocolURLResponse {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateURLResponse
   ///An implementation of [NSObject] used to access callback methods
@@ -1972,26 +1896,33 @@ final class PigeonApiURLResponse: PigeonApiProtocolURLResponse  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLResponse) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLResponse
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of URLResponse and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: URLResponse, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: URLResponse, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URLResponse.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.URLResponse.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2009,56 +1940,28 @@ final class PigeonApiURLResponse: PigeonApiProtocolURLResponse  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `URLResponse`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ResponseProxyAPIDelegate : PigeonApiDelegateURLResponse {
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ResponseProxyAPITests: XCTestCase {
-}
-*/
-
 protocol PigeonApiDelegateWKUserScript {
   /// Creates a user script object that contains the specified source code and
   /// attributes.
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime, isForMainFrameOnly: Bool) throws -> WKUserScript
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime,
+    isForMainFrameOnly: Bool
+  ) throws -> WKUserScript
   /// The script’s source code.
   func source(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> String
   /// The time at which to inject the script into the webpage.
-  func injectionTime(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> UserScriptInjectionTime
+  func injectionTime(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws
+    -> UserScriptInjectionTime
   /// A Boolean value that indicates whether to inject the script into the main
   /// frame or all frames.
-  func isForMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> Bool
+  func isForMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws
+    -> Bool
 }
 
 protocol PigeonApiProtocolWKUserScript {
 }
 
-final class PigeonApiWKUserScript: PigeonApiProtocolWKUserScript  {
+final class PigeonApiWKUserScript: PigeonApiProtocolWKUserScript {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKUserScript
   ///An implementation of [NSObject] used to access callback methods
@@ -2066,17 +1969,24 @@ final class PigeonApiWKUserScript: PigeonApiProtocolWKUserScript  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKUserScript) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKUserScript
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKUserScript?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKUserScript?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserScript.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserScript.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -2086,8 +1996,10 @@ final class PigeonApiWKUserScript: PigeonApiProtocolWKUserScript  {
         let isForMainFrameOnlyArg = args[3] as! Bool
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, source: sourceArg, injectionTime: injectionTimeArg, isForMainFrameOnly: isForMainFrameOnlyArg),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(
+              pigeonApi: api, source: sourceArg, injectionTime: injectionTimeArg,
+              isForMainFrameOnly: isForMainFrameOnlyArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -2099,25 +2011,34 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of WKUserScript and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKUserScript, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKUserScript, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let sourceArg = try! pigeonDelegate.source(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let injectionTimeArg = try! pigeonDelegate.injectionTime(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let isForMainFrameOnlyArg = try! pigeonDelegate.isForMainFrameOnly(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let injectionTimeArg = try! pigeonDelegate.injectionTime(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let isForMainFrameOnlyArg = try! pigeonDelegate.isForMainFrameOnly(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserScript.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg, sourceArg, injectionTimeArg, isForMainFrameOnlyArg] as [Any?]) { response in
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserScript.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage(
+        [pigeonIdentifierArg, sourceArg, injectionTimeArg, isForMainFrameOnlyArg] as [Any?]
+      ) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
@@ -2134,115 +2055,24 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKUserScript`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class UserScriptProxyAPIDelegate : PigeonApiDelegateWKUserScript {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUserScript, source: String, injectionTime: UserScriptInjectionTime, isForMainFrameOnly: Bool) throws -> WKUserScript {
-    return WKUserScript()
-  }
-
-  func source(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> String {
-    return pigeonInstance.source
-  }
-
-  func injectionTime(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> UserScriptInjectionTime {
-    switch pigeonInstance.injectionTime {
-      case .atDocumentStart:
-        return .atDocumentStart
-      case .atDocumentEnd:
-        return .atDocumentEnd
-      @unknown default:
-        return .unknown
-    }
-  }
-
-  func isForMainFrameOnly(pigeonApi: PigeonApiWKUserScript, pigeonInstance: WKUserScript) throws -> Bool {
-    return pigeonInstance.isForMainFrameOnly
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class UserScriptProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api source: "myString", injectionTime: .atDocumentStart, isForMainFrameOnly: true)
-    XCTAssertNotNil(instance)
-  }
-
-  func testSource() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
-
-    let instance = TestUserScript()
-    let value = try? api.pigeonDelegate.source(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.source)
-  }
-
-  func testInjectionTime() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
-
-    let instance = TestUserScript()
-    let value = try? api.pigeonDelegate.injectionTime(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.injectionTime)
-  }
-
-  func testIsForMainFrameOnly() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUserScript(registrar)
-
-    let instance = TestUserScript()
-    let value = try? api.pigeonDelegate.isForMainFrameOnly(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.isForMainFrameOnly)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateWKNavigationAction {
   /// The URL request object associated with the navigation action.
-  func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> URLRequestWrapper
+  func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws
+    -> URLRequestWrapper
   /// The frame in which to display the new content.
   ///
   /// If the target of the navigation is a new window, this property is nil.
-  func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> WKFrameInfo?
+  func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction)
+    throws -> WKFrameInfo?
   /// The type of action that triggered the navigation.
-  func navigationType(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> NavigationType
+  func navigationType(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction)
+    throws -> NavigationType
 }
 
 protocol PigeonApiProtocolWKNavigationAction {
 }
 
-final class PigeonApiWKNavigationAction: PigeonApiProtocolWKNavigationAction  {
+final class PigeonApiWKNavigationAction: PigeonApiProtocolWKNavigationAction {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKNavigationAction
   ///An implementation of [NSObject] used to access callback methods
@@ -2250,30 +2080,42 @@ final class PigeonApiWKNavigationAction: PigeonApiProtocolWKNavigationAction  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKNavigationAction) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKNavigationAction
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of WKNavigationAction and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKNavigationAction, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKNavigationAction, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let requestArg = try! pigeonDelegate.request(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let targetFrameArg = try! pigeonDelegate.targetFrame(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let navigationTypeArg = try! pigeonDelegate.navigationType(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let targetFrameArg = try! pigeonDelegate.targetFrame(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let navigationTypeArg = try! pigeonDelegate.navigationType(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationAction.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg, requestArg, targetFrameArg, navigationTypeArg] as [Any?]) { response in
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationAction.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage(
+        [pigeonIdentifierArg, requestArg, targetFrameArg, navigationTypeArg] as [Any?]
+      ) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
@@ -2290,108 +2132,21 @@ final class PigeonApiWKNavigationAction: PigeonApiProtocolWKNavigationAction  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKNavigationAction`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class NavigationActionProxyAPIDelegate : PigeonApiDelegateWKNavigationAction {
-  func request(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> URLRequestWrapper {
-    return pigeonInstance.request
-  }
-
-  func targetFrame(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> WKFrameInfo? {
-    return pigeonInstance.targetFrame
-  }
-
-  func navigationType(pigeonApi: PigeonApiWKNavigationAction, pigeonInstance: WKNavigationAction) throws -> NavigationType {
-    switch pigeonInstance.navigationType {
-      case .linkActivated:
-        return .linkActivated
-      case .formSubmitted:
-        return .formSubmitted
-      case .backForward:
-        return .backForward
-      case .reload:
-        return .reload
-      case .formResubmitted:
-        return .formResubmitted
-      case .other:
-        return .other
-      @unknown default:
-        return .unknown
-    }
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class NavigationActionProxyAPITests: XCTestCase {
-  func testRequest() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
-
-    let instance = TestNavigationAction()
-    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.request)
-  }
-
-  func testTargetFrame() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
-
-    let instance = TestNavigationAction()
-    let value = try? api.pigeonDelegate.targetFrame(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.targetFrame)
-  }
-
-  func testNavigationType() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKNavigationAction(registrar)
-
-    let instance = TestNavigationAction()
-    let value = try? api.pigeonDelegate.navigationType(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.navigationType)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateWKNavigationResponse {
   /// The frame’s response.
-  func response(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse) throws -> URLResponse
+  func response(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse)
+    throws -> URLResponse
   /// A Boolean value that indicates whether the response targets the web view’s
   /// main frame.
-  func isForMainFrame(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse) throws -> Bool
+  func isForMainFrame(
+    pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse
+  ) throws -> Bool
 }
 
 protocol PigeonApiProtocolWKNavigationResponse {
 }
 
-final class PigeonApiWKNavigationResponse: PigeonApiProtocolWKNavigationResponse  {
+final class PigeonApiWKNavigationResponse: PigeonApiProtocolWKNavigationResponse {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKNavigationResponse
   ///An implementation of [NSObject] used to access callback methods
@@ -2399,29 +2154,40 @@ final class PigeonApiWKNavigationResponse: PigeonApiProtocolWKNavigationResponse
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKNavigationResponse) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKNavigationResponse
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of WKNavigationResponse and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKNavigationResponse, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKNavigationResponse, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-      let responseArg = try! pigeonDelegate.response(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let isForMainFrameArg = try! pigeonDelegate.isForMainFrame(pigeonApi: self, pigeonInstance: pigeonInstance)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let responseArg = try! pigeonDelegate.response(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let isForMainFrameArg = try! pigeonDelegate.isForMainFrame(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationResponse.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg, responseArg, isForMainFrameArg] as [Any?]) { response in
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationResponse.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg, responseArg, isForMainFrameArg] as [Any?]) {
+        response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
@@ -2438,79 +2204,19 @@ final class PigeonApiWKNavigationResponse: PigeonApiProtocolWKNavigationResponse
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKNavigationResponse`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class NavigationResponseProxyAPIDelegate : PigeonApiDelegateWKNavigationResponse {
-  func response(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse) throws -> URLResponse {
-    return pigeonInstance.response
-  }
-
-  func isForMainFrame(pigeonApi: PigeonApiWKNavigationResponse, pigeonInstance: WKNavigationResponse) throws -> Bool {
-    return pigeonInstance.isForMainFrame
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class NavigationResponseProxyAPITests: XCTestCase {
-  func testResponse() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKNavigationResponse(registrar)
-
-    let instance = TestNavigationResponse()
-    let value = try? api.pigeonDelegate.response(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.response)
-  }
-
-  func testIsForMainFrame() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKNavigationResponse(registrar)
-
-    let instance = TestNavigationResponse()
-    let value = try? api.pigeonDelegate.isForMainFrame(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.isForMainFrame)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateWKFrameInfo {
   /// A Boolean value indicating whether the frame is the web site's main frame
   /// or a subframe.
   func isMainFrame(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> Bool
   /// The frame’s current request.
-  func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> URLRequestWrapper?
+  func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws
+    -> URLRequestWrapper?
 }
 
 protocol PigeonApiProtocolWKFrameInfo {
 }
 
-final class PigeonApiWKFrameInfo: PigeonApiProtocolWKFrameInfo  {
+final class PigeonApiWKFrameInfo: PigeonApiProtocolWKFrameInfo {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKFrameInfo
   ///An implementation of [NSObject] used to access callback methods
@@ -2518,28 +2224,36 @@ final class PigeonApiWKFrameInfo: PigeonApiProtocolWKFrameInfo  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKFrameInfo) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKFrameInfo
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of WKFrameInfo and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKFrameInfo, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKFrameInfo, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-      let isMainFrameArg = try! pigeonDelegate.isMainFrame(pigeonApi: self, pigeonInstance: pigeonInstance)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let isMainFrameArg = try! pigeonDelegate.isMainFrame(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let requestArg = try! pigeonDelegate.request(pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKFrameInfo.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKFrameInfo.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg, isMainFrameArg, requestArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2557,67 +2271,6 @@ final class PigeonApiWKFrameInfo: PigeonApiProtocolWKFrameInfo  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKFrameInfo`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class FrameInfoProxyAPIDelegate : PigeonApiDelegateWKFrameInfo {
-  func isMainFrame(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> Bool {
-    return pigeonInstance.isMainFrame
-  }
-
-  func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws -> URLRequestWrapper? {
-    return pigeonInstance.request
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class FrameInfoProxyAPITests: XCTestCase {
-  func testIsMainFrame() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
-
-    let instance = TestFrameInfo()
-    let value = try? api.pigeonDelegate.isMainFrame(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.isMainFrame)
-  }
-
-  func testRequest() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKFrameInfo(registrar)
-
-    let instance = TestFrameInfo()
-    let value = try? api.pigeonDelegate.request(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.request)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateNSError {
   /// The error code.
   func code(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> Int64
@@ -2630,7 +2283,7 @@ protocol PigeonApiDelegateNSError {
 protocol PigeonApiProtocolNSError {
 }
 
-final class PigeonApiNSError: PigeonApiProtocolNSError  {
+final class PigeonApiNSError: PigeonApiProtocolNSError {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateNSError
   ///An implementation of [NSObject] used to access callback methods
@@ -2643,25 +2296,32 @@ final class PigeonApiNSError: PigeonApiProtocolNSError  {
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of NSError and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let codeArg = try! pigeonDelegate.code(pigeonApi: self, pigeonInstance: pigeonInstance)
       let domainArg = try! pigeonDelegate.domain(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let userInfoArg = try! pigeonDelegate.userInfo(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let userInfoArg = try! pigeonDelegate.userInfo(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSError.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg, codeArg, domainArg, userInfoArg] as [Any?]) { response in
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.NSError.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg, codeArg, domainArg, userInfoArg] as [Any?]) {
+        response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
@@ -2678,81 +2338,6 @@ final class PigeonApiNSError: PigeonApiProtocolNSError  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `NSError`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ErrorProxyAPIDelegate : PigeonApiDelegateNSError {
-  func code(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> Int64 {
-    return pigeonInstance.code
-  }
-
-  func domain(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> String {
-    return pigeonInstance.domain
-  }
-
-  func userInfo(pigeonApi: PigeonApiNSError, pigeonInstance: NSError) throws -> [String: Any?] {
-    return pigeonInstance.userInfo
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ErrorProxyAPITests: XCTestCase {
-  func testCode() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSError(registrar)
-
-    let instance = TestError()
-    let value = try? api.pigeonDelegate.code(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.code)
-  }
-
-  func testDomain() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSError(registrar)
-
-    let instance = TestError()
-    let value = try? api.pigeonDelegate.domain(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.domain)
-  }
-
-  func testUserInfo() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSError(registrar)
-
-    let instance = TestError()
-    let value = try? api.pigeonDelegate.userInfo(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.userInfo)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateWKScriptMessage {
   /// The name of the message handler to which the message is sent.
   func name(pigeonApi: PigeonApiWKScriptMessage, pigeonInstance: WKScriptMessage) throws -> String
@@ -2763,7 +2348,7 @@ protocol PigeonApiDelegateWKScriptMessage {
 protocol PigeonApiProtocolWKScriptMessage {
 }
 
-final class PigeonApiWKScriptMessage: PigeonApiProtocolWKScriptMessage  {
+final class PigeonApiWKScriptMessage: PigeonApiProtocolWKScriptMessage {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKScriptMessage
   ///An implementation of [NSObject] used to access callback methods
@@ -2771,28 +2356,36 @@ final class PigeonApiWKScriptMessage: PigeonApiProtocolWKScriptMessage  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKScriptMessage) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKScriptMessage
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of WKScriptMessage and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKScriptMessage, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKScriptMessage, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let nameArg = try! pigeonDelegate.name(pigeonApi: self, pigeonInstance: pigeonInstance)
       let bodyArg = try! pigeonDelegate.body(pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessage.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessage.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg, nameArg, bodyArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -2810,80 +2403,20 @@ final class PigeonApiWKScriptMessage: PigeonApiProtocolWKScriptMessage  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKScriptMessage`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ScriptMessageProxyAPIDelegate : PigeonApiDelegateWKScriptMessage {
-  func name(pigeonApi: PigeonApiWKScriptMessage, pigeonInstance: WKScriptMessage) throws -> String {
-    return pigeonInstance.name
-  }
-
-  func body(pigeonApi: PigeonApiWKScriptMessage, pigeonInstance: WKScriptMessage) throws -> Any? {
-    return pigeonInstance.body
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ScriptMessageProxyAPITests: XCTestCase {
-  func testName() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKScriptMessage(registrar)
-
-    let instance = TestScriptMessage()
-    let value = try? api.pigeonDelegate.name(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.name)
-  }
-
-  func testBody() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKScriptMessage(registrar)
-
-    let instance = TestScriptMessage()
-    let value = try? api.pigeonDelegate.body(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.body)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateWKSecurityOrigin {
   /// The security origin’s host.
   func host(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> String
   /// The security origin's port.
   func port(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> Int64
   /// The security origin's protocol.
-  func securityProtocol(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> String
+  func securityProtocol(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin)
+    throws -> String
 }
 
 protocol PigeonApiProtocolWKSecurityOrigin {
 }
 
-final class PigeonApiWKSecurityOrigin: PigeonApiProtocolWKSecurityOrigin  {
+final class PigeonApiWKSecurityOrigin: PigeonApiProtocolWKSecurityOrigin {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKSecurityOrigin
   ///An implementation of [NSObject] used to access callback methods
@@ -2891,30 +2424,40 @@ final class PigeonApiWKSecurityOrigin: PigeonApiProtocolWKSecurityOrigin  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKSecurityOrigin) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKSecurityOrigin
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of WKSecurityOrigin and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKSecurityOrigin, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKSecurityOrigin, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let hostArg = try! pigeonDelegate.host(pigeonApi: self, pigeonInstance: pigeonInstance)
       let portArg = try! pigeonDelegate.port(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let securityProtocolArg = try! pigeonDelegate.securityProtocol(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let securityProtocolArg = try! pigeonDelegate.securityProtocol(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKSecurityOrigin.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg, hostArg, portArg, securityProtocolArg] as [Any?]) { response in
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKSecurityOrigin.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg, hostArg, portArg, securityProtocolArg] as [Any?]) {
+        response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
@@ -2931,91 +2474,19 @@ final class PigeonApiWKSecurityOrigin: PigeonApiProtocolWKSecurityOrigin  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKSecurityOrigin`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class SecurityOriginProxyAPIDelegate : PigeonApiDelegateWKSecurityOrigin {
-  func host(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> String {
-    return pigeonInstance.host
-  }
-
-  func port(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> Int64 {
-    return pigeonInstance.port
-  }
-
-  func securityProtocol(pigeonApi: PigeonApiWKSecurityOrigin, pigeonInstance: WKSecurityOrigin) throws -> String {
-    return pigeonInstance.securityProtocol
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class SecurityOriginProxyAPITests: XCTestCase {
-  func testHost() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKSecurityOrigin(registrar)
-
-    let instance = TestSecurityOrigin()
-    let value = try? api.pigeonDelegate.host(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.host)
-  }
-
-  func testPort() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKSecurityOrigin(registrar)
-
-    let instance = TestSecurityOrigin()
-    let value = try? api.pigeonDelegate.port(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.port)
-  }
-
-  func testSecurityProtocol() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKSecurityOrigin(registrar)
-
-    let instance = TestSecurityOrigin()
-    let value = try? api.pigeonDelegate.securityProtocol(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.securityProtocol)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateHTTPCookie {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]) throws -> HTTPCookie
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]
+  ) throws -> HTTPCookie
   /// The cookie’s properties.
-  func getProperties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any]?
+  func getProperties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws
+    -> [HttpCookiePropertyKey: Any]?
 }
 
 protocol PigeonApiProtocolHTTPCookie {
 }
 
-final class PigeonApiHTTPCookie: PigeonApiProtocolHTTPCookie  {
+final class PigeonApiHTTPCookie: PigeonApiProtocolHTTPCookie {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateHTTPCookie
   ///An implementation of [NSObject] used to access callback methods
@@ -3023,17 +2494,23 @@ final class PigeonApiHTTPCookie: PigeonApiProtocolHTTPCookie  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateHTTPCookie) {
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateHTTPCookie)
+  {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiHTTPCookie?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiHTTPCookie?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -3041,8 +2518,9 @@ final class PigeonApiHTTPCookie: PigeonApiProtocolHTTPCookie  {
         let propertiesArg = args[1] as? [HttpCookiePropertyKey: Any]
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, properties: propertiesArg!),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(
+              pigeonApi: api, properties: propertiesArg!),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3051,13 +2529,16 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let getPropertiesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.getProperties", binaryMessenger: binaryMessenger, codec: codec)
+    let getPropertiesChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.getProperties",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getPropertiesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! HTTPCookie
         do {
-          let result = try api.pigeonDelegate.getProperties(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getProperties(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -3069,21 +2550,26 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of HTTPCookie and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: HTTPCookie, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: HTTPCookie, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.HTTPCookie.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3101,100 +2587,52 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `HTTPCookie`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class CookieProxyAPIDelegate : PigeonApiDelegateHTTPCookie {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiHTTPCookie, properties: [HttpCookiePropertyKey: Any]) throws -> HTTPCookie {
-    return HTTPCookie(,properties: properties)
-  }
-
-  func getProperties(pigeonApi: PigeonApiHTTPCookie, pigeonInstance: HTTPCookie) throws -> [HttpCookiePropertyKey: Any]? {
-    return pigeonInstance.properties
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class CookieProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiHTTPCookie(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, properties: [.comment: -1])
-    XCTAssertNotNil(instance)
-  }
-
-  func testGetProperties() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiHTTPCookie(registrar)
-
-    let instance = TestCookie()
-    let value = api.pigeonDelegate.getProperties(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getPropertiesCalled)
-    XCTAssertEqual(value, instance.getProperties())
-  }
-
-}
-class TestCookie: HTTPCookie {
-  var getPropertiesCalled = false
-
-
-  override func getProperties() {
-    getPropertiesCalled = true
-  }
-}
-*/
-
 protocol PigeonApiDelegateAuthenticationChallengeResponse {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiAuthenticationChallengeResponse, disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential?) throws -> AuthenticationChallengeResponse
+  func pigeonDefaultConstructor(
+    pigeonApi: PigeonApiAuthenticationChallengeResponse,
+    disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential?
+  ) throws -> AuthenticationChallengeResponse
   /// The option to use to handle the challenge.
-  func disposition(pigeonApi: PigeonApiAuthenticationChallengeResponse, pigeonInstance: AuthenticationChallengeResponse) throws -> UrlSessionAuthChallengeDisposition
+  func disposition(
+    pigeonApi: PigeonApiAuthenticationChallengeResponse,
+    pigeonInstance: AuthenticationChallengeResponse
+  ) throws -> UrlSessionAuthChallengeDisposition
   /// The credential to use for authentication when the disposition parameter
   /// contains the value URLSession.AuthChallengeDisposition.useCredential.
-  func credential(pigeonApi: PigeonApiAuthenticationChallengeResponse, pigeonInstance: AuthenticationChallengeResponse) throws -> URLCredential?
+  func credential(
+    pigeonApi: PigeonApiAuthenticationChallengeResponse,
+    pigeonInstance: AuthenticationChallengeResponse
+  ) throws -> URLCredential?
 }
 
 protocol PigeonApiProtocolAuthenticationChallengeResponse {
 }
 
-final class PigeonApiAuthenticationChallengeResponse: PigeonApiProtocolAuthenticationChallengeResponse  {
+final class PigeonApiAuthenticationChallengeResponse:
+  PigeonApiProtocolAuthenticationChallengeResponse
+{
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateAuthenticationChallengeResponse
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateAuthenticationChallengeResponse) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateAuthenticationChallengeResponse
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiAuthenticationChallengeResponse?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiAuthenticationChallengeResponse?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.AuthenticationChallengeResponse.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.AuthenticationChallengeResponse.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -3203,8 +2641,9 @@ final class PigeonApiAuthenticationChallengeResponse: PigeonApiProtocolAuthentic
         let credentialArg: URLCredential? = nilOrValue(args[2])
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, disposition: dispositionArg, credential: credentialArg),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(
+              pigeonApi: api, disposition: dispositionArg, credential: credentialArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3216,24 +2655,33 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of AuthenticationChallengeResponse and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: AuthenticationChallengeResponse, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: AuthenticationChallengeResponse,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-      let dispositionArg = try! pigeonDelegate.disposition(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let credentialArg = try! pigeonDelegate.credential(pigeonApi: self, pigeonInstance: pigeonInstance)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let dispositionArg = try! pigeonDelegate.disposition(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let credentialArg = try! pigeonDelegate.credential(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.AuthenticationChallengeResponse.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg, dispositionArg, credentialArg] as [Any?]) { response in
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.AuthenticationChallengeResponse.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg, dispositionArg, credentialArg] as [Any?]) {
+        response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
@@ -3250,103 +2698,23 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `AuthenticationChallengeResponse`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AuthenticationChallengeResponseProxyAPIDelegate : PigeonApiDelegateAuthenticationChallengeResponse {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiAuthenticationChallengeResponse, disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential?) throws -> AuthenticationChallengeResponse {
-    return AuthenticationChallengeResponse()
-  }
-
-  func disposition(pigeonApi: PigeonApiAuthenticationChallengeResponse, pigeonInstance: AuthenticationChallengeResponse) throws -> UrlSessionAuthChallengeDisposition {
-    switch pigeonInstance.disposition {
-      case .useCredential:
-        return .useCredential
-      case .performDefaultHandling:
-        return .performDefaultHandling
-      case .cancelAuthenticationChallenge:
-        return .cancelAuthenticationChallenge
-      case .rejectProtectionSpace:
-        return .rejectProtectionSpace
-      @unknown default:
-        return .unknown
-    }
-  }
-
-  func credential(pigeonApi: PigeonApiAuthenticationChallengeResponse, pigeonInstance: AuthenticationChallengeResponse) throws -> URLCredential? {
-    return pigeonInstance.credential
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class AuthenticationChallengeResponseProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api disposition: .useCredential, credential: TestCredential)
-    XCTAssertNotNil(instance)
-  }
-
-  func testDisposition() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
-
-    let instance = TestAuthenticationChallengeResponse()
-    let value = try? api.pigeonDelegate.disposition(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.disposition)
-  }
-
-  func testCredential() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiAuthenticationChallengeResponse(registrar)
-
-    let instance = TestAuthenticationChallengeResponse()
-    let value = try? api.pigeonDelegate.credential(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.credential)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateWKWebsiteDataStore {
   /// The default data store, which stores data persistently to disk.
   func defaultDataStore(pigeonApi: PigeonApiWKWebsiteDataStore) throws -> WKWebsiteDataStore
   /// The object that manages the HTTP cookies for your website.
-  func httpCookieStore(pigeonApi: PigeonApiWKWebsiteDataStore, pigeonInstance: WKWebsiteDataStore) throws -> WKHTTPCookieStore
+  func httpCookieStore(pigeonApi: PigeonApiWKWebsiteDataStore, pigeonInstance: WKWebsiteDataStore)
+    throws -> WKHTTPCookieStore
   /// Removes the specified types of website data from one or more data records.
-  func removeDataOfTypes(pigeonApi: PigeonApiWKWebsiteDataStore, pigeonInstance: WKWebsiteDataStore, dataTypes: [WebsiteDataType], modificationTimeInSecondsSinceEpoch: Double, completion: @escaping (Result<Bool, Error>) -> Void)
+  func removeDataOfTypes(
+    pigeonApi: PigeonApiWKWebsiteDataStore, pigeonInstance: WKWebsiteDataStore,
+    dataTypes: [WebsiteDataType], modificationTimeInSecondsSinceEpoch: Double,
+    completion: @escaping (Result<Bool, Error>) -> Void)
 }
 
 protocol PigeonApiProtocolWKWebsiteDataStore {
 }
 
-final class PigeonApiWKWebsiteDataStore: PigeonApiProtocolWKWebsiteDataStore  {
+final class PigeonApiWKWebsiteDataStore: PigeonApiProtocolWKWebsiteDataStore {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKWebsiteDataStore
   ///An implementation of [NSObject] used to access callback methods
@@ -3354,23 +2722,33 @@ final class PigeonApiWKWebsiteDataStore: PigeonApiProtocolWKWebsiteDataStore  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKWebsiteDataStore) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKWebsiteDataStore
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKWebsiteDataStore?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKWebsiteDataStore?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let defaultDataStoreChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStore.defaultDataStore", binaryMessenger: binaryMessenger, codec: codec)
+    let defaultDataStoreChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStore.defaultDataStore",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       defaultDataStoreChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.defaultDataStore(pigeonApi: api), withIdentifier: pigeonIdentifierArg)
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.defaultDataStore(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3379,14 +2757,19 @@ final class PigeonApiWKWebsiteDataStore: PigeonApiProtocolWKWebsiteDataStore  {
     } else {
       defaultDataStoreChannel.setMessageHandler(nil)
     }
-    let httpCookieStoreChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStore.httpCookieStore", binaryMessenger: binaryMessenger, codec: codec)
+    let httpCookieStoreChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStore.httpCookieStore",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       httpCookieStoreChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebsiteDataStore
         let pigeonIdentifierArg = args[1] as! Int64
         do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.httpCookieStore(pigeonApi: api, pigeonInstance: pigeonInstanceArg), withIdentifier: pigeonIdentifierArg)
+          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+            try api.pigeonDelegate.httpCookieStore(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -3395,14 +2778,19 @@ final class PigeonApiWKWebsiteDataStore: PigeonApiProtocolWKWebsiteDataStore  {
     } else {
       httpCookieStoreChannel.setMessageHandler(nil)
     }
-    let removeDataOfTypesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStore.removeDataOfTypes", binaryMessenger: binaryMessenger, codec: codec)
+    let removeDataOfTypesChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStore.removeDataOfTypes",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       removeDataOfTypesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebsiteDataStore
         let dataTypesArg = args[1] as! [WebsiteDataType]
         let modificationTimeInSecondsSinceEpochArg = args[2] as! Double
-        api.pigeonDelegate.removeDataOfTypes(pigeonApi: api, pigeonInstance: pigeonInstanceArg, dataTypes: dataTypesArg, modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpochArg) { result in
+        api.pigeonDelegate.removeDataOfTypes(
+          pigeonApi: api, pigeonInstance: pigeonInstanceArg, dataTypes: dataTypesArg,
+          modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpochArg
+        ) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -3417,21 +2805,26 @@ final class PigeonApiWKWebsiteDataStore: PigeonApiProtocolWKWebsiteDataStore  {
   }
 
   ///Creates a Dart instance of WKWebsiteDataStore and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKWebsiteDataStore, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKWebsiteDataStore, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStore.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebsiteDataStore.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -3449,102 +2842,22 @@ final class PigeonApiWKWebsiteDataStore: PigeonApiProtocolWKWebsiteDataStore  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKWebsiteDataStore`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class WebsiteDataStoreProxyAPIDelegate : PigeonApiDelegateWKWebsiteDataStore {
-  func defaultDataStore(pigeonApi: PigeonApiWKWebsiteDataStore): WKWebsiteDataStore {
-    return WKWebsiteDataStore.defaultDataStore
-  }
-
-  func httpCookieStore(pigeonApi: PigeonApiWKWebsiteDataStore, pigeonInstance: WKWebsiteDataStore): WKHTTPCookieStore {
-    return pigeonInstance.httpCookieStore
-  }
-
-  func removeDataOfTypes(pigeonApi: PigeonApiWKWebsiteDataStore, pigeonInstance: WKWebsiteDataStore, dataTypes: [WebsiteDataType], modificationTimeInSecondsSinceEpoch: Double, completion: @escaping (Result<Bool, PigeonError>) -> Void) {
-    return pigeonInstance.removeDataOfTypes(dataTypes: dataTypes, modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class WebsiteDataStoreProxyAPITests: XCTestCase {
-  func testHttpCookieStore() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebsiteDataStore(registrar)
-
-    let instance = TestWebsiteDataStore()
-    let value = try? api.pigeonDelegate.httpCookieStore(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.httpCookieStore)
-  }
-
-  func testRemoveDataOfTypes() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebsiteDataStore(registrar)
-
-    let instance = TestWebsiteDataStore()
-    let dataTypes = [.cookies]
-    let modificationTimeInSecondsSinceEpoch = 1.0
-    let value = api.pigeonDelegate.removeDataOfTypes(pigeonApi: api, pigeonInstance: instance, dataTypes: dataTypes, modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch)
-
-    XCTAssertEqual(instance.removeDataOfTypesArgs, [dataTypes, modificationTimeInSecondsSinceEpoch])
-    XCTAssertEqual(value, instance.removeDataOfTypes(dataTypes: dataTypes, modificationTimeInSecondsSinceEpoch: modificationTimeInSecondsSinceEpoch))
-  }
-
-}
-class TestWebsiteDataStore: WKWebsiteDataStore {
-  private var httpCookieStoreTestValue = TestCookieStore
-  var removeDataOfTypesArgs: [AnyHashable?]? = nil
-
-  override var httpCookieStore: WKHTTPCookieStore {
-    return httpCookieStoreTestValue
-  }
-
-  override func removeDataOfTypes() {
-    removeDataOfTypesArgs = [dataTypes, modificationTimeInSecondsSinceEpoch]
-    return true
-  }
-}
-*/
-
 protocol PigeonApiDelegateUIView {
   #if !os(macOS)
-  /// The view’s background color.
-  func setBackgroundColor(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, value: Int64?) throws
+    /// The view’s background color.
+    func setBackgroundColor(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, value: Int64?)
+      throws
   #endif
   #if !os(macOS)
-  /// A Boolean value that determines whether the view is opaque.
-  func setOpaque(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, opaque: Bool) throws
+    /// A Boolean value that determines whether the view is opaque.
+    func setOpaque(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, opaque: Bool) throws
   #endif
 }
 
 protocol PigeonApiProtocolUIView {
 }
 
-final class PigeonApiUIView: PigeonApiProtocolUIView  {
+final class PigeonApiUIView: PigeonApiProtocolUIView {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateUIView
   ///An implementation of [NSObject] used to access callback methods
@@ -3560,215 +2873,162 @@ final class PigeonApiUIView: PigeonApiProtocolUIView  {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     #if !os(macOS)
-    let setBackgroundColorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIView.setBackgroundColor", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setBackgroundColorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIView
-        let valueArg: Int64? = nilOrValue(args[1])
-        do {
-          try api.pigeonDelegate.setBackgroundColor(pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let setBackgroundColorChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIView.setBackgroundColor",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setBackgroundColorChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIView
+          let valueArg: Int64? = nilOrValue(args[1])
+          do {
+            try api.pigeonDelegate.setBackgroundColor(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setBackgroundColorChannel.setMessageHandler(nil)
       }
-    } else {
-      setBackgroundColorChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let setOpaqueChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIView.setOpaque", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setOpaqueChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIView
-        let opaqueArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setOpaque(pigeonApi: api, pigeonInstance: pigeonInstanceArg, opaque: opaqueArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let setOpaqueChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIView.setOpaque",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setOpaqueChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIView
+          let opaqueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setOpaque(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, opaque: opaqueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setOpaqueChannel.setMessageHandler(nil)
       }
-    } else {
-      setOpaqueChannel.setMessageHandler(nil)
-    }
     #endif
   }
 
   #if !os(macOS)
-  ///Creates a Dart instance of UIView and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: UIView, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    if pigeonRegistrar.ignoreCallsToDart {
-      completion(
-        .failure(
-          PigeonError(
-            code: "ignore-calls-error",
-            message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
-      completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-      let binaryMessenger = pigeonRegistrar.binaryMessenger
-      let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.UIView.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(PigeonError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
+    ///Creates a Dart instance of UIView and attaches it to [pigeonInstance].
+    func pigeonNewInstance(
+      pigeonInstance: UIView, completion: @escaping (Result<Void, PigeonError>) -> Void
+    ) {
+      if pigeonRegistrar.ignoreCallsToDart {
+        completion(
+          .failure(
+            PigeonError(
+              code: "ignore-calls-error",
+              message: "Calls to Dart are being ignored.", details: "")))
+      } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+        completion(.success(()))
+      } else {
+        let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+          pigeonInstance as AnyObject)
+        let binaryMessenger = pigeonRegistrar.binaryMessenger
+        let codec = pigeonRegistrar.codec
+        let channelName: String =
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIView.pigeon_newInstance"
+        let channel = FlutterBasicMessageChannel(
+          name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+        channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+          guard let listResponse = response as? [Any?] else {
+            completion(.failure(createConnectionError(withChannelName: channelName)))
+            return
+          }
+          if listResponse.count > 1 {
+            let code: String = listResponse[0] as! String
+            let message: String? = nilOrValue(listResponse[1])
+            let details: String? = nilOrValue(listResponse[2])
+            completion(.failure(PigeonError(code: code, message: message, details: details)))
+          } else {
+            completion(.success(()))
+          }
         }
       }
     }
-  }
   #endif
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import UIKit
-
-
-/// ProxyApi implementation for `UIView`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ViewProxyAPIDelegate : PigeonApiDelegateUIView {
-  func setBackgroundColor(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, value: Int64?) throws {
-    pigeonInstance.backgroundColor = value: value
-  }
-
-  func setOpaque(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, opaque: Bool) throws {
-    pigeonInstance.opaque = opaque: opaque
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import UIKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ViewProxyAPITests: XCTestCase {
-  func testSetBackgroundColor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIView(registrar)
-
-    let instance = TestView()
-    let value = 0
-    api.pigeonDelegate.setBackgroundColor(pigeonApi: api, pigeonInstance: instance, value: value)
-
-    XCTAssertEqual(instance.setBackgroundColorArgs, [value])
-  }
-
-  func testSetOpaque() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIView(registrar)
-
-    let instance = TestView()
-    let opaque = true
-    api.pigeonDelegate.setOpaque(pigeonApi: api, pigeonInstance: instance, opaque: opaque)
-
-    XCTAssertEqual(instance.setOpaqueArgs, [opaque])
-  }
-
-}
-class TestView: UIView {
-  var setBackgroundColorArgs: [AnyHashable?]? = nil
-  var setOpaqueArgs: [AnyHashable?]? = nil
-
-
-  override func setBackgroundColor() {
-    setBackgroundColorArgs = [value]
-  }
-  override func setOpaque() {
-    setOpaqueArgs = [opaque]
-  }
-}
-*/
-
 protocol PigeonApiDelegateUIScrollView {
   #if !os(macOS)
-  /// The point at which the origin of the content view is offset from the
-  /// origin of the scroll view.
-  func getContentOffset(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView) throws -> [Double]
+    /// The point at which the origin of the content view is offset from the
+    /// origin of the scroll view.
+    func getContentOffset(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView) throws
+      -> [Double]
   #endif
   #if !os(macOS)
-  /// Move the scrolled position of your view.
-  ///
-  /// Convenience method to synchronize change to the x and y scroll position.
-  func scrollBy(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, x: Double, y: Double) throws
+    /// Move the scrolled position of your view.
+    ///
+    /// Convenience method to synchronize change to the x and y scroll position.
+    func scrollBy(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, x: Double, y: Double) throws
   #endif
   #if !os(macOS)
-  /// The point at which the origin of the content view is offset from the
-  /// origin of the scroll view.
-  func setContentOffset(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, x: Double, y: Double) throws
+    /// The point at which the origin of the content view is offset from the
+    /// origin of the scroll view.
+    func setContentOffset(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, x: Double, y: Double) throws
   #endif
   #if !os(macOS)
-  /// The delegate of the scroll view.
-  func setDelegate(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, delegate: UIScrollViewDelegate?) throws
+    /// The delegate of the scroll view.
+    func setDelegate(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView,
+      delegate: UIScrollViewDelegate?) throws
   #endif
   #if !os(macOS)
-  /// Whether the scroll view bounces past the edge of content and back again.
-  func setBounces(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
+    /// Whether the scroll view bounces past the edge of content and back again.
+    func setBounces(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool)
+      throws
   #endif
   #if !os(macOS)
-  /// Whether the scroll view bounces when it reaches the ends of its horizontal
-  /// axis.
-  func setBouncesHorizontally(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
+    /// Whether the scroll view bounces when it reaches the ends of its horizontal
+    /// axis.
+    func setBouncesHorizontally(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
   #endif
   #if !os(macOS)
-  /// Whether the scroll view bounces when it reaches the ends of its vertical
-  /// axis.
-  func setBouncesVertically(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
+    /// Whether the scroll view bounces when it reaches the ends of its vertical
+    /// axis.
+    func setBouncesVertically(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
   #endif
   #if !os(macOS)
-  /// Whether bouncing always occurs when vertical scrolling reaches the end of
-  /// the content.
-  ///
-  /// If the value of this property is true and `bouncesVertically` is true, the
-  /// scroll view allows vertical dragging even if the content is smaller than
-  /// the bounds of the scroll view.
-  func setAlwaysBounceVertical(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
+    /// Whether bouncing always occurs when vertical scrolling reaches the end of
+    /// the content.
+    ///
+    /// If the value of this property is true and `bouncesVertically` is true, the
+    /// scroll view allows vertical dragging even if the content is smaller than
+    /// the bounds of the scroll view.
+    func setAlwaysBounceVertical(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
   #endif
   #if !os(macOS)
-  /// Whether bouncing always occurs when horizontal scrolling reaches the end
-  /// of the content view.
-  ///
-  /// If the value of this property is true and `bouncesHorizontally` is true,
-  /// the scroll view allows horizontal dragging even if the content is smaller
-  /// than the bounds of the scroll view.
-  func setAlwaysBounceHorizontal(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
+    /// Whether bouncing always occurs when horizontal scrolling reaches the end
+    /// of the content view.
+    ///
+    /// If the value of this property is true and `bouncesHorizontally` is true,
+    /// the scroll view allows horizontal dragging even if the content is smaller
+    /// than the bounds of the scroll view.
+    func setAlwaysBounceHorizontal(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
   #endif
 }
 
 protocol PigeonApiProtocolUIScrollView {
 }
 
-final class PigeonApiUIScrollView: PigeonApiProtocolUIScrollView  {
+final class PigeonApiUIScrollView: PigeonApiProtocolUIScrollView {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateUIScrollView
   ///An implementation of [UIView] used to access callback methods
@@ -3776,461 +3036,309 @@ final class PigeonApiUIScrollView: PigeonApiProtocolUIScrollView  {
     return pigeonRegistrar.apiDelegate.pigeonApiUIView(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateUIScrollView) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateUIScrollView
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiUIScrollView?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiUIScrollView?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     #if !os(macOS)
-    let getContentOffsetChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.getContentOffset", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getContentOffsetChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIScrollView
-        do {
-          let result = try api.pigeonDelegate.getContentOffset(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
+      let getContentOffsetChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.getContentOffset",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getContentOffsetChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          do {
+            let result = try api.pigeonDelegate.getContentOffset(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        getContentOffsetChannel.setMessageHandler(nil)
       }
-    } else {
-      getContentOffsetChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let scrollByChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.scrollBy", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      scrollByChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIScrollView
-        let xArg = args[1] as! Double
-        let yArg = args[2] as! Double
-        do {
-          try api.pigeonDelegate.scrollBy(pigeonApi: api, pigeonInstance: pigeonInstanceArg, x: xArg, y: yArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let scrollByChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.scrollBy",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        scrollByChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let xArg = args[1] as! Double
+          let yArg = args[2] as! Double
+          do {
+            try api.pigeonDelegate.scrollBy(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, x: xArg, y: yArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        scrollByChannel.setMessageHandler(nil)
       }
-    } else {
-      scrollByChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let setContentOffsetChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setContentOffset", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setContentOffsetChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIScrollView
-        let xArg = args[1] as! Double
-        let yArg = args[2] as! Double
-        do {
-          try api.pigeonDelegate.setContentOffset(pigeonApi: api, pigeonInstance: pigeonInstanceArg, x: xArg, y: yArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let setContentOffsetChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setContentOffset",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setContentOffsetChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let xArg = args[1] as! Double
+          let yArg = args[2] as! Double
+          do {
+            try api.pigeonDelegate.setContentOffset(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, x: xArg, y: yArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setContentOffsetChannel.setMessageHandler(nil)
       }
-    } else {
-      setContentOffsetChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let setDelegateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setDelegate", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setDelegateChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIScrollView
-        let delegateArg: UIScrollViewDelegate? = nilOrValue(args[1])
-        do {
-          try api.pigeonDelegate.setDelegate(pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let setDelegateChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setDelegate",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setDelegateChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let delegateArg: UIScrollViewDelegate? = nilOrValue(args[1])
+          do {
+            try api.pigeonDelegate.setDelegate(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setDelegateChannel.setMessageHandler(nil)
       }
-    } else {
-      setDelegateChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let setBouncesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setBounces", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setBouncesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIScrollView
-        let valueArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setBounces(pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let setBouncesChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setBounces",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setBouncesChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let valueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setBounces(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setBouncesChannel.setMessageHandler(nil)
       }
-    } else {
-      setBouncesChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let setBouncesHorizontallyChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setBouncesHorizontally", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setBouncesHorizontallyChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIScrollView
-        let valueArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setBouncesHorizontally(pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let setBouncesHorizontallyChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setBouncesHorizontally",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setBouncesHorizontallyChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let valueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setBouncesHorizontally(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setBouncesHorizontallyChannel.setMessageHandler(nil)
       }
-    } else {
-      setBouncesHorizontallyChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let setBouncesVerticallyChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setBouncesVertically", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setBouncesVerticallyChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIScrollView
-        let valueArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setBouncesVertically(pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let setBouncesVerticallyChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setBouncesVertically",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setBouncesVerticallyChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let valueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setBouncesVertically(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setBouncesVerticallyChannel.setMessageHandler(nil)
       }
-    } else {
-      setBouncesVerticallyChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let setAlwaysBounceVerticalChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setAlwaysBounceVertical", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setAlwaysBounceVerticalChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIScrollView
-        let valueArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setAlwaysBounceVertical(pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let setAlwaysBounceVerticalChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setAlwaysBounceVertical",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setAlwaysBounceVerticalChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let valueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setAlwaysBounceVertical(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setAlwaysBounceVerticalChannel.setMessageHandler(nil)
       }
-    } else {
-      setAlwaysBounceVerticalChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let setAlwaysBounceHorizontalChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setAlwaysBounceHorizontal", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setAlwaysBounceHorizontalChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! UIScrollView
-        let valueArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setAlwaysBounceHorizontal(pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let setAlwaysBounceHorizontalChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setAlwaysBounceHorizontal",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setAlwaysBounceHorizontalChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let valueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setAlwaysBounceHorizontal(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setAlwaysBounceHorizontalChannel.setMessageHandler(nil)
       }
-    } else {
-      setAlwaysBounceHorizontalChannel.setMessageHandler(nil)
-    }
     #endif
   }
 
   #if !os(macOS)
-  ///Creates a Dart instance of UIScrollView and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: UIScrollView, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    if pigeonRegistrar.ignoreCallsToDart {
-      completion(
-        .failure(
-          PigeonError(
-            code: "ignore-calls-error",
-            message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
-      completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-      let binaryMessenger = pigeonRegistrar.binaryMessenger
-      let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(PigeonError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
+    ///Creates a Dart instance of UIScrollView and attaches it to [pigeonInstance].
+    func pigeonNewInstance(
+      pigeonInstance: UIScrollView, completion: @escaping (Result<Void, PigeonError>) -> Void
+    ) {
+      if pigeonRegistrar.ignoreCallsToDart {
+        completion(
+          .failure(
+            PigeonError(
+              code: "ignore-calls-error",
+              message: "Calls to Dart are being ignored.", details: "")))
+      } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+        completion(.success(()))
+      } else {
+        let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+          pigeonInstance as AnyObject)
+        let binaryMessenger = pigeonRegistrar.binaryMessenger
+        let codec = pigeonRegistrar.codec
+        let channelName: String =
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.pigeon_newInstance"
+        let channel = FlutterBasicMessageChannel(
+          name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+        channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+          guard let listResponse = response as? [Any?] else {
+            completion(.failure(createConnectionError(withChannelName: channelName)))
+            return
+          }
+          if listResponse.count > 1 {
+            let code: String = listResponse[0] as! String
+            let message: String? = nilOrValue(listResponse[1])
+            let details: String? = nilOrValue(listResponse[2])
+            completion(.failure(PigeonError(code: code, message: message, details: details)))
+          } else {
+            completion(.success(()))
+          }
         }
       }
     }
-  }
   #endif
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import UIKit
-
-
-/// ProxyApi implementation for `UIScrollView`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ScrollViewProxyAPIDelegate : PigeonApiDelegateUIScrollView {
-  func getContentOffset(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView) throws -> [Double] {
-    return pigeonInstance.contentOffset
-  }
-
-  func scrollBy(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, x: Double, y: Double) throws {
-    pigeonInstance.scrollBy(x: x, y: y)
-  }
-
-  func setContentOffset(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, x: Double, y: Double) throws {
-    pigeonInstance.setContentOffset(x: x, y: y)
-  }
-
-  func setDelegate(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, delegate: UIScrollViewDelegate?) throws {
-    pigeonInstance.delegate = delegate: delegate
-  }
-
-  func setBounces(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws {
-    pigeonInstance.bounces = value: value
-  }
-
-  func setBouncesHorizontally(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws {
-    pigeonInstance.bouncesHorizontally = value: value
-  }
-
-  func setBouncesVertically(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws {
-    pigeonInstance.bouncesVertically = value: value
-  }
-
-  func setAlwaysBounceVertical(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws {
-    pigeonInstance.alwaysBounceVertical = value: value
-  }
-
-  func setAlwaysBounceHorizontal(pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws {
-    pigeonInstance.alwaysBounceHorizontal = value: value
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import UIKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ScrollViewProxyAPITests: XCTestCase {
-  func testGetContentOffset() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
-
-    let instance = TestScrollView()
-    let value = api.pigeonDelegate.getContentOffset(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getContentOffsetCalled)
-    XCTAssertEqual(value, instance.getContentOffset())
-  }
-
-  func testScrollBy() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
-
-    let instance = TestScrollView()
-    let x = 1.0
-    let y = 1.0
-    api.pigeonDelegate.scrollBy(pigeonApi: api, pigeonInstance: instance, x: x, y: y)
-
-    XCTAssertEqual(instance.scrollByArgs, [x, y])
-  }
-
-  func testSetContentOffset() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
-
-    let instance = TestScrollView()
-    let x = 1.0
-    let y = 1.0
-    api.pigeonDelegate.setContentOffset(pigeonApi: api, pigeonInstance: instance, x: x, y: y)
-
-    XCTAssertEqual(instance.setContentOffsetArgs, [x, y])
-  }
-
-  func testSetDelegate() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
-
-    let instance = TestScrollView()
-    let delegate = TestScrollViewDelegate
-    api.pigeonDelegate.setDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
-
-    XCTAssertEqual(instance.setDelegateArgs, [delegate])
-  }
-
-  func testSetBounces() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
-
-    let instance = TestScrollView()
-    let value = true
-    api.pigeonDelegate.setBounces(pigeonApi: api, pigeonInstance: instance, value: value)
-
-    XCTAssertEqual(instance.setBouncesArgs, [value])
-  }
-
-  func testSetBouncesHorizontally() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
-
-    let instance = TestScrollView()
-    let value = true
-    api.pigeonDelegate.setBouncesHorizontally(pigeonApi: api, pigeonInstance: instance, value: value)
-
-    XCTAssertEqual(instance.setBouncesHorizontallyArgs, [value])
-  }
-
-  func testSetBouncesVertically() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
-
-    let instance = TestScrollView()
-    let value = true
-    api.pigeonDelegate.setBouncesVertically(pigeonApi: api, pigeonInstance: instance, value: value)
-
-    XCTAssertEqual(instance.setBouncesVerticallyArgs, [value])
-  }
-
-  func testSetAlwaysBounceVertical() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
-
-    let instance = TestScrollView()
-    let value = true
-    api.pigeonDelegate.setAlwaysBounceVertical(pigeonApi: api, pigeonInstance: instance, value: value)
-
-    XCTAssertEqual(instance.setAlwaysBounceVerticalArgs, [value])
-  }
-
-  func testSetAlwaysBounceHorizontal() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
-
-    let instance = TestScrollView()
-    let value = true
-    api.pigeonDelegate.setAlwaysBounceHorizontal(pigeonApi: api, pigeonInstance: instance, value: value)
-
-    XCTAssertEqual(instance.setAlwaysBounceHorizontalArgs, [value])
-  }
-
-}
-class TestScrollView: UIScrollView {
-  var getContentOffsetCalled = false
-  var scrollByArgs: [AnyHashable?]? = nil
-  var setContentOffsetArgs: [AnyHashable?]? = nil
-  var setDelegateArgs: [AnyHashable?]? = nil
-  var setBouncesArgs: [AnyHashable?]? = nil
-  var setBouncesHorizontallyArgs: [AnyHashable?]? = nil
-  var setBouncesVerticallyArgs: [AnyHashable?]? = nil
-  var setAlwaysBounceVerticalArgs: [AnyHashable?]? = nil
-  var setAlwaysBounceHorizontalArgs: [AnyHashable?]? = nil
-
-
-  override func getContentOffset() {
-    getContentOffsetCalled = true
-  }
-  override func scrollBy() {
-    scrollByArgs = [x, y]
-  }
-  override func setContentOffset() {
-    setContentOffsetArgs = [x, y]
-  }
-  override func setDelegate() {
-    setDelegateArgs = [delegate]
-  }
-  override func setBounces() {
-    setBouncesArgs = [value]
-  }
-  override func setBouncesHorizontally() {
-    setBouncesHorizontallyArgs = [value]
-  }
-  override func setBouncesVertically() {
-    setBouncesVerticallyArgs = [value]
-  }
-  override func setAlwaysBounceVertical() {
-    setAlwaysBounceVerticalArgs = [value]
-  }
-  override func setAlwaysBounceHorizontal() {
-    setAlwaysBounceHorizontalArgs = [value]
-  }
-}
-*/
-
 protocol PigeonApiDelegateWKWebViewConfiguration {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKWebViewConfiguration) throws -> WKWebViewConfiguration
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKWebViewConfiguration) throws
+    -> WKWebViewConfiguration
   /// The object that coordinates interactions between your app’s native code
   /// and the webpage’s scripts and other content.
-  func setUserContentController(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, controller: WKUserContentController) throws
+  func setUserContentController(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    controller: WKUserContentController) throws
   /// The object that coordinates interactions between your app’s native code
   /// and the webpage’s scripts and other content.
-  func getUserContentController(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKUserContentController
+  func getUserContentController(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
+  ) throws -> WKUserContentController
   /// The object you use to get and set the site’s cookies and to track the
   /// cached data objects.
-  func setWebsiteDataStore(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, dataStore: WKWebsiteDataStore) throws
+  func setWebsiteDataStore(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    dataStore: WKWebsiteDataStore) throws
   /// The object you use to get and set the site’s cookies and to track the
   /// cached data objects.
-  func getWebsiteDataStore(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKWebsiteDataStore
+  func getWebsiteDataStore(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
+  ) throws -> WKWebsiteDataStore
   /// The object that manages the preference-related settings for the web view.
-  func setPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, preferences: WKPreferences) throws
+  func setPreferences(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    preferences: WKPreferences) throws
   /// The object that manages the preference-related settings for the web view.
-  func getPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKPreferences
+  func getPreferences(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
+  ) throws -> WKPreferences
   /// A Boolean value that indicates whether HTML5 videos play inline or use the
   /// native full-screen controller.
-  func setAllowsInlineMediaPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, allow: Bool) throws
+  func setAllowsInlineMediaPlayback(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, allow: Bool)
+    throws
   /// A Boolean value that indicates whether the web view limits navigation to
   /// pages within the app’s domain.
-  func setLimitsNavigationsToAppBoundDomains(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, limit: Bool) throws
+  func setLimitsNavigationsToAppBoundDomains(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, limit: Bool)
+    throws
   /// The media types that require a user gesture to begin playing.
-  func setMediaTypesRequiringUserActionForPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, type: AudiovisualMediaType) throws
+  func setMediaTypesRequiringUserActionForPlayback(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    type: AudiovisualMediaType) throws
   /// The default preferences to use when loading and rendering content.
   @available(iOS 13.0.0, macOS 10.15.0, *)
-  func getDefaultWebpagePreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKWebpagePreferences
+  func getDefaultWebpagePreferences(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
+  ) throws -> WKWebpagePreferences
 }
 
 protocol PigeonApiProtocolWKWebViewConfiguration {
 }
 
-final class PigeonApiWKWebViewConfiguration: PigeonApiProtocolWKWebViewConfiguration  {
+final class PigeonApiWKWebViewConfiguration: PigeonApiProtocolWKWebViewConfiguration {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKWebViewConfiguration
   ///An implementation of [NSObject] used to access callback methods
@@ -4238,25 +3346,34 @@ final class PigeonApiWKWebViewConfiguration: PigeonApiProtocolWKWebViewConfigura
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKWebViewConfiguration) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKWebViewConfiguration
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKWebViewConfiguration?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKWebViewConfiguration?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4265,14 +3382,18 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let setUserContentControllerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setUserContentController", binaryMessenger: binaryMessenger, codec: codec)
+    let setUserContentControllerChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setUserContentController",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setUserContentControllerChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         let controllerArg = args[1] as! WKUserContentController
         do {
-          try api.pigeonDelegate.setUserContentController(pigeonApi: api, pigeonInstance: pigeonInstanceArg, controller: controllerArg)
+          try api.pigeonDelegate.setUserContentController(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, controller: controllerArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4281,13 +3402,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setUserContentControllerChannel.setMessageHandler(nil)
     }
-    let getUserContentControllerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getUserContentController", binaryMessenger: binaryMessenger, codec: codec)
+    let getUserContentControllerChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getUserContentController",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getUserContentControllerChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         do {
-          let result = try api.pigeonDelegate.getUserContentController(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getUserContentController(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -4296,14 +3421,18 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getUserContentControllerChannel.setMessageHandler(nil)
     }
-    let setWebsiteDataStoreChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setWebsiteDataStore", binaryMessenger: binaryMessenger, codec: codec)
+    let setWebsiteDataStoreChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setWebsiteDataStore",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setWebsiteDataStoreChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         let dataStoreArg = args[1] as! WKWebsiteDataStore
         do {
-          try api.pigeonDelegate.setWebsiteDataStore(pigeonApi: api, pigeonInstance: pigeonInstanceArg, dataStore: dataStoreArg)
+          try api.pigeonDelegate.setWebsiteDataStore(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, dataStore: dataStoreArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4312,13 +3441,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setWebsiteDataStoreChannel.setMessageHandler(nil)
     }
-    let getWebsiteDataStoreChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getWebsiteDataStore", binaryMessenger: binaryMessenger, codec: codec)
+    let getWebsiteDataStoreChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getWebsiteDataStore",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getWebsiteDataStoreChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         do {
-          let result = try api.pigeonDelegate.getWebsiteDataStore(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getWebsiteDataStore(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -4327,14 +3460,17 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getWebsiteDataStoreChannel.setMessageHandler(nil)
     }
-    let setPreferencesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setPreferences", binaryMessenger: binaryMessenger, codec: codec)
+    let setPreferencesChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setPreferences",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setPreferencesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         let preferencesArg = args[1] as! WKPreferences
         do {
-          try api.pigeonDelegate.setPreferences(pigeonApi: api, pigeonInstance: pigeonInstanceArg, preferences: preferencesArg)
+          try api.pigeonDelegate.setPreferences(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, preferences: preferencesArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4343,13 +3479,16 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setPreferencesChannel.setMessageHandler(nil)
     }
-    let getPreferencesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getPreferences", binaryMessenger: binaryMessenger, codec: codec)
+    let getPreferencesChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getPreferences",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getPreferencesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         do {
-          let result = try api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getPreferences(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -4358,14 +3497,18 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       getPreferencesChannel.setMessageHandler(nil)
     }
-    let setAllowsInlineMediaPlaybackChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setAllowsInlineMediaPlayback", binaryMessenger: binaryMessenger, codec: codec)
+    let setAllowsInlineMediaPlaybackChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setAllowsInlineMediaPlayback",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setAllowsInlineMediaPlaybackChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         let allowArg = args[1] as! Bool
         do {
-          try api.pigeonDelegate.setAllowsInlineMediaPlayback(pigeonApi: api, pigeonInstance: pigeonInstanceArg, allow: allowArg)
+          try api.pigeonDelegate.setAllowsInlineMediaPlayback(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, allow: allowArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4374,14 +3517,18 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setAllowsInlineMediaPlaybackChannel.setMessageHandler(nil)
     }
-    let setLimitsNavigationsToAppBoundDomainsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setLimitsNavigationsToAppBoundDomains", binaryMessenger: binaryMessenger, codec: codec)
+    let setLimitsNavigationsToAppBoundDomainsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setLimitsNavigationsToAppBoundDomains",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setLimitsNavigationsToAppBoundDomainsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         let limitArg = args[1] as! Bool
         do {
-          try api.pigeonDelegate.setLimitsNavigationsToAppBoundDomains(pigeonApi: api, pigeonInstance: pigeonInstanceArg, limit: limitArg)
+          try api.pigeonDelegate.setLimitsNavigationsToAppBoundDomains(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, limit: limitArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4390,14 +3537,18 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       setLimitsNavigationsToAppBoundDomainsChannel.setMessageHandler(nil)
     }
-    let setMediaTypesRequiringUserActionForPlaybackChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setMediaTypesRequiringUserActionForPlayback", binaryMessenger: binaryMessenger, codec: codec)
+    let setMediaTypesRequiringUserActionForPlaybackChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setMediaTypesRequiringUserActionForPlayback",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setMediaTypesRequiringUserActionForPlaybackChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
         let typeArg = args[1] as! AudiovisualMediaType
         do {
-          try api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(pigeonApi: api, pigeonInstance: pigeonInstanceArg, type: typeArg)
+          try api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, type: typeArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4407,13 +3558,17 @@ withIdentifier: pigeonIdentifierArg)
       setMediaTypesRequiringUserActionForPlaybackChannel.setMessageHandler(nil)
     }
     if #available(iOS 13.0.0, macOS 10.15.0, *) {
-      let getDefaultWebpagePreferencesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getDefaultWebpagePreferences", binaryMessenger: binaryMessenger, codec: codec)
+      let getDefaultWebpagePreferencesChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getDefaultWebpagePreferences",
+        binaryMessenger: binaryMessenger, codec: codec)
       if let api = api {
         getDefaultWebpagePreferencesChannel.setMessageHandler { message, reply in
           let args = message as! [Any?]
           let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
           do {
-            let result = try api.pigeonDelegate.getDefaultWebpagePreferences(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            let result = try api.pigeonDelegate.getDefaultWebpagePreferences(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
             reply(wrapResult(result))
           } catch {
             reply(wrapError(error))
@@ -4422,16 +3577,21 @@ withIdentifier: pigeonIdentifierArg)
       } else {
         getDefaultWebpagePreferencesChannel.setMessageHandler(nil)
       }
-    }     else {
+    } else {
       let getDefaultWebpagePreferencesChannel = FlutterBasicMessageChannel(
-        name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getDefaultWebpagePreferences",
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.getDefaultWebpagePreferences",
         binaryMessenger: binaryMessenger, codec: codec)
       if api != nil {
         getDefaultWebpagePreferencesChannel.setMessageHandler { message, reply in
-          reply(wrapError(FlutterError(code: "PigeonUnsupportedOperationError",
-                                       message: "Call to getDefaultWebpagePreferences requires @available(iOS 13.0.0, macOS 10.15.0, *).",
-                                       details: nil
-                                      )))
+          reply(
+            wrapError(
+              FlutterError(
+                code: "PigeonUnsupportedOperationError",
+                message:
+                  "Call to getDefaultWebpagePreferences requires @available(iOS 13.0.0, macOS 10.15.0, *).",
+                details: nil
+              )))
         }
       } else {
         getDefaultWebpagePreferencesChannel.setMessageHandler(nil)
@@ -4440,21 +3600,27 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of WKWebViewConfiguration and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKWebViewConfiguration, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKWebViewConfiguration,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4472,264 +3638,33 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKWebViewConfiguration`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class WebViewConfigurationProxyAPIDelegate : PigeonApiDelegateWKWebViewConfiguration {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKWebViewConfiguration) throws -> WKWebViewConfiguration {
-    return WKWebViewConfiguration()
-  }
-
-  func setUserContentController(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, controller: WKUserContentController) throws {
-    pigeonInstance.userContentController = controller: controller
-  }
-
-  func getUserContentController(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKUserContentController {
-    return pigeonInstance.userContentController
-  }
-
-  func setWebsiteDataStore(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, dataStore: WKWebsiteDataStore) throws {
-    pigeonInstance.websiteDataStore = dataStore: dataStore
-  }
-
-  func getWebsiteDataStore(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKWebsiteDataStore {
-    return pigeonInstance.websiteDataStore
-  }
-
-  func setPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, preferences: WKPreferences) throws {
-    pigeonInstance.preferences = preferences: preferences
-  }
-
-  func getPreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKPreferences {
-    return pigeonInstance.preferences
-  }
-
-  func setAllowsInlineMediaPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, allow: Bool) throws {
-    pigeonInstance.allowsInlineMediaPlayback = allow: allow
-  }
-
-  func setLimitsNavigationsToAppBoundDomains(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, limit: Bool) throws {
-    pigeonInstance.limitsNavigationsToAppBoundDomains = limit: limit
-  }
-
-  func setMediaTypesRequiringUserActionForPlayback(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration, type: AudiovisualMediaType) throws {
-    pigeonInstance.mediaTypesRequiringUserActionForPlayback = type: type
-  }
-
-  func getDefaultWebpagePreferences(pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration) throws -> WKWebpagePreferences {
-    return pigeonInstance.defaultWebpagePreferences
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class WebViewConfigurationProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testSetUserContentController() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let controller = TestUserContentController
-    api.pigeonDelegate.setUserContentController(pigeonApi: api, pigeonInstance: instance, controller: controller)
-
-    XCTAssertEqual(instance.setUserContentControllerArgs, [controller])
-  }
-
-  func testGetUserContentController() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let value = api.pigeonDelegate.getUserContentController(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getUserContentControllerCalled)
-    XCTAssertEqual(value, instance.getUserContentController())
-  }
-
-  func testSetWebsiteDataStore() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let dataStore = TestWebsiteDataStore
-    api.pigeonDelegate.setWebsiteDataStore(pigeonApi: api, pigeonInstance: instance, dataStore: dataStore)
-
-    XCTAssertEqual(instance.setWebsiteDataStoreArgs, [dataStore])
-  }
-
-  func testGetWebsiteDataStore() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let value = api.pigeonDelegate.getWebsiteDataStore(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getWebsiteDataStoreCalled)
-    XCTAssertEqual(value, instance.getWebsiteDataStore())
-  }
-
-  func testSetPreferences() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let preferences = TestPreferences
-    api.pigeonDelegate.setPreferences(pigeonApi: api, pigeonInstance: instance, preferences: preferences)
-
-    XCTAssertEqual(instance.setPreferencesArgs, [preferences])
-  }
-
-  func testGetPreferences() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let value = api.pigeonDelegate.getPreferences(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getPreferencesCalled)
-    XCTAssertEqual(value, instance.getPreferences())
-  }
-
-  func testSetAllowsInlineMediaPlayback() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let allow = true
-    api.pigeonDelegate.setAllowsInlineMediaPlayback(pigeonApi: api, pigeonInstance: instance, allow: allow)
-
-    XCTAssertEqual(instance.setAllowsInlineMediaPlaybackArgs, [allow])
-  }
-
-  func testSetLimitsNavigationsToAppBoundDomains() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let limit = true
-    api.pigeonDelegate.setLimitsNavigationsToAppBoundDomains(pigeonApi: api, pigeonInstance: instance, limit: limit)
-
-    XCTAssertEqual(instance.setLimitsNavigationsToAppBoundDomainsArgs, [limit])
-  }
-
-  func testSetMediaTypesRequiringUserActionForPlayback() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let type = .none
-    api.pigeonDelegate.setMediaTypesRequiringUserActionForPlayback(pigeonApi: api, pigeonInstance: instance, type: type)
-
-    XCTAssertEqual(instance.setMediaTypesRequiringUserActionForPlaybackArgs, [type])
-  }
-
-  func testGetDefaultWebpagePreferences() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
-
-    let instance = TestWebViewConfiguration()
-    let value = api.pigeonDelegate.getDefaultWebpagePreferences(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getDefaultWebpagePreferencesCalled)
-    XCTAssertEqual(value, instance.getDefaultWebpagePreferences())
-  }
-
-}
-class TestWebViewConfiguration: WKWebViewConfiguration {
-  var setUserContentControllerArgs: [AnyHashable?]? = nil
-  var getUserContentControllerCalled = false
-  var setWebsiteDataStoreArgs: [AnyHashable?]? = nil
-  var getWebsiteDataStoreCalled = false
-  var setPreferencesArgs: [AnyHashable?]? = nil
-  var getPreferencesCalled = false
-  var setAllowsInlineMediaPlaybackArgs: [AnyHashable?]? = nil
-  var setLimitsNavigationsToAppBoundDomainsArgs: [AnyHashable?]? = nil
-  var setMediaTypesRequiringUserActionForPlaybackArgs: [AnyHashable?]? = nil
-  var getDefaultWebpagePreferencesCalled = false
-
-
-  override func setUserContentController() {
-    setUserContentControllerArgs = [controller]
-  }
-  override func getUserContentController() {
-    getUserContentControllerCalled = true
-  }
-  override func setWebsiteDataStore() {
-    setWebsiteDataStoreArgs = [dataStore]
-  }
-  override func getWebsiteDataStore() {
-    getWebsiteDataStoreCalled = true
-  }
-  override func setPreferences() {
-    setPreferencesArgs = [preferences]
-  }
-  override func getPreferences() {
-    getPreferencesCalled = true
-  }
-  override func setAllowsInlineMediaPlayback() {
-    setAllowsInlineMediaPlaybackArgs = [allow]
-  }
-  override func setLimitsNavigationsToAppBoundDomains() {
-    setLimitsNavigationsToAppBoundDomainsArgs = [limit]
-  }
-  override func setMediaTypesRequiringUserActionForPlayback() {
-    setMediaTypesRequiringUserActionForPlaybackArgs = [type]
-  }
-  override func getDefaultWebpagePreferences() {
-    getDefaultWebpagePreferencesCalled = true
-  }
-}
-*/
-
 protocol PigeonApiDelegateWKUserContentController {
   /// Installs a message handler that you can call from your JavaScript code.
-  func addScriptMessageHandler(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController, handler: WKScriptMessageHandler, name: String) throws
+  func addScriptMessageHandler(
+    pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController,
+    handler: WKScriptMessageHandler, name: String) throws
   /// Uninstalls the custom message handler with the specified name from your
   /// JavaScript code.
-  func removeScriptMessageHandler(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController, name: String) throws
+  func removeScriptMessageHandler(
+    pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController,
+    name: String) throws
   /// Uninstalls all custom message handlers associated with the user content
   /// controller.
-  func removeAllScriptMessageHandlers(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController) throws
+  func removeAllScriptMessageHandlers(
+    pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController) throws
   /// Injects the specified script into the webpage’s content.
-  func addUserScript(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController, userScript: WKUserScript) throws
+  func addUserScript(
+    pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController,
+    userScript: WKUserScript) throws
   /// Removes all user scripts from the web view.
-  func removeAllUserScripts(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController) throws
+  func removeAllUserScripts(
+    pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController) throws
 }
 
 protocol PigeonApiProtocolWKUserContentController {
 }
 
-final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentController  {
+final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentController {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKUserContentController
   ///An implementation of [NSObject] used to access callback methods
@@ -4737,17 +3672,26 @@ final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentCont
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKUserContentController) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKUserContentController
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKUserContentController?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKUserContentController?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let addScriptMessageHandlerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.addScriptMessageHandler", binaryMessenger: binaryMessenger, codec: codec)
+    let addScriptMessageHandlerChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.addScriptMessageHandler",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addScriptMessageHandlerChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -4755,7 +3699,8 @@ final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentCont
         let handlerArg = args[1] as! WKScriptMessageHandler
         let nameArg = args[2] as! String
         do {
-          try api.pigeonDelegate.addScriptMessageHandler(pigeonApi: api, pigeonInstance: pigeonInstanceArg, handler: handlerArg, name: nameArg)
+          try api.pigeonDelegate.addScriptMessageHandler(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, handler: handlerArg, name: nameArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4764,14 +3709,18 @@ final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentCont
     } else {
       addScriptMessageHandlerChannel.setMessageHandler(nil)
     }
-    let removeScriptMessageHandlerChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.removeScriptMessageHandler", binaryMessenger: binaryMessenger, codec: codec)
+    let removeScriptMessageHandlerChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.removeScriptMessageHandler",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       removeScriptMessageHandlerChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKUserContentController
         let nameArg = args[1] as! String
         do {
-          try api.pigeonDelegate.removeScriptMessageHandler(pigeonApi: api, pigeonInstance: pigeonInstanceArg, name: nameArg)
+          try api.pigeonDelegate.removeScriptMessageHandler(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, name: nameArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4780,13 +3729,17 @@ final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentCont
     } else {
       removeScriptMessageHandlerChannel.setMessageHandler(nil)
     }
-    let removeAllScriptMessageHandlersChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.removeAllScriptMessageHandlers", binaryMessenger: binaryMessenger, codec: codec)
+    let removeAllScriptMessageHandlersChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.removeAllScriptMessageHandlers",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       removeAllScriptMessageHandlersChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKUserContentController
         do {
-          try api.pigeonDelegate.removeAllScriptMessageHandlers(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          try api.pigeonDelegate.removeAllScriptMessageHandlers(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4795,14 +3748,17 @@ final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentCont
     } else {
       removeAllScriptMessageHandlersChannel.setMessageHandler(nil)
     }
-    let addUserScriptChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.addUserScript", binaryMessenger: binaryMessenger, codec: codec)
+    let addUserScriptChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.addUserScript",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addUserScriptChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKUserContentController
         let userScriptArg = args[1] as! WKUserScript
         do {
-          try api.pigeonDelegate.addUserScript(pigeonApi: api, pigeonInstance: pigeonInstanceArg, userScript: userScriptArg)
+          try api.pigeonDelegate.addUserScript(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, userScript: userScriptArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4811,13 +3767,17 @@ final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentCont
     } else {
       addUserScriptChannel.setMessageHandler(nil)
     }
-    let removeAllUserScriptsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.removeAllUserScripts", binaryMessenger: binaryMessenger, codec: codec)
+    let removeAllUserScriptsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.removeAllUserScripts",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       removeAllUserScriptsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKUserContentController
         do {
-          try api.pigeonDelegate.removeAllUserScripts(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          try api.pigeonDelegate.removeAllUserScripts(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -4829,21 +3789,27 @@ final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentCont
   }
 
   ///Creates a Dart instance of WKUserContentController and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKUserContentController, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKUserContentController,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKUserContentController.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -4861,146 +3827,16 @@ final class PigeonApiWKUserContentController: PigeonApiProtocolWKUserContentCont
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKUserContentController`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class UserContentControllerProxyAPIDelegate : PigeonApiDelegateWKUserContentController {
-  func addScriptMessageHandler(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController, handler: WKScriptMessageHandler, name: String) throws {
-    pigeonInstance.addScriptMessageHandler(handler: handler, name: name)
-  }
-
-  func removeScriptMessageHandler(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController, name: String) throws {
-    pigeonInstance.removeScriptMessageHandler(name: name)
-  }
-
-  func removeAllScriptMessageHandlers(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController) throws {
-    pigeonInstance.removeAllScriptMessageHandlers()
-  }
-
-  func addUserScript(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController, userScript: WKUserScript) throws {
-    pigeonInstance.addUserScript(userScript: userScript)
-  }
-
-  func removeAllUserScripts(pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController) throws {
-    pigeonInstance.removeAllUserScripts()
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class UserContentControllerProxyAPITests: XCTestCase {
-  func testAddScriptMessageHandler() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
-
-    let instance = TestUserContentController()
-    let handler = TestScriptMessageHandler
-    let name = "myString"
-    api.pigeonDelegate.addScriptMessageHandler(pigeonApi: api, pigeonInstance: instance, handler: handler, name: name)
-
-    XCTAssertEqual(instance.addScriptMessageHandlerArgs, [handler, name])
-  }
-
-  func testRemoveScriptMessageHandler() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
-
-    let instance = TestUserContentController()
-    let name = "myString"
-    api.pigeonDelegate.removeScriptMessageHandler(pigeonApi: api, pigeonInstance: instance, name: name)
-
-    XCTAssertEqual(instance.removeScriptMessageHandlerArgs, [name])
-  }
-
-  func testRemoveAllScriptMessageHandlers() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
-
-    let instance = TestUserContentController()
-    api.pigeonDelegate.removeAllScriptMessageHandlers(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.removeAllScriptMessageHandlersCalled)
-  }
-
-  func testAddUserScript() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
-
-    let instance = TestUserContentController()
-    let userScript = TestUserScript
-    api.pigeonDelegate.addUserScript(pigeonApi: api, pigeonInstance: instance, userScript: userScript)
-
-    XCTAssertEqual(instance.addUserScriptArgs, [userScript])
-  }
-
-  func testRemoveAllUserScripts() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUserContentController(registrar)
-
-    let instance = TestUserContentController()
-    api.pigeonDelegate.removeAllUserScripts(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.removeAllUserScriptsCalled)
-  }
-
-}
-class TestUserContentController: WKUserContentController {
-  var addScriptMessageHandlerArgs: [AnyHashable?]? = nil
-  var removeScriptMessageHandlerArgs: [AnyHashable?]? = nil
-  var removeAllScriptMessageHandlersCalled = false
-  var addUserScriptArgs: [AnyHashable?]? = nil
-  var removeAllUserScriptsCalled = false
-
-
-  override func addScriptMessageHandler() {
-    addScriptMessageHandlerArgs = [handler, name]
-  }
-  override func removeScriptMessageHandler() {
-    removeScriptMessageHandlerArgs = [name]
-  }
-  override func removeAllScriptMessageHandlers() {
-    removeAllScriptMessageHandlersCalled = true
-  }
-  override func addUserScript() {
-    addUserScriptArgs = [userScript]
-  }
-  override func removeAllUserScripts() {
-    removeAllUserScriptsCalled = true
-  }
-}
-*/
-
 protocol PigeonApiDelegateWKPreferences {
   /// A Boolean value that indicates whether JavaScript is enabled.
-  func setJavaScriptEnabled(pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool) throws
+  func setJavaScriptEnabled(
+    pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool) throws
 }
 
 protocol PigeonApiProtocolWKPreferences {
 }
 
-final class PigeonApiWKPreferences: PigeonApiProtocolWKPreferences  {
+final class PigeonApiWKPreferences: PigeonApiProtocolWKPreferences {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKPreferences
   ///An implementation of [NSObject] used to access callback methods
@@ -5008,24 +3844,32 @@ final class PigeonApiWKPreferences: PigeonApiProtocolWKPreferences  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKPreferences) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKPreferences
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKPreferences?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKPreferences?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let setJavaScriptEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferences.setJavaScriptEnabled", binaryMessenger: binaryMessenger, codec: codec)
+    let setJavaScriptEnabledChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferences.setJavaScriptEnabled",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setJavaScriptEnabledChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKPreferences
         let enabledArg = args[1] as! Bool
         do {
-          try api.pigeonDelegate.setJavaScriptEnabled(pigeonApi: api, pigeonInstance: pigeonInstanceArg, enabled: enabledArg)
+          try api.pigeonDelegate.setJavaScriptEnabled(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, enabled: enabledArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -5037,21 +3881,26 @@ final class PigeonApiWKPreferences: PigeonApiProtocolWKPreferences  {
   }
 
   ///Creates a Dart instance of WKPreferences and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKPreferences, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKPreferences, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferences.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKPreferences.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -5069,72 +3918,20 @@ final class PigeonApiWKPreferences: PigeonApiProtocolWKPreferences  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKPreferences`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class PreferencesProxyAPIDelegate : PigeonApiDelegateWKPreferences {
-  func setJavaScriptEnabled(pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool) throws {
-    pigeonInstance.javaScriptEnabled = enabled: enabled
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class PreferencesProxyAPITests: XCTestCase {
-  func testSetJavaScriptEnabled() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKPreferences(registrar)
-
-    let instance = TestPreferences()
-    let enabled = true
-    api.pigeonDelegate.setJavaScriptEnabled(pigeonApi: api, pigeonInstance: instance, enabled: enabled)
-
-    XCTAssertEqual(instance.setJavaScriptEnabledArgs, [enabled])
-  }
-
-}
-class TestPreferences: WKPreferences {
-  var setJavaScriptEnabledArgs: [AnyHashable?]? = nil
-
-
-  override func setJavaScriptEnabled() {
-    setJavaScriptEnabledArgs = [enabled]
-  }
-}
-*/
-
 protocol PigeonApiDelegateWKScriptMessageHandler {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKScriptMessageHandler) throws -> WKScriptMessageHandler
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKScriptMessageHandler) throws
+    -> WKScriptMessageHandler
 }
 
 protocol PigeonApiProtocolWKScriptMessageHandler {
   /// Tells the handler that a webpage sent a script message.
-  func didReceiveScriptMessage(pigeonInstance pigeonInstanceArg: WKScriptMessageHandler, controller controllerArg: WKUserContentController, message messageArg: WKScriptMessage, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didReceiveScriptMessage(
+    pigeonInstance pigeonInstanceArg: WKScriptMessageHandler,
+    controller controllerArg: WKUserContentController, message messageArg: WKScriptMessage,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 
-final class PigeonApiWKScriptMessageHandler: PigeonApiProtocolWKScriptMessageHandler  {
+final class PigeonApiWKScriptMessageHandler: PigeonApiProtocolWKScriptMessageHandler {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKScriptMessageHandler
   ///An implementation of [NSObject] used to access callback methods
@@ -5142,25 +3939,34 @@ final class PigeonApiWKScriptMessageHandler: PigeonApiProtocolWKScriptMessageHan
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKScriptMessageHandler) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKScriptMessageHandler
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKScriptMessageHandler?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKScriptMessageHandler?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandler.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandler.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -5172,25 +3978,34 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of WKScriptMessageHandler and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKScriptMessageHandler, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKScriptMessageHandler,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
+    } else {
       completion(
         .failure(
           PigeonError(
             code: "new-instance-error",
-            message: "Error: Attempting to create a new Dart instance of WKScriptMessageHandler, but the class has a nonnull callback method.", details: "")))
+            message:
+              "Error: Attempting to create a new Dart instance of WKScriptMessageHandler, but the class has a nonnull callback method.",
+            details: "")))
     }
   }
   /// Tells the handler that a webpage sent a script message.
-  func didReceiveScriptMessage(pigeonInstance pigeonInstanceArg: WKScriptMessageHandler, controller controllerArg: WKUserContentController, message messageArg: WKScriptMessage, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func didReceiveScriptMessage(
+    pigeonInstance pigeonInstanceArg: WKScriptMessageHandler,
+    controller controllerArg: WKUserContentController, message messageArg: WKScriptMessage,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5201,8 +4016,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandler.didReceiveScriptMessage"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKScriptMessageHandler.didReceiveScriptMessage"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, controllerArg, messageArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -5220,102 +4037,45 @@ withIdentifier: pigeonIdentifierArg)
   }
 
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-/// Implementation of `WKScriptMessageHandler` that calls to Dart in callback methods.
-class ScriptMessageHandlerImpl: WKScriptMessageHandler {
-  let api: PigeonApiProtocolWKScriptMessageHandler
-
-  init(api: PigeonApiProtocolWKScriptMessageHandler) {
-    self.api = api
-  }
-
-  func fixMe() {
-    api.didReceiveScriptMessage(pigeonInstance: self, controller: controller, message: message) {  _ in }
-  }
-}
-
-/// ProxyApi implementation for `WKScriptMessageHandler`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ScriptMessageHandlerProxyAPIDelegate : PigeonApiDelegateWKScriptMessageHandler {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKScriptMessageHandler) throws -> WKScriptMessageHandler {
-    return WKScriptMessageHandlerImpl(api: pigeonApi)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ScriptMessageHandlerProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKScriptMessageHandler(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testDidReceiveScriptMessage() {
-    let api = TestScriptMessageHandlerApi()
-    let instance = ScriptMessageHandlerImpl(api: api)
-    let controller = TestUserContentController
-    let message = TestScriptMessage
-    instance.didReceiveScriptMessage(controller: controller, message: message)
-
-    XCTAssertEqual(api.didReceiveScriptMessageArgs, [controller, message])
-  }
-
-}
-class TestScriptMessageHandlerApi: PigeonApiProtocolWKScriptMessageHandler {
-  var didReceiveScriptMessageArgs: [AnyHashable?]? = nil
-
-  func didReceiveScriptMessage(controller: WKUserContentController, message: WKScriptMessage) throws {
-    didReceiveScriptMessageArgs = [controllerArg, messageArg]
-  }
-}
-*/
-
 protocol PigeonApiDelegateWKNavigationDelegate {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKNavigationDelegate) throws -> WKNavigationDelegate
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKNavigationDelegate) throws
+    -> WKNavigationDelegate
 }
 
 protocol PigeonApiProtocolWKNavigationDelegate {
   /// Tells the delegate that navigation is complete.
-  func didFinishNavigation(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, url urlArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didFinishNavigation(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    url urlArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Tells the delegate that navigation from the main frame has started.
-  func didStartProvisionalNavigation(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, url urlArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didStartProvisionalNavigation(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    url urlArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Asks the delegate for permission to navigate to new content based on the
   /// specified action information.
-  func decidePolicyForNavigationAction(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, navigationAction navigationActionArg: WKNavigationAction, completion: @escaping (Result<NavigationActionPolicy, PigeonError>) -> Void)
+  func decidePolicyForNavigationAction(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    navigationAction navigationActionArg: WKNavigationAction,
+    completion: @escaping (Result<NavigationActionPolicy, PigeonError>) -> Void)
   /// Asks the delegate for permission to navigate to new content after the
   /// response to the navigation request is known.
-  func decidePolicyForNavigationResponse(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, navigationResponse navigationResponseArg: WKNavigationResponse, completion: @escaping (Result<NavigationResponsePolicy, PigeonError>) -> Void)
+  func decidePolicyForNavigationResponse(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    navigationResponse navigationResponseArg: WKNavigationResponse,
+    completion: @escaping (Result<NavigationResponsePolicy, PigeonError>) -> Void)
   /// Tells the delegate that an error occurred during navigation.
-  func didFailNavigation(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, error errorArg: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didFailNavigation(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    error errorArg: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Tells the delegate that an error occurred during the early navigation
   /// process.
-  func didFailProvisionalNavigation(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, error errorArg: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func didFailProvisionalNavigation(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    error errorArg: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Tells the delegate that the web view’s content process was terminated.
-  func webViewWebContentProcessDidTerminate(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func webViewWebContentProcessDidTerminate(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Asks the delegate to respond to an authentication challenge.
   ///
   /// This return value expects a List with:
@@ -5327,10 +4087,13 @@ protocol PigeonApiProtocolWKNavigationDelegate {
   ///   "password": "<nonnull String user password>",
   ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
   /// ]
-  func didReceiveAuthenticationChallenge(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, challenge challengeArg: URLAuthenticationChallenge, completion: @escaping (Result<[Any?], PigeonError>) -> Void)
+  func didReceiveAuthenticationChallenge(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    challenge challengeArg: URLAuthenticationChallenge,
+    completion: @escaping (Result<[Any?], PigeonError>) -> Void)
 }
 
-final class PigeonApiWKNavigationDelegate: PigeonApiProtocolWKNavigationDelegate  {
+final class PigeonApiWKNavigationDelegate: PigeonApiProtocolWKNavigationDelegate {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKNavigationDelegate
   ///An implementation of [NSObject] used to access callback methods
@@ -5338,25 +4101,34 @@ final class PigeonApiWKNavigationDelegate: PigeonApiProtocolWKNavigationDelegate
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKNavigationDelegate) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKNavigationDelegate
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKNavigationDelegate?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKNavigationDelegate?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -5368,25 +4140,32 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of WKNavigationDelegate and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKNavigationDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKNavigationDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
+    } else {
       completion(
         .failure(
           PigeonError(
             code: "new-instance-error",
-            message: "Error: Attempting to create a new Dart instance of WKNavigationDelegate, but the class has a nonnull callback method.", details: "")))
+            message:
+              "Error: Attempting to create a new Dart instance of WKNavigationDelegate, but the class has a nonnull callback method.",
+            details: "")))
     }
   }
   /// Tells the delegate that navigation is complete.
-  func didFinishNavigation(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, url urlArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func didFinishNavigation(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    url urlArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5397,8 +4176,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didFinishNavigation"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didFinishNavigation"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, webViewArg, urlArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -5416,7 +4197,10 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Tells the delegate that navigation from the main frame has started.
-  func didStartProvisionalNavigation(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, url urlArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func didStartProvisionalNavigation(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    url urlArg: String?, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5427,8 +4211,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didStartProvisionalNavigation"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didStartProvisionalNavigation"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, webViewArg, urlArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -5447,7 +4233,11 @@ withIdentifier: pigeonIdentifierArg)
 
   /// Asks the delegate for permission to navigate to new content based on the
   /// specified action information.
-  func decidePolicyForNavigationAction(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, navigationAction navigationActionArg: WKNavigationAction, completion: @escaping (Result<NavigationActionPolicy, PigeonError>) -> Void)   {
+  func decidePolicyForNavigationAction(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    navigationAction navigationActionArg: WKNavigationAction,
+    completion: @escaping (Result<NavigationActionPolicy, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5458,9 +4248,12 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.decidePolicyForNavigationAction"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, webViewArg, navigationActionArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.decidePolicyForNavigationAction"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg, webViewArg, navigationActionArg] as [Any?]) {
+      response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -5471,7 +4264,11 @@ withIdentifier: pigeonIdentifierArg)
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
-        completion(.failure(PigeonError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! NavigationActionPolicy
         completion(.success(result))
@@ -5481,7 +4278,11 @@ withIdentifier: pigeonIdentifierArg)
 
   /// Asks the delegate for permission to navigate to new content after the
   /// response to the navigation request is known.
-  func decidePolicyForNavigationResponse(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, navigationResponse navigationResponseArg: WKNavigationResponse, completion: @escaping (Result<NavigationResponsePolicy, PigeonError>) -> Void)   {
+  func decidePolicyForNavigationResponse(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    navigationResponse navigationResponseArg: WKNavigationResponse,
+    completion: @escaping (Result<NavigationResponsePolicy, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5492,9 +4293,12 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.decidePolicyForNavigationResponse"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, webViewArg, navigationResponseArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.decidePolicyForNavigationResponse"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg, webViewArg, navigationResponseArg] as [Any?]) {
+      response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -5505,7 +4309,11 @@ withIdentifier: pigeonIdentifierArg)
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
-        completion(.failure(PigeonError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! NavigationResponsePolicy
         completion(.success(result))
@@ -5514,7 +4322,10 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Tells the delegate that an error occurred during navigation.
-  func didFailNavigation(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, error errorArg: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func didFailNavigation(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    error errorArg: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5525,8 +4336,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didFailNavigation"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didFailNavigation"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, webViewArg, errorArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -5545,7 +4358,10 @@ withIdentifier: pigeonIdentifierArg)
 
   /// Tells the delegate that an error occurred during the early navigation
   /// process.
-  func didFailProvisionalNavigation(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, error errorArg: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func didFailProvisionalNavigation(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    error errorArg: NSError, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5556,8 +4372,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didFailProvisionalNavigation"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didFailProvisionalNavigation"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, webViewArg, errorArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -5575,7 +4393,10 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Tells the delegate that the web view’s content process was terminated.
-  func webViewWebContentProcessDidTerminate(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func webViewWebContentProcessDidTerminate(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5586,8 +4407,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.webViewWebContentProcessDidTerminate"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.webViewWebContentProcessDidTerminate"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, webViewArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -5615,7 +4438,11 @@ withIdentifier: pigeonIdentifierArg)
   ///   "password": "<nonnull String user password>",
   ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
   /// ]
-  func didReceiveAuthenticationChallenge(pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView, challenge challengeArg: URLAuthenticationChallenge, completion: @escaping (Result<[Any?], PigeonError>) -> Void)   {
+  func didReceiveAuthenticationChallenge(
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
+    challenge challengeArg: URLAuthenticationChallenge,
+    completion: @escaping (Result<[Any?], PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5626,8 +4453,10 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didReceiveAuthenticationChallenge"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKNavigationDelegate.didReceiveAuthenticationChallenge"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([pigeonInstanceArg, webViewArg, challengeArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -5639,7 +4468,11 @@ withIdentifier: pigeonIdentifierArg)
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
-        completion(.failure(PigeonError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! [Any?]
         completion(.success(result))
@@ -5648,244 +4481,56 @@ withIdentifier: pigeonIdentifierArg)
   }
 
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-/// Implementation of `WKNavigationDelegate` that calls to Dart in callback methods.
-class NavigationDelegateImpl: WKNavigationDelegate {
-  let api: PigeonApiProtocolWKNavigationDelegate
-
-  init(api: PigeonApiProtocolWKNavigationDelegate) {
-    self.api = api
-  }
-
-  func fixMe() {
-    api.didFinishNavigation(pigeonInstance: self, webView: webView, url: url) {  _ in }
-  }
-
-  func fixMe() {
-    api.didStartProvisionalNavigation(pigeonInstance: self, webView: webView, url: url) {  _ in }
-  }
-
-  func fixMe() {
-    api.decidePolicyForNavigationAction(pigeonInstance: self, webView: webView, navigationAction: navigationAction) {  _ in }
-  }
-
-  func fixMe() {
-    api.decidePolicyForNavigationResponse(pigeonInstance: self, webView: webView, navigationResponse: navigationResponse) {  _ in }
-  }
-
-  func fixMe() {
-    api.didFailNavigation(pigeonInstance: self, webView: webView, error: error) {  _ in }
-  }
-
-  func fixMe() {
-    api.didFailProvisionalNavigation(pigeonInstance: self, webView: webView, error: error) {  _ in }
-  }
-
-  func fixMe() {
-    api.webViewWebContentProcessDidTerminate(pigeonInstance: self, webView: webView) {  _ in }
-  }
-
-  func fixMe() {
-    api.didReceiveAuthenticationChallenge(pigeonInstance: self, webView: webView, challenge: challenge) {  _ in }
-  }
-}
-
-/// ProxyApi implementation for `WKNavigationDelegate`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class NavigationDelegateProxyAPIDelegate : PigeonApiDelegateWKNavigationDelegate {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKNavigationDelegate) throws -> WKNavigationDelegate {
-    return WKNavigationDelegateImpl(api: pigeonApi)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class NavigationDelegateProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKNavigationDelegate(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testDidFinishNavigation() {
-    let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api)
-    let webView = TestWebView
-    let url = "myString"
-    instance.didFinishNavigation(webView: webView, url: url)
-
-    XCTAssertEqual(api.didFinishNavigationArgs, [webView, url])
-  }
-
-  func testDidStartProvisionalNavigation() {
-    let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api)
-    let webView = TestWebView
-    let url = "myString"
-    instance.didStartProvisionalNavigation(webView: webView, url: url)
-
-    XCTAssertEqual(api.didStartProvisionalNavigationArgs, [webView, url])
-  }
-
-  func testDecidePolicyForNavigationAction() {
-    let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api)
-    let webView = TestWebView
-    let navigationAction = TestNavigationAction
-    instance.decidePolicyForNavigationAction(webView: webView, navigationAction: navigationAction)
-
-    XCTAssertEqual(api.decidePolicyForNavigationActionArgs, [webView, navigationAction])
-  }
-
-  func testDecidePolicyForNavigationResponse() {
-    let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api)
-    let webView = TestWebView
-    let navigationResponse = TestNavigationResponse
-    instance.decidePolicyForNavigationResponse(webView: webView, navigationResponse: navigationResponse)
-
-    XCTAssertEqual(api.decidePolicyForNavigationResponseArgs, [webView, navigationResponse])
-  }
-
-  func testDidFailNavigation() {
-    let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api)
-    let webView = TestWebView
-    let error = TestError
-    instance.didFailNavigation(webView: webView, error: error)
-
-    XCTAssertEqual(api.didFailNavigationArgs, [webView, error])
-  }
-
-  func testDidFailProvisionalNavigation() {
-    let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api)
-    let webView = TestWebView
-    let error = TestError
-    instance.didFailProvisionalNavigation(webView: webView, error: error)
-
-    XCTAssertEqual(api.didFailProvisionalNavigationArgs, [webView, error])
-  }
-
-  func testWebViewWebContentProcessDidTerminate() {
-    let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api)
-    let webView = TestWebView
-    instance.webViewWebContentProcessDidTerminate(webView: webView)
-
-    XCTAssertEqual(api.webViewWebContentProcessDidTerminateArgs, [webView])
-  }
-
-  func testDidReceiveAuthenticationChallenge() {
-    let api = TestNavigationDelegateApi()
-    let instance = NavigationDelegateImpl(api: api)
-    let webView = TestWebView
-    let challenge = TestAuthenticationChallenge
-    instance.didReceiveAuthenticationChallenge(webView: webView, challenge: challenge)
-
-    XCTAssertEqual(api.didReceiveAuthenticationChallengeArgs, [webView, challenge])
-  }
-
-}
-class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
-  var didFinishNavigationArgs: [AnyHashable?]? = nil
-  var didStartProvisionalNavigationArgs: [AnyHashable?]? = nil
-  var decidePolicyForNavigationActionArgs: [AnyHashable?]? = nil
-  var decidePolicyForNavigationResponseArgs: [AnyHashable?]? = nil
-  var didFailNavigationArgs: [AnyHashable?]? = nil
-  var didFailProvisionalNavigationArgs: [AnyHashable?]? = nil
-  var webViewWebContentProcessDidTerminateArgs: [AnyHashable?]? = nil
-  var didReceiveAuthenticationChallengeArgs: [AnyHashable?]? = nil
-
-  func didFinishNavigation(webView: WKWebView, url: String?) throws {
-    didFinishNavigationArgs = [webViewArg, urlArg]
-  }
-  func didStartProvisionalNavigation(webView: WKWebView, url: String?) throws {
-    didStartProvisionalNavigationArgs = [webViewArg, urlArg]
-  }
-  func decidePolicyForNavigationAction(webView: WKWebView, navigationAction: WKNavigationAction) throws -> NavigationActionPolicy {
-    decidePolicyForNavigationActionArgs = [webViewArg, navigationActionArg]
-  }
-  func decidePolicyForNavigationResponse(webView: WKWebView, navigationResponse: WKNavigationResponse) throws -> NavigationResponsePolicy {
-    decidePolicyForNavigationResponseArgs = [webViewArg, navigationResponseArg]
-  }
-  func didFailNavigation(webView: WKWebView, error: NSError) throws {
-    didFailNavigationArgs = [webViewArg, errorArg]
-  }
-  func didFailProvisionalNavigation(webView: WKWebView, error: NSError) throws {
-    didFailProvisionalNavigationArgs = [webViewArg, errorArg]
-  }
-  func webViewWebContentProcessDidTerminate(webView: WKWebView) throws {
-    webViewWebContentProcessDidTerminateArgs = [webViewArg]
-  }
-  func didReceiveAuthenticationChallenge(webView: WKWebView, challenge: URLAuthenticationChallenge) throws -> [Any?] {
-    didReceiveAuthenticationChallengeArgs = [webViewArg, challengeArg]
-  }
-}
-*/
-
 protocol PigeonApiDelegateNSObject {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiNSObject) throws -> NSObject
   /// Registers the observer object to receive KVO notifications for the key
   /// path relative to the object receiving this message.
-  func addObserver(pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String, options: [KeyValueObservingOptions]) throws
+  func addObserver(
+    pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String,
+    options: [KeyValueObservingOptions]) throws
   /// Stops the observer object from receiving change notifications for the
   /// property specified by the key path relative to the object receiving this
   /// message.
-  func removeObserver(pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String) throws
+  func removeObserver(
+    pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String)
+    throws
 }
 
 protocol PigeonApiProtocolNSObject {
   /// Informs the observing object when the value at the specified key path
   /// relative to the observed object has changed.
-  func observeValue(pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?, object objectArg: NSObject?, change changeArg: [KeyValueChangeKey: Any?]?, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func observeValue(
+    pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?,
+    object objectArg: NSObject?, change changeArg: [KeyValueChangeKey: Any?]?,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 
-final class PigeonApiNSObject: PigeonApiProtocolNSObject  {
+final class PigeonApiNSObject: PigeonApiProtocolNSObject {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateNSObject
   init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateNSObject) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiNSObject?) {
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiNSObject?)
+  {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -5894,7 +4539,9 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       pigeonDefaultConstructorChannel.setMessageHandler(nil)
     }
-    let addObserverChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.addObserver", binaryMessenger: binaryMessenger, codec: codec)
+    let addObserverChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.addObserver",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       addObserverChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -5903,7 +4550,9 @@ withIdentifier: pigeonIdentifierArg)
         let keyPathArg = args[2] as! String
         let optionsArg = args[3] as! [KeyValueObservingOptions]
         do {
-          try api.pigeonDelegate.addObserver(pigeonApi: api, pigeonInstance: pigeonInstanceArg, observer: observerArg, keyPath: keyPathArg, options: optionsArg)
+          try api.pigeonDelegate.addObserver(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, observer: observerArg,
+            keyPath: keyPathArg, options: optionsArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -5912,7 +4561,9 @@ withIdentifier: pigeonIdentifierArg)
     } else {
       addObserverChannel.setMessageHandler(nil)
     }
-    let removeObserverChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.removeObserver", binaryMessenger: binaryMessenger, codec: codec)
+    let removeObserverChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.removeObserver",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       removeObserverChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -5920,7 +4571,9 @@ withIdentifier: pigeonIdentifierArg)
         let observerArg = args[1] as! NSObject
         let keyPathArg = args[2] as! String
         do {
-          try api.pigeonDelegate.removeObserver(pigeonApi: api, pigeonInstance: pigeonInstanceArg, observer: observerArg, keyPath: keyPathArg)
+          try api.pigeonDelegate.removeObserver(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, observer: observerArg,
+            keyPath: keyPathArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -5932,21 +4585,26 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of NSObject and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: NSObject, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: NSObject, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -5965,7 +4623,11 @@ withIdentifier: pigeonIdentifierArg)
   }
   /// Informs the observing object when the value at the specified key path
   /// relative to the observed object has changed.
-  func observeValue(pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?, object objectArg: NSObject?, change changeArg: [KeyValueChangeKey: Any?]?, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func observeValue(
+    pigeonInstance pigeonInstanceArg: NSObject, keyPath keyPathArg: String?,
+    object objectArg: NSObject?, change changeArg: [KeyValueChangeKey: Any?]?,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -5977,8 +4639,10 @@ withIdentifier: pigeonIdentifierArg)
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
     let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSObject.observeValue"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, keyPathArg, objectArg, changeArg] as [Any?]) { response in
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg, keyPathArg, objectArg, changeArg] as [Any?]) {
+      response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -5995,226 +4659,127 @@ withIdentifier: pigeonIdentifierArg)
   }
 
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-/// Implementation of `NSObject` that calls to Dart in callback methods.
-class ObjectImpl: NSObject {
-  let api: PigeonApiProtocolNSObject
-
-  init(api: PigeonApiProtocolNSObject) {
-    self.api = api
-  }
-
-  func fixMe() {
-    api.observeValue(pigeonInstance: self, keyPath: keyPath, object: object, change: change) {  _ in }
-  }
-}
-
-/// ProxyApi implementation for `NSObject`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ObjectProxyAPIDelegate : PigeonApiDelegateNSObject {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiNSObject) throws -> NSObject {
-    return NSObjectImpl(api: pigeonApi)
-  }
-
-  func addObserver(pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String, options: [KeyValueObservingOptions]) throws {
-    pigeonInstance.addObserver(observer: observer, keyPath: keyPath, options: options)
-  }
-
-  func removeObserver(pigeonApi: PigeonApiNSObject, pigeonInstance: NSObject, observer: NSObject, keyPath: String) throws {
-    pigeonInstance.removeObserver(observer: observer, keyPath: keyPath)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ObjectProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testAddObserver() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
-
-    let instance = TestObject()
-    let observer = TestObject
-    let keyPath = "myString"
-    let options = [.newValue]
-    api.pigeonDelegate.addObserver(pigeonApi: api, pigeonInstance: instance, observer: observer, keyPath: keyPath, options: options)
-
-    XCTAssertEqual(instance.addObserverArgs, [observer, keyPath, options])
-  }
-
-  func testRemoveObserver() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSObject(registrar)
-
-    let instance = TestObject()
-    let observer = TestObject
-    let keyPath = "myString"
-    api.pigeonDelegate.removeObserver(pigeonApi: api, pigeonInstance: instance, observer: observer, keyPath: keyPath)
-
-    XCTAssertEqual(instance.removeObserverArgs, [observer, keyPath])
-  }
-
-  func testObserveValue() {
-    let api = TestObjectApi()
-    let instance = ObjectImpl(api: api)
-    let keyPath = "myString"
-    let object = TestObject
-    let change = [.indexes: -1]
-    instance.observeValue(keyPath: keyPath, object: object, change: change)
-
-    XCTAssertEqual(api.observeValueArgs, [keyPath, object, change])
-  }
-
-}
-class TestObject: NSObject {
-  var addObserverArgs: [AnyHashable?]? = nil
-  var removeObserverArgs: [AnyHashable?]? = nil
-
-
-  override func addObserver() {
-    addObserverArgs = [observer, keyPath, options]
-  }
-  override func removeObserver() {
-    removeObserverArgs = [observer, keyPath]
-  }
-}
-class TestObjectApi: PigeonApiProtocolNSObject {
-  var observeValueArgs: [AnyHashable?]? = nil
-
-  func observeValue(keyPath: String?, object: NSObject?, change: [KeyValueChangeKey: Any?]?) throws {
-    observeValueArgs = [keyPathArg, objectArg, changeArg]
-  }
-}
-*/
-
 protocol PigeonApiDelegateUIViewWKWebView {
   #if !os(macOS)
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiUIViewWKWebView, initialConfiguration: WKWebViewConfiguration) throws -> WKWebView
+    func pigeonDefaultConstructor(
+      pigeonApi: PigeonApiUIViewWKWebView, initialConfiguration: WKWebViewConfiguration
+    ) throws -> WKWebView
   #endif
   #if !os(macOS)
-  /// The object that contains the configuration details for the web view.
-  func configuration(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> WKWebViewConfiguration
+    /// The object that contains the configuration details for the web view.
+    func configuration(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
+      -> WKWebViewConfiguration
   #endif
   #if !os(macOS)
-  /// The scroll view associated with the web view.
-  func scrollView(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> UIScrollView
+    /// The scroll view associated with the web view.
+    func scrollView(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
+      -> UIScrollView
   #endif
   #if !os(macOS)
-  /// The object you use to integrate custom user interface elements, such as
-  /// contextual menus or panels, into web view interactions.
-  func setUIDelegate(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, delegate: WKUIDelegate) throws
+    /// The object you use to integrate custom user interface elements, such as
+    /// contextual menus or panels, into web view interactions.
+    func setUIDelegate(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, delegate: WKUIDelegate) throws
   #endif
   #if !os(macOS)
-  /// The object you use to manage navigation behavior for the web view.
-  func setNavigationDelegate(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, delegate: WKNavigationDelegate) throws
+    /// The object you use to manage navigation behavior for the web view.
+    func setNavigationDelegate(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, delegate: WKNavigationDelegate
+    ) throws
   #endif
   #if !os(macOS)
-  /// The URL for the current webpage.
-  func getUrl(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String?
+    /// The URL for the current webpage.
+    func getUrl(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String?
   #endif
   #if !os(macOS)
-  /// An estimate of what fraction of the current navigation has been loaded.
-  func getEstimatedProgress(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Double
+    /// An estimate of what fraction of the current navigation has been loaded.
+    func getEstimatedProgress(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
+      -> Double
   #endif
   #if !os(macOS)
-  /// Loads the web content that the specified URL request object references and
-  /// navigates to that content.
-  func load(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper) throws
+    /// Loads the web content that the specified URL request object references and
+    /// navigates to that content.
+    func load(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper)
+      throws
   #endif
   #if !os(macOS)
-  /// Loads the contents of the specified HTML string and navigates to it.
-  func loadHtmlString(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, string: String, baseUrl: String?) throws
+    /// Loads the contents of the specified HTML string and navigates to it.
+    func loadHtmlString(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, string: String,
+      baseUrl: String?) throws
   #endif
   #if !os(macOS)
-  /// Loads the web content from the specified file and navigates to it.
-  func loadFileUrl(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, url: String, readAccessUrl: String) throws
+    /// Loads the web content from the specified file and navigates to it.
+    func loadFileUrl(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, url: String,
+      readAccessUrl: String) throws
   #endif
   #if !os(macOS)
-  /// Convenience method to load a Flutter asset.
-  func loadFlutterAsset(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, key: String) throws
+    /// Convenience method to load a Flutter asset.
+    func loadFlutterAsset(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, key: String) throws
   #endif
   #if !os(macOS)
-  /// A Boolean value that indicates whether there is a valid back item in the
-  /// back-forward list.
-  func canGoBack(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Bool
+    /// A Boolean value that indicates whether there is a valid back item in the
+    /// back-forward list.
+    func canGoBack(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Bool
   #endif
   #if !os(macOS)
-  /// A Boolean value that indicates whether there is a valid forward item in
-  /// the back-forward list.
-  func canGoForward(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Bool
+    /// A Boolean value that indicates whether there is a valid forward item in
+    /// the back-forward list.
+    func canGoForward(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Bool
   #endif
   #if !os(macOS)
-  /// Navigates to the back item in the back-forward list.
-  func goBack(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
+    /// Navigates to the back item in the back-forward list.
+    func goBack(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
   #endif
   #if !os(macOS)
-  /// Navigates to the forward item in the back-forward list.
-  func goForward(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
+    /// Navigates to the forward item in the back-forward list.
+    func goForward(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
   #endif
   #if !os(macOS)
-  /// Reloads the current webpage.
-  func reload(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
+    /// Reloads the current webpage.
+    func reload(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
   #endif
   #if !os(macOS)
-  /// The page title.
-  func getTitle(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String?
+    /// The page title.
+    func getTitle(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String?
   #endif
   #if !os(macOS)
-  /// A Boolean value that indicates whether horizontal swipe gestures trigger
-  /// backward and forward page navigation.
-  func setAllowsBackForwardNavigationGestures(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, allow: Bool) throws
+    /// A Boolean value that indicates whether horizontal swipe gestures trigger
+    /// backward and forward page navigation.
+    func setAllowsBackForwardNavigationGestures(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, allow: Bool) throws
   #endif
   #if !os(macOS)
-  /// The custom user agent string.
-  func setCustomUserAgent(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, userAgent: String?) throws
+    /// The custom user agent string.
+    func setCustomUserAgent(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, userAgent: String?) throws
   #endif
   #if !os(macOS)
-  /// Evaluates the specified JavaScript string.
-  func evaluateJavaScript(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String, completion: @escaping (Result<Any?, Error>) -> Void)
+    /// Evaluates the specified JavaScript string.
+    func evaluateJavaScript(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String,
+      completion: @escaping (Result<Any?, Error>) -> Void)
   #endif
   #if !os(macOS)
-  /// A Boolean value that indicates whether you can inspect the view with
-  /// Safari Web Inspector.
-  func setInspectable(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, inspectable: Bool) throws
+    /// A Boolean value that indicates whether you can inspect the view with
+    /// Safari Web Inspector.
+    func setInspectable(
+      pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, inspectable: Bool) throws
   #endif
   #if !os(macOS)
-  /// The custom user agent string.
-  func getCustomUserAgent(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String?
+    /// The custom user agent string.
+    func getCustomUserAgent(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws
+      -> String?
   #endif
 }
 
 protocol PigeonApiProtocolUIViewWKWebView {
 }
 
-final class PigeonApiUIViewWKWebView: PigeonApiProtocolUIViewWKWebView  {
+final class PigeonApiUIViewWKWebView: PigeonApiProtocolUIViewWKWebView {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateUIViewWKWebView
   ///An implementation of [UIView] used to access callback methods
@@ -6227,991 +4792,644 @@ final class PigeonApiUIViewWKWebView: PigeonApiProtocolUIViewWKWebView  {
     return pigeonRegistrar.apiDelegate.pigeonApiWKWebView(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateUIViewWKWebView) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateUIViewWKWebView
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiUIViewWKWebView?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiUIViewWKWebView?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     #if !os(macOS)
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonIdentifierArg = args[0] as! Int64
-        let initialConfigurationArg = args[1] as! WKWebViewConfiguration
-        do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, initialConfiguration: initialConfigurationArg),
-withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      pigeonDefaultConstructorChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let configurationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.configuration", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      configurationChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let pigeonIdentifierArg = args[1] as! Int64
-        do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.configuration(pigeonApi: api, pigeonInstance: pigeonInstanceArg), withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      configurationChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let scrollViewChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.scrollView", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      scrollViewChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let pigeonIdentifierArg = args[1] as! Int64
-        do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.scrollView(pigeonApi: api, pigeonInstance: pigeonInstanceArg), withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      scrollViewChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let setUIDelegateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setUIDelegate", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setUIDelegateChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let delegateArg = args[1] as! WKUIDelegate
-        do {
-          try api.pigeonDelegate.setUIDelegate(pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setUIDelegateChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let setNavigationDelegateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setNavigationDelegate", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setNavigationDelegateChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let delegateArg = args[1] as! WKNavigationDelegate
-        do {
-          try api.pigeonDelegate.setNavigationDelegate(pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setNavigationDelegateChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let getUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getUrl", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getUrlChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      getUrlChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let getEstimatedProgressChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getEstimatedProgress", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getEstimatedProgressChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.getEstimatedProgress(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      getEstimatedProgressChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let loadChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.load", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      loadChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let requestArg = args[1] as! URLRequestWrapper
-        do {
-          try api.pigeonDelegate.load(pigeonApi: api, pigeonInstance: pigeonInstanceArg, request: requestArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      loadChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let loadHtmlStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.loadHtmlString", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      loadHtmlStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let stringArg = args[1] as! String
-        let baseUrlArg: String? = nilOrValue(args[2])
-        do {
-          try api.pigeonDelegate.loadHtmlString(pigeonApi: api, pigeonInstance: pigeonInstanceArg, string: stringArg, baseUrl: baseUrlArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      loadHtmlStringChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let loadFileUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.loadFileUrl", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      loadFileUrlChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let urlArg = args[1] as! String
-        let readAccessUrlArg = args[2] as! String
-        do {
-          try api.pigeonDelegate.loadFileUrl(pigeonApi: api, pigeonInstance: pigeonInstanceArg, url: urlArg, readAccessUrl: readAccessUrlArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      loadFileUrlChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let loadFlutterAssetChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.loadFlutterAsset", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      loadFlutterAssetChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let keyArg = args[1] as! String
-        do {
-          try api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: pigeonInstanceArg, key: keyArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      loadFlutterAssetChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let canGoBackChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.canGoBack", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      canGoBackChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      canGoBackChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let canGoForwardChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.canGoForward", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      canGoForwardChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      canGoForwardChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let goBackChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.goBack", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      goBackChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          try api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      goBackChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let goForwardChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.goForward", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      goForwardChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          try api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      goForwardChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let reloadChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.reload", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      reloadChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          try api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      reloadChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let getTitleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getTitle", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getTitleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      getTitleChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let setAllowsBackForwardNavigationGesturesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setAllowsBackForwardNavigationGestures", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setAllowsBackForwardNavigationGesturesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let allowArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setAllowsBackForwardNavigationGestures(pigeonApi: api, pigeonInstance: pigeonInstanceArg, allow: allowArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setAllowsBackForwardNavigationGesturesChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let setCustomUserAgentChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setCustomUserAgent", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setCustomUserAgentChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let userAgentArg: String? = nilOrValue(args[1])
-        do {
-          try api.pigeonDelegate.setCustomUserAgent(pigeonApi: api, pigeonInstance: pigeonInstanceArg, userAgent: userAgentArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setCustomUserAgentChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(macOS)
-    let evaluateJavaScriptChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.evaluateJavaScript", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      evaluateJavaScriptChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let javaScriptStringArg = args[1] as! String
-        api.pigeonDelegate.evaluateJavaScript(pigeonApi: api, pigeonInstance: pigeonInstanceArg, javaScriptString: javaScriptStringArg) { result in
-          switch result {
-          case .success(let res):
-            reply(wrapResult(res))
-          case .failure(let error):
+      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.pigeon_defaultConstructor",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonIdentifierArg = args[0] as! Int64
+          let initialConfigurationArg = args[1] as! WKWebViewConfiguration
+          do {
+            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+              try api.pigeonDelegate.pigeonDefaultConstructor(
+                pigeonApi: api, initialConfiguration: initialConfigurationArg),
+              withIdentifier: pigeonIdentifierArg)
+            reply(wrapResult(nil))
+          } catch {
             reply(wrapError(error))
           }
         }
+      } else {
+        pigeonDefaultConstructorChannel.setMessageHandler(nil)
       }
-    } else {
-      evaluateJavaScriptChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let setInspectableChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setInspectable", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setInspectableChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let inspectableArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setInspectable(pigeonApi: api, pigeonInstance: pigeonInstanceArg, inspectable: inspectableArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let configurationChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.configuration",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        configurationChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let pigeonIdentifierArg = args[1] as! Int64
+          do {
+            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+              try api.pigeonDelegate.configuration(
+                pigeonApi: api, pigeonInstance: pigeonInstanceArg),
+              withIdentifier: pigeonIdentifierArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        configurationChannel.setMessageHandler(nil)
       }
-    } else {
-      setInspectableChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(macOS)
-    let getCustomUserAgentChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getCustomUserAgent", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getCustomUserAgentChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
+      let scrollViewChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.scrollView",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        scrollViewChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let pigeonIdentifierArg = args[1] as! Int64
+          do {
+            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+              try api.pigeonDelegate.scrollView(pigeonApi: api, pigeonInstance: pigeonInstanceArg),
+              withIdentifier: pigeonIdentifierArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        scrollViewChannel.setMessageHandler(nil)
       }
-    } else {
-      getCustomUserAgentChannel.setMessageHandler(nil)
-    }
+    #endif
+    #if !os(macOS)
+      let setUIDelegateChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setUIDelegate",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setUIDelegateChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let delegateArg = args[1] as! WKUIDelegate
+          do {
+            try api.pigeonDelegate.setUIDelegate(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setUIDelegateChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let setNavigationDelegateChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setNavigationDelegate",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setNavigationDelegateChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let delegateArg = args[1] as! WKNavigationDelegate
+          do {
+            try api.pigeonDelegate.setNavigationDelegate(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setNavigationDelegateChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let getUrlChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getUrl",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getUrlChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.getUrl(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        getUrlChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let getEstimatedProgressChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getEstimatedProgress",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getEstimatedProgressChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.getEstimatedProgress(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        getEstimatedProgressChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let loadChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.load",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        loadChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let requestArg = args[1] as! URLRequestWrapper
+          do {
+            try api.pigeonDelegate.load(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, request: requestArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        loadChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let loadHtmlStringChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.loadHtmlString",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        loadHtmlStringChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let stringArg = args[1] as! String
+          let baseUrlArg: String? = nilOrValue(args[2])
+          do {
+            try api.pigeonDelegate.loadHtmlString(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, string: stringArg,
+              baseUrl: baseUrlArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        loadHtmlStringChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let loadFileUrlChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.loadFileUrl",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        loadFileUrlChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let urlArg = args[1] as! String
+          let readAccessUrlArg = args[2] as! String
+          do {
+            try api.pigeonDelegate.loadFileUrl(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, url: urlArg,
+              readAccessUrl: readAccessUrlArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        loadFileUrlChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let loadFlutterAssetChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.loadFlutterAsset",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        loadFlutterAssetChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let keyArg = args[1] as! String
+          do {
+            try api.pigeonDelegate.loadFlutterAsset(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, key: keyArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        loadFlutterAssetChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let canGoBackChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.canGoBack",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        canGoBackChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.canGoBack(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        canGoBackChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let canGoForwardChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.canGoForward",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        canGoForwardChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.canGoForward(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        canGoForwardChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let goBackChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.goBack",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        goBackChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            try api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        goBackChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let goForwardChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.goForward",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        goForwardChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            try api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        goForwardChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let reloadChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.reload",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        reloadChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            try api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        reloadChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let getTitleChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getTitle",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getTitleChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.getTitle(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        getTitleChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let setAllowsBackForwardNavigationGesturesChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setAllowsBackForwardNavigationGestures",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setAllowsBackForwardNavigationGesturesChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let allowArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setAllowsBackForwardNavigationGestures(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, allow: allowArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setAllowsBackForwardNavigationGesturesChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let setCustomUserAgentChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setCustomUserAgent",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setCustomUserAgentChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let userAgentArg: String? = nilOrValue(args[1])
+          do {
+            try api.pigeonDelegate.setCustomUserAgent(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, userAgent: userAgentArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setCustomUserAgentChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let evaluateJavaScriptChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.evaluateJavaScript",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        evaluateJavaScriptChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let javaScriptStringArg = args[1] as! String
+          api.pigeonDelegate.evaluateJavaScript(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, javaScriptString: javaScriptStringArg
+          ) { result in
+            switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+            }
+          }
+        }
+      } else {
+        evaluateJavaScriptChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let setInspectableChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.setInspectable",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setInspectableChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let inspectableArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setInspectable(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, inspectable: inspectableArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setInspectableChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let getCustomUserAgentChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.getCustomUserAgent",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getCustomUserAgentChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.getCustomUserAgent(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        getCustomUserAgentChannel.setMessageHandler(nil)
+      }
     #endif
   }
 
   #if !os(macOS)
-  ///Creates a Dart instance of UIViewWKWebView and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKWebView, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    if pigeonRegistrar.ignoreCallsToDart {
-      completion(
-        .failure(
-          PigeonError(
-            code: "ignore-calls-error",
-            message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
-      completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-      let binaryMessenger = pigeonRegistrar.binaryMessenger
-      let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(PigeonError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
+    ///Creates a Dart instance of UIViewWKWebView and attaches it to [pigeonInstance].
+    func pigeonNewInstance(
+      pigeonInstance: WKWebView, completion: @escaping (Result<Void, PigeonError>) -> Void
+    ) {
+      if pigeonRegistrar.ignoreCallsToDart {
+        completion(
+          .failure(
+            PigeonError(
+              code: "ignore-calls-error",
+              message: "Calls to Dart are being ignored.", details: "")))
+      } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+        completion(.success(()))
+      } else {
+        let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+          pigeonInstance as AnyObject)
+        let binaryMessenger = pigeonRegistrar.binaryMessenger
+        let codec = pigeonRegistrar.codec
+        let channelName: String =
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIViewWKWebView.pigeon_newInstance"
+        let channel = FlutterBasicMessageChannel(
+          name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+        channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+          guard let listResponse = response as? [Any?] else {
+            completion(.failure(createConnectionError(withChannelName: channelName)))
+            return
+          }
+          if listResponse.count > 1 {
+            let code: String = listResponse[0] as! String
+            let message: String? = nilOrValue(listResponse[1])
+            let details: String? = nilOrValue(listResponse[2])
+            completion(.failure(PigeonError(code: code, message: message, details: details)))
+          } else {
+            completion(.success(()))
+          }
         }
       }
     }
-  }
   #endif
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import UIKit
-import WebKit
-
-
-/// ProxyApi implementation for `UIViewWKWebView`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ViewWKWebViewProxyAPIDelegate : PigeonApiDelegateUIViewWKWebView {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiUIViewWKWebView, initialConfiguration: WKWebViewConfiguration) throws -> WKWebView {
-    return UIViewWKWebView(,initialConfiguration: initialConfiguration)
-  }
-
-  func configuration(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: UIViewWKWebView): WKWebViewConfiguration {
-    return pigeonInstance.configuration
-  }
-
-  func scrollView(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: UIViewWKWebView): UIScrollView {
-    return pigeonInstance.scrollView
-  }
-
-  func setUIDelegate(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, delegate: WKUIDelegate) throws {
-    pigeonInstance.uIDelegate = delegate: delegate
-  }
-
-  func setNavigationDelegate(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, delegate: WKNavigationDelegate) throws {
-    pigeonInstance.navigationDelegate = delegate: delegate
-  }
-
-  func getUrl(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
-    return pigeonInstance.url
-  }
-
-  func getEstimatedProgress(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Double {
-    return pigeonInstance.estimatedProgress
-  }
-
-  func load(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper) throws {
-    pigeonInstance.load(request: request)
-  }
-
-  func loadHtmlString(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, string: String, baseUrl: String?) throws {
-    pigeonInstance.loadHtmlString(string: string, baseUrl: baseUrl)
-  }
-
-  func loadFileUrl(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, url: String, readAccessUrl: String) throws {
-    pigeonInstance.loadFileUrl(url: url, readAccessUrl: readAccessUrl)
-  }
-
-  func loadFlutterAsset(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, key: String) throws {
-    pigeonInstance.loadFlutterAsset(key: key)
-  }
-
-  func canGoBack(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Bool {
-    return pigeonInstance.canGoBack()
-  }
-
-  func canGoForward(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> Bool {
-    return pigeonInstance.canGoForward()
-  }
-
-  func goBack(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws {
-    pigeonInstance.goBack()
-  }
-
-  func goForward(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws {
-    pigeonInstance.goForward()
-  }
-
-  func reload(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws {
-    pigeonInstance.reload()
-  }
-
-  func getTitle(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
-    return pigeonInstance.title
-  }
-
-  func setAllowsBackForwardNavigationGestures(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, allow: Bool) throws {
-    pigeonInstance.allowsBackForwardNavigationGestures = allow: allow
-  }
-
-  func setCustomUserAgent(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, userAgent: String?) throws {
-    pigeonInstance.customUserAgent = userAgent: userAgent
-  }
-
-  func evaluateJavaScript(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String, completion: @escaping (Result<Any?, PigeonError>) -> Void) {
-    return pigeonInstance.evaluateJavaScript(javaScriptString: javaScriptString)
-  }
-
-  func setInspectable(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, inspectable: Bool) throws {
-    pigeonInstance.inspectable = inspectable: inspectable
-  }
-
-  func getCustomUserAgent(pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
-    return pigeonInstance.customUserAgent
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import UIKit
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ViewWKWebViewProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, initialConfiguration: TestWebViewConfiguration)
-    XCTAssertNotNil(instance)
-  }
-
-  func testConfiguration() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.configuration(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.configuration)
-  }
-
-  func testScrollView() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.scrollView(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.scrollView)
-  }
-
-  func testSetUIDelegate() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let delegate = TestDelegate
-    api.pigeonDelegate.setUIDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
-
-    XCTAssertEqual(instance.setUIDelegateArgs, [delegate])
-  }
-
-  func testSetNavigationDelegate() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let delegate = TestNavigationDelegate
-    api.pigeonDelegate.setNavigationDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
-
-    XCTAssertEqual(instance.setNavigationDelegateArgs, [delegate])
-  }
-
-  func testGetUrl() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getUrlCalled)
-    XCTAssertEqual(value, instance.getUrl())
-  }
-
-  func testGetEstimatedProgress() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.getEstimatedProgress(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getEstimatedProgressCalled)
-    XCTAssertEqual(value, instance.getEstimatedProgress())
-  }
-
-  func testLoad() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let request = TestRequest
-    api.pigeonDelegate.load(pigeonApi: api, pigeonInstance: instance, request: request)
-
-    XCTAssertEqual(instance.loadArgs, [request])
-  }
-
-  func testLoadHtmlString() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let string = "myString"
-    let baseUrl = "myString"
-    api.pigeonDelegate.loadHtmlString(pigeonApi: api, pigeonInstance: instance, string: string, baseUrl: baseUrl)
-
-    XCTAssertEqual(instance.loadHtmlStringArgs, [string, baseUrl])
-  }
-
-  func testLoadFileUrl() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let url = "myString"
-    let readAccessUrl = "myString"
-    api.pigeonDelegate.loadFileUrl(pigeonApi: api, pigeonInstance: instance, url: url, readAccessUrl: readAccessUrl)
-
-    XCTAssertEqual(instance.loadFileUrlArgs, [url, readAccessUrl])
-  }
-
-  func testLoadFlutterAsset() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let key = "myString"
-    api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: instance, key: key)
-
-    XCTAssertEqual(instance.loadFlutterAssetArgs, [key])
-  }
-
-  func testCanGoBack() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.canGoBackCalled)
-    XCTAssertEqual(value, instance.canGoBack())
-  }
-
-  func testCanGoForward() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.canGoForwardCalled)
-    XCTAssertEqual(value, instance.canGoForward())
-  }
-
-  func testGoBack() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.goBackCalled)
-  }
-
-  func testGoForward() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.goForwardCalled)
-  }
-
-  func testReload() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.reloadCalled)
-  }
-
-  func testGetTitle() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getTitleCalled)
-    XCTAssertEqual(value, instance.getTitle())
-  }
-
-  func testSetAllowsBackForwardNavigationGestures() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let allow = true
-    api.pigeonDelegate.setAllowsBackForwardNavigationGestures(pigeonApi: api, pigeonInstance: instance, allow: allow)
-
-    XCTAssertEqual(instance.setAllowsBackForwardNavigationGesturesArgs, [allow])
-  }
-
-  func testSetCustomUserAgent() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let userAgent = "myString"
-    api.pigeonDelegate.setCustomUserAgent(pigeonApi: api, pigeonInstance: instance, userAgent: userAgent)
-
-    XCTAssertEqual(instance.setCustomUserAgentArgs, [userAgent])
-  }
-
-  func testEvaluateJavaScript() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let javaScriptString = "myString"
-    let value = api.pigeonDelegate.evaluateJavaScript(pigeonApi: api, pigeonInstance: instance, javaScriptString: javaScriptString)
-
-    XCTAssertEqual(instance.evaluateJavaScriptArgs, [javaScriptString])
-    XCTAssertEqual(value, instance.evaluateJavaScript(javaScriptString: javaScriptString))
-  }
-
-  func testSetInspectable() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let inspectable = true
-    api.pigeonDelegate.setInspectable(pigeonApi: api, pigeonInstance: instance, inspectable: inspectable)
-
-    XCTAssertEqual(instance.setInspectableArgs, [inspectable])
-  }
-
-  func testGetCustomUserAgent() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getCustomUserAgentCalled)
-    XCTAssertEqual(value, instance.getCustomUserAgent())
-  }
-
-}
-class TestViewWKWebView: UIViewWKWebView {
-  private var configurationTestValue = TestWebViewConfiguration
-  private var scrollViewTestValue = TestScrollView
-  var setUIDelegateArgs: [AnyHashable?]? = nil
-  var setNavigationDelegateArgs: [AnyHashable?]? = nil
-  var getUrlCalled = false
-  var getEstimatedProgressCalled = false
-  var loadArgs: [AnyHashable?]? = nil
-  var loadHtmlStringArgs: [AnyHashable?]? = nil
-  var loadFileUrlArgs: [AnyHashable?]? = nil
-  var loadFlutterAssetArgs: [AnyHashable?]? = nil
-  var canGoBackCalled = false
-  var canGoForwardCalled = false
-  var goBackCalled = false
-  var goForwardCalled = false
-  var reloadCalled = false
-  var getTitleCalled = false
-  var setAllowsBackForwardNavigationGesturesArgs: [AnyHashable?]? = nil
-  var setCustomUserAgentArgs: [AnyHashable?]? = nil
-  var evaluateJavaScriptArgs: [AnyHashable?]? = nil
-  var setInspectableArgs: [AnyHashable?]? = nil
-  var getCustomUserAgentCalled = false
-
-  override var configuration: WKWebViewConfiguration {
-    return configurationTestValue
-  }
-  override var scrollView: UIScrollView {
-    return scrollViewTestValue
-  }
-
-  override func setUIDelegate() {
-    setUIDelegateArgs = [delegate]
-  }
-  override func setNavigationDelegate() {
-    setNavigationDelegateArgs = [delegate]
-  }
-  override func getUrl() {
-    getUrlCalled = true
-  }
-  override func getEstimatedProgress() {
-    getEstimatedProgressCalled = true
-  }
-  override func load() {
-    loadArgs = [request]
-  }
-  override func loadHtmlString() {
-    loadHtmlStringArgs = [string, baseUrl]
-  }
-  override func loadFileUrl() {
-    loadFileUrlArgs = [url, readAccessUrl]
-  }
-  override func loadFlutterAsset() {
-    loadFlutterAssetArgs = [key]
-  }
-  override func canGoBack() {
-    canGoBackCalled = true
-  }
-  override func canGoForward() {
-    canGoForwardCalled = true
-  }
-  override func goBack() {
-    goBackCalled = true
-  }
-  override func goForward() {
-    goForwardCalled = true
-  }
-  override func reload() {
-    reloadCalled = true
-  }
-  override func getTitle() {
-    getTitleCalled = true
-  }
-  override func setAllowsBackForwardNavigationGestures() {
-    setAllowsBackForwardNavigationGesturesArgs = [allow]
-  }
-  override func setCustomUserAgent() {
-    setCustomUserAgentArgs = [userAgent]
-  }
-  override func evaluateJavaScript() {
-    evaluateJavaScriptArgs = [javaScriptString]
-    return -1
-  }
-  override func setInspectable() {
-    setInspectableArgs = [inspectable]
-  }
-  override func getCustomUserAgent() {
-    getCustomUserAgentCalled = true
-  }
-}
-*/
-
 protocol PigeonApiDelegateNSViewWKWebView {
   #if !os(iOS)
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiNSViewWKWebView, initialConfiguration: WKWebViewConfiguration) throws -> WKWebView
+    func pigeonDefaultConstructor(
+      pigeonApi: PigeonApiNSViewWKWebView, initialConfiguration: WKWebViewConfiguration
+    ) throws -> WKWebView
   #endif
   #if !os(iOS)
-  /// The object that contains the configuration details for the web view.
-  func configuration(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> WKWebViewConfiguration
+    /// The object that contains the configuration details for the web view.
+    func configuration(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
+      -> WKWebViewConfiguration
   #endif
   #if !os(iOS)
-  /// The object you use to integrate custom user interface elements, such as
-  /// contextual menus or panels, into web view interactions.
-  func setUIDelegate(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: WKUIDelegate) throws
+    /// The object you use to integrate custom user interface elements, such as
+    /// contextual menus or panels, into web view interactions.
+    func setUIDelegate(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: WKUIDelegate) throws
   #endif
   #if !os(iOS)
-  /// The object you use to manage navigation behavior for the web view.
-  func setNavigationDelegate(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: WKNavigationDelegate) throws
+    /// The object you use to manage navigation behavior for the web view.
+    func setNavigationDelegate(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: WKNavigationDelegate
+    ) throws
   #endif
   #if !os(iOS)
-  /// The URL for the current webpage.
-  func getUrl(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String?
+    /// The URL for the current webpage.
+    func getUrl(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String?
   #endif
   #if !os(iOS)
-  /// An estimate of what fraction of the current navigation has been loaded.
-  func getEstimatedProgress(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Double
+    /// An estimate of what fraction of the current navigation has been loaded.
+    func getEstimatedProgress(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
+      -> Double
   #endif
   #if !os(iOS)
-  /// Loads the web content that the specified URL request object references and
-  /// navigates to that content.
-  func load(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper) throws
+    /// Loads the web content that the specified URL request object references and
+    /// navigates to that content.
+    func load(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper)
+      throws
   #endif
   #if !os(iOS)
-  /// Loads the contents of the specified HTML string and navigates to it.
-  func loadHtmlString(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, string: String, baseUrl: String?) throws
+    /// Loads the contents of the specified HTML string and navigates to it.
+    func loadHtmlString(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, string: String,
+      baseUrl: String?) throws
   #endif
   #if !os(iOS)
-  /// Loads the web content from the specified file and navigates to it.
-  func loadFileUrl(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, url: String, readAccessUrl: String) throws
+    /// Loads the web content from the specified file and navigates to it.
+    func loadFileUrl(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, url: String,
+      readAccessUrl: String) throws
   #endif
   #if !os(iOS)
-  /// Convenience method to load a Flutter asset.
-  func loadFlutterAsset(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, key: String) throws
+    /// Convenience method to load a Flutter asset.
+    func loadFlutterAsset(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, key: String) throws
   #endif
   #if !os(iOS)
-  /// A Boolean value that indicates whether there is a valid back item in the
-  /// back-forward list.
-  func canGoBack(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Bool
+    /// A Boolean value that indicates whether there is a valid back item in the
+    /// back-forward list.
+    func canGoBack(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Bool
   #endif
   #if !os(iOS)
-  /// A Boolean value that indicates whether there is a valid forward item in
-  /// the back-forward list.
-  func canGoForward(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Bool
+    /// A Boolean value that indicates whether there is a valid forward item in
+    /// the back-forward list.
+    func canGoForward(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Bool
   #endif
   #if !os(iOS)
-  /// Navigates to the back item in the back-forward list.
-  func goBack(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
+    /// Navigates to the back item in the back-forward list.
+    func goBack(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
   #endif
   #if !os(iOS)
-  /// Navigates to the forward item in the back-forward list.
-  func goForward(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
+    /// Navigates to the forward item in the back-forward list.
+    func goForward(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
   #endif
   #if !os(iOS)
-  /// Reloads the current webpage.
-  func reload(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
+    /// Reloads the current webpage.
+    func reload(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
   #endif
   #if !os(iOS)
-  /// The page title.
-  func getTitle(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String?
+    /// The page title.
+    func getTitle(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String?
   #endif
   #if !os(iOS)
-  /// A Boolean value that indicates whether horizontal swipe gestures trigger
-  /// backward and forward page navigation.
-  func setAllowsBackForwardNavigationGestures(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, allow: Bool) throws
+    /// A Boolean value that indicates whether horizontal swipe gestures trigger
+    /// backward and forward page navigation.
+    func setAllowsBackForwardNavigationGestures(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, allow: Bool) throws
   #endif
   #if !os(iOS)
-  /// The custom user agent string.
-  func setCustomUserAgent(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, userAgent: String?) throws
+    /// The custom user agent string.
+    func setCustomUserAgent(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, userAgent: String?) throws
   #endif
   #if !os(iOS)
-  /// Evaluates the specified JavaScript string.
-  func evaluateJavaScript(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String, completion: @escaping (Result<Any?, Error>) -> Void)
+    /// Evaluates the specified JavaScript string.
+    func evaluateJavaScript(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String,
+      completion: @escaping (Result<Any?, Error>) -> Void)
   #endif
   #if !os(iOS)
-  /// A Boolean value that indicates whether you can inspect the view with
-  /// Safari Web Inspector.
-  func setInspectable(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, inspectable: Bool) throws
+    /// A Boolean value that indicates whether you can inspect the view with
+    /// Safari Web Inspector.
+    func setInspectable(
+      pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, inspectable: Bool) throws
   #endif
   #if !os(iOS)
-  /// The custom user agent string.
-  func getCustomUserAgent(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String?
+    /// The custom user agent string.
+    func getCustomUserAgent(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws
+      -> String?
   #endif
 }
 
 protocol PigeonApiProtocolNSViewWKWebView {
 }
 
-final class PigeonApiNSViewWKWebView: PigeonApiProtocolNSViewWKWebView  {
+final class PigeonApiNSViewWKWebView: PigeonApiProtocolNSViewWKWebView {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateNSViewWKWebView
   ///An implementation of [NSObject] used to access callback methods
@@ -7224,864 +5442,513 @@ final class PigeonApiNSViewWKWebView: PigeonApiProtocolNSViewWKWebView  {
     return pigeonRegistrar.apiDelegate.pigeonApiWKWebView(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateNSViewWKWebView) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateNSViewWKWebView
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiNSViewWKWebView?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiNSViewWKWebView?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     #if !os(iOS)
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonIdentifierArg = args[0] as! Int64
-        let initialConfigurationArg = args[1] as! WKWebViewConfiguration
-        do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, initialConfiguration: initialConfigurationArg),
-withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      pigeonDefaultConstructorChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let configurationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.configuration", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      configurationChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let pigeonIdentifierArg = args[1] as! Int64
-        do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(try api.pigeonDelegate.configuration(pigeonApi: api, pigeonInstance: pigeonInstanceArg), withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      configurationChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let setUIDelegateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setUIDelegate", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setUIDelegateChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let delegateArg = args[1] as! WKUIDelegate
-        do {
-          try api.pigeonDelegate.setUIDelegate(pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setUIDelegateChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let setNavigationDelegateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setNavigationDelegate", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setNavigationDelegateChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let delegateArg = args[1] as! WKNavigationDelegate
-        do {
-          try api.pigeonDelegate.setNavigationDelegate(pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setNavigationDelegateChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let getUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getUrl", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getUrlChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      getUrlChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let getEstimatedProgressChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getEstimatedProgress", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getEstimatedProgressChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.getEstimatedProgress(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      getEstimatedProgressChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let loadChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.load", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      loadChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let requestArg = args[1] as! URLRequestWrapper
-        do {
-          try api.pigeonDelegate.load(pigeonApi: api, pigeonInstance: pigeonInstanceArg, request: requestArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      loadChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let loadHtmlStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.loadHtmlString", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      loadHtmlStringChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let stringArg = args[1] as! String
-        let baseUrlArg: String? = nilOrValue(args[2])
-        do {
-          try api.pigeonDelegate.loadHtmlString(pigeonApi: api, pigeonInstance: pigeonInstanceArg, string: stringArg, baseUrl: baseUrlArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      loadHtmlStringChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let loadFileUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.loadFileUrl", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      loadFileUrlChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let urlArg = args[1] as! String
-        let readAccessUrlArg = args[2] as! String
-        do {
-          try api.pigeonDelegate.loadFileUrl(pigeonApi: api, pigeonInstance: pigeonInstanceArg, url: urlArg, readAccessUrl: readAccessUrlArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      loadFileUrlChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let loadFlutterAssetChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.loadFlutterAsset", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      loadFlutterAssetChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let keyArg = args[1] as! String
-        do {
-          try api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: pigeonInstanceArg, key: keyArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      loadFlutterAssetChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let canGoBackChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.canGoBack", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      canGoBackChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      canGoBackChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let canGoForwardChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.canGoForward", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      canGoForwardChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      canGoForwardChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let goBackChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.goBack", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      goBackChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          try api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      goBackChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let goForwardChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.goForward", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      goForwardChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          try api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      goForwardChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let reloadChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.reload", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      reloadChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          try api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      reloadChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let getTitleChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getTitle", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getTitleChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      getTitleChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let setAllowsBackForwardNavigationGesturesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setAllowsBackForwardNavigationGestures", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setAllowsBackForwardNavigationGesturesChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let allowArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setAllowsBackForwardNavigationGestures(pigeonApi: api, pigeonInstance: pigeonInstanceArg, allow: allowArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setAllowsBackForwardNavigationGesturesChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let setCustomUserAgentChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setCustomUserAgent", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setCustomUserAgentChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let userAgentArg: String? = nilOrValue(args[1])
-        do {
-          try api.pigeonDelegate.setCustomUserAgent(pigeonApi: api, pigeonInstance: pigeonInstanceArg, userAgent: userAgentArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      setCustomUserAgentChannel.setMessageHandler(nil)
-    }
-    #endif
-    #if !os(iOS)
-    let evaluateJavaScriptChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.evaluateJavaScript", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      evaluateJavaScriptChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let javaScriptStringArg = args[1] as! String
-        api.pigeonDelegate.evaluateJavaScript(pigeonApi: api, pigeonInstance: pigeonInstanceArg, javaScriptString: javaScriptStringArg) { result in
-          switch result {
-          case .success(let res):
-            reply(wrapResult(res))
-          case .failure(let error):
+      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.pigeon_defaultConstructor",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonIdentifierArg = args[0] as! Int64
+          let initialConfigurationArg = args[1] as! WKWebViewConfiguration
+          do {
+            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+              try api.pigeonDelegate.pigeonDefaultConstructor(
+                pigeonApi: api, initialConfiguration: initialConfigurationArg),
+              withIdentifier: pigeonIdentifierArg)
+            reply(wrapResult(nil))
+          } catch {
             reply(wrapError(error))
           }
         }
+      } else {
+        pigeonDefaultConstructorChannel.setMessageHandler(nil)
       }
-    } else {
-      evaluateJavaScriptChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(iOS)
-    let setInspectableChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setInspectable", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setInspectableChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        let inspectableArg = args[1] as! Bool
-        do {
-          try api.pigeonDelegate.setInspectable(pigeonApi: api, pigeonInstance: pigeonInstanceArg, inspectable: inspectableArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let configurationChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.configuration",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        configurationChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let pigeonIdentifierArg = args[1] as! Int64
+          do {
+            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+              try api.pigeonDelegate.configuration(
+                pigeonApi: api, pigeonInstance: pigeonInstanceArg),
+              withIdentifier: pigeonIdentifierArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        configurationChannel.setMessageHandler(nil)
       }
-    } else {
-      setInspectableChannel.setMessageHandler(nil)
-    }
     #endif
     #if !os(iOS)
-    let getCustomUserAgentChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getCustomUserAgent", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getCustomUserAgentChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonInstanceArg = args[0] as! WKWebView
-        do {
-          let result = try api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
+      let setUIDelegateChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setUIDelegate",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setUIDelegateChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let delegateArg = args[1] as! WKUIDelegate
+          do {
+            try api.pigeonDelegate.setUIDelegate(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        setUIDelegateChannel.setMessageHandler(nil)
       }
-    } else {
-      getCustomUserAgentChannel.setMessageHandler(nil)
-    }
+    #endif
+    #if !os(iOS)
+      let setNavigationDelegateChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setNavigationDelegate",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setNavigationDelegateChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let delegateArg = args[1] as! WKNavigationDelegate
+          do {
+            try api.pigeonDelegate.setNavigationDelegate(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, delegate: delegateArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setNavigationDelegateChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let getUrlChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getUrl",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getUrlChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.getUrl(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        getUrlChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let getEstimatedProgressChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getEstimatedProgress",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getEstimatedProgressChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.getEstimatedProgress(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        getEstimatedProgressChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let loadChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.load",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        loadChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let requestArg = args[1] as! URLRequestWrapper
+          do {
+            try api.pigeonDelegate.load(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, request: requestArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        loadChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let loadHtmlStringChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.loadHtmlString",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        loadHtmlStringChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let stringArg = args[1] as! String
+          let baseUrlArg: String? = nilOrValue(args[2])
+          do {
+            try api.pigeonDelegate.loadHtmlString(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, string: stringArg,
+              baseUrl: baseUrlArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        loadHtmlStringChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let loadFileUrlChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.loadFileUrl",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        loadFileUrlChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let urlArg = args[1] as! String
+          let readAccessUrlArg = args[2] as! String
+          do {
+            try api.pigeonDelegate.loadFileUrl(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, url: urlArg,
+              readAccessUrl: readAccessUrlArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        loadFileUrlChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let loadFlutterAssetChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.loadFlutterAsset",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        loadFlutterAssetChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let keyArg = args[1] as! String
+          do {
+            try api.pigeonDelegate.loadFlutterAsset(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, key: keyArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        loadFlutterAssetChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let canGoBackChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.canGoBack",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        canGoBackChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.canGoBack(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        canGoBackChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let canGoForwardChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.canGoForward",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        canGoForwardChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.canGoForward(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        canGoForwardChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let goBackChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.goBack",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        goBackChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            try api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        goBackChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let goForwardChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.goForward",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        goForwardChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            try api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        goForwardChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let reloadChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.reload",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        reloadChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            try api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        reloadChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let getTitleChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getTitle",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getTitleChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.getTitle(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        getTitleChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let setAllowsBackForwardNavigationGesturesChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setAllowsBackForwardNavigationGestures",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setAllowsBackForwardNavigationGesturesChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let allowArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setAllowsBackForwardNavigationGestures(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, allow: allowArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setAllowsBackForwardNavigationGesturesChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let setCustomUserAgentChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setCustomUserAgent",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setCustomUserAgentChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let userAgentArg: String? = nilOrValue(args[1])
+          do {
+            try api.pigeonDelegate.setCustomUserAgent(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, userAgent: userAgentArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setCustomUserAgentChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let evaluateJavaScriptChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.evaluateJavaScript",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        evaluateJavaScriptChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let javaScriptStringArg = args[1] as! String
+          api.pigeonDelegate.evaluateJavaScript(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg, javaScriptString: javaScriptStringArg
+          ) { result in
+            switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+            }
+          }
+        }
+      } else {
+        evaluateJavaScriptChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let setInspectableChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.setInspectable",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setInspectableChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          let inspectableArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setInspectable(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, inspectable: inspectableArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setInspectableChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(iOS)
+      let getCustomUserAgentChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.getCustomUserAgent",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        getCustomUserAgentChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebView
+          do {
+            let result = try api.pigeonDelegate.getCustomUserAgent(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+            reply(wrapResult(result))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        getCustomUserAgentChannel.setMessageHandler(nil)
+      }
     #endif
   }
 
   #if !os(iOS)
-  ///Creates a Dart instance of NSViewWKWebView and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKWebView, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    if pigeonRegistrar.ignoreCallsToDart {
-      completion(
-        .failure(
-          PigeonError(
-            code: "ignore-calls-error",
-            message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
-      completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
-      let binaryMessenger = pigeonRegistrar.binaryMessenger
-      let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
-        guard let listResponse = response as? [Any?] else {
-          completion(.failure(createConnectionError(withChannelName: channelName)))
-          return
-        }
-        if listResponse.count > 1 {
-          let code: String = listResponse[0] as! String
-          let message: String? = nilOrValue(listResponse[1])
-          let details: String? = nilOrValue(listResponse[2])
-          completion(.failure(PigeonError(code: code, message: message, details: details)))
-        } else {
-          completion(.success(()))
+    ///Creates a Dart instance of NSViewWKWebView and attaches it to [pigeonInstance].
+    func pigeonNewInstance(
+      pigeonInstance: WKWebView, completion: @escaping (Result<Void, PigeonError>) -> Void
+    ) {
+      if pigeonRegistrar.ignoreCallsToDart {
+        completion(
+          .failure(
+            PigeonError(
+              code: "ignore-calls-error",
+              message: "Calls to Dart are being ignored.", details: "")))
+      } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+        completion(.success(()))
+      } else {
+        let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+          pigeonInstance as AnyObject)
+        let binaryMessenger = pigeonRegistrar.binaryMessenger
+        let codec = pigeonRegistrar.codec
+        let channelName: String =
+          "dev.flutter.pigeon.webview_flutter_wkwebview.NSViewWKWebView.pigeon_newInstance"
+        let channel = FlutterBasicMessageChannel(
+          name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+        channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+          guard let listResponse = response as? [Any?] else {
+            completion(.failure(createConnectionError(withChannelName: channelName)))
+            return
+          }
+          if listResponse.count > 1 {
+            let code: String = listResponse[0] as! String
+            let message: String? = nilOrValue(listResponse[1])
+            let details: String? = nilOrValue(listResponse[2])
+            completion(.failure(PigeonError(code: code, message: message, details: details)))
+          } else {
+            completion(.success(()))
+          }
         }
       }
     }
-  }
   #endif
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `NSViewWKWebView`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ViewWKWebViewProxyAPIDelegate : PigeonApiDelegateNSViewWKWebView {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiNSViewWKWebView, initialConfiguration: WKWebViewConfiguration) throws -> WKWebView {
-    return NSViewWKWebView(,initialConfiguration: initialConfiguration)
-  }
-
-  func configuration(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: NSViewWKWebView): WKWebViewConfiguration {
-    return pigeonInstance.configuration
-  }
-
-  func setUIDelegate(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: WKUIDelegate) throws {
-    pigeonInstance.uIDelegate = delegate: delegate
-  }
-
-  func setNavigationDelegate(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, delegate: WKNavigationDelegate) throws {
-    pigeonInstance.navigationDelegate = delegate: delegate
-  }
-
-  func getUrl(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
-    return pigeonInstance.url
-  }
-
-  func getEstimatedProgress(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Double {
-    return pigeonInstance.estimatedProgress
-  }
-
-  func load(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, request: URLRequestWrapper) throws {
-    pigeonInstance.load(request: request)
-  }
-
-  func loadHtmlString(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, string: String, baseUrl: String?) throws {
-    pigeonInstance.loadHtmlString(string: string, baseUrl: baseUrl)
-  }
-
-  func loadFileUrl(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, url: String, readAccessUrl: String) throws {
-    pigeonInstance.loadFileUrl(url: url, readAccessUrl: readAccessUrl)
-  }
-
-  func loadFlutterAsset(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, key: String) throws {
-    pigeonInstance.loadFlutterAsset(key: key)
-  }
-
-  func canGoBack(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Bool {
-    return pigeonInstance.canGoBack()
-  }
-
-  func canGoForward(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> Bool {
-    return pigeonInstance.canGoForward()
-  }
-
-  func goBack(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws {
-    pigeonInstance.goBack()
-  }
-
-  func goForward(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws {
-    pigeonInstance.goForward()
-  }
-
-  func reload(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws {
-    pigeonInstance.reload()
-  }
-
-  func getTitle(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
-    return pigeonInstance.title
-  }
-
-  func setAllowsBackForwardNavigationGestures(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, allow: Bool) throws {
-    pigeonInstance.allowsBackForwardNavigationGestures = allow: allow
-  }
-
-  func setCustomUserAgent(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, userAgent: String?) throws {
-    pigeonInstance.customUserAgent = userAgent: userAgent
-  }
-
-  func evaluateJavaScript(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, javaScriptString: String, completion: @escaping (Result<Any?, PigeonError>) -> Void) {
-    return pigeonInstance.evaluateJavaScript(javaScriptString: javaScriptString)
-  }
-
-  func setInspectable(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, inspectable: Bool) throws {
-    pigeonInstance.inspectable = inspectable: inspectable
-  }
-
-  func getCustomUserAgent(pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView) throws -> String? {
-    return pigeonInstance.customUserAgent
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ViewWKWebViewProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, initialConfiguration: TestWebViewConfiguration)
-    XCTAssertNotNil(instance)
-  }
-
-  func testConfiguration() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = try? api.pigeonDelegate.configuration(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.configuration)
-  }
-
-  func testSetUIDelegate() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let delegate = TestDelegate
-    api.pigeonDelegate.setUIDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
-
-    XCTAssertEqual(instance.setUIDelegateArgs, [delegate])
-  }
-
-  func testSetNavigationDelegate() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let delegate = TestNavigationDelegate
-    api.pigeonDelegate.setNavigationDelegate(pigeonApi: api, pigeonInstance: instance, delegate: delegate)
-
-    XCTAssertEqual(instance.setNavigationDelegateArgs, [delegate])
-  }
-
-  func testGetUrl() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.getUrl(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getUrlCalled)
-    XCTAssertEqual(value, instance.getUrl())
-  }
-
-  func testGetEstimatedProgress() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.getEstimatedProgress(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getEstimatedProgressCalled)
-    XCTAssertEqual(value, instance.getEstimatedProgress())
-  }
-
-  func testLoad() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let request = TestRequest
-    api.pigeonDelegate.load(pigeonApi: api, pigeonInstance: instance, request: request)
-
-    XCTAssertEqual(instance.loadArgs, [request])
-  }
-
-  func testLoadHtmlString() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let string = "myString"
-    let baseUrl = "myString"
-    api.pigeonDelegate.loadHtmlString(pigeonApi: api, pigeonInstance: instance, string: string, baseUrl: baseUrl)
-
-    XCTAssertEqual(instance.loadHtmlStringArgs, [string, baseUrl])
-  }
-
-  func testLoadFileUrl() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let url = "myString"
-    let readAccessUrl = "myString"
-    api.pigeonDelegate.loadFileUrl(pigeonApi: api, pigeonInstance: instance, url: url, readAccessUrl: readAccessUrl)
-
-    XCTAssertEqual(instance.loadFileUrlArgs, [url, readAccessUrl])
-  }
-
-  func testLoadFlutterAsset() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let key = "myString"
-    api.pigeonDelegate.loadFlutterAsset(pigeonApi: api, pigeonInstance: instance, key: key)
-
-    XCTAssertEqual(instance.loadFlutterAssetArgs, [key])
-  }
-
-  func testCanGoBack() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.canGoBack(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.canGoBackCalled)
-    XCTAssertEqual(value, instance.canGoBack())
-  }
-
-  func testCanGoForward() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.canGoForward(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.canGoForwardCalled)
-    XCTAssertEqual(value, instance.canGoForward())
-  }
-
-  func testGoBack() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    api.pigeonDelegate.goBack(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.goBackCalled)
-  }
-
-  func testGoForward() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    api.pigeonDelegate.goForward(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.goForwardCalled)
-  }
-
-  func testReload() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    api.pigeonDelegate.reload(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.reloadCalled)
-  }
-
-  func testGetTitle() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.getTitle(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getTitleCalled)
-    XCTAssertEqual(value, instance.getTitle())
-  }
-
-  func testSetAllowsBackForwardNavigationGestures() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let allow = true
-    api.pigeonDelegate.setAllowsBackForwardNavigationGestures(pigeonApi: api, pigeonInstance: instance, allow: allow)
-
-    XCTAssertEqual(instance.setAllowsBackForwardNavigationGesturesArgs, [allow])
-  }
-
-  func testSetCustomUserAgent() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let userAgent = "myString"
-    api.pigeonDelegate.setCustomUserAgent(pigeonApi: api, pigeonInstance: instance, userAgent: userAgent)
-
-    XCTAssertEqual(instance.setCustomUserAgentArgs, [userAgent])
-  }
-
-  func testEvaluateJavaScript() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let javaScriptString = "myString"
-    let value = api.pigeonDelegate.evaluateJavaScript(pigeonApi: api, pigeonInstance: instance, javaScriptString: javaScriptString)
-
-    XCTAssertEqual(instance.evaluateJavaScriptArgs, [javaScriptString])
-    XCTAssertEqual(value, instance.evaluateJavaScript(javaScriptString: javaScriptString))
-  }
-
-  func testSetInspectable() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let inspectable = true
-    api.pigeonDelegate.setInspectable(pigeonApi: api, pigeonInstance: instance, inspectable: inspectable)
-
-    XCTAssertEqual(instance.setInspectableArgs, [inspectable])
-  }
-
-  func testGetCustomUserAgent() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiNSViewWKWebView(registrar)
-
-    let instance = TestViewWKWebView()
-    let value = api.pigeonDelegate.getCustomUserAgent(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getCustomUserAgentCalled)
-    XCTAssertEqual(value, instance.getCustomUserAgent())
-  }
-
-}
-class TestViewWKWebView: NSViewWKWebView {
-  private var configurationTestValue = TestWebViewConfiguration
-  var setUIDelegateArgs: [AnyHashable?]? = nil
-  var setNavigationDelegateArgs: [AnyHashable?]? = nil
-  var getUrlCalled = false
-  var getEstimatedProgressCalled = false
-  var loadArgs: [AnyHashable?]? = nil
-  var loadHtmlStringArgs: [AnyHashable?]? = nil
-  var loadFileUrlArgs: [AnyHashable?]? = nil
-  var loadFlutterAssetArgs: [AnyHashable?]? = nil
-  var canGoBackCalled = false
-  var canGoForwardCalled = false
-  var goBackCalled = false
-  var goForwardCalled = false
-  var reloadCalled = false
-  var getTitleCalled = false
-  var setAllowsBackForwardNavigationGesturesArgs: [AnyHashable?]? = nil
-  var setCustomUserAgentArgs: [AnyHashable?]? = nil
-  var evaluateJavaScriptArgs: [AnyHashable?]? = nil
-  var setInspectableArgs: [AnyHashable?]? = nil
-  var getCustomUserAgentCalled = false
-
-  override var configuration: WKWebViewConfiguration {
-    return configurationTestValue
-  }
-
-  override func setUIDelegate() {
-    setUIDelegateArgs = [delegate]
-  }
-  override func setNavigationDelegate() {
-    setNavigationDelegateArgs = [delegate]
-  }
-  override func getUrl() {
-    getUrlCalled = true
-  }
-  override func getEstimatedProgress() {
-    getEstimatedProgressCalled = true
-  }
-  override func load() {
-    loadArgs = [request]
-  }
-  override func loadHtmlString() {
-    loadHtmlStringArgs = [string, baseUrl]
-  }
-  override func loadFileUrl() {
-    loadFileUrlArgs = [url, readAccessUrl]
-  }
-  override func loadFlutterAsset() {
-    loadFlutterAssetArgs = [key]
-  }
-  override func canGoBack() {
-    canGoBackCalled = true
-  }
-  override func canGoForward() {
-    canGoForwardCalled = true
-  }
-  override func goBack() {
-    goBackCalled = true
-  }
-  override func goForward() {
-    goForwardCalled = true
-  }
-  override func reload() {
-    reloadCalled = true
-  }
-  override func getTitle() {
-    getTitleCalled = true
-  }
-  override func setAllowsBackForwardNavigationGestures() {
-    setAllowsBackForwardNavigationGesturesArgs = [allow]
-  }
-  override func setCustomUserAgent() {
-    setCustomUserAgentArgs = [userAgent]
-  }
-  override func evaluateJavaScript() {
-    evaluateJavaScriptArgs = [javaScriptString]
-    return -1
-  }
-  override func setInspectable() {
-    setInspectableArgs = [inspectable]
-  }
-  override func getCustomUserAgent() {
-    getCustomUserAgentCalled = true
-  }
-}
-*/
-
 open class PigeonApiDelegateWKWebView {
 }
 
 protocol PigeonApiProtocolWKWebView {
 }
 
-final class PigeonApiWKWebView: PigeonApiProtocolWKWebView  {
+final class PigeonApiWKWebView: PigeonApiProtocolWKWebView {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKWebView
   ///An implementation of [NSObject] used to access callback methods
@@ -8089,26 +5956,32 @@ final class PigeonApiWKWebView: PigeonApiProtocolWKWebView  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKWebView) {
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKWebView)
+  {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of WKWebView and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKWebView, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKWebView, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebView.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -8126,58 +5999,41 @@ final class PigeonApiWKWebView: PigeonApiProtocolWKWebView  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKWebView`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class WebViewProxyAPIDelegate : PigeonApiDelegateWKWebView {
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class WebViewProxyAPITests: XCTestCase {
-}
-*/
-
 protocol PigeonApiDelegateWKUIDelegate {
   func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUIDelegate) throws -> WKUIDelegate
 }
 
 protocol PigeonApiProtocolWKUIDelegate {
   /// Creates a new web view.
-  func onCreateWebView(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, configuration configurationArg: WKWebViewConfiguration, navigationAction navigationActionArg: WKNavigationAction, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onCreateWebView(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    configuration configurationArg: WKWebViewConfiguration,
+    navigationAction navigationActionArg: WKNavigationAction,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Determines whether a web resource, which the security origin object
   /// describes, can access to the device’s microphone audio and camera video.
-  func requestMediaCapturePermission(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, origin originArg: WKSecurityOrigin, frame frameArg: WKFrameInfo, type typeArg: MediaCaptureType, completion: @escaping (Result<PermissionDecision, PigeonError>) -> Void)
+  func requestMediaCapturePermission(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    origin originArg: WKSecurityOrigin, frame frameArg: WKFrameInfo, type typeArg: MediaCaptureType,
+    completion: @escaping (Result<PermissionDecision, PigeonError>) -> Void)
   /// Displays a JavaScript alert panel.
-  func runJavaScriptAlertPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func runJavaScriptAlertPanel(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    message messageArg: String, frame frameArg: WKFrameInfo,
+    completion: @escaping (Result<Void, PigeonError>) -> Void)
   /// Displays a JavaScript confirm panel.
-  func runJavaScriptConfirmPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Bool, PigeonError>) -> Void)
+  func runJavaScriptConfirmPanel(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    message messageArg: String, frame frameArg: WKFrameInfo,
+    completion: @escaping (Result<Bool, PigeonError>) -> Void)
   /// Displays a JavaScript text input panel.
-  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo, completion: @escaping (Result<String?, PigeonError>) -> Void)
+  func runJavaScriptTextInputPanel(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo,
+    completion: @escaping (Result<String?, PigeonError>) -> Void)
 }
 
-final class PigeonApiWKUIDelegate: PigeonApiProtocolWKUIDelegate  {
+final class PigeonApiWKUIDelegate: PigeonApiProtocolWKUIDelegate {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKUIDelegate
   ///An implementation of [NSObject] used to access callback methods
@@ -8185,25 +6041,32 @@ final class PigeonApiWKUIDelegate: PigeonApiProtocolWKUIDelegate  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKUIDelegate) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKUIDelegate
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKUIDelegate?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKUIDelegate?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
+    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.pigeon_defaultConstructor",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonIdentifierArg = args[0] as! Int64
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -8215,25 +6078,34 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of WKUIDelegate and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKUIDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKUIDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
+    } else {
       completion(
         .failure(
           PigeonError(
             code: "new-instance-error",
-            message: "Error: Attempting to create a new Dart instance of WKUIDelegate, but the class has a nonnull callback method.", details: "")))
+            message:
+              "Error: Attempting to create a new Dart instance of WKUIDelegate, but the class has a nonnull callback method.",
+            details: "")))
     }
   }
   /// Creates a new web view.
-  func onCreateWebView(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, configuration configurationArg: WKWebViewConfiguration, navigationAction navigationActionArg: WKNavigationAction, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func onCreateWebView(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    configuration configurationArg: WKWebViewConfiguration,
+    navigationAction navigationActionArg: WKNavigationAction,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -8244,9 +6116,13 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.onCreateWebView"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, webViewArg, configurationArg, navigationActionArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.onCreateWebView"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(
+      [pigeonInstanceArg, webViewArg, configurationArg, navigationActionArg] as [Any?]
+    ) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -8264,7 +6140,11 @@ withIdentifier: pigeonIdentifierArg)
 
   /// Determines whether a web resource, which the security origin object
   /// describes, can access to the device’s microphone audio and camera video.
-  func requestMediaCapturePermission(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, origin originArg: WKSecurityOrigin, frame frameArg: WKFrameInfo, type typeArg: MediaCaptureType, completion: @escaping (Result<PermissionDecision, PigeonError>) -> Void)   {
+  func requestMediaCapturePermission(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    origin originArg: WKSecurityOrigin, frame frameArg: WKFrameInfo, type typeArg: MediaCaptureType,
+    completion: @escaping (Result<PermissionDecision, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -8275,9 +6155,12 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.requestMediaCapturePermission"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, webViewArg, originArg, frameArg, typeArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.requestMediaCapturePermission"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg, webViewArg, originArg, frameArg, typeArg] as [Any?]) {
+      response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -8288,7 +6171,11 @@ withIdentifier: pigeonIdentifierArg)
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
-        completion(.failure(PigeonError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! PermissionDecision
         completion(.success(result))
@@ -8297,7 +6184,11 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Displays a JavaScript alert panel.
-  func runJavaScriptAlertPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
+  func runJavaScriptAlertPanel(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    message messageArg: String, frame frameArg: WKFrameInfo,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -8308,9 +6199,12 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptAlertPanel"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, webViewArg, messageArg, frameArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptAlertPanel"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg, webViewArg, messageArg, frameArg] as [Any?]) {
+      response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -8327,7 +6221,11 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Displays a JavaScript confirm panel.
-  func runJavaScriptConfirmPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, message messageArg: String, frame frameArg: WKFrameInfo, completion: @escaping (Result<Bool, PigeonError>) -> Void)   {
+  func runJavaScriptConfirmPanel(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    message messageArg: String, frame frameArg: WKFrameInfo,
+    completion: @escaping (Result<Bool, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -8338,9 +6236,12 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptConfirmPanel"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, webViewArg, messageArg, frameArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptConfirmPanel"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([pigeonInstanceArg, webViewArg, messageArg, frameArg] as [Any?]) {
+      response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -8351,7 +6252,11 @@ withIdentifier: pigeonIdentifierArg)
         let details: String? = nilOrValue(listResponse[2])
         completion(.failure(PigeonError(code: code, message: message, details: details)))
       } else if listResponse[0] == nil {
-        completion(.failure(PigeonError(code: "null-error", message: "Flutter api returned null value for non-null return value.", details: "")))
+        completion(
+          .failure(
+            PigeonError(
+              code: "null-error",
+              message: "Flutter api returned null value for non-null return value.", details: "")))
       } else {
         let result = listResponse[0] as! Bool
         completion(.success(result))
@@ -8360,7 +6265,11 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   /// Displays a JavaScript text input panel.
-  func runJavaScriptTextInputPanel(pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView, prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo, completion: @escaping (Result<String?, PigeonError>) -> Void)   {
+  func runJavaScriptTextInputPanel(
+    pigeonInstance pigeonInstanceArg: WKUIDelegate, webView webViewArg: WKWebView,
+    prompt promptArg: String, defaultText defaultTextArg: String?, frame frameArg: WKFrameInfo,
+    completion: @escaping (Result<String?, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
@@ -8371,9 +6280,13 @@ withIdentifier: pigeonIdentifierArg)
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptTextInputPanel"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, webViewArg, promptArg, defaultTextArg, frameArg] as [Any?]) { response in
+    let channelName: String =
+      "dev.flutter.pigeon.webview_flutter_wkwebview.WKUIDelegate.runJavaScriptTextInputPanel"
+    let channel = FlutterBasicMessageChannel(
+      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(
+      [pigeonInstanceArg, webViewArg, promptArg, defaultTextArg, frameArg] as [Any?]
+    ) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -8391,169 +6304,18 @@ withIdentifier: pigeonIdentifierArg)
   }
 
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-/// Implementation of `WKUIDelegate` that calls to Dart in callback methods.
-class DelegateImpl: WKUIDelegate {
-  let api: PigeonApiProtocolWKUIDelegate
-
-  init(api: PigeonApiProtocolWKUIDelegate) {
-    self.api = api
-  }
-
-  func fixMe() {
-    api.onCreateWebView(pigeonInstance: self, webView: webView, configuration: configuration, navigationAction: navigationAction) {  _ in }
-  }
-
-  func fixMe() {
-    api.requestMediaCapturePermission(pigeonInstance: self, webView: webView, origin: origin, frame: frame, type: type) {  _ in }
-  }
-
-  func fixMe() {
-    api.runJavaScriptAlertPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) {  _ in }
-  }
-
-  func fixMe() {
-    api.runJavaScriptConfirmPanel(pigeonInstance: self, webView: webView, message: message, frame: frame) {  _ in }
-  }
-
-  func fixMe() {
-    api.runJavaScriptTextInputPanel(pigeonInstance: self, webView: webView, prompt: prompt, defaultText: defaultText, frame: frame) {  _ in }
-  }
-}
-
-/// ProxyApi implementation for `WKUIDelegate`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class DelegateProxyAPIDelegate : PigeonApiDelegateWKUIDelegate {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKUIDelegate) throws -> WKUIDelegate {
-    return WKUIDelegateImpl(api: pigeonApi)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class DelegateProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKUIDelegate(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testOnCreateWebView() {
-    let api = TestDelegateApi()
-    let instance = DelegateImpl(api: api)
-    let webView = TestWebView
-    let configuration = TestWebViewConfiguration
-    let navigationAction = TestNavigationAction
-    instance.onCreateWebView(webView: webView, configuration: configuration, navigationAction: navigationAction)
-
-    XCTAssertEqual(api.onCreateWebViewArgs, [webView, configuration, navigationAction])
-  }
-
-  func testRequestMediaCapturePermission() {
-    let api = TestDelegateApi()
-    let instance = DelegateImpl(api: api)
-    let webView = TestWebView
-    let origin = TestSecurityOrigin
-    let frame = TestFrameInfo
-    let type = .camera
-    instance.requestMediaCapturePermission(webView: webView, origin: origin, frame: frame, type: type)
-
-    XCTAssertEqual(api.requestMediaCapturePermissionArgs, [webView, origin, frame, type])
-  }
-
-  func testRunJavaScriptAlertPanel() {
-    let api = TestDelegateApi()
-    let instance = DelegateImpl(api: api)
-    let webView = TestWebView
-    let message = "myString"
-    let frame = TestFrameInfo
-    instance.runJavaScriptAlertPanel(webView: webView, message: message, frame: frame)
-
-    XCTAssertEqual(api.runJavaScriptAlertPanelArgs, [webView, message, frame])
-  }
-
-  func testRunJavaScriptConfirmPanel() {
-    let api = TestDelegateApi()
-    let instance = DelegateImpl(api: api)
-    let webView = TestWebView
-    let message = "myString"
-    let frame = TestFrameInfo
-    instance.runJavaScriptConfirmPanel(webView: webView, message: message, frame: frame)
-
-    XCTAssertEqual(api.runJavaScriptConfirmPanelArgs, [webView, message, frame])
-  }
-
-  func testRunJavaScriptTextInputPanel() {
-    let api = TestDelegateApi()
-    let instance = DelegateImpl(api: api)
-    let webView = TestWebView
-    let prompt = "myString"
-    let defaultText = "myString"
-    let frame = TestFrameInfo
-    instance.runJavaScriptTextInputPanel(webView: webView, prompt: prompt, defaultText: defaultText, frame: frame)
-
-    XCTAssertEqual(api.runJavaScriptTextInputPanelArgs, [webView, prompt, defaultText, frame])
-  }
-
-}
-class TestDelegateApi: PigeonApiProtocolWKUIDelegate {
-  var onCreateWebViewArgs: [AnyHashable?]? = nil
-  var requestMediaCapturePermissionArgs: [AnyHashable?]? = nil
-  var runJavaScriptAlertPanelArgs: [AnyHashable?]? = nil
-  var runJavaScriptConfirmPanelArgs: [AnyHashable?]? = nil
-  var runJavaScriptTextInputPanelArgs: [AnyHashable?]? = nil
-
-  func onCreateWebView(webView: WKWebView, configuration: WKWebViewConfiguration, navigationAction: WKNavigationAction) throws {
-    onCreateWebViewArgs = [webViewArg, configurationArg, navigationActionArg]
-  }
-  func requestMediaCapturePermission(webView: WKWebView, origin: WKSecurityOrigin, frame: WKFrameInfo, type: MediaCaptureType) throws -> PermissionDecision {
-    requestMediaCapturePermissionArgs = [webViewArg, originArg, frameArg, typeArg]
-  }
-  func runJavaScriptAlertPanel(webView: WKWebView, message: String, frame: WKFrameInfo) throws {
-    runJavaScriptAlertPanelArgs = [webViewArg, messageArg, frameArg]
-  }
-  func runJavaScriptConfirmPanel(webView: WKWebView, message: String, frame: WKFrameInfo) throws -> Bool {
-    runJavaScriptConfirmPanelArgs = [webViewArg, messageArg, frameArg]
-  }
-  func runJavaScriptTextInputPanel(webView: WKWebView, prompt: String, defaultText: String?, frame: WKFrameInfo) throws -> String? {
-    runJavaScriptTextInputPanelArgs = [webViewArg, promptArg, defaultTextArg, frameArg]
-  }
-}
-*/
-
 protocol PigeonApiDelegateWKHTTPCookieStore {
   /// Sets a cookie policy that indicates whether the cookie store allows cookie
   /// storage.
-  func setCookie(pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: HTTPCookie, completion: @escaping (Result<Void, Error>) -> Void)
+  func setCookie(
+    pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: HTTPCookie,
+    completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 protocol PigeonApiProtocolWKHTTPCookieStore {
 }
 
-final class PigeonApiWKHTTPCookieStore: PigeonApiProtocolWKHTTPCookieStore  {
+final class PigeonApiWKHTTPCookieStore: PigeonApiProtocolWKHTTPCookieStore {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKHTTPCookieStore
   ///An implementation of [NSObject] used to access callback methods
@@ -8561,23 +6323,33 @@ final class PigeonApiWKHTTPCookieStore: PigeonApiProtocolWKHTTPCookieStore  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKHTTPCookieStore) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKHTTPCookieStore
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKHTTPCookieStore?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKHTTPCookieStore?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let setCookieChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKHTTPCookieStore.setCookie", binaryMessenger: binaryMessenger, codec: codec)
+    let setCookieChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKHTTPCookieStore.setCookie",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setCookieChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKHTTPCookieStore
         let cookieArg = args[1] as! HTTPCookie
-        api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: pigeonInstanceArg, cookie: cookieArg) { result in
+        api.pigeonDelegate.setCookie(
+          pigeonApi: api, pigeonInstance: pigeonInstanceArg, cookie: cookieArg
+        ) { result in
           switch result {
           case .success:
             reply(wrapResult(nil))
@@ -8592,21 +6364,26 @@ final class PigeonApiWKHTTPCookieStore: PigeonApiProtocolWKHTTPCookieStore  {
   }
 
   ///Creates a Dart instance of WKHTTPCookieStore and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: WKHTTPCookieStore, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKHTTPCookieStore, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKHTTPCookieStore.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKHTTPCookieStore.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -8624,80 +6401,29 @@ final class PigeonApiWKHTTPCookieStore: PigeonApiProtocolWKHTTPCookieStore  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKHTTPCookieStore`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class CookieStoreProxyAPIDelegate : PigeonApiDelegateWKHTTPCookieStore {
-  func setCookie(pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: HTTPCookie, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    pigeonInstance.cookie = cookie: cookie
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class CookieStoreProxyAPITests: XCTestCase {
-  func testSetCookie() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKHTTPCookieStore(registrar)
-
-    let instance = TestCookieStore()
-    let cookie = TestCookie
-    api.pigeonDelegate.setCookie(pigeonApi: api, pigeonInstance: instance, cookie: cookie)
-
-    XCTAssertEqual(instance.setCookieArgs, [cookie])
-  }
-
-}
-class TestCookieStore: WKHTTPCookieStore {
-  var setCookieArgs: [AnyHashable?]? = nil
-
-
-  override func setCookie() {
-    setCookieArgs = [cookie]
-  }
-}
-*/
-
 protocol PigeonApiDelegateUIScrollViewDelegate {
   #if !os(macOS)
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiUIScrollViewDelegate) throws -> UIScrollViewDelegate
+    func pigeonDefaultConstructor(pigeonApi: PigeonApiUIScrollViewDelegate) throws
+      -> UIScrollViewDelegate
   #endif
 }
 
 protocol PigeonApiProtocolUIScrollViewDelegate {
   #if !os(macOS)
-  /// Tells the delegate when the user scrolls the content view within the
-  /// scroll view.
-  ///
-  /// Note that this is a convenient method that includes the `contentOffset` of
-  /// the `scrollView`.
-  func scrollViewDidScroll(pigeonInstance pigeonInstanceArg: UIScrollViewDelegate, scrollView scrollViewArg: UIScrollView, x xArg: Double, y yArg: Double, completion: @escaping (Result<Void, PigeonError>) -> Void)  #endif
+    /// Tells the delegate when the user scrolls the content view within the
+    /// scroll view.
+    ///
+    /// Note that this is a convenient method that includes the `contentOffset` of
+    /// the `scrollView`.
+    func scrollViewDidScroll(
+      pigeonInstance pigeonInstanceArg: UIScrollViewDelegate,
+      scrollView scrollViewArg: UIScrollView, x xArg: Double, y yArg: Double,
+      completion: @escaping (Result<Void, PigeonError>) -> Void)
+  #endif
 
 }
 
-final class PigeonApiUIScrollViewDelegate: PigeonApiProtocolUIScrollViewDelegate  {
+final class PigeonApiUIScrollViewDelegate: PigeonApiProtocolUIScrollViewDelegate {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateUIScrollViewDelegate
   ///An implementation of [NSObject] used to access callback methods
@@ -8705,55 +6431,112 @@ final class PigeonApiUIScrollViewDelegate: PigeonApiProtocolUIScrollViewDelegate
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateUIScrollViewDelegate) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateUIScrollViewDelegate
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiUIScrollViewDelegate?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiUIScrollViewDelegate?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     #if !os(macOS)
-    let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.pigeon_defaultConstructor", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let pigeonIdentifierArg = args[0] as! Int64
-        do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
-withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
-        } catch {
-          reply(wrapError(error))
+      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.pigeon_defaultConstructor",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonIdentifierArg = args[0] as! Int64
+          do {
+            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+              try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+              withIdentifier: pigeonIdentifierArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
         }
+      } else {
+        pigeonDefaultConstructorChannel.setMessageHandler(nil)
       }
-    } else {
-      pigeonDefaultConstructorChannel.setMessageHandler(nil)
-    }
     #endif
   }
 
   #if !os(macOS)
-  ///Creates a Dart instance of UIScrollViewDelegate and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: UIScrollViewDelegate, completion: @escaping (Result<Void, PigeonError>) -> Void) {
-    if pigeonRegistrar.ignoreCallsToDart {
-      completion(
-        .failure(
-          PigeonError(
-            code: "ignore-calls-error",
-            message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
-      completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    ///Creates a Dart instance of UIScrollViewDelegate and attaches it to [pigeonInstance].
+    func pigeonNewInstance(
+      pigeonInstance: UIScrollViewDelegate,
+      completion: @escaping (Result<Void, PigeonError>) -> Void
+    ) {
+      if pigeonRegistrar.ignoreCallsToDart {
+        completion(
+          .failure(
+            PigeonError(
+              code: "ignore-calls-error",
+              message: "Calls to Dart are being ignored.", details: "")))
+      } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+        completion(.success(()))
+      } else {
+        let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+          pigeonInstance as AnyObject)
+        let binaryMessenger = pigeonRegistrar.binaryMessenger
+        let codec = pigeonRegistrar.codec
+        let channelName: String =
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.pigeon_newInstance"
+        let channel = FlutterBasicMessageChannel(
+          name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+        channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+          guard let listResponse = response as? [Any?] else {
+            completion(.failure(createConnectionError(withChannelName: channelName)))
+            return
+          }
+          if listResponse.count > 1 {
+            let code: String = listResponse[0] as! String
+            let message: String? = nilOrValue(listResponse[1])
+            let details: String? = nilOrValue(listResponse[2])
+            completion(.failure(PigeonError(code: code, message: message, details: details)))
+          } else {
+            completion(.success(()))
+          }
+        }
+      }
+    }
+  #endif
+  #if !os(macOS)
+    /// Tells the delegate when the user scrolls the content view within the
+    /// scroll view.
+    ///
+    /// Note that this is a convenient method that includes the `contentOffset` of
+    /// the `scrollView`.
+    func scrollViewDidScroll(
+      pigeonInstance pigeonInstanceArg: UIScrollViewDelegate,
+      scrollView scrollViewArg: UIScrollView, x xArg: Double, y yArg: Double,
+      completion: @escaping (Result<Void, PigeonError>) -> Void
+    ) {
+      if pigeonRegistrar.ignoreCallsToDart {
+        completion(
+          .failure(
+            PigeonError(
+              code: "ignore-calls-error",
+              message: "Calls to Dart are being ignored.", details: "")))
+        return
+      }
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.scrollViewDidScroll"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonInstanceArg, scrollViewArg, xArg, yArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
@@ -8768,130 +6551,22 @@ withIdentifier: pigeonIdentifierArg)
         }
       }
     }
-  }
-  #endif
-  #if !os(macOS)
-  /// Tells the delegate when the user scrolls the content view within the
-  /// scroll view.
-  ///
-  /// Note that this is a convenient method that includes the `contentOffset` of
-  /// the `scrollView`.
-  func scrollViewDidScroll(pigeonInstance pigeonInstanceArg: UIScrollViewDelegate, scrollView scrollViewArg: UIScrollView, x xArg: Double, y yArg: Double, completion: @escaping (Result<Void, PigeonError>) -> Void)   {
-    if pigeonRegistrar.ignoreCallsToDart {
-      completion(
-        .failure(
-          PigeonError(
-            code: "ignore-calls-error",
-            message: "Calls to Dart are being ignored.", details: "")))
-      return
-    }
-    let binaryMessenger = pigeonRegistrar.binaryMessenger
-    let codec = pigeonRegistrar.codec
-    let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollViewDelegate.scrollViewDidScroll"
-    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([pigeonInstanceArg, scrollViewArg, xArg, yArg] as [Any?]) { response in
-      guard let listResponse = response as? [Any?] else {
-        completion(.failure(createConnectionError(withChannelName: channelName)))
-        return
-      }
-      if listResponse.count > 1 {
-        let code: String = listResponse[0] as! String
-        let message: String? = nilOrValue(listResponse[1])
-        let details: String? = nilOrValue(listResponse[2])
-        completion(.failure(PigeonError(code: code, message: message, details: details)))
-      } else {
-        completion(.success(()))
-      }
-    }
-  }
   #endif
 
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import UIKit
-
-/// Implementation of `UIScrollViewDelegate` that calls to Dart in callback methods.
-class ScrollViewDelegateImpl: UIScrollViewDelegate {
-  let api: PigeonApiProtocolUIScrollViewDelegate
-
-  init(api: PigeonApiProtocolUIScrollViewDelegate) {
-    self.api = api
-  }
-
-  func fixMe() {
-    api.scrollViewDidScroll(pigeonInstance: self, scrollView: scrollView, x: x, y: y) {  _ in }
-  }
-}
-
-/// ProxyApi implementation for `UIScrollViewDelegate`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ScrollViewDelegateProxyAPIDelegate : PigeonApiDelegateUIScrollViewDelegate {
-  func pigeonDefaultConstructor(pigeonApi: PigeonApiUIScrollViewDelegate) throws -> UIScrollViewDelegate {
-    return UIScrollViewDelegateImpl(api: pigeonApi)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import UIKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ScrollViewDelegateProxyAPITests: XCTestCase {
-  func testPigeonDefaultConstructor() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiUIScrollViewDelegate(registrar)
-
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api )
-    XCTAssertNotNil(instance)
-  }
-
-  func testScrollViewDidScroll() {
-    let api = TestScrollViewDelegateApi()
-    let instance = ScrollViewDelegateImpl(api: api)
-    let scrollView = TestScrollView
-    let x = 1.0
-    let y = 1.0
-    instance.scrollViewDidScroll(scrollView: scrollView, x: x, y: y)
-
-    XCTAssertEqual(api.scrollViewDidScrollArgs, [scrollView, x, y])
-  }
-
-}
-class TestScrollViewDelegateApi: PigeonApiProtocolUIScrollViewDelegate {
-  var scrollViewDidScrollArgs: [AnyHashable?]? = nil
-
-  func scrollViewDidScroll(scrollView: UIScrollView, x: Double, y: Double) throws {
-    scrollViewDidScrollArgs = [scrollViewArg, xArg, yArg]
-  }
-}
-*/
-
 protocol PigeonApiDelegateURLCredential {
   /// Creates a URL credential instance for internet password authentication
   /// with a given user name and password, using a given persistence setting.
-  func withUser(pigeonApi: PigeonApiURLCredential, user: String, password: String, persistence: UrlCredentialPersistence) throws -> URLCredential
+  func withUser(
+    pigeonApi: PigeonApiURLCredential, user: String, password: String,
+    persistence: UrlCredentialPersistence
+  ) throws -> URLCredential
 }
 
 protocol PigeonApiProtocolURLCredential {
 }
 
-final class PigeonApiURLCredential: PigeonApiProtocolURLCredential  {
+final class PigeonApiURLCredential: PigeonApiProtocolURLCredential {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateURLCredential
   ///An implementation of [NSObject] used to access callback methods
@@ -8899,17 +6574,24 @@ final class PigeonApiURLCredential: PigeonApiProtocolURLCredential  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLCredential) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLCredential
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiURLCredential?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiURLCredential?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let withUserChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.withUser", binaryMessenger: binaryMessenger, codec: codec)
+    let withUserChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.withUser",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       withUserChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -8919,8 +6601,9 @@ final class PigeonApiURLCredential: PigeonApiProtocolURLCredential  {
         let persistenceArg = args[3] as! UrlCredentialPersistence
         do {
           api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-try api.pigeonDelegate.withUser(pigeonApi: api, user: userArg, password: passwordArg, persistence: persistenceArg),
-withIdentifier: pigeonIdentifierArg)
+            try api.pigeonDelegate.withUser(
+              pigeonApi: api, user: userArg, password: passwordArg, persistence: persistenceArg),
+            withIdentifier: pigeonIdentifierArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -8932,21 +6615,26 @@ withIdentifier: pigeonIdentifierArg)
   }
 
   ///Creates a Dart instance of URLCredential and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: URLCredential, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: URLCredential, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.URLCredential.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -8964,68 +6652,29 @@ withIdentifier: pigeonIdentifierArg)
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `URLCredential`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class CredentialProxyAPIDelegate : PigeonApiDelegateURLCredential {
-  func withUser(pigeonApi: PigeonApiURLCredential, user: String, password: String, persistence: UrlCredentialPersistence) throws -> URLCredential {
-    return URLCredential(,user: user, password: password, persistence: persistence)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class CredentialProxyAPITests: XCTestCase {
-  func testWithUser() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLCredential(registrar)
-
-    let instance = try? api.pigeonDelegate.withUser(pigeonApi: api, user: "myString", password: "myString", persistence: .none)
-    XCTAssertNotNil(instance)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateURLProtectionSpace {
   /// The receiver’s host.
-  func host(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> String
+  func host(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws
+    -> String
   /// The receiver’s port.
-  func port(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> Int64
+  func port(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws
+    -> Int64
   /// The receiver’s authentication realm.
-  func realm(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> String?
+  func realm(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws
+    -> String?
   /// The authentication method used by the receiver.
-  func authenticationMethod(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> String?
+  func authenticationMethod(
+    pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace
+  ) throws -> String?
   /// A representation of the server’s SSL transaction state.
-  func getServerTrust(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> SecTrustWrapper?
+  func getServerTrust(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace)
+    throws -> SecTrustWrapper?
 }
 
 protocol PigeonApiProtocolURLProtectionSpace {
 }
 
-final class PigeonApiURLProtectionSpace: PigeonApiProtocolURLProtectionSpace  {
+final class PigeonApiURLProtectionSpace: PigeonApiProtocolURLProtectionSpace {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateURLProtectionSpace
   ///An implementation of [NSObject] used to access callback methods
@@ -9033,32 +6682,47 @@ final class PigeonApiURLProtectionSpace: PigeonApiProtocolURLProtectionSpace  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLProtectionSpace) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateURLProtectionSpace
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of URLProtectionSpace and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: URLProtectionSpace, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: URLProtectionSpace, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let hostArg = try! pigeonDelegate.host(pigeonApi: self, pigeonInstance: pigeonInstance)
       let portArg = try! pigeonDelegate.port(pigeonApi: self, pigeonInstance: pigeonInstance)
       let realmArg = try! pigeonDelegate.realm(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let authenticationMethodArg = try! pigeonDelegate.authenticationMethod(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let getServerTrustArg = try! pigeonDelegate.getServerTrust(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let authenticationMethodArg = try! pigeonDelegate.authenticationMethod(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let getServerTrustArg = try! pigeonDelegate.getServerTrust(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URLProtectionSpace.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg, hostArg, portArg, realmArg, authenticationMethodArg, getServerTrustArg] as [Any?]) { response in
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.URLProtectionSpace.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage(
+        [
+          pigeonIdentifierArg, hostArg, portArg, realmArg, authenticationMethodArg,
+          getServerTrustArg,
+        ] as [Any?]
+      ) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return
@@ -9075,118 +6739,17 @@ final class PigeonApiURLProtectionSpace: PigeonApiProtocolURLProtectionSpace  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `URLProtectionSpace`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class ProtectionSpaceProxyAPIDelegate : PigeonApiDelegateURLProtectionSpace {
-  func host(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> String {
-    return pigeonInstance.host
-  }
-
-  func port(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> Int64 {
-    return pigeonInstance.port
-  }
-
-  func realm(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> String? {
-    return pigeonInstance.realm
-  }
-
-  func authenticationMethod(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> String? {
-    return pigeonInstance.authenticationMethod
-  }
-
-  func getServerTrust(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace) throws -> SecTrustWrapper? {
-    return pigeonInstance.getServerTrust
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class ProtectionSpaceProxyAPITests: XCTestCase {
-  func testHost() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
-
-    let instance = TestProtectionSpace()
-    let value = try? api.pigeonDelegate.host(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.host)
-  }
-
-  func testPort() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
-
-    let instance = TestProtectionSpace()
-    let value = try? api.pigeonDelegate.port(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.port)
-  }
-
-  func testRealm() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
-
-    let instance = TestProtectionSpace()
-    let value = try? api.pigeonDelegate.realm(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.realm)
-  }
-
-  func testAuthenticationMethod() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
-
-    let instance = TestProtectionSpace()
-    let value = try? api.pigeonDelegate.authenticationMethod(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.authenticationMethod)
-  }
-
-  func testGetServerTrust() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLProtectionSpace(registrar)
-
-    let instance = TestProtectionSpace()
-    let value = try? api.pigeonDelegate.getServerTrust(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.getServerTrust)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateURLAuthenticationChallenge {
   /// The receiver’s protection space.
-  func getProtectionSpace(pigeonApi: PigeonApiURLAuthenticationChallenge, pigeonInstance: URLAuthenticationChallenge) throws -> URLProtectionSpace
+  func getProtectionSpace(
+    pigeonApi: PigeonApiURLAuthenticationChallenge, pigeonInstance: URLAuthenticationChallenge
+  ) throws -> URLProtectionSpace
 }
 
 protocol PigeonApiProtocolURLAuthenticationChallenge {
 }
 
-final class PigeonApiURLAuthenticationChallenge: PigeonApiProtocolURLAuthenticationChallenge  {
+final class PigeonApiURLAuthenticationChallenge: PigeonApiProtocolURLAuthenticationChallenge {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateURLAuthenticationChallenge
   ///An implementation of [NSObject] used to access callback methods
@@ -9194,23 +6757,33 @@ final class PigeonApiURLAuthenticationChallenge: PigeonApiProtocolURLAuthenticat
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateURLAuthenticationChallenge) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateURLAuthenticationChallenge
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiURLAuthenticationChallenge?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiURLAuthenticationChallenge?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let getProtectionSpaceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.getProtectionSpace", binaryMessenger: binaryMessenger, codec: codec)
+    let getProtectionSpaceChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.getProtectionSpace",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getProtectionSpaceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! URLAuthenticationChallenge
         do {
-          let result = try api.pigeonDelegate.getProtectionSpace(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getProtectionSpace(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -9222,21 +6795,27 @@ final class PigeonApiURLAuthenticationChallenge: PigeonApiProtocolURLAuthenticat
   }
 
   ///Creates a Dart instance of URLAuthenticationChallenge and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: URLAuthenticationChallenge, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: URLAuthenticationChallenge,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.URLAuthenticationChallenge.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -9254,62 +6833,6 @@ final class PigeonApiURLAuthenticationChallenge: PigeonApiProtocolURLAuthenticat
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `URLAuthenticationChallenge`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class AuthenticationChallengeProxyAPIDelegate : PigeonApiDelegateURLAuthenticationChallenge {
-  func getProtectionSpace(pigeonApi: PigeonApiURLAuthenticationChallenge, pigeonInstance: URLAuthenticationChallenge) throws -> URLProtectionSpace {
-    return pigeonInstance.protectionSpace
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class AuthenticationChallengeProxyAPITests: XCTestCase {
-  func testGetProtectionSpace() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURLAuthenticationChallenge(registrar)
-
-    let instance = TestAuthenticationChallenge()
-    let value = api.pigeonDelegate.getProtectionSpace(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getProtectionSpaceCalled)
-    XCTAssertEqual(value, instance.getProtectionSpace())
-  }
-
-}
-class TestAuthenticationChallenge: URLAuthenticationChallenge {
-  var getProtectionSpaceCalled = false
-
-
-  override func getProtectionSpace() {
-    getProtectionSpaceCalled = true
-  }
-}
-*/
-
 protocol PigeonApiDelegateURL {
   /// The absolute string for the URL.
   func getAbsoluteString(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> String
@@ -9318,7 +6841,7 @@ protocol PigeonApiDelegateURL {
 protocol PigeonApiProtocolURL {
 }
 
-final class PigeonApiURL: PigeonApiProtocolURL  {
+final class PigeonApiURL: PigeonApiProtocolURL {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateURL
   ///An implementation of [NSObject] used to access callback methods
@@ -9334,15 +6857,19 @@ final class PigeonApiURL: PigeonApiProtocolURL  {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let getAbsoluteStringChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.URL.getAbsoluteString", binaryMessenger: binaryMessenger, codec: codec)
+    let getAbsoluteStringChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.URL.getAbsoluteString",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAbsoluteStringChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! URL
         do {
-          let result = try api.pigeonDelegate.getAbsoluteString(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.getAbsoluteString(
+            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -9354,21 +6881,26 @@ final class PigeonApiURL: PigeonApiProtocolURL  {
   }
 
   ///Creates a Dart instance of URL and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: URL, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: URL, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.URL.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.URL.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -9386,73 +6918,19 @@ final class PigeonApiURL: PigeonApiProtocolURL  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `URL`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class LProxyAPIDelegate : PigeonApiDelegateURL {
-  func getAbsoluteString(pigeonApi: PigeonApiURL, pigeonInstance: URL) throws -> String {
-    return pigeonInstance.absoluteString
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class LProxyAPITests: XCTestCase {
-  func testGetAbsoluteString() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiURL(registrar)
-
-    let instance = TestL()
-    let value = api.pigeonDelegate.getAbsoluteString(pigeonApi: api, pigeonInstance: instance )
-
-    XCTAssertTrue(instance.getAbsoluteStringCalled)
-    XCTAssertEqual(value, instance.getAbsoluteString())
-  }
-
-}
-class TestL: URL {
-  var getAbsoluteStringCalled = false
-
-
-  override func getAbsoluteString() {
-    getAbsoluteStringCalled = true
-  }
-}
-*/
-
 protocol PigeonApiDelegateWKWebpagePreferences {
   /// A Boolean value that indicates whether JavaScript from web content is
   /// allowed to run.
   @available(iOS 13.0.0, macOS 10.15.0, *)
-  func setAllowsContentJavaScript(pigeonApi: PigeonApiWKWebpagePreferences, pigeonInstance: WKWebpagePreferences, allow: Bool) throws
+  func setAllowsContentJavaScript(
+    pigeonApi: PigeonApiWKWebpagePreferences, pigeonInstance: WKWebpagePreferences, allow: Bool)
+    throws
 }
 
 protocol PigeonApiProtocolWKWebpagePreferences {
 }
 
-final class PigeonApiWKWebpagePreferences: PigeonApiProtocolWKWebpagePreferences  {
+final class PigeonApiWKWebpagePreferences: PigeonApiProtocolWKWebpagePreferences {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateWKWebpagePreferences
   ///An implementation of [NSObject] used to access callback methods
@@ -9460,25 +6938,35 @@ final class PigeonApiWKWebpagePreferences: PigeonApiProtocolWKWebpagePreferences
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateWKWebpagePreferences) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateWKWebpagePreferences
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKWebpagePreferences?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiWKWebpagePreferences?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
     if #available(iOS 13.0.0, macOS 10.15.0, *) {
-      let setAllowsContentJavaScriptChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.setAllowsContentJavaScript", binaryMessenger: binaryMessenger, codec: codec)
+      let setAllowsContentJavaScriptChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.setAllowsContentJavaScript",
+        binaryMessenger: binaryMessenger, codec: codec)
       if let api = api {
         setAllowsContentJavaScriptChannel.setMessageHandler { message, reply in
           let args = message as! [Any?]
           let pigeonInstanceArg = args[0] as! WKWebpagePreferences
           let allowArg = args[1] as! Bool
           do {
-            try api.pigeonDelegate.setAllowsContentJavaScript(pigeonApi: api, pigeonInstance: pigeonInstanceArg, allow: allowArg)
+            try api.pigeonDelegate.setAllowsContentJavaScript(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, allow: allowArg)
             reply(wrapResult(nil))
           } catch {
             reply(wrapError(error))
@@ -9487,16 +6975,21 @@ final class PigeonApiWKWebpagePreferences: PigeonApiProtocolWKWebpagePreferences
       } else {
         setAllowsContentJavaScriptChannel.setMessageHandler(nil)
       }
-    }     else {
+    } else {
       let setAllowsContentJavaScriptChannel = FlutterBasicMessageChannel(
-        name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.setAllowsContentJavaScript",
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.setAllowsContentJavaScript",
         binaryMessenger: binaryMessenger, codec: codec)
       if api != nil {
         setAllowsContentJavaScriptChannel.setMessageHandler { message, reply in
-          reply(wrapError(FlutterError(code: "PigeonUnsupportedOperationError",
-                                       message: "Call to setAllowsContentJavaScript requires @available(iOS 13.0.0, macOS 10.15.0, *).",
-                                       details: nil
-                                      )))
+          reply(
+            wrapError(
+              FlutterError(
+                code: "PigeonUnsupportedOperationError",
+                message:
+                  "Call to setAllowsContentJavaScript requires @available(iOS 13.0.0, macOS 10.15.0, *).",
+                details: nil
+              )))
         }
       } else {
         setAllowsContentJavaScriptChannel.setMessageHandler(nil)
@@ -9506,21 +6999,26 @@ final class PigeonApiWKWebpagePreferences: PigeonApiProtocolWKWebpagePreferences
 
   ///Creates a Dart instance of WKWebpagePreferences and attaches it to [pigeonInstance].
   @available(iOS 13.0.0, macOS 10.15.0, *)
-  func pigeonNewInstance(pigeonInstance: WKWebpagePreferences, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: WKWebpagePreferences, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -9538,75 +7036,22 @@ final class PigeonApiWKWebpagePreferences: PigeonApiProtocolWKWebpagePreferences
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-import WebKit
-
-
-/// ProxyApi implementation for `WKWebpagePreferences`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class WebpagePreferencesProxyAPIDelegate : PigeonApiDelegateWKWebpagePreferences {
-  func setAllowsContentJavaScript(pigeonApi: PigeonApiWKWebpagePreferences, pigeonInstance: WKWebpagePreferences, allow: Bool) throws {
-    pigeonInstance.allowsContentJavaScript = allow: allow
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import WebKit
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class WebpagePreferencesProxyAPITests: XCTestCase {
-  func testSetAllowsContentJavaScript() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiWKWebpagePreferences(registrar)
-
-    let instance = TestWebpagePreferences()
-    let allow = true
-    api.pigeonDelegate.setAllowsContentJavaScript(pigeonApi: api, pigeonInstance: instance, allow: allow)
-
-    XCTAssertEqual(instance.setAllowsContentJavaScriptArgs, [allow])
-  }
-
-}
-class TestWebpagePreferences: WKWebpagePreferences {
-  var setAllowsContentJavaScriptArgs: [AnyHashable?]? = nil
-
-
-  override func setAllowsContentJavaScript() {
-    setAllowsContentJavaScriptArgs = [allow]
-  }
-}
-*/
-
 protocol PigeonApiDelegateGetTrustResultResponse {
   /// The result code from the most recent trust evaluation.
-  func result(pigeonApi: PigeonApiGetTrustResultResponse, pigeonInstance: GetTrustResultResponse) throws -> DartSecTrustResultType
+  func result(pigeonApi: PigeonApiGetTrustResultResponse, pigeonInstance: GetTrustResultResponse)
+    throws -> DartSecTrustResultType
   /// A result code.
   ///
   /// See https://developer.apple.com/documentation/security/security-framework-result-codes?language=objc.
-  func resultCode(pigeonApi: PigeonApiGetTrustResultResponse, pigeonInstance: GetTrustResultResponse) throws -> Int64
+  func resultCode(
+    pigeonApi: PigeonApiGetTrustResultResponse, pigeonInstance: GetTrustResultResponse
+  ) throws -> Int64
 }
 
 protocol PigeonApiProtocolGetTrustResultResponse {
 }
 
-final class PigeonApiGetTrustResultResponse: PigeonApiProtocolGetTrustResultResponse  {
+final class PigeonApiGetTrustResultResponse: PigeonApiProtocolGetTrustResultResponse {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateGetTrustResultResponse
   ///An implementation of [NSObject] used to access callback methods
@@ -9614,28 +7059,38 @@ final class PigeonApiGetTrustResultResponse: PigeonApiProtocolGetTrustResultResp
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateGetTrustResultResponse) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateGetTrustResultResponse
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
   ///Creates a Dart instance of GetTrustResultResponse and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: GetTrustResultResponse, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: GetTrustResultResponse,
+    completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let resultArg = try! pigeonDelegate.result(pigeonApi: self, pigeonInstance: pigeonInstance)
-      let resultCodeArg = try! pigeonDelegate.resultCode(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let resultCodeArg = try! pigeonDelegate.resultCode(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.GetTrustResultResponse.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.GetTrustResultResponse.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg, resultArg, resultCodeArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -9653,105 +7108,32 @@ final class PigeonApiGetTrustResultResponse: PigeonApiProtocolGetTrustResultResp
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `GetTrustResultResponse`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class GetTrustResultResponseProxyAPIDelegate : PigeonApiDelegateGetTrustResultResponse {
-  func result(pigeonApi: PigeonApiGetTrustResultResponse, pigeonInstance: GetTrustResultResponse) throws -> DartSecTrustResultType {
-    switch pigeonInstance.result {
-      case .unspecified:
-        return .unspecified
-      case .proceed:
-        return .proceed
-      case .deny:
-        return .deny
-      case .recoverableTrustFailure:
-        return .recoverableTrustFailure
-      case .fatalTrustFailure:
-        return .fatalTrustFailure
-      case .otherError:
-        return .otherError
-      case .invalid:
-        return .invalid
-      case .confirm:
-        return .confirm
-      @unknown default:
-        return .unknown
-    }
-  }
-
-  func resultCode(pigeonApi: PigeonApiGetTrustResultResponse, pigeonInstance: GetTrustResultResponse) throws -> Int64 {
-    return pigeonInstance.resultCode
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class GetTrustResultResponseProxyAPITests: XCTestCase {
-  func testResult() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiGetTrustResultResponse(registrar)
-
-    let instance = TestGetTrustResultResponse()
-    let value = try? api.pigeonDelegate.result(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.result)
-  }
-
-  func testResultCode() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiGetTrustResultResponse(registrar)
-
-    let instance = TestGetTrustResultResponse()
-    let value = try? api.pigeonDelegate.resultCode(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.resultCode)
-  }
-
-}
-*/
-
 protocol PigeonApiDelegateSecTrust {
   /// Evaluates trust for the specified certificate and policies.
-  func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, completion: @escaping (Result<Bool, Error>) -> Void)
+  func evaluateWithError(
+    pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper,
+    completion: @escaping (Result<Bool, Error>) -> Void)
   /// Returns an opaque cookie containing exceptions to trust policies that will
   /// allow future evaluations of the current certificate to succeed.
-  func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData?
+  func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws
+    -> FlutterStandardTypedData?
   /// Sets a list of exceptions that should be ignored when the certificate is
   /// evaluated.
-  func setExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, exceptions: FlutterStandardTypedData?) throws -> Bool
+  func setExceptions(
+    pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, exceptions: FlutterStandardTypedData?
+  ) throws -> Bool
   /// Returns the result code from the most recent trust evaluation.
-  func getTrustResult(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> GetTrustResultResponse
+  func getTrustResult(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws
+    -> GetTrustResultResponse
   /// Certificates used to evaluate trust.
-  func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> [SecCertificateWrapper]?
+  func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws
+    -> [SecCertificateWrapper]?
 }
 
 protocol PigeonApiProtocolSecTrust {
 }
 
-final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
+final class PigeonApiSecTrust: PigeonApiProtocolSecTrust {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateSecTrust
   ///An implementation of [NSObject] used to access callback methods
@@ -9763,13 +7145,17 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiSecTrust?) {
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiSecTrust?)
+  {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let evaluateWithErrorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.evaluateWithError", binaryMessenger: binaryMessenger, codec: codec)
+    let evaluateWithErrorChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.evaluateWithError",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       evaluateWithErrorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -9786,7 +7172,9 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
     } else {
       evaluateWithErrorChannel.setMessageHandler(nil)
     }
-    let copyExceptionsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.copyExceptions", binaryMessenger: binaryMessenger, codec: codec)
+    let copyExceptionsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.copyExceptions",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       copyExceptionsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -9801,14 +7189,17 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
     } else {
       copyExceptionsChannel.setMessageHandler(nil)
     }
-    let setExceptionsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.setExceptions", binaryMessenger: binaryMessenger, codec: codec)
+    let setExceptionsChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.setExceptions",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       setExceptionsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let trustArg = args[0] as! SecTrustWrapper
         let exceptionsArg: FlutterStandardTypedData? = nilOrValue(args[1])
         do {
-          let result = try api.pigeonDelegate.setExceptions(pigeonApi: api, trust: trustArg, exceptions: exceptionsArg)
+          let result = try api.pigeonDelegate.setExceptions(
+            pigeonApi: api, trust: trustArg, exceptions: exceptionsArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -9817,7 +7208,9 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
     } else {
       setExceptionsChannel.setMessageHandler(nil)
     }
-    let getTrustResultChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.getTrustResult", binaryMessenger: binaryMessenger, codec: codec)
+    let getTrustResultChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.getTrustResult",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getTrustResultChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -9832,7 +7225,9 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
     } else {
       getTrustResultChannel.setMessageHandler(nil)
     }
-    let copyCertificateChainChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.copyCertificateChain", binaryMessenger: binaryMessenger, codec: codec)
+    let copyCertificateChainChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.copyCertificateChain",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       copyCertificateChainChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -9850,21 +7245,26 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
   }
 
   ///Creates a Dart instance of SecTrust and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: SecTrustWrapper, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: SecTrustWrapper, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.SecTrust.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -9882,67 +7282,15 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `SecTrust`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class SecTrustProxyAPIDelegate : PigeonApiDelegateSecTrust {
-  func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, completion: @escaping (Result<Bool, PigeonError>) -> Void) {
-    return SecTrust.evaluateWithError(trust: trust)
-  }
-
-  func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData? {
-    return SecTrust.copyExceptions(trust: trust)
-  }
-
-  func setExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, exceptions: FlutterStandardTypedData?) throws -> Bool {
-    return SecTrust.setExceptions(trust: trust, exceptions: exceptions)
-  }
-
-  func getTrustResult(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> GetTrustResultResponse {
-    return SecTrust.getTrustResult(trust: trust)
-  }
-
-  func copyCertificateChain(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> [SecCertificateWrapper]? {
-    return SecTrust.copyCertificateChain(trust: trust)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class SecTrustProxyAPITests: XCTestCase {
-}
-*/
-
 protocol PigeonApiDelegateSecCertificate {
-  func copyData(pigeonApi: PigeonApiSecCertificate, certificate: SecCertificateWrapper) throws -> FlutterStandardTypedData
+  func copyData(pigeonApi: PigeonApiSecCertificate, certificate: SecCertificateWrapper) throws
+    -> FlutterStandardTypedData
 }
 
 protocol PigeonApiProtocolSecCertificate {
 }
 
-final class PigeonApiSecCertificate: PigeonApiProtocolSecCertificate  {
+final class PigeonApiSecCertificate: PigeonApiProtocolSecCertificate {
   unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateSecCertificate
   ///An implementation of [NSObject] used to access callback methods
@@ -9950,17 +7298,24 @@ final class PigeonApiSecCertificate: PigeonApiProtocolSecCertificate  {
     return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
   }
 
-  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateSecCertificate) {
+  init(
+    pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateSecCertificate
+  ) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiSecCertificate?) {
+  static func setUpMessageHandlers(
+    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiSecCertificate?
+  ) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let copyDataChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecCertificate.copyData", binaryMessenger: binaryMessenger, codec: codec)
+    let copyDataChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.SecCertificate.copyData",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       copyDataChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -9978,21 +7333,26 @@ final class PigeonApiSecCertificate: PigeonApiProtocolSecCertificate  {
   }
 
   ///Creates a Dart instance of SecCertificate and attaches it to [pigeonInstance].
-  func pigeonNewInstance(pigeonInstance: SecCertificateWrapper, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+  func pigeonNewInstance(
+    pigeonInstance: SecCertificateWrapper, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    }     else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
-      let channelName: String = "dev.flutter.pigeon.webview_flutter_wkwebview.SecCertificate.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channelName: String =
+        "dev.flutter.pigeon.webview_flutter_wkwebview.SecCertificate.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -10010,40 +7370,3 @@ final class PigeonApiSecCertificate: PigeonApiProtocolSecCertificate  {
     }
   }
 }
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-import Foundation
-
-
-
-/// ProxyApi implementation for `SecCertificate`.
-///
-/// This class may handle instantiating native object instances that are attached to a Dart instance
-/// or handle method calls on the associated native class or an instance of that class.
-class SecCertificateProxyAPIDelegate : PigeonApiDelegateSecCertificate {
-  func copyData(pigeonApi: PigeonApiSecCertificate, certificate: SecCertificateWrapper) throws -> FlutterStandardTypedData {
-    return SecCertificate.copyData(certificate: certificate)
-  }
-
-}
-*/
-
-/*
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-
-
-import Flutter
-import XCTest
-
-@testable import webview_flutter_wkwebview
-
-class SecCertificateProxyAPITests: XCTestCase {
-}
-*/
-

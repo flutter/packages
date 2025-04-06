@@ -71,16 +71,17 @@ class ProtectionSpaceProxyAPITests: XCTestCase {
 
 class TestProtectionSpace: URLProtectionSpace, @unchecked Sendable {
   var serverTrustVal: SecTrust?
-  
+
   override var serverTrust: SecTrust? {
-    if (serverTrustVal == nil) {
+    if serverTrustVal == nil {
       let url = FlutterAssetManager().urlForAsset("assets/test_cert.der")!
-      
+
       let certificateData = NSData(contentsOf: url)
       let dummyCertificate: SecCertificate! = SecCertificateCreateWithData(nil, certificateData!)
-      
+
       var trust: SecTrust?
-      SecTrustCreateWithCertificates([dummyCertificate] as AnyObject, SecPolicyCreateBasicX509(), &trust)
+      SecTrustCreateWithCertificates(
+        [dummyCertificate] as AnyObject, SecPolicyCreateBasicX509(), &trust)
       serverTrustVal = trust!
     }
     return serverTrustVal

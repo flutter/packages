@@ -4,6 +4,8 @@
 
 import XCTest
 
+@testable import webview_flutter_wkwebview
+
 #if os(iOS)
   import Flutter
 #elseif os(macOS)
@@ -12,16 +14,15 @@ import XCTest
   #error("Unsupported platform.")
 #endif
 
-@testable import webview_flutter_wkwebview
-
 class SecTrustProxyAPITests: XCTestCase {
   func createTrust(delegate: TestSecTrustProxyAPIDelegate) -> SecTrustWrapper {
     var trust: SecTrust?
-    SecTrustCreateWithCertificates([delegate.createDummyCertificate()] as AnyObject, SecPolicyCreateBasicX509(), &trust)
-    
+    SecTrustCreateWithCertificates(
+      [delegate.createDummyCertificate()] as AnyObject, SecPolicyCreateBasicX509(), &trust)
+
     return SecTrustWrapper(value: trust!)
   }
-  
+
   func testEvaluateWithError() {
     let registrar = TestProxyApiRegistrar()
     let delegate = TestSecTrustProxyAPIDelegate()
@@ -30,7 +31,7 @@ class SecTrustProxyAPITests: XCTestCase {
     let expect = expectation(description: "Wait for setCookie.")
     let trust = createTrust(delegate: delegate)
     var resultValue: Bool?
-    
+
     api.pigeonDelegate.evaluateWithError(pigeonApi: api, trust: trust) { result in
       switch result {
       case .success(let value):
@@ -44,7 +45,7 @@ class SecTrustProxyAPITests: XCTestCase {
     wait(for: [expect], timeout: 5.0)
     XCTAssertEqual(resultValue, true)
   }
-  
+
   func testCopyExceptions() {
     let registrar = TestProxyApiRegistrar()
     let delegate = TestSecTrustProxyAPIDelegate()
@@ -55,18 +56,19 @@ class SecTrustProxyAPITests: XCTestCase {
 
     XCTAssertEqual(value?.data, Data())
   }
-  
+
   func testSetExceptions() {
     let registrar = TestProxyApiRegistrar()
     let delegate = TestSecTrustProxyAPIDelegate()
     let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
 
     let trust = createTrust(delegate: delegate)
-    let value = try? api.pigeonDelegate.setExceptions(pigeonApi: api, trust: trust, exceptions: FlutterStandardTypedData(bytes: Data()))
+    let value = try? api.pigeonDelegate.setExceptions(
+      pigeonApi: api, trust: trust, exceptions: FlutterStandardTypedData(bytes: Data()))
 
     XCTAssertEqual(value, false)
   }
-  
+
   func testGetTrustResult() {
     let registrar = TestProxyApiRegistrar()
     let delegate = TestSecTrustProxyAPIDelegate()
@@ -78,7 +80,7 @@ class SecTrustProxyAPITests: XCTestCase {
     XCTAssertEqual(value?.result, SecTrustResultType.invalid)
     XCTAssertEqual(value?.resultCode, -1)
   }
-  
+
   func testCopyCertificateChain() {
     let registrar = TestProxyApiRegistrar()
     let delegate = TestSecTrustProxyAPIDelegate()
@@ -92,16 +94,18 @@ class SecTrustProxyAPITests: XCTestCase {
   }
 }
 
-class TestSecTrustProxyAPIDelegate : SecTrustProxyAPIDelegate {
+class TestSecTrustProxyAPIDelegate: SecTrustProxyAPIDelegate {
   func createDummyCertificate() -> SecCertificate {
     let url = FlutterAssetManager().urlForAsset("assets/test_cert.der")!
     let certificateData = NSData(contentsOf: url)
-    
+
     return SecCertificateCreateWithData(nil, certificateData!)!
   }
 
   // Overridable for testing.
-  override func secTrustEvaluateWithError(_ trust: SecTrust, _ error: UnsafeMutablePointer<CFError?>?) -> Bool {
+  override func secTrustEvaluateWithError(
+    _ trust: SecTrust, _ error: UnsafeMutablePointer<CFError?>?
+  ) -> Bool {
     return true
   }
 
@@ -116,7 +120,9 @@ class TestSecTrustProxyAPIDelegate : SecTrustProxyAPIDelegate {
   }
 
   // Overridable for testing.
-  override func secTrustGetTrustResult(_ trust: SecTrust, _ result: UnsafeMutablePointer<SecTrustResultType>) -> OSStatus {
+  override func secTrustGetTrustResult(
+    _ trust: SecTrust, _ result: UnsafeMutablePointer<SecTrustResultType>
+  ) -> OSStatus {
     result.pointee = SecTrustResultType.invalid
     return -1
   }

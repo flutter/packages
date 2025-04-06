@@ -4,6 +4,8 @@
 
 import XCTest
 
+@testable import webview_flutter_wkwebview
+
 #if os(iOS)
   import Flutter
 #elseif os(macOS)
@@ -11,8 +13,6 @@ import XCTest
 #else
   #error("Unsupported platform.")
 #endif
-
-@testable import webview_flutter_wkwebview
 
 class GetTrustResultResponseProxyAPITests: XCTestCase {
   func testResult() {
