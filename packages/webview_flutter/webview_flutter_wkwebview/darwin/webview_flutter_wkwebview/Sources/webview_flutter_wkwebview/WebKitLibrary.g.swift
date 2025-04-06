@@ -7283,6 +7283,7 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust {
   }
 }
 protocol PigeonApiDelegateSecCertificate {
+  /// Returns a DER representation of a certificate given a certificate object.
   func copyData(pigeonApi: PigeonApiSecCertificate, certificate: SecCertificateWrapper) throws
     -> FlutterStandardTypedData
 }

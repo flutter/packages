@@ -1218,6 +1218,7 @@ abstract class SecTrust extends NSObject {
 /// See https://developer.apple.com/documentation/security/seccertificate.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'SecCertificateWrapper'))
 abstract class SecCertificate extends NSObject {
+  /// Returns a DER representation of a certificate given a certificate object.
   @static
   Uint8List copyData(SecCertificate certificate);
 }

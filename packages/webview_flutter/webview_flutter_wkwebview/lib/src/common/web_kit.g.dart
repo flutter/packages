@@ -8454,6 +8454,7 @@ class SecCertificate extends NSObject {
     }
   }
 
+  /// Returns a DER representation of a certificate given a certificate object.
   static Future<Uint8List> copyData(
     SecCertificate certificate, {
     BinaryMessenger? pigeon_binaryMessenger,
