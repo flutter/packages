@@ -1,0 +1,121 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import XCTest
+
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#else
+  #error("Unsupported platform.")
+#endif
+
+@testable import webview_flutter_wkwebview
+
+class SecTrustProxyAPITests: XCTestCase {
+  func createTrust(delegate: TestSecTrustProxyAPIDelegate) -> SecTrustWrapper {
+    var trust: SecTrust?
+    SecTrustCreateWithCertificates([delegate.createDummyCertificate()] as AnyObject, SecPolicyCreateBasicX509(), &trust)
+    
+    return SecTrustWrapper(value: trust!)
+  }
+  
+  func testEvaluateWithError() {
+    let registrar = TestProxyApiRegistrar()
+    let delegate = TestSecTrustProxyAPIDelegate()
+    let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
+
+    let trust = createTrust(delegate: delegate)
+    let value = try? api.pigeonDelegate.evaluateWithError(pigeonApi: api, trust: trust)
+
+    XCTAssertEqual(value, true)
+  }
+  
+  func testCopyExceptions() {
+    let registrar = TestProxyApiRegistrar()
+    let delegate = TestSecTrustProxyAPIDelegate()
+    let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
+
+    let trust = createTrust(delegate: delegate)
+    let value = try? api.pigeonDelegate.copyExceptions(pigeonApi: api, trust: trust)
+
+    XCTAssertEqual(value?.data, Data())
+  }
+  
+  func testSetExceptions() {
+    let registrar = TestProxyApiRegistrar()
+    let delegate = TestSecTrustProxyAPIDelegate()
+    let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
+
+    let trust = createTrust(delegate: delegate)
+    let value = try? api.pigeonDelegate.setExceptions(pigeonApi: api, trust: trust, exceptions: FlutterStandardTypedData(bytes: Data()))
+
+    XCTAssertEqual(value, false)
+  }
+  
+  func testGetTrustResult() {
+    let registrar = TestProxyApiRegistrar()
+    let delegate = TestSecTrustProxyAPIDelegate()
+    let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
+
+    let trust = createTrust(delegate: delegate)
+    let value = try? api.pigeonDelegate.getTrustResult(pigeonApi: api, trust: trust)
+
+    XCTAssertEqual(value?.result, SecTrustResultType.invalid)
+    XCTAssertEqual(value?.resultCode, -1)
+  }
+  
+  func testCopyCertificateChain() {
+    let registrar = TestProxyApiRegistrar()
+    let delegate = TestSecTrustProxyAPIDelegate()
+    let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
+
+    let trust = createTrust(delegate: delegate)
+    let value = try? api.pigeonDelegate.copyCertificateChain(pigeonApi: api, trust: trust)
+
+    XCTAssertEqual(value?.count, 1)
+    XCTAssertNotNil(value?.first?.value)
+  }
+}
+
+class TestSecTrustProxyAPIDelegate : SecTrustProxyAPIDelegate {
+  func createDummyCertificate() -> SecCertificate {
+    let key = FlutterAssetManager().lookupKeyForAsset("assets/test_cert.der")
+    let url = Bundle.main.path(forResource: key, ofType: nil)
+    let certificateData = NSData(contentsOfFile: url!)
+    
+    return SecCertificateCreateWithData(nil, certificateData!)!
+  }
+
+  // Overridable for testing.
+  override func secTrustEvaluateWithError(_ trust: SecTrust, _ error: UnsafeMutablePointer<CFError?>?) -> Bool {
+    return true
+  }
+
+  // Overridable for testing.
+  override func secTrustCopyExceptions(_ trust: SecTrust) -> CFData? {
+    return Data() as CFData
+  }
+
+  // Overridable for testing.
+  override func secTrustSetExceptions(_ trust: SecTrust, _ exceptions: CFData?) -> Bool {
+    return false
+  }
+
+  // Overridable for testing.
+  override func secTrustGetTrustResult(_ trust: SecTrust, _ result: UnsafeMutablePointer<SecTrustResultType>) -> OSStatus {
+    result.pointee = SecTrustResultType.invalid
+    return -1
+  }
+
+  // Overridable for testing.
+  override func secTrustCopyCertificateChain(_ trust: SecTrust) -> CFArray? {
+    if #available(iOS 15.0, *) {
+      return [createDummyCertificate()] as CFArray
+    }
+
+    return nil
+  }
+}

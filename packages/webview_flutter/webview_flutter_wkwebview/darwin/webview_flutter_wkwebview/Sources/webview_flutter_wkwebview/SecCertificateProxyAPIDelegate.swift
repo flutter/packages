@@ -11,6 +11,7 @@
 #else
   #error("Unsupported platform.")
 #endif
+
 import Foundation
 
 /// ProxyApi implementation for `SecCertificate`.
@@ -19,7 +20,12 @@ import Foundation
 /// or handle method calls on the associated native class or an instance of that class.
 class SecCertificateProxyAPIDelegate : PigeonApiDelegateSecCertificate {
   func copyData(pigeonApi: PigeonApiSecCertificate, certificate: SecCertificateWrapper) throws -> FlutterStandardTypedData {
-    let data = SecCertificateCopyData(certificate.value)
+    let data = secCertificateCopyData(certificate.value)
     return FlutterStandardTypedData(bytes: data as Data)
+  }
+  
+  // Overridable for testing.
+  internal func secCertificateCopyData(_ certificate: SecCertificate) -> CFData {
+    return SecCertificateCopyData(certificate)
   }
 }
