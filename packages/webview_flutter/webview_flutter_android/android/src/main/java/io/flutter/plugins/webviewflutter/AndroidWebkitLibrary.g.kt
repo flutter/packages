@@ -24,15 +24,15 @@ private fun wrapError(exception: Throwable): List<Any?> {
     listOf(exception.code, exception.message, exception.details)
   } else {
     listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+      exception.javaClass.simpleName,
+      exception.toString(),
+      "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
   }
 }
 
 private fun createConnectionError(channelName: String): AndroidWebKitError {
   return AndroidWebKitError(
-      "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+    "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
 }
 
 /**
@@ -43,9 +43,9 @@ private fun createConnectionError(channelName: String): AndroidWebKitError {
  * @property details The error details. Must be a datatype supported by the api codec.
  */
 class AndroidWebKitError(
-    val code: String,
-    override val message: String? = null,
-    val details: Any? = null
+  val code: String,
+  override val message: String? = null,
+  val details: Any? = null
 ) : Throwable()
 /**
  * Maintains instances used to communicate with the corresponding objects in Dart.
@@ -64,7 +64,7 @@ class AndroidWebKitError(
  */
 @Suppress("UNCHECKED_CAST", "MemberVisibilityCanBePrivate")
 class AndroidWebkitLibraryPigeonInstanceManager(
-    private val finalizationListener: PigeonFinalizationListener
+  private val finalizationListener: PigeonFinalizationListener
 ) {
   /** Interface for listening when a weak reference of an instance is removed from the manager. */
   interface PigeonFinalizationListener {
@@ -86,7 +86,8 @@ class AndroidWebkitLibraryPigeonInstanceManager(
    */
   var clearFinalizedWeakReferencesInterval: Long = 3000
     set(value) {
-      handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+      val runnable = Runnable { this.releaseAllFinalizedInstances() }
+      handler.removeCallbacks(runnable)
       field = value
       releaseAllFinalizedInstances()
     }
@@ -109,7 +110,7 @@ class AndroidWebkitLibraryPigeonInstanceManager(
      * When the manager is no longer needed, [stopFinalizationListener] must be called.
      */
     fun create(
-        finalizationListener: PigeonFinalizationListener
+      finalizationListener: PigeonFinalizationListener
     ): AndroidWebkitLibraryPigeonInstanceManager {
       return AndroidWebkitLibraryPigeonInstanceManager(finalizationListener)
     }
@@ -198,7 +199,8 @@ class AndroidWebkitLibraryPigeonInstanceManager(
    * longer be called and methods will log a warning.
    */
   fun stopFinalizationListener() {
-    handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+    val runnable = Runnable { this.releaseAllFinalizedInstances() }
+    handler.removeCallbacks(runnable)
     hasFinalizationListenerStopped = true
   }
 
@@ -230,7 +232,7 @@ class AndroidWebkitLibraryPigeonInstanceManager(
     }
     var reference: java.lang.ref.WeakReference<Any>?
     while ((referenceQueue.poll() as java.lang.ref.WeakReference<Any>?).also { reference = it } !=
-        null) {
+      null) {
       val identifier = weakReferencesToIdentifiers.remove(reference)
       if (identifier != null) {
         weakInstances.remove(identifier)
@@ -256,8 +258,8 @@ class AndroidWebkitLibraryPigeonInstanceManager(
   private fun logWarningIfFinalizationListenerHasStopped() {
     if (hasFinalizationListenerStopped()) {
       Log.w(
-          tag,
-          "The manager was used after calls to the PigeonFinalizationListener has been stopped.")
+        tag,
+        "The manager was used after calls to the PigeonFinalizationListener has been stopped.")
     }
   }
 }
@@ -273,26 +275,26 @@ private class AndroidWebkitLibraryPigeonInstanceManagerApi(val binaryMessenger: 
      * the `binaryMessenger`.
      */
     fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        instanceManager: AndroidWebkitLibraryPigeonInstanceManager?
+      binaryMessenger: BinaryMessenger,
+      instanceManager: AndroidWebkitLibraryPigeonInstanceManager?
     ) {
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference",
+            codec)
         if (instanceManager != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val identifierArg = args[0] as Long
             val wrapped: List<Any?> =
-                try {
-                  instanceManager.remove<Any?>(identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                instanceManager.remove<Any?>(identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -301,19 +303,19 @@ private class AndroidWebkitLibraryPigeonInstanceManagerApi(val binaryMessenger: 
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.clear",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.clear",
+            codec)
         if (instanceManager != null) {
           channel.setMessageHandler { _, reply ->
             val wrapped: List<Any?> =
-                try {
-                  instanceManager.clear()
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                instanceManager.clear()
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -325,14 +327,14 @@ private class AndroidWebkitLibraryPigeonInstanceManagerApi(val binaryMessenger: 
 
   fun removeStrongReference(identifierArg: Long, callback: (Result<Unit>) -> Unit) {
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference"
+      "dev.flutter.pigeon.webview_flutter_android.PigeonInternalInstanceManager.removeStrongReference"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(identifierArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -362,18 +364,18 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
   init {
     val api = AndroidWebkitLibraryPigeonInstanceManagerApi(binaryMessenger)
     instanceManager =
-        AndroidWebkitLibraryPigeonInstanceManager.create(
-            object : AndroidWebkitLibraryPigeonInstanceManager.PigeonFinalizationListener {
-              override fun onFinalize(identifier: Long) {
-                api.removeStrongReference(identifier) {
-                  if (it.isFailure) {
-                    Log.e(
-                        "PigeonProxyApiRegistrar",
-                        "Failed to remove Dart strong reference with identifier: $identifier")
-                  }
-                }
+      AndroidWebkitLibraryPigeonInstanceManager.create(
+        object : AndroidWebkitLibraryPigeonInstanceManager.PigeonFinalizationListener {
+          override fun onFinalize(identifier: Long) {
+            api.removeStrongReference(identifier) {
+              if (it.isFailure) {
+                Log.e(
+                  "PigeonProxyApiRegistrar",
+                  "Failed to remove Dart strong reference with identifier: $identifier")
               }
-            })
+            }
+          }
+        })
   }
   /**
    * An implementation of [PigeonApiWebResourceRequest] used to add a new Dart instance of
@@ -503,25 +505,25 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
 
   fun setUp() {
     AndroidWebkitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
-        binaryMessenger, instanceManager)
+      binaryMessenger, instanceManager)
     PigeonApiCookieManager.setUpMessageHandlers(binaryMessenger, getPigeonApiCookieManager())
     PigeonApiWebView.setUpMessageHandlers(binaryMessenger, getPigeonApiWebView())
     PigeonApiWebSettings.setUpMessageHandlers(binaryMessenger, getPigeonApiWebSettings())
     PigeonApiJavaScriptChannel.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiJavaScriptChannel())
+      binaryMessenger, getPigeonApiJavaScriptChannel())
     PigeonApiWebViewClient.setUpMessageHandlers(binaryMessenger, getPigeonApiWebViewClient())
     PigeonApiDownloadListener.setUpMessageHandlers(binaryMessenger, getPigeonApiDownloadListener())
     PigeonApiWebChromeClient.setUpMessageHandlers(binaryMessenger, getPigeonApiWebChromeClient())
     PigeonApiFlutterAssetManager.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiFlutterAssetManager())
+      binaryMessenger, getPigeonApiFlutterAssetManager())
     PigeonApiWebStorage.setUpMessageHandlers(binaryMessenger, getPigeonApiWebStorage())
     PigeonApiPermissionRequest.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiPermissionRequest())
+      binaryMessenger, getPigeonApiPermissionRequest())
     PigeonApiCustomViewCallback.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiCustomViewCallback())
+      binaryMessenger, getPigeonApiCustomViewCallback())
     PigeonApiView.setUpMessageHandlers(binaryMessenger, getPigeonApiView())
     PigeonApiGeolocationPermissionsCallback.setUpMessageHandlers(
-        binaryMessenger, getPigeonApiGeolocationPermissionsCallback())
+      binaryMessenger, getPigeonApiGeolocationPermissionsCallback())
     PigeonApiHttpAuthHandler.setUpMessageHandlers(binaryMessenger, getPigeonApiHttpAuthHandler())
   }
 
@@ -545,7 +547,7 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
 }
 
 private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
-    val registrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  val registrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) : AndroidWebkitLibraryPigeonCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -558,20 +560,20 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
 
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     if (value is Boolean ||
-        value is ByteArray ||
-        value is Double ||
-        value is DoubleArray ||
-        value is FloatArray ||
-        value is Int ||
-        value is IntArray ||
-        value is List<*> ||
-        value is Long ||
-        value is LongArray ||
-        value is Map<*, *> ||
-        value is String ||
-        value is FileChooserMode ||
-        value is ConsoleMessageLevel ||
-        value == null) {
+      value is ByteArray ||
+      value is Double ||
+      value is DoubleArray ||
+      value is FloatArray ||
+      value is Int ||
+      value is IntArray ||
+      value is List<*> ||
+      value is Long ||
+      value is LongArray ||
+      value is Map<*, *> ||
+      value is String ||
+      value is FileChooserMode ||
+      value is ConsoleMessageLevel ||
+      value == null) {
       super.writeValue(stream, value)
       return
     }
@@ -601,7 +603,7 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
     } else if (value is android.webkit.DownloadListener) {
       registrar.getPigeonApiDownloadListener().pigeon_newInstance(value) {}
     } else if (value
-        is io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl) {
+              is io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl) {
       registrar.getPigeonApiWebChromeClient().pigeon_newInstance(value) {}
     } else if (value is io.flutter.plugins.webviewflutter.FlutterAssetManager) {
       registrar.getPigeonApiFlutterAssetManager().pigeon_newInstance(value) {}
@@ -627,8 +629,8 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
         writeValue(stream, registrar.instanceManager.getIdentifierForStrongReference(value))
       }
       else ->
-          throw IllegalArgumentException(
-              "Unsupported value: '$value' of type '${value.javaClass.name}'")
+        throw IllegalArgumentException(
+          "Unsupported value: '$value' of type '${value.javaClass.name}'")
     }
   }
 }
@@ -761,7 +763,7 @@ private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebResourceRequest(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** The URL for which the resource request was made. */
   abstract fun url(pigeon_instance: android.webkit.WebResourceRequest): String
@@ -780,19 +782,19 @@ abstract class PigeonApiWebResourceRequest(
 
   /** The headers associated with the request. */
   abstract fun requestHeaders(
-      pigeon_instance: android.webkit.WebResourceRequest
+    pigeon_instance: android.webkit.WebResourceRequest
   ): Map<String, String>?
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of WebResourceRequest and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of WebResourceRequest and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebResourceRequest,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebResourceRequest,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -800,7 +802,7 @@ abstract class PigeonApiWebResourceRequest(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val urlArg = url(pigeon_instanceArg)
     val isForMainFrameArg = isForMainFrame(pigeon_instanceArg)
     val isRedirectArg = isRedirect(pigeon_instanceArg)
@@ -810,29 +812,29 @@ abstract class PigeonApiWebResourceRequest(
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.WebResourceRequest.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(
-        listOf(
-            pigeon_identifierArg,
-            urlArg,
-            isForMainFrameArg,
-            isRedirectArg,
-            hasGestureArg,
-            methodArg,
-            requestHeadersArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(
-                      AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+      listOf(
+        pigeon_identifierArg,
+        urlArg,
+        isForMainFrameArg,
+        isRedirectArg,
+        hasGestureArg,
+        methodArg,
+        requestHeadersArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
   }
 }
 /**
@@ -842,21 +844,21 @@ abstract class PigeonApiWebResourceRequest(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebResourceResponse(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** The resource response's status code. */
   abstract fun statusCode(pigeon_instance: android.webkit.WebResourceResponse): Long
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of WebResourceResponse and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of WebResourceResponse and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebResourceResponse,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebResourceResponse,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -864,19 +866,19 @@ abstract class PigeonApiWebResourceResponse(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val statusCodeArg = statusCode(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.WebResourceResponse.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg, statusCodeArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -893,7 +895,7 @@ abstract class PigeonApiWebResourceResponse(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebResourceError(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** The error code of the error. */
   @androidx.annotation.RequiresApi(api = 23)
@@ -907,13 +909,13 @@ abstract class PigeonApiWebResourceError(
   /** Creates a Dart instance of WebResourceError and attaches it to [pigeon_instanceArg]. */
   @androidx.annotation.RequiresApi(api = 23)
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebResourceError,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebResourceError,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -921,20 +923,20 @@ abstract class PigeonApiWebResourceError(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val errorCodeArg = errorCode(pigeon_instanceArg)
     val descriptionArg = description(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.WebResourceError.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg, errorCodeArg, descriptionArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -951,7 +953,7 @@ abstract class PigeonApiWebResourceError(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebResourceErrorCompat(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** The error code of the error. */
   abstract fun errorCode(pigeon_instance: androidx.webkit.WebResourceErrorCompat): Long
@@ -960,15 +962,15 @@ abstract class PigeonApiWebResourceErrorCompat(
   abstract fun description(pigeon_instance: androidx.webkit.WebResourceErrorCompat): String
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of WebResourceErrorCompat and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of WebResourceErrorCompat and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: androidx.webkit.WebResourceErrorCompat,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: androidx.webkit.WebResourceErrorCompat,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -976,20 +978,20 @@ abstract class PigeonApiWebResourceErrorCompat(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val errorCodeArg = errorCode(pigeon_instanceArg)
     val descriptionArg = description(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.WebResourceErrorCompat.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg, errorCodeArg, descriptionArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -1006,19 +1008,19 @@ abstract class PigeonApiWebResourceErrorCompat(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebViewPoint(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun x(pigeon_instance: WebViewPoint): Long
 
   abstract fun y(pigeon_instance: WebViewPoint): Long
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of WebViewPoint and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of WebViewPoint and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: WebViewPoint, callback: (Result<Unit>) -> Unit) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -1026,7 +1028,7 @@ abstract class PigeonApiWebViewPoint(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val xArg = x(pigeon_instanceArg)
     val yArg = y(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -1037,8 +1039,8 @@ abstract class PigeonApiWebViewPoint(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -1055,7 +1057,7 @@ abstract class PigeonApiWebViewPoint(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiConsoleMessage(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun lineNumber(pigeon_instance: android.webkit.ConsoleMessage): Long
 
@@ -1066,15 +1068,15 @@ abstract class PigeonApiConsoleMessage(
   abstract fun sourceId(pigeon_instance: android.webkit.ConsoleMessage): String
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of ConsoleMessage and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of ConsoleMessage and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.ConsoleMessage,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.ConsoleMessage,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -1082,7 +1084,7 @@ abstract class PigeonApiConsoleMessage(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val lineNumberArg = lineNumber(pigeon_instanceArg)
     val messageArg = message(pigeon_instanceArg)
     val levelArg = level(pigeon_instanceArg)
@@ -1095,8 +1097,8 @@ abstract class PigeonApiConsoleMessage(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -1113,7 +1115,7 @@ abstract class PigeonApiConsoleMessage(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiCookieManager(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun instance(): android.webkit.CookieManager
 
@@ -1122,15 +1124,15 @@ abstract class PigeonApiCookieManager(
 
   /** Removes all cookies. */
   abstract fun removeAllCookies(
-      pigeon_instance: android.webkit.CookieManager,
-      callback: (Result<Boolean>) -> Unit
+    pigeon_instance: android.webkit.CookieManager,
+    callback: (Result<Boolean>) -> Unit
   )
 
   /** Sets whether the `WebView` should allow third party cookies to be set. */
   abstract fun setAcceptThirdPartyCookies(
-      pigeon_instance: android.webkit.CookieManager,
-      webView: android.webkit.WebView,
-      accept: Boolean
+    pigeon_instance: android.webkit.CookieManager,
+    webView: android.webkit.WebView,
+    accept: Boolean
   )
 
   companion object {
@@ -1139,22 +1141,22 @@ abstract class PigeonApiCookieManager(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.CookieManager.instance",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.CookieManager.instance",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.instance(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                  api.instance(), pigeon_identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1163,10 +1165,10 @@ abstract class PigeonApiCookieManager(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.CookieManager.setCookie",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.CookieManager.setCookie",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1174,12 +1176,12 @@ abstract class PigeonApiCookieManager(
             val urlArg = args[1] as String
             val valueArg = args[2] as String
             val wrapped: List<Any?> =
-                try {
-                  api.setCookie(pigeon_instanceArg, urlArg, valueArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setCookie(pigeon_instanceArg, urlArg, valueArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1188,10 +1190,10 @@ abstract class PigeonApiCookieManager(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.CookieManager.removeAllCookies",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.CookieManager.removeAllCookies",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1212,10 +1214,10 @@ abstract class PigeonApiCookieManager(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.CookieManager.setAcceptThirdPartyCookies",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.CookieManager.setAcceptThirdPartyCookies",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1223,12 +1225,12 @@ abstract class PigeonApiCookieManager(
             val webViewArg = args[1] as android.webkit.WebView
             val acceptArg = args[2] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setAcceptThirdPartyCookies(pigeon_instanceArg, webViewArg, acceptArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setAcceptThirdPartyCookies(pigeon_instanceArg, webViewArg, acceptArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1239,15 +1241,15 @@ abstract class PigeonApiCookieManager(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of CookieManager and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of CookieManager and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.CookieManager,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.CookieManager,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -1255,7 +1257,7 @@ abstract class PigeonApiCookieManager(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.webview_flutter_android.CookieManager.pigeon_newInstance"
@@ -1264,8 +1266,8 @@ abstract class PigeonApiCookieManager(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -1282,7 +1284,7 @@ abstract class PigeonApiCookieManager(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebView(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun pigeon_defaultConstructor(): android.webkit.WebView
 
@@ -1291,27 +1293,27 @@ abstract class PigeonApiWebView(
 
   /** Loads the given data into this WebView using a 'data' scheme URL. */
   abstract fun loadData(
-      pigeon_instance: android.webkit.WebView,
-      data: String,
-      mimeType: String?,
-      encoding: String?
+    pigeon_instance: android.webkit.WebView,
+    data: String,
+    mimeType: String?,
+    encoding: String?
   )
 
   /** Loads the given data into this WebView, using baseUrl as the base URL for the content. */
   abstract fun loadDataWithBaseUrl(
-      pigeon_instance: android.webkit.WebView,
-      baseUrl: String?,
-      data: String,
-      mimeType: String?,
-      encoding: String?,
-      historyUrl: String?
+    pigeon_instance: android.webkit.WebView,
+    baseUrl: String?,
+    data: String,
+    mimeType: String?,
+    encoding: String?,
+    historyUrl: String?
   )
 
   /** Loads the given URL. */
   abstract fun loadUrl(
-      pigeon_instance: android.webkit.WebView,
-      url: String,
-      headers: Map<String, String>
+    pigeon_instance: android.webkit.WebView,
+    url: String,
+    headers: Map<String, String>
   )
 
   /** Loads the URL with postData using "POST" method into this WebView. */
@@ -1340,9 +1342,9 @@ abstract class PigeonApiWebView(
 
   /** Asynchronously evaluates JavaScript in the context of the currently displayed page. */
   abstract fun evaluateJavascript(
-      pigeon_instance: android.webkit.WebView,
-      javascriptString: String,
-      callback: (Result<String?>) -> Unit
+    pigeon_instance: android.webkit.WebView,
+    javascriptString: String,
+    callback: (Result<String?>) -> Unit
   )
 
   /** Gets the title for the current page. */
@@ -1356,14 +1358,14 @@ abstract class PigeonApiWebView(
 
   /** Sets the WebViewClient that will receive various notifications and requests. */
   abstract fun setWebViewClient(
-      pigeon_instance: android.webkit.WebView,
-      client: android.webkit.WebViewClient?
+    pigeon_instance: android.webkit.WebView,
+    client: android.webkit.WebViewClient?
   )
 
   /** Injects the supplied Java object into this WebView. */
   abstract fun addJavaScriptChannel(
-      pigeon_instance: android.webkit.WebView,
-      channel: JavaScriptChannel
+    pigeon_instance: android.webkit.WebView,
+    channel: JavaScriptChannel
   )
 
   /** Removes a previously injected Java object from this WebView. */
@@ -1374,14 +1376,14 @@ abstract class PigeonApiWebView(
    * should be downloaded instead.
    */
   abstract fun setDownloadListener(
-      pigeon_instance: android.webkit.WebView,
-      listener: android.webkit.DownloadListener?
+    pigeon_instance: android.webkit.WebView,
+    listener: android.webkit.DownloadListener?
   )
 
   /** Sets the chrome handler. */
   abstract fun setWebChromeClient(
-      pigeon_instance: android.webkit.WebView,
-      client: io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl?
+    pigeon_instance: android.webkit.WebView,
+    client: io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl?
   )
 
   /** Sets the background color for this view. */
@@ -1396,22 +1398,22 @@ abstract class PigeonApiWebView(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_defaultConstructor",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_defaultConstructor",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                  api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1420,23 +1422,23 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.settings",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.settings",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val pigeon_identifierArg = args[1] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.settings(pigeon_instanceArg), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                  api.settings(pigeon_instanceArg), pigeon_identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1445,10 +1447,10 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.loadData",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.loadData",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1457,12 +1459,12 @@ abstract class PigeonApiWebView(
             val mimeTypeArg = args[2] as String?
             val encodingArg = args[3] as String?
             val wrapped: List<Any?> =
-                try {
-                  api.loadData(pigeon_instanceArg, dataArg, mimeTypeArg, encodingArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.loadData(pigeon_instanceArg, dataArg, mimeTypeArg, encodingArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1471,10 +1473,10 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.loadDataWithBaseUrl",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.loadDataWithBaseUrl",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1485,18 +1487,18 @@ abstract class PigeonApiWebView(
             val encodingArg = args[4] as String?
             val historyUrlArg = args[5] as String?
             val wrapped: List<Any?> =
-                try {
-                  api.loadDataWithBaseUrl(
-                      pigeon_instanceArg,
-                      baseUrlArg,
-                      dataArg,
-                      mimeTypeArg,
-                      encodingArg,
-                      historyUrlArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.loadDataWithBaseUrl(
+                  pigeon_instanceArg,
+                  baseUrlArg,
+                  dataArg,
+                  mimeTypeArg,
+                  encodingArg,
+                  historyUrlArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1505,10 +1507,10 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.loadUrl",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.loadUrl",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1516,12 +1518,12 @@ abstract class PigeonApiWebView(
             val urlArg = args[1] as String
             val headersArg = args[2] as Map<String, String>
             val wrapped: List<Any?> =
-                try {
-                  api.loadUrl(pigeon_instanceArg, urlArg, headersArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.loadUrl(pigeon_instanceArg, urlArg, headersArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1530,10 +1532,10 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.postUrl",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.postUrl",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1541,12 +1543,12 @@ abstract class PigeonApiWebView(
             val urlArg = args[1] as String
             val dataArg = args[2] as ByteArray
             val wrapped: List<Any?> =
-                try {
-                  api.postUrl(pigeon_instanceArg, urlArg, dataArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.postUrl(pigeon_instanceArg, urlArg, dataArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1555,18 +1557,18 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.WebView.getUrl", codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.WebView.getUrl", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val wrapped: List<Any?> =
-                try {
-                  listOf(api.getUrl(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                listOf(api.getUrl(pigeon_instanceArg))
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1575,20 +1577,20 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.canGoBack",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.canGoBack",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val wrapped: List<Any?> =
-                try {
-                  listOf(api.canGoBack(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                listOf(api.canGoBack(pigeon_instanceArg))
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1597,20 +1599,20 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.canGoForward",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.canGoForward",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val wrapped: List<Any?> =
-                try {
-                  listOf(api.canGoForward(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                listOf(api.canGoForward(pigeon_instanceArg))
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1619,19 +1621,19 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.WebView.goBack", codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.WebView.goBack", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val wrapped: List<Any?> =
-                try {
-                  api.goBack(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.goBack(pigeon_instanceArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1640,21 +1642,21 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.goForward",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.goForward",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val wrapped: List<Any?> =
-                try {
-                  api.goForward(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.goForward(pigeon_instanceArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1663,19 +1665,19 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.WebView.reload", codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.WebView.reload", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val wrapped: List<Any?> =
-                try {
-                  api.reload(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.reload(pigeon_instanceArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1684,22 +1686,22 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.clearCache",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.clearCache",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val includeDiskFilesArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.clearCache(pigeon_instanceArg, includeDiskFilesArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.clearCache(pigeon_instanceArg, includeDiskFilesArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1708,10 +1710,10 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.evaluateJavascript",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.evaluateJavascript",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -1734,20 +1736,20 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.getTitle",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.getTitle",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val wrapped: List<Any?> =
-                try {
-                  listOf(api.getTitle(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                listOf(api.getTitle(pigeon_instanceArg))
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1756,21 +1758,21 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.setWebContentsDebuggingEnabled",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.setWebContentsDebuggingEnabled",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val enabledArg = args[0] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setWebContentsDebuggingEnabled(enabledArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setWebContentsDebuggingEnabled(enabledArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1779,22 +1781,22 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.setWebViewClient",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.setWebViewClient",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val clientArg = args[1] as android.webkit.WebViewClient?
             val wrapped: List<Any?> =
-                try {
-                  api.setWebViewClient(pigeon_instanceArg, clientArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setWebViewClient(pigeon_instanceArg, clientArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1803,22 +1805,22 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.addJavaScriptChannel",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.addJavaScriptChannel",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val channelArg = args[1] as JavaScriptChannel
             val wrapped: List<Any?> =
-                try {
-                  api.addJavaScriptChannel(pigeon_instanceArg, channelArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.addJavaScriptChannel(pigeon_instanceArg, channelArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1827,22 +1829,22 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.removeJavaScriptChannel",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.removeJavaScriptChannel",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val nameArg = args[1] as String
             val wrapped: List<Any?> =
-                try {
-                  api.removeJavaScriptChannel(pigeon_instanceArg, nameArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.removeJavaScriptChannel(pigeon_instanceArg, nameArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1851,22 +1853,22 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.setDownloadListener",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.setDownloadListener",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val listenerArg = args[1] as android.webkit.DownloadListener?
             val wrapped: List<Any?> =
-                try {
-                  api.setDownloadListener(pigeon_instanceArg, listenerArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setDownloadListener(pigeon_instanceArg, listenerArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1875,25 +1877,25 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.setWebChromeClient",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.setWebChromeClient",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val clientArg =
-                args[1]
-                    as
-                    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl?
+              args[1]
+                      as
+                      io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl?
             val wrapped: List<Any?> =
-                try {
-                  api.setWebChromeClient(pigeon_instanceArg, clientArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setWebChromeClient(pigeon_instanceArg, clientArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1902,22 +1904,22 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.setBackgroundColor",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.setBackgroundColor",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val colorArg = args[1] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.setBackgroundColor(pigeon_instanceArg, colorArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setBackgroundColor(pigeon_instanceArg, colorArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1926,21 +1928,21 @@ abstract class PigeonApiWebView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebView.destroy",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebView.destroy",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebView
             val wrapped: List<Any?> =
-                try {
-                  api.destroy(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.destroy(pigeon_instanceArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -1951,15 +1953,15 @@ abstract class PigeonApiWebView(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of WebView and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of WebView and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebView,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebView,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -1967,7 +1969,7 @@ abstract class PigeonApiWebView(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.webview_flutter_android.WebView.pigeon_newInstance"
@@ -1976,8 +1978,8 @@ abstract class PigeonApiWebView(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -1992,17 +1994,17 @@ abstract class PigeonApiWebView(
    * contents).
    */
   fun onScrollChanged(
-      pigeon_instanceArg: android.webkit.WebView,
-      leftArg: Long,
-      topArg: Long,
-      oldLeftArg: Long,
-      oldTopArg: Long,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebView,
+    leftArg: Long,
+    topArg: Long,
+    oldLeftArg: Long,
+    oldTopArg: Long,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2013,8 +2015,8 @@ abstract class PigeonApiWebView(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2025,7 +2027,7 @@ abstract class PigeonApiWebView(
   }
 
   @Suppress("FunctionName")
-  /** An implementation of [PigeonApiView] used to access callback methods */
+          /** An implementation of [PigeonApiView] used to access callback methods */
   fun pigeon_getPigeonApiView(): PigeonApiView {
     return pigeonRegistrar.getPigeonApiView()
   }
@@ -2037,21 +2039,21 @@ abstract class PigeonApiWebView(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebSettings(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** Sets whether the DOM storage API is enabled. */
   abstract fun setDomStorageEnabled(pigeon_instance: android.webkit.WebSettings, flag: Boolean)
 
   /** Tells JavaScript to open windows automatically. */
   abstract fun setJavaScriptCanOpenWindowsAutomatically(
-      pigeon_instance: android.webkit.WebSettings,
-      flag: Boolean
+    pigeon_instance: android.webkit.WebSettings,
+    flag: Boolean
   )
 
   /** Sets whether the WebView whether supports multiple windows. */
   abstract fun setSupportMultipleWindows(
-      pigeon_instance: android.webkit.WebSettings,
-      support: Boolean
+    pigeon_instance: android.webkit.WebSettings,
+    support: Boolean
   )
 
   /** Tells the WebView to enable JavaScript execution. */
@@ -2059,14 +2061,14 @@ abstract class PigeonApiWebSettings(
 
   /** Sets the WebView's user-agent string. */
   abstract fun setUserAgentString(
-      pigeon_instance: android.webkit.WebSettings,
-      userAgentString: String?
+    pigeon_instance: android.webkit.WebSettings,
+    userAgentString: String?
   )
 
   /** Sets whether the WebView requires a user gesture to play media. */
   abstract fun setMediaPlaybackRequiresUserGesture(
-      pigeon_instance: android.webkit.WebSettings,
-      require: Boolean
+    pigeon_instance: android.webkit.WebSettings,
+    require: Boolean
   )
 
   /**
@@ -2079,8 +2081,8 @@ abstract class PigeonApiWebSettings(
    * screen by width.
    */
   abstract fun setLoadWithOverviewMode(
-      pigeon_instance: android.webkit.WebSettings,
-      overview: Boolean
+    pigeon_instance: android.webkit.WebSettings,
+    overview: Boolean
   )
 
   /**
@@ -2122,22 +2124,22 @@ abstract class PigeonApiWebSettings(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDomStorageEnabled",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDomStorageEnabled",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val flagArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setDomStorageEnabled(pigeon_instanceArg, flagArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setDomStorageEnabled(pigeon_instanceArg, flagArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2146,22 +2148,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptCanOpenWindowsAutomatically",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptCanOpenWindowsAutomatically",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val flagArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setJavaScriptCanOpenWindowsAutomatically(pigeon_instanceArg, flagArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setJavaScriptCanOpenWindowsAutomatically(pigeon_instanceArg, flagArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2170,22 +2172,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportMultipleWindows",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportMultipleWindows",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val supportArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setSupportMultipleWindows(pigeon_instanceArg, supportArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setSupportMultipleWindows(pigeon_instanceArg, supportArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2194,22 +2196,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptEnabled",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setJavaScriptEnabled",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val flagArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setJavaScriptEnabled(pigeon_instanceArg, flagArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setJavaScriptEnabled(pigeon_instanceArg, flagArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2218,22 +2220,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setUserAgentString",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setUserAgentString",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val userAgentStringArg = args[1] as String?
             val wrapped: List<Any?> =
-                try {
-                  api.setUserAgentString(pigeon_instanceArg, userAgentStringArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setUserAgentString(pigeon_instanceArg, userAgentStringArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2242,22 +2244,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setMediaPlaybackRequiresUserGesture",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setMediaPlaybackRequiresUserGesture",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val requireArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setMediaPlaybackRequiresUserGesture(pigeon_instanceArg, requireArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setMediaPlaybackRequiresUserGesture(pigeon_instanceArg, requireArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2266,22 +2268,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportZoom",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setSupportZoom",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val supportArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setSupportZoom(pigeon_instanceArg, supportArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setSupportZoom(pigeon_instanceArg, supportArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2290,22 +2292,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setLoadWithOverviewMode",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setLoadWithOverviewMode",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val overviewArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setLoadWithOverviewMode(pigeon_instanceArg, overviewArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setLoadWithOverviewMode(pigeon_instanceArg, overviewArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2314,22 +2316,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setUseWideViewPort",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setUseWideViewPort",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val useArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setUseWideViewPort(pigeon_instanceArg, useArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setUseWideViewPort(pigeon_instanceArg, useArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2338,22 +2340,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDisplayZoomControls",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setDisplayZoomControls",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val enabledArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setDisplayZoomControls(pigeon_instanceArg, enabledArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setDisplayZoomControls(pigeon_instanceArg, enabledArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2362,22 +2364,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setBuiltInZoomControls",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setBuiltInZoomControls",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val enabledArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setBuiltInZoomControls(pigeon_instanceArg, enabledArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setBuiltInZoomControls(pigeon_instanceArg, enabledArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2386,22 +2388,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setAllowFileAccess",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setAllowFileAccess",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val enabledArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setAllowFileAccess(pigeon_instanceArg, enabledArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setAllowFileAccess(pigeon_instanceArg, enabledArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2410,22 +2412,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setAllowContentAccess",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setAllowContentAccess",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val enabledArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setAllowContentAccess(pigeon_instanceArg, enabledArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setAllowContentAccess(pigeon_instanceArg, enabledArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2434,22 +2436,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setGeolocationEnabled",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setGeolocationEnabled",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val enabledArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setGeolocationEnabled(pigeon_instanceArg, enabledArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setGeolocationEnabled(pigeon_instanceArg, enabledArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2458,22 +2460,22 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setTextZoom",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.setTextZoom",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val textZoomArg = args[1] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.setTextZoom(pigeon_instanceArg, textZoomArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setTextZoom(pigeon_instanceArg, textZoomArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2482,20 +2484,20 @@ abstract class PigeonApiWebSettings(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebSettings.getUserAgentString",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebSettings.getUserAgentString",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebSettings
             val wrapped: List<Any?> =
-                try {
-                  listOf(api.getUserAgentString(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                listOf(api.getUserAgentString(pigeon_instanceArg))
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2506,15 +2508,15 @@ abstract class PigeonApiWebSettings(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of WebSettings and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of WebSettings and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebSettings,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebSettings,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -2522,7 +2524,7 @@ abstract class PigeonApiWebSettings(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.webview_flutter_android.WebSettings.pigeon_newInstance"
@@ -2531,8 +2533,8 @@ abstract class PigeonApiWebSettings(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2550,7 +2552,7 @@ abstract class PigeonApiWebSettings(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiJavaScriptChannel(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun pigeon_defaultConstructor(channelName: String): JavaScriptChannel
 
@@ -2560,23 +2562,23 @@ abstract class PigeonApiJavaScriptChannel(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.pigeon_defaultConstructor",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.JavaScriptChannel.pigeon_defaultConstructor",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val channelNameArg = args[1] as String
             val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(channelNameArg), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                  api.pigeon_defaultConstructor(channelNameArg), pigeon_identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2587,12 +2589,12 @@ abstract class PigeonApiJavaScriptChannel(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of JavaScriptChannel and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of JavaScriptChannel and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: JavaScriptChannel, callback: (Result<Unit>) -> Unit) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -2600,19 +2602,19 @@ abstract class PigeonApiJavaScriptChannel(
       return
     }
     throw IllegalStateException(
-        "Attempting to create a new Dart instance of JavaScriptChannel, but the class has a nonnull callback method.")
+      "Attempting to create a new Dart instance of JavaScriptChannel, but the class has a nonnull callback method.")
   }
 
   /** Handles callbacks messages from JavaScript. */
   fun postMessage(
-      pigeon_instanceArg: JavaScriptChannel,
-      messageArg: String,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: JavaScriptChannel,
+    messageArg: String,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2623,8 +2625,8 @@ abstract class PigeonApiJavaScriptChannel(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2641,7 +2643,7 @@ abstract class PigeonApiJavaScriptChannel(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebViewClient(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun pigeon_defaultConstructor(): android.webkit.WebViewClient
 
@@ -2659,8 +2661,8 @@ abstract class PigeonApiWebViewClient(
    * Defaults to false.
    */
   abstract fun setSynchronousReturnValueForShouldOverrideUrlLoading(
-      pigeon_instance: android.webkit.WebViewClient,
-      value: Boolean
+    pigeon_instance: android.webkit.WebViewClient,
+    value: Boolean
   )
 
   companion object {
@@ -2669,22 +2671,22 @@ abstract class PigeonApiWebViewClient(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_defaultConstructor",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_defaultConstructor",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                  api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2693,23 +2695,23 @@ abstract class PigeonApiWebViewClient(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebViewClient.setSynchronousReturnValueForShouldOverrideUrlLoading",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebViewClient.setSynchronousReturnValueForShouldOverrideUrlLoading",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebViewClient
             val valueArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setSynchronousReturnValueForShouldOverrideUrlLoading(
-                      pigeon_instanceArg, valueArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setSynchronousReturnValueForShouldOverrideUrlLoading(
+                  pigeon_instanceArg, valueArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -2720,15 +2722,15 @@ abstract class PigeonApiWebViewClient(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of WebViewClient and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of WebViewClient and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -2736,7 +2738,7 @@ abstract class PigeonApiWebViewClient(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.webview_flutter_android.WebViewClient.pigeon_newInstance"
@@ -2745,8 +2747,8 @@ abstract class PigeonApiWebViewClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2758,15 +2760,15 @@ abstract class PigeonApiWebViewClient(
 
   /** Notify the host application that a page has started loading. */
   fun onPageStarted(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      urlArg: String,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    urlArg: String,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2777,8 +2779,8 @@ abstract class PigeonApiWebViewClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2790,15 +2792,15 @@ abstract class PigeonApiWebViewClient(
 
   /** Notify the host application that a page has finished loading. */
   fun onPageFinished(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      urlArg: String,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    urlArg: String,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2809,8 +2811,8 @@ abstract class PigeonApiWebViewClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2825,16 +2827,16 @@ abstract class PigeonApiWebViewClient(
    * a resource.
    */
   fun onReceivedHttpError(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      requestArg: android.webkit.WebResourceRequest,
-      responseArg: android.webkit.WebResourceResponse,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    requestArg: android.webkit.WebResourceRequest,
+    responseArg: android.webkit.WebResourceResponse,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2845,8 +2847,8 @@ abstract class PigeonApiWebViewClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2859,29 +2861,29 @@ abstract class PigeonApiWebViewClient(
   /** Report web resource loading error to the host application. */
   @androidx.annotation.RequiresApi(api = 23)
   fun onReceivedRequestError(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      requestArg: android.webkit.WebResourceRequest,
-      errorArg: android.webkit.WebResourceError,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    requestArg: android.webkit.WebResourceRequest,
+    errorArg: android.webkit.WebResourceError,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError"
+      "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestError"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, webViewArg, requestArg, errorArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2893,29 +2895,29 @@ abstract class PigeonApiWebViewClient(
 
   /** Report web resource loading error to the host application. */
   fun onReceivedRequestErrorCompat(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      requestArg: android.webkit.WebResourceRequest,
-      errorArg: androidx.webkit.WebResourceErrorCompat,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    requestArg: android.webkit.WebResourceRequest,
+    errorArg: androidx.webkit.WebResourceErrorCompat,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat"
+      "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedRequestErrorCompat"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, webViewArg, requestArg, errorArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -2927,17 +2929,17 @@ abstract class PigeonApiWebViewClient(
 
   /** Report an error to the host application. */
   fun onReceivedError(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      errorCodeArg: Long,
-      descriptionArg: String,
-      failingUrlArg: String,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    errorCodeArg: Long,
+    descriptionArg: String,
+    failingUrlArg: String,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2945,19 +2947,19 @@ abstract class PigeonApiWebViewClient(
     val channelName = "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedError"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(
-        listOf(pigeon_instanceArg, webViewArg, errorCodeArg, descriptionArg, failingUrlArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(
-                      AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+      listOf(pigeon_instanceArg, webViewArg, errorCodeArg, descriptionArg, failingUrlArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
   }
 
   /**
@@ -2965,15 +2967,15 @@ abstract class PigeonApiWebViewClient(
    * current WebView.
    */
   fun requestLoading(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      requestArg: android.webkit.WebResourceRequest,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    requestArg: android.webkit.WebResourceRequest,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2984,8 +2986,8 @@ abstract class PigeonApiWebViewClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3000,15 +3002,15 @@ abstract class PigeonApiWebViewClient(
    * current WebView.
    */
   fun urlLoading(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      urlArg: String,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    urlArg: String,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3019,8 +3021,8 @@ abstract class PigeonApiWebViewClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3032,29 +3034,29 @@ abstract class PigeonApiWebViewClient(
 
   /** Notify the host application to update its visited links database. */
   fun doUpdateVisitedHistory(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      urlArg: String,
-      isReloadArg: Boolean,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    urlArg: String,
+    isReloadArg: Boolean,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory"
+      "dev.flutter.pigeon.webview_flutter_android.WebViewClient.doUpdateVisitedHistory"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, webViewArg, urlArg, isReloadArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3066,30 +3068,30 @@ abstract class PigeonApiWebViewClient(
 
   /** Notifies the host application that the WebView received an HTTP authentication request. */
   fun onReceivedHttpAuthRequest(
-      pigeon_instanceArg: android.webkit.WebViewClient,
-      webViewArg: android.webkit.WebView,
-      handlerArg: android.webkit.HttpAuthHandler,
-      hostArg: String,
-      realmArg: String,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebViewClient,
+    webViewArg: android.webkit.WebView,
+    handlerArg: android.webkit.HttpAuthHandler,
+    hostArg: String,
+    realmArg: String,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest"
+      "dev.flutter.pigeon.webview_flutter_android.WebViewClient.onReceivedHttpAuthRequest"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, webViewArg, handlerArg, hostArg, realmArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3106,7 +3108,7 @@ abstract class PigeonApiWebViewClient(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiDownloadListener(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun pigeon_defaultConstructor(): android.webkit.DownloadListener
 
@@ -3116,22 +3118,22 @@ abstract class PigeonApiDownloadListener(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.DownloadListener.pigeon_defaultConstructor",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.DownloadListener.pigeon_defaultConstructor",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                  api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -3142,15 +3144,15 @@ abstract class PigeonApiDownloadListener(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of DownloadListener and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of DownloadListener and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.DownloadListener,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.DownloadListener,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -3158,23 +3160,23 @@ abstract class PigeonApiDownloadListener(
       return
     }
     throw IllegalStateException(
-        "Attempting to create a new Dart instance of DownloadListener, but the class has a nonnull callback method.")
+      "Attempting to create a new Dart instance of DownloadListener, but the class has a nonnull callback method.")
   }
 
   /** Notify the host application that a file should be downloaded. */
   fun onDownloadStart(
-      pigeon_instanceArg: android.webkit.DownloadListener,
-      urlArg: String,
-      userAgentArg: String,
-      contentDispositionArg: String,
-      mimetypeArg: String,
-      contentLengthArg: Long,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.DownloadListener,
+    urlArg: String,
+    userAgentArg: String,
+    contentDispositionArg: String,
+    mimetypeArg: String,
+    contentLengthArg: Long,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3182,25 +3184,25 @@ abstract class PigeonApiDownloadListener(
     val channelName = "dev.flutter.pigeon.webview_flutter_android.DownloadListener.onDownloadStart"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(
-        listOf(
-            pigeon_instanceArg,
-            urlArg,
-            userAgentArg,
-            contentDispositionArg,
-            mimetypeArg,
-            contentLengthArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(
-                      AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+      listOf(
+        pigeon_instanceArg,
+        urlArg,
+        userAgentArg,
+        contentDispositionArg,
+        mimetypeArg,
+        contentLengthArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
   }
 }
 /**
@@ -3210,10 +3212,10 @@ abstract class PigeonApiDownloadListener(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebChromeClient(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun pigeon_defaultConstructor():
-      io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
+          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
 
   /**
    * Sets the required synchronous return value for the Java method,
@@ -3232,9 +3234,9 @@ abstract class PigeonApiWebChromeClient(
    * Defaults to false.
    */
   abstract fun setSynchronousReturnValueForOnShowFileChooser(
-      pigeon_instance:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      value: Boolean
+    pigeon_instance:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    value: Boolean
   )
 
   /**
@@ -3251,9 +3253,9 @@ abstract class PigeonApiWebChromeClient(
    * Defaults to false.
    */
   abstract fun setSynchronousReturnValueForOnConsoleMessage(
-      pigeon_instance:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      value: Boolean
+    pigeon_instance:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    value: Boolean
   )
 
   /**
@@ -3270,9 +3272,9 @@ abstract class PigeonApiWebChromeClient(
    * Defaults to false.
    */
   abstract fun setSynchronousReturnValueForOnJsAlert(
-      pigeon_instance:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      value: Boolean
+    pigeon_instance:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    value: Boolean
   )
 
   /**
@@ -3289,9 +3291,9 @@ abstract class PigeonApiWebChromeClient(
    * Defaults to false.
    */
   abstract fun setSynchronousReturnValueForOnJsConfirm(
-      pigeon_instance:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      value: Boolean
+    pigeon_instance:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    value: Boolean
   )
 
   /**
@@ -3308,9 +3310,9 @@ abstract class PigeonApiWebChromeClient(
    * Defaults to false.
    */
   abstract fun setSynchronousReturnValueForOnJsPrompt(
-      pigeon_instance:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      value: Boolean
+    pigeon_instance:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    value: Boolean
   )
 
   companion object {
@@ -3319,22 +3321,22 @@ abstract class PigeonApiWebChromeClient(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.pigeon_defaultConstructor",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.pigeon_defaultConstructor",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                  api.pigeon_defaultConstructor(), pigeon_identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -3343,24 +3345,24 @@ abstract class PigeonApiWebChromeClient(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnShowFileChooser",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnShowFileChooser",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg =
-                args[0]
-                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
+              args[0]
+                      as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
             val valueArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setSynchronousReturnValueForOnShowFileChooser(pigeon_instanceArg, valueArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setSynchronousReturnValueForOnShowFileChooser(pigeon_instanceArg, valueArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -3369,24 +3371,24 @@ abstract class PigeonApiWebChromeClient(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnConsoleMessage",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnConsoleMessage",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg =
-                args[0]
-                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
+              args[0]
+                      as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
             val valueArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setSynchronousReturnValueForOnConsoleMessage(pigeon_instanceArg, valueArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setSynchronousReturnValueForOnConsoleMessage(pigeon_instanceArg, valueArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -3395,24 +3397,24 @@ abstract class PigeonApiWebChromeClient(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsAlert",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsAlert",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg =
-                args[0]
-                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
+              args[0]
+                      as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
             val valueArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setSynchronousReturnValueForOnJsAlert(pigeon_instanceArg, valueArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setSynchronousReturnValueForOnJsAlert(pigeon_instanceArg, valueArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -3421,24 +3423,24 @@ abstract class PigeonApiWebChromeClient(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsConfirm",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsConfirm",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg =
-                args[0]
-                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
+              args[0]
+                      as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
             val valueArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setSynchronousReturnValueForOnJsConfirm(pigeon_instanceArg, valueArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setSynchronousReturnValueForOnJsConfirm(pigeon_instanceArg, valueArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -3447,24 +3449,24 @@ abstract class PigeonApiWebChromeClient(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsPrompt",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.setSynchronousReturnValueForOnJsPrompt",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg =
-                args[0]
-                    as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
+              args[0]
+                      as io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl
             val valueArg = args[1] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.setSynchronousReturnValueForOnJsPrompt(pigeon_instanceArg, valueArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.setSynchronousReturnValueForOnJsPrompt(pigeon_instanceArg, valueArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -3475,16 +3477,16 @@ abstract class PigeonApiWebChromeClient(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of WebChromeClient and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of WebChromeClient and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -3492,18 +3494,18 @@ abstract class PigeonApiWebChromeClient(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3515,16 +3517,16 @@ abstract class PigeonApiWebChromeClient(
 
   /** Tell the host application the current progress of loading a page. */
   fun onProgressChanged(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      webViewArg: android.webkit.WebView,
-      progressArg: Long,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    webViewArg: android.webkit.WebView,
+    progressArg: Long,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3535,8 +3537,8 @@ abstract class PigeonApiWebChromeClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3548,16 +3550,16 @@ abstract class PigeonApiWebChromeClient(
 
   /** Tell the client to show a file chooser. */
   fun onShowFileChooser(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      webViewArg: android.webkit.WebView,
-      paramsArg: android.webkit.WebChromeClient.FileChooserParams,
-      callback: (Result<List<String>>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    webViewArg: android.webkit.WebView,
+    paramsArg: android.webkit.WebChromeClient.FileChooserParams,
+    callback: (Result<List<String>>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3568,15 +3570,15 @@ abstract class PigeonApiWebChromeClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(
-                      "null-error",
-                      "Flutter api returned null value for non-null return value.",
-                      "")))
+            Result.failure(
+              AndroidWebKitError(
+                "null-error",
+                "Flutter api returned null value for non-null return value.",
+                "")))
         } else {
           val output = it[0] as List<String>
           callback(Result.success(output))
@@ -3592,28 +3594,28 @@ abstract class PigeonApiWebChromeClient(
    * resources and the permission currently isn't granted or denied.
    */
   fun onPermissionRequest(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      requestArg: android.webkit.PermissionRequest,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    requestArg: android.webkit.PermissionRequest,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest"
+      "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onPermissionRequest"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, requestArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3625,16 +3627,16 @@ abstract class PigeonApiWebChromeClient(
 
   /** Callback to Dart function `WebChromeClient.onShowCustomView`. */
   fun onShowCustomView(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      viewArg: android.view.View,
-      callbackArg: android.webkit.WebChromeClient.CustomViewCallback,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    viewArg: android.view.View,
+    callbackArg: android.webkit.WebChromeClient.CustomViewCallback,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3645,8 +3647,8 @@ abstract class PigeonApiWebChromeClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3658,14 +3660,14 @@ abstract class PigeonApiWebChromeClient(
 
   /** Notify the host application that the current page has entered full screen mode. */
   fun onHideCustomView(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3676,8 +3678,8 @@ abstract class PigeonApiWebChromeClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3692,29 +3694,29 @@ abstract class PigeonApiWebChromeClient(
    * Geolocation API, but no permission state is currently set for that origin.
    */
   fun onGeolocationPermissionsShowPrompt(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      originArg: String,
-      callbackArg: android.webkit.GeolocationPermissions.Callback,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    originArg: String,
+    callbackArg: android.webkit.GeolocationPermissions.Callback,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt"
+      "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsShowPrompt"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg, originArg, callbackArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3729,27 +3731,27 @@ abstract class PigeonApiWebChromeClient(
    * call to `onGeolocationPermissionsShowPrompt` has been canceled.
    */
   fun onGeolocationPermissionsHidePrompt(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsHidePrompt"
+      "dev.flutter.pigeon.webview_flutter_android.WebChromeClient.onGeolocationPermissionsHidePrompt"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_instanceArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3761,15 +3763,15 @@ abstract class PigeonApiWebChromeClient(
 
   /** Report a JavaScript console message to the host application. */
   fun onConsoleMessage(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      messageArg: android.webkit.ConsoleMessage,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    messageArg: android.webkit.ConsoleMessage,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3780,8 +3782,8 @@ abstract class PigeonApiWebChromeClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3795,17 +3797,17 @@ abstract class PigeonApiWebChromeClient(
    * Notify the host application that the web page wants to display a JavaScript `alert()` dialog.
    */
   fun onJsAlert(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      webViewArg: android.webkit.WebView,
-      urlArg: String,
-      messageArg: String,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    webViewArg: android.webkit.WebView,
+    urlArg: String,
+    messageArg: String,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3816,8 +3818,8 @@ abstract class PigeonApiWebChromeClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -3831,17 +3833,17 @@ abstract class PigeonApiWebChromeClient(
    * Notify the host application that the web page wants to display a JavaScript `confirm()` dialog.
    */
   fun onJsConfirm(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      webViewArg: android.webkit.WebView,
-      urlArg: String,
-      messageArg: String,
-      callback: (Result<Boolean>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    webViewArg: android.webkit.WebView,
+    urlArg: String,
+    messageArg: String,
+    callback: (Result<Boolean>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3852,15 +3854,15 @@ abstract class PigeonApiWebChromeClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else if (it[0] == null) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(
-                      "null-error",
-                      "Flutter api returned null value for non-null return value.",
-                      "")))
+            Result.failure(
+              AndroidWebKitError(
+                "null-error",
+                "Flutter api returned null value for non-null return value.",
+                "")))
         } else {
           val output = it[0] as Boolean
           callback(Result.success(output))
@@ -3875,18 +3877,18 @@ abstract class PigeonApiWebChromeClient(
    * Notify the host application that the web page wants to display a JavaScript `prompt()` dialog.
    */
   fun onJsPrompt(
-      pigeon_instanceArg:
-          io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
-      webViewArg: android.webkit.WebView,
-      urlArg: String,
-      messageArg: String,
-      defaultValueArg: String,
-      callback: (Result<String?>) -> Unit
+    pigeon_instanceArg:
+    io.flutter.plugins.webviewflutter.WebChromeClientProxyApi.WebChromeClientImpl,
+    webViewArg: android.webkit.WebView,
+    urlArg: String,
+    messageArg: String,
+    defaultValueArg: String,
+    callback: (Result<String?>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     val binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3897,8 +3899,8 @@ abstract class PigeonApiWebChromeClient(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           val output = it[0] as String?
           callback(Result.success(output))
@@ -3916,7 +3918,7 @@ abstract class PigeonApiWebChromeClient(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiFlutterAssetManager(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** The global instance of the `FlutterAssetManager`. */
   abstract fun instance(): io.flutter.plugins.webviewflutter.FlutterAssetManager
@@ -3927,8 +3929,8 @@ abstract class PigeonApiFlutterAssetManager(
    * Throws an IOException in case I/O operations were interrupted.
    */
   abstract fun list(
-      pigeon_instance: io.flutter.plugins.webviewflutter.FlutterAssetManager,
-      path: String
+    pigeon_instance: io.flutter.plugins.webviewflutter.FlutterAssetManager,
+    path: String
   ): List<String>
 
   /**
@@ -3940,8 +3942,8 @@ abstract class PigeonApiFlutterAssetManager(
    * appropriate to load as an absolute path.
    */
   abstract fun getAssetFilePathByName(
-      pigeon_instance: io.flutter.plugins.webviewflutter.FlutterAssetManager,
-      name: String
+    pigeon_instance: io.flutter.plugins.webviewflutter.FlutterAssetManager,
+    name: String
   ): String
 
   companion object {
@@ -3950,22 +3952,22 @@ abstract class PigeonApiFlutterAssetManager(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.instance",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.instance",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.instance(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                  api.instance(), pigeon_identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -3974,22 +3976,22 @@ abstract class PigeonApiFlutterAssetManager(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.list",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.list",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg =
-                args[0] as io.flutter.plugins.webviewflutter.FlutterAssetManager
+              args[0] as io.flutter.plugins.webviewflutter.FlutterAssetManager
             val pathArg = args[1] as String
             val wrapped: List<Any?> =
-                try {
-                  listOf(api.list(pigeon_instanceArg, pathArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                listOf(api.list(pigeon_instanceArg, pathArg))
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -3998,22 +4000,22 @@ abstract class PigeonApiFlutterAssetManager(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.getAssetFilePathByName",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.getAssetFilePathByName",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg =
-                args[0] as io.flutter.plugins.webviewflutter.FlutterAssetManager
+              args[0] as io.flutter.plugins.webviewflutter.FlutterAssetManager
             val nameArg = args[1] as String
             val wrapped: List<Any?> =
-                try {
-                  listOf(api.getAssetFilePathByName(pigeon_instanceArg, nameArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                listOf(api.getAssetFilePathByName(pigeon_instanceArg, nameArg))
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4024,15 +4026,15 @@ abstract class PigeonApiFlutterAssetManager(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of FlutterAssetManager and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of FlutterAssetManager and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: io.flutter.plugins.webviewflutter.FlutterAssetManager,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: io.flutter.plugins.webviewflutter.FlutterAssetManager,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -4040,18 +4042,18 @@ abstract class PigeonApiFlutterAssetManager(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.FlutterAssetManager.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -4068,7 +4070,7 @@ abstract class PigeonApiFlutterAssetManager(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebStorage(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun instance(): android.webkit.WebStorage
 
@@ -4081,22 +4083,22 @@ abstract class PigeonApiWebStorage(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebStorage.instance",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebStorage.instance",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.instance(), pigeon_identifierArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+                  api.instance(), pigeon_identifierArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4105,21 +4107,21 @@ abstract class PigeonApiWebStorage(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.WebStorage.deleteAllData",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.WebStorage.deleteAllData",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebStorage
             val wrapped: List<Any?> =
-                try {
-                  api.deleteAllData(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.deleteAllData(pigeon_instanceArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4130,15 +4132,15 @@ abstract class PigeonApiWebStorage(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of WebStorage and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of WebStorage and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebStorage,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebStorage,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -4146,7 +4148,7 @@ abstract class PigeonApiWebStorage(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.webview_flutter_android.WebStorage.pigeon_newInstance"
@@ -4155,8 +4157,8 @@ abstract class PigeonApiWebStorage(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -4173,38 +4175,38 @@ abstract class PigeonApiWebStorage(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiFileChooserParams(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** Preference for a live media captured value (e.g. Camera, Microphone). */
   abstract fun isCaptureEnabled(
-      pigeon_instance: android.webkit.WebChromeClient.FileChooserParams
+    pigeon_instance: android.webkit.WebChromeClient.FileChooserParams
   ): Boolean
 
   /** An array of acceptable MIME types. */
   abstract fun acceptTypes(
-      pigeon_instance: android.webkit.WebChromeClient.FileChooserParams
+    pigeon_instance: android.webkit.WebChromeClient.FileChooserParams
   ): List<String>
 
   /** File chooser mode. */
   abstract fun mode(
-      pigeon_instance: android.webkit.WebChromeClient.FileChooserParams
+    pigeon_instance: android.webkit.WebChromeClient.FileChooserParams
   ): FileChooserMode
 
   /** File name of a default selection if specified, or null. */
   abstract fun filenameHint(
-      pigeon_instance: android.webkit.WebChromeClient.FileChooserParams
+    pigeon_instance: android.webkit.WebChromeClient.FileChooserParams
   ): String?
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of FileChooserParams and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of FileChooserParams and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebChromeClient.FileChooserParams,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebChromeClient.FileChooserParams,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -4212,7 +4214,7 @@ abstract class PigeonApiFileChooserParams(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val isCaptureEnabledArg = isCaptureEnabled(pigeon_instanceArg)
     val acceptTypesArg = acceptTypes(pigeon_instanceArg)
     val modeArg = mode(pigeon_instanceArg)
@@ -4220,23 +4222,23 @@ abstract class PigeonApiFileChooserParams(
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.FileChooserParams.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(
-        listOf(
-            pigeon_identifierArg, isCaptureEnabledArg, acceptTypesArg, modeArg, filenameHintArg)) {
-          if (it is List<*>) {
-            if (it.size > 1) {
-              callback(
-                  Result.failure(
-                      AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
-            } else {
-              callback(Result.success(Unit))
-            }
-          } else {
-            callback(Result.failure(createConnectionError(channelName)))
-          }
+      listOf(
+        pigeon_identifierArg, isCaptureEnabledArg, acceptTypesArg, modeArg, filenameHintArg)) {
+      if (it is List<*>) {
+        if (it.size > 1) {
+          callback(
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+        } else {
+          callback(Result.success(Unit))
         }
+      } else {
+        callback(Result.failure(createConnectionError(channelName)))
+      }
+    }
   }
 }
 /**
@@ -4247,7 +4249,7 @@ abstract class PigeonApiFileChooserParams(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiPermissionRequest(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   abstract fun resources(pigeon_instance: android.webkit.PermissionRequest): List<String>
 
@@ -4263,22 +4265,22 @@ abstract class PigeonApiPermissionRequest(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.PermissionRequest.grant",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.PermissionRequest.grant",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.PermissionRequest
             val resourcesArg = args[1] as List<String>
             val wrapped: List<Any?> =
-                try {
-                  api.grant(pigeon_instanceArg, resourcesArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.grant(pigeon_instanceArg, resourcesArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4287,21 +4289,21 @@ abstract class PigeonApiPermissionRequest(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.PermissionRequest.deny",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.PermissionRequest.deny",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.PermissionRequest
             val wrapped: List<Any?> =
-                try {
-                  api.deny(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.deny(pigeon_instanceArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4312,15 +4314,15 @@ abstract class PigeonApiPermissionRequest(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of PermissionRequest and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of PermissionRequest and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.PermissionRequest,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.PermissionRequest,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -4328,19 +4330,19 @@ abstract class PigeonApiPermissionRequest(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val resourcesArg = resources(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.PermissionRequest.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg, resourcesArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -4358,11 +4360,11 @@ abstract class PigeonApiPermissionRequest(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiCustomViewCallback(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** Invoked when the host application dismisses the custom view. */
   abstract fun onCustomViewHidden(
-      pigeon_instance: android.webkit.WebChromeClient.CustomViewCallback
+    pigeon_instance: android.webkit.WebChromeClient.CustomViewCallback
   )
 
   companion object {
@@ -4371,21 +4373,21 @@ abstract class PigeonApiCustomViewCallback(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.onCustomViewHidden",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.onCustomViewHidden",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.WebChromeClient.CustomViewCallback
             val wrapped: List<Any?> =
-                try {
-                  api.onCustomViewHidden(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.onCustomViewHidden(pigeon_instanceArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4396,15 +4398,15 @@ abstract class PigeonApiCustomViewCallback(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of CustomViewCallback and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of CustomViewCallback and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.WebChromeClient.CustomViewCallback,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.WebChromeClient.CustomViewCallback,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -4412,18 +4414,18 @@ abstract class PigeonApiCustomViewCallback(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.CustomViewCallback.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -4440,7 +4442,7 @@ abstract class PigeonApiCustomViewCallback(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiView(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** Set the scrolled position of your view. */
   abstract fun scrollTo(pigeon_instance: android.view.View, x: Long, y: Long)
@@ -4457,8 +4459,8 @@ abstract class PigeonApiView(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.View.scrollTo", codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.View.scrollTo", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -4466,12 +4468,12 @@ abstract class PigeonApiView(
             val xArg = args[1] as Long
             val yArg = args[2] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.scrollTo(pigeon_instanceArg, xArg, yArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.scrollTo(pigeon_instanceArg, xArg, yArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4480,8 +4482,8 @@ abstract class PigeonApiView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.View.scrollBy", codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger, "dev.flutter.pigeon.webview_flutter_android.View.scrollBy", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -4489,12 +4491,12 @@ abstract class PigeonApiView(
             val xArg = args[1] as Long
             val yArg = args[2] as Long
             val wrapped: List<Any?> =
-                try {
-                  api.scrollBy(pigeon_instanceArg, xArg, yArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.scrollBy(pigeon_instanceArg, xArg, yArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4503,20 +4505,20 @@ abstract class PigeonApiView(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.View.getScrollPosition",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.View.getScrollPosition",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.view.View
             val wrapped: List<Any?> =
-                try {
-                  listOf(api.getScrollPosition(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                listOf(api.getScrollPosition(pigeon_instanceArg))
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4527,12 +4529,12 @@ abstract class PigeonApiView(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of View and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of View and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: android.view.View, callback: (Result<Unit>) -> Unit) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -4540,7 +4542,7 @@ abstract class PigeonApiView(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName = "dev.flutter.pigeon.webview_flutter_android.View.pigeon_newInstance"
@@ -4549,8 +4551,8 @@ abstract class PigeonApiView(
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -4568,29 +4570,29 @@ abstract class PigeonApiView(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiGeolocationPermissionsCallback(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /** Sets the Geolocation permission state for the supplied origin. */
   abstract fun invoke(
-      pigeon_instance: android.webkit.GeolocationPermissions.Callback,
-      origin: String,
-      allow: Boolean,
-      retain: Boolean
+    pigeon_instance: android.webkit.GeolocationPermissions.Callback,
+    origin: String,
+    allow: Boolean,
+    retain: Boolean
   )
 
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(
-        binaryMessenger: BinaryMessenger,
-        api: PigeonApiGeolocationPermissionsCallback?
+      binaryMessenger: BinaryMessenger,
+      api: PigeonApiGeolocationPermissionsCallback?
     ) {
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.invoke",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.invoke",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -4599,12 +4601,12 @@ abstract class PigeonApiGeolocationPermissionsCallback(
             val allowArg = args[2] as Boolean
             val retainArg = args[3] as Boolean
             val wrapped: List<Any?> =
-                try {
-                  api.invoke(pigeon_instanceArg, originArg, allowArg, retainArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.invoke(pigeon_instanceArg, originArg, allowArg, retainArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4615,18 +4617,18 @@ abstract class PigeonApiGeolocationPermissionsCallback(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /**
-   * Creates a Dart instance of GeolocationPermissionsCallback and attaches it to
-   * [pigeon_instanceArg].
-   */
+          /**
+           * Creates a Dart instance of GeolocationPermissionsCallback and attaches it to
+           * [pigeon_instanceArg].
+           */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.GeolocationPermissions.Callback,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.GeolocationPermissions.Callback,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -4634,18 +4636,18 @@ abstract class PigeonApiGeolocationPermissionsCallback(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.GeolocationPermissionsCallback.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
@@ -4662,7 +4664,7 @@ abstract class PigeonApiGeolocationPermissionsCallback(
  */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiHttpAuthHandler(
-    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+  open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
 ) {
   /**
    * Gets whether the credentials stored for the current host (i.e. the host for which
@@ -4675,9 +4677,9 @@ abstract class PigeonApiHttpAuthHandler(
 
   /** Instructs the WebView to proceed with the authentication with the given credentials. */
   abstract fun proceed(
-      pigeon_instance: android.webkit.HttpAuthHandler,
-      username: String,
-      password: String
+    pigeon_instance: android.webkit.HttpAuthHandler,
+    username: String,
+    password: String
   )
 
   companion object {
@@ -4686,20 +4688,20 @@ abstract class PigeonApiHttpAuthHandler(
       val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.useHttpAuthUsernamePassword",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.useHttpAuthUsernamePassword",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.HttpAuthHandler
             val wrapped: List<Any?> =
-                try {
-                  listOf(api.useHttpAuthUsernamePassword(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                listOf(api.useHttpAuthUsernamePassword(pigeon_instanceArg))
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4708,21 +4710,21 @@ abstract class PigeonApiHttpAuthHandler(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.cancel",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.cancel",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.HttpAuthHandler
             val wrapped: List<Any?> =
-                try {
-                  api.cancel(pigeon_instanceArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.cancel(pigeon_instanceArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4731,10 +4733,10 @@ abstract class PigeonApiHttpAuthHandler(
       }
       run {
         val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.proceed",
-                codec)
+          BasicMessageChannel<Any?>(
+            binaryMessenger,
+            "dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.proceed",
+            codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
@@ -4742,12 +4744,12 @@ abstract class PigeonApiHttpAuthHandler(
             val usernameArg = args[1] as String
             val passwordArg = args[2] as String
             val wrapped: List<Any?> =
-                try {
-                  api.proceed(pigeon_instanceArg, usernameArg, passwordArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  wrapError(exception)
-                }
+              try {
+                api.proceed(pigeon_instanceArg, usernameArg, passwordArg)
+                listOf(null)
+              } catch (exception: Throwable) {
+                wrapError(exception)
+              }
             reply.reply(wrapped)
           }
         } else {
@@ -4758,15 +4760,15 @@ abstract class PigeonApiHttpAuthHandler(
   }
 
   @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of HttpAuthHandler and attaches it to [pigeon_instanceArg]. */
+          /** Creates a Dart instance of HttpAuthHandler and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(
-      pigeon_instanceArg: android.webkit.HttpAuthHandler,
-      callback: (Result<Unit>) -> Unit
+    pigeon_instanceArg: android.webkit.HttpAuthHandler,
+    callback: (Result<Unit>) -> Unit
   ) {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
-          Result.failure(
-              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+        Result.failure(
+          AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
       return
     }
     if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
@@ -4774,18 +4776,18 @@ abstract class PigeonApiHttpAuthHandler(
       return
     }
     val pigeon_identifierArg =
-        pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
     val binaryMessenger = pigeonRegistrar.binaryMessenger
     val codec = pigeonRegistrar.codec
     val channelName =
-        "dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.pigeon_newInstance"
+      "dev.flutter.pigeon.webview_flutter_android.HttpAuthHandler.pigeon_newInstance"
     val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
     channel.send(listOf(pigeon_identifierArg)) {
       if (it is List<*>) {
         if (it.size > 1) {
           callback(
-              Result.failure(
-                  AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+            Result.failure(
+              AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
         } else {
           callback(Result.success(Unit))
         }
