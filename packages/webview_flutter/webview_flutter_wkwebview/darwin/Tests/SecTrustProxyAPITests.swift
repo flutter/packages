@@ -102,24 +102,20 @@ class TestSecTrustProxyAPIDelegate: SecTrustProxyAPIDelegate {
     return SecCertificateCreateWithData(nil, certificateData!)!
   }
 
-  // Overridable for testing.
   override func secTrustEvaluateWithError(
     _ trust: SecTrust, _ error: UnsafeMutablePointer<CFError?>?
   ) -> Bool {
     return true
   }
 
-  // Overridable for testing.
   override func secTrustCopyExceptions(_ trust: SecTrust) -> CFData? {
     return Data() as CFData
   }
 
-  // Overridable for testing.
   override func secTrustSetExceptions(_ trust: SecTrust, _ exceptions: CFData?) -> Bool {
     return false
   }
 
-  // Overridable for testing.
   override func secTrustGetTrustResult(
     _ trust: SecTrust, _ result: UnsafeMutablePointer<SecTrustResultType>
   ) -> OSStatus {
@@ -127,7 +123,6 @@ class TestSecTrustProxyAPIDelegate: SecTrustProxyAPIDelegate {
     return -1
   }
 
-  // Overridable for testing.
   override func secTrustCopyCertificateChain(_ trust: SecTrust) -> CFArray? {
     if #available(iOS 15.0, *) {
       return [createDummyCertificate()] as CFArray
