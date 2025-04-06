@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Darwin
+import Security
 
 /// Data class used to respond to `SecTrustGetTrustResult`.
 ///
