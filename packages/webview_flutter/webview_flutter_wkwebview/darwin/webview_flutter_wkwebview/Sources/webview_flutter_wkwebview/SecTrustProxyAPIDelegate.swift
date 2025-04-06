@@ -21,7 +21,7 @@ import Foundation
 class SecTrustProxyAPIDelegate: PigeonApiDelegateSecTrust {
   func evaluateWithError(
     pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper,
-    completion: @escaping (Result<Bool, any Error>) -> Void
+    completion: @escaping (Result<Bool, Error>) -> Void
   ) {
     /// `SecTrustEvaluateWithError` should not be called on main thread, so this calls the method on a background thread.
     DispatchQueue.global().async {
