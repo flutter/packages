@@ -18,13 +18,20 @@ import Foundation
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class SecTrustProxyAPIDelegate : PigeonApiDelegateSecTrust {
-  func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> Bool {
-    var error: CFError?
-    let result = secTrustEvaluateWithError(trust.value, &error)
-    if let error = error {
-      throw PigeonError(code: CFErrorGetDomain(error) as String, message: CFErrorCopyDescription(error) as String, details: nil)
+  func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, completion: @escaping (Result<Bool, any Error>) -> Void) {
+    /// `SecTrustEvaluateWithError` should not be called on main thread, so this calls the method on a background thread.
+    DispatchQueue.global().async {
+      var error: CFError?
+      let result = self.secTrustEvaluateWithError(trust.value, &error)
+      
+      DispatchQueue.main.async {
+        if let error = error {
+          completion(Result.failure(PigeonError(code: CFErrorGetDomain(error) as String, message: CFErrorCopyDescription(error) as String, details: nil)))
+        } else {
+          completion(Result.success(result))
+        }
+      }
     }
-    return result
   }
 
   func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData? {

@@ -9735,7 +9735,7 @@ class GetTrustResultResponseProxyAPITests: XCTestCase {
 
 protocol PigeonApiDelegateSecTrust {
   /// Evaluates trust for the specified certificate and policies.
-  func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> Bool
+  func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, completion: @escaping (Result<Bool, Error>) -> Void)
   /// Returns an opaque cookie containing exceptions to trust policies that will
   /// allow future evaluations of the current certificate to succeed.
   func copyExceptions(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> FlutterStandardTypedData?
@@ -9774,11 +9774,13 @@ final class PigeonApiSecTrust: PigeonApiProtocolSecTrust  {
       evaluateWithErrorChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let trustArg = args[0] as! SecTrustWrapper
-        do {
-          let result = try api.pigeonDelegate.evaluateWithError(pigeonApi: api, trust: trustArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
+        api.pigeonDelegate.evaluateWithError(pigeonApi: api, trust: trustArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
+          }
         }
       }
     } else {
@@ -9895,7 +9897,7 @@ import Foundation
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class SecTrustProxyAPIDelegate : PigeonApiDelegateSecTrust {
-  func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper) throws -> Bool {
+  func evaluateWithError(pigeonApi: PigeonApiSecTrust, trust: SecTrustWrapper, completion: @escaping (Result<Bool, PigeonError>) -> Void) {
     return SecTrust.evaluateWithError(trust: trust)
   }
 

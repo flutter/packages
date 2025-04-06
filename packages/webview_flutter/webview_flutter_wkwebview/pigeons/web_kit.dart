@@ -1191,6 +1191,7 @@ abstract class GetTrustResultResponse extends NSObject {
 abstract class SecTrust extends NSObject {
   /// Evaluates trust for the specified certificate and policies.
   @static
+  @async
   bool evaluateWithError(SecTrust trust);
 
   /// Returns an opaque cookie containing exceptions to trust policies that will

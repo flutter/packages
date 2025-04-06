@@ -27,10 +27,22 @@ class SecTrustProxyAPITests: XCTestCase {
     let delegate = TestSecTrustProxyAPIDelegate()
     let api = PigeonApiSecTrust(pigeonRegistrar: registrar, delegate: delegate)
 
+    let expect = expectation(description: "Wait for setCookie.")
     let trust = createTrust(delegate: delegate)
-    let value = try? api.pigeonDelegate.evaluateWithError(pigeonApi: api, trust: trust)
+    var resultValue: Bool?
+    
+    api.pigeonDelegate.evaluateWithError(pigeonApi: api, trust: trust) { result in
+      switch result {
+      case .success(let value):
+        resultValue = value
+      case .failure(_):
+        break
+      }
+      expect.fulfill()
+    }
 
-    XCTAssertEqual(value, true)
+    wait(for: [expect], timeout: 5.0)
+    XCTAssertEqual(resultValue, true)
   }
   
   func testCopyExceptions() {
