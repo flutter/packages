@@ -74,9 +74,9 @@ class TestProtectionSpace: URLProtectionSpace, @unchecked Sendable {
   
   override var serverTrust: SecTrust? {
     if (serverTrustVal == nil) {
-      let key = FlutterAssetManager().lookupKeyForAsset("assets/test_cert.der")
-      let url = Bundle.main.path(forResource: key, ofType: nil)
-      let certificateData = NSData(contentsOfFile: url!)
+      let url = FlutterAssetManager().urlForAsset("assets/test_cert.der")!
+      
+      let certificateData = NSData(contentsOf: url)
       let dummyCertificate: SecCertificate! = SecCertificateCreateWithData(nil, certificateData!)
       
       var trust: SecTrust?

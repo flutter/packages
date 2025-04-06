@@ -16,11 +16,10 @@ import Foundation
 
 /// Implementation of `WebKitLibraryPigeonProxyApiRegistrar` that provides any additional resources needed by API implementations.
 open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
-  let assetManager = FlutterAssetManager()
-  let bundle: Bundle
+  let assetManager: FlutterAssetManager
 
-  init(binaryMessenger: FlutterBinaryMessenger, bundle: Bundle = Bundle.main) {
-    self.bundle = bundle
+  init(binaryMessenger: FlutterBinaryMessenger, assetManager: FlutterAssetManager = FlutterAssetManager()) {
+    self.assetManager = assetManager
     super.init(binaryMessenger: binaryMessenger, apiDelegate: ProxyAPIDelegate())
   }
 

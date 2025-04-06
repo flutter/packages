@@ -94,9 +94,8 @@ class SecTrustProxyAPITests: XCTestCase {
 
 class TestSecTrustProxyAPIDelegate : SecTrustProxyAPIDelegate {
   func createDummyCertificate() -> SecCertificate {
-    let key = FlutterAssetManager().lookupKeyForAsset("assets/test_cert.der")
-    let url = Bundle.main.path(forResource: key, ofType: nil)
-    let certificateData = NSData(contentsOfFile: url!)
+    let url = FlutterAssetManager().urlForAsset("assets/test_cert.der")!
+    let certificateData = NSData(contentsOf: url)
     
     return SecCertificateCreateWithData(nil, certificateData!)!
   }
