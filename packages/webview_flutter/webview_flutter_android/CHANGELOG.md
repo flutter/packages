@@ -1,3 +1,9 @@
+## 4.3.5
+
+* Gradle debug build stopped because some line of codes considered errors.
+* Putting same lambda in the removeCallbacks, it's not recognized as the same object and not removed.
+* 2 lines of code fixed.
+
 ## 4.3.4
 
 * Bumps gradle from 8.0.0 to 8.9.0.
