@@ -1,3 +1,53 @@
+## 25.2.0
+
+* [kotlin] Adds equality methods to generated data classes.
+
+## 25.1.0
+
+* [dart] Adds equality methods to generated data classes.
+
+## 25.0.0
+
+* **Breaking Change** Removes `oneLanguage` field from `PigeonOptions`.
+* Separates internal options classes from user facing options.
+* Adds `mergeDefinitionFileOptions` parameter to `runWithOptions` method.
+* Relocates `injectOverflowTypes` to non-public facing method.
+
+## 24.2.2
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 24.2.1
+
+* [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in an async method.
+
+## 24.2.0
+
+* Adjusts task queues to use a shared task queue for all methods in a single
+  API instance, to give the same ordering guarantees as non-task-queue usage.
+* [swift] Adds task queue support to the Swift generator.
+
+## 24.1.1
+
+* [swift, kotlin] Adds an error message when a ProxyAPI callback method that returns a non-null
+  value is nullable.
+* [swift, kotlin] Adds an error message in the `ProxyApiBaseCodec` when an instance could not be
+  retrieved when reading a value.
+* [swift, kotlin] Fixes ProxyAPI platform APIs not calling completion when creating a new instance.
+
+## 24.1.0
+
+* [kotlin, swift] Adds annotation options to omit shared classes used in Event Channels.
+
+## 24.0.0
+
+* **Breaking Change** Relocates some files in `lib` that were not intended for direct client use to `lib/src`.
+
+## 23.0.0
+
+* **Breaking Change** [swift] Fixes a compile error about PigeonError's sendability conformance in Swift 6.
+  * PigeonError's init now requires the "details" argument to be Sendable.
+
 ## 22.7.4
 
 * [dart] Fixes bug with multi-instance event channel support.

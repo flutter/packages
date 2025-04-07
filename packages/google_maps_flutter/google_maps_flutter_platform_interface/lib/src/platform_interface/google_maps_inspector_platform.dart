@@ -117,11 +117,7 @@ abstract class GoogleMapsInspectorPlatform extends PlatformInterface {
   }
 
   /// If the platform supports getting information about heatmaps.
-  bool supportsGettingHeatmapInfo() {
-    throw UnimplementedError(
-      'supportsGettingHeatmapInfo() has not been implemented.',
-    );
-  }
+  bool supportsGettingHeatmapInfo() => false;
 
   /// Returns information about the heatmap with the given ID.
   ///
@@ -132,9 +128,35 @@ abstract class GoogleMapsInspectorPlatform extends PlatformInterface {
     throw UnimplementedError('getHeatmapInfo() has not been implemented.');
   }
 
+  /// If the platform supports getting information about ground overlays.
+  bool supportsGettingGroundOverlayInfo() => false;
+
+  /// Returns information about the ground overlay with the given ID.
+  ///
+  /// The returned object will be synthesized from platform data, so will not
+  /// be the same Dart object as the original [GroundOverlay] provided to the
+  /// platform interface with that ID, and not all fields will be populated.
+  Future<GroundOverlay?> getGroundOverlayInfo(GroundOverlayId groundOverlayId,
+      {required int mapId}) {
+    throw UnimplementedError(
+        'getGroundOverlayInfo() has not been implemented.');
+  }
+
   /// Returns current clusters from [ClusterManager].
   Future<List<Cluster>> getClusters(
       {required int mapId, required ClusterManagerId clusterManagerId}) {
     throw UnimplementedError('getClusters() has not been implemented.');
+  }
+
+  /// If the platform supports getting camera position.
+  bool supportsGettingGameraPosition() => false;
+
+  /// Returns current camera position.
+  ///
+  /// The returned object will be synthesized from platform data, so will not
+  /// be the same Dart object as the original [CameraPosition] provided to the
+  /// platform interface with map initialization or with [CameraUpdate].
+  Future<CameraPosition> getCameraPosition({required int mapId}) {
+    throw UnimplementedError('getCameraPosition() has not been implemented.');
   }
 }

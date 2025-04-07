@@ -8,9 +8,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @protocol FLTPermissionServicing <NSObject>
-- (AVAuthorizationStatus)authorizationStatusForMediaType:(AVMediaType)mediaType;
+- (AVAuthorizationStatus)authorizationStatusForMediaType:(AVMediaType)mediaType
+    NS_SWIFT_NAME(authorizationStatus(for:));
 - (void)requestAccessForMediaType:(AVMediaType)mediaType
-                completionHandler:(void (^)(BOOL granted))handler;
+                completionHandler:(void (^)(BOOL granted))handler
+    NS_SWIFT_NAME(requestAccess(for:completion:));
 @end
 
 @interface FLTDefaultPermissionService : NSObject <FLTPermissionServicing>

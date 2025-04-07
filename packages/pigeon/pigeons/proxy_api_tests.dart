@@ -95,42 +95,42 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
   // ========== Non-nullable argument/return type tests ==========
 
   /// Returns the passed boolean, to test serialization and deserialization.
-  late bool Function(bool aBool)? flutterEchoBool;
+  late bool Function(bool aBool) flutterEchoBool;
 
   /// Returns the passed int, to test serialization and deserialization.
-  late int Function(int anInt)? flutterEchoInt;
+  late int Function(int anInt) flutterEchoInt;
 
   /// Returns the passed double, to test serialization and deserialization.
-  late double Function(double aDouble)? flutterEchoDouble;
+  late double Function(double aDouble) flutterEchoDouble;
 
   /// Returns the passed string, to test serialization and deserialization.
-  late String Function(String aString)? flutterEchoString;
+  late String Function(String aString) flutterEchoString;
 
   /// Returns the passed byte list, to test serialization and deserialization.
-  late Uint8List Function(Uint8List aList)? flutterEchoUint8List;
+  late Uint8List Function(Uint8List aList) flutterEchoUint8List;
 
   /// Returns the passed list, to test serialization and deserialization.
-  late List<Object?> Function(List<Object?> aList)? flutterEchoList;
+  late List<Object?> Function(List<Object?> aList) flutterEchoList;
 
   /// Returns the passed list with ProxyApis, to test serialization and
   /// deserialization.
-  late List<ProxyApiTestClass?> Function(List<ProxyApiTestClass?> aList)?
+  late List<ProxyApiTestClass?> Function(List<ProxyApiTestClass?> aList)
       flutterEchoProxyApiList;
 
   /// Returns the passed map, to test serialization and deserialization.
-  late Map<String?, Object?> Function(Map<String?, Object?> aMap)?
+  late Map<String?, Object?> Function(Map<String?, Object?> aMap)
       flutterEchoMap;
 
   /// Returns the passed map with ProxyApis, to test serialization and
   /// deserialization.
   late Map<String?, ProxyApiTestClass?> Function(
-      Map<String?, ProxyApiTestClass?> aMap)? flutterEchoProxyApiMap;
+      Map<String?, ProxyApiTestClass?> aMap) flutterEchoProxyApiMap;
 
   /// Returns the passed enum to test serialization and deserialization.
-  late ProxyApiTestEnum Function(ProxyApiTestEnum anEnum)? flutterEchoEnum;
+  late ProxyApiTestEnum Function(ProxyApiTestEnum anEnum) flutterEchoEnum;
 
   /// Returns the passed ProxyApi to test serialization and deserialization.
-  late ProxyApiSuperClass Function(ProxyApiSuperClass aProxyApi)?
+  late ProxyApiSuperClass Function(ProxyApiSuperClass aProxyApi)
       flutterEchoProxyApi;
 
   // ========== Nullable argument/return type tests ==========
@@ -177,7 +177,7 @@ abstract class ProxyApiTestClass extends ProxyApiSuperClass
 
   /// Returns the passed in generic Object asynchronously.
   @async
-  late String Function(String aString)? flutterEchoAsyncString;
+  late String Function(String aString) flutterEchoAsyncString;
 
   // ========== Synchronous host method tests ==========
 

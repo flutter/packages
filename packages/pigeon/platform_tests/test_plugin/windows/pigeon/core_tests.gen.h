@@ -1156,6 +1156,12 @@ class HostIntegrationCoreApi {
       const AnotherEnum* another_enum,
       std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)>
           result) = 0;
+  // Returns true if the handler is run on a main thread, which should be
+  // true since there is no TaskQueue annotation.
+  virtual ErrorOr<bool> DefaultIsMainThread() = 0;
+  // Returns true if the handler is run on a non-main thread, which should be
+  // true for any platform with TaskQueue support.
+  virtual ErrorOr<bool> TaskQueueIsBackgroundThread() = 0;
   virtual void CallFlutterNoop(
       std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterThrowError(

@@ -317,6 +317,20 @@ void main() {
         expect(goRouter.routerDelegate.canPop(), true);
       },
     );
+    testWidgets(
+      'It should return false if there are no matches in the stack',
+      (WidgetTester tester) async {
+        final GoRouter goRouter = GoRouter(
+          initialLocation: '/',
+          routes: <GoRoute>[],
+        );
+        addTearDown(goRouter.dispose);
+        await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
+        await tester.pumpAndSettle();
+        expect(goRouter.routerDelegate.currentConfiguration.matches.length, 0);
+        expect(goRouter.routerDelegate.canPop(), false);
+      },
+    );
   });
 
   group('pushReplacement', () {
