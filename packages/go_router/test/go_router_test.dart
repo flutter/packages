@@ -6448,6 +6448,271 @@ void main() {
           contains('Too many onEnter calls detected'));
       expect(find.text('Fallback'), findsOneWidget);
     });
+    testWidgets('Should handle `go` usage in onEnter',
+        (WidgetTester tester) async {
+      bool isAuthenticatedResult = false;
+
+      Future<bool> isAuthenticated() =>
+          Future<bool>.value(isAuthenticatedResult);
+
+      final StreamController<({String current, String next})> paramsSink =
+          StreamController<({String current, String next})>();
+      final Stream<({String current, String next})> paramsStream =
+          paramsSink.stream.asBroadcastStream();
+
+      router = GoRouter(
+        initialLocation: '/home',
+        onEnter: (
+          BuildContext context,
+          GoRouterState current,
+          GoRouterState next,
+          GoRouter goRouter,
+        ) async {
+          final bool isProtected = next.uri.toString().contains('protected');
+          paramsSink.add(
+              (current: current.uri.toString(), next: next.uri.toString()));
+
+          if (!isProtected) {
+            return true;
+          }
+          if (await isAuthenticated()) {
+            return true;
+          }
+          router.go('/sign-in');
+          return false;
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/home',
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Home'))),
+          ),
+          GoRoute(
+            path: '/protected',
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Protected'))),
+          ),
+          GoRoute(
+            path: '/sign-in',
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Sign-in'))),
+          ),
+        ],
+      );
+
+      expect(paramsStream, emits((current: '/home', next: '/home')));
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(
+        paramsStream,
+        emitsInOrder(<({String current, String next})>[
+          (current: '/home', next: '/protected'),
+          (current: '/home', next: '/sign-in')
+        ]),
+      );
+      router.go('/protected');
+      await tester.pumpAndSettle();
+      expect(router.state.uri.toString(), equals('/sign-in'));
+
+      isAuthenticatedResult = true;
+      expect(
+        paramsStream,
+        emits((current: '/sign-in', next: '/protected')),
+      );
+      router.go('/protected');
+      await tester.pumpAndSettle();
+
+      expect(router.state.uri.toString(), equals('/protected'));
+    });
+
+    testWidgets('Should handle `push` usage in onEnter',
+        (WidgetTester tester) async {
+      const bool isAuthenticatedResult = false;
+
+      Future<bool> isAuthenticated() =>
+          Future<bool>.value(isAuthenticatedResult);
+
+      final StreamController<({String current, String next})> paramsSink =
+          StreamController<({String current, String next})>();
+      final Stream<({String current, String next})> paramsStream =
+          paramsSink.stream.asBroadcastStream();
+
+      router = GoRouter(
+        initialLocation: '/home',
+        onEnter: (
+          BuildContext context,
+          GoRouterState current,
+          GoRouterState next,
+          GoRouter goRouter,
+        ) async {
+          final bool isProtected = next.uri.toString().contains('protected');
+          paramsSink.add(
+              (current: current.uri.toString(), next: next.uri.toString()));
+          if (!isProtected) {
+            return true;
+          }
+          if (await isAuthenticated()) {
+            return true;
+          }
+          await router.push<bool?>('/sign-in').then((bool? isLoggedIn) {
+            if (isLoggedIn ?? false) {
+              router.go(next.uri.toString());
+            }
+          });
+
+          return false;
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/home',
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Home'))),
+          ),
+          GoRoute(
+            path: '/protected',
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Protected'))),
+          ),
+          GoRoute(
+            path: '/sign-in',
+            builder: (_, __) => Scaffold(
+              appBar: AppBar(
+                title: const Text('Sign in'),
+              ),
+              body: const Center(child: Text('Sign-in')),
+            ),
+          ),
+        ],
+      );
+
+      expect(paramsStream, emits((current: '/home', next: '/home')));
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      router.go('/protected');
+      expect(
+        paramsStream,
+        emitsInOrder(<({String current, String next})>[
+          (current: '/home', next: '/protected'),
+          (current: '/home', next: '/sign-in')
+        ]),
+      );
+      await tester.pumpAndSettle();
+
+      expect(router.state.uri.toString(), equals('/sign-in'));
+      expect(find.byType(BackButton), findsOneWidget);
+
+      await tester.tap(find.byType(BackButton));
+      await tester.pumpAndSettle();
+
+      expect(router.state.uri.toString(), equals('/home'));
+    });
+
+    testWidgets('Should allow redirection with query parameters',
+        (WidgetTester tester) async {
+      bool isAuthenticatedResult = false;
+
+      Future<bool> isAuthenticated() =>
+          Future<bool>.value(isAuthenticatedResult);
+
+      final StreamController<({String current, String next})> paramsSink =
+          StreamController<({String current, String next})>();
+      final Stream<({String current, String next})> paramsStream =
+          paramsSink.stream.asBroadcastStream();
+
+      void goToRedirect(GoRouter router, GoRouterState state) {
+        final String redirect = state.uri.queryParameters['redirectTo'] ?? '';
+        if (redirect.isNotEmpty) {
+          router.go(Uri.decodeComponent(redirect));
+        }
+      }
+
+      router = GoRouter(
+        initialLocation: '/home',
+        onEnter: (
+          BuildContext context,
+          GoRouterState current,
+          GoRouterState next,
+          GoRouter goRouter,
+        ) async {
+          paramsSink.add(
+              (current: current.uri.toString(), next: next.uri.toString()));
+          final bool isProtected = next.uri.toString().startsWith('/protected');
+
+          if (!isProtected) {
+            return true;
+          }
+          if (await isAuthenticated()) {
+            return true;
+          }
+          await router.pushNamed<bool?>('sign-in',
+              queryParameters: <String, String>{
+                'redirectTo': next.uri.toString()
+              });
+          return false;
+        },
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/home',
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Home'))),
+          ),
+          GoRoute(
+            path: '/protected',
+            builder: (_, __) =>
+                const Scaffold(body: Center(child: Text('Protected'))),
+          ),
+          GoRoute(
+            path: '/sign-in',
+            name: 'sign-in',
+            builder: (_, GoRouterState state) => Scaffold(
+              appBar: AppBar(
+                title: const Text('Sign in'),
+              ),
+              body: Center(
+                child: ElevatedButton(
+                    child: const Text('Sign in'),
+                    onPressed: () => goToRedirect(router, state)),
+              ),
+            ),
+          ),
+        ],
+      );
+
+      expect(paramsStream, emits((current: '/home', next: '/home')));
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(
+        paramsStream,
+        emitsInOrder(<({String current, String next})>[
+          (current: '/home', next: '/protected'),
+          (current: '/home', next: '/sign-in')
+        ]),
+      );
+      router.go('/protected');
+
+      await tester.pumpAndSettle();
+      expect(router.state.uri.toString(),
+          equals('/sign-in?redirectTo=%2Fprotected'));
+
+      isAuthenticatedResult = true;
+      // TODO omar: This test is failing because current is still home here
+      expect(
+          paramsStream,
+          emits((
+            current: '/sign-in?redirectTo=%2Fprotected',
+            next: '/protected'
+          )));
+
+      await tester.tap(find.byType(ElevatedButton));
+      await tester.pumpAndSettle();
+
+      expect(router.state.uri.toString(), equals('/protected'));
+    });
   });
 }
 
