@@ -1,3 +1,7 @@
+## 2.12.1
+
+* Fixes typo in README.
+
 ## 2.12.0
 
 * Adds support for animating the camera with a duration.
