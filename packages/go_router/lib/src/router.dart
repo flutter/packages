@@ -14,6 +14,7 @@ import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'misc/inherited_router.dart';
+import 'on_enter.dart';
 import 'parser.dart';
 import 'route.dart';
 import 'state.dart';

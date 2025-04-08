@@ -1,6 +1,6 @@
-// on_enter.dart
 // ignore_for_file: use_build_context_synchronously
-// Copyright 2013 The Flutter Authors.
+
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,17 +11,31 @@ import 'package:flutter/widgets.dart';
 
 import '../go_router.dart';
 
-/// Handles the `onEnter` callback logic and redirection history for GoRouter.
+/// The signature for the top-level [onEnter] callback.
 ///
-/// This class encapsulates the logic to execute the top-level `onEnter`
-/// callback, track redirection history, enforce the redirection limit,
-/// and generate an error match list when the limit is exceeded.
+/// This callback receives the [BuildContext], the current navigation state,
+/// the state being navigated to, and a reference to the [GoRouter] instance.
+/// It returns a [Future<bool>] which should resolve to `true` if navigation
+/// is allowed, or `false` to block navigation.
+typedef OnEnter = Future<bool> Function(
+  BuildContext context,
+  GoRouterState currentState,
+  GoRouterState nextState,
+  GoRouter goRouter,
+);
+
+/// Handles the top-level [onEnter] callback logic and manages redirection history.
+///
+/// This class encapsulates the logic to execute the top-level [onEnter] callback,
+/// enforce the redirection limit defined in the router configuration, and generate
+/// an error match list when the limit is exceeded. It is used internally by [GoRouter]
+/// during route parsing.
 class OnEnterHandler {
   /// Creates an [OnEnterHandler] instance.
   ///
-  /// [configuration] is the route configuration.
-  /// [router] is used to access GoRouter methods.
-  /// [onParserException] is the exception handler for the parser.
+  /// * [configuration] is the current route configuration containing all route definitions.
+  /// * [router] is the [GoRouter] instance used for navigation actions.
+  /// * [onParserException] is an optional exception handler invoked on route parsing errors.
   OnEnterHandler({
     required RouteConfiguration configuration,
     required GoRouter router,
@@ -30,67 +44,57 @@ class OnEnterHandler {
         _configuration = configuration,
         _router = router;
 
-  /// The route configuration for the current router.
+  /// The current route configuration.
   ///
-  /// This object contains all the route definitions, redirection logic, and other
-  /// navigation settings. It is used to determine which routes match the incoming
-  /// URI and to build the corresponding navigation state.
+  /// Contains all route definitions, redirection logic, and navigation settings.
   final RouteConfiguration _configuration;
 
   /// Optional exception handler for route parsing errors.
   ///
-  /// When an error occurs during route parsing (e.g., when the onEnter redirection
-  /// limit is exceeded), this handler is invoked with the current [BuildContext]
-  /// and a [RouteMatchList] that contains the error details. It must conform to the
-  /// [ParserExceptionHandler] typedef and is responsible for returning a fallback
-  /// [RouteMatchList].
+  /// This handler is invoked when errors occur during route parsing (for example,
+  /// when the [onEnter] redirection limit is exceeded) to return a fallback [RouteMatchList].
   final ParserExceptionHandler? _onParserException;
 
   /// The [GoRouter] instance used to perform navigation actions.
   ///
-  /// This instance provides access to various navigation methods and serves as a
-  /// fallback when the [BuildContext] does not have an inherited GoRouter. It is
-  /// essential for executing onEnter callbacks and handling redirections.
+  /// This provides access to the imperative navigation methods (like [go], [push],
+  /// [replace], etc.) and serves as a fallback reference in case the [BuildContext]
+  /// does not include a [GoRouter].
   final GoRouter _router;
 
-  /// A history of URIs encountered during onEnter redirections.
+  /// A history of URIs encountered during [onEnter] redirections.
   ///
-  /// This list tracks each URI that triggers an onEnter redirection and is used to
-  /// enforce the redirection limit defined in [RouteConfiguration.redirectLimit]. It
-  /// helps prevent infinite redirection loops by generating an error if the limit is exceeded.
+  /// This list tracks every URI that triggers an [onEnter] redirection, ensuring that
+  /// the number of redirections does not exceed the limit defined in the router's configuration.
   final List<Uri> _redirectionHistory = <Uri>[];
 
-  /// Executes the top-level `onEnter` callback and decides whether navigation
-  /// should proceed.
+  /// Executes the top-level [onEnter] callback and determines whether navigation should proceed.
   ///
-  /// This method first checks for redirection errors via
-  /// [_redirectionErrorMatchList]. If no error is found, it builds the current
-  /// and next navigation states, executes the onEnter callback, and based on its
-  /// result returns either [onCanEnter] or [onCanNotEnter].
+  /// It checks for redirection errors by verifying if the redirection history exceeds the
+  /// configured limit. If everything is within limits, this method builds the current and
+  /// next navigation states, then executes the [onEnter] callback.
   ///
-  /// [context] is the BuildContext.
-  /// [routeInformation] is the current RouteInformation.
-  /// [infoState] is the state embedded in the RouteInformation.
-  /// [lastMatchList] is the last successful match list (if any).
-  /// [onCanEnter] is called when navigation is allowed.
-  /// [onCanNotEnter] is called when navigation is blocked.
+  /// * If [onEnter] returns `true`, the [onCanEnter] callback is invoked to allow navigation.
+  /// * If [onEnter] returns `false`, the [onCanNotEnter] callback is invoked to block navigation.
   ///
-  /// Returns a Future that resolves to a [RouteMatchList].
+  /// Exceptions thrown synchronously or asynchronously by [onEnter] are caught and processed
+  /// via the [_onParserException] handler if available.
+  ///
+  /// Returns a [Future<RouteMatchList>] representing the final navigation state.
   Future<RouteMatchList> handleTopOnEnter({
     required BuildContext context,
     required RouteInformation routeInformation,
     required RouteInformationState<dynamic> infoState,
-    required RouteMatchList? lastMatchList,
     required Future<RouteMatchList> Function() onCanEnter,
     required Future<RouteMatchList> Function() onCanNotEnter,
   }) {
     final OnEnter? topOnEnter = _configuration.topOnEnter;
-    // If no onEnter is configured, simply allow navigation.
+    // If no onEnter is configured, allow navigation immediately.
     if (topOnEnter == null) {
       return onCanEnter();
     }
 
-    // Check if the redirection history already exceeds the configured limit.
+    // Check if the redirection history exceeds the configured limit.
     final RouteMatchList? redirectionErrorMatchList =
         _redirectionErrorMatchList(context, routeInformation.uri, infoState);
 
@@ -99,7 +103,7 @@ class OnEnterHandler {
       return SynchronousFuture<RouteMatchList>(redirectionErrorMatchList);
     }
 
-    // Build route matches for the incoming URI.
+    // Find route matches for the incoming URI.
     final RouteMatchList incomingMatches = _configuration.findMatch(
       routeInformation.uri,
       extra: infoState.extra,
@@ -107,32 +111,115 @@ class OnEnterHandler {
 
     // Build the next navigation state.
     final GoRouterState nextState =
-        _configuration.buildTopLevelGoRouterState(incomingMatches);
-    // Use the last successful state if available.
-    final GoRouterState currentState = lastMatchList != null
-        ? _configuration.buildTopLevelGoRouterState(lastMatchList)
+        _buildTopLevelGoRouterState(incomingMatches);
+
+    // Get the current state from the router delegate.
+    final RouteMatchList currentMatchList =
+        _router.routerDelegate.currentConfiguration;
+    final GoRouterState currentState = currentMatchList.isNotEmpty
+        ? _buildTopLevelGoRouterState(currentMatchList)
         : nextState;
 
-    // Execute the onEnter callback and get a Future<bool> result.
-    final Future<bool> canEnterFuture = topOnEnter(
-      context,
-      currentState,
-      nextState,
-      _router,
-    );
-    // Reset history after attempting the callback.
+    // Execute the onEnter callback in a try-catch to capture synchronous exceptions.
+    Future<bool> canEnterFuture;
+    try {
+      canEnterFuture = topOnEnter(
+        context,
+        currentState,
+        nextState,
+        _router,
+      );
+    } catch (error) {
+      final RouteMatchList errorMatchList = _errorRouteMatchList(
+        routeInformation.uri,
+        error is GoException ? error : GoException(error.toString()),
+        extra: infoState.extra,
+      );
+
+      _resetRedirectionHistory();
+
+      return SynchronousFuture<RouteMatchList>(_onParserException != null
+          ? _onParserException(context, errorMatchList)
+          : errorMatchList);
+    }
+
+    // Reset the redirection history after attempting the callback.
     _resetRedirectionHistory();
-    // Return the appropriate match list based on whether navigation is allowed.
-    return canEnterFuture.then(
+
+    // Handle asynchronous completion and catch any errors.
+    return canEnterFuture.then<RouteMatchList>(
       (bool canEnter) => canEnter ? onCanEnter() : onCanNotEnter(),
+      onError: (Object error, StackTrace stackTrace) {
+        final RouteMatchList errorMatchList = _errorRouteMatchList(
+          routeInformation.uri,
+          error is GoException ? error : GoException(error.toString()),
+          extra: infoState.extra,
+        );
+
+        return _onParserException != null
+            ? _onParserException(context, errorMatchList)
+            : errorMatchList;
+      },
     );
   }
 
-  /// Processes the redirection history and checks for redirection limits.
+  /// Builds a [GoRouterState] based on the given [matchList].
   ///
-  /// Adds [redirectedUri] to the redirection history. If the number of redirections
-  /// exceeds [_configuration.redirectLimit], returns an error match list.
-  /// Otherwise, returns null.
+  /// This method derives the effective URI, full path, path parameters, and extra data from
+  /// the topmost route match, drilling down through nested shells if necessary.
+  ///
+  /// Returns a constructed [GoRouterState] reflecting the current or next navigation state.
+  GoRouterState _buildTopLevelGoRouterState(RouteMatchList matchList) {
+    // Determine effective navigation state from the match list.
+    Uri effectiveUri = matchList.uri;
+    String? effectiveFullPath = matchList.fullPath;
+    Map<String, String> effectivePathParams = matchList.pathParameters;
+    String effectiveMatchedLocation = matchList.uri.path;
+    Object? effectiveExtra = matchList.extra; // Base extra
+
+    if (matchList.matches.isNotEmpty) {
+      RouteMatchBase lastMatch = matchList.matches.last;
+      // Drill down to the actual leaf match even inside shell routes.
+      while (lastMatch is ShellRouteMatch) {
+        if (lastMatch.matches.isEmpty) {
+          break;
+        }
+        lastMatch = lastMatch.matches.last;
+      }
+
+      if (lastMatch is ImperativeRouteMatch) {
+        // Use state from the imperative match.
+        effectiveUri = lastMatch.matches.uri;
+        effectiveFullPath = lastMatch.matches.fullPath;
+        effectivePathParams = lastMatch.matches.pathParameters;
+        effectiveMatchedLocation = lastMatch.matches.uri.path;
+        effectiveExtra = lastMatch.matches.extra;
+      } else {
+        // For non-imperative matches, use the matched location and extra from the match list.
+        effectiveMatchedLocation = lastMatch.matchedLocation;
+        effectiveExtra = matchList.extra;
+      }
+    }
+
+    return GoRouterState(
+      _configuration,
+      uri: effectiveUri,
+      matchedLocation: effectiveMatchedLocation,
+      name: matchList.lastOrNull?.route.name,
+      path: matchList.lastOrNull?.route.path,
+      fullPath: effectiveFullPath,
+      pathParameters: effectivePathParams,
+      extra: effectiveExtra,
+      pageKey: const ValueKey<String>('topLevel'),
+      topRoute: matchList.lastOrNull?.route,
+      error: matchList.error,
+    );
+  }
+
+  /// Processes the redirection history and checks against the configured redirection limit.
+  ///
+  /// Adds [redirectedUri] to the history and, if the limit is exceeded, returns an error
+  /// match list. Otherwise, returns null.
   RouteMatchList? _redirectionErrorMatchList(
     BuildContext context,
     Uri redirectedUri,
@@ -148,7 +235,6 @@ class OnEnterHandler {
         extra: infoState.extra,
       );
       _resetRedirectionHistory();
-      // Use onParserException if available to process the error match list.
       return _onParserException != null
           ? _onParserException(context, errorMatchList)
           : errorMatchList;
@@ -156,17 +242,19 @@ class OnEnterHandler {
     return null;
   }
 
-  /// Resets the onEnter redirection history.
+  /// Clears the redirection history.
   void _resetRedirectionHistory() {
     _redirectionHistory.clear();
   }
 
-  /// Formats the redirection history as a string for error messages.
+  /// Formats the redirection history into a string for error reporting.
   String _formatOnEnterRedirectionHistory(List<Uri> history) {
     return history.map((Uri uri) => uri.toString()).join(' => ');
   }
 
-  /// Creates an error match list for a given [uri] and [exception].
+  /// Creates an error [RouteMatchList] for the given [uri] and [exception].
+  ///
+  /// This is used to encapsulate errors encountered during redirection or parsing.
   static RouteMatchList _errorRouteMatchList(
     Uri uri,
     GoException exception, {

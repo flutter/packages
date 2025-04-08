@@ -11,6 +11,7 @@ import 'package:flutter/widgets.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'misc/errors.dart';
+import 'on_enter.dart';
 import 'path_utils.dart';
 import 'route.dart';
 import 'router.dart';
@@ -20,14 +21,6 @@ import 'state.dart';
 typedef GoRouterRedirect = FutureOr<String?> Function(
   BuildContext context,
   GoRouterState state,
-);
-
-/// The signature of the onEnter callback.
-typedef OnEnter = Future<bool> Function(
-  BuildContext context,
-  GoRouterState currentState,
-  GoRouterState nextState,
-  GoRouter goRouter,
 );
 
 /// The route configuration for GoRouter configured by the app.

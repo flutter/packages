@@ -97,7 +97,6 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       context: context,
       routeInformation: routeInformation,
       infoState: infoState,
-      lastMatchList: _lastMatchList,
       onCanEnter: () => _navigate(routeInformation, context, infoState),
       onCanNotEnter: () {
         // If navigation is blocked, return the last successful match or a fallback.

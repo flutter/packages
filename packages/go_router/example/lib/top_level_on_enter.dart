@@ -50,11 +50,38 @@ class App extends StatelessWidget {
       initialLocation: '/home',
       debugLogDiagnostics: true,
 
+      /// Exception handler to gracefully handle errors in navigation
+      onException:
+          (BuildContext context, GoRouterState state, GoRouter router) {
+        // Show a user-friendly error message
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Navigation error: ${state.error}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Go Home',
+                onPressed: () => router.go('/home'),
+              ),
+            ),
+          );
+        }
+        // Log the error for debugging
+        debugPrint('Router exception: ${state.error}');
+
+        // Navigate to error screen if needed
+        if (state.uri.path == '/crash-test') {
+          router.go('/error');
+        }
+      },
+
       /// Handles incoming routes before navigation occurs.
       /// This callback can:
       /// 1. Block navigation and perform actions (return false)
       /// 2. Allow navigation to proceed (return true)
       /// 3. Show loading states during async operations
+      /// 4. Demonstrate exception handling
       onEnter: (
         BuildContext context,
         GoRouterState currentState,
@@ -69,14 +96,39 @@ class App extends StatelessWidget {
         // Handle special routes
         switch (nextState.uri.path) {
           case '/referral':
-            _handleReferralDeepLink(context, nextState);
+            final String? code = nextState.uri.queryParameters['code'];
+            if (code != null) {
+              // Use SnackBar for feedback instead of dialog
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Processing referral code...'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              }
+
+              // Process code in background - don't block with complex UI
+              await _processReferralCodeInBackground(context, code);
+            }
             return false; // Prevent navigation
 
           case '/auth':
             if (nextState.uri.queryParameters['token'] != null) {
-              _handleAuthCallback(context, nextState);
+              _handleAuthToken(
+                  context, nextState.uri.queryParameters['token']!);
               return false; // Prevent navigation
             }
+            return true;
+
+          case '/crash-test':
+            // Deliberately throw an exception to demonstrate error handling
+            throw Exception('Simulated error in onEnter callback!');
+
+          case '/bad-route':
+            // Runtime type error to test different error types
+            // ignore: unnecessary_cast
+            nextState.uri as int;
             return true;
 
           default:
@@ -84,6 +136,10 @@ class App extends StatelessWidget {
         }
       },
       routes: <RouteBase>[
+        GoRoute(
+          path: '/',
+          redirect: (BuildContext context, GoRouterState state) => '/home',
+        ),
         GoRoute(
           path: '/login',
           builder: (BuildContext context, GoRouterState state) =>
@@ -99,11 +155,26 @@ class App extends StatelessWidget {
           builder: (BuildContext context, GoRouterState state) =>
               const SettingsScreen(),
         ),
-        // Add route for testing purposes, but it won't navigate
+        // Add routes for demonstration purposes
         GoRoute(
           path: '/referral',
           builder: (BuildContext context, GoRouterState state) =>
               const SizedBox(), // Never reached
+        ),
+        GoRoute(
+          path: '/crash-test',
+          builder: (BuildContext context, GoRouterState state) =>
+              const SizedBox(), // Never reached
+        ),
+        GoRoute(
+          path: '/bad-route',
+          builder: (BuildContext context, GoRouterState state) =>
+              const SizedBox(), // Never reached
+        ),
+        GoRoute(
+          path: '/error',
+          builder: (BuildContext context, GoRouterState state) =>
+              const ErrorScreen(),
         ),
       ],
     );
@@ -116,88 +187,55 @@ class App extends StatelessWidget {
     });
   }
 
-  /// Processes referral deep links with loading state
-  void _handleReferralDeepLink(BuildContext context, GoRouterState state) {
-    final String? code = state.uri.queryParameters['code'];
-    if (code == null) {
+  /// Processes referral code in the background without blocking navigation
+  Future<void> _processReferralCodeInBackground(
+      BuildContext context, String code) async {
+    try {
+      final bool success = await ReferralService.processReferralCode(code);
+
+      if (!context.mounted) {
+        return;
+      }
+
+      // Show result with a simple SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            success
+                ? 'Referral code $code applied successfully!'
+                : 'Failed to apply referral code',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $error'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  /// Handles OAuth tokens with minimal UI interaction
+  void _handleAuthToken(BuildContext context, String token) {
+    if (!context.mounted) {
       return;
     }
 
-    // Show loading immediately
-    showDialog<dynamic>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) => const Center(
-        child: Card(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                CircularProgressIndicator(),
-                SizedBox(height: 16),
-                Text('Processing referral...'),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-
-    // Process referral asynchronously
-    ReferralService.processReferralCode(code).then(
-      (bool success) {
-        if (!context.mounted) {
-          return;
-        }
-
-        // Close loading dialog
-        Navigator.of(context).pop();
-
-        // Show result
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success
-                  ? 'Referral code $code applied successfully!'
-                  : 'Failed to apply referral code',
-            ),
-          ),
-        );
-      },
-      onError: (dynamic error) {
-        if (!context.mounted) {
-          return;
-        }
-
-        // Close loading dialog
-        Navigator.of(context).pop();
-
-        // Show error
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $error'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      },
-    );
-  }
-
-  /// Handles OAuth callback processing
-  void _handleAuthCallback(BuildContext context, GoRouterState state) {
-    final String token = state.uri.queryParameters['token']!;
-
-    // Show processing state
+    // Just show feedback, avoid complex UI
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Processing authentication...'),
-        duration: Duration(seconds: 1),
+      SnackBar(
+        content: Text('Processing auth token: $token'),
+        duration: const Duration(seconds: 2),
       ),
     );
 
-    // Process auth token asynchronously
-    // Replace with your actual auth logic
+    // Process in background
     Future<void>(() async {
       await Future<dynamic>.delayed(const Duration(seconds: 1));
       if (!context.mounted) {
@@ -206,18 +244,7 @@ class App extends StatelessWidget {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Processed auth token: $token'),
-        ),
-      );
-    }).catchError((dynamic error) {
-      if (!context.mounted) {
-        return;
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Auth error: $error'),
-          backgroundColor: Colors.red,
+          content: Text('Auth token processed: $token'),
         ),
       );
     });
@@ -268,6 +295,23 @@ class HomeScreen extends StatelessWidget {
               path: '/auth?token=abc123',
               description: 'Simulates OAuth callback',
             ),
+
+            // Exception Testing Section
+            const SizedBox(height: 24),
+            Text('Exception Handling Tests',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            const _DeepLinkButton(
+              label: 'Trigger Exception',
+              path: '/crash-test',
+              description: 'Throws exception in onEnter callback',
+            ),
+            const SizedBox(height: 8),
+            const _DeepLinkButton(
+              label: 'Type Error Exception',
+              path: '/bad-route',
+              description: 'Triggers a runtime type error',
+            ),
           ],
         ),
       ),
@@ -312,7 +356,6 @@ class _DeepLinkButton extends StatelessWidget {
 /// Login screen implementation
 class LoginScreen extends StatelessWidget {
   /// Login screen implementation
-
   const LoginScreen({super.key});
 
   @override
@@ -355,6 +398,43 @@ class SettingsScreen extends StatelessWidget {
               onTap: () => context.go('/login'),
             ),
           ],
+        ),
+      );
+}
+
+/// Error screen implementation
+class ErrorScreen extends StatelessWidget {
+  /// Error screen implementation
+  const ErrorScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Error'),
+          backgroundColor: Colors.red,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Icon(
+                Icons.error_outline,
+                color: Colors.red,
+                size: 60,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'An error occurred during navigation',
+                style: TextStyle(fontSize: 18),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: () => context.go('/home'),
+                icon: const Icon(Icons.home),
+                label: const Text('Return to Home'),
+              ),
+            ],
+          ),
         ),
       );
 }
