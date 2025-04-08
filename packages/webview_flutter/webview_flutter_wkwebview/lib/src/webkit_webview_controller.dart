@@ -547,6 +547,16 @@ class WebKitWebViewController extends PlatformWebViewController {
     return Offset(position[0], position[1]);
   }
 
+  @override
+  Future<void> setVerticalScrollBarEnabled(bool enabled) {
+    return _webView.scrollView.setShowsVerticalScrollIndicator(enabled);
+  }
+
+  @override
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) {
+    return _webView.scrollView.setShowsHorizontalScrollIndicator(enabled);
+  }
+
   /// Whether horizontal swipe gestures trigger page navigation.
   Future<void> setAllowsBackForwardNavigationGestures(bool enabled) {
     return _webView.setAllowsBackForwardNavigationGestures(enabled);

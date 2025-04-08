@@ -679,6 +679,36 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    test('setVerticalScrollBarEnabled', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await controller.setVerticalScrollBarEnabled(true);
+      verify(mockScrollView.setShowsVerticalScrollIndicator(true));
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('setHorizontalScrollBarEnabled', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await controller.setHorizontalScrollBarEnabled(false);
+      verify(mockScrollView.setShowsHorizontalScrollIndicator(false));
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     test('disable zoom', () async {
       final MockWKUserContentController mockUserContentController =
           MockWKUserContentController();
