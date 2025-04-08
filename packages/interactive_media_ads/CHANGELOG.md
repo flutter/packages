@@ -1,3 +1,11 @@
+## 0.2.3+10
+
+* Fixes `AdEventType`s not triggering on iOS in release mode.
+
+## 0.2.3+9
+
+* Bumps gradle from 8.0.0 to 8.9.0.
+
 ## 0.2.3+8
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.

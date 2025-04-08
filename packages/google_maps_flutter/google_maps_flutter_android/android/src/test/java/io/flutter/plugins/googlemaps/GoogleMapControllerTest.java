@@ -7,16 +7,25 @@ package io.flutter.plugins.googlemaps;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.os.Build;
 import androidx.activity.ComponentActivity;
 import androidx.test.core.app.ApplicationProvider;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -28,6 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
@@ -249,5 +259,65 @@ public class GoogleMapControllerTest {
     verify(mockHeatmapsController, times(1)).addHeatmaps(toAdd);
     verify(mockHeatmapsController, times(1)).changeHeatmaps(toChange);
     verify(mockHeatmapsController, times(1)).removeHeatmaps(idsToRemove);
+  }
+
+  @Test
+  public void AnimateCamera() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+    googleMapController.onMapReady(mockGoogleMap);
+
+    Messages.PlatformCameraUpdateZoomBy newCameraPosition =
+        new Messages.PlatformCameraUpdateZoomBy.Builder().setAmount(1.0).build();
+    Messages.PlatformCameraUpdate cameraUpdate =
+        new Messages.PlatformCameraUpdate.Builder().setCameraUpdate(newCameraPosition).build();
+
+    try (MockedStatic<CameraUpdateFactory> mockedFactory = mockStatic(CameraUpdateFactory.class)) {
+      mockedFactory
+          .when(() -> CameraUpdateFactory.zoomBy(anyFloat()))
+          .thenReturn(mock(CameraUpdate.class));
+      googleMapController.animateCamera(cameraUpdate, null);
+    }
+
+    verify(mockGoogleMap, times(1)).animateCamera(any(CameraUpdate.class));
+  }
+
+  @Test
+  public void AnimateCameraWithDuration() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+    googleMapController.onMapReady(mockGoogleMap);
+
+    Messages.PlatformCameraUpdateZoomBy newCameraPosition =
+        new Messages.PlatformCameraUpdateZoomBy.Builder().setAmount(1.0).build();
+    Messages.PlatformCameraUpdate cameraUpdate =
+        new Messages.PlatformCameraUpdate.Builder().setCameraUpdate(newCameraPosition).build();
+
+    Long durationMilliseconds = 1000L;
+
+    try (MockedStatic<CameraUpdateFactory> mockedFactory = mockStatic(CameraUpdateFactory.class)) {
+      mockedFactory
+          .when(() -> CameraUpdateFactory.zoomBy(anyFloat()))
+          .thenReturn(mock(CameraUpdate.class));
+      googleMapController.animateCamera(cameraUpdate, durationMilliseconds);
+    }
+
+    verify(mockGoogleMap, times(1))
+        .animateCamera(any(CameraUpdate.class), eq(durationMilliseconds.intValue()), isNull());
+  }
+
+  @Test
+  public void getCameraPositionReturnsCorrectData() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+    googleMapController.onMapReady(mockGoogleMap);
+
+    CameraPosition cameraPosition = new CameraPosition(new LatLng(10.0, 20.0), 15.0f, 30.0f, 45.0f);
+    when(mockGoogleMap.getCameraPosition()).thenReturn(cameraPosition);
+
+    Messages.PlatformCameraPosition result = googleMapController.getCameraPosition();
+
+    Assert.assertEquals(cameraPosition.target.latitude, result.getTarget().getLatitude(), 1e-15);
+    Assert.assertEquals(cameraPosition.target.longitude, result.getTarget().getLongitude(), 1e-15);
+    Assert.assertEquals(cameraPosition.zoom, result.getZoom(), 1e-15);
+    Assert.assertEquals(cameraPosition.tilt, result.getTilt(), 1e-15);
+    Assert.assertEquals(cameraPosition.bearing, result.getBearing(), 1e-15);
   }
 }

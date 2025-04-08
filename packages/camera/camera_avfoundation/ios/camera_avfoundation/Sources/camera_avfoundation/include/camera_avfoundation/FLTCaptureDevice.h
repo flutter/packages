@@ -22,40 +22,40 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSString *uniqueID;
 
 // Position/Orientation
-- (AVCaptureDevicePosition)position;
+@property(nonatomic, readonly) AVCaptureDevicePosition position;
 
 // Format/Configuration
 @property(nonatomic, retain) NSObject<FLTCaptureDeviceFormat> *activeFormat;
 @property(nonatomic, readonly) NSArray<NSObject<FLTCaptureDeviceFormat> *> *formats;
 
 // Flash/Torch
-- (BOOL)hasFlash;
-- (BOOL)hasTorch;
-- (BOOL)isTorchAvailable;
-- (AVCaptureTorchMode)torchMode;
-- (void)setTorchMode:(AVCaptureTorchMode)torchMode;
+@property(nonatomic, readonly) BOOL hasFlash;
+@property(nonatomic, readonly) BOOL hasTorch;
+@property(nonatomic, readonly, getter=isTorchAvailable) BOOL torchAvailable;
+@property(nonatomic) AVCaptureTorchMode torchMode;
 - (BOOL)isFlashModeSupported:(AVCaptureFlashMode)mode;
 
 // Focus
-- (BOOL)focusPointOfInterestSupported;
+@property(nonatomic, readonly, getter=isFocusPointOfInterestSupported)
+    BOOL focusPointOfInterestSupported;
 - (BOOL)isFocusModeSupported:(AVCaptureFocusMode)mode;
 - (void)setFocusMode:(AVCaptureFocusMode)focusMode;
 - (void)setFocusPointOfInterest:(CGPoint)point;
 
 // Exposure
-- (BOOL)exposurePointOfInterestSupported;
+@property(nonatomic, readonly, getter=isExposurePointOfInterestSupported)
+    BOOL exposurePointOfInterestSupported;
 - (void)setExposureMode:(AVCaptureExposureMode)exposureMode;
 - (void)setExposurePointOfInterest:(CGPoint)point;
-- (float)minExposureTargetBias;
-- (float)maxExposureTargetBias;
+@property(nonatomic, readonly) float minExposureTargetBias;
+@property(nonatomic, readonly) float maxExposureTargetBias;
 - (void)setExposureTargetBias:(float)bias completionHandler:(void (^_Nullable)(CMTime))handler;
 - (BOOL)isExposureModeSupported:(AVCaptureExposureMode)mode;
 
 // Zoom
-- (float)maxAvailableVideoZoomFactor;
-- (float)minAvailableVideoZoomFactor;
-- (float)videoZoomFactor;
-- (void)setVideoZoomFactor:(float)factor;
+@property(nonatomic, readonly) CGFloat maxAvailableVideoZoomFactor;
+@property(nonatomic, readonly) CGFloat minAvailableVideoZoomFactor;
+@property(nonatomic) CGFloat videoZoomFactor;
 
 // Camera Properties
 - (float)lensAperture;
@@ -63,14 +63,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (float)ISO;
 
 // Configuration Lock
-- (BOOL)lockForConfiguration:(NSError **)error;
+- (BOOL)lockForConfiguration:(NSError *_Nullable *_Nullable)outError;
 - (void)unlockForConfiguration;
 
 // Frame Duration
-- (CMTime)activeVideoMinFrameDuration;
-- (void)setActiveVideoMinFrameDuration:(CMTime)duration;
-- (CMTime)activeVideoMaxFrameDuration;
-- (void)setActiveVideoMaxFrameDuration:(CMTime)duration;
+@property(nonatomic) CMTime activeVideoMinFrameDuration;
+@property(nonatomic) CMTime activeVideoMaxFrameDuration;
 
 @end
 

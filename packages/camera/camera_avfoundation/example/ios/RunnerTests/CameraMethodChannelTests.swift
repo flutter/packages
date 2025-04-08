@@ -23,7 +23,7 @@ final class CameraMethodChannelTests: XCTestCase {
 
   func testCreate_ShouldCallResultOnMainThread() {
     let avCaptureSessionMock = MockCaptureSession()
-    avCaptureSessionMock.canSetSessionPreset = true
+    avCaptureSessionMock.canSetSessionPresetStub = { _ in true }
     let camera = createCameraPlugin(with: avCaptureSessionMock)
     let expectation = self.expectation(description: "Result finished")
 
@@ -48,7 +48,7 @@ final class CameraMethodChannelTests: XCTestCase {
 
   func testDisposeShouldDeallocCamera() {
     let avCaptureSessionMock = MockCaptureSession()
-    avCaptureSessionMock.canSetSessionPreset = true
+    avCaptureSessionMock.canSetSessionPresetStub = { _ in true }
     let camera = createCameraPlugin(with: avCaptureSessionMock)
     let createExpectation = self.expectation(description: "create's result block must be called")
 

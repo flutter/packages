@@ -649,9 +649,11 @@ abstract class MapsApi {
   @ObjCSelector('moveCameraWithUpdate:')
   void moveCamera(PlatformCameraUpdate cameraUpdate);
 
-  /// Moves the camera according to [cameraUpdate], animating the update.
-  @ObjCSelector('animateCameraWithUpdate:')
-  void animateCamera(PlatformCameraUpdate cameraUpdate);
+  /// Moves the camera according to [cameraUpdate], animating the update using a
+  /// duration in milliseconds if provided.
+  @ObjCSelector('animateCameraWithUpdate:duration:')
+  void animateCamera(
+      PlatformCameraUpdate cameraUpdate, int? durationMilliseconds);
 
   /// Gets the current map zoom level.
   @ObjCSelector('currentZoomLevel')
@@ -794,4 +796,6 @@ abstract class MapsInspectorApi {
   PlatformZoomRange getZoomRange();
   @ObjCSelector('clustersWithIdentifier:')
   List<PlatformCluster> getClusters(String clusterManagerId);
+  @ObjCSelector('cameraPosition')
+  PlatformCameraPosition getCameraPosition();
 }

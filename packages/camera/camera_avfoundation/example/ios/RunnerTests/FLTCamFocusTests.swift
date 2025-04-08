@@ -12,10 +12,10 @@ final class FLTCamSetFocusModeTests: XCTestCase {
     let mockDevice = MockCaptureDevice()
     let mockDeviceOrientationProvider = MockDeviceOrientationProvider()
 
-    let configuration = FLTCreateTestCameraConfiguration()
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureDeviceFactory = { mockDevice }
     configuration.deviceOrientationProvider = mockDeviceOrientationProvider
-    let camera = FLTCreateCamWithConfiguration(configuration)
+    let camera = FLTCam(configuration: configuration, error: nil)
 
     return (camera, mockDevice, mockDeviceOrientationProvider)
   }
@@ -122,9 +122,9 @@ final class FLTCamSetFocusModeTests: XCTestCase {
   func testSetFocusPointWithResult_SetsFocusPointOfInterest() {
     let (camera, mockDevice, mockDeviceOrientationProvider) = createCamera()
     // UI is currently in landscape left orientation.
-    mockDeviceOrientationProvider.orientation = .landscapeLeft
+    mockDeviceOrientationProvider.orientationStub = { .landscapeLeft }
     // Focus point of interest is supported.
-    mockDevice.focusPointOfInterestSupported = true
+    mockDevice.isFocusPointOfInterestSupported = true
 
     var setFocusPointOfInterestCalled = false
     mockDevice.setFocusPointOfInterestStub = { point in
@@ -143,9 +143,9 @@ final class FLTCamSetFocusModeTests: XCTestCase {
   func testSetFocusPoint_WhenNotSupported_ReturnsError() {
     let (camera, mockDevice, mockDeviceOrientationProvider) = createCamera()
     // UI is currently in landscape left orientation.
-    mockDeviceOrientationProvider.orientation = .landscapeLeft
+    mockDeviceOrientationProvider.orientationStub = { .landscapeLeft }
     // Focus point of interest is not supported.
-    mockDevice.focusPointOfInterestSupported = false
+    mockDevice.isFocusPointOfInterestSupported = false
 
     let expectation = self.expectation(description: "Completion with error")
 

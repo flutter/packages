@@ -278,6 +278,47 @@ Future<void> main() async {
     await expectLater(channelCompleter.future, completion('hello'));
   });
 
+  testWidgets('JavaScriptChannel can receive undefined',
+      (WidgetTester tester) async {
+    final Completer<void> pageFinished = Completer<void>();
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+    final Completer<String> channelCompleter = Completer<String>();
+    await controller.addJavaScriptChannel(
+      JavaScriptChannelParams(
+        name: 'Channel',
+        onMessageReceived: (JavaScriptMessage message) {
+          channelCompleter.complete(message.message);
+        },
+      ),
+    );
+
+    await controller.loadHtmlString(
+      'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    await pageFinished.future;
+
+    await controller.runJavaScript('Channel.postMessage(undefined);');
+    await expectLater(channelCompleter.future, completion('(null)'));
+  });
+
   testWidgets('resize webview', (WidgetTester tester) async {
     final Completer<void> buttonTapResizeCompleter = Completer<void>();
     final Completer<void> onPageFinished = Completer<void>();
@@ -342,46 +383,8 @@ Future<void> main() async {
   });
 
   group('Video playback policy', () {
-    late String videoTestBase64;
-    setUpAll(() async {
-      final ByteData videoData =
-          await rootBundle.load('assets/sample_video.mp4');
-      final String base64VideoData =
-          base64Encode(Uint8List.view(videoData.buffer));
-      final String videoTest = '''
-        <!DOCTYPE html><html>
-        <head><title>Video auto play</title>
-          <script type="text/javascript">
-            function play() {
-              var video = document.getElementById("video");
-              video.play();
-              video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
-            }
-            function videoTimeUpdateHandler(e) {
-              var video = document.getElementById("video");
-              VideoTestTime.postMessage(video.currentTime);
-            }
-            function isPaused() {
-              var video = document.getElementById("video");
-              return video.paused;
-            }
-            function isFullScreen() {
-              var video = document.getElementById("video");
-              return video.webkitDisplayingFullscreen;
-            }
-          </script>
-        </head>
-        <body onload="play();">
-        <video controls playsinline autoplay id="video">
-          <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
-        </video>
-        </body>
-        </html>
-      ''';
-      videoTestBase64 = base64Encode(const Utf8Encoder().convert(videoTest));
-    });
-
     testWidgets('Auto media playback', (WidgetTester tester) async {
+      final String videoTestBase64 = await getTestVideoBase64();
       Completer<void> pageLoaded = Completer<void>();
 
       WebKitWebViewController controller = WebKitWebViewController(
@@ -454,6 +457,7 @@ Future<void> main() async {
 
     testWidgets('Video plays inline when allowsInlineMediaPlayback is true',
         (WidgetTester tester) async {
+      final String videoTestBase64 = await getTestVideoBase64();
       final Completer<void> pageLoaded = Completer<void>();
       final Completer<void> videoPlaying = Completer<void>();
 
@@ -513,6 +517,7 @@ Future<void> main() async {
     testWidgets(
         'Video plays full screen when allowsInlineMediaPlayback is false',
         (WidgetTester tester) async {
+      final String videoTestBase64 = await getTestVideoBase64();
       final Completer<void> pageLoaded = Completer<void>();
       final Completer<void> videoPlaying = Completer<void>();
 
@@ -1724,4 +1729,40 @@ class ClassWithCallbackClass {
   }
 
   late final CopyableObjectWithCallback callbackClass;
+}
+
+Future<String> getTestVideoBase64() async {
+  final ByteData videoData = await rootBundle.load('assets/sample_video.mp4');
+  final String base64VideoData = base64Encode(Uint8List.view(videoData.buffer));
+  final String videoTest = '''
+        <!DOCTYPE html><html>
+        <head><title>Video auto play</title>
+          <script type="text/javascript">
+            function play() {
+              var video = document.getElementById("video");
+              video.play();
+              video.addEventListener('timeupdate', videoTimeUpdateHandler, false);
+            }
+            function videoTimeUpdateHandler(e) {
+              var video = document.getElementById("video");
+              VideoTestTime.postMessage(video.currentTime);
+            }
+            function isPaused() {
+              var video = document.getElementById("video");
+              return video.paused;
+            }
+            function isFullScreen() {
+              var video = document.getElementById("video");
+              return video.webkitDisplayingFullscreen;
+            }
+          </script>
+        </head>
+        <body onload="play();">
+        <video controls playsinline autoplay id="video">
+          <source src="data:video/mp4;charset=utf-8;base64,$base64VideoData">
+        </video>
+        </body>
+        </html>
+      ''';
+  return base64Encode(const Utf8Encoder().convert(videoTest));
 }
