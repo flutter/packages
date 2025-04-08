@@ -230,7 +230,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
       return;
     }
     [strongSelf.camera startImageStreamWithMessenger:strongSelf.messenger
-                                      withCompletion:completion];
+                                      completion:completion];
   });
 }
 

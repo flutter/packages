@@ -847,9 +847,9 @@ static void selectBestFormatForRequestedFrameRate(
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
   if (!_isRecording) {
     if (messenger != nil) {
-      // Start image stream without waiting for result.
+      // Start image stream without waiting for result. 
       [self startImageStreamWithMessenger:messenger
-                           withCompletion:^(FlutterError *_Nullable error){
+                           completion:^(FlutterError *_Nullable error){
                            }];
     }
 
@@ -1180,16 +1180,16 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                       withCompletion:(void (^)(FlutterError *))completion {
+                       completion:(void (^)(FlutterError *))completion {
   [self startImageStreamWithMessenger:messenger
                    imageStreamHandler:[[FLTImageStreamHandler alloc]
                                           initWithCaptureSessionQueue:_captureSessionQueue]
-                       withCompletion:completion];
+                       completion:completion];
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                    imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
-                       withCompletion:(void (^)(FlutterError *))completion {
+                       completion:(void (^)(FlutterError *))completion {
   if (!_isStreamingImages) {
     id<FLTEventChannel> eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
@@ -1202,12 +1202,18 @@ static void selectBestFormatForRequestedFrameRate(
     [threadSafeEventChannel setStreamHandler:_imageStreamHandler
                                   completion:^{
                                     typeof(self) strongSelf = weakSelf;
-                                    if (!strongSelf) return;
+                                    if (!strongSelf){
+                                        completion(nil);
+                                        return;
+                                    }
 
                                     dispatch_async(strongSelf.captureSessionQueue, ^{
                                       // cannot use the outter strongSelf
                                       typeof(self) strongSelf = weakSelf;
-                                      if (!strongSelf) return;
+                                      if (!strongSelf) {
+                                        completion(nil);
+                                        return;
+                                      }
 
                                       strongSelf.isStreamingImages = YES;
                                       strongSelf.streamingPendingFramesCount = 0;
@@ -1216,6 +1222,7 @@ static void selectBestFormatForRequestedFrameRate(
                                   }];
   } else {
     [self reportErrorMessage:@"Images from camera are already streaming!"];
+    completion(nil);
   }
 }
 

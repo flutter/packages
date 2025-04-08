@@ -48,7 +48,7 @@ final class StreamingTests: XCTestCase {
     let messenger = MockFlutterBinaryMessenger()
     camera.startImageStream(
       with: messenger, imageStreamHandler: handlerMock,
-      withCompletion: {
+      completion: {
         _ in
         finishStartStreamExpectation.fulfill()
       })
@@ -86,7 +86,7 @@ final class StreamingTests: XCTestCase {
     let messenger = MockFlutterBinaryMessenger()
     camera.startImageStream(
       with: messenger, imageStreamHandler: handlerMock,
-      withCompletion: {
+      completion: {
         _ in
         finishStartStreamExpectation.fulfill()
       })

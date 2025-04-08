@@ -55,8 +55,8 @@ final class CameraInitRaceConditionsTests: XCTestCase {
 
   func testFlutterChannelInitializedWhenStartingImageStream() {
     let cameraPlugin = createCameraPlugin()
-    let configuration = FLTCreateTestCameraConfiguration()
-    cameraPlugin.camera = FLTCreateCamWithConfiguration(configuration)
+    let configuration = CameraTestUtils.createTestCameraConfiguration()
+    cameraPlugin.camera = FLTCam(configuration: configuration, error: nil)
 
     let createExpectation = expectation(description: "create's result block must be called")
 
@@ -84,9 +84,7 @@ final class CameraInitRaceConditionsTests: XCTestCase {
     })
 
     waitForExpectations(timeout: 30, handler: nil)
-
     XCTAssertEqual(cameraPlugin.camera?.isStreamingImages, true)
-
   }
 
 }

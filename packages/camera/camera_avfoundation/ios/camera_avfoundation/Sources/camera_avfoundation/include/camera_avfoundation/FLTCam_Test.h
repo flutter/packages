@@ -51,6 +51,6 @@
 /// Start streaming images.
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                    imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
-                       withCompletion:(void (^)(FlutterError *))completion;
+                       completion:(void (^)(FlutterError *))completion;
 
 @end

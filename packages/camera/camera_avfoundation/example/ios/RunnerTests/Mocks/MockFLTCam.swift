@@ -183,7 +183,7 @@ final class MockFLTCam: FLTCam {
 
   override func startImageStream(
     with messenger: FlutterBinaryMessenger,
-    withCompletion completion: @escaping (FlutterError?) -> Void
+    completion: @escaping (FlutterError?) -> Void
   ) {
     startImageStreamStub?(messenger, completion)
   }
