@@ -311,26 +311,26 @@ void main() {
     );
   });
 
-  test('Default implementation of verticalScrollBarEnabled should throw unimplemented error',
+  test('Default implementation of setVerticalScrollBarEnabled should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
             const PlatformWebViewControllerCreationParams());
 
     expect(
-      () => controller.verticalScrollBarEnabled(false),
+      () => controller.setVerticalScrollBarEnabled(false),
       throwsUnimplementedError,
     );
   });
 
-  test('Default implementation of horizontalScrollBarEnabled should throw unimplemented error',
+  test('Default implementation of setHorizontalScrollBarEnabled should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
             const PlatformWebViewControllerCreationParams());
 
     expect(
-      () => controller.horizontalScrollBarEnabled(false),
+      () => controller.setHorizontalScrollBarEnabled(false),
       throwsUnimplementedError,
     );
   });
