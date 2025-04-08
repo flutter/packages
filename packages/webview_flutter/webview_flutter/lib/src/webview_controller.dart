@@ -406,14 +406,14 @@ class WebViewController {
     return platform.setOnScrollPositionChange(onScrollPositionChange);
   }
 
-  /// Define whether the vertical scrollbar should be drawn or not. The default value is true.
-  Future<void> verticalScrollBarEnabled(bool enabled) {
-    return platform.verticalScrollBarEnabled(enabled);
+  /// Whether the vertical scrollbar should be drawn or not.
+  Future<void> setVerticalScrollBarEnabled(bool enabled) {
+    return platform.setVerticalScrollBarEnabled(enabled);
   }
 
-  /// Define whether the horizontal scrollbar should be drawn or not. The default value is true.
-  Future<void> horizontalScrollBarEnabled(bool enabled) {
-    return platform.horizontalScrollBarEnabled(enabled);
+  /// Whether the horizontal scrollbar should be drawn or not.
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) {
+    return platform.setHorizontalScrollBarEnabled(enabled);
   }
 }
 

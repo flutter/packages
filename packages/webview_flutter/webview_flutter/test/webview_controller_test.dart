@@ -281,7 +281,7 @@ void main() {
     verify(mockPlatformWebViewController.scrollBy(2, 3));
   });
 
-  test('verticalScrollBarEnabled', () async {
+  test('setVerticalScrollBarEnabled', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
 
@@ -289,11 +289,11 @@ void main() {
       mockPlatformWebViewController,
     );
 
-    await webViewController.verticalScrollBarEnabled(false);
-    verify(mockPlatformWebViewController.verticalScrollBarEnabled(false));
+    await webViewController.setVerticalScrollBarEnabled(true);
+    verify(mockPlatformWebViewController.setVerticalScrollBarEnabled(true));
   });
 
-  test('horizontalScrollBarEnabled', () async {
+  test('setHorizontalScrollBarEnabled', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
 
@@ -301,8 +301,8 @@ void main() {
       mockPlatformWebViewController,
     );
 
-    await webViewController.horizontalScrollBarEnabled(false);
-    verify(mockPlatformWebViewController.horizontalScrollBarEnabled(false));
+    await webViewController.setHorizontalScrollBarEnabled(false);
+    verify(mockPlatformWebViewController.setHorizontalScrollBarEnabled(false));
   });
 
   test('getScrollPosition', () async {
