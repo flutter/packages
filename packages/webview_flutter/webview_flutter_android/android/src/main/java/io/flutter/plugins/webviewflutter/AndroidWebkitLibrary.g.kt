@@ -77,6 +77,7 @@ class AndroidWebkitLibraryPigeonInstanceManager(
   private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
   private val weakReferencesToIdentifiers = HashMap<java.lang.ref.WeakReference<Any>, Long>()
   private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+  private val releaseAllFinalizedInstancesRunnable = { this.releaseAllFinalizedInstances() }
   private var nextIdentifier: Long = minHostCreatedIdentifier
   private var hasFinalizationListenerStopped = false
 
@@ -86,13 +87,13 @@ class AndroidWebkitLibraryPigeonInstanceManager(
    */
   var clearFinalizedWeakReferencesInterval: Long = 3000
     set(value) {
-      handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+      handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
       field = value
       releaseAllFinalizedInstances()
     }
 
   init {
-    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+    handler.postDelayed(releaseAllFinalizedInstancesRunnable, clearFinalizedWeakReferencesInterval)
   }
 
   companion object {
@@ -198,7 +199,7 @@ class AndroidWebkitLibraryPigeonInstanceManager(
    * longer be called and methods will log a warning.
    */
   fun stopFinalizationListener() {
-    handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+    handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
     hasFinalizationListenerStopped = true
   }
 
@@ -238,7 +239,7 @@ class AndroidWebkitLibraryPigeonInstanceManager(
         finalizationListener.onFinalize(identifier)
       }
     }
-    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+    handler.postDelayed(releaseAllFinalizedInstancesRunnable, clearFinalizedWeakReferencesInterval)
   }
 
   private fun addInstance(instance: Any, identifier: Long) {

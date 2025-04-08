@@ -48,6 +48,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
   private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
   private val weakReferencesToIdentifiers = HashMap<java.lang.ref.WeakReference<Any>, Long>()
   private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+  private val releaseAllFinalizedInstancesRunnable = { this.releaseAllFinalizedInstances() }
   private var nextIdentifier: Long = minHostCreatedIdentifier
   private var hasFinalizationListenerStopped = false
 
@@ -63,10 +64,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
     }
 
   init {
-    handler.postDelayed(
-      { releaseAllFinalizedInstances() },
-      clearFinalizedWeakReferencesInterval
-    )
+    handler.postDelayed(releaseAllFinalizedInstancesRunnable, clearFinalizedWeakReferencesInterval)
   }
 
   companion object {
@@ -167,7 +165,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
    * longer be called and methods will log a warning.
    */
   fun stopFinalizationListener() {
-    handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+    handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
     hasFinalizationListenerStopped = true
   }
 
@@ -206,10 +204,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
         finalizationListener.onFinalize(identifier)
       }
     }
-    handler.postDelayed(
-      { releaseAllFinalizedInstances() },
-      clearFinalizedWeakReferencesInterval
-    )
+    handler.postDelayed(releaseAllFinalizedInstancesRunnable, clearFinalizedWeakReferencesInterval)
   }
 
   private fun addInstance(instance: Any, identifier: Long) {
