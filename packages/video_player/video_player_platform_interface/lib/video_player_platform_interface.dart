@@ -121,6 +121,12 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
   }
+
+  /// Sets preferred audio language
+  Future<void> setPreferredAudioLanguage(String? preferredAudioLanguage) {
+    // Fail silently for platforms that don't support this yet.
+    return Future<void>(() {});
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
@@ -404,6 +410,7 @@ class VideoPlayerOptions {
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
     this.webOptions,
+    this.preferredAudioLanguage,
   });
 
   /// Set this to true to keep playing video in background, when app goes in background.
@@ -419,6 +426,9 @@ class VideoPlayerOptions {
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;
+
+  /// Preferred audio language for the video.
+  final String? preferredAudioLanguage;
 }
 
 /// [VideoPlayerWebOptions] can be optionally used to set additional web settings
