@@ -311,7 +311,8 @@ void main() {
     );
   });
 
-  test('Default implementation of setVerticalScrollBarEnabled should throw unimplemented error',
+  test(
+      'Default implementation of setVerticalScrollBarEnabled should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
@@ -323,7 +324,8 @@ void main() {
     );
   });
 
-  test('Default implementation of setHorizontalScrollBarEnabled should throw unimplemented error',
+  test(
+      'Default implementation of setHorizontalScrollBarEnabled should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
