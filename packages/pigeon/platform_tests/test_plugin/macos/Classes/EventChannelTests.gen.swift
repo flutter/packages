@@ -42,6 +42,68 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+func deepEqualsEventChannelTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
+  let cleanLhs = nilOrValue(lhs) as Any?
+  let cleanRhs = nilOrValue(rhs) as Any?
+  switch (cleanLhs, cleanRhs) {
+  case (nil, nil):
+    return true
+
+  case (nil, _), (_, nil):
+    return false
+
+  case is (Void, Void):
+    return true
+
+  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
+    return cleanLhsHashable == cleanRhsHashable
+
+  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
+    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
+    for (index, element) in cleanLhsArray.enumerated() {
+      if !deepEqualsEventChannelTests(element, cleanRhsArray[index]) {
+        return false
+      }
+    }
+    return true
+
+  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
+    for (key, cleanLhsValue) in cleanLhsDictionary {
+      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
+      if !deepEqualsEventChannelTests(cleanLhsValue, cleanRhsDictionary[key]!) {
+        return false
+      }
+    }
+    return true
+
+  default:
+    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
+    return false
+  }
+}
+
+func deepHashEventChannelTests(value: Any?, hasher: inout Hasher) {
+  if let valueList = value as? [AnyHashable] {
+    for item in valueList { deepHashEventChannelTests(value: item, hasher: &hasher) }
+    return
+  }
+
+  if let valueDict = value as? [AnyHashable: AnyHashable] {
+    for key in valueDict.keys {
+      hasher.combine(key)
+      deepHashEventChannelTests(value: valueDict[key]!, hasher: &hasher)
+    }
+    return
+  }
+
+  if let hashableValue = value as? AnyHashable {
+    hasher.combine(hashableValue.hashValue)
+  }
+
+  return hasher.combine(String(describing: value))
+}
+
 enum EventEnum: Int {
   case one = 0
   case two = 1
@@ -57,7 +119,7 @@ enum AnotherEventEnum: Int {
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-class EventAllNullableTypes {
+class EventAllNullableTypes: Hashable {
   init(
     aNullableBool: Bool? = nil,
     aNullableInt: Int64? = nil,
@@ -258,6 +320,15 @@ class EventAllNullableTypes {
       recursiveClassMap,
     ]
   }
+  static func == (lhs: EventAllNullableTypes, rhs: EventAllNullableTypes) -> Bool {
+    if lhs === rhs {
+      return true
+    }
+    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
@@ -283,6 +354,12 @@ struct IntEvent: PlatformEvent {
       value
     ]
   }
+  static func == (lhs: IntEvent, rhs: IntEvent) -> Bool {
+    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
@@ -301,6 +378,12 @@ struct StringEvent: PlatformEvent {
     return [
       value
     ]
+  }
+  static func == (lhs: StringEvent, rhs: StringEvent) -> Bool {
+    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelTests(value: toList(), hasher: &hasher)
   }
 }
 
@@ -321,6 +404,12 @@ struct BoolEvent: PlatformEvent {
       value
     ]
   }
+  static func == (lhs: BoolEvent, rhs: BoolEvent) -> Bool {
+    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
@@ -339,6 +428,12 @@ struct DoubleEvent: PlatformEvent {
     return [
       value
     ]
+  }
+  static func == (lhs: DoubleEvent, rhs: DoubleEvent) -> Bool {
+    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelTests(value: toList(), hasher: &hasher)
   }
 }
 
@@ -359,6 +454,12 @@ struct ObjectsEvent: PlatformEvent {
       value
     ]
   }
+  static func == (lhs: ObjectsEvent, rhs: ObjectsEvent) -> Bool {
+    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
@@ -378,6 +479,12 @@ struct EnumEvent: PlatformEvent {
       value
     ]
   }
+  static func == (lhs: EnumEvent, rhs: EnumEvent) -> Bool {
+    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
@@ -396,6 +503,12 @@ struct ClassEvent: PlatformEvent {
     return [
       value
     ]
+  }
+  static func == (lhs: ClassEvent, rhs: ClassEvent) -> Bool {
+    return deepEqualsEventChannelTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashEventChannelTests(value: toList(), hasher: &hasher)
   }
 }
 
