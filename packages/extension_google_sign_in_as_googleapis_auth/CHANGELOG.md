@@ -1,6 +1,7 @@
-## NEXT
+## 2.0.13
 
-* Updates minimum supported SDK version to Flutter 3.19/Dart 3.3.
+* Supports the latest version of `package:googleapis_auth`.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 2.0.12
 

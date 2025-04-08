@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -766,6 +767,107 @@ void main() {
       await expectLater(
           widgetFinder, matchesGoldenFile('golden_widget/image_$key.png'));
     }
+  });
+
+  group('SvgPicture - errorBuilder', () {
+    testWidgets('SvgPicture.string handles failure',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MediaQuery(
+          data: mediaQueryData,
+          child: SvgPicture.string(
+            '<!-- invalid svg -->',
+            errorBuilder: (
+              BuildContext context,
+              Object error,
+              StackTrace stackTrace,
+            ) {
+              return const Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text('image failed'),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('image failed'), findsOneWidget);
+    });
+
+    testWidgets('SvgPicture.memory handles failure',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MediaQuery(
+          data: mediaQueryData,
+          child: SvgPicture.memory(
+            Uint8List.fromList(utf8.encode('<!-- invalid svg -->')),
+            errorBuilder: (
+              BuildContext context,
+              Object error,
+              StackTrace stackTrace,
+            ) {
+              return const Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text('image failed'),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('image failed'), findsOneWidget);
+    });
+
+    testWidgets('SvgPicture.asset handles failure',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MediaQuery(
+          data: mediaQueryData,
+          child: SvgPicture.asset(
+            '/wrong path',
+            errorBuilder: (
+              BuildContext context,
+              Object error,
+              StackTrace stackTrace,
+            ) {
+              return const Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text('image failed'),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('image failed'), findsOneWidget);
+    });
+
+    testWidgets('SvgPicture.file handles failure', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MediaQuery(
+          data: mediaQueryData,
+          child: SvgPicture.file(
+            File('nosuchfile'),
+            errorBuilder: (
+              BuildContext context,
+              Object error,
+              StackTrace stackTrace,
+            ) {
+              return const Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text('image failed'),
+              );
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('image failed'), findsOneWidget);
+    });
   });
 }
 

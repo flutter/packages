@@ -26,7 +26,7 @@
 }
 
 - (void)handlePhotoCaptureResultWithError:(NSError *)error
-                        photoDataProvider:(NSData * (^)(void))photoDataProvider {
+                        photoDataProvider:(NSObject<FLTWritableData> * (^)(void))photoDataProvider {
   if (error) {
     self.completionHandler(nil, error);
     return;
@@ -36,7 +36,7 @@
     typeof(self) strongSelf = weakSelf;
     if (!strongSelf) return;
 
-    NSData *data = photoDataProvider();
+    NSObject<FLTWritableData> *data = photoDataProvider();
     NSError *ioError;
     if ([data writeToFile:strongSelf.path options:NSDataWritingAtomic error:&ioError]) {
       strongSelf.completionHandler(self.path, nil);

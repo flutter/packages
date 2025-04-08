@@ -277,7 +277,7 @@ dependencies {}
     final Pubspec originalPubspec = app.parsePubspec();
     const String dartSdkKey = 'sdk';
     final VersionConstraint dartSdkConstraint =
-        originalPubspec.environment?[dartSdkKey] ??
+        originalPubspec.environment[dartSdkKey] ??
             VersionConstraint.compatibleWith(
               Version.parse('3.0.0'),
             );
@@ -342,7 +342,7 @@ publish_to: none
 
 version: ${pubspec.version}
 
-environment:${_pubspecMapString(pubspec.environment!)}
+environment:${_pubspecMapString(pubspec.environment)}
 
 dependencies:${_pubspecMapString(pubspec.dependencies)}
 

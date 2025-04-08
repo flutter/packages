@@ -1,3 +1,8 @@
+## 0.8.12+2
+
+* Removes the need for user permissions to pick an image on iOS 14+.
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 0.8.12+1
 
 * Updates Pigeon for non-nullable collection type support.

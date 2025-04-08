@@ -353,6 +353,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   void Function(ScrollPositionChange scrollPositionChange)?
       _onScrollPositionChangedCallback;
 
+  /// Sets the file access permission for the web view.
+  ///
+  /// The default value is true for apps targeting API 29 and below, and false
+  /// when targeting API 30 and above.
+  Future<void> setAllowFileAccess(bool allow) =>
+      _webView.settings.setAllowFileAccess(allow);
+
   /// Whether to enable the platform's webview content debugging tools.
   ///
   /// Defaults to false.
@@ -591,6 +598,18 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// The default is 100.
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
+
+  /// Enables or disables content URL access.
+  ///
+  /// The default is true.
+  Future<void> setAllowContentAccess(bool enabled) =>
+      _webView.settings.setAllowContentAccess(enabled);
+
+  /// Sets whether Geolocation is enabled.
+  ///
+  /// The default is true.
+  Future<void> setGeolocationEnabled(bool enabled) =>
+      _webView.settings.setGeolocationEnabled(enabled);
 
   /// Sets the callback that is invoked when the client should show a file
   /// selector.

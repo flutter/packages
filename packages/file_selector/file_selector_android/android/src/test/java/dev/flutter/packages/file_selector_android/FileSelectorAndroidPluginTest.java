@@ -5,6 +5,8 @@
 package dev.flutter.packages.file_selector_android;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -209,6 +211,206 @@ public class FileSelectorAndroidPluginTest {
       assertEquals(fileList.get(1).getName(), "filename2");
       assertEquals(fileList.get(1).getSize(), (Long) 40L);
       assertEquals(fileList.get(1).getPath(), mockUri2Path);
+    }
+  }
+
+  // This test was created when error handling was moved from FileUtils.java to FileSelectorApiImpl.java
+  // in https://github.com/flutter/packages/pull/8184, so as to maintain the existing test.
+  // The behavior is actually an error case and should be fixed,
+  // see: https://github.com/flutter/flutter/issues/159568.
+  // Remove when fixed!
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Test
+  public void
+      openFileThrowsIllegalStateException_whenSecurityExceptionInGetPathFromCopyOfFileFromUri()
+          throws FileNotFoundException {
+
+    try (MockedStatic<FileUtils> mockedFileUtils = mockStatic(FileUtils.class)) {
+
+      final ContentResolver mockContentResolver = mock(ContentResolver.class);
+
+      final Uri mockUri = mock(Uri.class);
+      final String mockUriPath = "some/path/";
+      mockedFileUtils
+          .when(() -> FileUtils.getPathFromCopyOfFileFromUri(any(Context.class), eq(mockUri)))
+          .thenThrow(SecurityException.class);
+      mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain");
+
+      final Uri mockUri2 = mock(Uri.class);
+      final String mockUri2Path = "some/other/path/";
+      mockedFileUtils
+          .when(() -> FileUtils.getPathFromCopyOfFileFromUri(any(Context.class), eq(mockUri2)))
+          .thenAnswer((Answer<String>) invocation -> mockUri2Path);
+      mockContentResolver(mockContentResolver, mockUri2, "filename2", 40, "image/jpg");
+
+      when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
+      when(mockObjectFactory.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
+      when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
+      when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
+      final FileSelectorApiImpl fileSelectorApi =
+          new FileSelectorApiImpl(
+              mockActivityBinding,
+              mockObjectFactory,
+              (version) -> Build.VERSION.SDK_INT >= version);
+
+      final GeneratedFileSelectorApi.Result mockResult =
+          mock(GeneratedFileSelectorApi.Result.class);
+      fileSelectorApi.openFiles(
+          null,
+          new GeneratedFileSelectorApi.FileTypes.Builder()
+              .setMimeTypes(Collections.emptyList())
+              .setExtensions(Collections.emptyList())
+              .build(),
+          mockResult);
+      verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
+      verify(mockIntent).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+      verify(mockActivity).startActivityForResult(mockIntent, 222);
+
+      final ArgumentCaptor<PluginRegistry.ActivityResultListener> listenerArgumentCaptor =
+          ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+      verify(mockActivityBinding).addActivityResultListener(listenerArgumentCaptor.capture());
+
+      final Intent resultMockIntent = mock(Intent.class);
+      final ClipData mockClipData = mock(ClipData.class);
+      when(mockClipData.getItemCount()).thenReturn(2);
+
+      final ClipData.Item mockClipDataItem = mock(ClipData.Item.class);
+      when(mockClipDataItem.getUri()).thenReturn(mockUri);
+      when(mockClipData.getItemAt(0)).thenReturn(mockClipDataItem);
+
+      final ClipData.Item mockClipDataItem2 = mock(ClipData.Item.class);
+      when(mockClipDataItem2.getUri()).thenReturn(mockUri2);
+      when(mockClipData.getItemAt(1)).thenReturn(mockClipDataItem2);
+
+      when(resultMockIntent.getClipData()).thenReturn(mockClipData);
+
+      assertThrows(
+          IllegalStateException.class,
+          () ->
+              listenerArgumentCaptor
+                  .getValue()
+                  .onActivityResult(222, Activity.RESULT_OK, resultMockIntent));
+    }
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Test
+  public void
+      openFileReturnsNativeException_whenIllegalArgumentExceptionInGetPathFromCopyOfFileFromUri()
+          throws FileNotFoundException {
+    try (MockedStatic<FileUtils> mockedFileUtils = mockStatic(FileUtils.class)) {
+      final ContentResolver mockContentResolver = mock(ContentResolver.class);
+
+      final Uri mockUri = mock(Uri.class);
+      mockedFileUtils
+          .when(() -> FileUtils.getPathFromCopyOfFileFromUri(any(Context.class), eq(mockUri)))
+          .thenThrow(IllegalArgumentException.class);
+      mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain");
+
+      when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
+      when(mockObjectFactory.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
+      when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
+      when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
+      final FileSelectorApiImpl fileSelectorApi =
+          new FileSelectorApiImpl(
+              mockActivityBinding,
+              mockObjectFactory,
+              (version) -> Build.VERSION.SDK_INT >= version);
+
+      final GeneratedFileSelectorApi.NullableResult mockResult =
+          mock(GeneratedFileSelectorApi.NullableResult.class);
+      fileSelectorApi.openFile(
+          null,
+          new GeneratedFileSelectorApi.FileTypes.Builder()
+              .setMimeTypes(Collections.emptyList())
+              .setExtensions(Collections.emptyList())
+              .build(),
+          mockResult);
+      verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
+
+      verify(mockActivity).startActivityForResult(mockIntent, 221);
+
+      final ArgumentCaptor<PluginRegistry.ActivityResultListener> listenerArgumentCaptor =
+          ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+      verify(mockActivityBinding).addActivityResultListener(listenerArgumentCaptor.capture());
+
+      final Intent resultMockIntent = mock(Intent.class);
+      when(resultMockIntent.getData()).thenReturn(mockUri);
+      listenerArgumentCaptor.getValue().onActivityResult(221, Activity.RESULT_OK, resultMockIntent);
+
+      final ArgumentCaptor<GeneratedFileSelectorApi.FileResponse> fileCaptor =
+          ArgumentCaptor.forClass(GeneratedFileSelectorApi.FileResponse.class);
+      verify(mockResult).success(fileCaptor.capture());
+
+      final GeneratedFileSelectorApi.FileResponse file = fileCaptor.getValue();
+      assertNotNull(file.getFileSelectorNativeException());
+      assertEquals(file.getPath(), FileUtils.FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH);
+    }
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Test
+  public void
+      openFilesReturnsNativeException_whenIllegalArgumentExceptionInGetPathFromCopyOfFileFromUri()
+          throws FileNotFoundException {
+    try (MockedStatic<FileUtils> mockedFileUtils = mockStatic(FileUtils.class)) {
+
+      final ContentResolver mockContentResolver = mock(ContentResolver.class);
+
+      final Uri mockUri = mock(Uri.class);
+      final String mockUriPath = "some/path/";
+      mockedFileUtils
+          .when(() -> FileUtils.getPathFromCopyOfFileFromUri(any(Context.class), eq(mockUri)))
+          .thenThrow(IllegalArgumentException.class);
+      mockContentResolver(mockContentResolver, mockUri, "filename", 30, "text/plain");
+
+      when(mockObjectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT)).thenReturn(mockIntent);
+      when(mockObjectFactory.newDataInputStream(any())).thenReturn(mock(DataInputStream.class));
+      when(mockActivity.getContentResolver()).thenReturn(mockContentResolver);
+      when(mockActivityBinding.getActivity()).thenReturn(mockActivity);
+      final FileSelectorApiImpl fileSelectorApi =
+          new FileSelectorApiImpl(
+              mockActivityBinding,
+              mockObjectFactory,
+              (version) -> Build.VERSION.SDK_INT >= version);
+
+      final GeneratedFileSelectorApi.Result mockResult =
+          mock(GeneratedFileSelectorApi.Result.class);
+      fileSelectorApi.openFiles(
+          null,
+          new GeneratedFileSelectorApi.FileTypes.Builder()
+              .setMimeTypes(Collections.emptyList())
+              .setExtensions(Collections.emptyList())
+              .build(),
+          mockResult);
+      verify(mockIntent).addCategory(Intent.CATEGORY_OPENABLE);
+      verify(mockIntent).putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+      verify(mockActivity).startActivityForResult(mockIntent, 222);
+
+      final ArgumentCaptor<PluginRegistry.ActivityResultListener> listenerArgumentCaptor =
+          ArgumentCaptor.forClass(PluginRegistry.ActivityResultListener.class);
+      verify(mockActivityBinding).addActivityResultListener(listenerArgumentCaptor.capture());
+
+      final Intent resultMockIntent = mock(Intent.class);
+      final ClipData mockClipData = mock(ClipData.class);
+      when(mockClipData.getItemCount()).thenReturn(1);
+
+      final ClipData.Item mockClipDataItem = mock(ClipData.Item.class);
+      when(mockClipDataItem.getUri()).thenReturn(mockUri);
+      when(mockClipData.getItemAt(0)).thenReturn(mockClipDataItem);
+
+      when(resultMockIntent.getClipData()).thenReturn(mockClipData);
+
+      listenerArgumentCaptor.getValue().onActivityResult(222, Activity.RESULT_OK, resultMockIntent);
+
+      final ArgumentCaptor<List> fileListCaptor = ArgumentCaptor.forClass(List.class);
+      verify(mockResult).success(fileListCaptor.capture());
+
+      final List<GeneratedFileSelectorApi.FileResponse> fileList = fileListCaptor.getValue();
+      assertEquals(fileList.get(0).getPath(), FileUtils.FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH);
+      assertNotNull(fileList.get(0).getFileSelectorNativeException());
     }
   }
 

@@ -99,7 +99,7 @@ ErrorOr<bool> UrlLauncherPlugin::CanLaunchUrl(const std::string& url) {
 }
 
 ErrorOr<bool> UrlLauncherPlugin::LaunchUrl(const std::string& url) {
-  std::wstring url_wide;
+  std::string url_to_open;
   if (url.find("file:") == 0) {
     // ShellExecuteW does not process %-encoded UTF8 strings in file URLs.
     DWORD unescaped_len = 0;
@@ -108,14 +108,15 @@ ErrorOr<bool> UrlLauncherPlugin::LaunchUrl(const std::string& url) {
                               &unescaped_len, URL_UNESCAPE_INPLACE))) {
       return FlutterError("open_error", "Failed to unescape file URL");
     }
-    url_wide = Utf16FromUtf8(unescaped_url);
+    url_to_open = unescaped_url;
   } else {
-    url_wide = Utf16FromUtf8(url);
+    url_to_open = url;
   }
 
-  int status = static_cast<int>(reinterpret_cast<INT_PTR>(
-      system_apis_->ShellExecuteW(nullptr, TEXT("open"), url_wide.c_str(),
-                                  nullptr, nullptr, SW_SHOWNORMAL)));
+  int status =
+      static_cast<int>(reinterpret_cast<INT_PTR>(system_apis_->ShellExecuteW(
+          nullptr, TEXT("open"), Utf16FromUtf8(url_to_open).c_str(), nullptr,
+          nullptr, SW_SHOWNORMAL)));
 
   // Per ::ShellExecuteW documentation, anything >32 indicates success.
   if (status <= 32) {
@@ -126,8 +127,8 @@ ErrorOr<bool> UrlLauncherPlugin::LaunchUrl(const std::string& url) {
       return false;
     }
     std::ostringstream error_message;
-    error_message << "Failed to open " << url << ": ShellExecute error code "
-                  << status;
+    error_message << "Failed to open " << url_to_open
+                  << ": ShellExecute error code " << status;
     return FlutterError("open_error", error_message.str());
   }
   return true;

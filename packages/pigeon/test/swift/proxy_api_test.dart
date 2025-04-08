@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/ast.dart';
-import 'package:pigeon/swift_generator.dart';
+import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
@@ -85,7 +85,8 @@ void main() {
       final StringBuffer sink = StringBuffer();
       const SwiftGenerator generator = SwiftGenerator();
       generator.generate(
-        const SwiftOptions(fileSpecificClassNameComponent: 'MyFile'),
+        const InternalSwiftOptions(
+            fileSpecificClassNameComponent: 'MyFile', swiftOut: ''),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -187,6 +188,141 @@ void main() {
       );
     });
 
+    group('imports', () {
+      test('add check if every class does not support iOS', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsIos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(code, contains('#if !os(iOS)\nimport MyImport\n#endif'));
+      });
+
+      test('add check if every class does not support macOS', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsMacos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(code, contains('#if !os(macOS)\nimport MyImport\n#endif'));
+      });
+
+      test('add check if for multiple unsupported platforms', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsIos: false,
+                supportsMacos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(
+          code,
+          contains('#if !os(iOS) || !os(macOS)\nimport MyImport\n#endif'),
+        );
+      });
+
+      test('do not add check if at least one class is supported', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+                supportsIos: false,
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+            AstProxyApi(
+              name: 'Api2',
+              swiftOptions: const SwiftProxyApiOptions(
+                import: 'MyImport',
+              ),
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+
+        expect(code, isNot(contains('#if !os(iOS)\nimport MyImport')));
+      });
+    });
+
     group('inheritance', () {
       test('extends', () {
         final AstProxyApi api2 = AstProxyApi(
@@ -212,7 +348,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -250,7 +386,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -297,7 +433,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -325,7 +461,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -351,6 +487,43 @@ void main() {
           collapsedCode,
           contains(
             r'api.pigeonRegistrar.instanceManager.addDartCreatedInstance(',
+          ),
+        );
+      });
+
+      test('named constructor', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(name: 'Api', constructors: <Constructor>[
+              Constructor(
+                name: 'myConstructorName',
+                parameters: <Parameter>[],
+              )
+            ], fields: <ApiField>[], methods: <Method>[]),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(swiftOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+        expect(
+          collapsedCode,
+          contains(
+            'func myConstructorName(pigeonApi: PigeonApiApi) throws -> Api',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            r'let myConstructorNameChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.test_package.Api.myConstructorName", binaryMessenger: binaryMessenger, codec: codec)',
           ),
         );
       });
@@ -426,7 +599,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -452,6 +625,47 @@ void main() {
             r'try api.pigeonDelegate.name(pigeonApi: api, validType: validTypeArg, enumType: enumTypeArg, proxyApiType: '
             r'proxyApiTypeArg, nullableValidType: nullableValidTypeArg, nullableEnumType: nullableEnumTypeArg, '
             r'nullableProxyApiType: nullableProxyApiTypeArg)',
+          ),
+        );
+      });
+
+      test(
+          'host platform constructor calls new instance error for required callbacks',
+          () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[
+                Method(
+                  name: 'aCallbackMethod',
+                  returnType: const TypeDeclaration.voidDeclaration(),
+                  parameters: <Parameter>[],
+                  location: ApiLocation.flutter,
+                ),
+              ],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const SwiftGenerator generator = SwiftGenerator();
+        generator.generate(
+          const InternalSwiftOptions(errorClassName: 'TestError', swiftOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+        expect(
+          collapsedCode,
+          contains(
+            r'completion( .failure( TestError( code: "new-instance-error"',
           ),
         );
       });
@@ -534,7 +748,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -631,7 +845,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -684,7 +898,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -782,7 +996,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -832,7 +1046,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -920,7 +1134,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const SwiftGenerator generator = SwiftGenerator();
         generator.generate(
-          const SwiftOptions(),
+          const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,

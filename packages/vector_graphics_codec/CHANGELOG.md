@@ -1,3 +1,7 @@
+## 1.1.13
+
+* Works around a subtle Wasm bug in `writeRadialGradient`.
+
 ## 1.1.12
 
 * Transfers the package source from https://github.com/dnfield/vector_graphics

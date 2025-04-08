@@ -978,7 +978,7 @@ class StatefulShellRoute extends ShellRouteBase {
       String? restorationScopeId, List<StatefulShellBranch> branches) {
     if (branches
         .map((StatefulShellBranch e) => e.restorationScopeId)
-        .whereNotNull()
+        .nonNulls
         .isNotEmpty) {
       assert(
           restorationScopeId != null,

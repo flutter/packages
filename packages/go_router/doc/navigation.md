@@ -118,7 +118,7 @@ To try out the behavior yourself, see
 Waiting for a value to be returned:
 
 ```dart
-onTap: () {
+onTap: () async {
   final bool? result = await context.push<bool>('/page2');
   if(result ?? false)...
 }

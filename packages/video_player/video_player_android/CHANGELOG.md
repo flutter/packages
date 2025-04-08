@@ -1,3 +1,23 @@
+## 2.8.2
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to
+  disappear after an app is suspended and resumed.
+
+## 2.8.1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.8.0
+
+* Adds support for platform views as an optional way of displaying a video.
+* Suppresses deprecation and removal warnings for
+  `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
+
+## 2.7.17
+
+* Replaces deprecated Android embedder APIs (`onSurfaceCreated` -> `onSurfaceAvailable`).
+* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+
 ## 2.7.16
 
 * Updates internal Pigeon API to use newer features.

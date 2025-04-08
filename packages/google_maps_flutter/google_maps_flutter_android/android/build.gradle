@@ -23,7 +23,7 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'io.flutter.plugins.googlemaps'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
         minSdkVersion 20
@@ -36,7 +36,7 @@ android {
     }
 
     dependencies {
-        implementation "androidx.annotation:annotation:1.7.0"
+        implementation "androidx.annotation:annotation:1.9.1"
         implementation 'com.google.android.gms:play-services-maps:18.2.0'
         implementation 'com.google.maps.android:android-maps-utils:3.6.0'
         androidTestImplementation 'androidx.test:runner:1.2.0'
@@ -44,7 +44,7 @@ android {
         androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
         testImplementation 'junit:junit:4.13.2'
         testImplementation 'org.mockito:mockito-core:5.1.1'
-        testImplementation 'androidx.test:core:1.2.0'
+        testImplementation 'androidx.test:core:1.4.0'
         testImplementation "org.robolectric:robolectric:4.10.3"
     }
 
@@ -66,7 +66,7 @@ android {
             // the Java heap size when running the Android unit tests. The following property here
             // sets the heap size to a size large enough to run the robolectric tests across
             // multiple SDK levels.
-            jvmArgs "-Xmx1g"
+            jvmArgs "-Xmx4G"
         }
     }
 }

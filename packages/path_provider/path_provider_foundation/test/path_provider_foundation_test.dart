@@ -28,7 +28,7 @@ void main() {
     setUp(() async {
       testRoot = Directory.systemTemp.createTempSync();
       mockApi = MockTestPathProviderApi();
-      TestPathProviderApi.setup(mockApi);
+      TestPathProviderApi.setUp(mockApi);
     });
 
     tearDown(() {

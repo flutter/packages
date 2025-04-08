@@ -27,9 +27,18 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
+    StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, instanceName: "1",
+      streamHandler: SendConsistentNumbers(numberToSend: 1))
+    StreamConsistentNumbersStreamHandler.register(
+      with: binaryMessenger, instanceName: "2",
+      streamHandler: SendConsistentNumbers(numberToSend: 2))
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
+
+    StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
+    StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -502,6 +511,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     _ anotherEnum: AnotherEnum?, completion: @escaping (Result<AnotherEnum?, Error>) -> Void
   ) {
     completion(.success(anotherEnum))
+  }
+
+  func defaultIsMainThread() -> Bool {
+    return Thread.isMainThread
+  }
+
+  func taskQueueIsBackgroundThread() -> Bool {
+    return !Thread.isMainThread
   }
 
   func callFlutterNoop(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -1212,6 +1229,87 @@ public class TestPluginWithSuffix: HostSmallApi {
   }
 
 }
+class SendInts: StreamIntsStreamHandler {
+  var timerActive = false
+  var timer: Timer?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
+    var count: Int64 = 0
+    if !timerActive {
+      timerActive = true
+      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        DispatchQueue.main.async {
+          sink.success(count)
+          count += 1
+          if count >= 5 {
+            sink.endOfStream()
+            self.timer?.invalidate()
+          }
+        }
+      }
+    }
+  }
+}
+
+class SendEvents: StreamEventsStreamHandler {
+  var timerActive = false
+  var timer: Timer?
+  var eventList: [PlatformEvent] =
+    [
+      IntEvent(value: 1),
+      StringEvent(value: "string"),
+      BoolEvent(value: false),
+      DoubleEvent(value: 3.14),
+      ObjectsEvent(value: true),
+      EnumEvent(value: EventEnum.fortyTwo),
+      ClassEvent(value: EventAllNullableTypes(aNullableInt: 0)),
+    ]
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<PlatformEvent>) {
+    var count = 0
+    if !timerActive {
+      timerActive = true
+      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        DispatchQueue.main.async {
+          if count >= self.eventList.count {
+            sink.endOfStream()
+            self.timer?.invalidate()
+          } else {
+            sink.success(self.eventList[count])
+            count += 1
+          }
+        }
+      }
+    }
+  }
+}
+
+class SendConsistentNumbers: StreamConsistentNumbersStreamHandler {
+  let numberToSend: Int64
+  init(numberToSend: Int64) {
+    self.numberToSend = numberToSend
+  }
+  var timerActive = false
+  var timer: Timer?
+
+  override func onListen(withArguments arguments: Any?, sink: PigeonEventSink<Int64>) {
+    let numberThatWillBeSent: Int64 = numberToSend
+    var count: Int64 = 0
+    if !timerActive {
+      timerActive = true
+      timer = Timer.scheduledTimer(withTimeInterval: 0.01, repeats: true) { _ in
+        DispatchQueue.main.async {
+          sink.success(numberThatWillBeSent)
+          count += 1
+          if count >= 10 {
+            sink.endOfStream()
+            self.timer?.invalidate()
+          }
+        }
+      }
+    }
+  }
+}
 
 class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
   func pigeonApiProxyApiTestClass(_ registrar: ProxyApiTestsPigeonProxyApiRegistrar)
@@ -1233,6 +1331,18 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
         nullableUint8ListParam: FlutterStandardTypedData?, nullableListParam: [Any?]?,
         nullableMapParam: [String?: Any?]?, nullableEnumParam: ProxyApiTestEnum?,
         nullableProxyApiParam: ProxyApiSuperClass?
+      ) throws -> ProxyApiTestClass {
+        return ProxyApiTestClass()
+      }
+
+      func namedConstructor(
+        pigeonApi: PigeonApiProxyApiTestClass, aBool: Bool, anInt: Int64, aDouble: Double,
+        aString: String, aUint8List: FlutterStandardTypedData, aList: [Any?], aMap: [String?: Any?],
+        anEnum: ProxyApiTestEnum, aProxyApi: ProxyApiSuperClass, aNullableBool: Bool?,
+        aNullableInt: Int64?, aNullableDouble: Double?, aNullableString: String?,
+        aNullableUint8List: FlutterStandardTypedData?, aNullableList: [Any?]?,
+        aNullableMap: [String?: Any?]?, aNullableEnum: ProxyApiTestEnum?,
+        aNullableProxyApi: ProxyApiSuperClass?
       ) throws -> ProxyApiTestClass {
         return ProxyApiTestClass()
       }

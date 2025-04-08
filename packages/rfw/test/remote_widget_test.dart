@@ -15,12 +15,14 @@ void main() {
         import core;
         widget root = Placeholder();
       '''));
+    addTearDown(runtime1.dispose);
     final Runtime runtime2 = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['test']), parseLibraryFile('''
         import core;
         widget root = Container();
       '''));
+    addTearDown(runtime2.dispose);
     final DynamicContent data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(

@@ -4,10 +4,10 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/dart_test_command.dart';
+import 'package:git/git.dart';
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
@@ -16,21 +16,21 @@ import 'util.dart';
 
 void main() {
   group('TestCommand', () {
-    late FileSystem fileSystem;
     late Platform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       mockPlatform = MockPlatform();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-      processRunner = RecordingProcessRunner();
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final DartTestCommand command = DartTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>('test_test', 'Test for $DartTestCommand');
@@ -337,6 +337,33 @@ test_on: vm && browser
       );
     });
 
+    test('runs in Chrome (wasm) when requested for Flutter package', () async {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        isFlutter: true,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome', '--wasm']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+              getFlutterCommand(mockPlatform),
+              const <String>[
+                'test',
+                '--color',
+                '--platform=chrome',
+                '--wasm',
+              ],
+              package.path),
+        ]),
+      );
+    });
+
     test('runs in Chrome by default for Flutter plugins that implement web',
         () async {
       final RepositoryPackage plugin = createFakePlugin(
@@ -513,6 +540,33 @@ test_on: vm && browser
           ProcessCall('dart', const <String>['pub', 'get'], package.path),
           ProcessCall('dart',
               const <String>['run', 'test', '--platform=chrome'], package.path),
+        ]),
+      );
+    });
+
+    test('runs in Chrome (wasm) when requested for Dart package', () async {
+      final RepositoryPackage package = createFakePackage(
+        'package',
+        packagesDir,
+        extraFiles: <String>['test/empty_test.dart'],
+      );
+
+      await runCapturingPrint(
+          runner, <String>['dart-test', '--platform=chrome', '--wasm']);
+
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall('dart', const <String>['pub', 'get'], package.path),
+          ProcessCall(
+              'dart',
+              const <String>[
+                'run',
+                'test',
+                '--platform=chrome',
+                '--compiler=dart2wasm',
+              ],
+              package.path),
         ]),
       );
     });
