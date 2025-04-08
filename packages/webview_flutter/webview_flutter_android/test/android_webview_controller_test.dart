@@ -1407,9 +1407,9 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      await controller.verticalScrollBarEnabled(false);
+      await controller.setVerticalScrollBarEnabled(false);
 
-      verify(mockWebView.verticalScrollBarEnabled(false)).called(1);
+      verify(mockWebView.setVerticalScrollBarEnabled(false)).called(1);
     });
 
     test('horizontalScrollBarEnabled', () async {
@@ -1418,9 +1418,9 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      await controller.horizontalScrollBarEnabled(false);
+      await controller.setHorizontalScrollBarEnabled(false);
 
-      verify(mockWebView.horizontalScrollBarEnabled(false)).called(1);
+      verify(mockWebView.setHorizontalScrollBarEnabled(false)).called(1);
     });
 
     test('getScrollPosition', () async {

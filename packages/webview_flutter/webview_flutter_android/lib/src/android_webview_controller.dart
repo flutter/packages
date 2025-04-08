@@ -733,12 +733,12 @@ class AndroidWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> verticalScrollBarEnabled(bool enabled) =>
-      _webView.verticalScrollBarEnabled(enabled);
+  Future<void> setVerticalScrollBarEnabled(bool enabled) =>
+      _webView.setVerticalScrollBarEnabled(enabled);
 
   @override
-  Future<void> horizontalScrollBarEnabled(bool enabled) =>
-      _webView.horizontalScrollBarEnabled(enabled);
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) =>
+      _webView.setHorizontalScrollBarEnabled(enabled);
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
