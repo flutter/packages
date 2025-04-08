@@ -134,7 +134,9 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
   /**
    * Adds a new unique instance that was instantiated from the host platform.
    *
-   * [identifier] must be >= 0 and unique.
+   * If the manager contains [instance], this returns the corresponding identifier. If the
+   * manager does not contain [instance], this adds the instance and returns a unique
+   * identifier for that [instance].
    */
   fun addHostCreatedInstance(instance: Any): Long {
     logWarningIfFinalizationListenerHasStopped()
