@@ -847,10 +847,10 @@ static void selectBestFormatForRequestedFrameRate(
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
   if (!_isRecording) {
     if (messenger != nil) {
-      // Start image stream without waiting for result. 
+      // Start image stream without waiting for result.
       [self startImageStreamWithMessenger:messenger
-                           completion:^(FlutterError *_Nullable error){
-                           }];
+                               completion:^(FlutterError *_Nullable error){
+                               }];
     }
 
     NSError *error;
@@ -1180,16 +1180,16 @@ static void selectBestFormatForRequestedFrameRate(
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                       completion:(void (^)(FlutterError *))completion {
+                           completion:(void (^)(FlutterError *))completion {
   [self startImageStreamWithMessenger:messenger
                    imageStreamHandler:[[FLTImageStreamHandler alloc]
                                           initWithCaptureSessionQueue:_captureSessionQueue]
-                       completion:completion];
+                           completion:completion];
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                    imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
-                       completion:(void (^)(FlutterError *))completion {
+                           completion:(void (^)(FlutterError *))completion {
   if (!_isStreamingImages) {
     id<FLTEventChannel> eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
@@ -1202,9 +1202,9 @@ static void selectBestFormatForRequestedFrameRate(
     [threadSafeEventChannel setStreamHandler:_imageStreamHandler
                                   completion:^{
                                     typeof(self) strongSelf = weakSelf;
-                                    if (!strongSelf){
-                                        completion(nil);
-                                        return;
+                                    if (!strongSelf) {
+                                      completion(nil);
+                                      return;
                                     }
 
                                     dispatch_async(strongSelf.captureSessionQueue, ^{

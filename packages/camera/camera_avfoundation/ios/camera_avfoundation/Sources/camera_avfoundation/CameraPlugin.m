@@ -229,8 +229,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
       completion(nil);
       return;
     }
-    [strongSelf.camera startImageStreamWithMessenger:strongSelf.messenger
-                                      completion:completion];
+    [strongSelf.camera startImageStreamWithMessenger:strongSelf.messenger completion:completion];
   });
 }
 
