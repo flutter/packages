@@ -619,24 +619,31 @@ void main() {
       expect(find.text('Home'), findsOneWidget);
     });
 
-    testWidgets('Should allow redirection with query parameters',
+    testWidgets(
+        'onEnter should handle protected route redirection with query parameters',
         (WidgetTester tester) async {
+      // Test setup
       bool isAuthenticatedResult = false;
-
       Future<bool> isAuthenticated() =>
           Future<bool>.value(isAuthenticatedResult);
 
+      // Stream to capture onEnter calls
       final StreamController<({String current, String next})> paramsSink =
           StreamController<({String current, String next})>();
-      final Stream<({String current, String next})> paramsStream = paramsSink
-          .stream
-          .asBroadcastStream(); // Use broadcast for multiple expects
+      // Use broadcast stream for potentially multiple listeners/expects if needed,
+      // although expectLater handles one listener well.
+      final Stream<({String current, String next})> paramsStream =
+          paramsSink.stream.asBroadcastStream();
 
+      // Helper to navigate after sign-in button press
       void goToRedirect(GoRouter router, GoRouterState state) {
-        final String redirect = state.uri.queryParameters['redirectTo'] ?? '';
-        if (redirect.isNotEmpty) {
+        final String? redirect = state.uri.queryParameters['redirectTo'];
+        // Use null check and Uri.tryParse for safety
+        if (redirect != null && Uri.tryParse(redirect) != null) {
+          // Decode potentially encoded URI component
           router.go(Uri.decodeComponent(redirect));
         } else {
+          // Fallback if redirectTo is missing or invalid
           router.go('/home');
         }
       }
@@ -648,46 +655,57 @@ void main() {
           GoRouterState current,
           GoRouterState next,
           GoRouter goRouter,
+          // Renamed parameter to avoid shadowing router variable
         ) async {
-          // Log the attempt
+          // Log the navigation attempt state URIs
           paramsSink.add(
               (current: current.uri.toString(), next: next.uri.toString()));
 
-          final bool isProtected = next.uri.path.startsWith('/protected');
-          if (!isProtected) {
+          final bool isNavigatingToProtected = next.uri.path == '/protected';
+
+          // Allow navigation if not going to the protected route
+          if (!isNavigatingToProtected) {
             return true;
           }
+
+          // Allow navigation if authenticated
           if (await isAuthenticated()) {
             return true;
           }
-          // Use pushNamed as originally intended
-          await goRouter.pushNamed<bool?>('sign-in',
+
+          // If unauthenticated and going to protected route:
+          // 1. Redirect to sign-in using pushNamed, passing the intended destination
+          await goRouter.pushNamed<void>(
+              'sign-in', // Return type likely void or not needed
               queryParameters: <String, String>{
-                'redirectTo': next.uri.toString()
+                'redirectTo': next.uri.toString() // Pass the full next URI
               });
+          // 2. Block the original navigation to '/protected'
           return false;
         },
         routes: <RouteBase>[
           GoRoute(
             path: '/home',
-            builder: (_, __) =>
-                const Scaffold(body: Center(child: Text('Home'))),
+            name: 'home', // Good practice to name routes
+            builder: (_, __) => const Scaffold(
+                body: Center(child: Text('Home Screen'))), // Unique text
           ),
           GoRoute(
             path: '/protected',
-            builder: (_, __) =>
-                const Scaffold(body: Center(child: Text('Protected'))),
+            name: 'protected', // Good practice to name routes
+            builder: (_, __) => const Scaffold(
+                body: Center(child: Text('Protected Screen'))), // Unique text
           ),
           GoRoute(
             path: '/sign-in',
             name: 'sign-in',
             builder: (_, GoRouterState state) => Scaffold(
               appBar: AppBar(
-                title: const Text('Sign in Title'),
+                title: const Text('Sign In Screen Title'), // Unique text
               ),
               body: Center(
                 child: ElevatedButton(
-                    child: const Text('Sign in Button'),
+                    child: const Text('Sign In Button'), // Unique text
                     onPressed: () => goToRedirect(router, state)),
               ),
             ),
@@ -695,57 +713,74 @@ void main() {
         ],
       );
 
-      // Using expectLater with emitsInOrder covering the whole sequence
+      // Expect the stream of onEnter calls to emit events in this specific order
+      // We use unawaited because expectLater returns a Future that completes
+      // when the expectation is met or fails, but we want the test execution
+      // (pumping widgets, triggering actions) to proceed concurrently.
       unawaited(
-        // Don't await this expectLater itself
         expectLater(
           paramsStream,
           emitsInOrder(<dynamic>[
-            // Use dynamic or Matcher type
-            // 1. Initial Load
+            // 1. Initial Load to '/home'
             equals((current: '/home', next: '/home')),
-            // 2. Attempt go('/protected') -> onEnter blocks, pushes sign-in
+            // 2. Attempt go('/protected') -> onEnter blocks
             equals((current: '/home', next: '/protected')),
-            // 3. onEnter runs for the push('/sign-in?...')
+            // 3. onEnter runs for the push('/sign-in?redirectTo=...') triggered internally
             equals(
                 (current: '/home', next: '/sign-in?redirectTo=%2Fprotected')),
-            // 4. Tap button -> go('/protected') -> onEnter allows
+            // 4. Tap button -> go('/protected') -> onEnter allows access
             equals((
-              current: '/sign-in?redirectTo=%2Fprotected',
+              current:
+                  // State when button is tapped
+                  '/sign-in?redirectTo=%2Fprotected',
+              // Target of the 'go' call
               next: '/protected'
             )),
           ]),
         ),
       );
 
-      // Initial load
+      // Initial widget pump
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
-      await tester.pumpAndSettle(); // Let initial navigation complete
-      expect(find.text('Home'), findsOneWidget);
+      // Let initial navigation and builds complete
+      await tester.pumpAndSettle();
+      // Verify initial screen
+      expect(find.text('Home Screen'), findsOneWidget);
 
-      // Trigger first navigation (go protected -> push sign-in)
+      // Trigger navigation to protected route (user is not authenticated)
       router.go('/protected');
-      await tester.pumpAndSettle(); // Let navigation to sign-in complete
+      // Allow navigation/redirection to complete
+      await tester.pumpAndSettle();
 
-      // Verify state after first navigation attempt
-      expect(router.state.uri.toString(),
-          equals('/sign-in?redirectTo=%2Fprotected'));
-      expect(find.widgetWithText(ElevatedButton, 'Sign in Button'),
+      // Verify state after redirection to sign-in
+      expect(
+        router.state.uri.toString(),
+        equals('/sign-in?redirectTo=%2Fprotected'),
+      );
+      // Verify app bar title
+      expect(find.text('Sign In Screen Title'), findsOneWidget);
+      // Verify button exists
+      expect(find.widgetWithText(ElevatedButton, 'Sign In Button'),
           findsOneWidget);
+      // BackButton appears because sign-in was pushed onto the stack
       expect(find.byType(BackButton), findsOneWidget);
 
-      // Simulate login
+      // Simulate successful authentication
       isAuthenticatedResult = true;
 
-      // Trigger second navigation (tap button -> go protected)
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in Button'));
-      await tester.pumpAndSettle(); // Let navigation to protected complete
+      // Trigger navigation back to protected route by tapping the sign-in button
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Sign In Button'));
+      // Allow navigation to protected route to complete
+      await tester.pumpAndSettle();
 
       // Verify final state
       expect(router.state.uri.toString(), equals('/protected'));
-      expect(find.text('Protected'), findsOneWidget);
+      // Verify final screen
+      expect(find.text('Protected Screen'), findsOneWidget);
+      // Verify sign-in screen is gone
+      expect(find.text('Sign In Screen Title'), findsNothing);
 
-      // clean up
+      // Close the stream controller
       await paramsSink.close();
     });
 
