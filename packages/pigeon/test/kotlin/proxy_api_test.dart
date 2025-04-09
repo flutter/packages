@@ -1041,6 +1041,12 @@ void main() {
         );
 
         expect(
+          code,
+          contains(
+            'private val releaseAllFinalizedInstancesRunnable = { this.releaseAllFinalizedInstances() }',
+          ),
+        );
+        expect(
           'this.releaseAllFinalizedInstances()'.allMatches(code).length,
           1,
         );
