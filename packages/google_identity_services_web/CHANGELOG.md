@@ -1,3 +1,7 @@
+## 0.3.4
+
+* Fixes potential exceptions while fetching `Moment*Reason` for invalid value.
+
 ## 0.3.3
 
 * Moves all the JavaScript types to extend `JSObject`.
