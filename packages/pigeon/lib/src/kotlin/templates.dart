@@ -58,7 +58,7 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
    */
   var clearFinalizedWeakReferencesInterval: Long = 3000
     set(value) {
-      handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+      handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
       field = value
       releaseAllFinalizedInstances()
     }
