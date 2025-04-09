@@ -1,0 +1,15 @@
+import 'package:flutter/material.dart'; import 'package:webview_flutter/webview_flutter.dart';
+
+void main() { runApp(const ArmTubeApp()); }
+
+class ArmTubeApp extends StatelessWidget { const ArmTubeApp({super.key});
+
+@override Widget build(BuildContext context) { return MaterialApp( title: 'ArmTube', theme: ThemeData.dark().copyWith( primaryColor: Colors.red, scaffoldBackgroundColor: Colors.black, ), home: const ArmTubeHomePage(), debugShowCheckedModeBanner: false, ); } }
+
+class ArmTubeHomePage extends StatefulWidget { const ArmTubeHomePage({super.key});
+
+@override State<ArmTubeHomePage> createState() => _ArmTubeHomePageState(); }
+
+class _ArmTubeHomePageState extends State<ArmTubeHomePage> { late WebViewController controller;
+
+@override Widget build(BuildContext context) { return Scaffold( appBar: AppBar( title: const Text('ArmTube'), backgroundColor: Colors.redAccent, ), body: const SafeArea( child: WebView( initialUrl: 'https://piped.video', javascriptMode: JavascriptMode.unrestricted, ), ), ); } }
