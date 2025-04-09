@@ -1041,8 +1041,8 @@ void main() {
         );
 
         expect(
-          code,
-          isNot(contains('({ this.releaseAllFinalizedInstances() })')),
+          'this.releaseAllFinalizedInstances()'.allMatches(code).length,
+          1,
         );
       });
     });
