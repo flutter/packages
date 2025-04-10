@@ -1,3 +1,7 @@
+## 2.4.9
+
+* Enables callers to use `getInt` to read preference of type `int` that was written to shared preferences by native code without passing though plugin code.
+
 ## 2.4.8
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.

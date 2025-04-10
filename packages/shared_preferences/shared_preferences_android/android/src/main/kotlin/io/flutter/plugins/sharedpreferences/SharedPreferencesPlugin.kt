@@ -23,6 +23,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
+import java.lang.ClassCastException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -379,7 +380,12 @@ class SharedPreferencesBackend(
   override fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long? {
     val preferences = createSharedPreferences(options)
     return if (preferences.contains(key)) {
-      preferences.getLong(key, 0)
+      try {
+        preferences.getLong(key, 0)
+      } catch (e: ClassCastException) {
+        // Retry with getInt in case the preference was written by native code directly.
+        preferences.getInt(key, 0).toLong()
+      }
     } else {
       null
     }
