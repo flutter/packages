@@ -291,8 +291,10 @@ void main() {
 </svg>
 ''';
 
-    final VectorInstructions instructions =
-    parseWithoutOptimizers(strokeOpacitySvg, colorMapper: const _TestOpacityColorMapper());
+    final VectorInstructions instructions = parseWithoutOptimizers(
+      strokeOpacitySvg,
+      colorMapper: const _TestOpacityColorMapper(),
+    );
 
     expect(
       instructions.paints.single,
