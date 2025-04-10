@@ -337,7 +337,7 @@ class _MyAppState extends State<_MyApp> {
               backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Colors.white,
             ),
-            onPressed: () => _iapStoreKitPlatformAddition.sync(),
+            onPressed: () => _iapStoreKitPlatform.restorePurchases(),
             child: const Text('Restore purchases'),
           ),
         ],
