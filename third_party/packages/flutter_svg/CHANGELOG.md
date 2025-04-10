@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Expose `colorMapper` in `SvgPicture` constructors.
+
 ## 2.0.17
 
 * Implement errorBuilder callback
