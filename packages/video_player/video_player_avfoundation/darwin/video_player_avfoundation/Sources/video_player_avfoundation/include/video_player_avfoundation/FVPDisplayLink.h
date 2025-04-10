@@ -18,6 +18,9 @@
 /// Defaults to NO.
 @property(nonatomic, assign) BOOL running;
 
+/// The time interval between screen refresh updates.
+@property(nonatomic, readonly) CFTimeInterval duration;
+
 /// Initializes a display link that calls the given callback when fired.
 ///
 /// The display link starts paused, so must be started, by setting 'running' to YES, before the
