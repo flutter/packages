@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 /// Attempts to retrieve an enum value from [haystack] if [needle] is not null.
+///
+/// Returns `null` if no enum value in [haystack] matches [needle].
 T? maybeEnum<T extends Enum>(String? needle, List<T> haystack) {
   if (needle == null) {
     return null;
