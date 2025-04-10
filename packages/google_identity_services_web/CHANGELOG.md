@@ -1,6 +1,6 @@
 ## 0.3.4
 
-* Fixes potential exceptions while fetching `Moment*Reason` for invalid value.
+* Handles potential exceptions gracefully while fetching `Moment*Reason` for invalid value.
 
 ## 0.3.3
 
