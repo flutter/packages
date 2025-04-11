@@ -1,3 +1,7 @@
+## 2.13.0
+
+* Adds `onActiveLevelChanged` callback to `GoogleMap` to listen for indoor building active floor changes.
+
 ## 2.12.1
 
 * Fixes typo in README.

@@ -59,6 +59,7 @@ public class GoogleMapControllerTest {
   @Mock PolygonsController mockPolygonsController;
   @Mock PolylinesController mockPolylinesController;
   @Mock CirclesController mockCirclesController;
+  @Mock FloorController mockFloorController;
   @Mock HeatmapsController mockHeatmapsController;
   @Mock TileOverlaysController mockTileOverlaysController;
   @Mock GroundOverlaysController mockGroundOverlaysController;
@@ -94,6 +95,7 @@ public class GoogleMapControllerTest {
             mockPolygonsController,
             mockPolylinesController,
             mockCirclesController,
+            mockFloorController,
             mockHeatmapsController,
             mockTileOverlaysController,
             mockGroundOverlaysController);
@@ -212,7 +214,8 @@ public class GoogleMapControllerTest {
     googleMapController.setInitialClusterManagers(initialClusterManagers);
     googleMapController.onMapReady(mockGoogleMap);
 
-    // Verify if the ClusterManagersController.addClusterManagers method is called with initial cluster managers.
+    // Verify if the ClusterManagersController.addClusterManagers method is called with initial
+    // cluster managers.
     verify(mockClusterManagersController, times(1)).addClusterManagers(any());
   }
 

@@ -409,6 +409,13 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
     throw UnimplementedError('onLongPress() has not been implemented.');
   }
 
+  /// The active level of an indoor building has changed.
+  Stream<MapActiveLevelChangedEvent> onActiveLevelChanged(
+      {required int mapId}) {
+    throw UnimplementedError(
+        'onActiveLevelChanged() has not been implemented.');
+  }
+
   /// A marker icon managed by [ClusterManager] has been tapped.
   Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
     throw UnimplementedError('onClusterTap() has not been implemented.');

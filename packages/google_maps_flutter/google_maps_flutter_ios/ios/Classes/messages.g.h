@@ -89,6 +89,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @class FGMPlatformTileOverlay;
 @class FGMPlatformEdgeInsets;
 @class FGMPlatformLatLng;
+@class FGMPlatformIndoorLevel;
 @class FGMPlatformLatLngBounds;
 @class FGMPlatformCameraTargetBounds;
 @class FGMPlatformGroundOverlay;
@@ -412,6 +413,13 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 + (instancetype)makeWithLatitude:(double)latitude longitude:(double)longitude;
 @property(nonatomic, assign) double latitude;
 @property(nonatomic, assign) double longitude;
+@end
+
+/// Pigeon equivalent of IndoorLevel.
+@interface FGMPlatformIndoorLevel : NSObject
++ (instancetype)makeWithName:(nullable NSString *)name shortName:(nullable NSString *)shortName;
+@property(nonatomic, copy, nullable) NSString *name;
+@property(nonatomic, copy, nullable) NSString *shortName;
 @end
 
 /// Pigeon equivalent of LatLngBounds.
@@ -790,6 +798,9 @@ extern void SetUpFGMMapsApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger
 /// Called when the map, not a specifc map object, is long pressed.
 - (void)didLongPressAtPosition:(FGMPlatformLatLng *)position
                     completion:(void (^)(FlutterError *_Nullable))completion;
+/// Called when the user changes the active level on indoor maps.
+- (void)didChangeActiveLevel:(nullable FGMPlatformIndoorLevel *)activeLevel
+                  completion:(void (^)(FlutterError *_Nullable))completion;
 /// Called when a marker is tapped.
 - (void)didTapMarkerWithIdentifier:(NSString *)markerId
                         completion:(void (^)(FlutterError *_Nullable))completion;

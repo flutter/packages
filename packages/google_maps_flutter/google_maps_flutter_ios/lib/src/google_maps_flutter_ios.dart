@@ -206,6 +206,12 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MapActiveLevelChangedEvent> onActiveLevelChanged(
+      {required int mapId}) {
+    return _events(mapId).whereType<MapActiveLevelChangedEvent>();
+  }
+
+  @override
   Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
     return _events(mapId).whereType<ClusterTapEvent>();
   }
@@ -1023,6 +1029,16 @@ class HostMapMessageHandler implements MapsCallbackApi {
   void onTap(PlatformLatLng position) {
     streamController
         .add(MapTapEvent(mapId, _latLngFromPlatformLatLng(position)));
+  }
+
+  @override
+  void onActiveLevelChanged(PlatformIndoorLevel? activeLevel) {
+    streamController.add(MapActiveLevelChangedEvent(
+        mapId,
+        activeLevel == null
+            ? null
+            : IndoorLevel(
+                name: activeLevel.name, shortName: activeLevel.shortName)));
   }
 }
 

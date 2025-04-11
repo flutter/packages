@@ -163,6 +163,7 @@
     _dartCallbackHandler = [[FGMMapsCallbackApi alloc] initWithBinaryMessenger:registrar.messenger
                                                           messageChannelSuffix:pigeonSuffix];
     _mapView.delegate = self;
+    _mapView.indoorDisplay.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _registrar = registrar;
     _clusterManagersController =
@@ -425,6 +426,14 @@
   [self.dartCallbackHandler didLongPressAtPosition:FGMGetPigeonLatLngForCoordinate(coordinate)
                                         completion:^(FlutterError *_Nullable _){
                                         }];
+}
+
+- (void)didChangeActiveLevel:(GMSIndoorLevel *)level {
+  FGMPlatformIndoorLevel *pigeonLevel =
+      (level != nil) ? FGMGetPigeonIndoorLevelForIndoorLevel(level) : nil;
+  [self.dartCallbackHandler didChangeActiveLevel:pigeonLevel
+                                      completion:^(FlutterError *_Nullable _){
+                                      }];
 }
 
 - (void)interpretMapConfiguration:(FGMPlatformMapConfiguration *)config {
