@@ -4,6 +4,12 @@
 
 import Foundation
 
+#if canImport(camera_avfoundation_objc)
+  import camera_avfoundation_objc
+#else
+  import camera_avfoundation
+#endif
+
 /// Utils for creating default class instances used in tests
 enum CameraTestUtils {
   /// This method provides a convenient way to create media settings with minimal configuration.
