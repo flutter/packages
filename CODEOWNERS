@@ -84,7 +84,7 @@ packages/path_provider/path_provider_android/**          @camsim99
 packages/quick_actions/quick_actions_android/**          @camsim99
 packages/shared_preferences/shared_preferences_android/**  @reidbaker
 packages/url_launcher/url_launcher_android/**            @gmackall
-packages/video_player/video_player_android/**            @camsim99 @matanlurey
+packages/video_player/video_player_android/**            @camsim99
 # Owned by ecosystem team for now during the wrapper evaluation.
 packages/webview_flutter/webview_flutter_android/**      @bparrishMines
 
