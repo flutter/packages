@@ -87,7 +87,7 @@ void main() async {
         'supports a moment notification callback with correct type and reason',
         (_) async {
       id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
-      utils.setMockMomentNotification("skipped", "user_cancel");
+      utils.setMockMomentNotification('skipped', 'user_cancel');
 
       final StreamController<PromptMomentNotification> controller =
           StreamController<PromptMomentNotification>();
@@ -104,7 +104,7 @@ void main() async {
         'supports a moment notification callback while handling invalid reason '
         'value gracefully', (_) async {
       id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
-      utils.setMockMomentNotification("skipped", "random_invalid_reason");
+      utils.setMockMomentNotification('skipped', 'random_invalid_reason');
 
       final StreamController<PromptMomentNotification> controller =
           StreamController<PromptMomentNotification>();
