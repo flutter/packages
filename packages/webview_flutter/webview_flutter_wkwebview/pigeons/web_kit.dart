@@ -882,6 +882,12 @@ abstract class UIViewWKWebView extends UIView implements WKWebView {
 
   /// The custom user agent string.
   String? getCustomUserAgent();
+
+  /// Whether to allow previews for link destinations and detected data such as
+  /// addresses and phone numbers.
+  ///
+  /// Defaults to true.
+  void setAllowsLinkPreview(bool allow);
 }
 
 /// An object that displays interactive web content, such as for an in-app
@@ -965,6 +971,11 @@ abstract class NSViewWKWebView extends NSObject implements WKWebView {
 
   /// The custom user agent string.
   String? getCustomUserAgent();
+
+  /// If you set this property’s value to true, an iOS user can press links to
+  /// preview link destinations and detected data such as addresses and phone
+  /// numbers.
+  void setAllowsLinkPreview(bool allow);
 }
 
 /// An object that displays interactive web content, such as for an in-app
