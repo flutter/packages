@@ -1,3 +1,7 @@
+## 1.1.17
+
+* Fixes a bug where stroke opacity not applied by color mapper.
+
 ## 1.1.16
 
 * Sets stroke-width to 1 by default when an invalid value is parsed instead of throwing an exception.
