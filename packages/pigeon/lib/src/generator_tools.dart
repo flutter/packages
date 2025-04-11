@@ -15,7 +15,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '25.3.0';
+const String pigeonVersion = '25.3.1';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
