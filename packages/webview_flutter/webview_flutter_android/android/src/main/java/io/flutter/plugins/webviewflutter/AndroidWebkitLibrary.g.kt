@@ -86,7 +86,8 @@ class AndroidWebkitLibraryPigeonInstanceManager(
    */
   var clearFinalizedWeakReferencesInterval: Long = 3000
     set(value) {
-      handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+      val runnable = Runnable { this.releaseAllFinalizedInstances() }
+      handler.removeCallbacks(runnable)
       field = value
       releaseAllFinalizedInstances()
     }
@@ -198,7 +199,8 @@ class AndroidWebkitLibraryPigeonInstanceManager(
    * longer be called and methods will log a warning.
    */
   fun stopFinalizationListener() {
-    handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+    val runnable = Runnable { this.releaseAllFinalizedInstances() }
+    handler.removeCallbacks(runnable)
     hasFinalizationListenerStopped = true
   }
 
