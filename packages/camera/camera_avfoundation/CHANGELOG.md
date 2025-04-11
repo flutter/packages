@@ -1,3 +1,7 @@
+## 0.9.18+14
+
+* Creates Swift Package Manager target for Swift implementation.
+
 ## 0.9.18+13
 
 * Migrates test utils and mocks to Swift.

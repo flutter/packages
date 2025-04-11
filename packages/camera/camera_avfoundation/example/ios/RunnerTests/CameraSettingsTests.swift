@@ -7,6 +7,10 @@ import XCTest
 
 @testable import camera_avfoundation
 
+#if canImport(camera_avfoundation_objc)
+  @testable import camera_avfoundation_objc
+#endif
+
 private let testResolutionPreset = FCPPlatformResolutionPreset.medium
 private let testFramesPerSecond = 15
 private let testVideoBitrate = 200000

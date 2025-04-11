@@ -7,6 +7,10 @@ import XCTest
 
 @testable import camera_avfoundation
 
+#if canImport(camera_avfoundation_objc)
+  @testable import camera_avfoundation_objc
+#endif
+
 final class AvailableCamerasTest: XCTestCase {
   private func createCameraPlugin(with deviceDiscoverer: MockCameraDeviceDiscoverer) -> CameraPlugin
   {
