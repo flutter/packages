@@ -67,7 +67,7 @@ typedef NavigatorBuilder = Widget Function(
 ///
 /// If the return value is true or the future resolve to true, the route will
 /// exit as usual. Otherwise, the operation will abort.
-typedef ExitCallback = FutureOr<bool> Function(
+typedef ExitCallback = FutureOr<bool>? Function(
     BuildContext context, GoRouterState state);
 
 /// The base class for [GoRoute] and [ShellRoute].
@@ -1441,6 +1441,7 @@ class _RestorableRouteMatchList extends RestorableProperty<RouteMatchList> {
 
   RouteMatchList get value => _value;
   RouteMatchList _value = RouteMatchList.empty;
+
   set value(RouteMatchList newValue) {
     if (newValue != _value) {
       _value = newValue;
