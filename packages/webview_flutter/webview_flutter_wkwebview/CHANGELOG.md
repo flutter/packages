@@ -1,3 +1,8 @@
+## 3.18.6
+
+* Fixes `PlatformException` when calling `loadFlutterAsset` on macOS.
+* Updates native wrapper with methods handling `SecTust` and `SecCertificate`. 
+
 ## 3.18.5
 
 * Fixes crash when sending undefined message via JavaScript channel.
