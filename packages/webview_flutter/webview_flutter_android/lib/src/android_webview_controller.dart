@@ -731,6 +731,14 @@ class AndroidWebViewController extends PlatformWebViewController {
     _onJavaScriptPrompt = onJavaScriptTextInputDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
   }
+
+  @override
+  Future<void> setVerticalScrollBarEnabled(bool enabled) =>
+      _webView.setVerticalScrollBarEnabled(enabled);
+
+  @override
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) =>
+      _webView.setHorizontalScrollBarEnabled(enabled);
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].

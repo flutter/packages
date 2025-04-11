@@ -763,6 +763,16 @@ abstract class View {
 
   /// Return the scrolled position of this view.
   WebViewPoint getScrollPosition();
+
+  /// Define whether the vertical scrollbar should be drawn or not.
+  ///
+  /// The scrollbar is not drawn by default.
+  void setVerticalScrollBarEnabled(bool enabled);
+
+  /// Define whether the horizontal scrollbar should be drawn or not.
+  ///
+  /// The scrollbar is not drawn by default.
+  void setHorizontalScrollBarEnabled(bool enabled);
 }
 
 /// A callback interface used by the host application to set the Geolocation

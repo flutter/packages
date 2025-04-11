@@ -34,4 +34,14 @@ public class ViewProxyApi extends PigeonApiView {
   public WebViewPoint getScrollPosition(@NonNull View pigeon_instance) {
     return new WebViewPoint(pigeon_instance.getScrollX(), pigeon_instance.getScrollY());
   }
+
+  @Override
+  public void setVerticalScrollBarEnabled(@NonNull View pigeon_instance, boolean enabled) {
+    pigeon_instance.setVerticalScrollBarEnabled(enabled);
+  }
+
+  @Override
+  public void setHorizontalScrollBarEnabled(@NonNull View pigeon_instance, boolean enabled) {
+    pigeon_instance.setHorizontalScrollBarEnabled(enabled);
+  }
 }
