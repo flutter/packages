@@ -1,3 +1,7 @@
+## 0.9.18+14
+
+* Fixes race condition when starting image stream.
+
 ## 0.9.18+13
 
 * Migrates test utils and mocks to Swift.
