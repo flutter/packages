@@ -5,4 +5,5 @@
 export 'src/sk2_pigeon.g.dart';
 export 'src/store_kit_2_wrappers/sk2_appstore_wrapper.dart';
 export 'src/store_kit_2_wrappers/sk2_product_wrapper.dart';
+export 'src/store_kit_2_wrappers/sk2_storefront_wrapper.dart';
 export 'src/store_kit_2_wrappers/sk2_transaction_wrapper.dart';
