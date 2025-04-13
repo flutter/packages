@@ -88,7 +88,7 @@ class ProxyApiTestsPigeonInstanceManager(
    */
   var clearFinalizedWeakReferencesInterval: Long = 3000
     set(value) {
-      handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
+      handler.removeCallbacks(::releaseAllFinalizedInstances)
       field = value
       releaseAllFinalizedInstances()
     }
