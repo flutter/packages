@@ -238,7 +238,7 @@ Future<void> main() async {
     expect(content.contains('flutter_test_header'), isTrue);
   });
 
-  testWidgets('loadFlutterAsset does not throw exception',
+  testWidgets('loadFlutterAsset successfully loads an HTML asset',
       (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
 
