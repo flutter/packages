@@ -88,7 +88,7 @@ class ProxyApiTestsPigeonInstanceManager(
    */
   var clearFinalizedWeakReferencesInterval: Long = 3000
     set(value) {
-      handler.removeCallbacks(::releaseAllFinalizedInstances)
+      handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
       field = value
       releaseAllFinalizedInstances()
     }
@@ -198,7 +198,7 @@ class ProxyApiTestsPigeonInstanceManager(
    * longer be called and methods will log a warning.
    */
   fun stopFinalizationListener() {
-    handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
+    handler.removeCallbacks(::releaseAllFinalizedInstances)
     hasFinalizationListenerStopped = true
   }
 
