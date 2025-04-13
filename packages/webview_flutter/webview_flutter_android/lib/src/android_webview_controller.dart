@@ -1450,6 +1450,25 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           httpAuthHandler.cancel();
         }
       },
+      onFormResubmission:
+          (_, __, android_webview.AndroidMessage dontResend, ___) {
+        dontResend.sendToTarget();
+      },
+      onReceivedClientCertRequest: (
+        _,
+        __,
+        android_webview.ClientCertRequest request,
+      ) {
+        request.cancel();
+      },
+      onReceivedSslError: (
+        _,
+        __,
+        android_webview.SslErrorHandler handler,
+        ___,
+      ) {
+        handler.cancel();
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)

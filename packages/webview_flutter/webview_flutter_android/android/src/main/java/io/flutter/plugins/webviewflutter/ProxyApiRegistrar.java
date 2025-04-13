@@ -227,6 +227,12 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   }
 
   @NonNull
+  @Override
+  public PigeonApiAndroidMessage getPigeonApiAndroidMessage() {
+    return new MessageProxyApi(this);
+  }
+
+  @NonNull
   public Context getContext() {
     return context;
   }

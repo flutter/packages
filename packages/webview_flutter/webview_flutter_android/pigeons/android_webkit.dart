@@ -877,7 +877,13 @@ abstract class HttpAuthHandler {
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.os.Message'),
 )
-abstract class AndroidMessage {}
+abstract class AndroidMessage {
+  /// Sends this message to the Android native `Handler` specified by
+  /// getTarget().
+  ///
+  /// Throws a null pointer exception if this field has not been set.
+  void sendToTarget();
+}
 
 /// Defines a message containing a description and arbitrary data object that
 /// can be sent to a `Handler`.
