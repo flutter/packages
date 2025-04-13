@@ -482,8 +482,8 @@ abstract class WebViewClient {
     String realm,
   )? onReceivedHttpAuthRequest;
 
-  /// As the host application if the browser should resend data as the requested
-  /// page was a result of a POST.
+  /// Ask the host application if the browser should resend data as the
+  /// requested page was a result of a POST.
   void Function(
     WebView view,
     AndroidMessage dontResend,
@@ -1016,5 +1016,7 @@ abstract class SslCertificate {
 
   /// The X509Certificate used to create this SslCertificate or null if no
   /// certificate was provided.
+  ///
+  /// Always returns null on Android versions below Q.
   X509Certificate? getX509Certificate();
 }

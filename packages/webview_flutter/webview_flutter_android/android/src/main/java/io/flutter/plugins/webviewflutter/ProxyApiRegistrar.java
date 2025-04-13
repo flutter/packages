@@ -69,14 +69,6 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
     return method + " requires " + versionRequirements + ".";
   }
 
-  /** Creates an exception when a method is called on an unsupported version. */
-  @NonNull
-  UnsupportedOperationException createUnsupportedVersionError(
-      @NonNull String method, @NonNull String versionRequirements) {
-    return new UnsupportedOperationException(
-        createUnsupportedVersionMessage(method, versionRequirements));
-  }
-
   @NonNull
   @Override
   public PigeonApiWebResourceRequest getPigeonApiWebResourceRequest() {
