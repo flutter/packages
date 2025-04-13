@@ -61,7 +61,7 @@ android {
     lintOptions {
         checkAllWarnings true
         warningsAsErrors true
-        enable 'ImplicitSamInstance'
+        enable += 'ImplicitSamInstance'
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
