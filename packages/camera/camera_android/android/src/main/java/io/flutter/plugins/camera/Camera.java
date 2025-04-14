@@ -1293,10 +1293,11 @@ class Camera
   }
 
   void closeCaptureSession() {
-    if (captureSession != null) {
+    final CameraCaptureSession captureSessionToClose = captureSession;
+    if (captureSessionToClose != null) {
       Log.i(TAG, "closeCaptureSession");
 
-      captureSession.close();
+      captureSessionToClose.close();
       captureSession = null;
     }
   }
@@ -1324,8 +1325,9 @@ class Camera
   }
 
   private void stopAndReleaseCamera() {
-    if (cameraDevice != null) {
-      cameraDevice.close();
+    final CameraDeviceWrapper cameraDeviceToClose = cameraDevice;
+    if (cameraDeviceToClose != null) {
+      cameraDeviceToClose.close();
       cameraDevice = null;
 
       // Closing the CameraDevice without closing the CameraCaptureSession is recommended
