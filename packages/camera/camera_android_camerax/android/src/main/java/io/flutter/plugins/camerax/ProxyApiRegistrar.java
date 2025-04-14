@@ -87,17 +87,6 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
     }
   }
 
-  // For logging exceptions received from Host -> Dart message calls.
-  void logError(@NonNull String tag, @NonNull Throwable exception) {
-    Log.e(
-        tag,
-        exception.getClass().getSimpleName()
-            + ", Message: "
-            + exception.getMessage()
-            + ", Stacktrace: "
-            + Log.getStackTraceString(exception));
-  }
-
   @NonNull
   public Context getContext() {
     return context;
