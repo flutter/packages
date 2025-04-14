@@ -51,10 +51,6 @@ android {
         versionName flutterVersionName
     }
 
-    lint {
-        error += 'ImplicitSamInstance'
-    }
-
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

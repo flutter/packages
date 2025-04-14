@@ -198,7 +198,7 @@ class ProxyApiTestsPigeonInstanceManager(
    * longer be called and methods will log a warning.
    */
   fun stopFinalizationListener() {
-    handler.removeCallbacks(::releaseAllFinalizedInstances)
+    handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
     hasFinalizationListenerStopped = true
   }
 
