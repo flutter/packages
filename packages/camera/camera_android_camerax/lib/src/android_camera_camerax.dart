@@ -742,7 +742,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       final int? newIndex = await cameraControl.setExposureCompensationIndex(
         roundedExposureCompensationIndex,
       );
+
       if (newIndex == null) {
+        cameraErrorStreamController.add(
+            'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.');
         throw CameraException(
           setExposureOffsetFailedErrorCode,
           'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
@@ -751,6 +754,11 @@ class AndroidCameraCameraX extends CameraPlatform {
 
       return newIndex.toDouble();
     } on PlatformException catch (e) {
+      cameraErrorStreamController.add(e.message ??
+          'Setting the camera exposure compensation index failed.');
+      // Surfacing error to plugin layer to maintain consistency of
+      // setExposureOffset implementation across platform implementations.
+
       throw CameraException(
         setExposureOffsetFailedErrorCode,
         e.message ?? 'Setting the camera exposure compensation index failed.',
@@ -801,7 +809,13 @@ class AndroidCameraCameraX extends CameraPlatform {
       },
     );
 
-    await camera2Control.addCaptureRequestOptions(captureRequestOptions);
+    try {
+      await camera2Control.addCaptureRequestOptions(captureRequestOptions);
+    } on PlatformException catch (e) {
+      cameraErrorStreamController.add(e.message ??
+          'The camera was unable to set new capture request options due to new options being unavailable or the camera being closed.');
+    }
+
     _currentExposureMode = mode;
   }
 
@@ -846,7 +860,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Throws a `CameraException` when an illegal zoom level is supplied.
   @override
   Future<void> setZoomLevel(int cameraId, double zoom) async {
-    await cameraControl.setZoomRatio(zoom);
+    try {
+      await cameraControl.setZoomRatio(zoom);
+    } on PlatformException catch (e) {
+      cameraErrorStreamController.add(e.message ??
+          'Zoom ratio was unable to be set. If ratio was not out of range, newer value may have been set; otherwise, the camera may be closed.');
+    }
   }
 
   /// The ui orientation changed.
@@ -984,7 +1003,13 @@ class AndroidCameraCameraX extends CameraPlatform {
           // Torch mode enabled already.
           return;
         }
-        await cameraControl.enableTorch(true);
+
+        try {
+          await cameraControl.enableTorch(true);
+        } on PlatformException catch (e) {
+          cameraErrorStreamController
+              .add(e.message ?? 'The camera was unable to change torch modes.');
+        }
         torchEnabled = true;
     }
   }
@@ -1651,9 +1676,25 @@ class AndroidCameraCameraX extends CameraPlatform {
       currentFocusMeteringAction = await actionBuilder.build();
     }
 
-    final FocusMeteringResult? result =
-        await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
-    return result?.isFocusSuccessful ?? false;
+    try {
+      final FocusMeteringResult? result = await cameraControl
+          .startFocusAndMetering(currentFocusMeteringAction!);
+
+      if (result == null) {
+        cameraErrorStreamController.add(
+          'Starting focus and metering was canceled due to the camera being closed or a new request being submitted.',
+        );
+      }
+
+      return result?.isFocusSuccessful ?? false;
+    } on PlatformException catch (e) {
+      cameraErrorStreamController.add(
+        e.message ?? 'Starting focus and metering failed.',
+      );
+      // Surfacing error to differentiate an operation cancellation from an
+      // illegal argument exception at a plugin layer.
+      rethrow;
+    }
   }
 
   // Combines the metering points and metering modes of a `FocusMeteringAction`
