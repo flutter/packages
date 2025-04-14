@@ -25,7 +25,7 @@ public class ImageStreamReaderUtilsTest {
   /** Ensure that passing in an image with padding returns one without padding */
   @Test
   public void yuv420ThreePlanesToNV21_trimsPaddingWhenPresent() {
-    Image mockImage = ImageStreamReaderTest.getImage(160, 120, 16, ImageFormat.YUV_420_888);
+    Image mockImage = ImageStreamReaderTestUtils.getImage(160, 120, 16, ImageFormat.YUV_420_888);
     int imageWidth = mockImage.getWidth();
     int imageHeight = mockImage.getHeight();
 
@@ -40,7 +40,7 @@ public class ImageStreamReaderUtilsTest {
   /** Ensure that passing in an image without padding returns the same size */
   @Test
   public void yuv420ThreePlanesToNV21_trimsPaddingWhenAbsent() {
-    Image mockImage = ImageStreamReaderTest.getImage(160, 120, 0, ImageFormat.YUV_420_888);
+    Image mockImage = ImageStreamReaderTestUtils.getImage(160, 120, 0, ImageFormat.YUV_420_888);
     int imageWidth = mockImage.getWidth();
     int imageHeight = mockImage.getHeight();
 
