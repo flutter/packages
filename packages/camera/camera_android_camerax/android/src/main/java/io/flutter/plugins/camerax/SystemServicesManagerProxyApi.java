@@ -8,6 +8,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.io.IOException;
+import java.util.Objects;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -33,7 +34,24 @@ public class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManage
     @Override
     public void onCameraError(@NonNull String errorDescription) {
       api.getPigeonRegistrar()
-          .runOnMainThread(() -> api.onCameraError(this, errorDescription, reply -> null));
+          .runOnMainThread(
+              new ProxyApiRegistrar.FlutterMethodRunnable() {
+                @Override
+                public void run() {
+                  api.onCameraError(
+                      SystemServicesManagerImpl.this,
+                      errorDescription,
+                      ResultCompat.asCompatCallback(
+                          result -> {
+                            if (result.isFailure()) {
+                              onFailure(
+                                  "SystemServicesManager.onCameraError",
+                                  Objects.requireNonNull(result.exceptionOrNull()));
+                            }
+                            return null;
+                          }));
+                }
+              });
     }
 
     @NonNull

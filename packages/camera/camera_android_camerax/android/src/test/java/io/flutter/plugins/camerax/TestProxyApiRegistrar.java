@@ -21,7 +21,7 @@ public class TestProxyApiRegistrar extends ProxyApiRegistrar {
   }
 
   @Override
-  void runOnMainThread(@NonNull Runnable runnable) {
+  void runOnMainThread(@NonNull FlutterMethodRunnable runnable) {
     runnable.run();
   }
 

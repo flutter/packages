@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis.Analyzer;
+import java.util.Objects;
 
 /**
  * ProxyApi implementation for {@link Analyzer}. This class may handle instantiating native object
@@ -33,7 +34,25 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
 
     @Override
     public void analyze(@NonNull androidx.camera.core.ImageProxy image) {
-      api.getPigeonRegistrar().runOnMainThread(() -> api.analyze(this, image, reply -> null));
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              new ProxyApiRegistrar.FlutterMethodRunnable() {
+                @Override
+                public void run() {
+                  api.analyze(
+                      AnalyzerImpl.this,
+                      image,
+                      ResultCompat.asCompatCallback(
+                          result -> {
+                            if (result.isFailure()) {
+                              onFailure(
+                                  "Analyzer.analyze",
+                                  Objects.requireNonNull(result.exceptionOrNull()));
+                            }
+                            return null;
+                          }));
+                }
+              });
     }
   }
 

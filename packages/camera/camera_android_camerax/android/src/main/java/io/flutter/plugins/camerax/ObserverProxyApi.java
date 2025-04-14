@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
+import java.util.Objects;
 
 /**
  * ProxyApi implementation for {@link Observer}. This class may handle instantiating native object
@@ -23,7 +24,25 @@ class ObserverProxyApi extends PigeonApiObserver {
 
     @Override
     public void onChanged(T t) {
-      api.getPigeonRegistrar().runOnMainThread(() -> api.onChanged(this, t, reply -> null));
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              new ProxyApiRegistrar.FlutterMethodRunnable() {
+                @Override
+                public void run() {
+                  api.onChanged(
+                      ObserverImpl.this,
+                      t,
+                      ResultCompat.asCompatCallback(
+                          result -> {
+                            if (result.isFailure()) {
+                              onFailure(
+                                  "Observer.onChanged",
+                                  Objects.requireNonNull(result.exceptionOrNull()));
+                            }
+                            return null;
+                          }));
+                }
+              });
     }
   }
 

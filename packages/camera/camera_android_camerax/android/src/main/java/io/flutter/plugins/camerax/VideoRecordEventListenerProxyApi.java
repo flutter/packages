@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.camera.video.VideoRecordEvent;
+import java.util.Objects;
 
 /**
  * ProxyApi implementation for {@link VideoRecordEventListener}. This class may handle instantiating
@@ -29,7 +30,25 @@ class VideoRecordEventListenerProxyApi extends PigeonApiVideoRecordEventListener
 
     @Override
     public void onEvent(@NonNull VideoRecordEvent event) {
-      api.getPigeonRegistrar().runOnMainThread(() -> api.onEvent(this, event, reply -> null));
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              new ProxyApiRegistrar.FlutterMethodRunnable() {
+                @Override
+                public void run() {
+                  api.onEvent(
+                      VideoRecordEventListenerImpl.this,
+                      event,
+                      ResultCompat.asCompatCallback(
+                          result -> {
+                            if (result.isFailure()) {
+                              onFailure(
+                                  "VideoRecordEventListener.onEvent",
+                                  Objects.requireNonNull(result.exceptionOrNull()));
+                            }
+                            return null;
+                          }));
+                }
+              });
     }
   }
 

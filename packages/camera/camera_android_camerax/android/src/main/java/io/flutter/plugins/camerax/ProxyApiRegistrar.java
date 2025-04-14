@@ -29,6 +29,36 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   @Nullable private CameraPermissionsManager.PermissionsRegistry permissionsRegistry;
 
+  /**
+   * Handles errors received from calling a method from host->Dart.
+   *
+   * <p>If a call to Dart fails, users should call `onFailure`.
+   */
+  public abstract static class FlutterMethodRunnable implements Runnable {
+    void onFailure(@NonNull String methodName, @NonNull Throwable throwable) {
+      final String errorMessage;
+      if (throwable instanceof CameraXError) {
+        final CameraXError cameraXError = (CameraXError) throwable;
+        errorMessage =
+            cameraXError.getCode()
+                + ": Error returned from calling "
+                + methodName
+                + ": "
+                + cameraXError.getMessage()
+                + " Details: "
+                + cameraXError.getDetails();
+      } else {
+        errorMessage =
+            throwable.getClass().getSimpleName()
+                + ": Error returned from calling "
+                + methodName
+                + ": "
+                + throwable.getMessage();
+      }
+      Log.e("ProxyApiRegistrar", errorMessage);
+    }
+  }
+
   // PreviewProxyApi maintains a state to track SurfaceProducers provided by the Flutter engine.
   @NonNull private final PreviewProxyApi previewProxyApi = new PreviewProxyApi(this);
 
@@ -49,7 +79,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
 
   // Added to be overridden for tests. The test implementation calls `callback` immediately, instead
   // of waiting for the main thread to run it.
-  void runOnMainThread(@NonNull Runnable runnable) {
+  void runOnMainThread(@NonNull FlutterMethodRunnable runnable) {
     if (context instanceof Activity) {
       ((Activity) context).runOnUiThread(runnable);
     } else {

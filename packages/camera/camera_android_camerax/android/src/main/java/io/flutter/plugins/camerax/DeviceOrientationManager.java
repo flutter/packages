@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
+import java.util.Objects;
 
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
@@ -100,9 +101,23 @@ public class DeviceOrientationManager {
     if (!newOrientation.equals(previousOrientation)) {
       api.getPigeonRegistrar()
           .runOnMainThread(
-              () ->
+              new ProxyApiRegistrar.FlutterMethodRunnable() {
+                @Override
+                public void run() {
                   api.onDeviceOrientationChanged(
-                      manager, newOrientation.toString(), reply -> null));
+                      manager,
+                      newOrientation.toString(),
+                      ResultCompat.asCompatCallback(
+                          result -> {
+                            if (result.isFailure()) {
+                              onFailure(
+                                  "DeviceOrientationManager.onDeviceOrientationChanged",
+                                  Objects.requireNonNull(result.exceptionOrNull()));
+                            }
+                            return null;
+                          }));
+                }
+              });
     }
   }
 
