@@ -962,6 +962,20 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
         onReceivedError,
     void Function(_i2.WebViewClient, _i2.WebView, _i2.WebResourceRequest)?
         requestLoading,
+    void Function(
+      _i2.WebViewClient,
+      _i2.WebView,
+      _i2.AndroidMessage,
+      _i2.AndroidMessage,
+    )? onFormResubmission,
+    void Function(_i2.WebViewClient, _i2.WebView, _i2.ClientCertRequest)?
+        onReceivedClientCertRequest,
+    void Function(
+      _i2.WebViewClient,
+      _i2.WebView,
+      _i2.SslErrorHandler,
+      _i2.SslError,
+    )? onReceivedSslError,
     void Function(_i2.WebViewClient, _i2.WebView, String)? urlLoading,
   }) =>
       (super.noSuchMethod(
@@ -971,6 +985,9 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
           #onReceivedRequestError: onReceivedRequestError,
           #onReceivedError: onReceivedError,
           #requestLoading: requestLoading,
+          #onFormResubmission: onFormResubmission,
+          #onReceivedClientCertRequest: onReceivedClientCertRequest,
+          #onReceivedSslError: onReceivedSslError,
           #urlLoading: urlLoading,
         }),
         returnValue: _FakeWebViewClient_11(
@@ -981,6 +998,9 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
             #onReceivedRequestError: onReceivedRequestError,
             #onReceivedError: onReceivedError,
             #requestLoading: requestLoading,
+            #onFormResubmission: onFormResubmission,
+            #onReceivedClientCertRequest: onReceivedClientCertRequest,
+            #onReceivedSslError: onReceivedSslError,
             #urlLoading: urlLoading,
           }),
         ),

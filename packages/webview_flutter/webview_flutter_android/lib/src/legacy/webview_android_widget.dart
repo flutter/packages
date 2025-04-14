@@ -185,6 +185,25 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
         );
       };
     }),
+    onFormResubmission:
+        (_, __, android_webview.AndroidMessage dontResend, ___) {
+      dontResend.sendToTarget();
+    },
+    onReceivedClientCertRequest: (
+      _,
+      __,
+      android_webview.ClientCertRequest request,
+    ) {
+      request.cancel();
+    },
+    onReceivedSslError: (
+      _,
+      __,
+      android_webview.SslErrorHandler handler,
+      ___,
+    ) {
+      handler.cancel();
+    },
     requestLoading: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
@@ -650,6 +669,23 @@ class WebViewProxy {
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,
     )? requestLoading,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView,
+      android_webview.AndroidMessage,
+      android_webview.AndroidMessage,
+    )? onFormResubmission,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView,
+      android_webview.ClientCertRequest,
+    )? onReceivedClientCertRequest,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView,
+      android_webview.SslErrorHandler,
+      android_webview.SslError,
+    )? onReceivedSslError,
     void Function(
       android_webview.WebViewClient,
       android_webview.WebView webView,

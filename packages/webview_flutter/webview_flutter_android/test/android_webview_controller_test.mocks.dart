@@ -770,7 +770,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
       _i2.WebResourceRequest,
       _i2.WebResourceResponse,
     )? onReceivedHttpError,
-    void Function(_i2.WebViewClient, _i2.WebView, String, String, String)?
+    void Function(_i2.WebViewClient, _i2.WebView, String, String?, String)?
         onReceivedLoginRequest,
     void Function(
       _i2.WebViewClient,
@@ -840,7 +840,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebViewClient,
             _i2.WebView,
             String,
-            String,
+            String?,
             String,
           )? onReceivedLoginRequest,
           void Function(
@@ -917,7 +917,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.WebViewClient,
             _i2.WebView,
             String,
-            String,
+            String?,
             String,
           )? onReceivedLoginRequest,
           void Function(
@@ -989,7 +989,7 @@ class MockAndroidWebViewProxy extends _i1.Mock
           _i2.WebViewClient,
           _i2.WebView,
           String,
-          String,
+          String?,
           String,
         )? onReceivedLoginRequest,
         void Function(
