@@ -986,7 +986,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
     // Turn off torch mode if it is enabled and not being redundantly set.
     if (mode != FlashMode.torch && torchEnabled) {
-      await cameraControl.enableTorch(false);
+      await _enableTorchMode(false);
       torchEnabled = false;
     }
 
@@ -1004,12 +1004,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           return;
         }
 
-        try {
-          await cameraControl.enableTorch(true);
-        } on PlatformException catch (e) {
-          cameraErrorStreamController
-              .add(e.message ?? 'The camera was unable to change torch modes.');
-        }
+        await _enableTorchMode(true);
         torchEnabled = true;
     }
   }
@@ -1723,6 +1718,15 @@ class AndroidCameraCameraX extends CameraPlatform {
         MeteringMode.awb,
       ),
     ];
+  }
+
+  Future<void> _enableTorchMode(bool value) async {
+    try {
+      await cameraControl.enableTorch(value);
+    } on PlatformException catch (e) {
+      cameraErrorStreamController
+          .add(e.message ?? 'The camera was unable to change torch modes.');
+    }
   }
 
   static DeviceOrientation _deserializeDeviceOrientation(String orientation) {
