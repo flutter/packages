@@ -26,7 +26,7 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
 
   /** Implementation of {@link Analyzer} that passes arguments of callback methods to Dart. */
   static class AnalyzerImpl implements Analyzer {
-    private final AnalyzerProxyApi api;
+    final AnalyzerProxyApi api;
 
     AnalyzerImpl(@NonNull AnalyzerProxyApi api) {
       this.api = api;

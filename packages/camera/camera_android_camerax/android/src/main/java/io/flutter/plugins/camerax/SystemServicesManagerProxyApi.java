@@ -24,7 +24,7 @@ public class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManage
    * Dart.
    */
   static class SystemServicesManagerImpl extends SystemServicesManager {
-    private final SystemServicesManagerProxyApi api;
+    final SystemServicesManagerProxyApi api;
 
     SystemServicesManagerImpl(@NonNull SystemServicesManagerProxyApi api) {
       super(api.getPigeonRegistrar().getCameraPermissionsManager());

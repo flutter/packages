@@ -22,7 +22,7 @@ class VideoRecordEventListenerProxyApi extends PigeonApiVideoRecordEventListener
    * Dart.
    */
   static class VideoRecordEventListenerImpl implements VideoRecordEventListener {
-    private final VideoRecordEventListenerProxyApi api;
+    final VideoRecordEventListenerProxyApi api;
 
     VideoRecordEventListenerImpl(@NonNull VideoRecordEventListenerProxyApi api) {
       this.api = api;

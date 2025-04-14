@@ -16,7 +16,7 @@ import java.util.Objects;
 class ObserverProxyApi extends PigeonApiObserver {
   /** Implementation of {@link Observer} that passes arguments of callback methods to Dart. */
   static class ObserverImpl<T> implements Observer<T> {
-    private final ObserverProxyApi api;
+    final ObserverProxyApi api;
 
     ObserverImpl(@NonNull ObserverProxyApi api) {
       this.api = api;
