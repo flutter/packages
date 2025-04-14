@@ -19,6 +19,8 @@ import android.media.ImageReader;
 import android.os.Handler;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -155,89 +157,67 @@ public class ImageStreamReaderTest {
     final int numFramesPerBatch = ImageStreamReader.MAX_IMAGES_IN_TRANSIT + numExtraFramesPerBatch;
 
     int dartImageFormat = ImageFormat.YUV_420_888;
-    final List<Runnable> runnables = new ArrayList<Runnable>();
 
     ImageReader mockImageReader = mock(ImageReader.class);
     ImageStreamReaderUtils mockImageStreamReaderUtils = mock(ImageStreamReaderUtils.class);
     ImageStreamReader imageStreamReader =
         new ImageStreamReader(mockImageReader, dartImageFormat, mockImageStreamReaderUtils);
 
-    Handler mockHandler = mock(Handler.class);
-    imageStreamReader.handler = mockHandler;
+    for (boolean invalidateWeakReference : new boolean[] {true, false}) {
+      final List<Runnable> runnables = new ArrayList<Runnable>();
 
-    // initially, handler will simulate a hanging main looper, that only queues inputs
-    when(mockHandler.post(any(Runnable.class)))
-        .thenAnswer(
-            inputs -> {
-              Runnable r = inputs.getArgument(0, Runnable.class);
-              runnables.add(r);
-              return true;
-            });
+      Handler mockHandler = mock(Handler.class);
+      imageStreamReader.handler = mockHandler;
 
-    CameraCaptureProperties mockCaptureProps = mock(CameraCaptureProperties.class);
-    EventChannel.EventSink mockEventSink = mock(EventChannel.EventSink.class);
+      // initially, handler will simulate a hanging main looper, that only queues inputs
+      when(mockHandler.post(any(Runnable.class)))
+          .thenAnswer(
+              inputs -> {
+                Runnable r = inputs.getArgument(0, Runnable.class);
+                runnables.add(r);
+                return true;
+              });
 
-    // send some images whose "main-looper" callbacks won't get run, so some frames will drop
-    for (int i = 0; i < numFramesPerBatch; ++i) {
+      CameraCaptureProperties mockCaptureProps = mock(CameraCaptureProperties.class);
+      EventChannel.EventSink mockEventSink = mock(EventChannel.EventSink.class);
+
       Image mockImage = ImageStreamReaderTest.getImage(1280, 720, 256, ImageFormat.YUV_420_888);
       imageStreamReader.onImageAvailable(mockImage, mockCaptureProps, mockEventSink);
 
       // make sure the image was closed, even when skipping frames
       verify(mockImage, times(1)).close();
 
-      // frames beyond MAX_IMAGES_IN_TRANSIT are expected to be skipped
-      final int expectedFramesInQueue =
-          i < ImageStreamReader.MAX_IMAGES_IN_TRANSIT
-              ? i + 1
-              : ImageStreamReader.MAX_IMAGES_IN_TRANSIT;
-
       // check that we collected all runnables in this method
-      assertEquals(runnables.size(), expectedFramesInQueue);
-
-      // ensure the stream reader's count agrees
-      assertEquals(imageStreamReader.numImagesInTransit, expectedFramesInQueue);
+      assertEquals(runnables.size(), 1);
 
       // verify post() was not called more times than it should have
-      verify(mockHandler, times(expectedFramesInQueue)).post(any(Runnable.class));
+      verify(mockHandler, times(1)).post(any(Runnable.class));
+
+      // make sure callback was not yet invoked
+      verify(mockEventSink, never()).success(any(Map.class));
+
+      // simulate frame processing
+      for (Runnable r : runnables) {
+        if (invalidateWeakReference) {
+          // Replace the captured WeakReference with one pointing to null.
+          Field[] fields = r.getClass().getDeclaredFields();
+          for (Field field : fields) {
+            if (field.getType().equals(WeakReference.class)) {
+              // Remove the `final` modifier
+              try {
+                field.set(r, new WeakReference<Map<String, Object>>(null));
+              } catch (IllegalAccessException e) {
+                throw new RuntimeException("Failed to inject null WeakReference", e);
+              }
+            }
+          }
+        }
+
+        r.run();
+      }
+
+      // make sure all callbacks were invoked so far
+      verify(mockEventSink, invalidateWeakReference ? never() : times(1)).success(any(Map.class));
     }
-
-    // make sure callback was not yet invoked
-    verify(mockEventSink, never()).success(any(Map.class));
-
-    // simulate frame processing
-    for (Runnable r : runnables) {
-      r.run();
-    }
-
-    // make sure all callbacks were invoked so far
-    verify(mockEventSink, times(ImageStreamReader.MAX_IMAGES_IN_TRANSIT)).success(any(Map.class));
-
-    // switch handler to simulate a running main looper
-    when(mockHandler.post(any(Runnable.class)))
-        .thenAnswer(
-            input -> {
-              Runnable r = input.getArgument(0, Runnable.class);
-              r.run();
-              return true;
-            });
-
-    // send some images that will get processed by the handler
-    for (int i = 0; i < numFramesPerBatch; ++i) {
-      Image mockImage = ImageStreamReaderTest.getImage(1280, 720, 256, ImageFormat.YUV_420_888);
-      imageStreamReader.onImageAvailable(mockImage, mockCaptureProps, mockEventSink);
-
-      // make sure the image is closed when no frame-skipping happens
-      verify(mockImage, times(1)).close();
-
-      // since the handler is not "halting", each image available should cause a post(), which the
-      // mockHandler runs immediately, thus numImagesInTransit should remain zero.
-      verify(mockHandler, times(ImageStreamReader.MAX_IMAGES_IN_TRANSIT + i + 1))
-          .post(any(Runnable.class));
-      assertEquals(imageStreamReader.numImagesInTransit, 0);
-    }
-
-    // make sure all callbacks were invoked
-    verify(mockEventSink, times(ImageStreamReader.MAX_IMAGES_IN_TRANSIT + numFramesPerBatch))
-        .success(any(Map.class));
   }
 }

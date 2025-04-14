@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,11 +43,10 @@ public class ImageStreamReader {
   public Handler handler;
 
   /**
-   * This solves a memory issue, when the main thread hangs (e.g. when pausing the debugger) while
-   * many frames are being sent using android.os.Handler.post(). This causes an OOM error rather
-   * quickly. So to avoid this we apply some back-pressure.
+   * This hard reference is required so frames don't get randomly dropped before reaching the main
+   * looper.
    */
-  @VisibleForTesting public int numImagesInTransit = 0;
+  private Map<String, Object> latestImageBufferHardReference = null;
 
   /**
    * Creates a new instance of the {@link ImageStreamReader}.
@@ -111,13 +111,6 @@ public class ImageStreamReader {
       @NonNull CameraCaptureProperties captureProps,
       @NonNull EventChannel.EventSink imageStreamSink) {
     try {
-      // The limit was chosen so it would not drop frames for reasonable lags of the main thread.
-      if (numImagesInTransit >= ImageStreamReader.MAX_IMAGES_IN_TRANSIT) {
-        Log.d(TAG, "Dropping frame due to images pending on main thread.");
-        image.close();
-        return;
-      }
-
       Map<String, Object> imageBuffer = new HashMap<>();
 
       // Get plane data ready
@@ -138,13 +131,32 @@ public class ImageStreamReader {
 
       final Handler handler =
           this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
-      ++numImagesInTransit;
+
+      // Keep a hard reference to the latest frame, so it isn't dropped before it reaches the main
+      // looper
+      latestImageBufferHardReference = imageBuffer;
+
       boolean postResult =
           handler.post(
-              () -> {
-                imageStreamSink.success(imageBuffer);
-                --numImagesInTransit;
-              });
+              new Runnable() {
+                // a public field is required in order to test this code
+                @VisibleForTesting public WeakReference<Map<String, Object>> weakImageBuffer;
+
+                public Runnable withImageBuffer(Map<String, Object> imageBuffer) {
+                  weakImageBuffer = new WeakReference<>(imageBuffer);
+                  return this;
+                }
+
+                @Override
+                public void run() {
+                  final Map<String, Object> imageBuffer = weakImageBuffer.get();
+                  if (imageBuffer == null) {
+                    Log.d(TAG, "Image buffer was dropped by garbage collector.");
+                    return;
+                  }
+                  imageStreamSink.success(imageBuffer);
+                }
+              }.withImageBuffer(imageBuffer));
 
       image.close();
 
