@@ -38,7 +38,7 @@ public final class CameraAndroidCameraxPlugin implements FlutterPlugin, Activity
   @Override
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     if (proxyApiRegistrar != null) {
-      proxyApiRegistrar.setIgnoreCallsToDart(false);
+      proxyApiRegistrar.setIgnoreCallsToDart(true);
       proxyApiRegistrar.tearDown();
       proxyApiRegistrar.getInstanceManager().stopFinalizationListener();
       proxyApiRegistrar = null;
