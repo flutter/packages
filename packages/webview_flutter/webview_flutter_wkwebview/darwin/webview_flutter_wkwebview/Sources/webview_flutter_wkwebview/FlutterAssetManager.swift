@@ -24,19 +24,19 @@ open class FlutterAssetManager {
   func urlForAsset(_ asset: String) -> URL? {
     let assetFilePath: String? = lookupKeyForAsset(asset)
 
-    if assetFilePath == nil {
+    guard let assetFilePath = assetFilePath else {
       return nil
     }
 
     var url: URL? = bundle.url(
-      forResource: (assetFilePath! as NSString).deletingPathExtension,
-      withExtension: (assetFilePath! as NSString).pathExtension)
+      forResource: (assetFilePath as NSString).deletingPathExtension,
+      withExtension: (assetFilePath as NSString).pathExtension)
 
     #if os(macOS)
       // See https://github.com/flutter/flutter/issues/135302
       // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
       if url == nil {
-        url = URL(string: assetFilePath!, relativeTo: bundle.bundleURL)
+        url = URL(string: assetFilePath, relativeTo: bundle.bundleURL)
       }
     #endif
 
