@@ -1,3 +1,7 @@
+## 0.9.19
+
+* Adds lensType in the PlatformCameraDescription
+
 ## 0.9.18+13
 
 * Migrates test utils and mocks to Swift.
@@ -66,7 +70,6 @@
 ## 0.9.17+6
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-* Removes OCMock usage from permission tests
 
 ## 0.9.17+5
 
