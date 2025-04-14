@@ -110,44 +110,24 @@ public class ImageStreamReader {
       @NonNull Image image,
       @NonNull CameraCaptureProperties captureProps,
       @NonNull EventChannel.EventSink imageStreamSink) {
+    // The limit was chosen so it would not drop frames for reasonable lags of the main thread.
+    if (numImagesInTransit >= ImageStreamReader.MAX_IMAGES_IN_TRANSIT) {
+      Log.d(TAG, "Dropping frame due to images pending on main thread.");
+      image.close();
+      return;
+    }
+
+    Map<String, Object> imageBuffer = new HashMap<>();
+
+    imageBuffer.put("width", image.getWidth());
+    imageBuffer.put("height", image.getHeight());
     try {
-      // The limit was chosen so it would not drop frames for reasonable lags of the main thread.
-      if (numImagesInTransit >= ImageStreamReader.MAX_IMAGES_IN_TRANSIT) {
-        Log.d(TAG, "Dropping frame due to images pending on main thread.");
-        image.close();
-        return;
-      }
-
-      Map<String, Object> imageBuffer = new HashMap<>();
-
       // Get plane data ready
       if (dartImageFormat == ImageFormat.NV21) {
         imageBuffer.put("planes", parsePlanesForNv21(image));
       } else {
         imageBuffer.put("planes", parsePlanesForYuvOrJpeg(image));
       }
-
-      imageBuffer.put("width", image.getWidth());
-      imageBuffer.put("height", image.getHeight());
-      imageBuffer.put("format", dartImageFormat);
-      imageBuffer.put("lensAperture", captureProps.getLastLensAperture());
-      imageBuffer.put("sensorExposureTime", captureProps.getLastSensorExposureTime());
-      Integer sensorSensitivity = captureProps.getLastSensorSensitivity();
-      imageBuffer.put(
-          "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
-
-      final Handler handler =
-          this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
-      ++numImagesInTransit;
-      boolean postResult =
-          handler.post(
-              () -> {
-                imageStreamSink.success(imageBuffer);
-                --numImagesInTransit;
-              });
-
-      image.close();
-
     } catch (IllegalStateException e) {
       // Handle "buffer is inaccessible" errors that can happen on some devices from
       // ImageStreamReaderUtils.yuv420ThreePlanesToNV21()
@@ -159,8 +139,26 @@ public class ImageStreamReader {
                   "IllegalStateException",
                   "Caught IllegalStateException: " + e.getMessage(),
                   null));
+    } finally {
       image.close();
     }
+
+    imageBuffer.put("format", dartImageFormat);
+    imageBuffer.put("lensAperture", captureProps.getLastLensAperture());
+    imageBuffer.put("sensorExposureTime", captureProps.getLastSensorExposureTime());
+    Integer sensorSensitivity = captureProps.getLastSensorSensitivity();
+    imageBuffer.put(
+        "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
+
+    final Handler handler =
+        this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
+    ++numImagesInTransit;
+    boolean postResult =
+        handler.post(
+            () -> {
+              imageStreamSink.success(imageBuffer);
+              --numImagesInTransit;
+            });
   }
 
   /**
