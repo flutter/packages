@@ -846,7 +846,6 @@ static void selectBestFormatForRequestedFrameRate(
 - (void)startVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
   if (!_isRecording) {
-    
     // Main logic to setup the video recording in a block to reuse in the completion block.
     void (^videoRecordingSetupWithCompletion)(void) = ^void(void) {
       NSError *error;
