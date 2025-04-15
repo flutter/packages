@@ -25,6 +25,7 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
+  jni: ^0.14.0
 
 dev_dependencies:
   flutter_test:

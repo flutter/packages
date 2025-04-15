@@ -14,6 +14,7 @@ dependencies:
   collection: ^1.15.0
   dart_style: ^3.0.0
   graphs: ^2.3.1
+  jni: ^0.14.0
   meta: ^1.9.0
   path: ^1.8.0
   pub_semver: ^2.1.4
@@ -21,6 +22,7 @@ dependencies:
 
 dev_dependencies:
   test: ^1.11.1
+  jnigen: ^0.14.0
 
 topics:
   - codegen

@@ -45,6 +45,8 @@ class DartOptions {
     this.copyrightHeader,
     this.sourceOutPath,
     this.testOutPath,
+    this.useJni = false,
+    this.dartOut,
   });
 
   /// A copyright header that will get prepended to generated code.
@@ -56,6 +58,12 @@ class DartOptions {
   /// Path to output generated Test file for tests.
   final String? testOutPath;
 
+  /// Whether to use Jni for generating kotlin interop code.
+  final bool useJni;
+
+  /// Path to output generated Dart file.
+  final String? dartOut;
+
   /// Creates a [DartOptions] from a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
   static DartOptions fromMap(Map<String, Object> map) {
@@ -65,6 +73,8 @@ class DartOptions {
       copyrightHeader: copyrightHeader?.cast<String>(),
       sourceOutPath: map['sourceOutPath'] as String?,
       testOutPath: map['testOutPath'] as String?,
+      useJni: map['useJni'] as bool? ?? false,
+      dartOut: map['dartOut'] as String?,
     );
   }
 
@@ -75,6 +85,8 @@ class DartOptions {
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (sourceOutPath != null) 'sourceOutPath': sourceOutPath!,
       if (testOutPath != null) 'testOutPath': testOutPath!,
+      if (useJni) 'useJni': useJni,
+      if (dartOut != null) 'dartOut': dartOut!,
     };
     return result;
   }
@@ -86,6 +98,152 @@ class DartOptions {
   }
 }
 
+class _JniType {
+  const _JniType(
+    this.typeName,
+    this.jniName,
+    this.getterName,
+    this.conversionToDart,
+    this.conversionToJni,
+    this.conversionToNullableDart,
+    this.conversionToNullableJni,
+    this.isBuiltIn, {
+    this.nonNullableNeedsUnwrapping = false,
+  });
+
+  static _JniType fromTypeDeclaration(TypeDeclaration type) {
+    _JniType? jniType = _jniTypeForDartType[type.baseName];
+    jniType = jniType ??
+        _JniType(
+          type.baseName,
+          'bridge.${type.baseName}',
+          'get',
+          '${type.baseName}.fromJni',
+          '.toJni()',
+          '',
+          '',
+          false,
+          nonNullableNeedsUnwrapping: true,
+        );
+    return jniType;
+  }
+
+  final String typeName;
+  final String jniName;
+  final String getterName;
+  final String conversionToDart;
+  final String conversionToJni;
+  final String conversionToNullableDart;
+  final String conversionToNullableJni;
+  final bool isBuiltIn;
+  final bool nonNullableNeedsUnwrapping;
+
+  String getToDartCall(
+    TypeDeclaration type, {
+    String? varName,
+    bool forceConversion = false,
+  }) {
+    varName = varName ?? '';
+    if (isBuiltIn) {
+      return !type.isNullable && !nonNullableNeedsUnwrapping && !forceConversion
+          ? ''
+          : type.isNullable
+              ? '$varName$conversionToNullableDart'
+              : '$varName$conversionToDart';
+    }
+    return '$conversionToDart($varName)${type.isNullable ? '' : '!'}';
+  }
+
+  String getToJniCall(
+    NamedType field, {
+    bool forceNonNull = false,
+  }) {
+    if (isBuiltIn) {
+      final String forceNonNullSymbol = forceNonNull ? '!' : '';
+      return field.type.isNullable
+          ? '${field.name} != null ? $jniName$conversionToJni(${field.name}$forceNonNullSymbol) : null'
+          : nonNullableNeedsUnwrapping
+              ? '$jniName$conversionToJni(${field.name})'
+              : field.name;
+    }
+    return '${field.name}${field.type.isNullable ? '?' : ''}$conversionToJni';
+  }
+
+  String getJniGetterMethodName(String field) {
+    return '$getterName${toUpperCamelCase(field)}()';
+  }
+
+  String getApiCallReturnType(Method method) {
+    final String nullable = method.returnType.isNullable ? '?' : '';
+    if (method.isAsynchronous ||
+        method.returnType.isNullable ||
+        nonNullableNeedsUnwrapping) {
+      return '$jniName$nullable';
+    }
+    return typeName;
+  }
+}
+
+const Map<String, _JniType> _jniTypeForDartType = <String, _JniType>{
+  'String': _JniType(
+    'String',
+    'JString',
+    'get',
+    '.toDartString(releaseOriginal: true)',
+    '.fromString',
+    '?.toDartString(releaseOriginal: true)',
+    '?.fromString',
+    true,
+    nonNullableNeedsUnwrapping: true,
+  ),
+  'void': _JniType(
+    'void',
+    'JVoid',
+    '',
+    '',
+    '',
+    '',
+    '',
+    true,
+  ),
+  'bool': _JniType(
+    'bool',
+    'JBoolean',
+    'get',
+    '.booleanValue(releaseOriginal: true)',
+    '',
+    '?.booleanValue(releaseOriginal: true)',
+    '',
+    true,
+  ),
+  'int': _JniType(
+    'int',
+    'JLong',
+    'get',
+    '.intValue(releaseOriginal: true)',
+    '',
+    '?.intValue(releaseOriginal: true)',
+    '',
+    true,
+  ),
+  'double': _JniType(
+    'double',
+    'JDouble',
+    'get',
+    '.doubleValue(releaseOriginal: true)',
+    '',
+    '?.doubleValue(releaseOriginal: true)',
+    '',
+    true,
+  ),
+  // 'Uint8List': 'ByteArray',
+  // 'Int32List': 'IntArray',
+  // 'Int64List': 'LongArray',
+  // 'Float32List': 'FloatArray',
+  // 'Float64List': 'DoubleArray',
+  // 'Object': _JniType('Object', 'JObject', 'get', '', '', '', '',),
+};
+
 /// Options that control how Dart code will be generated.
 class InternalDartOptions extends InternalOptions {
   /// Constructor for InternalDartOptions.
@@ -93,6 +251,7 @@ class InternalDartOptions extends InternalOptions {
     this.copyrightHeader,
     this.dartOut,
     this.testOut,
+    this.useJni = false,
   });
 
   /// Creates InternalDartOptions from DartOptions.
@@ -103,7 +262,8 @@ class InternalDartOptions extends InternalOptions {
     String? testOut,
   })  : copyrightHeader = copyrightHeader ?? options.copyrightHeader,
         dartOut = (dartOut ?? options.sourceOutPath)!,
-        testOut = testOut ?? options.testOutPath;
+        testOut = testOut ?? options.testOutPath,
+        useJni = options.useJni;
 
   /// A copyright header that will get prepended to generated code.
   final Iterable<String>? copyrightHeader;
@@ -113,6 +273,9 @@ class InternalDartOptions extends InternalOptions {
 
   /// Path to output generated Test file for tests.
   final String? testOut;
+
+  /// Whether to use Jni for generating kotlin interop code.
+  final bool useJni;
 }
 
 /// Class that manages all Dart code generation.
@@ -158,6 +321,12 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeln(
         "import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;",
       );
+    }
+    if (generatorOptions.useJni) {
+      indent.writeln("import 'package:jni/jni.dart';");
+      final String jniFileImportName = path.basename(generatorOptions.dartOut!);
+      indent.writeln(
+          "import './${path.withoutExtension(jniFileImportName)}.jni.dart' as bridge;");
     }
   }
 
@@ -258,6 +427,26 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
   }
 
+  @override
+  void writeClassEncode(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    Class classDefinition, {
+    required String dartPackageName,
+  }) {
+    if (generatorOptions.useJni) {
+      _writeToJni(indent, classDefinition);
+      indent.newln();
+    }
+    indent.write('Object encode() ');
+    indent.addScoped('{', '}', () {
+      indent.write(
+        'return _toList();',
+      );
+    });
+  }
+
   void _writeToList(Indent indent, Class classDefinition) {
     indent.writeScoped('List<Object?> _toList() {', '}', () {
       indent.writeScoped('return <Object?>[', '];', () {
@@ -269,19 +458,32 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
   }
 
-  @override
-  void writeClassEncode(
-    InternalDartOptions generatorOptions,
-    Root root,
-    Indent indent,
-    Class classDefinition, {
-    required String dartPackageName,
-  }) {
-    indent.write('Object encode() ');
-    indent.addScoped('{', '}', () {
-      indent.write(
-        'return _toList();',
-      );
+  void _writeToJni(Indent indent, Class classDefinition) {
+    indent.writeScoped('bridge.${classDefinition.name} toJni() {', '}', () {
+      indent.writeScoped('return bridge.${classDefinition.name} (', ');', () {
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
+          final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
+          indent.writeln('${jniType.getToJniCall(field, forceNonNull: true)},');
+        }
+      });
+    });
+  }
+
+  void _writeFromJni(Indent indent, Class classDefinition) {
+    indent.writeScoped(
+        'static ${classDefinition.name}? fromJni(bridge.${classDefinition.name}? jniClass) {',
+        '}', () {
+      indent.writeScoped(
+          'return jniClass == null ? null : ${classDefinition.name}(', ');',
+          () {
+        for (final NamedType field
+            in getFieldsInSerializationOrder(classDefinition)) {
+          final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
+          indent.writeln(
+              '${field.name}: jniClass.${jniType.getJniGetterMethodName(field.name)}${jniType.getToDartCall(field.type)},');
+        }
+      });
     });
   }
 
@@ -293,6 +495,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     Class classDefinition, {
     required String dartPackageName,
   }) {
+    if (generatorOptions.useJni) {
+      _writeFromJni(indent, classDefinition);
+      indent.newln();
+    }
     void writeValueDecode(NamedType field, int index) {
       final String resultAt = 'result[$index]';
       final String castCallPrefix = field.type.isNullable ? '?' : '!';
@@ -315,10 +521,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       }
     }
 
-    indent.write(
-      'static ${classDefinition.name} decode(Object result) ',
-    );
-    indent.addScoped('{', '}', () {
+    indent.writeScoped(
+        'static ${classDefinition.name} decode(Object result) {', '}', () {
       indent.writeln('result as List<Object?>;');
       indent.write('return ${classDefinition.name}');
       indent.addScoped('(', ');', () {
@@ -376,6 +580,12 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
+    if (generatorOptions.useJni &&
+        !root.containsProxyApi &&
+        !root.containsEventChannel &&
+        !root.containsFlutterApi) {
+      return;
+    }
     void writeEncodeLogic(
         EnumeratedType customType, int nonSerializedClassCount) {
       indent.writeScoped('else if (value is ${customType.name}) {', '}', () {
@@ -555,6 +765,88 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     });
   }
 
+  @override
+  void writeApis(InternalDartOptions generatorOptions, Root root, Indent indent,
+      {required String dartPackageName}) {
+    if (generatorOptions.useJni) {
+      indent.writeln(
+          "const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';");
+    }
+    super.writeApis(generatorOptions, root, indent,
+        dartPackageName: dartPackageName);
+  }
+
+  void _writeJniApi(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstHostApi api, {
+    required String dartPackageName,
+  }) {
+    final String dartApiName = api.name;
+    final String jniApiRegistrarName = 'bridge.${dartApiName}Registrar';
+    indent.newln();
+    indent.writeScoped('class $dartApiName {', '}', () {
+      indent.format('''
+  $dartApiName._withRegistrar($jniApiRegistrarName api) : _api = api;
+
+  /// Returns instance of $dartApiName with specified [channelName] if one has been registered.
+  static $dartApiName? getInstance({String channelName = defaultInstanceName}) {
+    final $jniApiRegistrarName? link =
+        $jniApiRegistrarName().getInstance(JString.fromString(channelName));
+    if (link == null) {
+      String nameString = 'named \$channelName';
+      if (channelName == defaultInstanceName) {
+        nameString = 'with no name';
+      }
+      final String error = 'No instance \$nameString has been registered.';
+      throw ArgumentError(error);
+    }
+    final $dartApiName res = $dartApiName._withRegistrar(link);
+    return res;
+  }
+
+  late final $jniApiRegistrarName _api;
+''');
+      for (final Method method in api.methods) {
+        indent.writeScoped(
+            '${method.isAsynchronous ? 'Future<' : ''}${_addGenericTypesNullable(method.returnType)}${method.isAsynchronous ? '>' : ''} ${method.name}(${_getMethodParameterSignature(method.parameters)}) ${method.isAsynchronous ? 'async ' : ''}{',
+            '}', () {
+          final _JniType returnType =
+              _JniType.fromTypeDeclaration(method.returnType);
+          final String methodCallReturnString = returnType.typeName == 'void' &&
+                  method.isAsynchronous
+              ? ''
+              : (!returnType.nonNullableNeedsUnwrapping &&
+                      !method.returnType.isNullable &&
+                      !method.isAsynchronous)
+                  ? 'return '
+                  : 'final ${returnType.getApiCallReturnType(method)} res = ';
+          indent.writeln(
+              '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_api.${method.name}(${_getJniMethodCallArguments(method.parameters)});');
+          if ((method.returnType.isNullable ||
+                  method.isAsynchronous ||
+                  returnType.nonNullableNeedsUnwrapping) &&
+              returnType.typeName != 'void') {
+            final String nullable = method.returnType.isNullable ? '?' : '';
+            indent.writeln(
+                'final ${returnType.typeName}$nullable dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};');
+            indent.writeln('return dartTypeRes;');
+          }
+        });
+        indent.newln();
+      }
+    });
+  }
+
+  String _getJniMethodCallArguments(Iterable<Parameter> parameters) {
+    return parameters
+        .map((Parameter parameter) =>
+            _JniType.fromTypeDeclaration(parameter.type)
+                .getToJniCall(parameter))
+        .join(', ');
+  }
+
   /// Writes the code for host [Api], [api].
   /// Example:
   /// class FooCodec extends StandardMessageCodec {...}
@@ -580,6 +872,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     AstHostApi api, {
     required String dartPackageName,
   }) {
+    if (generatorOptions.useJni) {
+      _writeJniApi(generatorOptions, root, indent, api,
+          dartPackageName: dartPackageName);
+      return;
+    }
     indent.newln();
     bool first = true;
     addDocumentationComments(
@@ -1075,7 +1372,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (root.containsHostApi || root.containsProxyApi) {
+    if ((root.containsHostApi && !generatorOptions.useJni) ||
+        root.containsProxyApi) {
       _writeCreateConnectionError(indent);
     }
     if (root.containsFlutterApi ||
@@ -1088,6 +1386,51 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
             .any((NamedType field) => isCollectionType(field.type)))) {
       _writeDeepEquals(indent);
     }
+    if (generatorOptions.useJni) {
+      _writeConvertObject(indent);
+    }
+  }
+
+  void _writeConvertObject(Indent indent) {
+    indent.newln();
+    indent.format('''
+Object? convertObject(JObject? object) {
+  if (object == null) {
+    return null;
+  }
+  if (object.isA<JLong>(JLong.type)) {
+    return (object.as(JLong.type)).intValue();
+  }
+  if (object.isA<JDouble>(JDouble.type)) {
+    return (object.as(JDouble.type)).doubleValue();
+  }
+  if (object.isA<JString>(JString.type)) {
+    return (object.as(JString.type)).toDartString();
+  }
+  if (object.isA<JBoolean>(JBoolean.type)) {
+    return (object.as(JBoolean.type)).booleanValue();
+  }
+  if (object.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
+    final JList<JObject> list = (object.as(JList.type<JObject>(JObject.type)));
+    final List<Object?> res = <Object?>[];
+    for (int i = 0; i < list.length; i++) {
+      res.add(convertObject(list[i]));
+    }
+    return res;
+  }
+  if (object.isA<JMap<JObject, JObject>>(
+      JMap.type<JObject, JObject>(JObject.type, JObject.type))) {
+    final JMap<JObject, JObject> map =
+        (object.as(JMap.type<JObject, JObject>(JObject.type, JObject.type)));
+    final Map<Object?, Object?> res = <Object, Object>{};
+    for (final MapEntry<JObject?, JObject?> entry in map.entries) {
+      res[convertObject(entry.key)] = convertObject(entry.value);
+    }
+    return res;
+  }
+  return object;
+}
+    ''');
   }
 
   /// Writes [wrapResponse] method.
@@ -1222,15 +1565,10 @@ if (wrapped == null) {
     required bool addSuffixVariable,
     bool insideAsyncMethod = true,
   }) {
-    String sendArgument = 'null';
-    if (parameters.isNotEmpty) {
-      final Iterable<String> argExpressions =
-          indexMap(parameters, (int index, NamedType type) {
-        final String name = _getParameterName(index, type);
-        return name;
-      });
-      sendArgument = '<Object?>[${argExpressions.join(', ')}]';
-    }
+    final String? arguments = _getArgumentsForMethodCall(parameters);
+    final String sendArgument =
+        arguments == null ? 'null' : '<Object?>[$arguments]';
+
     final String channelSuffix = addSuffixVariable ? '\$$_suffixVarName' : '';
     final String constOrFinal = addSuffixVariable ? 'final' : 'const';
     indent.writeln(
@@ -2343,7 +2681,7 @@ String _flattenTypeArguments(List<TypeDeclaration> args) {
 
 /// Creates the type declaration for use in Dart code from a [NamedType] making sure
 /// that type arguments are used for primitive generic types.
-String _addGenericTypes(TypeDeclaration type) {
+String _addGenericTypes(TypeDeclaration type, {bool useJni = false}) {
   final List<TypeDeclaration> typeArguments = type.typeArguments;
   switch (type.baseName) {
     case 'List':
@@ -2355,17 +2693,30 @@ String _addGenericTypes(TypeDeclaration type) {
           ? 'Map<Object?, Object?>'
           : 'Map<${_flattenTypeArguments(typeArguments)}>';
     default:
-      return type.baseName;
+      return useJni
+          ? _JniType.fromTypeDeclaration(type).jniName
+          : type.baseName;
   }
 }
 
-String _addGenericTypesNullable(TypeDeclaration type) {
-  final String genericType = _addGenericTypes(type);
-  return type.isNullable ? '$genericType?' : genericType;
+String _addGenericTypesNullable(TypeDeclaration type, {bool useJni = false}) {
+  final String genericType = _addGenericTypes(type, useJni: useJni);
+  final String nullableSymbol = type.isNullable ? '?' : '';
+  return '$genericType$nullableSymbol';
 }
 
 /// Converts [inputPath] to a posix absolute path.
 String _posixify(String inputPath) {
   final path.Context context = path.Context(style: path.Style.posix);
   return context.fromUri(path.toUri(path.absolute(inputPath)));
+}
+
+String? _getArgumentsForMethodCall(Iterable<Parameter> parameters) {
+  if (parameters.isNotEmpty) {
+    return indexMap(parameters, (int index, NamedType type) {
+      final String name = _getParameterName(index, type);
+      return name;
+    }).join(', ');
+  }
+  return null;
 }

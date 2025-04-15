@@ -18,4 +18,5 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+  jni: ^0.14.0
   mockito: ^5.4.4

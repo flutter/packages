@@ -1,0 +1,26 @@
+android_sdk_config:
+  add_gradle_deps: true
+  android_example: '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/example'
+
+# source_path:
+#   - 'android/src/main/java'
+
+summarizer:
+  backend: asm
+
+output:
+  dart:
+    path: /Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/jni_tests.gen.jni.dart
+    structure: single_file
+
+log_level: all
+
+classes:
+  - 'JniMessageApi'
+  - 'JniMessageApiRegistrar'
+  - 'JniMessageApiNullable'
+  - 'JniMessageApiNullableRegistrar'
+  - 'JniMessageApiAsync'
+  - 'JniMessageApiAsyncRegistrar'
+  - 'SomeTypes'
+  - 'SomeNullableTypes'
