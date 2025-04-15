@@ -26,7 +26,6 @@ import java.util.Map;
 // Wraps an ImageReader to allow for testing of the image handler.
 public class ImageStreamReader {
   private static final String TAG = "ImageStreamReader";
-  @VisibleForTesting public static final int MAX_IMAGES_IN_TRANSIT = 3;
 
   /**
    * The image format we are going to send back to dart. Usually it's the same as streamImageFormat
@@ -110,13 +109,6 @@ public class ImageStreamReader {
       @NonNull Image image,
       @NonNull CameraCaptureProperties captureProps,
       @NonNull EventChannel.EventSink imageStreamSink) {
-    // The limit was chosen so it would not drop frames for reasonable lags of the main thread.
-    if (numImagesInTransit >= ImageStreamReader.MAX_IMAGES_IN_TRANSIT) {
-      Log.d(TAG, "Dropping frame due to images pending on main thread.");
-      image.close();
-      return;
-    }
-
     Map<String, Object> imageBuffer = new HashMap<>();
 
     imageBuffer.put("width", image.getWidth());

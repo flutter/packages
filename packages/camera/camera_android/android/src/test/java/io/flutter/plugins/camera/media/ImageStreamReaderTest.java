@@ -111,9 +111,6 @@ public class ImageStreamReaderTest {
 
   @Test
   public void onImageAvailable_dropFramesWhenHandlerHalted() {
-    final int numExtraFramesPerBatch = ImageStreamReader.MAX_IMAGES_IN_TRANSIT * 2;
-    final int numFramesPerBatch = ImageStreamReader.MAX_IMAGES_IN_TRANSIT + numExtraFramesPerBatch;
-
     int dartImageFormat = ImageFormat.YUV_420_888;
 
     ImageReader mockImageReader = mock(ImageReader.class);
