@@ -1,3 +1,7 @@
+## 4.3.5
+
+* Adds internal wrapper methods for native `WebViewClient`.
+
 ## 4.3.4
 
 * Bumps gradle from 8.0.0 to 8.9.0.
