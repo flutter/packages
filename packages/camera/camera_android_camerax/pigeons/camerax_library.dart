@@ -2,98 +2,136 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: avoid_unused_constructor_parameters
+
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(
   PigeonOptions(
+    copyrightHeader: 'pigeons/copyright.txt',
     dartOut: 'lib/src/camerax_library.g.dart',
-    dartTestOut: 'test/test_camerax_library.g.dart',
-    dartOptions: DartOptions(copyrightHeader: <String>[
-      'Copyright 2013 The Flutter Authors. All rights reserved.',
-      'Use of this source code is governed by a BSD-style license that can be',
-      'found in the LICENSE file.',
-    ]),
-    javaOut:
-        'android/src/main/java/io/flutter/plugins/camerax/GeneratedCameraXLibrary.java',
-    javaOptions: JavaOptions(
+    kotlinOut:
+        'android/src/main/java/io/flutter/plugins/camerax/CameraXLibrary.g.kt',
+    kotlinOptions: KotlinOptions(
       package: 'io.flutter.plugins.camerax',
-      className: 'GeneratedCameraXLibrary',
-      copyrightHeader: <String>[
-        'Copyright 2013 The Flutter Authors. All rights reserved.',
-        'Use of this source code is governed by a BSD-style license that can be',
-        'found in the LICENSE file.',
-      ],
+      errorClassName: 'CameraXError',
     ),
   ),
 )
-class ResolutionInfo {
-  ResolutionInfo({
-    required this.width,
-    required this.height,
-  });
 
-  int width;
-  int height;
+/// Immutable class for describing width and height dimensions in pixels.
+///
+/// See https://developer.android.com/reference/android/util/Size.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.util.Size'),
+)
+abstract class CameraSize {
+  CameraSize();
+
+  /// The width of the size (in pixels).
+  late int width;
+
+  /// The height of the size (in pixels).
+  late int height;
 }
 
-class CameraPermissionsErrorData {
-  CameraPermissionsErrorData({
-    required this.errorCode,
-    required this.description,
-  });
+/// A `ResolutionInfo` allows the application to know the resolution information
+/// of a specific use case.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/ResolutionInfo.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.ResolutionInfo',
+  ),
+)
+abstract class ResolutionInfo {
+  /// Returns the output resolution used for the use case.
+  late CameraSize resolution;
+}
 
-  String errorCode;
-  String description;
+/// Generally classifies the overall set of the camera device functionality.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#INFO_SUPPORTED_HARDWARE_LEVEL_3.
+enum InfoSupportedHardwareLevel {
+  /// This camera device is capable of YUV reprocessing and RAW data capture, in
+  /// addition to FULL-level capabilities.
+  level3,
+
+  /// This camera device is backed by an external camera connected to this
+  /// Android device.
+  external,
+
+  /// This camera device is capable of supporting advanced imaging applications.
+  full,
+
+  /// This camera device is running in backward compatibility mode.
+  legacy,
+
+  /// This camera device does not have enough capabilities to qualify as a FULL
+  /// device or better.
+  limited,
+}
+
+/// The aspect ratio of the use case.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/AspectRatio.
+enum AspectRatio {
+  /// 16:9 standard aspect ratio.
+  ratio16To9,
+
+  /// 4:3 standard aspect ratio.
+  ratio4To3,
+
+  /// The aspect ratio representing no preference for aspect ratio.
+  ratioDefault,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
 }
 
 /// The states the camera can be in.
 ///
 /// See https://developer.android.com/reference/androidx/camera/core/CameraState.Type.
 enum CameraStateType {
+  /// Represents a state where the camera device is closed.
   closed,
-  closing,
-  open,
-  opening,
-  pendingOpen,
-}
 
-class CameraStateTypeData {
-  late CameraStateType value;
+  /// Represents a state where the camera device is currently closing.
+  closing,
+
+  /// Represents a state where the camera device is open.
+  open,
+
+  /// Represents a state where the camera device is currently opening.
+  opening,
+
+  /// Represents a state where the camera is waiting for a signal to attempt to
+  /// open the camera device.
+  pendingOpen,
+
+  /// This value is not recognized by this wrapper.
+  unknown,
 }
 
 /// The types (T) properly wrapped to be used as a LiveData<T>.
-///
-/// If you need to add another type to support a type S to use a LiveData<S> in
-/// this plugin, ensure the following is done on the Dart side:
-///
-///  * In `camera_android_camerax/lib/src/live_data.dart`, add new cases for S in
-///    `_LiveDataHostApiImpl#getValueFromInstances` to get the current value of
-///    type S from a LiveData<S> instance and in `LiveDataFlutterApiImpl#create`
-///    to create the expected type of LiveData<S> when requested.
-///
-/// On the native side, ensure the following is done:
-///
-///  * Make sure `LiveDataHostApiImpl#getValue` is updated to properly return
-///    identifiers for instances of type S.
-///  * Update `ObserverFlutterApiWrapper#onChanged` to properly handle receiving
-///    calls with instances of type S if a LiveData<S> instance is observed.
-enum LiveDataSupportedType {
-  cameraState,
-  zoomState,
-}
+enum LiveDataSupportedType { cameraState, zoomState }
 
-class LiveDataSupportedTypeData {
-  late LiveDataSupportedType value;
-}
+/// Immutable class for describing the range of two integer values.
+///
+/// This is the equivalent to `android.util.Range<Integer>`.
+///
+/// See https://developer.android.com/reference/android/util/Range.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.util.Range<*>'),
+)
+abstract class CameraIntegerRange {
+  CameraIntegerRange();
 
-class ExposureCompensationRange {
-  ExposureCompensationRange({
-    required this.minCompensation,
-    required this.maxCompensation,
-  });
+  /// The lower endpoint.
+  late int lower;
 
-  int minCompensation;
-  int maxCompensation;
+  /// The upper endpoint.
+  late int upper;
 }
 
 /// Video quality constraints that will be used by a QualitySelector to choose
@@ -103,174 +141,262 @@ class ExposureCompensationRange {
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/Quality.
 enum VideoQuality {
-  SD, // 480p
-  HD, // 720p
-  FHD, // 1080p
-  UHD, // 2160p
+  /// Standard Definition (SD) 480p video quality.
+  SD,
+
+  /// High Definition (HD) 720p video quality.
+  HD,
+
+  /// Full High Definition (FHD) 1080p video quality.
+  FHD,
+
+  /// Ultra High Definition (UHD) 2160p video quality.
+  UHD,
+
+  /// The lowest video quality supported by the video frame producer.
   lowest,
+
+  /// The highest video quality supported by the video frame producer.
   highest,
 }
 
-/// Convenience class for sending lists of [Quality]s.
-class VideoQualityData {
-  late VideoQuality quality;
-}
-
-/// Fallback rules for selecting video resolution.
-///
-/// See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
-enum VideoResolutionFallbackRule {
-  higherQualityOrLowerThan,
-  higherQualityThan,
-  lowerQualityOrHigherThan,
-  lowerQualityThan,
-}
-
-/// Video recording status.
+/// VideoRecordEvent is used to report video recording events and status.
 ///
 /// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.
-enum VideoRecordEvent { start, finalize }
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.VideoRecordEvent',
+  ),
+)
+abstract class VideoRecordEvent {}
 
-class VideoRecordEventData {
-  late VideoRecordEvent value;
-}
+/// Indicates the start of recording.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Start.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.VideoRecordEvent.Start',
+  ),
+)
+abstract class VideoRecordEventStart extends VideoRecordEvent {}
 
-/// Convenience class for building [FocusMeteringAction]s with multiple metering
-/// points.
-class MeteringPointInfo {
-  MeteringPointInfo({
-    required this.meteringPointId,
-    required this.meteringMode,
-  });
+/// Indicates the finalization of recording.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Finalize.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.VideoRecordEvent.Finalize',
+  ),
+)
+abstract class VideoRecordEventFinalize extends VideoRecordEvent {}
 
-  /// InstanceManager ID for a [MeteringPoint].
-  int meteringPointId;
-
-  /// The metering mode of the [MeteringPoint] whose ID is [meteringPointId].
+/// A MeteringPoint is used to specify a region which can then be converted to
+/// sensor coordinate system for focus and metering purpose.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/MeteringPoint.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.MeteringPoint',
+  ),
+)
+abstract class MeteringPoint {
+  /// Size of the MeteringPoint width and height (ranging from 0 to 1).
   ///
-  /// Metering mode should be one of the [FocusMeteringAction] constants.
-  int? meteringMode;
+  /// It is the percentage of the sensor width/height (or crop region
+  /// width/height if crop region is set).
+  double getSize();
 }
 
-/// The types of capture request options this plugin currently supports.
+/// A flag used for indicating metering mode regions.
 ///
-/// If you need to add another option to support, ensure the following is done
-/// on the Dart side:
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/FocusMeteringAction#FLAG_AF().
+enum MeteringMode {
+  /// A flag used in metering mode indicating the AE (Auto Exposure) region is
+  /// enabled.
+  ae,
+
+  /// A flag used in metering mode indicating the AF (Auto Focus) region is
+  /// enabled.
+  af,
+
+  /// A flag used in metering mode indicating the AWB (Auto White Balance)
+  /// region is enabled.
+  awb,
+}
+
+/// A simple callback that can receive from LiveData.
 ///
-///  * In `camera_android_camerax/lib/src/capture_request_options.dart`, add new cases for this
-///    option in `_CaptureRequestOptionsHostApiImpl#createFromInstances`
-///    to create the expected Map entry of option key index and value to send to
-///    the native side.
+/// See https://developer.android.com/reference/androidx/lifecycle/Observer.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.lifecycle.Observer<*>',
+  ),
+)
+abstract class Observer {
+  Observer();
+
+  /// Called when the data is changed to value.
+  late void Function(Object value) onChanged;
+}
+
+/// An interface for retrieving camera information.
 ///
-/// On the native side, ensure the following is done:
+/// See https://developer.android.com/reference/androidx/camera/core/CameraInfo.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.CameraInfo',
+  ),
+)
+abstract class CameraInfo {
+  /// Returns the sensor rotation in degrees, relative to the device's "natural"
+  /// (default) orientation.
+  late int sensorRotationDegrees;
+
+  /// Returns a ExposureState.
+  late ExposureState exposureState;
+
+  /// A LiveData of the camera's state.
+  LiveData getCameraState();
+
+  /// A LiveData of ZoomState.
+  LiveData getZoomState();
+}
+
+/// Direction of lens of a camera.
 ///
-///  * Update `CaptureRequestOptionsHostApiImpl#create` to set the correct
-///   `CaptureRequest` key with a valid value type for this option.
+/// See https://developer.android.com/reference/androidx/camera/core/CameraSelector#LENS_FACING_BACK().
+enum LensFacing {
+  /// A camera on the device facing the same direction as the device's screen.
+  front,
+
+  /// A camera on the device facing the opposite direction as the device's
+  /// screen.
+  back,
+
+  /// An external camera that has no fixed facing relative to the device's
+  /// screen.
+  external,
+
+  /// A camera on the devices that its lens facing is resolved.
+  unknown,
+}
+
+/// A set of requirements and priorities used to select a camera or return a
+/// filtered set of cameras.
 ///
-/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest
-/// for the sorts of capture request options that can be supported via CameraX's
-/// interoperability with Camera2.
-enum CaptureRequestKeySupportedType {
-  controlAeLock,
+/// See https://developer.android.com/reference/androidx/camera/core/CameraSelector.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.CameraSelector',
+  ),
+)
+abstract class CameraSelector {
+  CameraSelector(LensFacing? requireLensFacing);
+
+  /// A static `CameraSelector` that selects the default back facing camera.
+  @static
+  late CameraSelector defaultBackCamera;
+
+  /// A static `CameraSelector` that selects the default front facing camera.
+  @static
+  late CameraSelector defaultFrontCamera;
+
+  /// Filters the input `CameraInfo`s using the `CameraFilter`s assigned to the
+  /// selector.
+  List<CameraInfo> filter(List<CameraInfo> cameraInfos);
 }
 
-@HostApi(dartHostTestHandler: 'TestInstanceManagerHostApi')
-abstract class InstanceManagerHostApi {
-  /// Clear the native `InstanceManager`.
-  ///
-  /// This is typically only used after a hot restart.
-  void clear();
-}
-
-@HostApi(dartHostTestHandler: 'TestJavaObjectHostApi')
-abstract class JavaObjectHostApi {
-  void dispose(int identifier);
-}
-
-@FlutterApi()
-abstract class JavaObjectFlutterApi {
-  void dispose(int identifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestCameraInfoHostApi')
-abstract class CameraInfoHostApi {
-  int getSensorRotationDegrees(int identifier);
-
-  int getCameraState(int identifier);
-
-  int getExposureState(int identifier);
-
-  int getZoomState(int identifier);
-}
-
-@FlutterApi()
-abstract class CameraInfoFlutterApi {
-  void create(int identifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestCameraSelectorHostApi')
-abstract class CameraSelectorHostApi {
-  void create(int identifier, int? lensFacing);
-
-  List<int> filter(int identifier, List<int> cameraInfoIds);
-}
-
-@FlutterApi()
-abstract class CameraSelectorFlutterApi {
-  void create(int identifier, int? lensFacing);
-}
-
-@HostApi(dartHostTestHandler: 'TestProcessCameraProviderHostApi')
-abstract class ProcessCameraProviderHostApi {
+/// A singleton which can be used to bind the lifecycle of cameras to any
+/// `LifecycleOwner` within an application's process.
+///
+/// See https://developer.android.com/reference/androidx/camera/lifecycle/ProcessCameraProvider.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.lifecycle.ProcessCameraProvider',
+  ),
+)
+abstract class ProcessCameraProvider {
+  /// Retrieves the ProcessCameraProvider associated with the current process.
   @async
-  int getInstance();
+  @static
+  ProcessCameraProvider getInstance();
 
-  List<int> getAvailableCameraInfos(int identifier);
+  /// The `CameraInfo` instances of the available cameras.
+  List<CameraInfo> getAvailableCameraInfos();
 
-  int bindToLifecycle(
-      int identifier, int cameraSelectorIdentifier, List<int> useCaseIds);
+  /// Binds the collection of `UseCase` to a `LifecycleOwner`.
+  Camera bindToLifecycle(CameraSelector cameraSelector, List<UseCase> useCases);
 
-  bool isBound(int identifier, int useCaseIdentifier);
+  /// Returns true if the `UseCase` is bound to a lifecycle.
+  bool isBound(UseCase useCase);
 
-  void unbind(int identifier, List<int> useCaseIds);
+  /// Unbinds all specified use cases from the lifecycle provider.
+  void unbind(List<UseCase> useCases);
 
-  void unbindAll(int identifier);
+  /// Unbinds all use cases from the lifecycle provider and removes them from
+  /// CameraX.
+  void unbindAll();
 }
 
-@FlutterApi()
-abstract class ProcessCameraProviderFlutterApi {
-  void create(int identifier);
+/// The use case which all other use cases are built on top of.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/UseCase.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.UseCase',
+  ),
+)
+abstract class UseCase {}
+
+/// The camera interface is used to control the flow of data to use cases,
+/// control the camera via the `CameraControl`, and publish the state of the
+/// camera via CameraInfo.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/Camera.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.Camera',
+  ),
+)
+abstract class Camera {
+  /// The `CameraControl` for the Camera.
+  late CameraControl cameraControl;
+
+  /// Returns information about this camera.
+  CameraInfo getCameraInfo();
 }
 
-@HostApi(dartHostTestHandler: 'TestCameraHostApi')
-abstract class CameraHostApi {
-  int getCameraInfo(int identifier);
+/// Convenience class for accessing system resources.
+@ProxyApi()
+abstract class SystemServicesManager {
+  SystemServicesManager();
 
-  int getCameraControl(int identifier);
-}
+  late void Function(String errorDescription) onCameraError;
 
-@FlutterApi()
-abstract class CameraFlutterApi {
-  void create(int identifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestSystemServicesHostApi')
-abstract class SystemServicesHostApi {
   @async
-  CameraPermissionsErrorData? requestCameraPermissions(bool enableAudio);
+  CameraPermissionsError? requestCameraPermissions(bool enableAudio);
 
+  /// Returns a path to be used to create a temp file in the current cache
+  /// directory.
   String getTempFilePath(String prefix, String suffix);
 }
 
-@FlutterApi()
-abstract class SystemServicesFlutterApi {
-  void onCameraError(String errorDescription);
+/// Contains data when an attempt to retrieve camera permissions fails.
+@ProxyApi()
+abstract class CameraPermissionsError {
+  late final String errorCode;
+  late final String description;
 }
 
-@HostApi(dartHostTestHandler: 'TestDeviceOrientationManagerHostApi')
-abstract class DeviceOrientationManagerHostApi {
-  void startListeningForDeviceOrientationChange(
-      bool isFrontFacing, int sensorOrientation);
+/// Support class to help to determine the media orientation based on the
+/// orientation of the device.
+@ProxyApi()
+abstract class DeviceOrientationManager {
+  DeviceOrientationManager();
+
+  late void Function(String orientation) onDeviceOrientationChanged;
+
+  void startListeningForDeviceOrientationChange();
 
   void stopListeningForDeviceOrientationChange();
 
@@ -279,298 +405,861 @@ abstract class DeviceOrientationManagerHostApi {
   String getUiOrientation();
 }
 
-@FlutterApi()
-abstract class DeviceOrientationManagerFlutterApi {
-  void onDeviceOrientationChanged(String orientation);
-}
+/// A use case that provides a camera preview stream for displaying on-screen.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/Preview.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.Preview',
+  ),
+)
+abstract class Preview extends UseCase {
+  Preview(int? targetRotation);
 
-@HostApi(dartHostTestHandler: 'TestPreviewHostApi')
-abstract class PreviewHostApi {
-  void create(int identifier, int? rotation, int? resolutionSelectorId);
+  late final ResolutionSelector? resolutionSelector;
 
-  int setSurfaceProvider(int identifier);
+  /// Sets a SurfaceProvider to provide a Surface for Preview.
+  ///
+  /// This is a convenience function that
+  /// 1. Creates a `SurfaceProvider` using the `SurfaceProducer` provided by the
+  /// Flutter engine.
+  /// 2. Sets this method with the created `SurfaceProvider`.
+  /// 3. Returns the texture id of the `TextureEntry` that provided the
+  /// `SurfaceProducer`.
+  int setSurfaceProvider(SystemServicesManager systemServicesManager);
 
-  void releaseFlutterSurfaceTexture();
+  /// Releases the `SurfaceProducer` created in `setSurfaceProvider` if one was
+  /// created.
+  void releaseSurfaceProvider();
 
-  ResolutionInfo getResolutionInfo(int identifier);
+  /// Gets selected resolution information of the `Preview`.
+  ResolutionInfo? getResolutionInfo();
 
-  void setTargetRotation(int identifier, int rotation);
+  /// Sets the target rotation.
+  void setTargetRotation(int rotation);
 
+  /// Returns whether or not the preview's surface producer handles correctly
+  /// rotating the camera preview automatically.
   bool surfaceProducerHandlesCropAndRotation();
 }
 
-@HostApi(dartHostTestHandler: 'TestVideoCaptureHostApi')
-abstract class VideoCaptureHostApi {
-  int withOutput(int videoOutputId);
+/// A use case that provides camera stream suitable for video application.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/video/VideoCapture.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.VideoCapture<*>',
+  ),
+)
+abstract class VideoCapture extends UseCase {
+  /// Create a `VideoCapture` associated with the given `VideoOutput`.
+  VideoCapture.withOutput(VideoOutput videoOutput);
 
-  int getOutput(int identifier);
+  /// Gets the VideoOutput associated with this VideoCapture.
+  VideoOutput getOutput();
 
-  void setTargetRotation(int identifier, int rotation);
+  /// Sets the desired rotation of the output video.
+  void setTargetRotation(int rotation);
 }
 
-@FlutterApi()
-abstract class VideoCaptureFlutterApi {
-  void create(int identifier);
-}
+/// A class that will produce video data from a Surface.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/video/VideoOutput.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.VideoOutput',
+  ),
+)
+abstract class VideoOutput {}
 
-@HostApi(dartHostTestHandler: 'TestRecorderHostApi')
-abstract class RecorderHostApi {
-  void create(
-      int identifier, int? aspectRatio, int? bitRate, int? qualitySelectorId);
-
-  int getAspectRatio(int identifier);
-
-  int getTargetVideoEncodingBitRate(int identifier);
-
-  int prepareRecording(int identifier, String path);
-}
-
-@FlutterApi()
-abstract class RecorderFlutterApi {
-  void create(int identifier, int? aspectRatio, int? bitRate);
-}
-
-@HostApi(dartHostTestHandler: 'TestPendingRecordingHostApi')
-abstract class PendingRecordingHostApi {
-  int start(int identifier);
-}
-
-@FlutterApi()
-abstract class PendingRecordingFlutterApi {
-  void create(int identifier);
-
-  void onVideoRecordingEvent(VideoRecordEventData event);
-}
-
-@HostApi(dartHostTestHandler: 'TestRecordingHostApi')
-abstract class RecordingHostApi {
-  void close(int identifier);
-
-  void pause(int identifier);
-
-  void resume(int identifier);
-
-  void stop(int identifier);
-}
-
-@FlutterApi()
-abstract class RecordingFlutterApi {
-  void create(int identifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestImageCaptureHostApi')
-abstract class ImageCaptureHostApi {
-  void create(int identifier, int? targetRotation, int? flashMode,
-      int? resolutionSelectorId);
-
-  void setFlashMode(int identifier, int flashMode);
-
-  @async
-  String takePicture(int identifier);
-
-  void setTargetRotation(int identifier, int rotation);
-}
-
-@HostApi(dartHostTestHandler: 'TestResolutionStrategyHostApi')
-abstract class ResolutionStrategyHostApi {
-  void create(int identifier, ResolutionInfo? boundSize, int? fallbackRule);
-}
-
-@HostApi(dartHostTestHandler: 'TestResolutionSelectorHostApi')
-abstract class ResolutionSelectorHostApi {
-  void create(
-    int identifier,
-    int? resolutionStrategyIdentifier,
-    int? resolutionSelectorIdentifier,
-    int? aspectRatioStrategyIdentifier,
+/// An implementation of `VideoOutput` for starting video recordings that are
+/// saved to a File, ParcelFileDescriptor, or MediaStore.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/video/Recorder.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.Recorder',
+  ),
+)
+abstract class Recorder implements VideoOutput {
+  Recorder(
+    int? aspectRatio,
+    int? targetVideoEncodingBitRate,
+    QualitySelector? qualitySelector,
   );
+
+  /// Gets the aspect ratio of this Recorder.
+  int getAspectRatio();
+
+  /// Gets the target video encoding bitrate of this Recorder.
+  int getTargetVideoEncodingBitRate();
+
+  /// The quality selector of this Recorder.
+  QualitySelector getQualitySelector();
+
+  /// Prepares a recording that will be saved to a File.
+  PendingRecording prepareRecording(String path);
 }
 
-@HostApi(dartHostTestHandler: 'TestAspectRatioStrategyHostApi')
-abstract class AspectRatioStrategyHostApi {
-  void create(int identifier, int preferredAspectRatio, int fallbackRule);
+/// Listens for `VideoRecordEvent`s from a `PendingRecording`.
+@ProxyApi()
+abstract class VideoRecordEventListener {
+  VideoRecordEventListener();
+
+  late void Function(VideoRecordEvent event) onEvent;
 }
 
-@FlutterApi()
-abstract class CameraStateFlutterApi {
-  void create(int identifier, CameraStateTypeData type, int? errorIdentifier);
+/// A recording that can be started at a future time.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/video/PendingRecording.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.PendingRecording',
+  ),
+)
+abstract class PendingRecording {
+  /// Starts the recording, making it an active recording.
+  Recording start(VideoRecordEventListener listener);
 }
 
-@FlutterApi()
-abstract class ExposureStateFlutterApi {
-  void create(
-      int identifier,
-      ExposureCompensationRange exposureCompensationRange,
-      double exposureCompensationStep);
+/// Provides controls for the currently active recording.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/video/Recording.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.Recording',
+  ),
+)
+abstract class Recording {
+  /// Close this recording.
+  void close();
+
+  /// Pauses the current recording if active.
+  void pause();
+
+  /// Resumes the current recording if paused.
+  void resume();
+
+  /// Stops the recording, as if calling `close`.
+  ///
+  /// This method is equivalent to calling `close`.
+  void stop();
 }
 
-@FlutterApi()
-abstract class ZoomStateFlutterApi {
-  void create(int identifier, double minZoomRatio, double maxZoomRatio);
+/// FlashModes for image capture.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageCapture#FLASH_MODE_AUTO().
+enum CameraXFlashMode {
+  /// Auto flash.
+  ///
+  /// The flash will be used according to the camera system's determination when
+  /// taking a picture.
+  auto,
+
+  /// No flash.
+  ///
+  /// The flash will never be used when taking a picture.
+  off,
+
+  /// Always flash.
+  ///
+  /// The flash will always be used when taking a picture.
+  on,
 }
 
-@HostApi(dartHostTestHandler: 'TestImageAnalysisHostApi')
-abstract class ImageAnalysisHostApi {
-  void create(int identifier, int? targetRotation, int? resolutionSelectorId);
+/// A use case for taking a picture.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageCapture.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.ImageCapture',
+  ),
+)
+abstract class ImageCapture extends UseCase {
+  ImageCapture(int? targetRotation, CameraXFlashMode? flashMode);
 
-  void setAnalyzer(int identifier, int analyzerIdentifier);
+  late final ResolutionSelector? resolutionSelector;
 
-  void clearAnalyzer(int identifier);
+  /// Set the flash mode.
+  void setFlashMode(CameraXFlashMode flashMode);
 
-  void setTargetRotation(int identifier, int rotation);
-}
-
-@HostApi(dartHostTestHandler: 'TestAnalyzerHostApi')
-abstract class AnalyzerHostApi {
-  void create(int identifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestObserverHostApi')
-abstract class ObserverHostApi {
-  void create(int identifier);
-}
-
-@FlutterApi()
-abstract class ObserverFlutterApi {
-  void onChanged(int identifier, int valueIdentifier);
-}
-
-@FlutterApi()
-abstract class CameraStateErrorFlutterApi {
-  void create(int identifier, int code);
-}
-
-@HostApi(dartHostTestHandler: 'TestLiveDataHostApi')
-abstract class LiveDataHostApi {
-  void observe(int identifier, int observerIdentifier);
-
-  void removeObservers(int identifier);
-
-  int? getValue(int identifier, LiveDataSupportedTypeData type);
-}
-
-@FlutterApi()
-abstract class LiveDataFlutterApi {
-  void create(int identifier, LiveDataSupportedTypeData type);
-}
-
-@FlutterApi()
-abstract class AnalyzerFlutterApi {
-  void create(int identifier);
-
-  void analyze(int identifier, int imageProxyIdentifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestImageProxyHostApi')
-abstract class ImageProxyHostApi {
-  List<int> getPlanes(int identifier);
-
-  void close(int identifier);
-}
-
-@FlutterApi()
-abstract class ImageProxyFlutterApi {
-  void create(int identifier, int format, int height, int width);
-}
-
-@FlutterApi()
-abstract class PlaneProxyFlutterApi {
-  void create(int identifier, Uint8List buffer, int pixelStride, int rowStride);
-}
-
-@HostApi(dartHostTestHandler: 'TestQualitySelectorHostApi')
-abstract class QualitySelectorHostApi {
-  void create(int identifier, List<VideoQualityData> videoQualityDataList,
-      int? fallbackStrategyId);
-
-  ResolutionInfo getResolution(int cameraInfoId, VideoQuality quality);
-}
-
-@HostApi(dartHostTestHandler: 'TestFallbackStrategyHostApi')
-abstract class FallbackStrategyHostApi {
-  void create(int identifier, VideoQuality quality,
-      VideoResolutionFallbackRule fallbackRule);
-}
-
-@HostApi(dartHostTestHandler: 'TestCameraControlHostApi')
-abstract class CameraControlHostApi {
+  /// Captures a new still image for in memory access.
   @async
-  void enableTorch(int identifier, bool torch);
+  String takePicture();
 
+  /// Sets the desired rotation of the output image.
+  void setTargetRotation(int rotation);
+}
+
+/// Fallback rule for choosing an alternate size when the specified bound size
+/// is unavailable.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionStrategy.
+enum ResolutionStrategyFallbackRule {
+  /// When the specified bound size is unavailable, CameraX falls back to the
+  /// closest higher resolution size.
+  closestHigher,
+
+  /// When the specified bound size is unavailable, CameraX falls back to select
+  /// the closest higher resolution size.
+  closestHigherThenLower,
+
+  /// When the specified bound size is unavailable, CameraX falls back to the
+  /// closest lower resolution size.
+  closestLower,
+
+  /// When the specified bound size is unavailable, CameraX falls back to select
+  /// the closest lower resolution size.
+  ///
+  /// If CameraX still cannot find any available resolution, it will fallback to
+  /// select other higher resolutions.
+  closestLowerThenHigher,
+
+  /// CameraX doesn't select an alternate size when the specified bound size is
+  /// unavailable.
+  none,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
+}
+
+/// The resolution strategy defines the resolution selection sequence to select
+/// the best size.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionStrategy.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.resolutionselector.ResolutionStrategy',
+  ),
+)
+abstract class ResolutionStrategy {
+  ResolutionStrategy(
+    CameraSize boundSize,
+    ResolutionStrategyFallbackRule fallbackRule,
+  );
+
+  /// A resolution strategy chooses the highest available resolution.
+  @static
+  late ResolutionStrategy highestAvailableStrategy;
+
+  /// The specified bound size.
+  CameraSize? getBoundSize();
+
+  /// The fallback rule for choosing an alternate size when the specified bound
+  /// size is unavailable.
+  ResolutionStrategyFallbackRule getFallbackRule();
+}
+
+/// A set of requirements and priorities used to select a resolution for the
+/// `UseCase`.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionSelector.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.resolutionselector.ResolutionSelector',
+  ),
+)
+abstract class ResolutionSelector {
+  ResolutionSelector(AspectRatioStrategy? aspectRatioStrategy);
+
+  /// The resolution filter to output the final desired sizes list.
+  late final ResolutionFilter? resolutionFilter;
+
+  /// The resolution selection strategy for the `UseCase`.
+  late final ResolutionStrategy? resolutionStrategy;
+
+  /// Returns the specified `AspectRatioStrategy`, or
+  /// `AspectRatioStrategy.ratio_4_3FallbackAutoStrategy` if none is specified
+  /// when creating the ResolutionSelector.
+  AspectRatioStrategy getAspectRatioStrategy();
+}
+
+/// Fallback rule for choosing the aspect ratio when the preferred aspect ratio
+/// is not available.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/AspectRatioStrategy#FALLBACK_RULE_AUTO().
+enum AspectRatioStrategyFallbackRule {
+  /// CameraX automatically chooses the next best aspect ratio which contains
+  /// the closest field of view (FOV) of the camera sensor, from the remaining
+  /// options.
+  auto,
+
+  /// CameraX doesn't fall back to select sizes of any other aspect ratio when
+  /// this fallback rule is used.
+  none,
+
+  /// The value is not recognized by the wrapper.
+  unknown,
+}
+
+/// The aspect ratio strategy defines the sequence of aspect ratios that are
+/// used to select the best size for a particular image.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/AspectRatioStrategy.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'androidx.camera.core.resolutionselector.AspectRatioStrategy',
+  ),
+)
+abstract class AspectRatioStrategy {
+  /// Creates a new AspectRatioStrategy instance, configured with the specified
+  /// preferred aspect ratio and fallback rule.
+  AspectRatioStrategy(
+    AspectRatio preferredAspectRatio,
+    AspectRatioStrategyFallbackRule fallbackRule,
+  );
+
+  /// The pre-defined aspect ratio strategy that selects sizes with RATIO_16_9
+  /// in priority.
+  @static
+  late AspectRatioStrategy ratio_16_9FallbackAutoStrategy;
+
+  /// The pre-defined default aspect ratio strategy that selects sizes with
+  /// RATIO_4_3 in priority.
+  @static
+  late AspectRatioStrategy ratio_4_3FallbackAutoStrategy;
+
+  /// The specified fallback rule for choosing the aspect ratio when the
+  /// preferred aspect ratio is not available.
+  AspectRatioStrategyFallbackRule getFallbackRule();
+
+  /// The specified preferred aspect ratio.
+  AspectRatio getPreferredAspectRatio();
+}
+
+/// Represents the different states the camera can be in.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/CameraState.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.CameraState',
+  ),
+)
+abstract class CameraState {
+  /// The camera's state.
+  late CameraStateType type;
+
+  /// Potentially returns an error the camera encountered.
+  late CameraStateStateError? error;
+}
+
+/// An interface which contains the camera exposure related information.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/ExposureState.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.ExposureState',
+  ),
+)
+abstract class ExposureState {
+  /// Get the maximum and minimum exposure compensation values for
+  /// `CameraControl.setExposureCompensationIndex`.
+  late CameraIntegerRange exposureCompensationRange;
+
+  /// Get the smallest step by which the exposure compensation can be changed.
+  late double exposureCompensationStep;
+}
+
+/// An interface which contains the zoom related information from a camera.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/ZoomState.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.ZoomState',
+  ),
+)
+abstract class ZoomState {
+  /// The minimum zoom ratio.
+  late double minZoomRatio;
+
+  /// The maximum zoom ratio.
+  late double maxZoomRatio;
+}
+
+/// A use case providing CPU accessible images for an app to perform image
+/// analysis on.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageAnalysis.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.ImageAnalysis',
+  ),
+)
+abstract class ImageAnalysis extends UseCase {
+  ImageAnalysis(int? targetRotation);
+
+  late final ResolutionSelector? resolutionSelector;
+
+  /// Sets an analyzer to receive and analyze images.
+  void setAnalyzer(Analyzer analyzer);
+
+  /// Removes a previously set analyzer.
+  void clearAnalyzer();
+
+  /// Sets the target rotation.
+  void setTargetRotation(int rotation);
+}
+
+/// Interface for analyzing images.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageAnalysis.Analyzer.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.ImageAnalysis.Analyzer',
+  ),
+)
+abstract class Analyzer {
+  Analyzer();
+
+  /// Analyzes an image to produce a result.
+  late void Function(ImageProxy image) analyze;
+}
+
+/// Code for a `CameraState` error.
+///
+/// https://developer.android.com/reference/androidx/camera/core/CameraState#ERROR_CAMERA_DISABLED()
+enum CameraStateErrorCode {
+  /// An error indicating that the camera device could not be opened due to a
+  /// device policy.
+  cameraDisabled,
+
+  /// An error indicating that the camera device was closed due to a fatal
+  /// error.
+  cameraFatalError,
+
+  /// An error indicating that the camera device is already in use.
+  cameraInUse,
+
+  /// An error indicating that the camera could not be opened because "Do Not
+  /// Disturb" mode is enabled on devices affected by a bug in Android 9 (API
+  /// level 28).
+  doNotDisturbModeEnabled,
+
+  /// An error indicating that the limit number of open cameras has been
+  /// reached, and more cameras cannot be opened until other instances are
+  /// closed.
+  maxCamerasInUse,
+
+  /// An error indicating that the camera device has encountered a recoverable
+  /// error.
+  otherRecoverableError,
+
+  /// An error indicating that configuring the camera has failed.
+  streamConfig,
+
+  /// The value is not recognized by this wrapper.
+  unknown,
+}
+
+/// Error that the camera has encountered.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/CameraState.StateError.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.CameraState.StateError',
+  ),
+)
+abstract class CameraStateStateError {
+  /// The code of this error.
+  late CameraStateErrorCode code;
+}
+
+/// LiveData is a data holder class that can be observed within a given
+/// lifecycle.
+///
+/// This is a wrapper around the native class to better support the generic
+/// type. Java has type erasure;
+///
+/// See https://developer.android.com/reference/androidx/lifecycle/LiveData.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName:
+        'io.flutter.plugins.camerax.LiveDataProxyApi.LiveDataWrapper',
+  ),
+)
+abstract class LiveData {
+  /// The generic type used by this instance.
+  late LiveDataSupportedType type;
+
+  /// Adds the given observer to the observers list within the lifespan of the
+  /// given owner.
+  void observe(Observer observer);
+
+  /// Removes all observers that are tied to the given `LifecycleOwner`.
+  void removeObservers();
+
+  /// Returns the current value.
+  Object? getValue();
+}
+
+/// An image proxy which has a similar interface as `android.media.Image`.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageProxy.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.ImageProxy',
+  ),
+)
+abstract class ImageProxy {
+  /// The image format.
+  late int format;
+
+  /// The image width.
+  late int width;
+
+  /// The image height.
+  late int height;
+
+  /// Returns the array of planes.
+  List<PlaneProxy> getPlanes();
+
+  /// Closes the underlying `android.media.Image`.
+  void close();
+}
+
+/// A plane proxy which has an analogous interface as
+/// `android.media.Image.Plane`.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/ImageProxy.PlaneProxy.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.ImageProxy.PlaneProxy',
+  ),
+)
+abstract class PlaneProxy {
+  /// The pixels buffer.
+  late Uint8List buffer;
+
+  /// The pixel stride.
+  late int pixelStride;
+
+  /// The row stride.
+  late int rowStride;
+}
+
+/// Defines a desired quality setting that can be used to configure components
+/// with quality setting requirements such as creating a Recorder.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/video/QualitySelector.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.QualitySelector',
+  ),
+)
+abstract class QualitySelector {
+  /// Gets an instance of QualitySelector with a desired quality.
+  QualitySelector.from(
+    VideoQuality quality,
+    FallbackStrategy? fallbackStrategy,
+  );
+
+  /// Gets an instance of QualitySelector with ordered desired qualities.
+  QualitySelector.fromOrderedList(
+    List<VideoQuality> qualities,
+    FallbackStrategy? fallbackStrategy,
+  );
+
+  /// Gets the corresponding resolution from the input quality.
+  @static
+  CameraSize? getResolution(CameraInfo cameraInfo, VideoQuality quality);
+}
+
+/// A class represents the strategy that will be adopted when the device does
+/// not support all the desired Quality in QualitySelector in order to select
+/// the quality as possible.
+///
+/// See https://developer.android.com/reference/androidx/camera/video/FallbackStrategy.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.video.FallbackStrategy',
+  ),
+)
+abstract class FallbackStrategy {
+  /// Returns a fallback strategy that will choose the quality that is closest
+  /// to and higher than the input quality.
+  FallbackStrategy.higherQualityOrLowerThan(VideoQuality quality);
+
+  /// Returns a fallback strategy that will choose the quality that is closest
+  /// to and higher than the input quality.
+  FallbackStrategy.higherQualityThan(VideoQuality quality);
+
+  /// Returns a fallback strategy that will choose the quality that is closest
+  /// to and lower than the input quality.
+  FallbackStrategy.lowerQualityOrHigherThan(VideoQuality quality);
+
+  /// Returns a fallback strategy that will choose the quality that is closest
+  /// to and lower than the input quality.
+  FallbackStrategy.lowerQualityThan(VideoQuality quality);
+}
+
+/// The CameraControl provides various asynchronous operations like zoom, focus
+/// and metering which affects output of all UseCases currently bound to that
+/// camera.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/CameraControl.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.CameraControl',
+  ),
+)
+abstract class CameraControl {
+  /// Enable the torch or disable the torch.
   @async
-  void setZoomRatio(int identifier, double ratio);
+  void enableTorch(bool torch);
 
+  /// Sets current zoom by ratio.
   @async
-  int? startFocusAndMetering(int identifier, int focusMeteringActionId);
+  void setZoomRatio(double ratio);
 
+  /// Starts a focus and metering action configured by the
+  /// `FocusMeteringAction`.
   @async
-  void cancelFocusAndMetering(int identifier);
+  FocusMeteringResult? startFocusAndMetering(FocusMeteringAction action);
 
+  /// Cancels current FocusMeteringAction and clears AF/AE/AWB regions.
   @async
-  int? setExposureCompensationIndex(int identifier, int index);
-}
+  void cancelFocusAndMetering();
 
-@FlutterApi()
-abstract class CameraControlFlutterApi {
-  void create(int identifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestFocusMeteringActionHostApi')
-abstract class FocusMeteringActionHostApi {
-  void create(int identifier, List<MeteringPointInfo> meteringPointInfos,
-      bool? disableAutoCancel);
-}
-
-@HostApi(dartHostTestHandler: 'TestFocusMeteringResultHostApi')
-abstract class FocusMeteringResultHostApi {
-  bool isFocusSuccessful(int identifier);
-}
-
-@FlutterApi()
-abstract class FocusMeteringResultFlutterApi {
-  void create(int identifier);
-}
-
-@HostApi(dartHostTestHandler: 'TestMeteringPointHostApi')
-abstract class MeteringPointHostApi {
-  void create(
-      int identifier, double x, double y, double? size, int cameraInfoId);
-
-  double getDefaultPointSize();
-}
-
-@HostApi(dartHostTestHandler: 'TestCaptureRequestOptionsHostApi')
-abstract class CaptureRequestOptionsHostApi {
-  void create(int identifier, Map<int, Object?> options);
-}
-
-@HostApi(dartHostTestHandler: 'TestCamera2CameraControlHostApi')
-abstract class Camera2CameraControlHostApi {
-  void create(int identifier, int cameraControlIdentifier);
-
+  /// Set the exposure compensation value for the camera.
   @async
-  void addCaptureRequestOptions(
-      int identifier, int captureRequestOptionsIdentifier);
+  int? setExposureCompensationIndex(int index);
 }
 
-@HostApi(dartHostTestHandler: 'TestResolutionFilterHostApi')
-abstract class ResolutionFilterHostApi {
-  void createWithOnePreferredSize(
-      int identifier, ResolutionInfo preferredResolution);
+/// The builder used to create the `FocusMeteringAction`.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/FocusMeteringAction.Builder.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.FocusMeteringAction.Builder',
+  ),
+)
+abstract class FocusMeteringActionBuilder {
+  /// Creates a Builder from a `MeteringPoint` with default mode FLAG_AF |
+  /// FLAG_AE | FLAG_AWB.
+  FocusMeteringActionBuilder(MeteringPoint point);
+
+  /// Creates a Builder from a `MeteringPoint` and `MeteringMode`.
+  FocusMeteringActionBuilder.withMode(MeteringPoint point, MeteringMode mode);
+
+  /// Adds another MeteringPoint with default metering mode.
+  void addPoint(MeteringPoint point);
+
+  /// Adds another MeteringPoint with specified meteringMode.
+  void addPointWithMode(MeteringPoint point, MeteringMode mode);
+
+  /// Disables the auto-cancel.
+  void disableAutoCancel();
+
+  /// Builds the `FocusMeteringAction` instance.
+  FocusMeteringAction build();
 }
 
-@HostApi(dartHostTestHandler: 'TestCamera2CameraInfoHostApi')
-abstract class Camera2CameraInfoHostApi {
-  int createFrom(int cameraInfoIdentifier);
+/// A configuration used to trigger a focus and/or metering action.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/FocusMeteringAction.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.FocusMeteringAction',
+  ),
+)
+abstract class FocusMeteringAction {
+  /// All MeteringPoints used for AE regions.
+  late List<MeteringPoint> meteringPointsAe;
 
-  int getSupportedHardwareLevel(int identifier);
+  /// All MeteringPoints used for AF regions.
+  late List<MeteringPoint> meteringPointsAf;
 
-  String getCameraId(int identifier);
+  /// All MeteringPoints used for AWB regions.
+  late List<MeteringPoint> meteringPointsAwb;
 
-  int getSensorOrientation(int identifier);
+  /// If auto-cancel is enabled or not.
+  late bool isAutoCancelEnabled;
 }
 
-@FlutterApi()
-abstract class Camera2CameraInfoFlutterApi {
-  void create(int identifier);
+/// Result of the `CameraControl.startFocusAndMetering`.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/FocusMeteringResult.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.FocusMeteringResult',
+  ),
+)
+abstract class FocusMeteringResult {
+  /// If auto focus is successful.
+  late bool isFocusSuccessful;
+}
+
+/// An immutable package of settings and outputs needed to capture a single
+/// image from the camera device.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.hardware.camera2.CaptureRequest',
+  ),
+)
+abstract class CaptureRequest {
+  /// Whether auto-exposure (AE) is currently locked to its latest calculated
+  /// values.
+  ///
+  /// Value is boolean.
+  ///
+  /// This key is available on all devices.
+  @static
+  late CaptureRequestKey controlAELock;
+}
+
+/// A Key is used to do capture request field lookups with CaptureRequest.get or
+/// to set fields with `CaptureRequest.Builder.set`.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CaptureRequest.Key.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.hardware.camera2.CaptureRequest.Key<*>',
+  ),
+)
+abstract class CaptureRequestKey {}
+
+/// A bundle of Camera2 capture request options.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/camera2/interop/CaptureRequestOptions.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.camera2.interop.CaptureRequestOptions',
+  ),
+)
+abstract class CaptureRequestOptions {
+  CaptureRequestOptions(Map<CaptureRequestKey, Object?> options);
+
+  /// Returns a value for the given CaptureRequestKey or null if it hasn't been
+  /// set.
+  Object? getCaptureRequestOption(CaptureRequestKey key);
+}
+
+/// An class that provides ability to interoperate with the
+/// 1android.hardware.camera21 APIs.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/camera2/interop/Camera2CameraControl.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.camera2.interop.Camera2CameraControl',
+  ),
+)
+abstract class Camera2CameraControl {
+  /// Gets the `Camera2CameraControl` from a `CameraControl`.
+  Camera2CameraControl.from(CameraControl cameraControl);
+
+  /// Adds a `CaptureRequestOptions` updates the session with the options it
+  /// contains.
+  @async
+  void addCaptureRequestOptions(CaptureRequestOptions bundle);
+}
+
+/// Applications can filter out unsuitable sizes and sort the resolution list in
+/// the preferred order by implementing the resolution filter interface.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/core/resolutionselector/ResolutionFilter.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.resolutionselector.ResolutionFilter',
+  ),
+)
+abstract class ResolutionFilter {
+  ResolutionFilter.createWithOnePreferredSize(CameraSize preferredSize);
+}
+
+/// A Key is used to do camera characteristics field lookups with
+/// `CameraCharacteristics.get`.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics.Key.html.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.hardware.camera2.CameraCharacteristics.Key<*>',
+  ),
+)
+abstract class CameraCharacteristicsKey {}
+
+/// The properties describing a `CameraDevice`.
+///
+/// See https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.hardware.camera2.CameraCharacteristics',
+  ),
+)
+abstract class CameraCharacteristics {
+  /// Generally classifies the overall set of the camera device functionality.
+  ///
+  /// Value is `InfoSupportedHardwareLevel`.
+  ///
+  /// This key is available on all devices.
+  @static
+  late CameraCharacteristicsKey infoSupportedHardwareLevel;
+
+  /// Clockwise angle through which the output image needs to be rotated to be
+  /// upright on the device screen in its native orientation..
+  ///
+  /// Value is int.
+  ///
+  /// This key is available on all devices.
+  @static
+  late CameraCharacteristicsKey sensorOrientation;
+}
+
+/// An interface for retrieving Camera2-related camera information.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/camera/camera2/interop/Camera2CameraInfo.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.camera2.interop.Camera2CameraInfo',
+  ),
+)
+abstract class Camera2CameraInfo {
+  /// Gets the `Camera2CameraInfo` from a `CameraInfo`.
+  Camera2CameraInfo.from(CameraInfo cameraInfo);
+
+  /// Gets the string camera ID.
+  String getCameraId();
+
+  /// Gets a camera characteristic value.
+  Object? getCameraCharacteristic(CameraCharacteristicsKey key);
+}
+
+/// A factory to create a MeteringPoint.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/MeteringPointFactory.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.MeteringPointFactory',
+  ),
+)
+abstract class MeteringPointFactory {
+  /// Creates a MeteringPoint by x, y.
+  MeteringPoint createPoint(double x, double y);
+
+  /// Creates a MeteringPoint by x, y, size.
+  MeteringPoint createPointWithSize(double x, double y, double size);
+}
+
+/// A MeteringPointFactory that can convert a View (x, y) into a MeteringPoint
+/// which can then be used to construct a FocusMeteringAction to start a focus
+/// and metering action.
+///
+/// See https://developer.android.com/reference/androidx/camera/core/DisplayOrientedMeteringPointFactory.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.DisplayOrientedMeteringPointFactory',
+  ),
+)
+abstract class DisplayOrientedMeteringPointFactory
+    extends MeteringPointFactory {
+  /// Creates a DisplayOrientedMeteringPointFactory for converting View (x, y)
+  /// into a MeteringPoint based on the current display's rotation and
+  /// CameraInfo.
+  DisplayOrientedMeteringPointFactory(
+    CameraInfo cameraInfo,
+    double width,
+    double height,
+  );
 }

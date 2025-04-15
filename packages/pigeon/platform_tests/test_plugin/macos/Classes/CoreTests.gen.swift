@@ -74,6 +74,68 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+func deepEqualsCoreTests(_ lhs: Any?, _ rhs: Any?) -> Bool {
+  let cleanLhs = nilOrValue(lhs) as Any?
+  let cleanRhs = nilOrValue(rhs) as Any?
+  switch (cleanLhs, cleanRhs) {
+  case (nil, nil):
+    return true
+
+  case (nil, _), (_, nil):
+    return false
+
+  case is (Void, Void):
+    return true
+
+  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
+    return cleanLhsHashable == cleanRhsHashable
+
+  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
+    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
+    for (index, element) in cleanLhsArray.enumerated() {
+      if !deepEqualsCoreTests(element, cleanRhsArray[index]) {
+        return false
+      }
+    }
+    return true
+
+  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
+    for (key, cleanLhsValue) in cleanLhsDictionary {
+      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
+      if !deepEqualsCoreTests(cleanLhsValue, cleanRhsDictionary[key]!) {
+        return false
+      }
+    }
+    return true
+
+  default:
+    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
+    return false
+  }
+}
+
+func deepHashCoreTests(value: Any?, hasher: inout Hasher) {
+  if let valueList = value as? [AnyHashable] {
+    for item in valueList { deepHashCoreTests(value: item, hasher: &hasher) }
+    return
+  }
+
+  if let valueDict = value as? [AnyHashable: AnyHashable] {
+    for key in valueDict.keys {
+      hasher.combine(key)
+      deepHashCoreTests(value: valueDict[key]!, hasher: &hasher)
+    }
+    return
+  }
+
+  if let hashableValue = value as? AnyHashable {
+    hasher.combine(hashableValue.hashValue)
+  }
+
+  return hasher.combine(String(describing: value))
+}
+
 enum AnEnum: Int {
   case one = 0
   case two = 1
@@ -87,7 +149,7 @@ enum AnotherEnum: Int {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct UnusedClass {
+struct UnusedClass: Hashable {
   var aField: Any? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -103,12 +165,18 @@ struct UnusedClass {
       aField
     ]
   }
+  static func == (lhs: UnusedClass, rhs: UnusedClass) -> Bool {
+    return deepEqualsCoreTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashCoreTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// A class containing all supported types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct AllTypes {
+struct AllTypes: Hashable {
   var aBool: Bool
   var anInt: Int64
   var anInt64: Int64
@@ -232,12 +300,18 @@ struct AllTypes {
       mapMap,
     ]
   }
+  static func == (lhs: AllTypes, rhs: AllTypes) -> Bool {
+    return deepEqualsCoreTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashCoreTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// A class containing all supported nullable types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-class AllNullableTypes {
+class AllNullableTypes: Hashable {
   init(
     aNullableBool: Bool? = nil,
     aNullableInt: Int64? = nil,
@@ -438,6 +512,15 @@ class AllNullableTypes {
       recursiveClassMap,
     ]
   }
+  static func == (lhs: AllNullableTypes, rhs: AllNullableTypes) -> Bool {
+    if lhs === rhs {
+      return true
+    }
+    return deepEqualsCoreTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashCoreTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -445,7 +528,7 @@ class AllNullableTypes {
 /// test Swift classes.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct AllNullableTypesWithoutRecursion {
+struct AllNullableTypesWithoutRecursion: Hashable {
   var aNullableBool: Bool? = nil
   var aNullableInt: Int64? = nil
   var aNullableInt64: Int64? = nil
@@ -569,6 +652,14 @@ struct AllNullableTypesWithoutRecursion {
       mapMap,
     ]
   }
+  static func == (lhs: AllNullableTypesWithoutRecursion, rhs: AllNullableTypesWithoutRecursion)
+    -> Bool
+  {
+    return deepEqualsCoreTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashCoreTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// A class for testing nested class handling.
@@ -578,7 +669,7 @@ struct AllNullableTypesWithoutRecursion {
 /// than `AllTypes` when testing doesn't require both (ie. testing null classes).
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct AllClassesWrapper {
+struct AllClassesWrapper: Hashable {
   var allNullableTypes: AllNullableTypes
   var allNullableTypesWithoutRecursion: AllNullableTypesWithoutRecursion? = nil
   var allTypes: AllTypes? = nil
@@ -620,12 +711,18 @@ struct AllClassesWrapper {
       nullableClassMap,
     ]
   }
+  static func == (lhs: AllClassesWrapper, rhs: AllClassesWrapper) -> Bool {
+    return deepEqualsCoreTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashCoreTests(value: toList(), hasher: &hasher)
+  }
 }
 
 /// A data class containing a List, used in unit tests.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
-struct TestMessage {
+struct TestMessage: Hashable {
   var testList: [Any?]? = nil
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -640,6 +737,12 @@ struct TestMessage {
     return [
       testList
     ]
+  }
+  static func == (lhs: TestMessage, rhs: TestMessage) -> Bool {
+    return deepEqualsCoreTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashCoreTests(value: toList(), hasher: &hasher)
   }
 }
 
