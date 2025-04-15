@@ -2,12 +2,27 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-/// Attempts to retrieve an enum value from [haystack] if [needle] is not null.
+
+/// Attempts to retrieve the enum value from [haystack] whose name matches [needle], or returns `null` if not found.
+///
+/// This is a safe utility method that performs a reverse lookup on an enum
+/// by comparing the string [needle] with each value’s [Enum.name].
+///
+/// Example:
+/// ```dart
+/// enum AuthMethod { google, facebook, apple }
+///
+/// final result = maybeEnum('google', AuthMethod.values); // AuthMethod.google
+/// final invalid = maybeEnum('github', AuthMethod.values); // null
+/// ```
 T? maybeEnum<T extends Enum>(String? needle, List<T> haystack) {
-  if (needle == null) {
-    return null;
+  if (needle == null) return null;
+  for (final T value in haystack) {
+    if (value.name == needle) {
+      return value;
+    }
   }
-  return haystack.byName(needle);
+  return null;
 }
 
 /// The type of several functions from the library, that don't receive
