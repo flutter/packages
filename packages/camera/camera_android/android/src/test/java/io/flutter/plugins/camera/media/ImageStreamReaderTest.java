@@ -139,7 +139,8 @@ public class ImageStreamReaderTest {
       CameraCaptureProperties mockCaptureProps = mock(CameraCaptureProperties.class);
       EventChannel.EventSink mockEventSink = mock(EventChannel.EventSink.class);
 
-      Image mockImage = ImageStreamReaderTestUtils.getImage(1280, 720, 256, ImageFormat.YUV_420_888);
+      Image mockImage =
+          ImageStreamReaderTestUtils.getImage(1280, 720, 256, ImageFormat.YUV_420_888);
       imageStreamReader.onImageAvailable(mockImage, mockCaptureProps, mockEventSink);
 
       // make sure the image was closed, even when skipping frames

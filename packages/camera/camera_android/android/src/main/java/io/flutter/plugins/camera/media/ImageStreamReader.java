@@ -150,7 +150,6 @@ public class ImageStreamReader {
     imageBuffer.put(
         "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
 
-
     final Handler handler =
         this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
 
