@@ -9,6 +9,7 @@ import 'package:meta/meta.dart';
 
 import 'common/cmake.dart';
 import 'common/core.dart';
+import 'common/flutter_command_utils.dart';
 import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
@@ -330,12 +331,13 @@ this command.
         platform: platform,
       );
       if (!project.isConfigured()) {
-        final int exitCode = await processRunner.runAndStream(
-          flutterCommand,
-          <String>['build', 'apk', '--config-only'],
-          workingDir: example.directory,
+        final bool buildSuccess = await runConfigOnlyBuild(
+          example,
+          processRunner,
+          platform,
+          FlutterPlatform.android,
         );
-        if (exitCode != 0) {
+        if (!buildSuccess) {
           printError('Unable to configure Gradle project.');
           failed = true;
           continue;
