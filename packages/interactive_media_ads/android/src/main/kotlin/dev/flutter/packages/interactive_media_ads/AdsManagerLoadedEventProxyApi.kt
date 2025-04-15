@@ -4,8 +4,6 @@
 
 package dev.flutter.packages.interactive_media_ads
 
-import android.os.Handler
-import android.os.Looper
 import com.google.ads.interactivemedia.v3.api.AdsManager
 import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
 
@@ -18,12 +16,6 @@ import com.google.ads.interactivemedia.v3.api.AdsManagerLoadedEvent
 class AdsManagerLoadedEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiAdsManagerLoadedEvent(pigeonRegistrar) {
   override fun manager(pigeon_instance: AdsManagerLoadedEvent): AdsManager {
-    val handler = Handler(Looper.getMainLooper())
-    handler.post(::aMethod)
     return pigeon_instance.adsManager
-  }
-
-  fun aMethod() {
-
   }
 }
