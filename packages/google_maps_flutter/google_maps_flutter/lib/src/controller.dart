@@ -127,7 +127,6 @@ class GoogleMapController {
     );
   }
 
-
   /// Updates configuration options of the map user interface.
   ///
   /// Change listeners are notified once the update has been made on the
