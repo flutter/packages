@@ -157,6 +157,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         return completion(.failure(error))
       }
       completion(.success(currentStorefront.countryCode))
+      return
     }
   }
 
@@ -167,6 +168,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     Task {
       do {
         try await AppStore.sync()
+        completion(.success(Void()))
       } catch {
         let pigeonError = PigeonError(
           code: "storekit2_failed_to_sync_to_app_store",
