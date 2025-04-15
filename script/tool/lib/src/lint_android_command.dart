@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'common/core.dart';
+import 'common/flutter_command_utils.dart';
 import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
@@ -41,12 +42,9 @@ class LintAndroidCommand extends PackageLoopingCommand {
           processRunner: processRunner, platform: platform);
 
       if (!project.isConfigured()) {
-        final int exitCode = await processRunner.runAndStream(
-          flutterCommand,
-          <String>['build', 'apk', '--config-only'],
-          workingDir: example.directory,
-        );
-        if (exitCode != 0) {
+        final bool buildSuccess = await runConfigOnlyBuild(
+            example, processRunner, platform, FlutterPlatform.android);
+        if (!buildSuccess) {
           printError('Unable to configure Gradle project.');
           return PackageResult.fail(<String>['Unable to configure Gradle.']);
         }

@@ -32,4 +32,14 @@ class URLProtectionSpaceProxyAPIDelegate: PigeonApiDelegateURLProtectionSpace {
   ) throws -> String? {
     return pigeonInstance.authenticationMethod
   }
+
+  func getServerTrust(pigeonApi: PigeonApiURLProtectionSpace, pigeonInstance: URLProtectionSpace)
+    throws -> SecTrustWrapper?
+  {
+    if let serverTrust = pigeonInstance.serverTrust {
+      return SecTrustWrapper(value: serverTrust)
+    }
+
+    return nil
+  }
 }

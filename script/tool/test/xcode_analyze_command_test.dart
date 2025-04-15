@@ -106,6 +106,15 @@ void main() {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               ProcessCall(
+                  'flutter',
+                  const <String>[
+                    'build',
+                    'ios',
+                    '--debug',
+                    '--config-only',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
                   'xcrun',
                   const <String>[
                     'xcodebuild',
@@ -146,6 +155,15 @@ void main() {
         expect(
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  'flutter',
+                  const <String>[
+                    'build',
+                    'ios',
+                    '--debug',
+                    '--config-only',
+                  ],
+                  pluginExampleDirectory.path),
               ProcessCall(
                   'xcrun',
                   const <String>[
@@ -246,6 +264,15 @@ void main() {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               ProcessCall(
+                  'flutter',
+                  const <String>[
+                    'build',
+                    'macos',
+                    '--debug',
+                    '--config-only',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
                   'xcrun',
                   const <String>[
                     'xcodebuild',
@@ -280,6 +307,15 @@ void main() {
         expect(
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  'flutter',
+                  const <String>[
+                    'build',
+                    'macos',
+                    '--debug',
+                    '--config-only',
+                  ],
+                  pluginExampleDirectory.path),
               ProcessCall(
                   'xcrun',
                   const <String>[
@@ -354,6 +390,15 @@ void main() {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               ProcessCall(
+                  'flutter',
+                  const <String>[
+                    'build',
+                    'ios',
+                    '--debug',
+                    '--config-only',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
                   'xcrun',
                   const <String>[
                     'xcodebuild',
@@ -368,6 +413,15 @@ void main() {
                     '-destination',
                     'generic/platform=iOS Simulator',
                     'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
+                  'flutter',
+                  const <String>[
+                    'build',
+                    'macos',
+                    '--debug',
+                    '--config-only',
                   ],
                   pluginExampleDirectory.path),
               ProcessCall(
@@ -412,6 +466,15 @@ void main() {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               ProcessCall(
+                  'flutter',
+                  const <String>[
+                    'build',
+                    'macos',
+                    '--debug',
+                    '--config-only',
+                  ],
+                  pluginExampleDirectory.path),
+              ProcessCall(
                   'xcrun',
                   const <String>[
                     'xcodebuild',
@@ -451,6 +514,15 @@ void main() {
         expect(
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
+              ProcessCall(
+                  'flutter',
+                  const <String>[
+                    'build',
+                    'ios',
+                    '--debug',
+                    '--config-only',
+                  ],
+                  pluginExampleDirectory.path),
               ProcessCall(
                   'xcrun',
                   const <String>[
