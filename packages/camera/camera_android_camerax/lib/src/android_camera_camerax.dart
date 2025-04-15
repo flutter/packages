@@ -35,6 +35,7 @@ import 'focus_metering_result.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
+import 'image_reader_rotated_preview.dart';
 import 'live_data.dart';
 import 'metering_point.dart';
 import 'observer.dart';
@@ -48,8 +49,8 @@ import 'recording.dart';
 import 'resolution_filter.dart';
 import 'resolution_selector.dart';
 import 'resolution_strategy.dart';
-import 'rotated_preview.dart';
 import 'surface.dart';
+import 'surface_texture_rotated_preview.dart';
 import 'system_services.dart';
 import 'use_case.dart';
 import 'video_capture.dart';
@@ -253,6 +254,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The initial orientation of the device when the camera is created.
   late DeviceOrientation _initialDeviceOrientation;
 
+  /// The initial rotation of the Android default display when the camera is created.
+  late int _initialDefaultDisplayRotation;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -395,12 +399,12 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // TODO(camsim99): we may be able to fix this by computing natural orientation
     // and determining RotatedPreview map from that :)
-    // TODO(camsim99): write method that takes initial orientation and rotation then
+    // TODO(camsim99): write method that takes initial oriesntation and rotation then
     // computes natural orientation. (todo: determine clockwise, counter clockwise)
     print(
         'CAMILLE createCamera info start---------------------------------------');
-    final int defaultRotation = await proxy.getDefaultDisplayRotation();
-    print('CAMILLE proxy default rotation: $defaultRotation');
+    _initialDefaultDisplayRotation = await proxy.getDefaultDisplayRotation();
+    print('CAMILLE proxy default rotation: $_initialDefaultDisplayRotation');
     print(
         'CAMILLE createCamera info end---------------------------------------');
 
@@ -861,50 +865,29 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final Widget preview = Texture(textureId: cameraId);
-    final Future<int> defaultDisplayRotationFuture =
-        proxy.getDefaultDisplayRotation();
-        
-
-    if (_handlesCropAndRotation) {
-      final double extraRotationDegrees = switch (orientation) {
-      DeviceOrientation.portraitUp => 0,
-      DeviceOrientation.landscapeRight => 90,
-      DeviceOrientation.portraitDown => 180,
-      DeviceOrientation.landscapeLeft => 270,
-      };
-      return FutureBuilder(
-          future: defaultDisplayRotationFuture,
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.none:
-              case ConnectionState.waiting:
-                return SizedBox.shrink();
-              case ConnectionState.active:
-              case ConnectionState.done:
-                if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  int qt = snapshot.data as int;
-                  int qtmod90 = qt ~/ 90;
-                  return RotatedBox(quarterTurns: qtmod90 - , child: preview);
-                }
-            }
-          });
-      // return preview;
-    }
-
     final Stream<DeviceOrientation> deviceOrientationStream =
         onDeviceOrientationChanged()
             .map((DeviceOrientationChangedEvent e) => e.orientation);
+
+    if (_handlesCropAndRotation) {
+      // print(
+      // 'CAMILLE _handlesCropAndRotation is TRUE****************************************************');
+      return SurfaceTextureRotatedPreview(_initialDeviceOrientation,
+          _initialDefaultDisplayRotation, proxy, deviceOrientationStream,
+          child: preview);
+    }
+
+    // print(
+    // 'CAMILLE _handlesCropAndRotation is FALSE****************************************************');
     if (cameraIsFrontFacing) {
-      return RotatedPreview.frontFacingCamera(
+      return ImageReaderRotatedPreview.frontFacingCamera(
         _initialDeviceOrientation,
         deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
         child: preview,
       );
     } else {
-      return RotatedPreview.backFacingCamera(
+      return ImageReaderRotatedPreview.backFacingCamera(
         _initialDeviceOrientation,
         deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,

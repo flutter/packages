@@ -11,10 +11,10 @@ import 'package:meta/meta.dart';
 /// Widget that rotates the camera preview to be upright according to the
 /// current user interface orientation.
 @internal
-final class RotatedPreview extends StatefulWidget {
-  /// Creates [RotatedPreview] that will correct the preview
+final class ImageReaderRotatedPreview extends StatefulWidget {
+  /// Creates [ImageReaderRotatedPreview] that will correct the preview
   /// rotation assuming that the front camera is being used.
-  const RotatedPreview.frontFacingCamera(
+  const ImageReaderRotatedPreview.frontFacingCamera(
     this.initialDeviceOrientation,
     this.deviceOrientation, {
     required this.sensorOrientationDegrees,
@@ -22,9 +22,9 @@ final class RotatedPreview extends StatefulWidget {
     super.key,
   }) : facingSign = 1;
 
-  /// Creates [RotatedPreview] that will correct the preview
+  /// Creates [ImageReaderRotatedPreview] that will correct the preview
   /// rotation assuming that the back camera is being used.
-  const RotatedPreview.backFacingCamera(
+  const ImageReaderRotatedPreview.backFacingCamera(
     this.initialDeviceOrientation,
     this.deviceOrientation, {
     required this.child,
@@ -35,7 +35,7 @@ final class RotatedPreview extends StatefulWidget {
   /// The initial orientation of the device when the camera is created.
   final DeviceOrientation initialDeviceOrientation;
 
-  /// The orientation of the device using the camera.
+  /// Stream of changes to the device orientation.
   final Stream<DeviceOrientation> deviceOrientation;
 
   /// The orienation of the camera sensor in degrees.
@@ -50,10 +50,11 @@ final class RotatedPreview extends StatefulWidget {
   final int facingSign;
 
   @override
-  State<StatefulWidget> createState() => _RotatedPreviewState();
+  State<StatefulWidget> createState() => _ImageReaderRotatedPreviewState();
 }
 
-final class _RotatedPreviewState extends State<RotatedPreview> {
+final class _ImageReaderRotatedPreviewState
+    extends State<ImageReaderRotatedPreview> {
   late DeviceOrientation deviceOrientation;
   late StreamSubscription<DeviceOrientation> deviceOrientationSubscription;
 
