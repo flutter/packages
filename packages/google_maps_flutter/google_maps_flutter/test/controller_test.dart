@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -17,7 +16,10 @@ void main() {
 
   testWidgets('Subscriptions are canceled on dispose',
       (WidgetTester tester) async {
-    GoogleMapsFlutterPlatform.instance = FakeGoogleMapsFlutterPlatform();
+    final FakeGoogleMapsFlutterPlatform platform =
+        FakeGoogleMapsFlutterPlatform();
+        
+    GoogleMapsFlutterPlatform.instance = platform;
 
     final FakePlatformViewsController fakePlatformViewsController =
         FakePlatformViewsController();
@@ -49,11 +51,7 @@ void main() {
     final GoogleMapController? controller = controllerNotifier.value;
 
     if (controller != null) {
-      final TrackableStreamSubscription<MarkerDragEndEvent> subscription =
-          TrackableStreamSubscription<MarkerDragEndEvent>();
-
-      controller.addDebugTrackSubscription(subscription);
-      expect(subscription.isCanceled, false);
+      expect(platform.mapEventStreamController.hasListener, true);
 
       await tester.pumpWidget(const Directionality(
         textDirection: TextDirection.ltr,
@@ -64,7 +62,7 @@ void main() {
         await tester.pump();
       });
 
-      expect(subscription.isCanceled, true);
+      expect(platform.mapEventStreamController.hasListener, false);
 
       controllerNotifier.dispose();
     } else {
@@ -81,47 +79,5 @@ class FakePlatformViewsController {
       default:
         return Future<dynamic>.value();
     }
-  }
-}
-
-/// A trackable implementation of [StreamSubscription] that records cancellation.
-///
-/// This class is used for testing purposes to verify that stream subscriptions
-/// are properly cancelled when a [GoogleMapController] is disposed.
-///
-/// It implements the minimum functionality needed to act as a
-/// [StreamSubscription] while tracking whether [cancel] has been called.
-class TrackableStreamSubscription<T> implements StreamSubscription<T> {
-  bool _canceled = false;
-
-  bool get isCanceled => _canceled;
-
-  @override
-  Future<void> cancel() async {
-    _canceled = true;
-    return Future<void>.value();
-  }
-
-  @override
-  bool get isPaused => false;
-
-  @override
-  void onData(void Function(T data)? handleData) {}
-
-  @override
-  void onDone(void Function()? handleDone) {}
-
-  @override
-  void onError(Function? handleError) {}
-
-  @override
-  void pause([Future<void>? resumeSignal]) {}
-
-  @override
-  void resume() {}
-
-  @override
-  Future<E> asFuture<E>([E? futureValue]) {
-    return Future<E>.value(futureValue as E);
   }
 }
