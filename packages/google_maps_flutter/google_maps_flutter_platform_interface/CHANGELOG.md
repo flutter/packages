@@ -1,3 +1,7 @@
+## 2.11.2
+
+* Adds support to camera control button on web.
+
 ## 2.11.1
 
 * Updates READMEs and API docs.
