@@ -438,7 +438,15 @@ class GoRoute extends RouteBase {
   /// ```
   final ExitCallback? onExit;
 
-  /// Whether the path is case sensitive or not.
+  /// Determines whether the route matching is case sensitive.
+  ///
+  /// When `true`, the path must match the specified case. For example,
+  /// a [GoRoute] with `path: '/family/:fid'` will not match `/FaMiLy/f2`.
+  ///
+  /// When `false`, the path matching is case insensitive.  The route
+  /// with `path: '/family/:fid'` will match `/FaMiLy/f2`.
+  ///
+  /// Defaults to `true`.
   final bool caseSensitive;
 
   // TODO(chunhtai): move all regex related help methods to path_utils.dart.

@@ -219,16 +219,16 @@ abstract class RouteMatchBase with Diagnosticable {
         concatenatePaths(matchedLocation, pathLoc);
     final String newMatchedPath = concatenatePaths(matchedPath, route.path);
 
-    final String caseSensitiveNewMatchedLocation;
-    final String caseSensitiveUriPath;
+    final String newMatchedLocationToCompare;
+    final String uriPathToCompare;
     if (route.caseSensitive) {
-      caseSensitiveNewMatchedLocation = newMatchedLocation;
-      caseSensitiveUriPath = uri.path;
+      newMatchedLocationToCompare = newMatchedLocation;
+      uriPathToCompare = uri.path;
     } else {
-      caseSensitiveNewMatchedLocation = newMatchedLocation.toLowerCase();
-      caseSensitiveUriPath = uri.path.toLowerCase();
+      newMatchedLocationToCompare = newMatchedLocation.toLowerCase();
+      uriPathToCompare = uri.path.toLowerCase();
     }
-    if (caseSensitiveNewMatchedLocation == caseSensitiveUriPath) {
+    if (newMatchedLocationToCompare == uriPathToCompare) {
       // A complete match.
       pathParameters.addAll(currentPathParameter);
 
@@ -242,7 +242,7 @@ abstract class RouteMatchBase with Diagnosticable {
         ],
       };
     }
-    assert(caseSensitiveUriPath.startsWith(caseSensitiveNewMatchedLocation));
+    assert(uriPathToCompare.startsWith(newMatchedLocationToCompare));
     assert(remainingLocation.isNotEmpty);
 
     final String childRestLoc = uri.path.substring(
