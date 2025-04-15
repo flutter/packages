@@ -60,16 +60,16 @@ abstract class JniMessageApiAsync {
   SomeTypes sendSomeTypes(SomeTypes someTypes);
 }
 
-// @HostApi()
-// abstract class JniMessageApiNullableAsync {
-//   @async
-//   String? echoString(String? request);
-//   @async
-//   int? echoInt(int? request);
-//   @async
-//   double? echoDouble(double? request);
-//   @async
-//   bool? echoBool(bool? request);
-//   @async
-//   SomeNullableTypes? sendSomeNullableTypes(SomeNullableTypes? someTypes);
-// }
+@HostApi()
+abstract class JniMessageApiNullableAsync {
+  @async
+  String? echoString(String? request);
+  @async
+  int? echoInt(int? request);
+  @async
+  double? echoDouble(double? request);
+  @async
+  bool? echoBool(bool? request);
+  @async
+  SomeNullableTypes? sendSomeNullableTypes(SomeNullableTypes? someTypes);
+}

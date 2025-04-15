@@ -22,5 +22,7 @@ classes:
   - 'JniMessageApiNullableRegistrar'
   - 'JniMessageApiAsync'
   - 'JniMessageApiAsyncRegistrar'
+  - 'JniMessageApiNullableAsync'
+  - 'JniMessageApiNullableAsyncRegistrar'
   - 'SomeTypes'
   - 'SomeNullableTypes'

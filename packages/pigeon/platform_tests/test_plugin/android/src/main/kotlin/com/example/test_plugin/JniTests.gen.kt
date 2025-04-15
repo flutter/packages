@@ -398,3 +398,93 @@ class JniMessageApiAsyncRegistrar : JniMessageApiAsync() {
     error("JniMessageApiAsync has not been set")
   }
 }
+
+val JniMessageApiNullableAsyncInstances: MutableMap<String, JniMessageApiNullableAsyncRegistrar> =
+    mutableMapOf()
+
+@Keep
+abstract class JniMessageApiNullableAsync {
+  abstract suspend fun echoString(request: String?): String?
+
+  abstract suspend fun echoInt(request: Long?): Long?
+
+  abstract suspend fun echoDouble(request: Double?): Double?
+
+  abstract suspend fun echoBool(request: Boolean?): Boolean?
+
+  abstract suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes?
+}
+
+@Keep
+class JniMessageApiNullableAsyncRegistrar : JniMessageApiNullableAsync() {
+  var api: JniMessageApiNullableAsync? = null
+
+  fun register(
+      api: JniMessageApiNullableAsync,
+      name: String = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+  ): JniMessageApiNullableAsyncRegistrar {
+    this.api = api
+    JniMessageApiNullableAsyncInstances[name] = this
+    return this
+  }
+
+  @Keep
+  fun getInstance(name: String): JniMessageApiNullableAsyncRegistrar? {
+    return JniMessageApiNullableAsyncInstances[name]
+  }
+
+  override suspend fun echoString(request: String?): String? {
+    api?.let {
+      try {
+        return api!!.echoString(request)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullableAsync has not been set")
+  }
+
+  override suspend fun echoInt(request: Long?): Long? {
+    api?.let {
+      try {
+        return api!!.echoInt(request)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullableAsync has not been set")
+  }
+
+  override suspend fun echoDouble(request: Double?): Double? {
+    api?.let {
+      try {
+        return api!!.echoDouble(request)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullableAsync has not been set")
+  }
+
+  override suspend fun echoBool(request: Boolean?): Boolean? {
+    api?.let {
+      try {
+        return api!!.echoBool(request)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullableAsync has not been set")
+  }
+
+  override suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
+    api?.let {
+      try {
+        return api!!.sendSomeNullableTypes(someTypes)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullableAsync has not been set")
+  }
+}

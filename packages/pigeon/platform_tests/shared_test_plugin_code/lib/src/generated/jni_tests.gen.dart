@@ -382,3 +382,66 @@ class JniMessageApiAsync {
     return dartTypeRes;
   }
 }
+
+class JniMessageApiNullableAsync {
+  JniMessageApiNullableAsync._withRegistrar(
+      bridge.JniMessageApiNullableAsyncRegistrar api)
+      : _api = api;
+
+  /// Returns instance of JniMessageApiNullableAsync with specified [channelName] if one has been registered.
+  static JniMessageApiNullableAsync? getInstance(
+      {String channelName = defaultInstanceName}) {
+    final bridge.JniMessageApiNullableAsyncRegistrar? link =
+        bridge.JniMessageApiNullableAsyncRegistrar()
+            .getInstance(JString.fromString(channelName));
+    if (link == null) {
+      String nameString = 'named $channelName';
+      if (channelName == defaultInstanceName) {
+        nameString = 'with no name';
+      }
+      final String error = 'No instance $nameString has been registered.';
+      throw ArgumentError(error);
+    }
+    final JniMessageApiNullableAsync res =
+        JniMessageApiNullableAsync._withRegistrar(link);
+    return res;
+  }
+
+  late final bridge.JniMessageApiNullableAsyncRegistrar _api;
+
+  Future<String?> echoString(String? request) async {
+    final JString? res = await _api
+        .echoString(request != null ? JString.fromString(request) : null);
+    final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
+    return dartTypeRes;
+  }
+
+  Future<int?> echoInt(int? request) async {
+    final JLong? res =
+        await _api.echoInt(request != null ? JLong(request) : null);
+    final int? dartTypeRes = res?.intValue(releaseOriginal: true);
+    return dartTypeRes;
+  }
+
+  Future<double?> echoDouble(double? request) async {
+    final JDouble? res =
+        await _api.echoDouble(request != null ? JDouble(request) : null);
+    final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
+    return dartTypeRes;
+  }
+
+  Future<bool?> echoBool(bool? request) async {
+    final JBoolean? res =
+        await _api.echoBool(request != null ? JBoolean(request) : null);
+    final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
+    return dartTypeRes;
+  }
+
+  Future<SomeNullableTypes?> sendSomeNullableTypes(
+      SomeNullableTypes? someTypes) async {
+    final bridge.SomeNullableTypes? res =
+        await _api.sendSomeNullableTypes(someTypes?.toJni());
+    final SomeNullableTypes? dartTypeRes = SomeNullableTypes.fromJni(res);
+    return dartTypeRes;
+  }
+}
