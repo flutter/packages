@@ -1,0 +1,92 @@
+RouteBase get $customParameterRoute => GoRouteData.$route(
+      path: '/default-value-route',
+      factory: $CustomParameterRouteExtension._fromState,
+    );
+
+extension $CustomParameterRouteExtension on CustomParameterRoute {
+  static CustomParameterRoute _fromState(GoRouterState state) =>
+      CustomParameterRoute(
+        param: int.parse(fromBase64(state.uri.queryParameters['param']!))!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/default-value-route',
+        queryParams: {
+          'param': toBase64(param.toString()),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $customParameterComplexRoute => GoRouteData.$route(
+      path: '/:id/',
+      factory: $CustomParameterComplexRouteExtension._fromState,
+    );
+
+extension $CustomParameterComplexRouteExtension on CustomParameterComplexRoute {
+  static CustomParameterComplexRoute _fromState(GoRouterState state) =>
+      CustomParameterComplexRoute(
+        id: int.parse(fromBase64(state.pathParameters['id']!))!,
+        dir: state.uri.queryParameters['dir'] ?? '',
+        list: (state.uri.queryParametersAll['list']
+                    ?.map((e) => Uri.parse(fromBase64(e)))
+                    .cast<Uri>()
+                    ?.toList() as List<Uri>?)
+                ?.toList() ??
+            const <Uri>[],
+        enumTest: _$EnumTestEnumMap
+            ._$fromName(fromBase64(state.uri.queryParameters['enum-test']!))!,
+      );
+
+  String get location => GoRouteData.$location(
+        '/${Uri.encodeComponent(toBase64(id.toString()))}/',
+        queryParams: {
+          if (dir != '') 'dir': toBase64(dir),
+          if (!_$iterablesEqual(list, const <Uri>[]))
+            'list': list.map((e) => toBase64(e.toString())).toList(),
+          'enum-test': toBase64(_$EnumTestEnumMap[enumTest]),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+const _$EnumTestEnumMap = {
+  EnumTest.a: 'a',
+  EnumTest.b: 'b',
+  EnumTest.c: 'c',
+};
+
+extension<T extends Enum> on Map<T, String> {
+  T? _$fromName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
+}
+
+bool _$iterablesEqual<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
+  if (identical(iterable1, iterable2)) return true;
+  if (iterable1 == null || iterable2 == null) return false;
+  final iterator1 = iterable1.iterator;
+  final iterator2 = iterable2.iterator;
+  while (true) {
+    final hasNext1 = iterator1.moveNext();
+    final hasNext2 = iterator2.moveNext();
+    if (hasNext1 != hasNext2) return false;
+    if (!hasNext1) return true;
+    if (iterator1.current != iterator2.current) return false;
+  }
+}
