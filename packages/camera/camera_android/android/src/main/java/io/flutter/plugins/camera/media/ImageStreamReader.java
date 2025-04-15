@@ -110,56 +110,24 @@ public class ImageStreamReader {
       @NonNull Image image,
       @NonNull CameraCaptureProperties captureProps,
       @NonNull EventChannel.EventSink imageStreamSink) {
-    try {
-      Map<String, Object> imageBuffer = new HashMap<>();
+    // The limit was chosen so it would not drop frames for reasonable lags of the main thread.
+    if (numImagesInTransit >= ImageStreamReader.MAX_IMAGES_IN_TRANSIT) {
+      Log.d(TAG, "Dropping frame due to images pending on main thread.");
+      image.close();
+      return;
+    }
 
+    Map<String, Object> imageBuffer = new HashMap<>();
+
+    imageBuffer.put("width", image.getWidth());
+    imageBuffer.put("height", image.getHeight());
+    try {
       // Get plane data ready
       if (dartImageFormat == ImageFormat.NV21) {
         imageBuffer.put("planes", parsePlanesForNv21(image));
       } else {
         imageBuffer.put("planes", parsePlanesForYuvOrJpeg(image));
       }
-
-      imageBuffer.put("width", image.getWidth());
-      imageBuffer.put("height", image.getHeight());
-      imageBuffer.put("format", dartImageFormat);
-      imageBuffer.put("lensAperture", captureProps.getLastLensAperture());
-      imageBuffer.put("sensorExposureTime", captureProps.getLastSensorExposureTime());
-      Integer sensorSensitivity = captureProps.getLastSensorSensitivity();
-      imageBuffer.put(
-          "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
-
-      final Handler handler =
-          this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
-
-      // Keep a hard reference to the latest frame, so it isn't dropped before it reaches the main
-      // looper
-      latestImageBufferHardReference = imageBuffer;
-
-      boolean postResult =
-          handler.post(
-              new Runnable() {
-                // a public field is required in order to test this code
-                @VisibleForTesting public WeakReference<Map<String, Object>> weakImageBuffer;
-
-                public Runnable withImageBuffer(Map<String, Object> imageBuffer) {
-                  weakImageBuffer = new WeakReference<>(imageBuffer);
-                  return this;
-                }
-
-                @Override
-                public void run() {
-                  final Map<String, Object> imageBuffer = weakImageBuffer.get();
-                  if (imageBuffer == null) {
-                    Log.d(TAG, "Image buffer was dropped by garbage collector.");
-                    return;
-                  }
-                  imageStreamSink.success(imageBuffer);
-                }
-              }.withImageBuffer(imageBuffer));
-
-      image.close();
-
     } catch (IllegalStateException e) {
       // Handle "buffer is inaccessible" errors that can happen on some devices from
       // ImageStreamReaderUtils.yuv420ThreePlanesToNV21()
@@ -171,8 +139,46 @@ public class ImageStreamReader {
                   "IllegalStateException",
                   "Caught IllegalStateException: " + e.getMessage(),
                   null));
+    } finally {
       image.close();
     }
+
+    imageBuffer.put("format", dartImageFormat);
+    imageBuffer.put("lensAperture", captureProps.getLastLensAperture());
+    imageBuffer.put("sensorExposureTime", captureProps.getLastSensorExposureTime());
+    Integer sensorSensitivity = captureProps.getLastSensorSensitivity();
+    imageBuffer.put(
+        "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
+
+
+    final Handler handler =
+        this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
+
+    // Keep a hard reference to the latest frame, so it isn't dropped before it reaches the main
+    // looper
+    latestImageBufferHardReference = imageBuffer;
+
+    boolean postResult =
+        handler.post(
+            new Runnable() {
+              // a public field is required in order to test this code
+              @VisibleForTesting public WeakReference<Map<String, Object>> weakImageBuffer;
+
+              public Runnable withImageBuffer(Map<String, Object> imageBuffer) {
+                weakImageBuffer = new WeakReference<>(imageBuffer);
+                return this;
+              }
+
+              @Override
+              public void run() {
+                final Map<String, Object> imageBuffer = weakImageBuffer.get();
+                if (imageBuffer == null) {
+                  Log.d(TAG, "Image buffer was dropped by garbage collector.");
+                  return;
+                }
+                imageStreamSink.success(imageBuffer);
+              }
+            }.withImageBuffer(imageBuffer));
   }
 
   /**
