@@ -78,11 +78,20 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
     required double sensorOrientationDegrees,
     required int sign,
   }) {
-    final double deviceOrientationDegrees = switch (orientation) {
+    // TODO(camsim99): works with emulator back camera, front not working
+    // but could this be emulator issue? not sure what else I could be doing wrong
+    final double extraRotationDegrees = switch (orientation) {
       DeviceOrientation.portraitUp => 0,
       DeviceOrientation.landscapeRight => 90,
       DeviceOrientation.portraitDown => 180,
       DeviceOrientation.landscapeLeft => 270,
+    };
+
+    final double deviceOrientationDegrees = switch (orientation) {
+      DeviceOrientation.portraitUp => 270, // TODO ??
+      DeviceOrientation.landscapeRight => 180,
+      DeviceOrientation.portraitDown => 90, // TODO ??
+      DeviceOrientation.landscapeLeft => 0,
     };
 
     // Rotate the camera preview according to
@@ -93,7 +102,7 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
 
     // Then, subtract the rotation already applied in the CameraPreview widget
     // (see camera/camera/lib/src/camera_preview.dart).
-    rotationDegrees -= deviceOrientationDegrees;
+    rotationDegrees -= extraRotationDegrees;
 
     return rotationDegrees;
   }
@@ -111,6 +120,17 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
       sensorOrientationDegrees: widget.sensorOrientationDegrees,
       sign: widget.facingSign,
     );
+    print(
+        'CAMILLE build info start--------------------------------------------------');
+    print('CAMILLE device orientation: $deviceOrientation');
+    print(
+        'CAMILLE sensor orientation degrees: ${widget.sensorOrientationDegrees}');
+    print('CAMILLE: camer facing sign: ${widget.facingSign}');
+    print('CAMILLE rotation degrees: $rotationDegrees');
+    print('CAMILLE rotation degrees mod 90: ${rotationDegrees ~/ 90}');
+    print(
+        'CAMILLE build info end--------------------------------------------------');
+
     return RotatedBox(
       quarterTurns: rotationDegrees ~/ 90,
       child: widget.child,

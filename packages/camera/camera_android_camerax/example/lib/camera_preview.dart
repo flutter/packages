@@ -48,8 +48,14 @@ class CameraPreview extends StatelessWidget {
       return child;
     }
 
+    int qt = _getQuarterTurns();
+    print(
+        'CAMILLE wrap in rotated box info start--------------------------------------------');
+    print('CAMILLE quarter turns: $qt');
+    print(
+        'CAMILLE wrap in rotated box info end--------------------------------------------');
     return RotatedBox(
-      quarterTurns: _getQuarterTurns(),
+      quarterTurns: qt,
       child: child,
     );
   }
@@ -68,6 +74,23 @@ class CameraPreview extends StatelessWidget {
       DeviceOrientation.portraitDown: 2,
       DeviceOrientation.landscapeLeft: 3,
     };
+
+    // [WORKS FOR BACK CAMERA] Test for naturally landscape left:
+    // final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
+    //   DeviceOrientation.portraitUp: 3,
+    //   DeviceOrientation.landscapeRight: 2,
+    //   DeviceOrientation.portraitDown: 1,
+    //   DeviceOrientation.landscapeLeft: 0,
+    // };
+
+    // [WORKS FOR FRONT CAMERA] Test for naturally landscape left:
+    // TODO(camsim99): do algebra to understand this relationship a bit better.
+    // final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
+    //   DeviceOrientation.portraitUp: 1,
+    //   DeviceOrientation.landscapeRight: 2,
+    //   DeviceOrientation.portraitDown: 0,
+    //   DeviceOrientation.landscapeLeft: 2,
+    // };
     return turns[_getApplicableOrientation()]!;
   }
 

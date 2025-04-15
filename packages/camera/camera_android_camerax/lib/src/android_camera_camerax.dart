@@ -7,10 +7,11 @@ import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter/cupertino.dart' hide AspectRatio, Preview;
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show Size, Texture, Widget, visibleForTesting;
+    show BuildContext, FutureBuilder, Size, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
@@ -392,8 +393,25 @@ class AndroidCameraCameraX extends CameraPlatform {
         await proxy.previewSurfaceProducerHandlesCropAndRotation(preview!);
     _initialDeviceOrientation = await proxy.getUiOrientation();
 
+    // TODO(camsim99): we may be able to fix this by computing natural orientation
+    // and determining RotatedPreview map from that :)
+    // TODO(camsim99): write method that takes initial orientation and rotation then
+    // computes natural orientation. (todo: determine clockwise, counter clockwise)
+    print(
+        'CAMILLE createCamera info start---------------------------------------');
+    final int defaultRotation = await proxy.getDefaultDisplayRotation();
+    print('CAMILLE proxy default rotation: $defaultRotation');
+    print(
+        'CAMILLE createCamera info end---------------------------------------');
+
     return flutterSurfaceTextureId;
   }
+
+  // Map<DeviceOrientation, int> getSomething(DeviceOrientation initialDeviceOrientation, int defaultRotation) {
+  //   // Calculate natural orientation.
+
+  //   // Determine map from device orientation to rotation degrees
+  // }
 
   /// Initializes the camera on the device.
   ///
@@ -843,9 +861,36 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final Widget preview = Texture(textureId: cameraId);
+    final Future<int> defaultDisplayRotationFuture =
+        proxy.getDefaultDisplayRotation();
+        
 
     if (_handlesCropAndRotation) {
-      return preview;
+      final double extraRotationDegrees = switch (orientation) {
+      DeviceOrientation.portraitUp => 0,
+      DeviceOrientation.landscapeRight => 90,
+      DeviceOrientation.portraitDown => 180,
+      DeviceOrientation.landscapeLeft => 270,
+      };
+      return FutureBuilder(
+          future: defaultDisplayRotationFuture,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+                return SizedBox.shrink();
+              case ConnectionState.active:
+              case ConnectionState.done:
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  int qt = snapshot.data as int;
+                  int qtmod90 = qt ~/ 90;
+                  return RotatedBox(quarterTurns: qtmod90 - , child: preview);
+                }
+            }
+          });
+      // return preview;
     }
 
     final Stream<DeviceOrientation> deviceOrientationStream =
