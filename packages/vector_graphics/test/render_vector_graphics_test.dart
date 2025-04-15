@@ -46,7 +46,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
@@ -67,7 +66,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     final RenderVectorGraphic renderVectorGraphicB = RenderVectorGraphic(
       pictureInfo,
@@ -75,7 +73,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     renderVectorGraphicA.layout(BoxConstraints.tight(const Size(50, 50)));
     renderVectorGraphicB.layout(BoxConstraints.tight(const Size(50, 50)));
@@ -96,7 +93,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     final RenderVectorGraphic renderVectorGraphicB = RenderVectorGraphic(
       pictureInfo,
@@ -104,7 +100,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     renderVectorGraphicA.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakeHistoryPaintingContext context = FakeHistoryPaintingContext();
@@ -131,7 +126,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     final RenderVectorGraphic renderVectorGraphicB = RenderVectorGraphic(
       pictureInfo,
@@ -139,7 +133,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     renderVectorGraphicA.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakeHistoryPaintingContext context = FakeHistoryPaintingContext();
@@ -156,14 +149,13 @@ void main() {
     expect(identical(context.canvas.images[0], context.canvas.images[1]), true);
   });
 
-  test('Changing color filter does not re-rasterize', () async {
+  test('Changing color filter does re-rasterize', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
       pictureInfo,
       'test',
       null,
       1.0,
       null,
-      1.0,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
@@ -175,11 +167,11 @@ void main() {
         const ui.ColorFilter.mode(Colors.red, ui.BlendMode.colorBurn);
     renderVectorGraphic.paint(context, Offset.zero);
 
-    expect(firstImage.debugDisposed, false);
+    expect(firstImage.debugDisposed, true);
 
     renderVectorGraphic.paint(context, Offset.zero);
 
-    expect(context.canvas.lastImage, equals(firstImage));
+    expect(context.canvas.lastImage, isNot(firstImage));
   });
 
   test('Changing device pixel ratio does re-rasterize and dispose old raster',
@@ -190,7 +182,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
@@ -215,7 +206,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
@@ -223,7 +213,7 @@ void main() {
 
     final ui.Image firstImage = context.canvas.lastImage!;
 
-    renderVectorGraphic.scale = 2.0;
+    context.canvas.scale(2.0, 2.0);
     renderVectorGraphic.paint(context, Offset.zero);
 
     expect(firstImage.debugDisposed, true);
@@ -233,23 +223,23 @@ void main() {
     expect(context.canvas.lastImage!.debugDisposed, false);
   });
 
-  test('The raster size is increased by the inverse picture scale', () async {
+  test('The raster size is increased by the canvas scale', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
       pictureInfo,
       'test',
       null,
       1.0,
       null,
-      0.5, // twice as many pixels
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
+    context.canvas.scale(2.0, 2.0);
     renderVectorGraphic.paint(context, Offset.zero);
 
     // Dst rect is always size of RO.
     expect(context.canvas.lastDst, const Rect.fromLTWH(0, 0, 50, 50));
     expect(
-        context.canvas.lastSrc, const Rect.fromLTWH(0, 0, 50 / 0.5, 50 / 0.5));
+        context.canvas.lastSrc, const Rect.fromLTWH(0, 0, 50 * 2.0, 50 * 2.0));
   });
 
   test('The raster size is increased by the device pixel ratio', () async {
@@ -259,7 +249,6 @@ void main() {
       null,
       2.0,
       null,
-      1.0,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
@@ -278,10 +267,10 @@ void main() {
       null,
       2.0,
       null,
-      0.5,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
+    context.canvas.scale(2.0, 2.0);
     renderVectorGraphic.paint(context, Offset.zero);
 
     // Dst rect is always size of RO.
@@ -297,7 +286,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
@@ -318,7 +306,6 @@ void main() {
       null,
       1.0,
       opacity,
-      1.0,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
@@ -344,13 +331,13 @@ void main() {
       null,
       1.0,
       opacity,
-      1.0,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
     renderVectorGraphic.paint(context, Offset.zero);
 
-    expect(context.canvas.lastPaint?.color, const Color.fromRGBO(0, 0, 0, 0.5));
+    // opaque is used to generate raster cache.
+    expect(context.canvas.lastPaint?.color, const Color.fromRGBO(0, 0, 0, 1.0));
   });
 
   test('Disposing render object disposes picture', () async {
@@ -360,7 +347,6 @@ void main() {
       null,
       1.0,
       null,
-      1.0,
     );
     renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
     final FakePaintingContext context = FakePaintingContext();
@@ -381,7 +367,6 @@ void main() {
       null,
       1.0,
       opacity,
-      1.0,
     );
     final PipelineOwner pipelineOwner = PipelineOwner();
     expect(opacity._listeners, hasLength(1));
@@ -403,7 +388,9 @@ void main() {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     ui.Canvas(recorder);
     final ui.Image image = await recorder.endRecording().toImage(1, 1);
-    final RasterData data = RasterData(image, 1, const RasterKey('test', 1, 1));
+    final Paint paint = Paint();
+    final RasterData data =
+        RasterData(image, 1, RasterKey('test', 1, 1, paint));
 
     data.dispose();
 
@@ -426,6 +413,101 @@ void main() {
     expect(context.canvas.totalSaves, 1);
     expect(context.canvas.totalSaveLayers, 1);
   });
+
+  testWidgets('Changing offset does not re-rasterize in auto strategy',
+      (WidgetTester tester) async {
+    final RenderVectorGraphic renderAutoVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      'testOffset',
+      null,
+      1.0,
+      null,
+    );
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    final ui.Image? oldImage = context.canvas.lastImage;
+
+    renderAutoVectorGraphic.paint(context, const Offset(20, 30));
+    expect(context.canvas.lastImage, isNotNull);
+    expect(context.canvas.lastImage, equals(oldImage));
+
+    renderAutoVectorGraphic.dispose();
+  });
+
+  testWidgets('RenderAutoVectorGraphic re-rasterizes when opacity changes',
+      (WidgetTester tester) async {
+    final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.2);
+    final RenderVectorGraphic renderAutoVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      'testOpacity',
+      null,
+      1.0,
+      opacity,
+    );
+
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+
+    final ui.Image? oldImage = context.canvas.lastImage;
+
+    opacity.value = 0.5;
+    opacity.notifyListeners();
+
+    // Changing opacity requires painting.
+    expect(renderAutoVectorGraphic.debugNeedsPaint, true);
+
+    // Changing opacity need create new raster cache.
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    expect(context.canvas.lastImage, isNot(oldImage));
+
+    renderAutoVectorGraphic.dispose();
+  });
+
+  testWidgets(
+      'Identical widgets reuse raster cache when available in auto startegy',
+      (WidgetTester tester) async {
+    final RenderVectorGraphic renderAutoVectorGraphic1 = RenderVectorGraphic(
+      pictureInfo,
+      'testOffset',
+      null,
+      1.0,
+      null,
+    );
+    final RenderVectorGraphic renderAutoVectorGraphic2 = RenderVectorGraphic(
+      pictureInfo,
+      'testOffset',
+      null,
+      1.0,
+      null,
+    );
+    renderAutoVectorGraphic1.layout(BoxConstraints.tight(const Size(50, 50)));
+    renderAutoVectorGraphic2.layout(BoxConstraints.tight(const Size(50, 50)));
+
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderAutoVectorGraphic1.paint(context, Offset.zero);
+
+    final ui.Image? image1 = context.canvas.lastImage;
+
+    renderAutoVectorGraphic2.paint(context, Offset.zero);
+
+    final ui.Image? image2 = context.canvas.lastImage;
+
+    expect(image1, isNotNull);
+    expect(image2, isNotNull);
+
+    expect(image1, equals(image2));
+
+    renderAutoVectorGraphic1.dispose();
+    renderAutoVectorGraphic2.dispose();
+  });
 }
 
 class FakeCanvas extends Fake implements Canvas {
@@ -437,6 +519,8 @@ class FakeCanvas extends Fake implements Canvas {
   int saveCount = 0;
   int totalSaves = 0;
   int totalSaveLayers = 0;
+  double scaleX = 1.0;
+  double scaleY = 1.0;
 
   @override
   void drawImageRect(ui.Image image, Rect src, Rect dst, Paint paint) {
@@ -481,6 +565,24 @@ class FakeCanvas extends Fake implements Canvas {
       {ui.ClipOp clipOp = ui.ClipOp.intersect, bool doAntiAlias = true}) {
     lastClipRect = rect;
   }
+
+  @override
+  void scale(double sx, [double? sy]) {
+    scaleX = sx;
+    scaleY = sx;
+    if (sy != null) {
+      scaleY = sy;
+    }
+  }
+
+  @override
+  void translate(double dx, double dy) {}
+
+  @override
+  Float64List getTransform() {
+    return Float64List.fromList(
+        <double>[scaleX, 0, 0, 0, 0, scaleY, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  }
 }
 
 class FakeHistoryCanvas extends Fake implements Canvas {
@@ -489,6 +591,12 @@ class FakeHistoryCanvas extends Fake implements Canvas {
   @override
   void drawImageRect(ui.Image image, Rect src, Rect dst, Paint paint) {
     images.add(image);
+  }
+
+  @override
+  Float64List getTransform() {
+    return Float64List.fromList(
+        <double>[1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
   }
 }
 
