@@ -1293,6 +1293,7 @@ class Camera
   }
 
   void closeCaptureSession() {
+    // Keep a local copy to avoid race conditions between threads.
     final CameraCaptureSession captureSessionToClose = captureSession;
     if (captureSessionToClose != null) {
       Log.i(TAG, "closeCaptureSession");
@@ -1325,6 +1326,7 @@ class Camera
   }
 
   private void stopAndReleaseCamera() {
+    // Keep a local copy to avoid race conditions between threads.
     final CameraDeviceWrapper cameraDeviceToClose = cameraDevice;
     if (cameraDeviceToClose != null) {
       cameraDeviceToClose.close();
