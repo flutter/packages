@@ -22,8 +22,8 @@ class GoogleMapController {
   ///
   /// This list keeps track of all event subscriptions created for the map,
   /// including camera movements, marker interactions, and other map events.
-  /// These subscriptions are properly disposed when the controller is disposed.
-  final List<StreamSubscription<dynamic>> _streamSubscriptionList =
+  /// These subscriptions should be disposed when the controller is disposed.
+  final List<StreamSubscription<dynamic>> _streamSubscriptions =
       <StreamSubscription<dynamic>>[];
 
   /// Initialize control of a [GoogleMap] with [id].
@@ -46,14 +46,14 @@ class GoogleMapController {
 
   void _connectStreams(int mapId) {
     if (_googleMapState.widget.onCameraMoveStarted != null) {
-      _addSubscription(
+      _streamSubscriptions.add(
         GoogleMapsFlutterPlatform.instance
             .onCameraMoveStarted(mapId: mapId)
             .listen((_) => _googleMapState.widget.onCameraMoveStarted!()),
       );
     }
     if (_googleMapState.widget.onCameraMove != null) {
-      _addSubscription(
+      _streamSubscriptions.add(
         GoogleMapsFlutterPlatform.instance.onCameraMove(mapId: mapId).listen(
               (CameraMoveEvent e) =>
                   _googleMapState.widget.onCameraMove!(e.value),
@@ -61,94 +61,72 @@ class GoogleMapController {
       );
     }
     if (_googleMapState.widget.onCameraIdle != null) {
-      _addSubscription(
+      _streamSubscriptions.add(
         GoogleMapsFlutterPlatform.instance
             .onCameraIdle(mapId: mapId)
             .listen((_) => _googleMapState.widget.onCameraIdle!()),
       );
     }
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance
           .onMarkerTap(mapId: mapId)
           .listen((MarkerTapEvent e) => _googleMapState.onMarkerTap(e.value)),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance.onMarkerDragStart(mapId: mapId).listen(
             (MarkerDragStartEvent e) =>
                 _googleMapState.onMarkerDragStart(e.value, e.position),
           ),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance.onMarkerDrag(mapId: mapId).listen(
             (MarkerDragEvent e) =>
                 _googleMapState.onMarkerDrag(e.value, e.position),
           ),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance.onMarkerDragEnd(mapId: mapId).listen(
             (MarkerDragEndEvent e) =>
                 _googleMapState.onMarkerDragEnd(e.value, e.position),
           ),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance.onInfoWindowTap(mapId: mapId).listen(
             (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value),
           ),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance.onPolylineTap(mapId: mapId).listen(
             (PolylineTapEvent e) => _googleMapState.onPolylineTap(e.value),
           ),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance.onPolygonTap(mapId: mapId).listen(
             (PolygonTapEvent e) => _googleMapState.onPolygonTap(e.value),
           ),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance
           .onCircleTap(mapId: mapId)
           .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value)),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance
           .onTap(mapId: mapId)
           .listen((MapTapEvent e) => _googleMapState.onTap(e.position)),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance.onLongPress(mapId: mapId).listen(
             (MapLongPressEvent e) => _googleMapState.onLongPress(e.position),
           ),
     );
-    _addSubscription(
+    _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance.onClusterTap(mapId: mapId).listen(
             (ClusterTapEvent e) => _googleMapState.onClusterTap(e.value),
           ),
     );
   }
 
-  /// Adds a stream subscription to the list of active subscriptions.
-  ///
-  /// This method is used to track and manage all stream subscriptions
-  /// created for map events. The subscriptions are stored in
-  /// [_streamSubscriptionList] and will be properly disposed when the
-  /// controller is disposed.
-  void _addSubscription(StreamSubscription<dynamic> subscription) {
-    _streamSubscriptionList.add(subscription);
-  }
-
-  /// Adds a stream subscription to the tracked list for testing purposes.
-  ///
-  /// This method allows tests to add custom stream subscriptions to the
-  /// controller's tracking list. It is only intended for use in tests and
-  /// should not be called in production code.
-  ///
-  /// The added subscription will be properly canceled when the controller
-  /// is disposed, allowing tests to verify subscription cleanup behavior.
-  @visibleForTesting
-  void addDebugTrackSubscription(StreamSubscription<dynamic> subscription) {
-    _addSubscription(subscription);
-  }
 
   /// Updates configuration options of the map user interface.
   ///
@@ -385,10 +363,10 @@ class GoogleMapController {
   /// Disposes of the platform resources
   void dispose() {
     for (final StreamSubscription<dynamic> streamSubscription
-        in _streamSubscriptionList) {
+        in _streamSubscriptions) {
       streamSubscription.cancel();
     }
-    _streamSubscriptionList.clear();
+    _streamSubscriptions.clear();
     GoogleMapsFlutterPlatform.instance.dispose(mapId: mapId);
   }
 }

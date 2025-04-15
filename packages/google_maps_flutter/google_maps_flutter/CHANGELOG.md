@@ -1,8 +1,6 @@
 ## 2.12.2
 
-* Fixes memory leak by implementing mechanism for disposing stream subscriptions in `GoogleMapController`. 
-  Previously, subscriptions were not canceled upon disposal of the controller, which could lead to memory leaks or
-  unexpected behavior. The controller now tracks all stream subscriptions and cancels them when `dispose()` is called.
+* Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.
 
 ## 2.12.1
 
