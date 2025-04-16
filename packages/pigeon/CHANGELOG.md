@@ -1,6 +1,7 @@
 ## 25.3.1
 
 * [kotlin] Fixes Kotlin InstanceManager not properly removing callbacks from handler.
+* [kotlin] Fixes `SyntheticAccessor` lint caused by private utility methods.
 
 ## 25.3.0
 
