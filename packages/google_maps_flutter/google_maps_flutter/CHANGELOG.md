@@ -1,3 +1,7 @@
+## 2.12.2
+
+* Adds support for camera control button on web.
+
 ## 2.12.1
 
 * Fixes typo in README.
