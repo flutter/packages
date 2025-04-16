@@ -433,12 +433,12 @@ this command.
   }
 
   Future<_PlatformResult> _testIOS(RepositoryPackage plugin, _TestMode mode) {
-    return _runXcodeTests(plugin, 'iOS', mode,
+    return _runXcodeTests(plugin, FlutterPlatform.ios, mode,
         extraFlags: _iOSDestinationFlags);
   }
 
   Future<_PlatformResult> _testMacOS(RepositoryPackage plugin, _TestMode mode) {
-    return _runXcodeTests(plugin, 'macOS', mode);
+    return _runXcodeTests(plugin, FlutterPlatform.macos, mode);
   }
 
   /// Runs all applicable tests for [plugin], printing status and returning
@@ -448,7 +448,7 @@ this command.
   /// usually at "example/{ios,macos}/Runner.xcworkspace".
   Future<_PlatformResult> _runXcodeTests(
     RepositoryPackage plugin,
-    String targetPlatform,
+    FlutterPlatform targetPlatform,
     _TestMode mode, {
     List<String> extraFlags = const <String>[],
   }) async {
@@ -459,6 +459,8 @@ this command.
     } else if (mode.integrationOnly) {
       testTarget = 'RunnerUITests';
     }
+    final String targetPlatformString =
+        targetPlatform == FlutterPlatform.ios ? 'iOS' : 'macOS';
 
     bool ranUnitTests = false;
     // Assume skipped until at least one test has run.
@@ -472,8 +474,8 @@ this command.
       bool exampleHasUnitTests = false;
       final String? targetToCheck =
           testTarget ?? (mode.unit ? unitTestTarget : null);
-      final Directory xcodeProject = example.directory
-          .childDirectory(targetPlatform.toLowerCase())
+      final Directory xcodeProject = example
+          .platformDirectory(targetPlatform)
           .childDirectory('Runner.xcodeproj');
       if (targetToCheck != null) {
         final bool? hasTarget =
@@ -490,14 +492,29 @@ this command.
         }
       }
 
-      _printRunningExampleTestsMessage(example, targetPlatform);
+      // Ensure that the native project files are configured for a debug build,
+      // otherwise the Xcode build step will fail due to mode mismatch.
+      final bool buildSuccess = await runConfigOnlyBuild(
+        example,
+        processRunner,
+        platform,
+        targetPlatform,
+        buildDebug: true,
+      );
+      if (!buildSuccess) {
+        printError('Unable to generate debug Xcode project files');
+        overallResult = RunState.failed;
+        continue;
+      }
+
+      _printRunningExampleTestsMessage(example, targetPlatformString);
       final int exitCode = await _xcode.runXcodeBuild(
         example.directory,
-        targetPlatform,
+        targetPlatformString,
         // Clean before testing to remove cached swiftmodules from previous
         // runs, which can cause conflicts.
         actions: <String>['clean', 'test'],
-        workspace: '${targetPlatform.toLowerCase()}/Runner.xcworkspace',
+        workspace: '${targetPlatformString.toLowerCase()}/Runner.xcworkspace',
         scheme: 'Runner',
         configuration: 'Debug',
         hostPlatform: platform,
@@ -513,10 +530,10 @@ this command.
       const int xcodebuildNoTestExitCode = 66;
       switch (exitCode) {
         case xcodebuildNoTestExitCode:
-          _printNoExampleTestsMessage(example, targetPlatform);
+          _printNoExampleTestsMessage(example, targetPlatformString);
         case 0:
           printSuccess(
-              'Successfully ran $targetPlatform xctest for $exampleName');
+              'Successfully ran $targetPlatformString xctest for $exampleName');
           // If this is the first test, assume success until something fails.
           if (overallResult == RunState.skipped) {
             overallResult = RunState.succeeded;
