@@ -1,3 +1,7 @@
+## 3.19.0
+
+* Adds support to set the over-scroll mode for the WebView. See `WebKitWebViewController.setOverScrollMode`.
+
 ## 3.18.6
 
 * Fixes `PlatformException` when calling `loadFlutterAsset` on macOS.
