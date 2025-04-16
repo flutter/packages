@@ -121,6 +121,7 @@ class AndroidWebkitLibraryPigeonInstanceManager(
    */
   fun <T> remove(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
+    val instance: Any? = getInstance(identifier)
     if (instance is WebViewProxyApi.WebViewPlatformView) {
       instance.destroy()
     }
