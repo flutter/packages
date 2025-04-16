@@ -141,10 +141,10 @@ Future<int> generateTestPigeons(
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
       kotlinIncludeErrorClass: input != 'primitive',
-      // iOS
+      // iOS/macOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
-          : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
+          : '$outputBase/darwin/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
       // Linux
@@ -163,24 +163,6 @@ Future<int> generateTestPigeons(
           ? null
           : '$outputBase/windows/pigeon/$input.gen.cpp',
       cppNamespace: '${input}_pigeontest',
-      injectOverflowTypes: includeOverflow && input == 'core_tests',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-
-    // macOS has to be run as a separate generation, since currently Pigeon
-    // doesn't have a way to output separate macOS and iOS Swift output in a
-    // single invocation.
-    generateCode = await runPigeon(
-      input: './pigeons/$input.dart',
-      swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
-          ? null
-          : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
-      swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'primitive',
-      suppressVersion: true,
-      dartPackageName: 'pigeon_integration_tests',
       injectOverflowTypes: includeOverflow && input == 'core_tests',
     );
     if (generateCode != 0) {
