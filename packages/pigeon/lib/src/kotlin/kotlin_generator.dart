@@ -2244,7 +2244,7 @@ String _getErrorClassName(InternalKotlinOptions generatorOptions) =>
 /// Calculates the name of the codec that will be generated for [api].
 String _getUtilsClassName(InternalKotlinOptions options) {
   return toUpperCamelCase(
-    '${options.fileSpecificClassNameComponent}PigeonUtils',
+    '${options.fileSpecificClassNameComponent ?? ''}PigeonUtils',
   );
 }
 
