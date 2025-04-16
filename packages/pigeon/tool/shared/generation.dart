@@ -198,38 +198,13 @@ Future<int> generateTestPigeons(
           : '$alternateOutputBase/android/src/main/java/com/example/'
               'alternate_language_test_plugin/${_javaFilenameForName(input)}.java',
       javaPackage: 'com.example.alternate_language_test_plugin',
-      // iOS
+      // iOS/macOS
       objcHeaderOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
-          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.h',
+          : '$alternateOutputBase/darwin/Classes/$pascalCaseName.gen.h',
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
-          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
-      objcPrefix: input == 'core_tests'
-          ? 'FLT'
-          : input == 'enum'
-              ? 'PGN'
-              : '',
-      suppressVersion: true,
-      dartPackageName: 'pigeon_integration_tests',
-      injectOverflowTypes: includeOverflow && input == 'core_tests',
-      mergeDefinitionFileOptions: input != 'enum',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-
-    // macOS has to be run as a separate generation, since currently Pigeon
-    // doesn't have a way to output separate macOS and iOS Swift output in a
-    // single invocation.
-    generateCode = await runPigeon(
-      input: './pigeons/$input.dart',
-      objcHeaderOut: skipLanguages.contains(GeneratorLanguage.objc)
-          ? null
-          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.h',
-      objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
-          ? null
-          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
+          : '$alternateOutputBase/darwin/Classes/$pascalCaseName.gen.m',
       objcPrefix: input == 'core_tests'
           ? 'FLT'
           : input == 'enum'
