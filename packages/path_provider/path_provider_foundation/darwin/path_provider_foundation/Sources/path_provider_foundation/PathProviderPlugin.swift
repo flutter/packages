@@ -61,7 +61,7 @@ private func fileManagerDirectoryForType(_ type: DirectoryType) -> FileManager.S
   case .library:
     return FileManager.SearchPathDirectory.libraryDirectory
   case .temp:
-    return FileManager.SearchPathDirectory.cachesDirectory
+    return FileManager.SearchPathDirectory.temporaryDirectory
   }
 }
 

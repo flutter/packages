@@ -19,7 +19,7 @@ class RunnerTests: XCTestCase {
     XCTAssertEqual(
       path,
       NSSearchPathForDirectoriesInDomains(
-        FileManager.SearchPathDirectory.cachesDirectory,
+        FileManager.SearchPathDirectory.temporaryDirectory,
         FileManager.SearchPathDomainMask.userDomainMask,
         true
       ).first)
