@@ -1,4 +1,4 @@
-# TODO(stuartmorgan): Remove this once more of the files that macOS doesn't
+# TODO(stuartmorgan): Remove this once more of the files that iOS/macOS don't
 # use have been eliminated via test consolidation.
 *.gen.h
 *.gen.m
