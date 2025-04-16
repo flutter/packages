@@ -48,7 +48,9 @@ class ${kotlinInstanceManagerClassName(options)}(private val finalizationListene
   private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
   private val weakReferencesToIdentifiers = HashMap<java.lang.ref.WeakReference<Any>, Long>()
   private val handler = android.os.Handler(android.os.Looper.getMainLooper())
-  private val releaseAllFinalizedInstancesRunnable = { this.releaseAllFinalizedInstances() }
+  private val releaseAllFinalizedInstancesRunnable = Runnable {
+    this.releaseAllFinalizedInstances()
+  }
   private var nextIdentifier: Long = minHostCreatedIdentifier
   private var hasFinalizationListenerStopped = false
 

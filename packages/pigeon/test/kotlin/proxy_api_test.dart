@@ -1025,6 +1025,7 @@ void main() {
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
         final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
 
         expect(
           code,
@@ -1040,9 +1041,9 @@ void main() {
         );
 
         expect(
-          code,
+          collapsedCode,
           contains(
-            'private val releaseAllFinalizedInstancesRunnable = { this.releaseAllFinalizedInstances() }',
+            'private val releaseAllFinalizedInstancesRunnable = Runnable { this.releaseAllFinalizedInstances() }',
           ),
         );
         expect(
