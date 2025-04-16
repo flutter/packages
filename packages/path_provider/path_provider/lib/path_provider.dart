@@ -46,7 +46,7 @@ PathProviderPlatform get _platform => PathProviderPlatform.instance;
 /// directory is scoped to the calling application.
 ///
 /// Example implementations:
-/// - `NSTemporaryDirectory` on iOS and macOS.
+/// - `FileManager.SearchPathDirectory.temporaryDirectory` on iOS and macOS.
 /// - `Context.getCacheDir` on Android.
 ///
 /// Throws a [MissingPlatformDirectoryException] if the system is unable to

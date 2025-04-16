@@ -2,6 +2,11 @@
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
+## 2.4.2
+
+* Switches `getTemporaryDirectory` from `NSCachesDirectory` to `FileManager.SearchPathDirectory.temporaryDirectory`
+  for iOS and macOS.
+
 ## 2.4.1
 
 * Updates to Pigeon v22.
