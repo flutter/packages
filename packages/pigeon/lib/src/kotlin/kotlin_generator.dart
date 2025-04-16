@@ -2241,7 +2241,8 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
 String _getErrorClassName(InternalKotlinOptions generatorOptions) =>
     generatorOptions.errorClassName ?? 'FlutterError';
 
-/// Calculates the name of the codec that will be generated for [api].
+/// Calculates the name of the private utils class that will be generated for
+/// the file.
 String _getUtilsClassName(InternalKotlinOptions options) {
   return toUpperCamelCase(
     '${options.fileSpecificClassNameComponent ?? ''}PigeonUtils',
