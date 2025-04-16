@@ -7,8 +7,8 @@ enum WebViewOverScrollMode {
   /// Always allow a user to over-scroll the WebView.
   always,
 
-  /// Allow a user to over-scroll the WebView only if the content is large
-  /// enough to meaningfully scroll.
+  /// Allow a user to over-scroll the WebView only if the content is larger than
+  /// the viewport.
   ifContentScrolls,
 
   /// Never allow a user to over-scroll the WebView.
