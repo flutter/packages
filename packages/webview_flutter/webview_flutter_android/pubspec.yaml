@@ -27,9 +27,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^25.2.0
+  pigeon: ^25.3.0
 
 topics:
   - html
   - webview
   - webview-flutter
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  webview_flutter_platform_interface: {path: ../../../packages/webview_flutter/webview_flutter_platform_interface}

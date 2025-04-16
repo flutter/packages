@@ -34,4 +34,19 @@ public class ViewProxyApi extends PigeonApiView {
   public WebViewPoint getScrollPosition(@NonNull View pigeon_instance) {
     return new WebViewPoint(pigeon_instance.getScrollX(), pigeon_instance.getScrollY());
   }
+
+  @Override
+  public void setOverScrollMode(@NonNull View pigeon_instance, @NonNull OverScrollMode mode) {
+    switch (mode) {
+      case ALWAYS:
+        pigeon_instance.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+        break;
+      case IF_CONTENT_SCROLLS:
+        pigeon_instance.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+        break;
+      case NEVER:
+        pigeon_instance.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        break;
+    }
+  }
 }
