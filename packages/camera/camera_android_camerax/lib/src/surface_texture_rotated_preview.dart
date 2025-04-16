@@ -114,17 +114,6 @@ final class _SurfaceTextureRotatedPreviewState
 
   @override
   Widget build(BuildContext context) {
-    // print(
-    //     'CAMILLE build info start--------------------------------------------------');
-    // print('CAMILLE device orientation: $deviceOrientation');
-    // print(
-    //     'CAMILLE sensor orientation degrees: ${widget.sensorOrientationDegrees}');
-    // print('CAMILLE: camer facing sign: ${widget.facingSign}');
-    // print('CAMILLE rotation degrees: $rotationDegrees');
-    // print('CAMILLE rotation degrees mod 90: ${rotationDegrees ~/ 90}');
-    // print(
-    //     'CAMILLE build info end--------------------------------------------------');
-
     return FutureBuilder<int>(
         future: defaultDisplayRotation,
         builder: (BuildContext context, AsyncSnapshot<int> snapshot) {

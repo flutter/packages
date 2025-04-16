@@ -882,6 +882,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (cameraIsFrontFacing) {
       return ImageReaderRotatedPreview.frontFacingCamera(
         _initialDeviceOrientation,
+        _initialDefaultDisplayRotation,
+        proxy,
         deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
         child: preview,
@@ -889,6 +891,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     } else {
       return ImageReaderRotatedPreview.backFacingCamera(
         _initialDeviceOrientation,
+        _initialDefaultDisplayRotation,
+        proxy,
         deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
         child: preview,

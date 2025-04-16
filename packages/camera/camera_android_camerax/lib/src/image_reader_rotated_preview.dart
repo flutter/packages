@@ -8,6 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
+import 'camerax_proxy.dart';
+import 'surface.dart';
+
 /// Widget that rotates the camera preview to be upright according to the
 /// current user interface orientation.
 @internal
@@ -16,6 +19,8 @@ final class ImageReaderRotatedPreview extends StatefulWidget {
   /// rotation assuming that the front camera is being used.
   const ImageReaderRotatedPreview.frontFacingCamera(
     this.initialDeviceOrientation,
+    this.initialDefaultDisplayRotation,
+    this.cameraXProxy,
     this.deviceOrientation, {
     required this.sensorOrientationDegrees,
     required this.child,
@@ -26,6 +31,8 @@ final class ImageReaderRotatedPreview extends StatefulWidget {
   /// rotation assuming that the back camera is being used.
   const ImageReaderRotatedPreview.backFacingCamera(
     this.initialDeviceOrientation,
+    this.initialDefaultDisplayRotation,
+    this.cameraXProxy,
     this.deviceOrientation, {
     required this.child,
     required this.sensorOrientationDegrees,
@@ -34,6 +41,14 @@ final class ImageReaderRotatedPreview extends StatefulWidget {
 
   /// The initial orientation of the device when the camera is created.
   final DeviceOrientation initialDeviceOrientation;
+
+  /// The initial rotation of the Android default display when the camera is created.
+  final int initialDefaultDisplayRotation;
+
+  /// Proxy for calling into CameraX library on the native Android side of the plugin.
+  ///
+  /// Instance required to check the current rotation of the default Android display.
+  final CameraXProxy cameraXProxy;
 
   /// Stream of changes to the device orientation.
   final Stream<DeviceOrientation> deviceOrientation;
@@ -56,26 +71,45 @@ final class ImageReaderRotatedPreview extends StatefulWidget {
 final class _ImageReaderRotatedPreviewState
     extends State<ImageReaderRotatedPreview> {
   late DeviceOrientation deviceOrientation;
+  late Future<int> defaultDisplayRotation;
   late StreamSubscription<DeviceOrientation> deviceOrientationSubscription;
 
   @override
   void initState() {
     deviceOrientation = widget.initialDeviceOrientation;
+    defaultDisplayRotation =
+        Future<int>.value(widget.initialDefaultDisplayRotation);
     deviceOrientationSubscription =
         widget.deviceOrientation.listen((DeviceOrientation event) {
       // Ensure that we aren't updating the state if the widget is being destroyed.
       if (!mounted) {
         return;
       }
+
       setState(() {
         deviceOrientation = event;
+        defaultDisplayRotation =
+            widget.cameraXProxy.getDefaultDisplayRotation();
       });
     });
     super.initState();
   }
 
+  int _getGraphicsRotationFromDefaultDisplayRotation(
+      int defaultDisplayRotation) {
+    return switch (defaultDisplayRotation) {
+      Surface.rotation0 => 0,
+      Surface.rotation90 => 270,
+      Surface.rotation180 => 180,
+      Surface.rotation270 => 90,
+      // TODO(camsim99): Handle this case.
+      int() => throw UnimplementedError(),
+    };
+  }
+
   double _computeRotationDegrees(
-    DeviceOrientation orientation, {
+    DeviceOrientation orientation,
+    int currentDefaultDisplayRotationDegrees, {
     required double sensorOrientationDegrees,
     required int sign,
   }) {
@@ -88,18 +122,19 @@ final class _ImageReaderRotatedPreviewState
       DeviceOrientation.landscapeLeft => 270,
     };
 
-    final double deviceOrientationDegrees = switch (orientation) {
-      DeviceOrientation.portraitUp => 270, // TODO ??
-      DeviceOrientation.landscapeRight => 180,
-      DeviceOrientation.portraitDown => 90, // TODO ??
-      DeviceOrientation.landscapeLeft => 0,
-    };
+    // final double deviceOrientationDegrees = switch (orientation) {
+    //   DeviceOrientation.portraitUp => 270, // TODO ??
+    //   DeviceOrientation.landscapeRight => 180,
+    //   DeviceOrientation.portraitDown => 90, // TODO ??
+    //   DeviceOrientation.landscapeLeft => 0,
+    // };
 
     // Rotate the camera preview according to
     // https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation.
-    double rotationDegrees =
-        (sensorOrientationDegrees - deviceOrientationDegrees * sign + 360) %
-            360;
+    double rotationDegrees = (sensorOrientationDegrees -
+            currentDefaultDisplayRotationDegrees * sign +
+            360) %
+        360;
 
     // Then, subtract the rotation already applied in the CameraPreview widget
     // (see camera/camera/lib/src/camera_preview.dart).
@@ -116,25 +151,40 @@ final class _ImageReaderRotatedPreviewState
 
   @override
   Widget build(BuildContext context) {
-    final double rotationDegrees = _computeRotationDegrees(
-      deviceOrientation,
-      sensorOrientationDegrees: widget.sensorOrientationDegrees,
-      sign: widget.facingSign,
-    );
-    print(
-        'CAMILLE build info start--------------------------------------------------');
-    print('CAMILLE device orientation: $deviceOrientation');
-    print(
-        'CAMILLE sensor orientation degrees: ${widget.sensorOrientationDegrees}');
-    print('CAMILLE: camer facing sign: ${widget.facingSign}');
-    print('CAMILLE rotation degrees: $rotationDegrees');
-    print('CAMILLE rotation degrees mod 90: ${rotationDegrees ~/ 90}');
-    print(
-        'CAMILLE build info end--------------------------------------------------');
+    return FutureBuilder<int>(
+        future: defaultDisplayRotation,
+        builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final int currentDefaultDisplayRotation2 = snapshot.data!;
+            final int currentDefaultDisplayRotation =
+                _getGraphicsRotationFromDefaultDisplayRotation(
+                    currentDefaultDisplayRotation2);
+            final double rotationDegrees = _computeRotationDegrees(
+              deviceOrientation,
+              currentDefaultDisplayRotation,
+              sensorOrientationDegrees: widget.sensorOrientationDegrees,
+              sign: widget.facingSign,
+            );
+            print(
+                'CAMILLE build info start--------------------------------------------------');
+            print('CAMILLE device orientation: $deviceOrientation');
+            print(
+                'CAMILLE: currentDefaultDisplayRotation $currentDefaultDisplayRotation');
+            print(
+                'CAMILLE sensor orientation degrees: ${widget.sensorOrientationDegrees}');
+            print('CAMILLE: camera facing sign: ${widget.facingSign}');
+            print('CAMILLE rotation degrees: $rotationDegrees');
+            print('CAMILLE rotation degrees mod 90: ${rotationDegrees ~/ 90}');
+            print(
+                'CAMILLE build info end--------------------------------------------------');
 
-    return RotatedBox(
-      quarterTurns: rotationDegrees ~/ 90,
-      child: widget.child,
-    );
+            return RotatedBox(
+              quarterTurns: rotationDegrees ~/ 90,
+              child: widget.child,
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        });
   }
 }
