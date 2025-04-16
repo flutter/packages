@@ -1,6 +1,14 @@
-## 14.9.0
+## 15.1.0
+
 - Adds new top level `onEnter` callback with access to current and next route states.
 - Deprecates top level `redirect` in favor of `onEnter`.
+
+## 15.0.0
+
+- **BREAKING CHANGE**
+  - URLs are now case sensitive.
+  - Adds `caseSensitive` parameter to `GoRouter` (default to `true`).
+  - See [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes)
 
 ## 14.8.1
 
