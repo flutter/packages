@@ -147,6 +147,16 @@ static void *rateContext = &rateContext;
                                            selector:@selector(itemDidPlayToEndTime:)
                                                name:AVPlayerItemDidPlayToEndTimeNotification
                                              object:item];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePllayerOnPlayerLayer) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resetPlayerToPlayerLayer) name:UIApplicationWillEnterForegroundNotification object:nil];
+}
+
+- (void)removePllayerOnPlayerLayer {
+    _playerLayer.player = nil;
+}
+
+- (void)resetPlayerToPlayerLayer {
+    _playerLayer.player = _player;
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification *)notification {
