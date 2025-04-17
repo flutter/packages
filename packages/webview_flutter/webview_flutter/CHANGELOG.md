@@ -1,6 +1,6 @@
 ## 4.11.0
 
-* Adds support to set the over-scroll mode for the WebView. See `AndroidWebViewController.setOverScrollMode`.
+* Adds support to set the over-scroll mode for the WebView. See `WebViewController.setOverScrollMode`.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 4.10.0
