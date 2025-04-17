@@ -1,3 +1,7 @@
+## 2.12.2
+
+* Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.
+
 ## 2.12.1
 
 * Fixes typo in README.
