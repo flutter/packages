@@ -154,7 +154,8 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           code: "storekit2_failed_to_fetch_country_code",
           message: "Storekit has failed to fetch the country code.",
           details: "Storefront.current returned nil.")
-        return completion(.failure(error))
+        completion(.failure(error))
+        return
       }
       completion(.success(currentStorefront.countryCode))
       return
@@ -169,12 +170,14 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       do {
         try await AppStore.sync()
         completion(.success(Void()))
+        return
       } catch {
         let pigeonError = PigeonError(
           code: "storekit2_failed_to_sync_to_app_store",
           message: "Storekit has failed to sync to the app store.",
           details: "\(error)")
         completion(.failure(pigeonError))
+        return
       }
     }
   }
