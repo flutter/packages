@@ -318,9 +318,12 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     );
     _horizontalOverflows = maxHorizontalExtent > 0.0;
 
+    final double verticalLeadingExtent = verticalOffset.pixels;
+    final double verticalTrailingExtent =
+        _rowMetrics[_lastRow!]!.trailingOffset - viewportDimension.height;
     final double maxVerticalExtent = math.max(
       0.0,
-      _rowMetrics[_lastRow!]!.trailingOffset - viewportDimension.height,
+      math.max(verticalLeadingExtent, verticalTrailingExtent),
     );
     _verticalOverflows = maxVerticalExtent > 0.0;
 
