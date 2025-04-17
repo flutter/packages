@@ -172,6 +172,10 @@ Future<int> generateTestPigeons(
     }
 
     // Generate the alternate language test plugin output.
+    final String objcBase =
+        '$alternateOutputBase/darwin/$alternateTestPluginName/Sources/$alternateTestPluginName/';
+    final String objcBaseRelativeHeaderPath =
+        'include/$alternateTestPluginName/$pascalCaseName.gen.h';
     generateCode = await runPigeon(
       input: './pigeons/$input.dart',
       // Android
@@ -185,10 +189,11 @@ Future<int> generateTestPigeons(
       // iOS/macOS
       objcHeaderOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
-          : '$alternateOutputBase/darwin/Classes/$pascalCaseName.gen.h',
+          : '$objcBase/$objcBaseRelativeHeaderPath',
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
-          : '$alternateOutputBase/darwin/Classes/$pascalCaseName.gen.m',
+          : '$objcBase/$pascalCaseName.gen.m',
+      objcHeaderIncludePath: './$objcBaseRelativeHeaderPath',
       objcPrefix: input == 'core_tests'
           ? 'FLT'
           : input == 'enum'
@@ -228,6 +233,7 @@ Future<int> runPigeon({
   String? objcHeaderOut,
   String? objcSourceOut,
   String objcPrefix = '',
+  String? objcHeaderIncludePath,
   bool suppressVersion = false,
   String copyrightHeader = './copyright_header.txt',
   String? basePath,
@@ -287,7 +293,10 @@ Future<int> runPigeon({
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,
-      objcOptions: ObjcOptions(prefix: objcPrefix),
+      objcOptions: ObjcOptions(
+        prefix: objcPrefix,
+        headerIncludePath: objcHeaderIncludePath,
+      ),
       swiftOut: swiftOut,
       swiftOptions: SwiftOptions(
         errorClassName: swiftErrorClassName,
