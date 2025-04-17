@@ -1,3 +1,7 @@
+## 1.4.4
+
+* Add `stopAuthentication` implementation.
+
 ## 1.4.3
 
 * Handles when biometry hardware is available but permissions have been denied for the app.

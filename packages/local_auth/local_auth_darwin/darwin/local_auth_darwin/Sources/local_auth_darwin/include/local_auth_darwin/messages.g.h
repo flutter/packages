@@ -113,6 +113,13 @@ NSObject<FlutterMessageCodec> *FLADGetMessagesCodec(void);
 /// @return `nil` only when `error != nil`.
 - (nullable NSArray<FLADAuthBiometricBox *> *)getEnrolledBiometricsWithError:
     (FlutterError *_Nullable *_Nonnull)error;
+/// Cancels any in-progress authentication.
+///
+/// Returns true only if authentication was in progress, and was successfully
+/// cancelled.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSNumber *)stopAuthenticationWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// Attempts to authenticate the user with the provided [options], and using
 /// [strings] for any UI.
 - (void)authenticateWithOptions:(FLADAuthOptions *)options
