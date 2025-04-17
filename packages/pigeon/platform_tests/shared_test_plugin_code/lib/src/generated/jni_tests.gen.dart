@@ -14,41 +14,88 @@ import 'package:flutter/services.dart';
 import 'package:jni/jni.dart';
 import './jni_tests.gen.jni.dart' as bridge;
 
-Object? convertObject(JObject? object) {
-  if (object == null) {
-    return null;
-  }
-  if (object.isA<JLong>(JLong.type)) {
-    return (object.as(JLong.type)).intValue();
-  }
-  if (object.isA<JDouble>(JDouble.type)) {
-    return (object.as(JDouble.type)).doubleValue();
-  }
-  if (object.isA<JString>(JString.type)) {
-    return (object.as(JString.type)).toDartString();
-  }
-  if (object.isA<JBoolean>(JBoolean.type)) {
-    return (object.as(JBoolean.type)).booleanValue();
-  }
-  if (object.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
-    final JList<JObject> list = (object.as(JList.type<JObject>(JObject.type)));
-    final List<Object?> res = <Object?>[];
-    for (int i = 0; i < list.length; i++) {
-      res.add(convertObject(list[i]));
+class _PigeonJniCodec {
+  Object? readValue(JObject? value) {
+    if (value == null) {
+      return null;
+    } else if (value.isA<JLong>(JLong.type)) {
+      return (value.as(JLong.type)).intValue();
+    } else if (value.isA<JDouble>(JDouble.type)) {
+      return (value.as(JDouble.type)).doubleValue();
+    } else if (value.isA<JString>(JString.type)) {
+      return (value.as(JString.type)).toDartString();
+    } else if (value.isA<JBoolean>(JBoolean.type)) {
+      return (value.as(JBoolean.type)).booleanValue();
+    } else if (value.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
+      final JList<JObject> list = (value.as(JList.type<JObject>(JObject.type)));
+      final List<Object?> res = <Object?>[];
+      for (int i = 0; i < list.length; i++) {
+        res.add(readValue(list[i]));
+      }
+      return res;
+    } else if (value.isA<JMap<JObject, JObject>>(
+        JMap.type<JObject, JObject>(JObject.type, JObject.type))) {
+      final JMap<JObject, JObject> map =
+          (value.as(JMap.type<JObject, JObject>(JObject.type, JObject.type)));
+      final Map<Object?, Object?> res = <Object, Object>{};
+      for (final MapEntry<JObject?, JObject?> entry in map.entries) {
+        res[readValue(entry.key)] = readValue(entry.value);
+      }
+      return res;
+    } else if (value.isA<bridge.SomeTypes>(bridge.SomeTypes.type)) {
+      return SomeTypes.fromJni(value.as(bridge.SomeTypes.type));
+    } else if (value
+        .isA<bridge.SomeNullableTypes>(bridge.SomeNullableTypes.type)) {
+      return SomeNullableTypes.fromJni(value.as(bridge.SomeNullableTypes.type));
+    } else {
+      throw ArgumentError.value(value);
     }
-    return res;
   }
-  if (object.isA<JMap<JObject, JObject>>(
-      JMap.type<JObject, JObject>(JObject.type, JObject.type))) {
-    final JMap<JObject, JObject> map =
-        (object.as(JMap.type<JObject, JObject>(JObject.type, JObject.type)));
-    final Map<Object?, Object?> res = <Object, Object>{};
-    for (final MapEntry<JObject?, JObject?> entry in map.entries) {
-      res[convertObject(entry.key)] = convertObject(entry.value);
+
+  JObject? writeValue(Object? value) {
+    if (value == null) {
+      return null;
+    } else if (value is bool) {
+      return JBoolean(value);
+    } else if (value is double) {
+      return JDouble(value);
+    } else if (value is int) {
+      return JLong(value);
+    } else if (value is String) {
+      return JString.fromString(value);
+    } else if (value is Uint8List) {
+      //TODO
+      return null;
+    } else if (value is Int32List) {
+      //TODO
+      return null;
+    } else if (value is Int64List) {
+      //TODO
+      return null;
+    } else if (value is Float64List) {
+      //TODO
+      return null;
+    } else if (value is List) {
+      final JList<JObject?> res = JList<JObject?>.array(JObject.type);
+      for (int i = 0; i < value.length; i++) {
+        res.add(writeValue(value[i]));
+      }
+      return res;
+    } else if (value is Map) {
+      final JMap<JObject?, JObject?> res =
+          JMap<JObject, JObject>.hash(JObject.type, JObject.type);
+      for (final MapEntry<Object?, Object?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res;
+    } else if (value is SomeTypes) {
+      return value.toJni();
+    } else if (value is SomeNullableTypes) {
+      return value.toJni();
+    } else {
+      throw ArgumentError.value(value);
     }
-    return res;
   }
-  return object;
 }
 
 class SomeTypes {
@@ -157,10 +204,10 @@ class SomeNullableTypes {
 
   bridge.SomeNullableTypes toJni() {
     return bridge.SomeNullableTypes(
-      aString != null ? JString.fromString(aString!) : null,
-      anInt != null ? JLong(anInt!) : null,
-      aDouble != null ? JDouble(aDouble!) : null,
-      aBool != null ? JBoolean(aBool!) : null,
+      aString == null ? null : JString.fromString(aString!),
+      anInt == null ? null : JLong(anInt!),
+      aDouble == null ? null : JDouble(aDouble!),
+      aBool == null ? null : JBoolean(aBool!),
     );
   }
 
@@ -291,34 +338,34 @@ class JniMessageApiNullable {
 
   String? echoString(String? request) {
     final JString? res =
-        _api.echoString(request != null ? JString.fromString(request) : null);
+        _api.echoString(request == null ? null : JString.fromString(request));
     final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
     return dartTypeRes;
   }
 
   int? echoInt(int? request) {
-    final JLong? res = _api.echoInt(request != null ? JLong(request) : null);
+    final JLong? res = _api.echoInt(request == null ? null : JLong(request));
     final int? dartTypeRes = res?.intValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   double? echoDouble(double? request) {
     final JDouble? res =
-        _api.echoDouble(request != null ? JDouble(request) : null);
+        _api.echoDouble(request == null ? null : JDouble(request));
     final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   bool? echoBool(bool? request) {
     final JBoolean? res =
-        _api.echoBool(request != null ? JBoolean(request) : null);
+        _api.echoBool(request == null ? null : JBoolean(request));
     final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   SomeNullableTypes? sendSomeNullableTypes(SomeNullableTypes? someTypes) {
-    final bridge.SomeNullableTypes? res =
-        _api.sendSomeNullableTypes(someTypes?.toJni());
+    final bridge.SomeNullableTypes? res = _api
+        .sendSomeNullableTypes(someTypes == null ? null : someTypes.toJni());
     final SomeNullableTypes? dartTypeRes = SomeNullableTypes.fromJni(res);
     return dartTypeRes;
   }
@@ -411,36 +458,36 @@ class JniMessageApiNullableAsync {
 
   Future<String?> echoString(String? request) async {
     final JString? res = await _api
-        .echoString(request != null ? JString.fromString(request) : null);
+        .echoString(request == null ? null : JString.fromString(request));
     final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
     return dartTypeRes;
   }
 
   Future<int?> echoInt(int? request) async {
     final JLong? res =
-        await _api.echoInt(request != null ? JLong(request) : null);
+        await _api.echoInt(request == null ? null : JLong(request));
     final int? dartTypeRes = res?.intValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   Future<double?> echoDouble(double? request) async {
     final JDouble? res =
-        await _api.echoDouble(request != null ? JDouble(request) : null);
+        await _api.echoDouble(request == null ? null : JDouble(request));
     final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   Future<bool?> echoBool(bool? request) async {
     final JBoolean? res =
-        await _api.echoBool(request != null ? JBoolean(request) : null);
+        await _api.echoBool(request == null ? null : JBoolean(request));
     final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   Future<SomeNullableTypes?> sendSomeNullableTypes(
       SomeNullableTypes? someTypes) async {
-    final bridge.SomeNullableTypes? res =
-        await _api.sendSomeNullableTypes(someTypes?.toJni());
+    final bridge.SomeNullableTypes? res = await _api
+        .sendSomeNullableTypes(someTypes == null ? null : someTypes.toJni());
     final SomeNullableTypes? dartTypeRes = SomeNullableTypes.fromJni(res);
     return dartTypeRes;
   }

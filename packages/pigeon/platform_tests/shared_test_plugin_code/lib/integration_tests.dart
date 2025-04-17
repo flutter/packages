@@ -61,20 +61,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(sync.aDouble, 5.0);
     expect(sync.aBool, false);
     //nullable
-    // final JniMessageApiNullable? jniMessageNullable =
-    //     JniMessageApiNullable.getInstance();
-    // expect(jniMessageNullable, isNotNull);
-    // expect(jniMessageNullable!.echoString('hello'), 'hello');
-    // expect(jniMessageNullable.echoString(null), null);
-    // final SomeNullableTypes? syncNullable =
-    //     jniMessageNullable.sendSomeNullableTypes(SomeNullableTypes());
-    // expect(syncNullable!.aString, null);
-    // expect(syncNullable.anInt, null);
-    // expect(syncNullable.aDouble, null);
-    // expect(syncNullable.aBool, null);
-    // final SomeNullableTypes? syncNull =
-    //     jniMessageNullable.sendSomeNullableTypes(null);
-    // expect(syncNull, null);
+    final JniMessageApiNullable? jniMessageNullable =
+        JniMessageApiNullable.getInstance();
+    expect(jniMessageNullable, isNotNull);
+    expect(jniMessageNullable!.echoString('hello'), 'hello');
+    expect(jniMessageNullable.echoString(null), null);
+    final SomeNullableTypes? syncNullable =
+        jniMessageNullable.sendSomeNullableTypes(SomeNullableTypes());
+    expect(syncNullable!.aString, null);
+    expect(syncNullable.anInt, null);
+    expect(syncNullable.aDouble, null);
+    expect(syncNullable.aBool, null);
+    final SomeNullableTypes? syncNull =
+        jniMessageNullable.sendSomeNullableTypes(null);
+    expect(syncNull, null);
     //async
     final JniMessageApiAsync? jniMessageAsync =
         JniMessageApiAsync.getInstance();
@@ -90,20 +90,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(nonSync.aDouble, 5.0);
     expect(nonSync.aBool, false);
     //nullable async
-    // final JniMessageApiNullableAsync? jniMessageNullableAsync =
-    //     JniMessageApiNullableAsync.getInstance();
-    // expect(jniMessageNullableAsync, isNotNull);
-    // expect(await jniMessageNullableAsync!.echoString('hello'), 'hello');
-    // expect(await jniMessageNullableAsync.echoString(null), null);
-    // final SomeNullableTypes? syncNullableAsync = await jniMessageNullableAsync
-    //     .sendSomeNullableTypes(SomeNullableTypes());
-    // expect(syncNullableAsync!.aString, null);
-    // expect(syncNullableAsync.anInt, null);
-    // expect(syncNullableAsync.aDouble, null);
-    // expect(syncNullableAsync.aBool, null);
-    // final SomeNullableTypes? syncNullAsync =
-    //     await jniMessageNullableAsync.sendSomeNullableTypes(null);
-    // expect(syncNull, null);
+    final JniMessageApiNullableAsync? jniMessageNullableAsync =
+        JniMessageApiNullableAsync.getInstance();
+    expect(jniMessageNullableAsync, isNotNull);
+    expect(await jniMessageNullableAsync!.echoString('hello'), 'hello');
+    expect(await jniMessageNullableAsync.echoString(null), null);
+    final SomeNullableTypes? syncNullableAsync = await jniMessageNullableAsync
+        .sendSomeNullableTypes(SomeNullableTypes());
+    expect(syncNullableAsync!.aString, null);
+    expect(syncNullableAsync.anInt, null);
+    expect(syncNullableAsync.aDouble, null);
+    expect(syncNullableAsync.aBool, null);
+    final SomeNullableTypes? syncNullAsync =
+        await jniMessageNullableAsync.sendSomeNullableTypes(null);
+    expect(syncNull, null);
     //named
     final JniMessageApi? jniMessageNamed =
         JniMessageApi.getInstance(channelName: 'name');

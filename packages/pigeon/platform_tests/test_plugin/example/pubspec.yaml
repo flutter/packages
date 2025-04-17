@@ -8,7 +8,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  jnigen: ^0.14.0
+  jnigen:
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jnigen
+      ref: 735250a19b1a429869bfacccba833ecc93db34b6
   shared_test_plugin_code:
     path: ../../shared_test_plugin_code
   test_plugin:

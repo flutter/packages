@@ -14,7 +14,11 @@ dependencies:
   collection: ^1.15.0
   dart_style: ^3.0.0
   graphs: ^2.3.1
-  jni: ^0.14.0
+  jni:
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jni
+      ref: 735250a19b1a429869bfacccba833ecc93db34b6
   meta: ^1.9.0
   path: ^1.8.0
   pub_semver: ^2.1.4
@@ -22,7 +26,11 @@ dependencies:
 
 dev_dependencies:
   test: ^1.11.1
-  jnigen: ^0.14.0
+  jnigen:
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/jnigen
+      ref: 735250a19b1a429869bfacccba833ecc93db34b6
 
 topics:
   - codegen

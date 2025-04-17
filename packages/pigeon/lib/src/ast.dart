@@ -143,6 +143,7 @@ class AstProxyApi extends Api {
     super.documentationComments = const <String>[],
     required this.constructors,
     required this.fields,
+    this.associatedType,
     this.superClass,
     this.interfaces = const <TypeDeclaration>{},
     this.swiftOptions,
@@ -154,6 +155,9 @@ class AstProxyApi extends Api {
 
   /// List of fields inside the API.
   List<ApiField> fields;
+
+  /// The TypeDeclaration associated with this ProxyApi.
+  TypeDeclaration? associatedType;
 
   /// Name of the class this class considers the super class.
   TypeDeclaration? superClass;
@@ -541,6 +545,7 @@ class TypeDeclaration {
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedEnum` value.
   TypeDeclaration copyWithEnum(Enum enumDefinition) {
+    enumDefinition.associatedType = this;
     return TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
@@ -551,6 +556,7 @@ class TypeDeclaration {
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedClass` value.
   TypeDeclaration copyWithClass(Class classDefinition) {
+    classDefinition.associatedType = this;
     return TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
@@ -561,6 +567,7 @@ class TypeDeclaration {
 
   /// Returns duplicated `TypeDeclaration` with attached `associatedProxyApi` value.
   TypeDeclaration copyWithProxyApi(AstProxyApi proxyApiDefinition) {
+    proxyApiDefinition.associatedType = this;
     return TypeDeclaration(
       baseName: baseName,
       isNullable: isNullable,
@@ -707,6 +714,7 @@ class Class extends Node {
     required this.fields,
     this.superClassName,
     this.superClass,
+    this.associatedType,
     this.isSealed = false,
     this.isReferenced = true,
     this.isSwiftClass = false,
@@ -724,6 +732,9 @@ class Class extends Node {
 
   /// The definition of the parent class.
   Class? superClass;
+
+  /// The TypeDeclaration associated with this class.
+  TypeDeclaration? associatedType;
 
   /// List of class definitions of children.
   ///
@@ -761,6 +772,7 @@ class Enum extends Node {
   Enum({
     required this.name,
     required this.members,
+    this.associatedType,
     this.documentationComments = const <String>[],
   });
 
@@ -769,6 +781,9 @@ class Enum extends Node {
 
   /// All of the members of the enum.
   List<EnumMember> members;
+
+  /// The TypeDeclaration associated with this enum.
+  TypeDeclaration? associatedType;
 
   /// List of documentation comments, separated by line.
   ///

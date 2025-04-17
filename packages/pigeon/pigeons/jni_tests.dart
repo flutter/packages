@@ -9,12 +9,18 @@ import 'package:pigeon/pigeon.dart';
   kotlinOptions: KotlinOptions(useJni: true),
 ))
 class SomeTypes {
-  const SomeTypes(this.aString, this.anInt, this.aDouble, this.aBool);
+  const SomeTypes(
+    this.aString,
+    this.anInt,
+    this.aDouble,
+    this.aBool,
+    // this.anObject,
+  );
   final String aString;
   final int anInt;
   final double aDouble;
   final bool aBool;
-  // Object anObject;
+  // final Object anObject;
 }
 
 class SomeNullableTypes {
@@ -32,6 +38,7 @@ abstract class JniMessageApi {
   int echoInt(int request);
   double echoDouble(double request);
   bool echoBool(bool request);
+  // Object echoObj(Object request);
   SomeTypes sendSomeTypes(SomeTypes someTypes);
 }
 

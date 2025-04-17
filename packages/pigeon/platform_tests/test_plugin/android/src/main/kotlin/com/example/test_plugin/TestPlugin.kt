@@ -7,7 +7,12 @@ package com.example.test_plugin
 import JniMessageApi
 import JniMessageApiAsync
 import JniMessageApiAsyncRegistrar
+import JniMessageApiNullable
+import JniMessageApiNullableAsync
+import JniMessageApiNullableAsyncRegistrar
+import JniMessageApiNullableRegistrar
 import JniMessageApiRegistrar
+import SomeNullableTypes
 import SomeTypes
 import android.os.Handler
 import android.os.Looper
@@ -22,8 +27,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
   private var jniMessageApi: JniMessageApiRegistrar? = null
   private var jniMessageApiNamed: JniMessageApiRegistrar? = null
+  private var jniMessageApiNullable: JniMessageApiNullableRegistrar? = null
   private var jniMessageApiAsync: JniMessageApiAsyncRegistrar? = null
   private var jniMessageApiAsyncNamed: JniMessageApiAsyncRegistrar? = null
+  private var jniMessageApiNullableAsync: JniMessageApiNullableAsyncRegistrar? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -34,9 +41,12 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
 
     jniMessageApi = JniMessageApiRegistrar().register(JniMessageApiImpl())
     jniMessageApiNamed = JniMessageApiRegistrar().register(JniMessageApiImpl2(), "name")
+    jniMessageApiNullable = JniMessageApiNullableRegistrar().register(JniMessageApiNullableImpl())
     jniMessageApiAsync = JniMessageApiAsyncRegistrar().register(JniMessageApiAsyncImpl())
     jniMessageApiAsyncNamed =
         JniMessageApiAsyncRegistrar().register(JniMessageApiAsyncImpl2(), "name")
+    jniMessageApiNullableAsync =
+        JniMessageApiNullableAsyncRegistrar().register(JniMessageApiNullableAsyncImpl())
 
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -53,7 +63,7 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
         binding.binaryMessenger, SendConsistentNumbers(2), "2")
   }
 
-  override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
+  override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
     proxyApiRegistrar?.tearDown()
   }
 
@@ -543,11 +553,11 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 
   override fun defaultIsMainThread(): Boolean {
-    return Thread.currentThread() == Looper.getMainLooper().getThread()
+    return Thread.currentThread() == Looper.getMainLooper().thread
   }
 
   override fun taskQueueIsBackgroundThread(): Boolean {
-    return Thread.currentThread() != Looper.getMainLooper().getThread()
+    return Thread.currentThread() != Looper.getMainLooper().thread
   }
 
   override fun callFlutterNoop(callback: (Result<Unit>) -> Unit) {
@@ -947,6 +957,28 @@ class JniMessageApiImpl2 : JniMessageApi() {
   }
 }
 
+class JniMessageApiNullableImpl : JniMessageApiNullable() {
+  override fun echoString(request: String?): String? {
+    return request
+  }
+
+  override fun echoInt(request: Long?): Long? {
+    return request
+  }
+
+  override fun echoDouble(request: Double?): Double? {
+    return request
+  }
+
+  override fun echoBool(request: Boolean?): Boolean? {
+    return request
+  }
+
+  override fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
+    return someTypes
+  }
+}
+
 class JniMessageApiAsyncImpl : JniMessageApiAsync() {
   override suspend fun doNothing() {
     return
@@ -1008,6 +1040,29 @@ class JniMessageApiAsyncImpl2 : JniMessageApiAsync() {
   }
 }
 
+class JniMessageApiNullableAsyncImpl : JniMessageApiNullableAsync() {
+
+  override suspend fun echoString(request: String?): String? {
+    return request
+  }
+
+  override suspend fun echoInt(request: Long?): Long? {
+    return request
+  }
+
+  override suspend fun echoDouble(request: Double?): Double? {
+    return request
+  }
+
+  override suspend fun echoBool(request: Boolean?): Boolean? {
+    return request
+  }
+
+  override suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
+    return someTypes
+  }
+}
+
 // override suspend fun thinkBeforeAnswering(): String {
 //  delay(10L)
 //  return "42"
@@ -1064,7 +1119,7 @@ object SendClass : StreamEventsStreamHandler() {
           ClassEvent(EventAllNullableTypes(aNullableInt = 0)))
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {
-    var count: Int = 0
+    var count = 0
     val r: Runnable =
         object : Runnable {
           override fun run() {
@@ -1088,7 +1143,7 @@ class SendConsistentNumbers(private val numberToSend: Long) :
   private val handler = Handler(Looper.getMainLooper())
 
   override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {
-    var count: Int = 0
+    var count = 0
     val r: Runnable =
         object : Runnable {
           override fun run() {
