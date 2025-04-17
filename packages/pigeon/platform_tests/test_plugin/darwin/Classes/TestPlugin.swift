@@ -2,8 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Cocoa
-import FlutterMacOS
+import Foundation
+
+#if os(iOS)
+  import Flutter
+#elseif os(macOS)
+  import FlutterMacOS
+#endif
 
 /// This plugin handles the native side of the integration tests in
 /// example/integration_test/.
@@ -14,8 +19,14 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var proxyApiRegistrar: ProxyApiTestsPigeonProxyApiRegistrar?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let plugin = TestPlugin(binaryMessenger: registrar.messenger)
-    HostIntegrationCoreApiSetup.setUp(binaryMessenger: registrar.messenger, api: plugin)
+    // Workaround for https://github.com/flutter/flutter/issues/118103.
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #else
+      let messenger = registrar.messenger
+    #endif
+    let plugin = TestPlugin(binaryMessenger: messenger)
+    HostIntegrationCoreApiSetup.setUp(binaryMessenger: messenger, api: plugin)
     TestPluginWithSuffix.register(with: registrar, suffix: "suffixOne")
     TestPluginWithSuffix.register(with: registrar, suffix: "suffixTwo")
     registrar.publish(plugin)
@@ -27,6 +38,9 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(
       binaryMessenger: binaryMessenger, messageChannelSuffix: "suffixTwo")
+
+    StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
+    StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
     StreamConsistentNumbersStreamHandler.register(
       with: binaryMessenger, instanceName: "1",
       streamHandler: SendConsistentNumbers(numberToSend: 1))
@@ -36,9 +50,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
-
-    StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
-    StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -1215,9 +1226,15 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
 public class TestPluginWithSuffix: HostSmallApi {
   public static func register(with registrar: FlutterPluginRegistrar, suffix: String) {
+    // Workaround for https://github.com/flutter/flutter/issues/118103.
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #else
+      let messenger = registrar.messenger
+    #endif
     let plugin = TestPluginWithSuffix()
     HostSmallApiSetup.setUp(
-      binaryMessenger: registrar.messenger, api: plugin, messageChannelSuffix: suffix)
+      binaryMessenger: messenger, api: plugin, messageChannelSuffix: suffix)
   }
 
   func echo(aString: String, completion: @escaping (Result<String, Error>) -> Void) {
@@ -1229,6 +1246,7 @@ public class TestPluginWithSuffix: HostSmallApi {
   }
 
 }
+
 class SendInts: StreamIntsStreamHandler {
   var timerActive = false
   var timer: Timer?
@@ -2210,14 +2228,14 @@ class ProxyApiDelegate: ProxyApiTestsPigeonProxyApiDelegate {
     -> PigeonApiClassWithApiRequirement
   {
     class ClassWithApiRequirementDelegate: PigeonApiDelegateClassWithApiRequirement {
-      @available(macOS 10, *)
+      @available(iOS 15, macOS 10, *)
       func pigeonDefaultConstructor(pigeonApi: PigeonApiClassWithApiRequirement) throws
         -> ClassWithApiRequirement
       {
         return ClassWithApiRequirement()
       }
 
-      @available(macOS 10, *)
+      @available(iOS 15, macOS 10, *)
       func aMethod(
         pigeonApi: PigeonApiClassWithApiRequirement, pigeonInstance: ClassWithApiRequirement
       ) throws {

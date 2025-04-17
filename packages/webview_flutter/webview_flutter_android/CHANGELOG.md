@@ -1,3 +1,7 @@
+## 4.4.0
+
+* Adds support to set the over-scroll mode for the WebView. See `AndroidWebViewController.setOverScrollMode`.
+
 ## 4.3.5
 
 * Adds internal wrapper methods for native `WebViewClient`.

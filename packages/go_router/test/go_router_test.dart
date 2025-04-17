@@ -755,6 +755,7 @@ void main() {
         ),
         GoRoute(
           path: '/family/:fid',
+          caseSensitive: false,
           builder: (BuildContext context, GoRouterState state) =>
               FamilyScreen(state.pathParameters['fid']!),
         ),
@@ -778,6 +779,56 @@ void main() {
 
       expect(matches, hasLength(1));
       expect(find.byType(FamilyScreen), findsOneWidget);
+    });
+
+    testWidgets('match path case sensitively', (WidgetTester tester) async {
+      final FlutterExceptionHandler? oldFlutterError = FlutterError.onError;
+      addTearDown(() => FlutterError.onError = oldFlutterError);
+      final List<FlutterErrorDetails> errors = <FlutterErrorDetails>[];
+      FlutterError.onError = (FlutterErrorDetails details) {
+        errors.add(details);
+      };
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/family/:fid',
+          builder: (BuildContext context, GoRouterState state) =>
+              FamilyScreen(state.pathParameters['fid']!),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      const String wrongLoc = '/FaMiLy/f2';
+
+      expect(errors, isEmpty);
+      router.go(wrongLoc);
+      await tester.pumpAndSettle();
+
+      expect(errors, hasLength(1));
+      expect(
+        errors.single.exception,
+        isAssertionError,
+        reason: 'The path is case sensitive',
+      );
+
+      const String loc = '/family/f2';
+      router.go(loc);
+      await tester.pumpAndSettle();
+      final List<RouteMatchBase> matches =
+          router.routerDelegate.currentConfiguration.matches;
+
+      expect(
+        router.routerDelegate.currentConfiguration.uri.toString(),
+        loc,
+      );
+
+      expect(matches, hasLength(1));
+      expect(find.byType(FamilyScreen), findsOneWidget);
+      expect(errors, hasLength(1), reason: 'No new errors should be thrown');
     });
 
     testWidgets(
