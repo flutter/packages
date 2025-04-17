@@ -207,18 +207,16 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
     throws
   {
     let registrar = pigeonApi.pigeonRegistrar as! ProxyAPIRegistrar
-    let assetFilePath = registrar.assetManager.lookupKeyForAsset(key)
-
-    let url = registrar.bundle.url(
-      forResource: (assetFilePath as NSString).deletingPathExtension,
-      withExtension: (assetFilePath as NSString).pathExtension)
+    let url = registrar.assetManager.urlForAsset(key)
 
     if let url = url {
       pigeonInstance.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
     } else {
+      let assetFilePath = registrar.assetManager.lookupKeyForAsset(key)
       throw PigeonError(
         code: "FWFURLParsingError",
-        message: "Failed to find asset with filepath: `\(assetFilePath)`.", details: nil)
+        message: "Failed to find asset with filepath: `\(String(describing: assetFilePath))`.",
+        details: nil)
     }
   }
 
@@ -381,5 +379,18 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
   {
     return try getCustomUserAgent(
       pigeonApi: getUIViewWKWebViewAPI(pigeonApi), pigeonInstance: pigeonInstance)
+  }
+
+  func setAllowsLinkPreview(
+    pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, allow: Bool
+  ) throws {
+    pigeonInstance.allowsLinkPreview = allow
+  }
+
+  func setAllowsLinkPreview(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, allow: Bool
+  ) throws {
+    try setAllowsLinkPreview(
+      pigeonApi: getUIViewWKWebViewAPI(pigeonApi), pigeonInstance: pigeonInstance, allow: allow)
   }
 }

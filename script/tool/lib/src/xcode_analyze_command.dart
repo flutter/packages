@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'common/core.dart';
+import 'common/flutter_command_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
@@ -74,19 +75,21 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
 
     final List<String> failures = <String>[];
     if (testIOS &&
-        !await _analyzePlugin(package, 'iOS', extraFlags: <String>[
-          '-destination',
-          'generic/platform=iOS Simulator',
-          if (minIOSVersion.isNotEmpty)
-            'IPHONEOS_DEPLOYMENT_TARGET=$minIOSVersion',
-        ])) {
+        !await _analyzePlugin(package, FlutterPlatform.ios,
+            extraFlags: <String>[
+              '-destination',
+              'generic/platform=iOS Simulator',
+              if (minIOSVersion.isNotEmpty)
+                'IPHONEOS_DEPLOYMENT_TARGET=$minIOSVersion',
+            ])) {
       failures.add('iOS');
     }
     if (testMacOS &&
-        !await _analyzePlugin(package, 'macOS', extraFlags: <String>[
-          if (minMacOSVersion.isNotEmpty)
-            'MACOSX_DEPLOYMENT_TARGET=$minMacOSVersion',
-        ])) {
+        !await _analyzePlugin(package, FlutterPlatform.macos,
+            extraFlags: <String>[
+              if (minMacOSVersion.isNotEmpty)
+                'MACOSX_DEPLOYMENT_TARGET=$minMacOSVersion',
+            ])) {
       failures.add('macOS');
     }
 
@@ -101,22 +104,40 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
   /// Analyzes [plugin] for [targetPlatform], returning true if it passed analysis.
   Future<bool> _analyzePlugin(
     RepositoryPackage plugin,
-    String targetPlatform, {
+    FlutterPlatform targetPlatform, {
     List<String> extraFlags = const <String>[],
   }) async {
+    final String platformString =
+        targetPlatform == FlutterPlatform.ios ? 'iOS' : 'macOS';
     bool passing = true;
     for (final RepositoryPackage example in plugin.getExamples()) {
+      // Unconditionally re-run build with --debug --config-only, to ensure that
+      // the project is in a debug state even if it was previously configured.
+      print('Running flutter build --config-only...');
+      final bool buildSuccess = await runConfigOnlyBuild(
+        example,
+        processRunner,
+        platform,
+        targetPlatform,
+        buildDebug: true,
+      );
+      if (!buildSuccess) {
+        printError('Unable to prepare native project files.');
+        passing = false;
+        continue;
+      }
+
       // Running tests and static analyzer.
       final String examplePath = getRelativePosixPath(example.directory,
           from: plugin.directory.parent);
-      print('Running $targetPlatform tests and analyzer for $examplePath...');
+      print('Running $platformString tests and analyzer for $examplePath...');
       final int exitCode = await _xcode.runXcodeBuild(
         example.directory,
-        targetPlatform,
+        platformString,
         // Clean before analyzing to remove cached swiftmodules from previous
         // runs, which can cause conflicts.
         actions: <String>['clean', 'analyze'],
-        workspace: '${targetPlatform.toLowerCase()}/Runner.xcworkspace',
+        workspace: '${platformString.toLowerCase()}/Runner.xcworkspace',
         scheme: 'Runner',
         configuration: 'Debug',
         hostPlatform: platform,
@@ -126,9 +147,9 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
         ],
       );
       if (exitCode == 0) {
-        printSuccess('$examplePath ($targetPlatform) passed analysis.');
+        printSuccess('$examplePath ($platformString) passed analysis.');
       } else {
-        printError('$examplePath ($targetPlatform) failed analysis.');
+        printError('$examplePath ($platformString) failed analysis.');
         passing = false;
       }
     }
