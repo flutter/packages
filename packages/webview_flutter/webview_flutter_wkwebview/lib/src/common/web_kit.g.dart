@@ -6565,9 +6565,10 @@ class NSViewWKWebView extends NSObject implements WKWebView {
     }
   }
 
-  /// If you set this property’s value to true, an iOS user can press links to
-  /// preview link destinations and detected data such as addresses and phone
-  /// numbers.
+  /// Whether to allow previews for link destinations and detected data such as
+  /// addresses and phone numbers.
+  ///
+  /// Defaults to true.
   Future<void> setAllowsLinkPreview(bool allow) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecNSViewWKWebView;

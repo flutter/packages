@@ -972,9 +972,10 @@ abstract class NSViewWKWebView extends NSObject implements WKWebView {
   /// The custom user agent string.
   String? getCustomUserAgent();
 
-  /// If you set this property’s value to true, an iOS user can press links to
-  /// preview link destinations and detected data such as addresses and phone
-  /// numbers.
+  /// Whether to allow previews for link destinations and detected data such as
+  /// addresses and phone numbers.
+  ///
+  /// Defaults to true.
   void setAllowsLinkPreview(bool allow);
 }
 
