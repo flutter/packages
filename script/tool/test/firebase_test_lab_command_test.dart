@@ -168,11 +168,7 @@ public class MainActivityTest {
           ProcessCall(
               'flutter',
               const <String>['build', 'apk', '--debug', '--config-only'],
-              plugin1
-                  .getExamples()
-                  .first
-                  .platformDirectory(FlutterPlatform.android)
-                  .path),
+              plugin1.getExamples().first.directory.path),
           ProcessCall(
               'gcloud',
               'auth activate-service-account --key-file=/path/to/key'
@@ -197,11 +193,7 @@ public class MainActivityTest {
           ProcessCall(
               'flutter',
               const <String>['build', 'apk', '--debug', '--config-only'],
-              plugin2
-                  .getExamples()
-                  .first
-                  .platformDirectory(FlutterPlatform.android)
-                  .path),
+              plugin2.getExamples().first.directory.path),
           ProcessCall(
               '/packages/plugin2/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true'.split(' '),
@@ -265,11 +257,7 @@ public class MainActivityTest {
           ProcessCall(
               'flutter',
               const <String>['build', 'apk', '--debug', '--config-only'],
-              plugin
-                  .getExamples()
-                  .first
-                  .platformDirectory(FlutterPlatform.android)
-                  .path),
+              plugin.getExamples().first.directory.path),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true'.split(' '),
@@ -695,11 +683,7 @@ class MainActivityTest {
           ProcessCall(
             'flutter',
             'build apk --debug --config-only'.split(' '),
-            plugin
-                .getExamples()
-                .first
-                .platformDirectory(FlutterPlatform.android)
-                .path,
+            plugin.getExamples().first.directory.path,
           ),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
@@ -879,11 +863,7 @@ class MainActivityTest {
                 '--config-only',
                 '--enable-experiment=exp1'
               ],
-              plugin
-                  .getExamples()
-                  .first
-                  .platformDirectory(FlutterPlatform.android)
-                  .path),
+              plugin.getExamples().first.directory.path),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true -Pextra-front-end-options=--enable-experiment%3Dexp1 -Pextra-gen-snapshot-options=--enable-experiment%3Dexp1'

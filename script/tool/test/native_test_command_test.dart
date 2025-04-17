@@ -136,6 +136,21 @@ void main() {
           null);
     }
 
+    // Returns the ProcessCall to expect for generating the native project files
+    // with a --config-only build on iOS or macOS.
+    ProcessCall getConfigOnlyDarwinBuildCall(
+        Directory package, FlutterPlatform platform) {
+      return ProcessCall(
+          'flutter',
+          <String>[
+            'build',
+            if (platform == FlutterPlatform.ios) 'ios' else 'macos',
+            '--debug',
+            '--config-only',
+          ],
+          package.path);
+    }
+
     // Returns the ProcessCall to expect for running the tests in the
     // workspace [platform]/Runner.xcworkspace, with the given extra flags.
     ProcessCall getRunTestCall(
@@ -247,6 +262,8 @@ void main() {
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
             getTargetCheckCall(pluginExampleDirectory, 'macos'),
+            getConfigOnlyDarwinBuildCall(
+                pluginExampleDirectory, FlutterPlatform.macos),
             getRunTestCall(pluginExampleDirectory, 'macos',
                 extraFlags: <String>['-only-testing:RunnerUITests']),
           ]));
@@ -318,6 +335,8 @@ void main() {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.ios),
               getRunTestCall(pluginExampleDirectory, 'ios',
                   destination: 'foo_destination'),
             ]));
@@ -355,6 +374,8 @@ void main() {
                   ],
                   null),
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.ios),
               getRunTestCall(pluginExampleDirectory, 'ios',
                   destination: 'id=$_simulatorDeviceId'),
             ]));
@@ -489,6 +510,8 @@ packages/package_a/CHANGELOG.md
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos'),
             ]));
       });
@@ -1373,6 +1396,8 @@ public class FlutterActivityTest {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos',
                   extraFlags: <String>['-only-testing:RunnerTests']),
             ]));
@@ -1408,6 +1433,8 @@ public class FlutterActivityTest {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos',
                   extraFlags: <String>['-only-testing:RunnerUITests']),
             ]));
@@ -1677,9 +1704,13 @@ public class FlutterActivityTest {
                   ],
                   androidFolder.path),
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.ios),
               getRunTestCall(pluginExampleDirectory, 'ios',
                   destination: 'foo_destination'),
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos'),
             ]));
       });
@@ -1716,6 +1747,8 @@ public class FlutterActivityTest {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos'),
             ]));
       });
@@ -1752,6 +1785,8 @@ public class FlutterActivityTest {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.ios),
               getRunTestCall(pluginExampleDirectory, 'ios',
                   destination: 'foo_destination'),
             ]));
