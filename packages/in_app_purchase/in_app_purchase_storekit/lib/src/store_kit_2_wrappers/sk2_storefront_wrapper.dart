@@ -13,7 +13,6 @@ final class Storefront {
   /// Returns the 3 letter code for a store's locale
   /// (https://developer.apple.com/documentation/storekit/storefront/countrycode)
   Future<String> countryCode() async {
-    final String code = await _hostApi.countryCode();
-    return code;
+    return _hostApi.countryCode();
   }
 }

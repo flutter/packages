@@ -169,7 +169,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     Task {
       do {
         try await AppStore.sync()
-        completion(.success(Void()))
+        completion(.success(()))
         return
       } catch {
         let pigeonError = PigeonError(
