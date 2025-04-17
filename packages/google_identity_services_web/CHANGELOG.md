@@ -1,4 +1,4 @@
-## 0.3.4
+## 0.3.3+1
 
 * Handles potential exceptions gracefully while fetching `Moment*Reason` for invalid value.
 
