@@ -1602,6 +1602,17 @@ void main() {
       verify(mockWebView.setInspectable(true));
     });
 
+    test('setAllowsLinkPreview', () async {
+      final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.setAllowsLinkPreview(true);
+      verify(mockWebView.setAllowsLinkPreview(true));
+    });
+
     group('Console logging', () {
       test('setConsoleLogCallback should inject the correct JavaScript',
           () async {
