@@ -62,9 +62,14 @@ private fun deepEqualsMessages(a: Any?, b: Any?): Boolean {
   if (a is Array<*> && b is Array<*>) {
     return a.size == b.size && a.indices.all { deepEqualsMessages(a[it], b[it]) }
   }
+  if (a is List<*> && b is List<*>) {
+    return a.size == b.size && a.indices.all { deepEqualsMessages(a[it], b[it]) }
+  }
   if (a is Map<*, *> && b is Map<*, *>) {
     return a.size == b.size &&
-        a.keys.all { (b as Map<Any?, Any?>).containsKey(it) && deepEqualsMessages(a[it], b[it]) }
+        a.all {
+          (b as Map<Any?, Any?>).containsKey(it.key) && deepEqualsMessages(it.value, b[it.key])
+        }
   }
   return a == b
 }
@@ -113,10 +118,7 @@ data class MessageData(
     if (this === other) {
       return true
     }
-    return name == other.name &&
-        description == other.description &&
-        code == other.code &&
-        deepEqualsMessages(data, other.data)
+    return deepEqualsMessages(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()

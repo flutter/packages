@@ -10,7 +10,7 @@
 
 @interface FLTGoogleMapMarkerController ()
 
-@property(strong, nonatomic) GMSMarker *marker;
+@property(strong, nonatomic, readwrite) GMSMarker *marker;
 @property(weak, nonatomic) GMSMapView *mapView;
 @property(assign, nonatomic, readwrite) BOOL consumeTapEvents;
 /// The unique identifier for the cluster manager.
@@ -119,30 +119,21 @@
   [self setConsumeTapEvents:platformMarker.consumeTapEvents];
   [self setPosition:FGMGetCoordinateForPigeonLatLng(platformMarker.position)];
   [self setRotation:platformMarker.rotation];
-  [self setVisible:platformMarker.visible];
   [self setZIndex:platformMarker.zIndex];
-}
-
-- (void)interpretInfoWindow:(NSDictionary *)data {
-  NSDictionary *infoWindow = FGMGetValueOrNilFromDict(data, @"infoWindow");
-  if (infoWindow) {
-    NSString *title = FGMGetValueOrNilFromDict(infoWindow, @"title");
-    NSString *snippet = FGMGetValueOrNilFromDict(infoWindow, @"snippet");
-    if (title) {
-      [self setInfoWindowTitle:title snippet:snippet];
-    }
-    NSArray *infoWindowAnchor = infoWindow[@"infoWindowAnchor"];
-    if (infoWindowAnchor) {
-      [self setInfoWindowAnchor:[FLTGoogleMapJSONConversions pointFromArray:infoWindowAnchor]];
-    }
+  FGMPlatformInfoWindow *infoWindow = platformMarker.infoWindow;
+  [self setInfoWindowAnchor:FGMGetCGPointForPigeonPoint(infoWindow.anchor)];
+  if (infoWindow.title) {
+    [self setInfoWindowTitle:infoWindow.title snippet:infoWindow.snippet];
   }
+
+  [self setVisible:platformMarker.visible];
 }
 
 @end
 
 @interface FLTMarkersController ()
 
-@property(strong, nonatomic) NSMutableDictionary *markerIdentifierToController;
+@property(strong, nonatomic, readwrite) NSMutableDictionary *markerIdentifierToController;
 @property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 /// Controller for adding/removing/fetching cluster managers
 @property(weak, nonatomic, nullable) FGMClusterManagersController *clusterManagersController;

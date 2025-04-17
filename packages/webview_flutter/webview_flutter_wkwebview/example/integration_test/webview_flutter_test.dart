@@ -238,6 +238,36 @@ Future<void> main() async {
     expect(content.contains('flutter_test_header'), isTrue);
   });
 
+  testWidgets('loadFlutterAsset successfully loads an HTML asset',
+      (WidgetTester tester) async {
+    final Completer<void> pageFinished = Completer<void>();
+
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+    await expectLater(
+      controller.loadFlutterAsset('assets/www/index.html'),
+      completes,
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    // Verify page also loads.
+    await pageFinished.future;
+  });
+
   testWidgets('JavascriptChannel', (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
     final PlatformWebViewController controller = PlatformWebViewController(
@@ -276,6 +306,47 @@ Future<void> main() async {
 
     await controller.runJavaScript('Echo.postMessage("hello");');
     await expectLater(channelCompleter.future, completion('hello'));
+  });
+
+  testWidgets('JavaScriptChannel can receive undefined',
+      (WidgetTester tester) async {
+    final Completer<void> pageFinished = Completer<void>();
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+    unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+    final Completer<String> channelCompleter = Completer<String>();
+    await controller.addJavaScriptChannel(
+      JavaScriptChannelParams(
+        name: 'Channel',
+        onMessageReceived: (JavaScriptMessage message) {
+          channelCompleter.complete(message.message);
+        },
+      ),
+    );
+
+    await controller.loadHtmlString(
+      'data:text/html;charset=utf-8;base64,PCFET0NUWVBFIGh0bWw+',
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    await pageFinished.future;
+
+    await controller.runJavaScript('Channel.postMessage(undefined);');
+    await expectLater(channelCompleter.future, completion('(null)'));
   });
 
   testWidgets('resize webview', (WidgetTester tester) async {

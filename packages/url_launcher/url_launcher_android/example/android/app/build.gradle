@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace 'io.flutter.plugins.urllauncherexample'
-    compileSdk flutter.compileSdkVersion
+    compileSdk = flutter.compileSdkVersion
 
 
     defaultConfig {

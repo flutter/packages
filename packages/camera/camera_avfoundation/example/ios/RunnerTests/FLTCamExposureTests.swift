@@ -6,6 +6,11 @@ import XCTest
 
 @testable import camera_avfoundation
 
+// Import Objectice-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  @testable import camera_avfoundation_objc
+#endif
+
 final class FLTCamExposureTests: XCTestCase {
   private func createCamera() -> (FLTCam, MockCaptureDevice, MockDeviceOrientationProvider) {
     let mockDevice = MockCaptureDevice()
@@ -62,7 +67,7 @@ final class FLTCamExposureTests: XCTestCase {
   func testSetExposurePoint_setsExposurePointOfInterest() {
     let (camera, mockDevice, mockDeviceOrientationProvider) = createCamera()
     // UI is currently in landscape left orientation.
-    mockDeviceOrientationProvider.orientation = .landscapeLeft
+    mockDeviceOrientationProvider.orientationStub = { .landscapeLeft }
     // Exposure point of interest is supported.
     mockDevice.isExposurePointOfInterestSupported = true
 
@@ -87,7 +92,7 @@ final class FLTCamExposureTests: XCTestCase {
   func testSetExposurePoint_returnsError_ifNotSupported() {
     let (camera, mockDevice, mockDeviceOrientationProvider) = createCamera()
     // UI is currently in landscape left orientation.
-    mockDeviceOrientationProvider.orientation = .landscapeLeft
+    mockDeviceOrientationProvider.orientationStub = { .landscapeLeft }
     // Exposure point of interest is not supported.
     mockDevice.isExposurePointOfInterestSupported = false
 
