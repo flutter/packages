@@ -5,6 +5,7 @@
 import 'package:file/file.dart';
 
 import 'common/core.dart';
+import 'common/file_filters.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
@@ -67,20 +68,9 @@ class DartTestCommand extends PackageLoopingCommand {
 
   @override
   bool shouldIgnoreFile(String path) {
-    return repoLevelNonCodeImpactingFiles.contains(path) ||
-        // Native code, which is not part of Dart unit testing.
-        path.endsWith('.c') ||
-        path.endsWith('.cc') ||
-        path.endsWith('.cpp') ||
-        path.endsWith('.h') ||
-        path.endsWith('.m') ||
-        path.endsWith('.swift') ||
-        path.endsWith('.java') ||
-        path.endsWith('.kt') ||
-        // Package metadata that doesn't impact Dart unit tests.
-        path.endsWith('/AUTHORS') ||
-        path.endsWith('/CHANGELOG.md') ||
-        path.endsWith('/README.md');
+    return isRepoLevelNonCodeImpactingFile(path) ||
+        isNativeCodeFile(path) ||
+        isPackageSupportFile(path);
   }
 
   @override

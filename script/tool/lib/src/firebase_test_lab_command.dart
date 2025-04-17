@@ -8,6 +8,8 @@ import 'package:file/file.dart';
 import 'package:uuid/uuid.dart';
 
 import 'common/core.dart';
+import 'common/file_filters.dart';
+import 'common/flutter_command_utils.dart';
 import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
@@ -123,10 +125,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
 
   @override
   bool shouldIgnoreFile(String path) {
-    return repoLevelNonCodeImpactingFiles.contains(path) ||
-        path.endsWith('/AUTHORS') ||
-        path.endsWith('/CHANGELOG.md') ||
-        path.endsWith('/README.md');
+    return isRepoLevelNonCodeImpactingFile(path) || isPackageSupportFile(path);
   }
 
   @override

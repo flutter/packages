@@ -493,10 +493,6 @@ void main() {
 
     group('file filtering', () {
       const List<String> files = <String>[
-        'pubspec.yaml',
-        'foo.dart',
-        'foo.java',
-        'foo.kt',
         'foo.m',
         'foo.swift',
         'foo.cc',
@@ -534,6 +530,7 @@ packages/package_a/$file
 README.md
 CODEOWNERS
 packages/package_a/CHANGELOG.md
+packages/package_a/lib/foo.dart
 ''')),
         ];
 
