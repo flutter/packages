@@ -962,6 +962,33 @@ void main() {
     expect((await stream.next).value.value, equals(objectId));
   });
 
+  test('active level change events to correct stream', () async {
+    const int mapId = 1;
+    const String expectedName = 'some-name';
+    const String expectedShortName = 'some-short-name';
+    final PlatformIndoorLevel platformIndoorLevel = PlatformIndoorLevel(
+      name: expectedName,
+      shortName: expectedShortName,
+    );
+    const IndoorLevel indoorLevel =
+        IndoorLevel(name: expectedName, shortName: expectedShortName);
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+    final HostMapMessageHandler callbackHandler =
+        maps.ensureHandlerInitialized(mapId);
+
+    final StreamQueue<MapActiveLevelChangedEvent> stream =
+        StreamQueue<MapActiveLevelChangedEvent>(
+            maps.onActiveLevelChanged(mapId: mapId));
+
+    // Simulate message from the native side.
+    callbackHandler.onActiveLevelChanged(platformIndoorLevel);
+
+    final IndoorLevel? value = (await stream.next).value;
+    expect(value?.name, equals(indoorLevel.name));
+    expect(value?.shortName, equals(indoorLevel.shortName));
+  });
+
   test(
     'Does not use PlatformViewLink when using TLHC',
     () async {

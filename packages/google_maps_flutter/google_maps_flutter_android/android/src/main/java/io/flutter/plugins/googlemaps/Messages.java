@@ -3565,6 +3565,93 @@ public class Messages {
   }
 
   /**
+   * Pigeon equivalent of IndoorLevel.
+   *
+   * <p>Generated class from Pigeon that represents data sent in messages.
+   */
+  public static final class PlatformIndoorLevel {
+    private @Nullable String name;
+
+    public @Nullable String getName() {
+      return name;
+    }
+
+    public void setName(@Nullable String setterArg) {
+      this.name = setterArg;
+    }
+
+    private @Nullable String shortName;
+
+    public @Nullable String getShortName() {
+      return shortName;
+    }
+
+    public void setShortName(@Nullable String setterArg) {
+      this.shortName = setterArg;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlatformIndoorLevel that = (PlatformIndoorLevel) o;
+      return Objects.equals(name, that.name) && Objects.equals(shortName, that.shortName);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(name, shortName);
+    }
+
+    public static final class Builder {
+
+      private @Nullable String name;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setName(@Nullable String setterArg) {
+        this.name = setterArg;
+        return this;
+      }
+
+      private @Nullable String shortName;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setShortName(@Nullable String setterArg) {
+        this.shortName = setterArg;
+        return this;
+      }
+
+      public @NonNull PlatformIndoorLevel build() {
+        PlatformIndoorLevel pigeonReturn = new PlatformIndoorLevel();
+        pigeonReturn.setName(name);
+        pigeonReturn.setShortName(shortName);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(2);
+      toListResult.add(name);
+      toListResult.add(shortName);
+      return toListResult;
+    }
+
+    static @NonNull PlatformIndoorLevel fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlatformIndoorLevel pigeonResult = new PlatformIndoorLevel();
+      Object name = pigeonVar_list.get(0);
+      pigeonResult.setName((String) name);
+      Object shortName = pigeonVar_list.get(1);
+      pigeonResult.setShortName((String) shortName);
+      return pigeonResult;
+    }
+  }
+
+  /**
    * Pigeon equivalent of LatLngBounds.
    *
    * <p>Generated class from Pigeon that represents data sent in messages.
@@ -6295,36 +6382,38 @@ public class Messages {
         case (byte) 158:
           return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 159:
-          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformIndoorLevel.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 160:
-          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 161:
-          return PlatformGroundOverlay.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 162:
-          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformGroundOverlay.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 163:
-          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 164:
-          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 165:
-          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 166:
-          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 167:
-          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 168:
-          return PlatformBitmap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 169:
-          return PlatformBitmapDefaultMarker.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmap.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 170:
-          return PlatformBitmapBytes.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapDefaultMarker.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 171:
-          return PlatformBitmapAsset.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapBytes.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 172:
-          return PlatformBitmapAssetImage.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapAsset.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 173:
-          return PlatformBitmapAssetMap.fromList((ArrayList<Object>) readValue(buffer));
+          return PlatformBitmapAssetImage.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 174:
+          return PlatformBitmapAssetMap.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 175:
           return PlatformBitmapBytesMap.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -6423,53 +6512,56 @@ public class Messages {
       } else if (value instanceof PlatformLatLng) {
         stream.write(158);
         writeValue(stream, ((PlatformLatLng) value).toList());
-      } else if (value instanceof PlatformLatLngBounds) {
+      } else if (value instanceof PlatformIndoorLevel) {
         stream.write(159);
+        writeValue(stream, ((PlatformIndoorLevel) value).toList());
+      } else if (value instanceof PlatformLatLngBounds) {
+        stream.write(160);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(160);
+        stream.write(161);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformGroundOverlay) {
-        stream.write(161);
+        stream.write(162);
         writeValue(stream, ((PlatformGroundOverlay) value).toList());
       } else if (value instanceof PlatformCameraTargetBounds) {
-        stream.write(162);
+        stream.write(163);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
       } else if (value instanceof PlatformMapViewCreationParams) {
-        stream.write(163);
+        stream.write(164);
         writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(164);
+        stream.write(165);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(165);
+        stream.write(166);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(166);
+        stream.write(167);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(167);
+        stream.write(168);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformBitmap) {
-        stream.write(168);
+        stream.write(169);
         writeValue(stream, ((PlatformBitmap) value).toList());
       } else if (value instanceof PlatformBitmapDefaultMarker) {
-        stream.write(169);
+        stream.write(170);
         writeValue(stream, ((PlatformBitmapDefaultMarker) value).toList());
       } else if (value instanceof PlatformBitmapBytes) {
-        stream.write(170);
+        stream.write(171);
         writeValue(stream, ((PlatformBitmapBytes) value).toList());
       } else if (value instanceof PlatformBitmapAsset) {
-        stream.write(171);
+        stream.write(172);
         writeValue(stream, ((PlatformBitmapAsset) value).toList());
       } else if (value instanceof PlatformBitmapAssetImage) {
-        stream.write(172);
+        stream.write(173);
         writeValue(stream, ((PlatformBitmapAssetImage) value).toList());
       } else if (value instanceof PlatformBitmapAssetMap) {
-        stream.write(173);
+        stream.write(174);
         writeValue(stream, ((PlatformBitmapAssetMap) value).toList());
       } else if (value instanceof PlatformBitmapBytesMap) {
-        stream.write(174);
+        stream.write(175);
         writeValue(stream, ((PlatformBitmapBytesMap) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -6485,6 +6577,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for nullable API method returns. */
   public interface NullableResult<T> {
     /** Success case callback method for handling returns. */
@@ -6493,6 +6586,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /** Asynchronous error handling return type for void API method returns. */
   public interface VoidResult {
     /** Success case callback method for handling returns. */
@@ -6501,6 +6595,7 @@ public class Messages {
     /** Failure case callback method for handling errors. */
     void error(@NonNull Throwable error);
   }
+
   /**
    * Interface for non-test interactions with the native SDK.
    *
@@ -6511,6 +6606,7 @@ public class Messages {
   public interface MapsApi {
     /** Returns once the map instance is available. */
     void waitForMap(@NonNull VoidResult result);
+
     /**
      * Updates the map's configuration options.
      *
@@ -6518,71 +6614,89 @@ public class Messages {
      * remain unchanged.
      */
     void updateMapConfiguration(@NonNull PlatformMapConfiguration configuration);
+
     /** Updates the set of circles on the map. */
     void updateCircles(
         @NonNull List<PlatformCircle> toAdd,
         @NonNull List<PlatformCircle> toChange,
         @NonNull List<String> idsToRemove);
+
     /** Updates the set of heatmaps on the map. */
     void updateHeatmaps(
         @NonNull List<PlatformHeatmap> toAdd,
         @NonNull List<PlatformHeatmap> toChange,
         @NonNull List<String> idsToRemove);
+
     /** Updates the set of custer managers for clusters on the map. */
     void updateClusterManagers(
         @NonNull List<PlatformClusterManager> toAdd, @NonNull List<String> idsToRemove);
+
     /** Updates the set of markers on the map. */
     void updateMarkers(
         @NonNull List<PlatformMarker> toAdd,
         @NonNull List<PlatformMarker> toChange,
         @NonNull List<String> idsToRemove);
+
     /** Updates the set of polygonss on the map. */
     void updatePolygons(
         @NonNull List<PlatformPolygon> toAdd,
         @NonNull List<PlatformPolygon> toChange,
         @NonNull List<String> idsToRemove);
+
     /** Updates the set of polylines on the map. */
     void updatePolylines(
         @NonNull List<PlatformPolyline> toAdd,
         @NonNull List<PlatformPolyline> toChange,
         @NonNull List<String> idsToRemove);
+
     /** Updates the set of tile overlays on the map. */
     void updateTileOverlays(
         @NonNull List<PlatformTileOverlay> toAdd,
         @NonNull List<PlatformTileOverlay> toChange,
         @NonNull List<String> idsToRemove);
+
     /** Updates the set of ground overlays on the map. */
     void updateGroundOverlays(
         @NonNull List<PlatformGroundOverlay> toAdd,
         @NonNull List<PlatformGroundOverlay> toChange,
         @NonNull List<String> idsToRemove);
+
     /** Gets the screen coordinate for the given map location. */
     @NonNull
     PlatformPoint getScreenCoordinate(@NonNull PlatformLatLng latLng);
+
     /** Gets the map location for the given screen coordinate. */
     @NonNull
     PlatformLatLng getLatLng(@NonNull PlatformPoint screenCoordinate);
+
     /** Gets the map region currently displayed on the map. */
     @NonNull
     PlatformLatLngBounds getVisibleRegion();
+
     /** Moves the camera according to [cameraUpdate] immediately, with no animation. */
     void moveCamera(@NonNull PlatformCameraUpdate cameraUpdate);
+
     /**
      * Moves the camera according to [cameraUpdate], animating the update using a duration in
      * milliseconds if provided.
      */
     void animateCamera(
         @NonNull PlatformCameraUpdate cameraUpdate, @Nullable Long durationMilliseconds);
+
     /** Gets the current map zoom level. */
     @NonNull
     Double getZoomLevel();
+
     /** Show the info window for the marker with the given ID. */
     void showInfoWindow(@NonNull String markerId);
+
     /** Hide the info window for the marker with the given ID. */
     void hideInfoWindow(@NonNull String markerId);
+
     /** Returns true if the marker with the given ID is currently displaying its info window. */
     @NonNull
     Boolean isInfoWindowShown(@NonNull String markerId);
+
     /**
      * Sets the style to the given map style string, where an empty string indicates that the style
      * should be cleared.
@@ -6591,6 +6705,7 @@ public class Messages {
      */
     @NonNull
     Boolean setStyle(@NonNull String style);
+
     /**
      * Returns true if the last attempt to set a style, either via initial map style or setMapStyle,
      * succeeded.
@@ -6600,8 +6715,10 @@ public class Messages {
      */
     @NonNull
     Boolean didLastStyleSucceed();
+
     /** Clears the cache of tiles previously requseted from the tile provider. */
     void clearTileCache(@NonNull String tileOverlayId);
+
     /** Takes a snapshot of the map and returns its image data. */
     void takeSnapshot(@NonNull Result<byte[]> result);
 
@@ -6609,6 +6726,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Sets up an instance of `MapsApi` to handle messages through the `binaryMessenger`. */
     static void setUp(@NonNull BinaryMessenger binaryMessenger, @Nullable MapsApi api) {
       setUp(binaryMessenger, "", api);
@@ -7216,6 +7334,7 @@ public class Messages {
       }
     }
   }
+
   /** Generated class from Pigeon that represents Flutter messages that can be called from Java. */
   public static class MapsCallbackApi {
     private final @NonNull BinaryMessenger binaryMessenger;
@@ -7235,6 +7354,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /** Called when the map camera starts moving. */
     public void onCameraMoveStarted(@NonNull VoidResult result) {
       final String channelName =
@@ -7259,6 +7379,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when the map camera moves. */
     public void onCameraMove(
         @NonNull PlatformCameraPosition cameraPositionArg, @NonNull VoidResult result) {
@@ -7284,6 +7405,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when the map camera stops moving. */
     public void onCameraIdle(@NonNull VoidResult result) {
       final String channelName =
@@ -7308,6 +7430,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when the map, not a specifc map object, is tapped. */
     public void onTap(@NonNull PlatformLatLng positionArg, @NonNull VoidResult result) {
       final String channelName =
@@ -7332,6 +7455,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when the map, not a specifc map object, is long pressed. */
     public void onLongPress(@NonNull PlatformLatLng positionArg, @NonNull VoidResult result) {
       final String channelName =
@@ -7356,6 +7480,33 @@ public class Messages {
             }
           });
     }
+
+    /** Called when the user changes the active level on indoor maps. */
+    public void onActiveLevelChanged(
+        @Nullable PlatformIndoorLevel activeLevelArg, @NonNull VoidResult result) {
+      final String channelName =
+          "dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onActiveLevelChanged"
+              + messageChannelSuffix;
+      BasicMessageChannel<Object> channel =
+          new BasicMessageChannel<>(binaryMessenger, channelName, getCodec());
+      channel.send(
+          new ArrayList<>(Collections.singletonList(activeLevelArg)),
+          channelReply -> {
+            if (channelReply instanceof List) {
+              List<Object> listReply = (List<Object>) channelReply;
+              if (listReply.size() > 1) {
+                result.error(
+                    new FlutterError(
+                        (String) listReply.get(0), (String) listReply.get(1), listReply.get(2)));
+              } else {
+                result.success();
+              }
+            } else {
+              result.error(createConnectionError(channelName));
+            }
+          });
+    }
+
     /** Called when a marker is tapped. */
     public void onMarkerTap(@NonNull String markerIdArg, @NonNull VoidResult result) {
       final String channelName =
@@ -7380,6 +7531,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when a marker drag starts. */
     public void onMarkerDragStart(
         @NonNull String markerIdArg,
@@ -7407,6 +7559,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when a marker drag updates. */
     public void onMarkerDrag(
         @NonNull String markerIdArg,
@@ -7434,6 +7587,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when a marker drag ends. */
     public void onMarkerDragEnd(
         @NonNull String markerIdArg,
@@ -7461,6 +7615,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when a marker's info window is tapped. */
     public void onInfoWindowTap(@NonNull String markerIdArg, @NonNull VoidResult result) {
       final String channelName =
@@ -7485,6 +7640,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when a circle is tapped. */
     public void onCircleTap(@NonNull String circleIdArg, @NonNull VoidResult result) {
       final String channelName =
@@ -7509,6 +7665,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when a marker cluster is tapped. */
     public void onClusterTap(@NonNull PlatformCluster clusterArg, @NonNull VoidResult result) {
       final String channelName =
@@ -7533,6 +7690,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when a polygon is tapped. */
     public void onPolygonTap(@NonNull String polygonIdArg, @NonNull VoidResult result) {
       final String channelName =
@@ -7557,6 +7715,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when a polyline is tapped. */
     public void onPolylineTap(@NonNull String polylineIdArg, @NonNull VoidResult result) {
       final String channelName =
@@ -7581,6 +7740,7 @@ public class Messages {
             }
           });
     }
+
     /** Called when a ground overlay is tapped. */
     public void onGroundOverlayTap(@NonNull String groundOverlayIdArg, @NonNull VoidResult result) {
       final String channelName =
@@ -7605,6 +7765,7 @@ public class Messages {
             }
           });
     }
+
     /** Called to get data for a map tile. */
     public void getTileOverlayTile(
         @NonNull String tileOverlayIdArg,
@@ -7642,6 +7803,7 @@ public class Messages {
           });
     }
   }
+
   /**
    * Interface for global SDK initialization.
    *
@@ -7662,6 +7824,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `MapsInitializerApi` to handle messages through the `binaryMessenger`.
      */
@@ -7708,6 +7871,7 @@ public class Messages {
       }
     }
   }
+
   /**
    * Dummy interface to force generation of the platform view creation params, which are not used in
    * any Pigeon calls, only the platform view creation call made internally by Flutter.
@@ -7722,6 +7886,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `MapsPlatformViewApi` to handle messages through the
      * `binaryMessenger`.
@@ -7762,6 +7927,7 @@ public class Messages {
       }
     }
   }
+
   /**
    * Inspector API only intended for use in integration tests.
    *
@@ -7821,6 +7987,7 @@ public class Messages {
     static @NonNull MessageCodec<Object> getCodec() {
       return PigeonCodec.INSTANCE;
     }
+
     /**
      * Sets up an instance of `MapsInspectorApi` to handle messages through the `binaryMessenger`.
      */

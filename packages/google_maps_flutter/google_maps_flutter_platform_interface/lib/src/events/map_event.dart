@@ -176,6 +176,14 @@ class MapLongPressEvent extends _PositionedMapEvent<void> {
   MapLongPressEvent(int mapId, LatLng position) : super(mapId, position, null);
 }
 
+/// An event fired when the active level of an indoor map changes.
+class MapActiveLevelChangedEvent extends MapEvent<IndoorLevel?> {
+  /// Build a ActiveLevelChanged Event triggered from the map represented by `mapId`.
+  ///
+  /// The `value` of this event is an [IndoorLevel] object with the current name and shortName of the newly selected level.
+  MapActiveLevelChangedEvent(super.mapId, super.value);
+}
+
 /// An event fired when a cluster icon managed by [ClusterManager] is tapped.
 class ClusterTapEvent extends MapEvent<Cluster> {
   /// Build a ClusterTapEvent Event triggered from the map represented by `mapId`.

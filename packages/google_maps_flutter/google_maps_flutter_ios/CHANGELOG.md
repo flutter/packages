@@ -1,3 +1,7 @@
+## 2.16.0
+
+* Adds `onActiveLevelChanged` callback to `GoogleMap` to listen for indoor building active floor changes.
+
 ## 2.15.1
 
 * Fixes regression in displaying info windows.

@@ -26,6 +26,9 @@ extern CLLocationCoordinate2D FGMGetCoordinateForPigeonLatLng(FGMPlatformLatLng 
 /// Converts a CLLocationCoordinate2D to its Pigeon representation.
 extern FGMPlatformLatLng *FGMGetPigeonLatLngForCoordinate(CLLocationCoordinate2D coord);
 
+/// Converts a GMSIndoorLevel to its Pigeon representation.
+extern FGMPlatformIndoorLevel *FGMGetPigeonIndoorLevelForIndoorLevel(GMSIndoorLevel *level);
+
 /// Creates a GMSCoordinateBounds from its Pigeon representation.
 extern GMSCoordinateBounds *FGMGetCoordinateBoundsForPigeonLatLngBounds(
     FGMPlatformLatLngBounds *bounds);

@@ -883,6 +883,33 @@ class PlatformLatLng {
   }
 }
 
+/// Pigeon equivalent of IndoorLevel.
+class PlatformIndoorLevel {
+  PlatformIndoorLevel({
+    this.name,
+    this.shortName,
+  });
+
+  String? name;
+
+  String? shortName;
+
+  Object encode() {
+    return <Object?>[
+      name,
+      shortName,
+    ];
+  }
+
+  static PlatformIndoorLevel decode(Object result) {
+    result as List<Object?>;
+    return PlatformIndoorLevel(
+      name: result[0] as String?,
+      shortName: result[1] as String?,
+    );
+  }
+}
+
 /// Pigeon equivalent of LatLngBounds.
 class PlatformLatLngBounds {
   PlatformLatLngBounds({
@@ -1608,53 +1635,56 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformLatLng) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformIndoorLevel) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformCameraTargetBounds) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformGroundOverlay) {
+    } else if (value is PlatformCameraTargetBounds) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapViewCreationParams) {
+    } else if (value is PlatformGroundOverlay) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformMapViewCreationParams) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformPoint) {
+    } else if (value is PlatformMapConfiguration) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformSize) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformSize) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmap) {
+    } else if (value is PlatformZoomRange) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapDefaultMarker) {
+    } else if (value is PlatformBitmap) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytes) {
+    } else if (value is PlatformBitmapDefaultMarker) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAsset) {
+    } else if (value is PlatformBitmapBytes) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetImage) {
+    } else if (value is PlatformBitmapAsset) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetMap) {
+    } else if (value is PlatformBitmapAssetImage) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytesMap) {
+    } else if (value is PlatformBitmapAssetMap) {
       buffer.putUint8(171);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformBitmapBytesMap) {
+      buffer.putUint8(172);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1723,36 +1753,38 @@ class _PigeonCodec extends StandardMessageCodec {
       case 155:
         return PlatformLatLng.decode(readValue(buffer)!);
       case 156:
-        return PlatformLatLngBounds.decode(readValue(buffer)!);
+        return PlatformIndoorLevel.decode(readValue(buffer)!);
       case 157:
-        return PlatformCameraTargetBounds.decode(readValue(buffer)!);
+        return PlatformLatLngBounds.decode(readValue(buffer)!);
       case 158:
-        return PlatformGroundOverlay.decode(readValue(buffer)!);
+        return PlatformCameraTargetBounds.decode(readValue(buffer)!);
       case 159:
-        return PlatformMapViewCreationParams.decode(readValue(buffer)!);
+        return PlatformGroundOverlay.decode(readValue(buffer)!);
       case 160:
-        return PlatformMapConfiguration.decode(readValue(buffer)!);
+        return PlatformMapViewCreationParams.decode(readValue(buffer)!);
       case 161:
-        return PlatformPoint.decode(readValue(buffer)!);
+        return PlatformMapConfiguration.decode(readValue(buffer)!);
       case 162:
-        return PlatformSize.decode(readValue(buffer)!);
+        return PlatformPoint.decode(readValue(buffer)!);
       case 163:
-        return PlatformTileLayer.decode(readValue(buffer)!);
+        return PlatformSize.decode(readValue(buffer)!);
       case 164:
-        return PlatformZoomRange.decode(readValue(buffer)!);
+        return PlatformTileLayer.decode(readValue(buffer)!);
       case 165:
-        return PlatformBitmap.decode(readValue(buffer)!);
+        return PlatformZoomRange.decode(readValue(buffer)!);
       case 166:
-        return PlatformBitmapDefaultMarker.decode(readValue(buffer)!);
+        return PlatformBitmap.decode(readValue(buffer)!);
       case 167:
-        return PlatformBitmapBytes.decode(readValue(buffer)!);
+        return PlatformBitmapDefaultMarker.decode(readValue(buffer)!);
       case 168:
-        return PlatformBitmapAsset.decode(readValue(buffer)!);
+        return PlatformBitmapBytes.decode(readValue(buffer)!);
       case 169:
-        return PlatformBitmapAssetImage.decode(readValue(buffer)!);
+        return PlatformBitmapAsset.decode(readValue(buffer)!);
       case 170:
-        return PlatformBitmapAssetMap.decode(readValue(buffer)!);
+        return PlatformBitmapAssetImage.decode(readValue(buffer)!);
       case 171:
+        return PlatformBitmapAssetMap.decode(readValue(buffer)!);
+      case 172:
         return PlatformBitmapBytesMap.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -2421,6 +2453,9 @@ abstract class MapsCallbackApi {
   /// Called when the map, not a specifc map object, is long pressed.
   void onLongPress(PlatformLatLng position);
 
+  /// Called when the user changes the active level on indoor maps.
+  void onActiveLevelChanged(PlatformIndoorLevel? activeLevel);
+
   /// Called when a marker is tapped.
   void onMarkerTap(String markerId);
 
@@ -2586,6 +2621,34 @@ abstract class MapsCallbackApi {
               'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onLongPress was null, expected non-null PlatformLatLng.');
           try {
             api.onLongPress(arg_position!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onActiveLevelChanged$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.google_maps_flutter_ios.MapsCallbackApi.onActiveLevelChanged was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final PlatformIndoorLevel? arg_activeLevel =
+              (args[0] as PlatformIndoorLevel?);
+          try {
+            api.onActiveLevelChanged(arg_activeLevel);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
