@@ -658,6 +658,7 @@ ${_argParser.usage}''';
           JavaGeneratorAdapter(),
           SwiftGeneratorAdapter(),
           KotlinGeneratorAdapter(),
+          JnigenYamlGeneratorAdapter(),
           CppGeneratorAdapter(),
           GObjectGeneratorAdapter(),
           DartTestGeneratorAdapter(),

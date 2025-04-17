@@ -23,6 +23,7 @@ import 'dart/dart_generator.dart';
 import 'generator_tools.dart';
 import 'gobject/gobject_generator.dart';
 import 'java/java_generator.dart';
+import 'kotlin/jnigen_yaml_generator.dart';
 import 'kotlin/kotlin_generator.dart';
 import 'objc/objc_generator.dart';
 import 'pigeon_lib.dart';
@@ -614,6 +615,51 @@ class KotlinGeneratorAdapter implements GeneratorAdapter {
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
       _openSink(options.kotlinOptions?.kotlinOut,
           basePath: options.basePath ?? '');
+
+  @override
+  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+}
+
+/// A [GeneratorAdapter] that generates JnigenYaml source code.
+class JnigenYamlGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [JnigenYamlGeneratorAdapter].
+  JnigenYamlGeneratorAdapter(
+      {this.fileTypeList = const <FileType>[FileType.na]});
+
+  @override
+  List<FileType> fileTypeList;
+
+  @override
+  void generate(StringSink sink, InternalPigeonOptions options, Root root,
+      FileType fileType) {
+    if (options.kotlinOptions == null) {
+      return;
+    }
+    final JnigenYamlGenerator generator = JnigenYamlGenerator();
+    final InternalJnigenYamlOptions jnigenYamlOptions =
+        InternalJnigenYamlOptions(
+      options.dartOptions!,
+      options.kotlinOptions!,
+      options.basePath,
+      options.dartOptions?.dartOut,
+      options.kotlinOptions!.exampleAppDirectory,
+    );
+
+    generator.generate(
+      jnigenYamlOptions,
+      root,
+      sink,
+      dartPackageName: options.dartPackageName,
+    );
+  }
+
+  @override
+  IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
+      options.kotlinOptions?.kotlinOut != null &&
+              (options.kotlinOptions?.useJni ?? false)
+          ? _openSink('jnigen.yaml',
+              basePath: options.kotlinOptions?.exampleAppDirectory ?? '')
+          : null;
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];

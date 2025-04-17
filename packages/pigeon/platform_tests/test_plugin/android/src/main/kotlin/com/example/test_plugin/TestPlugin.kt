@@ -4,6 +4,11 @@
 
 package com.example.test_plugin
 
+import JniMessageApi
+import JniMessageApiAsync
+import JniMessageApiAsyncRegistrar
+import JniMessageApiRegistrar
+import SomeTypes
 import android.os.Handler
 import android.os.Looper
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -15,6 +20,10 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
+  private var jniMessageApi: JniMessageApiRegistrar? = null
+  private var jniMessageApiNamed: JniMessageApiRegistrar? = null
+  private var jniMessageApiAsync: JniMessageApiAsyncRegistrar? = null
+  private var jniMessageApiAsyncNamed: JniMessageApiAsyncRegistrar? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -22,6 +31,13 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     testSuffixApiOne.setUp(binding, "suffixOne")
     val testSuffixApiTwo = TestPluginWithSuffix()
     testSuffixApiTwo.setUp(binding, "suffixTwo")
+
+    jniMessageApi = JniMessageApiRegistrar().register(JniMessageApiImpl())
+    jniMessageApiNamed = JniMessageApiRegistrar().register(JniMessageApiImpl2(), "name")
+    jniMessageApiAsync = JniMessageApiAsyncRegistrar().register(JniMessageApiAsyncImpl())
+    jniMessageApiAsyncNamed =
+        JniMessageApiAsyncRegistrar().register(JniMessageApiAsyncImpl2(), "name")
+
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
     flutterSmallApiTwo = FlutterSmallApi(binding.binaryMessenger, "suffixTwo")
@@ -869,6 +885,133 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     return UnusedClass()
   }
 }
+
+class JniMessageApiImpl : JniMessageApi() {
+  override fun doNothing() {
+    return
+  }
+
+  override fun echoString(request: String): String {
+    return request
+  }
+
+  override fun echoInt(request: Long): Long {
+    return request
+  }
+
+  override fun echoDouble(request: Double): Double {
+    return request
+  }
+
+  override fun echoBool(request: Boolean): Boolean {
+    return request
+  }
+
+  //  override fun echoObj(request: Any): Any {
+  //    return request
+  //  }
+
+  override fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
+    return someTypes
+  }
+}
+
+class JniMessageApiImpl2 : JniMessageApi() {
+  override fun doNothing() {
+    return
+  }
+
+  override fun echoString(request: String): String {
+    return request + "1"
+  }
+
+  override fun echoInt(request: Long): Long {
+    return request + 1
+  }
+
+  override fun echoDouble(request: Double): Double {
+    return request + 1
+  }
+
+  override fun echoBool(request: Boolean): Boolean {
+    return !request
+  }
+
+  //  override fun echoObj(request: Any): Any {
+  //    return request
+  //  }
+
+  override fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
+    val newSomeTypes = someTypes.copy(anInt = someTypes.anInt + 1)
+    return newSomeTypes
+  }
+}
+
+class JniMessageApiAsyncImpl : JniMessageApiAsync() {
+  override suspend fun doNothing() {
+    return
+  }
+
+  override suspend fun echoString(request: String): String {
+    return request
+  }
+
+  override suspend fun echoInt(request: Long): Long {
+    return request
+  }
+
+  override suspend fun echoDouble(request: Double): Double {
+    return request
+  }
+
+  override suspend fun echoBool(request: Boolean): Boolean {
+    return request
+  }
+
+  //  override fun echoObj(request: Any): Any {
+  //    return request
+  //  }
+
+  override suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
+    return someTypes
+  }
+}
+
+class JniMessageApiAsyncImpl2 : JniMessageApiAsync() {
+  override suspend fun doNothing() {
+    return
+  }
+
+  override suspend fun echoString(request: String): String {
+    return request + "1"
+  }
+
+  override suspend fun echoInt(request: Long): Long {
+    return request + 1
+  }
+
+  override suspend fun echoDouble(request: Double): Double {
+    return request + 1
+  }
+
+  override suspend fun echoBool(request: Boolean): Boolean {
+    return !request
+  }
+
+  //  override fun echoObj(request: Any): Any {
+  //    return request
+  //  }
+
+  override suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
+    val newSomeTypes = someTypes.copy(anInt = someTypes.anInt + 1)
+    return newSomeTypes
+  }
+}
+
+// override suspend fun thinkBeforeAnswering(): String {
+//  delay(10L)
+//  return "42"
+// }
 
 class TestPluginWithSuffix : HostSmallApi {
 

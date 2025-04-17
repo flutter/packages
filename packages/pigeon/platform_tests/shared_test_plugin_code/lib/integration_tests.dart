@@ -12,6 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
 import 'generated.dart';
+import 'src/generated/jni_tests.gen.dart';
 import 'test_types.dart';
 
 /// Possible host languages that test can target.
@@ -44,6 +45,75 @@ const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{
 /// Sets up and runs the integration tests.
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('jni', (WidgetTester _) async {
+    final JniMessageApi? jniMessage = JniMessageApi.getInstance();
+    expect(jniMessage, isNotNull);
+    expect(jniMessage!.echoString('hello'), 'hello');
+    final SomeTypes sync = jniMessage.sendSomeTypes(SomeTypes(
+      aString: 'hi',
+      anInt: 5,
+      aDouble: 5.0,
+      aBool: false,
+    ));
+    expect(sync.aString, 'hi');
+    expect(sync.anInt, 5);
+    expect(sync.aDouble, 5.0);
+    expect(sync.aBool, false);
+    //nullable
+    // final JniMessageApiNullable? jniMessageNullable =
+    //     JniMessageApiNullable.getInstance();
+    // expect(jniMessageNullable, isNotNull);
+    // expect(jniMessageNullable!.echoString('hello'), 'hello');
+    // expect(jniMessageNullable.echoString(null), null);
+    // final SomeNullableTypes? syncNullable =
+    //     jniMessageNullable.sendSomeNullableTypes(SomeNullableTypes());
+    // expect(syncNullable!.aString, null);
+    // expect(syncNullable.anInt, null);
+    // expect(syncNullable.aDouble, null);
+    // expect(syncNullable.aBool, null);
+    // final SomeNullableTypes? syncNull =
+    //     jniMessageNullable.sendSomeNullableTypes(null);
+    // expect(syncNull, null);
+    //async
+    final JniMessageApiAsync? jniMessageAsync =
+        JniMessageApiAsync.getInstance();
+
+    final SomeTypes nonSync = await jniMessageAsync!.sendSomeTypes(SomeTypes(
+      aString: 'hi',
+      anInt: 5,
+      aDouble: 5.0,
+      aBool: false,
+    ));
+    expect(nonSync.aString, 'hi');
+    expect(nonSync.anInt, 5);
+    expect(nonSync.aDouble, 5.0);
+    expect(nonSync.aBool, false);
+    //nullable async
+    // final JniMessageApiNullableAsync? jniMessageNullableAsync =
+    //     JniMessageApiNullableAsync.getInstance();
+    // expect(jniMessageNullableAsync, isNotNull);
+    // expect(await jniMessageNullableAsync!.echoString('hello'), 'hello');
+    // expect(await jniMessageNullableAsync.echoString(null), null);
+    // final SomeNullableTypes? syncNullableAsync = await jniMessageNullableAsync
+    //     .sendSomeNullableTypes(SomeNullableTypes());
+    // expect(syncNullableAsync!.aString, null);
+    // expect(syncNullableAsync.anInt, null);
+    // expect(syncNullableAsync.aDouble, null);
+    // expect(syncNullableAsync.aBool, null);
+    // final SomeNullableTypes? syncNullAsync =
+    //     await jniMessageNullableAsync.sendSomeNullableTypes(null);
+    // expect(syncNull, null);
+    //named
+    final JniMessageApi? jniMessageNamed =
+        JniMessageApi.getInstance(channelName: 'name');
+    final JniMessageApiAsync? jniMessageAsyncNamed =
+        JniMessageApiAsync.getInstance(channelName: 'name');
+    expect(jniMessageNamed, isNotNull);
+    expect(jniMessageNamed!.echoString('hello'), 'hello1');
+    expect(await jniMessageAsync.echoInt(5), 5);
+    expect(await jniMessageAsyncNamed!.echoInt(5), 6);
+  });
 
   group('Host sync API tests', () {
     testWidgets('basic void->void call works', (WidgetTester _) async {

@@ -19,6 +19,7 @@ analyzer:
   exclude: # DIFFERENT FROM FLUTTER/FLUTTER
     # Ignore generated files
     - '**/*.g.dart'
+    - '**/*.gen.jni.dart'
     - '**/*.mocks.dart' # Mockito @GenerateMocks
 
 linter:

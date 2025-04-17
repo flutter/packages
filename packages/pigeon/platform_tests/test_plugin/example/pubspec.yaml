@@ -8,6 +8,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  jnigen: ^0.14.0
   shared_test_plugin_code:
     path: ../../shared_test_plugin_code
   test_plugin:
