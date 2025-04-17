@@ -19,6 +19,12 @@ public class ViewProxyApi extends PigeonApiView {
     super(pigeonRegistrar);
   }
 
+  @NonNull
+  @Override
+  public ProxyApiRegistrar getPigeonRegistrar() {
+    return (ProxyApiRegistrar) super.getPigeonRegistrar();
+  }
+
   @Override
   public void scrollTo(@NonNull View pigeon_instance, long x, long y) {
     pigeon_instance.scrollTo((int) x, (int) y);
@@ -47,6 +53,8 @@ public class ViewProxyApi extends PigeonApiView {
       case NEVER:
         pigeon_instance.setOverScrollMode(View.OVER_SCROLL_NEVER);
         break;
+      case UNKNOWN:
+        throw getPigeonRegistrar().createUnknownEnumException(OverScrollMode.UNKNOWN);
     }
   }
 }

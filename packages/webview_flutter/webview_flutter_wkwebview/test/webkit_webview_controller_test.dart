@@ -1392,6 +1392,8 @@ void main() {
 
       await controller.setOverScrollMode(WebViewOverScrollMode.always);
       verify(mockScrollView.setBounces(true));
+      verify(mockScrollView.setAlwaysBounceVertical(true));
+      verify(mockScrollView.setAlwaysBounceHorizontal(true));
 
       clearInteractions(mockScrollView);
       await controller

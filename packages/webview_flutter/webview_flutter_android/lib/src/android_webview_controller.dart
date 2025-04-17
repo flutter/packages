@@ -733,25 +733,21 @@ class AndroidWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
-    switch (mode) {
-      case WebViewOverScrollMode.always:
-        return _webView.setOverScrollMode(
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
+    return switch (mode) {
+      WebViewOverScrollMode.always => _webView.setOverScrollMode(
           android_webview.OverScrollMode.always,
-        );
-      case WebViewOverScrollMode.ifContentScrolls:
-        return _webView.setOverScrollMode(
+        ),
+      WebViewOverScrollMode.ifContentScrolls => _webView.setOverScrollMode(
           android_webview.OverScrollMode.ifContentScrolls,
-        );
-      case WebViewOverScrollMode.never:
-        return _webView.setOverScrollMode(
+        ),
+      WebViewOverScrollMode.never => _webView.setOverScrollMode(
           android_webview.OverScrollMode.never,
-        );
+        ),
       // This prevents future additions from causing a breaking change.
       // ignore: unreachable_switch_case
-      case _:
-        throw UnsupportedError('Android does not support $mode.');
-    }
+      _ => throw UnsupportedError('Android does not support $mode.'),
+    };
   }
 }
 

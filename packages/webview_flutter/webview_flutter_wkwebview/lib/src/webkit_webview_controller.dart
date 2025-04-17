@@ -769,23 +769,27 @@ window.addEventListener("error", function(e) {
   }
 
   @override
-  Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
-    switch (mode) {
-      case WebViewOverScrollMode.always:
-        return _webView.scrollView.setBounces(true);
-      case WebViewOverScrollMode.ifContentScrolls:
-        await Future.wait<void>(<Future<void>>[
-          _webView.scrollView.setBounces(true),
-          _webView.scrollView.setAlwaysBounceHorizontal(false),
-          _webView.scrollView.setAlwaysBounceVertical(false),
-        ]);
-      case WebViewOverScrollMode.never:
-        return _webView.scrollView.setBounces(false);
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
+    return switch (mode) {
+      WebViewOverScrollMode.always => Future.wait<void>(
+          <Future<void>>[
+            _webView.scrollView.setBounces(true),
+            _webView.scrollView.setAlwaysBounceHorizontal(true),
+            _webView.scrollView.setAlwaysBounceVertical(true),
+          ],
+        ),
+      WebViewOverScrollMode.ifContentScrolls => Future.wait<void>(
+          <Future<void>>[
+            _webView.scrollView.setBounces(true),
+            _webView.scrollView.setAlwaysBounceHorizontal(false),
+            _webView.scrollView.setAlwaysBounceVertical(false),
+          ],
+        ),
+      WebViewOverScrollMode.never => _webView.scrollView.setBounces(false),
       // This prevents future additions from causing a breaking change.
       // ignore: unreachable_switch_case
-      case _:
-        throw UnsupportedError('This platform does not support $mode.');
-    }
+      _ => throw UnsupportedError('This platform does not support $mode.'),
+    };
   }
 
   // WKWebView does not support removing a single user script, so all user
