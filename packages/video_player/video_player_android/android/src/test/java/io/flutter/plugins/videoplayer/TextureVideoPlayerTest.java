@@ -189,6 +189,7 @@ public final class TextureVideoPlayerTest {
     // Initially create the video player, which creates the initial surface.
     VideoPlayer videoPlayer = createVideoPlayer();
     verify(mockProducer).getSurface();
+    verify(mockProducer).handlesCropAndRotation();
 
     // Capture the lifecycle events so we can simulate onSurfaceAvailable/Destroyed.
     verify(mockProducer).setCallback(callbackCaptor.capture());

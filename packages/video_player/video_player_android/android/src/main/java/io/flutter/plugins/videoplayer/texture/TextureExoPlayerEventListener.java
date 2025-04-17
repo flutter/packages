@@ -20,12 +20,17 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
 
   @VisibleForTesting
   public TextureExoPlayerEventListener(
-      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events, boolean surfaceProducerHandlesCropAndRotation) {
-    this(exoPlayer, events, false, boolean surfaceProducerHandlesCropAndRotation);
+      @NonNull ExoPlayer exoPlayer,
+      @NonNull VideoPlayerCallbacks events,
+      boolean surfaceProducerHandlesCropAndRotation) {
+    this(exoPlayer, events, surfaceProducerHandlesCropAndRotation, false);
   }
 
   public TextureExoPlayerEventListener(
-      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events, boolean surfaceProducerHandlesCropAndRotation, boolean initialized) {
+      @NonNull ExoPlayer exoPlayer,
+      @NonNull VideoPlayerCallbacks events,
+      boolean surfaceProducerHandlesCropAndRotation,
+      boolean initialized) {
     super(exoPlayer, events, initialized);
     this.surfaceProducerHandlesCropAndRotation = surfaceProducerHandlesCropAndRotation;
   }
