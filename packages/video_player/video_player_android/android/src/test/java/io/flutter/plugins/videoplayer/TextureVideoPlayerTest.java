@@ -55,6 +55,7 @@ public final class TextureVideoPlayerTest {
   public void setUp() {
     fakeVideoAsset = new FakeVideoAsset(FAKE_ASSET_URL);
     when(mockProducer.getSurface()).thenReturn(mock(Surface.class));
+    when(mockProducer.handlesCropAndRotation()).thenReturn(true);
   }
 
   private VideoPlayer createVideoPlayer() {

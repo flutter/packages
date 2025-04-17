@@ -79,8 +79,9 @@ public final class TextureVideoPlayer extends VideoPlayer
   @NonNull
   @Override
   protected ExoPlayerEventListener createExoPlayerEventListener(@NonNull ExoPlayer exoPlayer) {
+    boolean surfaceProducerHandlesCropAndRotation = surfaceProducer.handlesCropAndRotation();
     return new TextureExoPlayerEventListener(
-        exoPlayer, videoPlayerEvents, playerHasBeenSuspended());
+        exoPlayer, videoPlayerEvents, playerHasBeenSuspended(), surfaceProducerHandlesCropAndRotation);
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
