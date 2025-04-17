@@ -10,5 +10,5 @@ open class ProxyApiSuperClass {}
 
 protocol ProxyApiInterface {}
 
-@available(iOS 15, *)
+@available(iOS 15, macOS 10, *)
 class ClassWithApiRequirement {}
