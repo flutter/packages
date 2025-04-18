@@ -701,6 +701,35 @@ void main() {
     expect(find.text('Error is handled'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets(
+    'Construct vector graphic with auto strategy',
+    (WidgetTester tester) async {
+      final TestAssetBundle testBundle = TestAssetBundle();
+
+      await tester.pumpWidget(
+        DefaultAssetBundle(
+          bundle: testBundle,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: createCompatVectorGraphic(
+                loader: const AssetBytesLoader('foo.svg'),
+                colorFilter:
+                    const ColorFilter.mode(Colors.red, BlendMode.srcIn),
+                opacity: const AlwaysStoppedAnimation<double>(0.5),
+                strategy: RenderingStrategy.auto),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.layers.last, isA<PictureLayer>());
+      // Opacity and color filter are drawn as savelayer
+      expect(tester.layers, isNot(contains(isA<OpacityLayer>())));
+      expect(tester.layers, isNot(contains(isA<ColorFilterLayer>())));
+    },
+    skip: kIsWeb,
+  ); // picture rasterization works differently on HTML due to saveLayer bugs in HTML backend
 }
 
 class TestBundle extends Fake implements AssetBundle {
