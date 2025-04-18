@@ -26,6 +26,17 @@ import 'google_maps_controller_test.dart' as _i5;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeMarkerController_0<T, O> extends _i1.SmartFake
+    implements _i2.MarkerController<T, O> {
+  _FakeMarkerController_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [CirclesController].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -385,13 +396,16 @@ class MockPolylinesController extends _i1.Mock
 /// A class which mocks [MarkersController].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMarkersController extends _i1.Mock implements _i2.MarkersController {
+class MockMarkersController extends _i1.Mock
+    implements _i2.MarkersController<Object?, Object> {
   @override
-  Map<_i3.MarkerId, _i2.MarkerController> get markers => (super.noSuchMethod(
+  Map<_i3.MarkerId, _i2.MarkerController<Object?, Object>> get markers =>
+      (super.noSuchMethod(
         Invocation.getter(#markers),
-        returnValue: <_i3.MarkerId, _i2.MarkerController>{},
-        returnValueForMissingStub: <_i3.MarkerId, _i2.MarkerController>{},
-      ) as Map<_i3.MarkerId, _i2.MarkerController>);
+        returnValue: <_i3.MarkerId, _i2.MarkerController<Object?, Object>>{},
+        returnValueForMissingStub: <_i3.MarkerId,
+            _i2.MarkerController<Object?, Object>>{},
+      ) as Map<_i3.MarkerId, _i2.MarkerController<Object?, Object>>);
 
   @override
   _i4.Map get googleMap => (super.noSuchMethod(
@@ -435,6 +449,48 @@ class MockMarkersController extends _i1.Mock implements _i2.MarkersController {
         returnValue: _i6.Future<void>.value(),
         returnValueForMissingStub: _i6.Future<void>.value(),
       ) as _i6.Future<void>);
+
+  @override
+  _i6.Future<_i2.MarkerController<Object?, Object>> createMarkerController(
+    _i3.Marker? marker,
+    Object? currentMarker,
+    dynamic gmInfoWindow,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #createMarkerController,
+          [
+            marker,
+            currentMarker,
+            gmInfoWindow,
+          ],
+        ),
+        returnValue: _i6.Future<_i2.MarkerController<Object?, Object>>.value(
+            _FakeMarkerController_0<Object?, Object>(
+          this,
+          Invocation.method(
+            #createMarkerController,
+            [
+              marker,
+              currentMarker,
+              gmInfoWindow,
+            ],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i6.Future<_i2.MarkerController<Object?, Object>>.value(
+                _FakeMarkerController_0<Object?, Object>(
+          this,
+          Invocation.method(
+            #createMarkerController,
+            [
+              marker,
+              currentMarker,
+              gmInfoWindow,
+            ],
+          ),
+        )),
+      ) as _i6.Future<_i2.MarkerController<Object?, Object>>);
 
   @override
   _i6.Future<void> changeMarkers(Set<_i3.Marker>? markersToChange) =>

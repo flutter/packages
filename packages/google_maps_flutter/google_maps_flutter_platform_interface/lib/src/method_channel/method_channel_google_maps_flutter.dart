@@ -652,8 +652,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
       creationId,
       onPlatformViewCreated,
       widgetConfiguration: MapWidgetConfiguration(
-          initialCameraPosition: initialCameraPosition,
-          textDirection: textDirection),
+        initialCameraPosition: initialCameraPosition,
+        textDirection: textDirection,
+      ),
       mapObjects: MapObjects(
           markers: markers,
           polygons: polygons,

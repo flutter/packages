@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -74,7 +75,8 @@ public class GoogleMapControllerTest {
   // See getGoogleMapControllerWithMockedDependencies for version with dependency injections.
   public GoogleMapController getGoogleMapController() {
     GoogleMapController googleMapController =
-        new GoogleMapController(0, context, mockMessenger, activity::getLifecycle, null);
+        new GoogleMapController(
+            0, context, mockMessenger, activity::getLifecycle, null, PlatformMarkerType.MARKER);
     googleMapController.init();
     return googleMapController;
   }
@@ -219,7 +221,7 @@ public class GoogleMapControllerTest {
   @Test
   public void OnClusterItemRenderedCallsMarkersController() {
     GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
-    MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "cm_1");
+    MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "cm_1", PlatformMarkerType.MARKER);
     final Marker marker = mock(Marker.class);
     googleMapController.onClusterItemRendered(markerBuilder, marker);
     verify(mockMarkersController, times(1)).onClusterItemRendered(markerBuilder, marker);
@@ -228,7 +230,7 @@ public class GoogleMapControllerTest {
   @Test
   public void OnClusterItemClickCallsMarkersController() {
     GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
-    MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "cm_1");
+    MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "cm_1", PlatformMarkerType.MARKER);
 
     googleMapController.onClusterItemClick(markerBuilder);
     verify(mockMarkersController, times(1)).onMarkerTap(markerBuilder.markerId());

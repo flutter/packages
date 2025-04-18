@@ -5,26 +5,34 @@
 part of '../google_maps_flutter_web.dart';
 
 /// This class manages a set of [MarkerController]s associated to a [GoogleMapController].
-class MarkersController extends GeometryController {
+///
+/// * [LegacyMarkersController] implements the [MarkersController] for the
+/// legacy [gmaps.Marker] class.
+/// * [AdvancedMarkersController] implements the [MarkersController] for the
+/// advanced [gmaps.AdvancedMarkerElement] class.
+///
+/// [T] must extend [JSObject]. It's not specified in code because our mocking
+/// framework does not support mocking JSObjects.
+abstract class MarkersController<T, O> extends GeometryController {
   /// Initialize the cache. The [StreamController] comes from the [GoogleMapController], and is shared with other controllers.
   MarkersController({
     required StreamController<MapEvent<Object?>> stream,
-    required ClusterManagersController clusterManagersController,
+    required ClusterManagersController<T> clusterManagersController,
   })  : _streamController = stream,
         _clusterManagersController = clusterManagersController,
-        _markerIdToController = <MarkerId, MarkerController>{};
+        _markerIdToController = <MarkerId, MarkerController<T, O>>{};
 
   // A cache of [MarkerController]s indexed by their [MarkerId].
-  final Map<MarkerId, MarkerController> _markerIdToController;
+  final Map<MarkerId, MarkerController<T, O>> _markerIdToController;
 
   // The stream over which markers broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
 
-  final ClusterManagersController _clusterManagersController;
+  final ClusterManagersController<T> _clusterManagersController;
 
   /// Returns the cache of [MarkerController]s. Test only.
   @visibleForTesting
-  Map<MarkerId, MarkerController> get markers => _markerIdToController;
+  Map<MarkerId, MarkerController<T, O>> get markers => _markerIdToController;
 
   /// Adds a set of [Marker] objects to the cache.
   ///
@@ -52,43 +60,28 @@ class MarkersController extends GeometryController {
       }
     }
 
-    final gmaps.Marker? currentMarker =
-        _markerIdToController[marker.markerId]?.marker;
-
-    final gmaps.MarkerOptions markerOptions =
+    final MarkerController<T, O>? markerController =
+        _markerIdToController[marker.markerId];
+    final T? currentMarker = markerController?.marker;
+    final O markerOptions =
         await _markerOptionsFromMarker(marker, currentMarker);
-
-    final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
-
-    gmMarker.set('markerId', marker.markerId.value.toJS);
-
-    if (marker.clusterManagerId != null) {
-      _clusterManagersController.addItem(marker.clusterManagerId!, gmMarker);
-    } else {
-      gmMarker.map = googleMap;
-    }
-
-    final MarkerController controller = MarkerController(
-      marker: gmMarker,
-      clusterManagerId: marker.clusterManagerId,
-      infoWindow: gmInfoWindow,
-      consumeTapEvents: marker.consumeTapEvents,
-      onTap: () {
-        showMarkerInfoWindow(marker.markerId);
-        _onMarkerTap(marker.markerId);
-      },
-      onDragStart: (gmaps.LatLng latLng) {
-        _onMarkerDragStart(marker.markerId, latLng);
-      },
-      onDrag: (gmaps.LatLng latLng) {
-        _onMarkerDrag(marker.markerId, latLng);
-      },
-      onDragEnd: (gmaps.LatLng latLng) {
-        _onMarkerDragEnd(marker.markerId, latLng);
-      },
-    );
+    final MarkerController<T, O> controller =
+        await createMarkerController(marker, markerOptions, gmInfoWindow);
     _markerIdToController[marker.markerId] = controller;
   }
+
+  /// Creates a [MarkerController] for the given [marker].
+  ///
+  /// [markerOptions] contains configuration that should be used to create
+  /// a [gmaps.Marker] or [gmaps.AdvancedMarkerElement] object. [markersOptions]
+  /// is either [gmaps.MarkerOptions] or [gmaps.AdvancedMarkerElementOptions].
+  ///
+  /// [gmInfoWindow] is marker's info window to show on tap.
+  Future<MarkerController<T, O>> createMarkerController(
+    Marker marker,
+    O markerOptions,
+    gmaps.InfoWindow? gmInfoWindow,
+  );
 
   /// Updates a set of [Marker] objects with new options.
   Future<void> changeMarkers(Set<Marker> markersToChange) async {
@@ -96,7 +89,7 @@ class MarkersController extends GeometryController {
   }
 
   Future<void> _changeMarker(Marker marker) async {
-    final MarkerController? markerController =
+    final MarkerController<T, O>? markerController =
         _markerIdToController[marker.markerId];
     if (markerController != null) {
       final ClusterManagerId? oldClusterManagerId =
@@ -108,8 +101,7 @@ class MarkersController extends GeometryController {
         _removeMarker(marker.markerId);
         await _addMarker(marker);
       } else {
-        final gmaps.MarkerOptions markerOptions =
-            await _markerOptionsFromMarker(
+        final O markerOptions = await _markerOptionsFromMarker(
           marker,
           markerController.marker,
         );
@@ -129,7 +121,8 @@ class MarkersController extends GeometryController {
   }
 
   void _removeMarker(MarkerId markerId) {
-    final MarkerController? markerController = _markerIdToController[markerId];
+    final MarkerController<T, O>? markerController =
+        _markerIdToController[markerId];
     if (markerController?.clusterManagerId != null) {
       _clusterManagersController.removeItem(
           markerController!.clusterManagerId!, markerController.marker);
@@ -145,7 +138,8 @@ class MarkersController extends GeometryController {
   /// See also [hideMarkerInfoWindow] and [isInfoWindowShown].
   void showMarkerInfoWindow(MarkerId markerId) {
     _hideAllMarkerInfoWindow();
-    final MarkerController? markerController = _markerIdToController[markerId];
+    final MarkerController<T, O>? markerController =
+        _markerIdToController[markerId];
     markerController?.showInfoWindow();
   }
 
@@ -153,7 +147,8 @@ class MarkersController extends GeometryController {
   ///
   /// See also [showMarkerInfoWindow] and [isInfoWindowShown].
   void hideMarkerInfoWindow(MarkerId markerId) {
-    final MarkerController? markerController = _markerIdToController[markerId];
+    final MarkerController<T, O>? markerController =
+        _markerIdToController[markerId];
     markerController?.hideInfoWindow();
   }
 
@@ -161,7 +156,8 @@ class MarkersController extends GeometryController {
   ///
   /// See also [showMarkerInfoWindow] and [hideMarkerInfoWindow].
   bool isInfoWindowShown(MarkerId markerId) {
-    final MarkerController? markerController = _markerIdToController[markerId];
+    final MarkerController<T, O>? markerController =
+        _markerIdToController[markerId];
     return markerController?.infoWindowShown ?? false;
   }
 
@@ -204,10 +200,106 @@ class MarkersController extends GeometryController {
 
   void _hideAllMarkerInfoWindow() {
     _markerIdToController.values
-        .where((MarkerController? controller) =>
+        .where((MarkerController<T, O>? controller) =>
             controller?.infoWindowShown ?? false)
-        .forEach((MarkerController controller) {
+        .forEach((MarkerController<T, O> controller) {
       controller.hideInfoWindow();
     });
+  }
+}
+
+/// A [MarkersController] for the legacy [gmaps.Marker] class.
+class LegacyMarkersController
+    extends MarkersController<gmaps.Marker, gmaps.MarkerOptions> {
+  /// Initialize the markers controller for the legacy [gmaps.Marker] class.
+  LegacyMarkersController({
+    required super.stream,
+    required super.clusterManagersController,
+  });
+
+  @override
+  Future<LegacyMarkerController> createMarkerController(
+    Marker marker,
+    gmaps.MarkerOptions markerOptions,
+    gmaps.InfoWindow? gmInfoWindow,
+  ) async {
+    final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
+    gmMarker.set('markerId', marker.markerId.value.toJS);
+
+    if (marker.clusterManagerId != null) {
+      _clusterManagersController.addItem(marker.clusterManagerId!, gmMarker);
+    } else {
+      gmMarker.map = googleMap;
+    }
+
+    return LegacyMarkerController(
+      marker: gmMarker,
+      clusterManagerId: marker.clusterManagerId,
+      infoWindow: gmInfoWindow,
+      consumeTapEvents: marker.consumeTapEvents,
+      onTap: () {
+        showMarkerInfoWindow(marker.markerId);
+        _onMarkerTap(marker.markerId);
+      },
+      onDragStart: (gmaps.LatLng latLng) {
+        _onMarkerDragStart(marker.markerId, latLng);
+      },
+      onDrag: (gmaps.LatLng latLng) {
+        _onMarkerDrag(marker.markerId, latLng);
+      },
+      onDragEnd: (gmaps.LatLng latLng) {
+        _onMarkerDragEnd(marker.markerId, latLng);
+      },
+    );
+  }
+}
+
+/// A [MarkersController] for the advanced [gmaps.AdvancedMarkerElement] class.
+class AdvancedMarkersController extends MarkersController<
+    gmaps.AdvancedMarkerElement, gmaps.AdvancedMarkerElementOptions> {
+  /// Initialize the markers controller for advanced markers
+  /// ([gmaps.AdvancedMarkerElement]).
+  AdvancedMarkersController({
+    required super.stream,
+    required super.clusterManagersController,
+  });
+
+  @override
+  Future<AdvancedMarkerController> createMarkerController(
+    Marker marker,
+    gmaps.AdvancedMarkerElementOptions markerOptions,
+    gmaps.InfoWindow? gmInfoWindow,
+  ) async {
+    assert(marker is AdvancedMarker, 'Marker must be an AdvancedMarker.');
+
+    final gmaps.AdvancedMarkerElement gmMarker =
+        gmaps.AdvancedMarkerElement(markerOptions);
+    gmMarker.setAttribute('id', marker.markerId.value);
+
+    if (marker.clusterManagerId != null) {
+      _clusterManagersController.addItem(marker.clusterManagerId!, gmMarker);
+    } else {
+      gmMarker.map = googleMap;
+    }
+
+    return AdvancedMarkerController(
+      marker: gmMarker,
+      clusterManagerId: marker.clusterManagerId,
+      infoWindow: gmInfoWindow,
+      consumeTapEvents: marker.consumeTapEvents,
+      onTap: () {
+        showMarkerInfoWindow(marker.markerId);
+        _onMarkerTap(marker.markerId);
+      },
+      onDragStart: (gmaps.LatLng latLng) {
+        _onMarkerDragStart(marker.markerId, latLng);
+      },
+      onDrag: (gmaps.LatLng latLng) {
+        _onMarkerDrag(marker.markerId, latLng);
+      },
+      onDragEnd: (gmaps.LatLng latLng) {
+        _onMarkerDragEnd(marker.markerId, latLng);
+      },
+    );
   }
 }

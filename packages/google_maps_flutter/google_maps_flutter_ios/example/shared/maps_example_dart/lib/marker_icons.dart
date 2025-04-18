@@ -21,15 +21,15 @@ class MarkerIconsPage extends GoogleMapExampleAppPage {
 
   @override
   Widget build(BuildContext context) {
-    return const MarkerIconsBody();
+    return const _MarkerIconsBody();
   }
 }
 
-class MarkerIconsBody extends StatefulWidget {
-  const MarkerIconsBody({super.key});
+class _MarkerIconsBody extends StatefulWidget {
+  const _MarkerIconsBody();
 
   @override
-  State<StatefulWidget> createState() => MarkerIconsBodyState();
+  State<StatefulWidget> createState() => _MarkerIconsBodyState();
 }
 
 const LatLng _kMapCenter = LatLng(52.4478, -3.5402);
@@ -42,7 +42,7 @@ enum _MarkerSizeOption {
   size120x60,
 }
 
-class MarkerIconsBodyState extends State<MarkerIconsBody> {
+class _MarkerIconsBodyState extends State<_MarkerIconsBody> {
   final Size _markerAssetImageSize = const Size(48, 48);
   _MarkerSizeOption _currentSizeOption = _MarkerSizeOption.original;
   Set<Marker> _markers = <Marker>{};
