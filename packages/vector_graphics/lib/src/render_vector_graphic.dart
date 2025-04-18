@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/animation.dart';
@@ -15,7 +16,7 @@ import 'listener.dart';
 @immutable
 class RasterKey {
   /// Create a new [RasterKey].
-  const RasterKey(this.assetKey, this.width, this.height);
+  const RasterKey(this.assetKey, this.width, this.height, this.paint);
 
   /// An object that is used to identify the raster data this key will store.
   ///
@@ -28,16 +29,22 @@ class RasterKey {
   /// The width of this vector graphic raster, in physical pixels.
   final int height;
 
+  /// The paint of this vector graphic raster.
+  final Paint paint;
+
   @override
   bool operator ==(Object other) {
     return other is RasterKey &&
         other.assetKey == assetKey &&
         other.width == width &&
-        other.height == height;
+        other.height == height &&
+        other.paint.color == paint.color &&
+        other.paint.colorFilter == paint.colorFilter;
   }
 
   @override
-  int get hashCode => Object.hash(assetKey, width, height);
+  int get hashCode =>
+      Object.hash(assetKey, width, height, paint.color, paint.colorFilter);
 }
 
 /// The cache entry for a rasterized vector graphic.
@@ -81,7 +88,6 @@ class RenderVectorGraphic extends RenderBox {
     this._colorFilter,
     this._devicePixelRatio,
     this._opacity,
-    this._scale,
   ) {
     _opacity?.addListener(_updateOpacity);
     _updateOpacity();
@@ -116,6 +122,8 @@ class RenderVectorGraphic extends RenderBox {
   /// An optional [ColorFilter] to apply to the rasterized vector graphic.
   ColorFilter? get colorFilter => _colorFilter;
   ColorFilter? _colorFilter;
+  double _rasterScaleFactor = 1.0;
+  final Paint _colorPaint = Paint();
   set colorFilter(ColorFilter? value) {
     if (colorFilter == value) {
       return;
@@ -173,16 +181,6 @@ class RenderVectorGraphic extends RenderBox {
   /// the vector graphic itself has a size of 50x50, and [BoxFit.fill]
   /// is used. This will compute a scale of 2.0, which will result in a
   /// raster that is 100x100.
-  double get scale => _scale;
-  double _scale;
-  set scale(double value) {
-    assert(value != 0);
-    if (value == scale) {
-      return;
-    }
-    _scale = value;
-    markNeedsPaint();
-  }
 
   @override
   bool hitTestSelf(Offset position) => true;
@@ -196,7 +194,7 @@ class RenderVectorGraphic extends RenderBox {
   }
 
   static RasterData _createRaster(
-      RasterKey key, double scaleFactor, PictureInfo info) {
+      RasterKey key, double scaleFactor, PictureInfo info, Paint colorPaint) {
     final int scaledWidth = key.width;
     final int scaledHeight = key.height;
     // In order to scale a picture, it must be placed in a new picture
@@ -204,11 +202,19 @@ class RenderVectorGraphic extends RenderBox {
     // arguments of Picture.toImage do not control the resolution that the
     // picture is rendered at, instead it controls how much of the picture to
     // capture in a raster.
+    // Note: Transform applies a transformation to the canvas matrix.
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final ui.Canvas canvas = ui.Canvas(recorder);
-
+    final Rect drawSize =
+        ui.Rect.fromLTWH(0, 0, scaledWidth.toDouble(), scaledHeight.toDouble());
+    canvas.clipRect(drawSize);
+    final int saveCount = canvas.getSaveCount();
+    if (colorPaint.color.opacity != 1.0 || colorPaint.colorFilter != null) {
+      canvas.saveLayer(drawSize, colorPaint);
+    }
     canvas.scale(scaleFactor);
     canvas.drawPicture(info.picture);
+    canvas.restoreToCount(saveCount);
     final ui.Picture rasterPicture = recorder.endRecording();
 
     final ui.Image pending =
@@ -230,12 +236,14 @@ class RenderVectorGraphic extends RenderBox {
   // Re-create the raster for a given vector graphic if the target size
   // is sufficiently different. Returns `null` if rasterData has been
   // updated immediately.
-  void _maybeUpdateRaster() {
+  void _maybeUpdateRaster(double drawScaleFactor) {
+    _rasterScaleFactor = devicePixelRatio * drawScaleFactor;
     final int scaledWidth =
-        (pictureInfo.size.width * devicePixelRatio / scale).round();
+        (pictureInfo.size.width * _rasterScaleFactor).round();
     final int scaledHeight =
-        (pictureInfo.size.height * devicePixelRatio / scale).round();
-    final RasterKey key = RasterKey(assetKey, scaledWidth, scaledHeight);
+        (pictureInfo.size.height * _rasterScaleFactor).round();
+    final RasterKey key =
+        RasterKey(assetKey, scaledWidth, scaledHeight, _colorPaint);
 
     // First check if the raster is available synchronously. This also handles
     // a no-op change that would resolve to an identical picture.
@@ -249,7 +257,7 @@ class RenderVectorGraphic extends RenderBox {
       return;
     }
     final RasterData data =
-        _createRaster(key, devicePixelRatio / scale, pictureInfo);
+        _createRaster(key, _rasterScaleFactor, pictureInfo, _colorPaint);
     data.count += 1;
 
     assert(!_liveRasterCache.containsKey(key));
@@ -296,18 +304,23 @@ class RenderVectorGraphic extends RenderBox {
       return;
     }
 
-    _maybeUpdateRaster();
+    if (colorFilter != null) {
+      _colorPaint.colorFilter = colorFilter;
+    }
+    _colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
+
+    // Use this transform to get real x/y scale facotr.
+    final Float64List transformList = context.canvas.getTransform();
+    final double drawScaleFactor = math.max(
+      transformList[0 + 0 * 4],
+      transformList[1 + 1 * 4],
+    );
+    _maybeUpdateRaster(drawScaleFactor);
+
     final ui.Image image = _rasterData!.image;
     final int width = _rasterData!.key.width;
     final int height = _rasterData!.key.height;
 
-    // Use `FilterQuality.low` to scale the image, which corresponds to
-    // bilinear interpolation.
-    final Paint colorPaint = Paint()..filterQuality = ui.FilterQuality.low;
-    if (colorFilter != null) {
-      colorPaint.colorFilter = colorFilter;
-    }
-    colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
     final Rect src = ui.Rect.fromLTWH(
       0,
       0,
@@ -325,7 +338,7 @@ class RenderVectorGraphic extends RenderBox {
       image,
       src,
       dst,
-      colorPaint,
+      Paint(),
     );
   }
 }
