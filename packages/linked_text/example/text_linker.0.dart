@@ -213,4 +213,3 @@ class _MyInlineLinkSpan extends TextSpan {
     text: text,
   );
 }
-
