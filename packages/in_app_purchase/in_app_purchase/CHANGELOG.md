@@ -1,3 +1,7 @@
+## 3.2.2
+
+* Removes obsolete code related to supporting SDK <21.
+
 ## 3.2.1
 
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.

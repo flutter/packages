@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
+
 ## 4.11.0
 
 * Adds support to set the over-scroll mode for the WebView. See `WebViewController.setOverScrollMode`.
