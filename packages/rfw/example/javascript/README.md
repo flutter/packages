@@ -9,7 +9,9 @@ Windows, Linux, Android, iOS, and Web.
 
 ## Running the Application
 
-To run the application, simply execute: `flutter run`
+To run the application, simply execute: `flutter run`.
+
+On some platforms, network permissions are required to run.
 
 ## Conventions
 
