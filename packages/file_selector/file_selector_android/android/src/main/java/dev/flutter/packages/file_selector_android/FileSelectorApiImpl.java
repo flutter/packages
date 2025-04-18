@@ -6,7 +6,6 @@ package dev.flutter.packages.file_selector_android;
 
 import static dev.flutter.packages.file_selector_android.FileUtils.FILE_SELECTOR_EXCEPTION_PLACEHOLDER_PATH;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ContentResolver;
@@ -193,7 +192,6 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   }
 
   @Override
-  @TargetApi(21)
   public void getDirectoryPath(
       @Nullable String initialDirectory,
       @NonNull GeneratedFileSelectorApi.NullableResult<String> result) {
