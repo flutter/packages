@@ -197,13 +197,6 @@ public class FileSelectorApiImpl implements GeneratedFileSelectorApi.FileSelecto
   public void getDirectoryPath(
       @Nullable String initialDirectory,
       @NonNull GeneratedFileSelectorApi.NullableResult<String> result) {
-    if (!sdkChecker.sdkIsAtLeast(android.os.Build.VERSION_CODES.LOLLIPOP)) {
-      result.error(
-          new UnsupportedOperationException(
-              "Selecting a directory is only supported on versions >= 21"));
-      return;
-    }
-
     final Intent intent = objectFactory.newIntent(Intent.ACTION_OPEN_DOCUMENT_TREE);
     trySetInitialDirectory(intent, initialDirectory);
 

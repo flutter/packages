@@ -13,7 +13,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import android.content.Context;
-import android.os.Build;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.MapsInitializer.Renderer;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -23,10 +22,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class GoogleMapInitializerTest {
   private GoogleMapInitializer googleMapInitializer;
 
