@@ -92,6 +92,11 @@ class _ApiLogger implements TestHostVideoPlayerApi {
     passedPlayerId = playerId;
     passedPlaybackSpeed = speed;
   }
+
+  @override
+  void setPreferredAudioLanguage(String preferredAudioLanguage) {
+    log.add('setPreferredAudioLanguage');
+  }
 }
 
 void main() {

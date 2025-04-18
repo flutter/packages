@@ -20,4 +20,19 @@ void main() {
       expect(options.mixWithOthers, false);
     },
   );
+  test(
+    'VideoPlayerOptions preferredAudioLanguage defaults to null',
+    () {
+      final VideoPlayerOptions options = VideoPlayerOptions();
+      expect(options.preferredAudioLanguage, null);
+    },
+  );
+  test(
+    'VideoPlayerOptions preferredAudioLanguage is set correctly',
+    () {
+      final VideoPlayerOptions options =
+          VideoPlayerOptions(preferredAudioLanguage: 'en');
+      expect(options.preferredAudioLanguage, 'en');
+    },
+  );
 }

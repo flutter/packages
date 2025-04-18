@@ -1,3 +1,7 @@
+## 2.9.6
+
+* Adds support for preferred audio language in video_player if platform supports it.
+
 ## 2.9.5
 
 * Fixes layout issue caused by `Transform.rotate` not affecting space calculation.
@@ -629,7 +633,7 @@ DefaultHttpDataSourceFactory by default.
 ## 0.9.0
 
 * Fixed the aspect ratio and orientation of videos. Videos are now properly displayed when recorded
- in portrait mode both in iOS and Android.
+  in portrait mode both in iOS and Android.
 
 ## 0.8.0
 
