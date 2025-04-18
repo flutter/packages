@@ -690,6 +690,7 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i8.Future<void>);
 
   @override
+<<<<<<< HEAD
   _i8.Future<void> setVerticalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(#setVerticalScrollBarEnabled, [enabled]),
@@ -701,6 +702,11 @@ class MockAndroidWebViewController extends _i1.Mock
   _i8.Future<void> setHorizontalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(#setHorizontalScrollBarEnabled, [enabled]),
+=======
+  _i8.Future<void> setOverScrollMode(_i3.WebViewOverScrollMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(#setOverScrollMode, [mode]),
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
@@ -759,8 +765,23 @@ class MockAndroidWebViewProxy extends _i1.Mock
   _i2.WebViewClient Function({
     void Function(_i2.WebViewClient, _i2.WebView, String, bool)?
         doUpdateVisitedHistory,
+<<<<<<< HEAD
     void Function(_i2.WebViewClient, _i2.WebView, String)? onPageFinished,
     void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
+=======
+    void Function(
+      _i2.WebViewClient,
+      _i2.WebView,
+      _i2.AndroidMessage,
+      _i2.AndroidMessage,
+    )? onFormResubmission,
+    void Function(_i2.WebViewClient, _i2.WebView, String)? onLoadResource,
+    void Function(_i2.WebViewClient, _i2.WebView, String)? onPageCommitVisible,
+    void Function(_i2.WebViewClient, _i2.WebView, String)? onPageFinished,
+    void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
+    void Function(_i2.WebViewClient, _i2.WebView, _i2.ClientCertRequest)?
+        onReceivedClientCertRequest,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
     void Function(_i2.WebViewClient, _i2.WebView, int, String, String)?
         onReceivedError,
     void Function(
@@ -776,6 +797,8 @@ class MockAndroidWebViewProxy extends _i1.Mock
       _i2.WebResourceRequest,
       _i2.WebResourceResponse,
     )? onReceivedHttpError,
+    void Function(_i2.WebViewClient, _i2.WebView, String, String?, String)?
+        onReceivedLoginRequest,
     void Function(
       _i2.WebViewClient,
       _i2.WebView,
@@ -788,6 +811,17 @@ class MockAndroidWebViewProxy extends _i1.Mock
       _i2.WebResourceRequest,
       _i2.WebResourceErrorCompat,
     )? onReceivedRequestErrorCompat,
+<<<<<<< HEAD
+=======
+    void Function(
+      _i2.WebViewClient,
+      _i2.WebView,
+      _i2.SslErrorHandler,
+      _i2.SslError,
+    )? onReceivedSslError,
+    void Function(_i2.WebViewClient, _i2.WebView, double, double)?
+        onScaleChanged,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
     void Function(_i2.WebViewClient, _i2.WebView, _i2.WebResourceRequest)?
         requestLoading,
     void Function(_i2.WebViewClient, _i2.WebView, String)? urlLoading,
@@ -796,8 +830,27 @@ class MockAndroidWebViewProxy extends _i1.Mock
         returnValue: ({
           void Function(_i2.WebViewClient, _i2.WebView, String, bool)?
               doUpdateVisitedHistory,
+<<<<<<< HEAD
           void Function(_i2.WebViewClient, _i2.WebView, String)? onPageFinished,
           void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
+=======
+          void Function(
+            _i2.WebViewClient,
+            _i2.WebView,
+            _i2.AndroidMessage,
+            _i2.AndroidMessage,
+          )? onFormResubmission,
+          void Function(_i2.WebViewClient, _i2.WebView, String)? onLoadResource,
+          void Function(_i2.WebViewClient, _i2.WebView, String)?
+              onPageCommitVisible,
+          void Function(_i2.WebViewClient, _i2.WebView, String)? onPageFinished,
+          void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
+          void Function(
+            _i2.WebViewClient,
+            _i2.WebView,
+            _i2.ClientCertRequest,
+          )? onReceivedClientCertRequest,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
           void Function(
             _i2.WebViewClient,
             _i2.WebView,
@@ -821,6 +874,13 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebViewClient,
             _i2.WebView,
+            String,
+            String?,
+            String,
+          )? onReceivedLoginRequest,
+          void Function(
+            _i2.WebViewClient,
+            _i2.WebView,
             _i2.WebResourceRequest,
             _i2.WebResourceError,
           )? onReceivedRequestError,
@@ -833,6 +893,17 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebViewClient,
             _i2.WebView,
+<<<<<<< HEAD
+=======
+            _i2.SslErrorHandler,
+            _i2.SslError,
+          )? onReceivedSslError,
+          void Function(_i2.WebViewClient, _i2.WebView, double, double)?
+              onScaleChanged,
+          void Function(
+            _i2.WebViewClient,
+            _i2.WebView,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
             _i2.WebResourceRequest,
           )? requestLoading,
           void Function(_i2.WebViewClient, _i2.WebView, String)? urlLoading,
@@ -844,8 +915,27 @@ class MockAndroidWebViewProxy extends _i1.Mock
         returnValueForMissingStub: ({
           void Function(_i2.WebViewClient, _i2.WebView, String, bool)?
               doUpdateVisitedHistory,
+<<<<<<< HEAD
           void Function(_i2.WebViewClient, _i2.WebView, String)? onPageFinished,
           void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
+=======
+          void Function(
+            _i2.WebViewClient,
+            _i2.WebView,
+            _i2.AndroidMessage,
+            _i2.AndroidMessage,
+          )? onFormResubmission,
+          void Function(_i2.WebViewClient, _i2.WebView, String)? onLoadResource,
+          void Function(_i2.WebViewClient, _i2.WebView, String)?
+              onPageCommitVisible,
+          void Function(_i2.WebViewClient, _i2.WebView, String)? onPageFinished,
+          void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
+          void Function(
+            _i2.WebViewClient,
+            _i2.WebView,
+            _i2.ClientCertRequest,
+          )? onReceivedClientCertRequest,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
           void Function(
             _i2.WebViewClient,
             _i2.WebView,
@@ -869,6 +959,13 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebViewClient,
             _i2.WebView,
+            String,
+            String?,
+            String,
+          )? onReceivedLoginRequest,
+          void Function(
+            _i2.WebViewClient,
+            _i2.WebView,
             _i2.WebResourceRequest,
             _i2.WebResourceError,
           )? onReceivedRequestError,
@@ -881,6 +978,17 @@ class MockAndroidWebViewProxy extends _i1.Mock
           void Function(
             _i2.WebViewClient,
             _i2.WebView,
+<<<<<<< HEAD
+=======
+            _i2.SslErrorHandler,
+            _i2.SslError,
+          )? onReceivedSslError,
+          void Function(_i2.WebViewClient, _i2.WebView, double, double)?
+              onScaleChanged,
+          void Function(
+            _i2.WebViewClient,
+            _i2.WebView,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
             _i2.WebResourceRequest,
           )? requestLoading,
           void Function(_i2.WebViewClient, _i2.WebView, String)? urlLoading,
@@ -892,8 +1000,27 @@ class MockAndroidWebViewProxy extends _i1.Mock
       ) as _i2.WebViewClient Function({
         void Function(_i2.WebViewClient, _i2.WebView, String, bool)?
             doUpdateVisitedHistory,
+<<<<<<< HEAD
         void Function(_i2.WebViewClient, _i2.WebView, String)? onPageFinished,
         void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
+=======
+        void Function(
+          _i2.WebViewClient,
+          _i2.WebView,
+          _i2.AndroidMessage,
+          _i2.AndroidMessage,
+        )? onFormResubmission,
+        void Function(_i2.WebViewClient, _i2.WebView, String)? onLoadResource,
+        void Function(_i2.WebViewClient, _i2.WebView, String)?
+            onPageCommitVisible,
+        void Function(_i2.WebViewClient, _i2.WebView, String)? onPageFinished,
+        void Function(_i2.WebViewClient, _i2.WebView, String)? onPageStarted,
+        void Function(
+          _i2.WebViewClient,
+          _i2.WebView,
+          _i2.ClientCertRequest,
+        )? onReceivedClientCertRequest,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
         void Function(_i2.WebViewClient, _i2.WebView, int, String, String)?
             onReceivedError,
         void Function(
@@ -912,6 +1039,13 @@ class MockAndroidWebViewProxy extends _i1.Mock
         void Function(
           _i2.WebViewClient,
           _i2.WebView,
+          String,
+          String?,
+          String,
+        )? onReceivedLoginRequest,
+        void Function(
+          _i2.WebViewClient,
+          _i2.WebView,
           _i2.WebResourceRequest,
           _i2.WebResourceError,
         )? onReceivedRequestError,
@@ -924,6 +1058,17 @@ class MockAndroidWebViewProxy extends _i1.Mock
         void Function(
           _i2.WebViewClient,
           _i2.WebView,
+<<<<<<< HEAD
+=======
+          _i2.SslErrorHandler,
+          _i2.SslError,
+        )? onReceivedSslError,
+        void Function(_i2.WebViewClient, _i2.WebView, double, double)?
+            onScaleChanged,
+        void Function(
+          _i2.WebViewClient,
+          _i2.WebView,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
           _i2.WebResourceRequest,
         )? requestLoading,
         void Function(_i2.WebViewClient, _i2.WebView, String)? urlLoading,
@@ -982,6 +1127,20 @@ class MockAndroidWebViewProxy extends _i1.Mock
 
   @override
   _i2.WebChromeClient Function({
+<<<<<<< HEAD
+=======
+    required _i8.Future<bool> Function(
+      _i2.WebChromeClient,
+      _i2.WebView,
+      String,
+      String,
+    ) onJsConfirm,
+    required _i8.Future<List<String>> Function(
+      _i2.WebChromeClient,
+      _i2.WebView,
+      _i2.FileChooserParams,
+    ) onShowFileChooser,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
     void Function(_i2.WebChromeClient, _i2.ConsoleMessage)? onConsoleMessage,
     void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
     void Function(
@@ -992,8 +1151,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(_i2.WebChromeClient)? onHideCustomView,
     _i8.Future<void> Function(_i2.WebChromeClient, _i2.WebView, String, String)?
         onJsAlert,
+<<<<<<< HEAD
     _i8.Future<bool> Function(_i2.WebChromeClient, _i2.WebView, String, String)?
         onJsConfirm,
+=======
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
     _i8.Future<String?> Function(
       _i2.WebChromeClient,
       _i2.WebView,
@@ -1006,11 +1168,14 @@ class MockAndroidWebViewProxy extends _i1.Mock
     void Function(_i2.WebChromeClient, _i2.WebView, int)? onProgressChanged,
     void Function(_i2.WebChromeClient, _i2.View, _i2.CustomViewCallback)?
         onShowCustomView,
+<<<<<<< HEAD
     _i8.Future<List<String>> Function(
       _i2.WebChromeClient,
       _i2.WebView,
       _i2.FileChooserParams,
     )? onShowFileChooser,
+=======
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
   }) get newWebChromeClient => (super.noSuchMethod(
         Invocation.getter(#newWebChromeClient),
         returnValue: ({
@@ -1030,12 +1195,12 @@ class MockAndroidWebViewProxy extends _i1.Mock
             String,
             String,
           )? onJsAlert,
-          _i8.Future<bool> Function(
+          required _i8.Future<bool> Function(
             _i2.WebChromeClient,
             _i2.WebView,
             String,
             String,
-          )? onJsConfirm,
+          ) onJsConfirm,
           _i8.Future<String?> Function(
             _i2.WebChromeClient,
             _i2.WebView,
@@ -1052,11 +1217,11 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.View,
             _i2.CustomViewCallback,
           )? onShowCustomView,
-          _i8.Future<List<String>> Function(
+          required _i8.Future<List<String>> Function(
             _i2.WebChromeClient,
             _i2.WebView,
             _i2.FileChooserParams,
-          )? onShowFileChooser,
+          ) onShowFileChooser,
         }) =>
             _FakeWebChromeClient_0(
           this,
@@ -1079,12 +1244,12 @@ class MockAndroidWebViewProxy extends _i1.Mock
             String,
             String,
           )? onJsAlert,
-          _i8.Future<bool> Function(
+          required _i8.Future<bool> Function(
             _i2.WebChromeClient,
             _i2.WebView,
             String,
             String,
-          )? onJsConfirm,
+          ) onJsConfirm,
           _i8.Future<String?> Function(
             _i2.WebChromeClient,
             _i2.WebView,
@@ -1101,17 +1266,31 @@ class MockAndroidWebViewProxy extends _i1.Mock
             _i2.View,
             _i2.CustomViewCallback,
           )? onShowCustomView,
-          _i8.Future<List<String>> Function(
+          required _i8.Future<List<String>> Function(
             _i2.WebChromeClient,
             _i2.WebView,
             _i2.FileChooserParams,
-          )? onShowFileChooser,
+          ) onShowFileChooser,
         }) =>
             _FakeWebChromeClient_0(
           this,
           Invocation.getter(#newWebChromeClient),
         ),
       ) as _i2.WebChromeClient Function({
+<<<<<<< HEAD
+=======
+        required _i8.Future<bool> Function(
+          _i2.WebChromeClient,
+          _i2.WebView,
+          String,
+          String,
+        ) onJsConfirm,
+        required _i8.Future<List<String>> Function(
+          _i2.WebChromeClient,
+          _i2.WebView,
+          _i2.FileChooserParams,
+        ) onShowFileChooser,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
         void Function(_i2.WebChromeClient, _i2.ConsoleMessage)?
             onConsoleMessage,
         void Function(_i2.WebChromeClient)? onGeolocationPermissionsHidePrompt,
@@ -1127,12 +1306,6 @@ class MockAndroidWebViewProxy extends _i1.Mock
           String,
           String,
         )? onJsAlert,
-        _i8.Future<bool> Function(
-          _i2.WebChromeClient,
-          _i2.WebView,
-          String,
-          String,
-        )? onJsConfirm,
         _i8.Future<String?> Function(
           _i2.WebChromeClient,
           _i2.WebView,
@@ -1148,11 +1321,6 @@ class MockAndroidWebViewProxy extends _i1.Mock
           _i2.View,
           _i2.CustomViewCallback,
         )? onShowCustomView,
-        _i8.Future<List<String>> Function(
-          _i2.WebChromeClient,
-          _i2.WebView,
-          _i2.FileChooserParams,
-        )? onShowFileChooser,
       }));
 
   @override
@@ -1852,6 +2020,56 @@ class MockSurfaceAndroidViewController extends _i1.Mock
 /// See the documentation for Mockito's code generation for more information.
 class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
   @override
+  _i8.Future<List<String>> Function(
+    _i2.WebChromeClient,
+    _i2.WebView,
+    _i2.FileChooserParams,
+  ) get onShowFileChooser => (super.noSuchMethod(
+        Invocation.getter(#onShowFileChooser),
+        returnValue: (
+          _i2.WebChromeClient pigeon_instance,
+          _i2.WebView webView,
+          _i2.FileChooserParams params,
+        ) =>
+            _i8.Future<List<String>>.value(<String>[]),
+        returnValueForMissingStub: (
+          _i2.WebChromeClient pigeon_instance,
+          _i2.WebView webView,
+          _i2.FileChooserParams params,
+        ) =>
+            _i8.Future<List<String>>.value(<String>[]),
+      ) as _i8.Future<List<String>> Function(
+        _i2.WebChromeClient,
+        _i2.WebView,
+        _i2.FileChooserParams,
+      ));
+
+  @override
+  _i8.Future<bool> Function(_i2.WebChromeClient, _i2.WebView, String, String)
+      get onJsConfirm => (super.noSuchMethod(
+            Invocation.getter(#onJsConfirm),
+            returnValue: (
+              _i2.WebChromeClient pigeon_instance,
+              _i2.WebView webView,
+              String url,
+              String message,
+            ) =>
+                _i8.Future<bool>.value(false),
+            returnValueForMissingStub: (
+              _i2.WebChromeClient pigeon_instance,
+              _i2.WebView webView,
+              String url,
+              String message,
+            ) =>
+                _i8.Future<bool>.value(false),
+          ) as _i8.Future<bool> Function(
+            _i2.WebChromeClient,
+            _i2.WebView,
+            String,
+            String,
+          ));
+
+  @override
   _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
         Invocation.getter(#pigeon_instanceManager),
         returnValue: _FakePigeonInstanceManager_12(
@@ -2333,6 +2551,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
       ) as _i8.Future<_i2.WebViewPoint>);
 
   @override
+<<<<<<< HEAD
   _i8.Future<void> setVerticalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(#setVerticalScrollBarEnabled, [enabled]),
@@ -2344,6 +2563,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i8.Future<void> setHorizontalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(#setHorizontalScrollBarEnabled, [enabled]),
+=======
+  _i8.Future<void> setOverScrollMode(_i2.OverScrollMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(#setOverScrollMode, [mode]),
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);

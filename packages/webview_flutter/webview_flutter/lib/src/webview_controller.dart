@@ -415,6 +415,13 @@ class WebViewController {
   Future<void> setHorizontalScrollBarEnabled(bool enabled) {
     return platform.setHorizontalScrollBarEnabled(enabled);
   }
+
+  /// Sets the over-scroll mode for the WebView.
+  ///
+  /// Default behavior is platform dependent.
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
+    return platform.setOverScrollMode(mode);
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.

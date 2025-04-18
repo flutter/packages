@@ -114,7 +114,7 @@ platform_properties:
 targets:
   - name: Linux repo_checks
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       target_file: repo_checks.yaml

@@ -548,6 +548,7 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
       ) as _i4.Future<_i2.WebViewPoint>);
 
   @override
+<<<<<<< HEAD
   _i4.Future<void> setVerticalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(#setVerticalScrollBarEnabled, [enabled]),
@@ -559,6 +560,11 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   _i4.Future<void> setHorizontalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(#setHorizontalScrollBarEnabled, [enabled]),
+=======
+  _i4.Future<void> setOverScrollMode(_i2.OverScrollMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(#setOverScrollMode, [mode]),
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
@@ -727,6 +733,43 @@ class MockWebChromeClient extends _i1.Mock implements _i2.WebChromeClient {
   MockWebChromeClient() {
     _i1.throwOnMissingStub(this);
   }
+
+  @override
+  _i4.Future<List<String>> Function(
+    _i2.WebChromeClient,
+    _i2.WebView,
+    _i2.FileChooserParams,
+  ) get onShowFileChooser => (super.noSuchMethod(
+        Invocation.getter(#onShowFileChooser),
+        returnValue: (
+          _i2.WebChromeClient pigeon_instance,
+          _i2.WebView webView,
+          _i2.FileChooserParams params,
+        ) =>
+            _i4.Future<List<String>>.value(<String>[]),
+      ) as _i4.Future<List<String>> Function(
+        _i2.WebChromeClient,
+        _i2.WebView,
+        _i2.FileChooserParams,
+      ));
+
+  @override
+  _i4.Future<bool> Function(_i2.WebChromeClient, _i2.WebView, String, String)
+      get onJsConfirm => (super.noSuchMethod(
+            Invocation.getter(#onJsConfirm),
+            returnValue: (
+              _i2.WebChromeClient pigeon_instance,
+              _i2.WebView webView,
+              String url,
+              String message,
+            ) =>
+                _i4.Future<bool>.value(false),
+          ) as _i4.Future<bool> Function(
+            _i2.WebChromeClient,
+            _i2.WebView,
+            String,
+            String,
+          ));
 
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
@@ -941,6 +984,23 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
         onReceivedError,
     void Function(_i2.WebViewClient, _i2.WebView, _i2.WebResourceRequest)?
         requestLoading,
+<<<<<<< HEAD
+=======
+    void Function(
+      _i2.WebViewClient,
+      _i2.WebView,
+      _i2.AndroidMessage,
+      _i2.AndroidMessage,
+    )? onFormResubmission,
+    void Function(_i2.WebViewClient, _i2.WebView, _i2.ClientCertRequest)?
+        onReceivedClientCertRequest,
+    void Function(
+      _i2.WebViewClient,
+      _i2.WebView,
+      _i2.SslErrorHandler,
+      _i2.SslError,
+    )? onReceivedSslError,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
     void Function(_i2.WebViewClient, _i2.WebView, String)? urlLoading,
   }) =>
       (super.noSuchMethod(
@@ -950,6 +1010,12 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
           #onReceivedRequestError: onReceivedRequestError,
           #onReceivedError: onReceivedError,
           #requestLoading: requestLoading,
+<<<<<<< HEAD
+=======
+          #onFormResubmission: onFormResubmission,
+          #onReceivedClientCertRequest: onReceivedClientCertRequest,
+          #onReceivedSslError: onReceivedSslError,
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
           #urlLoading: urlLoading,
         }),
         returnValue: _FakeWebViewClient_11(
@@ -960,6 +1026,9 @@ class MockWebViewProxy extends _i1.Mock implements _i7.WebViewProxy {
             #onReceivedRequestError: onReceivedRequestError,
             #onReceivedError: onReceivedError,
             #requestLoading: requestLoading,
+            #onFormResubmission: onFormResubmission,
+            #onReceivedClientCertRequest: onReceivedClientCertRequest,
+            #onReceivedSslError: onReceivedSslError,
             #urlLoading: urlLoading,
           }),
         ),

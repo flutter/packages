@@ -20,11 +20,12 @@ void main() {
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
+    late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
       mockPlatform = MockPlatform();
       final GitDir gitDir;
-      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
       final FirebaseTestLabCommand command = FirebaseTestLabCommand(
         packagesDir,
@@ -167,11 +168,7 @@ public class MainActivityTest {
           ProcessCall(
               'flutter',
               const <String>['build', 'apk', '--debug', '--config-only'],
-              plugin1
-                  .getExamples()
-                  .first
-                  .platformDirectory(FlutterPlatform.android)
-                  .path),
+              plugin1.getExamples().first.directory.path),
           ProcessCall(
               'gcloud',
               'auth activate-service-account --key-file=/path/to/key'
@@ -196,11 +193,7 @@ public class MainActivityTest {
           ProcessCall(
               'flutter',
               const <String>['build', 'apk', '--debug', '--config-only'],
-              plugin2
-                  .getExamples()
-                  .first
-                  .platformDirectory(FlutterPlatform.android)
-                  .path),
+              plugin2.getExamples().first.directory.path),
           ProcessCall(
               '/packages/plugin2/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true'.split(' '),
@@ -264,11 +257,7 @@ public class MainActivityTest {
           ProcessCall(
               'flutter',
               const <String>['build', 'apk', '--debug', '--config-only'],
-              plugin
-                  .getExamples()
-                  .first
-                  .platformDirectory(FlutterPlatform.android)
-                  .path),
+              plugin.getExamples().first.directory.path),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true'.split(' '),
@@ -694,11 +683,7 @@ class MainActivityTest {
           ProcessCall(
             'flutter',
             'build apk --debug --config-only'.split(' '),
-            plugin
-                .getExamples()
-                .first
-                .platformDirectory(FlutterPlatform.android)
-                .path,
+            plugin.getExamples().first.directory.path,
           ),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
@@ -878,11 +863,7 @@ class MainActivityTest {
                 '--config-only',
                 '--enable-experiment=exp1'
               ],
-              plugin
-                  .getExamples()
-                  .first
-                  .platformDirectory(FlutterPlatform.android)
-                  .path),
+              plugin.getExamples().first.directory.path),
           ProcessCall(
               '/packages/plugin/example/android/gradlew',
               'app:assembleAndroidTest -Pverbose=true -Pextra-front-end-options=--enable-experiment%3Dexp1 -Pextra-gen-snapshot-options=--enable-experiment%3Dexp1'
@@ -900,6 +881,76 @@ class MainActivityTest {
               '/packages/plugin/example'),
         ]),
       );
+    });
+
+    group('file filtering', () {
+      const List<String> files = <String>[
+        'pubspec.yaml',
+        'foo.dart',
+        'foo.java',
+        'foo.kt',
+        'foo.m',
+        'foo.swift',
+        'foo.cc',
+        'foo.cpp',
+        'foo.h',
+      ];
+      for (final String file in files) {
+        test('runs command for changes to $file', () async {
+          createFakePackage('package_a', packagesDir);
+
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(stdout: '''
+packages/package_a/$file
+''')),
+          ];
+
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'firebase-test-lab',
+            '--results-bucket=a_bucket',
+            '--device',
+            'model=redfin,version=30',
+          ]);
+
+          expect(
+              output,
+              containsAllInOrder(<Matcher>[
+                contains('Running for package_a'),
+              ]));
+        });
+      }
+
+      test('skips commands if all files should be ignored', () async {
+        createFakePackage('package_a', packagesDir);
+
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+README.md
+CODEOWNERS
+packages/package_a/CHANGELOG.md
+''')),
+        ];
+
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'firebase-test-lab',
+          '--results-bucket=a_bucket',
+          '--device',
+          'model=redfin,version=30',
+        ]);
+
+        expect(
+            output,
+            isNot(containsAllInOrder(<Matcher>[
+              contains('Running for package_a'),
+            ])));
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('SKIPPING ALL PACKAGES'),
+            ]));
+      });
     });
   });
 }

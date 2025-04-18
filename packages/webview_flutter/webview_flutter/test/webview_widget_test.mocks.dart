@@ -232,6 +232,7 @@ class MockPlatformWebViewController extends _i1.Mock
   @override
   _i7.Future<void> scrollBy(int? x, int? y) => (super.noSuchMethod(
         Invocation.method(#scrollBy, [x, y]),
+<<<<<<< HEAD
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
       ) as _i7.Future<void>);
@@ -248,6 +249,8 @@ class MockPlatformWebViewController extends _i1.Mock
   _i7.Future<void> setHorizontalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
         Invocation.method(#setHorizontalScrollBarEnabled, [enabled]),
+=======
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
       ) as _i7.Future<void>);
@@ -364,6 +367,17 @@ class MockPlatformWebViewController extends _i1.Mock
         Invocation.method(#setOnJavaScriptTextInputDialog, [
           onJavaScriptTextInputDialog,
         ]),
+<<<<<<< HEAD
+=======
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> setOverScrollMode(_i2.WebViewOverScrollMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(#setOverScrollMode, [mode]),
+>>>>>>> bfb42a62a56ee53010e7c2601cbf1bac993122f2
         returnValue: _i7.Future<void>.value(),
         returnValueForMissingStub: _i7.Future<void>.value(),
       ) as _i7.Future<void>);

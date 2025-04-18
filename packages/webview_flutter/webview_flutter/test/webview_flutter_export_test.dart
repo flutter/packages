@@ -30,6 +30,7 @@ void main() {
         main_file.PlatformWebViewPermissionRequest;
         main_file.PlatformWebViewWidgetCreationParams;
         main_file.ProgressCallback;
+        main_file.WebViewOverScrollMode;
         main_file.WebViewPermissionResourceType;
         main_file.WebResourceError;
         main_file.WebResourceErrorCallback;

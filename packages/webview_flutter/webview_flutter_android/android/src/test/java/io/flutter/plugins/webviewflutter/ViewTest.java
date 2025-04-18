@@ -71,4 +71,15 @@ public class ViewTest {
 
     verify(instance).setHorizontalScrollBarEnabled(enabled);
   }
+
+  @Test
+  public void setOverScrollMode() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
+
+    final View instance = mock(View.class);
+    final OverScrollMode mode = io.flutter.plugins.webviewflutter.OverScrollMode.ALWAYS;
+    api.setOverScrollMode(instance, mode);
+
+    verify(instance).setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+  }
 }
