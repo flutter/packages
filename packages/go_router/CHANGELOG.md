@@ -1,3 +1,22 @@
+## 15.0.0
+
+- **BREAKING CHANGE**
+  - URLs are now case sensitive.
+  - Adds `caseSensitive` parameter to `GoRouter` (default to `true`).
+  - See [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes)
+
+## 14.8.1
+
+- Secured canPop method for the lack of matches in routerDelegate's configuration.
+ 
+## 14.8.0
+
+- Adds `preload` parameter to `StatefulShellBranchData.$branch`.
+
+## 14.7.2
+
+- Add missing `await` keyword to `onTap` callback in `navigation.md`.
+
 ## 14.7.1
 
 - Fixes return type of current state getter on `GoRouter` and `GoRouterDelegate` to be non-nullable.

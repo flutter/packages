@@ -200,6 +200,12 @@ LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
   );
 }
 
+/// Converts a [LatLngBounds] into a [gmaps.LatLngBounds].
+gmaps.LatLngBounds latLngBoundsToGmlatLngBounds(LatLngBounds latLngBounds) {
+  return gmaps.LatLngBounds(_latLngToGmLatLng(latLngBounds.southwest),
+      _latLngToGmLatLng(latLngBounds.northeast));
+}
+
 CameraPosition _gmViewportToCameraPosition(gmaps.Map map) {
   return CameraPosition(
     target:
@@ -296,6 +302,18 @@ void _setIconSize({
   icon.scaledSize = gmapsSize;
 }
 
+void _setIconAnchor({
+  required Size size,
+  required Offset anchor,
+  required gmaps.Icon icon,
+}) {
+  final gmaps.Point gmapsAnchor = gmaps.Point(
+    size.width * anchor.dx,
+    size.height * anchor.dy,
+  );
+  icon.anchor = gmapsAnchor;
+}
+
 /// Determines the appropriate size for a bitmap based on its descriptor.
 ///
 /// This method returns the icon's size based on the provided [width] and
@@ -371,21 +389,11 @@ void _cleanUpBitmapConversionCaches() {
 
 // Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
 Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
-    BitmapDescriptor bitmapDescriptor) async {
+    BitmapDescriptor bitmapDescriptor, Offset anchor) async {
   gmaps.Icon? icon;
 
   if (bitmapDescriptor is MapBitmap) {
-    final String url = switch (bitmapDescriptor) {
-      (final BytesMapBitmap bytesMapBitmap) =>
-        _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
-          final Blob blob =
-              Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
-          return URL.createObjectURL(blob as JSObject);
-        }),
-      (final AssetMapBitmap assetMapBitmap) =>
-        ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
-      _ => throw UnimplementedError(),
-    };
+    final String url = urlFromMapBitmap(bitmapDescriptor);
 
     icon = gmaps.Icon()..url = url;
 
@@ -394,6 +402,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
         final Size? size = await _getBitmapSize(bitmapDescriptor, url);
         if (size != null) {
           _setIconSize(size: size, icon: icon);
+          _setIconAnchor(size: size, anchor: anchor, icon: icon);
         }
       case MapBitmapScaling.none:
         break;
@@ -460,7 +469,7 @@ Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
     ..visible = marker.visible
     ..opacity = marker.alpha
     ..draggable = marker.draggable
-    ..icon = await _gmIconFromBitmapDescriptor(marker.icon);
+    ..icon = await _gmIconFromBitmapDescriptor(marker.icon, marker.anchor);
   // TODO(ditman): Compute anchor properly, otherwise infowindows attach to the wrong spot.
   // Flat and Rotation are not supported directly on the web.
 }
@@ -676,6 +685,22 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
     default:
       throw UnimplementedError('Unimplemented CameraMove: ${json[0]}.');
   }
+}
+
+/// Converts a [MapBitmap] into a URL.
+String urlFromMapBitmap(MapBitmap mapBitmap) {
+  return switch (mapBitmap) {
+    (final BytesMapBitmap bytesMapBitmap) =>
+      _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
+        final Blob blob =
+            Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
+        return URL.createObjectURL(blob as JSObject);
+      }),
+    (final AssetMapBitmap assetMapBitmap) =>
+      ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
+    _ => throw UnimplementedError(
+        'Only BytesMapBitmap and AssetMapBitmap are supported.'),
+  };
 }
 
 // original JS by: Byron Singh (https://stackoverflow.com/a/30541162)

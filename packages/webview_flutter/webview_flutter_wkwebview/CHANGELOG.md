@@ -1,3 +1,45 @@
+## 3.20.0
+
+* Adds support to disable a preview of the destination for a link. See
+  `WebKitWebViewController.setAllowsLinkPreview`.
+
+## 3.19.0
+
+* Adds support to set the over-scroll mode for the WebView. See `WebKitWebViewController.setOverScrollMode`.
+
+## 3.18.6
+
+* Fixes `PlatformException` when calling `loadFlutterAsset` on macOS.
+* Updates native wrapper with methods handling `SecTust` and `SecCertificate`. 
+
+## 3.18.5
+
+* Fixes crash when sending undefined message via JavaScript channel.
+
+## 3.18.4
+
+* Fixes crash when native `WKFrameInfo.request` is nil.
+
+## 3.18.3
+
+* Fixes crash where the native `AuthenticationChallengeResponse` could not be found for auth
+  requests.
+
+## 3.18.2
+
+* Updates generated pigeon code to ensure the internal wrapper immediately sends constructor calls.
+
+## 3.18.1
+
+* Fixes bug that would allow the API wrapper to return `null` when a non-null value was required in
+  a callback method.
+* Changes default method to enable JavaScript for web content to
+  `WKWebpagePreferences.allowsContentJavaScript`. 
+
+## 3.18.0
+
+* Updates internal API wrapper to use ProxyApis.
+
 ## 3.17.0
 
 * Adds a change listener for the `canGoBack` property. See

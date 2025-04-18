@@ -465,7 +465,7 @@ class FLALocalAuthPluginTests: XCTestCase {
     XCTAssertNil(error)
   }
 
-  func testDeviceSupportsBiometrics_withBiometryNotAvailableLoadedBiometryType() {
+  func testDeviceSupportsBiometrics_withBiometryNotAvailableWhenPermissionsDenied() {
     let stubAuthContext = StubAuthContext()
     let alertFactory = StubAlertFactory()
     let viewProvider = StubViewProvider()

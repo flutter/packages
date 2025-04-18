@@ -30,6 +30,21 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    return a.length == b.length &&
+        a.entries.every((MapEntry<Object?, Object?> entry) =>
+            (b as Map<Object?, Object?>).containsKey(entry.key) &&
+            _deepEquals(entry.value, b[entry.key]));
+  }
+  return a == b;
+}
+
 enum NullFieldsSearchReplyType {
   success,
   failure,
@@ -45,11 +60,15 @@ class NullFieldsSearchRequest {
 
   int identifier;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       query,
       identifier,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static NullFieldsSearchRequest decode(Object result) {
@@ -59,6 +78,22 @@ class NullFieldsSearchRequest {
       identifier: result[1]! as int,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NullFieldsSearchRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class NullFieldsSearchReply {
@@ -80,7 +115,7 @@ class NullFieldsSearchReply {
 
   NullFieldsSearchReplyType? type;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       result,
       error,
@@ -88,6 +123,10 @@ class NullFieldsSearchReply {
       request,
       type,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static NullFieldsSearchReply decode(Object result) {
@@ -100,6 +139,22 @@ class NullFieldsSearchReply {
       type: result[4] as NullFieldsSearchReplyType?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NullFieldsSearchReply || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -163,8 +218,10 @@ class NullFieldsHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[nested]);
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[nested]) as List<Object?>?;
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

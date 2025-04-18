@@ -23,6 +23,7 @@ import io.flutter.plugin.common.BinaryMessenger
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
+import java.lang.ClassCastException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -203,13 +204,20 @@ class SharedPreferencesPlugin() : FlutterPlugin, SharedPreferencesAsyncApi {
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): String? {
+  override fun getStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): StringListResult? {
     val stringValue = getString(key, options)
     stringValue?.let {
       // The JSON-encoded lists use an extended prefix to distinguish them from
       // lists that using listEncoder.
-      if (stringValue.startsWith(JSON_LIST_PREFIX)) {
-        return stringValue
+      return if (stringValue.startsWith(JSON_LIST_PREFIX)) {
+        StringListResult(stringValue, StringListLookupResultType.JSON_ENCODED)
+      } else if (stringValue.startsWith(LIST_PREFIX)) {
+        StringListResult(null, StringListLookupResultType.PLATFORM_ENCODED)
+      } else {
+        StringListResult(null, StringListLookupResultType.UNEXPECTED_STRING)
       }
     }
     return null
@@ -372,7 +380,12 @@ class SharedPreferencesBackend(
   override fun getInt(key: String, options: SharedPreferencesPigeonOptions): Long? {
     val preferences = createSharedPreferences(options)
     return if (preferences.contains(key)) {
-      preferences.getLong(key, 0)
+      try {
+        preferences.getLong(key, 0)
+      } catch (e: ClassCastException) {
+        // Retry with getInt in case the preference was written by native code directly.
+        preferences.getInt(key, 0).toLong()
+      }
     } else {
       null
     }
@@ -408,12 +421,21 @@ class SharedPreferencesBackend(
   }
 
   /** Gets StringList at [key] from data store. */
-  override fun getStringList(key: String, options: SharedPreferencesPigeonOptions): String? {
+  override fun getStringList(
+      key: String,
+      options: SharedPreferencesPigeonOptions
+  ): StringListResult? {
     val preferences = createSharedPreferences(options)
     if (preferences.contains(key)) {
       val value = preferences.getString(key, "")
-      if (value!!.startsWith(JSON_LIST_PREFIX)) {
-        return value
+      // The JSON-encoded lists use an extended prefix to distinguish them from
+      // lists that using listEncoder.
+      return if (value!!.startsWith(JSON_LIST_PREFIX)) {
+        StringListResult(value, StringListLookupResultType.JSON_ENCODED)
+      } else if (value.startsWith(LIST_PREFIX)) {
+        StringListResult(null, StringListLookupResultType.PLATFORM_ENCODED)
+      } else {
+        StringListResult(null, StringListLookupResultType.UNEXPECTED_STRING)
       }
     }
     return null

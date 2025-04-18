@@ -96,7 +96,27 @@ internal class SharedPreferencesTest {
   fun testSetAndGetStringListWithDataStore() {
     val plugin = pluginSetup(dataStoreOptions)
     plugin.setEncodedStringList(listKey, testList, dataStoreOptions)
-    Assert.assertEquals(plugin.getStringList(listKey, dataStoreOptions), testList)
+    val result = plugin.getStringList(listKey, dataStoreOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, testList)
+    Assert.assertEquals(result?.type, StringListLookupResultType.JSON_ENCODED)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithDataStoreRedirectsForPlatformEncoded() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setDeprecatedStringList(listKey, listOf(""), dataStoreOptions)
+    val result = plugin.getStringList(listKey, dataStoreOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.type, StringListLookupResultType.PLATFORM_ENCODED)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithDataStoreReportsRawString() {
+    val plugin = pluginSetup(dataStoreOptions)
+    plugin.setString(listKey, testString, dataStoreOptions)
+    val result = plugin.getStringList(listKey, dataStoreOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.type, StringListLookupResultType.UNEXPECTED_STRING)
   }
 
   @Test
@@ -217,7 +237,27 @@ internal class SharedPreferencesTest {
   fun testSetAndGetStringListWithSharedPreferences() {
     val plugin = pluginSetup(sharedPreferencesOptions)
     plugin.setEncodedStringList(listKey, testList, sharedPreferencesOptions)
-    Assert.assertEquals(plugin.getStringList(listKey, sharedPreferencesOptions), testList)
+    val result = plugin.getStringList(listKey, sharedPreferencesOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, testList)
+    Assert.assertEquals(result?.type, StringListLookupResultType.JSON_ENCODED)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithSharedPreferencesRedirectsForPlatformEncoded() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setDeprecatedStringList(listKey, listOf(""), sharedPreferencesOptions)
+    val result = plugin.getStringList(listKey, sharedPreferencesOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.type, StringListLookupResultType.PLATFORM_ENCODED)
+  }
+
+  @Test
+  fun testSetAndGetStringListWithSharedPreferencesReportsRawString() {
+    val plugin = pluginSetup(sharedPreferencesOptions)
+    plugin.setString(listKey, testString, sharedPreferencesOptions)
+    val result = plugin.getStringList(listKey, sharedPreferencesOptions)
+    Assert.assertEquals(result?.jsonEncodedValue, null)
+    Assert.assertEquals(result?.type, StringListLookupResultType.UNEXPECTED_STRING)
   }
 
   @Test

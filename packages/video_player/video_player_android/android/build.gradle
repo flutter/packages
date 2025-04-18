@@ -23,7 +23,7 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'io.flutter.plugins.videoplayer'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
         minSdkVersion 21
@@ -47,7 +47,7 @@ android {
         implementation "androidx.media3:media3-exoplayer-rtsp:${exoplayer_version}"
         implementation "androidx.media3:media3-exoplayer-smoothstreaming:${exoplayer_version}"
         testImplementation 'junit:junit:4.13.2'
-        testImplementation 'androidx.test:core:1.3.0'
+        testImplementation 'androidx.test:core:1.4.0'
         testImplementation 'org.mockito:mockito-inline:5.0.0'
         testImplementation 'org.robolectric:robolectric:4.10.3'
         testImplementation "androidx.media3:media3-test-utils:${exoplayer_version}"
@@ -61,7 +61,7 @@ android {
             // the Java heap size when running the Android unit tests. The following property here
             // sets the heap size to a size large enough to run the robolectric tests across
             // multiple SDK levels.
-            jvmArgs "-Xmx1g"
+            jvmArgs "-Xmx4G"
             testLogging {
                events "passed", "skipped", "failed", "standardOut", "standardError"
                outputs.upToDateWhen {false}

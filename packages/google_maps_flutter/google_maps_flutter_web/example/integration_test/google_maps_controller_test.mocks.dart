@@ -594,3 +594,87 @@ class MockTileOverlaysController extends _i1.Mock
         returnValueForMissingStub: null,
       );
 }
+
+/// A class which mocks [GroundOverlaysController].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockGroundOverlaysController extends _i1.Mock
+    implements _i2.GroundOverlaysController {
+  @override
+  _i4.Map get googleMap => (super.noSuchMethod(
+        Invocation.getter(#googleMap),
+        returnValue: _i5.mapShim(),
+        returnValueForMissingStub: _i5.mapShim(),
+      ) as _i4.Map);
+
+  @override
+  set googleMap(_i4.Map? _googleMap) => super.noSuchMethod(
+        Invocation.setter(
+          #googleMap,
+          _googleMap,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  int get mapId => (super.noSuchMethod(
+        Invocation.getter(#mapId),
+        returnValue: 0,
+        returnValueForMissingStub: 0,
+      ) as int);
+
+  @override
+  set mapId(int? _mapId) => super.noSuchMethod(
+        Invocation.setter(
+          #mapId,
+          _mapId,
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void addGroundOverlays(Set<_i3.GroundOverlay>? groundOverlaysToAdd) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #addGroundOverlays,
+          [groundOverlaysToAdd],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void changeGroundOverlays(Set<_i3.GroundOverlay>? groundOverlays) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #changeGroundOverlays,
+          [groundOverlays],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void removeGroundOverlays(Set<_i3.GroundOverlayId>? groundOverlayIds) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #removeGroundOverlays,
+          [groundOverlayIds],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void bindToMap(
+    int? mapId,
+    _i4.Map? googleMap,
+  ) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #bindToMap,
+          [
+            mapId,
+            googleMap,
+          ],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
