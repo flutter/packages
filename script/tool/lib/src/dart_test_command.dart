@@ -5,6 +5,7 @@
 import 'package:file/file.dart';
 
 import 'common/core.dart';
+import 'common/file_filters.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
@@ -64,6 +65,13 @@ class DartTestCommand extends PackageLoopingCommand {
   @override
   PackageLoopingType get packageLoopingType =>
       PackageLoopingType.includeAllSubpackages;
+
+  @override
+  bool shouldIgnoreFile(String path) {
+    return isRepoLevelNonCodeImpactingFile(path) ||
+        isNativeCodeFile(path) ||
+        isPackageSupportFile(path);
+  }
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
