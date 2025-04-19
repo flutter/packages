@@ -1,6 +1,7 @@
-## NEXT
+## 0.3.4
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes a bug where collapsing a node in a TreeView with other offscreen nodes would dereference a null value.
 
 ## 0.3.3
 
