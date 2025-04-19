@@ -663,7 +663,7 @@ public class CameraTest {
     camera.mediaRecorder = mockMediaRecorder;
     camera.recordingVideo = true;
     camera.videoRenderer = mockVideoRenderer;
-    SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.LOLLIPOP;
+    SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.N;
 
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
     assertThrows(
