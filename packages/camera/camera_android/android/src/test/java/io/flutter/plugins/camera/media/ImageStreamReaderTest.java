@@ -9,15 +9,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.graphics.ImageFormat;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.Handler;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -61,40 +66,9 @@ public class ImageStreamReaderTest {
     when(mockImageStreamReaderUtils.yuv420ThreePlanesToNV21(any(), anyInt(), anyInt()))
         .thenReturn(mockBytes);
 
-    // The image format as streamed from the camera
-    int imageFormat = ImageFormat.YUV_420_888;
-
-    // Mock YUV image
-    Image mockImage = mock(Image.class);
-    when(mockImage.getWidth()).thenReturn(1280);
-    when(mockImage.getHeight()).thenReturn(720);
-    when(mockImage.getFormat()).thenReturn(imageFormat);
-
-    // Mock planes. YUV images have 3 planes (Y, U, V).
-    Image.Plane planeY = mock(Image.Plane.class);
-    Image.Plane planeU = mock(Image.Plane.class);
-    Image.Plane planeV = mock(Image.Plane.class);
-
-    // Y plane is width*height
-    // Row stride is generally == width but when there is padding it will
-    // be larger. The numbers in this example are from a Vivo V2135 on 'high'
-    // setting (1280x720).
-    when(planeY.getBuffer()).thenReturn(ByteBuffer.allocate(1105664));
-    when(planeY.getRowStride()).thenReturn(1536);
-    when(planeY.getPixelStride()).thenReturn(1);
-
-    // U and V planes are always the same sizes/values.
-    // https://developer.android.com/reference/android/graphics/ImageFormat#YUV_420_888
-    when(planeU.getBuffer()).thenReturn(ByteBuffer.allocate(552703));
-    when(planeV.getBuffer()).thenReturn(ByteBuffer.allocate(552703));
-    when(planeU.getRowStride()).thenReturn(1536);
-    when(planeV.getRowStride()).thenReturn(1536);
-    when(planeU.getPixelStride()).thenReturn(2);
-    when(planeV.getPixelStride()).thenReturn(2);
-
-    // Add planes to image
-    Image.Plane[] planes = {planeY, planeU, planeV};
-    when(mockImage.getPlanes()).thenReturn(planes);
+    // Note: the code for getImage() was previously inlined, with uSize set to one less than
+    // getImage() calculates (see function implementation)
+    Image mockImage = ImageStreamReaderTestUtils.getImage(1280, 720, 256, ImageFormat.YUV_420_888);
 
     CameraCaptureProperties mockCaptureProps = mock(CameraCaptureProperties.class);
     EventChannel.EventSink mockEventSink = mock(EventChannel.EventSink.class);
@@ -102,7 +76,8 @@ public class ImageStreamReaderTest {
 
     // Make sure we processed the frame with parsePlanesForNv21
     verify(mockImageStreamReaderUtils)
-        .yuv420ThreePlanesToNV21(planes, mockImage.getWidth(), mockImage.getHeight());
+        .yuv420ThreePlanesToNV21(
+            mockImage.getPlanes(), mockImage.getWidth(), mockImage.getHeight());
   }
 
   /** If we are requesting YUV420, then we should send the 3-plane image as it is. */
@@ -120,40 +95,9 @@ public class ImageStreamReaderTest {
     when(mockImageStreamReaderUtils.yuv420ThreePlanesToNV21(any(), anyInt(), anyInt()))
         .thenReturn(mockBytes);
 
-    // The image format as streamed from the camera
-    int imageFormat = ImageFormat.YUV_420_888;
-
-    // Mock YUV image
-    Image mockImage = mock(Image.class);
-    when(mockImage.getWidth()).thenReturn(1280);
-    when(mockImage.getHeight()).thenReturn(720);
-    when(mockImage.getFormat()).thenReturn(imageFormat);
-
-    // Mock planes. YUV images have 3 planes (Y, U, V).
-    Image.Plane planeY = mock(Image.Plane.class);
-    Image.Plane planeU = mock(Image.Plane.class);
-    Image.Plane planeV = mock(Image.Plane.class);
-
-    // Y plane is width*height
-    // Row stride is generally == width but when there is padding it will
-    // be larger. The numbers in this example are from a Vivo V2135 on 'high'
-    // setting (1280x720).
-    when(planeY.getBuffer()).thenReturn(ByteBuffer.allocate(1105664));
-    when(planeY.getRowStride()).thenReturn(1536);
-    when(planeY.getPixelStride()).thenReturn(1);
-
-    // U and V planes are always the same sizes/values.
-    // https://developer.android.com/reference/android/graphics/ImageFormat#YUV_420_888
-    when(planeU.getBuffer()).thenReturn(ByteBuffer.allocate(552703));
-    when(planeV.getBuffer()).thenReturn(ByteBuffer.allocate(552703));
-    when(planeU.getRowStride()).thenReturn(1536);
-    when(planeV.getRowStride()).thenReturn(1536);
-    when(planeU.getPixelStride()).thenReturn(2);
-    when(planeV.getPixelStride()).thenReturn(2);
-
-    // Add planes to image
-    Image.Plane[] planes = {planeY, planeU, planeV};
-    when(mockImage.getPlanes()).thenReturn(planes);
+    // Note: the code for getImage() was previously inlined, with uSize set to one less than
+    // getImage() calculates (see function implementation)
+    Image mockImage = ImageStreamReaderTestUtils.getImage(1280, 720, 256, ImageFormat.YUV_420_888);
 
     CameraCaptureProperties mockCaptureProps = mock(CameraCaptureProperties.class);
     EventChannel.EventSink mockEventSink = mock(EventChannel.EventSink.class);
@@ -161,5 +105,99 @@ public class ImageStreamReaderTest {
 
     // Make sure we processed the frame with parsePlanesForYuvOrJpeg
     verify(mockImageStreamReaderUtils, never()).yuv420ThreePlanesToNV21(any(), anyInt(), anyInt());
+  }
+
+  @Test
+  public void onImageAvailable_dropFramesWhenHandlerHalted() {
+    final int numExtraFramesPerBatch = ImageStreamReader.MAX_IMAGES_IN_TRANSIT * 2;
+    final int numFramesPerBatch = ImageStreamReader.MAX_IMAGES_IN_TRANSIT + numExtraFramesPerBatch;
+
+    int dartImageFormat = ImageFormat.YUV_420_888;
+    final List<Runnable> runnables = new ArrayList<Runnable>();
+
+    ImageReader mockImageReader = mock(ImageReader.class);
+    ImageStreamReaderUtils mockImageStreamReaderUtils = mock(ImageStreamReaderUtils.class);
+    ImageStreamReader imageStreamReader =
+        new ImageStreamReader(mockImageReader, dartImageFormat, mockImageStreamReaderUtils);
+
+    Handler mockHandler = mock(Handler.class);
+    imageStreamReader.handler = mockHandler;
+
+    // initially, handler will simulate a hanging main looper, that only queues inputs
+    when(mockHandler.post(any(Runnable.class)))
+        .thenAnswer(
+            inputs -> {
+              Runnable r = inputs.getArgument(0, Runnable.class);
+              runnables.add(r);
+              return true;
+            });
+
+    CameraCaptureProperties mockCaptureProps = mock(CameraCaptureProperties.class);
+    EventChannel.EventSink mockEventSink = mock(EventChannel.EventSink.class);
+
+    // send some images whose "main-looper" callbacks won't get run, so some frames will drop
+    for (int i = 0; i < numFramesPerBatch; ++i) {
+      Image mockImage =
+          ImageStreamReaderTestUtils.getImage(1280, 720, 256, ImageFormat.YUV_420_888);
+      imageStreamReader.onImageAvailable(mockImage, mockCaptureProps, mockEventSink);
+
+      // make sure the image was closed, even when skipping frames
+      verify(mockImage, times(1)).close();
+
+      // frames beyond MAX_IMAGES_IN_TRANSIT are expected to be skipped
+      final int expectedFramesInQueue =
+          i < ImageStreamReader.MAX_IMAGES_IN_TRANSIT
+              ? i + 1
+              : ImageStreamReader.MAX_IMAGES_IN_TRANSIT;
+
+      // check that we collected all runnables in this method
+      assertEquals(runnables.size(), expectedFramesInQueue);
+
+      // ensure the stream reader's count agrees
+      assertEquals(imageStreamReader.numImagesInTransit, expectedFramesInQueue);
+
+      // verify post() was not called more times than it should have
+      verify(mockHandler, times(expectedFramesInQueue)).post(any(Runnable.class));
+    }
+
+    // make sure callback was not yet invoked
+    verify(mockEventSink, never()).success(any(Map.class));
+
+    // simulate frame processing
+    for (Runnable r : runnables) {
+      r.run();
+    }
+
+    // make sure all callbacks were invoked so far
+    verify(mockEventSink, times(ImageStreamReader.MAX_IMAGES_IN_TRANSIT)).success(any(Map.class));
+
+    // switch handler to simulate a running main looper
+    when(mockHandler.post(any(Runnable.class)))
+        .thenAnswer(
+            input -> {
+              Runnable r = input.getArgument(0, Runnable.class);
+              r.run();
+              return true;
+            });
+
+    // send some images that will get processed by the handler
+    for (int i = 0; i < numFramesPerBatch; ++i) {
+      Image mockImage =
+          ImageStreamReaderTestUtils.getImage(1280, 720, 256, ImageFormat.YUV_420_888);
+      imageStreamReader.onImageAvailable(mockImage, mockCaptureProps, mockEventSink);
+
+      // make sure the image is closed when no frame-skipping happens
+      verify(mockImage, times(1)).close();
+
+      // since the handler is not "halting", each image available should cause a post(), which the
+      // mockHandler runs immediately, thus numImagesInTransit should remain zero.
+      verify(mockHandler, times(ImageStreamReader.MAX_IMAGES_IN_TRANSIT + i + 1))
+          .post(any(Runnable.class));
+      assertEquals(imageStreamReader.numImagesInTransit, 0);
+    }
+
+    // make sure all callbacks were invoked
+    verify(mockEventSink, times(ImageStreamReader.MAX_IMAGES_IN_TRANSIT + numFramesPerBatch))
+        .success(any(Map.class));
   }
 }

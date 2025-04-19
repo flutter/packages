@@ -9,8 +9,10 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
@@ -22,6 +24,8 @@ import java.util.Map;
 
 // Wraps an ImageReader to allow for testing of the image handler.
 public class ImageStreamReader {
+  private static final String TAG = "ImageStreamReader";
+  @VisibleForTesting public static final int MAX_IMAGES_IN_TRANSIT = 3;
 
   /**
    * The image format we are going to send back to dart. Usually it's the same as streamImageFormat
@@ -32,6 +36,17 @@ public class ImageStreamReader {
 
   private final ImageReader imageReader;
   private final ImageStreamReaderUtils imageStreamReaderUtils;
+
+  @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+  @Nullable
+  public Handler handler;
+
+  /**
+   * This solves a memory issue, when the main thread hangs (e.g. when pausing the debugger) while
+   * many frames are being sent using android.os.Handler.post(). This causes an OOM error rather
+   * quickly. So to avoid this we apply some back-pressure.
+   */
+  @VisibleForTesting public int numImagesInTransit = 0;
 
   /**
    * Creates a new instance of the {@link ImageStreamReader}.
@@ -95,40 +110,55 @@ public class ImageStreamReader {
       @NonNull Image image,
       @NonNull CameraCaptureProperties captureProps,
       @NonNull EventChannel.EventSink imageStreamSink) {
-    try {
-      Map<String, Object> imageBuffer = new HashMap<>();
+    // The limit was chosen so it would not drop frames for reasonable lags of the main thread.
+    if (numImagesInTransit >= ImageStreamReader.MAX_IMAGES_IN_TRANSIT) {
+      Log.d(TAG, "Dropping frame due to images pending on main thread.");
+      image.close();
+      return;
+    }
 
+    Map<String, Object> imageBuffer = new HashMap<>();
+
+    imageBuffer.put("width", image.getWidth());
+    imageBuffer.put("height", image.getHeight());
+    try {
       // Get plane data ready
       if (dartImageFormat == ImageFormat.NV21) {
         imageBuffer.put("planes", parsePlanesForNv21(image));
       } else {
         imageBuffer.put("planes", parsePlanesForYuvOrJpeg(image));
       }
-
-      imageBuffer.put("width", image.getWidth());
-      imageBuffer.put("height", image.getHeight());
-      imageBuffer.put("format", dartImageFormat);
-      imageBuffer.put("lensAperture", captureProps.getLastLensAperture());
-      imageBuffer.put("sensorExposureTime", captureProps.getLastSensorExposureTime());
-      Integer sensorSensitivity = captureProps.getLastSensorSensitivity();
-      imageBuffer.put(
-          "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
-
-      final Handler handler = new Handler(Looper.getMainLooper());
-      handler.post(() -> imageStreamSink.success(imageBuffer));
-      image.close();
-
     } catch (IllegalStateException e) {
-      // Handle "buffer is inaccessible" errors that can happen on some devices from ImageStreamReaderUtils.yuv420ThreePlanesToNV21()
-      final Handler handler = new Handler(Looper.getMainLooper());
+      // Handle "buffer is inaccessible" errors that can happen on some devices from
+      // ImageStreamReaderUtils.yuv420ThreePlanesToNV21()
+      final Handler handler =
+          this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
       handler.post(
           () ->
               imageStreamSink.error(
                   "IllegalStateException",
                   "Caught IllegalStateException: " + e.getMessage(),
                   null));
+    } finally {
       image.close();
     }
+
+    imageBuffer.put("format", dartImageFormat);
+    imageBuffer.put("lensAperture", captureProps.getLastLensAperture());
+    imageBuffer.put("sensorExposureTime", captureProps.getLastSensorExposureTime());
+    Integer sensorSensitivity = captureProps.getLastSensorSensitivity();
+    imageBuffer.put(
+        "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
+
+    final Handler handler =
+        this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
+    ++numImagesInTransit;
+    boolean postResult =
+        handler.post(
+            () -> {
+              imageStreamSink.success(imageBuffer);
+              --numImagesInTransit;
+            });
   }
 
   /**
