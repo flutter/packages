@@ -1,6 +1,6 @@
-## 3.2.2
+## NEXT
 
-* Removes obsolete code related to supporting SDK <21.
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
 
 ## 3.2.1
 

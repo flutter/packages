@@ -1,6 +1,6 @@
-## 2.1.6
+## NEXT
 
-* Removes obsolete code related to supporting SDK <21.
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 2.1.5
