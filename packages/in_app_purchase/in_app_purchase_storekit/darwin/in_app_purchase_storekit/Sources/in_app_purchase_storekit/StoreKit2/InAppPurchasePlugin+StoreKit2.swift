@@ -207,12 +207,14 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
   private func sendTransactionUpdate(transaction: Transaction, receipt: String? = nil) {
     let transactionMessage = transaction.convertToPigeon(receipt: receipt)
-    self.transactionCallbackAPI?.onTransactionsUpdated(newTransactions: [transactionMessage]) {
-      result in
-      switch result {
-      case .success: break
-      case .failure(let error):
-        print("Failed to send transaction updates: \(error)")
+    Task { @MainActor in
+      self.transactionCallbackAPI?.onTransactionsUpdated(newTransactions: [transactionMessage]) {
+        result in
+        switch result {
+        case .success: break
+        case .failure(let error):
+          print("Failed to send transaction updates: \(error)")
+        }
       }
     }
   }
