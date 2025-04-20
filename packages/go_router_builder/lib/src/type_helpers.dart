@@ -68,7 +68,7 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 
   throw InvalidGenerationSourceError(
     'The parameter type '
-    '`${paramType.getDisplayString(withNullability: false)}` is not supported.',
+    '`${paramType.getDisplayString()}` is not supported.',
     element: element,
   );
 }
@@ -111,7 +111,7 @@ String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
     // ignore: avoid_redundant_argument_values
-    return 'extra as ${element.type.getDisplayString(withNullability: true)}';
+    return 'extra as ${element.type.getDisplayString()}';
   }
 
   late String access;
