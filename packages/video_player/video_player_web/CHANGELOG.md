@@ -1,3 +1,7 @@
+## 2.3.5
+
+* Add html 5 video poster support as a VideoPlayerWebOptions.
+
 ## 2.3.4
 
 * Adjusts the code to the new platform interface.
