@@ -1,6 +1,6 @@
 ## 0.10.10+3
 
-* Wait for the creation of the capture session when initializing the camera to avoid thread race conditions.
+* Waits for the creation of the capture session when initializing the camera to avoid thread race conditions.
 
 ## 0.10.10+2
 
