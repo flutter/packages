@@ -1175,7 +1175,14 @@ class Camera
 
   private void startRegularPreview(@Nullable Runnable onSuccessCallback)
       throws CameraAccessException {
-    if (pictureImageReader == null || pictureImageReader.getSurface() == null) return;
+    if (pictureImageReader == null || pictureImageReader.getSurface() == null) {
+      // noop
+      if (onSuccessCallback != null) {
+        onSuccessCallback.run();
+      }
+      return;
+    }
+
     Log.i(TAG, "startPreview");
     createCaptureSession(
         CameraDevice.TEMPLATE_PREVIEW, onSuccessCallback, pictureImageReader.getSurface());
@@ -1183,7 +1190,13 @@ class Camera
 
   private void startPreviewWithVideoRendererStream(@Nullable Runnable onSuccessCallback)
       throws CameraAccessException, InterruptedException {
-    if (videoRenderer == null) return;
+    if (videoRenderer == null) {
+      // noop
+      if (onSuccessCallback != null) {
+        onSuccessCallback.run();
+      }
+      return;
+    }
 
     // get rotation for rendered video
     final PlatformChannel.DeviceOrientation lockedOrientation =
