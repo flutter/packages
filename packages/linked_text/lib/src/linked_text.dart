@@ -34,7 +34,7 @@ typedef LinkedTextWidgetBuilder = Widget Function(
 /// {@end-tool}
 ///
 /// {@tool dartpad}
-/// This example shows how to use [LinkedText] to link Twitter handles by
+/// This example shows how to use [LinkedText] to link X handles by
 /// passing in a custom [RegExp].
 ///
 /// ** See code in examples/api/lib/widgets/linked_text/linked_text.1.dart **
@@ -77,7 +77,7 @@ class LinkedText extends StatefulWidget {
   /// turning anything matched by [regExp] into interactive links.
   ///
   /// {@tool dartpad}
-  /// This example shows how to use [LinkedText] to link Twitter handles by
+  /// This example shows how to use [LinkedText] to link X handles by
   /// passing in a custom [RegExp].
   ///
   /// ** See code in examples/api/lib/widgets/linked_text/linked_text.1.dart **
@@ -106,11 +106,11 @@ class LinkedText extends StatefulWidget {
   /// applied.
   ///
   /// Useful for independently matching different types of strings with
-  /// different behaviors. For example, highlighting both URLs and Twitter
+  /// different behaviors. For example, highlighting both URLs and X
   /// handles with different style and/or behavior.
   ///
   /// {@tool dartpad}
-  /// This example shows how to use [LinkedText] to link both URLs and Twitter
+  /// This example shows how to use [LinkedText] to link both URLs and X
   /// handles in the same text.
   ///
   /// ** See code in examples/api/lib/widgets/linked_text/linked_text.3.dart **
@@ -160,7 +160,7 @@ class LinkedText extends StatefulWidget {
   /// [TextLinker] specifies its own [TextLinker.regExp].
   ///
   /// {@tool dartpad}
-  /// This example shows how to use [LinkedText] to link Twitter handles by
+  /// This example shows how to use [LinkedText] to link X handles by
   /// passing in a custom [RegExp].
   ///
   /// ** See code in examples/api/lib/widgets/linked_text/linked_text.1.dart **
@@ -173,7 +173,7 @@ class LinkedText extends StatefulWidget {
   /// supported and will produce an error.
   ///
   /// {@tool dartpad}
-  /// This example shows how to use [LinkedText] to link both URLs and Twitter
+  /// This example shows how to use [LinkedText] to link both URLs and X
   /// handles in the same text with [TextLinker]s.
   ///
   /// ** See code in examples/api/lib/widgets/linked_text/linked_text.3.dart **

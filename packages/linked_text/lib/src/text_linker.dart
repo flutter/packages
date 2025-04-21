@@ -28,7 +28,7 @@ import 'package:flutter/widgets.dart';
 /// {@endtemplate}
 ///
 /// {@tool dartpad}
-/// This example shows how to use [TextLinker] to link both URLs and Twitter
+/// This example shows how to use [TextLinker] to link both URLs and X
 /// handles in a [TextSpan] tree. It also illustrates the difference between
 /// `displayString` and `linkString`.
 ///
@@ -42,14 +42,14 @@ typedef InlineLinkBuilder = InlineSpan Function(
 /// [TextLinker]s can be applied to some text using the [linkSpans] method.
 ///
 /// {@tool dartpad}
-/// This example shows how to use [TextLinker] to link both URLs and Twitter
+/// This example shows how to use [TextLinker] to link both URLs and X
 /// handles in the same text.
 ///
 /// ** See code in examples/api/lib/painting/text_linker/text_linker.0.dart **
 /// {@end-tool}
 ///
 /// {@tool dartpad}
-/// This example shows how to use [TextLinker] to link both URLs and Twitter
+/// This example shows how to use [TextLinker] to link both URLs and X
 /// handles in a [TextSpan] tree instead of a flat string.
 ///
 /// ** See code in examples/api/lib/painting/text_linker/text_linker.1.dart **
