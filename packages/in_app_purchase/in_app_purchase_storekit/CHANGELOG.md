@@ -1,3 +1,7 @@
+## 0.3.22+1
+
+* Fix a channel thread-safety issue when StoreKit2 is enabled.
+
 ## 0.3.22
 
 * Adds `sync()` and `countryCode()`.
