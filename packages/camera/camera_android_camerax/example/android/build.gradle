@@ -27,10 +27,10 @@ tasks.register("clean", Delete) {
 // in the plugin itself to avoid breaking clients that have different
 // warnings (e.g., deprecation warnings from a newer SDK than this project
 // builds with).
-// gradle.projectsEvaluated {
-//     project(":camera_android_camerax") {
-//         tasks.withType(JavaCompile) {
-//             options.compilerArgs << "-Xlint:all" << "-Werror"
-//         }
-//     }
-// }
+gradle.projectsEvaluated {
+    project(":camera_android_camerax") {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:all" << "-Werror"
+        }
+    }
+}

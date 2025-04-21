@@ -7,11 +7,11 @@ import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/cupertino.dart' hide AspectRatio, Preview;
+import 'package:flutter/cupertino.dart' hide AspectRatio;
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart'
-    show BuildContext, FutureBuilder, Size, Texture, Widget, visibleForTesting;
+    show Size, Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 
 import 'analyzer.dart';
@@ -35,7 +35,6 @@ import 'focus_metering_result.dart';
 import 'image_analysis.dart';
 import 'image_capture.dart';
 import 'image_proxy.dart';
-import 'image_reader_rotated_preview.dart';
 import 'live_data.dart';
 import 'metering_point.dart';
 import 'observer.dart';
@@ -49,8 +48,8 @@ import 'recording.dart';
 import 'resolution_filter.dart';
 import 'resolution_selector.dart';
 import 'resolution_strategy.dart';
+import 'rotated_preview_delegate.dart';
 import 'surface.dart';
-import 'surface_texture_rotated_preview.dart';
 import 'system_services.dart';
 import 'use_case.dart';
 import 'video_capture.dart';
@@ -254,7 +253,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The initial orientation of the device when the camera is created.
   late DeviceOrientation _initialDeviceOrientation;
 
-  /// The initial rotation of the Android default display when the camera is created.
+  /// The initial rotation (in terms of a Surface rotation constant) of the Android default
+  /// display when the camera is created.
   late int _initialDefaultDisplayRotation;
 
   /// Returns list of all available cameras and their descriptions.
@@ -396,26 +396,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     _handlesCropAndRotation =
         await proxy.previewSurfaceProducerHandlesCropAndRotation(preview!);
     _initialDeviceOrientation = await proxy.getUiOrientation();
-
-    // TODO(camsim99): we may be able to fix this by computing natural orientation
-    // and determining RotatedPreview map from that :)
-    // TODO(camsim99): write method that takes initial oriesntation and rotation then
-    // computes natural orientation. (todo: determine clockwise, counter clockwise)
-    print(
-        'CAMILLE createCamera info start---------------------------------------');
     _initialDefaultDisplayRotation = await proxy.getDefaultDisplayRotation();
-    print('CAMILLE proxy default rotation: $_initialDefaultDisplayRotation');
-    print(
-        'CAMILLE createCamera info end---------------------------------------');
 
     return flutterSurfaceTextureId;
   }
-
-  // Map<DeviceOrientation, int> getSomething(DeviceOrientation initialDeviceOrientation, int defaultRotation) {
-  //   // Calculate natural orientation.
-
-  //   // Determine map from device orientation to rotation degrees
-  // }
 
   /// Initializes the camera on the device.
   ///
@@ -864,40 +848,20 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    final Widget preview = Texture(textureId: cameraId);
     final Stream<DeviceOrientation> deviceOrientationStream =
         onDeviceOrientationChanged()
             .map((DeviceOrientationChangedEvent e) => e.orientation);
+    final Widget preview = Texture(textureId: cameraId);
 
-    if (_handlesCropAndRotation) {
-      // print(
-      // 'CAMILLE _handlesCropAndRotation is TRUE****************************************************');
-      return SurfaceTextureRotatedPreview(_initialDeviceOrientation,
-          _initialDefaultDisplayRotation, proxy, deviceOrientationStream,
-          child: preview);
-    }
-
-    // print(
-    // 'CAMILLE _handlesCropAndRotation is FALSE****************************************************');
-    if (cameraIsFrontFacing) {
-      return ImageReaderRotatedPreview.frontFacingCamera(
-        _initialDeviceOrientation,
-        _initialDefaultDisplayRotation,
-        proxy,
-        deviceOrientationStream,
+    return RotatedPreviewDelegate(
+        handlesCropAndRotation: _handlesCropAndRotation,
+        initialDeviceOrientation: _initialDeviceOrientation,
+        initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
+        deviceOrientationStream: deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
-        child: preview,
-      );
-    } else {
-      return ImageReaderRotatedPreview.backFacingCamera(
-        _initialDeviceOrientation,
-        _initialDefaultDisplayRotation,
-        proxy,
-        deviceOrientationStream,
-        sensorOrientationDegrees: sensorOrientationDegrees,
-        child: preview,
-      );
-    }
+        cameraIsFrontFacing: cameraIsFrontFacing,
+        cameraXProxy: proxy,
+        child: preview);
   }
 
   /// Captures an image and returns the file where it was saved.
