@@ -337,6 +337,15 @@ void main() {
     );
   });
 
+  test('Default implementation of supportsSetScrollBarsEnabled returns false',
+      () {f
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(controller.supportsSetScrollBarsEnabled(), isFalse);
+  });
+
   test(
       'Default implementation of getScrollPosition should throw unimplemented error',
       () {
