@@ -60,7 +60,8 @@ class MyHomePage extends StatelessWidget {
     Navigator.of(context).push(
       DialogRoute<void>(
         context: context,
-        builder: (BuildContext context) => AlertDialog(title: Text('You tapped: $uri')),
+        builder: (BuildContext context) =>
+            AlertDialog(title: Text('You tapped: $uri')),
       ),
     );
   }
