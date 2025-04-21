@@ -36,12 +36,12 @@ class MyHomePage extends StatelessWidget {
 
   final String title;
 
-  void _handleTapTwitterHandle(BuildContext context, String linkString) {
+  void _handleTapXHandle(BuildContext context, String linkString) {
     final String handleWithoutAt = linkString.substring(1);
-    final String twitterUriString = 'https://www.twitter.com/$handleWithoutAt';
-    final Uri? uri = Uri.tryParse(twitterUriString);
+    final String xUriString = 'https://www.x.com/$handleWithoutAt';
+    final Uri? uri = Uri.tryParse(xUriString);
     if (uri == null) {
-      throw Exception('Failed to parse $twitterUriString.');
+      throw Exception('Failed to parse $xUriString.');
     }
     _showDialog(context, uri);
   }
@@ -76,10 +76,10 @@ class MyHomePage extends StatelessWidget {
         child: Builder(
           builder: (BuildContext context) {
             return SelectionArea(
-              child: _TwitterAndUrlLinkedText(
+              child: _XAndUrlLinkedText(
                 spans: <InlineSpan>[
                   TextSpan(
-                    text: '@FlutterDev is our Twitter, or find us at www.',
+                    text: '@FlutterDev is our X, or find us at www.',
                     style: DefaultTextStyle.of(context).style,
                     children: const <InlineSpan>[
                       TextSpan(
@@ -97,8 +97,8 @@ class MyHomePage extends StatelessWidget {
                 ],
                 onTapUrl: (String urlString) =>
                     _handleTapUrl(context, urlString),
-                onTapTwitterHandle: (String handleString) =>
-                    _handleTapTwitterHandle(context, handleString),
+                onTapXHandle: (String handleString) =>
+                    _handleTapXHandle(context, handleString),
               ),
             );
           },
@@ -108,28 +108,28 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class _TwitterAndUrlLinkedText extends StatefulWidget {
-  const _TwitterAndUrlLinkedText({
+class _XAndUrlLinkedText extends StatefulWidget {
+  const _XAndUrlLinkedText({
     required this.spans,
     required this.onTapUrl,
-    required this.onTapTwitterHandle,
+    required this.onTapXHandle,
   });
 
   final List<InlineSpan> spans;
   final ValueChanged<String> onTapUrl;
-  final ValueChanged<String> onTapTwitterHandle;
+  final ValueChanged<String> onTapXHandle;
 
   @override
-  State<_TwitterAndUrlLinkedText> createState() =>
-      _TwitterAndUrlLinkedTextState();
+  State<_XAndUrlLinkedText> createState() =>
+      _XAndUrlLinkedTextState();
 }
 
-class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
+class _XAndUrlLinkedTextState extends State<_XAndUrlLinkedText> {
   final List<GestureRecognizer> _recognizers = <GestureRecognizer>[];
   late Iterable<InlineSpan> _linkedSpans;
   late final List<TextLinker> _textLinkers;
 
-  final RegExp _twitterHandleRegExp = RegExp(r'@[a-zA-Z0-9]{4,15}');
+  final RegExp _xHandleRegExp = RegExp(r'@[a-zA-Z0-9]{4,15}');
 
   void _disposeRecognizers() {
     for (final GestureRecognizer recognizer in _recognizers) {
@@ -172,10 +172,10 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
         },
       ),
       TextLinker(
-        regExp: _twitterHandleRegExp,
+        regExp: _xHandleRegExp,
         linkBuilder: (String displayString, String linkString) {
           final TapGestureRecognizer recognizer = TapGestureRecognizer()
-            ..onTap = () => widget.onTapTwitterHandle(linkString);
+            ..onTap = () => widget.onTapXHandle(linkString);
           _recognizers.add(recognizer);
           return _MyInlineLinkSpan(
             text: displayString,
@@ -190,12 +190,12 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
   }
 
   @override
-  void didUpdateWidget(_TwitterAndUrlLinkedText oldWidget) {
+  void didUpdateWidget(_XAndUrlLinkedText oldWidget) {
     super.didUpdateWidget(oldWidget);
 
     if (widget.spans != oldWidget.spans ||
         widget.onTapUrl != oldWidget.onTapUrl ||
-        widget.onTapTwitterHandle != oldWidget.onTapTwitterHandle) {
+        widget.onTapXHandle != oldWidget.onTapXHandle) {
       _linkSpans();
     }
   }

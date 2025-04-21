@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'package:linked_text/linked_text.dart';
 
-// This example demonstrates highlighting and linking Twitter handles.
+// This example demonstrates highlighting and linking X handles.
 
 void main() {
   runApp(const LinkedTextApp());
@@ -20,7 +20,7 @@ class LinkedTextApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: MyHomePage(title: 'Flutter Link Twitter Handle Demo'),
+      home: MyHomePage(title: 'Flutter Link X Handle Demo'),
     );
   }
 }
@@ -30,14 +30,14 @@ class MyHomePage extends StatelessWidget {
 
   final String title;
   static const String _text =
-      'Please check out @FlutterDev on Twitter for the latest.';
+      'Please check out @FlutterDev on X for the latest.';
 
-  void _handleTapTwitterHandle(BuildContext context, String linkText) {
+  void _handleTapXHandle(BuildContext context, String linkText) {
     final String handleWithoutAt = linkText.substring(1);
-    final String twitterUriString = 'https://www.twitter.com/$handleWithoutAt';
-    final Uri? uri = Uri.tryParse(twitterUriString);
+    final String xUriString = 'https://www.x.com/$handleWithoutAt';
+    final Uri? uri = Uri.tryParse(xUriString);
     if (uri == null) {
-      throw Exception('Failed to parse $twitterUriString.');
+      throw Exception('Failed to parse $xUriString.');
     }
 
     // A package like url_launcher would be useful for actually opening the URL
@@ -51,7 +51,7 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
-  final RegExp _twitterHandleRegExp = RegExp(r'@[a-zA-Z0-9]{4,15}');
+  final RegExp _xHandleRegExp = RegExp(r'@[a-zA-Z0-9]{4,15}');
 
   @override
   Widget build(BuildContext context) {
@@ -66,10 +66,10 @@ class MyHomePage extends StatelessWidget {
                 children: <Widget>[
                   LinkedText.regExp(
                     text: _text,
-                    regExp: _twitterHandleRegExp,
+                    regExp: _xHandleRegExp,
                     // TODO(justinmc): So the user has to use url_launcher directly for cases like this. That's probably not ideal for several reasons, but most importantly, in the browser when you hover the link you won't see the URL at the bottom of the browser. Right clicking and clicking "open in new tab" also doesn't work. So instead, provide a getUri parameter that passes in the link string and returns the URL. Use that to give the URL directly to Link, so everything works. Right?
-                    onTap: (String twitterHandleString) =>
-                        _handleTapTwitterHandle(context, twitterHandleString),
+                    onTap: (String xHandleString) =>
+                        _handleTapXHandle(context, xHandleString),
                   ),
                 ],
               ),

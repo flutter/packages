@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'package:linked_text/linked_text.dart';
 
-// This example demonstrates highlighting both URLs and Twitter handles with
+// This example demonstrates highlighting both URLs and X handles with
 // different actions and different styles.
 
 void main() {
@@ -26,7 +26,7 @@ class LinkedTextApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Link Twitter Handle Demo'),
+      home: const MyHomePage(title: 'Flutter Link X Handle Demo'),
     );
   }
 }
@@ -38,14 +38,14 @@ class MyHomePage extends StatelessWidget {
   });
 
   final String title;
-  static const String _text = '@FlutterDev is our Twitter account, or find us at www.flutter.dev';
+  static const String _text = '@FlutterDev is our X account, or find us at www.flutter.dev';
 
-  void _handleTapTwitterHandle(BuildContext context, String linkText) {
+  void _handleTapXHandle(BuildContext context, String linkText) {
     final String handleWithoutAt = linkText.substring(1);
-    final String twitterUriString = 'https://www.twitter.com/$handleWithoutAt';
-    final Uri? uri = Uri.tryParse(twitterUriString);
+    final String xUriString = 'https://www.x.com/$handleWithoutAt';
+    final Uri? uri = Uri.tryParse(xUriString);
     if (uri == null) {
-      throw Exception('Failed to parse $twitterUriString.');
+      throw Exception('Failed to parse $xUriString.');
     }
     _showDialog(context, uri);
   }
@@ -79,10 +79,10 @@ class MyHomePage extends StatelessWidget {
         child: Builder(
           builder: (BuildContext context) {
             return SelectionArea(
-              child: _TwitterAndUrlLinkedText(
+              child: _XAndUrlLinkedText(
                 text: _text,
                 onTapUrl: (String urlString) => _handleTapUrl(context, urlString),
-                onTapTwitterHandle: (String handleString) => _handleTapTwitterHandle(context, handleString),
+                onTapXHandle: (String handleString) => _handleTapXHandle(context, handleString),
               ),
             );
           },
@@ -92,26 +92,26 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class _TwitterAndUrlLinkedText extends StatefulWidget {
-  const _TwitterAndUrlLinkedText({
+class _XAndUrlLinkedText extends StatefulWidget {
+  const _XAndUrlLinkedText({
     required this.text,
     required this.onTapUrl,
-    required this.onTapTwitterHandle,
+    required this.onTapXHandle,
   });
 
   final String text;
   final ValueChanged<String> onTapUrl;
-  final ValueChanged<String> onTapTwitterHandle;
+  final ValueChanged<String> onTapXHandle;
 
   @override
-  State<_TwitterAndUrlLinkedText> createState() => _TwitterAndUrlLinkedTextState();
+  State<_XAndUrlLinkedText> createState() => _XAndUrlLinkedTextState();
 }
 
-class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
+class _XAndUrlLinkedTextState extends State<_XAndUrlLinkedText> {
   final List<GestureRecognizer> _recognizers = <GestureRecognizer>[];
   late final List<TextLinker> _textLinkers;
 
-  final RegExp _twitterHandleRegExp = RegExp(r'@[a-zA-Z0-9]{4,15}');
+  final RegExp _xHandleRegExp = RegExp(r'@[a-zA-Z0-9]{4,15}');
 
   void _disposeRecognizers() {
     for (final GestureRecognizer recognizer in _recognizers) {
@@ -139,10 +139,10 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
         },
       ),
       TextLinker(
-        regExp: _twitterHandleRegExp,
+        regExp: _xHandleRegExp,
         linkBuilder: (String displayText, String linkText) {
           final TapGestureRecognizer recognizer = TapGestureRecognizer()
-              ..onTap = () => widget.onTapTwitterHandle(linkText);
+              ..onTap = () => widget.onTapXHandle(linkText);
           _recognizers.add(recognizer);
           return _MyInlineLinkSpan(
             text: displayText,
