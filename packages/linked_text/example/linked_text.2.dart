@@ -38,17 +38,6 @@ class MyHomePage extends StatelessWidget {
 
   final String title;
 
-  void _onTapUri (BuildContext context, Uri uri) {
-    // A package like url_launcher would be useful for actually opening the URL
-    // here instead of just showing a dialog.
-    Navigator.of(context).push(
-      DialogRoute<void>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(title: Text('You tapped: $uri')),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
