@@ -740,7 +740,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setHorizontalScrollBarEnabled(bool enabled) =>
       _webView.setHorizontalScrollBarEnabled(enabled);
 
-  @Override
+  @override
   Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
     return switch (mode) {
       WebViewOverScrollMode.always => _webView.setOverScrollMode(
