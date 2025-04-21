@@ -64,6 +64,7 @@ class MyHomePage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  // #docregion linked_text_reg_exp
                   LinkedText.regExp(
                     text: _text,
                     regExp: _xHandleRegExp,
@@ -71,6 +72,7 @@ class MyHomePage extends StatelessWidget {
                     onTap: (String xHandleString) =>
                         _handleTapXHandle(context, xHandleString),
                   ),
+                  // #enddocregion linked_text_reg_exp
                 ],
               ),
             );

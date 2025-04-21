@@ -62,6 +62,7 @@ class MyHomePage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  // #docregion linked_text_spans
                   LinkedText(
                     spans: <InlineSpan>[
                       TextSpan(
@@ -82,6 +83,7 @@ class MyHomePage extends StatelessWidget {
                       ),
                     ],
                   ),
+                  // #enddocregion linked_text_spans
                 ],
               ),
             );

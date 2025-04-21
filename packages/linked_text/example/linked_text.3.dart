@@ -162,10 +162,12 @@ class _XAndUrlLinkedTextState extends State<_XAndUrlLinkedText> {
 
   @override
   Widget build(BuildContext context) {
+    // #docregion linked_text_text_linkers
     return LinkedText.textLinkers(
       text: widget.text,
       textLinkers: _textLinkers,
     );
+    // #enddocregion linked_text_text_linkers
   }
 }
 

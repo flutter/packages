@@ -29,9 +29,6 @@ class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
-  // TODO(justinmc): Only the full URL works perfectly with Link! The other ones don't show the URL in the bottom of the browser and "open in new tab" doesn't work either. Do I need to parse partial URLs into their full https:// etc. form? It might not work how it would in the browser. You can do href="flutter.dev" in the browser. I need to understand more about how Link works internally, and why it has different behavior for partial URLs.
-  static const String _text =
-      'Check out https://www.flutter.dev, or maybe just flutter.dev or www.flutter.dev.';
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +40,13 @@ class MyHomePage extends StatelessWidget {
             return SelectionArea(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[LinkedText(text: _text)],
+                children: <Widget>[
+                  // #docregion linked_text
+                  LinkedText(
+                    text: 'Check out https://www.flutter.dev, or maybe just flutter.dev or www.flutter.dev.',
+                  ),
+                  // #enddocregion linked_text
+                ],
               ),
             );
           },
