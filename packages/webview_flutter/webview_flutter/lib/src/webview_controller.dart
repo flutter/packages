@@ -416,6 +416,14 @@ class WebViewController {
     return platform.setHorizontalScrollBarEnabled(enabled);
   }
 
+  /// Returns true if the current platform supports setting whether scrollbars
+  /// should be drawn or not.
+  ///
+  /// See [setVerticalScrollBarEnabled] and [setHorizontalScrollBarEnabled].
+  bool supportsSetScrollBarsEnabled() {
+    return platform.supportsSetScrollBarsEnabled();
+  }
+
   /// Sets the over-scroll mode for the WebView.
   ///
   /// Default behavior is platform dependent.

@@ -241,6 +241,14 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'setHorizontalScrollBarEnabled is not implemented on the current platform');
   }
 
+  /// Returns true if the current platform supports setting whether scrollbars
+  /// should be drawn or not.
+  ///
+  /// See [setVerticalScrollBarEnabled] and [setHorizontalScrollBarEnabled].
+  bool supportsSetScrollBarsEnabled() {
+    return false;
+  }
+
   /// Return the current scroll position of this view.
   ///
   /// Scroll position is measured from the top left.

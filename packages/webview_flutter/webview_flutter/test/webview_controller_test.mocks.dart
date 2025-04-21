@@ -240,6 +240,12 @@ class MockPlatformWebViewController extends _i1.Mock
       ) as _i5.Future<void>);
 
   @override
+  bool supportsSetScrollBarsEnabled() => (super.noSuchMethod(
+        Invocation.method(#supportsSetScrollBarsEnabled, []),
+        returnValue: false,
+      ) as bool);
+
+  @override
   _i5.Future<_i3.Offset> getScrollPosition() => (super.noSuchMethod(
         Invocation.method(#getScrollPosition, []),
         returnValue: _i5.Future<_i3.Offset>.value(
