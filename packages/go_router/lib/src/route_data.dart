@@ -369,6 +369,7 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
     required this.path,
     this.name,
     this.routes = const <TypedRoute<RouteData>>[],
+    this.caseSensitive = true,
   });
 
   /// The path that corresponds to this route.
@@ -390,6 +391,17 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   ///
   /// See [RouteBase.routes].
   final List<TypedRoute<RouteData>> routes;
+
+  /// Determines whether the route matching is case sensitive.
+  ///
+  /// When `true`, the path must match the specified case. For example,
+  /// a route with `path: '/family/:fid'` will not match `/FaMiLy/f2`.
+  ///
+  /// When `false`, the path matching is case insensitive.  The route
+  /// with `path: '/family/:fid'` will match `/FaMiLy/f2`.
+  ///
+  /// Defaults to `true`.
+  final bool caseSensitive;
 }
 
 /// A superclass for each typed shell route descendant
