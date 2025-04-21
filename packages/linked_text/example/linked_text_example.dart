@@ -54,9 +54,9 @@ class MyHomePage extends StatelessWidget {
                                 fontWeight: FontWeight.w800,
                                 decoration:
                                     TextDecoration.combine(<TextDecoration>[
-                                      TextDecoration.lineThrough,
-                                      TextDecoration.underline,
-                                    ]),
+                                  TextDecoration.lineThrough,
+                                  TextDecoration.underline,
+                                ]),
                               ),
                               text: 'ample.com?q=1 ex',
                             ),
@@ -77,9 +77,9 @@ class MyHomePage extends StatelessWidget {
                                 fontWeight: FontWeight.w800,
                                 decoration:
                                     TextDecoration.combine(<TextDecoration>[
-                                      TextDecoration.lineThrough,
-                                      TextDecoration.underline,
-                                    ]),
+                                  TextDecoration.lineThrough,
+                                  TextDecoration.underline,
+                                ]),
                               ),
                               text: 'ex',
                             ),

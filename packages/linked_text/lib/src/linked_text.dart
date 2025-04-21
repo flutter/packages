@@ -15,8 +15,8 @@ import './text_linker.dart';
 ///
 /// Typically a [Text.rich] containing a [TextSpan] whose children are the
 /// [linkedSpans].
-typedef LinkedTextWidgetBuilder =
-    Widget Function(BuildContext context, Iterable<InlineSpan> linkedSpans);
+typedef LinkedTextWidgetBuilder = Widget Function(
+    BuildContext context, Iterable<InlineSpan> linkedSpans);
 
 /// A widget that displays text with parts of it made interactive.
 ///
@@ -64,14 +64,14 @@ class LinkedText extends StatefulWidget {
     this.builder = _defaultBuilder,
     List<InlineSpan>? spans,
     String? text,
-  }) : assert(
-         (text == null) != (spans == null),
-         'Must specify exactly one to link: either text or spans.',
-       ),
-       spans = spans ?? <InlineSpan>[TextSpan(text: text)],
-       onTap = _getOnTap(onTapUri ?? _defaultOnTapUri),
-       regExp = defaultUriRegExp,
-       textLinkers = null;
+  })  : assert(
+          (text == null) != (spans == null),
+          'Must specify exactly one to link: either text or spans.',
+        ),
+        spans = spans ?? <InlineSpan>[TextSpan(text: text)],
+        onTap = _getOnTap(onTapUri ?? _defaultOnTapUri),
+        regExp = defaultUriRegExp,
+        textLinkers = null;
 
   /// Creates an instance of [LinkedText] from the given [text] or [spans],
   /// turning anything matched by [regExp] into interactive links.
@@ -95,12 +95,12 @@ class LinkedText extends StatefulWidget {
     this.builder = _defaultBuilder,
     List<InlineSpan>? spans,
     String? text,
-  }) : assert(
-         (text == null) != (spans == null),
-         'Must specify exactly one to link: either text or spans.',
-       ),
-       spans = spans ?? <InlineSpan>[TextSpan(text: text)],
-       textLinkers = null;
+  })  : assert(
+          (text == null) != (spans == null),
+          'Must specify exactly one to link: either text or spans.',
+        ),
+        spans = spans ?? <InlineSpan>[TextSpan(text: text)],
+        textLinkers = null;
 
   /// Creates an instance of [LinkedText] where the given [textLinkers] are
   /// applied.
@@ -126,15 +126,15 @@ class LinkedText extends StatefulWidget {
     String? text,
     List<InlineSpan>? spans,
     required List<TextLinker> textLinkers,
-  }) : assert(
-         (text == null) != (spans == null),
-         'Must specify exactly one to link: either text or spans.',
-       ),
-       assert(textLinkers.isNotEmpty),
-       textLinkers = textLinkers, // ignore: prefer_initializing_formals
-       spans = spans ?? <InlineSpan>[TextSpan(text: text)],
-       onTap = null,
-       regExp = null;
+  })  : assert(
+          (text == null) != (spans == null),
+          'Must specify exactly one to link: either text or spans.',
+        ),
+        assert(textLinkers.isNotEmpty),
+        textLinkers = textLinkers, // ignore: prefer_initializing_formals
+        spans = spans ?? <InlineSpan>[TextSpan(text: text)],
+        onTap = null,
+        regExp = null;
 
   /// The spans on which to create links.
   ///
@@ -262,8 +262,7 @@ class _LinkedTextState extends State<LinkedText> {
   @override
   void initState() {
     super.initState();
-    _textLinkers =
-        widget.textLinkers ??
+    _textLinkers = widget.textLinkers ??
         <TextLinker>[
           TextLinker(
             regExp: widget.regExp ?? LinkedText.defaultUriRegExp,
@@ -325,11 +324,11 @@ class _LinkedTextState extends State<LinkedText> {
 class _InlineLinkSpan extends TextSpan {
   /// Create an instance of [_InlineLinkSpan].
   _InlineLinkSpan({required String text, TextStyle? style, super.recognizer})
-    : super(
-        style: style ?? defaultLinkStyle,
-        mouseCursor: SystemMouseCursors.click,
-        text: text,
-      );
+      : super(
+          style: style ?? defaultLinkStyle,
+          mouseCursor: SystemMouseCursors.click,
+          text: text,
+        );
 
   static Color get _linkColor {
     return switch (defaultTargetPlatform) {
@@ -340,7 +339,8 @@ class _InlineLinkSpan extends TextSpan {
       TargetPlatform.macOS => const Color(0xff0000ee),
       // This value was taken from Chrome on Android 14.
       TargetPlatform.android ||
-      TargetPlatform.fuchsia => const Color(0xff0e0eef),
+      TargetPlatform.fuchsia =>
+        const Color(0xff0e0eef),
       // This value was taken from the Chrome browser running on GNOME 43.3 on
       // Debian.
       TargetPlatform.linux => const Color(0xff0026e8),

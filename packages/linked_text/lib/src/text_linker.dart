@@ -34,8 +34,8 @@ import 'package:flutter/widgets.dart';
 ///
 /// ** See code in examples/api/lib/painting/text_linker/text_linker.1.dart **
 /// {@end-tool}
-typedef InlineLinkBuilder =
-    InlineSpan Function(String displayString, String linkString);
+typedef InlineLinkBuilder = InlineSpan Function(
+    String displayString, String linkString);
 
 /// Specifies a way to find and style parts of some text.
 ///
@@ -184,7 +184,9 @@ class _TextCache {
     return textCache;
   }
 
-  _TextCache._empty() : text = '', _lengths = <InlineSpan, int>{};
+  _TextCache._empty()
+      : text = '',
+        _lengths = <InlineSpan, int>{};
 
   const _TextCache._({
     required this.text,
@@ -255,8 +257,8 @@ class _LinkedSpans {
 
     final Iterable<_TextLinkerMatch> textLinkerMatches =
         _cleanTextLinkerMatches(
-          _TextLinkerMatch.fromTextLinkers(textLinkers, textCache.text),
-        );
+      _TextLinkerMatch.fromTextLinkers(textLinkers, textCache.text),
+    );
 
     final (Iterable<InlineSpan> linkedSpans, Iterable<_TextLinkerMatch> _) =
         _linkSpansRecurse(spans, textCache, textLinkerMatches);
@@ -271,8 +273,8 @@ class _LinkedSpans {
   static List<_TextLinkerMatch> _cleanTextLinkerMatches(
     Iterable<_TextLinkerMatch> textLinkerMatches,
   ) {
-    final List<_TextLinkerMatch> nextTextLinkerMatches = textLinkerMatches
-        .toList();
+    final List<_TextLinkerMatch> nextTextLinkerMatches =
+        textLinkerMatches.toList();
 
     // Sort by start.
     nextTextLinkerMatches.sort((_TextLinkerMatch a, _TextLinkerMatch b) {

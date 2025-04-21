@@ -363,12 +363,12 @@ void main() {
                 text: 'Check out flutter.dev.',
                 builder:
                     (BuildContext context, Iterable<InlineSpan> linkedSpans) {
-                      return RichText(
-                        key: key,
-                        textAlign: TextAlign.center,
-                        text: TextSpan(children: linkedSpans.toList()),
-                      );
-                    },
+                  return RichText(
+                    key: key,
+                    textAlign: TextAlign.center,
+                    text: TextSpan(children: linkedSpans.toList()),
+                  );
+                },
               );
             },
           ),

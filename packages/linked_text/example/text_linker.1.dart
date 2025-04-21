@@ -32,10 +32,7 @@ class TextLinkerApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({
-    super.key,
-    required this.title
-  });
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -97,8 +94,10 @@ class MyHomePage extends StatelessWidget {
                     style: DefaultTextStyle.of(context).style,
                   ),
                 ],
-                onTapUrl: (String urlString) => _handleTapUrl(context, urlString),
-                onTapTwitterHandle: (String handleString) => _handleTapTwitterHandle(context, handleString),
+                onTapUrl: (String urlString) =>
+                    _handleTapUrl(context, urlString),
+                onTapTwitterHandle: (String handleString) =>
+                    _handleTapTwitterHandle(context, handleString),
               ),
             );
           },
@@ -120,7 +119,8 @@ class _TwitterAndUrlLinkedText extends StatefulWidget {
   final ValueChanged<String> onTapTwitterHandle;
 
   @override
-  State<_TwitterAndUrlLinkedText> createState() => _TwitterAndUrlLinkedTextState();
+  State<_TwitterAndUrlLinkedText> createState() =>
+      _TwitterAndUrlLinkedTextState();
 }
 
 class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
@@ -155,9 +155,9 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
         regExp: LinkedText.defaultUriRegExp,
         linkBuilder: (String displayString, String linkString) {
           final TapGestureRecognizer recognizer = TapGestureRecognizer()
-              // The linkString always contains the full matched text, so that's
-              // what should be linked to.
-              ..onTap = () => widget.onTapUrl(linkString);
+            // The linkString always contains the full matched text, so that's
+            // what should be linked to.
+            ..onTap = () => widget.onTapUrl(linkString);
           _recognizers.add(recognizer);
           return _MyInlineLinkSpan(
             // The displayString contains only the portion of the matched text
@@ -174,11 +174,11 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
         regExp: _twitterHandleRegExp,
         linkBuilder: (String displayString, String linkString) {
           final TapGestureRecognizer recognizer = TapGestureRecognizer()
-              ..onTap = () => widget.onTapTwitterHandle(linkString);
+            ..onTap = () => widget.onTapTwitterHandle(linkString);
           _recognizers.add(recognizer);
           return _MyInlineLinkSpan(
             text: displayString,
-              color: const Color(0xff00aaaa),
+            color: const Color(0xff00aaaa),
             recognizer: recognizer,
           );
         },
@@ -192,9 +192,9 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
   void didUpdateWidget(_TwitterAndUrlLinkedText oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.spans != oldWidget.spans
-      || widget.onTapUrl != oldWidget.onTapUrl
-      || widget.onTapTwitterHandle != oldWidget.onTapTwitterHandle) {
+    if (widget.spans != oldWidget.spans ||
+        widget.onTapUrl != oldWidget.onTapUrl ||
+        widget.onTapTwitterHandle != oldWidget.onTapTwitterHandle) {
       _linkSpans();
     }
   }
@@ -226,12 +226,12 @@ class _MyInlineLinkSpan extends TextSpan {
     required Color color,
     required super.recognizer,
   }) : super(
-    style: TextStyle(
-      color: color,
-      decorationColor: color,
-      decoration: TextDecoration.underline,
-    ),
-    mouseCursor: SystemMouseCursors.click,
-    text: text,
-  );
+          style: TextStyle(
+            color: color,
+            decorationColor: color,
+            decoration: TextDecoration.underline,
+          ),
+          mouseCursor: SystemMouseCursors.click,
+          text: text,
+        );
 }

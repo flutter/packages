@@ -199,12 +199,12 @@ class _MyInlineLinkSpan extends TextSpan {
     required Color color,
     required super.recognizer,
   }) : super(
-         style: TextStyle(
-           color: color,
-           decorationColor: color,
-           decoration: TextDecoration.underline,
-         ),
-         mouseCursor: SystemMouseCursors.click,
-         text: text,
-       );
+          style: TextStyle(
+            color: color,
+            decorationColor: color,
+            decoration: TextDecoration.underline,
+          ),
+          mouseCursor: SystemMouseCursors.click,
+          text: text,
+        );
 }
