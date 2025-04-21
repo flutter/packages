@@ -1,12 +1,12 @@
 name: linked_text
-description: Flutter plugin for creating links in text.
+description: A Flutter plugin for creating interactive links in text based on url_launcher.
 version: 1.0.0
 repository: https://github.com/flutter/packages/tree/main/packages/linked_text
-issue_tracker: https://github.com/flutter/flutter/issues
+issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+linked_text%22
 
 environment:
-  sdk: ">=3.1.0 <4.0.0"
-  flutter: ">=3.13.0"
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
 
 dependencies:
   flutter:
@@ -18,3 +18,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   test: ^1.24.0
+
+topics:
+  - link
+  - text
+  - url
