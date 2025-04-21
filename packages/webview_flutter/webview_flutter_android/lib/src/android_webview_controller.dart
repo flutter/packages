@@ -731,6 +731,24 @@ class AndroidWebViewController extends PlatformWebViewController {
     _onJavaScriptPrompt = onJavaScriptTextInputDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
   }
+
+  @override
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
+    return switch (mode) {
+      WebViewOverScrollMode.always => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.always,
+        ),
+      WebViewOverScrollMode.ifContentScrolls => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.ifContentScrolls,
+        ),
+      WebViewOverScrollMode.never => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.never,
+        ),
+      // This prevents future additions from causing a breaking change.
+      // ignore: unreachable_switch_case
+      _ => throw UnsupportedError('Android does not support $mode.'),
+    };
+  }
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].

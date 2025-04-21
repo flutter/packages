@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
+
 ## 2.12.1
 
 * Fixes typo in README.

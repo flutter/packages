@@ -1,3 +1,12 @@
+## 3.20.0
+
+* Adds support to disable a preview of the destination for a link. See
+  `WebKitWebViewController.setAllowsLinkPreview`.
+
+## 3.19.0
+
+* Adds support to set the over-scroll mode for the WebView. See `WebKitWebViewController.setOverScrollMode`.
+
 ## 3.18.6
 
 * Fixes `PlatformException` when calling `loadFlutterAsset` on macOS.
