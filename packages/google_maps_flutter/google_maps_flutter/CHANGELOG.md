@@ -1,6 +1,10 @@
-## 2.12.2
+## NEXT
 
 * Adds support for camera control button on web.
+
+## NEXT
+
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
 
 ## 2.12.1
 

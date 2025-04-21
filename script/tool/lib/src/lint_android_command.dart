@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'common/core.dart';
+import 'common/file_filters.dart';
+import 'common/flutter_command_utils.dart';
 import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
@@ -29,6 +31,15 @@ class LintAndroidCommand extends PackageLoopingCommand {
       'Requires the examples to have been build at least once before running.';
 
   @override
+  bool shouldIgnoreFile(String path) {
+    return isRepoLevelNonCodeImpactingFile(path) ||
+        isPackageSupportFile(path) ||
+        // These are part of the build, but don't affect native code analysis.
+        path.endsWith('/pubspec.yaml') ||
+        path.endsWith('.dart');
+  }
+
+  @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     if (!pluginSupportsPlatform(platformAndroid, package,
         requiredMode: PlatformSupport.inline)) {
@@ -41,12 +52,9 @@ class LintAndroidCommand extends PackageLoopingCommand {
           processRunner: processRunner, platform: platform);
 
       if (!project.isConfigured()) {
-        final int exitCode = await processRunner.runAndStream(
-          flutterCommand,
-          <String>['build', 'apk', '--config-only'],
-          workingDir: example.directory,
-        );
-        if (exitCode != 0) {
+        final bool buildSuccess = await runConfigOnlyBuild(
+            example, processRunner, platform, FlutterPlatform.android);
+        if (!buildSuccess) {
           printError('Unable to configure Gradle project.');
           return PackageResult.fail(<String>['Unable to configure Gradle.']);
         }

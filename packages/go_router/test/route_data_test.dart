@@ -492,4 +492,50 @@ void main() {
       expect(find.byKey(const Key('buildPage')), findsNothing);
     },
   );
+  test('TypedGoRoute with default parameters', () {
+    const TypedGoRoute<GoRouteData> typedGoRoute = TypedGoRoute<GoRouteData>(
+      path: '/path',
+    );
+
+    expect(typedGoRoute.path, '/path');
+    expect(typedGoRoute.name, isNull);
+    expect(typedGoRoute.caseSensitive, true);
+    expect(typedGoRoute.routes, isEmpty);
+  });
+
+  test('TypedGoRoute with provided parameters', () {
+    const TypedGoRoute<GoRouteData> typedGoRoute = TypedGoRoute<GoRouteData>(
+      path: '/path',
+      name: 'name',
+      caseSensitive: false,
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<GoRouteData>(
+          path: 'sub-path',
+          name: 'subName',
+          caseSensitive: false,
+        ),
+      ],
+    );
+
+    expect(typedGoRoute.path, '/path');
+    expect(typedGoRoute.name, 'name');
+    expect(typedGoRoute.caseSensitive, false);
+    expect(typedGoRoute.routes, hasLength(1));
+    expect(
+      typedGoRoute.routes.single,
+      isA<TypedGoRoute<GoRouteData>>()
+          .having((TypedGoRoute<GoRouteData> route) => route.path, 'path',
+              'sub-path')
+          .having(
+            (TypedGoRoute<GoRouteData> route) => route.name,
+            'name',
+            'subName',
+          )
+          .having(
+            (TypedGoRoute<GoRouteData> route) => route.caseSensitive,
+            'caseSensitive',
+            false,
+          ),
+    );
+  });
 }

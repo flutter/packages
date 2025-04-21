@@ -642,6 +642,7 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
         value is String ||
         value is FileChooserMode ||
         value is ConsoleMessageLevel ||
+        value is OverScrollMode ||
         value is SslErrorType ||
         value == null) {
       super.writeValue(stream, value)
@@ -815,6 +816,31 @@ enum class ConsoleMessageLevel(val raw: Int) {
 }
 
 /**
+ * The over-scroll mode for a view.
+ *
+ * See https://developer.android.com/reference/android/view/View#OVER_SCROLL_ALWAYS.
+ */
+enum class OverScrollMode(val raw: Int) {
+  /** Always allow a user to over-scroll this view, provided it is a view that can scroll. */
+  ALWAYS(0),
+  /**
+   * Allow a user to over-scroll this view only if the content is large enough to meaningfully
+   * scroll, provided it is a view that can scroll.
+   */
+  IF_CONTENT_SCROLLS(1),
+  /** Never allow a user to over-scroll this view. */
+  NEVER(2),
+  /** The type is not recognized by this wrapper. */
+  UNKNOWN(3);
+
+  companion object {
+    fun ofRaw(raw: Int): OverScrollMode? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/**
  * Type of error for a SslCertificate.
  *
  * See https://developer.android.com/reference/android/net/http/SslError#SSL_DATE_INVALID.
@@ -852,6 +878,9 @@ private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
         return (readValue(buffer) as Long?)?.let { ConsoleMessageLevel.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
+        return (readValue(buffer) as Long?)?.let { OverScrollMode.ofRaw(it.toInt()) }
+      }
+      132.toByte() -> {
         return (readValue(buffer) as Long?)?.let { SslErrorType.ofRaw(it.toInt()) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -868,8 +897,12 @@ private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
         stream.write(130)
         writeValue(stream, value.raw)
       }
-      is SslErrorType -> {
+      is OverScrollMode -> {
         stream.write(131)
+        writeValue(stream, value.raw)
+      }
+      is SslErrorType -> {
+        stream.write(132)
         writeValue(stream, value.raw)
       }
       else -> super.writeValue(stream, value)
@@ -4780,6 +4813,9 @@ abstract class PigeonApiView(
   /** Return the scrolled position of this view. */
   abstract fun getScrollPosition(pigeon_instance: android.view.View): WebViewPoint
 
+  /** Set the over-scroll mode for this view. */
+  abstract fun setOverScrollMode(pigeon_instance: android.view.View, mode: OverScrollMode)
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiView?) {
@@ -4843,6 +4879,30 @@ abstract class PigeonApiView(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getScrollPosition(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.View.setOverScrollMode",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.view.View
+            val modeArg = args[1] as OverScrollMode
+            val wrapped: List<Any?> =
+                try {
+                  api.setOverScrollMode(pigeon_instanceArg, modeArg)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   wrapError(exception)
                 }

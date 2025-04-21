@@ -6,7 +6,6 @@ import StoreKit
 
 @available(iOS 15.0, macOS 12.0, *)
 extension InAppPurchasePlugin: InAppPurchase2API {
-
   // MARK: - Pigeon Functions
 
   /// Wrapper method around StoreKit2's canMakePayments() method
@@ -142,6 +141,43 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       if let transaction = transaction {
         await transaction.finish()
         completion(.success(Void()))
+      }
+    }
+  }
+
+  /// Wrapper method around StoreKit2's countryCode() method
+  /// https://developer.apple.com/documentation/storekit/storefront/countrycode
+  func countryCode(completion: @escaping (Result<String, Error>) -> Void) {
+    Task {
+      guard let currentStorefront = await Storefront.current else {
+        let error = PigeonError(
+          code: "storekit2_failed_to_fetch_country_code",
+          message: "Storekit has failed to fetch the country code.",
+          details: "Storefront.current returned nil.")
+        completion(.failure(error))
+        return
+      }
+      completion(.success(currentStorefront.countryCode))
+      return
+    }
+  }
+
+  /// Wrapper method around StoreKit2's sync() method
+  /// https://developer.apple.com/documentation/storekit/appstore/sync()
+  /// When called, a system prompt will ask users to enter their authentication details
+  func sync(completion: @escaping (Result<Void, Error>) -> Void) {
+    Task {
+      do {
+        try await AppStore.sync()
+        completion(.success(()))
+        return
+      } catch {
+        let pigeonError = PigeonError(
+          code: "storekit2_failed_to_sync_to_app_store",
+          message: "Storekit has failed to sync to the app store.",
+          details: "\(error)")
+        completion(.failure(pigeonError))
+        return
       }
     }
   }
