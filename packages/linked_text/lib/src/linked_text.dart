@@ -199,13 +199,7 @@ class LinkedText extends StatefulWidget {
   /// tapping on a [Uri].
   static ValueChanged<String> _getOnTap(ValueChanged<Uri> onTapUri) {
     return (String linkString) {
-      Uri uri = Uri.parse(linkString);
-      if (uri.host.isEmpty) {
-        // defaultUriRegExp matches Uris without a host, but packages like
-        // url_launcher require a host to launch a Uri.
-        uri = Uri.parse('https://$linkString');
-      }
-      onTapUri(uri);
+      onTapUri(Uri.parse(linkString));
     };
   }
 
@@ -259,6 +253,19 @@ class _LinkedTextState extends State<LinkedText> {
     _linkedSpans = linkedSpans;
   }
 
+  InlineSpan _getInlineSpan(String displayString, String linkString) {
+    final TapGestureRecognizer recognizer =
+        TapGestureRecognizer()
+          ..onTap = () => widget.onTap!(linkString);
+    // Keep track of created recognizers so that they can be disposed.
+    _recognizers.add(recognizer);
+    return _InlineLinkSpan(
+      recognizer: recognizer,
+      style: LinkedText.defaultLinkStyle,
+      text: displayString,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -267,23 +274,27 @@ class _LinkedTextState extends State<LinkedText> {
           TextLinker(
             regExp: widget.regExp ?? LinkedText.defaultUriRegExp,
             linkBuilder: (String displayString, String linkString) {
+              // If we're using a custom RegExp, this is not necessarily a
+              // navigation link.
+              if (widget.regExp != LinkedText.defaultUriRegExp) {
+                return _getInlineSpan(displayString, linkString);
+              }
+
+              Uri uri = Uri.parse(linkString);
+              print('justin uri $uri from $linkString.');
+              if (uri.host.isEmpty) {
+                // defaultUriRegExp matches Uris without a host, but packages like
+                // url_launcher require a host to launch a Uri.
+                uri = Uri.parse('https://$linkString');
+              }
               return WidgetSpan(
                 child: Link(
-                  uri: Uri.parse(linkString),
+                  uri: uri,
                   // TODO(justinmc): target should probably be a parameter too? Or users can do it themselves if they want via TextLinker?
-                  //target: LinkTarget.blank,
+                  target: LinkTarget.blank,
                   builder: (BuildContext context, FollowLink? followLink) {
-                    final TapGestureRecognizer recognizer =
-                        TapGestureRecognizer()
-                          ..onTap = () => widget.onTap!(linkString);
-                    // Keep track of created recognizers so that they can be disposed.
-                    _recognizers.add(recognizer);
                     return Text.rich(
-                      _InlineLinkSpan(
-                        recognizer: recognizer,
-                        style: LinkedText.defaultLinkStyle,
-                        text: displayString,
-                      ),
+                      _getInlineSpan(displayString, linkString),
                     );
                   },
                 ),
