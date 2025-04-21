@@ -338,7 +338,7 @@ void main() {
   });
 
   test('Default implementation of supportsSetScrollBarsEnabled returns false',
-      () {f
+      () {
     final PlatformWebViewController controller =
         ExtendsPlatformWebViewController(
             const PlatformWebViewControllerCreationParams());
