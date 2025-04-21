@@ -709,6 +709,34 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    test('supportsSetScrollBarsEnabled returns true for iOS', () {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      expect(controller.supportsSetScrollBarsEnabled(), true);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('supportsSetScrollBarsEnabled returns false for macOS', () {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+
+      expect(controller.supportsSetScrollBarsEnabled(), false);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     test('disable zoom', () async {
       final MockWKUserContentController mockUserContentController =
           MockWKUserContentController();
