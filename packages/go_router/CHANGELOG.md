@@ -1,3 +1,7 @@
+## 15.1.0
+
+- Adds `caseSensitive` to `TypedGoRoute`.
+
 ## 15.0.0
 
 - **BREAKING CHANGE**
