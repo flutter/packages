@@ -390,24 +390,11 @@ class GoogleMapController
     groundOverlaysController.onGroundOverlayTap(groundOverlay.getId());
   }
 
-  @Nullable private IndoorBuilding previousBuilding;
-  private boolean isFirstFocus = true;
-
   @Override
   public void onIndoorBuildingFocused() {
     if (googleMap != null) {
       IndoorBuilding currentBuilding = googleMap.getFocusedBuilding();
-      if (previousBuilding != null && currentBuilding == null) {
-        floorController.onActiveLevelChanged(null);
-      }
-
-      if (currentBuilding != null) {
-        if (!isFirstFocus) {
-          onIndoorLevelActivated(currentBuilding);
-        }
-        isFirstFocus = false;
-      }
-      previousBuilding = currentBuilding;
+      floorController.onActiveLevelChanged(currentBuilding != null ? currentBuilding.getLevels().get(currentBuilding.getActiveLevelIndex()) : null);
     }
   }
 
