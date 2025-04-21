@@ -17,7 +17,6 @@ flutter:
         default_package: google_maps_flutter_ios
       web:
         default_package: google_maps_flutter_web
-publish_to: none
 
 dependencies:
   flutter:
