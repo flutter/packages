@@ -34,10 +34,8 @@ import 'package:flutter/widgets.dart';
 ///
 /// ** See code in examples/api/lib/painting/text_linker/text_linker.1.dart **
 /// {@end-tool}
-typedef InlineLinkBuilder = InlineSpan Function(
-  String displayString,
-  String linkString,
-);
+typedef InlineLinkBuilder =
+    InlineSpan Function(String displayString, String linkString);
 
 /// Specifies a way to find and style parts of some text.
 ///
@@ -70,10 +68,7 @@ class TextLinker {
   /// Does not manage the lifecycle of any [GestureRecognizer]s created in
   /// [linkBuilder], so it's the responsibility of the caller to do so. See
   /// [TextSpan.recognizer] for more.
-  TextLinker({
-    required this.regExp,
-    required this.linkBuilder,
-  });
+  TextLinker({required this.regExp, required this.linkBuilder});
 
   /// Builds an [InlineSpan] to display the text that it's passed.
   ///
@@ -85,7 +80,10 @@ class TextLinker {
 
   /// Applies the given [TextLinker]s to the given [InlineSpan]s and returns the
   /// new resulting spans and any created [GestureRecognizer]s.
-  static Iterable<InlineSpan> linkSpans(Iterable<InlineSpan> spans, Iterable<TextLinker> textLinkers) {
+  static Iterable<InlineSpan> linkSpans(
+    Iterable<InlineSpan> spans,
+    Iterable<TextLinker> textLinkers,
+  ) {
     final _LinkedSpans linkedSpans = _LinkedSpans(
       spans: spans,
       textLinkers: textLinkers,
@@ -97,10 +95,7 @@ class TextLinker {
   static Iterable<TextRange> _textRangesFromText(String text, RegExp regExp) {
     final Iterable<RegExpMatch> matches = regExp.allMatches(text);
     return matches.map((RegExpMatch match) {
-      return TextRange(
-        start: match.start,
-        end: match.end,
-      );
+      return TextRange(start: match.start, end: match.end);
     });
   }
 
@@ -138,38 +133,35 @@ class _TextLinkerMatch {
 
   /// Get all [_TextLinkerMatch]s obtained from applying the given
   /// `textLinker`s with the given `text`.
-  static List<_TextLinkerMatch> fromTextLinkers(Iterable<TextLinker> textLinkers, String text) {
-    return textLinkers
-        .fold<List<_TextLinkerMatch>>(
-          <_TextLinkerMatch>[],
-          (List<_TextLinkerMatch> previousValue, TextLinker value) {
-            return previousValue..addAll(value._link(text));
-        });
+  static List<_TextLinkerMatch> fromTextLinkers(
+    Iterable<TextLinker> textLinkers,
+    String text,
+  ) {
+    return textLinkers.fold<List<_TextLinkerMatch>>(<_TextLinkerMatch>[], (
+      List<_TextLinkerMatch> previousValue,
+      TextLinker value,
+    ) {
+      return previousValue..addAll(value._link(text));
+    });
   }
 
   @override
-  String toString() => '${objectRuntimeType(this, '_TextLinkerMatch')}($textRange, $linkBuilder, $linkString)';
+  String toString() =>
+      '${objectRuntimeType(this, '_TextLinkerMatch')}($textRange, $linkBuilder, $linkString)';
 }
 
 /// Used to cache information about a span's recursive text.
 ///
 /// Avoids repeatedly calling [TextSpan.toPlainText].
 class _TextCache {
-  factory _TextCache({
-    required InlineSpan span,
-  }) {
+  factory _TextCache({required InlineSpan span}) {
     if (span is! TextSpan) {
-      return _TextCache._(
-        text: '',
-        lengths: <InlineSpan, int>{span: 0},
-      );
+      return _TextCache._(text: '', lengths: <InlineSpan, int>{span: 0});
     }
 
     _TextCache childrenTextCache = _TextCache._empty();
     for (final InlineSpan child in span.children ?? <InlineSpan>[]) {
-      final _TextCache childTextCache = _TextCache(
-        span: child,
-      );
+      final _TextCache childTextCache = _TextCache(span: child);
       childrenTextCache = childrenTextCache._merge(childTextCache);
     }
 
@@ -183,22 +175,16 @@ class _TextCache {
     );
   }
 
-  factory _TextCache.fromMany({
-    required Iterable<InlineSpan> spans,
-  }) {
+  factory _TextCache.fromMany({required Iterable<InlineSpan> spans}) {
     _TextCache textCache = _TextCache._empty();
     for (final InlineSpan span in spans) {
-      final _TextCache spanTextCache = _TextCache(
-        span: span,
-      );
+      final _TextCache spanTextCache = _TextCache(span: span);
       textCache = textCache._merge(spanTextCache);
     }
     return textCache;
   }
 
-  _TextCache._empty(
-  ) : text = '',
-      _lengths = <InlineSpan, int>{};
+  _TextCache._empty() : text = '', _lengths = <InlineSpan, int>{};
 
   const _TextCache._({
     required this.text,
@@ -229,7 +215,8 @@ class _TextCache {
   int? getLength(InlineSpan span) => _lengths[span];
 
   @override
-  String toString() => '${objectRuntimeType(this, '_TextCache')}($text, $_lengths)';
+  String toString() =>
+      '${objectRuntimeType(this, '_TextCache')}($text, $_lengths)';
 }
 
 /// Signature for the output of linking an InlineSpan to some
@@ -237,6 +224,7 @@ class _TextCache {
 typedef _LinkSpanRecursion = (
   /// The output of linking the input InlineSpan.
   InlineSpan linkedSpan,
+
   /// The provided _TextLinkerMatches, but with those completely used during
   /// linking removed.
   Iterable<_TextLinkerMatch> unusedTextLinkerMatches,
@@ -247,6 +235,7 @@ typedef _LinkSpanRecursion = (
 typedef _LinkSpansRecursion = (
   /// The output of linking the input InlineSpans.
   Iterable<InlineSpan> linkedSpans,
+
   /// The provided _TextLinkerMatches, but with those completely used during
   /// linking removed.
   Iterable<_TextLinkerMatch> unusedTextLinkerMatches,
@@ -270,25 +259,20 @@ class _LinkedSpans {
         );
 
     final (Iterable<InlineSpan> linkedSpans, Iterable<_TextLinkerMatch> _) =
-        _linkSpansRecurse(
-          spans,
-          textCache,
-          textLinkerMatches,
-        );
+        _linkSpansRecurse(spans, textCache, textLinkerMatches);
 
-    return _LinkedSpans._(
-      linkedSpans: linkedSpans,
-    );
+    return _LinkedSpans._(linkedSpans: linkedSpans);
   }
 
-  const _LinkedSpans._({
-    required this.linkedSpans,
-  });
+  const _LinkedSpans._({required this.linkedSpans});
 
   final Iterable<InlineSpan> linkedSpans;
 
-  static List<_TextLinkerMatch> _cleanTextLinkerMatches(Iterable<_TextLinkerMatch> textLinkerMatches) {
-    final List<_TextLinkerMatch> nextTextLinkerMatches = textLinkerMatches.toList();
+  static List<_TextLinkerMatch> _cleanTextLinkerMatches(
+    Iterable<_TextLinkerMatch> textLinkerMatches,
+  ) {
+    final List<_TextLinkerMatch> nextTextLinkerMatches = textLinkerMatches
+        .toList();
 
     // Sort by start.
     nextTextLinkerMatches.sort((_TextLinkerMatch a, _TextLinkerMatch b) {
@@ -299,7 +283,9 @@ class _LinkedSpans {
     int lastEnd = 0;
     for (final _TextLinkerMatch textLinkerMatch in nextTextLinkerMatches) {
       if (textLinkerMatch.textRange.start < lastEnd) {
-        throw ArgumentError('Matches must not overlap. Overlapping text was "${textLinkerMatch.linkString}" located at ${textLinkerMatch.textRange.start}-${textLinkerMatch.textRange.end}.');
+        throw ArgumentError(
+          'Matches must not overlap. Overlapping text was "${textLinkerMatch.linkString}" located at ${textLinkerMatch.textRange.start}-${textLinkerMatch.textRange.end}.',
+        );
       }
       lastEnd = textLinkerMatch.textRange.end;
     }
@@ -314,12 +300,20 @@ class _LinkedSpans {
 
   // `index` is the index of the start of `span` in the overall flattened tree
   // string.
-  static _LinkSpansRecursion _linkSpansRecurse(Iterable<InlineSpan> spans, _TextCache textCache, Iterable<_TextLinkerMatch> textLinkerMatches, [int index = 0]) {
+  static _LinkSpansRecursion _linkSpansRecurse(
+    Iterable<InlineSpan> spans,
+    _TextCache textCache,
+    Iterable<_TextLinkerMatch> textLinkerMatches, [
+    int index = 0,
+  ]) {
     final List<InlineSpan> output = <InlineSpan>[];
     Iterable<_TextLinkerMatch> nextTextLinkerMatches = textLinkerMatches;
     int nextIndex = index;
     for (final InlineSpan span in spans) {
-      final (InlineSpan childSpan, Iterable<_TextLinkerMatch> childTextLinkerMatches) = _linkSpanRecurse(
+      final (
+        InlineSpan childSpan,
+        Iterable<_TextLinkerMatch> childTextLinkerMatches,
+      ) = _linkSpanRecurse(
         span,
         textCache,
         nextTextLinkerMatches,
@@ -335,13 +329,20 @@ class _LinkedSpans {
 
   // `index` is the index of the start of `span` in the overall flattened tree
   // string.
-  static _LinkSpanRecursion _linkSpanRecurse(InlineSpan span, _TextCache textCache, Iterable<_TextLinkerMatch> textLinkerMatches, [int index = 0]) {
+  static _LinkSpanRecursion _linkSpanRecurse(
+    InlineSpan span,
+    _TextCache textCache,
+    Iterable<_TextLinkerMatch> textLinkerMatches, [
+    int index = 0,
+  ]) {
     if (span is! TextSpan) {
       return (span, textLinkerMatches);
     }
 
     final List<InlineSpan> nextChildren = <InlineSpan>[];
-    List<_TextLinkerMatch> nextTextLinkerMatches = <_TextLinkerMatch>[...textLinkerMatches];
+    List<_TextLinkerMatch> nextTextLinkerMatches = <_TextLinkerMatch>[
+      ...textLinkerMatches,
+    ];
     int lastLinkEnd = index;
     if (span.text?.isNotEmpty ?? false) {
       final int textEnd = index + span.text!.length;
@@ -360,12 +361,14 @@ class _LinkedSpans {
         }
         if (textLinkerMatch.textRange.start > index) {
           // Add the unlinked text before the range.
-          nextChildren.add(TextSpan(
-            text: span.text!.substring(
-              lastLinkEnd - index,
-              textLinkerMatch.textRange.start - index,
+          nextChildren.add(
+            TextSpan(
+              text: span.text!.substring(
+                lastLinkEnd - index,
+                textLinkerMatch.textRange.start - index,
+              ),
             ),
-          ));
+          );
         }
         // Add the link itself.
         final int linkStart = math.max(textLinkerMatch.textRange.start, index);
@@ -387,9 +390,7 @@ class _LinkedSpans {
       // Add any extra text after any ranges.
       final String remainingText = span.text!.substring(lastLinkEnd - index);
       if (remainingText.isNotEmpty) {
-        nextChildren.add(TextSpan(
-          text: remainingText,
-        ));
+        nextChildren.add(TextSpan(text: remainingText));
       }
     }
 
@@ -409,10 +410,7 @@ class _LinkedSpans {
     }
 
     return (
-      TextSpan(
-        style: span.style,
-        children: nextChildren,
-      ),
+      TextSpan(style: span.style, children: nextChildren),
       nextTextLinkerMatches,
     );
   }

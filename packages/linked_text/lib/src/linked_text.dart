@@ -15,10 +15,8 @@ import './text_linker.dart';
 ///
 /// Typically a [Text.rich] containing a [TextSpan] whose children are the
 /// [linkedSpans].
-typedef LinkedTextWidgetBuilder = Widget Function (
-  BuildContext context,
-  Iterable<InlineSpan> linkedSpans,
-);
+typedef LinkedTextWidgetBuilder =
+    Widget Function(BuildContext context, Iterable<InlineSpan> linkedSpans);
 
 /// A widget that displays text with parts of it made interactive.
 ///
@@ -66,12 +64,11 @@ class LinkedText extends StatefulWidget {
     this.builder = _defaultBuilder,
     List<InlineSpan>? spans,
     String? text,
-  }) : assert((text == null) != (spans == null), 'Must specify exactly one to link: either text or spans.'),
-       spans = spans ?? <InlineSpan>[
-         TextSpan(
-           text: text,
-         ),
-       ],
+  }) : assert(
+         (text == null) != (spans == null),
+         'Must specify exactly one to link: either text or spans.',
+       ),
+       spans = spans ?? <InlineSpan>[TextSpan(text: text)],
        onTap = _getOnTap(onTapUri ?? _defaultOnTapUri),
        regExp = defaultUriRegExp,
        textLinkers = null;
@@ -98,12 +95,11 @@ class LinkedText extends StatefulWidget {
     this.builder = _defaultBuilder,
     List<InlineSpan>? spans,
     String? text,
-  }) : assert((text == null) != (spans == null), 'Must specify exactly one to link: either text or spans.'),
-       spans = spans ?? <InlineSpan>[
-         TextSpan(
-           text: text,
-         ),
-       ],
+  }) : assert(
+         (text == null) != (spans == null),
+         'Must specify exactly one to link: either text or spans.',
+       ),
+       spans = spans ?? <InlineSpan>[TextSpan(text: text)],
        textLinkers = null;
 
   /// Creates an instance of [LinkedText] where the given [textLinkers] are
@@ -130,14 +126,13 @@ class LinkedText extends StatefulWidget {
     String? text,
     List<InlineSpan>? spans,
     required List<TextLinker> textLinkers,
-  }) : assert((text == null) != (spans == null), 'Must specify exactly one to link: either text or spans.'),
+  }) : assert(
+         (text == null) != (spans == null),
+         'Must specify exactly one to link: either text or spans.',
+       ),
        assert(textLinkers.isNotEmpty),
        textLinkers = textLinkers, // ignore: prefer_initializing_formals
-       spans = spans ?? <InlineSpan>[
-         TextSpan(
-           text: text,
-         ),
-       ],
+       spans = spans ?? <InlineSpan>[TextSpan(text: text)],
        onTap = null,
        regExp = null;
 
@@ -189,7 +184,9 @@ class LinkedText extends StatefulWidget {
   ///
   /// Matches with and without a host, but only "http" or "https". Ignores email
   /// addresses.
-  static final RegExp defaultUriRegExp = RegExp(r'(?<!@[a-zA-Z0-9-]*)(?<![\/\.a-zA-Z0-9-])((https?:\/\/)?(([a-zA-Z0-9-]*\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]+)+))(?::\d{1,5})?(?:\/[^\s]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?(?![a-zA-Z0-9-]*@)');
+  static final RegExp defaultUriRegExp = RegExp(
+    r'(?<!@[a-zA-Z0-9-]*)(?<![\/\.a-zA-Z0-9-])((https?:\/\/)?(([a-zA-Z0-9-]*\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]+)+))(?::\d{1,5})?(?:\/[^\s]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?(?![a-zA-Z0-9-]*@)',
+  );
 
   // By default, launch the Uri in the browser.
   static Future<void> _defaultOnTapUri(Uri uri) async {
@@ -217,7 +214,10 @@ class LinkedText extends StatefulWidget {
   /// Builds a [Text.rich] with a single [TextSpan] whose children are the
   /// linked [TextSpan]s, and whose style is [DefaultTextStyle]. If there are no
   /// linked [TextSpan]s to display, builds a [SizedBox.shrink].
-  static Widget _defaultBuilder(BuildContext context, Iterable<InlineSpan> linkedSpans) {
+  static Widget _defaultBuilder(
+    BuildContext context,
+    Iterable<InlineSpan> linkedSpans,
+  ) {
     if (linkedSpans.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -262,33 +262,36 @@ class _LinkedTextState extends State<LinkedText> {
   @override
   void initState() {
     super.initState();
-    _textLinkers = widget.textLinkers ?? <TextLinker>[
-       TextLinker(
-         regExp: widget.regExp ?? LinkedText.defaultUriRegExp,
-         linkBuilder: (String displayString, String linkString) {
-           return WidgetSpan(
-             child: Link(
-               uri: Uri.parse(linkString),
-               // TODO(justinmc): target should probably be a parameter too? Or users can do it themselves if they want via TextLinker?
-               //target: LinkTarget.blank,
-               builder: (BuildContext context, FollowLink? followLink) {
-                 final TapGestureRecognizer recognizer = TapGestureRecognizer()
-                     ..onTap = () => widget.onTap!(linkString);
-                 // Keep track of created recognizers so that they can be disposed.
-                 _recognizers.add(recognizer);
-                 return Text.rich(
-                   _InlineLinkSpan(
-                     recognizer: recognizer,
-                     style: LinkedText.defaultLinkStyle,
-                     text: displayString,
-                   ),
-                 );
-               },
-             ),
-           );
-         },
-       ),
-     ];
+    _textLinkers =
+        widget.textLinkers ??
+        <TextLinker>[
+          TextLinker(
+            regExp: widget.regExp ?? LinkedText.defaultUriRegExp,
+            linkBuilder: (String displayString, String linkString) {
+              return WidgetSpan(
+                child: Link(
+                  uri: Uri.parse(linkString),
+                  // TODO(justinmc): target should probably be a parameter too? Or users can do it themselves if they want via TextLinker?
+                  //target: LinkTarget.blank,
+                  builder: (BuildContext context, FollowLink? followLink) {
+                    final TapGestureRecognizer recognizer =
+                        TapGestureRecognizer()
+                          ..onTap = () => widget.onTap!(linkString);
+                    // Keep track of created recognizers so that they can be disposed.
+                    _recognizers.add(recognizer);
+                    return Text.rich(
+                      _InlineLinkSpan(
+                        recognizer: recognizer,
+                        style: LinkedText.defaultLinkStyle,
+                        text: displayString,
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ];
     _linkSpans();
   }
 
@@ -296,7 +299,8 @@ class _LinkedTextState extends State<LinkedText> {
   void didUpdateWidget(LinkedText oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.spans != oldWidget.spans || widget.textLinkers != oldWidget.textLinkers) {
+    if (widget.spans != oldWidget.spans ||
+        widget.textLinkers != oldWidget.textLinkers) {
       _linkSpans();
     }
   }
@@ -320,15 +324,12 @@ class _LinkedTextState extends State<LinkedText> {
 ///  * [LinkedText], which creates links with this class by default.
 class _InlineLinkSpan extends TextSpan {
   /// Create an instance of [_InlineLinkSpan].
-  _InlineLinkSpan({
-    required String text,
-    TextStyle? style,
-    super.recognizer,
-  }) : super(
-    style: style ?? defaultLinkStyle,
-    mouseCursor: SystemMouseCursors.click,
-    text: text,
-  );
+  _InlineLinkSpan({required String text, TextStyle? style, super.recognizer})
+    : super(
+        style: style ?? defaultLinkStyle,
+        mouseCursor: SystemMouseCursors.click,
+        text: text,
+      );
 
   static Color get _linkColor {
     return switch (defaultTargetPlatform) {
@@ -338,7 +339,8 @@ class _InlineLinkSpan extends TextSpan {
       // This value was taken from Chrome on macOS 13.4.1.
       TargetPlatform.macOS => const Color(0xff0000ee),
       // This value was taken from Chrome on Android 14.
-      TargetPlatform.android || TargetPlatform.fuchsia => const Color(0xff0e0eef),
+      TargetPlatform.android ||
+      TargetPlatform.fuchsia => const Color(0xff0e0eef),
       // This value was taken from the Chrome browser running on GNOME 43.3 on
       // Debian.
       TargetPlatform.linux => const Color(0xff0026e8),

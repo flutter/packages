@@ -13,30 +13,24 @@ void main() {
 }
 
 class LinkedTextApp extends StatelessWidget {
-  const LinkedTextApp({
-    super.key,
-  });
+  const LinkedTextApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: MyHomePage(title: 'Flutter Link Twitter Handle Demo'),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  MyHomePage({
-    super.key,
-    required this.title
-  });
+  MyHomePage({super.key, required this.title});
 
   final String title;
-  static const String _text = 'Please check out @FlutterDev on Twitter for the latest.';
+  static const String _text =
+      'Please check out @FlutterDev on Twitter for the latest.';
 
   void _handleTapTwitterHandle(BuildContext context, String linkText) {
     final String handleWithoutAt = linkText.substring(1);
@@ -51,7 +45,8 @@ class MyHomePage extends StatelessWidget {
     Navigator.of(context).push(
       DialogRoute<void>(
         context: context,
-        builder: (BuildContext context) => AlertDialog(title: Text('You tapped: $uri')),
+        builder: (BuildContext context) =>
+            AlertDialog(title: Text('You tapped: $uri')),
       ),
     );
   }
@@ -61,9 +56,7 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: AppBar(title: Text(title)),
       body: Center(
         child: Builder(
           builder: (BuildContext context) {
@@ -75,7 +68,8 @@ class MyHomePage extends StatelessWidget {
                     text: _text,
                     regExp: _twitterHandleRegExp,
                     // TODO(justinmc): So the user has to use url_launcher directly for cases like this. That's probably not ideal for several reasons, but most importantly, in the browser when you hover the link you won't see the URL at the bottom of the browser. Right clicking and clicking "open in new tab" also doesn't work. So instead, provide a getUri parameter that passes in the link string and returns the URL. Use that to give the URL directly to Link, so everything works. Right?
-                    onTap: (String twitterHandleString) => _handleTapTwitterHandle(context, twitterHandleString),
+                    onTap: (String twitterHandleString) =>
+                        _handleTapTwitterHandle(context, twitterHandleString),
                   ),
                 ],
               ),

@@ -11,7 +11,9 @@ import 'package:flutter_test/flutter_test.dart';
 Rect getTextRect(WidgetTester tester, String substring) {
   expect(find.byType(RichText), findsAtLeast(1));
 
-  final Iterable<RenderParagraph> renderParagraphs = tester.renderObjectList(find.byType(RichText));
+  final Iterable<RenderParagraph> renderParagraphs = tester.renderObjectList(
+    find.byType(RichText),
+  );
   for (final RenderParagraph renderParagraph in renderParagraphs) {
     final String text = renderParagraph.text.toPlainText();
     final int index = text.indexOf(substring);

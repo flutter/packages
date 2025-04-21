@@ -15,30 +15,24 @@ void main() {
 }
 
 class TextLinkerApp extends StatelessWidget {
-  const TextLinkerApp({
-    super.key,
-  });
+  const TextLinkerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const MyHomePage(title: 'Flutter Link Twitter Handle Demo'),
     );
   }
 }
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({
-    super.key,
-    required this.title
-  });
+  const MyHomePage({super.key, required this.title});
 
   final String title;
-  static const String _text = '@FlutterDev is our Twitter account, or find us at www.flutter.dev';
+  static const String _text =
+      '@FlutterDev is our Twitter account, or find us at www.flutter.dev';
 
   void _handleTapTwitterHandle(BuildContext context, String linkString) {
     final String handleWithoutAt = linkString.substring(1);
@@ -64,7 +58,8 @@ class MyHomePage extends StatelessWidget {
     Navigator.of(context).push(
       DialogRoute<void>(
         context: context,
-        builder: (BuildContext context) => AlertDialog(title: Text('You tapped: $uri')),
+        builder: (BuildContext context) =>
+            AlertDialog(title: Text('You tapped: $uri')),
       ),
     );
   }
@@ -72,17 +67,17 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
+      appBar: AppBar(title: Text(title)),
       body: Center(
         child: Builder(
           builder: (BuildContext context) {
             return SelectionArea(
               child: _TwitterAndUrlLinkedText(
                 text: _text,
-                onTapUrl: (String urlString) => _handleTapUrl(context, urlString),
-                onTapTwitterHandle: (String handleString) => _handleTapTwitterHandle(context, handleString),
+                onTapUrl: (String urlString) =>
+                    _handleTapUrl(context, urlString),
+                onTapTwitterHandle: (String handleString) =>
+                    _handleTapTwitterHandle(context, handleString),
               ),
             );
           },
@@ -104,7 +99,8 @@ class _TwitterAndUrlLinkedText extends StatefulWidget {
   final ValueChanged<String> onTapTwitterHandle;
 
   @override
-  State<_TwitterAndUrlLinkedText> createState() => _TwitterAndUrlLinkedTextState();
+  State<_TwitterAndUrlLinkedText> createState() =>
+      _TwitterAndUrlLinkedTextState();
 }
 
 class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
@@ -123,10 +119,9 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
 
   void _linkSpans() {
     _disposeRecognizers();
-    final Iterable<InlineSpan> linkedSpans = TextLinker.linkSpans(
-      <TextSpan>[TextSpan(text: widget.text)],
-      _textLinkers,
-    );
+    final Iterable<InlineSpan> linkedSpans = TextLinker.linkSpans(<TextSpan>[
+      TextSpan(text: widget.text),
+    ], _textLinkers);
     _linkedSpans = linkedSpans;
   }
 
@@ -139,7 +134,7 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
         regExp: LinkedText.defaultUriRegExp,
         linkBuilder: (String displayString, String linkString) {
           final TapGestureRecognizer recognizer = TapGestureRecognizer()
-              ..onTap = () => widget.onTapUrl(linkString);
+            ..onTap = () => widget.onTapUrl(linkString);
           _recognizers.add(recognizer);
           return _MyInlineLinkSpan(
             text: displayString,
@@ -152,11 +147,11 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
         regExp: _twitterHandleRegExp,
         linkBuilder: (String displayString, String linkString) {
           final TapGestureRecognizer recognizer = TapGestureRecognizer()
-              ..onTap = () => widget.onTapTwitterHandle(linkString);
+            ..onTap = () => widget.onTapTwitterHandle(linkString);
           _recognizers.add(recognizer);
           return _MyInlineLinkSpan(
             text: displayString,
-              color: const Color(0xff00aaaa),
+            color: const Color(0xff00aaaa),
             recognizer: recognizer,
           );
         },
@@ -170,9 +165,9 @@ class _TwitterAndUrlLinkedTextState extends State<_TwitterAndUrlLinkedText> {
   void didUpdateWidget(_TwitterAndUrlLinkedText oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.text != oldWidget.text
-      || widget.onTapUrl != oldWidget.onTapUrl
-      || widget.onTapTwitterHandle != oldWidget.onTapTwitterHandle) {
+    if (widget.text != oldWidget.text ||
+        widget.onTapUrl != oldWidget.onTapUrl ||
+        widget.onTapTwitterHandle != oldWidget.onTapTwitterHandle) {
       _linkSpans();
     }
   }
@@ -204,12 +199,12 @@ class _MyInlineLinkSpan extends TextSpan {
     required Color color,
     required super.recognizer,
   }) : super(
-    style: TextStyle(
-      color: color,
-      decorationColor: color,
-      decoration: TextDecoration.underline,
-    ),
-    mouseCursor: SystemMouseCursors.click,
-    text: text,
-  );
+         style: TextStyle(
+           color: color,
+           decorationColor: color,
+           decoration: TextDecoration.underline,
+         ),
+         mouseCursor: SystemMouseCursors.click,
+         text: text,
+       );
 }

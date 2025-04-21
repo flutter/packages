@@ -9,7 +9,9 @@ import 'package:linked_text/linked_text.dart';
 
 void main() {
   final RegExp hashTagRegExp = RegExp(r'#[a-zA-Z0-9]*');
-  final RegExp urlRegExp = RegExp(r'(?<!@[a-zA-Z0-9-]*)(?<![\/\.a-zA-Z0-9-])((https?:\/\/)?(([a-zA-Z0-9-]*\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]+)+))(?::\d{1,5})?(?:\/[^\s]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?(?![a-zA-Z0-9-]*@)');
+  final RegExp urlRegExp = RegExp(
+    r'(?<!@[a-zA-Z0-9-]*)(?<![\/\.a-zA-Z0-9-])((https?:\/\/)?(([a-zA-Z0-9-]*\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]+)+))(?::\d{1,5})?(?:\/[^\s]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?(?![a-zA-Z0-9-]*@)',
+  );
 
   group('TextLinker.linkSpans', () {
     group('url matching', () {
@@ -32,15 +34,11 @@ void main() {
         'https://subdomain.example.io:8443/resource/file.html?search=query#result',
         'example.com',
         'subsub.www.example.com',
-        'https://subsub.www.example.com'
+        'https://subsub.www.example.com',
       ]) {
         test('converts the valid url $text to a link by default', () {
           final Iterable<InlineSpan> linkedSpans = TextLinker.linkSpans(
-             <InlineSpan>[
-               TextSpan(
-                 text: text,
-               ),
-             ],
+            <InlineSpan>[TextSpan(text: text)],
             <TextLinker>[
               TextLinker(
                 regExp: LinkedText.defaultUriRegExp,
@@ -75,18 +73,12 @@ void main() {
       ]) {
         test('does nothing to the invalid url $text', () {
           final Iterable<InlineSpan> linkedSpans = TextLinker.linkSpans(
-             <InlineSpan>[
-               TextSpan(
-                 text: text,
-               ),
-             ],
+            <InlineSpan>[TextSpan(text: text)],
             <TextLinker>[
               TextLinker(
                 regExp: LinkedText.defaultUriRegExp,
                 linkBuilder: (String displayString, String linkString) {
-                  return TextSpan(
-                    text: displayString,
-                  );
+                  return TextSpan(text: displayString);
                 },
               ),
             ],
@@ -114,11 +106,7 @@ void main() {
       ]) {
         test('can parse url $text with leading and trailing characters', () {
           final Iterable<InlineSpan> linkedSpans = TextLinker.linkSpans(
-             <InlineSpan>[
-               TextSpan(
-                 text: text,
-               ),
-             ],
+            <InlineSpan>[TextSpan(text: text)],
             <TextLinker>[
               TextLinker(
                 regExp: LinkedText.defaultUriRegExp,
@@ -180,12 +168,13 @@ void main() {
         },
       );
       final Iterable<InlineSpan> linkedSpans = TextLinker.linkSpans(
-         <InlineSpan>[
-           const TextSpan(
-             text: 'Flutter is great #crossplatform #declarative check out flutter.dev.',
-           ),
-         ],
-         <TextLinker>[urlTextLinker, hashTagTextLinker],
+        <InlineSpan>[
+          const TextSpan(
+            text:
+                'Flutter is great #crossplatform #declarative check out flutter.dev.',
+          ),
+        ],
+        <TextLinker>[urlTextLinker, hashTagTextLinker],
       );
 
       expect(linkedSpans, hasLength(1));
@@ -245,16 +234,12 @@ void main() {
             text: 'Check out https://www.',
             children: <InlineSpan>[
               TextSpan(
-                style: TextStyle(
-                  fontWeight: FontWeight.w800,
-                ),
+                style: TextStyle(fontWeight: FontWeight.w800),
                 text: 'flutter',
               ),
             ],
           ),
-          TextSpan(
-            text: '.dev!',
-          ),
+          TextSpan(text: '.dev!'),
         ],
         <TextLinker>[
           TextLinker(

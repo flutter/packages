@@ -14,7 +14,9 @@ import './text_utils.dart';
 
 void main() {
   final RegExp hashTagRegExp = RegExp(r'#[a-zA-Z0-9]*');
-  final RegExp urlRegExp = RegExp(r'(?<!@[a-zA-Z0-9-]*)(?<![\/\.a-zA-Z0-9-])((https?:\/\/)?(([a-zA-Z0-9-]*\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]+)+))(?::\d{1,5})?(?:\/[^\s]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?(?![a-zA-Z0-9-]*@)');
+  final RegExp urlRegExp = RegExp(
+    r'(?<!@[a-zA-Z0-9-]*)(?<![\/\.a-zA-Z0-9-])((https?:\/\/)?(([a-zA-Z0-9-]*\.)*[a-zA-Z0-9-]+(\.[a-zA-Z]+)+))(?::\d{1,5})?(?:\/[^\s]*)?(?:\?[^\s#]*)?(?:#[^\s]*)?(?![a-zA-Z0-9-]*@)',
+  );
 
   testWidgets('links urls by default', (WidgetTester tester) async {
     Uri? lastTappedUri;
@@ -72,7 +74,9 @@ void main() {
     expect(lastTappedLink, '#declarative');
   });
 
-  testWidgets('can pass custom regexp with .textLinkers', (WidgetTester tester) async {
+  testWidgets('can pass custom regexp with .textLinkers', (
+    WidgetTester tester,
+  ) async {
     const String text = 'Flutter is great #crossplatform #declarative';
     String? lastTappedLink;
     final List<TapGestureRecognizer> recognizers = <TapGestureRecognizer>[];
@@ -86,10 +90,11 @@ void main() {
                   TextLinker(
                     regExp: hashTagRegExp,
                     linkBuilder: (String displayString, String linkString) {
-                      final TapGestureRecognizer recognizer = TapGestureRecognizer()
-                          ..onTap = () {
-                            lastTappedLink = linkString;
-                          };
+                      final TapGestureRecognizer recognizer =
+                          TapGestureRecognizer()
+                            ..onTap = () {
+                              lastTappedLink = linkString;
+                            };
                       recognizers.add(recognizer);
                       return TextSpan(
                         style: LinkedText.defaultLinkStyle,
@@ -126,9 +131,9 @@ void main() {
       regExp: urlRegExp,
       linkBuilder: (String displayString, String linkString) {
         final TapGestureRecognizer recognizer = TapGestureRecognizer()
-            ..onTap = () {
-              lastTappedLink = linkString;
-            };
+          ..onTap = () {
+            lastTappedLink = linkString;
+          };
         recognizers.add(recognizer);
         return TextSpan(
           style: LinkedText.defaultLinkStyle,
@@ -141,9 +146,9 @@ void main() {
       regExp: hashTagRegExp,
       linkBuilder: (String displayString, String linkString) {
         final TapGestureRecognizer recognizer = TapGestureRecognizer()
-            ..onTap = () {
-              lastTappedLink = linkString;
-            };
+          ..onTap = () {
+            lastTappedLink = linkString;
+          };
         recognizers.add(recognizer);
         return TextSpan(
           style: LinkedText.defaultLinkStyle,
@@ -197,10 +202,11 @@ void main() {
                   TextLinker(
                     regExp: LinkedText.defaultUriRegExp,
                     linkBuilder: (String displayString, String linkString) {
-                      final TapGestureRecognizer recognizer = TapGestureRecognizer()
-                          ..onTap = () {
-                            lastTappedLink = linkString;
-                          };
+                      final TapGestureRecognizer recognizer =
+                          TapGestureRecognizer()
+                            ..onTap = () {
+                              lastTappedLink = linkString;
+                            };
                       recognizers.add(recognizer);
                       return TextSpan(
                         recognizer: recognizer,
@@ -221,12 +227,21 @@ void main() {
     expect(find.byType(RichText), findsOneWidget);
     expect(lastTappedLink, isNull);
 
-    final TestGesture gesture = await tester.createGesture(kind: PointerDeviceKind.mouse, pointer: 1);
+    final TestGesture gesture = await tester.createGesture(
+      kind: PointerDeviceKind.mouse,
+      pointer: 1,
+    );
     await gesture.addPointer(location: tester.getCenter(find.byType(Scaffold)));
     await tester.pump();
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.basic);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.basic,
+    );
     await gesture.moveTo(tester.getCenter(find.byType(RichText)));
-    expect(RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1), SystemMouseCursors.help);
+    expect(
+      RendererBinding.instance.mouseTracker.debugDeviceActiveCursor(1),
+      SystemMouseCursors.help,
+    );
 
     await tester.tapAt(tester.getCenter(find.byType(RichText)));
     expect(lastTappedLink, 'flutter.dev');
@@ -257,21 +272,15 @@ void main() {
                         text: 'u',
                         children: <InlineSpan>[
                           TextSpan(
-                            style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.w800),
                             text: 'tt',
                           ),
-                          TextSpan(
-                            text: 'er',
-                          ),
+                          TextSpan(text: 'er'),
                         ],
                       ),
                     ],
                   ),
-                  const TextSpan(
-                    text: '.dev.',
-                  ),
+                  const TextSpan(text: '.dev.'),
                 ],
               );
             },
@@ -310,24 +319,16 @@ void main() {
                         text: 'u',
                         children: <InlineSpan>[
                           TextSpan(
-                            style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                            ),
+                            style: TextStyle(fontWeight: FontWeight.w800),
                             text: 'tt',
                           ),
-                          WidgetSpan(
-                            child: FlutterLogo(),
-                          ),
-                          TextSpan(
-                            text: 'er',
-                          ),
+                          WidgetSpan(child: FlutterLogo()),
+                          TextSpan(text: 'er'),
                         ],
                       ),
                     ],
                   ),
-                  const TextSpan(
-                    text: '.dev.',
-                  ),
+                  const TextSpan(text: '.dev.'),
                 ],
               );
             },
@@ -347,7 +348,9 @@ void main() {
     expect(lastTappedUri, Uri.parse('https://flutter.dev'));
   });
 
-  testWidgets('builds the widget specified by builder', (WidgetTester tester) async {
+  testWidgets('builds the widget specified by builder', (
+    WidgetTester tester,
+  ) async {
     final GlobalKey key = GlobalKey();
 
     await tester.pumpWidget(
@@ -358,15 +361,14 @@ void main() {
               return LinkedText(
                 onTapUri: (Uri uri) {},
                 text: 'Check out flutter.dev.',
-                builder: (BuildContext context, Iterable<InlineSpan> linkedSpans) {
-                  return RichText(
-                    key: key,
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      children: linkedSpans.toList(),
-                    ),
-                  );
-                },
+                builder:
+                    (BuildContext context, Iterable<InlineSpan> linkedSpans) {
+                      return RichText(
+                        key: key,
+                        textAlign: TextAlign.center,
+                        text: TextSpan(children: linkedSpans.toList()),
+                      );
+                    },
               );
             },
           ),
