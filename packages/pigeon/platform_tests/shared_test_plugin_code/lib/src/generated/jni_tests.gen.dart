@@ -15,7 +15,7 @@ import 'package:jni/jni.dart';
 import './jni_tests.gen.jni.dart' as bridge;
 
 class _PigeonJniCodec {
-  Object? readValue(JObject? value) {
+  static Object? readValue(JObject? value) {
     if (value == null) {
       return null;
     } else if (value.isA<JLong>(JLong.type)) {
@@ -52,7 +52,7 @@ class _PigeonJniCodec {
     }
   }
 
-  JObject? writeValue(Object? value) {
+  static JObject? writeValue(Object? value) {
     if (value == null) {
       return null;
     } else if (value is bool) {
@@ -98,12 +98,28 @@ class _PigeonJniCodec {
   }
 }
 
+enum SomeEnum {
+  value1,
+  value2,
+  value3;
+
+  bridge.SomeEnum toJni() {
+    return bridge.SomeEnum.Companion.ofRaw(index)!;
+  }
+
+  static SomeEnum? fromJni(bridge.SomeEnum? jniEnum) {
+    return jniEnum == null ? null : SomeEnum.values[jniEnum.getRaw()];
+  }
+}
+
 class SomeTypes {
   SomeTypes({
     required this.aString,
     required this.anInt,
     required this.aDouble,
     required this.aBool,
+    required this.anObject,
+    required this.anEnum,
   });
 
   String aString;
@@ -114,12 +130,18 @@ class SomeTypes {
 
   bool aBool;
 
+  Object anObject;
+
+  SomeEnum anEnum;
+
   List<Object?> _toList() {
     return <Object?>[
       aString,
       anInt,
       aDouble,
       aBool,
+      anObject,
+      anEnum,
     ];
   }
 
@@ -129,6 +151,8 @@ class SomeTypes {
       anInt,
       aDouble,
       aBool,
+      _PigeonJniCodec.writeValue(anObject)!,
+      anEnum.toJni(),
     );
   }
 
@@ -144,6 +168,8 @@ class SomeTypes {
             anInt: jniClass.getAnInt(),
             aDouble: jniClass.getADouble(),
             aBool: jniClass.getABool(),
+            anObject: _PigeonJniCodec.readValue(jniClass.getAnObject())!,
+            anEnum: SomeEnum.fromJni(jniClass.getAnEnum())!,
           );
   }
 
@@ -154,6 +180,8 @@ class SomeTypes {
       anInt: result[1]! as int,
       aDouble: result[2]! as double,
       aBool: result[3]! as bool,
+      anObject: result[4]!,
+      anEnum: result[5]! as SomeEnum,
     );
   }
 
@@ -169,7 +197,9 @@ class SomeTypes {
     return aString == other.aString &&
         anInt == other.anInt &&
         aDouble == other.aDouble &&
-        aBool == other.aBool;
+        aBool == other.aBool &&
+        anObject == other.anObject &&
+        anEnum == other.anEnum;
   }
 
   @override
@@ -183,6 +213,8 @@ class SomeNullableTypes {
     this.anInt,
     this.aDouble,
     this.aBool,
+    this.anObject,
+    this.anEnum,
   });
 
   String? aString;
@@ -193,12 +225,18 @@ class SomeNullableTypes {
 
   bool? aBool;
 
+  Object? anObject;
+
+  SomeEnum? anEnum;
+
   List<Object?> _toList() {
     return <Object?>[
       aString,
       anInt,
       aDouble,
       aBool,
+      anObject,
+      anEnum,
     ];
   }
 
@@ -208,6 +246,8 @@ class SomeNullableTypes {
       anInt == null ? null : JLong(anInt!),
       aDouble == null ? null : JDouble(aDouble!),
       aBool == null ? null : JBoolean(aBool!),
+      _PigeonJniCodec.writeValue(anObject),
+      anEnum == null ? null : anEnum!.toJni(),
     );
   }
 
@@ -223,6 +263,8 @@ class SomeNullableTypes {
             anInt: jniClass.getAnInt()?.intValue(releaseOriginal: true),
             aDouble: jniClass.getADouble()?.doubleValue(releaseOriginal: true),
             aBool: jniClass.getABool()?.booleanValue(releaseOriginal: true),
+            anObject: _PigeonJniCodec.readValue(jniClass.getAnObject()),
+            anEnum: SomeEnum.fromJni(jniClass.getAnEnum()),
           );
   }
 
@@ -233,6 +275,8 @@ class SomeNullableTypes {
       anInt: result[1] as int?,
       aDouble: result[2] as double?,
       aBool: result[3] as bool?,
+      anObject: result[4],
+      anEnum: result[5] as SomeEnum?,
     );
   }
 
@@ -248,7 +292,9 @@ class SomeNullableTypes {
     return aString == other.aString &&
         anInt == other.anInt &&
         aDouble == other.aDouble &&
-        aBool == other.aBool;
+        aBool == other.aBool &&
+        anObject == other.anObject &&
+        anEnum == other.anEnum;
   }
 
   @override
@@ -303,9 +349,21 @@ class JniMessageApi {
     return _api.echoBool(request);
   }
 
+  Object echoObj(Object request) {
+    final JObject res = _api.echoObj(_PigeonJniCodec.writeValue(request)!);
+    final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
+    return dartTypeRes;
+  }
+
   SomeTypes sendSomeTypes(SomeTypes someTypes) {
     final bridge.SomeTypes res = _api.sendSomeTypes(someTypes.toJni());
     final SomeTypes dartTypeRes = SomeTypes.fromJni(res)!;
+    return dartTypeRes;
+  }
+
+  SomeEnum sendSomeEnum(SomeEnum anEnum) {
+    final bridge.SomeEnum res = _api.sendSomeEnum(anEnum.toJni());
+    final SomeEnum dartTypeRes = SomeEnum.fromJni(res)!;
     return dartTypeRes;
   }
 }
@@ -363,10 +421,23 @@ class JniMessageApiNullable {
     return dartTypeRes;
   }
 
+  Object? echoObj(Object? request) {
+    final JObject? res = _api.echoObj(_PigeonJniCodec.writeValue(request));
+    final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
+    return dartTypeRes;
+  }
+
   SomeNullableTypes? sendSomeNullableTypes(SomeNullableTypes? someTypes) {
     final bridge.SomeNullableTypes? res = _api
         .sendSomeNullableTypes(someTypes == null ? null : someTypes.toJni());
     final SomeNullableTypes? dartTypeRes = SomeNullableTypes.fromJni(res);
+    return dartTypeRes;
+  }
+
+  SomeEnum? sendSomeEnum(SomeEnum? anEnum) {
+    final bridge.SomeEnum? res =
+        _api.sendSomeEnum(anEnum == null ? null : anEnum.toJni());
+    final SomeEnum? dartTypeRes = SomeEnum.fromJni(res);
     return dartTypeRes;
   }
 }
@@ -423,9 +494,22 @@ class JniMessageApiAsync {
     return dartTypeRes;
   }
 
+  Future<Object> echoObj(Object request) async {
+    final JObject res =
+        await _api.echoObj(_PigeonJniCodec.writeValue(request)!);
+    final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
+    return dartTypeRes;
+  }
+
   Future<SomeTypes> sendSomeTypes(SomeTypes someTypes) async {
     final bridge.SomeTypes res = await _api.sendSomeTypes(someTypes.toJni());
     final SomeTypes dartTypeRes = SomeTypes.fromJni(res)!;
+    return dartTypeRes;
+  }
+
+  Future<SomeEnum> sendSomeEnum(SomeEnum anEnum) async {
+    final bridge.SomeEnum res = await _api.sendSomeEnum(anEnum.toJni());
+    final SomeEnum dartTypeRes = SomeEnum.fromJni(res)!;
     return dartTypeRes;
   }
 }
@@ -484,11 +568,25 @@ class JniMessageApiNullableAsync {
     return dartTypeRes;
   }
 
+  Future<Object?> echoObj(Object? request) async {
+    final JObject? res =
+        await _api.echoObj(_PigeonJniCodec.writeValue(request));
+    final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
+    return dartTypeRes;
+  }
+
   Future<SomeNullableTypes?> sendSomeNullableTypes(
       SomeNullableTypes? someTypes) async {
     final bridge.SomeNullableTypes? res = await _api
         .sendSomeNullableTypes(someTypes == null ? null : someTypes.toJni());
     final SomeNullableTypes? dartTypeRes = SomeNullableTypes.fromJni(res);
+    return dartTypeRes;
+  }
+
+  Future<SomeEnum?> sendSomeEnum(SomeEnum? anEnum) async {
+    final bridge.SomeEnum? res =
+        await _api.sendSomeEnum(anEnum == null ? null : anEnum.toJni());
+    final SomeEnum? dartTypeRes = SomeEnum.fromJni(res);
     return dartTypeRes;
   }
 }

@@ -51,11 +51,11 @@ enum AnEnum {
   two,
   three,
   fortyTwo,
-  fourHundredTwentyTwo,
+  fourHundredTwentyTwo;
 }
 
 enum AnotherEnum {
-  justInCase,
+  justInCase;
 }
 
 class UnusedClass {

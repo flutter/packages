@@ -12,6 +12,7 @@ import JniMessageApiNullableAsync
 import JniMessageApiNullableAsyncRegistrar
 import JniMessageApiNullableRegistrar
 import JniMessageApiRegistrar
+import SomeEnum
 import SomeNullableTypes
 import SomeTypes
 import android.os.Handler
@@ -917,12 +918,16 @@ class JniMessageApiImpl : JniMessageApi() {
     return request
   }
 
-  //  override fun echoObj(request: Any): Any {
-  //    return request
-  //  }
+  override fun echoObj(request: Any): Any {
+    return request
+  }
 
   override fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
     return someTypes
+  }
+
+  override fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
+    return anEnum
   }
 }
 
@@ -947,13 +952,17 @@ class JniMessageApiImpl2 : JniMessageApi() {
     return !request
   }
 
-  //  override fun echoObj(request: Any): Any {
-  //    return request
-  //  }
+  override fun echoObj(request: Any): Any {
+    return request
+  }
 
   override fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
     val newSomeTypes = someTypes.copy(anInt = someTypes.anInt + 1)
     return newSomeTypes
+  }
+
+  override fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
+    return anEnum
   }
 }
 
@@ -974,8 +983,16 @@ class JniMessageApiNullableImpl : JniMessageApiNullable() {
     return request
   }
 
+  override fun echoObj(request: Any?): Any? {
+    return request
+  }
+
   override fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
     return someTypes
+  }
+
+  override fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
+    return anEnum
   }
 }
 
@@ -1000,12 +1017,16 @@ class JniMessageApiAsyncImpl : JniMessageApiAsync() {
     return request
   }
 
-  //  override fun echoObj(request: Any): Any {
-  //    return request
-  //  }
+  override suspend fun echoObj(request: Any): Any {
+    return request
+  }
 
   override suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
     return someTypes
+  }
+
+  override suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
+    return anEnum
   }
 }
 
@@ -1030,13 +1051,17 @@ class JniMessageApiAsyncImpl2 : JniMessageApiAsync() {
     return !request
   }
 
-  //  override fun echoObj(request: Any): Any {
-  //    return request
-  //  }
+  override suspend fun echoObj(request: Any): Any {
+    return request
+  }
 
   override suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
     val newSomeTypes = someTypes.copy(anInt = someTypes.anInt + 1)
     return newSomeTypes
+  }
+
+  override suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
+    return anEnum
   }
 }
 
@@ -1058,8 +1083,16 @@ class JniMessageApiNullableAsyncImpl : JniMessageApiNullableAsync() {
     return request
   }
 
+  override suspend fun echoObj(request: Any?): Any? {
+    return request
+  }
+
   override suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
     return someTypes
+  }
+
+  override suspend fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
+    return anEnum
   }
 }
 

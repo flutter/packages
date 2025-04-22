@@ -40,7 +40,7 @@ List<Object?> wrapResponse(
 enum MessageRequestState {
   pending,
   success,
-  failure,
+  failure;
 }
 
 /// This comment is to test class documentation comments.

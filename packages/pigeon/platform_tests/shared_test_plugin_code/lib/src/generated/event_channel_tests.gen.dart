@@ -33,11 +33,11 @@ enum EventEnum {
   two,
   three,
   fortyTwo,
-  fourHundredTwentyTwo,
+  fourHundredTwentyTwo;
 }
 
 enum AnotherEventEnum {
-  justInCase,
+  justInCase;
 }
 
 /// A class containing all supported nullable types.

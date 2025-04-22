@@ -21,12 +21,26 @@ class JniTestsError(
     val details: Any? = null
 ) : Throwable()
 
+enum class SomeEnum(val raw: Int) {
+  VALUE1(0),
+  VALUE2(1),
+  VALUE3(2);
+
+  companion object {
+    fun ofRaw(raw: Int): SomeEnum? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /** Generated class from Pigeon that represents data sent in messages. */
 data class SomeTypes(
     val aString: String,
     val anInt: Long,
     val aDouble: Double,
-    val aBool: Boolean
+    val aBool: Boolean,
+    val anObject: Any,
+    val anEnum: SomeEnum
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): SomeTypes {
@@ -34,7 +48,9 @@ data class SomeTypes(
       val anInt = pigeonVar_list[1] as Long
       val aDouble = pigeonVar_list[2] as Double
       val aBool = pigeonVar_list[3] as Boolean
-      return SomeTypes(aString, anInt, aDouble, aBool)
+      val anObject = pigeonVar_list[4] as Any
+      val anEnum = pigeonVar_list[5] as SomeEnum
+      return SomeTypes(aString, anInt, aDouble, aBool, anObject, anEnum)
     }
   }
 
@@ -44,6 +60,8 @@ data class SomeTypes(
         anInt,
         aDouble,
         aBool,
+        anObject,
+        anEnum,
     )
   }
 
@@ -57,7 +75,9 @@ data class SomeTypes(
     return aString == other.aString &&
         anInt == other.anInt &&
         aDouble == other.aDouble &&
-        aBool == other.aBool
+        aBool == other.aBool &&
+        anObject == other.anObject &&
+        anEnum == other.anEnum
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -68,7 +88,9 @@ data class SomeNullableTypes(
     val aString: String? = null,
     val anInt: Long? = null,
     val aDouble: Double? = null,
-    val aBool: Boolean? = null
+    val aBool: Boolean? = null,
+    val anObject: Any? = null,
+    val anEnum: SomeEnum? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): SomeNullableTypes {
@@ -76,7 +98,9 @@ data class SomeNullableTypes(
       val anInt = pigeonVar_list[1] as Long?
       val aDouble = pigeonVar_list[2] as Double?
       val aBool = pigeonVar_list[3] as Boolean?
-      return SomeNullableTypes(aString, anInt, aDouble, aBool)
+      val anObject = pigeonVar_list[4]
+      val anEnum = pigeonVar_list[5] as SomeEnum?
+      return SomeNullableTypes(aString, anInt, aDouble, aBool, anObject, anEnum)
     }
   }
 
@@ -86,6 +110,8 @@ data class SomeNullableTypes(
         anInt,
         aDouble,
         aBool,
+        anObject,
+        anEnum,
     )
   }
 
@@ -99,7 +125,9 @@ data class SomeNullableTypes(
     return aString == other.aString &&
         anInt == other.anInt &&
         aDouble == other.aDouble &&
-        aBool == other.aBool
+        aBool == other.aBool &&
+        anObject == other.anObject &&
+        anEnum == other.anEnum
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -119,7 +147,11 @@ abstract class JniMessageApi {
 
   abstract fun echoBool(request: Boolean): Boolean
 
+  abstract fun echoObj(request: Any): Any
+
   abstract fun sendSomeTypes(someTypes: SomeTypes): SomeTypes
+
+  abstract fun sendSomeEnum(anEnum: SomeEnum): SomeEnum
 }
 
 @Keep
@@ -195,10 +227,32 @@ class JniMessageApiRegistrar : JniMessageApi() {
     error("JniMessageApi has not been set")
   }
 
+  override fun echoObj(request: Any): Any {
+    api?.let {
+      try {
+        return api!!.echoObj(request)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApi has not been set")
+  }
+
   override fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
     api?.let {
       try {
         return api!!.sendSomeTypes(someTypes)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApi has not been set")
+  }
+
+  override fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
+    api?.let {
+      try {
+        return api!!.sendSomeEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -220,7 +274,11 @@ abstract class JniMessageApiNullable {
 
   abstract fun echoBool(request: Boolean?): Boolean?
 
+  abstract fun echoObj(request: Any?): Any?
+
   abstract fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes?
+
+  abstract fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum?
 }
 
 @Keep
@@ -285,10 +343,32 @@ class JniMessageApiNullableRegistrar : JniMessageApiNullable() {
     error("JniMessageApiNullable has not been set")
   }
 
+  override fun echoObj(request: Any?): Any? {
+    api?.let {
+      try {
+        return api!!.echoObj(request)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullable has not been set")
+  }
+
   override fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
     api?.let {
       try {
         return api!!.sendSomeNullableTypes(someTypes)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullable has not been set")
+  }
+
+  override fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
+    api?.let {
+      try {
+        return api!!.sendSomeEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -311,7 +391,11 @@ abstract class JniMessageApiAsync {
 
   abstract suspend fun echoBool(request: Boolean): Boolean
 
+  abstract suspend fun echoObj(request: Any): Any
+
   abstract suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes
+
+  abstract suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum
 }
 
 @Keep
@@ -387,10 +471,32 @@ class JniMessageApiAsyncRegistrar : JniMessageApiAsync() {
     error("JniMessageApiAsync has not been set")
   }
 
+  override suspend fun echoObj(request: Any): Any {
+    api?.let {
+      try {
+        return api!!.echoObj(request)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiAsync has not been set")
+  }
+
   override suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
     api?.let {
       try {
         return api!!.sendSomeTypes(someTypes)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiAsync has not been set")
+  }
+
+  override suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
+    api?.let {
+      try {
+        return api!!.sendSomeEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }
@@ -412,7 +518,11 @@ abstract class JniMessageApiNullableAsync {
 
   abstract suspend fun echoBool(request: Boolean?): Boolean?
 
+  abstract suspend fun echoObj(request: Any?): Any?
+
   abstract suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes?
+
+  abstract suspend fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum?
 }
 
 @Keep
@@ -477,10 +587,32 @@ class JniMessageApiNullableAsyncRegistrar : JniMessageApiNullableAsync() {
     error("JniMessageApiNullableAsync has not been set")
   }
 
+  override suspend fun echoObj(request: Any?): Any? {
+    api?.let {
+      try {
+        return api!!.echoObj(request)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullableAsync has not been set")
+  }
+
   override suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
     api?.let {
       try {
         return api!!.sendSomeNullableTypes(someTypes)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullableAsync has not been set")
+  }
+
+  override suspend fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
+    api?.let {
+      try {
+        return api!!.sendSomeEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }

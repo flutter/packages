@@ -50,16 +50,24 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     final JniMessageApi? jniMessage = JniMessageApi.getInstance();
     expect(jniMessage, isNotNull);
     expect(jniMessage!.echoString('hello'), 'hello');
-    final SomeTypes sync = jniMessage.sendSomeTypes(SomeTypes(
+    final SomeTypes toSend = SomeTypes(
       aString: 'hi',
       anInt: 5,
       aDouble: 5.0,
       aBool: false,
-    ));
-    expect(sync.aString, 'hi');
-    expect(sync.anInt, 5);
-    expect(sync.aDouble, 5.0);
-    expect(sync.aBool, false);
+      anObject: 'obj',
+      anEnum: SomeEnum.value2,
+    );
+    final SomeTypes sync = jniMessage.sendSomeTypes(toSend);
+    expect(sync, toSend);
+    expect(jniMessage.echoBool(true), true);
+    expect(jniMessage.echoBool(false), false);
+    expect(jniMessage.echoDouble(2.0), 2.0);
+    expect(jniMessage.echoInt(2), 2);
+    expect(jniMessage.echoString('hello'), 'hello');
+    expect(jniMessage.echoObj('hello'), 'hello');
+    expect(jniMessage.echoObj(sync), sync);
+    expect(jniMessage.sendSomeEnum(SomeEnum.value2), SomeEnum.value2);
     //nullable
     final JniMessageApiNullable? jniMessageNullable =
         JniMessageApiNullable.getInstance();
@@ -72,23 +80,38 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(syncNullable.anInt, null);
     expect(syncNullable.aDouble, null);
     expect(syncNullable.aBool, null);
+    expect(syncNullable.anObject, null);
     final SomeNullableTypes? syncNull =
         jniMessageNullable.sendSomeNullableTypes(null);
     expect(syncNull, null);
+    expect(jniMessageNullable.echoBool(true), true);
+    expect(jniMessageNullable.echoBool(false), false);
+    expect(jniMessageNullable.echoDouble(2.0), 2.0);
+    expect(jniMessageNullable.echoInt(2), 2);
+    expect(jniMessageNullable.echoString('hello'), 'hello');
+    expect(jniMessageNullable.echoObj('hello'), 'hello');
+    expect(jniMessageNullable.echoObj(syncNullable), syncNullable);
+    expect(jniMessageNullable.sendSomeEnum(SomeEnum.value3), SomeEnum.value3);
+    expect(jniMessageNullable.echoBool(null), null);
+    expect(jniMessageNullable.echoDouble(null), null);
+    expect(jniMessageNullable.echoInt(null), null);
+    expect(jniMessageNullable.echoString(null), null);
+    expect(jniMessageNullable.echoObj(null), null);
     //async
     final JniMessageApiAsync? jniMessageAsync =
         JniMessageApiAsync.getInstance();
 
-    final SomeTypes nonSync = await jniMessageAsync!.sendSomeTypes(SomeTypes(
-      aString: 'hi',
-      anInt: 5,
-      aDouble: 5.0,
-      aBool: false,
-    ));
-    expect(nonSync.aString, 'hi');
-    expect(nonSync.anInt, 5);
-    expect(nonSync.aDouble, 5.0);
-    expect(nonSync.aBool, false);
+    final SomeTypes nonSync = await jniMessageAsync!.sendSomeTypes(toSend);
+    expect(nonSync, toSend);
+    expect(await jniMessageAsync.echoBool(true), true);
+    expect(await jniMessageAsync.echoBool(false), false);
+    expect(await jniMessageAsync.echoDouble(2.0), 2.0);
+    expect(await jniMessageAsync.echoInt(2), 2);
+    expect(await jniMessageAsync.echoString('hello'), 'hello');
+    expect(await jniMessageAsync.echoObj('hello'), 'hello');
+    expect(await jniMessageAsync.echoObj(sync), sync);
+    expect(
+        await jniMessageAsync.sendSomeEnum(SomeEnum.value3), SomeEnum.value3);
     //nullable async
     final JniMessageApiNullableAsync? jniMessageNullableAsync =
         JniMessageApiNullableAsync.getInstance();
@@ -101,9 +124,24 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(syncNullableAsync.anInt, null);
     expect(syncNullableAsync.aDouble, null);
     expect(syncNullableAsync.aBool, null);
+    expect(syncNullableAsync.anObject, null);
     final SomeNullableTypes? syncNullAsync =
         await jniMessageNullableAsync.sendSomeNullableTypes(null);
     expect(syncNull, null);
+    expect(await jniMessageNullableAsync.echoBool(true), true);
+    expect(await jniMessageNullableAsync.echoBool(false), false);
+    expect(await jniMessageNullableAsync.echoDouble(2.0), 2.0);
+    expect(await jniMessageNullableAsync.echoInt(2), 2);
+    expect(await jniMessageNullableAsync.echoString('hello'), 'hello');
+    expect(await jniMessageNullableAsync.echoObj('hello'), 'hello');
+    expect(await jniMessageNullableAsync.echoObj(syncNullable), syncNullable);
+    expect(await jniMessageNullableAsync.sendSomeEnum(SomeEnum.value3),
+        SomeEnum.value3);
+    expect(await jniMessageNullableAsync.echoBool(null), null);
+    expect(await jniMessageNullableAsync.echoDouble(null), null);
+    expect(await jniMessageNullableAsync.echoInt(null), null);
+    expect(await jniMessageNullableAsync.echoString(null), null);
+    expect(await jniMessageNullableAsync.echoObj(null), null);
     //named
     final JniMessageApi? jniMessageNamed =
         JniMessageApi.getInstance(channelName: 'name');
@@ -113,7 +151,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(jniMessageNamed!.echoString('hello'), 'hello1');
     expect(await jniMessageAsync.echoInt(5), 5);
     expect(await jniMessageAsyncNamed!.echoInt(5), 6);
-  });
+  }, skip: targetGenerator != TargetGenerator.kotlin);
 
   group('Host sync API tests', () {
     testWidgets('basic void->void call works', (WidgetTester _) async {

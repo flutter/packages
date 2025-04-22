@@ -8,19 +8,27 @@ import 'package:pigeon/pigeon.dart';
   dartOptions: DartOptions(useJni: true),
   kotlinOptions: KotlinOptions(useJni: true),
 ))
+enum SomeEnum {
+  value1,
+  value2,
+  value3,
+}
+
 class SomeTypes {
   const SomeTypes(
     this.aString,
     this.anInt,
     this.aDouble,
     this.aBool,
-    // this.anObject,
+    this.anObject,
+    this.anEnum,
   );
   final String aString;
   final int anInt;
   final double aDouble;
   final bool aBool;
-  // final Object anObject;
+  final Object anObject;
+  final SomeEnum anEnum;
 }
 
 class SomeNullableTypes {
@@ -28,7 +36,8 @@ class SomeNullableTypes {
   int? anInt;
   double? aDouble;
   bool? aBool;
-  // Object? anObject;
+  Object? anObject;
+  SomeEnum? anEnum;
 }
 
 @HostApi()
@@ -38,8 +47,9 @@ abstract class JniMessageApi {
   int echoInt(int request);
   double echoDouble(double request);
   bool echoBool(bool request);
-  // Object echoObj(Object request);
+  Object echoObj(Object request);
   SomeTypes sendSomeTypes(SomeTypes someTypes);
+  SomeEnum sendSomeEnum(SomeEnum anEnum);
 }
 
 @HostApi()
@@ -48,7 +58,9 @@ abstract class JniMessageApiNullable {
   int? echoInt(int? request);
   double? echoDouble(double? request);
   bool? echoBool(bool? request);
+  Object? echoObj(Object? request);
   SomeNullableTypes? sendSomeNullableTypes(SomeNullableTypes? someTypes);
+  SomeEnum? sendSomeEnum(SomeEnum? anEnum);
 }
 
 @HostApi()
@@ -64,7 +76,11 @@ abstract class JniMessageApiAsync {
   @async
   bool echoBool(bool request);
   @async
+  Object echoObj(Object request);
+  @async
   SomeTypes sendSomeTypes(SomeTypes someTypes);
+  @async
+  SomeEnum sendSomeEnum(SomeEnum anEnum);
 }
 
 @HostApi()
@@ -78,5 +94,9 @@ abstract class JniMessageApiNullableAsync {
   @async
   bool? echoBool(bool? request);
   @async
+  Object? echoObj(Object? request);
+  @async
   SomeNullableTypes? sendSomeNullableTypes(SomeNullableTypes? someTypes);
+  @async
+  SomeEnum? sendSomeEnum(SomeEnum? anEnum);
 }

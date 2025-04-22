@@ -413,7 +413,7 @@ class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
 enum ProxyApiTestEnum {
   one,
   two,
-  three,
+  three;
 }
 
 class _PigeonCodec extends StandardMessageCodec {

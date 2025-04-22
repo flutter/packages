@@ -47,7 +47,7 @@ bool _deepEquals(Object? a, Object? b) {
 
 enum Code {
   one,
-  two,
+  two;
 }
 
 class MessageData {

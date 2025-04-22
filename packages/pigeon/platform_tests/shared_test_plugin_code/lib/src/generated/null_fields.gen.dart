@@ -48,7 +48,7 @@ bool _deepEquals(Object? a, Object? b) {
 
 enum NullFieldsSearchReplyType {
   success,
-  failure,
+  failure;
 }
 
 class NullFieldsSearchRequest {

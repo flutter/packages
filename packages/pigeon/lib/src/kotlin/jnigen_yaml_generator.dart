@@ -73,6 +73,9 @@ class JnigenYamlGenerator extends Generator<InternalJnigenYamlOptions> {
       for (final Class dataClass in root.classes) {
         indent.writeln("- '${dataClass.name}'");
       }
+      for (final Enum enumType in root.enums) {
+        indent.writeln("- '${enumType.name}'");
+      }
     });
   }
 }

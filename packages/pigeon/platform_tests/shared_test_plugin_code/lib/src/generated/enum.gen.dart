@@ -42,7 +42,7 @@ enum EnumState {
   Error,
 
   /// This comment is to test enum member (SnakeCase) documentation comments.
-  SnakeCase,
+  SnakeCase;
 }
 
 /// This comment is to test class documentation comments.

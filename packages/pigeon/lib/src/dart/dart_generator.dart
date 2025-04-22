@@ -130,27 +130,62 @@ class _JniType {
       );
     }
     _JniType? jniType = _jniTypeForDartType[type.baseName];
-    jniType = jniType ??
+    if (type.isClass) {
+      jniType = jniType ??
+          _JniType(
+            typeName: type.baseName,
+            jniName: 'bridge.${type.baseName}',
+            getToDartCall: (
+              TypeDeclaration type, {
+              String? varName,
+              bool forceConversion = false,
+            }) =>
+                '${type.baseName}.fromJni($varName)${_getForceNonNullSymbol(!type.isNullable)}',
+            getToJniCall: (
+              NamedType field,
+              _JniType jniType, {
+              bool forceNonNull = false,
+            }) =>
+                _wrapInNullCheckIfNullable(
+                    field.type, field.name, '${field.name}.toJni()'),
+            isBuiltIn: false,
+            nonNullableNeedsUnwrapping: true,
+          );
+    } else if (type.isEnum) {
+      jniType = jniType ??
+          _JniType(
+            typeName: type.baseName,
+            jniName: 'bridge.${type.baseName}',
+            getToDartCall: (
+              TypeDeclaration type, {
+              String? varName,
+              bool forceConversion = false,
+            }) =>
+                '${type.baseName}.fromJni($varName)${_getForceNonNullSymbol(!type.isNullable)}',
+            getToJniCall: (
+              NamedType field,
+              _JniType jniType, {
+              bool forceNonNull = false,
+            }) =>
+                _wrapInNullCheckIfNullable(field.type, field.name,
+                    '${field.name}${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toJni()'),
+            isBuiltIn: false,
+            nonNullableNeedsUnwrapping: true,
+          );
+    }
+    return jniType ??
         _JniType(
-          typeName: type.baseName,
-          jniName: 'bridge.${type.baseName}',
-          getToDartCall: (
-            TypeDeclaration type, {
-            String? varName,
-            bool forceConversion = false,
-          }) =>
-              '${type.baseName}.fromJni($varName)${_getForceNonNullSymbol(!type.isNullable)}',
-          getToJniCall: (
-            NamedType field,
-            _JniType jniType, {
-            bool forceNonNull = false,
-          }) =>
-              _wrapInNullCheckIfNullable(
-                  field.type, field.name, '${field.name}.toJni()'),
-          isBuiltIn: false,
-          nonNullableNeedsUnwrapping: true,
-        );
-    return jniType;
+            typeName: '',
+            jniName: '',
+            isBuiltIn: false,
+            getToDartCall:
+                (_, {bool forceConversion = true, String varName = ''}) => '',
+            getToJniCall: (
+              _,
+              __, {
+              bool forceNonNull = true,
+            }) =>
+                '');
   }
 
   final String typeName;
@@ -324,13 +359,13 @@ final Map<String, _JniType> _jniTypeForDartType = <String, _JniType>{
       String varName = '',
       bool forceConversion = false,
     }) =>
-        '_PigeonJniCodec.readValue($varName)',
+        '_PigeonJniCodec.readValue($varName)${_getForceNonNullSymbol(!type.isNullable)}',
     getToJniCall: (
       NamedType field,
       _JniType jniType, {
       bool forceNonNull = false,
     }) =>
-        '_PigeonJniCodec.writeValue(${field.name})',
+        '_PigeonJniCodec.writeValue(${field.name})${_getForceNonNullSymbol(!field.type.isNullable)}',
     isBuiltIn: true,
     nonNullableNeedsUnwrapping: true,
   ),
@@ -433,12 +468,30 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.newln();
     addDocumentationComments(
         indent, anEnum.documentationComments, _docCommentSpec);
-    indent.write('enum ${anEnum.name} ');
-    indent.addScoped('{', '}', () {
+    indent.addScoped('enum ${anEnum.name} {', '}', () {
       for (final EnumMember member in anEnum.members) {
+        final String separatorSymbol =
+            member == anEnum.members.last ? ';' : ',';
         addDocumentationComments(
             indent, member.documentationComments, _docCommentSpec);
-        indent.writeln('${member.name},');
+        indent.writeln('${member.name}$separatorSymbol');
+      }
+
+      if (generatorOptions.useJni) {
+        final _JniType jniType =
+            _JniType.fromTypeDeclaration(anEnum.associatedType);
+        indent.newln();
+        indent.writeScoped('${jniType.jniName} toJni() {', '}', () {
+          indent.writeln('return ${jniType.jniName}.Companion.ofRaw(index)!;');
+        });
+
+        indent.newln();
+        indent.writeScoped(
+            'static ${anEnum.name}? fromJni(${jniType.jniName}? jniEnum) {',
+            '}', () {
+          indent.writeln(
+              'return jniEnum == null ? null : ${anEnum.name}.values[jniEnum.getRaw()];');
+        });
       }
     });
   }
@@ -574,7 +627,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             in getFieldsInSerializationOrder(classDefinition)) {
           final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
           indent.writeln(
-              '${field.name}: jniClass.${jniType.getJniGetterMethodName(field.name)}${jniType.getToDartCall(field.type)},');
+              '${field.name}: ${jniType.getToDartCall(field.type, varName: 'jniClass.${jniType.getJniGetterMethodName(field.name)}')},');
         }
       });
     });
@@ -1486,7 +1539,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     indent.newln();
     indent.format('''
 class _PigeonJniCodec {
-  Object? readValue(JObject? value) {
+  static Object? readValue(JObject? value) {
     if (value == null) {
       return null;
     } else if (value.isA<JLong>(JLong.type)) {
@@ -1527,7 +1580,7 @@ class _PigeonJniCodec {
     }
   }
 
-  JObject? writeValue(Object? value) {
+  static JObject? writeValue(Object? value) {
     if (value == null) {
       return null;
     } else if (value is bool) {

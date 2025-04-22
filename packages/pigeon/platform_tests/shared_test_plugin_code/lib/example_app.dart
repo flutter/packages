@@ -5,6 +5,7 @@
 import 'package:flutter/material.dart';
 
 import 'generated.dart';
+import 'src/generated/jni_tests.gen.dart';
 
 void main() {
   runApp(const ExampleApp());
@@ -39,6 +40,18 @@ class _ExampleAppState extends State<ExampleApp> {
       // Make a single trivial call just to validate that everything is wired
       // up.
       await api.noop();
+      final JniMessageApi? jniMessage = JniMessageApi.getInstance();
+      print('before sendSomeTypes');
+      final SomeTypes toSend = SomeTypes(
+        aString: 'hi',
+        anInt: 5,
+        aDouble: 5.0,
+        aBool: false,
+        anObject: 'obj',
+        anEnum: SomeEnum.value2,
+      );
+      final SomeTypes sync = jniMessage!.sendSomeTypes(toSend);
+      print(sync);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';
