@@ -1,3 +1,13 @@
+## 25.3.1
+
+* [kotlin] Fixes Kotlin InstanceManager not properly removing callbacks from handler.
+* [kotlin] Fixes `SyntheticAccessor` lint caused by private utility methods.
+
+## 25.3.0
+
+* [swift] Adds equality methods to generated data classes.
+* [dart, kotlin] Shortens equality methods.
+
 ## 25.2.0
 
 * [kotlin] Adds equality methods to generated data classes.
