@@ -1,6 +1,17 @@
-## 14.8.2
+## 15.1.1
 
 - Fixes `PopScope.onPopInvokedWithResult` getting called twice when popping a route if `GoRouteData.onExit` is not null
+
+## 15.1.0
+
+- Adds `caseSensitive` to `TypedGoRoute`.
+
+## 15.0.0
+
+- **BREAKING CHANGE**
+  - URLs are now case sensitive.
+  - Adds `caseSensitive` parameter to `GoRouter` (default to `true`).
+  - See [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes)
 
 ## 14.8.1
 

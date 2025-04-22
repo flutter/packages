@@ -472,4 +472,12 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setOverScrollMode(_i3.WebViewOverScrollMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(#setOverScrollMode, [mode]),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
