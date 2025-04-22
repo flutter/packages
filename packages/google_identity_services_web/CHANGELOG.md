@@ -1,3 +1,7 @@
+## 0.3.3+1
+
+* Improves robustness of `maybeEnum` by catching `ArgumentError` when the enum name is not found and returning `null`.
+
 ## 0.3.3
 
 * Moves all the JavaScript types to extend `JSObject`.
