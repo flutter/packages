@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/widgets.dart';
-import 'package:http/http.dart' as http;
 import 'package:jsf/jsf.dart';
 import 'package:rfw/rfw.dart';
 
@@ -35,28 +36,26 @@ class _ExampleState extends State<Example> {
   void initState() {
     super.initState();
     RendererBinding.instance.deferFirstFrame();
+
     _runtime.update(
       const LibraryName(<String>['core', 'widgets']),
       createCoreWidgets(),
     );
-    _loadRemoteAssets();
+
+    _loadAssets();
   }
 
-  Future<void> _loadRemoteAssets() async {
-    final http.Response rfwResponse = await http.get(
-      Uri.parse('https://moluopro.atomgit.net/web/applet/calculator.rfw'),
-    );
-
-    final http.Response jsResponse = await http.get(
-      Uri.parse('https://moluopro.atomgit.net/web/applet/calculator.js'),
-    );
+  Future<void> _loadAssets() async {
+    final ByteData interfaceBytes =
+        await rootBundle.load('assets/calculator.rfw');
+    final String script = await rootBundle.loadString('assets/calculator.js');
 
     _runtime.update(
       const LibraryName(<String>['main']),
-      decodeLibraryBlob(rfwResponse.bodyBytes),
+      decodeLibraryBlob(interfaceBytes.buffer.asUint8List()),
     );
 
-    _js.execInitScript(jsResponse.body);
+    _js.execInitScript(script);
     _updateData();
 
     setState(() {
@@ -67,18 +66,18 @@ class _ExampleState extends State<Example> {
   void _updateData() {
     final String result = _js.eval('value();');
     final int value = int.tryParse(result) ?? 0;
+
     _data.update('value',
         <String, Object>{'numeric': value, 'string': value.toString()});
   }
 
-  List<Object?> _asList(Object? value) {
-    return value is List<Object?> ? value : const <Object?>[];
-  }
+  List<Object?> _asList(Object? value) =>
+      value is List ? value : const <Object?>[];
 
   @override
   Widget build(BuildContext context) {
     if (!RendererBinding.instance.sendFramesToEngine) {
-      return const Center(child: SizedBox.expand());
+      return const SizedBox.shrink();
     }
 
     return RemoteWidget(
@@ -90,8 +89,7 @@ class _ExampleState extends State<Example> {
       ),
       onEvent: (String name, DynamicMap arguments) {
         final List<Object?> args = _asList(arguments['arguments']);
-        final String argsString = args.join(',');
-        _js.eval('$name($argsString);');
+        _js.eval('$name(${args.join(',')});');
         _updateData();
       },
     );
