@@ -255,6 +255,31 @@ void main() {
         expect(find.byKey(const Key('buildPage')), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'It should build a go route with the default case sensitivity',
+      (WidgetTester tester) async {
+        final GoRoute routeWithDefaultCaseSensitivity = GoRouteData.$route(
+          path: '/path',
+          factory: (GoRouterState state) => const _GoRouteDataBuild(),
+        );
+
+        expect(routeWithDefaultCaseSensitivity.caseSensitive, true);
+      },
+    );
+
+    testWidgets(
+      'It should build a go route with the overridden case sensitivity',
+      (WidgetTester tester) async {
+        final GoRoute routeWithDefaultCaseSensitivity = GoRouteData.$route(
+          path: '/path',
+          caseSensitive: false,
+          factory: (GoRouterState state) => const _GoRouteDataBuild(),
+        );
+
+        expect(routeWithDefaultCaseSensitivity.caseSensitive, false);
+      },
+    );
   });
 
   group('ShellRouteData', () {
