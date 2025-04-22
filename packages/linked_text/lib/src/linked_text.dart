@@ -281,7 +281,6 @@ class _LinkedTextState extends State<LinkedText> {
               }
 
               Uri uri = Uri.parse(linkString);
-              print('justin uri $uri from $linkString.');
               if (uri.host.isEmpty) {
                 // defaultUriRegExp matches Uris without a host, but packages like
                 // url_launcher require a host to launch a Uri.
