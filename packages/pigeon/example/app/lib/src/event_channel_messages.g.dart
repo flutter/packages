@@ -11,6 +11,21 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    return a.length == b.length &&
+        a.entries.every((MapEntry<Object?, Object?> entry) =>
+            (b as Map<Object?, Object?>).containsKey(entry.key) &&
+            _deepEquals(entry.value, b[entry.key]));
+  }
+  return a == b;
+}
+
 sealed class PlatformEvent {}
 
 class IntEvent extends PlatformEvent {
@@ -46,7 +61,7 @@ class IntEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return data == other.data;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override
@@ -87,7 +102,7 @@ class StringEvent extends PlatformEvent {
     if (identical(this, other)) {
       return true;
     }
-    return data == other.data;
+    return _deepEquals(encode(), other.encode());
   }
 
   @override

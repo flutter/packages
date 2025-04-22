@@ -2,6 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import camera_avfoundation
+
+// Import Objectice-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  import camera_avfoundation_objc
+#endif
+
 /// A mock implementation of `FCPCameraGlobalEventApi` that captures received
 /// `deviceOrientationChanged` events and exposes whether they were received to the testing code.
 final class MockGlobalEventApi: FCPCameraGlobalEventApi {
