@@ -9,11 +9,10 @@ T? maybeEnum<T extends Enum>(String? needle, List<T> haystack) {
   if (needle == null) {
     return null;
   }
-  
+
   try {
     return haystack.byName(needle);
   } on ArgumentError catch (_) {
-    // Ignore the error and return null.
     return null;
   }
 }

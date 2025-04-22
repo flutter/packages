@@ -2,7 +2,6 @@ import 'package:google_identity_services_web/src/js_interop/shared.dart'
     show maybeEnum;
 import 'package:test/test.dart';
 
-// Define a sample enum for testing
 enum TestEnum {
   first,
   second,
