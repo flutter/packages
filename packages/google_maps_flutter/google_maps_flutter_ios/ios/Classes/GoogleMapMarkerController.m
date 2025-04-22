@@ -24,17 +24,18 @@
 
 - (instancetype)initWithMarker:(GMSMarker *)marker
               markerIdentifier:(NSString *)markerIdentifier
-      clusterManagerIdentifier:(nullable NSString *)clusterManagerIdentifier
                        mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _marker = marker;
     _markerIdentifier = [markerIdentifier copy];
-    _clusterManagerIdentifier = [clusterManagerIdentifier copy];
     _mapView = mapView;
-    FGMSetIdentifiersToMarkerUserData(_markerIdentifier, _clusterManagerIdentifier, _marker);
   }
   return self;
+}
+
+- (void)setClusterManagerIdentifier:(nullable NSString *)clusterManagerIdentifier {
+  _clusterManagerIdentifier = clusterManagerIdentifier;
 }
 
 - (void)showInfoWindow {
@@ -110,6 +111,7 @@
 - (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                      screenScale:(CGFloat)screenScale {
+  [self setClusterManagerIdentifier:platformMarker.clusterManagerId];
   [self setAlpha:platformMarker.alpha];
   [self setAnchor:FGMGetCGPointForPigeonPoint(platformMarker.anchor)];
   [self setDraggable:platformMarker.draggable];
@@ -127,6 +129,10 @@
   }
 
   [self setVisible:platformMarker.visible];
+
+  // Set the marker's user data with current identifiers.
+  FGMSetIdentifiersToMarkerUserData(self.markerIdentifier, self.clusterManagerIdentifier,
+                                    self.marker);
 }
 
 @end
@@ -173,7 +179,6 @@
   FLTGoogleMapMarkerController *controller =
       [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
                                           markerIdentifier:markerIdentifier
-                                  clusterManagerIdentifier:clusterManagerIdentifier
                                                    mapView:self.mapView];
   [controller updateFromPlatformMarker:markerToAdd
                              registrar:self.registrar
@@ -196,20 +201,35 @@
 
 - (void)changeMarker:(FGMPlatformMarker *)markerToChange {
   NSString *markerIdentifier = markerToChange.markerId;
-  NSString *clusterManagerIdentifier = markerToChange.clusterManagerId;
 
   FLTGoogleMapMarkerController *controller = self.markerIdentifierToController[markerIdentifier];
   if (!controller) {
     return;
   }
+
+  NSString *clusterManagerIdentifier = markerToChange.clusterManagerId;
   NSString *previousClusterManagerIdentifier = [controller clusterManagerIdentifier];
-  if (![previousClusterManagerIdentifier isEqualToString:clusterManagerIdentifier]) {
-    [self removeMarker:markerIdentifier];
-    [self addMarker:markerToChange];
-  } else {
-    [controller updateFromPlatformMarker:markerToChange
-                               registrar:self.registrar
-                             screenScale:[self getScreenScale]];
+  [controller updateFromPlatformMarker:markerToChange
+                             registrar:self.registrar
+                           screenScale:[self getScreenScale]];
+
+  if ([controller.marker conformsToProtocol:@protocol(GMUClusterItem)]) {
+    if (previousClusterManagerIdentifier &&
+        ![previousClusterManagerIdentifier isEqualToString:clusterManagerIdentifier]) {
+      // Remove marker from previous cluster manager if its cluster manager identifier is removed or
+      // changed.
+      GMUClusterManager *clusterManager = [_clusterManagersController
+          clusterManagerWithIdentifier:previousClusterManagerIdentifier];
+      [clusterManager removeItem:(id<GMUClusterItem>)controller.marker];
+    }
+
+    if (clusterManagerIdentifier &&
+        ![previousClusterManagerIdentifier isEqualToString:clusterManagerIdentifier]) {
+      // Add marker to cluster manager if its cluster manager identifier has changed.
+      GMUClusterManager *clusterManager =
+          [_clusterManagersController clusterManagerWithIdentifier:clusterManagerIdentifier];
+      [clusterManager addItem:(id<GMUClusterItem>)controller.marker];
+    }
   }
 }
 

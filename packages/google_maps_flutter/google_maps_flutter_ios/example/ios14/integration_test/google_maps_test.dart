@@ -807,10 +807,17 @@ void main() {
   });
 
   testWidgets('testToggleInfoWindow', (WidgetTester tester) async {
+    final Key key = GlobalKey();
     const Marker marker = Marker(
         markerId: MarkerId('marker'),
         infoWindow: InfoWindow(title: 'InfoWindow'));
-    final Set<Marker> markers = <Marker>{marker};
+    Set<Marker> markers = <Marker>{marker};
+
+    const ClusterManager clusterManager =
+        ClusterManager(clusterManagerId: ClusterManagerId('cluster_manager'));
+    final Set<ClusterManager> clusterManagers = <ClusterManager>{
+      clusterManager
+    };
 
     final Completer<ExampleGoogleMapController> controllerCompleter =
         Completer<ExampleGoogleMapController>();
@@ -818,8 +825,10 @@ void main() {
     await tester.pumpWidget(Directionality(
       textDirection: TextDirection.ltr,
       child: ExampleGoogleMap(
+        key: key,
         initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
         markers: markers,
+        clusterManagers: clusterManagers,
         onMapCreated: (ExampleGoogleMapController googleMapController) {
           controllerCompleter.complete(googleMapController);
         },
@@ -832,6 +841,26 @@ void main() {
     bool iwVisibleStatus =
         await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, false);
+
+    await controller.showMarkerInfoWindow(marker.markerId);
+    iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
+    expect(iwVisibleStatus, true);
+
+    // Update marker and check if the info window is still visible.
+    final Marker updatedMarker = marker.copyWith(
+      alphaParam: 0.5,
+      clusterManagerIdParam: clusterManager.clusterManagerId,
+    );
+    markers = <Marker>{updatedMarker};
+
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+          key: key,
+          initialCameraPosition: _kInitialCameraPosition,
+          clusterManagers: clusterManagers,
+          markers: Set<Marker>.of(markers)),
+    ));
 
     await controller.showMarkerInfoWindow(marker.markerId);
     iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
@@ -1108,6 +1137,46 @@ void main() {
           .map<int>((Cluster cluster) => cluster.count)
           .reduce((int value, int element) => value + element);
       expect(markersAmountForClusterManager, markersPerClusterManager);
+    }
+
+    // Move marker from the first cluster manager to the last.
+    final MarkerId markerIdToMove = markers.entries
+        .firstWhere((MapEntry<MarkerId, Marker> entry) =>
+            entry.value.clusterManagerId ==
+            clusterManagers.first.clusterManagerId)
+        .key;
+    markers[markerIdToMove] = _copyMarkerWithClusterManagerId(
+        markers[markerIdToMove]!, clusterManagers.last.clusterManagerId);
+
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+          key: key,
+          initialCameraPosition: _kInitialCameraPosition,
+          clusterManagers: clusterManagers,
+          markers: Set<Marker>.of(markers.values)),
+    ));
+
+    {
+      final List<Cluster> clusters = await inspector.getClusters(
+          mapId: controller.mapId,
+          clusterManagerId: clusterManagers.first.clusterManagerId);
+      final int markersAmountForClusterManager = clusters
+          .map<int>((Cluster cluster) => cluster.count)
+          .reduce((int value, int element) => value + element);
+      //Check that first cluster manager has one less marker.
+      expect(markersAmountForClusterManager, markersPerClusterManager - 1);
+    }
+
+    {
+      final List<Cluster> clusters = await inspector.getClusters(
+          mapId: controller.mapId,
+          clusterManagerId: clusterManagers.last.clusterManagerId);
+      final int markersAmountForClusterManager = clusters
+          .map<int>((Cluster cluster) => cluster.count)
+          .reduce((int value, int element) => value + element);
+      // Check that last cluster manager has one more marker.
+      expect(markersAmountForClusterManager, markersPerClusterManager + 1);
     }
 
     // Remove markers from clusterManagers and test that clusterManagers are empty.
