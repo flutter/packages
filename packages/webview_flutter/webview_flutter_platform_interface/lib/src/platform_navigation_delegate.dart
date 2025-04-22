@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'platform_ssl_auth_request.dart';
 import 'types/types.dart';
 
 import 'webview_platform.dart' show WebViewPlatform;
@@ -33,6 +34,10 @@ typedef UrlChangeCallback = void Function(UrlChange change);
 /// Signature for callbacks that notify the host application of an
 /// authentication request.
 typedef HttpAuthRequestCallback = void Function(HttpAuthRequest request);
+
+/// Signature for callbacks that notify the host application of an
+/// SSL authentication request.
+typedef SslAuthRequestCallback = void Function(PlatformSslAuthRequest request);
 
 /// An interface defining navigation events that occur on the native platform.
 ///
@@ -141,6 +146,13 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
   Future<void> setOnHttpAuthRequest(HttpAuthRequestCallback onHttpAuthRequest) {
     throw UnimplementedError(
       'setOnHttpAuthRequest is not implemented on the current platform.',
+    );
+  }
+
+  /// Invoked when the web view requests a response to an SSL error.
+  Future<void> setOnSSlAuthRequest(SslAuthRequestCallback onSslAuthRequest) {
+    throw UnimplementedError(
+      'setOnSSlAuthRequest is not implemented on the current platform.',
     );
   }
 }
