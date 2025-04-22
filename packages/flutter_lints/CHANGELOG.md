@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
-
 ## 6.0.0
 
 * Updates `package:lints` dependency to version 6.0.0, with the following changes:
