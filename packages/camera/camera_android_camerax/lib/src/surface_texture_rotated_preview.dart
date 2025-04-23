@@ -75,7 +75,7 @@ final class _SurfaceTextureRotatedPreviewState
         return;
       }
 
-      setState(() async {
+      setState(() {
         preappliedRotationQuarterTurns =
             getPreAppliedQuarterTurnsRotationFromDeviceOrientation(event);
         defaultDisplayRotationQuarterTurns =
