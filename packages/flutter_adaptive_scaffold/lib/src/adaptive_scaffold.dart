@@ -28,6 +28,9 @@ const double kMaterialMediumAndUpMargin = 24;
 /// design 3 spec.
 const double kMaterialPadding = 4;
 
+/// Padding value of the default padding for the navigation rail
+const double kNavigationRailDefaultPadding = 8;
+
 /// Signature for a builder used by [AdaptiveScaffold.navigationRailDestinationBuilder] that converts a
 /// [NavigationDestination] to a [NavigationRailDestination].
 typedef NavigationRailDestinationBuilder = NavigationRailDestination Function(
@@ -94,7 +97,7 @@ class AdaptiveScaffold extends StatefulWidget {
     this.leadingUnextendedNavRail,
     this.leadingExtendedNavRail,
     this.trailingNavRail,
-    this.navigationRailPadding,
+    this.navigationRailPadding = const EdgeInsets.all(kNavigationRailDefaultPadding),
     this.smallBody,
     this.body,
     this.mediumLargeBody,
@@ -150,7 +153,7 @@ class AdaptiveScaffold extends StatefulWidget {
   final Widget? trailingNavRail;
 
   /// Option to apply custom padding to the navigation rail.
-  final EdgeInsetsGeometry? navigationRailPadding;
+  final EdgeInsetsGeometry navigationRailPadding;
 
   /// The alignment of the destinations in the navigation rail.
   final double? groupAlignment;
@@ -347,7 +350,7 @@ class AdaptiveScaffold extends StatefulWidget {
     int? selectedIndex,
     bool extended = false,
     Color? backgroundColor,
-    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry padding = const EdgeInsets.all(kNavigationRailDefaultPadding),
     Widget? leading,
     Widget? trailing,
     void Function(int)? onDestinationSelected,
@@ -363,7 +366,7 @@ class AdaptiveScaffold extends StatefulWidget {
     }
     return Builder(builder: (BuildContext context) {
       return Padding(
-        padding: padding ?? const EdgeInsets.all(8.0),
+        padding: padding,
         child: SizedBox(
           width: width,
           height: MediaQuery.sizeOf(context).height,
