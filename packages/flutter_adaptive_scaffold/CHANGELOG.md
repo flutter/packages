@@ -1,4 +1,4 @@
-## 0.3.1
+## 0.3.2
 
 * Add `navigationRailPadding` padding to `AdaptiveScaffold` to allow for specifying custom padding around the navigation rail.
 
