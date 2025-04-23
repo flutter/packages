@@ -1,3 +1,8 @@
+## 0.6.15+1
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
 ## 0.6.15
 
 * Updates internal API wrapper to use ProxyApis.
