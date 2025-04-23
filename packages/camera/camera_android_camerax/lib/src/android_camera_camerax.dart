@@ -493,6 +493,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     await liveCameraState?.removeObservers();
     await processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
+    await deviceOrientationManager.stopListeningForDeviceOrientationChange();
   }
 
   /// The camera has been initialized.
