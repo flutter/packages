@@ -642,6 +642,16 @@ abstract class UIScrollView extends UIView {
   /// the scroll view allows horizontal dragging even if the content is smaller
   /// than the bounds of the scroll view.
   void setAlwaysBounceHorizontal(bool value);
+
+  /// Whether the vertical scroll indicator is visible.
+  ///
+  /// The default value is true.
+  void setShowsVerticalScrollIndicator(bool value);
+
+  /// Whether the horizontal scroll indicator is visible.
+  ///
+  /// The default value is true.
+  void setShowsHorizontalScrollIndicator(bool value);
 }
 
 /// A collection of properties that you use to initialize a web view..

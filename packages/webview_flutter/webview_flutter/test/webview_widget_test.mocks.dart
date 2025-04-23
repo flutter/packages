@@ -237,6 +237,28 @@ class MockPlatformWebViewController extends _i1.Mock
       ) as _i7.Future<void>);
 
   @override
+  _i7.Future<void> setVerticalScrollBarEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(#setVerticalScrollBarEnabled, [enabled]),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  _i7.Future<void> setHorizontalScrollBarEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(#setHorizontalScrollBarEnabled, [enabled]),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
+  bool supportsSetScrollBarsEnabled() => (super.noSuchMethod(
+        Invocation.method(#supportsSetScrollBarsEnabled, []),
+        returnValue: false,
+      ) as bool);
+
+  @override
   _i7.Future<_i3.Offset> getScrollPosition() => (super.noSuchMethod(
         Invocation.method(#getScrollPosition, []),
         returnValue: _i7.Future<_i3.Offset>.value(

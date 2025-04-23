@@ -679,6 +679,64 @@ void main() {
       debugDefaultTargetPlatformOverride = null;
     });
 
+    test('setVerticalScrollBarEnabled', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await controller.setVerticalScrollBarEnabled(true);
+      verify(mockScrollView.setShowsVerticalScrollIndicator(true));
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('setHorizontalScrollBarEnabled', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await controller.setHorizontalScrollBarEnabled(false);
+      verify(mockScrollView.setShowsHorizontalScrollIndicator(false));
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('supportsSetScrollBarsEnabled returns true for iOS', () {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      expect(controller.supportsSetScrollBarsEnabled(), true);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('supportsSetScrollBarsEnabled returns false for macOS', () {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+
+      expect(controller.supportsSetScrollBarsEnabled(), false);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
     test('disable zoom', () async {
       final MockWKUserContentController mockUserContentController =
           MockWKUserContentController();

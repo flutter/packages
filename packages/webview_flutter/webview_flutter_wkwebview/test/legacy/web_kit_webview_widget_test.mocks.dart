@@ -201,6 +201,22 @@ class MockUIScrollView extends _i1.Mock implements _i2.UIScrollView {
       ) as _i4.Future<void>);
 
   @override
+  _i4.Future<void> setShowsVerticalScrollIndicator(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(#setShowsVerticalScrollIndicator, [value]),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setShowsHorizontalScrollIndicator(bool? value) =>
+      (super.noSuchMethod(
+        Invocation.method(#setShowsHorizontalScrollIndicator, [value]),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
   _i2.UIScrollView pigeon_copy() => (super.noSuchMethod(
         Invocation.method(#pigeon_copy, []),
         returnValue: _FakeUIScrollView_1(

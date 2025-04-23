@@ -3024,6 +3024,20 @@ protocol PigeonApiDelegateUIScrollView {
     func setAlwaysBounceHorizontal(
       pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
   #endif
+  #if !os(macOS)
+    /// Whether the vertical scroll indicator is visible.
+    ///
+    /// The default value is true.
+    func setShowsVerticalScrollIndicator(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
+  #endif
+  #if !os(macOS)
+    /// Whether the horizontal scroll indicator is visible.
+    ///
+    /// The default value is true.
+    func setShowsHorizontalScrollIndicator(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool) throws
+  #endif
 }
 
 protocol PigeonApiProtocolUIScrollView {
@@ -3240,6 +3254,50 @@ final class PigeonApiUIScrollView: PigeonApiProtocolUIScrollView {
         }
       } else {
         setAlwaysBounceHorizontalChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let setShowsVerticalScrollIndicatorChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setShowsVerticalScrollIndicator",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setShowsVerticalScrollIndicatorChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let valueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setShowsVerticalScrollIndicator(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setShowsVerticalScrollIndicatorChannel.setMessageHandler(nil)
+      }
+    #endif
+    #if !os(macOS)
+      let setShowsHorizontalScrollIndicatorChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIScrollView.setShowsHorizontalScrollIndicator",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setShowsHorizontalScrollIndicatorChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! UIScrollView
+          let valueArg = args[1] as! Bool
+          do {
+            try api.pigeonDelegate.setShowsHorizontalScrollIndicator(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setShowsHorizontalScrollIndicatorChannel.setMessageHandler(nil)
       }
     #endif
   }
