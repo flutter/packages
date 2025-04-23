@@ -128,11 +128,13 @@
     [self setInfoWindowTitle:infoWindow.title snippet:infoWindow.snippet];
   }
 
-  [self setVisible:platformMarker.visible];
-
   // Set the marker's user data with current identifiers.
   FGMSetIdentifiersToMarkerUserData(self.markerIdentifier, self.clusterManagerIdentifier,
                                     self.marker);
+
+  // Ensure setVisible is called last as it adds the marker to the map,
+  // and must be done after all other parameters are set.
+  [self setVisible:platformMarker.visible];
 }
 
 @end
@@ -215,7 +217,7 @@
 
   if ([controller.marker conformsToProtocol:@protocol(GMUClusterItem)]) {
     if (previousClusterManagerIdentifier &&
-        ![previousClusterManagerIdentifier isEqualToString:clusterManagerIdentifier]) {
+        ![clusterManagerIdentifier isEqualToString:previousClusterManagerIdentifier]) {
       // Remove marker from previous cluster manager if its cluster manager identifier is removed or
       // changed.
       GMUClusterManager *clusterManager = [_clusterManagersController

@@ -807,6 +807,43 @@ void main() {
   });
 
   testWidgets('testToggleInfoWindow', (WidgetTester tester) async {
+    const Marker marker = Marker(
+        markerId: MarkerId('marker'),
+        infoWindow: InfoWindow(title: 'InfoWindow'));
+    final Set<Marker> markers = <Marker>{marker};
+
+    final Completer<ExampleGoogleMapController> controllerCompleter =
+        Completer<ExampleGoogleMapController>();
+
+    await tester.pumpWidget(Directionality(
+      textDirection: TextDirection.ltr,
+      child: ExampleGoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        markers: markers,
+        onMapCreated: (ExampleGoogleMapController googleMapController) {
+          controllerCompleter.complete(googleMapController);
+        },
+      ),
+    ));
+
+    final ExampleGoogleMapController controller =
+        await controllerCompleter.future;
+
+    bool iwVisibleStatus =
+        await controller.isMarkerInfoWindowShown(marker.markerId);
+    expect(iwVisibleStatus, false);
+
+    await controller.showMarkerInfoWindow(marker.markerId);
+    iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
+    expect(iwVisibleStatus, true);
+
+    await controller.hideMarkerInfoWindow(marker.markerId);
+    iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
+    expect(iwVisibleStatus, false);
+  });
+
+  testWidgets('updating a marker does not hide its info window',
+      (WidgetTester tester) async {
     final Key key = GlobalKey();
     const Marker marker = Marker(
         markerId: MarkerId('marker'),
@@ -838,15 +875,13 @@ void main() {
     final ExampleGoogleMapController controller =
         await controllerCompleter.future;
 
+    await controller.showMarkerInfoWindow(marker.markerId);
     bool iwVisibleStatus =
         await controller.isMarkerInfoWindowShown(marker.markerId);
-    expect(iwVisibleStatus, false);
-
-    await controller.showMarkerInfoWindow(marker.markerId);
-    iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, true);
 
-    // Update marker and check if the info window is still visible.
+    // Update marker and ensure the info window remains visible when added to a
+    // cluster manager.
     final Marker updatedMarker = marker.copyWith(
       alphaParam: 0.5,
       clusterManagerIdParam: clusterManager.clusterManagerId,
@@ -862,13 +897,8 @@ void main() {
           markers: Set<Marker>.of(markers)),
     ));
 
-    await controller.showMarkerInfoWindow(marker.markerId);
     iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
     expect(iwVisibleStatus, true);
-
-    await controller.hideMarkerInfoWindow(marker.markerId);
-    iwVisibleStatus = await controller.isMarkerInfoWindowShown(marker.markerId);
-    expect(iwVisibleStatus, false);
   });
 
   testWidgets('testTakeSnapshot', (WidgetTester tester) async {
