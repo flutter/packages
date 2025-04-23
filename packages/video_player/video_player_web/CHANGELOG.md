@@ -1,3 +1,7 @@
+## 2.3.5
+
+* Fixes blank first frame on iOS.
+
 ## 2.3.4
 
 * Adjusts the code to the new platform interface.

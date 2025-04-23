@@ -1624,6 +1624,21 @@ void main() {
     verify(mockSettings.setTextZoom(100)).called(1);
   });
 
+  test('setOverScrollMode', () async {
+    final MockWebView mockWebView = MockWebView();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+    );
+
+    await controller.setOverScrollMode(WebViewOverScrollMode.always);
+
+    verify(
+      mockWebView.setOverScrollMode(
+        android_webview.OverScrollMode.always,
+      ),
+    ).called(1);
+  });
+
   test('webViewIdentifier', () {
     final MockWebView mockWebView = MockWebView();
 
