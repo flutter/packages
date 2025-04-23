@@ -13,7 +13,7 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 import org.junit.Test;
 
-public class SslCertificateProxyApiTest {
+public class SslCertificateTest {
   @Test
   public void getIssuedBy() {
     final PigeonApiSslCertificate api = new TestProxyApiRegistrar().getPigeonApiSslCertificate();

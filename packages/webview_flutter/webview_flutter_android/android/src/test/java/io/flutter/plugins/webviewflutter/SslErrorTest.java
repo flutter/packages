@@ -12,7 +12,7 @@ import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import org.junit.Test;
 
-public class SslErrorProxyApiTest {
+public class SslErrorTest {
   @Test
   public void certificate() {
     final PigeonApiSslError api = new TestProxyApiRegistrar().getPigeonApiSslError();
