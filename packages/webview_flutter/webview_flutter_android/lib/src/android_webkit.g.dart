@@ -8,8 +8,7 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected;
+import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -20,8 +19,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -30,7 +28,6 @@ List<Object?> wrapResponse(
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
@@ -113,10 +110,9 @@ class PigeonInstanceManager {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>>
-      _weakInstances = <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
-  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances =
-      <int, PigeonInternalProxyApiBaseClass>{};
+  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>> _weakInstances =
+      <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
+  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances = <int, PigeonInternalProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -126,8 +122,7 @@ class PigeonInstanceManager {
 
   static PigeonInstanceManager _initInstance() {
     WidgetsFlutterBinding.ensureInitialized();
-    final _PigeonInternalInstanceManagerApi api =
-        _PigeonInternalInstanceManagerApi();
+    final _PigeonInternalInstanceManagerApi api = _PigeonInternalInstanceManagerApi();
     // Clears the native `PigeonInstanceManager` on the initial use of the Dart one.
     api.clear();
     final PigeonInstanceManager instanceManager = PigeonInstanceManager(
@@ -135,67 +130,37 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(
-        instanceManager: instanceManager);
-    WebResourceRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebResourceResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebResourceError.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebResourceErrorCompat.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebViewPoint.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ConsoleMessage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CookieManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebSettings.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    JavaScriptChannel.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebViewClient.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    DownloadListener.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebChromeClient.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FlutterAssetManager.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WebStorage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    FileChooserParams.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    PermissionRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    CustomViewCallback.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    WebResourceRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebResourceResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebResourceError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebResourceErrorCompat.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebViewPoint.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ConsoleMessage.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CookieManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebSettings.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    JavaScriptChannel.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebViewClient.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    DownloadListener.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebChromeClient.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FlutterAssetManager.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WebStorage.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    FileChooserParams.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    PermissionRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    CustomViewCallback.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     View.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    GeolocationPermissionsCallback.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    HttpAuthHandler.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AndroidMessage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    ClientCertRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    PrivateKey.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    X509Certificate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    SslErrorHandler.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    SslError.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    SslCertificateDName.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    SslCertificate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    Certificate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    GeolocationPermissionsCallback.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    HttpAuthHandler.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AndroidMessage.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    ClientCertRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    PrivateKey.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    X509Certificate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    SslErrorHandler.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    SslError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    SslCertificateDName.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    SslCertificate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    Certificate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -259,20 +224,15 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(
-      int identifier) {
-    final PigeonInternalProxyApiBaseClass? weakInstance =
-        _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(int identifier) {
+    final PigeonInternalProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonInternalProxyApiBaseClass? strongInstance =
-          _strongInstances[identifier];
+      final PigeonInternalProxyApiBaseClass? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy =
-            strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] =
-            WeakReference<PigeonInternalProxyApiBaseClass>(copy);
+        _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -296,20 +256,17 @@ class PigeonInstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+  void addHostCreatedInstance(PigeonInternalProxyApiBaseClass instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+  void _addInstanceWithIdentifier(PigeonInternalProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
@@ -436,29 +393,274 @@ class _PigeonInternalInstanceManagerApi {
 }
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
-  const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
-  final PigeonInstanceManager instanceManager;
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonInternalProxyApiBaseClass) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
+ const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
+ final PigeonInstanceManager instanceManager;
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is PigeonInternalProxyApiBaseClass) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
 }
+
+/// Handles constructing objects and calling static methods for the Android
+/// Interactive Media Ads native library.
+///
+/// This class provides dependency injection for the implementations of the
+/// platform interface classes. Improving the ease of unit testing and/or
+/// overriding the underlying Android classes.
+///
+/// By default each function calls the default constructor of the class it
+/// intends to return.
+class AndroidWebkitGProxy {
+  /// Constructs an [AndroidWebkitGProxy].
+  const AndroidWebkitGProxy({
+    this.newWebView = WebView.new,
+    this.newJavaScriptChannel = JavaScriptChannel.new,
+    this.newWebViewClient = WebViewClient.new,
+    this.newDownloadListener = DownloadListener.new,
+    this.newWebChromeClient = WebChromeClient.new,
+    this.setWebContentsDebuggingEnabledWebView =
+        WebView.setWebContentsDebuggingEnabled,
+    this.instanceCookieManager = _instanceCookieManager,
+    this.instanceFlutterAssetManager = _instanceFlutterAssetManager,
+    this.instanceWebStorage = _instanceWebStorage,
+  });
+
+  /// Constructs [WebView].
+  final WebView Function({
+    void Function(
+      WebView,
+      int,
+      int,
+      int,
+      int,
+    )? onScrollChanged,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newWebView;
+
+  /// Constructs [JavaScriptChannel].
+  final JavaScriptChannel Function({
+    required void Function(
+      JavaScriptChannel,
+      String,
+    ) postMessage,
+    required String channelName,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newJavaScriptChannel;
+
+  /// Constructs [WebViewClient].
+  final WebViewClient Function({
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? onPageStarted,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? onPageFinished,
+    void Function(
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+      WebResourceResponse,
+    )? onReceivedHttpError,
+    void Function(
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+      WebResourceError,
+    )? onReceivedRequestError,
+    void Function(
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+      WebResourceErrorCompat,
+    )? onReceivedRequestErrorCompat,
+    void Function(
+      WebViewClient,
+      WebView,
+      int,
+      String,
+      String,
+    )? onReceivedError,
+    void Function(
+      WebViewClient,
+      WebView,
+      WebResourceRequest,
+    )? requestLoading,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? urlLoading,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+      bool,
+    )? doUpdateVisitedHistory,
+    void Function(
+      WebViewClient,
+      WebView,
+      HttpAuthHandler,
+      String,
+      String,
+    )? onReceivedHttpAuthRequest,
+    void Function(
+      WebViewClient,
+      WebView,
+      AndroidMessage,
+      AndroidMessage,
+    )? onFormResubmission,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? onLoadResource,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? onPageCommitVisible,
+    void Function(
+      WebViewClient,
+      WebView,
+      ClientCertRequest,
+    )? onReceivedClientCertRequest,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+      String?,
+      String,
+    )? onReceivedLoginRequest,
+    void Function(
+      WebViewClient,
+      WebView,
+      SslErrorHandler,
+      SslError,
+    )? onReceivedSslError,
+    void Function(
+      WebViewClient,
+      WebView,
+      double,
+      double,
+    )? onScaleChanged,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newWebViewClient;
+
+  /// Constructs [DownloadListener].
+  final DownloadListener Function({
+    required void Function(
+      DownloadListener,
+      String,
+      String,
+      String,
+      String,
+      int,
+    ) onDownloadStart,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newDownloadListener;
+
+  /// Constructs [WebChromeClient].
+  final WebChromeClient Function({
+    required Future<List<String>> Function(
+      WebChromeClient,
+      WebView,
+      FileChooserParams,
+    ) onShowFileChooser,
+    required Future<bool> Function(
+      WebChromeClient,
+      WebView,
+      String,
+      String,
+    ) onJsConfirm,
+    void Function(
+      WebChromeClient,
+      WebView,
+      int,
+    )? onProgressChanged,
+    void Function(
+      WebChromeClient,
+      PermissionRequest,
+    )? onPermissionRequest,
+    void Function(
+      WebChromeClient,
+      View,
+      CustomViewCallback,
+    )? onShowCustomView,
+    void Function(WebChromeClient)? onHideCustomView,
+    void Function(
+      WebChromeClient,
+      String,
+      GeolocationPermissionsCallback,
+    )? onGeolocationPermissionsShowPrompt,
+    void Function(WebChromeClient)? onGeolocationPermissionsHidePrompt,
+    void Function(
+      WebChromeClient,
+      ConsoleMessage,
+    )? onConsoleMessage,
+    Future<void> Function(
+      WebChromeClient,
+      WebView,
+      String,
+      String,
+    )? onJsAlert,
+    Future<String?> Function(
+      WebChromeClient,
+      WebView,
+      String,
+      String,
+      String,
+    )? onJsPrompt,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newWebChromeClient;
+
+  /// Calls to [WebView.setWebContentsDebuggingEnabled].
+  final Future<void> Function(
+    bool, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) setWebContentsDebuggingEnabledWebView;
+
+  /// Calls to [CookieManager.instance].
+  final CookieManager Function() instanceCookieManager;
+
+  /// Calls to [FlutterAssetManager.instance].
+  final FlutterAssetManager Function() instanceFlutterAssetManager;
+
+  /// Calls to [WebStorage.instance].
+  final WebStorage Function() instanceWebStorage;
+
+  static CookieManager _instanceCookieManager() => CookieManager.instance;
+
+  static FlutterAssetManager _instanceFlutterAssetManager() =>
+      FlutterAssetManager.instance;
+
+  static WebStorage _instanceWebStorage() => WebStorage.instance;
+}
+
 
 /// Mode of how to select files for a file chooser.
 ///
@@ -469,17 +671,14 @@ enum FileChooserMode {
   ///
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams#MODE_OPEN.
   open,
-
   /// Similar to [open] but allows multiple files to be selected.
   ///
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams#MODE_OPEN_MULTIPLE.
   openMultiple,
-
   /// Allows picking a nonexistent file and saving it.
   ///
   /// See https://developer.android.com/reference/android/webkit/WebChromeClient.FileChooserParams#MODE_SAVE.
   save,
-
   /// Indicates a `FileChooserMode` with an unknown mode.
   ///
   /// This does not represent an actual value provided by the platform and only
@@ -495,27 +694,22 @@ enum ConsoleMessageLevel {
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#DEBUG.
   debug,
-
   /// Indicates a message is provided as an error.
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#ERROR.
   error,
-
   /// Indicates a message is provided as a basic log message.
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#LOG.
   log,
-
   /// Indicates a message is provided as a tip.
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#TIP.
   tip,
-
   /// Indicates a message is provided as a warning.
   ///
   /// See https://developer.android.com/reference/android/webkit/ConsoleMessage.MessageLevel#WARNING.
   warning,
-
   /// Indicates a message with an unknown level.
   ///
   /// This does not represent an actual value provided by the platform and only
@@ -530,14 +724,11 @@ enum OverScrollMode {
   /// Always allow a user to over-scroll this view, provided it is a view that
   /// can scroll.
   always,
-
   /// Allow a user to over-scroll this view only if the content is large enough
   /// to meaningfully scroll, provided it is a view that can scroll.
   ifContentScrolls,
-
   /// Never allow a user to over-scroll this view.
   never,
-
   /// The type is not recognized by this wrapper.
   unknown,
 }
@@ -548,25 +739,20 @@ enum OverScrollMode {
 enum SslErrorType {
   /// The date of the certificate is invalid.
   dateInvalid,
-
   /// The certificate has expired.
   expired,
-
   /// Hostname mismatch.
   idMismatch,
-
   /// A generic error occurred.
   invalid,
-
   /// The certificate is not yet valid.
   notYetValid,
-
   /// The certificate authority is not trusted.
   untrusted,
-
   /// The type is not recognized by this wrapper.
   unknown,
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -575,16 +761,16 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is FileChooserMode) {
+    }    else if (value is FileChooserMode) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is ConsoleMessageLevel) {
+    }    else if (value is ConsoleMessageLevel) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is OverScrollMode) {
+    }    else if (value is OverScrollMode) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is SslErrorType) {
+    }    else if (value is SslErrorType) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
     } else {
@@ -595,16 +781,16 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : FileChooserMode.values[value];
-      case 130:
+      case 130: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : ConsoleMessageLevel.values[value];
-      case 131:
+      case 131: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : OverScrollMode.values[value];
-      case 132:
+      case 132: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SslErrorType.values[value];
       default:
@@ -612,7 +798,6 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
-
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
@@ -8230,3 +8415,4 @@ class Certificate extends PigeonInternalProxyApiBaseClass {
     );
   }
 }
+
