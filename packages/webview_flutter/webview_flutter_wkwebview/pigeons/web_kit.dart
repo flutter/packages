@@ -1142,7 +1142,7 @@ abstract class URLProtectionSpace extends NSObject {
   late String? authenticationMethod;
 
   /// A representation of the server’s SSL transaction state.
-  late SecTrust? getServerTrust;
+  SecTrust? getServerTrust();
 }
 
 /// A challenge from a server requiring authentication from the client.

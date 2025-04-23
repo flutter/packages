@@ -16,6 +16,7 @@ import 'common/weak_reference_utils.dart';
 import 'common/web_kit.g.dart';
 import 'common/webkit_constants.dart';
 import 'webkit_proxy.dart';
+import 'webkit_ssl_auth_request.dart';
 
 /// Media types that can require a user gesture to begin playing.
 ///
@@ -1233,57 +1234,77 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         __,
         URLAuthenticationChallenge challenge,
       ) async {
-        final URLProtectionSpace protectionSpace =
-            await challenge.getProtectionSpace();
+        final WebKitNavigationDelegate? delegate = weakThis.target;
 
-        final bool isBasicOrNtlm = protectionSpace.authenticationMethod ==
-                NSUrlAuthenticationMethod.httpBasic ||
-            protectionSpace.authenticationMethod ==
-                NSUrlAuthenticationMethod.httpNtlm;
-
-        final void Function(HttpAuthRequest)? callback =
-            weakThis.target?._onHttpAuthRequest;
-
-        final WebKitProxy? proxy =
-            (weakThis.target?.params as WebKitNavigationDelegateCreationParams?)
-                ?.webKitProxy;
-
-        if (isBasicOrNtlm && callback != null && proxy != null) {
-          final String host = protectionSpace.host;
-          final String? realm = protectionSpace.realm;
-
+        if (delegate != null) {
+          final URLProtectionSpace protectionSpace =
+              await challenge.getProtectionSpace();
+          final WebKitProxy proxy =
+              (delegate.params as WebKitNavigationDelegateCreationParams)
+                  .webKitProxy;
           final Completer<List<Object?>> responseCompleter =
               Completer<List<Object?>>();
 
-          callback(
-            HttpAuthRequest(
-              host: host,
-              realm: realm,
-              onProceed: (WebViewCredential credential) {
-                responseCompleter.complete(
-                  <Object?>[
-                    UrlSessionAuthChallengeDisposition.useCredential,
-                    <String, Object?>{
-                      'user': credential.user,
-                      'password': credential.password,
-                      'persistence': UrlCredentialPersistence.forSession,
+          switch (protectionSpace.authenticationMethod) {
+            case NSUrlAuthenticationMethod.httpBasic:
+            case NSUrlAuthenticationMethod.httpNtlm:
+              final void Function(HttpAuthRequest)? callback =
+                  delegate._onHttpAuthRequest;
+              if (callback != null) {
+                callback(
+                  HttpAuthRequest(
+                    host: protectionSpace.host,
+                    realm: protectionSpace.realm,
+                    onProceed: (WebViewCredential credential) {
+                      responseCompleter.complete(
+                        <Object?>[
+                          UrlSessionAuthChallengeDisposition.useCredential,
+                          <String, Object?>{
+                            'user': credential.user,
+                            'password': credential.password,
+                            'persistence': UrlCredentialPersistence.forSession,
+                          },
+                        ],
+                      );
                     },
-                  ],
+                    onCancel: () {
+                      responseCompleter.complete(
+                        <Object?>[
+                          UrlSessionAuthChallengeDisposition
+                              .cancelAuthenticationChallenge,
+                          null,
+                        ],
+                      );
+                    },
+                  ),
                 );
-              },
-              onCancel: () {
-                responseCompleter.complete(
-                  <Object?>[
-                    UrlSessionAuthChallengeDisposition
-                        .cancelAuthenticationChallenge,
-                    null,
-                  ],
-                );
-              },
-            ),
-          );
 
-          return responseCompleter.future;
+                return responseCompleter.future;
+              }
+            case NSUrlAuthenticationMethod.serverTrust:
+              final void Function(PlatformSslAuthRequest)? callback =
+                  delegate._onSslAuthRequest;
+              final SecTrust? serverTrust =
+                  await protectionSpace.getServerTrust();
+              if (callback != null && serverTrust != null) {
+                callback(
+                  await WebKitSslAuthRequest.fromTrust(
+                    trust: serverTrust,
+                    host: protectionSpace.host,
+                    onResponse: (
+                      UrlSessionAuthChallengeDisposition disposition,
+                      Map<String, Object?>? credentialMap,
+                    ) {
+                      responseCompleter.complete(
+                        <Object?>[disposition, credentialMap],
+                      );
+                    },
+                  ),
+                );
+
+                return responseCompleter.future;
+              }
+          }
         }
 
         return <Object?>[
@@ -1305,6 +1326,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   NavigationRequestCallback? _onNavigationRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
+  SslAuthRequestCallback? _onSslAuthRequest;
 
   @override
   Future<void> setOnPageFinished(PageEventCallback onPageFinished) async {
@@ -1350,6 +1372,13 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;
+  }
+
+  @override
+  Future<void> setOnSSlAuthRequest(
+    SslAuthRequestCallback onSslAuthRequest,
+  ) async {
+    _onSslAuthRequest = onSslAuthRequest;
   }
 }
 

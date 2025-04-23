@@ -7,9 +7,10 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 import 'common/web_kit.g.dart';
 
 class WebKitSslAuthRequest extends PlatformSslAuthRequest {
-  WebKitSslAuthRequest({
+  WebKitSslAuthRequest._({
     required super.certificates,
     required SecTrust trust,
+    required this.host,
     required void Function(
       UrlSessionAuthChallengeDisposition disposition,
       Map<String, Object?>? credentialMap,
@@ -24,8 +25,11 @@ class WebKitSslAuthRequest extends PlatformSslAuthRequest {
     Map<String, Object?>? credentialMap,
   ) _onResponse;
 
+  final String host;
+
   static Future<WebKitSslAuthRequest> fromTrust({
     required SecTrust trust,
+    required String host,
     required void Function(
       UrlSessionAuthChallengeDisposition disposition,
       Map<String, Object?>? credentialMap,
@@ -56,13 +60,14 @@ class WebKitSslAuthRequest extends PlatformSslAuthRequest {
       final List<SecCertificate> certificates =
           (await SecTrust.copyCertificateChain(trust)) ?? <SecCertificate>[];
       if (trusted) {
-        return WebKitSslAuthRequest(
+        return WebKitSslAuthRequest._(
           certificates: await fromNativeCertificates(certificates),
           trust: trust,
+          host: host,
           onResponse: onResponse,
         );
       } else {
-        return WebKitSslAuthRequest(
+        return WebKitSslAuthRequest._(
           certificates: await fromNativeCertificates(
             certificates,
             <SslError>[
@@ -72,6 +77,7 @@ class WebKitSslAuthRequest extends PlatformSslAuthRequest {
             ],
           ),
           trust: trust,
+          host: host,
           onResponse: onResponse,
         );
       }
@@ -79,7 +85,7 @@ class WebKitSslAuthRequest extends PlatformSslAuthRequest {
       final List<SecCertificate> certificates =
           (await SecTrust.copyCertificateChain(trust)) ?? <SecCertificate>[];
 
-      return WebKitSslAuthRequest(
+      return WebKitSslAuthRequest._(
         certificates: await fromNativeCertificates(
           certificates,
           <SslError>[
@@ -89,6 +95,7 @@ class WebKitSslAuthRequest extends PlatformSslAuthRequest {
           ],
         ),
         trust: trust,
+        host: host,
         onResponse: onResponse,
       );
     }
