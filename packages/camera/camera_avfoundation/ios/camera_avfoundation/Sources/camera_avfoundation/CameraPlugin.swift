@@ -10,20 +10,20 @@ import ObjectiveC
   import camera_avfoundation_objc
 #endif
 
-public typealias CaptureNamedDeviceFactory = (String) -> FLTCaptureDevice
+typealias CaptureNamedDeviceFactory = (String) -> FLTCaptureDevice
 
 public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
-  let registry: FlutterTextureRegistry
-  let messenger: FlutterBinaryMessenger
-  let globalEventAPI: FCPCameraGlobalEventApi
-  let deviceDiscoverer: FLTCameraDeviceDiscovering
-  let permissionManager: FLTCameraPermissionManager
-  let captureDeviceFactory: CaptureNamedDeviceFactory
-  let captureSessionFactory: CaptureSessionFactory
-  let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  private let registry: FlutterTextureRegistry
+  private let messenger: FlutterBinaryMessenger
+  private let globalEventAPI: FCPCameraGlobalEventApi
+  private let deviceDiscoverer: FLTCameraDeviceDiscovering
+  private let permissionManager: FLTCameraPermissionManager
+  private let captureDeviceFactory: CaptureNamedDeviceFactory
+  private let captureSessionFactory: CaptureSessionFactory
+  private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
 
   /// All FLTCam's state access and capture session related operations should be on run on this queue.
-  var captureSessionQueue: DispatchQueue
+  private let captureSessionQueue: DispatchQueue
 
   /// An internal camera object that manages camera's state and performs camera operations.
   var camera: FLTCam?
@@ -43,14 +43,16 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
       permissionManager: FLTCameraPermissionManager(
         permissionService: FLTDefaultPermissionService()),
       deviceFactory: { name in
+        // TODO(RobertOdrowaz) Implement better error handling and remove non-null assertion
         FLTDefaultCaptureDevice(device: AVCaptureDevice(uniqueID: name)!)
       },
       captureSessionFactory: { FLTDefaultCaptureSession(captureSession: AVCaptureSession()) },
-      captureDeviceInputFactory: FLTDefaultCaptureDeviceInputFactory()
+      captureDeviceInputFactory: FLTDefaultCaptureDeviceInputFactory(),
+      captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
   }
 
-  public init(
+  init(
     registry: FlutterTextureRegistry,
     messenger: FlutterBinaryMessenger,
     globalAPI: FCPCameraGlobalEventApi,
@@ -58,7 +60,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
     permissionManager: FLTCameraPermissionManager,
     deviceFactory: @escaping CaptureNamedDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
-    captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+    captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
+    captureSessionQueue: DispatchQueue
   ) {
     self.registry = registry
     self.messenger = messenger
@@ -68,8 +71,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
     self.captureDeviceFactory = deviceFactory
     self.captureSessionFactory = captureSessionFactory
     self.captureDeviceInputFactory = captureDeviceInputFactory
-
-    self.captureSessionQueue = DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
+    self.captureSessionQueue = captureSessionQueue
 
     super.init()
 
@@ -127,7 +129,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
     completion: @escaping ([FCPPlatformCameraDescription]?, FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
-      guard let self = self else { return }
+      guard let strongSelf = self else { return }
 
       var discoveryDevices: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera,
@@ -138,7 +140,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
         discoveryDevices.append(.builtInUltraWideCamera)
       }
 
-      let devices = self.deviceDiscoverer.discoverySession(
+      let devices = strongSelf.deviceDiscoverer.discoverySession(
         withDeviceTypes: discoveryDevices,
         mediaType: .video,
         position: .unspecified)
@@ -182,38 +184,41 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
 
         if let error = error {
           completion(nil, error)
-        } else {
-          // Request audio permission on `create` call with `enableAudio` argument instead of the
-          // `prepareForVideoRecording` call. This is because `prepareForVideoRecording` call is
-          // optional, and used as a workaround to fix a missing frame issue on iOS.
-          if settings.enableAudio {
-            // Setup audio capture session only if granted audio access.
-            strongSelf.permissionManager.requestAudioPermission { [weak self] audioError in
-              // cannot use the outter `strongSelf`
-              guard let strongSelf = self else { return }
+          return
+        }
 
-              if let audioError = audioError {
-                completion(nil, audioError)
-              } else {
-                strongSelf.createCameraOnSessionQueue(
-                  withName: cameraName,
-                  settings: settings,
-                  completion: completion)
-              }
+        // Request audio permission on `create` call with `enableAudio` argument instead of the
+        // `prepareForVideoRecording` call. This is because `prepareForVideoRecording` call is
+        // optional, and used as a workaround to fix a missing frame issue on iOS.
+        if settings.enableAudio {
+          // Setup audio capture session only if granted audio access.
+          strongSelf.permissionManager.requestAudioPermission { [weak self] audioError in
+            // cannot use the outter `strongSelf`
+            guard let strongSelf = self else { return }
+
+            if let audioError = audioError {
+              completion(nil, audioError)
+              return
             }
-          } else {
+
             strongSelf.createCameraOnSessionQueue(
               withName: cameraName,
               settings: settings,
               completion: completion)
           }
+        } else {
+          strongSelf.createCameraOnSessionQueue(
+            withName: cameraName,
+            settings: settings,
+            completion: completion)
         }
       }
     }
   }
 
   public func createCameraOnSessionQueue(
-    withName: String, settings: FCPPlatformMediaSettings,
+    withName: String,
+    settings: FCPPlatformMediaSettings,
     completion: @escaping (NSNumber?, FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
@@ -252,8 +257,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
       camera = newCamera
 
       FLTEnsureToRunOnMainQueue { [weak self] in
-        guard let self = self else { return }
-        completion(NSNumber(value: self.registry.register(newCamera)), nil)
+        guard let strongSelf = self else { return }
+        completion(NSNumber(value: strongSelf.registry.register(newCamera)), nil)
       }
     }
   }
@@ -282,7 +287,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
     camera?.videoFormat = FCPGetPixelFormatForPigeonFormat(imageFormat)
 
     camera?.onFrameAvailable = { [weak self] in
-      if !(self?.camera?.isPreviewPaused ?? true) {
+      guard let camera = self?.camera else { return }
+      if !camera.isPreviewPaused {
         FLTEnsureToRunOnMainQueue { [weak self] in
           self?.registry.textureFrameAvailable(Int64(cameraId))
         }
@@ -325,8 +331,10 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
   public func disposeCamera(_ cameraId: Int, completion: @escaping (FlutterError?) -> Void) {
     registry.unregisterTexture(Int64(cameraId))
     captureSessionQueue.async { [weak self] in
-      self?.camera?.close()
-      self?.camera = nil
+      if let strongSelf = self {
+        strongSelf.camera?.close()
+        strongSelf.camera = nil
+      }
       completion(nil)
     }
   }
