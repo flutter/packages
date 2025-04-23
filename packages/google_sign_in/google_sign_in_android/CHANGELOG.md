@@ -1,3 +1,7 @@
+## 6.2.1
+
+* Removes obsolete code related to supporting SDK <21.
+
 ## 6.2.0
 
 * Adds a sign-in field to allow clients to explicitly specify an account name.

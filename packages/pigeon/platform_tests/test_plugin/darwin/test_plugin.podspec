@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'BSD', :file => '../../../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/pigeon' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'test_plugin/Sources/test_plugin/**/*.swift'
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
   s.ios.deployment_target = '12.0'

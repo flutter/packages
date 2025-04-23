@@ -9,6 +9,7 @@ import 'package:meta/meta.dart';
 
 import 'common/cmake.dart';
 import 'common/core.dart';
+import 'common/file_filters.dart';
 import 'common/flutter_command_utils.dart';
 import 'common/gradle.dart';
 import 'common/output_utils.dart';
@@ -113,6 +114,13 @@ this command.
   List<String> _requestedPlatforms = <String>[];
 
   Set<String> _xcodeWarningsExceptions = <String>{};
+
+  @override
+  bool shouldIgnoreFile(String path) {
+    return isRepoLevelNonCodeImpactingFile(path) || isPackageSupportFile(path);
+    // It may seem tempting to filter out *.dart, but that would skip critical
+    // testing since native integration tests run the full compiled application.
+  }
 
   @override
   Future<void> initializeRun() async {

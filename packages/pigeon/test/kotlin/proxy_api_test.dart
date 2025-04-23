@@ -999,6 +999,59 @@ void main() {
         );
       });
     });
+
+    group('InstanceManager', () {
+      test(
+          'InstanceManager passes runnable field and not a new runnable instance',
+          () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const KotlinGenerator generator = KotlinGenerator();
+        generator.generate(
+          const InternalKotlinOptions(kotlinOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+        expect(
+          code,
+          contains(
+            'handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)',
+          ),
+        );
+        expect(
+          code,
+          contains(
+            'handler.postDelayed(releaseAllFinalizedInstancesRunnable',
+          ),
+        );
+
+        expect(
+          collapsedCode,
+          contains(
+            'private val releaseAllFinalizedInstancesRunnable = Runnable { this.releaseAllFinalizedInstances() }',
+          ),
+        );
+        expect(
+          'this.releaseAllFinalizedInstances()'.allMatches(code).length,
+          1,
+        );
+      });
+    });
   });
 }
 

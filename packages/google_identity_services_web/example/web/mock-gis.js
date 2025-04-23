@@ -22,9 +22,6 @@ class PromptMomentNotification {
   isNotDisplayed() { return this.isDisplayMoment() && this.reason; }
 }
 
-const CREDENTIAL_RETURNED = new PromptMomentNotification("dismissed", "credential_returned");
-const USER_CANCEL = new PromptMomentNotification("skipped", "user_cancel");
-
 function callAsync(func, timeout = 100) {
   window.setTimeout(func, timeout)
 }
@@ -47,11 +44,11 @@ class Id {
         if (callback) {
           callback(this.mockCredentialResponse);
         }
-        if (momentListener) {
-          momentListener(CREDENTIAL_RETURNED);
+      }
+      if (momentListener) {
+        if (this.mockMomentNotification) {
+          momentListener(this.mockMomentNotification);
         }
-      } else if (momentListener) {
-        momentListener(USER_CANCEL);
       }
     });
   }
@@ -61,11 +58,15 @@ class Id {
       select_by: select_by,
     };
   }
+  setMockMomentNotification(momentType, reason) {
+    this.mockMomentNotification = new PromptMomentNotification(momentType, reason);
+  }
   disableAutoSelect() {}
   storeCredential() {}
   cancel() {}
   revoke(hint, callback) {
     this.mockCredentialResponse = null;
+    this.mockMomentNotification = null;
     if (!callback) {
       return;
     }

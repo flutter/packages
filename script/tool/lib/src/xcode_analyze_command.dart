@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'common/core.dart';
+import 'common/file_filters.dart';
 import 'common/flutter_command_utils.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
@@ -46,6 +47,15 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
   @override
   final String description =
       'Runs Xcode analysis on the iOS and/or macOS example apps.';
+
+  @override
+  bool shouldIgnoreFile(String path) {
+    return isRepoLevelNonCodeImpactingFile(path) ||
+        isPackageSupportFile(path) ||
+        // These are part of the build, but don't affect native code analysis.
+        path.endsWith('/pubspec.yaml') ||
+        path.endsWith('.dart');
+  }
 
   @override
   Future<void> initializeRun() async {
