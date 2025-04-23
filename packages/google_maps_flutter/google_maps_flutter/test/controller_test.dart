@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -61,15 +60,4 @@ void main() {
 
     expect(platform.mapEventStreamController.hasListener, false);
   });
-}
-
-class FakePlatformViewsController {
-  Future<dynamic> fakePlatformViewsMethodHandler(MethodCall call) {
-    switch (call.method) {
-      case 'create':
-        return Future<int>.value(1);
-      default:
-        return Future<dynamic>.value();
-    }
-  }
 }
