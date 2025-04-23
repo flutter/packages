@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,20 +22,12 @@ void main() {
 
     GoogleMapsFlutterPlatform.instance = platform;
 
-    final FakePlatformViewsController fakePlatformViewsController =
-        FakePlatformViewsController();
-
-    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      SystemChannels.platform_views,
-      fakePlatformViewsController.fakePlatformViewsMethodHandler,
-    );
-
-    final ValueNotifier<GoogleMapController?> controllerNotifier =
-        ValueNotifier<GoogleMapController?>(null);
+    final Completer<GoogleMapController?> controllerCompleter =
+        Completer<GoogleMapController?>();
 
     final GoogleMap googleMap = GoogleMap(
       onMapCreated: (GoogleMapController controller) {
-        controllerNotifier.value = controller;
+        controllerCompleter.complete(controller);
       },
       initialCameraPosition: const CameraPosition(
         target: LatLng(0, 0),
@@ -47,26 +41,25 @@ void main() {
 
     await tester.pump();
 
-    final GoogleMapController? controller = controllerNotifier.value;
+    final GoogleMapController? controller = await controllerCompleter.future;
 
-    if (controller != null) {
-      expect(platform.mapEventStreamController.hasListener, true);
-
-      await tester.pumpWidget(const Directionality(
-        textDirection: TextDirection.ltr,
-        child: SizedBox(),
-      ));
-
-      await tester.binding.runAsync(() async {
-        await tester.pump();
-      });
-
-      expect(platform.mapEventStreamController.hasListener, false);
-
-      controllerNotifier.dispose();
-    } else {
+    if (controller == null) {
       fail('GoogleMapController not created');
     }
+
+    expect(platform.mapEventStreamController.hasListener, true);
+
+    // Remove the map from the widget tree.
+    await tester.pumpWidget(const Directionality(
+      textDirection: TextDirection.ltr,
+      child: SizedBox(),
+    ));
+
+    await tester.binding.runAsync(() async {
+      await tester.pump();
+    });
+
+    expect(platform.mapEventStreamController.hasListener, false);
   });
 }
 
