@@ -1,3 +1,7 @@
+## 0.6.15+1
+
+* Ensures DeviceOrientationManager is stopped on dispose.
+
 ## 0.6.15
 
 * Updates internal API wrapper to use ProxyApis.
