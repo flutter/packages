@@ -134,76 +134,47 @@ void main() {
   CameraXProxy getProxyForTestingResolutionPreset(
           MockProcessCameraProvider mockProcessCameraProvider) =>
       CameraXProxy(
-        getProcessCameraProvider: () =>
-            Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-        createCameraSelector: (int cameraSelectorLensDirection) =>
-            MockCameraSelector(),
-        createPreview:
-            (ResolutionSelector? resolutionSelector, int? targetRotation) =>
-                Preview.detached(
-                    initialTargetRotation: targetRotation,
-                    resolutionSelector: resolutionSelector),
-        createImageCapture:
-            (ResolutionSelector? resolutionSelector, int? targetRotation) =>
-                ImageCapture.detached(
-                    resolutionSelector: resolutionSelector,
-                    initialTargetRotation: targetRotation),
-        createRecorder: (QualitySelector? qualitySelector) =>
-            Recorder.detached(qualitySelector: qualitySelector),
-        createVideoCapture: (_) =>
-            Future<VideoCapture>.value(MockVideoCapture()),
-        createImageAnalysis:
-            (ResolutionSelector? resolutionSelector, int? targetRotation) =>
-                ImageAnalysis.detached(
-                    resolutionSelector: resolutionSelector,
-                    initialTargetRotation: targetRotation),
-        createResolutionStrategy: (
-            {bool highestAvailable = false,
-            Size? boundSize,
-            int? fallbackRule}) {
-          if (highestAvailable) {
-            return ResolutionStrategy.detachedHighestAvailableStrategy();
-          }
-          return ResolutionStrategy.detached(
-              boundSize: boundSize, fallbackRule: fallbackRule);
-        },
-        createResolutionSelector: (ResolutionStrategy resolutionStrategy,
-                ResolutionFilter? resolutionFilter,
-                AspectRatioStrategy? aspectRatioStrategy) =>
-            ResolutionSelector.detached(
-                resolutionStrategy: resolutionStrategy,
-                resolutionFilter: resolutionFilter,
-                aspectRatioStrategy: aspectRatioStrategy),
-        createFallbackStrategy: (
-                {required VideoQuality quality,
-                required VideoResolutionFallbackRule fallbackRule}) =>
-            FallbackStrategy.detached(
-                quality: quality, fallbackRule: fallbackRule),
-        createQualitySelector: (
-                {required VideoQuality videoQuality,
-                required FallbackStrategy fallbackStrategy}) =>
-            QualitySelector.detached(qualityList: <VideoQualityData>[
-          VideoQualityData(quality: videoQuality)
-        ], fallbackStrategy: fallbackStrategy),
-        createCameraStateObserver: (_) => MockObserver(),
-        requestCameraPermissions: (_) => Future<void>.value(),
-        startListeningForDeviceOrientationChange: (_, __) {},
-        setPreviewSurfaceProvider: (_) => Future<int>.value(
-            3), // 3 is a random Flutter SurfaceTexture ID for testing,
-        createAspectRatioStrategy: (int aspectRatio, int fallbackRule) =>
-            AspectRatioStrategy.detached(
-                preferredAspectRatio: aspectRatio, fallbackRule: fallbackRule),
-        createResolutionFilterWithOnePreferredSize:
-            (Size preferredResolution) =>
-                ResolutionFilter.onePreferredSizeDetached(
-                    preferredResolution: preferredResolution),
-        getCamera2CameraInfo: (_) =>
-            Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
-        getUiOrientation: () =>
-            Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
-        previewSurfaceProducerHandlesCropAndRotation: (_) =>
-            Future<bool>.value(false),
-      );
+          getProcessCameraProvider: () =>
+              Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+          createCameraSelector: (int cameraSelectorLensDirection) =>
+              MockCameraSelector(),
+          createPreview:
+              (ResolutionSelector? resolutionSelector, int? targetRotation) =>
+                  Preview.detached(
+                      initialTargetRotation: targetRotation,
+                      resolutionSelector: resolutionSelector),
+          createImageCapture:
+              (ResolutionSelector? resolutionSelector, int? targetRotation) =>
+                  ImageCapture.detached(
+                      resolutionSelector: resolutionSelector,
+                      initialTargetRotation: targetRotation),
+          createRecorder: (QualitySelector? qualitySelector) =>
+              Recorder.detached(qualitySelector: qualitySelector),
+          createVideoCapture: (_) =>
+              Future<VideoCapture>.value(MockVideoCapture()),
+          createImageAnalysis:
+              (ResolutionSelector? resolutionSelector, int? targetRotation) =>
+                  ImageAnalysis.detached(resolutionSelector: resolutionSelector, initialTargetRotation: targetRotation),
+          createResolutionStrategy: ({bool highestAvailable = false, Size? boundSize, int? fallbackRule}) {
+            if (highestAvailable) {
+              return ResolutionStrategy.detachedHighestAvailableStrategy();
+            }
+            return ResolutionStrategy.detached(
+                boundSize: boundSize, fallbackRule: fallbackRule);
+          },
+          createResolutionSelector: (ResolutionStrategy resolutionStrategy, ResolutionFilter? resolutionFilter, AspectRatioStrategy? aspectRatioStrategy) => ResolutionSelector.detached(resolutionStrategy: resolutionStrategy, resolutionFilter: resolutionFilter, aspectRatioStrategy: aspectRatioStrategy),
+          createFallbackStrategy: ({required VideoQuality quality, required VideoResolutionFallbackRule fallbackRule}) => FallbackStrategy.detached(quality: quality, fallbackRule: fallbackRule),
+          createQualitySelector: ({required VideoQuality videoQuality, required FallbackStrategy fallbackStrategy}) => QualitySelector.detached(qualityList: <VideoQualityData>[VideoQualityData(quality: videoQuality)], fallbackStrategy: fallbackStrategy),
+          createCameraStateObserver: (_) => MockObserver(),
+          requestCameraPermissions: (_) => Future<void>.value(),
+          startListeningForDeviceOrientationChange: (_, __) {},
+          setPreviewSurfaceProvider: (_) => Future<int>.value(3), // 3 is a random Flutter SurfaceTexture ID for testing,
+          createAspectRatioStrategy: (int aspectRatio, int fallbackRule) => AspectRatioStrategy.detached(preferredAspectRatio: aspectRatio, fallbackRule: fallbackRule),
+          createResolutionFilterWithOnePreferredSize: (Size preferredResolution) => ResolutionFilter.onePreferredSizeDetached(preferredResolution: preferredResolution),
+          getCamera2CameraInfo: (_) => Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
+          getUiOrientation: () => Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
+          previewSurfaceProducerHandlesCropAndRotation: (_) => Future<bool>.value(false),
+          getDefaultDisplayRotation: () => Future<int>.value(Surface.rotation90));
 
   /// CameraXProxy for testing exposure and focus related controls.
   ///
@@ -354,52 +325,54 @@ void main() {
     // Tell plugin to create mock/detached objects and stub method calls for the
     // testing of createCamera.
     camera.proxy = CameraXProxy(
-      getProcessCameraProvider: () =>
-          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-      createCameraSelector: (int cameraSelectorLensDirection) {
-        switch (cameraSelectorLensDirection) {
-          case CameraSelector.lensFacingFront:
-            return MockCameraSelector();
-          case CameraSelector.lensFacingBack:
-          default:
-            return mockBackCameraSelector;
-        }
-      },
-      createPreview: (_, __) => mockPreview,
-      createImageCapture: (_, __) => mockImageCapture,
-      createRecorder: (_) => mockRecorder,
-      createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
-      createImageAnalysis: (_, __) => mockImageAnalysis,
-      createResolutionStrategy: (
-              {bool highestAvailable = false,
-              Size? boundSize,
-              int? fallbackRule}) =>
-          MockResolutionStrategy(),
-      createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
-      createFallbackStrategy: (
-              {required VideoQuality quality,
-              required VideoResolutionFallbackRule fallbackRule}) =>
-          MockFallbackStrategy(),
-      createQualitySelector: (
-              {required VideoQuality videoQuality,
-              required FallbackStrategy fallbackStrategy}) =>
-          MockQualitySelector(),
-      createCameraStateObserver: (void Function(Object) onChanged) =>
-          Observer<CameraState>.detached(onChanged: onChanged),
-      requestCameraPermissions: (_) {
-        cameraPermissionsRequested = true;
-        return Future<void>.value();
-      },
-      startListeningForDeviceOrientationChange: (_, __) {
-        startedListeningForDeviceOrientationChanges = true;
-      },
-      createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
-      createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
-      getCamera2CameraInfo: (_) =>
-          Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
-      getUiOrientation: () =>
-          Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
-    );
+        getProcessCameraProvider: () =>
+            Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+        createCameraSelector: (int cameraSelectorLensDirection) {
+          switch (cameraSelectorLensDirection) {
+            case CameraSelector.lensFacingFront:
+              return MockCameraSelector();
+            case CameraSelector.lensFacingBack:
+            default:
+              return mockBackCameraSelector;
+          }
+        },
+        createPreview: (_, __) => mockPreview,
+        createImageCapture: (_, __) => mockImageCapture,
+        createRecorder: (_) => mockRecorder,
+        createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
+        createImageAnalysis: (_, __) => mockImageAnalysis,
+        createResolutionStrategy: (
+                {bool highestAvailable = false,
+                Size? boundSize,
+                int? fallbackRule}) =>
+            MockResolutionStrategy(),
+        createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
+        createFallbackStrategy: (
+                {required VideoQuality quality,
+                required VideoResolutionFallbackRule fallbackRule}) =>
+            MockFallbackStrategy(),
+        createQualitySelector: (
+                {required VideoQuality videoQuality,
+                required FallbackStrategy fallbackStrategy}) =>
+            MockQualitySelector(),
+        createCameraStateObserver: (void Function(Object) onChanged) =>
+            Observer<CameraState>.detached(onChanged: onChanged),
+        requestCameraPermissions: (_) {
+          cameraPermissionsRequested = true;
+          return Future<void>.value();
+        },
+        startListeningForDeviceOrientationChange: (_, __) {
+          startedListeningForDeviceOrientationChanges = true;
+        },
+        createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
+        createResolutionFilterWithOnePreferredSize: (_) =>
+            MockResolutionFilter(),
+        getCamera2CameraInfo: (_) =>
+            Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
+        getUiOrientation: () =>
+            Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
+        getDefaultDisplayRotation: () =>
+            Future<int>.value(Surface.rotation270));
 
     camera.processCameraProvider = mockProcessCameraProvider;
 
@@ -489,49 +462,51 @@ void main() {
     // Tell plugin to create mock/detached objects and stub method calls for the
     // testing of createCamera.
     camera.proxy = CameraXProxy(
-      getProcessCameraProvider: () =>
-          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-      createCameraSelector: (int cameraSelectorLensDirection) {
-        switch (cameraSelectorLensDirection) {
-          case CameraSelector.lensFacingFront:
-            return MockCameraSelector();
-          case CameraSelector.lensFacingBack:
-          default:
-            return mockBackCameraSelector;
-        }
-      },
-      createPreview: (_, __) => mockPreview,
-      createImageCapture: (_, __) => mockImageCapture,
-      createRecorder: (_) => mockRecorder,
-      createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
-      createImageAnalysis: (_, __) => mockImageAnalysis,
-      createResolutionStrategy: (
-              {bool highestAvailable = false,
-              Size? boundSize,
-              int? fallbackRule}) =>
-          MockResolutionStrategy(),
-      createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
-      createFallbackStrategy: (
-              {required VideoQuality quality,
-              required VideoResolutionFallbackRule fallbackRule}) =>
-          MockFallbackStrategy(),
-      createQualitySelector: (
-              {required VideoQuality videoQuality,
-              required FallbackStrategy fallbackStrategy}) =>
-          MockQualitySelector(),
-      createCameraStateObserver: (void Function(Object) onChanged) =>
-          Observer<CameraState>.detached(onChanged: onChanged),
-      requestCameraPermissions: (_) => Future<void>.value(),
-      startListeningForDeviceOrientationChange: (_, __) {},
-      createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
-      createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
-      getCamera2CameraInfo: (CameraInfo cameraInfo) =>
-          cameraInfo == mockCameraInfo
-              ? Future<Camera2CameraInfo>.value(mockCamera2CameraInfo)
-              : Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
-      getUiOrientation: () =>
-          Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
-    );
+        getProcessCameraProvider: () =>
+            Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+        createCameraSelector: (int cameraSelectorLensDirection) {
+          switch (cameraSelectorLensDirection) {
+            case CameraSelector.lensFacingFront:
+              return MockCameraSelector();
+            case CameraSelector.lensFacingBack:
+            default:
+              return mockBackCameraSelector;
+          }
+        },
+        createPreview: (_, __) => mockPreview,
+        createImageCapture: (_, __) => mockImageCapture,
+        createRecorder: (_) => mockRecorder,
+        createVideoCapture: (_) => Future<VideoCapture>.value(mockVideoCapture),
+        createImageAnalysis: (_, __) => mockImageAnalysis,
+        createResolutionStrategy: (
+                {bool highestAvailable = false,
+                Size? boundSize,
+                int? fallbackRule}) =>
+            MockResolutionStrategy(),
+        createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
+        createFallbackStrategy: (
+                {required VideoQuality quality,
+                required VideoResolutionFallbackRule fallbackRule}) =>
+            MockFallbackStrategy(),
+        createQualitySelector: (
+                {required VideoQuality videoQuality,
+                required FallbackStrategy fallbackStrategy}) =>
+            MockQualitySelector(),
+        createCameraStateObserver: (void Function(Object) onChanged) =>
+            Observer<CameraState>.detached(onChanged: onChanged),
+        requestCameraPermissions: (_) => Future<void>.value(),
+        startListeningForDeviceOrientationChange: (_, __) {},
+        createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
+        createResolutionFilterWithOnePreferredSize: (_) =>
+            MockResolutionFilter(),
+        getCamera2CameraInfo: (CameraInfo cameraInfo) =>
+            cameraInfo == mockCameraInfo
+                ? Future<Camera2CameraInfo>.value(mockCamera2CameraInfo)
+                : Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
+        getUiOrientation: () =>
+            Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
+        getDefaultDisplayRotation: () =>
+            Future<int>.value(Surface.rotation270));
 
     when(mockProcessCameraProvider.bindToLifecycle(mockBackCameraSelector,
             <UseCase>[mockPreview, mockImageCapture, mockImageAnalysis]))
@@ -921,9 +896,7 @@ void main() {
     expect(camera.recorder!.qualitySelector, isNull);
   });
 
-  test(
-      'createCamera sets sensor orientation, handlesCropAndRotation, initialDeviceOrientation as expected',
-      () async {
+  test('createCamera sets sensor orientation as expected', () async {
     final AndroidCameraCameraX camera = AndroidCameraCameraX();
     const CameraLensDirection testLensDirection = CameraLensDirection.back;
     const int testSensorOrientation = 270;
@@ -1011,47 +984,50 @@ void main() {
     // Tell plugin to create mock/detached objects for testing createCamera
     // as needed.
     camera.proxy = CameraXProxy(
-      getProcessCameraProvider: () =>
-          Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-      createCameraSelector: (int cameraSelectorLensDirection) {
-        switch (cameraSelectorLensDirection) {
-          case CameraSelector.lensFacingFront:
-            return mockFrontCameraSelector;
-          case CameraSelector.lensFacingBack:
-          default:
-            return mockBackCameraSelector;
-        }
-      },
-      createPreview: (_, __) => mockPreview,
-      createImageCapture: (_, __) => mockImageCapture,
-      createRecorder: (QualitySelector? qualitySelector) => MockRecorder(),
-      createVideoCapture: (_) => Future<VideoCapture>.value(MockVideoCapture()),
-      createImageAnalysis: (_, __) => mockImageAnalysis,
-      createResolutionStrategy: (
-              {bool highestAvailable = false,
-              Size? boundSize,
-              int? fallbackRule}) =>
-          MockResolutionStrategy(),
-      createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
-      createFallbackStrategy: (
-              {required VideoQuality quality,
-              required VideoResolutionFallbackRule fallbackRule}) =>
-          MockFallbackStrategy(),
-      createQualitySelector: (
-              {required VideoQuality videoQuality,
-              required FallbackStrategy fallbackStrategy}) =>
-          MockQualitySelector(),
-      createCameraStateObserver: (void Function(Object) onChanged) =>
-          Observer<CameraState>.detached(onChanged: onChanged),
-      requestCameraPermissions: (_) => Future<void>.value(),
-      startListeningForDeviceOrientationChange: (_, __) {},
-      createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
-      createResolutionFilterWithOnePreferredSize: (_) => MockResolutionFilter(),
-      getCamera2CameraInfo: (_) =>
-          Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
-      getUiOrientation: () =>
-          Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
-    );
+        getProcessCameraProvider: () =>
+            Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
+        createCameraSelector: (int cameraSelectorLensDirection) {
+          switch (cameraSelectorLensDirection) {
+            case CameraSelector.lensFacingFront:
+              return mockFrontCameraSelector;
+            case CameraSelector.lensFacingBack:
+            default:
+              return mockBackCameraSelector;
+          }
+        },
+        createPreview: (_, __) => mockPreview,
+        createImageCapture: (_, __) => mockImageCapture,
+        createRecorder: (QualitySelector? qualitySelector) => MockRecorder(),
+        createVideoCapture: (_) =>
+            Future<VideoCapture>.value(MockVideoCapture()),
+        createImageAnalysis: (_, __) => mockImageAnalysis,
+        createResolutionStrategy: (
+                {bool highestAvailable = false,
+                Size? boundSize,
+                int? fallbackRule}) =>
+            MockResolutionStrategy(),
+        createResolutionSelector: (_, __, ___) => MockResolutionSelector(),
+        createFallbackStrategy: (
+                {required VideoQuality quality,
+                required VideoResolutionFallbackRule fallbackRule}) =>
+            MockFallbackStrategy(),
+        createQualitySelector: (
+                {required VideoQuality videoQuality,
+                required FallbackStrategy fallbackStrategy}) =>
+            MockQualitySelector(),
+        createCameraStateObserver: (void Function(Object) onChanged) =>
+            Observer<CameraState>.detached(onChanged: onChanged),
+        requestCameraPermissions: (_) => Future<void>.value(),
+        startListeningForDeviceOrientationChange: (_, __) {},
+        createAspectRatioStrategy: (_, __) => MockAspectRatioStrategy(),
+        createResolutionFilterWithOnePreferredSize: (_) =>
+            MockResolutionFilter(),
+        getCamera2CameraInfo: (_) =>
+            Future<Camera2CameraInfo>.value(MockCamera2CameraInfo()),
+        getUiOrientation: () =>
+            Future<DeviceOrientation>.value(DeviceOrientation.portraitUp),
+        getDefaultDisplayRotation: () =>
+            Future<int>.value(Surface.rotation180));
 
     final CameraInitializedEvent testCameraInitializedEvent =
         CameraInitializedEvent(
