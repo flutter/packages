@@ -682,6 +682,21 @@ void main() {
       await error.cancel();
       verify(mockSslErrorHandler.cancel());
     });
+
+    test('setOnSSlAuthError calls cancel by default', () async {
+      AndroidNavigationDelegate(_buildCreationParams());
+
+      final MockSslErrorHandler mockSslErrorHandler = MockSslErrorHandler();
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedSslError!(
+        CapturingWebViewClient(),
+        TestWebView(),
+        mockSslErrorHandler,
+        MockSslError(),
+      );
+
+      verify(mockSslErrorHandler.cancel());
+    });
   });
 }
 
