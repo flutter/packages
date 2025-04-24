@@ -2,11 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:meta/meta.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'android_webkit.g.dart' as android;
 
+/// Implementation of the [PlatformSslAuthError] with the Android WebView API.
 class AndroidSslAuthError extends PlatformSslAuthError {
-  AndroidSslAuthError({
+  /// Creates an [AndroidSslAuthError].
+  AndroidSslAuthError._({
     required super.certificate,
     required super.description,
     required android.SslErrorHandler handler,
@@ -18,7 +21,10 @@ class AndroidSslAuthError extends PlatformSslAuthError {
   /// The URL associated with the error.
   final String url;
 
-  static Future<AndroidSslAuthError> fromNativeSslError({
+  /// Creates an [AndroidSslAuthError] from the parameters from the native
+  /// `WebViewClient.onReceivedSslError`.
+  @internal
+  static Future<AndroidSslAuthError> fromNativeCallback({
     required android.SslError error,
     required android.SslErrorHandler handler,
   }) async {
@@ -39,7 +45,7 @@ class AndroidSslAuthError extends PlatformSslAuthError {
       android.SslErrorType.unknown => 'The certificate has an unknown error.',
     };
 
-    return AndroidSslAuthError(
+    return AndroidSslAuthError._(
       certificate: X509Certificate(
         data:
             x509Certificate != null ? await x509Certificate.getEncoded() : null,

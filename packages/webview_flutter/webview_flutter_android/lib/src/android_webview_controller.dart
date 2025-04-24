@@ -1491,7 +1491,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
 
         if (callback != null) {
           final AndroidSslAuthError authError =
-              await AndroidSslAuthError.fromNativeSslError(
+              await AndroidSslAuthError.fromNativeCallback(
             error: error,
             handler: handler,
           );
