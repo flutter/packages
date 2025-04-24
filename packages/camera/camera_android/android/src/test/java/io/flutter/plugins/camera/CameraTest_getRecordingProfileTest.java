@@ -86,10 +86,7 @@ public class CameraTest_getRecordingProfileTest {
 
     CamcorderProfile actualRecordingProfile = camera.getRecordingProfileLegacy();
 
-    // First time: getRecordingProfileLegacy() is called in `before()` when
-    // camera constructor tries to determine default recording Fps.
-    // Second time: in this test case.
-    verify(mockResolutionFeature, times(2)).getRecordingProfileLegacy();
+    verify(mockResolutionFeature, times(1)).getRecordingProfileLegacy();
     assertEquals(mockCamcorderProfile, actualRecordingProfile);
   }
 
@@ -104,7 +101,7 @@ public class CameraTest_getRecordingProfileTest {
 
     EncoderProfiles actualRecordingProfile = camera.getRecordingProfile();
 
-    verify(mockResolutionFeature, times(2)).getRecordingProfile();
+    verify(mockResolutionFeature, times(1)).getRecordingProfile();
     assertEquals(mockRecordingProfile, actualRecordingProfile);
   }
 

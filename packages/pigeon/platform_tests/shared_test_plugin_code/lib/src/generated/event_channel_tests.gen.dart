@@ -12,6 +12,21 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    return a.length == b.length &&
+        a.entries.every((MapEntry<Object?, Object?> entry) =>
+            (b as Map<Object?, Object?>).containsKey(entry.key) &&
+            _deepEquals(entry.value, b[entry.key]));
+  }
+  return a == b;
+}
+
 enum EventEnum {
   one,
   two,
@@ -122,7 +137,7 @@ class EventAllNullableTypes {
 
   Map<int?, EventAllNullableTypes?>? recursiveClassMap;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       aNullableBool,
       aNullableInt,
@@ -156,6 +171,10 @@ class EventAllNullableTypes {
       mapMap,
       recursiveClassMap,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static EventAllNullableTypes decode(Object result) {
@@ -201,6 +220,22 @@ class EventAllNullableTypes {
           ?.cast<int?, EventAllNullableTypes?>(),
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! EventAllNullableTypes || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 sealed class PlatformEvent {}
@@ -212,10 +247,14 @@ class IntEvent extends PlatformEvent {
 
   int value;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static IntEvent decode(Object result) {
@@ -224,6 +263,22 @@ class IntEvent extends PlatformEvent {
       value: result[0]! as int,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! IntEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class StringEvent extends PlatformEvent {
@@ -233,10 +288,14 @@ class StringEvent extends PlatformEvent {
 
   String value;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static StringEvent decode(Object result) {
@@ -245,6 +304,22 @@ class StringEvent extends PlatformEvent {
       value: result[0]! as String,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! StringEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class BoolEvent extends PlatformEvent {
@@ -254,10 +329,14 @@ class BoolEvent extends PlatformEvent {
 
   bool value;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static BoolEvent decode(Object result) {
@@ -266,6 +345,22 @@ class BoolEvent extends PlatformEvent {
       value: result[0]! as bool,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! BoolEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class DoubleEvent extends PlatformEvent {
@@ -275,10 +370,14 @@ class DoubleEvent extends PlatformEvent {
 
   double value;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static DoubleEvent decode(Object result) {
@@ -287,6 +386,22 @@ class DoubleEvent extends PlatformEvent {
       value: result[0]! as double,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! DoubleEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class ObjectsEvent extends PlatformEvent {
@@ -296,10 +411,14 @@ class ObjectsEvent extends PlatformEvent {
 
   Object value;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static ObjectsEvent decode(Object result) {
@@ -308,6 +427,22 @@ class ObjectsEvent extends PlatformEvent {
       value: result[0]!,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! ObjectsEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class EnumEvent extends PlatformEvent {
@@ -317,10 +452,14 @@ class EnumEvent extends PlatformEvent {
 
   EventEnum value;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static EnumEvent decode(Object result) {
@@ -329,6 +468,22 @@ class EnumEvent extends PlatformEvent {
       value: result[0]! as EventEnum,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! EnumEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class ClassEvent extends PlatformEvent {
@@ -338,10 +493,14 @@ class ClassEvent extends PlatformEvent {
 
   EventAllNullableTypes value;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       value,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static ClassEvent decode(Object result) {
@@ -350,6 +509,22 @@ class ClassEvent extends PlatformEvent {
       value: result[0]! as EventAllNullableTypes,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! ClassEvent || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -432,8 +607,8 @@ Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  const EventChannel streamIntsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts',
+  final EventChannel streamIntsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts$instanceName',
       pigeonMethodCodec);
   return streamIntsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as int;
@@ -444,10 +619,24 @@ Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  const EventChannel streamEventsChannel = EventChannel(
-      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents',
+  final EventChannel streamEventsChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents$instanceName',
       pigeonMethodCodec);
   return streamEventsChannel.receiveBroadcastStream().map((dynamic event) {
     return event as PlatformEvent;
+  });
+}
+
+Stream<int> streamConsistentNumbers({String instanceName = ''}) {
+  if (instanceName.isNotEmpty) {
+    instanceName = '.$instanceName';
+  }
+  final EventChannel streamConsistentNumbersChannel = EventChannel(
+      'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName',
+      pigeonMethodCodec);
+  return streamConsistentNumbersChannel
+      .receiveBroadcastStream()
+      .map((dynamic event) {
+    return event as int;
   });
 }

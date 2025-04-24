@@ -23,10 +23,10 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'io.flutter.plugins.flutter_plugin_android_lifecycle'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'proguard.txt'
     }

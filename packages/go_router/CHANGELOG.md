@@ -1,3 +1,38 @@
+## 15.1.1
+
+- Adds missing `caseSensitive` to `GoRouteData.$route`.
+
+## 15.1.0
+
+- Adds `caseSensitive` to `TypedGoRoute`.
+
+## 15.0.0
+
+- **BREAKING CHANGE**
+  - URLs are now case sensitive.
+  - Adds `caseSensitive` parameter to `GoRouter` (default to `true`).
+  - See [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes)
+
+## 14.8.1
+
+- Secured canPop method for the lack of matches in routerDelegate's configuration.
+ 
+## 14.8.0
+
+- Adds `preload` parameter to `StatefulShellBranchData.$branch`.
+
+## 14.7.2
+
+- Add missing `await` keyword to `onTap` callback in `navigation.md`.
+
+## 14.7.1
+
+- Fixes return type of current state getter on `GoRouter` and `GoRouterDelegate` to be non-nullable.
+
+## 14.7.0
+
+- Adds fragment support to GoRouter, enabling direct specification and automatic handling of fragments in routes.
+
 ## 14.6.4
 
 - Rephrases readme.
@@ -23,7 +58,6 @@
 
 - Adds preload support to StatefulShellRoute, configurable via `preload` parameter on StatefulShellBranch.
 
-
 ## 14.4.1
 
 - Adds `missing_code_block_language_in_doc_comment` lint.
@@ -42,7 +76,7 @@
 
 ## 14.2.8
 
-- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView. 
+- Updated custom_stateful_shell_route example to better support swiping in TabView as well as demonstration of the use of PageView.
 
 ## 14.2.7
 
@@ -1146,3 +1180,4 @@
 ## 0.1.0
 
 - squatting on the package name (I'm not too proud to admit it)
+

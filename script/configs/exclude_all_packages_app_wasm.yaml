@@ -4,5 +4,3 @@
 #
 # This is only used for the rare case where a package fails in Wasm, but works
 # in JS mode.
-
-[] # Needed so the contents of this file are an empty array, not `null`!

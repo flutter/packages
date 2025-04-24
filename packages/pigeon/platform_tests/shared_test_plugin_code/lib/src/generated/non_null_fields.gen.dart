@@ -30,6 +30,21 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    return a.length == b.length &&
+        a.entries.every((MapEntry<Object?, Object?> entry) =>
+            (b as Map<Object?, Object?>).containsKey(entry.key) &&
+            _deepEquals(entry.value, b[entry.key]));
+  }
+  return a == b;
+}
+
 enum ReplyType {
   success,
   error,
@@ -42,10 +57,14 @@ class NonNullFieldSearchRequest {
 
   String query;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       query,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static NonNullFieldSearchRequest decode(Object result) {
@@ -54,6 +73,23 @@ class NonNullFieldSearchRequest {
       query: result[0]! as String,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NonNullFieldSearchRequest ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class ExtraData {
@@ -66,11 +102,15 @@ class ExtraData {
 
   String detailB;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       detailA,
       detailB,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static ExtraData decode(Object result) {
@@ -80,6 +120,22 @@ class ExtraData {
       detailB: result[1]! as String,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! ExtraData || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class NonNullFieldSearchReply {
@@ -101,7 +157,7 @@ class NonNullFieldSearchReply {
 
   ReplyType type;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       result,
       error,
@@ -109,6 +165,10 @@ class NonNullFieldSearchReply {
       extraData,
       type,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static NonNullFieldSearchReply decode(Object result) {
@@ -121,6 +181,22 @@ class NonNullFieldSearchReply {
       type: result[4]! as ReplyType,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NonNullFieldSearchReply || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -190,8 +266,10 @@ class NonNullFieldHostApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[nested]);
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[nested]) as List<Object?>?;
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

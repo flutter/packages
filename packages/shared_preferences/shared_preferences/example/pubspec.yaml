@@ -17,7 +17,10 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   shared_preferences_android: ^2.4.0
+  shared_preferences_foundation: ^2.5.3
+  shared_preferences_linux: ^2.4.1
   shared_preferences_platform_interface: ^2.4.0
+  shared_preferences_windows: ^2.4.1
 
 dev_dependencies:
   build_runner: ^2.1.10

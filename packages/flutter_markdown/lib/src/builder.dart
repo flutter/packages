@@ -50,6 +50,33 @@ class _TableElement {
   final List<TableRow> rows = <TableRow>[];
 }
 
+/// Holds configuration data for an image in a Markdown document.
+class MarkdownImageConfig {
+  /// Creates a new [MarkdownImageConfig] instance.
+  MarkdownImageConfig({
+    required this.uri,
+    this.title,
+    this.alt,
+    this.width,
+    this.height,
+  });
+
+  /// The URI of the image.
+  final Uri uri;
+
+  /// The title of the image, displayed on hover.
+  final String? title;
+
+  /// The alternative text for the image, displayed if the image cannot be loaded.
+  final String? alt;
+
+  /// The desired width of the image.
+  final double? width;
+
+  /// The desired height of the image.
+  final double? height;
+}
+
 /// A collection of widgets that should be placed adjacent to (inline with)
 /// other inline elements in the same parent block.
 ///
@@ -105,7 +132,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     required this.selectable,
     required this.styleSheet,
     required this.imageDirectory,
-    required this.imageBuilder,
+    @Deprecated('Use sizedImageBuilder instead') this.imageBuilder,
+    required this.sizedImageBuilder,
     required this.checkboxBuilder,
     required this.bulletBuilder,
     required this.builders,
@@ -115,7 +143,8 @@ class MarkdownBuilder implements md.NodeVisitor {
     this.onSelectionChanged,
     this.onTapText,
     this.softLineBreak = false,
-  });
+  }) : assert(imageBuilder == null || sizedImageBuilder == null,
+            'Only one of imageBuilder or sizedImageBuilder may be specified.');
 
   /// A delegate that controls how link and `pre` elements behave.
   final MarkdownBuilderDelegate delegate;
@@ -131,8 +160,40 @@ class MarkdownBuilder implements md.NodeVisitor {
   /// The base directory holding images referenced by Img tags with local or network file paths.
   final String? imageDirectory;
 
-  /// Call when build an image widget.
+  /// {@template flutter_markdown.builder.MarkdownBuilder.imageBuilder}
+  /// Called to build an image widget.
+  ///
+  /// This builder allows for custom rendering of images within the Markdown content.
+  /// It provides the image `Uri`, `title`, and `alt` text.
+  ///
+  /// **Deprecated:** Use [sizedImageBuilder] instead, which offers more comprehensive
+  /// image information.
+  ///
+  /// Only one of [imageBuilder] or [sizedImageBuilder] may be specified.
+  ///
+  /// {@endtemplate}
+  @Deprecated('Use sizedImageBuilder instead')
   final MarkdownImageBuilder? imageBuilder;
+
+  /// {@template flutter_markdown.builder.MarkdownBuilder.sizedImageBuilder}
+  /// Called to build an image widget with size information.
+  ///
+  /// This builder allows for custom rendering of images within the Markdown content
+  /// when size information is available. It provides a [MarkdownImageConfig]
+  /// containing the `Uri`, `title`, `alt`, `width`, and `height` of the image.
+  ///
+  /// If both [imageBuilder] and [sizedImageBuilder] are `null`, a default image builder
+  /// will be used.
+  /// when size information is available. It provides a [MarkdownImageConfig]
+  /// containing the `Uri`, `title`, `alt`, `width`, and `height` of the image.
+  ///
+  /// If both [imageBuilder] and [sizedImageBuilder] are `null`, a default
+  /// image builder will be used.
+  ///
+  /// Only one of [imageBuilder] or [sizedImageBuilder] may be specified.
+  ///
+  /// {@endtemplate}
+  final MarkdownSizedImageBuilder? sizedImageBuilder;
 
   /// Call when build a checkbox widget.
   final MarkdownCheckboxBuilder? checkboxBuilder;
@@ -451,12 +512,14 @@ class MarkdownBuilder implements md.NodeVisitor {
           );
         }
       } else if (tag == 'table') {
-        if (styleSheet.tableColumnWidth is FixedColumnWidth) {
+        if (styleSheet.tableColumnWidth is FixedColumnWidth ||
+            styleSheet.tableColumnWidth is IntrinsicColumnWidth) {
           child = _ScrollControllerBuilder(
             builder: (BuildContext context,
                 ScrollController tableScrollController, Widget? child) {
               return Scrollbar(
                 controller: tableScrollController,
+                thumbVisibility: styleSheet.tableScrollbarThumbVisibility,
                 child: SingleChildScrollView(
                   controller: tableScrollController,
                   scrollDirection: Axis.horizontal,
@@ -617,8 +680,12 @@ class MarkdownBuilder implements md.NodeVisitor {
     }
 
     Widget child;
-    if (imageBuilder != null) {
-      child = imageBuilder!(uri, title, alt);
+    if (sizedImageBuilder != null) {
+      final MarkdownImageConfig config = MarkdownImageConfig(
+          uri: uri, alt: alt, title: title, height: height, width: width);
+      child = sizedImageBuilder!(config);
+    } else if (imageBuilder != null) {
+      child = imageBuilder!(uri, alt, title);
     } else {
       child = kDefaultImageBuilder(uri, imageDirectory, width, height);
     }
@@ -775,7 +842,7 @@ class MarkdownBuilder implements md.NodeVisitor {
   }
 
   /// Extracts all spans from an inline element and merges them into a single list
-  Iterable<InlineSpan> _getInlineSpans(InlineSpan span) {
+  Iterable<InlineSpan> _getInlineSpansFromSpan(InlineSpan span) {
     // If the span is not a TextSpan or it has no children, return the span
     if (span is! TextSpan || span.children == null) {
       return <InlineSpan>[span];
@@ -799,95 +866,69 @@ class MarkdownBuilder implements md.NodeVisitor {
     return spans;
   }
 
-  /// Merges adjacent [TextSpan] children
+  // Accesses the TextSpan property correctly depending on the widget type.
+  // Returns null if not a valid (text) widget.
+  InlineSpan? _getInlineSpanFromText(Widget widget) => switch (widget) {
+        SelectableText() => widget.textSpan,
+        Text() => widget.textSpan,
+        RichText() => widget.text,
+        _ => null
+      };
+
+  /// Merges adjacent [TextSpan] children.
+  /// Also forces a specific [TextAlign] regardless of merging.
+  /// This is essential for table column alignment, since desired column alignment
+  /// is discovered after the text widgets have been created. This function is the
+  /// last chance to enforce the desired column alignment in the texts.
   List<Widget> _mergeInlineChildren(
     List<Widget> children,
     TextAlign? textAlign,
   ) {
-    // List of merged text spans and widgets
-    final List<Widget> mergedTexts = <Widget>[];
+    // List of text widgets (merged) and non-text widgets (non-merged)
+    final List<Widget> mergedWidgets = <Widget>[];
 
+    bool lastIsText = false;
     for (final Widget child in children) {
-      // If the list is empty, add the current widget to the list
-      if (mergedTexts.isEmpty) {
-        mergedTexts.add(child);
+      final InlineSpan? currentSpan = _getInlineSpanFromText(child);
+      final bool currentIsText = currentSpan != null;
+
+      if (!currentIsText) {
+        // There is no merging to do, so just add and continue
+        mergedWidgets.add(child);
+        lastIsText = false;
         continue;
       }
-
-      // Remove last widget from the list to merge it with the current widget
-      final Widget last = mergedTexts.removeLast();
 
       // Extracted spans from the last and the current widget
       List<InlineSpan> spans = <InlineSpan>[];
 
-      // Extract the text spans from the last widget
-      if (last is SelectableText) {
-        final TextSpan span = last.textSpan!;
-        spans.addAll(_getInlineSpans(span));
-      } else if (last is Text) {
-        final InlineSpan span = last.textSpan!;
-        spans.addAll(_getInlineSpans(span));
-      } else if (last is RichText) {
-        final InlineSpan span = last.text;
-        spans.addAll(_getInlineSpans(span));
-      } else {
-        // If the last widget is not a text widget,
-        // add both the last and the current widget to the list
-        mergedTexts.addAll(<Widget>[last, child]);
-        continue;
+      if (lastIsText) {
+        // Removes last widget from the list for merging and extracts its spans
+        spans.addAll(_getInlineSpansFromSpan(
+            _getInlineSpanFromText(mergedWidgets.removeLast())!));
       }
 
-      // Extract the text spans from the current widget
-      if (child is Text) {
-        final InlineSpan span = child.textSpan!;
-        spans.addAll(_getInlineSpans(span));
-      } else if (child is SelectableText) {
-        final TextSpan span = child.textSpan!;
-        spans.addAll(_getInlineSpans(span));
-      } else if (child is RichText) {
-        final InlineSpan span = child.text;
-        spans.addAll(_getInlineSpans(span));
+      spans.addAll(_getInlineSpansFromSpan(currentSpan));
+      spans = _mergeSimilarTextSpans(spans);
+
+      final Widget mergedWidget;
+
+      if (spans.isEmpty) {
+        // no spans found, just insert the current widget
+        mergedWidget = child;
       } else {
-        // If the current widget is not a text widget,
-        // add both the last and the current widget to the list
-        mergedTexts.addAll(<Widget>[last, child]);
-        continue;
+        final InlineSpan first = spans.first;
+        final TextSpan textSpan = (spans.length == 1 && first is TextSpan)
+            ? first
+            : TextSpan(children: spans);
+        mergedWidget = _buildRichText(textSpan, textAlign: textAlign);
       }
 
-      if (spans.isNotEmpty) {
-        // Merge similar text spans
-        spans = _mergeSimilarTextSpans(spans);
-
-        // Create a new text widget with the merged text spans
-        InlineSpan child;
-        if (spans.length == 1) {
-          child = spans.first;
-        } else {
-          child = TextSpan(children: spans);
-        }
-
-        // Add the new text widget to the list
-        if (selectable) {
-          mergedTexts.add(SelectableText.rich(
-            TextSpan(children: spans),
-            textScaler: styleSheet.textScaler,
-            textAlign: textAlign ?? TextAlign.start,
-            onTap: onTapText,
-          ));
-        } else {
-          mergedTexts.add(Text.rich(
-            child,
-            textScaler: styleSheet.textScaler,
-            textAlign: textAlign ?? TextAlign.start,
-          ));
-        }
-      } else {
-        // If no text spans were found, add the current widget to the list
-        mergedTexts.add(child);
-      }
+      mergedWidgets.add(mergedWidget);
+      lastIsText = true;
     }
 
-    return mergedTexts;
+    return mergedWidgets;
   }
 
   TextAlign _textAlignForBlockTag(String? blockTag) {
@@ -1001,12 +1042,12 @@ class MarkdownBuilder implements md.NodeVisitor {
     return mergedSpans;
   }
 
-  Widget _buildRichText(TextSpan? text, {TextAlign? textAlign, String? key}) {
+  Widget _buildRichText(TextSpan text, {TextAlign? textAlign, String? key}) {
     //Adding a unique key prevents the problem of using the same link handler for text spans with the same text
     final Key k = key == null ? UniqueKey() : Key(key);
     if (selectable) {
       return SelectableText.rich(
-        text!,
+        text,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
         onSelectionChanged: onSelectionChanged != null
@@ -1018,7 +1059,7 @@ class MarkdownBuilder implements md.NodeVisitor {
       );
     } else {
       return Text.rich(
-        text!,
+        text,
         textScaler: styleSheet.textScaler,
         textAlign: textAlign ?? TextAlign.start,
         key: k,

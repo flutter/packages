@@ -599,6 +599,18 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
 
+  /// Enables or disables content URL access.
+  ///
+  /// The default is true.
+  Future<void> setAllowContentAccess(bool enabled) =>
+      _webView.settings.setAllowContentAccess(enabled);
+
+  /// Sets whether Geolocation is enabled.
+  ///
+  /// The default is true.
+  Future<void> setGeolocationEnabled(bool enabled) =>
+      _webView.settings.setGeolocationEnabled(enabled);
+
   /// Sets the callback that is invoked when the client should show a file
   /// selector.
   Future<void> setOnShowFileSelector(
@@ -718,6 +730,24 @@ class AndroidWebViewController extends PlatformWebViewController {
           onJavaScriptTextInputDialog) async {
     _onJavaScriptPrompt = onJavaScriptTextInputDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
+  }
+
+  @override
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
+    return switch (mode) {
+      WebViewOverScrollMode.always => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.always,
+        ),
+      WebViewOverScrollMode.ifContentScrolls => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.ifContentScrolls,
+        ),
+      WebViewOverScrollMode.never => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.never,
+        ),
+      // This prevents future additions from causing a breaking change.
+      // ignore: unreachable_switch_case
+      _ => throw UnsupportedError('Android does not support $mode.'),
+    };
   }
 }
 
@@ -1438,6 +1468,25 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           httpAuthHandler.cancel();
         }
       },
+      onFormResubmission:
+          (_, __, android_webview.AndroidMessage dontResend, ___) {
+        dontResend.sendToTarget();
+      },
+      onReceivedClientCertRequest: (
+        _,
+        __,
+        android_webview.ClientCertRequest request,
+      ) {
+        request.cancel();
+      },
+      onReceivedSslError: (
+        _,
+        __,
+        android_webview.SslErrorHandler handler,
+        ___,
+      ) {
+        handler.cancel();
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
@@ -1462,7 +1511,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
       params as AndroidNavigationDelegateCreationParams;
 
   late final android_webview.WebChromeClient _webChromeClient =
-      _androidParams.androidWebViewProxy.newWebChromeClient();
+      _androidParams.androidWebViewProxy.newWebChromeClient(
+    onJsConfirm: (_, __, ___, ____) async => false,
+    onShowFileChooser: (_, __, ___) async => <String>[],
+  );
 
   /// Gets the native [android_webview.WebChromeClient] that is bridged by this [AndroidNavigationDelegate].
   ///

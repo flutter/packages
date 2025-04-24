@@ -496,6 +496,7 @@ class TreeView<T> extends StatefulWidget {
 
   /// The default [AnimationStyle] used for node expand and collapse animations,
   /// when one has not been provided in [toggleAnimationStyle].
+  // ignore: prefer_const_constructors
   static AnimationStyle defaultToggleAnimationStyle = AnimationStyle(
     curve: defaultAnimationCurve,
     duration: defaultAnimationDuration,

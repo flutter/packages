@@ -1,6 +1,19 @@
 ## NEXT
 
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
+
+## 2.9.5
+
+* Fixes layout issue caused by `Transform.rotate` not affecting space calculation.
+
+## 2.9.4
+
+* Reduces the position update interval from 500ms to 100ms.
+
+## 2.9.3
+
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes mechanism to detect identifier in multi-line WebVTT captions.
 
 ## 2.9.2
 
