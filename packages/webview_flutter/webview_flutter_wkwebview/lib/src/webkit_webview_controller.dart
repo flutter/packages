@@ -16,7 +16,7 @@ import 'common/weak_reference_utils.dart';
 import 'common/web_kit.g.dart';
 import 'common/webkit_constants.dart';
 import 'webkit_proxy.dart';
-import 'webkit_ssl_auth_request.dart';
+import 'webkit_ssl_auth_error.dart';
 
 /// Media types that can require a user gesture to begin playing.
 ///
@@ -1282,27 +1282,60 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 return responseCompleter.future;
               }
             case NSUrlAuthenticationMethod.serverTrust:
-              final void Function(PlatformSslAuthRequest)? callback =
-                  delegate._onSslAuthRequest;
+              final void Function(PlatformSslAuthError)? callback =
+                  delegate._onSslAuthError;
+              if (callback == null) {
+                break;
+              }
+
               final SecTrust? serverTrust =
                   await protectionSpace.getServerTrust();
-              if (callback != null && serverTrust != null) {
-                callback(
-                  await WebKitSslAuthRequest.fromTrust(
-                    trust: serverTrust,
-                    host: protectionSpace.host,
-                    onResponse: (
-                      UrlSessionAuthChallengeDisposition disposition,
-                      Map<String, Object?>? credentialMap,
-                    ) {
-                      responseCompleter.complete(
-                        <Object?>[disposition, credentialMap],
-                      );
-                    },
-                  ),
-                );
+              if (serverTrust == null) {
+                break;
+              }
 
-                return responseCompleter.future;
+              try {
+                final bool trusted =
+                    await SecTrust.evaluateWithError(serverTrust);
+                if (!trusted) {
+                  throw StateError(
+                    'Expected to throw an exception when evaluation fails.',
+                  );
+                }
+              } on PlatformException catch (exception) {
+                final DartSecTrustResultType result =
+                    (await SecTrust.getTrustResult(serverTrust)).result;
+                if (result == DartSecTrustResultType.recoverableTrustFailure) {
+                  final List<SecCertificate> certificates =
+                      (await SecTrust.copyCertificateChain(serverTrust)) ??
+                          <SecCertificate>[];
+
+                  final SecCertificate? leafCertificate =
+                      certificates.firstOrNull;
+                  if (leafCertificate != null) {
+                    callback(
+                      WebKitSslAuthError(
+                        certificate: X509Certificate(
+                          data: await SecCertificate.copyData(leafCertificate),
+                        ),
+                        description: '${exception.code}: ${exception.message}',
+                        trust: serverTrust,
+                        host: protectionSpace.host,
+                        port: protectionSpace.port,
+                        onResponse: (
+                          UrlSessionAuthChallengeDisposition disposition,
+                          Map<String, Object?>? credentialMap,
+                        ) {
+                          responseCompleter.complete(
+                            <Object?>[disposition, credentialMap],
+                          );
+                        },
+                      ),
+                    );
+
+                    return responseCompleter.future;
+                  }
+                }
               }
           }
         }
@@ -1326,7 +1359,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   NavigationRequestCallback? _onNavigationRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
-  SslAuthRequestCallback? _onSslAuthRequest;
+  SslAuthErrorCallback? _onSslAuthError;
 
   @override
   Future<void> setOnPageFinished(PageEventCallback onPageFinished) async {
@@ -1375,10 +1408,8 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   }
 
   @override
-  Future<void> setOnSSlAuthRequest(
-    SslAuthRequestCallback onSslAuthRequest,
-  ) async {
-    _onSslAuthRequest = onSslAuthRequest;
+  Future<void> setOnSSlAuthError(SslAuthErrorCallback onSslAuthError) async {
+    _onSslAuthError = onSslAuthError;
   }
 }
 
