@@ -5,12 +5,23 @@
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'android_webkit.g.dart' as android;
 
-class AndroidSslCertificate extends SslCertificate {
-  AndroidSslCertificate._({super.data, super.errors});
+class AndroidSslAuthError extends PlatformSslAuthError {
+  AndroidSslAuthError({
+    required super.certificate,
+    required super.description,
+    required android.SslErrorHandler handler,
+    required this.url,
+  }) : _handler = handler;
 
-  static Future<AndroidSslCertificate> fromNativeSslError(
-    android.SslError error,
-  ) async {
+  final android.SslErrorHandler _handler;
+
+  /// The URL associated with the error.
+  final String url;
+
+  static Future<AndroidSslAuthError> fromNativeSslError({
+    required android.SslError error,
+    required android.SslErrorHandler handler,
+  }) async {
     final android.SslCertificate certificate = error.certificate;
     final android.X509Certificate? x509Certificate =
         await certificate.getX509Certificate();
@@ -28,33 +39,20 @@ class AndroidSslCertificate extends SslCertificate {
       android.SslErrorType.unknown => 'The certificate has an unknown error.',
     };
 
-    return AndroidSslCertificate._(
-      data: x509Certificate != null ? await x509Certificate.getEncoded() : null,
-      errors: <SslError>[SslError(description: errorDescription)],
+    return AndroidSslAuthError(
+      certificate: X509Certificate(
+        data:
+            x509Certificate != null ? await x509Certificate.getEncoded() : null,
+      ),
+      handler: handler,
+      description: errorDescription,
+      url: error.url,
     );
   }
-}
-
-class AndroidSslAuthRequest extends PlatformSslAuthRequest {
-  AndroidSslAuthRequest({
-    required android.SslErrorHandler handler,
-    required super.certificates,
-    super.url,
-  }) : _handler = handler;
-
-  final android.SslErrorHandler _handler;
-
-  // /// The URL associated with the request.
-  // final Uri? url;
 
   @override
   Future<void> cancel() => _handler.cancel();
 
   @override
   Future<void> proceed() => _handler.proceed();
-
-  @override
-  Future<void> defaultHandling() {
-    return _handler.cancel();
-  }
 }

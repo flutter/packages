@@ -12,7 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_proxy.dart';
-import 'android_ssl_auth_request.dart';
+import 'android_ssl_auth_error.dart';
 import 'android_webkit.g.dart' as android_webview;
 import 'android_webkit_constants.dart';
 import 'platform_views_service_proxy.dart';
@@ -1486,18 +1486,17 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         android_webview.SslErrorHandler handler,
         android_webview.SslError error,
       ) async {
-        final void Function(PlatformSslAuthRequest)? callback =
-            weakThis.target?._onSslAuthRequest;
+        final void Function(PlatformSslAuthError)? callback =
+            weakThis.target?._onSslAuthError;
 
         if (callback != null) {
-          final AndroidSslAuthRequest authRequest = AndroidSslAuthRequest(
+          final AndroidSslAuthError authError =
+              await AndroidSslAuthError.fromNativeSslError(
+            error: error,
             handler: handler,
-            certificates: <SslCertificate>[
-              await AndroidSslCertificate.fromNativeSslError(error),
-            ],
           );
 
-          callback(authRequest);
+          callback(authError);
         } else {
           await handler.cancel();
         }
@@ -1564,7 +1563,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
-  SslAuthRequestCallback? _onSslAuthRequest;
+  SslAuthErrorCallback? _onSslAuthError;
 
   void _handleNavigation(
     String url, {
@@ -1671,8 +1670,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   }
 
   @override
-  Future<void> setOnSSlAuthRequest(
-      SslAuthRequestCallback onSslAuthRequest) async {
-    _onSslAuthRequest = onSslAuthRequest;
+  Future<void> setOnSSlAuthError(SslAuthErrorCallback onSslAuthError) async {
+    _onSslAuthError = onSslAuthError;
   }
 }

@@ -6,7 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import 'platform_ssl_auth_request.dart';
+import 'platform_ssl_auth_error.dart';
 import 'types/types.dart';
 
 import 'webview_platform.dart' show WebViewPlatform;
