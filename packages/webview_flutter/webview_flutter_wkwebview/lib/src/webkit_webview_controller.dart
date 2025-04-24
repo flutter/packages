@@ -1312,29 +1312,31 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 
                   final SecCertificate? leafCertificate =
                       certificates.firstOrNull;
-                  if (leafCertificate != null) {
-                    callback(
-                      WebKitSslAuthError(
-                        certificate: X509Certificate(
-                          data: await SecCertificate.copyData(leafCertificate),
-                        ),
-                        description: '${exception.code}: ${exception.message}',
-                        trust: serverTrust,
-                        host: protectionSpace.host,
-                        port: protectionSpace.port,
-                        onResponse: (
-                          UrlSessionAuthChallengeDisposition disposition,
-                          Map<String, Object?>? credentialMap,
-                        ) {
-                          responseCompleter.complete(
-                            <Object?>[disposition, credentialMap],
-                          );
-                        },
-                      ),
-                    );
+                  callback(
+                    WebKitSslAuthError(
+                      certificate: leafCertificate != null
+                          ? X509Certificate(
+                              data: await SecCertificate.copyData(
+                                leafCertificate,
+                              ),
+                            )
+                          : null,
+                      description: '${exception.code}: ${exception.message}',
+                      trust: serverTrust,
+                      host: protectionSpace.host,
+                      port: protectionSpace.port,
+                      onResponse: (
+                        UrlSessionAuthChallengeDisposition disposition,
+                        Map<String, Object?>? credentialMap,
+                      ) {
+                        responseCompleter.complete(
+                          <Object?>[disposition, credentialMap],
+                        );
+                      },
+                    ),
+                  );
 
-                    return responseCompleter.future;
-                  }
+                  return responseCompleter.future;
                 }
               }
           }

@@ -38,8 +38,11 @@ class NavigationDelegate {
   /// Constructs a [NavigationDelegate].
   ///
   /// {@template webview_fluttter.NavigationDelegate.constructor}
-  /// `onUrlChange`: invoked when the underlying web view changes to a new url.
-  /// `onHttpAuthRequest`: invoked when the web view is requesting authentication.
+  /// **`onUrlChange`:** invoked when the underlying web view changes to a new url.
+  /// **`onHttpAuthRequest`:** invoked when the web view is requesting authentication.
+  /// **`onSslAuthError`:** Invoked when the web view receives a recoverable SSL
+  ///   error for a certificate. The host application must call either
+  ///   [SslAuthError.cancel] or [SslAuthError.proceed].
   /// {@endtemplate}
   NavigationDelegate({
     FutureOr<NavigationDecision> Function(NavigationRequest request)?
@@ -51,7 +54,7 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
-    void Function(SslAuthRequest request)? onSslAuthRequest,
+    void Function(SslAuthError request)? onSslAuthError,
   }) : this.fromPlatformCreationParams(
           const PlatformNavigationDelegateCreationParams(),
           onNavigationRequest: onNavigationRequest,
@@ -62,7 +65,7 @@ class NavigationDelegate {
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
           onHttpError: onHttpError,
-          onSslAuthRequest: onSslAuthRequest,
+          onSslAuthError: onSslAuthError,
         );
 
   /// Constructs a [NavigationDelegate] from creation params for a specific
@@ -107,7 +110,7 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
-    void Function(SslAuthRequest request)? onSslAuthRequest,
+    void Function(SslAuthError request)? onSslAuthError,
   }) : this.fromPlatform(
           PlatformNavigationDelegate(params),
           onNavigationRequest: onNavigationRequest,
@@ -118,7 +121,7 @@ class NavigationDelegate {
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
           onHttpError: onHttpError,
-          onSslAuthRequest: onSslAuthRequest,
+          onSslAuthError: onSslAuthError,
         );
 
   /// Constructs a [NavigationDelegate] from a specific platform implementation.
@@ -134,7 +137,7 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     HttpAuthRequestCallback? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
-    void Function(SslAuthRequest request)? onSslAuthRequest,
+    void Function(SslAuthError request)? onSslAuthError,
   }) {
     if (onNavigationRequest != null) {
       platform.setOnNavigationRequest(onNavigationRequest!);
@@ -160,10 +163,10 @@ class NavigationDelegate {
     if (onHttpError != null) {
       platform.setOnHttpError(onHttpError);
     }
-    if (onSslAuthRequest != null) {
-      platform.setOnSSlAuthRequest(
-        (PlatformSslAuthRequest request) {
-          onSslAuthRequest(SslAuthRequest._fromPlatform(request));
+    if (onSslAuthError != null) {
+      platform.setOnSSlAuthError(
+        (PlatformSslAuthError request) {
+          onSslAuthError(SslAuthError._fromPlatform(request));
         },
       );
     }
@@ -197,11 +200,11 @@ class NavigationDelegate {
   final WebResourceErrorCallback? onWebResourceError;
 }
 
-/// A request from a server to respond to a set of one or more SSL errors with
-/// the associated SSL certificate.
+/// Represents an SSL error with the associated certificate.
 ///
-/// The host application must call [cancel], [proceed], or choose an option
-/// provided by by the platform implementation.
+/// The host application must call [cancel] or, contrary to secure web
+/// communication standards, [proceed] to provide the web view's response to the
+/// request.
 ///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current
@@ -212,24 +215,37 @@ class NavigationDelegate {
 /// iOS and Android:
 ///
 /// ```dart
-/// final SslAuthRequest request = ...;
+/// final SslAuthError error = ...;
 ///
 /// if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-///   final WebKitSslAuthRequest webKitRequest =
-///       request.platform as WebKitSslAuthRequest;
+///   final WebKitSslAuthError webKitError =
+///       error.platform as WebKitSslAuthError;
 /// } else if (WebViewPlatform.instance is AndroidWebViewPlatform) {
-///   final AndroidSslAuthRequest androidRequest =
-///       request.platform as AndroidSslAuthRequest;
+///   final AndroidSslAuthError androidError =
+///       error.platform as AndroidSslAuthError;
 /// }
 /// ```
-class SslAuthRequest {
-  SslAuthRequest._fromPlatform(this.platform);
+class SslAuthError {
+  SslAuthError._fromPlatform(this.platform);
 
-  final PlatformSslAuthRequest platform;
+  /// An implementation of [PlatformSslAuthError] for the current platform.
+  final PlatformSslAuthError platform;
 
-  List<SslCertificate> get certificate => platform.certificates;
+  /// The certificate associated with this error.
+  X509Certificate? get certificate => platform.certificate;
 
+  /// Instructs the WebView that encountered the SSL certificate error to
+  /// terminate communication with the server.
+  ///
+  /// The host application must call this method to prevent a resource from
+  /// loading when an SSL certificate is invalid.
   Future<void> cancel() => platform.cancel();
 
+  /// Instructs the WebView that encountered the SSL certificate error to ignore
+  /// the error and continue communicating with the server.
+  ///
+  /// **Warning:** When an SSL error occurs, the host application should always
+  /// call [cancel] rather than [proceed] because an invalid SSL certificate
+  /// means the connection is not secure.
   Future<void> proceed() => platform.proceed();
 }

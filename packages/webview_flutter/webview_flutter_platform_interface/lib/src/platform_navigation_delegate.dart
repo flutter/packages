@@ -151,6 +151,9 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
 
   /// Invoked when the web view receives a recoverable SSL error for a
   /// certificate.
+  ///
+  /// The host application must call either [PlatformSslAuthError.cancel] or
+  /// [PlatformSslAuthError.proceed].
   Future<void> setOnSSlAuthError(SslAuthErrorCallback onSslAuthError) {
     throw UnimplementedError(
       'setOnSSlAuthError is not implemented on the current platform.',

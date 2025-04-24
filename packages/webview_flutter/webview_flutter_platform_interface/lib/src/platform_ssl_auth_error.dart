@@ -24,9 +24,16 @@ abstract class PlatformSslAuthError {
 
   /// Instructs the WebView that encountered the SSL certificate error to ignore
   /// the error and continue communicating with the server.
+  ///
+  /// **Warning:** When an SSL error occurs, the host application should always
+  /// call [cancel] rather than [proceed] because an invalid SSL certificate
+  /// means the connection is not secure.
   Future<void> proceed();
 
   /// Instructs the WebView that encountered the SSL certificate error to
   /// terminate communication with the server.
+  ///
+  /// The host application must call this method to prevent a resource from
+  /// loading when an SSL certificate is invalid.
   Future<void> cancel();
 }
