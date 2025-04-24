@@ -49,4 +49,9 @@ class AndroidSslAuthRequest extends PlatformSslAuthRequest {
 
   @override
   Future<void> proceed() => _handler.proceed();
+
+  @override
+  Future<void> defaultHandling() {
+    return _handler.cancel();
+  }
 }

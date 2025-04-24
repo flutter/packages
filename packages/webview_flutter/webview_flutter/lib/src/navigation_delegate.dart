@@ -51,6 +51,7 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
+    void Function(SslAuthRequest request)? onSslAuthRequest,
   }) : this.fromPlatformCreationParams(
           const PlatformNavigationDelegateCreationParams(),
           onNavigationRequest: onNavigationRequest,
@@ -61,6 +62,7 @@ class NavigationDelegate {
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
           onHttpError: onHttpError,
+          onSslAuthRequest: onSslAuthRequest,
         );
 
   /// Constructs a [NavigationDelegate] from creation params for a specific
@@ -105,6 +107,7 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     void Function(HttpAuthRequest request)? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
+    void Function(SslAuthRequest request)? onSslAuthRequest,
   }) : this.fromPlatform(
           PlatformNavigationDelegate(params),
           onNavigationRequest: onNavigationRequest,
@@ -115,6 +118,7 @@ class NavigationDelegate {
           onUrlChange: onUrlChange,
           onHttpAuthRequest: onHttpAuthRequest,
           onHttpError: onHttpError,
+          onSslAuthRequest: onSslAuthRequest,
         );
 
   /// Constructs a [NavigationDelegate] from a specific platform implementation.
@@ -130,6 +134,7 @@ class NavigationDelegate {
     void Function(UrlChange change)? onUrlChange,
     HttpAuthRequestCallback? onHttpAuthRequest,
     void Function(HttpResponseError error)? onHttpError,
+    void Function(SslAuthRequest request)? onSslAuthRequest,
   }) {
     if (onNavigationRequest != null) {
       platform.setOnNavigationRequest(onNavigationRequest!);
@@ -154,6 +159,13 @@ class NavigationDelegate {
     }
     if (onHttpError != null) {
       platform.setOnHttpError(onHttpError);
+    }
+    if (onSslAuthRequest != null) {
+      platform.setOnSSlAuthRequest(
+        (PlatformSslAuthRequest request) {
+          onSslAuthRequest(SslAuthRequest._fromPlatform(request));
+        },
+      );
     }
   }
 
@@ -183,4 +195,41 @@ class NavigationDelegate {
 
   /// Invoked when a resource loading error occurred.
   final WebResourceErrorCallback? onWebResourceError;
+}
+
+/// A request from a server to respond to a set of one or more SSL errors with
+/// the associated SSL certificate.
+///
+/// The host application must call [cancel], [proceed], or choose an option
+/// provided by by the platform implementation.
+///
+/// ## Platform-Specific Features
+/// This class contains an underlying implementation provided by the current
+/// platform. Once a platform implementation is imported, the examples below
+/// can be followed to use features provided by a platform's implementation.
+///
+/// Below is an example of accessing the platform-specific implementation for
+/// iOS and Android:
+///
+/// ```dart
+/// final SslAuthRequest request = ...;
+///
+/// if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+///   final WebKitSslAuthRequest webKitRequest =
+///       request.platform as WebKitSslAuthRequest;
+/// } else if (WebViewPlatform.instance is AndroidWebViewPlatform) {
+///   final AndroidSslAuthRequest androidRequest =
+///       request.platform as AndroidSslAuthRequest;
+/// }
+/// ```
+class SslAuthRequest {
+  SslAuthRequest._fromPlatform(this.platform);
+
+  final PlatformSslAuthRequest platform;
+
+  List<SslCertificate> get certificate => platform.certificates;
+
+  Future<void> cancel() => platform.cancel();
+
+  Future<void> proceed() => platform.proceed();
 }

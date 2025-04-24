@@ -53,10 +53,6 @@ class WebKitSslAuthRequest extends PlatformSslAuthRequest {
     try {
       final bool trusted = await SecTrust.evaluateWithError(trust);
 
-      // Since this is expected to be an auth request for an invalid
-      // certificate, the method above is expected to throw with an error
-      // message. However, this handles the scenario where the certificate is
-      // valid or doesn't throw just in case.
       final List<SecCertificate> certificates =
           (await SecTrust.copyCertificateChain(trust)) ?? <SecCertificate>[];
       if (trusted) {
@@ -99,6 +95,13 @@ class WebKitSslAuthRequest extends PlatformSslAuthRequest {
         onResponse: onResponse,
       );
     }
+  }
+
+  Future<void> performDefaultHandling() async {
+    _onResponse(
+      UrlSessionAuthChallengeDisposition.performDefaultHandling,
+      null,
+    );
   }
 
   @override

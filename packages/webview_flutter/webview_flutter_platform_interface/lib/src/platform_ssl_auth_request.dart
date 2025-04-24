@@ -33,4 +33,8 @@ abstract class PlatformSslAuthRequest {
   /// Instructs the WebView that encountered the SSL certificate error to
   /// terminate communication with the server.
   Future<void> cancel();
+
+  /// Instructs the WebView that encountered the SSL certificate error to use
+  /// the system-provided default behavior.
+  Future<void> defaultHandling();
 }
