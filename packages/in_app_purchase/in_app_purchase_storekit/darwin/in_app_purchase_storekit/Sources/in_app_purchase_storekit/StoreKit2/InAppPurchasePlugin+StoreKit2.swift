@@ -53,7 +53,19 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           return completion(.failure(error))
         }
 
-        let result = try await product.purchase(options: [])
+        var purchaseOptions: Set<Product.PurchaseOption> = []
+
+        if let accountToken = options?.appAccountToken,
+          let token = UUID(uuidString: accountToken)
+        {
+          purchaseOptions.insert(.appAccountToken(token))
+        }
+
+        if let quantity = options?.quantity {
+          purchaseOptions.insert(.quantity(Int(quantity)))
+        }
+
+        let result = try await product.purchase(options: purchaseOptions)
 
         switch result {
         case .success(let verification):

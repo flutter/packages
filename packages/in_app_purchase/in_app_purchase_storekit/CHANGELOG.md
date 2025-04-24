@@ -1,3 +1,7 @@
+## 0.3.22+2
+
+* Adds support for `appAccountToken` and `quantity` in `purchase` for StoreKit2.
+
 ## 0.3.22+1
 
 * Fix a channel thread-safety issue when StoreKit2 is enabled.
