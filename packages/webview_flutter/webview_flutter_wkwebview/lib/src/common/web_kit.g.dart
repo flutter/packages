@@ -8,8 +8,7 @@
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected;
+import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -20,8 +19,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse(
-    {Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -30,7 +28,6 @@ List<Object?> wrapResponse(
   }
   return <Object?>[error.code, error.message, error.details];
 }
-
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
@@ -113,10 +110,9 @@ class PigeonInstanceManager {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>>
-      _weakInstances = <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
-  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances =
-      <int, PigeonInternalProxyApiBaseClass>{};
+  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>> _weakInstances =
+      <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
+  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances = <int, PigeonInternalProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -126,8 +122,7 @@ class PigeonInstanceManager {
 
   static PigeonInstanceManager _initInstance() {
     WidgetsFlutterBinding.ensureInitialized();
-    final _PigeonInternalInstanceManagerApi api =
-        _PigeonInternalInstanceManagerApi();
+    final _PigeonInternalInstanceManagerApi api = _PigeonInternalInstanceManagerApi();
     // Clears the native `PigeonInstanceManager` on the initial use of the Dart one.
     api.clear();
     final PigeonInstanceManager instanceManager = PigeonInstanceManager(
@@ -135,76 +130,42 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(
-        instanceManager: instanceManager);
-    URLRequest.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    HTTPURLResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    URLResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKUserScript.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKNavigationAction.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKNavigationResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKFrameInfo.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSError.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKScriptMessage.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKSecurityOrigin.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    HTTPCookie.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    AuthenticationChallengeResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKWebsiteDataStore.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    URLRequest.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    HTTPURLResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    URLResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKUserScript.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKNavigationAction.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKNavigationResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKFrameInfo.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    NSError.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKScriptMessage.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKSecurityOrigin.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    HTTPCookie.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    AuthenticationChallengeResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKWebsiteDataStore.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     UIView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    UIScrollView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKWebViewConfiguration.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKUserContentController.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKPreferences.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKScriptMessageHandler.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKNavigationDelegate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSObject.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    UIViewWKWebView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    NSViewWKWebView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKWebView.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKUIDelegate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    WKHTTPCookieStore.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    UIScrollViewDelegate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    URLCredential.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    URLProtectionSpace.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    URLAuthenticationChallenge.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    UIScrollView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKWebViewConfiguration.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKUserContentController.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKPreferences.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKScriptMessageHandler.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKNavigationDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    NSObject.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    UIViewWKWebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    NSViewWKWebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKWebView.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKUIDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    WKHTTPCookieStore.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    UIScrollViewDelegate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    URLCredential.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    URLProtectionSpace.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    URLAuthenticationChallenge.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     URL.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    WKWebpagePreferences.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    GetTrustResultResponse.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    SecTrust.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
-    SecCertificate.pigeon_setUpMessageHandlers(
-        pigeon_instanceManager: instanceManager);
+    WKWebpagePreferences.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    GetTrustResultResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    SecTrust.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    SecCertificate.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -268,20 +229,15 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(
-      int identifier) {
-    final PigeonInternalProxyApiBaseClass? weakInstance =
-        _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(int identifier) {
+    final PigeonInternalProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonInternalProxyApiBaseClass? strongInstance =
-          _strongInstances[identifier];
+      final PigeonInternalProxyApiBaseClass? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy =
-            strongInstance.pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] =
-            WeakReference<PigeonInternalProxyApiBaseClass>(copy);
+        _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -305,20 +261,17 @@ class PigeonInstanceManager {
   /// added.
   ///
   /// Returns unique identifier of the [instance] added.
-  void addHostCreatedInstance(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+  void addHostCreatedInstance(PigeonInternalProxyApiBaseClass instance, int identifier) {
     _addInstanceWithIdentifier(instance, identifier);
   }
 
-  void _addInstanceWithIdentifier(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+  void _addInstanceWithIdentifier(PigeonInternalProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
+    _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
@@ -445,29 +398,293 @@ class _PigeonInternalInstanceManagerApi {
 }
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
-  const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
-  final PigeonInstanceManager instanceManager;
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonInternalProxyApiBaseClass) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager
-            .getInstanceWithWeakReference(readValue(buffer)! as int);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
+ const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
+ final PigeonInstanceManager instanceManager;
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is PigeonInternalProxyApiBaseClass) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
 }
+
+/// Handles constructing objects and calling static methods for the Android
+/// Interactive Media Ads native library.
+///
+/// This class provides dependency injection for the implementations of the
+/// platform interface classes. Improving the ease of unit testing and/or
+/// overriding the underlying Android classes.
+///
+/// By default each function calls the default constructor of the class it
+/// intends to return.
+class WebKitGProxy {
+  /// Constructs an [WebKitGProxy].
+  const WebKitGProxy({
+    this.newURLRequest = URLRequest.new,
+    this.newWKUserScript = WKUserScript.new,
+    this.newHTTPCookie = HTTPCookie.new,
+    this.newAuthenticationChallengeResponse =
+        AuthenticationChallengeResponse.new,
+    this.newWKWebViewConfiguration = WKWebViewConfiguration.new,
+    this.newWKScriptMessageHandler = WKScriptMessageHandler.new,
+    this.newWKNavigationDelegate = WKNavigationDelegate.new,
+    this.newNSObject = NSObject.new,
+    this.newUIViewWKWebView = UIViewWKWebView.new,
+    this.newNSViewWKWebView = NSViewWKWebView.new,
+    this.newWKUIDelegate = WKUIDelegate.new,
+    this.newUIScrollViewDelegate = UIScrollViewDelegate.new,
+    this.withUserURLCredential = URLCredential.withUser,
+    this.evaluateWithErrorSecTrust = SecTrust.evaluateWithError,
+    this.copyExceptionsSecTrust = SecTrust.copyExceptions,
+    this.setExceptionsSecTrust = SecTrust.setExceptions,
+    this.getTrustResultSecTrust = SecTrust.getTrustResult,
+    this.copyCertificateChainSecTrust = SecTrust.copyCertificateChain,
+    this.copyDataSecCertificate = SecCertificate.copyData,
+    this.defaultDataStoreWKWebsiteDataStore =
+        _defaultDataStoreWKWebsiteDataStore,
+  });
+
+  /// Constructs [URLRequest].
+  final URLRequest Function({
+    required String url,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newURLRequest;
+
+  /// Constructs [WKUserScript].
+  final WKUserScript Function({
+    required String source,
+    required UserScriptInjectionTime injectionTime,
+    required bool isForMainFrameOnly,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newWKUserScript;
+
+  /// Constructs [HTTPCookie].
+  final HTTPCookie Function({
+    required Map<HttpCookiePropertyKey, Object> properties,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newHTTPCookie;
+
+  /// Constructs [AuthenticationChallengeResponse].
+  final AuthenticationChallengeResponse Function({
+    required UrlSessionAuthChallengeDisposition disposition,
+    URLCredential? credential,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newAuthenticationChallengeResponse;
+
+  /// Constructs [WKWebViewConfiguration].
+  final WKWebViewConfiguration Function({
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newWKWebViewConfiguration;
+
+  /// Constructs [WKScriptMessageHandler].
+  final WKScriptMessageHandler Function({
+    required void Function(
+      WKScriptMessageHandler,
+      WKUserContentController,
+      WKScriptMessage,
+    ) didReceiveScriptMessage,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newWKScriptMessageHandler;
+
+  /// Constructs [WKNavigationDelegate].
+  final WKNavigationDelegate Function({
+    required Future<NavigationActionPolicy> Function(
+      WKNavigationDelegate,
+      WKWebView,
+      WKNavigationAction,
+    ) decidePolicyForNavigationAction,
+    required Future<NavigationResponsePolicy> Function(
+      WKNavigationDelegate,
+      WKWebView,
+      WKNavigationResponse,
+    ) decidePolicyForNavigationResponse,
+    required Future<List<Object?>> Function(
+      WKNavigationDelegate,
+      WKWebView,
+      URLAuthenticationChallenge,
+    ) didReceiveAuthenticationChallenge,
+    void Function(
+      WKNavigationDelegate,
+      WKWebView,
+      String?,
+    )? didFinishNavigation,
+    void Function(
+      WKNavigationDelegate,
+      WKWebView,
+      String?,
+    )? didStartProvisionalNavigation,
+    void Function(
+      WKNavigationDelegate,
+      WKWebView,
+      NSError,
+    )? didFailNavigation,
+    void Function(
+      WKNavigationDelegate,
+      WKWebView,
+      NSError,
+    )? didFailProvisionalNavigation,
+    void Function(
+      WKNavigationDelegate,
+      WKWebView,
+    )? webViewWebContentProcessDidTerminate,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newWKNavigationDelegate;
+
+  /// Constructs [NSObject].
+  final NSObject Function({
+    void Function(
+      NSObject,
+      String?,
+      NSObject?,
+      Map<KeyValueChangeKey, Object?>?,
+    )? observeValue,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newNSObject;
+
+  /// Constructs [UIViewWKWebView].
+  final UIViewWKWebView Function({
+    required WKWebViewConfiguration initialConfiguration,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newUIViewWKWebView;
+
+  /// Constructs [NSViewWKWebView].
+  final NSViewWKWebView Function({
+    required WKWebViewConfiguration initialConfiguration,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newNSViewWKWebView;
+
+  /// Constructs [WKUIDelegate].
+  final WKUIDelegate Function({
+    required Future<PermissionDecision> Function(
+      WKUIDelegate,
+      WKWebView,
+      WKSecurityOrigin,
+      WKFrameInfo,
+      MediaCaptureType,
+    ) requestMediaCapturePermission,
+    required Future<bool> Function(
+      WKUIDelegate,
+      WKWebView,
+      String,
+      WKFrameInfo,
+    ) runJavaScriptConfirmPanel,
+    void Function(
+      WKUIDelegate,
+      WKWebView,
+      WKWebViewConfiguration,
+      WKNavigationAction,
+    )? onCreateWebView,
+    Future<void> Function(
+      WKUIDelegate,
+      WKWebView,
+      String,
+      WKFrameInfo,
+    )? runJavaScriptAlertPanel,
+    Future<String?> Function(
+      WKUIDelegate,
+      WKWebView,
+      String,
+      String?,
+      WKFrameInfo,
+    )? runJavaScriptTextInputPanel,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newWKUIDelegate;
+
+  /// Constructs [UIScrollViewDelegate].
+  final UIScrollViewDelegate Function({
+    void Function(
+      UIScrollViewDelegate,
+      UIScrollView,
+      double,
+      double,
+    )? scrollViewDidScroll,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) newUIScrollViewDelegate;
+
+  /// Constructs [URLCredential].
+  final URLCredential Function({
+    required String user,
+    required String password,
+    required UrlCredentialPersistence persistence,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) withUserURLCredential;
+
+  /// Calls to [SecTrust.evaluateWithError].
+  final Future<bool> Function(
+    SecTrust, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) evaluateWithErrorSecTrust;
+
+  /// Calls to [SecTrust.copyExceptions].
+  final Future<Uint8List?> Function(
+    SecTrust, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) copyExceptionsSecTrust;
+
+  /// Calls to [SecTrust.setExceptions].
+  final Future<bool> Function(
+    SecTrust,
+    Uint8List?, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) setExceptionsSecTrust;
+
+  /// Calls to [SecTrust.getTrustResult].
+  final Future<GetTrustResultResponse> Function(
+    SecTrust, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) getTrustResultSecTrust;
+
+  /// Calls to [SecTrust.copyCertificateChain].
+  final Future<List<SecCertificate>?> Function(
+    SecTrust, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) copyCertificateChainSecTrust;
+
+  /// Calls to [SecCertificate.copyData].
+  final Future<Uint8List> Function(
+    SecCertificate, {
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  }) copyDataSecCertificate;
+
+  /// Calls to [WKWebsiteDataStore.defaultDataStore].
+  final WKWebsiteDataStore Function() defaultDataStoreWKWebsiteDataStore;
+
+  static WKWebsiteDataStore _defaultDataStoreWKWebsiteDataStore() =>
+      WKWebsiteDataStore.defaultDataStore;
+}
+
 
 /// The values that can be returned in a change dictionary.
 ///
@@ -476,15 +693,12 @@ enum KeyValueObservingOptions {
   /// Indicates that the change dictionary should provide the new attribute
   /// value, if applicable.
   newValue,
-
   /// Indicates that the change dictionary should contain the old attribute
   /// value, if applicable.
   oldValue,
-
   /// If specified, a notification should be sent to the observer immediately,
   /// before the observer registration method even returns.
   initialValue,
-
   /// Whether separate notifications should be sent to the observer before and
   /// after each change, instead of a single notification after the change.
   priorNotification,
@@ -496,19 +710,15 @@ enum KeyValueObservingOptions {
 enum KeyValueChange {
   /// Indicates that the value of the observed key path was set to a new value.
   setting,
-
   /// Indicates that an object has been inserted into the to-many relationship
   /// that is being observed.
   insertion,
-
   /// Indicates that an object has been removed from the to-many relationship
   /// that is being observed.
   removal,
-
   /// Indicates that an object has been replaced in the to-many relationship
   /// that is being observed.
   replacement,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
@@ -522,28 +732,23 @@ enum KeyValueChangeKey {
   /// `KeyValueChange.replacement`, the value of this key is a Set object that
   /// contains the indexes of the inserted, removed, or replaced objects.
   indexes,
-
   /// An object that contains a value corresponding to one of the
   /// `KeyValueChange` enum, indicating what sort of change has occurred.
   kind,
-
   /// If the value of the `KeyValueChange.kind` entry is
   /// `KeyValueChange.setting, and `KeyValueObservingOptions.newValue` was
   /// specified when the observer was registered, the value of this key is the
   /// new value for the attribute.
   newValue,
-
   /// If the `KeyValueObservingOptions.priorNotification` option was specified
   /// when the observer was registered this notification is sent prior to a
   /// change.
   notificationIsPrior,
-
   /// If the value of the `KeyValueChange.kind` entry is
   /// `KeyValueChange.setting`, and `KeyValueObservingOptions.old` was specified
   /// when the observer was registered, the value of this key is the value
   /// before the attribute was changed.
   oldValue,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
@@ -555,11 +760,9 @@ enum UserScriptInjectionTime {
   /// A constant to inject the script after the creation of the webpage’s
   /// document element, but before loading any other content.
   atDocumentStart,
-
   /// A constant to inject the script after the document finishes loading, but
   /// before loading any other subresources.
   atDocumentEnd,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
@@ -570,13 +773,10 @@ enum UserScriptInjectionTime {
 enum AudiovisualMediaType {
   /// No media types require a user gesture to begin playing.
   none,
-
   /// Media types that contain audio require a user gesture to begin playing.
   audio,
-
   /// Media types that contain video require a user gesture to begin playing.
   video,
-
   /// All media types require a user gesture to begin playing.
   all,
 }
@@ -588,25 +788,18 @@ enum AudiovisualMediaType {
 enum WebsiteDataType {
   /// Cookies.
   cookies,
-
   /// In-memory caches.
   memoryCache,
-
   /// On-disk caches.
   diskCache,
-
   /// HTML offline web app caches.
   offlineWebApplicationCache,
-
   /// HTML local storage.
   localStorage,
-
   /// HTML session storage.
   sessionStorage,
-
   /// WebSQL databases.
   webSQLDatabases,
-
   /// IndexedDB databases.
   indexedDBDatabases,
 }
@@ -618,10 +811,8 @@ enum WebsiteDataType {
 enum NavigationActionPolicy {
   /// Allow the navigation to continue.
   allow,
-
   /// Cancel the navigation.
   cancel,
-
   /// Allow the download to proceed.
   download,
 }
@@ -633,10 +824,8 @@ enum NavigationActionPolicy {
 enum NavigationResponsePolicy {
   /// Allow the navigation to continue.
   allow,
-
   /// Cancel the navigation.
   cancel,
-
   /// Allow the download to proceed.
   download,
 }
@@ -647,51 +836,37 @@ enum NavigationResponsePolicy {
 enum HttpCookiePropertyKey {
   /// A String object containing the comment for the cookie.
   comment,
-
   /// An Uri object or String object containing the comment URL for the cookie.
   commentUrl,
-
   /// Aa String object stating whether the cookie should be discarded at the end
   /// of the session.
   discard,
-
   /// An String object containing the domain for the cookie.
   domain,
-
   /// An Date object or String object specifying the expiration date for the
   /// cookie.
   expires,
-
   /// An String object containing an integer value stating how long in seconds
   /// the cookie should be kept, at most.
   maximumAge,
-
   /// An String object containing the name of the cookie (required).
   name,
-
   /// A URL or String object containing the URL that set this cookie.
   originUrl,
-
   /// A String object containing the path for the cookie.
   path,
-
   /// An String object containing comma-separated integer values specifying the
   /// ports for the cookie.
   port,
-
   /// A string indicating the same-site policy for the cookie.
   sameSitePolicy,
-
   /// A String object indicating that the cookie should be transmitted only over
   /// secure channels.
   secure,
-
   /// A String object containing the value of the cookie.
   value,
-
   /// A String object that specifies the version of the cookie.
   version,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
@@ -702,22 +877,16 @@ enum HttpCookiePropertyKey {
 enum NavigationType {
   /// A link activation.
   linkActivated,
-
   /// A request to submit a form.
   formSubmitted,
-
   /// A request for the frame’s next or previous item.
   backForward,
-
   /// A request to reload the webpage.
   reload,
-
   /// A request to resubmit a form.
   formResubmitted,
-
   /// A navigation request that originates for some other reason.
   other,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
@@ -728,10 +897,8 @@ enum NavigationType {
 enum PermissionDecision {
   /// Deny permission for the requested resource.
   deny,
-
   /// Deny permission for the requested resource.
   grant,
-
   /// Prompt the user for permission for the requested resource.
   prompt,
 }
@@ -742,13 +909,10 @@ enum PermissionDecision {
 enum MediaCaptureType {
   /// A media device that can capture video.
   camera,
-
   /// A media device or devices that can capture audio and video.
   cameraAndMicrophone,
-
   /// A media device that can capture audio.
   microphone,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
@@ -759,18 +923,14 @@ enum MediaCaptureType {
 enum UrlSessionAuthChallengeDisposition {
   /// Use the specified credential, which may be nil.
   useCredential,
-
   /// Use the default handling for the challenge as though this delegate method
   /// were not implemented.
   performDefaultHandling,
-
   /// Cancel the entire request.
   cancelAuthenticationChallenge,
-
   /// Reject this challenge, and call the authentication delegate method again
   /// with the next authentication protection space.
   rejectProtectionSpace,
-
   /// The value is not recognized by the wrapper.
   unknown,
 }
@@ -781,13 +941,10 @@ enum UrlSessionAuthChallengeDisposition {
 enum UrlCredentialPersistence {
   /// The credential should not be stored.
   none,
-
   /// The credential should be stored only for this session.
   forSession,
-
   /// The credential should be stored in the keychain.
   permanent,
-
   /// The credential should be stored permanently in the keychain, and in
   /// addition should be distributed to other devices based on the owning Apple
   /// ID.
@@ -800,32 +957,25 @@ enum UrlCredentialPersistence {
 enum DartSecTrustResultType {
   /// The user did not specify a trust setting.
   unspecified,
-
   /// The user granted permission to trust the certificate for the purposes
   /// designated in the specified policies.
   proceed,
-
   /// The user specified that the certificate should not be trusted.
   deny,
-
   /// Trust is denied, but recovery may be possible.
   recoverableTrustFailure,
-
   /// Trust is denied and no simple fix is available.
   fatalTrustFailure,
-
   /// A value that indicates a failure other than trust evaluation.
   otherError,
-
   /// An indication of an invalid setting or result.
   invalid,
-
   /// User confirmation is required before proceeding.
   confirm,
-
   /// The type is not recognized by this wrapper.
   unknown,
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -834,49 +984,49 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is KeyValueObservingOptions) {
+    }    else if (value is KeyValueObservingOptions) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is KeyValueChange) {
+    }    else if (value is KeyValueChange) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is KeyValueChangeKey) {
+    }    else if (value is KeyValueChangeKey) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    } else if (value is UserScriptInjectionTime) {
+    }    else if (value is UserScriptInjectionTime) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    } else if (value is AudiovisualMediaType) {
+    }    else if (value is AudiovisualMediaType) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    } else if (value is WebsiteDataType) {
+    }    else if (value is WebsiteDataType) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    } else if (value is NavigationActionPolicy) {
+    }    else if (value is NavigationActionPolicy) {
       buffer.putUint8(135);
       writeValue(buffer, value.index);
-    } else if (value is NavigationResponsePolicy) {
+    }    else if (value is NavigationResponsePolicy) {
       buffer.putUint8(136);
       writeValue(buffer, value.index);
-    } else if (value is HttpCookiePropertyKey) {
+    }    else if (value is HttpCookiePropertyKey) {
       buffer.putUint8(137);
       writeValue(buffer, value.index);
-    } else if (value is NavigationType) {
+    }    else if (value is NavigationType) {
       buffer.putUint8(138);
       writeValue(buffer, value.index);
-    } else if (value is PermissionDecision) {
+    }    else if (value is PermissionDecision) {
       buffer.putUint8(139);
       writeValue(buffer, value.index);
-    } else if (value is MediaCaptureType) {
+    }    else if (value is MediaCaptureType) {
       buffer.putUint8(140);
       writeValue(buffer, value.index);
-    } else if (value is UrlSessionAuthChallengeDisposition) {
+    }    else if (value is UrlSessionAuthChallengeDisposition) {
       buffer.putUint8(141);
       writeValue(buffer, value.index);
-    } else if (value is UrlCredentialPersistence) {
+    }    else if (value is UrlCredentialPersistence) {
       buffer.putUint8(142);
       writeValue(buffer, value.index);
-    } else if (value is DartSecTrustResultType) {
+    }    else if (value is DartSecTrustResultType) {
       buffer.putUint8(143);
       writeValue(buffer, value.index);
     } else {
@@ -887,51 +1037,49 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129:
+      case 129: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : KeyValueObservingOptions.values[value];
-      case 130:
+      case 130: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : KeyValueChange.values[value];
-      case 131:
+      case 131: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : KeyValueChangeKey.values[value];
-      case 132:
+      case 132: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : UserScriptInjectionTime.values[value];
-      case 133:
+      case 133: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : AudiovisualMediaType.values[value];
-      case 134:
+      case 134: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : WebsiteDataType.values[value];
-      case 135:
+      case 135: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NavigationActionPolicy.values[value];
-      case 136:
+      case 136: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NavigationResponsePolicy.values[value];
-      case 137:
+      case 137: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : HttpCookiePropertyKey.values[value];
-      case 138:
+      case 138: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NavigationType.values[value];
-      case 139:
+      case 139: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PermissionDecision.values[value];
-      case 140:
+      case 140: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : MediaCaptureType.values[value];
-      case 141:
+      case 141: 
         final int? value = readValue(buffer) as int?;
-        return value == null
-            ? null
-            : UrlSessionAuthChallengeDisposition.values[value];
-      case 142:
+        return value == null ? null : UrlSessionAuthChallengeDisposition.values[value];
+      case 142: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : UrlCredentialPersistence.values[value];
-      case 143:
+      case 143: 
         final int? value = readValue(buffer) as int?;
         return value == null ? null : DartSecTrustResultType.values[value];
       default:
@@ -939,7 +1087,6 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
-
 /// A URL load request that is independent of protocol or URL scheme.
 ///
 /// See https://developer.apple.com/documentation/foundation/urlrequest.
@@ -8595,3 +8742,4 @@ class SecCertificate extends NSObject {
     );
   }
 }
+
