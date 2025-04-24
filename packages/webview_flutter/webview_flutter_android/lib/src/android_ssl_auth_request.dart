@@ -44,6 +44,9 @@ class AndroidSslAuthRequest extends PlatformSslAuthRequest {
 
   final android.SslErrorHandler _handler;
 
+  // /// The URL associated with the request.
+  // final Uri? url;
+
   @override
   Future<void> cancel() => _handler.cancel();
 

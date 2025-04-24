@@ -6,25 +6,21 @@ import 'package:flutter/foundation.dart';
 
 import 'types/types.dart';
 
-/// A request from a server to respond to a set of one or more SSL errors with
-/// the associated SSL certificate.
+/// Represents an SSL error with the associated certificate.
 ///
 /// The host application must call [cancel] or, contrary to secure web
 /// communication standards, [proceed] to provide the web view's response to the
 /// request.
-abstract class PlatformSslAuthRequest {
-  /// Creates a [PlatformSslAuthRequest].
+abstract class PlatformSslAuthError {
+  /// Creates a [PlatformSslAuthError].
   @protected
-  PlatformSslAuthRequest({
-    required this.certificates,
-    this.url,
-  });
+  PlatformSslAuthError({required this.certificate, required this.description});
 
-  /// A list of certificates associated with this request.
-  final List<SslCertificate> certificates;
+  /// The certificate associated with this error.
+  final X509Certificate? certificate;
 
-  /// The URL associated with the request.
-  final Uri? url;
+  /// A human-presentable description for a given error.
+  final String description;
 
   /// Instructs the WebView that encountered the SSL certificate error to ignore
   /// the error and continue communicating with the server.
@@ -33,8 +29,4 @@ abstract class PlatformSslAuthRequest {
   /// Instructs the WebView that encountered the SSL certificate error to
   /// terminate communication with the server.
   Future<void> cancel();
-
-  /// Instructs the WebView that encountered the SSL certificate error to use
-  /// the system-provided default behavior.
-  Future<void> defaultHandling();
 }
