@@ -497,6 +497,35 @@ void main() {
           expect(capturedOptions!.gestureHandling, 'greedy');
         });
 
+        testWidgets('translates cameraTargetBounds option',
+            (WidgetTester tester) async {
+          final LatLngBounds mockLatLngBounds = LatLngBounds(
+            southwest: const LatLng(20, 30),
+            northeast: const LatLng(25, 35),
+          );
+          gmaps.MapOptions? capturedOptions;
+          controller = createController(
+              mapConfiguration: MapConfiguration(
+            cameraTargetBounds: CameraTargetBounds(mockLatLngBounds),
+          ));
+          controller.debugSetOverrides(
+              createMap: (_, gmaps.MapOptions options) {
+            capturedOptions = options;
+            return map;
+          });
+
+          controller.init();
+
+          final gmaps.LatLngBoundsOrLatLngBoundsLiteral capturedBounds =
+              capturedOptions!.restriction!.latLngBounds;
+
+          expect(capturedOptions, isNotNull);
+          expect(capturedBounds.north, mockLatLngBounds.northeast.latitude);
+          expect(capturedBounds.south, mockLatLngBounds.southwest.latitude);
+          expect(capturedBounds.east, mockLatLngBounds.northeast.longitude);
+          expect(capturedBounds.west, mockLatLngBounds.southwest.longitude);
+        });
+
         testWidgets('sets initial position when passed',
             (WidgetTester tester) async {
           gmaps.MapOptions? capturedOptions;
