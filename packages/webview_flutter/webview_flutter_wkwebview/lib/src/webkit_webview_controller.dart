@@ -1236,12 +1236,13 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
       ) async {
         final WebKitNavigationDelegate? delegate = weakThis.target;
 
-        if (delegate != null) {
+        final WebKitProxy? proxy =
+            (delegate?.params as WebKitNavigationDelegateCreationParams?)
+                ?.webKitProxy;
+
+        if (delegate != null && proxy != null) {
           final URLProtectionSpace protectionSpace =
               await challenge.getProtectionSpace();
-          final WebKitProxy proxy =
-              (delegate.params as WebKitNavigationDelegateCreationParams)
-                  .webKitProxy;
           final Completer<AuthenticationChallengeResponse> responseCompleter =
               Completer<AuthenticationChallengeResponse>();
 
@@ -1347,7 +1348,8 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           }
         }
 
-        return AuthenticationChallengeResponse.createAsync(
+        return (proxy ?? const WebKitProxy())
+            .createAsyncAuthenticationChallengeResponse(
           UrlSessionAuthChallengeDisposition.performDefaultHandling,
           null,
         );
