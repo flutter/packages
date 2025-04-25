@@ -289,7 +289,7 @@ void main() {
           .called(1);
       verify(mockWebSettings.setLoadWithOverviewMode(true)).called(1);
       verify(mockWebSettings.setSupportMultipleWindows(true)).called(1);
-      verify(mockWebSettings.setUseWideViewPort(true)).called(1);
+      verify(mockWebSettings.setUseWideViewPort(false)).called(1);
     });
 
     test('loadFile without file prefix', () async {
