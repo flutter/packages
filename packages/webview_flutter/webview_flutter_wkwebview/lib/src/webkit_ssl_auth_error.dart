@@ -5,6 +5,7 @@
 import 'package:flutter/services.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'common/web_kit.g.dart';
+import 'webkit_proxy.dart';
 
 class WebKitSslAuthError extends PlatformSslAuthError {
   WebKitSslAuthError({
@@ -13,14 +14,17 @@ class WebKitSslAuthError extends PlatformSslAuthError {
     required SecTrust trust,
     required this.host,
     required this.port,
+    required WebKitProxy proxy,
     required void Function(
       UrlSessionAuthChallengeDisposition disposition,
       Map<String, Object?>? credentialMap,
     ) onResponse,
   })  : _trust = trust,
+        _proxy = proxy,
         _onResponse = onResponse;
 
   final SecTrust _trust;
+  final WebKitProxy _proxy;
 
   final void Function(
     UrlSessionAuthChallengeDisposition disposition,
@@ -43,9 +47,9 @@ class WebKitSslAuthError extends PlatformSslAuthError {
 
   @override
   Future<void> proceed() async {
-    final Uint8List? exceptions = await SecTrust.copyExceptions(_trust);
+    final Uint8List? exceptions = await _proxy.copyExceptionsSecTrust(_trust);
     if (exceptions != null) {
-      await SecTrust.setExceptions(_trust, exceptions);
+      await _proxy.setExceptionsSecTrust(_trust, exceptions);
     }
     _onResponse(
       UrlSessionAuthChallengeDisposition.useCredential,

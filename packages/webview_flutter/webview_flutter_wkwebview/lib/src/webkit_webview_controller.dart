@@ -1296,7 +1296,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
 
               try {
                 final bool trusted =
-                    await SecTrust.evaluateWithError(serverTrust);
+                    await proxy.evaluateWithErrorSecTrust(serverTrust);
                 if (!trusted) {
                   throw StateError(
                     'Expected to throw an exception when evaluation fails.',
@@ -1304,10 +1304,10 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 }
               } on PlatformException catch (exception) {
                 final DartSecTrustResultType result =
-                    (await SecTrust.getTrustResult(serverTrust)).result;
+                    (await proxy.getTrustResultSecTrust(serverTrust)).result;
                 if (result == DartSecTrustResultType.recoverableTrustFailure) {
                   final List<SecCertificate> certificates =
-                      (await SecTrust.copyCertificateChain(serverTrust)) ??
+                      (await proxy.copyCertificateChainSecTrust(serverTrust)) ??
                           <SecCertificate>[];
 
                   final SecCertificate? leafCertificate =
@@ -1316,7 +1316,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                     WebKitSslAuthError(
                       certificate: leafCertificate != null
                           ? X509Certificate(
-                              data: await SecCertificate.copyData(
+                              data: await proxy.copyDataSecCertificate(
                                 leafCertificate,
                               ),
                             )
@@ -1325,6 +1325,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                       trust: serverTrust,
                       host: protectionSpace.host,
                       port: protectionSpace.port,
+                      proxy: proxy,
                       onResponse: (
                         UrlSessionAuthChallengeDisposition disposition,
                         Map<String, Object?>? credentialMap,
