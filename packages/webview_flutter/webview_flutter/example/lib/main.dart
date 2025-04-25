@@ -199,8 +199,7 @@ Page resource error:
     if (controller.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
       (controller.platform as AndroidWebViewController)
-        ..setUseWideViewPort(false)
-        ..setMediaPlaybackRequiresUserGesture(false);
+          .setMediaPlaybackRequiresUserGesture(false);
     }
     // #enddocregion platform_features
 
