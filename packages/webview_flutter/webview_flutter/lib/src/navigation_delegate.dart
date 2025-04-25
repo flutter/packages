@@ -204,7 +204,7 @@ class NavigationDelegate {
 ///
 /// The host application must call [cancel] or, contrary to secure web
 /// communication standards, [proceed] to provide the web view's response to the
-/// request.
+/// error.
 ///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current
