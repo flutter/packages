@@ -165,8 +165,8 @@ class NavigationDelegate {
     }
     if (onSslAuthError != null) {
       platform.setOnSSlAuthError(
-        (PlatformSslAuthError request) {
-          onSslAuthError(SslAuthError._fromPlatform(request));
+        (PlatformSslAuthError error) {
+          onSslAuthError(SslAuthError._fromPlatform(error));
         },
       );
     }

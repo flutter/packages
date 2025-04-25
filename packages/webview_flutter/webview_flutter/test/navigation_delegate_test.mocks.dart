@@ -211,4 +211,14 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setOnSSlAuthError(
+    _i3.SslAuthErrorCallback? onSslAuthError,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(#setOnSSlAuthError, [onSslAuthError]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
