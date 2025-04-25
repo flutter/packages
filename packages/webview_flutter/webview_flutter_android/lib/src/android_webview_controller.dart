@@ -86,7 +86,7 @@ class AndroidWebViewController extends PlatformWebViewController {
     _webView.settings.setJavaScriptCanOpenWindowsAutomatically(true);
     _webView.settings.setSupportMultipleWindows(true);
     _webView.settings.setLoadWithOverviewMode(true);
-    _webView.settings.setUseWideViewPort(true);
+    _webView.settings.setUseWideViewPort(false);
     _webView.settings.setDisplayZoomControls(false);
     _webView.settings.setBuiltInZoomControls(true);
 
@@ -598,6 +598,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// The default is 100.
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
+
+  /// Sets whether the WebView should enable support for the "viewport" HTML
+  /// meta tag or should use a wide viewport.
+  ///
+  /// The default is false.
+  Future<void> setUseWideViewPort(bool use) =>
+      _webView.settings.setUseWideViewPort(use);
 
   /// Enables or disables content URL access.
   ///
