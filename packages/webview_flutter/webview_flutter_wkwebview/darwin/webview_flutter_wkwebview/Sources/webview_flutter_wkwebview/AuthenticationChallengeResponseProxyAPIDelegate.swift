@@ -33,9 +33,16 @@ class AuthenticationChallengeResponseProxyAPIDelegate:
 
     return AuthenticationChallengeResponse(disposition: nativeDisposition, credential: credential)
   }
-  
-  func createAsync(pigeonApi: PigeonApiAuthenticationChallengeResponse, disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential?, completion: @escaping (Result<AuthenticationChallengeResponse, any Error>) -> Void) {
-    completion(Result.success(try! pigeonDefaultConstructor(pigeonApi: pigeonApi, disposition: disposition, credential: credential)))
+
+  func createAsync(
+    pigeonApi: PigeonApiAuthenticationChallengeResponse,
+    disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential?,
+    completion: @escaping (Result<AuthenticationChallengeResponse, any Error>) -> Void
+  ) {
+    completion(
+      Result.success(
+        try! pigeonDefaultConstructor(
+          pigeonApi: pigeonApi, disposition: disposition, credential: credential)))
   }
 
   func disposition(
