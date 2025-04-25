@@ -199,6 +199,10 @@ Page resource error:
           })
           ..setOnHttpAuthRequest((HttpAuthRequest request) {
             openDialog(request);
+          })
+          ..setOnSSlAuthError((PlatformSslAuthError error) {
+            debugPrint('SSL error from ${(error as WebKitSslAuthError).host}');
+            error.proceed();
           }),
       )
       ..addJavaScriptChannel(JavaScriptChannelParams(
@@ -475,7 +479,7 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _loadFlutterDev() {
     return webViewController.loadRequest(LoadRequestParams(
-      uri: Uri.parse('https://flutter.dev'),
+      uri: Uri.parse('https://expired.badssl.com/'),
     ));
   }
 

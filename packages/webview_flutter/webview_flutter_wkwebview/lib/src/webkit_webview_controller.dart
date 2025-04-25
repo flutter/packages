@@ -1242,8 +1242,8 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           final WebKitProxy proxy =
               (delegate.params as WebKitNavigationDelegateCreationParams)
                   .webKitProxy;
-          final Completer<List<Object?>> responseCompleter =
-              Completer<List<Object?>>();
+          final Completer<AuthenticationChallengeResponse> responseCompleter =
+              Completer<AuthenticationChallengeResponse>();
 
           switch (protectionSpace.authenticationMethod) {
             case NSUrlAuthenticationMethod.httpBasic:
@@ -1255,25 +1255,25 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                   HttpAuthRequest(
                     host: protectionSpace.host,
                     realm: protectionSpace.realm,
-                    onProceed: (WebViewCredential credential) {
+                    onProceed: (WebViewCredential credential) async {
                       responseCompleter.complete(
-                        <Object?>[
+                        await AuthenticationChallengeResponse.createAsync(
                           UrlSessionAuthChallengeDisposition.useCredential,
-                          <String, Object?>{
-                            'user': credential.user,
-                            'password': credential.password,
-                            'persistence': UrlCredentialPersistence.forSession,
-                          },
-                        ],
+                          await URLCredential.withUserAsync(
+                            credential.user,
+                            credential.password,
+                            UrlCredentialPersistence.forSession,
+                          ),
+                        ),
                       );
                     },
-                    onCancel: () {
+                    onCancel: () async {
                       responseCompleter.complete(
-                        <Object?>[
+                        await AuthenticationChallengeResponse.createAsync(
                           UrlSessionAuthChallengeDisposition
                               .cancelAuthenticationChallenge,
                           null,
-                        ],
+                        ),
                       );
                     },
                   ),
@@ -1328,10 +1328,13 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                       proxy: proxy,
                       onResponse: (
                         UrlSessionAuthChallengeDisposition disposition,
-                        Map<String, Object?>? credentialMap,
-                      ) {
+                        URLCredential? credential,
+                      ) async {
                         responseCompleter.complete(
-                          <Object?>[disposition, credentialMap],
+                          await AuthenticationChallengeResponse.createAsync(
+                            disposition,
+                            credential,
+                          ),
                         );
                       },
                     ),
@@ -1343,10 +1346,10 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
           }
         }
 
-        return <Object?>[
+        return AuthenticationChallengeResponse.createAsync(
           UrlSessionAuthChallengeDisposition.performDefaultHandling,
           null,
-        ];
+        );
       },
     );
   }

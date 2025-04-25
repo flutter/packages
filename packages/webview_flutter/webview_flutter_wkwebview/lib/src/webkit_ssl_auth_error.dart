@@ -19,9 +19,9 @@ class WebKitSslAuthError extends PlatformSslAuthError {
     required this.host,
     required this.port,
     required WebKitProxy proxy,
-    required void Function(
+    required Future<void> Function(
       UrlSessionAuthChallengeDisposition disposition,
-      Map<String, Object?>? credentialMap,
+      URLCredential? credential,
     ) onResponse,
   })  : _trust = trust,
         _proxy = proxy,
@@ -30,9 +30,9 @@ class WebKitSslAuthError extends PlatformSslAuthError {
   final SecTrust _trust;
   final WebKitProxy _proxy;
 
-  final void Function(
+  final Future<void> Function(
     UrlSessionAuthChallengeDisposition disposition,
-    Map<String, Object?>? credentialMap,
+    URLCredential? credential,
   ) _onResponse;
 
   /// The host portion of the url associated with the error.
@@ -43,7 +43,7 @@ class WebKitSslAuthError extends PlatformSslAuthError {
 
   @override
   Future<void> cancel() async {
-    _onResponse(
+    await _onResponse(
       UrlSessionAuthChallengeDisposition.cancelAuthenticationChallenge,
       null,
     );
@@ -55,9 +55,10 @@ class WebKitSslAuthError extends PlatformSslAuthError {
     if (exceptions != null) {
       await _proxy.setExceptionsSecTrust(_trust, exceptions);
     }
-    _onResponse(
+
+    await _onResponse(
       UrlSessionAuthChallengeDisposition.useCredential,
-      <String, Object?>{'serverTrust': _trust},
+      await _proxy.serverTrustAsyncURLCredential(_trust),
     );
   }
 }

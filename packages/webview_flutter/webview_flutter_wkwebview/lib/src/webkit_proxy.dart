@@ -31,6 +31,10 @@ class WebKitProxy {
     this.newPlatformWebView = PlatformWebView.new,
     this.newWKUIDelegate = WKUIDelegate.new,
     this.newUIScrollViewDelegate = UIScrollViewDelegate.new,
+    this.createAsyncAuthenticationChallengeResponse =
+        AuthenticationChallengeResponse.createAsync,
+    this.withUserAsyncURLCredential = URLCredential.withUserAsync,
+    this.serverTrustAsyncURLCredential = URLCredential.serverTrustAsync,
     this.withUserURLCredential = URLCredential.withUser,
     this.evaluateWithErrorSecTrust = SecTrust.evaluateWithError,
     this.copyExceptionsSecTrust = SecTrust.copyExceptions,
@@ -110,7 +114,7 @@ class WebKitProxy {
       WKNavigationDelegate,
       WKWebView,
     )? webViewWebContentProcessDidTerminate,
-    required Future<List<Object?>> Function(
+    required Future<AuthenticationChallengeResponse> Function(
       WKNavigationDelegate,
       WKWebView,
       URLAuthenticationChallenge,
@@ -182,6 +186,22 @@ class WebKitProxy {
       double,
     )? scrollViewDidScroll,
   }) newUIScrollViewDelegate;
+
+  /// Calls to [AuthenticationChallengeResponse.createAsync].
+  final Future<AuthenticationChallengeResponse> Function(
+    UrlSessionAuthChallengeDisposition disposition,
+    URLCredential? credential,
+  ) createAsyncAuthenticationChallengeResponse;
+
+  /// Calls to [URLCredential.withUserAsync].
+  final Future<URLCredential> Function(
+    String,
+    String,
+    UrlCredentialPersistence,
+  ) withUserAsyncURLCredential;
+
+  /// Calls to [URLCredential.serverTrustAsync].
+  final Future<URLCredential> Function(SecTrust) serverTrustAsyncURLCredential;
 
   /// Constructs [URLCredential].
   final URLCredential Function({
