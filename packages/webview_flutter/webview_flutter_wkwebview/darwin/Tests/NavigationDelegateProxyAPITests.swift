@@ -217,7 +217,7 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   }
 
   func didReceiveAuthenticationChallenge(
-    pigeonInstance pigeonInstanceArg: any WKNavigationDelegate, webView webViewArg: WKWebView,
+    pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     challenge challengeArg: URLAuthenticationChallenge,
     completion: @escaping (
       Result<
