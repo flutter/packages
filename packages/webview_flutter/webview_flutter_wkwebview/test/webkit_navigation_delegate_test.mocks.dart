@@ -27,29 +27,29 @@ import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart' as _i2;
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
   _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeURLProtectionSpace_1 extends _i1.SmartFake
     implements _i2.URLProtectionSpace {
   _FakeURLProtectionSpace_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeURLAuthenticationChallenge_2 extends _i1.SmartFake
     implements _i2.URLAuthenticationChallenge {
   _FakeURLAuthenticationChallenge_2(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeURLRequest_3 extends _i1.SmartFake implements _i2.URLRequest {
   _FakeURLRequest_3(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 class _FakeURL_4 extends _i1.SmartFake implements _i2.URL {
   _FakeURL_4(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
+      : super(parent, parentInvocation);
 }
 
 /// A class which mocks [URLAuthenticationChallenge].
@@ -62,39 +62,34 @@ class MockURLAuthenticationChallenge extends _i1.Mock
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_0(
-              this,
-              Invocation.getter(#pigeon_instanceManager),
-            ),
-          )
-          as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
 
   @override
   _i3.Future<_i2.URLProtectionSpace> getProtectionSpace() =>
       (super.noSuchMethod(
+        Invocation.method(#getProtectionSpace, []),
+        returnValue: _i3.Future<_i2.URLProtectionSpace>.value(
+          _FakeURLProtectionSpace_1(
+            this,
             Invocation.method(#getProtectionSpace, []),
-            returnValue: _i3.Future<_i2.URLProtectionSpace>.value(
-              _FakeURLProtectionSpace_1(
-                this,
-                Invocation.method(#getProtectionSpace, []),
-              ),
-            ),
-          )
-          as _i3.Future<_i2.URLProtectionSpace>);
+          ),
+        ),
+      ) as _i3.Future<_i2.URLProtectionSpace>);
 
   @override
-  _i2.URLAuthenticationChallenge pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeURLAuthenticationChallenge_2(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
-          )
-          as _i2.URLAuthenticationChallenge);
+  _i2.URLAuthenticationChallenge pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(#pigeon_copy, []),
+        returnValue: _FakeURLAuthenticationChallenge_2(
+          this,
+          Invocation.method(#pigeon_copy, []),
+        ),
+      ) as _i2.URLAuthenticationChallenge);
 
   @override
   _i3.Future<void> addObserver(
@@ -103,20 +98,18 @@ class MockURLAuthenticationChallenge extends _i1.Mock
     List<_i2.KeyValueObservingOptions>? options,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#addObserver, [observer, keyPath, options]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#addObserver, [observer, keyPath, options]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
       (super.noSuchMethod(
-            Invocation.method(#removeObserver, [observer, keyPath]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#removeObserver, [observer, keyPath]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }
 
 /// A class which mocks [URLProtectionSpace].
@@ -129,46 +122,38 @@ class MockURLProtectionSpace extends _i1.Mock
   }
 
   @override
-  String get host =>
-      (super.noSuchMethod(
-            Invocation.getter(#host),
-            returnValue: _i4.dummyValue<String>(this, Invocation.getter(#host)),
-          )
-          as String);
+  String get host => (super.noSuchMethod(
+        Invocation.getter(#host),
+        returnValue: _i4.dummyValue<String>(this, Invocation.getter(#host)),
+      ) as String);
 
   @override
   int get port =>
       (super.noSuchMethod(Invocation.getter(#port), returnValue: 0) as int);
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_0(
-              this,
-              Invocation.getter(#pigeon_instanceManager),
-            ),
-          )
-          as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<_i2.SecTrust?> getServerTrust() =>
-      (super.noSuchMethod(
-            Invocation.method(#getServerTrust, []),
-            returnValue: _i3.Future<_i2.SecTrust?>.value(),
-          )
-          as _i3.Future<_i2.SecTrust?>);
+  _i3.Future<_i2.SecTrust?> getServerTrust() => (super.noSuchMethod(
+        Invocation.method(#getServerTrust, []),
+        returnValue: _i3.Future<_i2.SecTrust?>.value(),
+      ) as _i3.Future<_i2.SecTrust?>);
 
   @override
-  _i2.URLProtectionSpace pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeURLProtectionSpace_1(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
-          )
-          as _i2.URLProtectionSpace);
+  _i2.URLProtectionSpace pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(#pigeon_copy, []),
+        returnValue: _FakeURLProtectionSpace_1(
+          this,
+          Invocation.method(#pigeon_copy, []),
+        ),
+      ) as _i2.URLProtectionSpace);
 
   @override
   _i3.Future<void> addObserver(
@@ -177,20 +162,18 @@ class MockURLProtectionSpace extends _i1.Mock
     List<_i2.KeyValueObservingOptions>? options,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#addObserver, [observer, keyPath, options]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#addObserver, [observer, keyPath, options]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
       (super.noSuchMethod(
-            Invocation.method(#removeObserver, [observer, keyPath]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#removeObserver, [observer, keyPath]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }
 
 /// A class which mocks [URLRequest].
@@ -202,85 +185,69 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_0(
-              this,
-              Invocation.getter(#pigeon_instanceManager),
-            ),
-          )
-          as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<String?> getUrl() =>
-      (super.noSuchMethod(
-            Invocation.method(#getUrl, []),
-            returnValue: _i3.Future<String?>.value(),
-          )
-          as _i3.Future<String?>);
+  _i3.Future<String?> getUrl() => (super.noSuchMethod(
+        Invocation.method(#getUrl, []),
+        returnValue: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
 
   @override
-  _i3.Future<void> setHttpMethod(String? method) =>
-      (super.noSuchMethod(
-            Invocation.method(#setHttpMethod, [method]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> setHttpMethod(String? method) => (super.noSuchMethod(
+        Invocation.method(#setHttpMethod, [method]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i3.Future<String?> getHttpMethod() =>
-      (super.noSuchMethod(
-            Invocation.method(#getHttpMethod, []),
-            returnValue: _i3.Future<String?>.value(),
-          )
-          as _i3.Future<String?>);
+  _i3.Future<String?> getHttpMethod() => (super.noSuchMethod(
+        Invocation.method(#getHttpMethod, []),
+        returnValue: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
 
   @override
-  _i3.Future<void> setHttpBody(_i5.Uint8List? body) =>
-      (super.noSuchMethod(
-            Invocation.method(#setHttpBody, [body]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+  _i3.Future<void> setHttpBody(_i5.Uint8List? body) => (super.noSuchMethod(
+        Invocation.method(#setHttpBody, [body]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
-  _i3.Future<_i5.Uint8List?> getHttpBody() =>
-      (super.noSuchMethod(
-            Invocation.method(#getHttpBody, []),
-            returnValue: _i3.Future<_i5.Uint8List?>.value(),
-          )
-          as _i3.Future<_i5.Uint8List?>);
+  _i3.Future<_i5.Uint8List?> getHttpBody() => (super.noSuchMethod(
+        Invocation.method(#getHttpBody, []),
+        returnValue: _i3.Future<_i5.Uint8List?>.value(),
+      ) as _i3.Future<_i5.Uint8List?>);
 
   @override
   _i3.Future<void> setAllHttpHeaderFields(Map<String, String>? fields) =>
       (super.noSuchMethod(
-            Invocation.method(#setAllHttpHeaderFields, [fields]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#setAllHttpHeaderFields, [fields]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<Map<String, String>?> getAllHttpHeaderFields() =>
       (super.noSuchMethod(
-            Invocation.method(#getAllHttpHeaderFields, []),
-            returnValue: _i3.Future<Map<String, String>?>.value(),
-          )
-          as _i3.Future<Map<String, String>?>);
+        Invocation.method(#getAllHttpHeaderFields, []),
+        returnValue: _i3.Future<Map<String, String>?>.value(),
+      ) as _i3.Future<Map<String, String>?>);
 
   @override
-  _i2.URLRequest pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeURLRequest_3(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
-          )
-          as _i2.URLRequest);
+  _i2.URLRequest pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(#pigeon_copy, []),
+        returnValue: _FakeURLRequest_3(
+          this,
+          Invocation.method(#pigeon_copy, []),
+        ),
+      ) as _i2.URLRequest);
 
   @override
   _i3.Future<void> addObserver(
@@ -289,20 +256,18 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
     List<_i2.KeyValueObservingOptions>? options,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#addObserver, [observer, keyPath, options]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#addObserver, [observer, keyPath, options]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
       (super.noSuchMethod(
-            Invocation.method(#removeObserver, [observer, keyPath]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#removeObserver, [observer, keyPath]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }
 
 /// A class which mocks [URL].
@@ -314,36 +279,30 @@ class MockURL extends _i1.Mock implements _i2.URL {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#pigeon_instanceManager),
-            returnValue: _FakePigeonInstanceManager_0(
-              this,
-              Invocation.getter(#pigeon_instanceManager),
-            ),
-          )
-          as _i2.PigeonInstanceManager);
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<String> getAbsoluteString() =>
-      (super.noSuchMethod(
+  _i3.Future<String> getAbsoluteString() => (super.noSuchMethod(
+        Invocation.method(#getAbsoluteString, []),
+        returnValue: _i3.Future<String>.value(
+          _i4.dummyValue<String>(
+            this,
             Invocation.method(#getAbsoluteString, []),
-            returnValue: _i3.Future<String>.value(
-              _i4.dummyValue<String>(
-                this,
-                Invocation.method(#getAbsoluteString, []),
-              ),
-            ),
-          )
-          as _i3.Future<String>);
+          ),
+        ),
+      ) as _i3.Future<String>);
 
   @override
-  _i2.URL pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeURL_4(this, Invocation.method(#pigeon_copy, [])),
-          )
-          as _i2.URL);
+  _i2.URL pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(#pigeon_copy, []),
+        returnValue: _FakeURL_4(this, Invocation.method(#pigeon_copy, [])),
+      ) as _i2.URL);
 
   @override
   _i3.Future<void> addObserver(
@@ -352,18 +311,16 @@ class MockURL extends _i1.Mock implements _i2.URL {
     List<_i2.KeyValueObservingOptions>? options,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#addObserver, [observer, keyPath, options]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#addObserver, [observer, keyPath, options]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
       (super.noSuchMethod(
-            Invocation.method(#removeObserver, [observer, keyPath]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
-          )
-          as _i3.Future<void>);
+        Invocation.method(#removeObserver, [observer, keyPath]),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 }
