@@ -547,6 +547,10 @@ abstract class HTTPCookie extends NSObject {
 /// values. The wrapper returns this class instead to handle this scenario.
 @ProxyApi()
 abstract class AuthenticationChallengeResponse {
+  /// Creates an [AuthenticationChallengeResponse].
+  ///
+  /// Due to https://github.com/flutter/flutter/issues/162437, this should only
+  /// be used for testing.
   AuthenticationChallengeResponse();
 
   /// Creates an [AuthenticationChallengeResponse]

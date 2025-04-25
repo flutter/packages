@@ -1257,9 +1257,9 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                     realm: protectionSpace.realm,
                     onProceed: (WebViewCredential credential) async {
                       responseCompleter.complete(
-                        await AuthenticationChallengeResponse.createAsync(
+                        await proxy.createAsyncAuthenticationChallengeResponse(
                           UrlSessionAuthChallengeDisposition.useCredential,
-                          await URLCredential.withUserAsync(
+                          await proxy.withUserAsyncURLCredential(
                             credential.user,
                             credential.password,
                             UrlCredentialPersistence.forSession,
@@ -1269,7 +1269,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                     },
                     onCancel: () async {
                       responseCompleter.complete(
-                        await AuthenticationChallengeResponse.createAsync(
+                        await proxy.createAsyncAuthenticationChallengeResponse(
                           UrlSessionAuthChallengeDisposition
                               .cancelAuthenticationChallenge,
                           null,
@@ -1331,7 +1331,8 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                         URLCredential? credential,
                       ) async {
                         responseCompleter.complete(
-                          await AuthenticationChallengeResponse.createAsync(
+                          await proxy
+                              .createAsyncAuthenticationChallengeResponse(
                             disposition,
                             credential,
                           ),

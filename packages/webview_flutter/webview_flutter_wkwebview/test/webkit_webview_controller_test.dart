@@ -1923,10 +1923,10 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
       return NavigationResponsePolicy.cancel;
     },
     didReceiveAuthenticationChallenge: (_, __, ___) async {
-      return <Object?>[
-        UrlSessionAuthChallengeDisposition.performDefaultHandling,
-        null,
-      ];
+      return AuthenticationChallengeResponse.pigeon_detached(
+        disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
+        pigeon_instanceManager: TestInstanceManager(),
+      );
     },
   );
 }
