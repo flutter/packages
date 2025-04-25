@@ -1576,6 +1576,22 @@ void main() {
     verify(mockSettings.setMediaPlaybackRequiresUserGesture(true)).called(1);
   });
 
+  test('setUseWideViewPort', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setUseWideViewPort(true);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setUseWideViewPort(true)).called(1);
+  });
+
   test('setAllowContentAccess', () async {
     final MockWebView mockWebView = MockWebView();
     final MockWebSettings mockSettings = MockWebSettings();
