@@ -516,11 +516,12 @@ void main() {
 
           controller.init();
 
-          final gmaps.LatLngBoundsOrLatLngBoundsLiteral capturedBounds =
-              capturedOptions!.restriction!.latLngBounds;
+          final gmaps.LatLngBoundsOrLatLngBoundsLiteral? capturedBounds =
+              capturedOptions?.restriction?.latLngBounds;
 
           expect(capturedOptions, isNotNull);
-          expect(capturedBounds.north, mockLatLngBounds.northeast.latitude);
+          expect(capturedBounds, isNotNull);
+          expect(capturedBounds!.north, mockLatLngBounds.northeast.latitude);
           expect(capturedBounds.south, mockLatLngBounds.southwest.latitude);
           expect(capturedBounds.east, mockLatLngBounds.northeast.longitude);
           expect(capturedBounds.west, mockLatLngBounds.southwest.longitude);
