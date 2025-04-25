@@ -37,6 +37,9 @@ typedef HttpAuthRequestCallback = void Function(HttpAuthRequest request);
 
 /// Signature for callbacks that notify the host application of an SSL
 /// authentication error.
+///
+/// The host application must call either [PlatformSslAuthError.cancel] or
+/// [PlatformSslAuthError.proceed].
 typedef SslAuthErrorCallback = void Function(PlatformSslAuthError error);
 
 /// An interface defining navigation events that occur on the native platform.

@@ -30,7 +30,7 @@ class URLCredentialProxyAPIDelegate: PigeonApiDelegateURLCredential {
   func withUserAsync(
     pigeonApi: PigeonApiURLCredential, user: String, password: String,
     persistence: UrlCredentialPersistence,
-    completion: @escaping (Result<URLCredential, any Error>) -> Void
+    completion: @escaping (Result<URLCredential, Error>) -> Void
   ) {
     completion(
       Result.success(
@@ -40,7 +40,7 @@ class URLCredentialProxyAPIDelegate: PigeonApiDelegateURLCredential {
 
   func serverTrustAsync(
     pigeonApi: PigeonApiURLCredential, trust: SecTrustWrapper,
-    completion: @escaping (Result<URLCredential, any Error>) -> Void
+    completion: @escaping (Result<URLCredential, Error>) -> Void
   ) {
     completion(Result.success(URLCredential(trust: trust.value)))
   }

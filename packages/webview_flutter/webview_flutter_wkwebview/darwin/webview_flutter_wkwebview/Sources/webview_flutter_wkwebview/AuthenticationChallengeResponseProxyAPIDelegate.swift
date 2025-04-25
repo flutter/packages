@@ -37,7 +37,7 @@ class AuthenticationChallengeResponseProxyAPIDelegate:
   func createAsync(
     pigeonApi: PigeonApiAuthenticationChallengeResponse,
     disposition: UrlSessionAuthChallengeDisposition, credential: URLCredential?,
-    completion: @escaping (Result<AuthenticationChallengeResponse, any Error>) -> Void
+    completion: @escaping (Result<AuthenticationChallengeResponse, Error>) -> Void
   ) {
     completion(
       Result.success(
