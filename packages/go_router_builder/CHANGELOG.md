@@ -1,3 +1,7 @@
+## 2.8.3
+
+- Fixes an deprecated warning for using withNullability
+
 ## 2.8.2
 
 - Fixes an issue when enum params are not required

@@ -68,7 +68,7 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 
   throw InvalidGenerationSourceError(
     'The parameter type '
-    '`${paramType.getDisplayString(withNullability: false)}` is not supported.',
+    '`${paramType.getDisplayString().withoutNullability}` is not supported.',
     element: element,
   );
 }
@@ -111,7 +111,7 @@ String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
     // ignore: avoid_redundant_argument_values
-    return 'extra as ${element.type.getDisplayString(withNullability: true)}';
+    return 'extra as ${element.type.getDisplayString()}';
   }
 
   late String access;
@@ -436,6 +436,17 @@ extension ParameterElementExtension on ParameterElement {
 
   /// Returns `true` if `this` has a name that matches [extraFieldName];
   bool get isExtraField => name == extraFieldName;
+}
+
+/// Extension helpers on [String] for nullability check.
+extension TypeStringExtensions on String {
+  /// Returns `true` if the type string ends with a nullability marker (`?` or `*`)
+  bool get _isNullableType => endsWith('?') || endsWith('*');
+
+  /// Returns the type string without a trailing nullability marker
+  String get withoutNullability {
+    return _isNullableType ? substring(0, length - 1) : this;
+  }
 }
 
 /// An error thrown when a default value is used with a nullable type.
