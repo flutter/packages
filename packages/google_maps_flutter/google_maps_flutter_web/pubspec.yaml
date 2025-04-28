@@ -6,7 +6,7 @@ version: 0.5.12
 
 environment:
   sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  flutter: '>=3.22.0'
 
 flutter:
   plugin:
@@ -26,7 +26,7 @@ dependencies:
   google_maps_flutter_platform_interface: ^2.10.0
   sanitize_html: ^2.0.0
   stream_transform: ^2.0.0
-  web: ">=0.5.1 <2.0.0"
+  web: '>=0.5.1 <2.0.0'
 
 dev_dependencies:
   flutter_test:
@@ -44,4 +44,9 @@ false_secrets:
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
 # See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
 dependency_overrides:
-   {google_maps_flutter_platform_interface: {path: ../../../packages/google_maps_flutter/google_maps_flutter_platform_interface}}
+  {
+    google_maps_flutter_platform_interface:
+      {
+        path: ../../../packages/google_maps_flutter/google_maps_flutter_platform_interface,
+      },
+  }
