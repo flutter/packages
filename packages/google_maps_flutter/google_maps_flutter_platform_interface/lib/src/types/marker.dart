@@ -154,14 +154,17 @@ class Marker implements MapsObject<Marker> {
       'Use zIndexInt instead. '
       'On some platforms zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
     )
-    this.zIndex = 0.0,
-    this.zIndexInt = 0,
+    double zIndex = 0.0,
+    int zIndexInt = 0,
     this.clusterManagerId,
     this.onTap,
     this.onDrag,
     this.onDragStart,
     this.onDragEnd,
-  }) : assert(0.0 <= alpha && alpha <= 1.0);
+  })  : assert(0.0 <= alpha && alpha <= 1.0),
+        assert(zIndex == 0.0 || zIndexInt == 0,
+            'Only one of zIndex and zIndexInt can be provided'),
+        _zIndexNum = zIndexInt == 0 ? zIndex : zIndexInt;
 
   /// Uniquely identifies a [Marker].
   final MarkerId markerId;
@@ -219,23 +222,26 @@ class Marker implements MapsObject<Marker> {
   /// True if the marker is visible.
   final bool visible;
 
-  /// The z-index of the marker, used to determine relative drawing order of
-  /// map overlays.
-  ///
-  /// Overlays are drawn in order of z-index, so that lower values means drawn
-  /// earlier, and thus appearing to be closer to the surface of the Earth.
-  @Deprecated(
-    'Use zIndexInt instead. '
-    'On some platforms zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
-  )
-  final double zIndex;
+  final num _zIndexNum;
 
   /// The z-index of the marker, used to determine relative drawing order of
   /// map overlays.
   ///
   /// Overlays are drawn in order of z-index, so that lower values means drawn
   /// earlier, and thus appearing to be closer to the surface of the Earth.
-  final int zIndexInt;
+  // TODO(stuartmorgan): Make this an int when removing the deprecated double zIndex parameter.
+  @Deprecated(
+    'Use zIndexInt instead. '
+    'On some platforms zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
+  )
+  double get zIndex => _zIndexNum.toDouble();
+
+  /// The z-index of the marker, used to determine relative drawing order of
+  /// map overlays.
+  ///
+  /// Overlays are drawn in order of z-index, so that lower values means drawn
+  /// earlier, and thus appearing to be closer to the surface of the Earth.
+  int get zIndexInt => _zIndexNum.round();
 
   /// Callbacks to receive tap events for markers placed on this map.
   final VoidCallback? onTap;
