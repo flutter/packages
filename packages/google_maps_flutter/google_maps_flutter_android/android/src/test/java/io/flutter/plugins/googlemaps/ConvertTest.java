@@ -60,6 +60,7 @@ public class ConvertTest {
   @Mock private FlutterInjectorWrapper flutterInjectorWrapper;
 
   @Mock private GoogleMapOptionsSink optionsSink;
+  @Mock private MarkerOptionsSink markerOptionsSink;
 
   AutoCloseable mockCloseable;
 
@@ -125,6 +126,26 @@ public class ConvertTest {
     Assert.assertEquals(2, markerIds.size());
     Assert.assertEquals(marker1.markerId(), markerIds.get(0));
     Assert.assertEquals(marker2.markerId(), markerIds.get(1));
+  }
+
+  @Test
+  public void ConvertMarkerFromPigeonReturnsCorrectZIndex() {
+    mockStatic(BitmapDescriptorFactory.class);
+    when(BitmapDescriptorFactory.defaultMarker()).thenReturn(mockBitmapDescriptor);
+
+    double zIndex = 2.0;
+    long zIndexInt = 4;
+
+    float density = 1.0F;
+
+    Messages.PlatformMarker pMarker = createDefaultMarker();
+    pMarker.setZIndex(zIndex);
+    pMarker.setZIndexInt(zIndexInt);
+
+    Convert.interpretMarkerOptions(
+        pMarker, markerOptionsSink, assetManager, density, bitmapDescriptorFactoryWrapper);
+
+    verify(markerOptionsSink).setZIndex(zIndexInt);
   }
 
   @Test
@@ -786,6 +807,38 @@ public class ConvertTest {
         Convert.groundOverlayToPigeon(mockGroundOverlay, overlayId, true);
 
     assertGroundOverlayEquals(result, mockGroundOverlay, overlayId, null, bounds);
+  }
+
+  private Messages.PlatformMarker createDefaultMarker() {
+    Messages.PlatformDoublePair anchor =
+        new Messages.PlatformDoublePair.Builder().setX(0.0).setY(0.0).build();
+
+    Messages.PlatformBitmapDefaultMarker bitmapDefaultMarker =
+        new Messages.PlatformBitmapDefaultMarker();
+    Messages.PlatformBitmap icon =
+        new Messages.PlatformBitmap.Builder().setBitmap(bitmapDefaultMarker).build();
+
+    Messages.PlatformInfoWindow infoWindow =
+        new Messages.PlatformInfoWindow.Builder().setAnchor(anchor).build();
+
+    Messages.PlatformLatLng position =
+        new Messages.PlatformLatLng.Builder().setLatitude(0.0).setLongitude(0.0).build();
+
+    return new Messages.PlatformMarker.Builder()
+        .setAlpha(0.0)
+        .setAnchor(anchor)
+        .setConsumeTapEvents(false)
+        .setDraggable(false)
+        .setFlat(false)
+        .setIcon(icon)
+        .setInfoWindow(infoWindow)
+        .setPosition(position)
+        .setRotation(0.0)
+        .setVisible(false)
+        .setZIndex(0.0)
+        .setZIndexInt(0L)
+        .setMarkerId("default-marker")
+        .build();
   }
 }
 
