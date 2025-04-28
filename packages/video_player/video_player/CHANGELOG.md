@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
+
 ## 2.9.5
 
 * Fixes layout issue caused by `Transform.rotate` not affecting space calculation.

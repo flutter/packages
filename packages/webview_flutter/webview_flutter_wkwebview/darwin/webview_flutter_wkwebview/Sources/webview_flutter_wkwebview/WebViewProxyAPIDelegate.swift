@@ -380,4 +380,17 @@ class WebViewProxyAPIDelegate: PigeonApiDelegateWKWebView, PigeonApiDelegateUIVi
     return try getCustomUserAgent(
       pigeonApi: getUIViewWKWebViewAPI(pigeonApi), pigeonInstance: pigeonInstance)
   }
+
+  func setAllowsLinkPreview(
+    pigeonApi: PigeonApiUIViewWKWebView, pigeonInstance: WKWebView, allow: Bool
+  ) throws {
+    pigeonInstance.allowsLinkPreview = allow
+  }
+
+  func setAllowsLinkPreview(
+    pigeonApi: PigeonApiNSViewWKWebView, pigeonInstance: WKWebView, allow: Bool
+  ) throws {
+    try setAllowsLinkPreview(
+      pigeonApi: getUIViewWKWebViewAPI(pigeonApi), pigeonInstance: pigeonInstance, allow: allow)
+  }
 }

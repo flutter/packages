@@ -13,24 +13,53 @@ import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
-private fun wrapResult(result: Any?): List<Any?> {
-  return listOf(result)
-}
+private object MessagesPigeonUtils {
 
-private fun wrapError(exception: Throwable): List<Any?> {
-  return if (exception is FlutterError) {
-    listOf(exception.code, exception.message, exception.details)
-  } else {
-    listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+  fun createConnectionError(channelName: String): FlutterError {
+    return FlutterError(
+        "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
   }
-}
 
-private fun createConnectionError(channelName: String): FlutterError {
-  return FlutterError(
-      "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+  fun wrapResult(result: Any?): List<Any?> {
+    return listOf(result)
+  }
+
+  fun wrapError(exception: Throwable): List<Any?> {
+    return if (exception is FlutterError) {
+      listOf(exception.code, exception.message, exception.details)
+    } else {
+      listOf(
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+    }
+  }
+
+  fun deepEquals(a: Any?, b: Any?): Boolean {
+    if (a is ByteArray && b is ByteArray) {
+      return a.contentEquals(b)
+    }
+    if (a is IntArray && b is IntArray) {
+      return a.contentEquals(b)
+    }
+    if (a is LongArray && b is LongArray) {
+      return a.contentEquals(b)
+    }
+    if (a is DoubleArray && b is DoubleArray) {
+      return a.contentEquals(b)
+    }
+    if (a is Array<*> && b is Array<*>) {
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
+    }
+    if (a is List<*> && b is List<*>) {
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
+    }
+    if (a is Map<*, *> && b is Map<*, *>) {
+      return a.size == b.size &&
+          a.all { (b as Map<Any?, Any?>).containsKey(it.key) && deepEquals(it.value, b[it.key]) }
+    }
+    return a == b
+  }
 }
 
 /**
@@ -45,34 +74,6 @@ class FlutterError(
     override val message: String? = null,
     val details: Any? = null
 ) : Throwable()
-
-private fun deepEqualsMessages(a: Any?, b: Any?): Boolean {
-  if (a is ByteArray && b is ByteArray) {
-    return a.contentEquals(b)
-  }
-  if (a is IntArray && b is IntArray) {
-    return a.contentEquals(b)
-  }
-  if (a is LongArray && b is LongArray) {
-    return a.contentEquals(b)
-  }
-  if (a is DoubleArray && b is DoubleArray) {
-    return a.contentEquals(b)
-  }
-  if (a is Array<*> && b is Array<*>) {
-    return a.size == b.size && a.indices.all { deepEqualsMessages(a[it], b[it]) }
-  }
-  if (a is List<*> && b is List<*>) {
-    return a.size == b.size && a.indices.all { deepEqualsMessages(a[it], b[it]) }
-  }
-  if (a is Map<*, *> && b is Map<*, *>) {
-    return a.size == b.size &&
-        a.all {
-          (b as Map<Any?, Any?>).containsKey(it.key) && deepEqualsMessages(it.value, b[it.key])
-        }
-  }
-  return a == b
-}
 
 enum class Code(val raw: Int) {
   ONE(0),
@@ -118,7 +119,7 @@ data class MessageData(
     if (this === other) {
       return true
     }
-    return deepEqualsMessages(toList(), other.toList())
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -184,7 +185,7 @@ interface ExampleHostApi {
                 try {
                   listOf(api.getHostLanguage())
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  MessagesPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -207,7 +208,7 @@ interface ExampleHostApi {
                 try {
                   listOf(api.add(aArg, bArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  MessagesPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -228,10 +229,10 @@ interface ExampleHostApi {
             api.sendMessage(messageArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(MessagesPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(MessagesPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -274,7 +275,7 @@ class MessageFlutterApi(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(MessagesPigeonUtils.createConnectionError(channelName)))
       }
     }
   }

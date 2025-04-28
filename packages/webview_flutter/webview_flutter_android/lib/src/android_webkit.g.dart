@@ -521,6 +521,25 @@ enum ConsoleMessageLevel {
   unknown,
 }
 
+/// The over-scroll mode for a view.
+///
+/// See https://developer.android.com/reference/android/view/View#OVER_SCROLL_ALWAYS.
+enum OverScrollMode {
+  /// Always allow a user to over-scroll this view, provided it is a view that
+  /// can scroll.
+  always,
+
+  /// Allow a user to over-scroll this view only if the content is large enough
+  /// to meaningfully scroll, provided it is a view that can scroll.
+  ifContentScrolls,
+
+  /// Never allow a user to over-scroll this view.
+  never,
+
+  /// The type is not recognized by this wrapper.
+  unknown,
+}
+
 /// Type of error for a SslCertificate.
 ///
 /// See https://developer.android.com/reference/android/net/http/SslError#SSL_DATE_INVALID.
@@ -560,8 +579,11 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is ConsoleMessageLevel) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is SslErrorType) {
+    } else if (value is OverScrollMode) {
       buffer.putUint8(131);
+      writeValue(buffer, value.index);
+    } else if (value is SslErrorType) {
+      buffer.putUint8(132);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -578,6 +600,9 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : ConsoleMessageLevel.values[value];
       case 131:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : OverScrollMode.values[value];
+      case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SslErrorType.values[value];
       default:
@@ -6583,6 +6608,36 @@ class View extends PigeonInternalProxyApiBaseClass {
       );
     } else {
       return (pigeonVar_replyList[0] as WebViewPoint?)!;
+    }
+  }
+
+  /// Set the over-scroll mode for this view.
+  Future<void> setOverScrollMode(OverScrollMode mode) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecView;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_android.View.setOverScrollMode';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, mode]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 

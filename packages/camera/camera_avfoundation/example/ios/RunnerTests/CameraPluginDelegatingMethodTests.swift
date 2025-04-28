@@ -6,6 +6,11 @@ import XCTest
 
 @testable import camera_avfoundation
 
+// Import Objectice-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  @testable import camera_avfoundation_objc
+#endif
+
 /// Tests of `CameraPlugin` methods delegating to `FLTCam` instance
 final class CameraPluginDelegatingMethodTests: XCTestCase {
   private func createCameraPlugin() -> (CameraPlugin, MockFLTCam) {

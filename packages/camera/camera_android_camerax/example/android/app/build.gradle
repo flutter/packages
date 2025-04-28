@@ -32,6 +32,11 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
 
+    kotlinOptions {
+        // This must match the Java version provided in compileOptions.
+        jvmTarget = '11'
+    }
+
     defaultConfig {
         applicationId "io.flutter.plugins.cameraxexample"
         minSdkVersion flutter.minSdkVersion
