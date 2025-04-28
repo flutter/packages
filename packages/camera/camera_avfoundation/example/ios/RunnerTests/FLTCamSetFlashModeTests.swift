@@ -19,7 +19,7 @@ final class FLTCamSetFlashModeTests: XCTestCase {
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureDeviceFactory = { _ in mockDevice }
-    let camera = FLTCam(configuration: configuration, error: nil)
+    let camera = CameraTestUtils.createTestCamera(configuration)
     camera.capturePhotoOutput = mockCapturePhotoOutput
 
     return (camera, mockDevice, mockCapturePhotoOutput)

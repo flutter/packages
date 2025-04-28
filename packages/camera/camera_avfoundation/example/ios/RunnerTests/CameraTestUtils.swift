@@ -80,10 +80,20 @@ enum CameraTestUtils {
     return configuration
   }
 
-  static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue) -> FLTCam {
+  static func createTestCamera(_ configuration: FLTCamConfiguration) -> FLTCam {
+    return FLTCam(configuration: configuration, error: nil)
+  }
+
+  static func createTestCamera() -> FLTCam {
+    return CameraTestUtils.createTestCamera(CameraTestUtils.createTestCameraConfiguration())
+  }
+
+  static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue)
+    -> FLTCam
+  {
     let configuration = createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    return FLTCam(configuration: configuration, error: nil)
+    return CameraTestUtils.createTestCamera(configuration)
   }
 
   /// Creates a test sample buffer.
@@ -116,7 +126,7 @@ enum CameraTestUtils {
 
   /// Creates a test audio sample buffer.
   /// @return a test audio sample buffer.
-  static func createTestAudioSampleBuffer() -> CMSampleBuffer? {
+  static func createTestAudioSampleBuffer() -> CMSampleBuffer {
     var blockBuffer: CMBlockBuffer?
     CMBlockBufferCreateWithMemoryBlock(
       allocator: kCFAllocatorDefault,
@@ -128,8 +138,6 @@ enum CameraTestUtils {
       dataLength: 100,
       flags: kCMBlockBufferAssureMemoryNowFlag,
       blockBufferOut: &blockBuffer)
-
-    guard let blockBuffer = blockBuffer else { return nil }
 
     var formatDescription: CMFormatDescription?
     var basicDescription = AudioStreamBasicDescription(
@@ -156,13 +164,13 @@ enum CameraTestUtils {
     var sampleBuffer: CMSampleBuffer?
     CMAudioSampleBufferCreateReadyWithPacketDescriptions(
       allocator: kCFAllocatorDefault,
-      dataBuffer: blockBuffer,
+      dataBuffer: blockBuffer!,
       formatDescription: formatDescription!,
       sampleCount: 1,
       presentationTimeStamp: .zero,
       packetDescriptions: nil,
       sampleBufferOut: &sampleBuffer)
 
-    return sampleBuffer
+    return sampleBuffer!
   }
 }

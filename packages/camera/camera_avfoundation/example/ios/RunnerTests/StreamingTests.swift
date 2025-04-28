@@ -37,7 +37,7 @@ final class StreamingTests: XCTestCase {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
 
-    let camera = FLTCam(configuration: configuration, error: nil)
+    let camera = CameraTestUtils.createTestCamera(configuration)
     let sampleBuffer = CameraTestUtils.createTestSampleBuffer()
 
     return (camera, sampleBuffer)
