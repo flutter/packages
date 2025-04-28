@@ -200,6 +200,7 @@ public class ClusterManagersControllerTest {
         .setVisible(true)
         .setRotation(0.0)
         .setZIndex(0.0)
+        .setZIndexInt(0L)
         .setPosition(
             new Messages.PlatformLatLng.Builder()
                 .setLatitude(location.get(0))

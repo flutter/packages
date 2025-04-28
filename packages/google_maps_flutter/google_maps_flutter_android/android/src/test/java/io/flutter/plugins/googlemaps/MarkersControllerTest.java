@@ -79,6 +79,7 @@ public class MarkersControllerTest {
         .setAlpha(1.0)
         .setRotation(0.0)
         .setZIndex(0.0)
+        .setZIndexInt(0L)
         .setConsumeTapEvents(false)
         .setIcon(icon)
         .setInfoWindow(infoWindow);
