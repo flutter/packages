@@ -30,7 +30,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^22.6.0
+  pigeon: ^22.7.4
   plugin_platform_interface: ^2.1.7
 
 topics:
@@ -41,4 +41,9 @@ topics:
 # FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
 # See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
 dependency_overrides:
-   {google_maps_flutter_platform_interface: {path: ../../../packages/google_maps_flutter/google_maps_flutter_platform_interface}}
+  {
+    google_maps_flutter_platform_interface:
+      {
+        path: ../../../packages/google_maps_flutter/google_maps_flutter_platform_interface,
+      },
+  }

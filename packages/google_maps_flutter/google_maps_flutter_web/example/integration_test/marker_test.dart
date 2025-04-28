@@ -212,7 +212,6 @@ void main() {
       final gmaps.Marker newGmMarker = gmaps.Marker();
       const Marker marker = Marker(
         markerId: MarkerId('1'),
-        zIndex: 2.0,
         zIndexInt: 4,
       );
 

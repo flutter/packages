@@ -793,7 +793,6 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       rotation: marker.rotation,
       visible: marker.visible,
       zIndex: marker.zIndex,
-      zIndexInt: marker.zIndexInt,
       markerId: marker.markerId.value,
       clusterManagerId: marker.clusterManagerId?.value,
     );

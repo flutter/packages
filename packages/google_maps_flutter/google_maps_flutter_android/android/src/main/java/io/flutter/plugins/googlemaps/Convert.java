@@ -601,15 +601,7 @@ class Convert {
     sink.setPosition(toLatLng(marker.getPosition().toList()));
     sink.setRotation(marker.getRotation().floatValue());
     sink.setVisible(marker.getVisible());
-
-    // We compare with zero because zIndexInt if non zero should get higher priority than zIndex
-    int zIndexInt = marker.getZIndexInt().intValue();
-    float zIndex = marker.getZIndex().floatValue();
-    if (zIndexInt != 0) {
-      sink.setZIndex(zIndexInt);
-    } else {
-      sink.setZIndex(zIndex);
-    }
+    sink.setZIndex(marker.getZIndex().floatValue());
   }
 
   private static void interpretInfoWindowOptions(

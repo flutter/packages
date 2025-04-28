@@ -2009,8 +2009,8 @@ Marker _copyMarkerWithClusterManagerId(
     position: marker.position,
     rotation: marker.rotation,
     visible: marker.visible,
+    // The deprecated parameter is used here to avoid losing precision.
     zIndex: marker.zIndex,
-    zIndexInt: marker.zIndexInt,
     onTap: marker.onTap,
     onDragStart: marker.onDragStart,
     onDrag: marker.onDrag,
