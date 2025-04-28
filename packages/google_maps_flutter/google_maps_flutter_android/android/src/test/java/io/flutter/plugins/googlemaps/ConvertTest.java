@@ -46,6 +46,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
@@ -130,22 +131,24 @@ public class ConvertTest {
 
   @Test
   public void ConvertMarkerFromPigeonReturnsCorrectZIndex() {
-    mockStatic(BitmapDescriptorFactory.class);
-    when(BitmapDescriptorFactory.defaultMarker()).thenReturn(mockBitmapDescriptor);
+    try (MockedStatic<BitmapDescriptorFactory> mockedStatic =
+        mockStatic(BitmapDescriptorFactory.class)) {
+      mockedStatic.when(BitmapDescriptorFactory::defaultMarker).thenReturn(mockBitmapDescriptor);
 
-    double zIndex = 2.0;
-    long zIndexInt = 4;
+      double zIndex = 2.0;
+      long zIndexInt = 4;
 
-    float density = 1.0F;
+      float density = 1.0F;
 
-    Messages.PlatformMarker pMarker = createDefaultMarker();
-    pMarker.setZIndex(zIndex);
-    pMarker.setZIndexInt(zIndexInt);
+      Messages.PlatformMarker pMarker = createDefaultMarker();
+      pMarker.setZIndex(zIndex);
+      pMarker.setZIndexInt(zIndexInt);
 
-    Convert.interpretMarkerOptions(
-        pMarker, markerOptionsSink, assetManager, density, bitmapDescriptorFactoryWrapper);
+      Convert.interpretMarkerOptions(
+          pMarker, markerOptionsSink, assetManager, density, bitmapDescriptorFactoryWrapper);
 
-    verify(markerOptionsSink).setZIndex(zIndexInt);
+      verify(markerOptionsSink).setZIndex(zIndexInt);
+    }
   }
 
   @Test
