@@ -33,7 +33,7 @@ private class MockImageStreamHandler: FLTImageStreamHandler {
 
 final class StreamingTests: XCTestCase {
   private func createCamera() -> (
-    FLTCam,
+    DefaultCamera,
     AVCaptureOutput,
     CMSampleBuffer,
     AVCaptureConnection
