@@ -183,6 +183,7 @@ class PlatformMarker {
     this.rotation = 0.0,
     this.visible = true,
     this.zIndex = 0.0,
+    this.zIndexInt = 0,
     this.clusterManagerId,
   });
 
@@ -198,6 +199,7 @@ class PlatformMarker {
   final double rotation;
   final bool visible;
   final double zIndex;
+  final int zIndexInt;
   final String markerId;
   final String? clusterManagerId;
 }
