@@ -135,7 +135,7 @@ class Marker implements MapsObject<Marker> {
   /// * is positioned at 0, 0; [position] is `LatLng(0.0, 0.0)`
   /// * has an axis-aligned icon; [rotation] is 0.0
   /// * is visible; [visible] is true
-  /// * is placed at the base of the drawing order; [zIndexInt] is 0.0
+  /// * is placed at the base of the drawing order; [zIndexInt] is 0
   /// * reports [onTap] events
   /// * reports [onDragEnd] events
   const Marker({
@@ -152,7 +152,7 @@ class Marker implements MapsObject<Marker> {
     this.visible = true,
     @Deprecated(
       'Use zIndexInt instead. '
-      'On iOS zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
+      'On some platforms zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
     )
     this.zIndex = 0.0,
     this.zIndexInt = 0,
@@ -226,7 +226,7 @@ class Marker implements MapsObject<Marker> {
   /// earlier, and thus appearing to be closer to the surface of the Earth.
   @Deprecated(
     'Use zIndexInt instead. '
-    'On iOS zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
+    'On some platforms zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
   )
   final double zIndex;
 
@@ -264,7 +264,7 @@ class Marker implements MapsObject<Marker> {
     bool? visibleParam,
     @Deprecated(
       'Use zIndexIntParam instead. '
-      'On iOS zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
+      'On some platforms zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
     )
     double? zIndexParam,
     int? zIndexIntParam,
