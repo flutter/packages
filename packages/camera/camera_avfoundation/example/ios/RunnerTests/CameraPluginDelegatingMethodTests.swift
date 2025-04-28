@@ -39,7 +39,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     let targetOrientation = FCPPlatformDeviceOrientation.landscapeLeft
 
     var lockCaptureCalled = false
-    mockCamera.lockCaptureStub = { orientation in
+    mockCamera.lockCaptureOrientationStub = { orientation in
       XCTAssertEqual(orientation, targetOrientation)
       lockCaptureCalled = true
     }

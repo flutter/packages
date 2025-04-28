@@ -29,10 +29,13 @@ private class MockImageStreamHandler: FLTImageStreamHandler {
     }
   }
 
+  init() {
+    super.init(captureSessionQueue: DispatchQueue(label: "capture_session_queue"))
+  }
 }
 
 final class StreamingTests: XCTestCase {
-  private func createCamera() -> (FLTCam, CMSampleBuffer) {
+  private func createCamera() -> (FLTDefaultCam, CMSampleBuffer) {
     let captureSessionQueue = DispatchQueue(label: "testing")
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
@@ -59,7 +62,7 @@ final class StreamingTests: XCTestCase {
 
     streamingExpectation.expectedFulfillmentCount = 4
     for _ in 0..<10 {
-      camera.captureOutput(nil, didOutputSampleBuffer: sampleBuffer, from: nil)
+      camera.captureOutput(nil, didOutput: sampleBuffer)
     }
 
     waitForExpectations(timeout: 30, handler: nil)
@@ -81,11 +84,11 @@ final class StreamingTests: XCTestCase {
 
     streamingExpectation.expectedFulfillmentCount = 5
     for _ in 0..<10 {
-      camera.captureOutput(nil, didOutputSampleBuffer: sampleBuffer, from: nil)
+      camera.captureOutput(nil, didOutput: sampleBuffer)
     }
 
     camera.receivedImageStreamData()
-    camera.captureOutput(nil, didOutputSampleBuffer: sampleBuffer, from: nil)
+    camera.captureOutput(nil, didOutput: sampleBuffer)
 
     waitForExpectations(timeout: 30, handler: nil)
   }

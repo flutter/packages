@@ -6,9 +6,9 @@ import XCTest
 
 // Import Objectice-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
+  @testable import camera_avfoundation_objc
 #else
-  import camera_avfoundation
+  @testable import camera_avfoundation
 #endif
 
 /// Utils for creating default class instances used in tests
@@ -61,6 +61,7 @@ enum CameraTestUtils {
         resolutionPreset: FCPPlatformResolutionPreset.medium),
       mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
       captureDeviceFactory: { _ in captureDeviceMock },
+      audioCaptureDeviceFactory: { MockCaptureDevice() },
       captureSessionFactory: { videoSessionMock },
       captureSessionQueue: captureSessionQueue,
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -80,16 +81,18 @@ enum CameraTestUtils {
     return configuration
   }
 
-  static func createTestCamera(_ configuration: FLTCamConfiguration) -> FLTCam {
-    return FLTCam(configuration: configuration, error: nil)
+  static func createTestCamera(_ configuration: FLTCamConfiguration) -> FLTDefaultCam {
+    let camera = try? FLTDefaultCam(configuration: configuration)
+
+    return camera!
   }
 
-  static func createTestCamera() -> FLTCam {
+  static func createTestCamera() -> FLTDefaultCam {
     return createTestCamera(createTestCameraConfiguration())
   }
 
   static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue)
-    -> FLTCam
+    -> FLTDefaultCam
   {
     let configuration = createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
