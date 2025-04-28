@@ -602,7 +602,7 @@ class Convert {
     sink.setRotation(marker.getRotation().floatValue());
     sink.setVisible(marker.getVisible());
 
-    // We check with zero because zIndexInt if non zero should get higher priority than zIndex
+    // We compare with zero because zIndexInt if non zero should get higher priority than zIndex
     int zIndexInt = marker.getZIndexInt().intValue();
     float zIndex = marker.getZIndex().floatValue();
     if (zIndexInt != 0) {
