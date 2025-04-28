@@ -15,6 +15,34 @@ import io.flutter.plugin.common.StandardMethodCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
+private object EventChannelTestsPigeonUtils {
+  fun deepEquals(a: Any?, b: Any?): Boolean {
+    if (a is ByteArray && b is ByteArray) {
+      return a.contentEquals(b)
+    }
+    if (a is IntArray && b is IntArray) {
+      return a.contentEquals(b)
+    }
+    if (a is LongArray && b is LongArray) {
+      return a.contentEquals(b)
+    }
+    if (a is DoubleArray && b is DoubleArray) {
+      return a.contentEquals(b)
+    }
+    if (a is Array<*> && b is Array<*>) {
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
+    }
+    if (a is List<*> && b is List<*>) {
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
+    }
+    if (a is Map<*, *> && b is Map<*, *>) {
+      return a.size == b.size &&
+          a.all { (b as Map<Any?, Any?>).containsKey(it.key) && deepEquals(it.value, b[it.key]) }
+    }
+    return a == b
+  }
+}
+
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
  *
@@ -27,35 +55,6 @@ class EventChannelTestsError(
     override val message: String? = null,
     val details: Any? = null
 ) : Throwable()
-
-private fun deepEqualsEventChannelTests(a: Any?, b: Any?): Boolean {
-  if (a is ByteArray && b is ByteArray) {
-    return a.contentEquals(b)
-  }
-  if (a is IntArray && b is IntArray) {
-    return a.contentEquals(b)
-  }
-  if (a is LongArray && b is LongArray) {
-    return a.contentEquals(b)
-  }
-  if (a is DoubleArray && b is DoubleArray) {
-    return a.contentEquals(b)
-  }
-  if (a is Array<*> && b is Array<*>) {
-    return a.size == b.size && a.indices.all { deepEqualsEventChannelTests(a[it], b[it]) }
-  }
-  if (a is List<*> && b is List<*>) {
-    return a.size == b.size && a.indices.all { deepEqualsEventChannelTests(a[it], b[it]) }
-  }
-  if (a is Map<*, *> && b is Map<*, *>) {
-    return a.size == b.size &&
-        a.all {
-          (b as Map<Any?, Any?>).containsKey(it.key) &&
-              deepEqualsEventChannelTests(it.value, b[it.key])
-        }
-  }
-  return a == b
-}
 
 enum class EventEnum(val raw: Int) {
   ONE(0),
@@ -230,7 +229,7 @@ data class EventAllNullableTypes(
     if (this === other) {
       return true
     }
-    return deepEqualsEventChannelTests(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -263,7 +262,7 @@ data class IntEvent(val value: Long) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return deepEqualsEventChannelTests(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -291,7 +290,7 @@ data class StringEvent(val value: String) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return deepEqualsEventChannelTests(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -319,7 +318,7 @@ data class BoolEvent(val value: Boolean) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return deepEqualsEventChannelTests(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -347,7 +346,7 @@ data class DoubleEvent(val value: Double) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return deepEqualsEventChannelTests(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -375,7 +374,7 @@ data class ObjectsEvent(val value: Any) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return deepEqualsEventChannelTests(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -403,7 +402,7 @@ data class EnumEvent(val value: EventEnum) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return deepEqualsEventChannelTests(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -431,7 +430,7 @@ data class ClassEvent(val value: EventAllNullableTypes) : PlatformEvent() {
     if (this === other) {
       return true
     }
-    return deepEqualsEventChannelTests(toList(), other.toList())
+    return EventChannelTestsPigeonUtils.deepEquals(toList(), other.toList())
   }
 
   override fun hashCode(): Int = toList().hashCode()

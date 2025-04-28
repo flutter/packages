@@ -29,7 +29,7 @@ android {
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

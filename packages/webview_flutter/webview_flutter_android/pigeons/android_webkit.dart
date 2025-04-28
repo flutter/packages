@@ -80,6 +80,25 @@ enum ConsoleMessageLevel {
   unknown,
 }
 
+/// The over-scroll mode for a view.
+///
+/// See https://developer.android.com/reference/android/view/View#OVER_SCROLL_ALWAYS.
+enum OverScrollMode {
+  /// Always allow a user to over-scroll this view, provided it is a view that
+  /// can scroll.
+  always,
+
+  /// Allow a user to over-scroll this view only if the content is large enough
+  /// to meaningfully scroll, provided it is a view that can scroll.
+  ifContentScrolls,
+
+  /// Never allow a user to over-scroll this view.
+  never,
+
+  /// The type is not recognized by this wrapper.
+  unknown,
+}
+
 /// Type of error for a SslCertificate.
 ///
 /// See https://developer.android.com/reference/android/net/http/SslError#SSL_DATE_INVALID.
@@ -832,6 +851,9 @@ abstract class View {
 
   /// Return the scrolled position of this view.
   WebViewPoint getScrollPosition();
+
+  /// Set the over-scroll mode for this view.
+  void setOverScrollMode(OverScrollMode mode);
 }
 
 /// A callback interface used by the host application to set the Geolocation

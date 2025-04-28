@@ -7,8 +7,17 @@ import XCTest
 
 @testable import in_app_purchase_storekit
 
-@available(iOS 15.0, macOS 12.0, *)
+final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
+  func onTransactionsUpdated(
+    newTransactions newTransactionsArg: [in_app_purchase_storekit.SK2TransactionMessage],
+    completion: @escaping (Result<Void, in_app_purchase_storekit.PigeonError>) -> Void
+  ) {
+    // We should only write to a flutter channel from the main thread.
+    XCTAssertTrue(Thread.isMainThread)
+  }
+}
 
+@available(iOS 15.0, macOS 12.0, *)
 final class InAppPurchase2PluginTests: XCTestCase {
   private var session: SKTestSession!
   private var plugin: InAppPurchasePlugin!
@@ -24,6 +33,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     plugin = InAppPurchasePluginStub(receiptManager: FIAPReceiptManagerStub()) { request in
       DefaultRequestHandler(requestHandler: FIAPRequestHandler(request: request))
     }
+    plugin.transactionCallbackAPI = FakeIAP2Callback()
     try plugin.startListeningToTransactions()
   }
 
@@ -296,6 +306,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
     }
+    await fulfillment(of: [purchaseExpectation], timeout: 5)
+
     plugin.restorePurchases { result in
       switch result {
       case .success():
@@ -304,8 +316,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
         XCTFail("Restore purchases should NOT fail. Failed with \(error)")
       }
     }
-
-    await fulfillment(of: [restoreExpectation, purchaseExpectation], timeout: 5)
+    await fulfillment(of: [restoreExpectation], timeout: 5)
   }
 
   func testFinishTransaction() async throws {

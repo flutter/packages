@@ -1,7 +1,15 @@
-## 15.1.0
+## 15.2.0
 
 - Adds new top level `onEnter` callback with access to current and next route states.
 - Deprecates top level `redirect` in favor of `onEnter`.
+
+## 15.1.1
+
+- Adds missing `caseSensitive` to `GoRouteData.$route`.
+
+## 15.1.0
+
+- Adds `caseSensitive` to `TypedGoRoute`.
 
 ## 15.0.0
 
