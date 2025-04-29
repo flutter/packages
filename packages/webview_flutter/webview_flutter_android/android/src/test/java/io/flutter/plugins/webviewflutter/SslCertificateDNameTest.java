@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import android.net.http.SslCertificate;
 import org.junit.Test;
 
-public class SslCertificateDNameProxyApiTest {
+public class SslCertificateDNameTest {
   @Test
   public void getCName() {
     final PigeonApiSslCertificateDName api =
