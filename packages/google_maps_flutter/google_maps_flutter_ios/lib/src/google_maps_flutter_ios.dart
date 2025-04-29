@@ -483,6 +483,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _hostApi(mapId).getLastStyleError();
   }
 
+  @override
+  Future<bool> isAdvancedMarkersAvailable({required int mapId}) {
+    return _hostApi(mapId).isAdvancedMarkersAvailable();
+  }
+
   Widget _buildView(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
@@ -566,8 +571,9 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       creationId,
       onPlatformViewCreated,
       widgetConfiguration: MapWidgetConfiguration(
-          initialCameraPosition: initialCameraPosition,
-          textDirection: textDirection),
+        initialCameraPosition: initialCameraPosition,
+        textDirection: textDirection,
+      ),
       mapObjects: MapObjects(
           markers: markers,
           polygons: polygons,
@@ -882,6 +888,45 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
                 imagePixelRatio: bytes.imagePixelRatio,
                 width: bytes.width,
                 height: bytes.height));
+      case final PinConfig pinConfig:
+        final int? backgroundColor = pinConfig.backgroundColor?.value;
+        final int? borderColor = pinConfig.borderColor?.value;
+        switch (pinConfig.glyph) {
+          case final CircleGlyph circleGlyph:
+            return PlatformBitmap(
+              bitmap: PlatformBitmapPinConfig(
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                glyphColor: circleGlyph.color.value,
+              ),
+            );
+          case final TextGlyph textGlyph:
+            return PlatformBitmap(
+              bitmap: PlatformBitmapPinConfig(
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                glyphText: textGlyph.text,
+                glyphTextColor: textGlyph.textColor?.value,
+              ),
+            );
+          case final BitmapGlyph bitmapGlyph:
+            return PlatformBitmap(
+              bitmap: PlatformBitmapPinConfig(
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                glyphBitmap: platformBitmapFromBitmapDescriptor(
+                  bitmapGlyph.bitmap,
+                ),
+              ),
+            );
+          case null:
+            return PlatformBitmap(
+              bitmap: PlatformBitmapPinConfig(
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+              ),
+            );
+        }
       default:
         throw ArgumentError(
             'Unrecognized type of bitmap ${bitmap.runtimeType}', 'bitmap');
@@ -1124,9 +1169,18 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     indoorViewEnabled: config.indoorViewEnabled,
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
-    cloudMapId: config.cloudMapId,
+    markerType: _platformMarkerTypeFromMarkerType(config.markerType),
+    mapId: config.mapId,
     style: config.style,
   );
+}
+
+PlatformMarkerType? _platformMarkerTypeFromMarkerType(MarkerType? markerType) {
+  return switch (markerType) {
+    MarkerType.marker => PlatformMarkerType.marker,
+    MarkerType.advancedMarker => PlatformMarkerType.advancedMarker,
+    null => null,
+  };
 }
 
 // For supporting the deprecated updateMapOptions API.
@@ -1162,7 +1216,8 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     indoorViewEnabled: options['indoorEnabled'] as bool?,
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
-    cloudMapId: options['cloudMapId'] as String?,
+    markerType: PlatformMarkerType.marker,
+    mapId: options['mapId'] as String?,
     style: options['style'] as String?,
   );
 }

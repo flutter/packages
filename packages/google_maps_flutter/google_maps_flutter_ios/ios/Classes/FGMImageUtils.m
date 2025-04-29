@@ -125,6 +125,43 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
                                      reason:@"Unable to interpret bytes as a valid image."
                                    userInfo:nil];
     }
+  } else if ([bitmap isKindOfClass:[FGMPlatformBitmapPinConfig class]]) {
+    FGMPlatformBitmapPinConfig *pinConfig = bitmap;
+
+    GMSPinImageOptions *options = [[GMSPinImageOptions alloc] init];
+    NSNumber *backgroundColor = pinConfig.backgroundColor;
+    if (backgroundColor) {
+      options.backgroundColor = FGMGetColorForRGBA([backgroundColor integerValue]);
+    }
+
+    NSNumber *borderColor = pinConfig.borderColor;
+    if (borderColor) {
+      options.borderColor = FGMGetColorForRGBA([borderColor integerValue]);
+    }
+
+    GMSPinImageGlyph *glyph;
+    NSString *glyphText = pinConfig.glyphText;
+    NSNumber *glyphColor = pinConfig.glyphColor;
+    FGMPlatformBitmap *glyphBitmap = pinConfig.glyphBitmap;
+    if (glyphText) {
+      NSNumber *glyphTextColorInt = pinConfig.glyphTextColor;
+      UIColor *glyphTextColor = glyphTextColorInt
+                                    ? FGMGetColorForRGBA([glyphTextColorInt integerValue])
+                                    : [UIColor blackColor];
+      glyph = [[GMSPinImageGlyph alloc] initWithText:glyphText textColor:glyphTextColor];
+    } else if (glyphColor) {
+      UIColor *color = FGMGetColorForRGBA([glyphColor integerValue]);
+      glyph = [[GMSPinImageGlyph alloc] initWithGlyphColor:color];
+    } else if (glyphBitmap) {
+      UIImage *glyphImage = FGMIconFromBitmap(glyphBitmap, registrar, screenScale);
+      glyph = [[GMSPinImageGlyph alloc] initWithImage:glyphImage];
+    }
+
+    if (glyph) {
+      options.glyph = glyph;
+    }
+
+    image = [GMSPinImage pinImageWithOptions:options];
   }
 
   return image;
