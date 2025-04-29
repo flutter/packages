@@ -55,7 +55,7 @@ public class FileUtilTest {
     ShadowMimeTypeMap mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
     mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
     mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png");
-    mimeTypeMap.addExtensionMimeTypegMapping("webp", "image/webp");
+    mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp");
   }
 
   @Test
