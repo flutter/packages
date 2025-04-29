@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import 'camerax_proxy.dart';
+import 'camerax_library.g.dart';
 import 'image_reader_rotated_preview.dart';
 import 'surface_texture_rotated_preview.dart';
 
@@ -28,7 +28,7 @@ final class RotatedPreviewDelegate extends StatelessWidget {
       required this.deviceOrientationStream,
       required this.sensorOrientationDegrees,
       required this.cameraIsFrontFacing,
-      required this.cameraXProxy,
+      required this.deviceOrientationManager,
       required this.child});
 
   /// Whether or not the Android surface producer automatically handles
@@ -52,10 +52,10 @@ final class RotatedPreviewDelegate extends StatelessWidget {
   /// Whether or not the camera is front facing.
   final bool cameraIsFrontFacing;
 
-  /// Proxy for calling into CameraX library on the native Android side of the plugin.
+  /// The camera's device orientation manager.
   ///
   /// Instance required to check the current rotation of the default Android display.
-  final CameraXProxy cameraXProxy;
+  final DeviceOrientationManager deviceOrientationManager;
 
   /// The camera preview [Widget] to rotate.
   final Widget child;
@@ -63,8 +63,11 @@ final class RotatedPreviewDelegate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (handlesCropAndRotation) {
-      return SurfaceTextureRotatedPreview(initialDeviceOrientation,
-          initialDefaultDisplayRotation, deviceOrientationStream, cameraXProxy,
+      return SurfaceTextureRotatedPreview(
+          initialDeviceOrientation,
+          initialDefaultDisplayRotation,
+          deviceOrientationStream,
+          deviceOrientationManager,
           child: child);
     }
 
@@ -74,7 +77,7 @@ final class RotatedPreviewDelegate extends StatelessWidget {
         initialDefaultDisplayRotation,
         deviceOrientationStream,
         sensorOrientationDegrees,
-        cameraXProxy,
+        deviceOrientationManager,
         child: child,
       );
     } else {
@@ -83,7 +86,7 @@ final class RotatedPreviewDelegate extends StatelessWidget {
         initialDefaultDisplayRotation,
         deviceOrientationStream,
         sensorOrientationDegrees,
-        cameraXProxy,
+        deviceOrientationManager,
         child: child,
       );
     }

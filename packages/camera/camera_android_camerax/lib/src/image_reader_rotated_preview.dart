@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import 'camerax_proxy.dart';
+import 'camerax_library.dart';
 import 'rotated_preview_utils.dart';
 
 /// Widget that rotates the camera preview to be upright according to the
@@ -22,7 +22,7 @@ final class ImageReaderRotatedPreview extends StatefulWidget {
     this.initialDefaultDisplayRotation,
     this.deviceOrientation,
     this.sensorOrientationDegrees,
-    this.cameraXProxy, {
+    this.deviceOrientationManager, {
     required this.child,
     super.key,
   }) : facingSign = 1;
@@ -34,7 +34,7 @@ final class ImageReaderRotatedPreview extends StatefulWidget {
     this.initialDefaultDisplayRotation,
     this.deviceOrientation,
     this.sensorOrientationDegrees,
-    this.cameraXProxy, {
+    this.deviceOrientationManager, {
     required this.child,
     super.key,
   }) : facingSign = -1;
@@ -52,10 +52,10 @@ final class ImageReaderRotatedPreview extends StatefulWidget {
   /// The orienation of the camera sensor in degrees.
   final double sensorOrientationDegrees;
 
-  /// Proxy for calling into CameraX library on the native Android side of the plugin.
+  /// The camera's device orientation manager.
   ///
   /// Instance required to check the current rotation of the default Android display.
-  final CameraXProxy cameraXProxy;
+  final DeviceOrientationManager deviceOrientationManager;
 
   /// Value used to calculate the correct preview rotation.
   ///
@@ -77,7 +77,7 @@ final class _ImageReaderRotatedPreviewState
 
   Future<int> _getCurrentDefaultDisplayRotationDegrees() async {
     final int currentDefaultDisplayRotationQuarterTurns =
-        await widget.cameraXProxy.getDefaultDisplayRotation();
+        await widget.deviceOrientationManager.getDefaultDisplayRotation();
     return getQuarterTurnsFromSurfaceRotationConstant(
             currentDefaultDisplayRotationQuarterTurns) *
         90;

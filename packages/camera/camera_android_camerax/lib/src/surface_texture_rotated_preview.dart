@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
-import 'camerax_proxy.dart';
+import 'camerax_library.dart' show DeviceOrientationManager;
 import 'rotated_preview_utils.dart';
 
 /// Widget that rotates the camera preview to be upright according to the
@@ -22,7 +22,7 @@ final class SurfaceTextureRotatedPreview extends StatefulWidget {
       this.initialDeviceOrientation,
       this.initialDefaultDisplayRotationQuarterTurns,
       this.deviceOrientationStream,
-      this.cameraXProxy,
+      this.deviceOrientationManager,
       {required this.child,
       super.key});
 
@@ -36,10 +36,10 @@ final class SurfaceTextureRotatedPreview extends StatefulWidget {
   /// Stream of changes to the device orientation.
   final Stream<DeviceOrientation> deviceOrientationStream;
 
-  /// Proxy for calling into CameraX library on the native Android side of the plugin.
+  /// The camera's device orientation manager.
   ///
   /// Instance required to check the current rotation of the default Android display.
-  final CameraXProxy cameraXProxy;
+  final DeviceOrientationManager deviceOrientationManager;
 
   /// The camera preview [Widget] to rotate.
   final Widget child;
@@ -56,7 +56,7 @@ final class _SurfaceTextureRotatedPreviewState
 
   Future<int> _getCurrentDefaultDisplayRotationQuarterTurns() async {
     final int currentDefaultDisplayRotationQuarterTurns =
-        await widget.cameraXProxy.getDefaultDisplayRotation();
+        await widget.deviceOrientationManager.getDefaultDisplayRotation();
     return getQuarterTurnsFromSurfaceRotationConstant(
         currentDefaultDisplayRotationQuarterTurns);
   }
@@ -104,6 +104,7 @@ final class _SurfaceTextureRotatedPreviewState
             final int currentDefaultDisplayRotation = snapshot.data!;
             final int rotationCorrection =
                 currentDefaultDisplayRotation - preappliedRotationQuarterTurns;
+
             return RotatedBox(
                 quarterTurns: rotationCorrection, child: widget.child);
           } else {

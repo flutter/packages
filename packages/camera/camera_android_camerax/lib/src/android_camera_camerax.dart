@@ -14,7 +14,6 @@ import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
 import 'camerax_proxy.dart';
-import 'rotated_preview.dart';
 import 'rotated_preview_delegate.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
@@ -436,7 +435,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     _initialDeviceOrientation = _deserializeDeviceOrientation(
       await deviceOrientationManager.getUiOrientation(),
     );
-    _initialDefaultDisplayRotation = await proxy.getDefaultDisplayRotation();
+    _initialDefaultDisplayRotation =
+        await deviceOrientationManager.getDefaultDisplayRotation();
 
     return flutterSurfaceTextureId;
   }
@@ -935,7 +935,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         deviceOrientationStream: deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
         cameraIsFrontFacing: cameraIsFrontFacing,
-        cameraXProxy: proxy,
+        deviceOrientationManager: deviceOrientationManager,
         child: preview);
   }
 
