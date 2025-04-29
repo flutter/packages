@@ -1,3 +1,7 @@
+## 0.6.16
+
+* Fixes incorrect camera preview rotation for landscape-oriented devices.
+
 ## 0.6.15
 
 * Updates internal API wrapper to use ProxyApis.
