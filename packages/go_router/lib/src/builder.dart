@@ -121,6 +121,7 @@ class RouteBuilder {
         configuration: configuration,
         errorBuilder: errorBuilder,
         errorPageBuilder: errorPageBuilder,
+        requestFocus: requestFocus,
       ),
     );
   }
@@ -138,6 +139,7 @@ class _CustomNavigator extends StatefulWidget {
     required this.configuration,
     required this.errorBuilder,
     required this.errorPageBuilder,
+    required this.requestFocus
   });
 
   final GlobalKey<NavigatorState> navigatorKey;
@@ -155,6 +157,7 @@ class _CustomNavigator extends StatefulWidget {
   final String? navigatorRestorationId;
   final GoRouterWidgetBuilder? errorBuilder;
   final GoRouterPageBuilder? errorPageBuilder;
+  final bool requestFocus;
 
   @override
   State<StatefulWidget> createState() => _CustomNavigatorState();
@@ -295,6 +298,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
           // This is used to recursively build pages under this shell route.
           errorBuilder: widget.errorBuilder,
           errorPageBuilder: widget.errorPageBuilder,
+          requestFocus: widget.requestFocus
         );
       },
     );
@@ -437,6 +441,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         controller: _controller!,
         child: Navigator(
           key: widget.navigatorKey,
+          requestFocus: widget.requestFocus,
           restorationScopeId: widget.navigatorRestorationId,
           pages: _pages!,
           observers: widget.observers,
