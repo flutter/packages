@@ -457,6 +457,9 @@ abstract class ImaSdkFactory {
     VideoAdPlayer player,
   );
 
+  /// Creates a CompanionAdSlot for the SDK to fill with companion ads.
+  CompanionAdSlot createCompanionAdSlot();
+
   /// Creates an `ImaSdkSettings` object for configuring the IMA SDK.
   ImaSdkSettings createImaSdkSettings();
 
@@ -1083,4 +1086,10 @@ abstract class CompanionAdSlot {
   ///
   /// Only companions matching the slot size will be displayed in the slot.
   void setSize(int width, int height);
+
+  /// Sets the size of the slot as fluid.
+  ///
+  /// This is a convenience method that sets both parameters of [setSize] to
+  /// [CompanionAdSlot.FLUID_SIZE](https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot#FLUID_SIZE()).
+  void setFluidSize();
 }
