@@ -1,7 +1,6 @@
 ## 0.3.23
 
-* **BREAKING CHANGE:** StoreKit 2 is now the default.
-* If you would like to stay on the original StoreKit, you can call `disableStoreKit2()`
+* **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.
 
 ## 0.3.22+1
 
