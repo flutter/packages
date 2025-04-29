@@ -15,10 +15,12 @@ flutter:
         pluginClass: TestPlugin
       ios:
         pluginClass: TestPlugin
+        sharedDarwinSource: true
       linux:
         pluginClass: TestPlugin
       macos:
         pluginClass: TestPlugin
+        sharedDarwinSource: true
       windows:
         pluginClass: TestPluginCApi
 

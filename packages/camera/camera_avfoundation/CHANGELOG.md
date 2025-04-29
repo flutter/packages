@@ -1,6 +1,10 @@
-## 0.9.18+14
+## 0.9.18+15
 
 * Fixes race condition when starting image stream.
+
+## 0.9.18+14
+
+* Creates Swift Package Manager target for Swift implementation.
 
 ## 0.9.18+13
 

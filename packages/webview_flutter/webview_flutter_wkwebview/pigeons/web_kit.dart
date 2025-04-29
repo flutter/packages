@@ -340,6 +340,39 @@ enum UrlCredentialPersistence {
   synchronizable,
 }
 
+/// Trust evaluation result codes.
+///
+/// See https://developer.apple.com/documentation/security/sectrustresulttype?language=objc.
+enum DartSecTrustResultType {
+  /// The user did not specify a trust setting.
+  unspecified,
+
+  /// The user granted permission to trust the certificate for the purposes
+  /// designated in the specified policies.
+  proceed,
+
+  /// The user specified that the certificate should not be trusted.
+  deny,
+
+  /// Trust is denied, but recovery may be possible.
+  recoverableTrustFailure,
+
+  /// Trust is denied and no simple fix is available.
+  fatalTrustFailure,
+
+  /// A value that indicates a failure other than trust evaluation.
+  otherError,
+
+  /// An indication of an invalid setting or result.
+  invalid,
+
+  /// User confirmation is required before proceeding.
+  confirm,
+
+  /// The type is not recognized by this wrapper.
+  unknown,
+}
+
 /// A URL load request that is independent of protocol or URL scheme.
 ///
 /// See https://developer.apple.com/documentation/foundation/urlrequest.
@@ -882,6 +915,12 @@ abstract class UIViewWKWebView extends UIView implements WKWebView {
 
   /// The custom user agent string.
   String? getCustomUserAgent();
+
+  /// Whether to allow previews for link destinations and detected data such as
+  /// addresses and phone numbers.
+  ///
+  /// Defaults to true.
+  void setAllowsLinkPreview(bool allow);
 }
 
 /// An object that displays interactive web content, such as for an in-app
@@ -965,6 +1004,12 @@ abstract class NSViewWKWebView extends NSObject implements WKWebView {
 
   /// The custom user agent string.
   String? getCustomUserAgent();
+
+  /// Whether to allow previews for link destinations and detected data such as
+  /// addresses and phone numbers.
+  ///
+  /// Defaults to true.
+  void setAllowsLinkPreview(bool allow);
 }
 
 /// An object that displays interactive web content, such as for an in-app
@@ -1095,6 +1140,9 @@ abstract class URLProtectionSpace extends NSObject {
 
   /// The authentication method used by the receiver.
   late String? authenticationMethod;
+
+  /// A representation of the server’s SSL transaction state.
+  late SecTrust? getServerTrust;
 }
 
 /// A challenge from a server requiring authentication from the client.
@@ -1131,4 +1179,58 @@ abstract class WKWebpagePreferences extends NSObject {
   /// A Boolean value that indicates whether JavaScript from web content is
   /// allowed to run.
   void setAllowsContentJavaScript(bool allow);
+}
+
+/// Data class used to respond to `SecTrust.getTrustResult`.
+///
+/// The native method needs to return two values, so this custom class is
+/// created to support this.
+@ProxyApi()
+abstract class GetTrustResultResponse extends NSObject {
+  /// The result code from the most recent trust evaluation.
+  late DartSecTrustResultType result;
+
+  /// A result code.
+  ///
+  /// See https://developer.apple.com/documentation/security/security-framework-result-codes?language=objc.
+  late int resultCode;
+}
+
+/// An object used to evaluate trust.
+///
+/// See https://developer.apple.com/documentation/security/sectrust.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'SecTrustWrapper'))
+abstract class SecTrust extends NSObject {
+  /// Evaluates trust for the specified certificate and policies.
+  @static
+  @async
+  bool evaluateWithError(SecTrust trust);
+
+  /// Returns an opaque cookie containing exceptions to trust policies that will
+  /// allow future evaluations of the current certificate to succeed.
+  @static
+  Uint8List? copyExceptions(SecTrust trust);
+
+  /// Sets a list of exceptions that should be ignored when the certificate is
+  /// evaluated.
+  @static
+  bool setExceptions(SecTrust trust, Uint8List? exceptions);
+
+  /// Returns the result code from the most recent trust evaluation.
+  @static
+  GetTrustResultResponse getTrustResult(SecTrust trust);
+
+  /// Certificates used to evaluate trust.
+  @static
+  List<SecCertificate>? copyCertificateChain(SecTrust trust);
+}
+
+/// An abstract Core Foundation-type object representing an X.509 certificate.
+///
+/// See https://developer.apple.com/documentation/security/seccertificate.
+@ProxyApi(swiftOptions: SwiftProxyApiOptions(name: 'SecCertificateWrapper'))
+abstract class SecCertificate extends NSObject {
+  /// Returns a DER representation of a certificate given a certificate object.
+  @static
+  Uint8List copyData(SecCertificate certificate);
 }

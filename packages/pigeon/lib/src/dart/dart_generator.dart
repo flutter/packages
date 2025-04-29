@@ -351,16 +351,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.writeScoped('if (identical(this, other)) {', '}', () {
         indent.writeln('return true;');
       });
-      indent.writeScoped('return ', '', () {
-        indent.format(
-            classDefinition.fields
-                .map((NamedType field) => isCollectionType(field.type)
-                    ? '_deepEquals(${field.name}, other.${field.name})'
-                    : '${field.name} == other.${field.name}')
-                .join('\n&& '),
-            trailingNewline: false);
-        indent.addln(';');
-      }, addTrailingNewline: false);
+      indent.writeln('return _deepEquals(encode(), other.encode());');
     });
     indent.newln();
     indent.writeln('@override');
@@ -1083,9 +1074,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         generatorOptions.testOut != null) {
       _writeWrapResponse(generatorOptions, root, indent);
     }
-    if (root.classes.isNotEmpty &&
-        root.classes.any((Class dataClass) => dataClass.fields
-            .any((NamedType field) => isCollectionType(field.type)))) {
+    if (root.classes.isNotEmpty) {
       _writeDeepEquals(indent);
     }
   }
@@ -1116,14 +1105,13 @@ bool _deepEquals(Object? a, Object? b) {
         .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
-    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
-    return a.length == b.length && keys.every((Object? key) =>
-        (b as Map<Object?, Object?>).containsKey(key) &&
-        _deepEquals(a[key], b[key]));
+    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
+        (b as Map<Object?, Object?>).containsKey(entry.key) &&
+        _deepEquals(entry.value, b[entry.key]));
   }
   return a == b;
 }
-    ''');
+''');
   }
 
   void _writeCreateConnectionError(Indent indent) {
