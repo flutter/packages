@@ -1,3 +1,7 @@
+## 0.2.3+12
+
+* Fixes support for ad tag URLs that do not contain a query.
+
 ## 0.2.3+11
 
 * Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
