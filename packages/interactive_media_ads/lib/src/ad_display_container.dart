@@ -4,6 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 
+import '../interactive_media_ads.dart';
 import 'platform_interface/platform_ad_display_container.dart';
 import 'platform_interface/platform_interface.dart';
 
@@ -37,6 +38,7 @@ class AdDisplayContainer extends StatelessWidget {
   AdDisplayContainer({
     Key? key,
     required void Function(AdDisplayContainer container) onContainerAdded,
+    Iterable<CompanionAdSlot> companionAds = const <CompanionAdSlot>[],
     TextDirection layoutDirection = TextDirection.ltr,
   }) : this.fromPlatformCreationParams(
           key: key,
@@ -46,6 +48,9 @@ class AdDisplayContainer extends StatelessWidget {
                 platform: container,
               ));
             },
+            companionSlots: companionAds.map(
+              (CompanionAdSlot slot) => slot.platform,
+            ),
             layoutDirection: layoutDirection,
           ),
         );
@@ -96,6 +101,13 @@ class AdDisplayContainer extends StatelessWidget {
   /// platform view hierarchy.
   void Function(PlatformAdDisplayContainer container) get onContainerAdded =>
       platform.params.onContainerAdded;
+
+  Iterable<CompanionAdSlot> get companionAds =>
+      platform.params.companionSlots.map(
+        (PlatformCompanionAdSlot slot) {
+          return CompanionAdSlot.fromPlatform(platform: slot);
+        },
+      );
 
   /// The layout direction to use for the embedded AdDisplayContainer.
   TextDirection get layoutDirection => platform.params.layoutDirection;

@@ -372,10 +372,7 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(val binaryMesse
    * An implementation of [PigeonApiBaseDisplayContainer] used to add a new Dart instance of
    * `BaseDisplayContainer` to the Dart `InstanceManager`.
    */
-  open fun getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer
-  {
-    return PigeonApiBaseDisplayContainer(this)
-  }
+  abstract fun getPigeonApiBaseDisplayContainer(): PigeonApiBaseDisplayContainer
 
   /**
    * An implementation of [PigeonApiAdDisplayContainer] used to add a new Dart instance of
@@ -580,6 +577,7 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(val binaryMesse
 
   fun setUp() {
     InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, instanceManager)
+    PigeonApiBaseDisplayContainer.setUpMessageHandlers(binaryMessenger, getPigeonApiBaseDisplayContainer())
     PigeonApiAdsLoader.setUpMessageHandlers(binaryMessenger, getPigeonApiAdsLoader())
     PigeonApiAdsRequest.setUpMessageHandlers(binaryMessenger, getPigeonApiAdsRequest())
     PigeonApiContentProgressProvider.setUpMessageHandlers(binaryMessenger, getPigeonApiContentProgressProvider())
@@ -602,6 +600,7 @@ abstract class InteractiveMediaAdsLibraryPigeonProxyApiRegistrar(val binaryMesse
   }
   fun tearDown() {
     InteractiveMediaAdsLibraryPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiBaseDisplayContainer.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiAdsLoader.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiAdsRequest.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiContentProgressProvider.setUpMessageHandlers(binaryMessenger, null)
@@ -1006,7 +1005,40 @@ private open class InteractiveMediaAdsLibraryPigeonCodec : StandardMessageCodec(
  * See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/BaseDisplayContainer.html.
  */
 @Suppress("UNCHECKED_CAST")
-open class PigeonApiBaseDisplayContainer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+abstract class PigeonApiBaseDisplayContainer(open val pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) {
+  /**
+   * Sets slots for displaying companions.
+   *
+   * Passing null will reset the container to having no companion slots.
+   */
+  abstract fun setCompanionSlots(pigeon_instance: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer, companionSlots: List<com.google.ads.interactivemedia.v3.api.CompanionAdSlot>?)
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiBaseDisplayContainer?) {
+      val codec = api?.pigeonRegistrar?.codec ?: InteractiveMediaAdsLibraryPigeonCodec()
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.setCompanionSlots", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
+            val companionSlotsArg = args[1] as List<com.google.ads.interactivemedia.v3.api.CompanionAdSlot>?
+            val wrapped: List<Any?> = try {
+              api.setCompanionSlots(pigeon_instanceArg, companionSlotsArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              InteractiveMediaAdsLibraryPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of BaseDisplayContainer and attaches it to [pigeon_instanceArg]. */
   fun pigeon_newInstance(pigeon_instanceArg: com.google.ads.interactivemedia.v3.api.BaseDisplayContainer, callback: (Result<Unit>) -> Unit)

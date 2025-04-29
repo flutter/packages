@@ -230,7 +230,12 @@ enum UiElement {
         'com.google.ads.interactivemedia.v3.api.BaseDisplayContainer',
   ),
 )
-abstract class BaseDisplayContainer {}
+abstract class BaseDisplayContainer {
+  /// Sets slots for displaying companions.
+  ///
+  /// Passing null will reset the container to having no companion slots.
+  void setCompanionSlots(List<CompanionAdSlot>? companionSlots);
+}
 
 /// A container in which to display the ads.
 ///
@@ -240,7 +245,7 @@ abstract class BaseDisplayContainer {}
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdDisplayContainer',
   ),
 )
-abstract class AdDisplayContainer implements BaseDisplayContainer {}
+abstract class AdDisplayContainer extends BaseDisplayContainer {}
 
 /// An object which allows publishers to request ads from ad servers or a
 /// dynamic ad insertion stream.

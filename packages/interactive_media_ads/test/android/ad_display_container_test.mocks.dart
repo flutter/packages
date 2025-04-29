@@ -3,7 +3,7 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i6;
+import 'dart:async' as _i5;
 import 'dart:ui' as _i3;
 
 import 'package:flutter/services.dart' as _i4;
@@ -12,7 +12,7 @@ import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
 import 'package:interactive_media_ads/src/android/platform_views_service_proxy.dart'
     as _i7;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -213,6 +213,18 @@ class MockAdDisplayContainer extends _i1.Mock
           ),
         ),
       ) as _i2.AdDisplayContainer);
+
+  @override
+  _i5.Future<void> setCompanionSlots(
+          List<_i2.CompanionAdSlot>? companionSlots) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setCompanionSlots,
+          [companionSlots],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [AdMediaInfo].
@@ -222,11 +234,11 @@ class MockAdMediaInfo extends _i1.Mock implements _i2.AdMediaInfo {
   @override
   String get url => (super.noSuchMethod(
         Invocation.getter(#url),
-        returnValue: _i5.dummyValue<String>(
+        returnValue: _i6.dummyValue<String>(
           this,
           Invocation.getter(#url),
         ),
-        returnValueForMissingStub: _i5.dummyValue<String>(
+        returnValueForMissingStub: _i6.dummyValue<String>(
           this,
           Invocation.getter(#url),
         ),
@@ -390,24 +402,24 @@ class MockFrameLayout extends _i1.Mock implements _i2.FrameLayout {
       ) as _i2.FrameLayout);
 
   @override
-  _i6.Future<void> addView(_i2.View? view) => (super.noSuchMethod(
+  _i5.Future<void> addView(_i2.View? view) => (super.noSuchMethod(
         Invocation.method(
           #addView,
           [view],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> removeView(_i2.View? view) => (super.noSuchMethod(
+  _i5.Future<void> removeView(_i2.View? view) => (super.noSuchMethod(
         Invocation.method(
           #removeView,
           [view],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [MediaPlayer].
@@ -428,54 +440,54 @@ class MockMediaPlayer extends _i1.Mock implements _i2.MediaPlayer {
       ) as _i2.PigeonInstanceManager);
 
   @override
-  _i6.Future<int> getDuration() => (super.noSuchMethod(
+  _i5.Future<int> getDuration() => (super.noSuchMethod(
         Invocation.method(
           #getDuration,
           [],
         ),
-        returnValue: _i6.Future<int>.value(0),
-        returnValueForMissingStub: _i6.Future<int>.value(0),
-      ) as _i6.Future<int>);
+        returnValue: _i5.Future<int>.value(0),
+        returnValueForMissingStub: _i5.Future<int>.value(0),
+      ) as _i5.Future<int>);
 
   @override
-  _i6.Future<void> seekTo(int? mSec) => (super.noSuchMethod(
+  _i5.Future<void> seekTo(int? mSec) => (super.noSuchMethod(
         Invocation.method(
           #seekTo,
           [mSec],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> start() => (super.noSuchMethod(
+  _i5.Future<void> start() => (super.noSuchMethod(
         Invocation.method(
           #start,
           [],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> pause() => (super.noSuchMethod(
+  _i5.Future<void> pause() => (super.noSuchMethod(
         Invocation.method(
           #pause,
           [],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> stop() => (super.noSuchMethod(
+  _i5.Future<void> stop() => (super.noSuchMethod(
         Invocation.method(
           #stop,
           [],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
   _i2.MediaPlayer pigeon_copy() => (super.noSuchMethod(
@@ -643,25 +655,25 @@ class MockVideoAdPlayer extends _i1.Mock implements _i2.VideoAdPlayer {
       ) as _i2.PigeonInstanceManager);
 
   @override
-  _i6.Future<void> setVolume(int? value) => (super.noSuchMethod(
+  _i5.Future<void> setVolume(int? value) => (super.noSuchMethod(
         Invocation.method(
           #setVolume,
           [value],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> setAdProgress(_i2.VideoProgressUpdate? progress) =>
+  _i5.Future<void> setAdProgress(_i2.VideoProgressUpdate? progress) =>
       (super.noSuchMethod(
         Invocation.method(
           #setAdProgress,
           [progress],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
   _i2.VideoAdPlayer pigeon_copy() => (super.noSuchMethod(
@@ -705,7 +717,7 @@ class MockVideoAdPlayerCallback extends _i1.Mock
       ) as _i2.PigeonInstanceManager);
 
   @override
-  _i6.Future<void> onAdProgress(
+  _i5.Future<void> onAdProgress(
     _i2.AdMediaInfo? adMediaInfo,
     _i2.VideoProgressUpdate? videoProgressUpdate,
   ) =>
@@ -717,95 +729,95 @@ class MockVideoAdPlayerCallback extends _i1.Mock
             videoProgressUpdate,
           ],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> onBuffering(_i2.AdMediaInfo? adMediaInfo) =>
+  _i5.Future<void> onBuffering(_i2.AdMediaInfo? adMediaInfo) =>
       (super.noSuchMethod(
         Invocation.method(
           #onBuffering,
           [adMediaInfo],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> onContentComplete() => (super.noSuchMethod(
+  _i5.Future<void> onContentComplete() => (super.noSuchMethod(
         Invocation.method(
           #onContentComplete,
           [],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> onEnded(_i2.AdMediaInfo? adMediaInfo) => (super.noSuchMethod(
+  _i5.Future<void> onEnded(_i2.AdMediaInfo? adMediaInfo) => (super.noSuchMethod(
         Invocation.method(
           #onEnded,
           [adMediaInfo],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> onError(_i2.AdMediaInfo? adMediaInfo) => (super.noSuchMethod(
+  _i5.Future<void> onError(_i2.AdMediaInfo? adMediaInfo) => (super.noSuchMethod(
         Invocation.method(
           #onError,
           [adMediaInfo],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> onLoaded(_i2.AdMediaInfo? adMediaInfo) =>
+  _i5.Future<void> onLoaded(_i2.AdMediaInfo? adMediaInfo) =>
       (super.noSuchMethod(
         Invocation.method(
           #onLoaded,
           [adMediaInfo],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> onPause(_i2.AdMediaInfo? adMediaInfo) => (super.noSuchMethod(
+  _i5.Future<void> onPause(_i2.AdMediaInfo? adMediaInfo) => (super.noSuchMethod(
         Invocation.method(
           #onPause,
           [adMediaInfo],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> onPlay(_i2.AdMediaInfo? adMediaInfo) => (super.noSuchMethod(
+  _i5.Future<void> onPlay(_i2.AdMediaInfo? adMediaInfo) => (super.noSuchMethod(
         Invocation.method(
           #onPlay,
           [adMediaInfo],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> onResume(_i2.AdMediaInfo? adMediaInfo) =>
+  _i5.Future<void> onResume(_i2.AdMediaInfo? adMediaInfo) =>
       (super.noSuchMethod(
         Invocation.method(
           #onResume,
           [adMediaInfo],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> onVolumeChanged(
+  _i5.Future<void> onVolumeChanged(
     _i2.AdMediaInfo? adMediaInfo,
     int? percentage,
   ) =>
@@ -817,9 +829,9 @@ class MockVideoAdPlayerCallback extends _i1.Mock
             percentage,
           ],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
   _i2.VideoAdPlayerCallback pigeon_copy() => (super.noSuchMethod(
@@ -930,24 +942,24 @@ class MockVideoView extends _i1.Mock implements _i2.VideoView {
       ) as _i2.PigeonInstanceManager);
 
   @override
-  _i6.Future<void> setVideoUri(String? uri) => (super.noSuchMethod(
+  _i5.Future<void> setVideoUri(String? uri) => (super.noSuchMethod(
         Invocation.method(
           #setVideoUri,
           [uri],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<int> getCurrentPosition() => (super.noSuchMethod(
+  _i5.Future<int> getCurrentPosition() => (super.noSuchMethod(
         Invocation.method(
           #getCurrentPosition,
           [],
         ),
-        returnValue: _i6.Future<int>.value(0),
-        returnValueForMissingStub: _i6.Future<int>.value(0),
-      ) as _i6.Future<int>);
+        returnValue: _i5.Future<int>.value(0),
+        returnValueForMissingStub: _i5.Future<int>.value(0),
+      ) as _i5.Future<int>);
 
   @override
   _i2.VideoView pigeon_copy() => (super.noSuchMethod(
@@ -1036,17 +1048,17 @@ class MockSurfaceAndroidViewController extends _i1.Mock
       );
 
   @override
-  _i6.Future<void> setOffset(_i3.Offset? off) => (super.noSuchMethod(
+  _i5.Future<void> setOffset(_i3.Offset? off) => (super.noSuchMethod(
         Invocation.method(
           #setOffset,
           [off],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> create({
+  _i5.Future<void> create({
     _i3.Size? size,
     _i3.Offset? position,
   }) =>
@@ -1059,42 +1071,42 @@ class MockSurfaceAndroidViewController extends _i1.Mock
             #position: position,
           },
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<_i3.Size> setSize(_i3.Size? size) => (super.noSuchMethod(
+  _i5.Future<_i3.Size> setSize(_i3.Size? size) => (super.noSuchMethod(
         Invocation.method(
           #setSize,
           [size],
         ),
-        returnValue: _i6.Future<_i3.Size>.value(_FakeSize_11(
+        returnValue: _i5.Future<_i3.Size>.value(_FakeSize_11(
           this,
           Invocation.method(
             #setSize,
             [size],
           ),
         )),
-        returnValueForMissingStub: _i6.Future<_i3.Size>.value(_FakeSize_11(
+        returnValueForMissingStub: _i5.Future<_i3.Size>.value(_FakeSize_11(
           this,
           Invocation.method(
             #setSize,
             [size],
           ),
         )),
-      ) as _i6.Future<_i3.Size>);
+      ) as _i5.Future<_i3.Size>);
 
   @override
-  _i6.Future<void> sendMotionEvent(_i4.AndroidMotionEvent? event) =>
+  _i5.Future<void> sendMotionEvent(_i4.AndroidMotionEvent? event) =>
       (super.noSuchMethod(
         Invocation.method(
           #sendMotionEvent,
           [event],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
   void addOnPlatformViewCreatedListener(
@@ -1119,46 +1131,46 @@ class MockSurfaceAndroidViewController extends _i1.Mock
       );
 
   @override
-  _i6.Future<void> setLayoutDirection(_i3.TextDirection? layoutDirection) =>
+  _i5.Future<void> setLayoutDirection(_i3.TextDirection? layoutDirection) =>
       (super.noSuchMethod(
         Invocation.method(
           #setLayoutDirection,
           [layoutDirection],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> dispatchPointerEvent(_i4.PointerEvent? event) =>
+  _i5.Future<void> dispatchPointerEvent(_i4.PointerEvent? event) =>
       (super.noSuchMethod(
         Invocation.method(
           #dispatchPointerEvent,
           [event],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> clearFocus() => (super.noSuchMethod(
+  _i5.Future<void> clearFocus() => (super.noSuchMethod(
         Invocation.method(
           #clearFocus,
           [],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i6.Future<void> dispose() => (super.noSuchMethod(
+  _i5.Future<void> dispose() => (super.noSuchMethod(
         Invocation.method(
           #dispose,
           [],
         ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }
 
 /// A class which mocks [PlatformViewsServiceProxy].

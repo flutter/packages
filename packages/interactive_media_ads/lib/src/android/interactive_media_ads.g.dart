@@ -628,6 +628,10 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
   });
 
+  late final _PigeonInternalProxyApiBaseCodec
+      _pigeonVar_codecBaseDisplayContainer =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -677,6 +681,38 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
     }
   }
 
+  /// Sets slots for displaying companions.
+  ///
+  /// Passing null will reset the container to having no companion slots.
+  Future<void> setCompanionSlots(List<CompanionAdSlot>? companionSlots) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecBaseDisplayContainer;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.BaseDisplayContainer.setCompanionSlots';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, companionSlots]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   @override
   BaseDisplayContainer pigeon_copy() {
     return BaseDisplayContainer.pigeon_detached(
@@ -689,8 +725,7 @@ class BaseDisplayContainer extends PigeonInternalProxyApiBaseClass {
 /// A container in which to display the ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdDisplayContainer.
-class AdDisplayContainer extends PigeonInternalProxyApiBaseClass
-    implements BaseDisplayContainer {
+class AdDisplayContainer extends BaseDisplayContainer {
   /// Constructs [AdDisplayContainer] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -699,7 +734,7 @@ class AdDisplayContainer extends PigeonInternalProxyApiBaseClass
   AdDisplayContainer.pigeon_detached({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-  });
+  }) : super.pigeon_detached();
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
