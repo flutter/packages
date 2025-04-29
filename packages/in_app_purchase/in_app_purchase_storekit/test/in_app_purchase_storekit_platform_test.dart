@@ -27,7 +27,6 @@ void main() {
 
   setUp(() {
     InAppPurchaseStoreKitPlatform.registerPlatform();
-    InAppPurchaseStoreKitPlatform.disableStoreKit2();
     iapStoreKitPlatform =
         InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
     fakeStoreKitPlatform.reset();

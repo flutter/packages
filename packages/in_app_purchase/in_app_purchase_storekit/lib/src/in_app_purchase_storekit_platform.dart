@@ -31,7 +31,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   InAppPurchaseStoreKitPlatform();
 
   /// Experimental flag for StoreKit2.
-  static bool _useStoreKit2 = true;
+  static bool _useStoreKit2 = false;
 
   /// StoreKit1
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
@@ -56,6 +56,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   /// Registers this class as the default instance of [InAppPurchasePlatform].
   static void registerPlatform() {
+    enableStoreKit2();
     // Register the [InAppPurchaseStoreKitPlatformAddition] containing
     // StoreKit-specific functionality.
     InAppPurchasePlatformAddition.instance =
@@ -256,11 +257,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   static Future<bool> enableStoreKit2() async {
     _useStoreKit2 = await SKRequestMaker.supportsStoreKit2();
     return _useStoreKit2;
-  }
-
-  /// Revert to using the original Storekit.
-  static void disableStoreKit2() {
-    _useStoreKit2 = false;
   }
 }
 
