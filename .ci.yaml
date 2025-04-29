@@ -413,10 +413,9 @@ targets:
       # This file only builds a *legacy* version of the project.
       target_file: android_build_all_packages_legacy.yaml
       channel: master
-      # The legacy project build requires an older JDK.
       dependencies: >-
         [
-          {"dependency": "open_jdk", "version": "version:11"}
+          {"dependency": "open_jdk", "version": "version:17"}
         ]
       env_variables: >-
         {
@@ -445,10 +444,9 @@ targets:
       # This file only builds a *legacy* version of the project.
       target_file: android_build_all_packages_legacy.yaml
       channel: stable
-      # The legacy project build requires an older JDK.
       dependencies: >-
         [
-          {"dependency": "open_jdk", "version": "version:11"}
+          {"dependency": "open_jdk", "version": "version:17"}
         ]
       env_variables: >-
         {
