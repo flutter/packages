@@ -7,6 +7,7 @@ import '../platform_interface/platform_ad_display_container.dart';
 import '../platform_interface/platform_ads_loader.dart';
 import '../platform_interface/platform_ads_manager_delegate.dart';
 import '../platform_interface/platform_ads_rendering_settings.dart';
+import '../platform_interface/platform_companion_ad_slot.dart';
 import '../platform_interface/platform_content_progress_provider.dart';
 import 'ios_ad_display_container.dart';
 import 'ios_ads_loader.dart';
@@ -52,5 +53,11 @@ final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
     PlatformAdsRenderingSettingsCreationParams params,
   ) {
     return IOSAdsRenderingSettings(params);
+  }
+
+  @override
+  PlatformCompanionAdSlot createPlatformCompanionAdSlot(PlatformCompanionAdSlotCreationParams params) {
+    // TODO: implement createPlatformCompanionAdSlot
+    throw UnimplementedError();
   }
 }
