@@ -227,9 +227,8 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
-  // This must be called on captureSessionQueue. It is extracted from
-  // initializeCamera:withImageFormat:completion: to make it easier to reason about strong/weak
-  // self pointers.
+  // This must be called on captureSessionQueue. It is extracted from createCameraOnSessionQueue
+  // to make it easier to reason about strong/weak self pointers.
   private func sessionQueueCreateCamera(
     name: String,
     settings: FCPPlatformMediaSettings,
@@ -277,17 +276,18 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
-  // This must be called on captureSessionQueue. It is extracted from
-  // initializeCamera:withImageFormat:completion: to make it easier to reason about strong/weak
-  // self pointers.
+  // This must be called on captureSessionQueue. It is extracted from initializeCamera to make it
+  // easier to reason about strong/weak self pointers.
   private func sessionQueueInitializeCamera(
     _ cameraId: Int,
     withImageFormat imageFormat: FCPPlatformImageFormatGroup,
     completion: @escaping (FlutterError?) -> Void
   ) {
-    camera?.videoFormat = FCPGetPixelFormatForPigeonFormat(imageFormat)
+    guard let camera = camera else { return }
 
-    camera?.onFrameAvailable = { [weak self] in
+    camera.videoFormat = FCPGetPixelFormatForPigeonFormat(imageFormat)
+
+    camera.onFrameAvailable = { [weak self] in
       guard let camera = self?.camera else { return }
       if !camera.isPreviewPaused {
         FLTEnsureToRunOnMainQueue { [weak self] in
@@ -296,14 +296,14 @@ extension CameraPlugin: FCPCameraApi {
       }
     }
 
-    camera?.dartAPI = FCPCameraEventApi(
+    camera.dartAPI = FCPCameraEventApi(
       binaryMessenger: messenger,
       messageChannelSuffix: "\(cameraId)"
     )
 
-    camera?.reportInitializationState()
+    camera.reportInitializationState()
     sendDeviceOrientation(UIDevice.current.orientation)
-    camera?.start()
+    camera.start()
     completion(nil)
   }
 
