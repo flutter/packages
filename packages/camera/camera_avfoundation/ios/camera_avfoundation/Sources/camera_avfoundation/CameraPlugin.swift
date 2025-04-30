@@ -10,7 +10,7 @@ import ObjectiveC
   import camera_avfoundation_objc
 #endif
 
-typealias CaptureNamedDeviceFactory = (String) -> FLTCaptureDevice
+typealias NamedCaptureDeviceFactory = (String) -> FLTCaptureDevice
 
 public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
   private let registry: FlutterTextureRegistry
@@ -18,7 +18,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
   private let globalEventAPI: FCPCameraGlobalEventApi
   private let deviceDiscoverer: FLTCameraDeviceDiscovering
   private let permissionManager: FLTCameraPermissionManager
-  private let captureDeviceFactory: CaptureNamedDeviceFactory
+  private let captureDeviceFactory: NamedCaptureDeviceFactory
   private let captureSessionFactory: CaptureSessionFactory
   private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
 
@@ -58,7 +58,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
     globalAPI: FCPCameraGlobalEventApi,
     deviceDiscoverer: FLTCameraDeviceDiscovering,
     permissionManager: FLTCameraPermissionManager,
-    deviceFactory: @escaping CaptureNamedDeviceFactory,
+    deviceFactory: @escaping NamedCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
     captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
     captureSessionQueue: DispatchQueue
