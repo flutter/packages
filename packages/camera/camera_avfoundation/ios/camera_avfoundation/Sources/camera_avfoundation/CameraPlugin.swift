@@ -104,10 +104,11 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     }
 
     self.captureSessionQueue.async { [weak self] in
+      guard let strongSelf = self else { return }
       // `FLTCam.setDeviceOrientation` must be called on capture session queue.
-      self?.camera?.setDeviceOrientation(orientation)
+      strongSelf.camera?.setDeviceOrientation(orientation)
       // `CameraPlugin.sendDeviceOrientation` can be called on any queue.
-      self?.sendDeviceOrientation(orientation)
+      strongSelf.sendDeviceOrientation(orientation)
     }
   }
 
@@ -308,8 +309,8 @@ extension CameraPlugin: FCPCameraApi {
 
   public func startImageStream(completion: @escaping (FlutterError?) -> Void) {
     captureSessionQueue.async { [weak self] in
-      guard let self = self else { return }
-      self.camera?.startImageStream(with: self.messenger)
+      guard let strongSelf = self else { return }
+      strongSelf.camera?.startImageStream(with: strongSelf.messenger)
       completion(nil)
     }
   }
@@ -373,10 +374,10 @@ extension CameraPlugin: FCPCameraApi {
     withStreaming enableStream: Bool, completion: @escaping (FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
-      guard let self = self else { return }
-      self.camera?.startVideoRecording(
+      guard let strongSelf = self else { return }
+      strongSelf.camera?.startVideoRecording(
         completion: completion,
-        messengerForStreaming: enableStream ? self.messenger : nil)
+        messengerForStreaming: enableStream ? strongSelf.messenger : nil)
     }
   }
 
