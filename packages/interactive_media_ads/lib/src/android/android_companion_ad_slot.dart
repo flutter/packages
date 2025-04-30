@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
+import '../platform_interface/build_widget_creation_params.dart';
 import '../platform_interface/platform_companion_ad_slot.dart';
 import 'android_view_widget.dart';
 import 'interactive_media_ads.g.dart' as ima;
@@ -11,10 +12,8 @@ final class AndroidCompanionAdSlotCreationParams
     extends PlatformCompanionAdSlotCreationParams {
   /// Constructs a [AndroidCompanionAdSlotCreationParams].
   const AndroidCompanionAdSlotCreationParams.size({
-    super.key,
     required super.width,
     required super.height,
-    super.layoutDirection,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
@@ -24,8 +23,6 @@ final class AndroidCompanionAdSlotCreationParams
 
   /// Constructs a [AndroidCompanionAdSlotCreationParams].
   const AndroidCompanionAdSlotCreationParams.fluid({
-    super.key,
-    super.layoutDirection,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
@@ -101,7 +98,7 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildWidget(BuildWidgetCreationParams params) {
     return AndroidViewWidget(
       key: params.key,
       view: _frameLayout,

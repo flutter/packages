@@ -12,52 +12,20 @@ import 'test_stubs.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('build', (WidgetTester tester) async {
+  testWidgets('buildWidget', (WidgetTester tester) async {
     final TestCompanionAdSlot slot = TestCompanionAdSlot(
       const PlatformCompanionAdSlotCreationParams.fluid(),
-      onBuild: (_) => Container(),
+      onBuildWidget: (_) => Container(),
     );
 
-    await tester.pumpWidget(CompanionAdSlot.fromPlatform(
-      platform: slot,
-    ));
+    await tester.pumpWidget(
+      Builder(
+        builder: (BuildContext context) {
+          return CompanionAdSlot.fromPlatform(slot).buildWidget(context);
+        },
+      ),
+    );
 
     expect(find.byType(Container), findsOneWidget);
-  });
-
-  testWidgets('constructor parameters are correctly passed to creation params',
-      (WidgetTester tester) async {
-    InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
-      onCreatePlatformCompanionAdSlot: (
-        PlatformCompanionAdSlotCreationParams params,
-      ) {
-        return TestCompanionAdSlot(params, onBuild: (_) => Container());
-      },
-      onCreatePlatformAdDisplayContainer: (
-        PlatformAdDisplayContainerCreationParams params,
-      ) {
-        return TestPlatformAdDisplayContainer(
-          params,
-          onBuild: (_) => Container(),
-        );
-      },
-      onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
-        throw UnimplementedError();
-      },
-      onCreatePlatformAdsManagerDelegate: (
-        PlatformAdsManagerDelegateCreationParams params,
-      ) {
-        throw UnimplementedError();
-      },
-      onCreatePlatformContentProgressProvider: (_) {
-        throw UnimplementedError();
-      },
-    );
-
-    final CompanionAdSlot slot = CompanionAdSlot.fluid(key: GlobalKey());
-
-    // The key passed to the default constructor is used by the super class
-    // and not passed to the platform implementation.
-    expect(slot.platform.params.key, isNull);
   });
 }

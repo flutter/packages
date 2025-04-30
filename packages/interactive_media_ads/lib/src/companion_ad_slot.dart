@@ -19,7 +19,7 @@ import 'platform_interface/platform_interface.dart';
 /// iOS and Android:
 ///
 /// ```dart
-/// final CompanionAdSlot slot = CompanionAdSlot();
+/// final CompanionAdSlot slot = CompanionAdSlot.size(width: 100, height: 100);
 ///
 /// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
 ///   final IOSCompanionAdSlot iosSlot = slot.platform as IOSCompanionAdSlot;
@@ -28,22 +28,18 @@ import 'platform_interface/platform_interface.dart';
 ///       slot.platform as AndroidCompanionAdSlot;
 /// }
 /// ```
-class CompanionAdSlot extends StatelessWidget {
+class CompanionAdSlot {
   /// Constructs an [CompanionAdSlot].
   ///
   /// See [CompanionAdSlot.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
   CompanionAdSlot.size({
-    Key? key,
     required int width,
     required int height,
-    TextDirection layoutDirection = TextDirection.ltr,
   }) : this.fromPlatformCreationParams(
-          key: key,
           params: PlatformCompanionAdSlotCreationParams.size(
             width: width,
             height: height,
-            layoutDirection: layoutDirection,
           ),
         );
 
@@ -51,14 +47,9 @@ class CompanionAdSlot extends StatelessWidget {
   ///
   /// See [CompanionAdSlot.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
-  CompanionAdSlot.fluid({
-    Key? key,
-    TextDirection layoutDirection = TextDirection.ltr,
-  }) : this.fromPlatformCreationParams(
-          key: key,
-          params: PlatformCompanionAdSlotCreationParams.fluid(
-            layoutDirection: layoutDirection,
-          ),
+  CompanionAdSlot.fluid()
+      : this.fromPlatformCreationParams(
+          params: const PlatformCompanionAdSlotCreationParams.fluid(),
         );
 
   /// Constructs an [CompanionAdSlot] from creation params for a specific platform.
@@ -87,26 +78,19 @@ class CompanionAdSlot extends StatelessWidget {
   ///   params,
   /// );
   /// ```
-  /// {@endtemplate}
+  /// {@endtemplate}/// Builds the Widget that contains the native View.
   CompanionAdSlot.fromPlatformCreationParams({
-    Key? key,
     required PlatformCompanionAdSlotCreationParams params,
-  }) : this.fromPlatform(
-          key: key,
-          platform: PlatformCompanionAdSlot(params),
-        );
+  }) : this.fromPlatform(PlatformCompanionAdSlot(params));
 
   /// Constructs an [CompanionAdSlot] from a specific platform implementation.
-  const CompanionAdSlot.fromPlatform({super.key, required this.platform});
+  const CompanionAdSlot.fromPlatform(this.platform);
 
   /// Implementation of [PlatformCompanionAdSlot] for the current platform.
   final PlatformCompanionAdSlot platform;
 
-  /// The layout direction to use for the embedded CompanionAdSlot.
-  TextDirection get layoutDirection => platform.params.layoutDirection;
-
-  @override
-  Widget build(BuildContext context) {
-    return platform.build(context);
+  /// Builds the Widget that contains the native View.
+  Widget buildWidget(BuildContext context) {
+    return platform.buildWidget(BuildWidgetCreationParams(context: context));
   }
 }

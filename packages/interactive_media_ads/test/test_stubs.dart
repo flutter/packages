@@ -82,7 +82,7 @@ final class TestInteractiveMediaAdsPlatform
     return onCreatePlatformCompanionAdSlot?.call(params) ??
         TestCompanionAdSlot(
           params,
-          onBuild: (_) => Container(),
+          onBuildWidget: (_) => Container(),
         );
   }
 }
@@ -226,13 +226,13 @@ final class TestAdsRenderingSettings extends PlatformAdsRenderingSettings {
 final class TestCompanionAdSlot extends PlatformCompanionAdSlot {
   TestCompanionAdSlot(
     super.params, {
-    required this.onBuild,
+    required this.onBuildWidget,
   }) : super.implementation();
 
-  Widget Function(BuildContext context) onBuild;
+  Widget Function(BuildWidgetCreationParams params) onBuildWidget;
 
   @override
-  Widget build(BuildContext context) {
-    return onBuild(context);
+  Widget buildWidget(BuildWidgetCreationParams params) {
+    return onBuildWidget(params);
   }
 }

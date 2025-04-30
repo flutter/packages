@@ -4,6 +4,7 @@
 
 import 'package:flutter/widgets.dart';
 
+import 'build_widget_creation_params.dart';
 import 'interactive_media_ads_platform.dart';
 
 /// Object specifying creation parameters for creating a
@@ -46,26 +47,16 @@ base class PlatformCompanionAdSlotCreationParams {
   /// Used by the platform implementation to create a new
   /// [PlatformCompanionAdSlot].
   const PlatformCompanionAdSlotCreationParams.size({
-    this.key,
     required int this.width,
     required int this.height,
-    this.layoutDirection = TextDirection.ltr,
   }) : isFluid = false;
 
   /// Used by the platform implementation to create a new
   /// [PlatformCompanionAdSlot].
-  const PlatformCompanionAdSlotCreationParams.fluid({
-    this.key,
-    this.layoutDirection = TextDirection.ltr,
-  })  : width = null,
+  const PlatformCompanionAdSlotCreationParams.fluid()
+      : width = null,
         height = null,
         isFluid = true;
-
-  /// Controls how one widget replaces another widget in the tree.
-  ///
-  /// See also:
-  ///  * The discussions at [Key] and [GlobalKey].
-  final Key? key;
 
   /// The width of the companion slot.
   ///
@@ -80,9 +71,6 @@ base class PlatformCompanionAdSlotCreationParams {
   /// Whether the companion ad has no fixed size, but rather adapts to fit the
   /// creative content they display.
   final bool isFluid;
-
-  /// The layout direction to use for the embedded companion ad.
-  final TextDirection layoutDirection;
 }
 
 /// Ad slot for companion ads.
@@ -117,5 +105,5 @@ abstract base class PlatformCompanionAdSlot {
   final PlatformCompanionAdSlotCreationParams params;
 
   /// Builds the Widget that contains the native View.
-  Widget build(BuildContext context);
+  Widget buildWidget(BuildWidgetCreationParams params);
 }

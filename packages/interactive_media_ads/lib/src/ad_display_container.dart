@@ -104,9 +104,7 @@ class AdDisplayContainer extends StatelessWidget {
 
   Iterable<CompanionAdSlot> get companionAds =>
       platform.params.companionSlots.map(
-        (PlatformCompanionAdSlot slot) {
-          return CompanionAdSlot.fromPlatform(platform: slot);
-        },
+        (PlatformCompanionAdSlot slot) => CompanionAdSlot.fromPlatform(slot),
       );
 
   /// The layout direction to use for the embedded AdDisplayContainer.

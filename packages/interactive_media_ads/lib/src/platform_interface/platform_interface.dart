@@ -5,6 +5,7 @@
 export 'ad_error.dart';
 export 'ad_event.dart';
 export 'ad_ui_element.dart';
+export 'build_widget_creation_params.dart';
 export 'interactive_media_ads_platform.dart';
 export 'platform_ad_display_container.dart';
 export 'platform_ads_loader.dart';
