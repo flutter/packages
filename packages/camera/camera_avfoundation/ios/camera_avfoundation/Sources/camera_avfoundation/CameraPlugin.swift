@@ -10,15 +10,13 @@ import ObjectiveC
   import camera_avfoundation_objc
 #endif
 
-typealias NamedCaptureDeviceFactory = (String) -> FLTCaptureDevice
-
 public final class CameraPlugin: NSObject, FlutterPlugin {
   private let registry: FlutterTextureRegistry
   private let messenger: FlutterBinaryMessenger
   private let globalEventAPI: FCPCameraGlobalEventApi
   private let deviceDiscoverer: FLTCameraDeviceDiscovering
   private let permissionManager: FLTCameraPermissionManager
-  private let captureDeviceFactory: NamedCaptureDeviceFactory
+  private let captureDeviceFactory: CaptureDeviceFactory
   private let captureSessionFactory: CaptureSessionFactory
   private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
 
@@ -54,7 +52,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     globalAPI: FCPCameraGlobalEventApi,
     deviceDiscoverer: FLTCameraDeviceDiscovering,
     permissionManager: FLTCameraPermissionManager,
-    deviceFactory: @escaping NamedCaptureDeviceFactory,
+    deviceFactory: @escaping CaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
     captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
     captureSessionQueue: DispatchQueue
@@ -239,12 +237,11 @@ extension CameraPlugin: FCPCameraApi {
     let camConfiguration = FLTCamConfiguration(
       mediaSettings: settings,
       mediaSettingsWrapper: mediaSettingsAVWrapper,
-      captureDeviceFactory: { [self] in
-        self.captureDeviceFactory(name)
-      },
+      captureDeviceFactory: captureDeviceFactory,
       captureSessionFactory: captureSessionFactory,
       captureSessionQueue: captureSessionQueue,
-      captureDeviceInputFactory: captureDeviceInputFactory
+      captureDeviceInputFactory: captureDeviceInputFactory,
+      initialCameraName: name
     )
 
     var error: NSError?

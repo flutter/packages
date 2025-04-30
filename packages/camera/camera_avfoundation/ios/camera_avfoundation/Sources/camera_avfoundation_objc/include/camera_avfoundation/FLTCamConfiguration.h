@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Factory block returning an AVCaptureDevice.
 /// Used in tests to inject a device into FLTCam.
-typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureDeviceFactory)(void);
+typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureDeviceFactory)(NSString *);
 
 typedef NSObject<FLTCaptureSession> *_Nonnull (^CaptureSessionFactory)(void);
 
@@ -41,7 +41,8 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(NSObject<FLTCaptureDeviceF
                 captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
             captureDeviceInputFactory:
-                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory;
+                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory
+                    initialCameraName:(NSString *)initialCameraName;
 
 @property(nonatomic, strong) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
 @property(nonatomic, strong) dispatch_queue_t captureSessionQueue;
@@ -56,6 +57,7 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(NSObject<FLTCaptureDeviceF
 @property(nonatomic, strong) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
+@property(nonatomic, copy) NSString *initialCameraName;
 
 @end
 

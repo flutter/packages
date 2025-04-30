@@ -1,6 +1,7 @@
-## 0.9.18+15
+## 0.9.19
 
 * Migrates the CameraPlugin class to Swift.
+* Fixes camera name being ignored in `setDescriptionWhileRecording`.
 
 ## 0.9.18+14
 
