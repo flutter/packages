@@ -290,7 +290,7 @@ extension CameraPlugin: FCPCameraApi {
     camera.onFrameAvailable = { [weak self] in
       guard let camera = self?.camera else { return }
       if !camera.isPreviewPaused {
-        FLTEnsureToRunOnMainQueue { [weak self] in
+        FLTEnsureToRunOnMainQueue {
           self?.registry.textureFrameAvailable(Int64(cameraId))
         }
       }
