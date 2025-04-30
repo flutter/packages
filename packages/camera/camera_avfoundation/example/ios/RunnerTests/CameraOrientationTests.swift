@@ -23,8 +23,12 @@ private final class MockUIDevice: UIDevice {
 
 final class CameraOrientationTests: XCTestCase {
   private func createCameraPlugin() -> (
-    CameraPlugin, MockFLTCam, MockGlobalEventApi, MockCaptureDevice, MockCameraDeviceDiscoverer,
-    DispatchQueue
+    cameraPlugin: CameraPlugin,
+    mockCamera: MockFLTCam,
+    mockEventAPI: MockGlobalEventApi,
+    mockDevice: MockCaptureDevice,
+    mockDeviceDiscoverer: MockCameraDeviceDiscoverer,
+    captureSessionQueue: DispatchQueue
   ) {
     let mockDevice = MockCaptureDevice()
     let mockCamera = MockFLTCam()
@@ -46,7 +50,12 @@ final class CameraOrientationTests: XCTestCase {
     cameraPlugin.camera = mockCamera
 
     return (
-      cameraPlugin, mockCamera, mockEventAPI, mockDevice, mockDeviceDiscoverer, captureSessionQueue
+      cameraPlugin,
+      mockCamera,
+      mockEventAPI,
+      mockDevice,
+      mockDeviceDiscoverer,
+      captureSessionQueue
     )
   }
 
@@ -61,7 +70,8 @@ final class CameraOrientationTests: XCTestCase {
   }
 
   private func sendOrientation(
-    _ orientation: UIDeviceOrientation, to cameraPlugin: CameraPlugin,
+    _ orientation: UIDeviceOrientation,
+    to cameraPlugin: CameraPlugin,
     captureSessionQueue: DispatchQueue
   ) {
     cameraPlugin.orientationChanged(createMockNotification(for: orientation))
