@@ -371,7 +371,8 @@ extension CameraPlugin: FCPCameraApi {
   }
 
   public func startVideoRecording(
-    withStreaming enableStream: Bool, completion: @escaping (FlutterError?) -> Void
+    withStreaming enableStream: Bool,
+    completion: @escaping (FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else { return }
@@ -402,7 +403,8 @@ extension CameraPlugin: FCPCameraApi {
   }
 
   public func setFlashMode(
-    _ mode: FCPPlatformFlashMode, completion: @escaping (FlutterError?) -> Void
+    _ mode: FCPPlatformFlashMode,
+    completion: @escaping (FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setFlashMode(mode, withCompletion: completion)
@@ -410,7 +412,8 @@ extension CameraPlugin: FCPCameraApi {
   }
 
   public func setExposureMode(
-    _ mode: FCPPlatformExposureMode, completion: @escaping (FlutterError?) -> Void
+    _ mode: FCPPlatformExposureMode,
+    completion: @escaping (FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setExposureMode(mode)
@@ -419,7 +422,8 @@ extension CameraPlugin: FCPCameraApi {
   }
 
   public func setExposurePoint(
-    _ point: FCPPlatformPoint?, completion: @escaping (FlutterError?) -> Void
+    _ point: FCPPlatformPoint?,
+    completion: @escaping (FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setExposurePoint(point, withCompletion: completion)
@@ -454,7 +458,8 @@ extension CameraPlugin: FCPCameraApi {
   }
 
   public func setFocusMode(
-    _ mode: FCPPlatformFocusMode, completion: @escaping (FlutterError?) -> Void
+    _ mode: FCPPlatformFocusMode,
+    completion: @escaping (FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setFocusMode(mode)
