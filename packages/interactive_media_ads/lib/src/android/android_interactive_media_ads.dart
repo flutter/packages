@@ -13,6 +13,7 @@ import 'android_ad_display_container.dart';
 import 'android_ads_loader.dart';
 import 'android_ads_manager_delegate.dart';
 import 'android_ads_rendering_settings.dart';
+import 'android_companion_ad_slot.dart';
 import 'android_content_progress_provider.dart';
 
 /// Android implementation of [InteractiveMediaAdsPlatform].
@@ -58,8 +59,9 @@ final class AndroidInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   }
 
   @override
-  PlatformCompanionAdSlot createPlatformCompanionAdSlot(PlatformCompanionAdSlotCreationParams params) {
-    // TODO: implement createPlatformCompanionAdSlot
-    throw UnimplementedError();
+  AndroidCompanionAdSlot createPlatformCompanionAdSlot(
+    PlatformCompanionAdSlotCreationParams params,
+  ) {
+    return AndroidCompanionAdSlot(params);
   }
 }
