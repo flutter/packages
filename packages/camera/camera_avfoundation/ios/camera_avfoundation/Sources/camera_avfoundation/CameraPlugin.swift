@@ -12,7 +12,7 @@ import ObjectiveC
 
 typealias NamedCaptureDeviceFactory = (String) -> FLTCaptureDevice
 
-public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
+public final class CameraPlugin: NSObject, FlutterPlugin {
   private let registry: FlutterTextureRegistry
   private let messenger: FlutterBinaryMessenger
   private let globalEventAPI: FCPCameraGlobalEventApi
@@ -124,7 +124,9 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
       }
     }
   }
+}
 
+extension CameraPlugin: FCPCameraApi {
   public func availableCameras(
     completion: @escaping ([FCPPlatformCameraDescription]?, FlutterError?) -> Void
   ) {
@@ -216,7 +218,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin, FCPCameraApi {
     }
   }
 
-  public func createCameraOnSessionQueue(
+  func createCameraOnSessionQueue(
     withName: String,
     settings: FCPPlatformMediaSettings,
     completion: @escaping (NSNumber?, FlutterError?) -> Void
