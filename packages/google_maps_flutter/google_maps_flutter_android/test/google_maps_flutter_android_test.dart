@@ -476,6 +476,24 @@ void main() {
       expect(firstAdded.markerId, object3.markerId.value);
       expect(firstAdded.clusterManagerId, object3.clusterManagerId?.value);
     }
+  });
+
+  test('updatePolygons passes expected arguments', () async {
+    const int mapId = 1;
+    final (GoogleMapsFlutterAndroid maps, MockMapsApi api) =
+        setUpMockMap(mapId: mapId);
+
+    const Polygon object1 = Polygon(polygonId: PolygonId('1'));
+    const Polygon object2old = Polygon(polygonId: PolygonId('2'));
+    final Polygon object2new = object2old.copyWith(strokeWidthParam: 42);
+    const Polygon object3 = Polygon(polygonId: PolygonId('3'));
+    await maps.updatePolygons(
+        PolygonUpdates.from(
+            <Polygon>{object1, object2old}, <Polygon>{object2new, object3}),
+        mapId: mapId);
+
+    final VerificationResult verification =
+        verify(api.updatePolygons(captureAny, captureAny, captureAny));
     final List<PlatformPolygon> toAdd =
         verification.captured[0] as List<PlatformPolygon>;
     final List<PlatformPolygon> toChange =
