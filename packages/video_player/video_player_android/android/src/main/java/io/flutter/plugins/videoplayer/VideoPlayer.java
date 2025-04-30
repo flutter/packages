@@ -104,6 +104,10 @@ public abstract class VideoPlayer {
     exoPlayer.seekTo(location);
   }
 
+  void seekToDefaultPosition() {
+    exoPlayer.seekToDefaultPosition();
+  }
+
   long getPosition() {
     return exoPlayer.getCurrentPosition();
   }

@@ -213,6 +213,12 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   @Override
+  public void seekToDefaultPosition(@NonNull Long playerId) {
+    VideoPlayer player = getPlayer(playerId);
+    player.seekToDefaultPosition();
+  }
+
+  @Override
   public void pause(@NonNull Long playerId) {
     VideoPlayer player = getPlayer(playerId);
     player.pause();
