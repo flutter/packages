@@ -29,16 +29,10 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   var camera: FLTCam?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let instance = CameraPlugin(registry: registrar.textures(), messenger: registrar.messenger())
-
-    SetUpFCPCameraApi(registrar.messenger(), instance)
-  }
-
-  convenience init(registry: FlutterTextureRegistry, messenger: FlutterBinaryMessenger) {
-    self.init(
-      registry: registry,
-      messenger: messenger,
-      globalAPI: FCPCameraGlobalEventApi(binaryMessenger: messenger),
+    let instance = CameraPlugin(
+      registry: registrar.textures(),
+      messenger: registrar.messenger(),
+      globalAPI: FCPCameraGlobalEventApi(binaryMessenger: registrar.messenger()),
       deviceDiscoverer: FLTDefaultCameraDeviceDiscoverer(),
       permissionManager: FLTCameraPermissionManager(
         permissionService: FLTDefaultPermissionService()),
@@ -50,6 +44,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
       captureDeviceInputFactory: FLTDefaultCaptureDeviceInputFactory(),
       captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
+
+    SetUpFCPCameraApi(registrar.messenger(), instance)
   }
 
   init(
