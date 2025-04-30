@@ -12,7 +12,9 @@ import 'camerax_library.dart';
 import 'rotated_preview_utils.dart';
 
 /// Widget that rotates the camera preview to be upright according to the
-/// current user interface orientation.
+/// current user interface orientation for devices using the `ImageReader`
+/// Impeller backend, which does not automatically handle the crop and
+/// rotation of the camera preview correctly.
 @internal
 final class ImageReaderRotatedPreview extends StatefulWidget {
   /// Creates [ImageReaderRotatedPreview] that will correct the preview
@@ -112,10 +114,6 @@ final class _ImageReaderRotatedPreviewState
     required double sensorOrientationDegrees,
     required int sign,
   }) {
-    final double extraRotationDegrees =
-        getPreAppliedQuarterTurnsRotationFromDeviceOrientation(orientation) *
-            90;
-
     // Rotate the camera preview according to
     // https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation.
     double rotationDegrees = (sensorOrientationDegrees -
@@ -126,6 +124,9 @@ final class _ImageReaderRotatedPreviewState
     // Then, subtract the rotation already applied in the CameraPreview widget
     // (see camera/camera/lib/src/camera_preview.dart) that is not correct
     // for this plugin.
+    final double extraRotationDegrees =
+        getPreAppliedQuarterTurnsRotationFromDeviceOrientation(orientation) *
+            90;
     rotationDegrees -= extraRotationDegrees;
 
     return rotationDegrees;

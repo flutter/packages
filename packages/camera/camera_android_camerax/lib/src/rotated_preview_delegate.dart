@@ -13,13 +13,14 @@ import 'image_reader_rotated_preview.dart';
 import 'surface_texture_rotated_preview.dart';
 
 /// Widget that rotates the camera preview to be upright according to the
-/// current user interface orientation based on whether or not the Impeller
-/// backend used handles crop and rotation of Surfaces correctly.
+/// current user interface orientation based on whether or not the device
+/// uses an Impeller backend that handles crop and rotation of Surfaces
+/// correctly automatically.
 @internal
 final class RotatedPreviewDelegate extends StatelessWidget {
   /// Creates [RotatedPreviewDelegate] that will build the correctly
   /// rotated preview widget depending on whether or not the Impeller
-  /// backend handles crop and rotation.
+  /// backend handles crop and rotation automatically.
   const RotatedPreviewDelegate(
       {super.key,
       required this.handlesCropAndRotation,

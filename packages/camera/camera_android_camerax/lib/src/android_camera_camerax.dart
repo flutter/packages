@@ -257,8 +257,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The initial orientation of the device when the camera is created.
   late DeviceOrientation _initialDeviceOrientation;
 
-  /// The initial rotation (in terms of a Surface rotation constant) of the Android default
-  /// display when the camera is created.
+  /// The initial rotation of the Android default display when the camera is created.
+  ///
+  /// This is expressed in terms of one of the [Surface] rotation constant.
   late int _initialDefaultDisplayRotation;
 
   /// Returns list of all available cameras and their descriptions.

@@ -19,6 +19,7 @@ const int _90DegreesClockwise = 1;
 const int _180DegreesClockwise = 2;
 const int _270DegreesClockwise = 3;
 
+// Serialize DeviceOrientations to Strings.
 String _serializeDeviceOrientation(DeviceOrientation orientation) {
   switch (orientation) {
     case DeviceOrientation.portraitUp:
@@ -79,7 +80,10 @@ void main() {
   }
 
   /// Returns CameraXProxy used to mock all calls to native Android in
-  /// the `availableCameras` and `createCameraWithSettings` methods.
+  /// the `availableCameras` and `createCameraWithSettings` methods, with
+  /// a DeviceORientationManager specified.
+  ///
+  /// Useful for tests that need a reference to a DeviceOrientationManager.
   CameraXProxy getProxyForCreatingTestCameraWithDeviceOrientationManager(
     DeviceOrientationManager deviceOrientationManager, {
     required MockProcessCameraProvider mockProcessCameraProvider,
@@ -279,7 +283,11 @@ void main() {
       );
 
   /// Returns CameraXProxy used to mock all calls to native Android in
-  /// the `availableCameras` and `createCameraWithSettings` methods.
+  /// the `availableCameras` and `createCameraWithSettings` methods, with
+  /// functions `getUiOrientation` and `getDefaultDisplayRotation` specified
+  /// to create a mock DeviceOrientationManager.
+  ///
+  /// Useful for tests that do not need a reference to a DeviceOrientationManager.
   CameraXProxy getProxyForCreatingTestCamera({
     required MockProcessCameraProvider mockProcessCameraProvider,
     required CameraSelector Function({
@@ -1762,7 +1770,7 @@ void main() {
       });
 
       testWidgets(
-          'camera is back facing, then the preview Texture is rotated 0 degrees clockwise',
+          'camera is back facing, then the preview Texture is rotated 270 degrees clockwise',
           (WidgetTester tester) async {
         // Set up test front camera with sensor orientation degrees 90.
         final MockCameraSelector mockBackCameraSelector = MockCameraSelector();

@@ -13,7 +13,8 @@ import 'rotated_preview_utils.dart';
 
 /// Widget that rotates the camera preview to be upright according to the
 /// current user interface orientation when the preview is backed by a
-/// native Android `SurfaceTexture`.
+/// native Android `SurfaceTexture`, which does handle the crop and rotation
+/// of the camera preview automatically.
 @internal
 final class SurfaceTextureRotatedPreview extends StatefulWidget {
   /// Creates [SurfaceTextureRotatedPreview] that will rotate camera preview
@@ -30,7 +31,7 @@ final class SurfaceTextureRotatedPreview extends StatefulWidget {
   final DeviceOrientation initialDeviceOrientation;
 
   /// The initial rotation of the Android default display when the camera is created
-  /// in units of clockwise quarter turns.
+  /// in terms of a Surface rotation constant.
   final int initialDefaultDisplayRotationQuarterTurns;
 
   /// Stream of changes to the device orientation.

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 import 'camerax_library.dart' show Surface;
 
-/// Returns the amount of counter-clockwise quarter turns represented by
+/// Returns the number of counter-clockwise quarter turns represented by
 /// [surfaceRotationConstant], a [Surface] constant representing a clockwise
 /// rotation.
 int getQuarterTurnsFromSurfaceRotationConstant(int surfaceRotationConstant) {
