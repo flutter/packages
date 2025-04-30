@@ -87,9 +87,11 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     UIDevice.current.endGeneratingDeviceOrientationNotifications()
   }
 
-  static func flutterErrorFromNSError(_ error: NSError) -> FlutterError {
+  private static func flutterErrorFromNSError(_ error: NSError) -> FlutterError {
     return FlutterError(
-      code: "Error \(error.code)", message: error.localizedDescription, details: error.domain)
+      code: "Error \(error.code)",
+      message: error.localizedDescription,
+      details: error.domain)
   }
 
   func orientationChanged(_ notification: Notification) {
