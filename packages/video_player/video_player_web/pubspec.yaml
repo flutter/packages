@@ -16,6 +16,10 @@ flutter:
         pluginClass: VideoPlayerPlugin
         fileName: video_player_web.dart
 
+dependency_overrides:
+  video_player_platform_interface:
+    path: ../video_player_platform_interface
+
 dependencies:
   flutter:
     sdk: flutter
