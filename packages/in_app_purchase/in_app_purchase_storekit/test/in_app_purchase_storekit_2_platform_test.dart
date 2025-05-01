@@ -40,6 +40,8 @@ void main() {
     InAppPurchaseStoreKitPlatform.registerPlatform();
     iapStoreKitPlatform =
         InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
+    fakeStoreKitPlatform.shouldStoreKit2BeEnabled = true;
+    fakeStoreKitPlatform.supportsStoreKit2();
     fakeStoreKit2Platform.reset();
   });
 

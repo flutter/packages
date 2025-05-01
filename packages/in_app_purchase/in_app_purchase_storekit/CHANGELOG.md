@@ -1,4 +1,4 @@
-## 0.3.23
+## 0.4.0
 
 * **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.
 
