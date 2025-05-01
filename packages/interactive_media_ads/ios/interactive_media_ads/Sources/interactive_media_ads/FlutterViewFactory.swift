@@ -33,10 +33,10 @@ class FlutterViewFactory: NSObject, FlutterPlatformViewFactory {
     let instance: AnyObject? = instanceManager.instance(forIdentifier: identifier)
 
     if let instance = instance as? FlutterPlatformView {
-      //instance.view().frame = frame
+      instance.view().frame = frame
       return instance
     } else {
-      //(instance as! UIView).frame = frame
+      (instance as! UIView).frame = frame
       return PlatformViewImpl(uiView: instance as! UIView)
     }
   }

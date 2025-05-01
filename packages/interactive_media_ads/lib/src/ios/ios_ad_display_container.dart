@@ -73,10 +73,10 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         adDisplayContainer = _iosParams._imaProxy.newIMAAdDisplayContainer(
           adContainer: _controller.view,
           adContainerViewController: _controller,
-          companionSlots: _iosParams.companionSlots
+          companionSlots: await Future.wait(_iosParams.companionSlots
               .cast<IOSCompanionAdSlot>()
-              .map((IOSCompanionAdSlot slot) => slot.nativeCompanionAdSlot)
-              .toList(),
+              .map((IOSCompanionAdSlot slot) =>
+                  slot.getNativeCompanionAdSlot())),
         );
         await _viewDidAppearCompleter.future;
         params.onContainerAdded(this);

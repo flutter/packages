@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
@@ -59,25 +61,28 @@ final class IOSCompanionAdSlotCreationParams
 
 base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   /// Constructs an [IOSCompanionAdSlot].
-  IOSCompanionAdSlot(super.params) : super.implementation() {
-    _initCompanionAdSlot();
-  }
+  IOSCompanionAdSlot(super.params) : super.implementation();
 
   late final IOSCompanionAdSlotCreationParams _iosParams =
       _initIOSParams(params);
 
+  final Completer<IMACompanionAdSlot> viewDidAppearCompleter = Completer<IMACompanionAdSlot>();
+
+  late final UIViewController viewController = _createViewController(WeakReference(this));
+
   @internal
-  late final IMACompanionAdSlot nativeCompanionAdSlot = _initCompanionAdSlot();
+  Future<IMACompanionAdSlot> getNativeCompanionAdSlot() {
+    return viewDidAppearCompleter.future;
+  }
 
   @override
   Widget buildWidget(BuildWidgetCreationParams params) {
-    print('BUILDING');
     return UiKitView(
       key: params.key,
       viewType: 'interactive_media_ads.packages.flutter.dev/view',
       layoutDirection: params.layoutDirection,
-      creationParams: nativeCompanionAdSlot.view.pigeon_instanceManager
-          .getIdentifier(nativeCompanionAdSlot.view),
+      creationParams: viewController.view.pigeon_instanceManager
+          .getIdentifier(viewController.view),
       creationParamsCodec: const StandardMessageCodec(),
     );
   }
@@ -98,15 +103,36 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
     }
   }
 
+  IMACompanionAdSlot? s;
+
   IMACompanionAdSlot _initCompanionAdSlot() {
     if (_iosParams.isFluid) {
-      return IMACompanionAdSlot(view: _iosParams._proxy.newUIView());
+      return s = IMACompanionAdSlot(view: _iosParams._proxy.newUIView());
     } else {
-      return IMACompanionAdSlot.size(
+      return s = IMACompanionAdSlot.size(
         view: _iosParams._proxy.newUIView(),
         width: _iosParams.width!,
         height: _iosParams.height!,
       );
     }
+  }
+
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
+  static UIViewController _createViewController(
+    WeakReference<IOSCompanionAdSlot> interfaceContainer,
+  ) {
+    return interfaceContainer.target!._iosParams._proxy.newUIViewController(
+      viewDidAppear: (_, bool animated) {
+        print('VIEW appeared');
+        final IOSCompanionAdSlot? container = interfaceContainer.target;
+        if (container != null &&
+            !container.viewDidAppearCompleter.isCompleted) {
+          print('complete');
+          container.viewDidAppearCompleter.complete(container._initCompanionAdSlot());
+        }
+      },
+    );
   }
 }
