@@ -22,7 +22,8 @@ final class CameraMethodChannelTests: XCTestCase {
       permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { session },
-      captureDeviceInputFactory: MockCaptureDeviceInputFactory()
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
   }
 
