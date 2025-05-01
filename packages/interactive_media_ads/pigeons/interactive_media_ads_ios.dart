@@ -656,6 +656,10 @@ abstract class IMACompanionAdSlot {
   /// This instance only creates a weak reference to the delegate, so the Dart
   /// instance should create an explicit reference to receive callbacks.
   void setDelegate(IMACompanionDelegate? delegate);
+
+  int width();
+
+  int height();
 }
 
 /// Delegate to receive events from the companion ad slot.

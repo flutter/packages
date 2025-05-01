@@ -77,13 +77,17 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
 
   @override
   Widget buildWidget(BuildWidgetCreationParams params) {
-    return UiKitView(
-      key: params.key,
-      viewType: 'interactive_media_ads.packages.flutter.dev/view',
-      layoutDirection: params.layoutDirection,
-      creationParams: viewController.view.pigeon_instanceManager
-          .getIdentifier(viewController.view),
-      creationParamsCodec: const StandardMessageCodec(),
+    return SizedBox(
+      width: 300,
+      height: 250,
+      child: UiKitView(
+        key: params.key,
+        viewType: 'interactive_media_ads.packages.flutter.dev/view',
+        layoutDirection: params.layoutDirection,
+        creationParams: viewController.view.pigeon_instanceManager
+            .getIdentifier(viewController.view),
+        creationParamsCodec: const StandardMessageCodec(),
+      ),
     );
   }
 
@@ -109,11 +113,15 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
     if (_iosParams.isFluid) {
       return s = IMACompanionAdSlot(view: _iosParams._proxy.newUIView());
     } else {
-      return s = IMACompanionAdSlot.size(
+      s = IMACompanionAdSlot.size(
         view: _iosParams._proxy.newUIView(),
         width: _iosParams.width!,
         height: _iosParams.height!,
       );
+      print('SIZE');
+      s!.width().then((int value) => print(value));
+      s!.height().then((int value) => print(value));
+      return s!;
     }
   }
 

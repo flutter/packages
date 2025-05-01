@@ -3036,6 +3036,8 @@ protocol PigeonApiDelegateIMACompanionAdSlot {
   /// This instance only creates a weak reference to the delegate, so the Dart
   /// instance should create an explicit reference to receive callbacks.
   func setDelegate(pigeonApi: PigeonApiIMACompanionAdSlot, pigeonInstance: IMACompanionAdSlot, delegate: IMACompanionDelegate?) throws
+  func width(pigeonApi: PigeonApiIMACompanionAdSlot, pigeonInstance: IMACompanionAdSlot) throws -> Int64
+  func height(pigeonApi: PigeonApiIMACompanionAdSlot, pigeonInstance: IMACompanionAdSlot) throws -> Int64
 }
 
 protocol PigeonApiProtocolIMACompanionAdSlot {
@@ -3107,6 +3109,36 @@ withIdentifier: pigeonIdentifierArg)
       }
     } else {
       setDelegateChannel.setMessageHandler(nil)
+    }
+    let widthChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMACompanionAdSlot.width", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      widthChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMACompanionAdSlot
+        do {
+          let result = try api.pigeonDelegate.width(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      widthChannel.setMessageHandler(nil)
+    }
+    let heightChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.interactive_media_ads.IMACompanionAdSlot.height", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      heightChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pigeonInstanceArg = args[0] as! IMACompanionAdSlot
+        do {
+          let result = try api.pigeonDelegate.height(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      heightChannel.setMessageHandler(nil)
     }
   }
 

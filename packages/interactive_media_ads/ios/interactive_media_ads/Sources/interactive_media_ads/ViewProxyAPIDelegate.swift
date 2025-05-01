@@ -11,6 +11,6 @@ import UIKit
 /// instance or handle method calls on the associated native class or an instance of that class.
 class ViewProxyAPIDelegate: PigeonApiDelegateUIView {  
   func pigeonDefaultConstructor(pigeonApi: PigeonApiUIView) throws -> UIView {
-    return UIView()
+    return UIView(frame: CGRect(x: 0, y: 0, width: 300, height: 250))
   }
 }

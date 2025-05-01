@@ -35,4 +35,12 @@ class CompanionAdSlotProxyAPIDelegate: PigeonApiDelegateIMACompanionAdSlot {
   ) throws {
     pigeonInstance.delegate = delegate
   }
+  
+  func width(pigeonApi: PigeonApiIMACompanionAdSlot, pigeonInstance: IMACompanionAdSlot) throws -> Int64 {
+    return Int64(pigeonInstance.width)
+  }
+  
+  func height(pigeonApi: PigeonApiIMACompanionAdSlot, pigeonInstance: IMACompanionAdSlot) throws -> Int64 {
+    return Int64(pigeonInstance.height)
+  }
 }
