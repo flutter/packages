@@ -38,7 +38,7 @@ final class MockFLTCam: FLTCam {
   var setExposurePointStub: ((FCPPlatformPoint?, ((FlutterError?) -> Void)?) -> Void)?
   var setFocusPointStub: ((FCPPlatformPoint?, ((FlutterError?) -> Void)?) -> Void)?
   var setExposureOffsetStub: ((Double) -> Void)?
-  var startImageStreamStub: ((FlutterBinaryMessenger) -> Void)?
+  var startImageStreamStub: ((FlutterBinaryMessenger, (FlutterError?) -> Void) -> Void)?
   var stopImageStreamStub: (() -> Void)?
   var setZoomLevelStub: ((CGFloat, ((FlutterError?) -> Void)?) -> Void)?
   var setUpCaptureSessionForAudioIfNeededStub: (() -> Void)?
@@ -188,8 +188,11 @@ final class MockFLTCam: FLTCam {
     setExposureOffsetStub?(offset)
   }
 
-  override func startImageStream(with messenger: FlutterBinaryMessenger) {
-    startImageStreamStub?(messenger)
+  override func startImageStream(
+    with messenger: FlutterBinaryMessenger,
+    completion: @escaping (FlutterError?) -> Void
+  ) {
+    startImageStreamStub?(messenger, completion)
   }
 
   override func stopImageStream() {
