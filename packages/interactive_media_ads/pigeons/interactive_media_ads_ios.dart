@@ -340,7 +340,9 @@ abstract class IMAAdDisplayContainer extends NSObject {
 ///
 /// See https://developer.apple.com/documentation/uikit/uiview.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'UIKit'))
-abstract class UIView extends NSObject {}
+abstract class UIView extends NSObject {
+  UIView();
+}
 
 /// An object that manages a view hierarchy for your UIKit app.
 ///

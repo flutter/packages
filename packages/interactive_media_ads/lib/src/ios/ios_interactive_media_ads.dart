@@ -13,6 +13,7 @@ import 'ios_ad_display_container.dart';
 import 'ios_ads_loader.dart';
 import 'ios_ads_manager_delegate.dart';
 import 'ios_ads_rendering_settings.dart';
+import 'ios_companion_ad_slot.dart';
 import 'ios_content_progress_provider.dart';
 
 /// Implementation of [InteractiveMediaAdsPlatform] for iOS.
@@ -56,8 +57,9 @@ final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
   }
 
   @override
-  PlatformCompanionAdSlot createPlatformCompanionAdSlot(PlatformCompanionAdSlotCreationParams params) {
-    // TODO: implement createPlatformCompanionAdSlot
-    throw UnimplementedError();
+  IOSCompanionAdSlot createPlatformCompanionAdSlot(
+    PlatformCompanionAdSlotCreationParams params,
+  ) {
+    return IOSCompanionAdSlot(params);
   }
 }
