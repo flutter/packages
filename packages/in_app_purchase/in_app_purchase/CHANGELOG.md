@@ -1,5 +1,7 @@
-## NEXT
+## 3.2.2
 
+* Updates `in_app_purchase_storekit` to 0.4.0 
+* Updates README with Storekit 2 examples.
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
 
 ## 3.2.1
