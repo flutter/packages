@@ -77,8 +77,6 @@ class VideoPlayer {
       ..playsInline = true;
 
     _videoElement.onCanPlay.listen(_onVideoElementInitialization);
-    // Needed for Safari iOS 17, which may not send `canplay`.
-    _videoElement.onLoadedMetadata.listen(_onVideoElementInitialization);
 
     _videoElement.onCanPlayThrough.listen((dynamic _) {
       setBuffering(false);
@@ -131,6 +129,10 @@ class VideoPlayer {
     if (src != null) {
       _videoElement.src = src;
     }
+
+    // Explicitly triggers media loading in preparation for playback. Needed on
+    // iOS to ensure the first frame becomes visible before playback begins.
+    _videoElement.load();
   }
 
   /// Attempts to play the video.

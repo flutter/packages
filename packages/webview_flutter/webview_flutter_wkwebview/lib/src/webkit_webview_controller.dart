@@ -369,6 +369,39 @@ class WebKitWebViewController extends PlatformWebViewController {
   int get webViewIdentifier =>
       _webKitParams._instanceManager.getIdentifier(_webView.nativeWebView)!;
 
+  /// Whether horizontal swipe gestures trigger page navigation.
+  Future<void> setAllowsBackForwardNavigationGestures(bool enabled) {
+    return _webView.setAllowsBackForwardNavigationGestures(enabled);
+  }
+
+  /// Whether to allow previews for link destinations and detected data such as
+  /// addresses and phone numbers.
+  ///
+  /// This property is available on devices that support 3D Touch.
+  ///
+  /// Defaults to true.
+  Future<void> setAllowsLinkPreview(bool allow) {
+    return _webView.setAllowsLinkPreview(allow);
+  }
+
+  /// Sets the listener for canGoBack changes.
+  Future<void> setOnCanGoBackChange(
+      void Function(bool) onCanGoBackChangeCallback) async {
+    _onCanGoBackChangeCallback = onCanGoBackChangeCallback;
+  }
+
+  /// Whether to enable tools for debugging the current WKWebView content.
+  ///
+  /// It needs to be activated in each WKWebView where you want to enable it.
+  ///
+  /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
+  /// the default value is set to false.
+  ///
+  /// Defaults to true in previous versions.
+  Future<void> setInspectable(bool inspectable) {
+    return _webView.setInspectable(inspectable);
+  }
+
   @override
   Future<void> loadFile(String absoluteFilePath) {
     return _webView.loadFileUrl(
@@ -547,11 +580,6 @@ class WebKitWebViewController extends PlatformWebViewController {
     return Offset(position[0], position[1]);
   }
 
-  /// Whether horizontal swipe gestures trigger page navigation.
-  Future<void> setAllowsBackForwardNavigationGestures(bool enabled) {
-    return _webView.setAllowsBackForwardNavigationGestures(enabled);
-  }
-
   @override
   Future<void> setBackgroundColor(Color color) {
     return Future.wait(<Future<void>>[
@@ -620,27 +648,6 @@ class WebKitWebViewController extends PlatformWebViewController {
     return _webView.setNavigationDelegate(handler._navigationDelegate);
   }
 
-  Future<void> _disableZoom() async {
-    final WKUserScript userScript = _webKitParams.webKitProxy.newWKUserScript(
-      source: "var meta = document.createElement('meta');\n"
-          "meta.name = 'viewport';\n"
-          "meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, "
-          "user-scalable=no';\n"
-          "var head = document.getElementsByTagName('head')[0];head.appendChild(meta);",
-      injectionTime: UserScriptInjectionTime.atDocumentEnd,
-      isForMainFrameOnly: true,
-    );
-    final WKUserContentController controller =
-        await _webView.configuration.getUserContentController();
-    await controller.addUserScript(userScript);
-  }
-
-  /// Sets the listener for canGoBack changes.
-  Future<void> setOnCanGoBackChange(
-      void Function(bool) onCanGoBackChangeCallback) async {
-    _onCanGoBackChangeCallback = onCanGoBackChangeCallback;
-  }
-
   /// Sets a callback that notifies the host application of any log messages
   /// written to the JavaScript console.
   ///
@@ -691,6 +698,152 @@ class WebKitWebViewController extends PlatformWebViewController {
 
     addJavaScriptChannel(channelParams);
     return _injectConsoleOverride();
+  }
+
+  @override
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
+    return switch (mode) {
+      WebViewOverScrollMode.always => Future.wait<void>(
+          <Future<void>>[
+            _webView.scrollView.setBounces(true),
+            _webView.scrollView.setAlwaysBounceHorizontal(true),
+            _webView.scrollView.setAlwaysBounceVertical(true),
+          ],
+        ),
+      WebViewOverScrollMode.ifContentScrolls => Future.wait<void>(
+          <Future<void>>[
+            _webView.scrollView.setBounces(true),
+            _webView.scrollView.setAlwaysBounceHorizontal(false),
+            _webView.scrollView.setAlwaysBounceVertical(false),
+          ],
+        ),
+      WebViewOverScrollMode.never => _webView.scrollView.setBounces(false),
+      // This prevents future additions from causing a breaking change.
+      // ignore: unreachable_switch_case
+      _ => throw UnsupportedError('This platform does not support $mode.'),
+    };
+  }
+
+  @override
+  Future<void> setOnPlatformPermissionRequest(
+    void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
+  ) async {
+    _onPermissionRequestCallback = onPermissionRequest;
+  }
+
+  @override
+  Future<void> setOnScrollPositionChange(
+      void Function(ScrollPositionChange scrollPositionChange)?
+          onScrollPositionChange) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      _onScrollPositionChangeCallback = onScrollPositionChange;
+
+      if (onScrollPositionChange != null) {
+        final WeakReference<WebKitWebViewController> weakThis =
+            WeakReference<WebKitWebViewController>(this);
+        _uiScrollViewDelegate =
+            _webKitParams.webKitProxy.newUIScrollViewDelegate(
+          scrollViewDidScroll: (_, __, double x, double y) {
+            weakThis.target?._onScrollPositionChangeCallback?.call(
+              ScrollPositionChange(x, y),
+            );
+          },
+        );
+        return _webView.scrollView.setDelegate(_uiScrollViewDelegate);
+      } else {
+        _uiScrollViewDelegate = null;
+        return _webView.scrollView.setDelegate(null);
+      }
+    } else {
+      // TODO(stuartmorgan): Investigate doing this via JS instead.
+      throw UnimplementedError(
+          'setOnScrollPositionChange is not implemented on macOS');
+    }
+  }
+
+  @override
+  Future<String?> getUserAgent() async {
+    final String? customUserAgent = await _webView.getCustomUserAgent();
+    // Despite the official documentation of `WKWebView.customUserAgent`, the
+    // default value seems to be an empty String and not null. It's possible it
+    // could depend on the iOS version, so this checks for both.
+    if (customUserAgent != null && customUserAgent.isNotEmpty) {
+      return customUserAgent;
+    }
+
+    return (await _webView.evaluateJavaScript('navigator.userAgent;')
+        as String?)!;
+  }
+
+  @override
+  Future<void> setOnJavaScriptAlertDialog(
+      Future<void> Function(JavaScriptAlertDialogRequest request)
+          onJavaScriptAlertDialog) async {
+    _onJavaScriptAlertDialog = onJavaScriptAlertDialog;
+  }
+
+  @override
+  Future<void> setOnJavaScriptConfirmDialog(
+      Future<bool> Function(JavaScriptConfirmDialogRequest request)
+          onJavaScriptConfirmDialog) async {
+    _onJavaScriptConfirmDialog = onJavaScriptConfirmDialog;
+  }
+
+  @override
+  Future<void> setOnJavaScriptTextInputDialog(
+      Future<String> Function(JavaScriptTextInputDialogRequest request)
+          onJavaScriptTextInputDialog) async {
+    _onJavaScriptTextInputDialog = onJavaScriptTextInputDialog;
+  }
+
+  // WKWebView does not support removing a single user script, so all user
+  // scripts and all message handlers are removed instead. And the JavaScript
+  // channels that shouldn't be removed are re-registered. Note that this
+  // workaround could interfere with exposing support for custom scripts from
+  // applications.
+  Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
+    final WKUserContentController controller =
+        await _webView.configuration.getUserContentController();
+    unawaited(controller.removeAllUserScripts());
+    // TODO(bparrishMines): This can be replaced with
+    // `removeAllScriptMessageHandlers` once Dart supports runtime version
+    // checking. (e.g. The equivalent to @availability in Objective-C.)
+    _javaScriptChannelParams.keys.forEach(
+      controller.removeScriptMessageHandler,
+    );
+    final Map<String, WebKitJavaScriptChannelParams> remainingChannelParams =
+        Map<String, WebKitJavaScriptChannelParams>.from(
+      _javaScriptChannelParams,
+    );
+    remainingChannelParams.remove(removedJavaScriptChannel);
+    _javaScriptChannelParams.clear();
+
+    await Future.wait(<Future<void>>[
+      for (final JavaScriptChannelParams params
+          in remainingChannelParams.values)
+        addJavaScriptChannel(params),
+      // Zoom is disabled with a WKUserScript, so this adds it back if it was
+      // removed above.
+      if (!_zoomEnabled) _disableZoom(),
+      // Console logs are forwarded with a WKUserScript, so this adds it back
+      // if a console callback was registered with [setOnConsoleMessage].
+      if (_onConsoleMessageCallback != null) _injectConsoleOverride(),
+    ]);
+  }
+
+  Future<void> _disableZoom() async {
+    final WKUserScript userScript = _webKitParams.webKitProxy.newWKUserScript(
+      source: "var meta = document.createElement('meta');\n"
+          "meta.name = 'viewport';\n"
+          "meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, "
+          "user-scalable=no';\n"
+          "var head = document.getElementsByTagName('head')[0];head.appendChild(meta);",
+      injectionTime: UserScriptInjectionTime.atDocumentEnd,
+      isForMainFrameOnly: true,
+    );
+    final WKUserContentController controller =
+        await _webView.configuration.getUserContentController();
+    await controller.addUserScript(userScript);
   }
 
   Future<void> _injectConsoleOverride() async {
@@ -766,125 +919,6 @@ window.addEventListener("error", function(e) {
     final WKUserContentController controller =
         await _webView.configuration.getUserContentController();
     await controller.addUserScript(overrideScript);
-  }
-
-  // WKWebView does not support removing a single user script, so all user
-  // scripts and all message handlers are removed instead. And the JavaScript
-  // channels that shouldn't be removed are re-registered. Note that this
-  // workaround could interfere with exposing support for custom scripts from
-  // applications.
-  Future<void> _resetUserScripts({String? removedJavaScriptChannel}) async {
-    final WKUserContentController controller =
-        await _webView.configuration.getUserContentController();
-    unawaited(controller.removeAllUserScripts());
-    // TODO(bparrishMines): This can be replaced with
-    // `removeAllScriptMessageHandlers` once Dart supports runtime version
-    // checking. (e.g. The equivalent to @availability in Objective-C.)
-    _javaScriptChannelParams.keys.forEach(
-      controller.removeScriptMessageHandler,
-    );
-    final Map<String, WebKitJavaScriptChannelParams> remainingChannelParams =
-        Map<String, WebKitJavaScriptChannelParams>.from(
-      _javaScriptChannelParams,
-    );
-    remainingChannelParams.remove(removedJavaScriptChannel);
-    _javaScriptChannelParams.clear();
-
-    await Future.wait(<Future<void>>[
-      for (final JavaScriptChannelParams params
-          in remainingChannelParams.values)
-        addJavaScriptChannel(params),
-      // Zoom is disabled with a WKUserScript, so this adds it back if it was
-      // removed above.
-      if (!_zoomEnabled) _disableZoom(),
-      // Console logs are forwarded with a WKUserScript, so this adds it back
-      // if a console callback was registered with [setOnConsoleMessage].
-      if (_onConsoleMessageCallback != null) _injectConsoleOverride(),
-    ]);
-  }
-
-  @override
-  Future<void> setOnPlatformPermissionRequest(
-    void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
-  ) async {
-    _onPermissionRequestCallback = onPermissionRequest;
-  }
-
-  @override
-  Future<void> setOnScrollPositionChange(
-      void Function(ScrollPositionChange scrollPositionChange)?
-          onScrollPositionChange) {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      _onScrollPositionChangeCallback = onScrollPositionChange;
-
-      if (onScrollPositionChange != null) {
-        final WeakReference<WebKitWebViewController> weakThis =
-            WeakReference<WebKitWebViewController>(this);
-        _uiScrollViewDelegate =
-            _webKitParams.webKitProxy.newUIScrollViewDelegate(
-          scrollViewDidScroll: (_, __, double x, double y) {
-            weakThis.target?._onScrollPositionChangeCallback?.call(
-              ScrollPositionChange(x, y),
-            );
-          },
-        );
-        return _webView.scrollView.setDelegate(_uiScrollViewDelegate);
-      } else {
-        _uiScrollViewDelegate = null;
-        return _webView.scrollView.setDelegate(null);
-      }
-    } else {
-      // TODO(stuartmorgan): Investigate doing this via JS instead.
-      throw UnimplementedError(
-          'setOnScrollPositionChange is not implemented on macOS');
-    }
-  }
-
-  /// Whether to enable tools for debugging the current WKWebView content.
-  ///
-  /// It needs to be activated in each WKWebView where you want to enable it.
-  ///
-  /// Starting from macOS version 13.3, iOS version 16.4, and tvOS version 16.4,
-  /// the default value is set to false.
-  ///
-  /// Defaults to true in previous versions.
-  Future<void> setInspectable(bool inspectable) {
-    return _webView.setInspectable(inspectable);
-  }
-
-  @override
-  Future<String?> getUserAgent() async {
-    final String? customUserAgent = await _webView.getCustomUserAgent();
-    // Despite the official documentation of `WKWebView.customUserAgent`, the
-    // default value seems to be an empty String and not null. It's possible it
-    // could depend on the iOS version, so this checks for both.
-    if (customUserAgent != null && customUserAgent.isNotEmpty) {
-      return customUserAgent;
-    }
-
-    return (await _webView.evaluateJavaScript('navigator.userAgent;')
-        as String?)!;
-  }
-
-  @override
-  Future<void> setOnJavaScriptAlertDialog(
-      Future<void> Function(JavaScriptAlertDialogRequest request)
-          onJavaScriptAlertDialog) async {
-    _onJavaScriptAlertDialog = onJavaScriptAlertDialog;
-  }
-
-  @override
-  Future<void> setOnJavaScriptConfirmDialog(
-      Future<bool> Function(JavaScriptConfirmDialogRequest request)
-          onJavaScriptConfirmDialog) async {
-    _onJavaScriptConfirmDialog = onJavaScriptConfirmDialog;
-  }
-
-  @override
-  Future<void> setOnJavaScriptTextInputDialog(
-      Future<String> Function(JavaScriptTextInputDialogRequest request)
-          onJavaScriptTextInputDialog) async {
-    _onJavaScriptTextInputDialog = onJavaScriptTextInputDialog;
   }
 }
 

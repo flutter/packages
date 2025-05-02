@@ -238,6 +238,36 @@ Future<void> main() async {
     expect(content.contains('flutter_test_header'), isTrue);
   });
 
+  testWidgets('loadFlutterAsset successfully loads an HTML asset',
+      (WidgetTester tester) async {
+    final Completer<void> pageFinished = Completer<void>();
+
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+    await expectLater(
+      controller.loadFlutterAsset('assets/www/index.html'),
+      completes,
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    // Verify page also loads.
+    await pageFinished.future;
+  });
+
   testWidgets('JavascriptChannel', (WidgetTester tester) async {
     final Completer<void> pageFinished = Completer<void>();
     final PlatformWebViewController controller = PlatformWebViewController(

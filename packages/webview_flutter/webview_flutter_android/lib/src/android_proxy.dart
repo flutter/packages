@@ -73,6 +73,46 @@ class AndroidWebViewProxy {
     void Function(WebViewClient, WebView, String, bool)? doUpdateVisitedHistory,
     void Function(WebViewClient, WebView, HttpAuthHandler, String, String)?
         onReceivedHttpAuthRequest,
+    void Function(
+      WebViewClient,
+      WebView,
+      AndroidMessage,
+      AndroidMessage,
+    )? onFormResubmission,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? onLoadResource,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+    )? onPageCommitVisible,
+    void Function(
+      WebViewClient,
+      WebView,
+      ClientCertRequest,
+    )? onReceivedClientCertRequest,
+    void Function(
+      WebViewClient,
+      WebView,
+      String,
+      String?,
+      String,
+    )? onReceivedLoginRequest,
+    void Function(
+      WebViewClient,
+      WebView,
+      SslErrorHandler,
+      SslError,
+    )? onReceivedSslError,
+    void Function(
+      WebViewClient,
+      WebView,
+      double,
+      double,
+    )? onScaleChanged,
   }) newWebViewClient;
 
   /// Constructs [DownloadListener].
@@ -85,11 +125,11 @@ class AndroidWebViewProxy {
   /// Constructs [WebChromeClient].
   final WebChromeClient Function({
     void Function(WebChromeClient, WebView, int)? onProgressChanged,
-    Future<List<String>> Function(
+    required Future<List<String>> Function(
       WebChromeClient,
       WebView,
       FileChooserParams,
-    )? onShowFileChooser,
+    ) onShowFileChooser,
     void Function(WebChromeClient, PermissionRequest)? onPermissionRequest,
     void Function(WebChromeClient, View, CustomViewCallback)? onShowCustomView,
     void Function(WebChromeClient)? onHideCustomView,
@@ -101,12 +141,12 @@ class AndroidWebViewProxy {
     void Function(WebChromeClient)? onGeolocationPermissionsHidePrompt,
     void Function(WebChromeClient, ConsoleMessage)? onConsoleMessage,
     Future<void> Function(WebChromeClient, WebView, String, String)? onJsAlert,
-    Future<bool> Function(
+    required Future<bool> Function(
       WebChromeClient,
       WebView,
       String,
       String,
-    )? onJsConfirm,
+    ) onJsConfirm,
     Future<String?> Function(
       WebChromeClient,
       WebView,
