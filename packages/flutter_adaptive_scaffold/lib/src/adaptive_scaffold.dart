@@ -28,6 +28,9 @@ const double kMaterialMediumAndUpMargin = 24;
 /// design 3 spec.
 const double kMaterialPadding = 4;
 
+/// Padding value of the default padding for the navigation rail
+const double kNavigationRailDefaultPadding = 8;
+
 /// Signature for a builder used by [AdaptiveScaffold.navigationRailDestinationBuilder] that converts a
 /// [NavigationDestination] to a [NavigationRailDestination].
 typedef NavigationRailDestinationBuilder = NavigationRailDestination Function(
@@ -94,6 +97,8 @@ class AdaptiveScaffold extends StatefulWidget {
     this.leadingUnextendedNavRail,
     this.leadingExtendedNavRail,
     this.trailingNavRail,
+    this.navigationRailPadding =
+        const EdgeInsets.all(kNavigationRailDefaultPadding),
     this.smallBody,
     this.body,
     this.mediumLargeBody,
@@ -147,6 +152,9 @@ class AdaptiveScaffold extends StatefulWidget {
   /// Option to display a trailing widget below the destinations of the
   /// navigation rail at the largest breakpoint.
   final Widget? trailingNavRail;
+
+  /// Option to apply custom padding to the navigation rail.
+  final EdgeInsetsGeometry navigationRailPadding;
 
   /// The alignment of the destinations in the navigation rail.
   final double? groupAlignment;
@@ -343,7 +351,8 @@ class AdaptiveScaffold extends StatefulWidget {
     int? selectedIndex,
     bool extended = false,
     Color? backgroundColor,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(8.0),
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.all(kNavigationRailDefaultPadding),
     Widget? leading,
     Widget? trailing,
     void Function(int)? onDestinationSelected,
@@ -608,6 +617,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 width: widget.navigationRailWidth,
                 leading: widget.leadingUnextendedNavRail,
                 trailing: widget.trailingNavRail,
+                padding: widget.navigationRailPadding,
                 selectedIndex: widget.selectedIndex,
                 destinations: destinations,
                 onDestinationSelected: widget.onSelectedIndexChange,
@@ -627,6 +637,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 extended: true,
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
+                padding: widget.navigationRailPadding,
                 selectedIndex: widget.selectedIndex,
                 destinations: destinations,
                 onDestinationSelected: widget.onSelectedIndexChange,
@@ -646,6 +657,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 extended: true,
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
+                padding: widget.navigationRailPadding,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
                     .map((NavigationDestination destination) =>
@@ -666,6 +678,7 @@ class _AdaptiveScaffoldState extends State<AdaptiveScaffold> {
                 extended: true,
                 leading: widget.leadingExtendedNavRail,
                 trailing: widget.trailingNavRail,
+                padding: widget.navigationRailPadding,
                 selectedIndex: widget.selectedIndex,
                 destinations: widget.destinations
                     .map((NavigationDestination destination) =>
