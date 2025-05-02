@@ -251,16 +251,21 @@ class GoogleSignIn {
   /// required. See the README for details. If provided, it will take precedence
   /// over any value in a configuration file.
   ///
+  /// If provided, [nonce] will be passed as part of any authentication
+  /// requests, to allow additional validation of the resulting ID token.
+  ///
   /// If provided, [hostedDomain] restricts account selection to accounts in
   /// that domain.
   Future<void> initialize({
     String? clientId,
     String? serverClientId,
+    String? nonce,
     String? hostedDomain,
   }) async {
     await GoogleSignInPlatform.instance.init(InitParameters(
       clientId: clientId,
       serverClientId: serverClientId,
+      nonce: nonce,
       hostedDomain: hostedDomain,
     ));
 
@@ -420,7 +425,9 @@ class GoogleSignIn {
       {List<String> scopeHint = const <String>[]}) async {
     try {
       final AuthenticationResults result = await GoogleSignInPlatform.instance
-          .authenticate(AuthenticateParameters(scopeHint: scopeHint));
+          .authenticate(AuthenticateParameters(
+        scopeHint: scopeHint,
+      ));
       final GoogleSignInAccount account =
           GoogleSignInAccount._(result.user, result.authenticationTokens);
       if (_createAuthenticationStreamEvents) {

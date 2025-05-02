@@ -23,6 +23,7 @@ class GisSdkClient {
     required String clientId,
     required StreamController<AuthenticationEvent?> authenticationController,
     bool loggingEnabled = false,
+    String? nonce,
     String? hostedDomain,
   })  : _clientId = clientId,
         _hostedDomain = hostedDomain,
@@ -38,6 +39,7 @@ class GisSdkClient {
     _initializeIdClient(
       clientId,
       onResponse: _onCredentialResponse,
+      nonce: nonce,
       hostedDomain: hostedDomain,
       useFedCM: true,
     );
@@ -82,6 +84,7 @@ class GisSdkClient {
   void _initializeIdClient(
     String clientId, {
     required CallbackFn onResponse,
+    String? nonce,
     String? hostedDomain,
     bool? useFedCM,
   }) {
@@ -91,6 +94,7 @@ class GisSdkClient {
       callback: onResponse,
       cancel_on_tap_outside: false,
       auto_select: true, // Attempt to sign-in silently.
+      nonce: nonce,
       hd: hostedDomain,
       use_fedcm_for_prompt:
           useFedCM, // Use the native browser prompt, when available.

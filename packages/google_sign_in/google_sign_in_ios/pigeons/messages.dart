@@ -136,8 +136,8 @@ abstract class GoogleSignInApi {
 
   /// Starts a sign in with user interaction.
   @async
-  @ObjCSelector('signInWithScopeHint:')
-  SignInResult signIn(List<String> scopeHint);
+  @ObjCSelector('signInWithScopeHint:nonce:')
+  SignInResult signIn(List<String> scopeHint, String? nonce);
 
   /// Requests the access token for the current sign in.
   @async

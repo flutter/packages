@@ -26,6 +26,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   String? _serverClientId;
   String? _hostedDomain;
+  String? _nonce;
 
   /// Registers this class as the default instance of [GoogleSignInPlatform].
   static void registerWith() {
@@ -37,6 +38,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     _hostedDomain = params.hostedDomain;
     _serverClientId = params.serverClientId ??
         await _credentialManaagerApi.getGoogleServicesJsonServerClientId();
+    _nonce = params.nonce;
     // The clientId parameter is not supported on Android.
     // Android apps are identified by their package name and the SHA-1 of their signing key.
   }
@@ -119,7 +121,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         await _credentialManaagerApi.getCredential(GetCredentialRequestParams(
             filterToAuthorized: filterToAuthorized,
             autoSelectEnabled: autoSelectEnabled,
-            serverClientId: _serverClientId));
+            serverClientId: _serverClientId,
+            nonce: _nonce));
     switch (authnResult) {
       case GetCredentialFailure():
         String? message = authnResult.message;

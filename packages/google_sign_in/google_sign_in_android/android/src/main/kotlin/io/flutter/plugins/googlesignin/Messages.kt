@@ -147,14 +147,17 @@ data class PlatformAuthorizationRequest(
 data class GetCredentialRequestParams(
     val filterToAuthorized: Boolean,
     val autoSelectEnabled: Boolean,
-    val serverClientId: String? = null
+    val serverClientId: String? = null,
+    val nonce: String? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): GetCredentialRequestParams {
       val filterToAuthorized = pigeonVar_list[0] as Boolean
       val autoSelectEnabled = pigeonVar_list[1] as Boolean
       val serverClientId = pigeonVar_list[2] as String?
-      return GetCredentialRequestParams(filterToAuthorized, autoSelectEnabled, serverClientId)
+      val nonce = pigeonVar_list[3] as String?
+      return GetCredentialRequestParams(
+          filterToAuthorized, autoSelectEnabled, serverClientId, nonce)
     }
   }
 
@@ -163,6 +166,7 @@ data class GetCredentialRequestParams(
         filterToAuthorized,
         autoSelectEnabled,
         serverClientId,
+        nonce,
     )
   }
 }

@@ -138,6 +138,7 @@ NSObject<FlutterMessageCodec> *FSIGetMessagesCodec(void);
                                                       FlutterError *_Nullable))completion;
 /// Starts a sign in with user interaction.
 - (void)signInWithScopeHint:(NSArray<NSString *> *)scopeHint
+                      nonce:(nullable NSString *)nonce
                  completion:
                      (void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion;
 /// Requests the access token for the current sign in.

@@ -358,7 +358,7 @@ class GoogleSignInApi {
   }
 
   /// Starts a sign in with user interaction.
-  Future<SignInResult> signIn(List<String> scopeHint) async {
+  Future<SignInResult> signIn(List<String> scopeHint, String? nonce) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_sign_in_ios.GoogleSignInApi.signIn$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -367,8 +367,8 @@ class GoogleSignInApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[scopeHint]) as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[scopeHint, nonce]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

@@ -138,6 +138,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
     _gisSdkClient ??= GisSdkClient(
       clientId: appClientId!,
+      nonce: params.nonce,
       hostedDomain: params.hostedDomain,
       authenticationController: _authenticationController,
       loggingEnabled: kDebugMode,

@@ -80,6 +80,7 @@ class InitParameters {
   const InitParameters({
     this.clientId,
     this.serverClientId,
+    this.nonce,
     this.hostedDomain,
   });
 
@@ -106,6 +107,9 @@ class InitParameters {
   ///   * [Platform Integration](https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in#platform-integration),
   ///     where you can find the details about the configuration files.
   final String? serverClientId;
+
+  /// An optional nonce for added security in ID token requests.
+  final String? nonce;
 
   /// A hosted domain to restrict accounts to.
   ///

@@ -119,6 +119,7 @@ class GetCredentialRequestParams {
     required this.filterToAuthorized,
     required this.autoSelectEnabled,
     this.serverClientId,
+    this.nonce,
   });
 
   bool filterToAuthorized;
@@ -127,11 +128,14 @@ class GetCredentialRequestParams {
 
   String? serverClientId;
 
+  String? nonce;
+
   Object encode() {
     return <Object?>[
       filterToAuthorized,
       autoSelectEnabled,
       serverClientId,
+      nonce,
     ];
   }
 
@@ -141,6 +145,7 @@ class GetCredentialRequestParams {
       filterToAuthorized: result[0]! as bool,
       autoSelectEnabled: result[1]! as bool,
       serverClientId: result[2] as String?,
+      nonce: result[3] as String?,
     );
   }
 }

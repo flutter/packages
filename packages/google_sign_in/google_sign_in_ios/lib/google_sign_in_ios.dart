@@ -18,6 +18,8 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
 
   final GoogleSignInApi _api;
 
+  String? _nonce;
+
   /// Registers this class as the default instance of [GoogleSignInPlatform].
   static void registerWith() {
     GoogleSignInPlatform.instance = GoogleSignInIOS();
@@ -25,6 +27,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
 
   @override
   Future<void> init(InitParameters params) async {
+    _nonce = params.nonce;
     await _api.configure(PlatformConfigurationParams(
         clientId: params.clientId,
         serverClientId: params.serverClientId,
@@ -59,7 +62,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   @override
   Future<AuthenticationResults> authenticate(
       AuthenticateParameters params) async {
-    final SignInResult result = await _api.signIn(params.scopeHint);
+    final SignInResult result = await _api.signIn(params.scopeHint, _nonce);
 
     // This should never happen; the corresponding native error code is
     // documented as being specific to restorePreviousSignIn.
@@ -129,7 +132,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
       if (success == null) {
         // There's no existing sign-in to use, so return the results of the
         // combined authn+authz flow.
-        result = await _api.signIn(request.scopes);
+        result = await _api.signIn(request.scopes, _nonce);
         return _processAuthorizationResult(result);
       } else {
         // Discard the authentication information, and extract the user ID to

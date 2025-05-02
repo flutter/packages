@@ -182,12 +182,14 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 }
 
 - (void)signInWithScopeHint:(NSArray<NSString *> *)scopeHint
+                      nonce:(nullable NSString *)nonce
                  completion:(nonnull void (^)(FSISignInResult *_Nullable,
                                               FlutterError *_Nullable))completion {
   @try {
     __weak typeof(self) weakSelf = self;
     [self signInWithHint:nil
         additionalScopes:scopeHint
+                   nonce:nonce
               completion:^(GIDSignInResult *_Nullable signInResult, NSError *_Nullable error) {
                 [weakSelf handleAuthResultWithUser:signInResult.user
                                     serverAuthCode:signInResult.serverAuthCode
@@ -273,8 +275,12 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 // Wraps the iOS and macOS sign in display methods.
 - (void)signInWithHint:(nullable NSString *)hint
       additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
+                 nonce:(nullable NSString *)nonce
             completion:(void (^)(GIDSignInResult *_Nullable signInResult,
                                  NSError *_Nullable error))completion {
+  // TODO(stuartmorgan): Add the nonce parameter to the calls below once it's available; it was
+  // added after 8.0, and based on https://github.com/google/GoogleSignIn-iOS/releases appears to
+  // be slated for an 8.1 release. See https://github.com/flutter/flutter/issues/85439.
 #if TARGET_OS_OSX
   [self.signIn signInWithPresentingWindow:self.registrar.view.window
                                      hint:hint
@@ -296,9 +302,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 #if TARGET_OS_OSX
   [user addScopes:scopes presentingWindow:self.registrar.view.window completion:completion];
 #else
-  [user addScopes:scopes
-      presentingViewController:[self topViewController]
-                    completion:completion];
+  [user addScopes:scopes presentingViewController:[self topViewController] completion:completion];
 #endif
 }
 

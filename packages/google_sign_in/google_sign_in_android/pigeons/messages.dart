@@ -35,10 +35,12 @@ class GetCredentialRequestParams {
     required this.filterToAuthorized,
     required this.autoSelectEnabled,
     this.serverClientId,
+    this.nonce,
   });
   bool filterToAuthorized;
   bool autoSelectEnabled;
   String? serverClientId;
+  String? nonce;
 }
 
 /// Pigeon equivalent of the native GoogleIdTokenCredential.

@@ -376,14 +376,16 @@ void SetUpFSIGoogleSignInApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenge
         binaryMessenger:binaryMessenger
                   codec:FSIGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(signInWithScopeHint:completion:)],
+      NSCAssert([api respondsToSelector:@selector(signInWithScopeHint:nonce:completion:)],
                 @"FSIGoogleSignInApi api (%@) doesn't respond to "
-                @"@selector(signInWithScopeHint:completion:)",
+                @"@selector(signInWithScopeHint:nonce:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSArray<NSString *> *arg_scopeHint = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_nonce = GetNullableObjectAtIndex(args, 1);
         [api signInWithScopeHint:arg_scopeHint
+                           nonce:arg_nonce
                       completion:^(FSISignInResult *_Nullable output,
                                    FlutterError *_Nullable error) {
                         callback(wrapResult(output, error));
