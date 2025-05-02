@@ -413,7 +413,7 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
         : '';
 
     return '${helperName(paramType)}'
-        '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})$nullAbleSuffix';
+        '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})$nullableSuffix';
   }
 }
 
