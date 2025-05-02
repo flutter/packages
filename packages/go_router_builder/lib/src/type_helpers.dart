@@ -407,7 +407,7 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
           '${helperName(paramType)})';
     }
 
-    final String nullAbleSuffix = paramType.isNullableType ||
+    final String nullableSuffix = paramType.isNullableType ||
             (paramType.isEnum && !paramType.isNullableType)
         ? '!'
         : '';
