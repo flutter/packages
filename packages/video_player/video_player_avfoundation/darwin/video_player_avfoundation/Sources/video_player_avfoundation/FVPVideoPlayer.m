@@ -443,6 +443,17 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       }];
 }
 
+- (void)seekToDefaultPosition:(void (^)(BOOL))completionHandler {
+  AVPlayerItem *item = _player.currentItem;
+  if (item.seekableTimeRanges.count > 0) {
+    CMTimeRange seekableRange = [item.seekableTimeRanges.lastObject CMTimeRangeValue];
+    CMTime liveEdgeTime = CMTimeRangeGetEnd(seekableRange);
+    [self seekTo:liveEdgeTime.value completionHandler:completionHandler];
+  } else {
+    [self seekTo:0 completionHandler:completionHandler];
+  }
+}
+
 - (void)setIsLooping:(BOOL)isLooping {
   _isLooping = isLooping;
 }
