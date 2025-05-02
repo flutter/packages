@@ -33,6 +33,7 @@ class InitParams {
     this.clientId,
     this.serverClientId,
     this.forceCodeForRefreshToken = false,
+    this.forceAccountName,
   });
 
   final List<String> scopes;
@@ -41,6 +42,7 @@ class InitParams {
   final String? clientId;
   final String? serverClientId;
   final bool forceCodeForRefreshToken;
+  final String? forceAccountName;
 }
 
 /// Pigeon version of GoogleSignInUserData.
@@ -79,6 +81,7 @@ abstract class GoogleSignInApi {
 
   /// Requests the access token for the current sign in.
   @async
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   String getAccessToken(String email, bool shouldRecoverAuth);
 
   /// Signs out the current user.
@@ -94,7 +97,7 @@ abstract class GoogleSignInApi {
 
   /// Clears the authentication caching for the given token, requiring a
   /// new sign in.
-  @async
+  @TaskQueue(type: TaskQueueType.serialBackgroundThread)
   void clearAuthCache(String token);
 
   /// Requests access to the given scopes.

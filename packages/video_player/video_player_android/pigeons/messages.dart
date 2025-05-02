@@ -13,6 +13,22 @@ import 'package:pigeon/pigeon.dart';
   ),
   copyrightHeader: 'pigeons/copyright.txt',
 ))
+
+/// Pigeon equivalent of VideoViewType.
+enum PlatformVideoViewType {
+  textureView,
+  platformView,
+}
+
+/// Information passed to the platform view creation.
+class PlatformVideoViewCreationParams {
+  const PlatformVideoViewCreationParams({
+    required this.playerId,
+  });
+
+  final int playerId;
+}
+
 class CreateMessage {
   CreateMessage({required this.httpHeaders});
   String? asset;
@@ -20,19 +36,20 @@ class CreateMessage {
   String? packageName;
   String? formatHint;
   Map<String, String> httpHeaders;
+  PlatformVideoViewType? viewType;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
 abstract class AndroidVideoPlayerApi {
   void initialize();
   int create(CreateMessage msg);
-  void dispose(int textureId);
-  void setLooping(int textureId, bool looping);
-  void setVolume(int textureId, double volume);
-  void setPlaybackSpeed(int textureId, double speed);
-  void play(int textureId);
-  int position(int textureId);
-  void seekTo(int textureId, int position);
-  void pause(int textureId);
+  void dispose(int playerId);
+  void setLooping(int playerId, bool looping);
+  void setVolume(int playerId, double volume);
+  void setPlaybackSpeed(int playerId, double speed);
+  void play(int playerId);
+  int position(int playerId);
+  void seekTo(int playerId, int position);
+  void pause(int playerId);
   void setMixWithOthers(bool mixWithOthers);
 }

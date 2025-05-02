@@ -120,7 +120,7 @@ flutter:
         currentDir.childDirectory('android').childFile('gradle.properties');
     gradleProperties.writeAsStringSync('''
 org.gradle.daemon=false
-org.gradle.jvmargs=-Xmx1536M
+org.gradle.jvmargs=-Xmx4G
 android.useAndroidX=true
 android.enableJetifier=true
 ''', flush: true);

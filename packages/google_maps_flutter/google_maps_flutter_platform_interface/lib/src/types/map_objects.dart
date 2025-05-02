@@ -23,6 +23,7 @@ class MapObjects {
     this.heatmaps = const <Heatmap>{},
     this.tileOverlays = const <TileOverlay>{},
     this.clusterManagers = const <ClusterManager>{},
+    this.groundOverlays = const <GroundOverlay>{},
   });
 
   final Set<Marker> markers;
@@ -32,4 +33,5 @@ class MapObjects {
   final Set<Heatmap> heatmaps;
   final Set<TileOverlay> tileOverlays;
   final Set<ClusterManager> clusterManagers;
+  final Set<GroundOverlay> groundOverlays;
 }

@@ -141,6 +141,8 @@ class UrlLauncherIOS extends UrlLauncherPlatform {
         throw _failedSafariViewControllerLoadException(url);
       case InAppLoadResult.invalidUrl:
         throw _invalidUrlException();
+      case InAppLoadResult.dismissed:
+        return false;
     }
   }
 

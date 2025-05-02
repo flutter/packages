@@ -23,10 +23,10 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'io.flutter.plugins.quickactions'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
@@ -37,7 +37,7 @@ android {
 
     dependencies {
         testImplementation 'junit:junit:4.13.2'
-        testImplementation 'org.mockito:mockito-core:5.0.0'
+        testImplementation 'org.mockito:mockito-core:5.17.0'
     }
 
     compileOptions {

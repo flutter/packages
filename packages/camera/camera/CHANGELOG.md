@@ -1,6 +1,7 @@
-## NEXT
+## 0.11.1
 
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Adds API support query for image streaming.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 * Updates example to dispose animation controllers and curved animations.
 
 ## 0.11.0+2

@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace 'io.flutter.plugins.imagepickerexample'
-    compileSdk flutter.compileSdkVersion
+    compileSdk = flutter.compileSdkVersion
     testOptions.unitTests.includeAndroidResources = true
 
 
@@ -61,5 +61,5 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    api 'androidx.test:core:1.2.0'
+    api 'androidx.test:core:1.4.0'
 }

@@ -1,3 +1,32 @@
+## 0.2.3+11
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
+## 0.2.3+10
+
+* Fixes `AdEventType`s not triggering on iOS in release mode.
+
+## 0.2.3+9
+
+* Bumps gradle from 8.0.0 to 8.9.0.
+
+## 0.2.3+8
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 0.2.3+7
+
+* Bumps gradle-plugin to 2.1.10.
+
+## 0.2.3+6
+
+* Adds internal wrapper for iOS native `IMAAdPodInfo`.
+
+## 0.2.3+5
+
+* Bumps gradle-plugin to 2.1.0.
+
 ## 0.2.3+4
 
 * Adds remaining methods for internal wrapper of the iOS native `IMAAdDisplayContainer`.

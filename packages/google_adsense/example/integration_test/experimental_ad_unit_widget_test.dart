@@ -19,6 +19,17 @@ import 'js_interop_mocks/adsense_test_js_interop.dart';
 const String testClient = 'test_client';
 const String testSlot = 'test_slot';
 
+class CallbackTracker {
+  void Function() createCallback() {
+    final int callbackIndex = _callbackStates.length;
+    _callbackStates.add(false);
+    return () => _callbackStates[callbackIndex] = true;
+  }
+
+  bool get allCalled => _callbackStates.every((bool state) => state);
+  final List<bool> _callbackStates = <bool>[];
+}
+
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -47,15 +58,17 @@ void main() async {
 
       await adSense.initialize(testClient);
 
+      final CallbackTracker tracker = CallbackTracker();
       final Widget adUnitWidget = AdUnitWidget(
         configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
           adFormat: AdFormat.AUTO, // Important!
         ),
         adClient: adSense.adClient,
+        onInjected: tracker.createCallback(),
       );
 
-      await pumpAdWidget(adUnitWidget, tester);
+      await pumpAdWidget(adUnitWidget, tester, tracker);
 
       // Then
       // Widget level
@@ -81,11 +94,13 @@ void main() async {
 
       await adSense.initialize(testClient);
 
+      final CallbackTracker tracker = CallbackTracker();
       final Widget adUnitWidget = AdUnitWidget(
         configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
         ),
         adClient: adSense.adClient,
+        onInjected: tracker.createCallback(),
       );
 
       final Widget constrainedAd = Container(
@@ -93,7 +108,7 @@ void main() async {
         child: adUnitWidget,
       );
 
-      await pumpAdWidget(constrainedAd, tester);
+      await pumpAdWidget(constrainedAd, tester, tracker);
 
       // Then
       // Widget level
@@ -110,14 +125,17 @@ void main() async {
       mockAdsByGoogle(mockAd(adStatus: AdStatus.UNFILLED));
 
       await adSense.initialize(testClient);
+
+      final CallbackTracker tracker = CallbackTracker();
       final Widget adUnitWidget = AdUnitWidget(
         configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
         ),
         adClient: adSense.adClient,
+        onInjected: tracker.createCallback(),
       );
 
-      await pumpAdWidget(adUnitWidget, tester);
+      await pumpAdWidget(adUnitWidget, tester, tracker);
 
       // Then
       expect(find.byType(HtmlElementView), findsNothing,
@@ -142,6 +160,7 @@ void main() async {
 
       await adSense.initialize(testClient);
 
+      final CallbackTracker tracker = CallbackTracker();
       final Widget bunchOfAds = Column(
         children: <Widget>[
           AdUnitWidget(
@@ -150,6 +169,7 @@ void main() async {
               adFormat: AdFormat.AUTO,
             ),
             adClient: adSense.adClient,
+            onInjected: tracker.createCallback(),
           ),
           AdUnitWidget(
             configuration: AdUnitConfiguration.displayAdUnit(
@@ -157,6 +177,7 @@ void main() async {
               adFormat: AdFormat.AUTO,
             ),
             adClient: adSense.adClient,
+            onInjected: tracker.createCallback(),
           ),
           Container(
             constraints: const BoxConstraints(maxHeight: 100),
@@ -165,12 +186,13 @@ void main() async {
                 adSlot: testSlot,
               ),
               adClient: adSense.adClient,
+              onInjected: tracker.createCallback(),
             ),
           ),
         ],
       );
 
-      await pumpAdWidget(bunchOfAds, tester);
+      await pumpAdWidget(bunchOfAds, tester, tracker);
 
       // Then
       // Widget level
@@ -192,7 +214,8 @@ void main() async {
 }
 
 // Pumps an AdUnit Widget into a given tester, with some parameters
-Future<void> pumpAdWidget(Widget adUnit, WidgetTester tester) async {
+Future<void> pumpAdWidget(
+    Widget adUnit, WidgetTester tester, CallbackTracker tracker) async {
   await tester.pumpWidget(
     MaterialApp(
       home: Scaffold(
@@ -203,10 +226,14 @@ Future<void> pumpAdWidget(Widget adUnit, WidgetTester tester) async {
     ),
   );
 
-  // This extra pump is needed for the platform view to actually render in the DOM.
-  await tester.pump();
-  // One more for skwasm.
-  await tester.pump();
+  final Stopwatch timer = Stopwatch()..start();
+  while (!tracker.allCalled) {
+    if (timer.elapsedMilliseconds > 1000) {
+      fail('timeout while waiting for ad widget to be injected');
+    }
+    // Pump until all the widgets have had their platform views injected into the dom.
+    await tester.pump();
+  }
   // This extra pump is needed to simulate the async behavior of the adsense JS mock.
   await tester.pumpAndSettle();
 }

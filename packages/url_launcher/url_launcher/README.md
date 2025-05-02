@@ -8,7 +8,7 @@ A Flutter plugin for launching a URL.
 
 |             | Android | iOS   | Linux | macOS  | Web | Windows     |
 |-------------|---------|-------|-------|--------|-----|-------------|
-| **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Windows 10+ |
+| **Support** | SDK 21+ | 12.0+ | Any   | 10.14+ | Any | Windows 10+ |
 
 ## Example
 

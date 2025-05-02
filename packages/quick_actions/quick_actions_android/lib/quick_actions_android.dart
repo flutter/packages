@@ -29,7 +29,7 @@ class QuickActionsAndroid extends QuickActionsPlatform {
   Future<void> initialize(QuickActionHandler handler) async {
     final _QuickActionHandlerApi quickActionsHandlerApi =
         _QuickActionHandlerApi();
-    AndroidQuickActionsFlutterApi.setup(quickActionsHandlerApi);
+    AndroidQuickActionsFlutterApi.setUp(quickActionsHandlerApi);
     _handler = handler;
     final String? action = await _hostApi.getLaunchAction();
     if (action != null) {

@@ -30,6 +30,21 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    return a.length == b.length &&
+        a.entries.every((MapEntry<Object?, Object?> entry) =>
+            (b as Map<Object?, Object?>).containsKey(entry.key) &&
+            _deepEquals(entry.value, b[entry.key]));
+  }
+  return a == b;
+}
+
 /// This comment is to test enum documentation comments.
 ///
 /// This comment also tests multiple line comments.
@@ -62,12 +77,16 @@ class MessageSearchRequest {
   /// This comment is to test field documentation comments.
   bool? aBool;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       query,
       anInt,
       aBool,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static MessageSearchRequest decode(Object result) {
@@ -78,6 +97,22 @@ class MessageSearchRequest {
       aBool: result[2] as bool?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! MessageSearchRequest || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// This comment is to test class documentation comments.
@@ -99,12 +134,16 @@ class MessageSearchReply {
   /// This comment is to test field documentation comments.
   MessageRequestState? state;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       result,
       error,
       state,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static MessageSearchReply decode(Object result) {
@@ -115,6 +154,22 @@ class MessageSearchReply {
       state: result[2] as MessageRequestState?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! MessageSearchReply || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// This comment is to test class documentation comments.
@@ -126,10 +181,14 @@ class MessageNested {
   /// This comment is to test field documentation comments.
   MessageSearchRequest? request;
 
-  Object encode() {
+  List<Object?> _toList() {
     return <Object?>[
       request,
     ];
+  }
+
+  Object encode() {
+    return _toList();
   }
 
   static MessageNested decode(Object result) {
@@ -138,6 +197,22 @@ class MessageNested {
       request: result[0] as MessageSearchRequest?,
     );
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! MessageNested || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -212,8 +287,9 @@ class MessageApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(null) as List<Object?>?;
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -237,8 +313,10 @@ class MessageApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[request]);
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[request]) as List<Object?>?;
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -286,8 +364,10 @@ class MessageNestedApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[nested]);
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[nested]) as List<Object?>?;
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

@@ -23,10 +23,10 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'io.flutter.plugins.pathprovider'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {

@@ -1,5 +1,10 @@
-## NEXT
+## 0.3.3
 
+* Adds an optional error callback for `MDnsClient::start` to prevent uncaught exceptions.
+
+## 0.3.2+8
+
+* Fixes stack overflows ocurring during the parsing of domain names in MDNS messages.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.3.2+7

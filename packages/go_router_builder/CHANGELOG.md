@@ -1,3 +1,26 @@
+## 2.9.0
+
+- Adds support for `caseSensitive` for go routes.
+
+## 2.8.2
+
+- Fixes an issue when enum params are not required
+
+## 2.8.1
+
+- Fixes an issue when navigate to router with invalid params 
+
+## 2.8.0
+
+- Adds support for passing `preload` parameter to `StatefulShellBranchData`.
+
+## 2.7.5
+
+- Fixes trailing `?` in the location when a go route has an empty default value.
+
+## 2.7.4
+
+- Fixes an issue by removing unnecessary `const` in StatefulShellRouteData generation.
 
 ## 2.7.3
 

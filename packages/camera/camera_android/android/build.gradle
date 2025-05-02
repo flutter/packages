@@ -31,7 +31,7 @@ buildFeatures {
         buildConfig true
     }
     namespace 'io.flutter.plugins.camera'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
         minSdkVersion 21
@@ -55,7 +55,7 @@ buildFeatures {
             // the Java heap size when running the Android unit tests. The following property here
             // sets the heap size to a size large enough to run the robolectric tests across
             // multiple SDK levels.
-            jvmArgs "-Xmx1g"
+            jvmArgs "-Xmx4G"
             testLogging {
                events "passed", "skipped", "failed", "standardOut", "standardError"
                outputs.upToDateWhen {false}
@@ -68,7 +68,7 @@ buildFeatures {
 dependencies {
     implementation 'androidx.annotation:annotation:1.9.1'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-inline:5.0.0'
-    testImplementation 'androidx.test:core:1.4.0'
-    testImplementation 'org.robolectric:robolectric:4.10.3'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'androidx.test:core:1.6.1'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
 }

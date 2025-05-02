@@ -17,12 +17,13 @@ final class LocalVideoAsset extends VideoAsset {
 
   @NonNull
   @Override
-  MediaItem getMediaItem() {
+  public MediaItem getMediaItem() {
     return new MediaItem.Builder().setUri(assetUrl).build();
   }
 
+  @NonNull
   @Override
-  MediaSource.Factory getMediaSourceFactory(Context context) {
+  public MediaSource.Factory getMediaSourceFactory(@NonNull Context context) {
     return new DefaultMediaSourceFactory(context);
   }
 }

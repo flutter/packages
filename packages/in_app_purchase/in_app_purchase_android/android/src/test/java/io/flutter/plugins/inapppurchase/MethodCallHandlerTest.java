@@ -5,8 +5,8 @@
 package io.flutter.plugins.inapppurchase;
 
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.ACTIVITY_UNAVAILABLE;
-import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
 import static io.flutter.plugins.inapppurchase.MethodCallHandlerImpl.REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY;
+import static io.flutter.plugins.inapppurchase.Translator.fromBillingResponseCode;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -59,6 +59,7 @@ import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.InAppPurchaseCallbackApi;
 import io.flutter.plugins.inapppurchase.Messages.PlatformAlternativeBillingOnlyReportingDetailsResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingChoiceMode;
+import io.flutter.plugins.inapppurchase.Messages.PlatformBillingClientFeature;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingConfigResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingFlowParams;
 import io.flutter.plugins.inapppurchase.Messages.PlatformBillingResult;
@@ -67,6 +68,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformProductType;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchaseHistoryResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformPurchasesResponse;
 import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
+import io.flutter.plugins.inapppurchase.Messages.PlatformReplacementMode;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -104,22 +106,33 @@ public class MethodCallHandlerTest {
   @Mock Context context;
   @Mock ActivityPluginBinding mockActivityPluginBinding;
 
+  private final Messages.PlatformPendingPurchasesParams defaultPendingPurchasesParams =
+      new Messages.PlatformPendingPurchasesParams.Builder().setEnablePrepaidPlans(false).build();
+
   private final Long DEFAULT_HANDLE = 1L;
 
   @Before
   public void setUp() {
     openMocks = MockitoAnnotations.openMocks(this);
+
     // Use the same client no matter if alternative billing is enabled or not.
     when(factory.createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY))
+            context,
+            mockCallbackApi,
+            PlatformBillingChoiceMode.PLAY_BILLING_ONLY,
+            defaultPendingPurchasesParams))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY))
+            context,
+            mockCallbackApi,
+            PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY,
+            defaultPendingPurchasesParams))
         .thenReturn(mockBillingClient);
     when(factory.createBillingClient(
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
-            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING)))
+            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
+            any(Messages.PlatformPendingPurchasesParams.class)))
         .thenReturn(mockBillingClient);
     methodChannelHandler = new MethodCallHandlerImpl(activity, context, mockCallbackApi, factory);
     when(mockActivityPluginBinding.getActivity()).thenReturn(activity);
@@ -159,10 +172,15 @@ public class MethodCallHandlerTest {
   @Test
   public void startConnection() {
     ArgumentCaptor<BillingClientStateListener> captor =
-        mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+        mockStartConnection(
+            PlatformBillingChoiceMode.PLAY_BILLING_ONLY, defaultPendingPurchasesParams);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+        .createBillingClient(
+            context,
+            mockCallbackApi,
+            PlatformBillingChoiceMode.PLAY_BILLING_ONLY,
+            defaultPendingPurchasesParams);
 
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
@@ -177,11 +195,15 @@ public class MethodCallHandlerTest {
   @Test
   public void startConnectionAlternativeBillingOnly() {
     ArgumentCaptor<BillingClientStateListener> captor =
-        mockStartConnection(PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
+        mockStartConnection(
+            PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY, defaultPendingPurchasesParams);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
-            context, mockCallbackApi, PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY);
+            context,
+            mockCallbackApi,
+            PlatformBillingChoiceMode.ALTERNATIVE_BILLING_ONLY,
+            defaultPendingPurchasesParams);
 
     BillingResult billingResult = buildBillingResult();
     captor.getValue().onBillingSetupFinished(billingResult);
@@ -194,16 +216,40 @@ public class MethodCallHandlerTest {
   }
 
   @Test
+  public void startConnectionPendingPurchasesPrepaidPlans() {
+    Messages.PlatformPendingPurchasesParams pendingPurchasesParams =
+        new Messages.PlatformPendingPurchasesParams.Builder().setEnablePrepaidPlans(true).build();
+    ArgumentCaptor<BillingClientStateListener> captor =
+        mockStartConnection(PlatformBillingChoiceMode.USER_CHOICE_BILLING, pendingPurchasesParams);
+    verify(platformBillingResult, never()).success(any());
+    verify(factory, times(1))
+        .createBillingClient(
+            context,
+            mockCallbackApi,
+            PlatformBillingChoiceMode.USER_CHOICE_BILLING,
+            pendingPurchasesParams);
+
+    BillingResult billingResult = buildBillingResult();
+    captor.getValue().onBillingSetupFinished(billingResult);
+
+    ArgumentCaptor<PlatformBillingResult> resultCaptor =
+        ArgumentCaptor.forClass(PlatformBillingResult.class);
+    verify(platformBillingResult, times(1)).success(resultCaptor.capture());
+  }
+
+  @Test
   public void startConnectionUserChoiceBilling() {
     ArgumentCaptor<BillingClientStateListener> captor =
-        mockStartConnection(PlatformBillingChoiceMode.USER_CHOICE_BILLING);
+        mockStartConnection(
+            PlatformBillingChoiceMode.USER_CHOICE_BILLING, defaultPendingPurchasesParams);
     verify(platformBillingResult, never()).success(any());
 
     verify(factory, times(1))
         .createBillingClient(
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
-            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING));
+            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
+            any(Messages.PlatformPendingPurchasesParams.class));
 
     BillingResult billingResult =
         BillingResult.newBuilder()
@@ -221,10 +267,15 @@ public class MethodCallHandlerTest {
   public void userChoiceBillingOnSecondConnection() {
     // First connection.
     ArgumentCaptor<BillingClientStateListener> captor1 =
-        mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+        mockStartConnection(
+            PlatformBillingChoiceMode.PLAY_BILLING_ONLY, defaultPendingPurchasesParams);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
-        .createBillingClient(context, mockCallbackApi, PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+        .createBillingClient(
+            context,
+            mockCallbackApi,
+            PlatformBillingChoiceMode.PLAY_BILLING_ONLY,
+            defaultPendingPurchasesParams);
 
     BillingResult billingResult1 =
         BillingResult.newBuilder()
@@ -248,13 +299,15 @@ public class MethodCallHandlerTest {
 
     // Second connection.
     ArgumentCaptor<BillingClientStateListener> captor2 =
-        mockStartConnection(PlatformBillingChoiceMode.USER_CHOICE_BILLING);
+        mockStartConnection(
+            PlatformBillingChoiceMode.USER_CHOICE_BILLING, defaultPendingPurchasesParams);
     verify(platformBillingResult, never()).success(any());
     verify(factory, times(1))
         .createBillingClient(
             any(Context.class),
             any(InAppPurchaseCallbackApi.class),
-            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING));
+            eq(PlatformBillingChoiceMode.USER_CHOICE_BILLING),
+            eq(defaultPendingPurchasesParams));
 
     BillingResult billingResult2 =
         BillingResult.newBuilder()
@@ -273,7 +326,10 @@ public class MethodCallHandlerTest {
     doNothing().when(mockBillingClient).startConnection(captor.capture());
 
     methodChannelHandler.startConnection(
-        DEFAULT_HANDLE, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, platformBillingResult);
+        DEFAULT_HANDLE,
+        PlatformBillingChoiceMode.PLAY_BILLING_ONLY,
+        defaultPendingPurchasesParams,
+        platformBillingResult);
     verify(platformBillingResult, never()).success(any());
     BillingResult billingResult1 = buildBillingResult();
     BillingResult billingResult2 =
@@ -295,7 +351,8 @@ public class MethodCallHandlerTest {
         ArgumentCaptor.forClass(PlatformBillingResult.class);
     verify(platformBillingResult, times(1)).success(resultCaptor.capture());
     assertEquals(
-        resultCaptor.getValue().getResponseCode().longValue(), billingResult1.getResponseCode());
+        resultCaptor.getValue().getResponseCode(),
+        fromBillingResponseCode(billingResult1.getResponseCode()));
     assertEquals(resultCaptor.getValue().getDebugMessage(), billingResult1.getDebugMessage());
     verify(platformBillingResult, never()).error(any());
   }
@@ -480,7 +537,10 @@ public class MethodCallHandlerTest {
     @SuppressWarnings("unchecked")
     final Messages.Result<PlatformBillingResult> mockResult = mock(Messages.Result.class);
     methodChannelHandler.startConnection(
-        disconnectCallbackHandle, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, mockResult);
+        disconnectCallbackHandle,
+        PlatformBillingChoiceMode.PLAY_BILLING_ONLY,
+        defaultPendingPurchasesParams,
+        mockResult);
     final BillingClientStateListener stateListener = captor.getValue();
 
     // Disconnect the connected client
@@ -555,10 +615,8 @@ public class MethodCallHandlerTest {
     queryForProducts(singletonList(productId));
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -582,10 +640,8 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -613,10 +669,8 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that the synchronous call throws an exception.
     FlutterError exception =
@@ -638,10 +692,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(oldProductId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -667,10 +719,8 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -687,27 +737,21 @@ public class MethodCallHandlerTest {
     assertResultsMatch(platformResult, billingResult);
   }
 
-  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
-  // ReplacementMode enum values.
-  // https://github.com/flutter/flutter/issues/128957.
   @Test
-  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Proration() {
     // Fetch the product details first and query the method call
     String productId = "foo";
     String oldProductId = "oldFoo";
     String purchaseToken = "purchaseTokenFoo";
     String accountId = "account";
-    int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE;
+    PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_PRORATED_PRICE;
     queryForProducts(unmodifiableList(asList(productId, oldProductId)));
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(oldProductId);
     paramsBuilder.setPurchaseToken(purchaseToken);
-    paramsBuilder.setProrationMode((long) prorationMode);
-    paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(replacementMode);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -724,25 +768,19 @@ public class MethodCallHandlerTest {
     assertResultsMatch(platformResult, billingResult);
   }
 
-  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
-  // ReplacementMode enum values.
-  // https://github.com/flutter/flutter/issues/128957.
   @Test
-  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Proration_with_null_OldProduct() {
     // Fetch the product details first and query the method call
     String productId = "foo";
     String accountId = "account";
     String queryOldProductId = "oldFoo";
-    int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE;
+    PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_PRORATED_PRICE;
     queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(null);
-    paramsBuilder.setProrationMode((long) prorationMode);
-    paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(replacementMode);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -766,16 +804,13 @@ public class MethodCallHandlerTest {
     String productId = "foo";
     String accountId = "account";
     String queryOldProductId = "oldFoo";
-    int replacementMode =
-        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE;
+    PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_PRORATED_PRICE;
     queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(null);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
-    paramsBuilder.setReplacementMode((long) replacementMode);
+    paramsBuilder.setReplacementMode(replacementMode);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -793,60 +828,20 @@ public class MethodCallHandlerTest {
   }
 
   @Test
-  @SuppressWarnings(value = "deprecation")
-  public void launchBillingFlow_ok_Proration_and_Replacement_conflict() {
-    // Fetch the product details first and query the method call
-    String productId = "foo";
-    String accountId = "account";
-    String queryOldProductId = "oldFoo";
-    int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_PRORATED_PRICE;
-    int replacementMode =
-        BillingFlowParams.SubscriptionUpdateParams.ReplacementMode.CHARGE_PRORATED_PRICE;
-    queryForProducts(unmodifiableList(asList(productId, queryOldProductId)));
-    PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
-    paramsBuilder.setProduct(productId);
-    paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setOldProduct(queryOldProductId);
-    paramsBuilder.setProrationMode((long) prorationMode);
-    paramsBuilder.setReplacementMode((long) replacementMode);
-
-    // Launch the billing flow
-    BillingResult billingResult = buildBillingResult();
-    when(mockBillingClient.launchBillingFlow(any(), any())).thenReturn(billingResult);
-
-    // Assert that the synchronous call throws an exception.
-    FlutterError exception =
-        assertThrows(
-            FlutterError.class,
-            () -> methodChannelHandler.launchBillingFlow(paramsBuilder.build()));
-    assertEquals("IN_APP_PURCHASE_CONFLICT_PRORATION_MODE_REPLACEMENT_MODE", exception.code);
-    assertTrue(
-        Objects.requireNonNull(exception.getMessage())
-            .contains(
-                "launchBillingFlow failed because you provided both prorationMode and replacementMode. You can only provide one of them."));
-  }
-
-  // TODO(gmackall): Replace uses of deprecated ProrationMode enum values with new
-  // ReplacementMode enum values.
-  // https://github.com/flutter/flutter/issues/128957.
-  @Test
-  @SuppressWarnings(value = "deprecation")
   public void launchBillingFlow_ok_Full() {
     // Fetch the product details first and query the method call
     String productId = "foo";
     String oldProductId = "oldFoo";
     String purchaseToken = "purchaseTokenFoo";
     String accountId = "account";
-    int prorationMode = BillingFlowParams.ProrationMode.IMMEDIATE_AND_CHARGE_FULL_PRICE;
+    PlatformReplacementMode replacementMode = PlatformReplacementMode.CHARGE_FULL_PRICE;
     queryForProducts(unmodifiableList(asList(productId, oldProductId)));
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(oldProductId);
     paramsBuilder.setPurchaseToken(purchaseToken);
-    paramsBuilder.setProrationMode((long) prorationMode);
-    paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+    paramsBuilder.setReplacementMode(replacementMode);
 
     // Launch the billing flow
     BillingResult billingResult = buildBillingResult();
@@ -872,10 +867,8 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that the synchronous call throws an exception.
     FlutterError exception =
@@ -895,10 +888,8 @@ public class MethodCallHandlerTest {
     PlatformBillingFlowParams.Builder paramsBuilder = new PlatformBillingFlowParams.Builder();
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that the synchronous call throws an exception.
     FlutterError exception =
@@ -921,10 +912,8 @@ public class MethodCallHandlerTest {
     paramsBuilder.setProduct(productId);
     paramsBuilder.setAccountId(accountId);
     paramsBuilder.setOldProduct(oldProductId);
-    paramsBuilder.setProrationMode(
-        (long) PRORATION_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
     paramsBuilder.setReplacementMode(
-        (long) REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
+        REPLACEMENT_MODE_UNKNOWN_SUBSCRIPTION_UPGRADE_DOWNGRADE_POLICY);
 
     // Assert that the synchronous call throws an exception.
     FlutterError exception =
@@ -982,12 +971,13 @@ public class MethodCallHandlerTest {
 
     PlatformPurchasesResponse purchasesResponse = resultCaptor.getValue();
     assertEquals(
-        purchasesResponse.getBillingResult().getResponseCode().longValue(),
-        BillingClient.BillingResponseCode.OK);
+        purchasesResponse.getBillingResult().getResponseCode(),
+        Messages.PlatformBillingResponse.OK);
     assertTrue(purchasesResponse.getPurchases().isEmpty());
   }
 
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void queryPurchaseHistoryAsync() {
     // Set up an established billing client and all our mocked responses
     establishConnectedBillingClient();
@@ -1015,6 +1005,7 @@ public class MethodCallHandlerTest {
   }
 
   @Test
+  @SuppressWarnings(value = "deprecation")
   public void queryPurchaseHistoryAsync_clientDisconnected() {
     methodChannelHandler.endConnection();
 
@@ -1116,7 +1107,7 @@ public class MethodCallHandlerTest {
     BillingResult billingResult = buildBillingResult(BillingClient.BillingResponseCode.OK);
     when(mockBillingClient.isFeatureSupported(feature)).thenReturn(billingResult);
 
-    assertTrue(methodChannelHandler.isFeatureSupported(feature));
+    assertTrue(methodChannelHandler.isFeatureSupported(PlatformBillingClientFeature.SUBSCRIPTIONS));
   }
 
   @Test
@@ -1127,30 +1118,34 @@ public class MethodCallHandlerTest {
     BillingResult billingResult = buildBillingResult(BillingResponseCode.FEATURE_NOT_SUPPORTED);
     when(mockBillingClient.isFeatureSupported(feature)).thenReturn(billingResult);
 
-    assertFalse(methodChannelHandler.isFeatureSupported(feature));
+    assertFalse(
+        methodChannelHandler.isFeatureSupported(PlatformBillingClientFeature.SUBSCRIPTIONS));
   }
 
   /**
    * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
-   * Messages.Result)} with startup params.
+   * Messages.PlatformPendingPurchasesParams, Messages.Result)} with startup params.
    *
    * <p>Defaults to play billing only which is the default.
    */
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection() {
-    return mockStartConnection(PlatformBillingChoiceMode.PLAY_BILLING_ONLY);
+    return mockStartConnection(
+        PlatformBillingChoiceMode.PLAY_BILLING_ONLY, defaultPendingPurchasesParams);
   }
 
   /**
    * Call {@link MethodCallHandlerImpl#startConnection(Long, PlatformBillingChoiceMode,
-   * Messages.Result)} with startup params.
+   * Messages.PlatformPendingPurchasesParams, Messages.Result)} with startup params.
    */
   private ArgumentCaptor<BillingClientStateListener> mockStartConnection(
-      PlatformBillingChoiceMode billingChoiceMode) {
+      PlatformBillingChoiceMode billingChoiceMode,
+      Messages.PlatformPendingPurchasesParams pendingPurchasesParams) {
     ArgumentCaptor<BillingClientStateListener> captor =
         ArgumentCaptor.forClass(BillingClientStateListener.class);
     doNothing().when(mockBillingClient).startConnection(captor.capture());
 
-    methodChannelHandler.startConnection(DEFAULT_HANDLE, billingChoiceMode, platformBillingResult);
+    methodChannelHandler.startConnection(
+        DEFAULT_HANDLE, billingChoiceMode, pendingPurchasesParams, platformBillingResult);
     return captor;
   }
 
@@ -1158,7 +1153,10 @@ public class MethodCallHandlerTest {
     @SuppressWarnings("unchecked")
     final Messages.Result<PlatformBillingResult> mockResult = mock(Messages.Result.class);
     methodChannelHandler.startConnection(
-        DEFAULT_HANDLE, PlatformBillingChoiceMode.PLAY_BILLING_ONLY, mockResult);
+        DEFAULT_HANDLE,
+        PlatformBillingChoiceMode.PLAY_BILLING_ONLY,
+        defaultPendingPurchasesParams,
+        mockResult);
   }
 
   private void queryForProducts(List<String> productIdList) {
@@ -1255,7 +1253,8 @@ public class MethodCallHandlerTest {
   }
 
   private void assertResultsMatch(PlatformBillingResult pigeonResult, BillingResult nativeResult) {
-    assertEquals(pigeonResult.getResponseCode().longValue(), nativeResult.getResponseCode());
+    assertEquals(
+        pigeonResult.getResponseCode(), fromBillingResponseCode(nativeResult.getResponseCode()));
     assertEquals(pigeonResult.getDebugMessage(), nativeResult.getDebugMessage());
   }
 

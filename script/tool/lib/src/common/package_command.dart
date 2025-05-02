@@ -77,7 +77,7 @@ abstract class PackageCommand extends Command<void> {
     argParser.addMultiOption(
       _excludeArg,
       abbr: 'e',
-      help: 'A list of packages to exclude from from this command.\n\n'
+      help: 'A list of packages to exclude from this command.\n\n'
           'Alternately, a list of one or more YAML files that contain a list '
           'of packages to exclude.',
       defaultsTo: <String>[],
@@ -252,6 +252,22 @@ abstract class PackageCommand extends Command<void> {
     return List<String>.from(argResults![key] as List<String>? ?? <String>[]);
   }
 
+  /// Convenience accessor for arguments containing a list of strings and/or
+  /// YAML files containing lists of strings.
+  Set<String> getYamlListArg(String key) {
+    return getStringListArg(key).expand<String>((String item) {
+      if (item.endsWith('.yaml')) {
+        final File file = packagesDir.fileSystem.file(item);
+        final Object? yaml = loadYaml(file.readAsStringSync());
+        if (yaml == null) {
+          return const <String>[];
+        }
+        return (yaml as YamlList).toList().cast<String>();
+      }
+      return <String>[item];
+    }).toSet();
+  }
+
   /// If true, commands should log timing information that might be useful in
   /// analyzing their runtime (e.g., the per-package time for multi-package
   /// commands).
@@ -277,25 +293,10 @@ abstract class PackageCommand extends Command<void> {
     _shardCount = shardCount;
   }
 
-  /// Converts a list of items which are either package names or yaml files
-  /// containing a list of package names to a flat list of package names by
-  /// reading all the file contents.
-  Set<String> _expandYamlInPackageList(List<String> items) {
-    return items.expand<String>((String item) {
-      if (item.endsWith('.yaml')) {
-        final File file = packagesDir.fileSystem.file(item);
-        return (loadYaml(file.readAsStringSync()) as YamlList)
-            .toList()
-            .cast<String>();
-      }
-      return <String>[item];
-    }).toSet();
-  }
-
   /// Returns the set of packages to exclude based on the `--exclude` argument.
   Set<String> getExcludedPackageNames() {
-    final Set<String> excludedPackages = _excludedPackages ??
-        _expandYamlInPackageList(getStringListArg(_excludeArg));
+    final Set<String> excludedPackages =
+        _excludedPackages ?? getYamlListArg(_excludeArg);
     // Cache for future calls.
     _excludedPackages = excludedPackages;
     return excludedPackages;
@@ -460,9 +461,8 @@ abstract class PackageCommand extends Command<void> {
 
     final Set<String> excludedPackageNames = getExcludedPackageNames();
     final bool hasFilter = argResults?.wasParsed(_filterPackagesArg) ?? false;
-    final Set<String>? excludeAllButPackageNames = hasFilter
-        ? _expandYamlInPackageList(getStringListArg(_filterPackagesArg))
-        : null;
+    final Set<String>? excludeAllButPackageNames =
+        hasFilter ? getYamlListArg(_filterPackagesArg) : null;
     if (excludeAllButPackageNames != null &&
         excludeAllButPackageNames.isNotEmpty) {
       final List<String> sortedList = excludeAllButPackageNames.toList()
