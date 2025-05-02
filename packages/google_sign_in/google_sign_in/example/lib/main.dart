@@ -7,11 +7,11 @@
 import 'dart:async';
 import 'dart:convert' show json;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:google_sign_in_web/web_only.dart' as web;
 import 'package:http/http.dart' as http;
-
-import 'src/sign_in_button.dart';
 
 /// To run this example, replace this value with your client ID, and/or
 /// update the relevant configuration files, as described in the README.
@@ -22,10 +22,12 @@ String? clientId;
 String? serverClientId;
 
 /// The scopes required by this application.
+// #docregion CheckAuthorization
 const List<String> scopes = <String>[
   'email',
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
+// #enddocregion CheckAuthorization
 
 void main() {
   runApp(
@@ -56,23 +58,26 @@ class _SignInDemoState extends State<SignInDemo> {
   void initState() {
     super.initState();
 
+    // #docregion Setup
     final GoogleSignIn signIn = GoogleSignIn.instance;
     unawaited(signIn
         .initialize(clientId: clientId, serverClientId: serverClientId)
         .then((_) {
-      GoogleSignIn.instance.authenticationEvents
-          .listen(_handleAuthenticationEvent);
+      signIn.authenticationEvents.listen(_handleAuthenticationEvent);
 
       /// This example always uses the stream-based approach to determining
       /// which UI state to show, rather than using the future returned here,
       /// if any, to conditionally skip directly to the signed-in state.
       signIn.attemptLightweightAuthentication();
     }));
+    // #enddocregion Setup
   }
 
   Future<void> _handleAuthenticationEvent(
       GoogleSignInAuthenticationEvent event) async {
+    // #docregion CheckAuthorization
     GoogleSignInAccount? user;
+    // #enddocregion CheckAuthorization
     String error = '';
     switch (event) {
       case GoogleSignInAuthenticationEventSignIn():
@@ -85,25 +90,24 @@ class _SignInDemoState extends State<SignInDemo> {
         error = 'GoogleSignInException ${e.code}: ${e.description}';
     }
 
-    // #docregion CanAccessScopes
     // Check for existing authorization.
-    bool isAuthorized = false;
+    // #docregion CheckAuthorization
+    GoogleSignInClientAuthorization? authorization;
     if (user != null) {
-      final GoogleSignInClientAuthorization? authorization =
+      authorization =
           await user.authorizationClient.authorizationForScopes(scopes);
-      isAuthorized = authorization != null;
     }
-    // #enddocregion CanAccessScopes
+    // #enddocregion CheckAuthorization
 
     setState(() {
       _currentUser = user;
-      _isAuthorized = isAuthorized;
+      _isAuthorized = authorization != null;
       _errorMessage = error;
     });
 
     // Now that we know that the user can access the required scopes, the app
     // can call the REST API.
-    if (user != null && isAuthorized) {
+    if (user != null && authorization != null) {
       unawaited(_handleGetContact(user));
     }
   }
@@ -166,38 +170,26 @@ class _SignInDemoState extends State<SignInDemo> {
     return null;
   }
 
-  // This is the on-click handler for the Sign In button that is rendered by Flutter.
-  //
-  // On the web, the on-click handler of the Sign In button is owned by the JS
-  // SDK, so this method can be considered mobile only.
-  // #docregion SignIn
-  Future<void> _handleSignIn() async {
-    try {
-      await GoogleSignIn.instance.authenticate();
-    } catch (e) {
-      _errorMessage = e.toString();
-    }
-  }
-  // #enddocregion SignIn
-
   // Prompts the user to authorize `scopes`.
   //
   // On the web, this must be called from an user interaction (button click).
-  // #docregion RequestScopes
   Future<void> _handleAuthorizeScopes(GoogleSignInAccount user) async {
     try {
-      // The returned tokens are ignored here since _handleGetContact uses the
-      // authorizationHeaders method to re-read the token cached here.
-      await user.authorizationClient.authorizeScopes(scopes);
-
+      // #docregion RequestScopes
+      final GoogleSignInClientAuthorization authorization =
+          await user.authorizationClient.authorizeScopes(scopes);
       // #enddocregion RequestScopes
+
+      // The returned tokens are ignored since _handleGetContact uses the
+      // authorizationHeaders method to re-read the token cached by this call.
+      // ignore: unnecessary_statements
+      authorization;
+
       setState(() {
         _isAuthorized = true;
         _errorMessage = '';
       });
-      // #docregion RequestScopes
       unawaited(_handleGetContact(_currentUser!));
-      // #enddocregion RequestScopes
     } on GoogleSignInException catch (e) {
       _errorMessage = 'GoogleSignInException ${e.code}: ${e.description}';
     }
@@ -206,13 +198,13 @@ class _SignInDemoState extends State<SignInDemo> {
   // Requests a server auth code for the authorized scopes.
   //
   // On the web, this must be called from an user interaction (button click).
-  // #docregion RequestScopes
   Future<void> _handleGetAuthCode(GoogleSignInAccount user) async {
     try {
+      // #docregion RequestServerAuth
       final GoogleSignInServerAuthorization? serverAuth =
           await user.authorizationClient.authorizeServer(scopes);
+      // #enddocregion RequestServerAuth
 
-      // #enddocregion RequestScopes
       setState(() {
         _serverAuthCode = serverAuth == null ? '' : serverAuth.serverAuthCode;
       });
@@ -286,11 +278,30 @@ class _SignInDemoState extends State<SignInDemo> {
   List<Widget> _buildUnauthenticatedWidgets() {
     return <Widget>[
       const Text('You are not currently signed in.'),
-      // This method is used to separate mobile from web code with conditional exports.
-      // See: src/sign_in_button.dart
-      buildSignInButton(
-        onPressed: _handleSignIn,
-      ),
+      // #docregion ExplicitSignIn
+      if (GoogleSignIn.instance.supportsAuthenticate())
+        ElevatedButton(
+          onPressed: () async {
+            try {
+              await GoogleSignIn.instance.authenticate();
+            } catch (e) {
+              // #enddocregion ExplicitSignIn
+              _errorMessage = e.toString();
+              // #docregion ExplicitSignIn
+            }
+          },
+          child: const Text('SIGN IN'),
+        )
+      else ...<Widget>[
+        if (kIsWeb)
+          web.renderButton()
+        // #enddocregion ExplicitSignIn
+        else
+          const Text(
+              'This platform does not have a known authentication method')
+        // #docregion ExplicitSignIn
+      ]
+      // #enddocregion ExplicitSignIn
     ];
   }
 

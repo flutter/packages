@@ -2,6 +2,53 @@
 
 The web implementation of [google_sign_in](https://pub.dev/packages/google_sign_in)
 
+## Usage
+
+This package is [endorsed](https://flutter.dev/to/endorsed-federated-plugin),
+which means you can simply use `google_sign_in`
+normally. This package will be automatically included in your app when you do,
+so you do not need to add it to your `pubspec.yaml`.
+
+However, if you `import` this package to use any of its APIs directly, you
+should add it to your `pubspec.yaml` as usual.
+
+For example, you need to import this package directly if you plan to use the
+web-only `Widget renderButton()` method.
+
+## Integration
+
+First, go through the instructions [here](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid) to create your Google Sign-In OAuth client ID.
+
+On your `web/index.html` file, add the following `meta` tag, somewhere in the
+`head` of the document:
+
+```html
+<meta name="google-signin-client_id" content="YOUR_GOOGLE_SIGN_IN_OAUTH_CLIENT_ID.apps.googleusercontent.com">
+```
+
+For this client to work correctly, the last step is to configure the **Authorized JavaScript origins**, which _identify the domains from which your application can send API requests._ When in local development, this is normally `localhost` and some port.
+
+You can do this by:
+
+1. Going to the [Credentials page](https://console.developers.google.com/apis/credentials).
+2. Clicking "Edit" in the OAuth 2.0 Web application client that you created above.
+3. Adding the URIs you want to the **Authorized JavaScript origins**.
+
+For local development, you must add two `localhost` entries:
+
+* `http://localhost` and
+* `http://localhost:7357` (or any port that is free in your machine)
+
+### Starting flutter in http://localhost:7357
+
+Normally `flutter run` starts in a random port. In the case where you need to deal with authentication like the above, that's not the most appropriate behavior.
+
+You can tell `flutter run` to listen for requests in a specific host and port with the following:
+
+```sh
+flutter run -d chrome --web-hostname localhost --web-port 7357
+```
+
 ## Migrating to v0.11 and v0.12 (Google Identity Services)
 
 The `google_sign_in_web` plugin is backed by the new Google Identity Services
@@ -83,7 +130,7 @@ their own Sign-In buttons, or an API to start the sign in flow, the current
 implementation of `signIn` (that does authorization and authentication) is no
 longer feasible on the web.
 
-The web plugin attempts to simulate the old `signIn` behavior by using the 
+The web plugin attempts to simulate the old `signIn` behavior by using the
 [OAuth Implicit pop-up flow](https://developers.google.com/identity/oauth2/web/guides/use-token-model),
 which authenticates and authorizes users.
 
@@ -141,64 +188,9 @@ In either case, your app needs to prompt the end user to `requestScopes`, to
 
 The GIS SDK limits authorization token duration to one hour (3600 seconds).
 
-## Usage
-
-### Import the package
-
-This package is [endorsed](https://flutter.dev/to/endorsed-federated-plugin),
-which means you can simply use `google_sign_in`
-normally. This package will be automatically included in your app when you do,
-so you do not need to add it to your `pubspec.yaml`.
-
-However, if you `import` this package to use any of its APIs directly, you
-should add it to your `pubspec.yaml` as usual.
-
-For example, you need to import this package directly if you plan to use the
-web-only `Widget renderButton()` method.
-
-### Web integration
-
-First, go through the instructions [here](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid) to create your Google Sign-In OAuth client ID.
-
-On your `web/index.html` file, add the following `meta` tag, somewhere in the
-`head` of the document:
-
-```html
-<meta name="google-signin-client_id" content="YOUR_GOOGLE_SIGN_IN_OAUTH_CLIENT_ID.apps.googleusercontent.com">
-```
-
-For this client to work correctly, the last step is to configure the **Authorized JavaScript origins**, which _identify the domains from which your application can send API requests._ When in local development, this is normally `localhost` and some port.
-
-You can do this by:
-
-1. Going to the [Credentials page](https://console.developers.google.com/apis/credentials).
-2. Clicking "Edit" in the OAuth 2.0 Web application client that you created above.
-3. Adding the URIs you want to the **Authorized JavaScript origins**.
-
-For local development, you must add two `localhost` entries:
-
-* `http://localhost` and
-* `http://localhost:7357` (or any port that is free in your machine)
-
-#### Starting flutter in http://localhost:7357
-
-Normally `flutter run` starts in a random port. In the case where you need to deal with authentication like the above, that's not the most appropriate behavior.
-
-You can tell `flutter run` to listen for requests in a specific host and port with the following:
-
-```sh
-flutter run -d chrome --web-hostname localhost --web-port 7357
-```
-
 ### Other APIs
 
 Read the rest of the instructions if you need to add extra APIs (like Google People API).
-
-### Using the plugin
-
-See the [**Usage** instructions of `package:google_sign_in`](https://pub.dev/packages/google_sign_in#usage)
-
-Note that the **`serverClientId` parameter of the `GoogleSignIn` constructor is not supported on Web.**
 
 ## Example
 
