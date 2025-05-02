@@ -864,7 +864,9 @@ void main() {
     },
   );
 
-  testWidgets('adaptive scaffold builds correctly with and without navigation rail padding specified', (WidgetTester tester) async {
+  testWidgets(
+      'adaptive scaffold builds correctly with and without navigation rail padding specified',
+      (WidgetTester tester) async {
     // without navigation rail padding specified
     await tester.pumpWidget(MaterialApp(
       home: AdaptiveScaffold(

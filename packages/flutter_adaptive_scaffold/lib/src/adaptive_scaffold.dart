@@ -97,7 +97,8 @@ class AdaptiveScaffold extends StatefulWidget {
     this.leadingUnextendedNavRail,
     this.leadingExtendedNavRail,
     this.trailingNavRail,
-    this.navigationRailPadding = const EdgeInsets.all(kNavigationRailDefaultPadding),
+    this.navigationRailPadding =
+        const EdgeInsets.all(kNavigationRailDefaultPadding),
     this.smallBody,
     this.body,
     this.mediumLargeBody,
@@ -350,7 +351,8 @@ class AdaptiveScaffold extends StatefulWidget {
     int? selectedIndex,
     bool extended = false,
     Color? backgroundColor,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(kNavigationRailDefaultPadding),
+    EdgeInsetsGeometry padding =
+        const EdgeInsets.all(kNavigationRailDefaultPadding),
     Widget? leading,
     Widget? trailing,
     void Function(int)? onDestinationSelected,
