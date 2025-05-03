@@ -1,6 +1,10 @@
-## 2.8.3
+## 2.9.1
 
 - Fixes warnings in generated code of iterable parameters.
+
+## 2.9.0
+
+- Adds support for `caseSensitive` for go routes.
 
 ## 2.8.2
 
