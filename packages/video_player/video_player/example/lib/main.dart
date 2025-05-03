@@ -23,7 +23,7 @@ class _App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         key: const ValueKey<String>('home_page'),
         appBar: AppBar(
@@ -51,6 +51,7 @@ class _App extends StatelessWidget {
               ),
               Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset'),
               Tab(icon: Icon(Icons.list), text: 'List example'),
+              Tab(icon: Icon(Icons.stream), text: 'HLS live'),
             ],
           ),
         ),
@@ -59,6 +60,7 @@ class _App extends StatelessWidget {
             _BumbleBeeRemoteVideo(),
             _ButterFlyAssetVideo(),
             _ButterFlyAssetVideoInList(),
+            _HLSVideo(),
           ],
         ),
       ),
@@ -265,6 +267,66 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
               ),
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HLSVideo extends StatefulWidget {
+  @override
+  _HLSVideoState createState() => _HLSVideoState();
+}
+
+class _HLSVideoState extends State<_HLSVideo> {
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.networkUrl(
+      Uri.parse('https://ireplay.tv/test/blender.m3u8'),
+      videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+    );
+
+    _controller.addListener(() {
+      setState(() {});
+    });
+    _controller.setLooping(true);
+    _controller.initialize();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Container(padding: const EdgeInsets.only(top: 20.0)),
+          const Text('With HLS live stream'),
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  VideoPlayer(_controller),
+                  ClosedCaption(text: _controller.value.caption.text),
+                  _ControlsOverlay(controller: _controller),
+                  VideoProgressIndicator(_controller, allowScrubbing: true),
+                ],
+              ),
+            ),
+          ),
+          TextButton(
+              onPressed: () => _controller.seekToDefaultPosition(),
+              child: const Text('Seek to default pos')),
         ],
       ),
     );
