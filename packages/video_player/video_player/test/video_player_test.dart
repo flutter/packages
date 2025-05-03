@@ -51,6 +51,9 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> seekTo(Duration moment) async {}
 
   @override
+  Future<void> seekToDefaultPosition() async {}
+
+  @override
   Future<void> setVolume(double volume) async {}
 
   @override
