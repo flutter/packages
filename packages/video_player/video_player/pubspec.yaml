@@ -22,6 +22,12 @@ flutter:
         default_package: video_player_web
 
 dependency_overrides:
+  video_player_android:
+    path: ../video_player_android
+  video_player_avfoundation:
+    path: ../video_player_avfoundation
+  video_player_web:
+    path: ../video_player_web
   video_player_platform_interface:
     path: ../video_player_platform_interface
 

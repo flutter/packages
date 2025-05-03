@@ -6,6 +6,16 @@ environment:
   sdk: ^3.4.0
   flutter: ">=3.22.0"
 
+dependency_overrides:
+  video_player_android:
+    path: ../../video_player_android
+  video_player_avfoundation:
+    path: ../../video_player_avfoundation
+  video_player_web:
+    path: ../../video_player_web
+  video_player_platform_interface:
+    path: ../../video_player_platform_interface
+
 dependencies:
   flutter:
     sdk: flutter
