@@ -211,7 +211,7 @@ class _MyAppState extends State<_MyApp> {
     return Card(child: Column(children: children));
   }
 
-  Card _buildProductList() {
+  Widget _buildProductList() {
     if (_loading) {
       return const Card(
           child: ListTile(
@@ -221,10 +221,25 @@ class _MyAppState extends State<_MyApp> {
     if (!_isAvailable) {
       return const Card();
     }
-    const ListTile productHeader = ListTile(title: Text('Products for Sale'));
-    const ListTile promoHeader = ListTile(title: Text('Products in promo'));
+    const ListTile productHeader = ListTile(
+      title: Text(
+        'Products for Sale',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+    const ListTile promoHeader = ListTile(
+      title: Text(
+        'Products in promo',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
     final List<ListTile> productList = <ListTile>[];
-    final List<ListTile> promoList = <ListTile>[];
     if (_notFoundIds.isNotEmpty) {
       productList.add(ListTile(
           title: Text('[${_notFoundIds.join(", ")}] not found',
@@ -247,7 +262,6 @@ class _MyAppState extends State<_MyApp> {
     productList.addAll(_products.map(
       (ProductDetails productDetails) {
         final PurchaseDetails? previousPurchase = purchases[productDetails.id];
-        _buildPromoList(promoList, productDetails);
         return ListTile(
             title: Text(
               productDetails.title,
@@ -283,33 +297,71 @@ class _MyAppState extends State<_MyApp> {
       },
     ));
 
-    return Card(
-      child: Column(
-        children: <Widget>[
-          productHeader,
-          const Divider(),
-          ...productList,
-          promoHeader,
-          const Divider(),
-          ...promoList,
-        ],
-      ),
+    return Column(
+      children: <Widget>[
+        Card(
+          child: Column(
+            children: <Widget>[
+              productHeader,
+              const Divider(),
+              ...productList,
+            ],
+          ),
+        ),
+        Card(
+          child: Column(
+            children: <Widget>[
+              promoHeader,
+              const Divider(),
+              FutureBuilder<List<ListTile>>(
+                future: _buildPromoList(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<ListTile>> snapshot) {
+                  final List<ListTile>? data = snapshot.data;
+
+                  if (data != null) {
+                    return Column(
+                      children: data,
+                    );
+                  }
+
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
-  void _buildPromoList(
-    List<ListTile> promoList,
-    ProductDetails productDetails,
-  ) {
-    if (productDetails is AppStoreProduct2Details) {
-      final SK2SubscriptionInfo? subscription =
-          productDetails.sk2Product.subscription;
-      final List<SK2SubscriptionOffer> offers =
-          subscription?.promotionalOffers ?? <SK2SubscriptionOffer>[];
-      promoList.addAll(offers.map(
-        (SK2SubscriptionOffer offer) => _buildPromoTile(productDetails, offer),
-      ));
+  Future<List<ListTile>> _buildPromoList() async {
+    final List<ListTile> promoList = <ListTile>[];
+    for (final ProductDetails detail in _products) {
+      if (detail is AppStoreProduct2Details) {
+        final SK2SubscriptionInfo? subscription =
+            detail.sk2Product.subscription;
+        final List<SK2SubscriptionOffer> offers =
+            subscription?.promotionalOffers ?? <SK2SubscriptionOffer>[];
+
+        for (final SK2SubscriptionOffer offer in offers) {
+          if (offer.type == SK2SubscriptionOfferType.winBack) {
+            final bool eligible =
+                await _iapStoreKitPlatform.checkWinBackOfferEligibility(
+              detail.id,
+              offer.id ?? '',
+            );
+
+            if (!eligible) {
+              continue;
+            }
+          }
+
+          promoList.add(_buildPromoTile(detail, offer));
+        }
+      }
     }
+    return promoList;
   }
 
   ListTile _buildPromoTile(

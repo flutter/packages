@@ -210,9 +210,6 @@ struct SK2SubscriptionOfferMessage: Hashable {
       paymentMode,
     ]
   }
-  static func == (lhs: SK2SubscriptionOfferMessage, rhs: SK2SubscriptionOfferMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
-  }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
   }
@@ -240,9 +237,6 @@ struct SK2SubscriptionPeriodMessage: Hashable {
       value,
       unit,
     ]
-  }
-  static func == (lhs: SK2SubscriptionPeriodMessage, rhs: SK2SubscriptionPeriodMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -276,9 +270,6 @@ struct SK2SubscriptionInfoMessage: Hashable {
       subscriptionGroupID,
       subscriptionPeriod,
     ]
-  }
-  static func == (lhs: SK2SubscriptionInfoMessage, rhs: SK2SubscriptionInfoMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -341,9 +332,6 @@ struct SK2ProductMessage: Hashable {
       priceLocale,
     ]
   }
-  static func == (lhs: SK2ProductMessage, rhs: SK2ProductMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
-  }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
   }
@@ -369,9 +357,6 @@ struct SK2PriceLocaleMessage: Hashable {
       currencyCode,
       currencySymbol,
     ]
-  }
-  static func == (lhs: SK2PriceLocaleMessage, rhs: SK2PriceLocaleMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -410,11 +395,6 @@ struct SK2SubscriptionOfferSignatureMessage: Hashable {
       signature,
     ]
   }
-  static func == (
-    lhs: SK2SubscriptionOfferSignatureMessage, rhs: SK2SubscriptionOfferSignatureMessage
-  ) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
-  }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
   }
@@ -440,11 +420,6 @@ struct SK2SubscriptionOfferPurchaseMessage: Hashable {
       promotionalOfferId,
       promotionalOfferSignature,
     ]
-  }
-  static func == (
-    lhs: SK2SubscriptionOfferPurchaseMessage, rhs: SK2SubscriptionOfferPurchaseMessage
-  ) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -479,11 +454,6 @@ struct SK2ProductPurchaseOptionsMessage: Hashable {
       promotionalOffer,
       winBackOfferId,
     ]
-  }
-  static func == (lhs: SK2ProductPurchaseOptionsMessage, rhs: SK2ProductPurchaseOptionsMessage)
-    -> Bool
-  {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
@@ -546,9 +516,6 @@ struct SK2TransactionMessage: Hashable {
       error,
       jsonRepresentation,
     ]
-  }
-  static func == (lhs: SK2TransactionMessage, rhs: SK2TransactionMessage) -> Bool {
-    return deepEqualssk2_pigeon(lhs.toList(), rhs.toList())
   }
   func hash(into hasher: inout Hasher) {
     deepHashsk2_pigeon(value: toList(), hasher: &hasher)
