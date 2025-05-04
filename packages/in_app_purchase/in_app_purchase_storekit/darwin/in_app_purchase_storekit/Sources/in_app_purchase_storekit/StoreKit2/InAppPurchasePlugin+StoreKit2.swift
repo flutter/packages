@@ -62,42 +62,26 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           purchaseOptions.insert(.appAccountToken(accountTokenUUID))
         }
 
-        #if compiler(>=6.0)
-          if #available(iOS 17.4, macOS 14.4, *) {
-            if let promotionalOffer = options?.promotionalOffer {
-              purchaseOptions.insert(
-                .promotionalOffer(
-                  offerID: promotionalOffer.promotionalOfferId,
-                  signature: promotionalOffer.promotionalOfferSignature.convertToSignature
-                )
-              )
-            }
-          }
-        #else
+        if #available(iOS 17.4, macOS 14.4, *) {
           if let promotionalOffer = options?.promotionalOffer {
             purchaseOptions.insert(
               .promotionalOffer(
                 offerID: promotionalOffer.promotionalOfferId,
-                keyID: promotionalOffer.promotionalOfferSignature.keyID,
-                nonce: promotionalOffer.promotionalOfferSignature.nonceAsUUID,
-                signature: promotionalOffer.promotionalOfferSignature.signatureAsData,
-                timestamp: Int(promotionalOffer.promotionalOfferSignature.timestamp)
+                signature: promotionalOffer.promotionalOfferSignature.convertToSignature
               )
             )
           }
-        #endif
+        }
 
-        #if compiler(>=6.0)
-          if #available(iOS 18.0, macOS 15.0, *) {
-            if let winBackOfferId = options?.winBackOfferId,
-              let winBackOffer = product.subscription?.winBackOffers.first(where: {
-                $0.id == winBackOfferId
-              })
-            {
-              purchaseOptions.insert(.winBackOffer(winBackOffer))
-            }
+        if #available(iOS 18.0, macOS 15.0, *) {
+          if let winBackOfferId = options?.winBackOfferId,
+            let winBackOffer = product.subscription?.winBackOffers.first(where: {
+              $0.id == winBackOfferId
+            })
+          {
+            purchaseOptions.insert(.winBackOffer(winBackOffer))
           }
-        #endif
+        }
 
         let result = try await product.purchase(options: purchaseOptions)
 
@@ -147,74 +131,65 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     offerId: String,
     completion: @escaping (Result<Bool, Error>) -> Void
   ) {
-    #if compiler(>=6.0)
-      if #available(iOS 18.0, macOS 15.0, *) {
-        Task {
-          do {
-            guard let product = try await Product.products(for: [productId]).first else {
-              completion(
-                .failure(
-                  PigeonError(
-                    code: "storekit2_failed_to_fetch_product",
-                    message: "Storekit has failed to fetch this product.",
-                    details: "Product ID: \(productId)")))
-              return
-            }
-
-            guard let subscription = product.subscription else {
-              completion(
-                .failure(
-                  PigeonError(
-                    code: "storekit2_not_subscription",
-                    message: "Product is not a subscription",
-                    details: "Product ID: \(productId)")))
-              return
-            }
-
-            let statuses = try await subscription.status
-
-            var isEligible = false
-            for status in statuses {
-              switch status.renewalInfo {
-              case .verified(let renewalInfo):
-                if renewalInfo.eligibleWinBackOfferIDs.contains(offerId) {
-                  isEligible = true
-                  break
-                }
-              case .unverified(let unverifiedInfo, let error):
-                continue
-              @unknown default:
-                continue
-              }
-            }
-
-            completion(.success(isEligible))
-
-          } catch {
+    if #available(iOS 18.0, macOS 15.0, *) {
+      Task {
+        do {
+          guard let product = try await Product.products(for: [productId]).first else {
             completion(
               .failure(
                 PigeonError(
-                  code: "storekit2_eligibility_check_failed",
-                  message: "Failed to check offer eligibility: \(error.localizedDescription)",
-                  details: "Product ID: \(productId), Error: \(error)")))
+                  code: "storekit2_failed_to_fetch_product",
+                  message: "Storekit has failed to fetch this product.",
+                  details: "Product ID: \(productId)")))
+            return
           }
+
+          guard let subscription = product.subscription else {
+            completion(
+              .failure(
+                PigeonError(
+                  code: "storekit2_not_subscription",
+                  message: "Product is not a subscription",
+                  details: "Product ID: \(productId)")))
+            return
+          }
+
+          let statuses = try await subscription.status
+
+          var isEligible = false
+          for status in statuses {
+            switch status.renewalInfo {
+            case .verified(let renewalInfo):
+              if renewalInfo.eligibleWinBackOfferIDs.contains(offerId) {
+                isEligible = true
+                break
+              }
+            case .unverified(let unverifiedInfo, let error):
+              continue
+            @unknown default:
+              continue
+            }
+          }
+
+          completion(.success(isEligible))
+
+        } catch {
+          completion(
+            .failure(
+              PigeonError(
+                code: "storekit2_eligibility_check_failed",
+                message: "Failed to check offer eligibility: \(error.localizedDescription)",
+                details: "Product ID: \(productId), Error: \(error)")))
         }
-      } else {
-        completion(
-          .failure(
-            PigeonError(
-              code: "storekit2_unsupported_platform_version",
-              message: "Win back offers require iOS 18+ or macOS 15.0+",
-              details: nil)))
       }
-    #else
+    } else {
       completion(
         .failure(
           PigeonError(
-            code: "storekit2_unsupported_compiler",
-            message: "Win back offers require Swift 6.0+",
-            details: "Current Swift version does not support this feature")))
-    #endif
+            code: "storekit2_unsupported_platform_version",
+            message: "Win back offers require iOS 18+ or macOS 15.0+",
+            details: nil)))
+    }
   }
 
   /// Wrapper method around StoreKit2's transactions() method

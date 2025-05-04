@@ -30,20 +30,18 @@ final class StoreKit2TranslatorTests: XCTestCase {
         paymentMode: .payAsYouGo)
     ]
 
-    #if compiler(>=6.0)
-      if #available(iOS 18.0, macOS 15.0, *) {
-        promotionalOffers.insert(
-          SK2SubscriptionOfferMessage(
-            id: "subscription_silver_winback_offer",
-            price: 0.99,
-            type: .winBack,
-            period: SK2SubscriptionPeriodMessage(value: 1, unit: .week),
-            periodCount: 1,
-            paymentMode: .payAsYouGo),
-          at: 0
-        )
-      }
-    #endif
+    if #available(iOS 18.0, macOS 15.0, *) {
+      promotionalOffers.insert(
+        SK2SubscriptionOfferMessage(
+          id: "subscription_silver_winback_offer",
+          price: 0.99,
+          type: .winBack,
+          period: SK2SubscriptionPeriodMessage(value: 1, unit: .week),
+          periodCount: 1,
+          paymentMode: .payAsYouGo),
+        at: 0
+      )
+    }
 
     productMessage = SK2ProductMessage(
       id: "subscription_silver",

@@ -333,24 +333,22 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   @available(iOS 18.0, macOS 15.0, *)
   func testPurchaseWithWinBackOffer() async throws {
-    #if compiler(>=6.0)
-      let expectation = self.expectation(description: "Purchase with winBackOffer should succeed")
+    let expectation = self.expectation(description: "Purchase with winBackOffer should succeed")
 
-      let options = SK2ProductPurchaseOptionsMessage(
-        appAccountToken: nil, promotionalOffer: nil,
-        winBackOfferId: "subscription_silver_winback_offer_1month")
+    let options = SK2ProductPurchaseOptionsMessage(
+      appAccountToken: nil, promotionalOffer: nil,
+      winBackOfferId: "subscription_silver_winback_offer_1month")
 
-      plugin.purchase(id: "subscription_silver", options: options) { result in
-        switch result {
-        case .success:
-          expectation.fulfill()
-        case .failure(let error):
-          XCTFail("Purchase should NOT fail. Failed with \(error)")
-        }
+    plugin.purchase(id: "subscription_silver", options: options) { result in
+      switch result {
+      case .success:
+        expectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
+    }
 
-      await fulfillment(of: [expectation], timeout: 5)
-    #endif
+    await fulfillment(of: [expectation], timeout: 5)
   }
 
   func testRestoreProductSuccess() async throws {
@@ -407,132 +405,101 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
   @available(iOS 18.0, macOS 15.0, *)
   func testCheckWinBackOfferEligibilityEligible() async throws {
-    #if compiler(>=6.0)
-      let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
 
-      plugin.purchase(id: "subscription_silver", options: nil) { result in
-        switch result {
-        case .success:
-          purchaseExpectation.fulfill()
-        case .failure(let error):
-          XCTFail("Purchase should NOT fail. Failed with \(error)")
-        }
+    plugin.purchase(id: "subscription_silver", options: nil) { result in
+      switch result {
+      case .success:
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
       }
-      await fulfillment(of: [purchaseExpectation], timeout: 5)
+    }
+    await fulfillment(of: [purchaseExpectation], timeout: 5)
 
-      try session.expireSubscription(productIdentifier: "subscription_silver")
+    try session.expireSubscription(productIdentifier: "subscription_silver")
 
-      let expectation = self.expectation(description: "Eligibility check should return true")
+    let expectation = self.expectation(description: "Eligibility check should return true")
 
-      plugin.checkWinBackOfferEligibility(
-        productId: "subscription_silver",
-        offerId: "subscription_silver_winback_offer"
-      ) { result in
-        switch result {
-        case .success(let isEligible):
-          XCTAssertTrue(isEligible)
-          expectation.fulfill()
-        case .failure(let error):
-          XCTFail("Eligibility check failed: \(error.localizedDescription)")
-        }
+    plugin.checkWinBackOfferEligibility(
+      productId: "subscription_silver",
+      offerId: "subscription_silver_winback_offer"
+    ) { result in
+      switch result {
+      case .success(let isEligible):
+        XCTAssertTrue(isEligible)
+        expectation.fulfill()
+      case .failure(let error):
+        XCTFail("Eligibility check failed: \(error.localizedDescription)")
       }
+    }
 
-      await fulfillment(of: [expectation], timeout: 5)
+    await fulfillment(of: [expectation], timeout: 5)
 
-    #endif
   }
 
   @available(iOS 18.0, macOS 15.0, *)
   func testCheckWinBackOfferEligibilityNotEligible() async throws {
-    #if compiler(>=6.0)
-      let expectation = self.expectation(description: "Eligibility check should return false")
+    let expectation = self.expectation(description: "Eligibility check should return false")
 
-      plugin.checkWinBackOfferEligibility(
-        productId: "subscription_silver",
-        offerId: "invalid_offer_id"
-      ) { result in
-        switch result {
-        case .success(let isEligible):
-          XCTAssertFalse(isEligible)
-          expectation.fulfill()
-        case .failure(let error):
-          XCTFail("Eligibility check failed: \(error.localizedDescription)")
-        }
+    plugin.checkWinBackOfferEligibility(
+      productId: "subscription_silver",
+      offerId: "invalid_offer_id"
+    ) { result in
+      switch result {
+      case .success(let isEligible):
+        XCTAssertFalse(isEligible)
+        expectation.fulfill()
+      case .failure(let error):
+        XCTFail("Eligibility check failed: \(error.localizedDescription)")
       }
+    }
 
-      await fulfillment(of: [expectation], timeout: 5)
-    #endif
+    await fulfillment(of: [expectation], timeout: 5)
   }
 
   @available(iOS 18.0, macOS 15.0, *)
   func testCheckWinBackOfferEligibilityProductNotFound() async throws {
-    #if compiler(>=6.0)
-      let expectation = self.expectation(description: "Should throw product not found error")
+    let expectation = self.expectation(description: "Should throw product not found error")
 
-      plugin.checkWinBackOfferEligibility(
-        productId: "invalid_product",
-        offerId: "winback_offer"
-      ) { result in
-        switch result {
-        case .success:
-          XCTFail("Should not succeed")
-        case .failure(let error as PigeonError):
-          XCTAssertEqual(error.code, "storekit2_failed_to_fetch_product")
-          expectation.fulfill()
-        case .failure(let error):
-          XCTFail("Unexpected error type: \(error)")
-        }
+    plugin.checkWinBackOfferEligibility(
+      productId: "invalid_product",
+      offerId: "winback_offer"
+    ) { result in
+      switch result {
+      case .success:
+        XCTFail("Should not succeed")
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "storekit2_failed_to_fetch_product")
+        expectation.fulfill()
+      case .failure(let error):
+        XCTFail("Unexpected error type: \(error)")
       }
+    }
 
-      await fulfillment(of: [expectation], timeout: 5)
-    #endif
+    await fulfillment(of: [expectation], timeout: 5)
   }
 
   @available(iOS 18.0, macOS 15.0, *)
   func testCheckWinBackOfferEligibilityNonSubscription() async throws {
-    #if compiler(>=6.0)
-      let expectation = self.expectation(description: "Should throw non-subscription error")
+    let expectation = self.expectation(description: "Should throw non-subscription error")
 
-      plugin.checkWinBackOfferEligibility(
-        productId: "consumable",
-        offerId: "winback_offer"
-      ) { result in
-        switch result {
-        case .success:
-          XCTFail("Should not succeed")
-        case .failure(let error as PigeonError):
-          XCTAssertEqual(error.code, "storekit2_not_subscription")
-          expectation.fulfill()
-        case .failure(let error):
-          XCTFail("Unexpected error type: \(error)")
-        }
+    plugin.checkWinBackOfferEligibility(
+      productId: "consumable",
+      offerId: "winback_offer"
+    ) { result in
+      switch result {
+      case .success:
+        XCTFail("Should not succeed")
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "storekit2_not_subscription")
+        expectation.fulfill()
+      case .failure(let error):
+        XCTFail("Unexpected error type: \(error)")
       }
+    }
 
-      await fulfillment(of: [expectation], timeout: 5)
-    #endif
-  }
-
-  func testCheckWinBackOfferEligibilityUnsupportedPlatform() async throws {
-    #if compiler(<6.0)
-      let expectation = self.expectation(description: "Should throw unsupported platform error")
-
-      plugin.checkWinBackOfferEligibility(
-        productId: "subscription_silver",
-        offerId: "winback_offer"
-      ) { result in
-        switch result {
-        case .success:
-          XCTFail("Should not succeed")
-        case .failure(let error as PigeonError):
-          XCTAssertEqual(error.code, "storekit2_unsupported_compiler")
-          expectation.fulfill()
-        case .failure(let error):
-          XCTFail("Unexpected error type: \(error)")
-        }
-      }
-
-      await fulfillment(of: [expectation], timeout: 5)
-    #endif
+    await fulfillment(of: [expectation], timeout: 5)
   }
 
 }
