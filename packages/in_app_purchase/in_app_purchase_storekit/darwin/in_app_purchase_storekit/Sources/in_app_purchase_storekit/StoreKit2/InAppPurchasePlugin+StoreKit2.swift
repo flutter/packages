@@ -163,9 +163,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
                 isEligible = true
                 break
               }
-            case .unverified(let unverifiedInfo, let error):
-              continue
-            @unknown default:
+            default:
               continue
             }
           }
