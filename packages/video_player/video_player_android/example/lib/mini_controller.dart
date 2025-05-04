@@ -467,12 +467,13 @@ class _VideoPlayerWithRotation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return rotation == 0
-        ? child
-        : Transform.rotate(
-            angle: rotation * pi / 180,
-            child: child,
-          );
+    if (rotation == 0) {
+      return child;
+    }
+    return RotatedBox(
+      quarterTurns: rotation ~/ 90,
+      child: child,
+    );
   }
 }
 
