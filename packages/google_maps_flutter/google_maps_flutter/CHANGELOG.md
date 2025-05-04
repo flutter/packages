@@ -1,3 +1,20 @@
+## NEXT
+
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
+
+## 2.12.1
+
+* Fixes typo in README.
+
+## 2.12.0
+
+* Adds support for animating the camera with a duration.
+
+## 2.11.0
+
+* Adds support for ground overlays.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 2.10.1
 
 * Updates READMEs and API docs.

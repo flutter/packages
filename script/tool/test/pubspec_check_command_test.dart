@@ -4,9 +4,9 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/pubspec_check_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -136,21 +136,20 @@ false_secrets:
 void main() {
   group('test pubspec_check_command', () {
     late CommandRunner<void> runner;
-    late RecordingProcessRunner processRunner;
-    late FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       mockPlatform = MockPlatform();
-      packagesDir = fileSystem.currentDirectory.childDirectory('packages');
-      createPackagesDirectory(parentDir: packagesDir.parent);
-      processRunner = RecordingProcessRunner();
+      final RecordingProcessRunner processRunner;
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final PubspecCheckCommand command = PubspecCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>(
@@ -1851,21 +1850,20 @@ ${_topicsSection()}
 
   group('test pubspec_check_command on Windows', () {
     late CommandRunner<void> runner;
-    late RecordingProcessRunner processRunner;
-    late FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
 
     setUp(() {
-      fileSystem = MemoryFileSystem(style: FileSystemStyle.windows);
       mockPlatform = MockPlatform(isWindows: true);
-      packagesDir = fileSystem.currentDirectory.childDirectory('packages');
-      createPackagesDirectory(parentDir: packagesDir.parent);
-      processRunner = RecordingProcessRunner();
+      final RecordingProcessRunner processRunner;
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final PubspecCheckCommand command = PubspecCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>(

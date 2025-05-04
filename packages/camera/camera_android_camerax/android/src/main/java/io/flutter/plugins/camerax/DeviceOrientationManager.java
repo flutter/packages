@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,47 +11,37 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.view.Display;
 import android.view.Surface;
-import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
+import java.util.Objects;
 
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
  */
 public class DeviceOrientationManager {
-
-  interface DeviceOrientationChangeCallback {
-    void onChange(DeviceOrientation newOrientation);
-  }
-
   private static final IntentFilter orientationIntentFilter =
       new IntentFilter(Intent.ACTION_CONFIGURATION_CHANGED);
 
-  private final Activity activity;
-  private final boolean isFrontFacing;
-  private final int sensorOrientation;
-  private final DeviceOrientationChangeCallback deviceOrientationChangeCallback;
+  private final DeviceOrientationManagerProxyApi api;
   private PlatformChannel.DeviceOrientation lastOrientation;
   private BroadcastReceiver broadcastReceiver;
 
-  DeviceOrientationManager(
-      @NonNull Activity activity,
-      boolean isFrontFacing,
-      int sensorOrientation,
-      DeviceOrientationChangeCallback callback) {
-    this.activity = activity;
-    this.isFrontFacing = isFrontFacing;
-    this.sensorOrientation = sensorOrientation;
-    this.deviceOrientationChangeCallback = callback;
+  DeviceOrientationManager(DeviceOrientationManagerProxyApi api) {
+    this.api = api;
+  }
+
+  @NonNull
+  Context getContext() {
+    return api.getPigeonRegistrar().getContext();
   }
 
   /**
    * Starts listening to the device's sensors or UI for orientation updates.
    *
    * <p>When orientation information is updated, the callback method of the {@link
-   * DeviceOrientationChangeCallback} is called with the new orientation.
+   * DeviceOrientationManagerProxyApi} is called with the new orientation.
    *
    * <p>If the device's ACCELEROMETER_ROTATION setting is enabled the {@link
    * DeviceOrientationManager} will report orientation updates based on the sensor information. If
@@ -70,8 +59,8 @@ public class DeviceOrientationManager {
             handleUIOrientationChange();
           }
         };
-    activity.registerReceiver(broadcastReceiver, orientationIntentFilter);
-    broadcastReceiver.onReceive(activity, null);
+    getContext().registerReceiver(broadcastReceiver, orientationIntentFilter);
+    broadcastReceiver.onReceive(getContext(), null);
   }
 
   /** Stops listening for orientation updates. */
@@ -79,7 +68,7 @@ public class DeviceOrientationManager {
     if (broadcastReceiver == null) {
       return;
     }
-    activity.unregisterReceiver(broadcastReceiver);
+    getContext().unregisterReceiver(broadcastReceiver);
     broadcastReceiver = null;
   }
 
@@ -92,7 +81,7 @@ public class DeviceOrientationManager {
   @VisibleForTesting
   void handleUIOrientationChange() {
     PlatformChannel.DeviceOrientation orientation = getUIOrientation();
-    handleOrientationChange(orientation, lastOrientation, deviceOrientationChangeCallback);
+    handleOrientationChange(this, orientation, lastOrientation, api);
     lastOrientation = orientation;
   }
 
@@ -105,11 +94,30 @@ public class DeviceOrientationManager {
    */
   @VisibleForTesting
   static void handleOrientationChange(
+      DeviceOrientationManager manager,
       DeviceOrientation newOrientation,
       DeviceOrientation previousOrientation,
-      DeviceOrientationChangeCallback callback) {
+      DeviceOrientationManagerProxyApi api) {
     if (!newOrientation.equals(previousOrientation)) {
-      callback.onChange(newOrientation);
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              new ProxyApiRegistrar.FlutterMethodRunnable() {
+                @Override
+                public void run() {
+                  api.onDeviceOrientationChanged(
+                      manager,
+                      newOrientation.toString(),
+                      ResultCompat.asCompatCallback(
+                          result -> {
+                            if (result.isFailure()) {
+                              onFailure(
+                                  "DeviceOrientationManager.onDeviceOrientationChanged",
+                                  Objects.requireNonNull(result.exceptionOrNull()));
+                            }
+                            return null;
+                          }));
+                }
+              });
     }
   }
 
@@ -126,7 +134,7 @@ public class DeviceOrientationManager {
   @NonNull
   PlatformChannel.DeviceOrientation getUIOrientation() {
     final int rotation = getDefaultRotation();
-    final int orientation = activity.getResources().getConfiguration().orientation;
+    final int orientation = getContext().getResources().getConfiguration().orientation;
 
     switch (orientation) {
       case Configuration.ORIENTATION_PORTRAIT:
@@ -171,9 +179,8 @@ public class DeviceOrientationManager {
    *
    * @return An instance of the Android {@link android.view.Display}.
    */
-  @SuppressWarnings("deprecation")
   @VisibleForTesting
   Display getDisplay() {
-    return ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+    return api.getPigeonRegistrar().getDisplay();
   }
 }

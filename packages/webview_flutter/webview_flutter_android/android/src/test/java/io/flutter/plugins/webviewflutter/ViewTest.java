@@ -49,4 +49,15 @@ public class ViewTest {
     assertEquals(value.getX(), api.getScrollPosition(instance).getX());
     assertEquals(value.getY(), api.getScrollPosition(instance).getY());
   }
+
+  @Test
+  public void setOverScrollMode() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
+
+    final View instance = mock(View.class);
+    final OverScrollMode mode = io.flutter.plugins.webviewflutter.OverScrollMode.ALWAYS;
+    api.setOverScrollMode(instance, mode);
+
+    verify(instance).setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+  }
 }

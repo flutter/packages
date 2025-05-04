@@ -74,6 +74,9 @@ class GoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onCircleTap(mapId: mapId)
         .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value));
+    GoogleMapsFlutterPlatform.instance.onGroundOverlayTap(mapId: mapId).listen(
+        (GroundOverlayTapEvent e) =>
+            _googleMapState.onGroundOverlayTap(e.value));
     GoogleMapsFlutterPlatform.instance
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
@@ -116,6 +119,18 @@ class GoogleMapController {
       ClusterManagerUpdates clusterManagerUpdates) {
     return GoogleMapsFlutterPlatform.instance
         .updateClusterManagers(clusterManagerUpdates, mapId: mapId);
+  }
+
+  /// Updates ground overlay configuration.
+  ///
+  /// Change listeners are notified once the update has been made on the
+  /// platform side.
+  ///
+  /// The returned [Future] completes after listeners have been notified.
+  Future<void> _updateGroundOverlays(
+      GroundOverlayUpdates groundOverlayUpdates) {
+    return GoogleMapsFlutterPlatform.instance
+        .updateGroundOverlays(groundOverlayUpdates, mapId: mapId);
   }
 
   /// Updates polygon configuration.
@@ -187,11 +202,15 @@ class GoogleMapController {
 
   /// Starts an animated change of the map camera position.
   ///
+  /// The [duration] parameter specifies the duration of the animation.
+  /// If null, the platform will decide the default value.
+  ///
   /// The returned [Future] completes after the change has been started on the
   /// platform side.
-  Future<void> animateCamera(CameraUpdate cameraUpdate) {
-    return GoogleMapsFlutterPlatform.instance
-        .animateCamera(cameraUpdate, mapId: mapId);
+  Future<void> animateCamera(CameraUpdate cameraUpdate, {Duration? duration}) {
+    return GoogleMapsFlutterPlatform.instance.animateCameraWithConfiguration(
+        cameraUpdate, CameraUpdateAnimationConfiguration(duration: duration),
+        mapId: mapId);
   }
 
   /// Changes the map camera position.

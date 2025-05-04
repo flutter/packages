@@ -44,6 +44,10 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   late Future<int> _counter;
   int _externalCounter = 0;
 
+  /// Completes when the preferences have been initialized, which happens after
+  /// legacy preferences have been migrated.
+  final Completer<void> _preferencesReady = Completer<void>();
+
   Future<void> _incrementCounter() async {
     final SharedPreferencesWithCache prefs = await _prefs;
     final int counter = (prefs.getInt('counter') ?? 0) + 1;
@@ -86,6 +90,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
         return prefs.getInt('counter') ?? 0;
       });
       _getExternalCounter();
+      _preferencesReady.complete();
     });
   }
 
@@ -96,30 +101,60 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
         title: const Text('SharedPreferencesWithCache Demo'),
       ),
       body: Center(
-          child: FutureBuilder<int>(
-              future: _counter,
-              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                    return const CircularProgressIndicator();
-                  case ConnectionState.active:
-                  case ConnectionState.done:
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return Text(
-                        'Button tapped ${snapshot.data ?? 0 + _externalCounter} time${(snapshot.data ?? 0 + _externalCounter) == 1 ? '' : 's'}.\n\n'
-                        'This should persist across restarts.',
-                      );
-                    }
-                }
-              })),
+        child: _WaitForInitialization(
+          initialized: _preferencesReady.future,
+          builder: (BuildContext context) => FutureBuilder<int>(
+            future: _counter,
+            builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.none:
+                case ConnectionState.waiting:
+                  return const CircularProgressIndicator();
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Text(
+                      'Button tapped ${snapshot.data ?? 0 + _externalCounter} time${(snapshot.data ?? 0 + _externalCounter) == 1 ? '' : 's'}.\n\n'
+                      'This should persist across restarts.',
+                    );
+                  }
+              }
+            },
+          ),
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ),
+    );
+  }
+}
+
+/// Waits for the [initialized] future to complete before rendering [builder].
+class _WaitForInitialization extends StatelessWidget {
+  const _WaitForInitialization({
+    required this.initialized,
+    required this.builder,
+  });
+
+  final Future<void> initialized;
+  final WidgetBuilder builder;
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: initialized,
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting ||
+            snapshot.connectionState == ConnectionState.none) {
+          return const CircularProgressIndicator();
+        }
+        return builder(context);
+      },
     );
   }
 }

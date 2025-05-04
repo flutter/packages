@@ -143,6 +143,7 @@ void main() {
       clientId: 'fakeClientId',
       serverClientId: 'fakeServerClientId',
       forceCodeForRefreshToken: true,
+      forceAccountName: 'fakeEmailAddress@example.com',
     );
 
     await googleSignIn.initWithParams(initParams);
@@ -156,6 +157,7 @@ void main() {
     expect(passedParams.serverClientId, initParams.serverClientId);
     expect(passedParams.forceCodeForRefreshToken,
         initParams.forceCodeForRefreshToken);
+    expect(passedParams.forceAccountName, initParams.forceAccountName);
   });
 
   test('clearAuthCache passes arguments', () async {

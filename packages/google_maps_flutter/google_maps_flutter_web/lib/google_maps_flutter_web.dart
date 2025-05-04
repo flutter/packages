@@ -35,6 +35,8 @@ part 'src/circles.dart';
 part 'src/convert.dart';
 part 'src/google_maps_controller.dart';
 part 'src/google_maps_flutter_web.dart';
+part 'src/ground_overlay.dart';
+part 'src/ground_overlays.dart';
 part 'src/heatmap.dart';
 part 'src/heatmaps.dart';
 part 'src/marker.dart';

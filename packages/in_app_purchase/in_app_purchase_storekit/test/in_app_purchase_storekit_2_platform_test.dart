@@ -268,6 +268,14 @@ void main() {
     });
   });
 
+  group('billing configuration', () {
+    test('country_code', () async {
+      const String expectedCountryCode = 'ABC';
+      final String countryCode = await iapStoreKitPlatform.countryCode();
+      expect(countryCode, expectedCountryCode);
+    });
+  });
+
   group('win back offers eligibility', () {
     late FakeStoreKit2Platform fakeStoreKit2Platform;
 

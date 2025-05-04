@@ -402,6 +402,16 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   }
 
   @override
+  Future<String> countryCode() async {
+    return 'ABC';
+  }
+
+  @override
+  Future<void> sync() {
+    return Future<void>.value();
+  }
+
+  @override
   Future<bool> checkWinBackOfferEligibility(
     String productId,
     String offerId,

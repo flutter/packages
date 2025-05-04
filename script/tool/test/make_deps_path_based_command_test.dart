@@ -4,44 +4,28 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/make_deps_path_based_command.dart';
-import 'package:mockito/mockito.dart';
+import 'package:git/git.dart';
 import 'package:pubspec_parse/pubspec_parse.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  FileSystem fileSystem;
   late Directory packagesDir;
   late Directory thirdPartyPackagesDir;
   late CommandRunner<void> runner;
-  late RecordingProcessRunner processRunner;
+  late RecordingProcessRunner gitProcessRunner;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    final GitDir gitDir;
+    (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
+        configureBaseCommandMocks();
     thirdPartyPackagesDir = packagesDir.parent
         .childDirectory('third_party')
         .childDirectory('packages');
 
-    final MockGitDir gitDir = MockGitDir();
-    when(gitDir.path).thenReturn(packagesDir.parent.path);
-    when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')))
-        .thenAnswer((Invocation invocation) {
-      final List<String> arguments =
-          invocation.positionalArguments[0]! as List<String>;
-      // Route git calls through the process runner, to make mock output
-      // consistent with other processes. Attach the first argument to the
-      // command to make targeting the mock results easier.
-      final String gitCommand = arguments.removeAt(0);
-      return processRunner.run('git-$gitCommand', arguments);
-    });
-
-    processRunner = RecordingProcessRunner();
     final MakeDepsPathBasedCommand command =
         MakeDepsPathBasedCommand(packagesDir, gitDir: gitDir);
 
@@ -498,11 +482,13 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       final String changedFileOutput = <File>[
         package.pubspecFile,
       ].map((File file) => file.path).join('\n');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
       ];
       // Simulate no change to the version in the interface's pubspec.yaml.
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(
             MockProcess(stdout: package.pubspecFile.readAsStringSync())),
       ];
@@ -525,7 +511,8 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
         // A change for a file that's not on disk simulates a deletion.
         packagesDir.childDirectory('foo').childFile('pubspec.yaml'),
       ].map((File file) => file.path).join('\n');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
       ];
 
@@ -552,13 +539,15 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       final String changedFileOutput = <File>[
         pubspecFile,
       ].map((File file) => file.path).join('\n');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
       ];
       final String gitPubspecContents =
           pubspecFile.readAsStringSync().replaceAll(newVersion, '1.0.0');
       // Simulate no change to the version in the interface's pubspec.yaml.
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
       ];
 
@@ -584,13 +573,15 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       final String changedFileOutput = <File>[
         pubspecFile,
       ].map((File file) => file.path).join('\n');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
       ];
       final String gitPubspecContents =
           pubspecFile.readAsStringSync().replaceAll(newVersion, '1.0.0');
       // Simulate no change to the version in the interface's pubspec.yaml.
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
       ];
 
@@ -616,13 +607,15 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       final String changedFileOutput = <File>[
         pubspecFile,
       ].map((File file) => file.path).join('\n');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
       ];
       final String gitPubspecContents =
           pubspecFile.readAsStringSync().replaceAll(newVersion, '1.0.0');
       // Simulate no change to the version in the interface's pubspec.yaml.
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
       ];
 
@@ -648,13 +641,15 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       final String changedFileOutput = <File>[
         pubspecFile,
       ].map((File file) => file.path).join('\n');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
       ];
       final String gitPubspecContents =
           pubspecFile.readAsStringSync().replaceAll(newVersion, '0.7.0');
       // Simulate no change to the version in the interface's pubspec.yaml.
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
       ];
 
@@ -686,12 +681,14 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       final String changedFileOutput = <File>[
         pubspecFile,
       ].map((File file) => file.path).join('\n');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
       ];
       final String gitPubspecContents =
           pubspecFile.readAsStringSync().replaceAll(newVersion, '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
       ];
 
@@ -726,12 +723,14 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       final String changedFileOutput = <File>[
         pubspecFile,
       ].map((File file) => file.path).join('\n');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
       ];
       final String gitPubspecContents =
           pubspecFile.readAsStringSync().replaceAll(newVersion, '2.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
       ];
 
@@ -764,12 +763,14 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
       final String changedFileOutput = <File>[
         pubspecFile,
       ].map((File file) => file.path).join('\n');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
       ];
       final String gitPubspecContents =
           pubspecFile.readAsStringSync().replaceAll(newVersion, '1.0.0');
-      processRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: gitPubspecContents)),
       ];
 

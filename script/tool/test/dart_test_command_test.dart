@@ -4,10 +4,10 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/dart_test_command.dart';
+import 'package:git/git.dart';
 import 'package:platform/platform.dart';
 import 'package:test/test.dart';
 
@@ -16,21 +16,22 @@ import 'util.dart';
 
 void main() {
   group('TestCommand', () {
-    late FileSystem fileSystem;
     late Platform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
+    late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       mockPlatform = MockPlatform();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-      processRunner = RecordingProcessRunner();
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final DartTestCommand command = DartTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>('test_test', 'Test for $DartTestCommand');
@@ -712,6 +713,92 @@ test_on: !vm && firefox
               package.path),
         ]),
       );
+    });
+
+    group('file filtering', () {
+      test('runs command for changes to Dart source', () async {
+        createFakePackage('package_a', packagesDir);
+
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+packages/package_a/foo.dart
+''')),
+        ];
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['test']);
+
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for package_a'),
+            ]));
+      });
+
+      const List<String> files = <String>[
+        'foo.java',
+        'foo.kt',
+        'foo.m',
+        'foo.swift',
+        'foo.c',
+        'foo.cc',
+        'foo.cpp',
+        'foo.h',
+      ];
+      for (final String file in files) {
+        test('skips command for changes to non-Dart source $file', () async {
+          createFakePackage('package_a', packagesDir);
+
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(stdout: '''
+packages/package_a/$file
+''')),
+          ];
+
+          final List<String> output =
+              await runCapturingPrint(runner, <String>['test']);
+
+          expect(
+              output,
+              isNot(containsAllInOrder(<Matcher>[
+                contains('Running for package_a'),
+              ])));
+          expect(
+              output,
+              containsAllInOrder(<Matcher>[
+                contains('SKIPPING ALL PACKAGES'),
+              ]));
+        });
+      }
+
+      test('skips commands if all files should be ignored', () async {
+        createFakePackage('package_a', packagesDir);
+
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+README.md
+CODEOWNERS
+packages/package_a/CHANGELOG.md
+''')),
+        ];
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['test']);
+
+        expect(
+            output,
+            isNot(containsAllInOrder(<Matcher>[
+              contains('Running for package_a'),
+            ])));
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('SKIPPING ALL PACKAGES'),
+            ]));
+      });
     });
   });
 }

@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/pigeon.dart' show Error;
 import 'package:pigeon/src/ast.dart';
 import 'package:pigeon/src/cpp/cpp_generator.dart';
 import 'package:pigeon/src/generator_tools.dart';
+import 'package:pigeon/src/pigeon_lib.dart' show Error;
 import 'package:test/test.dart';
 
 const String DEFAULT_PACKAGE_NAME = 'test_package';
@@ -66,10 +66,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -82,10 +83,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -157,10 +159,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -182,10 +185,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -217,10 +221,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -275,10 +280,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(generatorOptions, root, sink,
           dartPackageName: DEFAULT_PACKAGE_NAME);
@@ -341,10 +347,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -359,10 +366,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -397,10 +405,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -423,10 +432,13 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(headerIncludePath: 'a_header.h'),
+        languageOptions: const InternalCppOptions(
+            headerIncludePath: 'a_header.h',
+            cppHeaderOut: '',
+            cppSourceOut: ''),
       );
       generator.generate(
         generatorOptions,
@@ -471,10 +483,14 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(namespace: 'foo'),
+        languageOptions: const InternalCppOptions(
+            namespace: 'foo',
+            headerIncludePath: '',
+            cppHeaderOut: '',
+            cppSourceOut: ''),
       );
       generator.generate(
         generatorOptions,
@@ -489,10 +505,14 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(namespace: 'foo'),
+        languageOptions: const InternalCppOptions(
+            namespace: 'foo',
+            headerIncludePath: '',
+            cppHeaderOut: '',
+            cppSourceOut: ''),
       );
       generator.generate(
         generatorOptions,
@@ -564,10 +584,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -617,10 +638,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -745,10 +767,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -789,10 +812,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -927,10 +951,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1050,10 +1075,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1145,10 +1171,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1171,10 +1198,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1299,10 +1327,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1325,10 +1354,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1453,10 +1483,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1494,10 +1525,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1613,10 +1645,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.header,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1647,10 +1680,11 @@ void main() {
     {
       final StringBuffer sink = StringBuffer();
       const CppGenerator generator = CppGenerator();
-      final OutputFileOptions<CppOptions> generatorOptions =
-          OutputFileOptions<CppOptions>(
+      final OutputFileOptions<InternalCppOptions> generatorOptions =
+          OutputFileOptions<InternalCppOptions>(
         fileType: FileType.source,
-        languageOptions: const CppOptions(),
+        languageOptions: const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
       );
       generator.generate(
         generatorOptions,
@@ -1691,10 +1725,11 @@ void main() {
 
     final StringBuffer sink = StringBuffer();
     const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
+    final OutputFileOptions<InternalCppOptions> generatorOptions =
+        OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const CppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -1738,7 +1773,10 @@ void main() {
         ])
       ],
     );
-    final List<Error> errors = validateCpp(const CppOptions(), root);
+    final List<Error> errors = validateCpp(
+        const InternalCppOptions(
+            cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
+        root);
     expect(errors.length, 1);
   });
 
@@ -1817,10 +1855,14 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
+    final OutputFileOptions<InternalCppOptions> generatorOptions =
+        OutputFileOptions<InternalCppOptions>(
       fileType: FileType.header,
-      languageOptions: const CppOptions(headerIncludePath: 'foo'),
+      languageOptions: const InternalCppOptions(
+        headerIncludePath: 'foo',
+        cppHeaderOut: '',
+        cppSourceOut: '',
+      ),
     );
     generator.generate(
       generatorOptions,
@@ -1878,10 +1920,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
+    final OutputFileOptions<InternalCppOptions> generatorOptions =
+        OutputFileOptions<InternalCppOptions>(
       fileType: FileType.header,
-      languageOptions: const CppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -1960,10 +2003,11 @@ void main() {
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
+    final OutputFileOptions<InternalCppOptions> generatorOptions =
+        OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const CppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -2029,10 +2073,11 @@ void main() {
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
     const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
+    final OutputFileOptions<InternalCppOptions> generatorOptions =
+        OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const CppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -2080,10 +2125,11 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
+    final OutputFileOptions<InternalCppOptions> generatorOptions =
+        OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const CppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,
@@ -2127,10 +2173,11 @@ void main() {
     );
     final StringBuffer sink = StringBuffer();
     const CppGenerator generator = CppGenerator();
-    final OutputFileOptions<CppOptions> generatorOptions =
-        OutputFileOptions<CppOptions>(
+    final OutputFileOptions<InternalCppOptions> generatorOptions =
+        OutputFileOptions<InternalCppOptions>(
       fileType: FileType.source,
-      languageOptions: const CppOptions(),
+      languageOptions: const InternalCppOptions(
+          cppHeaderOut: '', cppSourceOut: '', headerIncludePath: ''),
     );
     generator.generate(
       generatorOptions,

@@ -113,6 +113,61 @@ FGMPlatformCluster *FGMGetPigeonCluster(GMUStaticCluster *cluster,
                      markerIds:markerIDs];
 }
 
+FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOverlay,
+                                                    NSString *overlayId, BOOL isCreatedWithBounds,
+                                                    NSNumber *zoomLevel) {
+  // Image is mandatory field on FGMPlatformGroundOverlay (and it should be kept
+  // non-nullable), therefore image must be set for the object. The image is
+  // description either contains set of bytes, or path to asset. This info is
+  // converted to format google maps uses (BitmapDescription), and the original
+  // data is not stored on native code. Therefore placeholder image is used for
+  // the image field.
+  FGMPlatformBitmap *placeholderImage =
+      [FGMPlatformBitmap makeWithBitmap:[FGMPlatformBitmapDefaultMarker makeWithHue:0]];
+  if (isCreatedWithBounds) {
+    return [FGMPlatformGroundOverlay
+        makeWithGroundOverlayId:overlayId
+                          image:placeholderImage
+                       position:nil
+                         bounds:[FGMPlatformLatLngBounds
+                                    makeWithNortheast:[FGMPlatformLatLng
+                                                          makeWithLatitude:groundOverlay.bounds
+                                                                               .northEast.latitude
+                                                                 longitude:groundOverlay.bounds
+                                                                               .northEast.longitude]
+                                            southwest:[FGMPlatformLatLng
+                                                          makeWithLatitude:groundOverlay.bounds
+                                                                               .southWest.latitude
+                                                                 longitude:groundOverlay.bounds
+                                                                               .southWest
+                                                                               .longitude]]
+                         anchor:[FGMPlatformPoint makeWithX:groundOverlay.anchor.x
+                                                          y:groundOverlay.anchor.y]
+                   transparency:1.0f - groundOverlay.opacity
+                        bearing:groundOverlay.bearing
+                         zIndex:groundOverlay.zIndex
+                        visible:groundOverlay.map != nil
+                      clickable:groundOverlay.isTappable
+                      zoomLevel:zoomLevel];
+  } else {
+    return [FGMPlatformGroundOverlay
+        makeWithGroundOverlayId:overlayId
+                          image:placeholderImage
+                       position:[FGMPlatformLatLng
+                                    makeWithLatitude:groundOverlay.position.latitude
+                                           longitude:groundOverlay.position.longitude]
+                         bounds:nil
+                         anchor:[FGMPlatformPoint makeWithX:groundOverlay.anchor.x
+                                                          y:groundOverlay.anchor.y]
+                   transparency:1.0f - groundOverlay.opacity
+                        bearing:groundOverlay.bearing
+                         zIndex:groundOverlay.zIndex
+                        visible:groundOverlay.map != nil
+                      clickable:groundOverlay.isTappable
+                      zoomLevel:zoomLevel];
+  }
+}
+
 GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate *cameraUpdate) {
   // See note in messages.dart for why this is so loosely typed.
   id update = cameraUpdate.cameraUpdate;

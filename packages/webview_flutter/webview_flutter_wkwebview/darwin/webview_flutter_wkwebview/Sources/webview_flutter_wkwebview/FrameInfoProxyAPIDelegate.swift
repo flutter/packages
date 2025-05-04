@@ -4,6 +4,18 @@
 
 import WebKit
 
+extension WKFrameInfo {
+  // It's possible that `WKFrameInfo.request` can be a nil value despite the Swift code considering
+  // it to be nonnull. This causes a crash when accessing the value with Swift. Accessing the value
+  // this way prevents the crash when the value is nil.
+  //
+  // See https://github.com/flutter/flutter/issues/163549 and https://developer.apple.com/forums/thread/77888.
+  var maybeRequest: URLRequest? {
+    return self.perform(#selector(getter:WKFrameInfo.request))?.takeUnretainedValue()
+      as! URLRequest?
+  }
+}
+
 /// ProxyApi implementation for `WKFrameInfo`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
@@ -14,8 +26,12 @@ class FrameInfoProxyAPIDelegate: PigeonApiDelegateWKFrameInfo {
   }
 
   func request(pigeonApi: PigeonApiWKFrameInfo, pigeonInstance: WKFrameInfo) throws
-    -> URLRequestWrapper
+    -> URLRequestWrapper?
   {
-    return URLRequestWrapper(pigeonInstance.request)
+    let request = pigeonInstance.maybeRequest
+    if let request = request {
+      return URLRequestWrapper(request)
+    }
+    return nil
   }
 }

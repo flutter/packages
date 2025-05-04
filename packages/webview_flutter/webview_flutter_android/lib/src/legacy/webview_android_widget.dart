@@ -185,6 +185,25 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
         );
       };
     }),
+    onFormResubmission:
+        (_, __, android_webview.AndroidMessage dontResend, ___) {
+      dontResend.sendToTarget();
+    },
+    onReceivedClientCertRequest: (
+      _,
+      __,
+      android_webview.ClientCertRequest request,
+    ) {
+      request.cancel();
+    },
+    onReceivedSslError: (
+      _,
+      __,
+      android_webview.SslErrorHandler handler,
+      ___,
+    ) {
+      handler.cancel();
+    },
     requestLoading: withWeakReferenceTo(this, (
       WeakReference<WebViewAndroidPlatformController> weakReference,
     ) {
@@ -247,18 +266,21 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
   @visibleForTesting
   late final android_webview.WebChromeClient webChromeClient =
       android_webview.WebChromeClient(
-          onProgressChanged: withWeakReferenceTo(
-    this,
-    (WeakReference<WebViewAndroidPlatformController> weakReference) {
-      return (_, __, int progress) {
-        final WebViewAndroidPlatformController? controller =
-            weakReference.target;
-        if (controller != null && controller._hasProgressTracking) {
-          controller.callbacksHandler.onProgress(progress);
-        }
-      };
-    },
-  ));
+    onProgressChanged: withWeakReferenceTo(
+      this,
+      (WeakReference<WebViewAndroidPlatformController> weakReference) {
+        return (_, __, int progress) {
+          final WebViewAndroidPlatformController? controller =
+              weakReference.target;
+          if (controller != null && controller._hasProgressTracking) {
+            controller.callbacksHandler.onProgress(progress);
+          }
+        };
+      },
+    ),
+    onJsConfirm: (_, __, ___, ____) async => false,
+    onShowFileChooser: (_, __, ___) async => <String>[],
+  );
 
   /// Manages the JavaScript storage APIs.
   final android_webview.WebStorage webStorage;
@@ -647,6 +669,23 @@ class WebViewProxy {
       android_webview.WebView webView,
       android_webview.WebResourceRequest request,
     )? requestLoading,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView,
+      android_webview.AndroidMessage,
+      android_webview.AndroidMessage,
+    )? onFormResubmission,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView,
+      android_webview.ClientCertRequest,
+    )? onReceivedClientCertRequest,
+    void Function(
+      android_webview.WebViewClient,
+      android_webview.WebView,
+      android_webview.SslErrorHandler,
+      android_webview.SslError,
+    )? onReceivedSslError,
     void Function(
       android_webview.WebViewClient,
       android_webview.WebView webView,

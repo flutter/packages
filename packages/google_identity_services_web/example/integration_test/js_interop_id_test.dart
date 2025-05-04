@@ -83,8 +83,11 @@ void main() async {
   });
 
   group('prompt', () {
-    testWidgets('supports a moment notification callback', (_) async {
+    testWidgets(
+        'supports a moment notification callback with correct type and reason',
+        (_) async {
       id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
+      utils.setMockMomentNotification('skipped', 'user_cancel');
 
       final StreamController<PromptMomentNotification> controller =
           StreamController<PromptMomentNotification>();
@@ -93,9 +96,25 @@ void main() async {
 
       final PromptMomentNotification moment = await controller.stream.first;
 
-      // These defaults are set in mock-gis.js
       expect(moment.getMomentType(), MomentType.skipped);
       expect(moment.getSkippedReason(), MomentSkippedReason.user_cancel);
+    });
+
+    testWidgets(
+        'supports a moment notification callback while handling invalid reason '
+        'value gracefully', (_) async {
+      id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
+      utils.setMockMomentNotification('skipped', 'random_invalid_reason');
+
+      final StreamController<PromptMomentNotification> controller =
+          StreamController<PromptMomentNotification>();
+
+      id.prompt(controller.add);
+
+      final PromptMomentNotification moment = await controller.stream.first;
+
+      expect(moment.getMomentType(), MomentType.skipped);
+      expect(moment.getSkippedReason(), isNull);
     });
 
     testWidgets('calls config callback with credential response', (_) async {

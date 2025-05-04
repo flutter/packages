@@ -146,8 +146,22 @@ void main() {
         description: FakeController.fakeDescription,
       );
 
-      expect(cameraValue.toString(),
-          'CameraValue(isRecordingVideo: false, isInitialized: false, errorDescription: null, previewSize: Size(10.0, 10.0), isStreamingImages: false, flashMode: FlashMode.auto, exposureMode: ExposureMode.auto, focusMode: FocusMode.auto, exposurePointSupported: true, focusPointSupported: true, deviceOrientation: DeviceOrientation.portraitUp, lockedCaptureOrientation: DeviceOrientation.portraitUp, recordingOrientation: DeviceOrientation.portraitUp, isPreviewPaused: true, previewPausedOrientation: DeviceOrientation.portraitUp, description: CameraDescription(, CameraLensDirection.back, 0))');
+      expect(
+          cameraValue.toString(),
+          'CameraValue(isRecordingVideo: false, isInitialized: false, '
+          'errorDescription: null, previewSize: Size(10.0, 10.0), '
+          'isStreamingImages: false, flashMode: FlashMode.auto, '
+          'exposureMode: ExposureMode.auto, focusMode: FocusMode.auto, '
+          'exposurePointSupported: true, focusPointSupported: true, '
+          'deviceOrientation: DeviceOrientation.portraitUp, '
+          'lockedCaptureOrientation: DeviceOrientation.portraitUp, '
+          'recordingOrientation: DeviceOrientation.portraitUp, '
+          'isPreviewPaused: true, '
+          'previewPausedOrientation: DeviceOrientation.portraitUp, '
+          // CameraDescription.toString is defined in the platform interface
+          // package, so don't assert a specific value for it, only that
+          // whatever it returns is inserted as expected.
+          'description: ${FakeController.fakeDescription})');
     });
   });
 }

@@ -1,0 +1,46 @@
+RouteBase get $caseSensitiveRoute => GoRouteData.$route(
+      path: '/case-sensitive-route',
+      factory: $CaseSensitiveRouteExtension._fromState,
+    );
+
+extension $CaseSensitiveRouteExtension on CaseSensitiveRoute {
+  static CaseSensitiveRoute _fromState(GoRouterState state) =>
+      CaseSensitiveRoute();
+
+  String get location => GoRouteData.$location(
+        '/case-sensitive-route',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $notCaseSensitiveRoute => GoRouteData.$route(
+      path: '/not-case-sensitive-route',
+      caseSensitive: false,
+      factory: $NotCaseSensitiveRouteExtension._fromState,
+    );
+
+extension $NotCaseSensitiveRouteExtension on NotCaseSensitiveRoute {
+  static NotCaseSensitiveRoute _fromState(GoRouterState state) =>
+      NotCaseSensitiveRoute();
+
+  String get location => GoRouteData.$location(
+        '/not-case-sensitive-route',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}

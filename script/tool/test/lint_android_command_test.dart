@@ -4,10 +4,10 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/plugin_utils.dart';
 import 'package:flutter_plugin_tools/src/lint_android_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'mocks.dart';
@@ -15,21 +15,22 @@ import 'util.dart';
 
 void main() {
   group('LintAndroidCommand', () {
-    FileSystem fileSystem;
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late MockPlatform mockPlatform;
     late RecordingProcessRunner processRunner;
+    late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
       mockPlatform = MockPlatform();
-      processRunner = RecordingProcessRunner();
+      final GitDir gitDir;
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final LintAndroidCommand command = LintAndroidCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
       );
 
       runner = CommandRunner<void>(
@@ -240,6 +241,62 @@ void main() {
                   'SKIPPING: Plugin does not have an Android implementation.')
             ],
           ));
+    });
+
+    group('file filtering', () {
+      const List<String> files = <String>[
+        'foo.java',
+        'foo.kt',
+      ];
+      for (final String file in files) {
+        test('runs command for changes to $file', () async {
+          createFakePackage('package_a', packagesDir);
+
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(stdout: '''
+packages/package_a/$file
+''')),
+          ];
+
+          final List<String> output =
+              await runCapturingPrint(runner, <String>['lint-android']);
+
+          expect(
+              output,
+              containsAllInOrder(<Matcher>[
+                contains('Running for package_a'),
+              ]));
+        });
+      }
+
+      test('skips commands if all files should be ignored', () async {
+        createFakePackage('package_a', packagesDir);
+
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+README.md
+CODEOWNERS
+packages/package_a/CHANGELOG.md
+packages/package_a/lib/foo.dart
+''')),
+        ];
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['lint-android']);
+
+        expect(
+            output,
+            isNot(containsAllInOrder(<Matcher>[
+              contains('Running for package_a'),
+            ])));
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('SKIPPING ALL PACKAGES'),
+            ]));
+      });
     });
   });
 }

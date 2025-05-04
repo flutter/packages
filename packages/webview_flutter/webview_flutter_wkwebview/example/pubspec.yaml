@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   path_provider: ^2.0.6
-  webview_flutter_platform_interface: ^2.10.0
+  webview_flutter_platform_interface: ^2.11.0
   webview_flutter_wkwebview:
     # When depending on this package from a real application you should use:
     #   webview_flutter: ^x.y.z
@@ -32,3 +32,5 @@ flutter:
     - assets/sample_video.mp4
     - assets/www/index.html
     - assets/www/styles/style.css
+    # Test certificate used to create a test native `SecTrust`.
+    - assets/test_cert.der

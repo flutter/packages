@@ -4,40 +4,23 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/update_release_info_command.dart';
-import 'package:mockito/mockito.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
-import 'common/package_command_test.mocks.dart';
 import 'mocks.dart';
 import 'util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late Directory packagesDir;
-  late MockGitDir gitDir;
-  late RecordingProcessRunner processRunner;
+  late RecordingProcessRunner gitProcessRunner;
   late CommandRunner<void> runner;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-    processRunner = RecordingProcessRunner();
-
-    gitDir = MockGitDir();
-    when(gitDir.path).thenReturn(packagesDir.parent.path);
-    when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')))
-        .thenAnswer((Invocation invocation) {
-      final List<String> arguments =
-          invocation.positionalArguments[0]! as List<String>;
-      // Route git calls through a process runner, to make mock output
-      // consistent with other processes. Attach the first argument to the
-      // command to make targeting the mock results easier.
-      final String gitCommand = arguments.removeAt(0);
-      return processRunner.run('git-$gitCommand', arguments);
-    });
+    final GitDir gitDir;
+    (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
+        configureBaseCommandMocks();
 
     final UpdateReleaseInfoCommand command = UpdateReleaseInfoCommand(
       packagesDir,
@@ -384,7 +367,8 @@ $originalChangelog''';
     test('skips for "minimal" when there are no changes at all', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: '''
 packages/different_package/lib/foo.dart
 ''')),
@@ -412,7 +396,8 @@ packages/different_package/lib/foo.dart
     test('skips for "minimal" when there are only test changes', () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: '''
 packages/a_package/test/a_test.dart
 packages/a_package/example/integration_test/another_test.dart
@@ -607,7 +592,8 @@ Some free-form text that isn't a list.
         () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: '''
 packages/a_package/lib/plugin.dart
 ''')),
@@ -632,7 +618,8 @@ packages/a_package/lib/plugin.dart
         () async {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.1');
-      processRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(stdout: '''
 packages/a_package/test/plugin_test.dart
 ''')),

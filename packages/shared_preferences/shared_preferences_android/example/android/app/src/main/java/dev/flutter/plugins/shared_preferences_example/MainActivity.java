@@ -17,9 +17,10 @@ public class MainActivity extends FlutterActivity {
     SharedPreferences preferences =
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-    // This call adds a preference for later testing in the Dart integration tests.
+    // These calls add preferences for later testing in the Dart integration tests.
     preferences
         .edit()
+        .putInt("thisIntIsWrittenInTheExampleAppJavaCode", 5)
         .putString("thisStringIsWrittenInTheExampleAppJavaCode", "testString")
         .commit();
   }

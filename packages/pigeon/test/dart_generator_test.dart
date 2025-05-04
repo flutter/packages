@@ -46,7 +46,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -72,7 +72,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -126,7 +126,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -159,7 +159,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -199,7 +199,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -243,7 +243,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -292,7 +292,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -355,7 +355,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -397,7 +397,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -438,7 +438,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -478,7 +478,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -532,7 +532,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -571,7 +571,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -630,7 +630,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -668,7 +668,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -738,7 +738,7 @@ void main() {
     final StringBuffer testCodeSink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       mainCodeSink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -753,9 +753,9 @@ void main() {
 
     const DartGenerator testGenerator = DartGenerator();
     testGenerator.generateTest(
-      const DartOptions(
-        sourceOutPath: "fo'o.dart",
-        testOutPath: 'test.dart',
+      const InternalDartOptions(
+        dartOut: "fo'o.dart",
+        testOut: 'test.dart',
       ),
       root,
       testCodeSink,
@@ -815,7 +815,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -867,7 +867,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -922,7 +922,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -960,7 +960,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -979,7 +979,7 @@ void main() {
 
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      DartOptions(copyrightHeader: makeIterable('hello world')),
+      InternalDartOptions(copyrightHeader: makeIterable('hello world')),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1010,7 +1010,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1043,7 +1043,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1079,7 +1079,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1114,7 +1114,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1145,7 +1145,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1189,7 +1189,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1223,7 +1223,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1255,7 +1255,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1289,7 +1289,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1319,7 +1319,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1350,7 +1350,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1380,7 +1380,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1416,7 +1416,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1449,7 +1449,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1484,7 +1484,7 @@ void main() {
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1511,9 +1511,9 @@ name: foobar
       final StringBuffer sink = StringBuffer();
       const DartGenerator testGenerator = DartGenerator();
       testGenerator.generateTest(
-        DartOptions(
-          sourceOutPath: path.join(foo.path, 'bar.dart'),
-          testOutPath: path.join(tempDir.path, 'test', 'bar_test.dart'),
+        InternalDartOptions(
+          dartOut: path.join(foo.path, 'bar.dart'),
+          testOut: path.join(tempDir.path, 'test', 'bar_test.dart'),
         ),
         root,
         sink,
@@ -1604,7 +1604,7 @@ name: foobar
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1660,7 +1660,7 @@ name: foobar
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1706,9 +1706,9 @@ name: foobar
 
     const DartGenerator testGenerator = DartGenerator();
     testGenerator.generateTest(
-      const DartOptions(
-        sourceOutPath: 'code.dart',
-        testOutPath: 'test.dart',
+      const InternalDartOptions(
+        dartOut: 'code.dart',
+        testOut: 'test.dart',
       ),
       root,
       sink,
@@ -1743,7 +1743,7 @@ name: foobar
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1779,8 +1779,8 @@ name: foobar
     final StringBuffer mainCodeSink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(
-        testOutPath: 'test.dart',
+      const InternalDartOptions(
+        testOut: 'test.dart',
       ),
       root,
       mainCodeSink,
@@ -1810,7 +1810,7 @@ name: foobar
     final StringBuffer sink = StringBuffer();
     const DartGenerator generator = DartGenerator();
     generator.generate(
-      const DartOptions(),
+      const InternalDartOptions(),
       root,
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,

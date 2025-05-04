@@ -14,6 +14,8 @@ void main() {
     final RegExp regex = RegExp(r'version:\s*(.*?) #');
     final RegExpMatch? match = regex.firstMatch(pubspec);
     expect(match, isNotNull);
-    expect(pigeonVersion, match?.group(1)?.trim());
+    expect(pigeonVersion, match?.group(1)?.trim(),
+        reason:
+            'Update lib/src/generator_tools.dart pigeonVersion to the value in the pubspec');
   });
 }

@@ -5,7 +5,8 @@
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
-  objcOptions: ObjcOptions(prefix: 'PGN'),
+  // This is here to test option merging.
+  objcOptions: ObjcOptions(prefix: 'ThisShouldntEndUpInTheOutput'),
 ))
 
 /// This comment is to test enum documentation comments.
