@@ -70,11 +70,10 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
         events.onBufferingUpdate(exoPlayer.getBufferedPosition());
         break;
       case Player.STATE_READY:
-        if (isInitialized) {
-          return;
+        if (!isInitialized) {
+          isInitialized = true;
+          sendInitialized();
         }
-        isInitialized = true;
-        sendInitialized();
         break;
       case Player.STATE_ENDED:
         events.onCompleted();

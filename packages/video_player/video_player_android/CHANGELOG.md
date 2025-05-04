@@ -1,3 +1,8 @@
+## 2.8.3
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/165149) where isBuffering flag always
+* return true after seekTo any position
+
 ## 2.8.2
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to
