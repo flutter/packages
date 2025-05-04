@@ -420,6 +420,21 @@ void main() {
     });
   });
 
+  group('StatefulShellBranchData', () {
+    test('Can assign preload', () {
+      final StatefulShellBranch branch = StatefulShellBranchData.$branch(
+        preload: true,
+        routes: <RouteBase>[
+          GoRouteData.$route(
+            path: '/child',
+            factory: (GoRouterState state) => const _GoRouteDataBuild(),
+          ),
+        ],
+      );
+      expect(branch.preload, true);
+    });
+  });
+
   testWidgets(
     'It should redirect using the overridden redirect method',
     (WidgetTester tester) async {

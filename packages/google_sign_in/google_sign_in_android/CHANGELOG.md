@@ -1,3 +1,7 @@
+## 6.1.35
+
+* Removes the dependency on the Guava library.
+
 ## 6.1.34
 
 * Removes unnecessary native code.

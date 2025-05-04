@@ -252,7 +252,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   final List<_TextConfig> _textConfig = <_TextConfig>[];
   final List<_TextPosition> _textPositions = <_TextPosition>[];
   final List<Future<void>> _pendingImages = <Future<void>>[];
-  final Map<int, ImageInfo> _images = <int, ImageInfo>{};
+  final Map<int, Image> _images = <int, Image>{};
   final Map<int, _PatternState> _patterns = <int, _PatternState>{};
   Path? _currentPath;
   Size _size = Size.zero;
@@ -283,7 +283,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     try {
       return PictureInfo._(_recorder.endRecording(), _size);
     } finally {
-      for (final ImageInfo image in _images.values) {
+      for (final Image image in _images.values) {
         image.dispose();
       }
       _images.clear();
@@ -746,7 +746,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     listener = ImageStreamListener(
       (ImageInfo image, bool synchronousCall) {
         cacheCompleter.removeListener(listener);
-        _images[imageId] = image;
+        _images[imageId] = image.image;
         completer.complete();
       },
       onError: (Object exception, StackTrace? stackTrace) {
@@ -773,7 +773,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   @override
   void onDrawImage(int imageId, double x, double y, double width, double height,
       Float64List? transform) {
-    final Image image = _images[imageId]!.image;
+    final Image image = _images[imageId]!;
     if (transform != null) {
       _canvas.save();
       _canvas.transform(transform);

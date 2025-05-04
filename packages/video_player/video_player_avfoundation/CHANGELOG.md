@@ -1,3 +1,7 @@
+## 2.7.0
+
+* Adds support for platform views as an optional way of displaying a video.
+
 ## 2.6.7
 
 * Fixes playback speed resetting.

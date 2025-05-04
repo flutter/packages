@@ -9,6 +9,8 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,8 +27,6 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.RuntimeExecutionException;
 import com.google.android.gms.tasks.Task;
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -37,8 +37,6 @@ import io.flutter.plugins.googlesignin.Messages.GoogleSignInApi;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 /** Google sign-in plugin for Flutter. */
 public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
@@ -135,8 +133,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     private final @NonNull Context context;
     // Only set activity for v2 embedder. Always access activity from getActivity() method.
     private @Nullable Activity activity;
-    // TODO(stuartmorgan): See whether this can be replaced with background channels.
-    private final BackgroundTaskRunner backgroundTaskRunner = new BackgroundTaskRunner(1);
     private final GoogleSignInWrapper googleSignInWrapper;
 
     private GoogleSignInClient signInClient;
@@ -224,7 +220,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         // https://developers.google.com/android/guides/client-auth
         // https://developers.google.com/identity/sign-in/android/start#configure-a-google-api-project
         String serverClientId = params.getServerClientId();
-        if (!Strings.isNullOrEmpty(params.getClientId()) && Strings.isNullOrEmpty(serverClientId)) {
+        if (!isNullOrEmpty(params.getClientId()) && isNullOrEmpty(serverClientId)) {
           Log.w(
               "google_sign_in",
               "clientId is not supported on Android and is interpreted as serverClientId. "
@@ -232,7 +228,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           serverClientId = params.getClientId();
         }
 
-        if (Strings.isNullOrEmpty(serverClientId)) {
+        if (isNullOrEmpty(serverClientId)) {
           // Only requests a clientId if google-services.json was present and parsed
           // by the google-services Gradle script.
           // TODO(jackson): Perhaps we should provide a mechanism to override this
@@ -246,7 +242,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
             serverClientId = context.getString(webClientIdIdentifier);
           }
         }
-        if (!Strings.isNullOrEmpty(serverClientId)) {
+        if (!isNullOrEmpty(serverClientId)) {
           optionsBuilder.requestIdToken(serverClientId);
           optionsBuilder.requestServerAuthCode(
               serverClientId, params.getForceCodeForRefreshToken());
@@ -255,7 +251,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         for (String scope : requestedScopes) {
           optionsBuilder.requestScopes(new Scope(scope));
         }
-        if (!Strings.isNullOrEmpty(params.getHostedDomain())) {
+        if (!isNullOrEmpty(params.getHostedDomain())) {
           optionsBuilder.setHostedDomain(params.getHostedDomain());
         }
 
@@ -450,6 +446,10 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       pendingOperation = null;
     }
 
+    private static boolean isNullOrEmpty(@Nullable String s) {
+      return s == null || s.isEmpty();
+    }
+
     private static class PendingOperation {
       final @NonNull String method;
       final @Nullable Messages.Result<Messages.UserData> userDataResult;
@@ -478,36 +478,25 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
       }
     }
 
-    /** Clears the token kept in the client side cache. */
+    /**
+     * Clears the token kept in the client side cache.
+     *
+     * <p>Runs on a background task queue.
+     */
     @Override
-    public void clearAuthCache(@NonNull String token, @NonNull Messages.VoidResult result) {
-      Callable<Void> clearTokenTask =
-          () -> {
-            GoogleAuthUtil.clearToken(context, token);
-            return null;
-          };
-
-      backgroundTaskRunner.runInBackground(
-          clearTokenTask,
-          clearTokenFuture -> {
-            try {
-              clearTokenFuture.get();
-              result.success();
-            } catch (ExecutionException e) {
-              @Nullable Throwable cause = e.getCause();
-              result.error(
-                  new FlutterError(
-                      ERROR_REASON_EXCEPTION, cause == null ? null : cause.getMessage(), null));
-            } catch (InterruptedException e) {
-              result.error(new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null));
-              Thread.currentThread().interrupt();
-            }
-          });
+    public void clearAuthCache(@NonNull String token) {
+      try {
+        GoogleAuthUtil.clearToken(context, token);
+      } catch (Exception e) {
+        throw new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null);
+      }
     }
 
     /**
      * Gets an OAuth access token with the scopes that were specified during initialization for the
      * user with the specified email address.
+     *
+     * <p>Runs on a background task queue.
      *
      * <p>If shouldRecoverAuth is set to true and user needs to recover authentication for method to
      * complete, the method will attempt to recover authentication and rerun method.
@@ -517,53 +506,39 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         @NonNull String email,
         @NonNull Boolean shouldRecoverAuth,
         @NonNull Messages.Result<String> result) {
-      Callable<String> getTokenTask =
-          () -> {
-            Account account = new Account(email, "com.google");
-            String scopesStr = "oauth2:" + Joiner.on(' ').join(requestedScopes);
-            return GoogleAuthUtil.getToken(context, account, scopesStr);
-          };
-
-      // Background task runner has a single thread effectively serializing
-      // the getToken calls. 1p apps can then enjoy the token cache if multiple
-      // getToken calls are coming in.
-      backgroundTaskRunner.runInBackground(
-          getTokenTask,
-          tokenFuture -> {
-            try {
-              result.success(tokenFuture.get());
-            } catch (ExecutionException e) {
-              if (e.getCause() instanceof UserRecoverableAuthException) {
-                if (shouldRecoverAuth && pendingOperation == null) {
-                  Activity activity = getActivity();
-                  if (activity == null) {
-                    result.error(
-                        new FlutterError(
-                            ERROR_USER_RECOVERABLE_AUTH,
-                            "Cannot recover auth because app is not in foreground. "
-                                + e.getLocalizedMessage(),
-                            null));
-                  } else {
-                    checkAndSetPendingAccessTokenOperation("getTokens", result, email);
-                    Intent recoveryIntent =
-                        ((UserRecoverableAuthException) e.getCause()).getIntent();
-                    activity.startActivityForResult(recoveryIntent, REQUEST_CODE_RECOVER_AUTH);
-                  }
-                } else {
+      try {
+        Account account = new Account(email, "com.google");
+        String scopesStr = "oauth2:" + String.join(" ", requestedScopes);
+        String token = GoogleAuthUtil.getToken(context, account, scopesStr);
+        result.success(token);
+      } catch (UserRecoverableAuthException e) {
+        // This method runs in a background task queue; hop to the main thread for interactions with
+        // plugin state and activities.
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(
+            () -> {
+              if (shouldRecoverAuth && pendingOperation == null) {
+                Activity activity = getActivity();
+                if (activity == null) {
                   result.error(
-                      new FlutterError(ERROR_USER_RECOVERABLE_AUTH, e.getLocalizedMessage(), null));
+                      new FlutterError(
+                          ERROR_USER_RECOVERABLE_AUTH,
+                          "Cannot recover auth because app is not in foreground. "
+                              + e.getLocalizedMessage(),
+                          null));
+                } else {
+                  checkAndSetPendingAccessTokenOperation("getTokens", result, email);
+                  Intent recoveryIntent = e.getIntent();
+                  activity.startActivityForResult(recoveryIntent, REQUEST_CODE_RECOVER_AUTH);
                 }
               } else {
-                @Nullable Throwable cause = e.getCause();
                 result.error(
-                    new FlutterError(
-                        ERROR_REASON_EXCEPTION, cause == null ? null : cause.getMessage(), null));
+                    new FlutterError(ERROR_USER_RECOVERABLE_AUTH, e.getLocalizedMessage(), null));
               }
-            } catch (InterruptedException e) {
-              result.error(new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null));
-              Thread.currentThread().interrupt();
-            }
-          });
+            });
+      } catch (Exception e) {
+        result.error(new FlutterError(ERROR_REASON_EXCEPTION, e.getMessage(), null));
+      }
     }
 
     @Override

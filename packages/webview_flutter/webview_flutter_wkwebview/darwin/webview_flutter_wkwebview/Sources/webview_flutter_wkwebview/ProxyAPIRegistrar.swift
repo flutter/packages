@@ -273,4 +273,11 @@ class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
   func pigeonApiURL(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiURL {
     return PigeonApiURL(pigeonRegistrar: registrar, delegate: URLProxyAPIDelegate())
   }
+
+  func pigeonApiWKWebpagePreferences(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiWKWebpagePreferences
+  {
+    return PigeonApiWKWebpagePreferences(
+      pigeonRegistrar: registrar, delegate: WebpagePreferencesProxyAPIDelegate())
+  }
 }

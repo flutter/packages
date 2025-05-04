@@ -314,6 +314,32 @@ void main() {
     expect(debugLastTextDirection, TextDirection.ltr);
   });
 
+  testWidgets('Test animated switch between placeholder and image',
+      (WidgetTester tester) async {
+    final TestAssetBundle testBundle = TestAssetBundle();
+    const Text placeholderWidget = Text('Placeholder');
+
+    await tester.pumpWidget(DefaultAssetBundle(
+      bundle: testBundle,
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: VectorGraphic(
+          loader: const AssetBytesLoader('bar.svg'),
+          placeholderBuilder: (BuildContext context) => placeholderWidget,
+          transitionDuration: const Duration(microseconds: 500),
+        ),
+      ),
+    ));
+
+    expect(find.text('Placeholder'), findsOneWidget);
+    expect(find.byType(Container), findsNothing); // No image yet
+
+    await tester.pumpAndSettle(const Duration(microseconds: 500));
+
+    expect(find.text('Placeholder'), findsNothing);
+    expect(testBundle.loadKeys, <String>['bar.svg']);
+  });
+
   testWidgets('Can exclude from semantics', (WidgetTester tester) async {
     final TestAssetBundle testBundle = TestAssetBundle();
 
@@ -442,9 +468,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final PictureInfo picture = await completer.future;
-    addTearDown(picture.picture.dispose);
-    expect(picture, isA<PictureInfo>());
+    expect(await completer.future, isA<PictureInfo>());
     expect(debugLastLocale, const Locale('fr', 'CH'));
     expect(debugLastTextDirection, TextDirection.rtl);
   });
@@ -477,9 +501,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final PictureInfo picture = await completer.future;
-    addTearDown(picture.picture.dispose);
-    expect(picture, isA<PictureInfo>());
+    expect(await completer.future, isA<PictureInfo>());
     expect(debugLastLocale, PlatformDispatcher.instance.locale);
     expect(debugLastTextDirection, TextDirection.ltr);
   });
@@ -588,7 +610,7 @@ void main() {
     expect(imageCache.statusForKey(imageKey).live, false);
     expect(imageCache.statusForKey(imageKey).keepAlive, true);
 
-    // A blue square, because the image is available now.
+    // A blue square, becuase the image is available now.
     await expectLater(
       find.byKey(key),
       matchesGoldenFile('vg_with_image_blue.png'),

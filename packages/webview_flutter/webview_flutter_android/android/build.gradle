@@ -2,7 +2,7 @@ group 'io.flutter.plugins.webviewflutter'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.1.0'
+    ext.kotlin_version = '2.1.10'
     repositories {
         google()
         mavenCentral()

@@ -61,6 +61,7 @@ VectorGraphic createCompatVectorGraphic({
   String? semanticsLabel,
   bool excludeFromSemantics = false,
   Clip clipBehavior = Clip.hardEdge,
+  Duration? transitionDuration,
   WidgetBuilder? placeholderBuilder,
   VectorGraphicsErrorWidget? errorBuilder,
   ColorFilter? colorFilter,
@@ -79,6 +80,7 @@ VectorGraphic createCompatVectorGraphic({
     semanticsLabel: semanticsLabel,
     excludeFromSemantics: excludeFromSemantics,
     clipBehavior: clipBehavior,
+    transitionDuration: transitionDuration,
     placeholderBuilder: placeholderBuilder,
     errorBuilder: errorBuilder,
     colorFilter: colorFilter,
@@ -118,6 +120,7 @@ class VectorGraphic extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.transitionDuration,
     this.placeholderBuilder,
     this.errorBuilder,
     this.colorFilter,
@@ -137,6 +140,7 @@ class VectorGraphic extends StatefulWidget {
     this.semanticsLabel,
     this.excludeFromSemantics = false,
     this.clipBehavior = Clip.hardEdge,
+    this.transitionDuration,
     this.placeholderBuilder,
     this.errorBuilder,
     this.colorFilter,
@@ -217,6 +221,9 @@ class VectorGraphic extends StatefulWidget {
 
   /// A callback that fires if some exception happens during data acquisition or decoding.
   final VectorGraphicsErrorWidget? errorBuilder;
+
+  /// Set transition duration while switching from placeholder to url image
+  final Duration? transitionDuration;
 
   /// If provided, a color filter to apply to the vector graphic when painting.
   ///
@@ -340,10 +347,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       return;
     }
     data.count -= 1;
-    if (data.count == 0) {
-      if (_livePictureCache.containsKey(data.key)) {
-        _livePictureCache.remove(data.key);
-      }
+    if (data.count == 0 && _livePictureCache.containsKey(data.key)) {
+      _livePictureCache.remove(data.key);
       data.pictureInfo.picture.dispose();
     }
   }
@@ -384,7 +389,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   }
 
   Future<void> _loadAssetBytes() async {
-    // First check if we have an available picture and use this immediately.
+    // First check if we have an avilable picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
     final _PictureKey key =
         _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
@@ -517,6 +522,19 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
             width: widget.width,
             height: widget.height,
           );
+    }
+
+    if (widget.transitionDuration != null) {
+      child = AnimatedSwitcher(
+        duration: widget.transitionDuration!,
+        child: child,
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+      );
     }
 
     if (!widget.excludeFromSemantics) {

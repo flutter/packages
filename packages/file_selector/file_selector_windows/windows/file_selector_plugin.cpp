@@ -221,8 +221,9 @@ ErrorOr<FileDialogResult> ShowDialog(
       mode == DialogMode::save ? CLSID_FileSaveDialog : CLSID_FileOpenDialog;
   DialogWrapper dialog(dialog_factory, dialog_type);
   if (!SUCCEEDED(dialog.last_result())) {
-    return FlutterError("System error", "Could not create dialog",
-                        EncodableValue(dialog.last_result()));
+    return FlutterError(
+        "System error", "Could not create dialog",
+        EncodableValue(std::in_place_type<int32_t>, dialog.last_result()));
   }
 
   FILEOPENDIALOGOPTIONS dialog_options = 0;
@@ -253,8 +254,9 @@ ErrorOr<FileDialogResult> ShowDialog(
   std::optional<FileDialogResult> result = dialog.Show(parent_window);
   if (!result) {
     if (dialog.last_result() != HRESULT_FROM_WIN32(ERROR_CANCELLED)) {
-      return FlutterError("System error", "Could not show dialog",
-                          EncodableValue(dialog.last_result()));
+      return FlutterError(
+          "System error", "Could not show dialog",
+          EncodableValue(std::in_place_type<int32_t>, dialog.last_result()));
     } else {
       return FileDialogResult(EncodableList(), nullptr);
     }

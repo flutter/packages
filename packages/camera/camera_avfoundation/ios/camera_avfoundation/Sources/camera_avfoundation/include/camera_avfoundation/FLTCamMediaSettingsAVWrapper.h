@@ -5,7 +5,9 @@
 @import AVFoundation;
 @import Foundation;
 
-#import "FLTCaptureDeviceControlling.h"
+#import "FLTAssetWriter.h"
+#import "FLTCaptureDevice.h"
+#import "FLTCaptureSession.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,15 +29,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @param outError The optional error.
  * @result A BOOL indicating whether the device was successfully locked for configuration.
  */
-- (BOOL)lockDevice:(id<FLTCaptureDeviceControlling>)captureDevice
-             error:(NSError *_Nullable *_Nullable)outError;
+- (BOOL)lockDevice:(NSObject<FLTCaptureDevice> *)captureDevice
+             error:(NSError *_Nullable *_Nullable)outError NS_SWIFT_NAME(lockDevice(_:));
 
 /**
  * @method unlockDevice:
  * @abstract Release exclusive control over device hardware properties.
  * @param captureDevice The capture device.
  */
-- (void)unlockDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
+- (void)unlockDevice:(NSObject<FLTCaptureDevice> *)captureDevice NS_SWIFT_NAME(unlockDevice(_:)) ;
 
 /**
  * @method beginConfigurationForSession:
@@ -43,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  * operations on a running session into atomic updates.
  * @param videoCaptureSession The video capture session.
  */
-- (void)beginConfigurationForSession:(AVCaptureSession *)videoCaptureSession;
+- (void)beginConfigurationForSession:(NSObject<FLTCaptureSession> *)videoCaptureSession;
 
 /**
  * @method commitConfigurationForSession:
@@ -51,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  * operations on a running session into atomic updates.
  * @param videoCaptureSession The video capture session.
  */
-- (void)commitConfigurationForSession:(AVCaptureSession *)videoCaptureSession;
+- (void)commitConfigurationForSession:(NSObject<FLTCaptureSession> *)videoCaptureSession;
 
 /**
  * @method setMinFrameDuration:onDevice:
@@ -60,8 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMinFrameDuration:(CMTime)duration
-                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
+- (void)setMinFrameDuration:(CMTime)duration onDevice:(NSObject<FLTCaptureDevice> *)captureDevice;
 
 /**
  * @method setMaxFrameDuration:onDevice:
@@ -70,8 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param duration The frame duration.
  * @param captureDevice The capture device
  */
-- (void)setMaxFrameDuration:(CMTime)duration
-                   onDevice:(id<FLTCaptureDeviceControlling>)captureDevice;
+- (void)setMaxFrameDuration:(CMTime)duration onDevice:(NSObject<FLTCaptureDevice> *)captureDevice;
 
 /**
  * @method assetWriterAudioInputWithOutputSettings:
@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param outputSettings The settings used for encoding the audio appended to the output.
  * @result An instance of `AVAssetWriterInput`.
  */
-- (AVAssetWriterInput *)assetWriterAudioInputWithOutputSettings:
+- (NSObject<FLTAssetWriterInput> *)assetWriterAudioInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings;
 
 /**
@@ -90,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param outputSettings The settings used for encoding the video appended to the output.
  * @result An instance of `AVAssetWriterInput`.
  */
-- (AVAssetWriterInput *)assetWriterVideoInputWithOutputSettings:
+- (NSObject<FLTAssetWriterInput> *)assetWriterVideoInputWithOutputSettings:
     (nullable NSDictionary<NSString *, id> *)outputSettings;
 
 /**
@@ -99,7 +99,8 @@ NS_ASSUME_NONNULL_BEGIN
  * @param writerInput The `AVAssetWriterInput` object to be added.
  * @param writer The `AVAssetWriter` object.
  */
-- (void)addInput:(AVAssetWriterInput *)writerInput toAssetWriter:(AVAssetWriter *)writer;
+- (void)addInput:(NSObject<FLTAssetWriterInput> *)writerInput
+    toAssetWriter:(NSObject<FLTAssetWriter> *)writer NS_SWIFT_NAME(addInput(_:to:));
 
 /**
  * @method recommendedVideoSettingsForAssetWriterWithFileType:forOutput:
