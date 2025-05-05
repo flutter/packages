@@ -31,7 +31,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   InAppPurchaseStoreKitPlatform();
 
   /// Experimental flag for StoreKit2.
-  static bool _useStoreKit2 = false;
+  static bool _useStoreKit2 = true;
 
   /// StoreKit1
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
@@ -255,8 +255,14 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// StoreKit 2 is now the default.
   @Deprecated('StoreKit 2 is now the default')
   static Future<bool> enableStoreKit2() async {
+    return true;
+  }
+
+  /// Call this if you still want to conditionally support StoreKit 1 for
+  /// devices below iOS 15.
+  static Future<bool> enableStoreKit1() async {
     _useStoreKit2 = await SKRequestMaker.supportsStoreKit2();
-    return _useStoreKit2;
+    return !_useStoreKit2;
   }
 }
 
