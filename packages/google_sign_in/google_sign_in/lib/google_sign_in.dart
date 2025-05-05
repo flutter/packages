@@ -469,6 +469,11 @@ class GoogleSignIn {
   /// Disconnects any currently authorized users from the app, revoking previous
   /// authorization.
   Future<void> disconnect() async {
+    // Disconnecting also signs out, so synthesize a sign-out if necessary.
+    if (_createAuthenticationStreamEvents) {
+      _authenticationStreamController
+          .add(GoogleSignInAuthenticationEventSignOut());
+    }
     // TODO(stuartmorgan): Consider making a per-user disconnect option once
     //  the Android implementation is available so that we can see how it is
     //  structured. In practice, currently the plugin only fully supports a
