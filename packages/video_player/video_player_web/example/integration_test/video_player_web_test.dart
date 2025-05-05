@@ -203,6 +203,14 @@ void main() {
       expect(VideoPlayerPlatform.instance.setMixWithOthers(false), completes);
     });
 
+    testWidgets('ignores setting allowBackgroundPlayback',
+        (WidgetTester tester) async {
+      expect(VideoPlayerPlatform.instance.setAllowBackgroundPlayback(true),
+          completes);
+      expect(VideoPlayerPlatform.instance.setAllowBackgroundPlayback(false),
+          completes);
+    });
+
     testWidgets(
       'double call to play will emit a single isPlayingStateUpdate event',
       (WidgetTester tester) async {

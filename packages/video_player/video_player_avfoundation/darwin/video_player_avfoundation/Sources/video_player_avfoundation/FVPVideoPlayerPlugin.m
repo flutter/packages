@@ -240,6 +240,30 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 #endif
 }
 
+- (void)setAllowBackgroundPlayback:(BOOL)allowBackgroundPlayback 
+                            error:(FlutterError **)error {
+#if TARGET_OS_IOS
+  if (allowBackgroundPlayback) {
+    upgradeAudioSessionCategory(AVAudioSessionCategoryPlayback, 
+                               AVAudioSessionCategoryOptionMixWithOthers, 0);
+  } else {
+    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, 0, 0);
+  }
+#endif
+}
+
+- (void)setAllowBackgroundPlayback:(BOOL)allowBackgroundPlayback 
+                            error:(FlutterError **)error {
+#if TARGET_OS_IOS
+  if (allowBackgroundPlayback) {
+    upgradeAudioSessionCategory(AVAudioSessionCategoryPlayback, 
+                               AVAudioSessionCategoryOptionMixWithOthers, 0);
+  } else {
+    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, 0, 0);
+  }
+#endif
+}
+
 - (nullable NSString *)fileURLForAssetWithName:(NSString *)asset
                                        package:(nullable NSString *)package
                                          error:(FlutterError *_Nullable *_Nonnull)error {

@@ -455,6 +455,13 @@ void main() {
       });
     });
 
+    test('setAllowBackgroundPlayback does nothing', () async {
+      final (AVFoundationVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+      // Should complete without error, even though it's a no-op on iOS
+      await player.setAllowBackgroundPlayback(true);
+      await player.setAllowBackgroundPlayback(false);
+    });
+
     test('setVolume', () async {
       final (
         AVFoundationVideoPlayer player,
