@@ -66,7 +66,7 @@ public class TextureExoPlayerEventListenerTest {
     when(mockExoPlayer.getVideoFormat()).thenReturn(videoFormat);
 
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
-    verify(mockCallbacks).onInitialized(400, 800, 10L, rotationCorrection);
+    verify(mockCallbacks).onInitialized(800, 400, 10L, rotationCorrection);
   }
 
   @Test
@@ -78,7 +78,7 @@ public class TextureExoPlayerEventListenerTest {
     when(mockExoPlayer.getDuration()).thenReturn(10L);
 
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
-    verify(mockCallbacks).onInitialized(400, 800, 10L, 0);
+    verify(mockCallbacks).onInitialized(800, 400, 10L, 0);
   }
 
   @Test
@@ -107,7 +107,7 @@ public class TextureExoPlayerEventListenerTest {
     when(mockExoPlayer.getVideoFormat()).thenReturn(videoFormat);
 
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
-    verify(mockCallbacks).onInitialized(400, 800, 10L, 90);
+    verify(mockCallbacks).onInitialized(800, 400, 10L, 90);
   }
 
   @Test
@@ -119,7 +119,7 @@ public class TextureExoPlayerEventListenerTest {
     when(mockExoPlayer.getDuration()).thenReturn(10L);
 
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
-    verify(mockCallbacks).onInitialized(400, 800, 10L, 0);
+    verify(mockCallbacks).onInitialized(800, 400, 10L, 0);
   }
 
   @Test
@@ -147,7 +147,7 @@ public class TextureExoPlayerEventListenerTest {
     when(mockExoPlayer.getVideoFormat()).thenReturn(videoFormat);
 
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
-    verify(mockCallbacks).onInitialized(400, 800, 10L, 270);
+    verify(mockCallbacks).onInitialized(800, 400, 10L, 270);
   }
 
   @Test

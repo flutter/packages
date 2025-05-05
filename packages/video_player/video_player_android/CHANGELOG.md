@@ -1,3 +1,7 @@
+## 2.8.3
+
+* Fixes incorrect width/height swap ([bug](https://github.com/flutter/flutter/issues/166097)). The swap was originally required for the uncorrected width/height of `Format` but was mistakenly retained after [switching to `VideoSize`](https://github.com/flutter/packages/pull/6535), which already accounts for rotation.
+
 ## 2.8.2
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to
