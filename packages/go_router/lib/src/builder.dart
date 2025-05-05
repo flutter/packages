@@ -128,19 +128,18 @@ class RouteBuilder {
 }
 
 class _CustomNavigator extends StatefulWidget {
-  const _CustomNavigator({
-    super.key,
-    required this.navigatorKey,
-    required this.observers,
-    required this.navigatorRestorationId,
-    required this.onPopPageWithRouteMatch,
-    required this.matchList,
-    required this.matches,
-    required this.configuration,
-    required this.errorBuilder,
-    required this.errorPageBuilder,
-    required this.requestFocus
-  });
+  const _CustomNavigator(
+      {super.key,
+      required this.navigatorKey,
+      required this.observers,
+      required this.navigatorRestorationId,
+      required this.onPopPageWithRouteMatch,
+      required this.matchList,
+      required this.matches,
+      required this.configuration,
+      required this.errorBuilder,
+      required this.errorPageBuilder,
+      required this.requestFocus});
 
   final GlobalKey<NavigatorState> navigatorKey;
   final List<NavigatorObserver> observers;
@@ -286,20 +285,19 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
         String? restorationScopeId,
       ) {
         return _CustomNavigator(
-          // The state needs to persist across rebuild.
-          key: GlobalObjectKey(navigatorKey.hashCode),
-          navigatorRestorationId: restorationScopeId,
-          navigatorKey: navigatorKey,
-          matches: match.matches,
-          matchList: matchList,
-          configuration: widget.configuration,
-          observers: observers ?? const <NavigatorObserver>[],
-          onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
-          // This is used to recursively build pages under this shell route.
-          errorBuilder: widget.errorBuilder,
-          errorPageBuilder: widget.errorPageBuilder,
-          requestFocus: widget.requestFocus
-        );
+            // The state needs to persist across rebuild.
+            key: GlobalObjectKey(navigatorKey.hashCode),
+            navigatorRestorationId: restorationScopeId,
+            navigatorKey: navigatorKey,
+            matches: match.matches,
+            matchList: matchList,
+            configuration: widget.configuration,
+            observers: observers ?? const <NavigatorObserver>[],
+            onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+            // This is used to recursively build pages under this shell route.
+            errorBuilder: widget.errorBuilder,
+            errorPageBuilder: widget.errorPageBuilder,
+            requestFocus: widget.requestFocus);
       },
     );
     final Page<Object?>? page =

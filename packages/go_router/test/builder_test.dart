@@ -390,7 +390,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (BuildContext context, GoRouterState state) => const Scaffold(
+            builder: (BuildContext context, GoRouterState state) =>
+                const Scaffold(
               body: Center(child: Text('Home')),
             ),
           ),
@@ -405,7 +406,8 @@ void main() {
 
       addTearDown(() => router.dispose());
 
-      final Navigator navigator = tester.widget<Navigator>(find.byType(Navigator));
+      final Navigator navigator =
+          tester.widget<Navigator>(find.byType(Navigator));
       expect(navigator.requestFocus, isTrue);
     });
 
@@ -415,7 +417,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (BuildContext context, GoRouterState state) => const Scaffold(
+            builder: (BuildContext context, GoRouterState state) =>
+                const Scaffold(
               body: Center(child: Text('Home')),
             ),
           ),
@@ -431,7 +434,8 @@ void main() {
 
       addTearDown(() => router.dispose());
 
-      final Navigator navigator = tester.widget<Navigator>(find.byType(Navigator));
+      final Navigator navigator =
+          tester.widget<Navigator>(find.byType(Navigator));
       expect(navigator.requestFocus, isFalse);
     });
   });
