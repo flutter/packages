@@ -35,6 +35,7 @@ import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
+import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -179,22 +180,31 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           return;
         }
 
-        GetGoogleIdOption.Builder optionBuilder =
-            new GetGoogleIdOption.Builder()
-                .setFilterByAuthorizedAccounts(params.getFilterToAuthorized())
-                .setAutoSelectEnabled(params.getAutoSelectEnabled())
-                .setServerClientId(serverClientId);
         String nonce = params.getNonce();
-        if (nonce != null) {
-          optionBuilder.setNonce(nonce);
+        GetCredentialRequest.Builder requestBuilder = new GetCredentialRequest.Builder();
+        if (params.getUseButtonFlow()) {
+          GetSignInWithGoogleOption.Builder optionBuilder =
+              new GetSignInWithGoogleOption.Builder(serverClientId);
+          if (nonce != null) {
+            optionBuilder.setNonce(nonce);
+          }
+          requestBuilder.addCredentialOption(optionBuilder.build());
+        } else {
+          GetGoogleIdOption.Builder optionBuilder =
+              new GetGoogleIdOption.Builder()
+                  .setFilterByAuthorizedAccounts(params.getFilterToAuthorized())
+                  .setAutoSelectEnabled(params.getAutoSelectEnabled())
+                  .setServerClientId(serverClientId);
+          if (nonce != null) {
+            optionBuilder.setNonce(nonce);
+          }
+          requestBuilder.addCredentialOption(optionBuilder.build());
         }
-        GetGoogleIdOption googleIdOption = optionBuilder.build();
-        GetCredentialRequest request =
-            new GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build();
+
         CredentialManager credentialManager = CredentialManager.create(context);
         credentialManager.getCredentialAsync(
             context,
-            request,
+            requestBuilder.build(),
             null,
             Executors.newSingleThreadExecutor(),
             new CredentialManagerCallback<>() {

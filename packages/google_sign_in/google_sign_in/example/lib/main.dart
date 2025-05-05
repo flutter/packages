@@ -10,8 +10,9 @@ import 'dart:convert' show json;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:google_sign_in_web/web_only.dart' as web;
 import 'package:http/http.dart' as http;
+
+import 'src/web_wrapper.dart' as web;
 
 /// To run this example, replace this value with your client ID, and/or
 /// update the relevant configuration files, as described in the README.

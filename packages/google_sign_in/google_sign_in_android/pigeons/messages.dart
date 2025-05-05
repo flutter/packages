@@ -32,11 +32,19 @@ class PlatformAuthorizationRequest {
 /// classes that are used for this plugin.
 class GetCredentialRequestParams {
   GetCredentialRequestParams({
+    required this.useButtonFlow,
     required this.filterToAuthorized,
     required this.autoSelectEnabled,
     this.serverClientId,
     this.nonce,
   });
+
+  /// Whether to use the Sign in with Google button flow
+  /// (GetSignInWithGoogleOption), corresponding to an explicit sign-in request,
+  /// or not (GetGoogleIdOption), corresponding to an implicit potential
+  /// sign-in.
+  bool useButtonFlow;
+
   bool filterToAuthorized;
   bool autoSelectEnabled;
   String? serverClientId;

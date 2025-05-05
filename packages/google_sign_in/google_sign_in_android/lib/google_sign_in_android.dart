@@ -46,9 +46,18 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   @override
   Future<AuthenticationResults?> attemptLightweightAuthentication(
       AttemptLightweightAuthenticationParameters params) async {
-    final PlatformGoogleIdTokenCredential? credential = await _authenticate(
+    // Attempt to auto-sign-in, for single-account or returning users.
+    PlatformGoogleIdTokenCredential? credential = await _authenticate(
       filterToAuthorized: true,
       autoSelectEnabled: true,
+      useButtonFlow: false,
+    );
+    // If no auto-sign-in is available, potentially prompt for an account via
+    // the bottom sheet flow.
+    credential ??= await _authenticate(
+      filterToAuthorized: false,
+      autoSelectEnabled: false,
+      useButtonFlow: false,
     );
     return credential == null
         ? null
@@ -58,15 +67,11 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   @override
   Future<AuthenticationResults> authenticate(
       AuthenticateParameters params) async {
-    // Attempt to authorize without user interaction.
-    PlatformGoogleIdTokenCredential? credential = await _authenticate(
-      filterToAuthorized: true,
-      autoSelectEnabled: true,
-    );
-    // If no auto-sign-in is available, prompt for an account.
-    credential ??= credential = await _authenticate(
+    // Attempt to authorize with minimal interaction.
+    final PlatformGoogleIdTokenCredential? credential = await _authenticate(
       filterToAuthorized: false,
       autoSelectEnabled: false,
+      useButtonFlow: true,
       throwForNoAuth: true,
     );
     // It's not clear from the documentation if this can happen; if it does,
@@ -115,12 +120,14 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   Future<PlatformGoogleIdTokenCredential?> _authenticate({
     required bool filterToAuthorized,
     required bool autoSelectEnabled,
+    required bool useButtonFlow,
     bool throwForNoAuth = false,
   }) async {
     final GetCredentialResult authnResult =
         await _credentialManaagerApi.getCredential(GetCredentialRequestParams(
             filterToAuthorized: filterToAuthorized,
             autoSelectEnabled: autoSelectEnabled,
+            useButtonFlow: useButtonFlow,
             serverClientId: _serverClientId,
             nonce: _nonce));
     switch (authnResult) {

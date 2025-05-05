@@ -118,6 +118,7 @@ class GetCredentialRequestParams {
   GetCredentialRequestParams({
     required this.filterToAuthorized,
     required this.autoSelectEnabled,
+    required this.useButtonFlow,
     this.serverClientId,
     this.nonce,
   });
@@ -125,6 +126,8 @@ class GetCredentialRequestParams {
   bool filterToAuthorized;
 
   bool autoSelectEnabled;
+
+  bool useButtonFlow;
 
   String? serverClientId;
 
@@ -134,6 +137,7 @@ class GetCredentialRequestParams {
     return <Object?>[
       filterToAuthorized,
       autoSelectEnabled,
+      useButtonFlow,
       serverClientId,
       nonce,
     ];
@@ -144,8 +148,9 @@ class GetCredentialRequestParams {
     return GetCredentialRequestParams(
       filterToAuthorized: result[0]! as bool,
       autoSelectEnabled: result[1]! as bool,
-      serverClientId: result[2] as String?,
-      nonce: result[3] as String?,
+      useButtonFlow: result[2]! as bool,
+      serverClientId: result[3] as String?,
+      nonce: result[4] as String?,
     );
   }
 }
