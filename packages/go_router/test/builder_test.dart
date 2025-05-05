@@ -386,11 +386,11 @@ void main() {
 
     testWidgets('GoRouter requestFocus defaults to true',
         (WidgetTester tester) async {
-      final router = GoRouter(
-        routes: [
+      final GoRouter router = GoRouter(
+        routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (context, state) => const Scaffold(
+            builder: (BuildContext context, GoRouterState state) => const Scaffold(
               body: Center(child: Text('Home')),
             ),
           ),
@@ -405,17 +405,17 @@ void main() {
 
       addTearDown(() => router.dispose());
 
-      final navigator = tester.widget<Navigator>(find.byType(Navigator));
+      final Navigator navigator = tester.widget<Navigator>(find.byType(Navigator));
       expect(navigator.requestFocus, isTrue);
     });
 
     testWidgets('GoRouter requestFocus can be set to false',
         (WidgetTester tester) async {
-      final router = GoRouter(
-        routes: [
+      final GoRouter router = GoRouter(
+        routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder: (context, state) => const Scaffold(
+            builder: (BuildContext context, GoRouterState state) => const Scaffold(
               body: Center(child: Text('Home')),
             ),
           ),
@@ -431,7 +431,7 @@ void main() {
 
       addTearDown(() => router.dispose());
 
-      final navigator = tester.widget<Navigator>(find.byType(Navigator));
+      final Navigator navigator = tester.widget<Navigator>(find.byType(Navigator));
       expect(navigator.requestFocus, isFalse);
     });
   });
