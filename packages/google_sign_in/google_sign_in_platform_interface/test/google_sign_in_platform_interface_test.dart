@@ -8,8 +8,8 @@ import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 void main() {
-  group('$GoogleSignInPlatform', () {
-    test('Cannot be implemented with `implements`', () {
+  group('GoogleSignInPlatform', () {
+    test('cannot be implemented with `implements`', () {
       expect(() {
         GoogleSignInPlatform.instance = ImplementsGoogleSignInPlatform();
         // In versions of `package:plugin_platform_interface` prior to fixing
@@ -22,28 +22,20 @@ void main() {
       }, throwsA(anything));
     });
 
-    test('Can be extended', () {
+    test('can be extended', () {
       GoogleSignInPlatform.instance = ExtendsGoogleSignInPlatform();
     });
 
-    test('Can be mocked with `implements`', () {
+    test('can be mocked with `implements`', () {
       GoogleSignInPlatform.instance = MockImplementation();
     });
-  });
 
-  group('GoogleSignInTokenData', () {
-    test('can be compared by == operator', () {
-      const GoogleSignInTokenData firstInstance = GoogleSignInTokenData(
-        accessToken: 'accessToken',
-        idToken: 'idToken',
-        serverAuthCode: 'serverAuthCode',
-      );
-      const GoogleSignInTokenData secondInstance = GoogleSignInTokenData(
-        accessToken: 'accessToken',
-        idToken: 'idToken',
-        serverAuthCode: 'serverAuthCode',
-      );
-      expect(firstInstance == secondInstance, isTrue);
+    test('implements authenticationEvents to return null by default', () {
+      // This uses ExtendsGoogleSignInPlatform since that's within the control
+      // of the test file, and doesn't override authenticationEvents; using
+      // the default `.instance` would only validate that the placeholder has
+      // this behavior, which could be implemented in the subclass.
+      expect(ExtendsGoogleSignInPlatform().authenticationEvents, null);
     });
   });
 
@@ -54,15 +46,51 @@ void main() {
         id: 'id',
         displayName: 'displayName',
         photoUrl: 'photoUrl',
-        idToken: 'idToken',
-        serverAuthCode: 'serverAuthCode',
       );
       const GoogleSignInUserData secondInstance = GoogleSignInUserData(
         email: 'email',
         id: 'id',
         displayName: 'displayName',
         photoUrl: 'photoUrl',
+      );
+      expect(firstInstance == secondInstance, isTrue);
+    });
+  });
+
+  group('AuthenticationTokenData', () {
+    test('can be compared by == operator', () {
+      const AuthenticationTokenData firstInstance = AuthenticationTokenData(
         idToken: 'idToken',
+      );
+      const AuthenticationTokenData secondInstance = AuthenticationTokenData(
+        idToken: 'idToken',
+      );
+      expect(firstInstance == secondInstance, isTrue);
+    });
+  });
+
+  group('ClientAuthorizationTokenData', () {
+    test('can be compared by == operator', () {
+      const ClientAuthorizationTokenData firstInstance =
+          ClientAuthorizationTokenData(
+        accessToken: 'accessToken',
+      );
+      const ClientAuthorizationTokenData secondInstance =
+          ClientAuthorizationTokenData(
+        accessToken: 'accessToken',
+      );
+      expect(firstInstance == secondInstance, isTrue);
+    });
+  });
+
+  group('ServerAuthorizationTokenData', () {
+    test('can be compared by == operator', () {
+      const ServerAuthorizationTokenData firstInstance =
+          ServerAuthorizationTokenData(
+        serverAuthCode: 'serverAuthCode',
+      );
+      const ServerAuthorizationTokenData secondInstance =
+          ServerAuthorizationTokenData(
         serverAuthCode: 'serverAuthCode',
       );
       expect(firstInstance == secondInstance, isTrue);
@@ -77,4 +105,36 @@ class MockImplementation extends Mock
 class ImplementsGoogleSignInPlatform extends Mock
     implements GoogleSignInPlatform {}
 
-class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {}
+class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
+  @override
+  Future<AuthenticationResults?>? attemptLightweightAuthentication(
+      AttemptLightweightAuthenticationParameters params) async {
+    return null;
+  }
+
+  @override
+  Future<AuthenticationResults> authenticate(AuthenticateParameters params) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
+      ClientAuthorizationTokensForScopesParameters params) async {
+    return null;
+  }
+
+  @override
+  Future<void> disconnect(DisconnectParams params) async {}
+
+  @override
+  Future<void> init(InitParameters params) async {}
+
+  @override
+  Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
+      ServerAuthorizationTokensForScopesParameters params) async {
+    return null;
+  }
+
+  @override
+  Future<void> signOut(SignOutParams params) async {}
+}
