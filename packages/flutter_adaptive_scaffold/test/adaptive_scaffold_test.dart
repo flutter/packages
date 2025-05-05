@@ -863,6 +863,33 @@ void main() {
       expect(rail.labelType, NavigationRailLabelType.all);
     },
   );
+
+  testWidgets(
+      'adaptive scaffold builds correctly with and without navigation rail padding specified',
+      (WidgetTester tester) async {
+    // without navigation rail padding specified
+    await tester.pumpWidget(MaterialApp(
+      home: AdaptiveScaffold(
+        destinations: const <NavigationDestination>[
+          NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+          NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
+        ],
+      ),
+    ));
+    expect(tester.takeException(), isNull);
+
+    // with navigation rail padding specified
+    await tester.pumpWidget(MaterialApp(
+      home: AdaptiveScaffold(
+        destinations: const <NavigationDestination>[
+          NavigationDestination(icon: Icon(Icons.inbox), label: 'Inbox'),
+          NavigationDestination(icon: Icon(Icons.article), label: 'Articles'),
+        ],
+        navigationRailPadding: const EdgeInsets.only(left: 10),
+      ),
+    ));
+    expect(tester.takeException(), isNull);
+  });
 }
 
 /// An empty widget that implements [PreferredSizeWidget] to ensure that

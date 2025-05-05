@@ -60,10 +60,11 @@ enum CameraTestUtils {
       mediaSettings: createDefaultMediaSettings(
         resolutionPreset: FCPPlatformResolutionPreset.medium),
       mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
-      captureDeviceFactory: { captureDeviceMock },
+      captureDeviceFactory: { _ in captureDeviceMock },
       captureSessionFactory: { videoSessionMock },
       captureSessionQueue: captureSessionQueue,
-      captureDeviceInputFactory: MockCaptureDeviceInputFactory()
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      initialCameraName: "camera_name"
     )
 
     configuration.videoCaptureSession = videoSessionMock
