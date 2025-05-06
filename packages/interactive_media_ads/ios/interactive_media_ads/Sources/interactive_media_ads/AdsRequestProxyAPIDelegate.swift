@@ -19,14 +19,18 @@ class AdsRequestProxyAPIDelegate: PigeonApiDelegateIMAAdsRequest {
     pigeonApi: PigeonApiIMAAdsRequest, adTagUrl: String, adDisplayContainer: IMAAdDisplayContainer,
     contentPlayhead: IMAContentPlayhead?
   ) throws -> IMAAdsRequest {
-    // Ensure adTag can append a custom parameter.
-    assert(!adTagUrl.contains("#"))
+    var modifiedURL: String?
 
-    let urlHasQuery = adTagUrl.contains("?")
-    let adTagWithRequestAgent =
-      "\(adTagUrl)\(urlHasQuery ? "&" : "?")request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)"
+    // Add a request agent only if the adTagUrl can append a custom parameter.
+    if !adTagUrl.contains("#") && adTagUrl.contains("?") {
+      modifiedURL =
+        "\(adTagUrl)&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)"
+    } else {
+      modifiedURL = adTagUrl
+    }
+
     return IMAAdsRequest(
-      adTagUrl: adTagWithRequestAgent, adDisplayContainer: adDisplayContainer,
+      adTagUrl: modifiedURL!, adDisplayContainer: adDisplayContainer,
       contentPlayhead: contentPlayhead as? ContentPlayheadImpl, userContext: nil)
   }
 }

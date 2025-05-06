@@ -23,14 +23,16 @@ class AdsRequestProxyApiTest {
   }
 
   @Test
-  fun setAdTagUrlHandlesAUrlWithoutAQuery() {
+  fun setAdTagUrlDoesNotAddRequestAgentToIncompatibleUrls() {
     val api = TestProxyApiRegistrar().getPigeonApiAdsRequest()
 
     val instance = mock<AdsRequest>()
-    api.setAdTagUrl(instance, "adTag")
 
-    verify(instance).adTagUrl =
-        "adTag?request_agent=Flutter-IMA-${AdsRequestProxyApi.pluginVersion}"
+    api.setAdTagUrl(instance, "adTag#")
+    verify(instance).adTagUrl = "adTag#"
+
+    api.setAdTagUrl(instance, "adTag?#")
+    verify(instance).adTagUrl = "adTag?#"
   }
 
   @Test

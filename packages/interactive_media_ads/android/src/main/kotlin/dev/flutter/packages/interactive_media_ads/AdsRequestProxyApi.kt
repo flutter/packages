@@ -25,12 +25,12 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun setAdTagUrl(pigeon_instance: AdsRequest, adTagUrl: String) {
-    // Ensure adTag can append a custom parameter.
-    require(!adTagUrl.contains("#"))
-
-    val urlHasQuery = adTagUrl.contains("?")
-    pigeon_instance.adTagUrl =
-        "$adTagUrl${if (urlHasQuery) "&" else "?"}request_agent=Flutter-IMA-$pluginVersion"
+    // Add a request agent only if the adTagUrl can append a custom parameter.
+    if (!adTagUrl.contains("#") && adTagUrl.contains("?")) {
+      pigeon_instance.adTagUrl = "$adTagUrl&request_agent=Flutter-IMA-$pluginVersion"
+    } else {
+      pigeon_instance.adTagUrl = adTagUrl
+    }
   }
 
   override fun setContentProgressProvider(
