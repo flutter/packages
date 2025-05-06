@@ -398,7 +398,7 @@ if (purchaseDetails is AppStorePurchaseDetails) {
 }
 ```
 
-How to get the `jsonRepresentation` of a transaction in iOS, using Storekit 2:
+How to get the `jsonRepresentation` of a transaction in iOS, using StoreKit 2:
 ```dart
 //import for SK2TransactionWrapper
 import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';

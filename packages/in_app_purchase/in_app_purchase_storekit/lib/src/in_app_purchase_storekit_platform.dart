@@ -258,11 +258,10 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     return true;
   }
 
-  /// Call this before `registerPlatform` to conditionally support StoreKit 1 for
-  /// devices below iOS 15.
-  static Future<bool> enableStoreKit1() async {
-    _useStoreKit2 = await SKRequestMaker.supportsStoreKit2();
-    return !_useStoreKit2;
+  /// Call this before `registerPlatform` to re-enable StoreKit1
+  static bool enableStoreKit1() {
+    _useStoreKit2 = false;
+    return false;
   }
 }
 
