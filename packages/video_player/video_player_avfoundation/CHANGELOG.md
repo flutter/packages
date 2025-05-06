@@ -1,3 +1,7 @@
+## 2.8.0
+
+* Implements background playback functionality using allowBackgroundPlayback option.
+
 ## 2.7.1
 
 * Adds possibility to play videos at more than 30 FPS.

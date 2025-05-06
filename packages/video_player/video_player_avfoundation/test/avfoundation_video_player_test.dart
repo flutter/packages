@@ -20,6 +20,7 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   double? volume;
   double? playbackSpeed;
   bool? mixWithOthers;
+  bool? allowBackgroundPlayback;
 
   @override
   int create(CreationOptions options) {
@@ -55,6 +56,12 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   void setMixWithOthers(bool enabled) {
     log.add('setMixWithOthers');
     mixWithOthers = enabled;
+  }
+
+  @override
+  void setAllowBackgroundPlayback(bool enabled) {
+    log.add('setAllowBackgroundPlayback');
+    allowBackgroundPlayback = enabled;
   }
 
   @override
@@ -333,6 +340,16 @@ void main() {
       await player.setMixWithOthers(false);
       expect(log.log.last, 'setMixWithOthers');
       expect(log.mixWithOthers, false);
+    });
+
+    test('setAllowBackgroundPlayback', () async {
+      await player.setAllowBackgroundPlayback(true);
+      expect(log.log.last, 'setAllowBackgroundPlayback');
+      expect(log.allowBackgroundPlayback, true);
+
+      await player.setAllowBackgroundPlayback(false);
+      expect(log.log.last, 'setAllowBackgroundPlayback');
+      expect(log.allowBackgroundPlayback, false);
     });
 
     test('setVolume', () async {

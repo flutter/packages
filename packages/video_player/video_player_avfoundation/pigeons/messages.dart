@@ -73,4 +73,6 @@ abstract class AVFoundationVideoPlayerApi {
   void pause(int playerId);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
+  @ObjCSelector('setAllowBackgroundPlayback:')
+  void setAllowBackgroundPlayback(bool allowBackgroundPlayback);
 }

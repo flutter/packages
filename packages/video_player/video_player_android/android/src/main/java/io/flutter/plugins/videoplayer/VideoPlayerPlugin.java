@@ -223,6 +223,11 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     options.mixWithOthers = mixWithOthers;
   }
 
+  @Override
+  public void setAllowBackgroundPlayback(@NonNull Boolean allowBackgroundPlayback) {
+    options.allowBackgroundPlayback = allowBackgroundPlayback;
+  }
+
   private interface KeyForAssetFn {
     String get(String asset);
   }

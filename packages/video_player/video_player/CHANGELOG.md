@@ -1,6 +1,7 @@
-## NEXT
+## 2.10.0
 
-* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Implements background playback functionality using allowBackgroundPlayback option.
+* Updates README to indicate that Android SDK <21 is no longer supported.
 
 ## 2.9.5
 

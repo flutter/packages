@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Implements background playback functionality using allowBackgroundPlayback option.
+
 ## 2.8.2
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to

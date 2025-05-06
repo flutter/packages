@@ -1,3 +1,7 @@
+## 6.4.0
+
+* Implements background playback functionality using allowBackgroundPlayback option.
+
 ## 6.3.0
 
 * Adds support for platform views as an optional way of displaying a video.

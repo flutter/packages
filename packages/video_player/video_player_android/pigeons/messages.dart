@@ -52,4 +52,5 @@ abstract class AndroidVideoPlayerApi {
   void seekTo(int playerId, int position);
   void pause(int playerId);
   void setMixWithOthers(bool mixWithOthers);
+  void setAllowBackgroundPlayback(bool allowBackgroundPlayback);
 }

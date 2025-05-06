@@ -30,6 +30,7 @@ public final class TextureVideoPlayer extends VideoPlayer
     implements TextureRegistry.SurfaceProducer.Callback {
   @NonNull private final TextureRegistry.SurfaceProducer surfaceProducer;
   @Nullable private ExoPlayerState savedStateDuring;
+  @Nullable private final VideoPlayerOptions options;
 
   /**
    * Creates a texture video player.
@@ -72,6 +73,7 @@ public final class TextureVideoPlayer extends VideoPlayer
 
     this.surfaceProducer = surfaceProducer;
     surfaceProducer.setCallback(this);
+    this.options = options;
 
     this.exoPlayer.setVideoSurface(surfaceProducer.getSurface());
   }
@@ -100,8 +102,13 @@ public final class TextureVideoPlayer extends VideoPlayer
   public void onSurfaceDestroyed() {
     // Intentionally do not call pause/stop here, because the surface has already been released
     // at this point (see https://github.com/flutter/flutter/issues/156451).
-    savedStateDuring = ExoPlayerState.save(exoPlayer);
-    exoPlayer.release();
+    if (options == null || !options.allowBackgroundPlayback) {
+      savedStateDuring = ExoPlayerState.save(exoPlayer);
+      exoPlayer.release();
+    } else {
+      savedStateDuring = null;
+      exoPlayer.setVideoSurface(null);
+    }
   }
 
   private boolean playerHasBeenSuspended() {

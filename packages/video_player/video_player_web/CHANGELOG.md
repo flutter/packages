@@ -1,3 +1,7 @@
+## 2.4.0
+
+* Implements background playback functionality using allowBackgroundPlayback option.
+
 ## 2.3.5
 
 * Fixes blank first frame on iOS.

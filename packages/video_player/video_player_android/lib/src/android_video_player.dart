@@ -198,6 +198,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return _api.setMixWithOthers(mixWithOthers);
   }
 
+  @override
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
+    return _api.setAllowBackgroundPlayback(allowBackgroundPlayback);
+  }
+
   EventChannel _eventChannelFor(int playerId) {
     return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
   }
