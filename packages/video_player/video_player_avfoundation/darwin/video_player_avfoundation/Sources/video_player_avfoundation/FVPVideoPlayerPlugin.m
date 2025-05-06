@@ -243,12 +243,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 - (void)setAllowBackgroundPlayback:(BOOL)allowBackgroundPlayback 
                             error:(FlutterError **)error {
 #if TARGET_OS_IOS
-  if (allowBackgroundPlayback) {
-    upgradeAudioSessionCategory(AVAudioSessionCategoryPlayback, 
-                               AVAudioSessionCategoryOptionMixWithOthers, 0);
-  } else {
-    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, 0, 0);
-  }
+  // Do nothing here, the background playback still works
 #endif
 }
 
