@@ -454,7 +454,7 @@ void main() {
       });
 
       testWidgets(
-          'initial default display rotation is 90 degrees clockwise, then the preview Texture is rotation 0 degrees clockwise',
+          'initial default display rotation is 90 degrees clockwise, then the preview Texture is rotation 180 degrees clockwise',
           (WidgetTester tester) async {
         // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
         // orientation to landscape right, and set initial default display rotation to 90 degrees clockwise.
@@ -483,8 +483,8 @@ void main() {
         final Texture texture = tester.widget<Texture>(find.byType(Texture));
         expect(texture.textureId, cameraId);
 
-        // Verify Texture is rotated by 90 - 90 = 0 degrees clockwise.
-        const int expectedQuarterTurns = _0DegreesClockwise;
+        // Verify Texture is rotated by 270 - 90 = 180 degrees clockwise.
+        const int expectedQuarterTurns = _180DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
 
@@ -536,7 +536,7 @@ void main() {
                 expectedQuarterTurns, rotatedBox.quarterTurns));
       });
       testWidgets(
-          'initial default display rotation is 270 degrees clockwise, then the preview Texture is rotation 180 degrees clockwise',
+          'initial default display rotation is 270 degrees clockwise, then the preview Texture is rotation 0 degrees clockwise',
           (WidgetTester tester) async {
         // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
         // orientation to landscape right, and set initial default display rotation to 270 degrees clockwise.
@@ -565,8 +565,8 @@ void main() {
         final Texture texture = tester.widget<Texture>(find.byType(Texture));
         expect(texture.textureId, cameraId);
 
-        // Verify Texture is rotated by 270 - 90 = 180 degrees clockwise.
-        const int expectedQuarterTurns = _180DegreesClockwise;
+        // Verify Texture is rotated by 90 - 90 = 0 degrees.
+        const int expectedQuarterTurns = _0DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
 
@@ -613,7 +613,7 @@ void main() {
       });
 
       testWidgets(
-          'initial device orientation is portraitUp, then the preview Texture is rotation 90 degrees clockwise',
+          'initial device orientation is portraitUp, then the preview Texture is rotation 270 degrees clockwise',
           (WidgetTester tester) async {
         // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
         // orientation to portrait up, and set initial default display rotation to 90 degrees clockwise.
@@ -642,8 +642,8 @@ void main() {
         final Texture texture = tester.widget<Texture>(find.byType(Texture));
         expect(texture.textureId, cameraId);
 
-        // Verify Texture is rotated by 90 - 0 = 90 degrees clockwise.
-        const int expectedQuarterTurns = _90DegreesClockwise;
+        // Verify Texture is rotated by 270 - 0 = 270 degrees clockwise.
+        const int expectedQuarterTurns = _270DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
 
@@ -654,7 +654,7 @@ void main() {
                 expectedQuarterTurns, rotatedBox.quarterTurns));
       });
       testWidgets(
-          'initial device orientation is landscapeLeft, then the preview Texture is rotation 180 degrees clockwise',
+          'initial device orientation is landscapeLeft, then the preview Texture is rotation 0 degrees clockwise',
           (WidgetTester tester) async {
         // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
         // orientation to landscape left, and set initial default display rotation to 90 degrees clockwise.
@@ -683,20 +683,19 @@ void main() {
         final Texture texture = tester.widget<Texture>(find.byType(Texture));
         expect(texture.textureId, cameraId);
 
-        // Verify Texture is rotated by 90 - 270 = -180 degrees clockwise = 180 degrees clockwise.
-        const int expectedQuarterTurns = _180DegreesClockwise;
+        // Verify Texture is rotated by 270 - 270 = 0 degrees.
+        const int expectedQuarterTurns = _0DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
-        final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
 
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
-        expect(clockwiseQuarterTurns, expectedQuarterTurns,
+        expect(rotatedBox.quarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
       });
       testWidgets(
-          'initial device orientation is portraitDown, then the preview Texture is rotation 270 degrees clockwise',
+          'initial device orientation is portraitDown, then the preview Texture is rotation 90 degrees clockwise',
           (WidgetTester tester) async {
         // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
         // orientation to portrait down, and set initial default display rotation to 90 degrees clockwise.
@@ -725,20 +724,19 @@ void main() {
         final Texture texture = tester.widget<Texture>(find.byType(Texture));
         expect(texture.textureId, cameraId);
 
-        // Verify Texture is rotated by 90 - 180 = -90 degrees clockwise = 270 degrees clockwise.
-        const int expectedQuarterTurns = _270DegreesClockwise;
+        // Verify Texture is rotated by 270 - 180 = 90 degrees clockwise.
+        const int expectedQuarterTurns = _90DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
-        final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
 
         expect(rotatedBox.child, isA<Texture>());
         expect((rotatedBox.child! as Texture).textureId, cameraId);
-        expect(clockwiseQuarterTurns, expectedQuarterTurns,
+        expect(rotatedBox.quarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
       });
       testWidgets(
-          'initial device orientation is landscapeRight, then the preview Texture is rotation 0 degrees clockwise',
+          'initial device orientation is landscapeRight, then the preview Texture is rotation 180 degrees clockwise',
           (WidgetTester tester) async {
         // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
         // orientation to landscape right, and set initial default display rotation to 90 degrees clockwise.
@@ -767,8 +765,8 @@ void main() {
         final Texture texture = tester.widget<Texture>(find.byType(Texture));
         expect(texture.textureId, cameraId);
 
-        // Verify Texture is rotated by 90 - 90 = 0 degrees clockwise.
-        const int expectedQuarterTurns = _0DegreesClockwise;
+        // Verify Texture is rotated by 270 - 90 = 180 degrees clockwise.
+        const int expectedQuarterTurns = _180DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
 

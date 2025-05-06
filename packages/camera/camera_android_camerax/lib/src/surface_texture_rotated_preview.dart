@@ -67,8 +67,9 @@ final class _SurfaceTextureRotatedPreviewState
     preappliedRotationQuarterTurns =
         getPreAppliedQuarterTurnsRotationFromDeviceOrientation(
             widget.initialDeviceOrientation);
-    defaultDisplayRotationQuarterTurns =
-        Future<int>.value(widget.initialDefaultDisplayRotationQuarterTurns);
+    defaultDisplayRotationQuarterTurns = Future<int>.value(
+        getQuarterTurnsFromSurfaceRotationConstant(
+            widget.initialDefaultDisplayRotationQuarterTurns));
     deviceOrientationSubscription =
         widget.deviceOrientationStream.listen((DeviceOrientation event) {
       // Ensure that we aren't updating the state if the widget is being destroyed.
