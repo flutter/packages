@@ -1,6 +1,10 @@
-## 15.1.1
+## 15.1.2
 
 - Fixes `PopScope.onPopInvokedWithResult` getting called twice when popping a route if `GoRouteData.onExit` is not null
+
+## 15.1.1
+
+- Adds missing `caseSensitive` to `GoRouteData.$route`.
 
 ## 15.1.0
 

@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
 
-public class ClientCertRequestProxyApiTest {
+public class ClientCertRequestTest {
   @Test
   public void cancel() {
     final PigeonApiClientCertRequest api =

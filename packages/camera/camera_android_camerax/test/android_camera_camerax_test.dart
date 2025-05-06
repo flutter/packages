@@ -2205,7 +2205,30 @@ void main() {
   test(
     'dispose releases Flutter surface texture, removes camera state observers, and unbinds all use cases',
     () async {
+      bool stoppedListeningForDeviceOrientationChange = false;
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      camera.proxy = CameraXProxy(
+        newDeviceOrientationManager: ({
+          required void Function(DeviceOrientationManager, String)
+              onDeviceOrientationChanged,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final MockDeviceOrientationManager mockDeviceOrientationManager =
+              MockDeviceOrientationManager();
+          when(
+            mockDeviceOrientationManager
+                .stopListeningForDeviceOrientationChange(),
+          ).thenAnswer((
+            _,
+          ) async {
+            stoppedListeningForDeviceOrientationChange = true;
+          });
+          return mockDeviceOrientationManager;
+        },
+      );
 
       camera.preview = MockPreview();
       camera.processCameraProvider = MockProcessCameraProvider();
@@ -2218,6 +2241,7 @@ void main() {
       verify(camera.liveCameraState!.removeObservers());
       verify(camera.processCameraProvider!.unbindAll());
       verify(camera.imageAnalysis!.clearAnalyzer());
+      expect(stoppedListeningForDeviceOrientationChange, isTrue);
     },
   );
 

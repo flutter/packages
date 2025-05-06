@@ -1,3 +1,8 @@
+## 4.4.2
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
 ## 4.4.1
 
 * Removes obsolete code related to supporting SDK <21.

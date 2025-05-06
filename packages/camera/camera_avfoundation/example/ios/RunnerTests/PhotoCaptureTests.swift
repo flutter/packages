@@ -173,7 +173,7 @@ final class PhotoCaptureTests: XCTestCase {
     FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    configuration.captureDeviceFactory = { captureDeviceMock }
+    configuration.captureDeviceFactory = { _ in captureDeviceMock }
     let cam = FLTCam(configuration: configuration, error: nil)
 
     let filePath = "test"

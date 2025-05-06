@@ -1,3 +1,8 @@
+## 0.2.3+11
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
 ## 0.2.3+10
 
 * Fixes `AdEventType`s not triggering on iOS in release mode.

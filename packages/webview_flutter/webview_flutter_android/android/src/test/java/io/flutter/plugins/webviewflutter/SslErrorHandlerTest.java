@@ -10,7 +10,7 @@ import static org.mockito.Mockito.verify;
 import android.webkit.SslErrorHandler;
 import org.junit.Test;
 
-public class SslErrorHandlerProxyApiTest {
+public class SslErrorHandlerTest {
   @Test
   public void cancel() {
     final PigeonApiSslErrorHandler api = new TestProxyApiRegistrar().getPigeonApiSslErrorHandler();

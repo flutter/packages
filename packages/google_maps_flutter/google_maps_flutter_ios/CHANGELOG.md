@@ -1,3 +1,7 @@
+## 2.15.2
+
+* Fixes regression where updating a marker hides its info window.
+
 ## 2.15.1
 
 * Fixes regression in displaying info windows.
