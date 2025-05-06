@@ -28,7 +28,7 @@ void main() {
 
   final FakeStoreKit2Platform fakeStoreKit2Platform = FakeStoreKit2Platform();
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
-  
+
   late InAppPurchaseStoreKitPlatform iapStoreKitPlatform;
 
   setUpAll(() {
