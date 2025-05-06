@@ -116,18 +116,22 @@ class PlatformAuthorizationRequest {
 /// classes that are used for this plugin.
 class GetCredentialRequestParams {
   GetCredentialRequestParams({
+    required this.useButtonFlow,
     required this.filterToAuthorized,
     required this.autoSelectEnabled,
-    required this.useButtonFlow,
     this.serverClientId,
     this.nonce,
   });
 
+  /// Whether to use the Sign in with Google button flow
+  /// (GetSignInWithGoogleOption), corresponding to an explicit sign-in request,
+  /// or not (GetGoogleIdOption), corresponding to an implicit potential
+  /// sign-in.
+  bool useButtonFlow;
+
   bool filterToAuthorized;
 
   bool autoSelectEnabled;
-
-  bool useButtonFlow;
 
   String? serverClientId;
 
@@ -135,9 +139,9 @@ class GetCredentialRequestParams {
 
   Object encode() {
     return <Object?>[
+      useButtonFlow,
       filterToAuthorized,
       autoSelectEnabled,
-      useButtonFlow,
       serverClientId,
       nonce,
     ];
@@ -146,9 +150,9 @@ class GetCredentialRequestParams {
   static GetCredentialRequestParams decode(Object result) {
     result as List<Object?>;
     return GetCredentialRequestParams(
-      filterToAuthorized: result[0]! as bool,
-      autoSelectEnabled: result[1]! as bool,
-      useButtonFlow: result[2]! as bool,
+      useButtonFlow: result[0]! as bool,
+      filterToAuthorized: result[1]! as bool,
+      autoSelectEnabled: result[2]! as bool,
       serverClientId: result[3] as String?,
       nonce: result[4] as String?,
     );
@@ -407,11 +411,11 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-class CredentialManagerApi {
-  /// Constructor for [CredentialManagerApi].  The [binaryMessenger] named argument is
+class GoogleSignInApi {
+  /// Constructor for [GoogleSignInApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  CredentialManagerApi(
+  GoogleSignInApi(
       {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
       : pigeonVar_binaryMessenger = binaryMessenger,
         pigeonVar_messageChannelSuffix =
@@ -424,12 +428,9 @@ class CredentialManagerApi {
 
   /// Returns the server client ID parsed from google-services.json by the
   /// google-services Gradle script, if any.
-  ///
-  /// This is not part of CredentialManager, but is included here for
-  /// convenience since CredentialManager requires a server client ID.
   Future<String?> getGoogleServicesJsonServerClientId() async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_android.CredentialManagerApi.getGoogleServicesJsonServerClientId$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getGoogleServicesJsonServerClientId$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -452,10 +453,12 @@ class CredentialManagerApi {
     }
   }
 
+  /// Requests an authentication credential (sign in) via CredentialManager's
+  /// getCredential.
   Future<GetCredentialResult> getCredential(
       GetCredentialRequestParams params) async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_android.CredentialManagerApi.getCredential$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getCredential$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -484,9 +487,10 @@ class CredentialManagerApi {
     }
   }
 
+  /// Clears CredentialManager credential state.
   Future<void> clearCredentialState() async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_android.CredentialManagerApi.clearCredentialState$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearCredentialState$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -508,27 +512,12 @@ class CredentialManagerApi {
       return;
     }
   }
-}
 
-class AuthorizationClientApi {
-  /// Constructor for [AuthorizationClientApi].  The [binaryMessenger] named argument is
-  /// available for dependency injection.  If it is left null, the default
-  /// BinaryMessenger will be used which routes to the host platform.
-  AuthorizationClientApi(
-      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-  final BinaryMessenger? pigeonVar_binaryMessenger;
-
-  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
-
-  final String pigeonVar_messageChannelSuffix;
-
+  /// Requests authorization tokens via AuthorizationClient.
   Future<AuthorizeResult> authorize(PlatformAuthorizationRequest params,
       {required bool promptIfUnauthorized}) async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.google_sign_in_android.AuthorizationClientApi.authorize$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.authorize$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,

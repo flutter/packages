@@ -145,29 +145,34 @@ data class PlatformAuthorizationRequest(
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class GetCredentialRequestParams(
+    /**
+     * Whether to use the Sign in with Google button flow (GetSignInWithGoogleOption), corresponding
+     * to an explicit sign-in request, or not (GetGoogleIdOption), corresponding to an implicit
+     * potential sign-in.
+     */
+    val useButtonFlow: Boolean,
     val filterToAuthorized: Boolean,
     val autoSelectEnabled: Boolean,
-    val useButtonFlow: Boolean,
     val serverClientId: String? = null,
     val nonce: String? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): GetCredentialRequestParams {
-      val filterToAuthorized = pigeonVar_list[0] as Boolean
-      val autoSelectEnabled = pigeonVar_list[1] as Boolean
-      val useButtonFlow = pigeonVar_list[2] as Boolean
+      val useButtonFlow = pigeonVar_list[0] as Boolean
+      val filterToAuthorized = pigeonVar_list[1] as Boolean
+      val autoSelectEnabled = pigeonVar_list[2] as Boolean
       val serverClientId = pigeonVar_list[3] as String?
       val nonce = pigeonVar_list[4] as String?
       return GetCredentialRequestParams(
-          filterToAuthorized, autoSelectEnabled, useButtonFlow, serverClientId, nonce)
+          useButtonFlow, filterToAuthorized, autoSelectEnabled, serverClientId, nonce)
     }
   }
 
   fun toList(): List<Any?> {
     return listOf(
+        useButtonFlow,
         filterToAuthorized,
         autoSelectEnabled,
-        useButtonFlow,
         serverClientId,
         nonce,
     )
@@ -423,34 +428,36 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
 }
 
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-interface CredentialManagerApi {
+interface GoogleSignInApi {
   /**
    * Returns the server client ID parsed from google-services.json by the google-services Gradle
    * script, if any.
-   *
-   * This is not part of CredentialManager, but is included here for convenience since
-   * CredentialManager requires a server client ID.
    */
   fun getGoogleServicesJsonServerClientId(): String?
-
+  /** Requests an authentication credential (sign in) via CredentialManager's getCredential. */
   fun getCredential(
       params: GetCredentialRequestParams,
       callback: (Result<GetCredentialResult>) -> Unit
   )
-
+  /** Clears CredentialManager credential state. */
   fun clearCredentialState(callback: (Result<Unit>) -> Unit)
+  /** Requests authorization tokens via AuthorizationClient. */
+  fun authorize(
+      params: PlatformAuthorizationRequest,
+      promptIfUnauthorized: Boolean,
+      callback: (Result<AuthorizeResult>) -> Unit
+  )
 
   companion object {
-    /** The codec used by CredentialManagerApi. */
+    /** The codec used by GoogleSignInApi. */
     val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
     /**
-     * Sets up an instance of `CredentialManagerApi` to handle messages through the
-     * `binaryMessenger`.
+     * Sets up an instance of `GoogleSignInApi` to handle messages through the `binaryMessenger`.
      */
     @JvmOverloads
     fun setUp(
         binaryMessenger: BinaryMessenger,
-        api: CredentialManagerApi?,
+        api: GoogleSignInApi?,
         messageChannelSuffix: String = ""
     ) {
       val separatedMessageChannelSuffix =
@@ -459,7 +466,7 @@ interface CredentialManagerApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.google_sign_in_android.CredentialManagerApi.getGoogleServicesJsonServerClientId$separatedMessageChannelSuffix",
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getGoogleServicesJsonServerClientId$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -479,7 +486,7 @@ interface CredentialManagerApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.google_sign_in_android.CredentialManagerApi.getCredential$separatedMessageChannelSuffix",
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.getCredential$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -503,7 +510,7 @@ interface CredentialManagerApi {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.google_sign_in_android.CredentialManagerApi.clearCredentialState$separatedMessageChannelSuffix",
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.clearCredentialState$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -520,37 +527,11 @@ interface CredentialManagerApi {
           channel.setMessageHandler(null)
         }
       }
-    }
-  }
-}
-/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
-interface AuthorizationClientApi {
-  fun authorize(
-      params: PlatformAuthorizationRequest,
-      promptIfUnauthorized: Boolean,
-      callback: (Result<AuthorizeResult>) -> Unit
-  )
-
-  companion object {
-    /** The codec used by AuthorizationClientApi. */
-    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
-    /**
-     * Sets up an instance of `AuthorizationClientApi` to handle messages through the
-     * `binaryMessenger`.
-     */
-    @JvmOverloads
-    fun setUp(
-        binaryMessenger: BinaryMessenger,
-        api: AuthorizationClientApi?,
-        messageChannelSuffix: String = ""
-    ) {
-      val separatedMessageChannelSuffix =
-          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
         val channel =
             BasicMessageChannel<Any?>(
                 binaryMessenger,
-                "dev.flutter.pigeon.google_sign_in_android.AuthorizationClientApi.authorize$separatedMessageChannelSuffix",
+                "dev.flutter.pigeon.google_sign_in_android.GoogleSignInApi.authorize$separatedMessageChannelSuffix",
                 codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->

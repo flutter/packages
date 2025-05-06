@@ -61,15 +61,13 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
   public void initInstance(@NonNull BinaryMessenger messenger, @NonNull Context context) {
     this.messenger = messenger;
     delegate = new Delegate(context);
-    CredentialManagerApi.Companion.setUp(messenger, delegate);
-    AuthorizationClientApi.Companion.setUp(messenger, delegate);
+    GoogleSignInApi.Companion.setUp(messenger, delegate);
   }
 
   private void dispose() {
     delegate = null;
     if (messenger != null) {
-      CredentialManagerApi.Companion.setUp(messenger, null);
-      AuthorizationClientApi.Companion.setUp(messenger, null);
+      GoogleSignInApi.Companion.setUp(messenger, null);
       messenger = null;
     }
   }
@@ -126,10 +124,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
    * completed (either successfully or in error). This class provides no synchronization constructs
    * to guarantee such behavior; callers are responsible for providing such guarantees.
    */
-  public static class Delegate
-      implements PluginRegistry.ActivityResultListener,
-          CredentialManagerApi,
-          AuthorizationClientApi {
+  public static class Delegate implements PluginRegistry.ActivityResultListener, GoogleSignInApi {
     private static final int REQUEST_CODE_AUTHORIZE = 53294;
 
     private final @NonNull Context context;

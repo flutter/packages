@@ -14,15 +14,10 @@ import 'src/messages.g.dart';
 class GoogleSignInAndroid extends GoogleSignInPlatform {
   /// Creates a new plugin implementation instance.
   GoogleSignInAndroid({
-    @visibleForTesting CredentialManagerApi? credentialManaagerApi,
-    @visibleForTesting AuthorizationClientApi? authorizationClientApi,
-  })  : _credentialManaagerApi =
-            credentialManaagerApi ?? CredentialManagerApi(),
-        _authorizationClientApi =
-            authorizationClientApi ?? AuthorizationClientApi();
+    @visibleForTesting GoogleSignInApi? googleSignInApi,
+  }) : _hostApi = googleSignInApi ?? GoogleSignInApi();
 
-  final CredentialManagerApi _credentialManaagerApi;
-  final AuthorizationClientApi _authorizationClientApi;
+  final GoogleSignInApi _hostApi;
 
   String? _serverClientId;
   String? _hostedDomain;
@@ -37,7 +32,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   Future<void> init(InitParameters params) async {
     _hostedDomain = params.hostedDomain;
     _serverClientId = params.serverClientId ??
-        await _credentialManaagerApi.getGoogleServicesJsonServerClientId();
+        await _hostApi.getGoogleServicesJsonServerClientId();
     _nonce = params.nonce;
     // The clientId parameter is not supported on Android.
     // Android apps are identified by their package name and the SHA-1 of their signing key.
@@ -86,7 +81,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<void> signOut(SignOutParams params) {
-    return _credentialManaagerApi.clearCredentialState();
+    return _hostApi.clearCredentialState();
   }
 
   @override
@@ -123,8 +118,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     required bool useButtonFlow,
     bool throwForNoAuth = false,
   }) async {
-    final GetCredentialResult authnResult =
-        await _credentialManaagerApi.getCredential(GetCredentialRequestParams(
+    final GetCredentialResult authnResult = await _hostApi.getCredential(
+        GetCredentialRequestParams(
             filterToAuthorized: filterToAuthorized,
             autoSelectEnabled: autoSelectEnabled,
             useButtonFlow: useButtonFlow,
@@ -173,7 +168,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   Future<({String? accessToken, String? serverAuthCode})> _authorize(
       AuthorizationRequestDetails request,
       {required bool requestOfflineAccess}) async {
-    final AuthorizeResult result = await _authorizationClientApi.authorize(
+    final AuthorizeResult result = await _hostApi.authorize(
         PlatformAuthorizationRequest(
             scopes: request.scopes,
             accountEmail: request.email,
