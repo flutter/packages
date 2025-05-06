@@ -28,6 +28,7 @@ void main() {
 
   final FakeStoreKit2Platform fakeStoreKit2Platform = FakeStoreKit2Platform();
   final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
+  
   late InAppPurchaseStoreKitPlatform iapStoreKitPlatform;
 
   setUpAll(() {
@@ -39,8 +40,6 @@ void main() {
     InAppPurchaseStoreKitPlatform.registerPlatform();
     iapStoreKitPlatform =
         InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
-    fakeStoreKitPlatform.shouldStoreKit2BeEnabled = true;
-    fakeStoreKitPlatform.supportsStoreKit2();
     fakeStoreKit2Platform.reset();
   });
 
