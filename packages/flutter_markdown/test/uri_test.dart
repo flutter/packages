@@ -11,6 +11,10 @@ void main() => defineTests();
 
 void defineTests() {
   group('Uri Data Scheme', () {
+    tearDownAll(() {
+      imageCache.clear();
+    });
+
     testWidgets(
       'should work with image in uri data scheme',
       (WidgetTester tester) async {

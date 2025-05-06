@@ -23,6 +23,10 @@ void defineTests() {
       io.HttpOverrides.global = TestHttpOverrides();
     });
 
+    tearDownAll(() {
+      imageCache.clear();
+    });
+
     testWidgets(
       'should not interrupt styling',
       (WidgetTester tester) async {
