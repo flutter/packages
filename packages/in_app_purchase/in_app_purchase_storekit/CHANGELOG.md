@@ -1,6 +1,7 @@
 ## 0.4.0
 
 * **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.
+* To revert to StoreKit1 for devices below iOS 15, call `enableStoreKit1`
 
 ## 0.3.22+1
 

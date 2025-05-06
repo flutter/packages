@@ -56,7 +56,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   /// Registers this class as the default instance of [InAppPurchasePlatform].
   static void registerPlatform() {
-    enableStoreKit2();
     // Register the [InAppPurchaseStoreKitPlatformAddition] containing
     // StoreKit-specific functionality.
     InAppPurchasePlatformAddition.instance =
@@ -255,10 +254,11 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// StoreKit 2 is now the default.
   @Deprecated('StoreKit 2 is now the default')
   static Future<bool> enableStoreKit2() async {
+    _useStoreKit2 = true;
     return true;
   }
 
-  /// Call this if you still want to conditionally support StoreKit 1 for
+  /// Call this before `registerPlatform` to conditionally support StoreKit 1 for
   /// devices below iOS 15.
   static Future<bool> enableStoreKit1() async {
     _useStoreKit2 = await SKRequestMaker.supportsStoreKit2();
