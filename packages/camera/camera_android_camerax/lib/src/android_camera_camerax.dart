@@ -7,7 +7,6 @@ import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
-import 'package:flutter/cupertino.dart' hide AspectRatio;
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;

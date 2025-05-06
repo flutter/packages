@@ -21,7 +21,7 @@ final class SurfaceTextureRotatedPreview extends StatefulWidget {
   /// according to the rotation of the Android default display.
   const SurfaceTextureRotatedPreview(
       this.initialDeviceOrientation,
-      this.initialDefaultDisplayRotationQuarterTurns,
+      this.initialDefaultDisplayRotation,
       this.deviceOrientationStream,
       this.deviceOrientationManager,
       {required this.child,
@@ -32,7 +32,7 @@ final class SurfaceTextureRotatedPreview extends StatefulWidget {
 
   /// The initial rotation of the Android default display when the camera is created
   /// in terms of a Surface rotation constant.
-  final int initialDefaultDisplayRotationQuarterTurns;
+  final int initialDefaultDisplayRotation;
 
   /// Stream of changes to the device orientation.
   final Stream<DeviceOrientation> deviceOrientationStream;
@@ -69,7 +69,7 @@ final class _SurfaceTextureRotatedPreviewState
             widget.initialDeviceOrientation);
     defaultDisplayRotationQuarterTurns = Future<int>.value(
         getQuarterTurnsFromSurfaceRotationConstant(
-            widget.initialDefaultDisplayRotationQuarterTurns));
+            widget.initialDefaultDisplayRotation));
     deviceOrientationSubscription =
         widget.deviceOrientationStream.listen((DeviceOrientation event) {
       // Ensure that we aren't updating the state if the widget is being destroyed.
