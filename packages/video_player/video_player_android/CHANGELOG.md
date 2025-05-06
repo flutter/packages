@@ -1,3 +1,8 @@
+## 2.8.3
+
+* Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect
+  whether or not the video player rotation needs to be corrected.
+
 ## 2.8.2
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to
