@@ -1,9 +1,9 @@
 CSS Colors
 ==========
 
-## To be discontinued
+## Discontinued
 
-**This project will be discontinued on April 30, 2025**, and will not receive further updates after that point. Community members interested in collaborating on a community-maintained fork can coordinate in [this issue](https://github.com/flutter/flutter/issues/162962).
+**This project has been discontinued**, and will not receive further updates. For community discussion of alternative packages, see [this issue](https://github.com/flutter/flutter/issues/162962).
 
 ---
 

@@ -1,3 +1,11 @@
+## 0.3.3+1
+
+* Updates README to indicate that the package has been discontinued.
+
+## 0.3.3
+
+* Adds `navigationRailPadding` padding to `AdaptiveScaffold` for specifying custom padding around the navigation rail.
+
 ## 0.3.2
 
 * Fixes some memory leaks by disposing curved animations and value notifiers.
