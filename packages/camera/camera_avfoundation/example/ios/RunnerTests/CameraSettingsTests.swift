@@ -163,7 +163,8 @@ final class CameraSettingsTests: XCTestCase {
       permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in mockDevice },
       captureSessionFactory: { mockSession },
-      captureDeviceInputFactory: MockCaptureDeviceInputFactory()
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
 
     let expectation = self.expectation(description: "Result finished")

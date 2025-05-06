@@ -1,3 +1,7 @@
+## 1.1.7
+
+* Updates README to indicate that the package has been discontinued.
+
 ## 1.1.6
 
 * Updates README to indicate that this package will be discontinued.
