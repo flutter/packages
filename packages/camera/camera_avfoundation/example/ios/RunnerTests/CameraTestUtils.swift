@@ -85,7 +85,7 @@ enum CameraTestUtils {
   }
 
   static func createTestCamera() -> FLTCam {
-    return CameraTestUtils.createTestCamera(CameraTestUtils.createTestCameraConfiguration())
+    return createTestCamera(createTestCameraConfiguration())
   }
 
   static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue)
@@ -93,7 +93,7 @@ enum CameraTestUtils {
   {
     let configuration = createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    return CameraTestUtils.createTestCamera(configuration)
+    return createTestCamera(configuration)
   }
 
   /// Creates a test sample buffer.
