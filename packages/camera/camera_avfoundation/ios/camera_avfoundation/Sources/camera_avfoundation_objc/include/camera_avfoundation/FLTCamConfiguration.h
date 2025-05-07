@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Used in tests to inject a device into FLTCam.
 typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureDeviceFactory)(NSString *);
 
-typedef NSObject<FLTCaptureDevice> *_Nonnull (^AudioCaptureDeviceFactory)();
+typedef NSObject<FLTCaptureDevice> *_Nonnull (^AudioCaptureDeviceFactory)(void);
 
 typedef NSObject<FLTCaptureSession> *_Nonnull (^CaptureSessionFactory)(void);
 
