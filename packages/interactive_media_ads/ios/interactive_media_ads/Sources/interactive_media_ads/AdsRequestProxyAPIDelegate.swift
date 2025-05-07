@@ -20,7 +20,7 @@ class AdsRequestProxyAPIDelegate: PigeonApiDelegateIMAAdsRequest {
     contentPlayhead: IMAContentPlayhead?
   ) throws -> IMAAdsRequest {
     // Add a request agent only if the adTagUrl can append a custom parameter.
-    var modifiedURL =
+    let modifiedURL =
       !adTagUrl.contains("#") && adTagUrl.contains("?")
       ? "\(adTagUrl)&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)"
       : adTagUrl
