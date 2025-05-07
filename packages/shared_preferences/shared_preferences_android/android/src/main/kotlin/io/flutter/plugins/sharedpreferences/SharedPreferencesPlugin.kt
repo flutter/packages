@@ -448,7 +448,7 @@ class SharedPreferencesBackend(
     val preferences = createSharedPreferences(options)
     if (preferences.contains(key)) {
       val value = preferences.getString(key, "")
-      if (value!!.startsWith(LIST_PREFIX) && !value.startsWith(JSON_LIST_PREFIX)) {
+      if (value!!.startsWith(LIST_PREFIX) && !value!!.startsWith(JSON_LIST_PREFIX)) {
         val transformed = transformPref(preferences.getString(key, ""), listEncoder)
         return (transformed as List<*>?)?.filterIsInstance<String>()
       }
