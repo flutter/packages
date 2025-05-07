@@ -7,13 +7,9 @@
 packages/animations/**                                   @hannah-hyj
 packages/camera/**                                       @bparrishMines
 packages/cross_file/**                                   @ditman
-packages/css_colors/**                                   @stuartmorgan-g
 packages/extension_google_sign_in_as_googleapis_auth/**  @ditman
 packages/file_selector/**                                @stuartmorgan-g
-packages/flutter_adaptive_scaffold/**                    @gspencergoog
-packages/flutter_image/**                                @stuartmorgan-g
 packages/flutter_lints/**                                @chunhtai
-packages/flutter_markdown/**                             @domesticmouse
 packages/flutter_migrate/**                              @stuartmorgan-g
 packages/flutter_template_images/**                      @stuartmorgan-g
 packages/go_router/**                                    @chunhtai
@@ -28,7 +24,6 @@ packages/in_app_purchase/**                              @bparrishMines
 packages/local_auth/**                                   @stuartmorgan-g
 packages/metrics_center/**                               @christopherfujino
 packages/multicast_dns/**                                @vashworth
-packages/palette_generator/**                            @gspencergoog
 packages/path_provider/**                                @stuartmorgan-g
 packages/pigeon/**                                       @tarrinneal
 packages/platform/**                                     @stuartmorgan-g
@@ -97,7 +92,6 @@ packages/google_sign_in/google_sign_in_ios/**            @LongCatIsLooong @cbrac
 packages/image_picker/image_picker_ios/**                @vashworth @louisehsu
 packages/image_picker/image_picker_macos/**              @vashworth @louisehsu
 packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu @LongCatIsLooong
-packages/ios_platform_images/**                          @vashworth
 packages/local_auth/local_auth_darwin/**                 @cbracken @vashworth
 packages/path_provider/path_provider_foundation/**       @cbracken @vashworth
 packages/pigeon/**/ios/**/*                              @louisehsu @hellohuanlin
