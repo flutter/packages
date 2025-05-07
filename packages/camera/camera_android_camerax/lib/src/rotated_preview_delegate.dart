@@ -47,7 +47,7 @@ final class RotatedPreviewDelegate extends StatelessWidget {
   /// Stream of changes to the device orientation.
   final Stream<DeviceOrientation> deviceOrientationStream;
 
-  /// The orienation of the camera sensor in degrees.
+  /// The orientation of the camera sensor in degrees.
   final double sensorOrientationDegrees;
 
   /// Whether or not the camera is front facing.
