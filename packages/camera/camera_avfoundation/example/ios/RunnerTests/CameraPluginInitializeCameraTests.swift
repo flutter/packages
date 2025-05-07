@@ -35,16 +35,6 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
     return (cameraPlugin, mockCamera, mockGlobalEventApi, captureSessionQueue)
   }
 
-  private func waitForRoundTrip(with queue: DispatchQueue) {
-    let expectation = self.expectation(description: "Queue flush")
-    queue.async {
-      DispatchQueue.main.async {
-        expectation.fulfill()
-      }
-    }
-    waitForExpectations(timeout: 30, handler: nil)
-  }
-
   func testInitializeCamera_setsCameraOnFrameAvailableCallback() {
     let (cameraPlugin, mockCamera, _, _) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
@@ -93,7 +83,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       XCTAssertNil(error)
     }
 
-    waitForRoundTrip(with: captureSessionQueue)
+    waitForQueueRoundTrip(with: captureSessionQueue)
 
     XCTAssertTrue(mockGlobalEventApi.deviceOrientationChangedCalled)
   }

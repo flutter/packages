@@ -1,5 +1,10 @@
 ## 2.8.3
 
+* Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect
+  whether or not the video player rotation needs to be corrected.
+
+## 2.8.3
+
 * Fixes a [bug](https://github.com/flutter/flutter/issues/165149) where isBuffering flag always
 * return true after seekTo any position
 
