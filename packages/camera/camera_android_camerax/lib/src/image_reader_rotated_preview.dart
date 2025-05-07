@@ -51,7 +51,7 @@ final class ImageReaderRotatedPreview extends StatefulWidget {
   /// Stream of changes to the device orientation.
   final Stream<DeviceOrientation> deviceOrientation;
 
-  /// The orienation of the camera sensor in degrees.
+  /// The orientation of the camera sensor in degrees.
   final double sensorOrientationDegrees;
 
   /// The camera's device orientation manager.
