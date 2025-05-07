@@ -75,9 +75,7 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
 
   /// Sets whether the WebView should allow third party cookies to be set.
   ///
-  /// Apps that target `Build.VERSION_CODES.KITKAT` or below default to allowing
-  /// third party cookies. Apps targeting `Build.VERSION_CODES.LOLLIPOP` or
-  /// later default to disallowing third party cookies.
+  /// Defaults to false.
   Future<void> setAcceptThirdPartyCookies(
     AndroidWebViewController controller,
     bool accept,

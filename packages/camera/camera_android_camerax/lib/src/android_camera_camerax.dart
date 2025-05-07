@@ -9,50 +9,11 @@ import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
-import 'package:flutter/widgets.dart'
-    show Size, Texture, Widget, visibleForTesting;
+import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
-
-import 'analyzer.dart';
-import 'aspect_ratio_strategy.dart';
-import 'camera.dart';
-import 'camera2_camera_control.dart';
-import 'camera2_camera_info.dart';
-import 'camera_control.dart';
-import 'camera_info.dart';
-import 'camera_metadata.dart';
-import 'camera_selector.dart';
-import 'camera_state.dart';
-import 'camerax_library.g.dart';
+import 'camerax_library.dart';
 import 'camerax_proxy.dart';
-import 'capture_request_options.dart';
-import 'device_orientation_manager.dart';
-import 'exposure_state.dart';
-import 'fallback_strategy.dart';
-import 'focus_metering_action.dart';
-import 'focus_metering_result.dart';
-import 'image_analysis.dart';
-import 'image_capture.dart';
-import 'image_proxy.dart';
-import 'live_data.dart';
-import 'metering_point.dart';
-import 'observer.dart';
-import 'pending_recording.dart';
-import 'plane_proxy.dart';
-import 'preview.dart';
-import 'process_camera_provider.dart';
-import 'quality_selector.dart';
-import 'recorder.dart';
-import 'recording.dart';
-import 'resolution_filter.dart';
-import 'resolution_selector.dart';
-import 'resolution_strategy.dart';
 import 'rotated_preview.dart';
-import 'surface.dart';
-import 'system_services.dart';
-import 'use_case.dart';
-import 'video_capture.dart';
-import 'zoom_state.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
@@ -114,11 +75,54 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   String? videoOutputPath;
 
+  /// Handles access to system resources.
+  late final SystemServicesManager systemServicesManager =
+      proxy.newSystemServicesManager(
+    onCameraError: (_, String errorDescription) {
+      cameraErrorStreamController.add(errorDescription);
+    },
+  );
+
+  /// Handles retrieving media orientation for a device.
+  late final DeviceOrientationManager deviceOrientationManager =
+      proxy.newDeviceOrientationManager(
+    onDeviceOrientationChanged: (_, String orientation) {
+      final DeviceOrientation deviceOrientation =
+          _deserializeDeviceOrientation(orientation);
+      deviceOrientationChangedStreamController.add(
+        DeviceOrientationChangedEvent(deviceOrientation),
+      );
+    },
+  );
+
+  /// Stream that emits an event when the corresponding video recording is finalized.
+  static final StreamController<VideoRecordEvent>
+      videoRecordingEventStreamController =
+      StreamController<VideoRecordEvent>.broadcast();
+
+  /// Stream that emits the errors caused by camera usage on the native side.
+  static final StreamController<String> cameraErrorStreamController =
+      StreamController<String>.broadcast();
+
+  /// Stream that emits the device orientation whenever it is changed.
+  ///
+  /// Values may start being added to the stream once
+  /// `startListeningForDeviceOrientationChange(...)` is called.
+  static final StreamController<DeviceOrientationChangedEvent>
+      deviceOrientationChangedStreamController =
+      StreamController<DeviceOrientationChangedEvent>.broadcast();
+
   /// Stream queue to pick up finalized viceo recording events in
   /// [stopVideoRecording].
   final StreamQueue<VideoRecordEvent> videoRecordingEventStreamQueue =
-      StreamQueue<VideoRecordEvent>(
-          PendingRecording.videoRecordingEventStreamController.stream);
+      StreamQueue<VideoRecordEvent>(videoRecordingEventStreamController.stream);
+
+  late final VideoRecordEventListener _videoRecordingEventListener =
+      proxy.newVideoRecordEventListener(
+    onEvent: (_, VideoRecordEvent event) {
+      videoRecordingEventStreamController.add(event);
+    },
+  );
 
   /// Whether or not [preview] has been bound to the lifecycle of the camera by
   /// [createCamera].
@@ -136,7 +140,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   ImageCapture? imageCapture;
 
   /// The flash mode currently configured for [imageCapture].
-  int? _currentFlashMode;
+  CameraXFlashMode? _currentFlashMode;
 
   /// Whether or not torch flash mode has been enabled for the [camera].
   @visibleForTesting
@@ -255,11 +259,13 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
+    proxy.setUpGenericsProxy();
+
     final List<CameraDescription> cameraDescriptions = <CameraDescription>[];
 
-    processCameraProvider ??= await proxy.getProcessCameraProvider();
+    processCameraProvider ??= await proxy.getInstanceProcessCameraProvider();
     final List<CameraInfo> cameraInfos =
-        await processCameraProvider!.getAvailableCameraInfos();
+        (await processCameraProvider!.getAvailableCameraInfos()).cast();
 
     CameraLensDirection? cameraLensDirection;
     int cameraCount = 0;
@@ -270,12 +276,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       // Determine the lens direction by filtering the CameraInfo
       // TODO(gmackall): replace this with call to CameraInfo.getLensFacing when changes containing that method are available
       if ((await proxy
-              .createCameraSelector(CameraSelector.lensFacingBack)
+              .newCameraSelector(requireLensFacing: LensFacing.back)
               .filter(<CameraInfo>[cameraInfo]))
           .isNotEmpty) {
         cameraLensDirection = CameraLensDirection.back;
       } else if ((await proxy
-              .createCameraSelector(CameraSelector.lensFacingFront)
+              .newCameraSelector(requireLensFacing: LensFacing.front)
               .filter(<CameraInfo>[cameraInfo]))
           .isNotEmpty) {
         cameraLensDirection = CameraLensDirection.front;
@@ -284,16 +290,19 @@ class AndroidCameraCameraX extends CameraPlatform {
         continue;
       }
 
-      cameraSensorOrientation = await cameraInfo.getSensorRotationDegrees();
+      cameraSensorOrientation = cameraInfo.sensorRotationDegrees;
       cameraName = 'Camera $cameraCount';
       cameraCount++;
 
       // TODO(camsim99): Use camera ID retrieved from Camera2CameraInfo as
       // camera name: https://github.com/flutter/flutter/issues/147545.
-      cameraDescriptions.add(CameraDescription(
+      cameraDescriptions.add(
+        CameraDescription(
           name: cameraName,
           lensDirection: cameraLensDirection,
-          sensorOrientation: cameraSensorOrientation));
+          sensorOrientation: cameraSensorOrientation,
+        ),
+      );
     }
 
     return cameraDescriptions;
@@ -309,9 +318,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     bool enableAudio = false,
   }) =>
       createCameraWithSettings(
-          description,
-          MediaSettings(
-              resolutionPreset: resolutionPreset, enableAudio: enableAudio));
+        description,
+        MediaSettings(
+            resolutionPreset: resolutionPreset, enableAudio: enableAudio),
+      );
 
   /// Creates an uninitialized camera instance and returns the camera ID.
   ///
@@ -334,18 +344,26 @@ class AndroidCameraCameraX extends CameraPlatform {
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
   ) async {
-    // Must obtain proper permissions before attempting to access a camera.
-    await proxy.requestCameraPermissions(mediaSettings?.enableAudio ?? false);
+    final CameraPermissionsError? error =
+        await systemServicesManager.requestCameraPermissions(
+      mediaSettings?.enableAudio ?? false,
+    );
+
+    if (error != null) {
+      throw CameraException(error.errorCode, error.description);
+    }
 
     // Save CameraSelector that matches cameraDescription.
-    final int cameraSelectorLensDirection =
+    final LensFacing cameraSelectorLensDirection =
         _getCameraSelectorLensDirection(cameraDescription.lensDirection);
-    cameraIsFrontFacing =
-        cameraSelectorLensDirection == CameraSelector.lensFacingFront;
-    cameraSelector = proxy.createCameraSelector(cameraSelectorLensDirection);
+    cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
+    cameraSelector = proxy.newCameraSelector(
+      requireLensFacing: cameraSelectorLensDirection,
+    );
     // Start listening for device orientation changes preceding camera creation.
-    proxy.startListeningForDeviceOrientationChange(
-        cameraIsFrontFacing, cameraDescription.sensorOrientation);
+    unawaited(
+      deviceOrientationManager.startListeningForDeviceOrientationChange(),
+    );
     // Determine ResolutionSelector and QualitySelector based on
     // resolutionPreset for camera UseCases.
     final ResolutionSelector? presetResolutionSelector =
@@ -354,43 +372,64 @@ class AndroidCameraCameraX extends CameraPlatform {
         _getQualitySelectorFromPreset(mediaSettings?.resolutionPreset);
 
     // Retrieve a fresh ProcessCameraProvider instance.
-    processCameraProvider ??= await proxy.getProcessCameraProvider();
-    processCameraProvider!.unbindAll();
+    processCameraProvider ??= await proxy.getInstanceProcessCameraProvider();
+    unawaited(processCameraProvider!.unbindAll());
 
     // Configure Preview instance.
-    preview = proxy.createPreview(presetResolutionSelector,
-        /* use CameraX default target rotation */ null);
-    final int flutterSurfaceTextureId =
-        await proxy.setPreviewSurfaceProvider(preview!);
+    preview = proxy.newPreview(
+      resolutionSelector: presetResolutionSelector,
+      /* use CameraX default target rotation */ targetRotation: null,
+    );
+    final int flutterSurfaceTextureId = await preview!.setSurfaceProvider(
+      systemServicesManager,
+    );
 
     // Configure ImageCapture instance.
-    imageCapture = proxy.createImageCapture(presetResolutionSelector,
-        /* use CameraX default target rotation */ null);
+    imageCapture = proxy.newImageCapture(
+      resolutionSelector: presetResolutionSelector,
+      /* use CameraX default target rotation */ targetRotation: null,
+    );
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
-    imageAnalysis = proxy.createImageAnalysis(presetResolutionSelector,
-        /* use CameraX default target rotation */ null);
+    imageAnalysis = proxy.newImageAnalysis(
+      resolutionSelector: presetResolutionSelector,
+      /* use CameraX default target rotation */ targetRotation: null,
+    );
 
     // Configure VideoCapture and Recorder instances.
-    recorder = proxy.createRecorder(presetQualitySelector);
-    videoCapture = await proxy.createVideoCapture(recorder!);
+    recorder = proxy.newRecorder(qualitySelector: presetQualitySelector);
+    videoCapture = proxy.withOutputVideoCapture(videoOutput: recorder!);
 
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
     // instance as bound but not paused. Video capture is bound at first use
     // instead of here.
     camera = await processCameraProvider!.bindToLifecycle(
-        cameraSelector!, <UseCase>[preview!, imageCapture!, imageAnalysis!]);
+      cameraSelector!,
+      <UseCase>[preview!, imageCapture!, imageAnalysis!],
+    );
     await _updateCameraInfoAndLiveCameraState(flutterSurfaceTextureId);
     previewInitiallyBound = true;
     _previewIsPaused = false;
 
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
+
+    final Camera2CameraInfo camera2CameraInfo = proxy.fromCamera2CameraInfo(
+      cameraInfo: cameraInfo!,
+    );
+    sensorOrientationDegrees =
+        ((await camera2CameraInfo.getCameraCharacteristic(
+      proxy.sensorOrientationCameraCharacteristics(),
+    ))! as int)
+            .toDouble();
+
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
     _handlesCropAndRotation =
-        await proxy.previewSurfaceProducerHandlesCropAndRotation(preview!);
-    _initialDeviceOrientation = await proxy.getUiOrientation();
+        await preview!.surfaceProducerHandlesCropAndRotation();
+    _initialDeviceOrientation = _deserializeDeviceOrientation(
+      await deviceOrientationManager.getUiOrientation(),
+    );
 
     return flutterSurfaceTextureId;
   }
@@ -422,7 +461,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final ResolutionInfo previewResolutionInfo =
-        await preview!.getResolutionInfo();
+        (await preview!.getResolutionInfo())!;
 
     // Mark auto-focus, auto-exposure and setting points for focus & exposure
     // as available operations as CameraX does its best across devices to
@@ -432,14 +471,17 @@ class AndroidCameraCameraX extends CameraPlatform {
     const bool exposurePointSupported = true;
     const bool focusPointSupported = true;
 
-    cameraEventStreamController.add(CameraInitializedEvent(
+    cameraEventStreamController.add(
+      CameraInitializedEvent(
         cameraId,
-        previewResolutionInfo.width.toDouble(),
-        previewResolutionInfo.height.toDouble(),
+        previewResolutionInfo.resolution.width.toDouble(),
+        previewResolutionInfo.resolution.height.toDouble(),
         exposureMode,
         exposurePointSupported,
         focusMode,
-        focusPointSupported));
+        focusPointSupported,
+      ),
+    );
   }
 
   /// Releases the resources of the accessed camera.
@@ -447,10 +489,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<void> dispose(int cameraId) async {
-    preview?.releaseFlutterSurfaceTexture();
+    await preview?.releaseSurfaceProvider();
     await liveCameraState?.removeObservers();
-    processCameraProvider?.unbindAll();
+    await processCameraProvider?.unbindAll();
     await imageAnalysis?.clearAnalyzer();
+    await deviceOrientationManager.stopListeningForDeviceOrientationChange();
   }
 
   /// The camera has been initialized.
@@ -476,14 +519,16 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The camera experienced an error.
   @override
   Stream<CameraErrorEvent> onCameraError(int cameraId) {
-    return StreamGroup.mergeBroadcast<
-        CameraErrorEvent>(<Stream<CameraErrorEvent>>[
-      SystemServices.cameraErrorStreamController.stream
-          .map<CameraErrorEvent>((String errorDescription) {
-        return CameraErrorEvent(cameraId, errorDescription);
-      }),
-      _cameraEvents(cameraId).whereType<CameraErrorEvent>()
-    ]);
+    return StreamGroup.mergeBroadcast<CameraErrorEvent>(
+      <Stream<CameraErrorEvent>>[
+        cameraErrorStreamController.stream.map<CameraErrorEvent>((
+          String errorDescription,
+        ) {
+          return CameraErrorEvent(cameraId, errorDescription);
+        }),
+        _cameraEvents(cameraId).whereType<CameraErrorEvent>(),
+      ],
+    );
   }
 
   /// The camera finished recording a video.
@@ -505,8 +550,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     captureOrientationLocked = true;
 
     // Get target rotation based on locked orientation.
-    final int targetLockedRotation =
-        _getRotationConstantFromDeviceOrientation(orientation);
+    final int targetLockedRotation = _getRotationConstantFromDeviceOrientation(
+      orientation,
+    );
 
     // Update UseCases to use target device orientation.
     await imageCapture!.setTargetRotation(targetLockedRotation);
@@ -538,9 +584,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     // is implemented with Camera2 interop that will override settings to
     // achieve the expected exposure mode as needed).
     await _startFocusAndMeteringForPoint(
-        point: point,
-        meteringMode: FocusMeteringAction.flagAe,
-        disableAutoCancel: _currentFocusMode == FocusMode.locked);
+      point: point,
+      meteringMode: MeteringMode.ae,
+      disableAutoCancel: _currentFocusMode == FocusMode.locked,
+    );
   }
 
   /// Gets the minimum supported exposure offset for the selected camera in EV units.
@@ -548,8 +595,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<double> getMinExposureOffset(int cameraId) async {
-    final ExposureState exposureState = await cameraInfo!.getExposureState();
-    return exposureState.exposureCompensationRange.minCompensation *
+    final ExposureState exposureState = cameraInfo!.exposureState;
+    return exposureState.exposureCompensationRange.lower *
         exposureState.exposureCompensationStep;
   }
 
@@ -558,8 +605,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<double> getMaxExposureOffset(int cameraId) async {
-    final ExposureState exposureState = await cameraInfo!.getExposureState();
-    return exposureState.exposureCompensationRange.maxCompensation *
+    final ExposureState exposureState = cameraInfo!.exposureState;
+    return exposureState.exposureCompensationRange.upper *
         exposureState.exposureCompensationStep;
   }
 
@@ -586,12 +633,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         // default auto-focus point if set previously to lock focus.
         final MeteringPoint? unLockedFocusPoint = _defaultFocusPointLocked
             ? null
-            : currentFocusMeteringAction!.meteringPointInfos
-                .where(((MeteringPoint, int?) meteringPointInfo) =>
-                    meteringPointInfo.$2 == FocusMeteringAction.flagAf)
-                .toList()
-                .first
-                .$1;
+            : currentFocusMeteringAction!.meteringPointsAf.first;
         _defaultFocusPointLocked = false;
         autoFocusPoint = unLockedFocusPoint;
         disableAutoCancel = false;
@@ -600,20 +642,26 @@ class AndroidCameraCameraX extends CameraPlatform {
 
         // Determine if there is an auto-focus point set currently to lock.
         if (currentFocusMeteringAction != null) {
-          final List<(MeteringPoint, int?)> possibleCurrentAfPoints =
-              currentFocusMeteringAction!.meteringPointInfos
-                  .where(((MeteringPoint, int?) meteringPointInfo) =>
-                      meteringPointInfo.$2 == FocusMeteringAction.flagAf)
-                  .toList();
+          final List<MeteringPoint> possibleCurrentAfPoints =
+              currentFocusMeteringAction!.meteringPointsAf;
           lockedFocusPoint = possibleCurrentAfPoints.isEmpty
               ? null
-              : possibleCurrentAfPoints.first.$1;
+              : possibleCurrentAfPoints.first;
         }
 
         // If there isn't, lock center of entire sensor area by default.
         if (lockedFocusPoint == null) {
-          lockedFocusPoint =
-              proxy.createMeteringPoint(0.5, 0.5, 1, cameraInfo!);
+          final DisplayOrientedMeteringPointFactory meteringPointFactory =
+              proxy.newDisplayOrientedMeteringPointFactory(
+            cameraInfo: cameraInfo!,
+            width: 1,
+            height: 1,
+          );
+          lockedFocusPoint = await meteringPointFactory.createPointWithSize(
+            0.5,
+            0.5,
+            1,
+          );
           _defaultFocusPointLocked = true;
         }
 
@@ -622,9 +670,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
     // Start appropriate focus and metering action.
     final bool focusAndMeteringWasSuccessful = await _startFocusAndMeteringFor(
-        meteringPoint: autoFocusPoint,
-        meteringMode: FocusMeteringAction.flagAf,
-        disableAutoCancel: disableAutoCancel);
+      meteringPoint: autoFocusPoint,
+      meteringMode: MeteringMode.af,
+      disableAutoCancel: disableAutoCancel,
+    );
 
     if (!focusAndMeteringWasSuccessful) {
       // Do not update current focus mode.
@@ -650,7 +699,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] not used.
   @override
   Future<double> getExposureOffsetStepSize(int cameraId) async {
-    final ExposureState exposureState = await cameraInfo!.getExposureState();
+    final ExposureState exposureState = cameraInfo!.exposureState;
     final double exposureOffsetStepSize =
         exposureState.exposureCompensationStep;
     if (exposureOffsetStepSize == 0) {
@@ -677,10 +726,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<double> setExposureOffset(int cameraId, double offset) async {
     final double exposureOffsetStepSize =
-        (await cameraInfo!.getExposureState()).exposureCompensationStep;
+        cameraInfo!.exposureState.exposureCompensationStep;
     if (exposureOffsetStepSize == 0) {
-      throw CameraException(exposureCompensationNotSupported,
-          'Exposure compensation not supported');
+      throw CameraException(
+        exposureCompensationNotSupported,
+        'Exposure compensation not supported',
+      );
     }
 
     // (Exposure compensation index) * (exposure offset step size) =
@@ -689,19 +740,30 @@ class AndroidCameraCameraX extends CameraPlatform {
         (offset / exposureOffsetStepSize).round();
 
     try {
-      final int? newIndex = await cameraControl
-          .setExposureCompensationIndex(roundedExposureCompensationIndex);
+      final int? newIndex = await cameraControl.setExposureCompensationIndex(
+        roundedExposureCompensationIndex,
+      );
+
       if (newIndex == null) {
-        throw CameraException(setExposureOffsetFailedErrorCode,
+        cameraErrorStreamController.add(
             'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.');
+        throw CameraException(
+          setExposureOffsetFailedErrorCode,
+          'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
+        );
       }
 
       return newIndex.toDouble();
     } on PlatformException catch (e) {
+      cameraErrorStreamController.add(e.message ??
+          'Setting the camera exposure compensation index failed.');
+      // Surfacing error to plugin layer to maintain consistency of
+      // setExposureOffset implementation across platform implementations.
+
       throw CameraException(
-          setExposureOffsetFailedErrorCode,
-          e.message ??
-              'Setting the camera exposure compensation index failed.');
+        setExposureOffsetFailedErrorCode,
+        e.message ?? 'Setting the camera exposure compensation index failed.',
+      );
     }
   }
 
@@ -722,9 +784,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     // is implemented with Camera2 interop that will override settings to
     // achieve the expected exposure mode as needed).
     await _startFocusAndMeteringForPoint(
-        point: point,
-        meteringMode: FocusMeteringAction.flagAf,
-        disableAutoCancel: _currentFocusMode == FocusMode.locked);
+      point: point,
+      meteringMode: MeteringMode.af,
+      disableAutoCancel: _currentFocusMode == FocusMode.locked,
+    );
   }
 
   /// Sets the exposure mode for taking pictures.
@@ -735,17 +798,25 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
-    final Camera2CameraControl camera2Control =
-        proxy.getCamera2CameraControl(cameraControl);
+    final Camera2CameraControl camera2Control = proxy.fromCamera2CameraControl(
+      cameraControl: cameraControl,
+    );
     final bool lockExposureMode = mode == ExposureMode.locked;
 
-    final CaptureRequestOptions captureRequestOptions = proxy
-        .createCaptureRequestOptions(<(
-      CaptureRequestKeySupportedType,
-      Object?
-    )>[(CaptureRequestKeySupportedType.controlAeLock, lockExposureMode)]);
+    final CaptureRequestOptions captureRequestOptions =
+        proxy.newCaptureRequestOptions(
+      options: <CaptureRequestKey, Object?>{
+        proxy.controlAELockCaptureRequest(): lockExposureMode,
+      },
+    );
 
-    await camera2Control.addCaptureRequestOptions(captureRequestOptions);
+    try {
+      await camera2Control.addCaptureRequestOptions(captureRequestOptions);
+    } on PlatformException catch (e) {
+      cameraErrorStreamController.add(e.message ??
+          'The camera was unable to set new capture request options due to new options being unavailable or the camera being closed.');
+    }
+
     _currentExposureMode = mode;
   }
 
@@ -790,14 +861,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// Throws a `CameraException` when an illegal zoom level is supplied.
   @override
   Future<void> setZoomLevel(int cameraId, double zoom) async {
-    await cameraControl.setZoomRatio(zoom);
+    try {
+      await cameraControl.setZoomRatio(zoom);
+    } on PlatformException catch (e) {
+      cameraErrorStreamController.add(e.message ??
+          'Zoom ratio was unable to be set. If ratio was not out of range, newer value may have been set; otherwise, the camera may be closed.');
+    }
   }
 
   /// The ui orientation changed.
   @override
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
-    return DeviceOrientationManager
-        .deviceOrientationChangedStreamController.stream;
+    return deviceOrientationChangedStreamController.stream;
   }
 
   /// Pause the active preview on the current frame for the selected camera.
@@ -849,8 +924,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final Stream<DeviceOrientation> deviceOrientationStream =
-        onDeviceOrientationChanged()
-            .map((DeviceOrientationChangedEvent e) => e.orientation);
+        onDeviceOrientationChanged().map(
+      (DeviceOrientationChangedEvent e) => e.orientation,
+    );
     if (cameraIsFrontFacing) {
       return RotatedPreview.frontFacingCamera(
         _initialDeviceOrientation,
@@ -880,14 +956,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     } else if (torchEnabled) {
       // Ensure any previously set flash modes are unset when torch mode has
       // been enabled.
-      await imageCapture!.setFlashMode(ImageCapture.flashModeOff);
+      await imageCapture!.setFlashMode(CameraXFlashMode.off);
     }
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await imageCapture!
-          .setTargetRotation(await proxy.getDefaultDisplayRotation());
+      await imageCapture!.setTargetRotation(
+        await deviceOrientationManager.getDefaultDisplayRotation(),
+      );
     }
 
     final String picturePath = await imageCapture!.takePicture();
@@ -910,24 +987,25 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<void> setFlashMode(int cameraId, FlashMode mode) async {
     // Turn off torch mode if it is enabled and not being redundantly set.
     if (mode != FlashMode.torch && torchEnabled) {
-      await cameraControl.enableTorch(false);
+      await _enableTorchMode(false);
       torchEnabled = false;
     }
 
     switch (mode) {
       case FlashMode.off:
-        _currentFlashMode = ImageCapture.flashModeOff;
+        _currentFlashMode = CameraXFlashMode.off;
       case FlashMode.auto:
-        _currentFlashMode = ImageCapture.flashModeAuto;
+        _currentFlashMode = CameraXFlashMode.auto;
       case FlashMode.always:
-        _currentFlashMode = ImageCapture.flashModeOn;
+        _currentFlashMode = CameraXFlashMode.on;
       case FlashMode.torch:
         _currentFlashMode = null;
         if (torchEnabled) {
           // Torch mode enabled already.
           return;
         }
-        await cameraControl.enableTorch(true);
+
+        await _enableTorchMode(true);
         torchEnabled = true;
     }
   }
@@ -950,8 +1028,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// This method is deprecated in favour of [startVideoCapturing].
   @override
-  Future<void> startVideoRecording(int cameraId,
-      {Duration? maxVideoDuration}) async {
+  Future<void> startVideoRecording(
+    int cameraId, {
+    Duration? maxVideoDuration,
+  }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
     return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
@@ -978,15 +1058,17 @@ class AndroidCameraCameraX extends CameraPlatform {
       // the preview must be paused in order to allow those concurrently. See
       // https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
       // for more information on supported concurrent camera use cases.
-      final Camera2CameraInfo camera2CameraInfo =
-          await proxy.getCamera2CameraInfo(cameraInfo!);
-      final int cameraInfoSupportedHardwareLevel =
-          await camera2CameraInfo.getSupportedHardwareLevel();
+      final Camera2CameraInfo camera2CameraInfo = proxy.fromCamera2CameraInfo(
+        cameraInfo: cameraInfo!,
+      );
+      final InfoSupportedHardwareLevel cameraInfoSupportedHardwareLevel =
+          (await camera2CameraInfo.getCameraCharacteristic(
+        proxy.infoSupportedHardwareLevelCameraCharacteristics(),
+      ))! as InfoSupportedHardwareLevel;
 
       // Handle limited level device restrictions:
       final bool cameraSupportsConcurrentImageCapture =
-          cameraInfoSupportedHardwareLevel !=
-              CameraMetadata.infoSupportedHardwareLevelLegacy;
+          cameraInfoSupportedHardwareLevel != InfoSupportedHardwareLevel.legacy;
       if (!cameraSupportsConcurrentImageCapture) {
         // Concurrent preview + video recording + image capture is not supported
         // unless the camera device is cameraSupportsHardwareLevelLimited or
@@ -996,8 +1078,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
       // Handle level 3 device restrictions:
       final bool cameraSupportsHardwareLevel3 =
-          cameraInfoSupportedHardwareLevel ==
-              CameraMetadata.infoSupportedHardwareLevel3;
+          cameraInfoSupportedHardwareLevel == InfoSupportedHardwareLevel.level3;
       if (!cameraSupportsHardwareLevel3 || streamCallback == null) {
         // Concurrent preview + video recording + image streaming is not supported
         // unless the camera device is cameraSupportsHardwareLevel3 or better.
@@ -1015,14 +1096,18 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await videoCapture!
-          .setTargetRotation(await proxy.getDefaultDisplayRotation());
+      await videoCapture!.setTargetRotation(
+        await deviceOrientationManager.getDefaultDisplayRotation(),
+      );
     }
 
-    videoOutputPath =
-        await SystemServices.getTempFilePath(videoPrefix, '.temp');
+    videoOutputPath = await systemServicesManager.getTempFilePath(
+      videoPrefix,
+      '.temp',
+    );
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
-    recording = await pendingRecording!.start();
+
+    recording = await pendingRecording!.start(_videoRecordingEventListener);
 
     if (streamCallback != null) {
       onStreamedFrameAvailable(options.cameraId).listen(streamCallback);
@@ -1030,7 +1115,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Wait for video recording to start.
     VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
-    while (event != VideoRecordEvent.start) {
+    while (event is! VideoRecordEventStart) {
       event = await videoRecordingEventStreamQueue.next;
     }
   }
@@ -1045,15 +1130,16 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<XFile> stopVideoRecording(int cameraId) async {
     if (recording == null) {
       throw CameraException(
-          'videoRecordingFailed',
-          'Attempting to stop a '
-              'video recording while no recording is in progress.');
+        'videoRecordingFailed',
+        'Attempting to stop a '
+            'video recording while no recording is in progress.',
+      );
     }
 
     /// Stop the active recording and wait for the video recording to be finalized.
     await recording!.close();
     VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
-    while (event != VideoRecordEvent.finalize) {
+    while (event is! VideoRecordEventFinalize) {
       event = await videoRecordingEventStreamQueue.next;
     }
     recording = null;
@@ -1062,16 +1148,18 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (videoOutputPath == null) {
       // Handle any errors with finalizing video recording.
       throw CameraException(
-          'INVALID_PATH',
-          'The platform did not return a path '
-              'while reporting success. The platform should always '
-              'return a valid path or report an error.');
+        'INVALID_PATH',
+        'The platform did not return a path '
+            'while reporting success. The platform should always '
+            'return a valid path or report an error.',
+      );
     }
 
     await _unbindUseCaseFromLifecycle(videoCapture!);
     final XFile videoFile = XFile(videoOutputPath!);
-    cameraEventStreamController
-        .add(VideoRecordedEvent(cameraId, videoFile, /* duration */ null));
+    cameraEventStreamController.add(
+      VideoRecordedEvent(cameraId, videoFile, /* duration */ null),
+    );
     return videoFile;
   }
 
@@ -1105,8 +1193,10 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///
   /// [cameraId] and [options] are not used.
   @override
-  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
-      {CameraImageStreamOptions? options}) {
+  Stream<CameraImageData> onStreamedFrameAvailable(
+    int cameraId, {
+    CameraImageStreamOptions? options,
+  }) {
     cameraImageDataStreamController = StreamController<CameraImageData>(
       onListen: () async => _configureImageAnalysis(cameraId),
       onCancel: _onFrameStreamCancel,
@@ -1133,8 +1223,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       return;
     }
 
-    camera = await processCameraProvider!
-        .bindToLifecycle(cameraSelector!, <UseCase>[useCase]);
+    camera = await processCameraProvider!.bindToLifecycle(
+      cameraSelector!,
+      <UseCase>[useCase],
+    );
 
     await _updateCameraInfoAndLiveCameraState(cameraId);
   }
@@ -1146,8 +1238,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await imageAnalysis!
-          .setTargetRotation(await proxy.getDefaultDisplayRotation());
+      await imageAnalysis!.setTargetRotation(
+        await deviceOrientationManager.getDefaultDisplayRotation(),
+      );
     }
 
     // Create and set Analyzer that can read image data for image streaming.
@@ -1157,29 +1250,35 @@ class AndroidCameraCameraX extends CameraPlatform {
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
       for (final PlaneProxy plane in planes) {
-        cameraImagePlanes.add(CameraImagePlane(
+        cameraImagePlanes.add(
+          CameraImagePlane(
             bytes: plane.buffer,
             bytesPerRow: plane.rowStride,
-            bytesPerPixel: plane.pixelStride));
+            bytesPerPixel: plane.pixelStride,
+          ),
+        );
       }
 
       final int format = imageProxy.format;
       final CameraImageFormat cameraImageFormat = CameraImageFormat(
-          _imageFormatGroupFromPlatformData(format),
-          raw: format);
+        _imageFormatGroupFromPlatformData(format),
+        raw: format,
+      );
 
       final CameraImageData cameraImageData = CameraImageData(
-          format: cameraImageFormat,
-          planes: cameraImagePlanes,
-          height: imageProxy.height,
-          width: imageProxy.width);
+        format: cameraImageFormat,
+        planes: cameraImagePlanes,
+        height: imageProxy.height,
+        width: imageProxy.width,
+      );
 
       weakThis.target!.cameraImageDataStreamController!.add(cameraImageData);
       await imageProxy.close();
     }
 
-    final Analyzer analyzer = proxy.createAnalyzer(analyze);
-    await imageAnalysis!.setAnalyzer(analyzer);
+    await imageAnalysis!.setAnalyzer(
+      proxy.newAnalyzer(analyze: (_, ImageProxy image) => analyze(image)),
+    );
   }
 
   /// Unbinds [useCase] from camera lifecycle controlled by the
@@ -1190,7 +1289,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       return;
     }
 
-    processCameraProvider!.unbind(<UseCase>[useCase]);
+    await processCameraProvider!.unbind(<UseCase>[useCase]);
   }
 
   // Methods for configuring image streaming:
@@ -1227,8 +1326,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// If a previous [liveCameraState] was stored, existing observers are
   /// removed, as well.
   Future<void> _updateCameraInfoAndLiveCameraState(int cameraId) async {
-    cameraInfo = await camera!.getCameraInfo();
-    cameraControl = await camera!.getCameraControl();
+    cameraInfo = (await camera!.getCameraInfo()) as CameraInfo;
+    cameraControl = camera!.cameraControl;
     await liveCameraState?.removeObservers();
     liveCameraState = await cameraInfo!.getCameraState();
     await liveCameraState!.observe(_createCameraClosingObserver(cameraId));
@@ -1245,36 +1344,64 @@ class AndroidCameraCameraX extends CameraPlatform {
         WeakReference<AndroidCameraCameraX>(this);
 
     // Callback method used to implement the behavior described above:
-    void onChanged(Object stateAsObject) {
-      // This cast is safe because the Observer implementation ensures
-      // the type of stateAsObject is the same as the observer this callback
-      // is attached to.
-      final CameraState state = stateAsObject as CameraState;
+    void onChanged(CameraState state) {
       if (state.type == CameraStateType.closing) {
-        weakThis.target!.cameraEventStreamController
-            .add(CameraClosingEvent(cameraId));
+        weakThis.target!.cameraEventStreamController.add(
+          CameraClosingEvent(cameraId),
+        );
       }
       if (state.error != null) {
-        weakThis.target!.cameraEventStreamController
-            .add(CameraErrorEvent(cameraId, state.error!.getDescription()));
+        late final String errorDescription;
+        switch (state.error!.code) {
+          case CameraStateErrorCode.cameraInUse:
+            errorDescription =
+                'The camera was already in use, possibly by a higher-priority camera client.';
+          case CameraStateErrorCode.maxCamerasInUse:
+            errorDescription =
+                'The limit number of open cameras has been reached, and more cameras cannot be opened until other instances are closed.';
+          case CameraStateErrorCode.otherRecoverableError:
+            errorDescription =
+                'The camera device has encountered a recoverable error. CameraX will attempt to recover from the error.';
+          case CameraStateErrorCode.streamConfig:
+            errorDescription = 'Configuring the camera has failed.';
+          case CameraStateErrorCode.cameraDisabled:
+            errorDescription =
+                'The camera device could not be opened due to a device policy. Thia may be caused by a client from a background process attempting to open the camera.';
+          case CameraStateErrorCode.cameraFatalError:
+            errorDescription =
+                'The camera was closed due to a fatal error. This may require the Android device be shut down and restarted to restore camera function or may indicate a persistent camera hardware problem.';
+          case CameraStateErrorCode.doNotDisturbModeEnabled:
+            errorDescription =
+                'The camera could not be opened because "Do Not Disturb" mode is enabled. Please disable this mode, and try opening the camera again.';
+          case CameraStateErrorCode.unknown:
+            errorDescription =
+                'There was an unspecified issue with the current camera state.';
+        }
+        weakThis.target!.cameraEventStreamController.add(
+          CameraErrorEvent(cameraId, errorDescription),
+        );
       }
     }
 
-    return proxy.createCameraStateObserver(onChanged);
+    return proxy.newObserver<CameraState>(
+      onChanged: (_, CameraState value) => onChanged(value),
+    );
   }
 
   // Methods for mapping Flutter camera constants to CameraX constants:
 
   /// Returns [CameraSelector] lens direction that maps to specified
   /// [CameraLensDirection].
-  int _getCameraSelectorLensDirection(CameraLensDirection lensDirection) {
+  LensFacing _getCameraSelectorLensDirection(
+    CameraLensDirection lensDirection,
+  ) {
     switch (lensDirection) {
       case CameraLensDirection.front:
-        return CameraSelector.lensFacingFront;
+        return LensFacing.front;
       case CameraLensDirection.back:
-        return CameraSelector.lensFacingBack;
+        return LensFacing.back;
       case CameraLensDirection.external:
-        return CameraSelector.lensFacingExternal;
+        return LensFacing.external;
     }
   }
 
@@ -1300,50 +1427,61 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// If the specified [preset] is unavailable, the camera will fall back to the
   /// closest lower resolution available.
   ResolutionSelector? _getResolutionSelectorFromPreset(
-      ResolutionPreset? preset) {
-    const int fallbackRule =
-        ResolutionStrategy.fallbackRuleClosestLowerThenHigher;
+    ResolutionPreset? preset,
+  ) {
+    const ResolutionStrategyFallbackRule fallbackRule =
+        ResolutionStrategyFallbackRule.closestLowerThenHigher;
 
-    Size? boundSize;
-    int? aspectRatio;
+    CameraSize? boundSize;
+    AspectRatio? aspectRatio;
     ResolutionStrategy? resolutionStrategy;
     switch (preset) {
       case ResolutionPreset.low:
-        boundSize = const Size(320, 240);
+        boundSize = proxy.newCameraSize(width: 320, height: 240);
         aspectRatio = AspectRatio.ratio4To3;
       case ResolutionPreset.medium:
-        boundSize = const Size(720, 480);
+        boundSize = proxy.newCameraSize(width: 720, height: 480);
       case ResolutionPreset.high:
-        boundSize = const Size(1280, 720);
+        boundSize = proxy.newCameraSize(width: 1280, height: 720);
         aspectRatio = AspectRatio.ratio16To9;
       case ResolutionPreset.veryHigh:
-        boundSize = const Size(1920, 1080);
+        boundSize = proxy.newCameraSize(width: 1920, height: 1080);
         aspectRatio = AspectRatio.ratio16To9;
       case ResolutionPreset.ultraHigh:
-        boundSize = const Size(3840, 2160);
+        boundSize = proxy.newCameraSize(width: 3840, height: 2160);
         aspectRatio = AspectRatio.ratio16To9;
       case ResolutionPreset.max:
         // Automatically set strategy to choose highest available.
-        resolutionStrategy =
-            proxy.createResolutionStrategy(highestAvailable: true);
-        return proxy.createResolutionSelector(resolutionStrategy,
-            /* ResolutionFilter */ null, /* AspectRatioStrategy */ null);
+        resolutionStrategy = proxy.highestAvailableStrategyResolutionStrategy();
+        return proxy.newResolutionSelector(
+          resolutionStrategy: resolutionStrategy,
+        );
       case null:
         // If no preset is specified, default to CameraX's default behavior
         // for each UseCase.
         return null;
     }
 
-    resolutionStrategy = proxy.createResolutionStrategy(
-        boundSize: boundSize, fallbackRule: fallbackRule);
-    final ResolutionFilter resolutionFilter =
-        proxy.createResolutionFilterWithOnePreferredSize(boundSize);
+    resolutionStrategy = proxy.newResolutionStrategy(
+      boundSize: proxy.newCameraSize(
+        width: boundSize.width,
+        height: boundSize.height,
+      ),
+      fallbackRule: fallbackRule,
+    );
+    final ResolutionFilter resolutionFilter = proxy
+        .createWithOnePreferredSizeResolutionFilter(preferredSize: boundSize);
     final AspectRatioStrategy? aspectRatioStrategy = aspectRatio == null
         ? null
-        : proxy.createAspectRatioStrategy(
-            aspectRatio, AspectRatioStrategy.fallbackRuleAuto);
-    return proxy.createResolutionSelector(
-        resolutionStrategy, resolutionFilter, aspectRatioStrategy);
+        : proxy.newAspectRatioStrategy(
+            preferredAspectRatio: aspectRatio,
+            fallbackRule: AspectRatioStrategyFallbackRule.auto,
+          );
+    return proxy.newResolutionSelector(
+      resolutionStrategy: resolutionStrategy,
+      resolutionFilter: resolutionFilter,
+      aspectRatioStrategy: aspectRatioStrategy,
+    );
   }
 
   /// Returns the [QualitySelector] that maps to the specified resolution
@@ -1374,28 +1512,44 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // We will choose the next highest video quality if the one desired
     // is unavailable.
-    const VideoResolutionFallbackRule fallbackRule =
-        VideoResolutionFallbackRule.lowerQualityOrHigherThan;
-    final FallbackStrategy fallbackStrategy = proxy.createFallbackStrategy(
-        quality: videoQuality, fallbackRule: fallbackRule);
+    final FallbackStrategy fallbackStrategy =
+        proxy.lowerQualityOrHigherThanFallbackStrategy(quality: videoQuality);
 
-    return proxy.createQualitySelector(
-        videoQuality: videoQuality, fallbackStrategy: fallbackStrategy);
+    return proxy.fromQualitySelector(
+      quality: videoQuality,
+      fallbackStrategy: fallbackStrategy,
+    );
   }
 
   // Methods for configuring auto-focus and auto-exposure:
 
-  Future<bool> _startFocusAndMeteringForPoint(
-      {required Point<double>? point,
-      required int meteringMode,
-      bool disableAutoCancel = false}) async {
+  Future<bool> _startFocusAndMeteringForPoint({
+    required Point<double>? point,
+    required MeteringMode meteringMode,
+    bool disableAutoCancel = false,
+  }) async {
+    MeteringPoint? meteringPoint;
+    if (point != null) {
+      if (point.x < 0 || point.x > 1 || point.y < 0 || point.y > 1) {
+        throw CameraException(
+          'pointInvalid',
+          'The coordinates of a metering point for an auto-focus or auto-exposure action must be within (0,0) and (1,1), but a point with coordinates (${point.x}, ${point.y}) was provided for metering mode $meteringMode.',
+        );
+      }
+
+      final DisplayOrientedMeteringPointFactory meteringPointFactory =
+          proxy.newDisplayOrientedMeteringPointFactory(
+        width: 1.0,
+        height: 1.0,
+        cameraInfo: cameraInfo!,
+      );
+      meteringPoint = await meteringPointFactory.createPoint(point.x, point.y);
+    }
     return _startFocusAndMeteringFor(
-        meteringPoint: point == null
-            ? null
-            : proxy.createMeteringPoint(
-                point.x, point.y, /* size */ null, cameraInfo!),
-        meteringMode: meteringMode,
-        disableAutoCancel: disableAutoCancel);
+      meteringPoint: meteringPoint,
+      meteringMode: meteringMode,
+      disableAutoCancel: disableAutoCancel,
+    );
   }
 
   /// Starts a focus and metering action and returns whether or not it was
@@ -1419,10 +1573,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// to [currentFocusMeteringAction] that do not share a metering mode with
   /// [meteringPoint]. If [meteringPoint] and [currentFocusMeteringAction] are
   /// null, then focus and metering will be canceled.
-  Future<bool> _startFocusAndMeteringFor(
-      {required MeteringPoint? meteringPoint,
-      required int meteringMode,
-      bool disableAutoCancel = false}) async {
+  Future<bool> _startFocusAndMeteringFor({
+    required MeteringPoint? meteringPoint,
+    required MeteringMode meteringMode,
+    bool disableAutoCancel = false,
+  }) async {
     if (meteringPoint == null) {
       // Try to clear any metering point from previous action with the specified
       // meteringMode.
@@ -1432,17 +1587,22 @@ class AndroidCameraCameraX extends CameraPlatform {
         return false;
       }
 
+      final Iterable<(MeteringPoint, MeteringMode)> originalMeteringPoints =
+          _combineMeteringPoints(currentFocusMeteringAction!);
+
       // Remove metering point with specified meteringMode from current focus
       // and metering action, as only one focus or exposure point may be set
       // at once in this plugin.
-      final List<(MeteringPoint, int?)> newMeteringPointInfos =
-          currentFocusMeteringAction!.meteringPointInfos
-              .where(((MeteringPoint, int?) meteringPointInfo) =>
-                  // meteringPointInfo may technically include points without a
-                  // mode specified, but this logic is safe because this plugin
-                  // only uses points that explicitly have mode
-                  // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
-                  meteringPointInfo.$2 != meteringMode)
+      final List<(MeteringPoint, MeteringMode)> newMeteringPointInfos =
+          originalMeteringPoints
+              .where(
+                ((MeteringPoint, MeteringMode) meteringPointInfo) =>
+                    // meteringPointInfo may technically include points without a
+                    // mode specified, but this logic is safe because this plugin
+                    // only uses points that explicitly have mode
+                    // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
+                    meteringPointInfo.$2 != meteringMode,
+              )
               .toList();
 
       if (newMeteringPointInfos.isEmpty) {
@@ -1452,38 +1612,138 @@ class AndroidCameraCameraX extends CameraPlatform {
         currentFocusMeteringAction = null;
         return true;
       }
-      currentFocusMeteringAction = proxy.createFocusMeteringAction(
-          newMeteringPointInfos, disableAutoCancel);
-    } else if (meteringPoint.x < 0 ||
-        meteringPoint.x > 1 ||
-        meteringPoint.y < 0 ||
-        meteringPoint.y > 1) {
-      throw CameraException('pointInvalid',
-          'The coordinates of a metering point for an auto-focus or auto-exposure action must be within (0,0) and (1,1), but a point with coordinates (${meteringPoint.x}, ${meteringPoint.y}) was provided for metering mode $meteringMode.');
+      // Create builder to potentially add more MeteringPoints to.
+      final FocusMeteringActionBuilder actionBuilder =
+          proxy.withModeFocusMeteringActionBuilder(
+        point: newMeteringPointInfos.first.$1,
+        mode: newMeteringPointInfos.first.$2,
+      );
+      if (disableAutoCancel) {
+        unawaited(actionBuilder.disableAutoCancel());
+      }
+
+      // Add any additional metering points in order as specified by input lists.
+      newMeteringPointInfos.skip(1).forEach((
+        (MeteringPoint point, MeteringMode) info,
+      ) {
+        actionBuilder.addPointWithMode(info.$1, info.$2);
+      });
+      currentFocusMeteringAction = await actionBuilder.build();
     } else {
       // Add new metering point with specified meteringMode, which may involve
       // replacing a metering point with the same specified meteringMode from
       // the current focus and metering action.
-      List<(MeteringPoint, int?)> newMeteringPointInfos =
-          <(MeteringPoint, int?)>[];
+      List<(MeteringPoint, MeteringMode)> newMeteringPointInfos =
+          <(MeteringPoint, MeteringMode)>[];
 
       if (currentFocusMeteringAction != null) {
-        newMeteringPointInfos = currentFocusMeteringAction!.meteringPointInfos
-            .where(((MeteringPoint, int?) meteringPointInfo) =>
-                // meteringPointInfo may technically include points without a
-                // mode specified, but this logic is safe because this plugin
-                // only uses points that explicitly have mode
-                // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
-                meteringPointInfo.$2 != meteringMode)
+        final Iterable<(MeteringPoint, MeteringMode)> originalMeteringPoints =
+            _combineMeteringPoints(currentFocusMeteringAction!);
+
+        newMeteringPointInfos = originalMeteringPoints
+            .where(
+              ((MeteringPoint, MeteringMode) meteringPointInfo) =>
+                  // meteringPointInfo may technically include points without a
+                  // mode specified, but this logic is safe because this plugin
+                  // only uses points that explicitly have mode
+                  // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
+                  meteringPointInfo.$2 != meteringMode,
+            )
             .toList();
       }
+
       newMeteringPointInfos.add((meteringPoint, meteringMode));
-      currentFocusMeteringAction = proxy.createFocusMeteringAction(
-          newMeteringPointInfos, disableAutoCancel);
+
+      final FocusMeteringActionBuilder actionBuilder =
+          proxy.withModeFocusMeteringActionBuilder(
+        point: newMeteringPointInfos.first.$1,
+        mode: newMeteringPointInfos.first.$2,
+      );
+
+      if (disableAutoCancel) {
+        unawaited(actionBuilder.disableAutoCancel());
+      }
+
+      newMeteringPointInfos.skip(1).forEach((
+        (MeteringPoint point, MeteringMode mode) info,
+      ) {
+        actionBuilder.addPointWithMode(info.$1, info.$2);
+      });
+      currentFocusMeteringAction = await actionBuilder.build();
     }
 
-    final FocusMeteringResult? result =
-        await cameraControl.startFocusAndMetering(currentFocusMeteringAction!);
-    return await result?.isFocusSuccessful() ?? false;
+    try {
+      final FocusMeteringResult? result = await cameraControl
+          .startFocusAndMetering(currentFocusMeteringAction!);
+
+      if (result == null) {
+        cameraErrorStreamController.add(
+          'Starting focus and metering was canceled due to the camera being closed or a new request being submitted.',
+        );
+      }
+
+      return result?.isFocusSuccessful ?? false;
+    } on PlatformException catch (e) {
+      cameraErrorStreamController.add(
+        e.message ?? 'Starting focus and metering failed.',
+      );
+      // Surfacing error to differentiate an operation cancellation from an
+      // illegal argument exception at a plugin layer.
+      rethrow;
+    }
+  }
+
+  // Combines the metering points and metering modes of a `FocusMeteringAction`
+  // into a single list.
+  Iterable<(MeteringPoint, MeteringMode)> _combineMeteringPoints(
+    FocusMeteringAction focusMeteringAction,
+  ) {
+    Iterable<(MeteringPoint, MeteringMode)> toMeteringPointRecords(
+      Iterable<MeteringPoint> points,
+      MeteringMode mode,
+    ) {
+      return points.map((MeteringPoint point) => (point, mode));
+    }
+
+    return <(MeteringPoint, MeteringMode)>[
+      ...toMeteringPointRecords(
+        focusMeteringAction.meteringPointsAf,
+        MeteringMode.af,
+      ),
+      ...toMeteringPointRecords(
+        focusMeteringAction.meteringPointsAe,
+        MeteringMode.ae,
+      ),
+      ...toMeteringPointRecords(
+        focusMeteringAction.meteringPointsAwb,
+        MeteringMode.awb,
+      ),
+    ];
+  }
+
+  Future<void> _enableTorchMode(bool value) async {
+    try {
+      await cameraControl.enableTorch(value);
+    } on PlatformException catch (e) {
+      cameraErrorStreamController
+          .add(e.message ?? 'The camera was unable to change torch modes.');
+    }
+  }
+
+  static DeviceOrientation _deserializeDeviceOrientation(String orientation) {
+    switch (orientation) {
+      case 'LANDSCAPE_LEFT':
+        return DeviceOrientation.landscapeLeft;
+      case 'LANDSCAPE_RIGHT':
+        return DeviceOrientation.landscapeRight;
+      case 'PORTRAIT_DOWN':
+        return DeviceOrientation.portraitDown;
+      case 'PORTRAIT_UP':
+        return DeviceOrientation.portraitUp;
+      default:
+        throw ArgumentError(
+          '"$orientation" is not a valid DeviceOrientation value',
+        );
+    }
   }
 }

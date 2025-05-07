@@ -492,6 +492,22 @@ void main() {
           .setOnScrollPositionChange(onScrollPositionChange),
     );
   });
+
+  test('setOverScrollMode', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    await webViewController.setOverScrollMode(WebViewOverScrollMode.never);
+    verify(
+      mockPlatformWebViewController.setOverScrollMode(
+        WebViewOverScrollMode.never,
+      ),
+    );
+  });
 }
 
 class TestPlatformWebViewPermissionRequest

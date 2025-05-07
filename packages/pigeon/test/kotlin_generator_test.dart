@@ -249,7 +249,7 @@ void main() {
             val wrapped: List<Any?> = try {
               listOf(api.doSomething(inputArg))
             } catch (exception: Throwable) {
-              wrapError(exception)
+              PigeonUtils.wrapError(exception)
             }
             reply.reply(wrapped)
           }
@@ -804,7 +804,7 @@ void main() {
     final String code = sink.toString();
     expect(code, contains('interface Api'));
     expect(code, contains('api.doSomething(argArg) {'));
-    expect(code, contains('reply.reply(wrapResult(data))'));
+    expect(code, contains('reply.reply(PigeonUtils.wrapResult(data))'));
   });
 
   test('gen one async Flutter Api', () {
@@ -1631,7 +1631,7 @@ void main() {
     expect(
         code,
         contains(
-            'callback(Result.failure(createConnectionError(channelName)))'));
+            'callback(Result.failure(PigeonUtils.createConnectionError(channelName)))'));
   });
 
   test('gen host uses default error class', () {

@@ -60,6 +60,10 @@ static void *rateContext = &rateContext;
                                         error:nil] == AVKeyValueStatusLoaded) {
             // Rotate the video by using a videoComposition and the preferredTransform
             self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
+            // Do not use video composition when it is not needed.
+            if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
+              return;
+            }
             // Note:
             // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
             // Video composition can only be used with file-based media and is not supported for
@@ -207,9 +211,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
   videoComposition.renderSize = CGSizeMake(width, height);
 
-  // TODO(@recastrodiaz): should we use videoTrack.nominalFrameRate ?
-  // Currently set at a constant 30 FPS
-  videoComposition.frameDuration = CMTimeMake(1, 30);
+  videoComposition.sourceTrackIDForFrameTiming = videoTrack.trackID;
+  if (CMTIME_IS_VALID(videoTrack.minFrameDuration)) {
+    videoComposition.frameDuration = videoTrack.minFrameDuration;
+  } else {
+    NSLog(@"Warning: videoTrack.minFrameDuration for input video is invalid, please report this to "
+          @"https://github.com/flutter/flutter/issues with input video attached.");
+    videoComposition.frameDuration = CMTimeMake(1, 30);
+  }
 
   return videoComposition;
 }
@@ -239,7 +248,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
         [self setupEventSinkIfReadyToPlay];
-        [self updatePlayingState];
         break;
     }
   } else if (context == presentationSizeContext || context == durationContext) {
@@ -249,7 +257,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       // its presentation size or duration. When these properties are finally set, re-check if
       // all required properties and instantiate the event sink if it is not already set up.
       [self setupEventSinkIfReadyToPlay];
-      [self updatePlayingState];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
     [self updatePlayingState];
@@ -387,6 +394,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
 
     _isInitialized = YES;
+    [self updatePlayingState];
+
     _eventSink(@{
       @"event" : @"initialized",
       @"duration" : @(duration),

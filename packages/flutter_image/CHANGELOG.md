@@ -1,3 +1,7 @@
+## 4.1.13
+
+* Updates README to indicate that the package has been discontinued.
+
 ## 4.1.12
 
 * Updates README to indicate that this package will be discontinued.

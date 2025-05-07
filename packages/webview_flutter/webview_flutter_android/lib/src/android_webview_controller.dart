@@ -731,6 +731,24 @@ class AndroidWebViewController extends PlatformWebViewController {
     _onJavaScriptPrompt = onJavaScriptTextInputDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
   }
+
+  @override
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
+    return switch (mode) {
+      WebViewOverScrollMode.always => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.always,
+        ),
+      WebViewOverScrollMode.ifContentScrolls => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.ifContentScrolls,
+        ),
+      WebViewOverScrollMode.never => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.never,
+        ),
+      // This prevents future additions from causing a breaking change.
+      // ignore: unreachable_switch_case
+      _ => throw UnsupportedError('Android does not support $mode.'),
+    };
+  }
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
@@ -1450,6 +1468,25 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           httpAuthHandler.cancel();
         }
       },
+      onFormResubmission:
+          (_, __, android_webview.AndroidMessage dontResend, ___) {
+        dontResend.sendToTarget();
+      },
+      onReceivedClientCertRequest: (
+        _,
+        __,
+        android_webview.ClientCertRequest request,
+      ) {
+        request.cancel();
+      },
+      onReceivedSslError: (
+        _,
+        __,
+        android_webview.SslErrorHandler handler,
+        ___,
+      ) {
+        handler.cancel();
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
@@ -1474,7 +1511,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
       params as AndroidNavigationDelegateCreationParams;
 
   late final android_webview.WebChromeClient _webChromeClient =
-      _androidParams.androidWebViewProxy.newWebChromeClient();
+      _androidParams.androidWebViewProxy.newWebChromeClient(
+    onJsConfirm: (_, __, ___, ____) async => false,
+    onShowFileChooser: (_, __, ___) async => <String>[],
+  );
 
   /// Gets the native [android_webview.WebChromeClient] that is bridged by this [AndroidNavigationDelegate].
   ///

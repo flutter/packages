@@ -800,6 +800,13 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
       ) as _i4.Future<String?>);
 
   @override
+  _i4.Future<void> setAllowsLinkPreview(bool? allow) => (super.noSuchMethod(
+        Invocation.method(#setAllowsLinkPreview, [allow]),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
   _i2.UIViewWKWebView pigeon_copy() => (super.noSuchMethod(
         Invocation.method(#pigeon_copy, []),
         returnValue: _FakeUIViewWKWebView_8(

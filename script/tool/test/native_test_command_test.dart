@@ -84,6 +84,7 @@ void main() {
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
+    late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
       // iOS and macOS tests expect macOS, Linux tests expect Linux; nothing
@@ -91,7 +92,7 @@ void main() {
       // allow them to share a setup group.
       mockPlatform = MockPlatform(isMacOS: true, isLinux: true);
       final GitDir gitDir;
-      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
       final NativeTestCommand command = NativeTestCommand(
         packagesDir,
@@ -133,6 +134,21 @@ void main() {
                 .path,
           ],
           null);
+    }
+
+    // Returns the ProcessCall to expect for generating the native project files
+    // with a --config-only build on iOS or macOS.
+    ProcessCall getConfigOnlyDarwinBuildCall(
+        Directory package, FlutterPlatform platform) {
+      return ProcessCall(
+          'flutter',
+          <String>[
+            'build',
+            if (platform == FlutterPlatform.ios) 'ios' else 'macos',
+            '--debug',
+            '--config-only',
+          ],
+          package.path);
     }
 
     // Returns the ProcessCall to expect for running the tests in the
@@ -246,6 +262,8 @@ void main() {
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
             getTargetCheckCall(pluginExampleDirectory, 'macos'),
+            getConfigOnlyDarwinBuildCall(
+                pluginExampleDirectory, FlutterPlatform.macos),
             getRunTestCall(pluginExampleDirectory, 'macos',
                 extraFlags: <String>['-only-testing:RunnerUITests']),
           ]));
@@ -317,6 +335,8 @@ void main() {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.ios),
               getRunTestCall(pluginExampleDirectory, 'ios',
                   destination: 'foo_destination'),
             ]));
@@ -354,9 +374,78 @@ void main() {
                   ],
                   null),
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.ios),
               getRunTestCall(pluginExampleDirectory, 'ios',
                   destination: 'id=$_simulatorDeviceId'),
             ]));
+      });
+
+      group('file filtering', () {
+        const List<String> files = <String>[
+          'pubspec.yaml',
+          'foo.dart',
+          'foo.java',
+          'foo.kt',
+          'foo.m',
+          'foo.swift',
+          'foo.cc',
+          'foo.cpp',
+          'foo.h',
+        ];
+        for (final String file in files) {
+          test('runs command for changes to $file', () async {
+            createFakePackage('package_a', packagesDir);
+
+            gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+                <FakeProcessInfo>[
+              FakeProcessInfo(MockProcess(stdout: '''
+packages/package_a/$file
+''')),
+            ];
+
+            // The target platform is irrelevant here; because this repo's
+            // packages are fully federated, there's no need to distinguish
+            // the ignore list by target (e.g., skipping iOS tests if only Java or
+            // Kotlin files change), because package-level filering will already
+            // accomplish the same goal.
+            final List<String> output = await runCapturingPrint(
+                runner, <String>['native-test', '--android']);
+
+            expect(
+                output,
+                containsAllInOrder(<Matcher>[
+                  contains('Running for package_a'),
+                ]));
+          });
+        }
+
+        test('skips commands if all files should be ignored', () async {
+          createFakePackage('package_a', packagesDir);
+
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(stdout: '''
+README.md
+CODEOWNERS
+packages/package_a/CHANGELOG.md
+''')),
+          ];
+
+          final List<String> output = await runCapturingPrint(
+              runner, <String>['native-test', 'android']);
+
+          expect(
+              output,
+              isNot(containsAllInOrder(<Matcher>[
+                contains('Running for package_a'),
+              ])));
+          expect(
+              output,
+              containsAllInOrder(<Matcher>[
+                contains('SKIPPING ALL PACKAGES'),
+              ]));
+        });
       });
     });
 
@@ -421,6 +510,8 @@ void main() {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos'),
             ]));
       });
@@ -1305,6 +1396,8 @@ public class FlutterActivityTest {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos',
                   extraFlags: <String>['-only-testing:RunnerTests']),
             ]));
@@ -1340,6 +1433,8 @@ public class FlutterActivityTest {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos',
                   extraFlags: <String>['-only-testing:RunnerUITests']),
             ]));
@@ -1609,9 +1704,13 @@ public class FlutterActivityTest {
                   ],
                   androidFolder.path),
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.ios),
               getRunTestCall(pluginExampleDirectory, 'ios',
                   destination: 'foo_destination'),
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos'),
             ]));
       });
@@ -1648,6 +1747,8 @@ public class FlutterActivityTest {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'macos'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.macos),
               getRunTestCall(pluginExampleDirectory, 'macos'),
             ]));
       });
@@ -1684,6 +1785,8 @@ public class FlutterActivityTest {
             processRunner.recordedCalls,
             orderedEquals(<ProcessCall>[
               getTargetCheckCall(pluginExampleDirectory, 'ios'),
+              getConfigOnlyDarwinBuildCall(
+                  pluginExampleDirectory, FlutterPlatform.ios),
               getRunTestCall(pluginExampleDirectory, 'ios',
                   destination: 'foo_destination'),
             ]));

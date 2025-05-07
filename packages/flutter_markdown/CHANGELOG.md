@@ -1,3 +1,7 @@
+## 0.7.7+1
+
+* Updates README to indicate that the package has been discontinued.
+
 ## 0.7.7
 
 * Introduces `MarkdownImageConfig` for `sizedImageBuilder` builder.

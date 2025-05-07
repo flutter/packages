@@ -7,6 +7,11 @@ import XCTest
 
 @testable import camera_avfoundation
 
+// Import Objectice-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  @testable import camera_avfoundation_objc
+#endif
+
 final class AvailableCamerasTest: XCTestCase {
   private func createCameraPlugin(with deviceDiscoverer: MockCameraDeviceDiscoverer) -> CameraPlugin
   {
@@ -18,7 +23,8 @@ final class AvailableCamerasTest: XCTestCase {
       permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
-      captureDeviceInputFactory: MockCaptureDeviceInputFactory()
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
   }
 

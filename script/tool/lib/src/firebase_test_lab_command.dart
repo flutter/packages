@@ -8,6 +8,8 @@ import 'package:file/file.dart';
 import 'package:uuid/uuid.dart';
 
 import 'common/core.dart';
+import 'common/file_filters.dart';
+import 'common/flutter_command_utils.dart';
 import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
@@ -122,6 +124,11 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
   }
 
   @override
+  bool shouldIgnoreFile(String path) {
+    return isRepoLevelNonCodeImpactingFile(path) || isPackageSupportFile(path);
+  }
+
+  @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final List<PackageResult> results = <PackageResult>[];
     for (final RepositoryPackage example in package.getExamples()) {
@@ -182,7 +189,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
     // Ensures that gradle wrapper exists
     final GradleProject project = GradleProject(example,
         processRunner: processRunner, platform: platform);
-    if (!await _ensureGradleWrapperExists(project)) {
+    if (!await _ensureGradleWrapperExists(example, project)) {
       return PackageResult.fail(<String>['Unable to build example apk']);
     }
 
@@ -245,26 +252,22 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
   /// Flutter build to generate it.
   ///
   /// Returns true if either gradlew was already present, or the build succeeds.
-  Future<bool> _ensureGradleWrapperExists(GradleProject project) async {
+  Future<bool> _ensureGradleWrapperExists(
+      RepositoryPackage package, GradleProject project) async {
     // Unconditionally re-run build with --debug --config-only, to ensure that
     // the project is in a debug state even if it was previously configured.
     print('Running flutter build apk...');
     final String experiment = getStringArg(kEnableExperiment);
-    final int exitCode = await processRunner.runAndStream(
-        flutterCommand,
-        <String>[
-          'build',
-          'apk',
-          '--debug',
-          '--config-only',
-          if (experiment.isNotEmpty) '--enable-experiment=$experiment',
-        ],
-        workingDir: project.androidDirectory);
-
-    if (exitCode != 0) {
-      return false;
-    }
-    return true;
+    return runConfigOnlyBuild(
+      package,
+      processRunner,
+      platform,
+      FlutterPlatform.android,
+      buildDebug: true,
+      extraArgs: <String>[
+        if (experiment.isNotEmpty) '--enable-experiment=$experiment',
+      ],
+    );
   }
 
   /// Runs [test] from [example] as a Firebase Test Lab test, returning true if

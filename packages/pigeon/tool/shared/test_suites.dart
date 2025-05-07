@@ -16,9 +16,12 @@ import 'process_utils.dart';
 
 const int _noDeviceAvailableExitCode = 100;
 
-const String _testPluginRelativePath = 'platform_tests/test_plugin';
+const String _testPluginName = 'test_plugin';
+const String _alternateLanguageTestPluginName =
+    'alternate_language_test_plugin';
+const String _testPluginRelativePath = 'platform_tests/$_testPluginName';
 const String _alternateLanguageTestPluginRelativePath =
-    'platform_tests/alternate_language_test_plugin';
+    'platform_tests/$_alternateLanguageTestPluginName';
 const String _integrationTestFileRelativePath = 'integration_test/test.dart';
 
 /// Information about a test suite.
@@ -38,6 +41,7 @@ const String androidJavaUnitTests = 'android_java_unittests';
 const String androidJavaLint = 'android_java_lint';
 const String androidJavaIntegrationTests = 'android_java_integration_tests';
 const String androidKotlinUnitTests = 'android_kotlin_unittests';
+const String androidKotlinLint = 'android_kotlin_lint';
 const String androidKotlinIntegrationTests = 'android_kotlin_integration_tests';
 const String iOSObjCUnitTests = 'ios_objc_unittests';
 const String iOSObjCIntegrationTests = 'ios_objc_integration_tests';
@@ -72,6 +76,9 @@ const Map<String, TestInfo> testSuites = <String, TestInfo>{
   androidKotlinUnitTests: TestInfo(
       function: _runAndroidKotlinUnitTests,
       description: 'Unit tests on generated Kotlin code.'),
+  androidKotlinLint: TestInfo(
+      function: _runAndroidKotlinLint,
+      description: 'Lint generated Kotlin code.'),
   androidKotlinIntegrationTests: TestInfo(
       function: _runAndroidKotlinIntegrationTests,
       description: 'Integration tests on generated Kotlin code.'),
@@ -123,24 +130,21 @@ Future<int> _runAndroidJavaIntegrationTests({bool ciMode = false}) async {
 }
 
 Future<int> _runAndroidJavaLint({bool ciMode = false}) async {
-  const String examplePath =
-      './$_alternateLanguageTestPluginRelativePath/example';
-  const String androidProjectPath = '$examplePath/android';
-  final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
-  if (!gradleFile.existsSync()) {
-    final int compileCode = await runFlutterBuild(examplePath, 'apk',
-        flags: <String>['--config-only']);
-    if (compileCode != 0) {
-      return compileCode;
-    }
-  }
-
-  return runGradleBuild(
-      androidProjectPath, 'alternate_language_test_plugin:lintDebug');
+  return _runAndroidLint(
+    testPluginName: _alternateLanguageTestPluginName,
+    testPluginPath: _alternateLanguageTestPluginRelativePath,
+  );
 }
 
 Future<int> _runAndroidKotlinUnitTests({bool ciMode = false}) async {
   return _runAndroidUnitTests(_testPluginRelativePath);
+}
+
+Future<int> _runAndroidKotlinLint({bool ciMode = false}) async {
+  return _runAndroidLint(
+    testPluginName: _testPluginName,
+    testPluginPath: _testPluginRelativePath,
+  );
 }
 
 Future<int> _runAndroidUnitTests(String testPluginPath) async {
@@ -155,6 +159,24 @@ Future<int> _runAndroidUnitTests(String testPluginPath) async {
   }
 
   return runGradleBuild(androidProjectPath, 'testDebugUnitTest');
+}
+
+Future<int> _runAndroidLint({
+  required String testPluginName,
+  required String testPluginPath,
+}) async {
+  final String examplePath = './$testPluginPath/example';
+  final String androidProjectPath = '$examplePath/android';
+  final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
+  if (!gradleFile.existsSync()) {
+    final int compileCode = await runFlutterBuild(examplePath, 'apk',
+        flags: <String>['--config-only']);
+    if (compileCode != 0) {
+      return compileCode;
+    }
+  }
+
+  return runGradleBuild(androidProjectPath, '$testPluginName:lintDebug');
 }
 
 Future<int> _runAndroidKotlinIntegrationTests({bool ciMode = false}) async {

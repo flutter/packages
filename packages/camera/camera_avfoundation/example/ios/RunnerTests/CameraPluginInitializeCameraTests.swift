@@ -6,12 +6,18 @@ import XCTest
 
 @testable import camera_avfoundation
 
+// Import Objectice-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  @testable import camera_avfoundation_objc
+#endif
+
 final class CameraPluginInitializeCameraTests: XCTestCase {
   private func createCameraPlugin() -> (
-    CameraPlugin, MockFLTCam, MockGlobalEventApi
+    CameraPlugin, MockFLTCam, MockGlobalEventApi, DispatchQueue
   ) {
     let mockCamera = MockFLTCam()
     let mockGlobalEventApi = MockGlobalEventApi()
+    let captureSessionQueue = DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
 
     let cameraPlugin = CameraPlugin(
       registry: MockFlutterTextureRegistry(),
@@ -21,11 +27,12 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
-      captureDeviceInputFactory: MockCaptureDeviceInputFactory()
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      captureSessionQueue: captureSessionQueue
     )
     cameraPlugin.camera = mockCamera
 
-    return (cameraPlugin, mockCamera, mockGlobalEventApi)
+    return (cameraPlugin, mockCamera, mockGlobalEventApi, captureSessionQueue)
   }
 
   private func waitForRoundTrip(with queue: DispatchQueue) {
@@ -39,7 +46,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   }
 
   func testInitializeCamera_setsCameraOnFrameAvailableCallback() {
-    let (cameraPlugin, mockCamera, _) = createCameraPlugin()
+    let (cameraPlugin, mockCamera, _, _) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
     var onFrameAvailableSet = false
@@ -59,7 +66,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   }
 
   func testInitializeCamera_setsCameraDartAPI() {
-    let (cameraPlugin, mockCamera, _) = createCameraPlugin()
+    let (cameraPlugin, mockCamera, _, _) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
     var dartAPISet = false
@@ -79,20 +86,20 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   }
 
   func testInitializeCamera_sendsDeviceOrientation() {
-    let (cameraPlugin, _, mockGlobalEventApi) = createCameraPlugin()
+    let (cameraPlugin, _, mockGlobalEventApi, captureSessionQueue) = createCameraPlugin()
 
     cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
       error in
       XCTAssertNil(error)
     }
 
-    waitForRoundTrip(with: cameraPlugin.captureSessionQueue)
+    waitForRoundTrip(with: captureSessionQueue)
 
     XCTAssertTrue(mockGlobalEventApi.deviceOrientationChangedCalled)
   }
 
   func testInitializeCamera_startsCamera() {
-    let (cameraPlugin, mockCamera, _) = createCameraPlugin()
+    let (cameraPlugin, mockCamera, _, _) = createCameraPlugin()
     let expectation = expectation(description: "Initialization completed")
 
     var startCalled = false

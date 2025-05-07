@@ -18,7 +18,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import android.content.Context;
-import android.os.Build;
 import androidx.activity.ComponentActivity;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.CameraUpdate;
@@ -41,10 +40,8 @@ import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class GoogleMapControllerTest {
 
   private Context context;
