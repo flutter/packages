@@ -56,7 +56,7 @@ class MarkersController extends GeometryController {
         _markerIdToController[marker.markerId]?.marker;
 
     final gmaps.MarkerOptions markerOptions =
-        await _markerOptionsFromMarker(marker, currentMarker);
+        await markerOptionsFromMarker(marker, currentMarker);
 
     final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
 
@@ -108,8 +108,7 @@ class MarkersController extends GeometryController {
         _removeMarker(marker.markerId);
         await _addMarker(marker);
       } else {
-        final gmaps.MarkerOptions markerOptions =
-            await _markerOptionsFromMarker(
+        final gmaps.MarkerOptions markerOptions = await markerOptionsFromMarker(
           marker,
           markerController.marker,
         );

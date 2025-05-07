@@ -1,3 +1,7 @@
+## 2.15.3
+
+* Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
+
 ## 2.15.2
 
 * Fixes regression where updating a marker hides its info window.

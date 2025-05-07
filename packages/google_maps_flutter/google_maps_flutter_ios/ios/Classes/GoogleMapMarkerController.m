@@ -104,8 +104,8 @@
   }
 }
 
-- (void)setZIndex:(int)zIndex {
-  self.marker.zIndex = zIndex;
+- (void)setZIndex:(int)zIndexInt {
+  self.marker.zIndexInt = zIndexInt;
 }
 
 - (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker
@@ -121,7 +121,7 @@
   [self setConsumeTapEvents:platformMarker.consumeTapEvents];
   [self setPosition:FGMGetCoordinateForPigeonLatLng(platformMarker.position)];
   [self setRotation:platformMarker.rotation];
-  [self setZIndex:platformMarker.zIndex];
+  [self setZIndexInt:platformMarker.zIndexInt];
   FGMPlatformInfoWindow *infoWindow = platformMarker.infoWindow;
   [self setInfoWindowAnchor:FGMGetCGPointForPigeonPoint(infoWindow.anchor)];
   if (infoWindow.title) {

@@ -1,3 +1,7 @@
+## 2.12.0
+
+* Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
+
 ## 2.11.1
 
 * Updates READMEs and API docs.
