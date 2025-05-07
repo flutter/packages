@@ -17,7 +17,7 @@ final class PhotoCaptureTests: XCTestCase {
   private func createCam(with captureSessionQueue: DispatchQueue) -> FLTCam {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    return FLTCam(configuration: configuration, error: nil)
+    return CameraTestUtils.createTestCamera(configuration)
   }
 
   func testCaptureToFile_mustReportErrorToResultIfSavePhotoDelegateCompletionsWithError() {
@@ -174,7 +174,7 @@ final class PhotoCaptureTests: XCTestCase {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
     configuration.captureDeviceFactory = { _ in captureDeviceMock }
-    let cam = FLTCam(configuration: configuration, error: nil)
+    let cam = CameraTestUtils.createTestCamera(configuration)
 
     let filePath = "test"
     let mockOutput = MockCapturePhotoOutput()
