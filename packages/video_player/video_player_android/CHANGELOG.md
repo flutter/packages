@@ -1,12 +1,12 @@
+## 2.8.4
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/165149) where the `isBuffering` flag
+  always returns true after seeking to any position.
+
 ## 2.8.3
 
 * Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect
   whether or not the video player rotation needs to be corrected.
-
-## 2.8.3
-
-* Fixes a [bug](https://github.com/flutter/flutter/issues/165149) where isBuffering flag always
-* return true after seekTo any position
 
 ## 2.8.2
 
@@ -115,7 +115,9 @@
 
 ## 2.7.0
 
-* Re-adds [support for Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
+*
+
+Re-adds [support for Impeller](https://docs.flutter.dev/release/breaking-changes/android-surface-plugins).
 
 ## 2.6.0
 
@@ -166,7 +168,8 @@
 ## 2.4.12
 
 * Updates compileSdk version to 34.
-* Adds error handling for `BehindLiveWindowException`, which may occur upon live-video playback failure.
+* Adds error handling for `BehindLiveWindowException`, which may occur upon live-video playback
+  failure.
 
 ## 2.4.11
 
@@ -213,7 +216,8 @@
 
 ## 2.4.1
 
-* Changes the severity of `javac` warnings so that they are treated as errors and fixes the violations.
+* Changes the severity of `javac` warnings so that they are treated as errors and fixes the
+  violations.
 
 ## 2.4.0
 
@@ -252,7 +256,8 @@
 ## 2.3.7
 
 * Bumps gradle version to 7.2.1.
-* Ignores unnecessary import warnings in preparation for [upcoming Flutter changes](https://github.com/flutter/flutter/pull/106316).
+* Ignores unnecessary import warnings in preparation
+  for [upcoming Flutter changes](https://github.com/flutter/flutter/pull/106316).
 
 ## 2.3.6
 
@@ -260,7 +265,8 @@
 
 ## 2.3.5
 
-* Sets rotationCorrection for videos recorded in landscapeRight (https://github.com/flutter/flutter/issues/60327).
+* Sets rotationCorrection for videos recorded in
+  landscapeRight (https://github.com/flutter/flutter/issues/60327).
 
 ## 2.3.4
 
@@ -269,7 +275,8 @@
 ## 2.3.3
 
 * Removes unnecessary imports.
-* Fixes library_private_types_in_public_api, sort_child_properties_last and use_key_in_widget_constructors
+* Fixes library_private_types_in_public_api, sort_child_properties_last and
+  use_key_in_widget_constructors
   lint warnings.
 
 ## 2.3.2
@@ -289,3 +296,4 @@
 ## 2.2.17
 
 * Splits from `video_player` as a federated implementation.
+  `
