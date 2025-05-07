@@ -774,11 +774,11 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   void onDrawImage(int imageId, double x, double y, double width, double height,
       Float64List? transform) {
     final Image? image = _images[imageId];
+    assert(image != null,
+        'Invalid imageId: $imageId. Image not found in _images.');
     if (image == null) {
-      throw ArgumentError(
-          'Invalid imageId: $imageId. Image not found in _images.');
+      return;
     }
-
     if (transform != null) {
       _canvas.save();
       _canvas.transform(transform);
