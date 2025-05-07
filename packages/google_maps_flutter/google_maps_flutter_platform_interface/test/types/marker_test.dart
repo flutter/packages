@@ -60,7 +60,6 @@ void main() {
         position: const LatLng(50, 50),
         rotation: 100,
         visible: false,
-        zIndex: 100,
         zIndexInt: 100,
         onTap: () {},
         onDragStart: (LatLng latLng) {},
