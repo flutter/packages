@@ -3,6 +3,8 @@
 * Fixes incorrect camera preview rotation for landscape-oriented devices.
 * Fixes regression where `onDeviceOrientationChanged` was not triggering with an initial orientation
   after calling `createCameraWithSettings`.
+* Fixes regression where `onDeviceOrientationChanged` was not triggering with an initial orientation
+  after calling `createCameraWithSettings`.
 
 ## 0.6.15+2
 
