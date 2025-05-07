@@ -899,7 +899,7 @@ class FLTDefaultCam: NSObject, FLTCam {
   }
 
   private func updateOrientation(
-    _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: any FLTCaptureOutput
+    _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: FLTCaptureOutput
   ) {
     if let connection = captureOutput.connection(withMediaType: .video),
       connection.isVideoOrientationSupported
