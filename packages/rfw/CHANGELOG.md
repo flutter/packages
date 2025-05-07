@@ -1,7 +1,3 @@
-## 1.0.32
-
-* Updates tests to no longer depend on a `Container` pumped via `testWidgets`.
-
 ## 1.0.31
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
