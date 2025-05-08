@@ -80,7 +80,7 @@ ${getters.map((String e) => "$e,").join('\n')}
     ConstantReader annotation,
   ) {
     final String typedAnnotation =
-        annotation.objectValue.type!.getDisplayString().withoutNullability;
+        withoutNullability(annotation.objectValue.type!.getDisplayString());
     final String type =
         typedAnnotation.substring(0, typedAnnotation.indexOf('<'));
     final String routeData = _annotations[type]!;

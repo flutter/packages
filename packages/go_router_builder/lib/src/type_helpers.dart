@@ -68,7 +68,7 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 
   throw InvalidGenerationSourceError(
     'The parameter type '
-    '`${paramType.getDisplayString().withoutNullability}` is not supported.',
+    '`${withoutNullability(paramType.getDisplayString())}` is not supported.',
     element: element,
   );
 }
@@ -125,6 +125,16 @@ String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   }
 
   return access;
+}
+
+/// Returns `true` if the type string ends with a nullability marker (`?` or `*`)
+bool _isNullableType(String type) {
+  return type.endsWith('?') || type.endsWith('*');
+}
+
+/// Returns the type string without a trailing nullability marker
+String withoutNullability(String type) {
+  return _isNullableType(type) ? type.substring(0, type.length - 1) : type;
 }
 
 abstract class _TypeHelper {
@@ -436,17 +446,6 @@ extension ParameterElementExtension on ParameterElement {
 
   /// Returns `true` if `this` has a name that matches [extraFieldName];
   bool get isExtraField => name == extraFieldName;
-}
-
-/// Extension helpers on [String] for nullability check.
-extension TypeStringExtensions on String {
-  /// Returns `true` if the type string ends with a nullability marker (`?` or `*`)
-  bool get _isNullableType => endsWith('?') || endsWith('*');
-
-  /// Returns the type string without a trailing nullability marker
-  String get withoutNullability {
-    return _isNullableType ? substring(0, length - 1) : this;
-  }
 }
 
 /// An error thrown when a default value is used with a nullable type.

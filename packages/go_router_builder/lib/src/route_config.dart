@@ -617,7 +617,7 @@ abstract class RouteBaseConfig {
               return false;
             }
             final DartType typeArgument = typeArguments.single;
-            if (typeArgument.getDisplayString().withoutNullability !=
+            if (withoutNullability(typeArgument.getDisplayString()) !=
                 'NavigatorState') {
               return false;
             }
