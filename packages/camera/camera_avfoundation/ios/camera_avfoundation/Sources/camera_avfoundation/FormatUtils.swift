@@ -2,6 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Import Objectice-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  import camera_avfoundation_objc
+#endif
+
 enum FormatUtils {
   // Returns frame rate supported by format closest to targetFrameRate.
   private static func bestFrameRate(for format: FLTCaptureDeviceFormat, targetFrameRate: Double)
