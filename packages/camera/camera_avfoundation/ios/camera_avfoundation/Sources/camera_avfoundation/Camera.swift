@@ -1287,13 +1287,10 @@ class DefaultCamera: NSObject, Camera {
   }
 
   func captureOutput(
-    _ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer,
+    _ output: AVCaptureOutput,
+    didOutput sampleBuffer: CMSampleBuffer,
     from connection: AVCaptureConnection
   ) {
-    captureOutput(output, didOutput: sampleBuffer)
-  }
-
-  func captureOutput(_ output: AVCaptureOutput?, didOutput sampleBuffer: CMSampleBuffer) {
     if output == captureVideoOutput.avOutput {
       if let newBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
 

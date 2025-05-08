@@ -176,6 +176,14 @@ enum CameraTestUtils {
 
     return sampleBuffer!
   }
+
+  static func createTestAudioOutput() -> AVCaptureOutput {
+    return AVCaptureAudioDataOutput()
+  }
+
+  static func createTestConnection(_ output: AVCaptureOutput) -> AVCaptureConnection {
+    return AVCaptureConnection(inputPorts: [], output: output)
+  }
 }
 
 extension XCTestCase {
