@@ -93,10 +93,3 @@ Refer to the official documentation site for the latest browser compatibility
 information of the underlying JS SDK:
 
 * **Sign In With Google > [Supported browsers and platforms](https://developers.google.com/identity/gsi/web/guides/supported-browsers)**
-
-## Testing
-
-This web-only package uses `dart:test` to test its features. They can be run
-with `dart test -p chrome`.
-
-_(Look at `test/README.md` and `tool/run_tests.dart` for more info.)_
