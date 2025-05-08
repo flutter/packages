@@ -66,7 +66,7 @@ abstract class GoRouteData extends RouteData {
   /// Called when this route is removed from GoRouter's route history.
   ///
   /// Corresponds to [GoRoute.onExit].
-  ExitCallback? get onExit => null;
+  FutureOr<bool>? onExit(BuildContext context, GoRouterState state) => null;
 
   /// A helper function used by generated code.
   ///
@@ -113,7 +113,7 @@ abstract class GoRouteData extends RouteData {
         factoryImpl(state).redirect(context, state);
 
     FutureOr<bool>? onExit(BuildContext context, GoRouterState state) =>
-        factoryImpl(state).onExit?.call(context, state);
+        factoryImpl(state).onExit(context, state);
 
     return GoRoute(
       path: path,
