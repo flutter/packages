@@ -1,6 +1,4 @@
 # Packages that are excluded from dart unit test on Windows.
-# Exclude flutter_image because its tests need a test server, so are run via custom_package_tests.
-- flutter_image
 # This test is very slow, so isn't worth running a second time
 # on Windows; the Linux run is enough coverage.
 - flutter_migrate
