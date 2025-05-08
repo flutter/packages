@@ -159,7 +159,7 @@ class PigeonInstanceManager {
   /// Returns the randomly generated id of the [instance] added.
   int addDartCreatedInstance(PigeonInternalProxyApiBaseClass instance) {
     final int identifier = _nextUniqueIdentifier();
-    _addInstanceWithIdentifier(instance, identifier);
+    _addInstanceWithIdentifier(instance, identifier, attachFinalizer: true);
     return identifier;
   }
 
@@ -248,11 +248,14 @@ class PigeonInstanceManager {
   /// Returns unique identifier of the [instance] added.
   void addHostCreatedInstance(
       PigeonInternalProxyApiBaseClass instance, int identifier) {
-    _addInstanceWithIdentifier(instance, identifier);
+    _addInstanceWithIdentifier(instance, identifier, attachFinalizer: false);
   }
 
   void _addInstanceWithIdentifier(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
+    PigeonInternalProxyApiBaseClass instance,
+    int identifier, {
+    required bool attachFinalizer,
+  }) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
@@ -260,7 +263,9 @@ class PigeonInstanceManager {
     _identifiers[instance] = identifier;
     _weakInstances[identifier] =
         WeakReference<PigeonInternalProxyApiBaseClass>(instance);
-    _finalizer.attach(instance, identifier, detach: instance);
+    if (attachFinalizer) {
+      _finalizer.attach(instance, identifier, detach: instance);
+    }
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
     _identifiers[copy] = identifier;

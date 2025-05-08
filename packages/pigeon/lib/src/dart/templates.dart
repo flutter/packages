@@ -111,7 +111,7 @@ class $dartInstanceManagerClassName {
   /// Returns the randomly generated id of the [instance] added.
   int addDartCreatedInstance($proxyApiBaseClassName instance) {
     final int identifier = _nextUniqueIdentifier();
-    _addInstanceWithIdentifier(instance, identifier);
+    _addInstanceWithIdentifier(instance, identifier, attachFinalizer: true);
     return identifier;
   }
 
@@ -194,17 +194,23 @@ class $dartInstanceManagerClassName {
   ///
   /// Returns unique identifier of the [instance] added.
   void addHostCreatedInstance($proxyApiBaseClassName instance, int identifier) {
-    _addInstanceWithIdentifier(instance, identifier);
+    _addInstanceWithIdentifier(instance, identifier, attachFinalizer: false);
   }
 
-  void _addInstanceWithIdentifier($proxyApiBaseClassName instance, int identifier) {
+  void _addInstanceWithIdentifier(
+    $proxyApiBaseClassName instance,
+    int identifier, {
+    required bool attachFinalizer,
+  }) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
     _weakInstances[identifier] = WeakReference<$proxyApiBaseClassName>(instance);
-    _finalizer.attach(instance, identifier, detach: instance);
+    if (attachFinalizer) {
+      _finalizer.attach(instance, identifier, detach: instance);
+    }
 
     final $proxyApiBaseClassName copy = instance.${classMemberNamePrefix}copy();
     _identifiers[copy] = identifier;
