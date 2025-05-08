@@ -193,6 +193,7 @@ class GoRouteConfig extends RouteBaseConfig {
   GoRouteConfig._({
     required this.path,
     required this.name,
+    required this.caseSensitive,
     required this.parentNavigatorKey,
     required super.routeDataClass,
     required super.parent,
@@ -203,6 +204,9 @@ class GoRouteConfig extends RouteBaseConfig {
 
   /// The name of the GoRoute to be created by this configuration.
   final String? name;
+
+  /// The case sensitivity of the GoRoute to be created by this configuration.
+  final bool caseSensitive;
 
   /// The parent navigator key.
   final String? parentNavigatorKey;
@@ -423,6 +427,7 @@ extension $_extensionName on $_className {
   String get routeConstructorParameters => '''
     path: ${escapeDartString(path)},
     ${name != null ? 'name: ${escapeDartString(name!)},' : ''}
+    ${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}
     ${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}
 ''';
 
@@ -553,9 +558,11 @@ abstract class RouteBaseConfig {
           );
         }
         final ConstantReader nameValue = reader.read('name');
+        final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
         value = GoRouteConfig._(
           path: pathValue.stringValue,
           name: nameValue.isNull ? null : nameValue.stringValue,
+          caseSensitive: caseSensitiveValue.boolValue,
           routeDataClass: classElement,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(
