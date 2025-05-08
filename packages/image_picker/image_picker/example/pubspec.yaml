@@ -35,3 +35,7 @@ flutter:
 # See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
 dependency_overrides:
   video_player: {path: ../../../../packages/video_player/video_player}
+  video_player_android: {path: ../../../../packages/video_player/video_player_android}
+  video_player_avfoundation: {path: ../../../../packages/video_player/video_player_avfoundation}
+  video_player_platform_interface: {path: ../../../../packages/video_player/video_player_platform_interface}
+  video_player_web: {path: ../../../../packages/video_player/video_player_web}
