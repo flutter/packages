@@ -1,3 +1,7 @@
+## 25.3.2
+
+* Something something
+
 ## 25.3.1
 
 * [kotlin] Fixes Kotlin InstanceManager not properly removing callbacks from handler.

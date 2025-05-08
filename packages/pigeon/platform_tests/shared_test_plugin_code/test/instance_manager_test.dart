@@ -23,7 +23,7 @@ void main() {
       expect(instanceManager.getIdentifier(object), 0);
       expect(
         instanceManager.getInstanceWithWeakReference(0),
-        object,
+        isA<CopyableObject>(),
       );
     });
 
@@ -107,7 +107,7 @@ void main() {
       expect(identical(object, copy), isFalse);
     });
 
-    test('removeStrongReference', () {
+    test('remove', () {
       final PigeonInstanceManager instanceManager =
           PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
 
@@ -121,7 +121,7 @@ void main() {
       expect(instanceManager.containsIdentifier(0), isFalse);
     });
 
-    test('removeStrongReference removes only strong reference', () {
+    test('remove throws AssertionError is weak reference still exists', () {
       final PigeonInstanceManager instanceManager =
           PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
 
@@ -129,12 +129,8 @@ void main() {
         pigeon_instanceManager: instanceManager,
       );
 
-      instanceManager.addHostCreatedInstance(object, 0);
-      expect(instanceManager.remove(0), isA<CopyableObject>());
-      expect(
-        instanceManager.getInstanceWithWeakReference(0),
-        object,
-      );
+      instanceManager.addDartCreatedInstance(object);
+      expect(() => instanceManager.remove(0), throwsAssertionError);
     });
 
     test('getInstance can add a new weak reference', () {
