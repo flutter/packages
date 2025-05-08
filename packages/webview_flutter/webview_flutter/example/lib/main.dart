@@ -80,7 +80,7 @@ const String kViewportMetaPage = '''
   <!DOCTYPE html>
   <html>
   <head>
-      <title>Viewport meta test</title>
+      <title>Viewport meta example</title>
   </head>
   <meta name="viewport" content="width=1000, initial-scale=1" />
   <style type="text/css">
@@ -89,7 +89,7 @@ const String kViewportMetaPage = '''
   </style>
   <body>
   <div>
-      <p>Viewport meta test</p>
+      <p>Viewport meta example</p>
       <img id="shape" src="https://storage.googleapis.com/cms-storage-bucket/4fd5520fe28ebf839174.svg"/>
   </div>
   </body>
