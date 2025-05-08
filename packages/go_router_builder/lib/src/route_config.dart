@@ -172,6 +172,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 
   @override
   String get factorConstructorParameters => '';
+
   @override
   String get routeConstructorParameters =>
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
@@ -616,7 +617,7 @@ abstract class RouteBaseConfig {
               return false;
             }
             final DartType typeArgument = typeArguments.single;
-            if (typeArgument.getDisplayString(withNullability: false) !=
+            if (withoutNullability(typeArgument.getDisplayString()) !=
                 'NavigatorState') {
               return false;
             }
