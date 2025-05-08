@@ -135,6 +135,11 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> seekToDefaultPosition(int playerId) async {
+    return _player(playerId).seekToDefaultPosition();
+  }
+
+  @override
   Future<Duration> getPosition(int playerId) async {
     return _player(playerId).getPosition();
   }

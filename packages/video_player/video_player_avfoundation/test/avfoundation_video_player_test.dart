@@ -72,6 +72,12 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
+  Future<void> seekToDefaultPosition(int playerId) async {
+    log.add('seekToDefaultPosition');
+    this.playerId = playerId;
+  }
+
+  @override
   void setLooping(bool loop, int playerId) {
     log.add('setLooping');
     looping = loop;

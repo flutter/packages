@@ -66,6 +66,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// Seeks to the specified location in the video and calls the completion handler when done, if one
 /// is supplied.
 - (void)seekTo:(int64_t)location completionHandler:(void (^_Nullable)(BOOL))completionHandler;
+
+/// Seeks to the default position associated with the current item.
+///
+/// The position can depend on the type of media being played.
+/// For live streams it will typically be the live edge.
+/// For other streams it will typically be the start.
+- (void)seekToDefaultPosition:(void (^_Nullable)(BOOL))completionHandler;
 @end
 
 NS_ASSUME_NONNULL_END

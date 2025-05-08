@@ -73,6 +73,12 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
+  void seekToDefaultPosition(int playerId) {
+    log.add('seekToDefaultPosition');
+    passedPlayerId = playerId;
+  }
+
+  @override
   void setLooping(int playerId, bool looping) {
     log.add('setLooping');
     passedPlayerId = playerId;
