@@ -572,17 +572,14 @@ void main() {
 }
 
 class _Page1 extends GoRouteData {
-  const _Page1({
-    required this.onPop,
-  });
+  const _Page1({required this.onPop});
 
   final VoidCallback onPop;
 
   @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      MaterialPage<void>(
+  Page<void> buildPage(_, __) => MaterialPage<void>(
         child: PopScope(
-          onPopInvokedWithResult: (bool didPop, __) {
+          onPopInvokedWithResult: (bool didPop, _) {
             if (didPop) {
               onPop();
               return;
@@ -602,5 +599,5 @@ class DummyStatefulWidget extends StatefulWidget {
 
 class _DummyStatefulWidgetState extends State<DummyStatefulWidget> {
   @override
-  Widget build(BuildContext context) => Container();
+  Widget build(_) => const SizedBox();
 }
