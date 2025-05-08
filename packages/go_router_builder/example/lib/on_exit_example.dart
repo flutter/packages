@@ -40,25 +40,25 @@ class SubRoute extends GoRouteData {
   const SubRoute();
 
   @override
-  ExitCallback get onExit => (BuildContext context, GoRouterState state) async {
-        final bool? confirmed = await showDialog<bool>(
-          context: context,
-          builder: (_) => AlertDialog(
-            content: const Text('Are you sure to leave this page?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Confirm'),
-              ),
-            ],
+  Future<bool> onExit(BuildContext context, GoRouterState state) async {
+    final bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        content: const Text('Are you sure to leave this page?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
           ),
-        );
-        return confirmed ?? false;
-      };
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Confirm'),
+          ),
+        ],
+      ),
+    );
+    return confirmed ?? false;
+  }
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const SubScreen();
