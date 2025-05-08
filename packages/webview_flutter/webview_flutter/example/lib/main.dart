@@ -433,7 +433,6 @@ class SampleMenu extends StatelessWidget {
           child: Text('Transparent background example'),
         ),
         const PopupMenuItem<MenuOptions>(
-          key: ValueKey<String>('ShowViewportMetaExample'),
           value: MenuOptions.viewportMeta,
           child: Text('Viewport meta example'),
         ),
