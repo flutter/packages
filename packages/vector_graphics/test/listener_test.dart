@@ -148,7 +148,7 @@ void main() {
   test('should assert when imageId is invalid', () async {
     final TestPictureFactory factory = TestPictureFactory();
     final FlutterVectorGraphicsListener listener =
-    FlutterVectorGraphicsListener(
+        FlutterVectorGraphicsListener(
       pictureFactory: factory,
     );
     listener.onImage(0, 0, base64.decode(bluePngPixel));
