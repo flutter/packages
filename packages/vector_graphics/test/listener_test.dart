@@ -153,10 +153,8 @@ void main() {
     );
     listener.onImage(0, 0, base64.decode(bluePngPixel));
     await listener.waitForImageDecode();
-    expect(
-          () => listener.onDrawImage(2, 10, 10, 100, 100, null),
-      throwsAssertionError,
-    );
+    expect(() => listener.onDrawImage(2, 10, 10, 100, 100, null),
+        throwsAssertionError);
   });
 }
 
