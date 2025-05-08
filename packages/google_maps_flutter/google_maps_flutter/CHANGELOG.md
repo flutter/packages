@@ -1,3 +1,7 @@
+## 2.12.3
+
+* Fixes exception when dispose is called while asynchronous update from didUpdateWidget is executed
+
 ## 2.12.2
 
 * Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.

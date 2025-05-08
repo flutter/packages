@@ -447,12 +447,18 @@ class _GoogleMapState extends State<GoogleMap> {
       return;
     }
     final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
     unawaited(controller._updateMapConfiguration(updates));
     _mapConfiguration = newConfig;
   }
 
   Future<void> _updateMarkers() async {
     final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
     unawaited(controller._updateMarkers(
         MarkerUpdates.from(_markers.values.toSet(), widget.markers)));
     _markers = keyByMarkerId(widget.markers);
@@ -460,6 +466,9 @@ class _GoogleMapState extends State<GoogleMap> {
 
   Future<void> _updateClusterManagers() async {
     final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
     unawaited(controller._updateClusterManagers(ClusterManagerUpdates.from(
         _clusterManagers.values.toSet(), widget.clusterManagers)));
     _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
@@ -467,6 +476,9 @@ class _GoogleMapState extends State<GoogleMap> {
 
   Future<void> _updateGroundOverlays() async {
     final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
     unawaited(controller._updateGroundOverlays(GroundOverlayUpdates.from(
         _groundOverlays.values.toSet(), widget.groundOverlays)));
     _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
@@ -474,6 +486,9 @@ class _GoogleMapState extends State<GoogleMap> {
 
   Future<void> _updatePolygons() async {
     final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
     unawaited(controller._updatePolygons(
         PolygonUpdates.from(_polygons.values.toSet(), widget.polygons)));
     _polygons = keyByPolygonId(widget.polygons);
@@ -481,6 +496,9 @@ class _GoogleMapState extends State<GoogleMap> {
 
   Future<void> _updatePolylines() async {
     final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
     unawaited(controller._updatePolylines(
         PolylineUpdates.from(_polylines.values.toSet(), widget.polylines)));
     _polylines = keyByPolylineId(widget.polylines);
@@ -488,6 +506,9 @@ class _GoogleMapState extends State<GoogleMap> {
 
   Future<void> _updateCircles() async {
     final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
     unawaited(controller._updateCircles(
         CircleUpdates.from(_circles.values.toSet(), widget.circles)));
     _circles = keyByCircleId(widget.circles);
@@ -495,6 +516,9 @@ class _GoogleMapState extends State<GoogleMap> {
 
   Future<void> _updateHeatmaps() async {
     final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
     unawaited(
       controller._updateHeatmaps(
         HeatmapUpdates.from(_heatmaps.values.toSet(), widget.heatmaps),
@@ -505,6 +529,9 @@ class _GoogleMapState extends State<GoogleMap> {
 
   Future<void> _updateTileOverlays() async {
     final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
     unawaited(controller._updateTileOverlays(widget.tileOverlays));
   }
 
