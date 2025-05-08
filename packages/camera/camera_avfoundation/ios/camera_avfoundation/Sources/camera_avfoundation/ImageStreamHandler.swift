@@ -5,7 +5,7 @@
 import Flutter
 import ObjectiveC
 
-class FLTImageStreamHandler: NSObject, FlutterStreamHandler {
+class ImageStreamHandler: NSObject, FlutterStreamHandler {
 
   /// The queue on which `eventSink` property should be accessed.
   let captureSessionQueue: DispatchQueue

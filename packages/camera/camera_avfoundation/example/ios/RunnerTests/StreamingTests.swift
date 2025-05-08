@@ -12,7 +12,7 @@ import XCTest
   @testable import camera_avfoundation_objc
 #endif
 
-private class MockImageStreamHandler: FLTImageStreamHandler {
+private class MockImageStreamHandler: ImageStreamHandler {
   var eventSinkStub: ((Any?) -> Void)?
 
   override var eventSink: FlutterEventSink? {

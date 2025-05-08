@@ -80,7 +80,7 @@ final class DefaultCamera: NSObject, Camera {
   /// instead of just a single delegate reference.
   private(set) var inProgressSavePhotoDelegates = [Int64: FLTSavePhotoDelegate]()
 
-  private var imageStreamHandler: FLTImageStreamHandler?
+  private var imageStreamHandler: ImageStreamHandler?
 
   private var textureId: Int64?
   private var previewSize: CGSize?
@@ -1094,13 +1094,13 @@ final class DefaultCamera: NSObject, Camera {
   func startImageStream(with messenger: FlutterBinaryMessenger) {
     startImageStream(
       with: messenger,
-      imageStreamHandler: FLTImageStreamHandler(captureSessionQueue: captureSessionQueue)
+      imageStreamHandler: ImageStreamHandler(captureSessionQueue: captureSessionQueue)
     )
   }
 
   func startImageStream(
     with messenger: FlutterBinaryMessenger,
-    imageStreamHandler: FLTImageStreamHandler
+    imageStreamHandler: ImageStreamHandler
   ) {
     if isStreamingImages {
       reportErrorMessage("Images from camera are already streaming!")
