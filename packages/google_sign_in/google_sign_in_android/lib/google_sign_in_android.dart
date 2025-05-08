@@ -14,8 +14,8 @@ import 'src/messages.g.dart';
 class GoogleSignInAndroid extends GoogleSignInPlatform {
   /// Creates a new plugin implementation instance.
   GoogleSignInAndroid({
-    @visibleForTesting GoogleSignInApi? googleSignInApi,
-  }) : _hostApi = googleSignInApi ?? GoogleSignInApi();
+    @visibleForTesting GoogleSignInApi? api,
+  }) : _hostApi = api ?? GoogleSignInApi();
 
   final GoogleSignInApi _hostApi;
 
@@ -178,6 +178,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         promptIfUnauthorized: request.promptIfUnauthorized);
     switch (result) {
       case AuthorizeFailure():
+        String? message = result.message;
         final GoogleSignInExceptionCode code;
         switch (result.type) {
           case AuthorizeFailureType.unauthorized:
@@ -187,13 +188,16 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
           case AuthorizeFailureType.pendingIntentException:
             code = GoogleSignInExceptionCode.canceled;
           case AuthorizeFailureType.authorizeFailure:
+            message = 'Authorization failed: $message';
+            code = GoogleSignInExceptionCode.unknownError;
           case AuthorizeFailureType.apiException:
+            message = 'SDK reported an exception: $message';
             code = GoogleSignInExceptionCode.unknownError;
           case AuthorizeFailureType.noActivity:
             code = GoogleSignInExceptionCode.uiUnavailable;
         }
         throw GoogleSignInException(
-            code: code, description: result.message, details: result.details);
+            code: code, description: message, details: result.details);
       case PlatformAuthorizationResult():
         final String? accessToken = result.accessToken;
         if (accessToken == null) {
