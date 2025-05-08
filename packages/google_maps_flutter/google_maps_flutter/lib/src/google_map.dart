@@ -429,96 +429,75 @@ class _GoogleMapState extends State<GoogleMap> {
   @override
   void didUpdateWidget(GoogleMap oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateOptions();
-    _updateClusterManagers();
-    _updateMarkers();
-    _updatePolygons();
-    _updatePolylines();
-    _updateCircles();
-    _updateHeatmaps();
-    _updateTileOverlays();
-    _updateGroundOverlays();
+
+    _refreshStateFromWidget();
   }
 
-  Future<void> _updateOptions() async {
+  Future<void> _refreshStateFromWidget() async {
+    final GoogleMapController controller = await _controller.future;
+    if (!mounted) {
+      return;
+    }
+
+    _updateOptions(controller);
+    _updateClusterManagers(controller);
+    _updateMarkers(controller);
+    _updatePolygons(controller);
+    _updatePolylines(controller);
+    _updateCircles(controller);
+    _updateHeatmaps(controller);
+    _updateTileOverlays(controller);
+    _updateGroundOverlays(controller);
+  }
+
+  void _updateOptions(GoogleMapController controller) {
     final MapConfiguration newConfig = _configurationFromMapWidget(widget);
     final MapConfiguration updates = newConfig.diffFrom(_mapConfiguration);
     if (updates.isEmpty) {
       return;
     }
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) {
-      return;
-    }
+
     unawaited(controller._updateMapConfiguration(updates));
     _mapConfiguration = newConfig;
   }
 
-  Future<void> _updateMarkers() async {
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) {
-      return;
-    }
+  void _updateMarkers(GoogleMapController controller) {
     unawaited(controller._updateMarkers(
         MarkerUpdates.from(_markers.values.toSet(), widget.markers)));
     _markers = keyByMarkerId(widget.markers);
   }
 
-  Future<void> _updateClusterManagers() async {
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) {
-      return;
-    }
+  void _updateClusterManagers(GoogleMapController controller) {
     unawaited(controller._updateClusterManagers(ClusterManagerUpdates.from(
         _clusterManagers.values.toSet(), widget.clusterManagers)));
     _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
   }
 
-  Future<void> _updateGroundOverlays() async {
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) {
-      return;
-    }
+  void _updateGroundOverlays(GoogleMapController controller) {
     unawaited(controller._updateGroundOverlays(GroundOverlayUpdates.from(
         _groundOverlays.values.toSet(), widget.groundOverlays)));
     _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
-  Future<void> _updatePolygons() async {
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) {
-      return;
-    }
+  void _updatePolygons(GoogleMapController controller) {
     unawaited(controller._updatePolygons(
         PolygonUpdates.from(_polygons.values.toSet(), widget.polygons)));
     _polygons = keyByPolygonId(widget.polygons);
   }
 
-  Future<void> _updatePolylines() async {
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) {
-      return;
-    }
+  void _updatePolylines(GoogleMapController controller) {
     unawaited(controller._updatePolylines(
         PolylineUpdates.from(_polylines.values.toSet(), widget.polylines)));
     _polylines = keyByPolylineId(widget.polylines);
   }
 
-  Future<void> _updateCircles() async {
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) {
-      return;
-    }
+  void _updateCircles(GoogleMapController controller) {
     unawaited(controller._updateCircles(
         CircleUpdates.from(_circles.values.toSet(), widget.circles)));
     _circles = keyByCircleId(widget.circles);
   }
 
-  Future<void> _updateHeatmaps() async {
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) {
-      return;
-    }
+  void _updateHeatmaps(GoogleMapController controller) {
     unawaited(
       controller._updateHeatmaps(
         HeatmapUpdates.from(_heatmaps.values.toSet(), widget.heatmaps),
@@ -527,11 +506,7 @@ class _GoogleMapState extends State<GoogleMap> {
     _heatmaps = keyByHeatmapId(widget.heatmaps);
   }
 
-  Future<void> _updateTileOverlays() async {
-    final GoogleMapController controller = await _controller.future;
-    if (!mounted) {
-      return;
-    }
+  void _updateTileOverlays(GoogleMapController controller) {
     unawaited(controller._updateTileOverlays(widget.tileOverlays));
   }
 
@@ -542,7 +517,7 @@ class _GoogleMapState extends State<GoogleMap> {
       this,
     );
     _controller.complete(controller);
-    unawaited(_updateTileOverlays());
+    _updateTileOverlays(controller);
     final MapCreatedCallback? onMapCreated = widget.onMapCreated;
     if (onMapCreated != null) {
       onMapCreated(controller);
