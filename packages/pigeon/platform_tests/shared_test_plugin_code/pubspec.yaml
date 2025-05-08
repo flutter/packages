@@ -21,4 +21,4 @@ dependencies:
   mockito: ^5.4.4
 
 dev_dependencies:
-  leak_tracker: ^11.0.1
+  leak_tracker: any
