@@ -81,18 +81,18 @@ enum CameraTestUtils {
     return configuration
   }
 
-  static func createTestCamera(_ configuration: FLTCamConfiguration) -> FLTDefaultCam {
-    let camera = try? FLTDefaultCam(configuration: configuration)
+  static func createTestCamera(_ configuration: FLTCamConfiguration) -> DefaultCamera {
+    let camera = try? DefaultCamera(configuration: configuration)
 
     return camera!
   }
 
-  static func createTestCamera() -> FLTDefaultCam {
+  static func createTestCamera() -> DefaultCamera {
     return createTestCamera(createTestCameraConfiguration())
   }
 
   static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue)
-    -> FLTDefaultCam
+    -> DefaultCamera
   {
     let configuration = createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue

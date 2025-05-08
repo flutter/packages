@@ -13,9 +13,9 @@ import XCTest
 
 final class CameraPluginInitializeCameraTests: XCTestCase {
   private func createCameraPlugin() -> (
-    CameraPlugin, MockFLTCam, MockGlobalEventApi, DispatchQueue
+    CameraPlugin, MockCamera, MockGlobalEventApi, DispatchQueue
   ) {
-    let mockCamera = MockFLTCam()
+    let mockCamera = MockCamera()
     let mockGlobalEventApi = MockGlobalEventApi()
     let captureSessionQueue = DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
 

@@ -12,7 +12,7 @@ import Flutter
 #endif
 
 /// A class that manages camera's state and performs camera operations.
-protocol FLTCam: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
+protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   AVCaptureAudioDataOutputSampleBufferDelegate
 {
   /// The API instance used to communicate with the Dart side of the plugin.
@@ -100,7 +100,7 @@ protocol FLTCam: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   func close()
 }
 
-class FLTDefaultCam: NSObject, FLTCam {
+class DefaultCamera: NSObject, Camera {
   var dartAPI: FCPCameraEventApi?
   var onFrameAvailable: (() -> Void)?
 
@@ -332,7 +332,7 @@ class FLTDefaultCam: NSObject, FLTCam {
     deviceOrientation = configuration.orientation
 
     let connection: AVCaptureConnection
-    (captureVideoInput, captureVideoOutput, connection) = try FLTDefaultCam.createConnection(
+    (captureVideoInput, captureVideoOutput, connection) = try DefaultCamera.createConnection(
       captureDevice: captureDevice,
       videoFormat: videoFormat,
       captureDeviceInputFactory: configuration.captureDeviceInputFactory)
@@ -367,7 +367,7 @@ class FLTDefaultCam: NSObject, FLTCam {
         throw error
       }
 
-      FLTDefaultCam.selectBestFormatForRequestedFrameRate(
+      DefaultCamera.selectBestFormatForRequestedFrameRate(
         captureDevice: captureDevice,
         mediaSettings: mediaSettings,
         targetFrameRate: targetFrameRate.doubleValue,
@@ -508,7 +508,7 @@ class FLTDefaultCam: NSObject, FLTCam {
       let block = {
         // Set up options implicit to AVAudioSessionCategoryPlayback to avoid conflicts with other
         // plugins like video_player.
-        FLTDefaultCam.upgradeAudioSessionCategory(
+        DefaultCamera.upgradeAudioSessionCategory(
           requestedCategory: .playAndRecord,
           options: [.defaultToSpeaker, .allowBluetoothA2DP, .allowAirPlay]
         )
@@ -637,7 +637,7 @@ class FLTDefaultCam: NSObject, FLTCam {
         prefix: "REC_")
       self.videoRecordingPath = videoRecordingPath
     } catch let error as NSError {
-      completion(FLTDefaultCam.flutterErrorFromNSError(error))
+      completion(DefaultCamera.flutterErrorFromNSError(error))
       return
     }
 
@@ -788,7 +788,7 @@ class FLTDefaultCam: NSObject, FLTCam {
         code: URLError.resourceUnavailable.rawValue,
         userInfo: [NSLocalizedDescriptionKey: "Video is not recording!"]
       )
-      completion(nil, FLTDefaultCam.flutterErrorFromNSError(error))
+      completion(nil, DefaultCamera.flutterErrorFromNSError(error))
     }
   }
 
@@ -822,7 +822,7 @@ class FLTDefaultCam: NSObject, FLTCam {
         subfolder: "pictures",
         prefix: "CAP_")
     } catch let error as NSError {
-      completion(nil, FLTDefaultCam.flutterErrorFromNSError(error))
+      completion(nil, DefaultCamera.flutterErrorFromNSError(error))
       return
     }
 
@@ -840,7 +840,7 @@ class FLTDefaultCam: NSObject, FLTCam {
         }
 
         if let error = error {
-          completion(nil, FLTDefaultCam.flutterErrorFromNSError(error as NSError))
+          completion(nil, DefaultCamera.flutterErrorFromNSError(error as NSError))
         } else {
           assert(path != nil, "Path must not be nil if no error.")
           completion(path, nil)
@@ -1091,7 +1091,7 @@ class FLTDefaultCam: NSObject, FLTCam {
     do {
       try captureDevice.lockForConfiguration()
     } catch let error as NSError {
-      completion(FLTDefaultCam.flutterErrorFromNSError(error))
+      completion(DefaultCamera.flutterErrorFromNSError(error))
       return
     }
 
@@ -1190,7 +1190,7 @@ class FLTDefaultCam: NSObject, FLTCam {
     let newConnection: AVCaptureConnection
 
     do {
-      (captureVideoInput, captureVideoOutput, newConnection) = try FLTDefaultCam.createConnection(
+      (captureVideoInput, captureVideoOutput, newConnection) = try DefaultCamera.createConnection(
         captureDevice: captureDevice,
         videoFormat: videoFormat,
         captureDeviceInputFactory: captureDeviceInputFactory)

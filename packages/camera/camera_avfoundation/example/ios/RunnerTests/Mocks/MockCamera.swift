@@ -9,7 +9,7 @@
   @testable import camera_avfoundation_objc
 #endif
 
-final class MockFLTCam: NSObject, FLTCam {
+final class MockCamera: NSObject, Camera {
   var setDartApiStub: ((FCPCameraEventApi?) -> Void)?
   var setOnFrameAvailableStub: (((() -> Void)?) -> Void)?
   var getMinimumExposureOffsetStub: (() -> CGFloat)?

@@ -24,7 +24,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   private let captureSessionQueue: DispatchQueue
 
   /// An internal camera object that manages camera's state and performs camera operations.
-  var camera: FLTCam?
+  var camera: Camera?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = CameraPlugin(
@@ -250,7 +250,7 @@ extension CameraPlugin: FCPCameraApi {
     )
 
     do {
-      let newCamera = try FLTDefaultCam(configuration: camConfiguration)
+      let newCamera = try DefaultCamera(configuration: camConfiguration)
 
       camera?.close()
       camera = newCamera

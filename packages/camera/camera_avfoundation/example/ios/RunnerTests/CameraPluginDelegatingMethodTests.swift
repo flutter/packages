@@ -13,8 +13,8 @@ import XCTest
 
 /// Tests of `CameraPlugin` methods delegating to `FLTCam` instance
 final class CameraPluginDelegatingMethodTests: XCTestCase {
-  private func createCameraPlugin() -> (CameraPlugin, MockFLTCam) {
-    let mockCamera = MockFLTCam()
+  private func createCameraPlugin() -> (CameraPlugin, MockCamera) {
+    let mockCamera = MockCamera()
 
     let cameraPlugin = CameraPlugin(
       registry: MockFlutterTextureRegistry(),

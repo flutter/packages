@@ -24,14 +24,14 @@ private final class MockUIDevice: UIDevice {
 final class CameraOrientationTests: XCTestCase {
   private func createCameraPlugin() -> (
     cameraPlugin: CameraPlugin,
-    mockCamera: MockFLTCam,
+    mockCamera: MockCamera,
     mockEventAPI: MockGlobalEventApi,
     mockDevice: MockCaptureDevice,
     mockDeviceDiscoverer: MockCameraDeviceDiscoverer,
     captureSessionQueue: DispatchQueue
   ) {
     let mockDevice = MockCaptureDevice()
-    let mockCamera = MockFLTCam()
+    let mockCamera = MockCamera()
     let mockEventAPI = MockGlobalEventApi()
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
     let captureSessionQueue = DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
