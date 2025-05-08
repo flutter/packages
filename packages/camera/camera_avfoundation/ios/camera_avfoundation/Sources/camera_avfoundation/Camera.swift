@@ -849,8 +849,8 @@ class DefaultCamera: NSObject, Camera {
     )
 
     assert(
-      DispatchQueue.getSpecific(key: fltCaptureSessionQueueSpecificKey)
-        == fltCaptureSessionQueueSpecificValue,
+      DispatchQueue.getSpecific(key: captureSessionQueueSpecificKey)
+        == captureSessionQueueSpecificValue,
       "save photo delegate references must be updated on the capture session queue")
     inProgressSavePhotoDelegates[settings.uniqueID] = savePhotoDelegate
     capturePhotoOutput.capturePhoto(with: settings, delegate: savePhotoDelegate)

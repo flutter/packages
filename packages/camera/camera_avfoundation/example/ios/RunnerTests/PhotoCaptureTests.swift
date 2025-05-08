@@ -25,8 +25,8 @@ final class PhotoCaptureTests: XCTestCase {
       description: "Must send error to result if save photo delegate completes with error.")
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     captureSessionQueue.setSpecific(
-      key: fltCaptureSessionQueueSpecificKey,
-      value: fltCaptureSessionQueueSpecificValue)
+      key: captureSessionQueueSpecificKey,
+      value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     let error = NSError(domain: "test", code: 0, userInfo: nil)
 
@@ -59,8 +59,8 @@ final class PhotoCaptureTests: XCTestCase {
       description: "Must send file path to result if save photo delegate completes with file path.")
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     captureSessionQueue.setSpecific(
-      key: fltCaptureSessionQueueSpecificKey,
-      value: fltCaptureSessionQueueSpecificValue)
+      key: captureSessionQueueSpecificKey,
+      value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     let filePath = "test"
 
@@ -94,8 +94,8 @@ final class PhotoCaptureTests: XCTestCase {
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     captureSessionQueue.setSpecific(
-      key: fltCaptureSessionQueueSpecificKey,
-      value: fltCaptureSessionQueueSpecificValue)
+      key: captureSessionQueueSpecificKey,
+      value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     cam.setImageFileFormat(FCPPlatformImageFileFormat.heif)
 
@@ -130,8 +130,8 @@ final class PhotoCaptureTests: XCTestCase {
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     captureSessionQueue.setSpecific(
-      key: fltCaptureSessionQueueSpecificKey,
-      value: fltCaptureSessionQueueSpecificValue)
+      key: captureSessionQueueSpecificKey,
+      value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     cam.setImageFileFormat(FCPPlatformImageFileFormat.heif)
 
@@ -176,8 +176,8 @@ final class PhotoCaptureTests: XCTestCase {
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     captureSessionQueue.setSpecific(
-      key: fltCaptureSessionQueueSpecificKey,
-      value: fltCaptureSessionQueueSpecificValue)
+      key: captureSessionQueueSpecificKey,
+      value: captureSessionQueueSpecificValue)
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
     configuration.captureDeviceFactory = { _ in captureDeviceMock }

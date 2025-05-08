@@ -70,8 +70,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     super.init()
 
     captureSessionQueue.setSpecific(
-      key: fltCaptureSessionQueueSpecificKey,
-      value: fltCaptureSessionQueueSpecificValue)
+      key: captureSessionQueueSpecificKey,
+      value: captureSessionQueueSpecificValue)
 
     UIDevice.current.beginGeneratingDeviceOrientationNotifications()
     NotificationCenter.default.addObserver(

@@ -5,5 +5,5 @@
 import Dispatch
 
 /// Queue-specific context data to be associated with the capture session queue.
-let fltCaptureSessionQueueSpecificKey = DispatchSpecificKey<String>()
-let fltCaptureSessionQueueSpecificValue = "capture_session_queue"
+let captureSessionQueueSpecificKey = DispatchSpecificKey<String>()
+let captureSessionQueueSpecificValue = "capture_session_queue"
