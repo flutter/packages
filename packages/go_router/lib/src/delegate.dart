@@ -66,7 +66,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // Fallback to onExit if maybePop did not handle the pop
     final GoRoute lastRoute = currentConfiguration.last.route;
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
-      return !(await lastRoute.onExit?.call(
+      return !(await lastRoute.onExit!.call(
             navigatorKey.currentContext!,
             currentConfiguration.last
                 .buildState(_configuration, currentConfiguration),
@@ -147,7 +147,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     // a microtask in case the onExit callback want to launch dialog or other
     // navigator operations.
     scheduleMicrotask(() async {
-      final bool? onExitResult = await routeBase.onExit?.call(
+      final bool? onExitResult = await routeBase.onExit!.call(
         navigatorKey.currentContext!,
         match.buildState(_configuration, currentConfiguration),
       );
