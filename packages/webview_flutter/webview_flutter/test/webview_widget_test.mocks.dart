@@ -92,6 +92,14 @@ class MockPlatformWebViewController extends _i1.Mock
       ) as _i7.Future<void>);
 
   @override
+  _i7.Future<void> loadFileWithParams(_i2.LoadFileParams? params) =>
+      (super.noSuchMethod(
+        Invocation.method(#loadFileWithParams, [params]),
+        returnValue: _i7.Future<void>.value(),
+        returnValueForMissingStub: _i7.Future<void>.value(),
+      ) as _i7.Future<void>);
+
+  @override
   _i7.Future<void> loadFlutterAsset(String? key) => (super.noSuchMethod(
         Invocation.method(#loadFlutterAsset, [key]),
         returnValue: _i7.Future<void>.value(),

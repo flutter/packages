@@ -1,6 +1,8 @@
-## NEXT
+## 4.12.0
 
-* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Updates README to indicate that Android SDK <21 is no longer supported.
+* Deprecates `WebViewController.loadFile(String)` in favor of `WebViewController.loadFileWithParams(LoadFileParams)`. 
+* Introduces `AndroidLoadFileParams` and `WebKitLoadFileParams` to support platform-specific parameters when loading local HTML files on Android and iOS/macOS.
 
 ## 4.11.0
 
