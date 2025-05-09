@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -1193,19 +1191,24 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   ParseResults results() {
     _storeCurrentApi();
     _storeCurrentClass();
+    final Map<String, TypeDeclaration> referencedLists =
+        <String, TypeDeclaration>{};
+    final Map<String, TypeDeclaration> referencedMaps =
+        <String, TypeDeclaration>{};
 
     final Map<TypeDeclaration, List<int>> referencedTypes =
         getReferencedTypes(_apis, _classes);
     final Set<String> referencedTypeNames =
         referencedTypes.keys.map((TypeDeclaration e) => e.baseName).toSet();
-    final List<Class> nonReferencedTypes = List<Class>.from(_classes);
-    nonReferencedTypes
+    final List<Class> nonReferencedClasses = List<Class>.from(_classes);
+    nonReferencedClasses
         .removeWhere((Class x) => referencedTypeNames.contains(x.name));
-    for (final Class x in nonReferencedTypes) {
+    for (final Class x in nonReferencedClasses) {
       x.isReferenced = false;
     }
 
     final List<Enum> referencedEnums = List<Enum>.from(_enums);
+
     bool containsHostApi = false;
     bool containsFlutterApi = false;
     bool containsProxyApi = false;
@@ -1222,17 +1225,13 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         case AstEventChannelApi():
           containsEventChannel = true;
       }
+      if (containsEventChannel &&
+          containsFlutterApi &&
+          containsProxyApi &&
+          containsHostApi) {
+        break;
+      }
     }
-
-    final Root completeRoot = Root(
-      apis: _apis,
-      classes: _classes,
-      enums: referencedEnums,
-      containsHostApi: containsHostApi,
-      containsFlutterApi: containsFlutterApi,
-      containsProxyApi: containsProxyApi,
-      containsEventChannel: containsEventChannel,
-    );
 
     final List<Error> totalErrors = List<Error>.from(_errors);
 
@@ -1291,13 +1290,43 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
         api.interfaces = newInterfaceSet;
       }
     }
+
+    final Map<TypeDeclaration, List<int>> referencedTypesAfterAssoc =
+        getReferencedTypes(_apis, _classes);
+
+    for (final TypeDeclaration type in referencedTypesAfterAssoc.keys) {
+      if (type.baseName == 'List') {
+        referencedLists[type.fullName] = type;
+      } else if (type.baseName == 'Map') {
+        referencedMaps[type.fullName] = type;
+      }
+    }
+
+    final Root completeRoot = Root(
+      apis: _apis,
+      classes: _classes,
+      enums: referencedEnums,
+      lists: referencedLists,
+      maps: referencedMaps,
+      containsHostApi: containsHostApi,
+      containsFlutterApi: containsFlutterApi,
+      containsProxyApi: containsProxyApi,
+      containsEventChannel: containsEventChannel,
+    );
+
     final List<Error> validateErrors = _validateAst(completeRoot, source);
     totalErrors.addAll(validateErrors);
 
     return ParseResults(
       root: totalErrors.isEmpty
           ? completeRoot
-          : Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]),
+          : Root(
+              apis: <Api>[],
+              classes: <Class>[],
+              enums: <Enum>[],
+              lists: <String, TypeDeclaration>{},
+              maps: <String, TypeDeclaration>{},
+            ),
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
     );
@@ -1714,7 +1743,10 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     } else {
       return Parameter(
         name: '',
-        type: const TypeDeclaration(baseName: '', isNullable: false),
+        type: const TypeDeclaration(
+          baseName: '',
+          isNullable: false,
+        ),
         offset: formalParameter.offset,
       );
     }

@@ -21,6 +21,29 @@ class JniTestsError(
     val details: Any? = null
 ) : Throwable()
 
+private fun deepEqualsJniTests(a: Any?, b: Any?): Boolean {
+  if (a is ByteArray && b is ByteArray) {
+    return a.contentEquals(b)
+  }
+  if (a is IntArray && b is IntArray) {
+    return a.contentEquals(b)
+  }
+  if (a is LongArray && b is LongArray) {
+    return a.contentEquals(b)
+  }
+  if (a is DoubleArray && b is DoubleArray) {
+    return a.contentEquals(b)
+  }
+  if (a is Array<*> && b is Array<*>) {
+    return a.size == b.size && a.indices.all { deepEqualsJniTests(a[it], b[it]) }
+  }
+  if (a is Map<*, *> && b is Map<*, *>) {
+    return a.size == b.size &&
+        a.keys.all { (b as Map<Any?, Any?>).containsKey(it) && deepEqualsJniTests(a[it], b[it]) }
+  }
+  return a == b
+}
+
 enum class SomeEnum(val raw: Int) {
   VALUE1(0),
   VALUE2(1),
@@ -33,14 +56,49 @@ enum class SomeEnum(val raw: Int) {
   }
 }
 
+enum class SomeOtherEnum(val raw: Int) {
+  VALUE1(0),
+  VALUE2(1),
+  VALUE3(2);
+
+  companion object {
+    fun ofRaw(raw: Int): SomeOtherEnum? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /** Generated class from Pigeon that represents data sent in messages. */
 data class SomeTypes(
     val aString: String,
     val anInt: Long,
     val aDouble: Double,
     val aBool: Boolean,
+    val aByteArray: ByteArray,
+    val a4ByteArray: IntArray,
+    val a8ByteArray: LongArray,
+    val aFloatArray: DoubleArray,
     val anObject: Any,
-    val anEnum: SomeEnum
+    val anEnum: SomeEnum,
+    val someNullableTypes: SomeNullableTypes,
+    val list: List<Any?>,
+    val stringList: List<String>,
+    val intList: List<Long>,
+    val doubleList: List<Double>,
+    val boolList: List<Boolean>,
+    val enumList: List<SomeEnum>,
+    val classList: List<SomeNullableTypes>,
+    val objectList: List<Any>,
+    val listList: List<List<Any?>>,
+    val mapList: List<Map<Any?, Any?>>,
+    val map: Map<Any, Any?>,
+    val stringMap: Map<String, String>,
+    val intMap: Map<Long, Long>,
+    val enumMap: Map<SomeEnum, SomeEnum>,
+    val classMap: Map<SomeNullableTypes, SomeNullableTypes>,
+    val objectMap: Map<Any, Any>,
+    val listMap: Map<Long, List<Any?>>,
+    val mapMap: Map<Long, Map<Any?, Any?>>
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): SomeTypes {
@@ -48,9 +106,61 @@ data class SomeTypes(
       val anInt = pigeonVar_list[1] as Long
       val aDouble = pigeonVar_list[2] as Double
       val aBool = pigeonVar_list[3] as Boolean
-      val anObject = pigeonVar_list[4] as Any
-      val anEnum = pigeonVar_list[5] as SomeEnum
-      return SomeTypes(aString, anInt, aDouble, aBool, anObject, anEnum)
+      val aByteArray = pigeonVar_list[4] as ByteArray
+      val a4ByteArray = pigeonVar_list[5] as IntArray
+      val a8ByteArray = pigeonVar_list[6] as LongArray
+      val aFloatArray = pigeonVar_list[7] as DoubleArray
+      val anObject = pigeonVar_list[8] as Any
+      val anEnum = pigeonVar_list[9] as SomeEnum
+      val someNullableTypes = pigeonVar_list[10] as SomeNullableTypes
+      val list = pigeonVar_list[11] as List<Any?>
+      val stringList = pigeonVar_list[12] as List<String>
+      val intList = pigeonVar_list[13] as List<Long>
+      val doubleList = pigeonVar_list[14] as List<Double>
+      val boolList = pigeonVar_list[15] as List<Boolean>
+      val enumList = pigeonVar_list[16] as List<SomeEnum>
+      val classList = pigeonVar_list[17] as List<SomeNullableTypes>
+      val objectList = pigeonVar_list[18] as List<Any>
+      val listList = pigeonVar_list[19] as List<List<Any?>>
+      val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>>
+      val map = pigeonVar_list[21] as Map<Any, Any?>
+      val stringMap = pigeonVar_list[22] as Map<String, String>
+      val intMap = pigeonVar_list[23] as Map<Long, Long>
+      val enumMap = pigeonVar_list[24] as Map<SomeEnum, SomeEnum>
+      val classMap = pigeonVar_list[25] as Map<SomeNullableTypes, SomeNullableTypes>
+      val objectMap = pigeonVar_list[26] as Map<Any, Any>
+      val listMap = pigeonVar_list[27] as Map<Long, List<Any?>>
+      val mapMap = pigeonVar_list[28] as Map<Long, Map<Any?, Any?>>
+      return SomeTypes(
+          aString,
+          anInt,
+          aDouble,
+          aBool,
+          aByteArray,
+          a4ByteArray,
+          a8ByteArray,
+          aFloatArray,
+          anObject,
+          anEnum,
+          someNullableTypes,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          classList,
+          objectList,
+          listList,
+          mapList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          classMap,
+          objectMap,
+          listMap,
+          mapMap)
     }
   }
 
@@ -60,8 +170,31 @@ data class SomeTypes(
         anInt,
         aDouble,
         aBool,
+        aByteArray,
+        a4ByteArray,
+        a8ByteArray,
+        aFloatArray,
         anObject,
         anEnum,
+        someNullableTypes,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        classList,
+        objectList,
+        listList,
+        mapList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        classMap,
+        objectMap,
+        listMap,
+        mapMap,
     )
   }
 
@@ -76,8 +209,31 @@ data class SomeTypes(
         anInt == other.anInt &&
         aDouble == other.aDouble &&
         aBool == other.aBool &&
+        deepEqualsJniTests(aByteArray, other.aByteArray) &&
+        deepEqualsJniTests(a4ByteArray, other.a4ByteArray) &&
+        deepEqualsJniTests(a8ByteArray, other.a8ByteArray) &&
+        deepEqualsJniTests(aFloatArray, other.aFloatArray) &&
         anObject == other.anObject &&
-        anEnum == other.anEnum
+        anEnum == other.anEnum &&
+        someNullableTypes == other.someNullableTypes &&
+        deepEqualsJniTests(list, other.list) &&
+        deepEqualsJniTests(stringList, other.stringList) &&
+        deepEqualsJniTests(intList, other.intList) &&
+        deepEqualsJniTests(doubleList, other.doubleList) &&
+        deepEqualsJniTests(boolList, other.boolList) &&
+        deepEqualsJniTests(enumList, other.enumList) &&
+        deepEqualsJniTests(classList, other.classList) &&
+        deepEqualsJniTests(objectList, other.objectList) &&
+        deepEqualsJniTests(listList, other.listList) &&
+        deepEqualsJniTests(mapList, other.mapList) &&
+        deepEqualsJniTests(map, other.map) &&
+        deepEqualsJniTests(stringMap, other.stringMap) &&
+        deepEqualsJniTests(intMap, other.intMap) &&
+        deepEqualsJniTests(enumMap, other.enumMap) &&
+        deepEqualsJniTests(classMap, other.classMap) &&
+        deepEqualsJniTests(objectMap, other.objectMap) &&
+        deepEqualsJniTests(listMap, other.listMap) &&
+        deepEqualsJniTests(mapMap, other.mapMap)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -89,8 +245,15 @@ data class SomeNullableTypes(
     val anInt: Long? = null,
     val aDouble: Double? = null,
     val aBool: Boolean? = null,
+    val aByteArray: ByteArray? = null,
+    val a4ByteArray: IntArray? = null,
+    val a8ByteArray: LongArray? = null,
+    val aFloatArray: DoubleArray? = null,
     val anObject: Any? = null,
-    val anEnum: SomeEnum? = null
+    val anEnum: SomeEnum? = null,
+    val someTypes: SomeTypes? = null,
+    val list: List<Any?>? = null,
+    val map: Map<Any, Any?>? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): SomeNullableTypes {
@@ -98,9 +261,29 @@ data class SomeNullableTypes(
       val anInt = pigeonVar_list[1] as Long?
       val aDouble = pigeonVar_list[2] as Double?
       val aBool = pigeonVar_list[3] as Boolean?
-      val anObject = pigeonVar_list[4]
-      val anEnum = pigeonVar_list[5] as SomeEnum?
-      return SomeNullableTypes(aString, anInt, aDouble, aBool, anObject, anEnum)
+      val aByteArray = pigeonVar_list[4] as ByteArray?
+      val a4ByteArray = pigeonVar_list[5] as IntArray?
+      val a8ByteArray = pigeonVar_list[6] as LongArray?
+      val aFloatArray = pigeonVar_list[7] as DoubleArray?
+      val anObject = pigeonVar_list[8]
+      val anEnum = pigeonVar_list[9] as SomeEnum?
+      val someTypes = pigeonVar_list[10] as SomeTypes?
+      val list = pigeonVar_list[11] as List<Any?>?
+      val map = pigeonVar_list[12] as Map<Any, Any?>?
+      return SomeNullableTypes(
+          aString,
+          anInt,
+          aDouble,
+          aBool,
+          aByteArray,
+          a4ByteArray,
+          a8ByteArray,
+          aFloatArray,
+          anObject,
+          anEnum,
+          someTypes,
+          list,
+          map)
     }
   }
 
@@ -110,8 +293,15 @@ data class SomeNullableTypes(
         anInt,
         aDouble,
         aBool,
+        aByteArray,
+        a4ByteArray,
+        a8ByteArray,
+        aFloatArray,
         anObject,
         anEnum,
+        someTypes,
+        list,
+        map,
     )
   }
 
@@ -126,8 +316,15 @@ data class SomeNullableTypes(
         anInt == other.anInt &&
         aDouble == other.aDouble &&
         aBool == other.aBool &&
+        deepEqualsJniTests(aByteArray, other.aByteArray) &&
+        deepEqualsJniTests(a4ByteArray, other.a4ByteArray) &&
+        deepEqualsJniTests(a8ByteArray, other.a8ByteArray) &&
+        deepEqualsJniTests(aFloatArray, other.aFloatArray) &&
         anObject == other.anObject &&
-        anEnum == other.anEnum
+        anEnum == other.anEnum &&
+        someTypes == other.someTypes &&
+        deepEqualsJniTests(list, other.list) &&
+        deepEqualsJniTests(map, other.map)
   }
 
   override fun hashCode(): Int = toList().hashCode()
@@ -152,6 +349,10 @@ abstract class JniMessageApi {
   abstract fun sendSomeTypes(someTypes: SomeTypes): SomeTypes
 
   abstract fun sendSomeEnum(anEnum: SomeEnum): SomeEnum
+
+  abstract fun echoList(list: List<Any?>): List<Any?>
+
+  abstract fun echoMap(map: Map<Any, Any?>): Map<Any, Any?>
 }
 
 @Keep
@@ -259,6 +460,28 @@ class JniMessageApiRegistrar : JniMessageApi() {
     }
     error("JniMessageApi has not been set")
   }
+
+  override fun echoList(list: List<Any?>): List<Any?> {
+    api?.let {
+      try {
+        return api!!.echoList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApi has not been set")
+  }
+
+  override fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
+    api?.let {
+      try {
+        return api!!.echoMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApi has not been set")
+  }
 }
 
 val JniMessageApiNullableInstances: MutableMap<String, JniMessageApiNullableRegistrar> =
@@ -279,6 +502,10 @@ abstract class JniMessageApiNullable {
   abstract fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes?
 
   abstract fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum?
+
+  abstract fun echoList(list: List<Any?>?): List<Any?>?
+
+  abstract fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>?
 }
 
 @Keep
@@ -375,6 +602,28 @@ class JniMessageApiNullableRegistrar : JniMessageApiNullable() {
     }
     error("JniMessageApiNullable has not been set")
   }
+
+  override fun echoList(list: List<Any?>?): List<Any?>? {
+    api?.let {
+      try {
+        return api!!.echoList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullable has not been set")
+  }
+
+  override fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>? {
+    api?.let {
+      try {
+        return api!!.echoMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullable has not been set")
+  }
 }
 
 val JniMessageApiAsyncInstances: MutableMap<String, JniMessageApiAsyncRegistrar> = mutableMapOf()
@@ -396,6 +645,10 @@ abstract class JniMessageApiAsync {
   abstract suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes
 
   abstract suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum
+
+  abstract suspend fun echoList(list: List<Any?>): List<Any?>
+
+  abstract suspend fun echoMap(map: Map<Any, Any?>): Map<Any, Any?>
 }
 
 @Keep
@@ -503,6 +756,28 @@ class JniMessageApiAsyncRegistrar : JniMessageApiAsync() {
     }
     error("JniMessageApiAsync has not been set")
   }
+
+  override suspend fun echoList(list: List<Any?>): List<Any?> {
+    api?.let {
+      try {
+        return api!!.echoList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiAsync has not been set")
+  }
+
+  override suspend fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
+    api?.let {
+      try {
+        return api!!.echoMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiAsync has not been set")
+  }
 }
 
 val JniMessageApiNullableAsyncInstances: MutableMap<String, JniMessageApiNullableAsyncRegistrar> =
@@ -523,6 +798,10 @@ abstract class JniMessageApiNullableAsync {
   abstract suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes?
 
   abstract suspend fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum?
+
+  abstract suspend fun echoList(list: List<Any?>?): List<Any?>?
+
+  abstract suspend fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>?
 }
 
 @Keep
@@ -613,6 +892,28 @@ class JniMessageApiNullableAsyncRegistrar : JniMessageApiNullableAsync() {
     api?.let {
       try {
         return api!!.sendSomeEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullableAsync has not been set")
+  }
+
+  override suspend fun echoList(list: List<Any?>?): List<Any?>? {
+    api?.let {
+      try {
+        return api!!.echoList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniMessageApiNullableAsync has not been set")
+  }
+
+  override suspend fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>? {
+    api?.let {
+      try {
+        return api!!.echoMap(map)
       } catch (e: Exception) {
         throw e
       }

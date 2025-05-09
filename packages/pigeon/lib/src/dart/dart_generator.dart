@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:code_builder/code_builder.dart' as cb;
+import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:path/path.dart' as path;
 import 'package:pub_semver/pub_semver.dart';
@@ -94,282 +95,288 @@ class DartOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [DartOptions].
   DartOptions merge(DartOptions options) {
-    return DartOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+    return DartOptions.fromMap(mergePigeonMaps(toMap(), options.toMap()));
   }
 }
 
 class _JniType {
   _JniType({
-    required this.typeName,
-    required this.jniName,
-    required this.getToDartCall,
-    required this.getToJniCall,
-    required this.isBuiltIn,
-    this.nonNullableNeedsUnwrapping = false,
+    required this.type,
+    this.subTypeOne,
+    this.subTypeTwo,
   });
+
+  final TypeDeclaration type;
+  final _JniType? subTypeOne;
+  final _JniType? subTypeTwo;
 
   static _JniType fromTypeDeclaration(TypeDeclaration? type) {
     if (type == null) {
-      // throw
       return _JniType(
-        typeName: '',
-        jniName: '',
-        getToDartCall: (
-          TypeDeclaration type, {
-          String? varName,
-          bool forceConversion = false,
-        }) =>
-            '',
-        getToJniCall: (
-          NamedType field,
-          _JniType jniType, {
-          bool forceNonNull = false,
-        }) =>
-            '',
-        isBuiltIn: false,
+        type:
+            const TypeDeclaration(baseName: 'type was null', isNullable: false),
       );
     }
-    _JniType? jniType = _jniTypeForDartType[type.baseName];
-    if (type.isClass) {
-      jniType = jniType ??
-          _JniType(
-            typeName: type.baseName,
-            jniName: 'bridge.${type.baseName}',
-            getToDartCall: (
-              TypeDeclaration type, {
-              String? varName,
-              bool forceConversion = false,
-            }) =>
-                '${type.baseName}.fromJni($varName)${_getForceNonNullSymbol(!type.isNullable)}',
-            getToJniCall: (
-              NamedType field,
-              _JniType jniType, {
-              bool forceNonNull = false,
-            }) =>
-                _wrapInNullCheckIfNullable(
-                    field.type, field.name, '${field.name}.toJni()'),
-            isBuiltIn: false,
-            nonNullableNeedsUnwrapping: true,
-          );
-    } else if (type.isEnum) {
-      jniType = jniType ??
-          _JniType(
-            typeName: type.baseName,
-            jniName: 'bridge.${type.baseName}',
-            getToDartCall: (
-              TypeDeclaration type, {
-              String? varName,
-              bool forceConversion = false,
-            }) =>
-                '${type.baseName}.fromJni($varName)${_getForceNonNullSymbol(!type.isNullable)}',
-            getToJniCall: (
-              NamedType field,
-              _JniType jniType, {
-              bool forceNonNull = false,
-            }) =>
-                _wrapInNullCheckIfNullable(field.type, field.name,
-                    '${field.name}${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toJni()'),
-            isBuiltIn: false,
-            nonNullableNeedsUnwrapping: true,
-          );
+    if (type.baseName == 'List') {
+      final _JniType? subType = type.typeArguments.firstOrNull != null
+          ? _JniType.fromTypeDeclaration(type.typeArguments.firstOrNull)
+          : null;
+      final _JniType jniType = _JniType(
+        type: type,
+        subTypeOne: subType,
+      );
+      return jniType;
+    } else if (type.baseName == 'Map') {
+      final _JniType? subTypeOne = type.typeArguments.firstOrNull != null
+          ? _JniType.fromTypeDeclaration(type.typeArguments.firstOrNull)
+          : null;
+      final _JniType? subTypeTwo = type.typeArguments.lastOrNull != null
+          ? _JniType.fromTypeDeclaration(type.typeArguments.lastOrNull)
+          : null;
+      final _JniType jniType = _JniType(
+        type: type,
+        subTypeOne: subTypeOne,
+        subTypeTwo: subTypeTwo,
+      );
+      return jniType;
     }
-    return jniType ??
-        _JniType(
-            typeName: '',
-            jniName: '',
-            isBuiltIn: false,
-            getToDartCall:
-                (_, {bool forceConversion = true, String varName = ''}) => '',
-            getToJniCall: (
-              _,
-              __, {
-              bool forceNonNull = true,
-            }) =>
-                '');
+
+    return _JniType(
+      type: type,
+    );
   }
 
-  final String typeName;
-  final String jniName;
-  final bool isBuiltIn;
-  final bool nonNullableNeedsUnwrapping;
-  final String Function(
-    TypeDeclaration type, {
-    String varName,
-    bool forceConversion,
-  }) getToDartCall;
-  String Function(
-    NamedType field,
-    _JniType jniType, {
-    bool forceNonNull,
-  }) getToJniCall;
+  static _JniType fromClass(Class classDefinition) {
+    final TypeDeclaration fakeType = TypeDeclaration(
+        baseName: classDefinition.name,
+        isNullable: true,
+        associatedClass: classDefinition);
+    return _JniType(
+      type: fakeType,
+    );
+  }
 
-  // String getToDartCall(
-  // TypeDeclaration type, {
-  // String? varName,
-  // bool forceConversion = false,
-  // }) {
-  //   varName = varName ?? '';
-  //   if (isBuiltIn) {
-  //     return !type.isNullable && !nonNullableNeedsUnwrapping && !forceConversion
-  //         ? ''
-  //         : type.isNullable
-  //             ? '$varName$conversionToNullableDart'
-  //             : '$varName$conversionToDart';
-  //   }
-  //   return '$conversionToDart($varName)${type.isNullable ? '' : '!'}';
-  // }
+  static _JniType fromEnum(Enum enumDefinition) {
+    final TypeDeclaration fakeType = TypeDeclaration(
+        baseName: enumDefinition.name,
+        isNullable: true,
+        associatedEnum: enumDefinition);
+    return _JniType(
+      type: fakeType,
+    );
+  }
+
+  String get jniName {
+    switch (type.baseName) {
+      case 'String':
+        return 'JString';
+      case 'void':
+        return 'JVoid';
+      case 'bool':
+        return 'JBoolean';
+      case 'int':
+        return 'JLong';
+      case 'double':
+        return 'JDouble';
+      case 'Uint8List':
+        return 'JByteArray';
+      case 'Int32List':
+        return 'JIntArray';
+      case 'Int64List':
+        return 'JLongArray';
+      case 'Float64List':
+        return 'JDoubleArray';
+      case 'Object':
+        return 'JObject';
+      case 'List':
+        return 'JList';
+      case 'Map':
+        return 'JMap';
+      default:
+        {
+          if (type.isClass || type.isEnum) {
+            return 'bridge.${type.baseName}';
+          }
+          return 'There is something wrong, a type is not classified';
+        }
+    }
+  }
+
+  String get fullJniName {
+    if (type.baseName == 'List' || type.baseName == 'Map') {
+      return jniName + jniCollectionTypeAnnotations;
+    }
+    return jniName;
+  }
+
+  String get fullJniType {
+    if (type.baseName == 'List' || type.baseName == 'Map') {
+      return '$jniName.type($getJniCollectionTypeTypes)';
+    }
+    return '$jniName.type';
+  }
+
+  String get getJniCollectionTypeTypes {
+    if (type.baseName == 'List') {
+      return subTypeOne?.fullJniType ?? 'JObject.type';
+    }
+    if (type.baseName == 'Map') {
+      return '${subTypeOne?.fullJniType ?? 'JObject.type'}, ${subTypeTwo?.fullJniType ?? 'JObject.type'}';
+    }
+
+    return '$jniName.type';
+  }
+
+  bool get nonNullableNeedsUnwrapping {
+    if (type.isClass ||
+        type.isEnum ||
+        type.baseName == 'String' ||
+        type.baseName == 'Object' ||
+        type.baseName == 'List' ||
+        type.baseName == 'Map') {
+      return true;
+    }
+    return false;
+  }
 
   String getJniGetterMethodName(String field) {
     return 'get${toUpperCamelCase(field)}()';
   }
 
-  String getApiCallReturnType(Method method) {
-    if (method.isAsynchronous ||
-        method.returnType.isNullable ||
-        nonNullableNeedsUnwrapping) {
-      return '$jniName${_getNullableSymbol(method.returnType)}';
+  String get primitiveToDartMethodName {
+    switch (type.baseName) {
+      case 'String':
+        return 'toDartString';
+      case 'int':
+      case 'double':
+        return '${type.baseName}Value';
+      case 'bool':
+        return 'booleanValue';
+      default:
+        return '';
     }
-    return typeName;
+  }
+
+  String getToDartCall(
+    TypeDeclaration type, {
+    String varName = '',
+    bool forceConversion = false,
+  }) {
+    if (type.isClass || type.isEnum) {
+      return '${type.baseName}.fromJni($varName)${_getForceNonNullSymbol(!type.isNullable)}';
+    }
+    String asType = ' as ${getDartReturnType(true)}';
+    String castCall = '';
+    final String codecCall =
+        '_PigeonJniCodec.readValue($varName)${_getForceNonNullSymbol(!type.isNullable)}';
+    String primitiveGetter(String converter, bool unwrap) {
+      return unwrap
+          ? '$varName${_getNullableSymbol(type.isNullable)}.$converter${'(releaseOriginal: true)'}'
+          : varName;
+    }
+
+    switch (type.baseName) {
+      case 'String':
+      case 'int':
+      case 'double':
+      case 'bool':
+        return primitiveGetter(primitiveToDartMethodName,
+            type.baseName == 'String' || type.isNullable || forceConversion);
+      case 'Object':
+        asType = '';
+      case 'List':
+        asType = ' as List<Object?>${_getNullableSymbol(type.isNullable)}';
+        castCall =
+            '${_getNullableSymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
+      case 'Map':
+        asType =
+            ' as Map<Object?, Object?>${_getNullableSymbol(type.isNullable)}';
+        castCall =
+            '${_getNullableSymbol(type.isNullable)}.cast$dartCollectionTypeAnnotations()';
+    }
+    return '${wrapConditionally(
+      '$codecCall$asType',
+      '(',
+      ')',
+      type.baseName != 'Object',
+    )}$castCall';
+  }
+
+  String getToJniCall(
+    TypeDeclaration type,
+    String name,
+    _JniType jniType, {
+    bool forceNonNull = false,
+  }) {
+    if (type.isClass || type.isEnum) {
+      return _wrapInNullCheckIfNullable(type.isNullable, name,
+          '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toJni()');
+    } else if (!type.isNullable &&
+        (type.baseName == 'int' ||
+            type.baseName == 'double' ||
+            type.baseName == 'bool')) {
+      return name;
+    }
+    return '_PigeonJniCodec.writeValue<${getJniCallReturnType(true)}>($name)';
+  }
+
+  String getJniCallReturnType(bool forceUnwrap) {
+    if (forceUnwrap || type.isNullable || nonNullableNeedsUnwrapping) {
+      return '$jniName$jniCollectionTypeAnnotations${_getNullableSymbol(type.isNullable)}';
+    }
+    return type.baseName;
+  }
+
+  String getDartReturnType(bool forceUnwrap) {
+    if (forceUnwrap || type.isNullable || nonNullableNeedsUnwrapping) {
+      return '${type.baseName}$dartCollectionTypeAnnotations${_getNullableSymbol(type.isNullable)}';
+    }
+    return type.baseName;
+  }
+
+  String get dartCollectionTypeAnnotations {
+    if (type.baseName == 'List') {
+      return '<$dartCollectionTypes>';
+    } else if (type.baseName == 'Map') {
+      return '<$dartCollectionTypes>';
+    }
+    return '';
+  }
+
+  String get jniCollectionTypeAnnotations {
+    if (type.baseName == 'List') {
+      return '<$jniCollectionTypes>';
+    } else if (type.baseName == 'Map') {
+      return '<$jniCollectionTypes>';
+    }
+    return '';
+  }
+
+  String get dartCollectionTypes {
+    if (type.baseName == 'List') {
+      return subTypeOne?.getDartReturnType(true) ?? 'Object?';
+    } else if (type.baseName == 'Map') {
+      return '${subTypeOne?.getDartReturnType(true) ?? 'Object?'}, ${subTypeTwo?.getDartReturnType(true) ?? 'Object?'}';
+    }
+    return '';
+  }
+
+  String get jniCollectionTypes {
+    if (type.baseName == 'List') {
+      return subTypeOne?.getJniCallReturnType(true) ?? 'JObject?';
+    } else if (type.baseName == 'Map') {
+      return '${subTypeOne?.getJniCallReturnType(true) ?? 'JObject'}, ${subTypeTwo?.getJniCallReturnType(true) ?? 'JObject?'}';
+    }
+    return '';
   }
 }
 
-String _standardToJniCall(
-  NamedType field,
-  _JniType jniType, {
-  bool forceNonNull = false,
-}) {
-  return field.type.isNullable
-      ? '${field.name} == null ? null : ${jniType.jniName}(${field.name}${_getForceNonNullSymbol(forceNonNull)})'
-      : field.name;
-  // return '${field.name}${field.type.isNullable ? '?' : ''}$conversionToJni';
-}
-
-String _getNullableSymbol(TypeDeclaration type) => type.isNullable ? '?' : '';
+String _getNullableSymbol(bool nullable) => nullable ? '?' : '';
 
 String _getForceNonNullSymbol(bool force) => force ? '!' : '';
 
-String _wrapInNullCheckIfNullable(
-        TypeDeclaration type, String varName, String code) =>
-    type.isNullable ? '$varName == null ? null : $code' : code;
-
-final Map<String, _JniType> _jniTypeForDartType = <String, _JniType>{
-  'String': _JniType(
-    typeName: 'String',
-    jniName: 'JString',
-    getToDartCall: (
-      TypeDeclaration type, {
-      String varName = '',
-      bool forceConversion = false,
-    }) =>
-        '$varName${_getNullableSymbol(type)}.toDartString(releaseOriginal: true)',
-    getToJniCall: (
-      NamedType field,
-      _JniType jniType, {
-      bool forceNonNull = false,
-    }) =>
-        _wrapInNullCheckIfNullable(field.type, field.name,
-            'JString.fromString(${field.name}${_getForceNonNullSymbol(field.type.isNullable && forceNonNull)})'),
-    isBuiltIn: true,
-    nonNullableNeedsUnwrapping: true,
-  ),
-  'void': _JniType(
-    typeName: 'void',
-    jniName: 'JVoid',
-    getToDartCall: (
-      TypeDeclaration type, {
-      String varName = '',
-      bool forceConversion = false,
-    }) =>
-        '',
-    getToJniCall: (
-      NamedType field,
-      _JniType jniType, {
-      bool forceNonNull = false,
-    }) =>
-        '',
-    isBuiltIn: true,
-  ),
-  'bool': _JniType(
-    typeName: 'bool',
-    jniName: 'JBoolean',
-    getToDartCall: (
-      TypeDeclaration type, {
-      String varName = '',
-      bool forceConversion = false,
-    }) =>
-        type.isNullable || forceConversion
-            ? '$varName${_getNullableSymbol(type)}.booleanValue(releaseOriginal: true)'
-            : varName,
-    getToJniCall: (
-      NamedType field,
-      _JniType jniType, {
-      bool forceNonNull = false,
-    }) =>
-        _standardToJniCall(field, jniType, forceNonNull: forceNonNull),
-    isBuiltIn: true,
-  ),
-  'int': _JniType(
-    typeName: 'int',
-    jniName: 'JLong',
-    getToDartCall: (
-      TypeDeclaration type, {
-      String varName = '',
-      bool forceConversion = false,
-    }) =>
-        type.isNullable || forceConversion
-            ? '$varName${_getNullableSymbol(type)}.intValue(releaseOriginal: true)'
-            : varName,
-    getToJniCall: (
-      NamedType field,
-      _JniType jniType, {
-      bool forceNonNull = false,
-    }) =>
-        _standardToJniCall(field, jniType, forceNonNull: forceNonNull),
-    isBuiltIn: true,
-  ),
-  'double': _JniType(
-    typeName: 'double',
-    jniName: 'JDouble',
-    getToDartCall: (
-      TypeDeclaration type, {
-      String varName = '',
-      bool forceConversion = false,
-    }) =>
-        type.isNullable || forceConversion
-            ? '$varName${_getNullableSymbol(type)}.doubleValue(releaseOriginal: true)'
-            : varName,
-    getToJniCall: (
-      NamedType field,
-      _JniType jniType, {
-      bool forceNonNull = false,
-    }) =>
-        _standardToJniCall(field, jniType, forceNonNull: forceNonNull),
-    isBuiltIn: true,
-  ),
-  // 'Uint8List': 'ByteArray',
-  // 'Int32List': 'IntArray',
-  // 'Int64List': 'LongArray',
-  // 'Float32List': 'FloatArray',
-  // 'Float64List': 'DoubleArray',
-  'Object': _JniType(
-    typeName: 'Object',
-    jniName: 'JObject',
-    getToDartCall: (
-      TypeDeclaration type, {
-      String varName = '',
-      bool forceConversion = false,
-    }) =>
-        '_PigeonJniCodec.readValue($varName)${_getForceNonNullSymbol(!type.isNullable)}',
-    getToJniCall: (
-      NamedType field,
-      _JniType jniType, {
-      bool forceNonNull = false,
-    }) =>
-        '_PigeonJniCodec.writeValue(${field.name})${_getForceNonNullSymbol(!field.type.isNullable)}',
-    isBuiltIn: true,
-    nonNullableNeedsUnwrapping: true,
-  ),
-};
+String _wrapInNullCheckIfNullable(bool nullable, String varName, String code) =>
+    nullable ? '$varName == null ? null : $code' : code;
 
 /// Options that control how Dart code will be generated.
 class InternalDartOptions extends InternalOptions {
@@ -478,8 +485,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       }
 
       if (generatorOptions.useJni) {
-        final _JniType jniType =
-            _JniType.fromTypeDeclaration(anEnum.associatedType);
+        final _JniType jniType = _JniType.fromEnum(anEnum);
         indent.newln();
         indent.writeScoped('${jniType.jniName} toJni() {', '}', () {
           indent.writeln('return ${jniType.jniName}.Companion.ofRaw(index)!;');
@@ -610,18 +616,19 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             in getFieldsInSerializationOrder(classDefinition)) {
           final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
           indent.writeln(
-              '${jniType.getToJniCall(field, jniType, forceNonNull: true)},');
+              '${jniType.getToJniCall(field.type, field.name, jniType, forceNonNull: true)},');
         }
       });
     });
   }
 
   void _writeFromJni(Indent indent, Class classDefinition) {
+    final _JniType jniClass = _JniType.fromClass(classDefinition);
     indent.writeScoped(
-        'static ${classDefinition.name}? fromJni(bridge.${classDefinition.name}? jniClass) {',
+        'static ${jniClass.type.baseName}? fromJni(${jniClass.jniName}? jniClass) {',
         '}', () {
       indent.writeScoped(
-          'return jniClass == null ? null : ${classDefinition.name}(', ');',
+          'return jniClass == null ? null : ${jniClass.type.baseName}(', ');',
           () {
         for (final NamedType field
             in getFieldsInSerializationOrder(classDefinition)) {
@@ -960,22 +967,23 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             '}', () {
           final _JniType returnType =
               _JniType.fromTypeDeclaration(method.returnType);
-          final String methodCallReturnString = returnType.typeName == 'void' &&
+          final String methodCallReturnString = returnType.type.baseName ==
+                      'void' &&
                   method.isAsynchronous
               ? ''
               : (!returnType.nonNullableNeedsUnwrapping &&
                       !method.returnType.isNullable &&
                       !method.isAsynchronous)
                   ? 'return '
-                  : 'final ${returnType.getApiCallReturnType(method)} res = ';
+                  : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} res = ';
           indent.writeln(
               '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_api.${method.name}(${_getJniMethodCallArguments(method.parameters)});');
           if ((method.returnType.isNullable ||
                   method.isAsynchronous ||
                   returnType.nonNullableNeedsUnwrapping) &&
-              returnType.typeName != 'void') {
+              returnType.type.baseName != 'void') {
             indent.writeln(
-                'final ${returnType.typeName}${_getNullableSymbol(method.returnType)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};');
+                'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};');
             indent.writeln('return dartTypeRes;');
           }
         });
@@ -987,7 +995,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   String _getJniMethodCallArguments(Iterable<Parameter> parameters) {
     return parameters.map((Parameter parameter) {
       final _JniType jniType = _JniType.fromTypeDeclaration(parameter.type);
-      return jniType.getToJniCall(parameter, jniType);
+      return jniType.getToJniCall(parameter.type, parameter.name, jniType);
     }).join(', ');
   }
 
@@ -1528,11 +1536,18 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     if (root.classes.isNotEmpty &&
         root.classes.any((Class dataClass) => dataClass.fields
             .any((NamedType field) => isCollectionType(field.type)))) {
+      indent.newln();
       _writeDeepEquals(indent);
     }
     if (generatorOptions.useJni) {
       _writeJniCodec(indent, root);
     }
+  }
+
+  int _sortByObjectCount(TypeDeclaration a, TypeDeclaration b) {
+    return a.fullName.split('Object').length > b.fullName.split('Object').length
+        ? 1
+        : -1;
   }
 
   void _writeJniCodec(Indent indent, Root root) {
@@ -1550,6 +1565,30 @@ class _PigeonJniCodec {
       return (value.as(JString.type)).toDartString();
     } else if (value.isA<JBoolean>(JBoolean.type)) {
       return (value.as(JBoolean.type)).booleanValue();
+    } else if (value.isA<JByteArray>(JByteArray.type)) {
+      final Uint8List list = Uint8List(value.as(JByteArray.type).length);
+      for (int i = 0; i < value.as(JByteArray.type).length; i++) {
+        list[i] = value.as(JByteArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JIntArray>(JIntArray.type)) {
+      final Int32List list = Int32List(value.as(JIntArray.type).length);
+      for (int i = 0; i < value.as(JIntArray.type).length; i++) {
+        list[i] = value.as(JIntArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JLongArray>(JLongArray.type)) {
+      final Int64List list = Int64List(value.as(JLongArray.type).length);
+      for (int i = 0; i < value.as(JLongArray.type).length; i++) {
+        list[i] = value.as(JLongArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JDoubleArray>(JDoubleArray.type)) {
+      final Float64List list = Float64List(value.as(JDoubleArray.type).length);
+      for (int i = 0; i < value.as(JDoubleArray.type).length; i++) {
+        list[i] = value.as(JDoubleArray.type)[i];
+      }
+      return list;
     } else if (value.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
       final JList<JObject> list = (value.as(JList.type<JObject>(JObject.type)));
       final List<Object?> res = <Object?>[];
@@ -1567,12 +1606,19 @@ class _PigeonJniCodec {
       }
       return res;
     ${root.classes.map((Class dataClass) {
-      final _JniType jniType =
-          _JniType.fromTypeDeclaration(dataClass.associatedType);
+      final _JniType jniType = _JniType.fromClass(dataClass);
       return '''
       } else if (value.isA<${jniType.jniName}>(
           ${jniType.jniName}.type)) {
-        return ${jniType.typeName}.fromJni(value.as(${jniType.jniName}.type));
+        return ${jniType.type.baseName}.fromJni(value.as(${jniType.jniName}.type));
+        ''';
+    }).join()}
+    ${root.enums.map((Enum enumDefinition) {
+      final _JniType jniType = _JniType.fromEnum(enumDefinition);
+      return '''
+      } else if (value.isA<${jniType.jniName}>(
+          ${jniType.jniName}.type)) {
+        return ${jniType.type.baseName}.fromJni(value.as(${jniType.jniName}.type));
         ''';
     }).join()}
     } else {
@@ -1580,48 +1626,128 @@ class _PigeonJniCodec {
     }
   }
 
-  static JObject? writeValue(Object? value) {
+  static T writeValue<T extends JObject?>(Object? value) {
     if (value == null) {
-      return null;
+      return null as T;
     } else if (value is bool) {
-      return JBoolean(value);
+      return JBoolean(value) as T;
     } else if (value is double) {
-      return JDouble(value);
+      return JDouble(value) as T;
+      // ignore: avoid_double_and_int_checks
     } else if (value is int) {
-      return JLong(value);
+      return JLong(value) as T;
     } else if (value is String) {
-      return JString.fromString(value);
-    } else if (value is Uint8List) {
-      //TODO
-      return null;
-    } else if (value is Int32List) {
-      //TODO
-      return null;
-    } else if (value is Int64List) {
-      //TODO
-      return null;
-    } else if (value is Float64List) {
-      //TODO
-      return null;
+      return JString.fromString(value) as T;
+    } else if (T == JByteArray) {
+      value as List<int>;
+      final JByteArray array = JByteArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (T == JIntArray) {
+      value as List<int>;
+      final JIntArray array = JIntArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (T == JLongArray) {
+      value as List<int>;
+      final JLongArray array = JLongArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (T == JDoubleArray) {
+      value as List<double>;
+      final JDoubleArray array = JDoubleArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    ${root.lists.values.sorted(_sortByObjectCount).map((TypeDeclaration list) {
+      if (list.typeArguments.isEmpty ||
+          list.typeArguments.first.baseName == 'Object') {
+        return '';
+      }
+      final _JniType jniType = _JniType.fromTypeDeclaration(list);
+      return '''
+    } else if (value is ${jniType.type.fullName}) {
+      final ${jniType.fullJniName} res =
+          ${jniType.fullJniName}.array(${jniType.subTypeOne?.fullJniType ?? 'JObject.type'});
+      for (final ${jniType.dartCollectionTypes} entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+        ''';
+    }).join()}
+    } else if (value is List<Object>) {
+      final JList<JObject> res = JList<JObject>.array(JObject.type);
+      for (int i = 0; i < value.length; i++) {
+        res.add(writeValue(value[i]));
+      }
+      return res as T;
     } else if (value is List) {
       final JList<JObject?> res = JList<JObject?>.array(JObject.type);
       for (int i = 0; i < value.length; i++) {
         res.add(writeValue(value[i]));
       }
-      return res;
-    } else if (value is Map) {
-      final JMap<JObject?, JObject?> res =
-          JMap<JObject, JObject>.hash(JObject.type, JObject.type);
-      for (final MapEntry<Object?, Object?> entry in value.entries) {
-        res[writeValue(entry.key)] = writeValue(entry.value);
+      return res as T;
+    ${root.maps.entries.sorted((MapEntry<String, TypeDeclaration> a, MapEntry<String, TypeDeclaration> b) => _sortByObjectCount(a.value, b.value)).map((MapEntry<String, TypeDeclaration> mapType) {
+      if (mapType.value.typeArguments.isEmpty ||
+          (mapType.value.typeArguments.first.baseName == 'Object' &&
+              mapType.value.typeArguments.last.baseName == 'Object')) {
+        return '';
       }
-      return res;
-    ${root.classes.map((Class dataClass) {
-      final _JniType jniType =
-          _JniType.fromTypeDeclaration(dataClass.associatedType);
+      final _JniType jniType = _JniType.fromTypeDeclaration(mapType.value);
       return '''
-      } else if (value is ${jniType.typeName}) {
-        return value.toJni();
+    } else if (value is ${jniType.type.fullName}) {
+      final ${jniType.fullJniName} res =
+          ${jniType.fullJniName}.hash(${jniType.subTypeOne?.fullJniType ?? 'JObject.type'}, ${jniType.subTypeTwo?.fullJniType ?? 'JObject.type'});
+      for (final MapEntry${jniType.dartCollectionTypeAnnotations} entry in value.entries) {
+        res[writeValue(entry.key)] = 
+            writeValue(entry.value);
+      }
+      return res as T;
+        ''';
+    }).join()}
+    } else if (value is Map<Object, Object>) {
+      final JMap<JObject, JObject> res =
+          JMap<JObject, JObject>.hash(JObject.type, JObject.type);
+      for (final MapEntry<Object, Object> entry in value.entries) {
+        res[writeValue(entry.key)] = 
+            writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<Object, Object?>) {
+      final JMap<JObject, JObject?> res =
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.type);
+      for (final MapEntry<Object, Object?> entry in value.entries) {
+        res[writeValue(entry.key)] = 
+            writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map) {
+      final JMap<JObject, JObject?> res =
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.type);
+      for (final MapEntry<Object?, Object?> entry in value.entries) {
+        res[writeValue(entry.key)] = 
+            writeValue(entry.value);
+      }
+      return res as T;
+    ${root.classes.map((Class dataClass) {
+      final _JniType jniType = _JniType.fromClass(dataClass);
+      return '''
+      } else if (value is ${jniType.type.baseName}) {
+        return value.toJni() as T;
+        ''';
+    }).join()}
+    ${root.enums.map((Enum enumDefinition) {
+      final _JniType jniType = _JniType.fromEnum(enumDefinition);
+      return '''
+      } else if (value is ${jniType.type.baseName}) {
+        return value.toJni() as T;
         ''';
     }).join()}
     } else {
@@ -1664,8 +1790,7 @@ bool _deepEquals(Object? a, Object? b) {
         _deepEquals(a[key], b[key]));
   }
   return a == b;
-}
-    ''');
+}''');
   }
 
   void _writeCreateConnectionError(Indent indent) {

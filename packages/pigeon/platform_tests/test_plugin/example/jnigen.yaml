@@ -27,3 +27,4 @@ classes:
   - 'SomeTypes'
   - 'SomeNullableTypes'
   - 'SomeEnum'
+  - 'SomeOtherEnum'

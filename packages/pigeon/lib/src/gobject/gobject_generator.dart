@@ -69,7 +69,7 @@ class GObjectOptions {
   /// Overrides any non-null parameters from [options] into this to make a new
   /// [GObjectOptions].
   GObjectOptions merge(GObjectOptions options) {
-    return GObjectOptions.fromMap(mergeMaps(toMap(), options.toMap()));
+    return GObjectOptions.fromMap(mergePigeonMaps(toMap(), options.toMap()));
   }
 }
 

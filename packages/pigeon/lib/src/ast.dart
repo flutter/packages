@@ -143,7 +143,6 @@ class AstProxyApi extends Api {
     super.documentationComments = const <String>[],
     required this.constructors,
     required this.fields,
-    this.associatedType,
     this.superClass,
     this.interfaces = const <TypeDeclaration>{},
     this.swiftOptions,
@@ -155,9 +154,6 @@ class AstProxyApi extends Api {
 
   /// List of fields inside the API.
   List<ApiField> fields;
-
-  /// The TypeDeclaration associated with this ProxyApi.
-  TypeDeclaration? associatedType;
 
   /// Name of the class this class considers the super class.
   TypeDeclaration? superClass;
@@ -514,6 +510,24 @@ class TypeDeclaration {
   /// Associated [AstProxyApi], if any.
   final AstProxyApi? associatedProxyApi;
 
+  /// Returns the full annotated name of the type.
+  String get fullName {
+    if (baseName == 'List' || baseName == 'Map') {
+      return '$baseName<$typeArgumentsString>${isNullable ? '?' : ''}';
+    }
+    return '$baseName${isNullable ? '?' : ''}';
+  }
+
+  /// Returns the Type Arguments in annotation form.
+  String get typeArgumentsString {
+    if (baseName == 'List') {
+      return typeArguments.firstOrNull?.fullName ?? 'Object?';
+    } else if (baseName == 'Map') {
+      return '${typeArguments.firstOrNull?.fullName ?? 'Object?'}, ${typeArguments.lastOrNull?.fullName ?? 'Object?'}';
+    }
+    return '';
+  }
+
   @override
   int get hashCode {
     // This has to be implemented because TypeDeclaration is used as a Key to a
@@ -551,7 +565,6 @@ class TypeDeclaration {
       associatedEnum: enumDefinition,
       typeArguments: typeArguments,
     );
-    enumDefinition.associatedType = newType;
     return newType;
   }
 
@@ -563,7 +576,6 @@ class TypeDeclaration {
       associatedClass: classDefinition,
       typeArguments: typeArguments,
     );
-    classDefinition.associatedType = newType;
     return newType;
   }
 
@@ -575,7 +587,6 @@ class TypeDeclaration {
       associatedProxyApi: proxyApiDefinition,
       typeArguments: typeArguments,
     );
-    proxyApiDefinition.associatedType = newType;
     return newType;
   }
 
@@ -717,7 +728,6 @@ class Class extends Node {
     required this.fields,
     this.superClassName,
     this.superClass,
-    this.associatedType,
     this.isSealed = false,
     this.isReferenced = true,
     this.isSwiftClass = false,
@@ -735,9 +745,6 @@ class Class extends Node {
 
   /// The definition of the parent class.
   Class? superClass;
-
-  /// The TypeDeclaration associated with this class.
-  TypeDeclaration? associatedType;
 
   /// List of class definitions of children.
   ///
@@ -775,7 +782,6 @@ class Enum extends Node {
   Enum({
     required this.name,
     required this.members,
-    this.associatedType,
     this.documentationComments = const <String>[],
   });
 
@@ -784,9 +790,6 @@ class Enum extends Node {
 
   /// All of the members of the enum.
   List<EnumMember> members;
-
-  /// The TypeDeclaration associated with this enum.
-  TypeDeclaration? associatedType;
 
   /// List of documentation comments, separated by line.
   ///
@@ -832,6 +835,8 @@ class Root extends Node {
     required this.classes,
     required this.apis,
     required this.enums,
+    this.lists = const <String, TypeDeclaration>{},
+    this.maps = const <String, TypeDeclaration>{},
     this.containsHostApi = false,
     this.containsFlutterApi = false,
     this.containsProxyApi = false,
@@ -840,7 +845,13 @@ class Root extends Node {
 
   /// Factory function for generating an empty root, usually used when early errors are encountered.
   factory Root.makeEmpty() {
-    return Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    return Root(
+      apis: <Api>[],
+      classes: <Class>[],
+      enums: <Enum>[],
+      lists: <String, TypeDeclaration>{},
+      maps: <String, TypeDeclaration>{},
+    );
   }
 
   /// All the classes contained in the AST.
@@ -851,6 +862,12 @@ class Root extends Node {
 
   /// All of the enums contained in the AST.
   List<Enum> enums;
+
+  /// All of the lists contained in the AST.
+  Map<String, TypeDeclaration> lists;
+
+  /// All of the maps contained in the AST.
+  Map<String, TypeDeclaration> maps;
 
   /// Whether the root has any Host API definitions.
   bool containsHostApi;
@@ -874,6 +891,6 @@ class Root extends Node {
 
   @override
   String toString() {
-    return '(Root classes:$classes apis:$apis enums:$enums)';
+    return '(Root classes:$classes apis:$apis enums:$enums lists:$lists maps:$maps containsHostApi:$containsHostApi containsFlutterApi:$containsFlutterApi containsProxyApi:$containsProxyApi)';
   }
 }

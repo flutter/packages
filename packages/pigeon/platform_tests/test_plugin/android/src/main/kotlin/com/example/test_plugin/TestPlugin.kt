@@ -929,6 +929,14 @@ class JniMessageApiImpl : JniMessageApi() {
   override fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
     return anEnum
   }
+
+  override fun echoList(list: List<Any?>): List<Any?> {
+    return list
+  }
+
+  override fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
+    return map
+  }
 }
 
 class JniMessageApiImpl2 : JniMessageApi() {
@@ -964,6 +972,14 @@ class JniMessageApiImpl2 : JniMessageApi() {
   override fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
     return anEnum
   }
+
+  override fun echoList(list: List<Any?>): List<Any?> {
+    return list
+  }
+
+  override fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
+    return map
+  }
 }
 
 class JniMessageApiNullableImpl : JniMessageApiNullable() {
@@ -993,6 +1009,14 @@ class JniMessageApiNullableImpl : JniMessageApiNullable() {
 
   override fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
     return anEnum
+  }
+
+  override fun echoList(list: List<Any?>?): List<Any?>? {
+    return list
+  }
+
+  override fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>? {
+    return map
   }
 }
 
@@ -1027,6 +1051,14 @@ class JniMessageApiAsyncImpl : JniMessageApiAsync() {
 
   override suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
     return anEnum
+  }
+
+  override suspend fun echoList(list: List<Any?>): List<Any?> {
+    return list
+  }
+
+  override suspend fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
+    return map
   }
 }
 
@@ -1063,6 +1095,14 @@ class JniMessageApiAsyncImpl2 : JniMessageApiAsync() {
   override suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
     return anEnum
   }
+
+  override suspend fun echoList(list: List<Any?>): List<Any?> {
+    return list
+  }
+
+  override suspend fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
+    return map
+  }
 }
 
 class JniMessageApiNullableAsyncImpl : JniMessageApiNullableAsync() {
@@ -1094,12 +1134,15 @@ class JniMessageApiNullableAsyncImpl : JniMessageApiNullableAsync() {
   override suspend fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
     return anEnum
   }
-}
 
-// override suspend fun thinkBeforeAnswering(): String {
-//  delay(10L)
-//  return "42"
-// }
+  override suspend fun echoList(list: List<Any?>?): List<Any?>? {
+    return list
+  }
+
+  override suspend fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>? {
+    return map
+  }
+}
 
 class TestPluginWithSuffix : HostSmallApi {
 

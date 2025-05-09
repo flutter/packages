@@ -14,6 +14,22 @@ import 'package:flutter/services.dart';
 import 'package:jni/jni.dart';
 import './jni_tests.gen.jni.dart' as bridge;
 
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+            .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
+    return a.length == b.length &&
+        keys.every((Object? key) =>
+            (b as Map<Object?, Object?>).containsKey(key) &&
+            _deepEquals(a[key], b[key]));
+  }
+  return a == b;
+}
+
 class _PigeonJniCodec {
   static Object? readValue(JObject? value) {
     if (value == null) {
@@ -26,6 +42,30 @@ class _PigeonJniCodec {
       return (value.as(JString.type)).toDartString();
     } else if (value.isA<JBoolean>(JBoolean.type)) {
       return (value.as(JBoolean.type)).booleanValue();
+    } else if (value.isA<JByteArray>(JByteArray.type)) {
+      final Uint8List list = Uint8List(value.as(JByteArray.type).length);
+      for (int i = 0; i < value.as(JByteArray.type).length; i++) {
+        list[i] = value.as(JByteArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JIntArray>(JIntArray.type)) {
+      final Int32List list = Int32List(value.as(JIntArray.type).length);
+      for (int i = 0; i < value.as(JIntArray.type).length; i++) {
+        list[i] = value.as(JIntArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JLongArray>(JLongArray.type)) {
+      final Int64List list = Int64List(value.as(JLongArray.type).length);
+      for (int i = 0; i < value.as(JLongArray.type).length; i++) {
+        list[i] = value.as(JLongArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JDoubleArray>(JDoubleArray.type)) {
+      final Float64List list = Float64List(value.as(JDoubleArray.type).length);
+      for (int i = 0; i < value.as(JDoubleArray.type).length; i++) {
+        list[i] = value.as(JDoubleArray.type)[i];
+      }
+      return list;
     } else if (value.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
       final JList<JObject> list = (value.as(JList.type<JObject>(JObject.type)));
       final List<Object?> res = <Object?>[];
@@ -47,51 +87,196 @@ class _PigeonJniCodec {
     } else if (value
         .isA<bridge.SomeNullableTypes>(bridge.SomeNullableTypes.type)) {
       return SomeNullableTypes.fromJni(value.as(bridge.SomeNullableTypes.type));
+    } else if (value.isA<bridge.SomeEnum>(bridge.SomeEnum.type)) {
+      return SomeEnum.fromJni(value.as(bridge.SomeEnum.type));
+    } else if (value.isA<bridge.SomeOtherEnum>(bridge.SomeOtherEnum.type)) {
+      return SomeOtherEnum.fromJni(value.as(bridge.SomeOtherEnum.type));
     } else {
       throw ArgumentError.value(value);
     }
   }
 
-  static JObject? writeValue(Object? value) {
+  static T writeValue<T extends JObject?>(Object? value) {
     if (value == null) {
-      return null;
+      return null as T;
     } else if (value is bool) {
-      return JBoolean(value);
+      return JBoolean(value) as T;
     } else if (value is double) {
-      return JDouble(value);
+      return JDouble(value) as T;
+      // ignore: avoid_double_and_int_checks
     } else if (value is int) {
-      return JLong(value);
+      return JLong(value) as T;
     } else if (value is String) {
-      return JString.fromString(value);
-    } else if (value is Uint8List) {
-      //TODO
-      return null;
-    } else if (value is Int32List) {
-      //TODO
-      return null;
-    } else if (value is Int64List) {
-      //TODO
-      return null;
-    } else if (value is Float64List) {
-      //TODO
-      return null;
+      return JString.fromString(value) as T;
+    } else if (T == JByteArray) {
+      value as List<int>;
+      final JByteArray array = JByteArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (T == JIntArray) {
+      value as List<int>;
+      final JIntArray array = JIntArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (T == JLongArray) {
+      value as List<int>;
+      final JLongArray array = JLongArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (T == JDoubleArray) {
+      value as List<double>;
+      final JDoubleArray array = JDoubleArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (value is List<String>) {
+      final JList<JString> res = JList<JString>.array(JString.type);
+      for (final String entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<int>) {
+      final JList<JLong> res = JList<JLong>.array(JLong.type);
+      for (final int entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<double>) {
+      final JList<JDouble> res = JList<JDouble>.array(JDouble.type);
+      for (final double entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<bool>) {
+      final JList<JBoolean> res = JList<JBoolean>.array(JBoolean.type);
+      for (final bool entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<SomeEnum>) {
+      final JList<bridge.SomeEnum> res =
+          JList<bridge.SomeEnum>.array(bridge.SomeEnum.type);
+      for (final SomeEnum entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<SomeNullableTypes>) {
+      final JList<bridge.SomeNullableTypes> res =
+          JList<bridge.SomeNullableTypes>.array(bridge.SomeNullableTypes.type);
+      for (final SomeNullableTypes entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<List<Object?>>) {
+      final JList<JList<JObject?>> res =
+          JList<JList<JObject?>>.array(JList.type(JObject.type));
+      for (final List<Object?> entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<Map<Object?, Object?>>) {
+      final JList<JMap<JObject?, JObject?>> res =
+          JList<JMap<JObject?, JObject?>>.array(
+              JMap.type(JObject.type, JObject.type));
+      for (final Map<Object?, Object?> entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<Object>) {
+      final JList<JObject> res = JList<JObject>.array(JObject.type);
+      for (int i = 0; i < value.length; i++) {
+        res.add(writeValue(value[i]));
+      }
+      return res as T;
     } else if (value is List) {
       final JList<JObject?> res = JList<JObject?>.array(JObject.type);
       for (int i = 0; i < value.length; i++) {
         res.add(writeValue(value[i]));
       }
-      return res;
-    } else if (value is Map) {
-      final JMap<JObject?, JObject?> res =
+      return res as T;
+    } else if (value is Map<String, String>) {
+      final JMap<JString, JString> res =
+          JMap<JString, JString>.hash(JString.type, JString.type);
+      for (final MapEntry<String, String> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int, int>) {
+      final JMap<JLong, JLong> res =
+          JMap<JLong, JLong>.hash(JLong.type, JLong.type);
+      for (final MapEntry<int, int> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<SomeEnum, SomeEnum>) {
+      final JMap<bridge.SomeEnum, bridge.SomeEnum> res =
+          JMap<bridge.SomeEnum, bridge.SomeEnum>.hash(
+              bridge.SomeEnum.type, bridge.SomeEnum.type);
+      for (final MapEntry<SomeEnum, SomeEnum> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<SomeNullableTypes, SomeNullableTypes>) {
+      final JMap<bridge.SomeNullableTypes, bridge.SomeNullableTypes> res =
+          JMap<bridge.SomeNullableTypes, bridge.SomeNullableTypes>.hash(
+              bridge.SomeNullableTypes.type, bridge.SomeNullableTypes.type);
+      for (final MapEntry<SomeNullableTypes, SomeNullableTypes> entry
+          in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int, List<Object?>>) {
+      final JMap<JLong, JList<JObject?>> res =
+          JMap<JLong, JList<JObject?>>.hash(
+              JLong.type, JList.type(JObject.type));
+      for (final MapEntry<int, List<Object?>> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int, Map<Object?, Object?>>) {
+      final JMap<JLong, JMap<JObject?, JObject?>> res =
+          JMap<JLong, JMap<JObject?, JObject?>>.hash(
+              JLong.type, JMap.type(JObject.type, JObject.type));
+      for (final MapEntry<int, Map<Object?, Object?>> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<Object, Object>) {
+      final JMap<JObject, JObject> res =
           JMap<JObject, JObject>.hash(JObject.type, JObject.type);
+      for (final MapEntry<Object, Object> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<Object, Object?>) {
+      final JMap<JObject, JObject?> res =
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.type);
+      for (final MapEntry<Object, Object?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map) {
+      final JMap<JObject, JObject?> res =
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.type);
       for (final MapEntry<Object?, Object?> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
-      return res;
+      return res as T;
     } else if (value is SomeTypes) {
-      return value.toJni();
+      return value.toJni() as T;
     } else if (value is SomeNullableTypes) {
-      return value.toJni();
+      return value.toJni() as T;
+    } else if (value is SomeEnum) {
+      return value.toJni() as T;
+    } else if (value is SomeOtherEnum) {
+      return value.toJni() as T;
     } else {
       throw ArgumentError.value(value);
     }
@@ -112,14 +297,51 @@ enum SomeEnum {
   }
 }
 
+enum SomeOtherEnum {
+  value1,
+  value2,
+  value3;
+
+  bridge.SomeOtherEnum toJni() {
+    return bridge.SomeOtherEnum.Companion.ofRaw(index)!;
+  }
+
+  static SomeOtherEnum? fromJni(bridge.SomeOtherEnum? jniEnum) {
+    return jniEnum == null ? null : SomeOtherEnum.values[jniEnum.getRaw()];
+  }
+}
+
 class SomeTypes {
   SomeTypes({
     required this.aString,
     required this.anInt,
     required this.aDouble,
     required this.aBool,
+    required this.aByteArray,
+    required this.a4ByteArray,
+    required this.a8ByteArray,
+    required this.aFloatArray,
     required this.anObject,
     required this.anEnum,
+    required this.someNullableTypes,
+    required this.list,
+    required this.stringList,
+    required this.intList,
+    required this.doubleList,
+    required this.boolList,
+    required this.enumList,
+    required this.classList,
+    required this.objectList,
+    required this.listList,
+    required this.mapList,
+    required this.map,
+    required this.stringMap,
+    required this.intMap,
+    required this.enumMap,
+    required this.classMap,
+    required this.objectMap,
+    required this.listMap,
+    required this.mapMap,
   });
 
   String aString;
@@ -130,9 +352,55 @@ class SomeTypes {
 
   bool aBool;
 
+  Uint8List aByteArray;
+
+  Int32List a4ByteArray;
+
+  Int64List a8ByteArray;
+
+  Float64List aFloatArray;
+
   Object anObject;
 
   SomeEnum anEnum;
+
+  SomeNullableTypes someNullableTypes;
+
+  List<Object?> list;
+
+  List<String> stringList;
+
+  List<int> intList;
+
+  List<double> doubleList;
+
+  List<bool> boolList;
+
+  List<SomeEnum> enumList;
+
+  List<SomeNullableTypes> classList;
+
+  List<Object> objectList;
+
+  List<List<Object?>> listList;
+
+  List<Map<Object?, Object?>> mapList;
+
+  Map<Object?, Object?> map;
+
+  Map<String, String> stringMap;
+
+  Map<int, int> intMap;
+
+  Map<SomeEnum, SomeEnum> enumMap;
+
+  Map<SomeNullableTypes, SomeNullableTypes> classMap;
+
+  Map<Object, Object> objectMap;
+
+  Map<int, List<Object?>> listMap;
+
+  Map<int, Map<Object?, Object?>> mapMap;
 
   List<Object?> _toList() {
     return <Object?>[
@@ -140,19 +408,67 @@ class SomeTypes {
       anInt,
       aDouble,
       aBool,
+      aByteArray,
+      a4ByteArray,
+      a8ByteArray,
+      aFloatArray,
       anObject,
       anEnum,
+      someNullableTypes,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      enumList,
+      classList,
+      objectList,
+      listList,
+      mapList,
+      map,
+      stringMap,
+      intMap,
+      enumMap,
+      classMap,
+      objectMap,
+      listMap,
+      mapMap,
     ];
   }
 
   bridge.SomeTypes toJni() {
     return bridge.SomeTypes(
-      JString.fromString(aString),
+      _PigeonJniCodec.writeValue<JString>(aString),
       anInt,
       aDouble,
       aBool,
-      _PigeonJniCodec.writeValue(anObject)!,
+      _PigeonJniCodec.writeValue<JByteArray>(aByteArray),
+      _PigeonJniCodec.writeValue<JIntArray>(a4ByteArray),
+      _PigeonJniCodec.writeValue<JLongArray>(a8ByteArray),
+      _PigeonJniCodec.writeValue<JDoubleArray>(aFloatArray),
+      _PigeonJniCodec.writeValue<JObject>(anObject),
       anEnum.toJni(),
+      someNullableTypes.toJni(),
+      _PigeonJniCodec.writeValue<JList<JObject?>>(list),
+      _PigeonJniCodec.writeValue<JList<JString>>(stringList),
+      _PigeonJniCodec.writeValue<JList<JLong>>(intList),
+      _PigeonJniCodec.writeValue<JList<JDouble>>(doubleList),
+      _PigeonJniCodec.writeValue<JList<JBoolean>>(boolList),
+      _PigeonJniCodec.writeValue<JList<bridge.SomeEnum>>(enumList),
+      _PigeonJniCodec.writeValue<JList<bridge.SomeNullableTypes>>(classList),
+      _PigeonJniCodec.writeValue<JList<JObject>>(objectList),
+      _PigeonJniCodec.writeValue<JList<JList<JObject?>>>(listList),
+      _PigeonJniCodec.writeValue<JList<JMap<JObject?, JObject?>>>(mapList),
+      _PigeonJniCodec.writeValue<JMap<JObject, JObject?>>(map),
+      _PigeonJniCodec.writeValue<JMap<JString, JString>>(stringMap),
+      _PigeonJniCodec.writeValue<JMap<JLong, JLong>>(intMap),
+      _PigeonJniCodec.writeValue<JMap<bridge.SomeEnum, bridge.SomeEnum>>(
+          enumMap),
+      _PigeonJniCodec.writeValue<
+          JMap<bridge.SomeNullableTypes, bridge.SomeNullableTypes>>(classMap),
+      _PigeonJniCodec.writeValue<JMap<JObject, JObject>>(objectMap),
+      _PigeonJniCodec.writeValue<JMap<JLong, JList<JObject?>>>(listMap),
+      _PigeonJniCodec.writeValue<JMap<JLong, JMap<JObject?, JObject?>>>(mapMap),
     );
   }
 
@@ -168,8 +484,72 @@ class SomeTypes {
             anInt: jniClass.getAnInt(),
             aDouble: jniClass.getADouble(),
             aBool: jniClass.getABool(),
+            aByteArray: (_PigeonJniCodec.readValue(jniClass.getAByteArray())!
+                as Uint8List),
+            a4ByteArray: (_PigeonJniCodec.readValue(jniClass.getA4ByteArray())!
+                as Int32List),
+            a8ByteArray: (_PigeonJniCodec.readValue(jniClass.getA8ByteArray())!
+                as Int64List),
+            aFloatArray: (_PigeonJniCodec.readValue(jniClass.getAFloatArray())!
+                as Float64List),
             anObject: _PigeonJniCodec.readValue(jniClass.getAnObject())!,
             anEnum: SomeEnum.fromJni(jniClass.getAnEnum())!,
+            someNullableTypes:
+                SomeNullableTypes.fromJni(jniClass.getSomeNullableTypes())!,
+            list: (_PigeonJniCodec.readValue(jniClass.getList())!
+                    as List<Object?>)
+                .cast<Object?>(),
+            stringList: (_PigeonJniCodec.readValue(jniClass.getStringList())!
+                    as List<Object?>)
+                .cast<String>(),
+            intList: (_PigeonJniCodec.readValue(jniClass.getIntList())!
+                    as List<Object?>)
+                .cast<int>(),
+            doubleList: (_PigeonJniCodec.readValue(jniClass.getDoubleList())!
+                    as List<Object?>)
+                .cast<double>(),
+            boolList: (_PigeonJniCodec.readValue(jniClass.getBoolList())!
+                    as List<Object?>)
+                .cast<bool>(),
+            enumList: (_PigeonJniCodec.readValue(jniClass.getEnumList())!
+                    as List<Object?>)
+                .cast<SomeEnum>(),
+            classList: (_PigeonJniCodec.readValue(jniClass.getClassList())!
+                    as List<Object?>)
+                .cast<SomeNullableTypes>(),
+            objectList: (_PigeonJniCodec.readValue(jniClass.getObjectList())!
+                    as List<Object?>)
+                .cast<Object>(),
+            listList: (_PigeonJniCodec.readValue(jniClass.getListList())!
+                    as List<Object?>)
+                .cast<List<Object?>>(),
+            mapList: (_PigeonJniCodec.readValue(jniClass.getMapList())!
+                    as List<Object?>)
+                .cast<Map<Object?, Object?>>(),
+            map: (_PigeonJniCodec.readValue(jniClass.getMap())!
+                    as Map<Object?, Object?>)
+                .cast<Object?, Object?>(),
+            stringMap: (_PigeonJniCodec.readValue(jniClass.getStringMap())!
+                    as Map<Object?, Object?>)
+                .cast<String, String>(),
+            intMap: (_PigeonJniCodec.readValue(jniClass.getIntMap())!
+                    as Map<Object?, Object?>)
+                .cast<int, int>(),
+            enumMap: (_PigeonJniCodec.readValue(jniClass.getEnumMap())!
+                    as Map<Object?, Object?>)
+                .cast<SomeEnum, SomeEnum>(),
+            classMap: (_PigeonJniCodec.readValue(jniClass.getClassMap())!
+                    as Map<Object?, Object?>)
+                .cast<SomeNullableTypes, SomeNullableTypes>(),
+            objectMap: (_PigeonJniCodec.readValue(jniClass.getObjectMap())!
+                    as Map<Object?, Object?>)
+                .cast<Object, Object>(),
+            listMap: (_PigeonJniCodec.readValue(jniClass.getListMap())!
+                    as Map<Object?, Object?>)
+                .cast<int, List<Object?>>(),
+            mapMap: (_PigeonJniCodec.readValue(jniClass.getMapMap())!
+                    as Map<Object?, Object?>)
+                .cast<int, Map<Object?, Object?>>(),
           );
   }
 
@@ -180,8 +560,35 @@ class SomeTypes {
       anInt: result[1]! as int,
       aDouble: result[2]! as double,
       aBool: result[3]! as bool,
-      anObject: result[4]!,
-      anEnum: result[5]! as SomeEnum,
+      aByteArray: result[4]! as Uint8List,
+      a4ByteArray: result[5]! as Int32List,
+      a8ByteArray: result[6]! as Int64List,
+      aFloatArray: result[7]! as Float64List,
+      anObject: result[8]!,
+      anEnum: result[9]! as SomeEnum,
+      someNullableTypes: result[10]! as SomeNullableTypes,
+      list: result[11]! as List<Object?>,
+      stringList: (result[12] as List<Object?>?)!.cast<String>(),
+      intList: (result[13] as List<Object?>?)!.cast<int>(),
+      doubleList: (result[14] as List<Object?>?)!.cast<double>(),
+      boolList: (result[15] as List<Object?>?)!.cast<bool>(),
+      enumList: (result[16] as List<Object?>?)!.cast<SomeEnum>(),
+      classList: (result[17] as List<Object?>?)!.cast<SomeNullableTypes>(),
+      objectList: (result[18] as List<Object?>?)!.cast<Object>(),
+      listList: (result[19] as List<Object?>?)!.cast<List<Object?>>(),
+      mapList: (result[20] as List<Object?>?)!.cast<Map<Object?, Object?>>(),
+      map: result[21]! as Map<Object?, Object?>,
+      stringMap: (result[22] as Map<Object?, Object?>?)!.cast<String, String>(),
+      intMap: (result[23] as Map<Object?, Object?>?)!.cast<int, int>(),
+      enumMap:
+          (result[24] as Map<Object?, Object?>?)!.cast<SomeEnum, SomeEnum>(),
+      classMap: (result[25] as Map<Object?, Object?>?)!
+          .cast<SomeNullableTypes, SomeNullableTypes>(),
+      objectMap: (result[26] as Map<Object?, Object?>?)!.cast<Object, Object>(),
+      listMap:
+          (result[27] as Map<Object?, Object?>?)!.cast<int, List<Object?>>(),
+      mapMap: (result[28] as Map<Object?, Object?>?)!
+          .cast<int, Map<Object?, Object?>>(),
     );
   }
 
@@ -198,8 +605,31 @@ class SomeTypes {
         anInt == other.anInt &&
         aDouble == other.aDouble &&
         aBool == other.aBool &&
+        _deepEquals(aByteArray, other.aByteArray) &&
+        _deepEquals(a4ByteArray, other.a4ByteArray) &&
+        _deepEquals(a8ByteArray, other.a8ByteArray) &&
+        _deepEquals(aFloatArray, other.aFloatArray) &&
         anObject == other.anObject &&
-        anEnum == other.anEnum;
+        anEnum == other.anEnum &&
+        someNullableTypes == other.someNullableTypes &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(classList, other.classList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(classMap, other.classMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap);
   }
 
   @override
@@ -213,8 +643,15 @@ class SomeNullableTypes {
     this.anInt,
     this.aDouble,
     this.aBool,
+    this.aByteArray,
+    this.a4ByteArray,
+    this.a8ByteArray,
+    this.aFloatArray,
     this.anObject,
     this.anEnum,
+    this.someTypes,
+    this.list,
+    this.map,
   });
 
   String? aString;
@@ -225,9 +662,23 @@ class SomeNullableTypes {
 
   bool? aBool;
 
+  Uint8List? aByteArray;
+
+  Int32List? a4ByteArray;
+
+  Int64List? a8ByteArray;
+
+  Float64List? aFloatArray;
+
   Object? anObject;
 
   SomeEnum? anEnum;
+
+  SomeTypes? someTypes;
+
+  List<Object?>? list;
+
+  Map<Object?, Object?>? map;
 
   List<Object?> _toList() {
     return <Object?>[
@@ -235,19 +686,33 @@ class SomeNullableTypes {
       anInt,
       aDouble,
       aBool,
+      aByteArray,
+      a4ByteArray,
+      a8ByteArray,
+      aFloatArray,
       anObject,
       anEnum,
+      someTypes,
+      list,
+      map,
     ];
   }
 
   bridge.SomeNullableTypes toJni() {
     return bridge.SomeNullableTypes(
-      aString == null ? null : JString.fromString(aString!),
-      anInt == null ? null : JLong(anInt!),
-      aDouble == null ? null : JDouble(aDouble!),
-      aBool == null ? null : JBoolean(aBool!),
-      _PigeonJniCodec.writeValue(anObject),
+      _PigeonJniCodec.writeValue<JString?>(aString),
+      _PigeonJniCodec.writeValue<JLong?>(anInt),
+      _PigeonJniCodec.writeValue<JDouble?>(aDouble),
+      _PigeonJniCodec.writeValue<JBoolean?>(aBool),
+      _PigeonJniCodec.writeValue<JByteArray?>(aByteArray),
+      _PigeonJniCodec.writeValue<JIntArray?>(a4ByteArray),
+      _PigeonJniCodec.writeValue<JLongArray?>(a8ByteArray),
+      _PigeonJniCodec.writeValue<JDoubleArray?>(aFloatArray),
+      _PigeonJniCodec.writeValue<JObject?>(anObject),
       anEnum == null ? null : anEnum!.toJni(),
+      someTypes == null ? null : someTypes!.toJni(),
+      _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
+      _PigeonJniCodec.writeValue<JMap<JObject, JObject?>?>(map),
     );
   }
 
@@ -263,8 +728,23 @@ class SomeNullableTypes {
             anInt: jniClass.getAnInt()?.intValue(releaseOriginal: true),
             aDouble: jniClass.getADouble()?.doubleValue(releaseOriginal: true),
             aBool: jniClass.getABool()?.booleanValue(releaseOriginal: true),
+            aByteArray: (_PigeonJniCodec.readValue(jniClass.getAByteArray())
+                as Uint8List?),
+            a4ByteArray: (_PigeonJniCodec.readValue(jniClass.getA4ByteArray())
+                as Int32List?),
+            a8ByteArray: (_PigeonJniCodec.readValue(jniClass.getA8ByteArray())
+                as Int64List?),
+            aFloatArray: (_PigeonJniCodec.readValue(jniClass.getAFloatArray())
+                as Float64List?),
             anObject: _PigeonJniCodec.readValue(jniClass.getAnObject()),
             anEnum: SomeEnum.fromJni(jniClass.getAnEnum()),
+            someTypes: SomeTypes.fromJni(jniClass.getSomeTypes()),
+            list: (_PigeonJniCodec.readValue(jniClass.getList())
+                    as List<Object?>?)
+                ?.cast<Object?>(),
+            map: (_PigeonJniCodec.readValue(jniClass.getMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<Object?, Object?>(),
           );
   }
 
@@ -275,8 +755,15 @@ class SomeNullableTypes {
       anInt: result[1] as int?,
       aDouble: result[2] as double?,
       aBool: result[3] as bool?,
-      anObject: result[4],
-      anEnum: result[5] as SomeEnum?,
+      aByteArray: result[4] as Uint8List?,
+      a4ByteArray: result[5] as Int32List?,
+      a8ByteArray: result[6] as Int64List?,
+      aFloatArray: result[7] as Float64List?,
+      anObject: result[8],
+      anEnum: result[9] as SomeEnum?,
+      someTypes: result[10] as SomeTypes?,
+      list: result[11] as List<Object?>?,
+      map: result[12] as Map<Object?, Object?>?,
     );
   }
 
@@ -293,8 +780,15 @@ class SomeNullableTypes {
         anInt == other.anInt &&
         aDouble == other.aDouble &&
         aBool == other.aBool &&
+        _deepEquals(aByteArray, other.aByteArray) &&
+        _deepEquals(a4ByteArray, other.a4ByteArray) &&
+        _deepEquals(a8ByteArray, other.a8ByteArray) &&
+        _deepEquals(aFloatArray, other.aFloatArray) &&
         anObject == other.anObject &&
-        anEnum == other.anEnum;
+        anEnum == other.anEnum &&
+        someTypes == other.someTypes &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(map, other.map);
   }
 
   @override
@@ -332,7 +826,8 @@ class JniMessageApi {
   }
 
   String echoString(String request) {
-    final JString res = _api.echoString(JString.fromString(request));
+    final JString res =
+        _api.echoString(_PigeonJniCodec.writeValue<JString>(request));
     final String dartTypeRes = res.toDartString(releaseOriginal: true);
     return dartTypeRes;
   }
@@ -350,7 +845,8 @@ class JniMessageApi {
   }
 
   Object echoObj(Object request) {
-    final JObject res = _api.echoObj(_PigeonJniCodec.writeValue(request)!);
+    final JObject res =
+        _api.echoObj(_PigeonJniCodec.writeValue<JObject>(request));
     final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
     return dartTypeRes;
   }
@@ -364,6 +860,23 @@ class JniMessageApi {
   SomeEnum sendSomeEnum(SomeEnum anEnum) {
     final bridge.SomeEnum res = _api.sendSomeEnum(anEnum.toJni());
     final SomeEnum dartTypeRes = SomeEnum.fromJni(res)!;
+    return dartTypeRes;
+  }
+
+  List<Object?> echoList(List<Object?> list) {
+    final JList<JObject?> res =
+        _api.echoList(_PigeonJniCodec.writeValue<JList<JObject?>>(list));
+    final List<Object?> dartTypeRes =
+        (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<Object?>();
+    return dartTypeRes;
+  }
+
+  Map<Object?, Object?> echoMap(Map<Object?, Object?> map) {
+    final JMap<JObject, JObject?> res =
+        _api.echoMap(_PigeonJniCodec.writeValue<JMap<JObject, JObject?>>(map));
+    final Map<Object?, Object?> dartTypeRes =
+        (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+            .cast<Object?, Object?>();
     return dartTypeRes;
   }
 }
@@ -396,33 +909,35 @@ class JniMessageApiNullable {
 
   String? echoString(String? request) {
     final JString? res =
-        _api.echoString(request == null ? null : JString.fromString(request));
+        _api.echoString(_PigeonJniCodec.writeValue<JString?>(request));
     final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
     return dartTypeRes;
   }
 
   int? echoInt(int? request) {
-    final JLong? res = _api.echoInt(request == null ? null : JLong(request));
+    final JLong? res =
+        _api.echoInt(_PigeonJniCodec.writeValue<JLong?>(request));
     final int? dartTypeRes = res?.intValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   double? echoDouble(double? request) {
     final JDouble? res =
-        _api.echoDouble(request == null ? null : JDouble(request));
+        _api.echoDouble(_PigeonJniCodec.writeValue<JDouble?>(request));
     final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   bool? echoBool(bool? request) {
     final JBoolean? res =
-        _api.echoBool(request == null ? null : JBoolean(request));
+        _api.echoBool(_PigeonJniCodec.writeValue<JBoolean?>(request));
     final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   Object? echoObj(Object? request) {
-    final JObject? res = _api.echoObj(_PigeonJniCodec.writeValue(request));
+    final JObject? res =
+        _api.echoObj(_PigeonJniCodec.writeValue<JObject?>(request));
     final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
     return dartTypeRes;
   }
@@ -438,6 +953,23 @@ class JniMessageApiNullable {
     final bridge.SomeEnum? res =
         _api.sendSomeEnum(anEnum == null ? null : anEnum.toJni());
     final SomeEnum? dartTypeRes = SomeEnum.fromJni(res);
+    return dartTypeRes;
+  }
+
+  List<Object?>? echoList(List<Object?>? list) {
+    final JList<JObject?>? res =
+        _api.echoList(_PigeonJniCodec.writeValue<JList<JObject?>?>(list));
+    final List<Object?>? dartTypeRes =
+        (_PigeonJniCodec.readValue(res) as List<Object?>?)?.cast<Object?>();
+    return dartTypeRes;
+  }
+
+  Map<Object?, Object?>? echoMap(Map<Object?, Object?>? map) {
+    final JMap<JObject, JObject?>? res =
+        _api.echoMap(_PigeonJniCodec.writeValue<JMap<JObject, JObject?>?>(map));
+    final Map<Object?, Object?>? dartTypeRes =
+        (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+            ?.cast<Object?, Object?>();
     return dartTypeRes;
   }
 }
@@ -471,7 +1003,8 @@ class JniMessageApiAsync {
   }
 
   Future<String> echoString(String request) async {
-    final JString res = await _api.echoString(JString.fromString(request));
+    final JString res =
+        await _api.echoString(_PigeonJniCodec.writeValue<JString>(request));
     final String dartTypeRes = res.toDartString(releaseOriginal: true);
     return dartTypeRes;
   }
@@ -496,7 +1029,7 @@ class JniMessageApiAsync {
 
   Future<Object> echoObj(Object request) async {
     final JObject res =
-        await _api.echoObj(_PigeonJniCodec.writeValue(request)!);
+        await _api.echoObj(_PigeonJniCodec.writeValue<JObject>(request));
     final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
     return dartTypeRes;
   }
@@ -510,6 +1043,23 @@ class JniMessageApiAsync {
   Future<SomeEnum> sendSomeEnum(SomeEnum anEnum) async {
     final bridge.SomeEnum res = await _api.sendSomeEnum(anEnum.toJni());
     final SomeEnum dartTypeRes = SomeEnum.fromJni(res)!;
+    return dartTypeRes;
+  }
+
+  Future<List<Object?>> echoList(List<Object?> list) async {
+    final JList<JObject?> res =
+        await _api.echoList(_PigeonJniCodec.writeValue<JList<JObject?>>(list));
+    final List<Object?> dartTypeRes =
+        (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<Object?>();
+    return dartTypeRes;
+  }
+
+  Future<Map<Object?, Object?>> echoMap(Map<Object?, Object?> map) async {
+    final JMap<JObject, JObject?> res = await _api
+        .echoMap(_PigeonJniCodec.writeValue<JMap<JObject, JObject?>>(map));
+    final Map<Object?, Object?> dartTypeRes =
+        (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+            .cast<Object?, Object?>();
     return dartTypeRes;
   }
 }
@@ -541,36 +1091,36 @@ class JniMessageApiNullableAsync {
   late final bridge.JniMessageApiNullableAsyncRegistrar _api;
 
   Future<String?> echoString(String? request) async {
-    final JString? res = await _api
-        .echoString(request == null ? null : JString.fromString(request));
+    final JString? res =
+        await _api.echoString(_PigeonJniCodec.writeValue<JString?>(request));
     final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
     return dartTypeRes;
   }
 
   Future<int?> echoInt(int? request) async {
     final JLong? res =
-        await _api.echoInt(request == null ? null : JLong(request));
+        await _api.echoInt(_PigeonJniCodec.writeValue<JLong?>(request));
     final int? dartTypeRes = res?.intValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   Future<double?> echoDouble(double? request) async {
     final JDouble? res =
-        await _api.echoDouble(request == null ? null : JDouble(request));
+        await _api.echoDouble(_PigeonJniCodec.writeValue<JDouble?>(request));
     final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   Future<bool?> echoBool(bool? request) async {
     final JBoolean? res =
-        await _api.echoBool(request == null ? null : JBoolean(request));
+        await _api.echoBool(_PigeonJniCodec.writeValue<JBoolean?>(request));
     final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
     return dartTypeRes;
   }
 
   Future<Object?> echoObj(Object? request) async {
     final JObject? res =
-        await _api.echoObj(_PigeonJniCodec.writeValue(request));
+        await _api.echoObj(_PigeonJniCodec.writeValue<JObject?>(request));
     final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
     return dartTypeRes;
   }
@@ -587,6 +1137,23 @@ class JniMessageApiNullableAsync {
     final bridge.SomeEnum? res =
         await _api.sendSomeEnum(anEnum == null ? null : anEnum.toJni());
     final SomeEnum? dartTypeRes = SomeEnum.fromJni(res);
+    return dartTypeRes;
+  }
+
+  Future<List<Object?>?> echoList(List<Object?>? list) async {
+    final JList<JObject?>? res =
+        await _api.echoList(_PigeonJniCodec.writeValue<JList<JObject?>?>(list));
+    final List<Object?>? dartTypeRes =
+        (_PigeonJniCodec.readValue(res) as List<Object?>?)?.cast<Object?>();
+    return dartTypeRes;
+  }
+
+  Future<Map<Object?, Object?>?> echoMap(Map<Object?, Object?>? map) async {
+    final JMap<JObject, JObject?>? res = await _api
+        .echoMap(_PigeonJniCodec.writeValue<JMap<JObject, JObject?>?>(map));
+    final Map<Object?, Object?>? dartTypeRes =
+        (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+            ?.cast<Object?, Object?>();
     return dartTypeRes;
   }
 }

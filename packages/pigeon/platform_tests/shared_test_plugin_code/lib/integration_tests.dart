@@ -55,8 +55,60 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       anInt: 5,
       aDouble: 5.0,
       aBool: false,
+      a4ByteArray: Int32List(1),
+      a8ByteArray: Int64List(1),
+      aByteArray: Uint8List(1),
+      aFloatArray: Float64List(1),
       anObject: 'obj',
       anEnum: SomeEnum.value2,
+      someNullableTypes: SomeNullableTypes(),
+      list: nonNullList,
+      map: nonNullMap,
+      stringList: nonNullStringList,
+      intList: nonNullIntList,
+      doubleList: nonNullDoubleList,
+      boolList: nonNullBoolList,
+      objectList: nonNullList,
+      enumList: <SomeEnum>[SomeEnum.value1, SomeEnum.value3],
+      classList: <SomeNullableTypes>[SomeNullableTypes()],
+      mapList: <Map<Object, Object>>[
+        nonNullMap,
+        nonNullStringMap,
+        nonNullDoubleMap,
+        nonNullIntMap,
+        nonNullBoolMap,
+      ],
+      stringMap: nonNullStringMap,
+      intMap: nonNullIntMap,
+      objectMap: nonNullMap,
+      enumMap: <SomeEnum, SomeEnum>{
+        SomeEnum.value1: SomeEnum.value1,
+        SomeEnum.value2: SomeEnum.value3
+      },
+      classMap: <SomeNullableTypes, SomeNullableTypes>{
+        SomeNullableTypes(): SomeNullableTypes()
+      },
+      listList: <List<Object>>[
+        nonNullList,
+        nonNullStringList,
+        nonNullIntList,
+        nonNullDoubleList,
+        nonNullBoolList,
+      ],
+      mapMap: <int, Map<Object, Object>>{
+        0: nonNullMap,
+        1: nonNullStringMap,
+        2: nonNullDoubleMap,
+        4: nonNullIntMap,
+        5: nonNullBoolMap,
+      },
+      listMap: <int, List<Object>>{
+        0: nonNullList,
+        1: nonNullStringList,
+        2: nonNullDoubleList,
+        4: nonNullIntList,
+        5: nonNullBoolList,
+      },
     );
     final SomeTypes sync = jniMessage.sendSomeTypes(toSend);
     expect(sync, toSend);
@@ -66,7 +118,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     expect(jniMessage.echoInt(2), 2);
     expect(jniMessage.echoString('hello'), 'hello');
     expect(jniMessage.echoObj('hello'), 'hello');
-    expect(jniMessage.echoObj(sync), sync);
+    expect(jniMessage.echoObj(toSend), toSend);
     expect(jniMessage.sendSomeEnum(SomeEnum.value2), SomeEnum.value2);
     //nullable
     final JniMessageApiNullable? jniMessageNullable =
