@@ -131,9 +131,15 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
       final SignInSuccess? success = result.success;
       if (success == null) {
         // There's no existing sign-in to use, so return the results of the
-        // combined authn+authz flow.
-        result = await _api.signIn(request.scopes, _nonce);
-        return _processAuthorizationResult(result);
+        // combined authn+authz flow, if prompting is allowed.
+        if (request.promptIfUnauthorized) {
+          result = await _api.signIn(request.scopes, _nonce);
+          return _processAuthorizationResult(result);
+        } else {
+          // No existing authentication, and no prompting allowed, so return
+          // no tokens.
+          return (accessToken: null, serverAuthCode: null);
+        }
       } else {
         // Discard the authentication information, and extract the user ID to
         // pass back to the authorization step so that it can re-associate
@@ -142,10 +148,11 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
       }
     }
 
-    SignInResult result = request.promptIfUnauthorized
-        ? await _api.addScopes(request.scopes, userId)
-        : await _api.getRefreshedAuthorizationTokens(userId);
-    if (request.promptIfUnauthorized &&
+    final bool useExistingAuthorization = !request.promptIfUnauthorized;
+    SignInResult result = useExistingAuthorization
+        ? await _api.getRefreshedAuthorizationTokens(userId)
+        : await _api.addScopes(request.scopes, userId);
+    if (!useExistingAuthorization &&
         result.error?.type == GoogleSignInErrorCode.scopesAlreadyGranted) {
       // The Google Sign In SDK returns an error when requesting scopes that are
       // already authorized, so in that case request updated tokens instead to
@@ -159,7 +166,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     // If re-using an existing authorization, ensure that it has all of the
     // requested scopes before returning it, as the list of requested scopes
     // may have changed since the last authorization.
-    if (!request.promptIfUnauthorized) {
+    if (useExistingAuthorization) {
       final SignInSuccess? success = result.success;
       // Don't validate the OpenID Connect scopes (see
       // https://developers.google.com/identity/protocols/oauth2/scopes#openid-connect
