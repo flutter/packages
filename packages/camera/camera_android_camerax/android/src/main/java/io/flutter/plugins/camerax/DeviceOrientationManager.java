@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -48,6 +49,7 @@ public class DeviceOrientationManager {
    * the ACCELEROMETER_ROTATION is disabled the {@link DeviceOrientationManager} will fallback to
    * the deliver orientation updates based on the UI orientation.
    */
+  @SuppressLint("UnprotectedReceiver") // orientationIntentFilter only listens to protected broadcast
   public void start() {
     stop();
 
@@ -58,6 +60,7 @@ public class DeviceOrientationManager {
             handleUiOrientationChange();
           }
         };
+
     getContext().registerReceiver(broadcastReceiver, orientationIntentFilter);
     broadcastReceiver.onReceive(getContext(), null);
   }
