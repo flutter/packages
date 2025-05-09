@@ -1,3 +1,8 @@
+## 0.6.17
+
+* Fixes incorrect camera preview mirroring for front cameras of devices using the `ImageReader`
+  Impeller backend.
+
 ## 0.6.16
 
 * Fixes incorrect camera preview rotation for landscape-oriented devices.
