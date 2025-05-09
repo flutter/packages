@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:analyzer/dart/analysis/results.dart';
+import 'package:analyzer/dart/analysis/session.dart';
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
@@ -20,6 +23,9 @@ const String durationDecoderHelperName = r'_$durationConverter';
 
 /// The name of the generated, private helper for converting [String] to [Enum].
 const String enumExtensionHelperName = r'_$fromName';
+
+/// The name of the generated, private getter for casting `this` (the mixin) to the class type.
+const String selfFieldName = '_self';
 
 /// The property/parameter name used to represent the `extra` data that may
 /// be passed to a route.
@@ -79,7 +85,8 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 String encodeField(PropertyAccessorElement element) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(element.returnType)) {
-      return helper._encode(element.name, element.returnType);
+      return helper._encode(
+          '$selfFieldName.${element.name}', element.returnType);
     }
   }
 
@@ -89,13 +96,30 @@ String encodeField(PropertyAccessorElement element) {
   );
 }
 
+/// Returns an AstNode type from a InterfaceElement.
+T? getClassDeclaration<T extends AstNode>(InterfaceElement element) {
+  final AnalysisSession? session = element.session;
+  if (session == null) {
+    return null;
+  }
+
+  final ParsedLibraryResult parsedLibrary =
+      session.getParsedLibraryByElement(element.library) as ParsedLibraryResult;
+  final ElementDeclarationResult? declaration =
+      parsedLibrary.getElementDeclaration(element);
+  final AstNode? node = declaration?.node;
+
+  return node is T ? node : null;
+}
+
 /// Returns the comparison of a parameter with its default value.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
 String compareField(ParameterElement param, String value1, String value2) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(param.type)) {
-      return helper._compare(param.name, param.defaultValueCode!);
+      return helper._compare(
+          '$selfFieldName.${param.name}', param.defaultValueCode!);
     }
   }
 
