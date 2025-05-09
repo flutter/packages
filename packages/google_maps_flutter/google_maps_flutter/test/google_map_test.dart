@@ -579,4 +579,35 @@ void main() {
 
     expect(map.mapConfiguration.style, '');
   });
+
+  testWidgets('Update state from widget only when mounted',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+
+    final State<StatefulWidget> googleMapState =
+        tester.state(find.byType(GoogleMap));
+
+    await tester.pumpWidget(Container());
+
+    // ignore:invalid_use_of_protected_member
+    googleMapState.didUpdateWidget(
+      GoogleMap(
+        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
+        circles: <Circle>{const Circle(circleId: CircleId('circle'))},
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.circleUpdates.length, 1);
+  });
 }
