@@ -52,7 +52,6 @@ void main() {
       expect(user.id, expectedPersonId);
       expect(user.displayName, expectedPersonName);
       expect(user.photoUrl, expectedPersonPhoto);
-      expect(user.idToken, isNull);
       expect(
         accessTokenCompleter.future,
         completion('Bearer $expectedAccessToken'),
@@ -87,7 +86,6 @@ void main() {
       expect(user.id, expectedPersonId);
       expect(user.displayName, expectedPersonName);
       expect(user.photoUrl, expectedPersonPhoto);
-      expect(user.idToken, isNull);
     });
 
     testWidgets('no name/photo - keeps going', (_) async {
@@ -104,7 +102,6 @@ void main() {
       expect(user.id, expectedPersonId);
       expect(user.displayName, isNull);
       expect(user.photoUrl, isNull);
-      expect(user.idToken, isNull);
     });
 
     testWidgets('no userId - throws assertion error', (_) async {

@@ -148,13 +148,11 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   }
 
   @override
-  Future<AuthenticationResults?> attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params) async {
-    await initialized;
-
-    // The new user is being injected from the `userDataEvents` Stream.
-    _gisClient.requestOneTap();
-
+  Future<AuthenticationResults?>? attemptLightweightAuthentication(
+      AttemptLightweightAuthenticationParameters params) {
+    initialized.then((void value) {
+      _gisClient.requestOneTap();
+    });
     // One tap does not necessarily return immediately, and may never return,
     // so clients should not await it. Return null to signal that.
     return null;
