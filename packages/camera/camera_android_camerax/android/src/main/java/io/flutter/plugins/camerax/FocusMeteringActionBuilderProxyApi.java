@@ -51,7 +51,7 @@ class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBui
 
   @NonNull
   @Override
-  public androidx.camera.core.FocusMeteringAction build(
+  public FocusMeteringAction build(
       FocusMeteringAction.Builder pigeonInstance) {
     return pigeonInstance.build();
   }

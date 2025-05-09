@@ -13,7 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
 import io.flutter.plugin.common.PluginRegistry;
 
 public final class CameraPermissionsManager {

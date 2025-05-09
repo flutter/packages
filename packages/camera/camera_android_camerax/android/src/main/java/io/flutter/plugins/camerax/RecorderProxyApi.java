@@ -36,7 +36,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
   public Recorder pigeon_defaultConstructor(
       @Nullable Long aspectRatio,
       @Nullable Long targetVideoEncodingBitRate,
-      @Nullable androidx.camera.video.QualitySelector qualitySelector) {
+      @Nullable QualitySelector qualitySelector) {
     final Recorder.Builder builder = new Recorder.Builder();
     if (aspectRatio != null) {
       builder.setAspectRatio(aspectRatio.intValue());
@@ -79,7 +79,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
   }
 
   @NonNull
-  File openTempFile(@NonNull String path) throws RuntimeException {
+  File openTempFile(@NonNull String path) {
     try {
       return new File(path);
     } catch (NullPointerException | SecurityException e) {

@@ -44,7 +44,7 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
 
   @Override
   public void setAnalyzer(
-      ImageAnalysis pigeonInstance, @NonNull androidx.camera.core.ImageAnalysis.Analyzer analyzer) {
+      ImageAnalysis pigeonInstance, @NonNull ImageAnalysis.Analyzer analyzer) {
     getPigeonRegistrar()
         .getInstanceManager()
         .setClearFinalizedWeakReferencesInterval(
