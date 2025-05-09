@@ -64,16 +64,19 @@ void main() {
 
     test('Prefers local bytes over path if both are provided', () async {
       const String text = 'Hello World';
+      const String path = 'test/x_file_html_test.dart';
 
       final XFile file = XFile.fromData(
         utf8.encode(text),
-        path: 'test/x_file_html_test.dart',
+        path: path,
         name: 'x_file_html_test.dart',
         length: text.length,
         mimeType: 'text/plain',
         lastModified: DateTime.now(),
       );
 
+      expect(file.path, isNot(equals(path)));
+      expect(file.path.startsWith('blob:'), isTrue);
       expect(await file.readAsString(), equals(text));
     });
   });

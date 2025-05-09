@@ -65,7 +65,7 @@ class XFile extends XFileBase {
         _name = name ?? '',
         super(path) {
     _browserBlob = _createBlobFromBytes(bytes, mimeType);
-    _path = path ?? URL.createObjectURL(_browserBlob!);
+    _path = URL.createObjectURL(_browserBlob!);
   }
 
   // Initializes a Blob from a bunch of `bytes` and an optional `mimeType`.
