@@ -405,6 +405,13 @@ class WebViewController {
   ) {
     return platform.setOnScrollPositionChange(onScrollPositionChange);
   }
+
+  /// Sets the over-scroll mode for the WebView.
+  ///
+  /// Default behavior is platform dependent.
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
+    return platform.setOverScrollMode(mode);
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.

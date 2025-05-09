@@ -886,6 +886,96 @@ void main() {
         expect(find.text('tres'), findsNothing);
       });
     });
+
+    testWidgets('Expand then collapse with offscreen nodes (top)',
+        (WidgetTester tester) async {
+      final ScrollController verticalController = ScrollController();
+      final TreeViewController controller = TreeViewController();
+      addTearDown(verticalController.dispose);
+
+      final List<TreeViewNode<String>> tree = <TreeViewNode<String>>[
+        TreeViewNode<String>(
+          'alpha',
+          children: <TreeViewNode<String>>[
+            TreeViewNode<String>('a'),
+            TreeViewNode<String>('b'),
+            TreeViewNode<String>('c'),
+          ],
+        ),
+        TreeViewNode<String>(
+          'beta',
+          children: <TreeViewNode<String>>[
+            TreeViewNode<String>('d'),
+            TreeViewNode<String>('e'),
+            TreeViewNode<String>('f'),
+          ],
+        ),
+        TreeViewNode<String>(
+          'gamma',
+          children: <TreeViewNode<String>>[
+            TreeViewNode<String>('g'),
+            TreeViewNode<String>('h'),
+            TreeViewNode<String>('i'),
+          ],
+        ),
+        TreeViewNode<String>(
+          'delta',
+          children: <TreeViewNode<String>>[
+            TreeViewNode<String>('j'),
+            TreeViewNode<String>('k'),
+            TreeViewNode<String>('l'),
+          ],
+        ),
+      ];
+
+      await tester.pumpWidget(MaterialApp(
+        home: TreeView<String>(
+          tree: tree,
+          controller: controller,
+          toggleAnimationStyle: AnimationStyle.noAnimation,
+          verticalDetails: ScrollableDetails.vertical(
+            controller: verticalController,
+          ),
+          treeNodeBuilder: (
+            BuildContext context,
+            TreeViewNode<Object?> node,
+            AnimationStyle animationStyle,
+          ) =>
+              GestureDetector(
+            onTap: () => controller.toggleNode(node),
+            child: TreeView.defaultTreeNodeBuilder(
+              context,
+              node,
+              animationStyle,
+            ),
+          ),
+        ),
+      ));
+
+      // Expand a few nodes
+      await tester.tap(find.text('alpha'));
+      await tester.tap(find.text('beta'));
+      await tester.tap(find.text('gamma'));
+      await tester.tap(find.text('delta'));
+      await tester.pumpAndSettle();
+
+      // Scroll down to hide some of them
+      expect(verticalController.position.pixels, 0.0);
+      const double defaultRowExtent = 40;
+      verticalController.jumpTo(3 * defaultRowExtent + 10);
+      await tester.pump();
+      expect(find.text('alpha'), findsNothing);
+
+      // Collapse the bottommost node
+      expect(find.text('j'), findsOneWidget);
+      expect(find.text('k'), findsOneWidget);
+      expect(find.text('l'), findsOneWidget);
+      await tester.tap(find.text('delta'));
+      await tester.pumpAndSettle();
+      expect(find.text('j'), findsNothing);
+      expect(find.text('k'), findsNothing);
+      expect(find.text('l'), findsNothing);
+    });
   });
 
   group('TreeViewport', () {

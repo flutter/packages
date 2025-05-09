@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/gradle.dart';
 import 'package:test/test.dart';
 
@@ -11,18 +10,17 @@ import '../mocks.dart';
 import '../util.dart';
 
 void main() {
-  late FileSystem fileSystem;
+  late Directory packagesDir;
   late RecordingProcessRunner processRunner;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    processRunner = RecordingProcessRunner();
+    (:packagesDir, :processRunner, gitProcessRunner: _, gitDir: _) =
+        configureBaseCommandMocks();
   });
 
   group('isConfigured', () {
     test('reports true when configured on Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-          'plugin', fileSystem.directory('/'),
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew.bat']);
       final GradleProject project = GradleProject(
         plugin,
@@ -34,8 +32,7 @@ void main() {
     });
 
     test('reports true when configured on non-Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-          'plugin', fileSystem.directory('/'),
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew']);
       final GradleProject project = GradleProject(
         plugin,
@@ -47,8 +44,7 @@ void main() {
     });
 
     test('reports false when not configured on Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-          'plugin', fileSystem.directory('/'),
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/foo']);
       final GradleProject project = GradleProject(
         plugin,
@@ -60,8 +56,7 @@ void main() {
     });
 
     test('reports true when configured on non-Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-          'plugin', fileSystem.directory('/'),
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/foo']);
       final GradleProject project = GradleProject(
         plugin,
@@ -75,8 +70,7 @@ void main() {
 
   group('runCommand', () {
     test('runs without arguments', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-          'plugin', fileSystem.directory('/'),
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew']);
       final GradleProject project = GradleProject(
         plugin,
@@ -103,8 +97,7 @@ void main() {
     });
 
     test('runs with arguments', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-          'plugin', fileSystem.directory('/'),
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew']);
       final GradleProject project = GradleProject(
         plugin,
@@ -136,8 +129,7 @@ void main() {
     });
 
     test('runs with the correct wrapper on Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-          'plugin', fileSystem.directory('/'),
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew.bat']);
       final GradleProject project = GradleProject(
         plugin,
@@ -164,8 +156,7 @@ void main() {
     });
 
     test('returns error codes', () async {
-      final RepositoryPackage plugin = createFakePlugin(
-          'plugin', fileSystem.directory('/'),
+      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew.bat']);
       final GradleProject project = GradleProject(
         plugin,

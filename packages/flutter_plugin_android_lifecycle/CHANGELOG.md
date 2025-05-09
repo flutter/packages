@@ -1,3 +1,11 @@
+## 2.0.28
+
+* Removes obsolete code related to supporting SDK <21.
+
+## 2.0.27
+
+* Bumps flutter supported version to 3.27 and use flutter.compileSdkVersion.
+
 ## 2.0.26
 
 * Removes flutter.compileSdkVersion for 35 to support flutter versions prior to 3.27.

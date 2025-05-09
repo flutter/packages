@@ -394,6 +394,16 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
     InAppPurchaseStoreKitPlatform.sk2TransactionObserver
         .onTransactionsUpdated(transactionList);
   }
+
+  @override
+  Future<String> countryCode() async {
+    return 'ABC';
+  }
+
+  @override
+  Future<void> sync() {
+    return Future<void>.value();
+  }
 }
 
 SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {

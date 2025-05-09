@@ -7,7 +7,7 @@ extension $NonNullableRequiredParamNotInPathExtension
     on NonNullableRequiredParamNotInPath {
   static NonNullableRequiredParamNotInPath _fromState(GoRouterState state) =>
       NonNullableRequiredParamNotInPath(
-        id: int.parse(state.uri.queryParameters['id'])!,
+        id: int.parse(state.uri.queryParameters['id']!)!,
       );
 
   String get location => GoRouteData.$location(

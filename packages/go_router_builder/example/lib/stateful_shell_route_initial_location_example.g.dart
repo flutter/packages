@@ -111,6 +111,6 @@ extension $OrdersRouteDataExtension on OrdersRouteData {
 }
 
 extension<T extends Enum> on Map<T, String> {
-  T? _$fromName(String value) =>
+  T? _$fromName(String? value) =>
       entries.where((element) => element.value == value).firstOrNull?.key;
 }

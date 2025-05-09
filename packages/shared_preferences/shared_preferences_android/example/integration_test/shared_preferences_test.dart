@@ -914,4 +914,16 @@ void main() {
             'thisStringIsWrittenInTheExampleAppJavaCode', options),
         'testString');
   });
+
+  testWidgets('Shared Preferences can read ints by conversion to long',
+      (WidgetTester _) async {
+    final SharedPreferencesAsyncAndroidOptions options =
+        getOptions(useDataStore: false);
+    final SharedPreferencesAsyncPlatform preferences = getPreferences();
+
+    expect(
+        await preferences.getInt(
+            'thisIntIsWrittenInTheExampleAppJavaCode', options),
+        5);
+  });
 }

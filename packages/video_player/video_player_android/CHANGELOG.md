@@ -1,5 +1,20 @@
-## NEXT
+## 2.8.3
 
+* Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect
+  whether or not the video player rotation needs to be corrected.
+
+## 2.8.2
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/164689) that can cause video to
+  disappear after an app is suspended and resumed.
+
+## 2.8.1
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.8.0
+
+* Adds support for platform views as an optional way of displaying a video.
 * Suppresses deprecation and removal warnings for
   `TextureRegistry.SurfaceProducer.onSurfaceDestroyed`.
 

@@ -1,3 +1,15 @@
+## 2.9.1
+
+- Fixes an deprecated warning for using withNullability
+
+## 2.9.0
+
+- Adds support for `caseSensitive` for go routes.
+
+## 2.8.2
+
+- Fixes an issue when enum params are not required
+
 ## 2.8.1
 
 - Fixes an issue when navigate to router with invalid params 

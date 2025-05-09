@@ -4,23 +4,24 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/remove_dev_dependencies_command.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import 'util.dart';
 
 void main() {
-  late FileSystem fileSystem;
   late Directory packagesDir;
   late CommandRunner<void> runner;
 
   setUp(() {
-    fileSystem = MemoryFileSystem();
-    packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+    final GitDir gitDir;
+    (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
+        configureBaseCommandMocks();
 
     final RemoveDevDependenciesCommand command = RemoveDevDependenciesCommand(
       packagesDir,
+      gitDir: gitDir,
     );
     runner = CommandRunner<void>('trim_dev_dependencies_command',
         'Test for trim_dev_dependencies_command');

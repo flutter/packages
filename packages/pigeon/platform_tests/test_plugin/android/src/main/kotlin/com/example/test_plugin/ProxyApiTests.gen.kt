@@ -16,24 +16,27 @@ import io.flutter.plugin.common.StandardMessageCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
-private fun wrapResult(result: Any?): List<Any?> {
-  return listOf(result)
-}
+private object ProxyApiTestsPigeonUtils {
 
-private fun wrapError(exception: Throwable): List<Any?> {
-  return if (exception is ProxyApiTestsError) {
-    listOf(exception.code, exception.message, exception.details)
-  } else {
-    listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+  fun createConnectionError(channelName: String): ProxyApiTestsError {
+    return ProxyApiTestsError(
+        "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
   }
-}
 
-private fun createConnectionError(channelName: String): ProxyApiTestsError {
-  return ProxyApiTestsError(
-      "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+  fun wrapResult(result: Any?): List<Any?> {
+    return listOf(result)
+  }
+
+  fun wrapError(exception: Throwable): List<Any?> {
+    return if (exception is ProxyApiTestsError) {
+      listOf(exception.code, exception.message, exception.details)
+    } else {
+      listOf(
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
+    }
+  }
 }
 
 /**
@@ -78,6 +81,9 @@ class ProxyApiTestsPigeonInstanceManager(
   private val referenceQueue = java.lang.ref.ReferenceQueue<Any>()
   private val weakReferencesToIdentifiers = HashMap<java.lang.ref.WeakReference<Any>, Long>()
   private val handler = android.os.Handler(android.os.Looper.getMainLooper())
+  private val releaseAllFinalizedInstancesRunnable = Runnable {
+    this.releaseAllFinalizedInstances()
+  }
   private var nextIdentifier: Long = minHostCreatedIdentifier
   private var hasFinalizationListenerStopped = false
 
@@ -87,13 +93,13 @@ class ProxyApiTestsPigeonInstanceManager(
    */
   var clearFinalizedWeakReferencesInterval: Long = 3000
     set(value) {
-      handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+      handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
       field = value
       releaseAllFinalizedInstances()
     }
 
   init {
-    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+    handler.postDelayed(releaseAllFinalizedInstancesRunnable, clearFinalizedWeakReferencesInterval)
   }
 
   companion object {
@@ -162,7 +168,9 @@ class ProxyApiTestsPigeonInstanceManager(
   /**
    * Adds a new unique instance that was instantiated from the host platform.
    *
-   * [identifier] must be >= 0 and unique.
+   * If the manager contains [instance], this returns the corresponding identifier. If the manager
+   * does not contain [instance], this adds the instance and returns a unique identifier for that
+   * [instance].
    */
   fun addHostCreatedInstance(instance: Any): Long {
     logWarningIfFinalizationListenerHasStopped()
@@ -195,7 +203,7 @@ class ProxyApiTestsPigeonInstanceManager(
    * longer be called and methods will log a warning.
    */
   fun stopFinalizationListener() {
-    handler.removeCallbacks { this.releaseAllFinalizedInstances() }
+    handler.removeCallbacks(releaseAllFinalizedInstancesRunnable)
     hasFinalizationListenerStopped = true
   }
 
@@ -235,7 +243,7 @@ class ProxyApiTestsPigeonInstanceManager(
         finalizationListener.onFinalize(identifier)
       }
     }
-    handler.postDelayed({ releaseAllFinalizedInstances() }, clearFinalizedWeakReferencesInterval)
+    handler.postDelayed(releaseAllFinalizedInstancesRunnable, clearFinalizedWeakReferencesInterval)
   }
 
   private fun addInstance(instance: Any, identifier: Long) {
@@ -288,7 +296,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
                   instanceManager.remove<Any?>(identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -309,7 +317,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
                   instanceManager.clear()
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -334,7 +342,7 @@ private class ProxyApiTestsPigeonInstanceManagerApi(val binaryMessenger: BinaryM
           callback(Result.success(Unit))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -1086,7 +1094,7 @@ abstract class PigeonApiProxyApiTestClass(
                       pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1147,7 +1155,7 @@ abstract class PigeonApiProxyApiTestClass(
                       pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1172,7 +1180,7 @@ abstract class PigeonApiProxyApiTestClass(
                       api.attachedField(pigeon_instanceArg), pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1196,7 +1204,7 @@ abstract class PigeonApiProxyApiTestClass(
                       api.staticAttachedField(), pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1219,7 +1227,7 @@ abstract class PigeonApiProxyApiTestClass(
                   api.noop(pigeon_instanceArg)
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1241,7 +1249,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.throwError(pigeon_instanceArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1264,7 +1272,7 @@ abstract class PigeonApiProxyApiTestClass(
                   api.throwErrorFromVoid(pigeon_instanceArg)
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1286,7 +1294,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.throwFlutterError(pigeon_instanceArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1309,7 +1317,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoInt(pigeon_instanceArg, anIntArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1332,7 +1340,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoDouble(pigeon_instanceArg, aDoubleArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1355,7 +1363,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoBool(pigeon_instanceArg, aBoolArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1378,7 +1386,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoString(pigeon_instanceArg, aStringArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1401,7 +1409,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoUint8List(pigeon_instanceArg, aUint8ListArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1424,7 +1432,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoObject(pigeon_instanceArg, anObjectArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1447,7 +1455,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoList(pigeon_instanceArg, aListArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1470,7 +1478,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoProxyApiList(pigeon_instanceArg, aListArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1493,7 +1501,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoMap(pigeon_instanceArg, aMapArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1516,7 +1524,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoProxyApiMap(pigeon_instanceArg, aMapArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1539,7 +1547,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoEnum(pigeon_instanceArg, anEnumArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1562,7 +1570,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoProxyApi(pigeon_instanceArg, aProxyApiArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1585,7 +1593,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableInt(pigeon_instanceArg, aNullableIntArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1608,7 +1616,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableDouble(pigeon_instanceArg, aNullableDoubleArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1631,7 +1639,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableBool(pigeon_instanceArg, aNullableBoolArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1654,7 +1662,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableString(pigeon_instanceArg, aNullableStringArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1677,7 +1685,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableUint8List(pigeon_instanceArg, aNullableUint8ListArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1700,7 +1708,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableObject(pigeon_instanceArg, aNullableObjectArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1723,7 +1731,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableList(pigeon_instanceArg, aNullableListArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1746,7 +1754,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableMap(pigeon_instanceArg, aNullableMapArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1769,7 +1777,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableEnum(pigeon_instanceArg, aNullableEnumArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1792,7 +1800,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoNullableProxyApi(pigeon_instanceArg, aNullableProxyApiArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -1813,9 +1821,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.noopAsync(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
-                reply.reply(wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
               }
             }
           }
@@ -1837,10 +1845,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncInt(pigeon_instanceArg, anIntArg) { result: Result<Long> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -1862,10 +1870,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncDouble(pigeon_instanceArg, aDoubleArg) { result: Result<Double> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -1887,10 +1895,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -1912,10 +1920,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncString(pigeon_instanceArg, aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -1937,10 +1945,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncUint8List(pigeon_instanceArg, aUint8ListArg) { result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -1962,10 +1970,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncObject(pigeon_instanceArg, anObjectArg) { result: Result<Any> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -1987,10 +1995,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncList(pigeon_instanceArg, aListArg) { result: Result<List<Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2012,10 +2020,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncMap(pigeon_instanceArg, aMapArg) { result: Result<Map<String?, Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2037,10 +2045,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncEnum(pigeon_instanceArg, anEnumArg) { result: Result<ProxyApiTestEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2061,10 +2069,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.throwAsyncError(pigeon_instanceArg) { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2085,9 +2093,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.throwAsyncErrorFromVoid(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
-                reply.reply(wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
               }
             }
           }
@@ -2108,10 +2116,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.throwAsyncFlutterError(pigeon_instanceArg) { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2133,10 +2141,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableInt(pigeon_instanceArg, anIntArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2158,10 +2166,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableDouble(pigeon_instanceArg, aDoubleArg) { result: Result<Double?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2183,10 +2191,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2208,10 +2216,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableString(pigeon_instanceArg, aStringArg) { result: Result<String?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2234,10 +2242,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ByteArray?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2259,10 +2267,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableObject(pigeon_instanceArg, anObjectArg) { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2284,10 +2292,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.echoAsyncNullableList(pigeon_instanceArg, aListArg) { result: Result<List<Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2310,10 +2318,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<Map<String?, Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2336,10 +2344,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ProxyApiTestEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2360,7 +2368,7 @@ abstract class PigeonApiProxyApiTestClass(
                   api.staticNoop()
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -2382,7 +2390,7 @@ abstract class PigeonApiProxyApiTestClass(
                 try {
                   listOf(api.echoStaticString(aStringArg))
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -2401,9 +2409,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.staticAsyncNoop { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
-                reply.reply(wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
               }
             }
           }
@@ -2424,9 +2432,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterNoop(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
-                reply.reply(wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
               }
             }
           }
@@ -2447,10 +2455,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterThrowError(pigeon_instanceArg) { result: Result<Any?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2471,9 +2479,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterThrowErrorFromVoid(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
-                reply.reply(wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
               }
             }
           }
@@ -2495,10 +2503,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoBool(pigeon_instanceArg, aBoolArg) { result: Result<Boolean> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2520,10 +2528,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoInt(pigeon_instanceArg, anIntArg) { result: Result<Long> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2545,10 +2553,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoDouble(pigeon_instanceArg, aDoubleArg) { result: Result<Double> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2570,10 +2578,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoString(pigeon_instanceArg, aStringArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2596,10 +2604,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ByteArray> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2621,10 +2629,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoList(pigeon_instanceArg, aListArg) { result: Result<List<Any?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2647,10 +2655,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<List<ProxyApiTestClass?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2673,10 +2681,10 @@ abstract class PigeonApiProxyApiTestClass(
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2699,10 +2707,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<Map<String?, ProxyApiTestClass?>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2725,10 +2733,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ProxyApiTestEnum> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2751,10 +2759,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<com.example.test_plugin.ProxyApiSuperClass> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2777,10 +2785,10 @@ abstract class PigeonApiProxyApiTestClass(
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2802,10 +2810,10 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterEchoNullableInt(pigeon_instanceArg, anIntArg) { result: Result<Long?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2828,10 +2836,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<Double?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2854,10 +2862,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<String?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2880,10 +2888,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ByteArray?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2906,10 +2914,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<List<Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2932,10 +2940,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<Map<String?, Any?>?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2958,10 +2966,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<ProxyApiTestEnum?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -2984,10 +2992,10 @@ abstract class PigeonApiProxyApiTestClass(
                 result: Result<com.example.test_plugin.ProxyApiSuperClass?> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -3008,9 +3016,9 @@ abstract class PigeonApiProxyApiTestClass(
             api.callFlutterNoopAsync(pigeon_instanceArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
-                reply.reply(wrapResult(null))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(null))
               }
             }
           }
@@ -3033,10 +3041,10 @@ abstract class PigeonApiProxyApiTestClass(
               ->
               val error = result.exceptionOrNull()
               if (error != null) {
-                reply.reply(wrapError(error))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapError(error))
               } else {
                 val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(ProxyApiTestsPigeonUtils.wrapResult(data))
               }
             }
           }
@@ -3088,7 +3096,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(Unit))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3117,7 +3125,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3148,7 +3156,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(Unit))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3188,7 +3196,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3227,7 +3235,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3267,7 +3275,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3307,7 +3315,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3347,7 +3355,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3387,7 +3395,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3427,7 +3435,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3466,7 +3474,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3506,7 +3514,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3546,7 +3554,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3586,7 +3594,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3619,7 +3627,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3652,7 +3660,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3685,7 +3693,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3718,7 +3726,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3751,7 +3759,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3784,7 +3792,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3817,7 +3825,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3850,7 +3858,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3883,7 +3891,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3914,7 +3922,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(Unit))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -3954,7 +3962,7 @@ abstract class PigeonApiProxyApiTestClass(
           callback(Result.success(output))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -4000,7 +4008,7 @@ abstract class PigeonApiProxyApiSuperClass(
                       api.pigeon_defaultConstructor(), pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -4023,7 +4031,7 @@ abstract class PigeonApiProxyApiSuperClass(
                   api.aSuperMethod(pigeon_instanceArg)
                   listOf(null)
                 } catch (exception: Throwable) {
-                  wrapError(exception)
+                  ProxyApiTestsPigeonUtils.wrapError(exception)
                 }
             reply.reply(wrapped)
           }
@@ -4064,7 +4072,7 @@ abstract class PigeonApiProxyApiSuperClass(
             callback(Result.success(Unit))
           }
         } else {
-          callback(Result.failure(createConnectionError(channelName)))
+          callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
         }
       }
     }
@@ -4102,7 +4110,7 @@ open class PigeonApiProxyApiInterface(
             callback(Result.success(Unit))
           }
         } else {
-          callback(Result.failure(createConnectionError(channelName)))
+          callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
         }
       }
     }
@@ -4130,7 +4138,7 @@ open class PigeonApiProxyApiInterface(
           callback(Result.success(Unit))
         }
       } else {
-        callback(Result.failure(createConnectionError(channelName)))
+        callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
       }
     }
   }
@@ -4170,7 +4178,7 @@ abstract class PigeonApiClassWithApiRequirement(
                         api.pigeon_defaultConstructor(), pigeon_identifierArg)
                     listOf(null)
                   } catch (exception: Throwable) {
-                    wrapError(exception)
+                    ProxyApiTestsPigeonUtils.wrapError(exception)
                   }
               reply.reply(wrapped)
             }
@@ -4187,7 +4195,7 @@ abstract class PigeonApiClassWithApiRequirement(
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             reply.reply(
-                wrapError(
+                ProxyApiTestsPigeonUtils.wrapError(
                     UnsupportedOperationException(
                         "Call references class `ClassWithApiRequirement`, which requires api version 25.")))
           }
@@ -4211,7 +4219,7 @@ abstract class PigeonApiClassWithApiRequirement(
                     api.aMethod(pigeon_instanceArg)
                     listOf(null)
                   } catch (exception: Throwable) {
-                    wrapError(exception)
+                    ProxyApiTestsPigeonUtils.wrapError(exception)
                   }
               reply.reply(wrapped)
             }
@@ -4228,7 +4236,7 @@ abstract class PigeonApiClassWithApiRequirement(
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             reply.reply(
-                wrapError(
+                ProxyApiTestsPigeonUtils.wrapError(
                     UnsupportedOperationException(
                         "Call references class `ClassWithApiRequirement`, which requires api version 25.")))
           }
@@ -4270,7 +4278,7 @@ abstract class PigeonApiClassWithApiRequirement(
             callback(Result.success(Unit))
           }
         } else {
-          callback(Result.failure(createConnectionError(channelName)))
+          callback(Result.failure(ProxyApiTestsPigeonUtils.createConnectionError(channelName)))
         }
       }
     }
