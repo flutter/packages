@@ -55,7 +55,7 @@ public class DeviceOrientationManager {
         new BroadcastReceiver() {
           @Override
           public void onReceive(Context context, Intent intent) {
-            handleUIOrientationChange();
+            handleUiOrientationChange();
           }
         };
     getContext().registerReceiver(broadcastReceiver, orientationIntentFilter);
@@ -80,8 +80,8 @@ public class DeviceOrientationManager {
    * class.
    */
   @VisibleForTesting
-  void handleUIOrientationChange() {
-    PlatformChannel.DeviceOrientation orientation = getUIOrientation();
+  void handleUiOrientationChange() {
+    PlatformChannel.DeviceOrientation orientation = getUiOrientation();
     handleOrientationChange(this, orientation, lastOrientation, api);
     lastOrientation = orientation;
   }
@@ -133,7 +133,7 @@ public class DeviceOrientationManager {
   // Configuration.ORIENTATION_SQUARE is deprecated.
   @SuppressWarnings("deprecation")
   @NonNull
-  PlatformChannel.DeviceOrientation getUIOrientation() {
+  PlatformChannel.DeviceOrientation getUiOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = getContext().getResources().getConfiguration().orientation;
 
