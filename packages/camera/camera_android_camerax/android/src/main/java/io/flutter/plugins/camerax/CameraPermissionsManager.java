@@ -14,10 +14,12 @@ import androidx.annotation.VisibleForTesting;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import io.flutter.plugin.common.PluginRegistry;
+
 public final class CameraPermissionsManager {
   interface PermissionsRegistry {
     void addListener(
-        io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener handler);
+        PluginRegistry.RequestPermissionsResultListener handler);
   }
 
   interface ResultCallback {
@@ -84,7 +86,7 @@ public final class CameraPermissionsManager {
 
   @VisibleForTesting
   static final class CameraRequestPermissionsListener
-      implements io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener {
+      implements PluginRegistry.RequestPermissionsResultListener {
 
     // There's no way to unregister permission listeners in the v1 embedding, so we'll be called
     // duplicate times in cases where the user denies and then grants a permission. Keep track of if
