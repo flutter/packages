@@ -16,7 +16,6 @@ import androidx.core.content.ContextCompat;
 
 public final class CameraPermissionsManager {
   interface PermissionsRegistry {
-    @SuppressWarnings("deprecation")
     void addListener(
         io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener handler);
   }
@@ -84,7 +83,6 @@ public final class CameraPermissionsManager {
   }
 
   @VisibleForTesting
-  @SuppressWarnings("deprecation")
   static final class CameraRequestPermissionsListener
       implements io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener {
 
