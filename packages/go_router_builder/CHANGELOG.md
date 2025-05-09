@@ -1,6 +1,10 @@
-## 2.9.1
+## 2.9.2
 
 - Fixes warnings in generated code of iterable parameters.
+
+## 2.9.1
+
+- Fixes an deprecated warning for using withNullability
 
 ## 2.9.0
 
