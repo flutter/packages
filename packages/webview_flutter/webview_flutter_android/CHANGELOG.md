@@ -1,3 +1,9 @@
+## 4.5.0
+
+* Adds support to set using wide view port.
+  Change default to `false` to align with native WebViews.
+  See `AndroidWebViewController.setUseWideViewPort`.
+
 ## 4.4.2
 
 * Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint

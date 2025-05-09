@@ -76,6 +76,26 @@ const String kTransparentBackgroundPage = '''
   </html>
 ''';
 
+const String kViewportMetaPage = '''
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>Viewport meta example</title>
+  </head>
+  <meta name="viewport" content="width=1000, initial-scale=1" />
+  <style type="text/css">
+      body { background: transparent; margin: 0; padding: 0; }
+      #shape { background: red; width: 50vw; height: 50vw; }
+  </style>
+  <body>
+  <div>
+      <p>Viewport meta example</p>
+      <img id="shape" src="https://storage.googleapis.com/cms-storage-bucket/4fd5520fe28ebf839174.svg"/>
+  </div>
+  </body>
+  </html>
+''';
+
 const String kLogExamplePage = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -307,6 +327,7 @@ enum MenuOptions {
   loadFlutterAsset,
   loadHtmlString,
   transparentBackground,
+  viewportMeta,
   setCookie,
   logExample,
   basicAuthentication,
@@ -351,6 +372,8 @@ class SampleMenu extends StatelessWidget {
             _onLoadHtmlStringExample();
           case MenuOptions.transparentBackground:
             _onTransparentBackground();
+          case MenuOptions.viewportMeta:
+            _onViewportMetaExample();
           case MenuOptions.setCookie:
             _onSetCookie();
           case MenuOptions.logExample:
@@ -408,6 +431,10 @@ class SampleMenu extends StatelessWidget {
           key: ValueKey<String>('ShowTransparentBackgroundExample'),
           value: MenuOptions.transparentBackground,
           child: Text('Transparent background example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.viewportMeta,
+          child: Text('Viewport meta example'),
         ),
         const PopupMenuItem<MenuOptions>(
           value: MenuOptions.setCookie,
@@ -538,6 +565,10 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _onTransparentBackground() {
     return webViewController.loadHtmlString(kTransparentBackgroundPage);
+  }
+
+  Future<void> _onViewportMetaExample() {
+    return webViewController.loadHtmlString(kViewportMetaPage);
   }
 
   Widget _getCookieList(String cookies) {
