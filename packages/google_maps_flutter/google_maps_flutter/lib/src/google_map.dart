@@ -517,10 +517,12 @@ class _GoogleMapState extends State<GoogleMap> {
       this,
     );
     _controller.complete(controller);
-    _updateTileOverlays(controller);
-    final MapCreatedCallback? onMapCreated = widget.onMapCreated;
-    if (onMapCreated != null) {
-      onMapCreated(controller);
+    if (mounted) {
+      _updateTileOverlays(controller);
+      final MapCreatedCallback? onMapCreated = widget.onMapCreated;
+      if (onMapCreated != null) {
+        onMapCreated(controller);
+      }
     }
   }
 
