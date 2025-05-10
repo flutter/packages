@@ -32,14 +32,14 @@ class App extends StatelessWidget {
     TypedGoRoute<FamilyRoute>(path: 'family/:familyId')
   ],
 )
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteData with _$HomeRoute {
   const HomeRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
-class FamilyRoute extends GoRouteData {
+class FamilyRoute extends GoRouteData with _$FamilyRoute {
   const FamilyRoute(this.familyId);
 
   final String familyId;

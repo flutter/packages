@@ -29,7 +29,7 @@ part 'all_types.g.dart';
       path: 'iterable-route-with-default-values'),
 ])
 @immutable
-class AllTypesBaseRoute extends GoRouteData {
+class AllTypesBaseRoute extends GoRouteData with _$AllTypesBaseRoute {
   const AllTypesBaseRoute();
 
   @override
@@ -39,7 +39,7 @@ class AllTypesBaseRoute extends GoRouteData {
       );
 }
 
-class BigIntRoute extends GoRouteData {
+class BigIntRoute extends GoRouteData with _$BigIntRoute {
   BigIntRoute({
     required this.requiredBigIntField,
     this.bigIntField,
@@ -62,7 +62,7 @@ class BigIntRoute extends GoRouteData {
       );
 }
 
-class BoolRoute extends GoRouteData {
+class BoolRoute extends GoRouteData with _$BoolRoute {
   BoolRoute({
     required this.requiredBoolField,
     this.boolField,
@@ -88,7 +88,7 @@ class BoolRoute extends GoRouteData {
       );
 }
 
-class DateTimeRoute extends GoRouteData {
+class DateTimeRoute extends GoRouteData with _$DateTimeRoute {
   DateTimeRoute({
     required this.requiredDateTimeField,
     this.dateTimeField,
@@ -111,7 +111,7 @@ class DateTimeRoute extends GoRouteData {
       );
 }
 
-class DoubleRoute extends GoRouteData {
+class DoubleRoute extends GoRouteData with _$DoubleRoute {
   DoubleRoute({
     required this.requiredDoubleField,
     this.doubleField,
@@ -137,7 +137,7 @@ class DoubleRoute extends GoRouteData {
       );
 }
 
-class IntRoute extends GoRouteData {
+class IntRoute extends GoRouteData with _$IntRoute {
   IntRoute({
     required this.requiredIntField,
     this.intField,
@@ -163,7 +163,7 @@ class IntRoute extends GoRouteData {
       );
 }
 
-class NumRoute extends GoRouteData {
+class NumRoute extends GoRouteData with _$NumRoute {
   NumRoute({
     required this.requiredNumField,
     this.numField,
@@ -189,7 +189,7 @@ class NumRoute extends GoRouteData {
       );
 }
 
-class EnumRoute extends GoRouteData {
+class EnumRoute extends GoRouteData with _$EnumRoute {
   EnumRoute({
     required this.requiredEnumField,
     this.enumField,
@@ -216,7 +216,7 @@ class EnumRoute extends GoRouteData {
       );
 }
 
-class EnhancedEnumRoute extends GoRouteData {
+class EnhancedEnumRoute extends GoRouteData with _$EnhancedEnumRoute {
   EnhancedEnumRoute({
     required this.requiredEnumField,
     this.enumField,
@@ -243,7 +243,7 @@ class EnhancedEnumRoute extends GoRouteData {
       );
 }
 
-class StringRoute extends GoRouteData {
+class StringRoute extends GoRouteData with _$StringRoute {
   StringRoute({
     required this.requiredStringField,
     this.stringField,
@@ -269,7 +269,7 @@ class StringRoute extends GoRouteData {
       );
 }
 
-class UriRoute extends GoRouteData {
+class UriRoute extends GoRouteData with _$UriRoute {
   UriRoute({
     required this.requiredUriField,
     this.uriField,
@@ -292,7 +292,7 @@ class UriRoute extends GoRouteData {
       );
 }
 
-class IterableRoute extends GoRouteData {
+class IterableRoute extends GoRouteData with _$IterableRoute {
   IterableRoute({
     this.intIterableField,
     this.doubleIterableField,
@@ -365,7 +365,8 @@ class IterableRoute extends GoRouteData {
       );
 }
 
-class IterableRouteWithDefaultValues extends GoRouteData {
+class IterableRouteWithDefaultValues extends GoRouteData
+    with _$IterableRouteWithDefaultValues {
   const IterableRouteWithDefaultValues({
     this.intIterableField = const <int>[0],
     this.doubleIterableField = const <double>[0, 1, 2],
