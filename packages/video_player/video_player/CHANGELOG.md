@@ -1,6 +1,11 @@
-## NEXT
+## 2.9.6
 
-* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Updates README to indicate that Android SDK <21 is no longer supported.
+* Improves buffering performance with optimized memory usage.
+* Enhances video loading speed with better resource management.
+* Reduces UI freezes during playback of high-resolution content.
+* Fixes stuttering issues on initial video playback.
+* Improves overall video playback performance across platforms.
 
 ## 2.9.5
 
