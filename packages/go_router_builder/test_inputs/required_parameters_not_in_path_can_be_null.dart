@@ -4,8 +4,11 @@
 
 import 'package:go_router/go_router.dart';
 
+mixin _$NullableRequiredParamNotInPath {}
+
 @TypedGoRoute<NullableRequiredParamNotInPath>(path: 'bob')
-class NullableRequiredParamNotInPath extends GoRouteData {
+class NullableRequiredParamNotInPath extends GoRouteData
+    with _$NullableRequiredParamNotInPath {
   NullableRequiredParamNotInPath({required this.id});
   final int? id;
 }
