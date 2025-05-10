@@ -1,2 +1,0 @@
-/Users/amirhassanamirmahani/flutter_apps/packages/packages/video_player/video_player/example/android/app/.cxx/Debug/2ad5t6g4/arm64-v8a/CMakeFiles/edit_cache.dir
-/Users/amirhassanamirmahani/flutter_apps/packages/packages/video_player/video_player/example/android/app/.cxx/Debug/2ad5t6g4/arm64-v8a/CMakeFiles/rebuild_cache.dir
