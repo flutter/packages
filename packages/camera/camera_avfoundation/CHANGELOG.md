@@ -1,3 +1,7 @@
+## 0.9.19+1
+
+* Migrates the FLTCam class to Swift.
+
 ## 0.9.19
 
 * Migrates the CameraPlugin class to Swift.

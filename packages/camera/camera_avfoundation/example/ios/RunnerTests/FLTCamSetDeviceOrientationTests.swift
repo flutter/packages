@@ -13,7 +13,7 @@ import XCTest
 #endif
 
 final class FLTCamSetDeviceOrientationTests: XCTestCase {
-  private func createCamera() -> (FLTCam, MockCaptureConnection, MockCaptureConnection) {
+  private func createCamera() -> (Camera, MockCaptureConnection, MockCaptureConnection) {
     let camera = CameraTestUtils.createTestCamera()
 
     let mockCapturePhotoOutput = MockCapturePhotoOutput()
@@ -73,7 +73,7 @@ final class FLTCamSetDeviceOrientationTests: XCTestCase {
       videoSetVideoOrientationCalled = true
     }
 
-    camera.lockCapture(FCPPlatformDeviceOrientation.portraitDown)
+    camera.lockCaptureOrientation(FCPPlatformDeviceOrientation.portraitDown)
 
     camera.setDeviceOrientation(.landscapeLeft)
 

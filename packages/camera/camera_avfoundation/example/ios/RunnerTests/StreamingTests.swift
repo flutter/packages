@@ -12,7 +12,7 @@ import XCTest
   @testable import camera_avfoundation_objc
 #endif
 
-private class MockImageStreamHandler: FLTImageStreamHandler {
+private class MockImageStreamHandler: ImageStreamHandler {
   var eventSinkStub: ((Any?) -> Void)?
 
   override var eventSink: FlutterEventSink? {
@@ -29,22 +29,32 @@ private class MockImageStreamHandler: FLTImageStreamHandler {
     }
   }
 
+  init() {
+    super.init(captureSessionQueue: DispatchQueue(label: "capture_session_queue"))
+  }
 }
 
 final class StreamingTests: XCTestCase {
-  private func createCamera() -> (FLTCam, CMSampleBuffer) {
+  private func createCamera() -> (
+    DefaultCamera,
+    AVCaptureOutput,
+    CMSampleBuffer,
+    AVCaptureConnection
+  ) {
     let captureSessionQueue = DispatchQueue(label: "testing")
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
 
     let camera = CameraTestUtils.createTestCamera(configuration)
+    let testAudioOutput = CameraTestUtils.createTestAudioOutput()
     let sampleBuffer = CameraTestUtils.createTestSampleBuffer()
+    let testAudioConnection = CameraTestUtils.createTestConnection(testAudioOutput)
 
-    return (camera, sampleBuffer)
+    return (camera, testAudioOutput, sampleBuffer, testAudioConnection)
   }
 
   func testExceedMaxStreamingPendingFramesCount() {
-    let (camera, sampleBuffer) = createCamera()
+    let (camera, testAudioOutput, sampleBuffer, testAudioConnection) = createCamera()
     let streamingExpectation = expectation(
       description: "Must not call handler over maxStreamingPendingFramesCount")
     let handlerMock = MockImageStreamHandler()
@@ -59,14 +69,14 @@ final class StreamingTests: XCTestCase {
 
     streamingExpectation.expectedFulfillmentCount = 4
     for _ in 0..<10 {
-      camera.captureOutput(nil, didOutputSampleBuffer: sampleBuffer, from: nil)
+      camera.captureOutput(testAudioOutput, didOutput: sampleBuffer, from: testAudioConnection)
     }
 
     waitForExpectations(timeout: 30, handler: nil)
   }
 
   func testReceivedImageStreamData() {
-    let (camera, sampleBuffer) = createCamera()
+    let (camera, testAudioOutput, sampleBuffer, testAudioConnection) = createCamera()
     let streamingExpectation = expectation(
       description: "Must be able to call the handler again when receivedImageStreamData is called")
     let handlerMock = MockImageStreamHandler()
@@ -81,11 +91,11 @@ final class StreamingTests: XCTestCase {
 
     streamingExpectation.expectedFulfillmentCount = 5
     for _ in 0..<10 {
-      camera.captureOutput(nil, didOutputSampleBuffer: sampleBuffer, from: nil)
+      camera.captureOutput(testAudioOutput, didOutput: sampleBuffer, from: testAudioConnection)
     }
 
     camera.receivedImageStreamData()
-    camera.captureOutput(nil, didOutputSampleBuffer: sampleBuffer, from: nil)
+    camera.captureOutput(testAudioOutput, didOutput: sampleBuffer, from: testAudioConnection)
 
     waitForExpectations(timeout: 30, handler: nil)
   }
