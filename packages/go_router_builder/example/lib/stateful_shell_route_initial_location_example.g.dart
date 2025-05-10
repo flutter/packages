@@ -19,7 +19,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: '/home',
-              factory: $HomeRouteDataExtension._fromState,
+              factory: _$HomeRouteData._fromState,
             ),
           ],
         ),
@@ -28,7 +28,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: '/notifications/:section',
-              factory: $NotificationsRouteDataExtension._fromState,
+              factory: _$NotificationsRouteData._fromState,
             ),
           ],
         ),
@@ -36,7 +36,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: '/orders',
-              factory: $OrdersRouteDataExtension._fromState,
+              factory: _$OrdersRouteData._fromState,
             ),
           ],
         ),
@@ -48,7 +48,7 @@ extension $MainShellRouteDataExtension on MainShellRouteData {
       const MainShellRouteData();
 }
 
-extension $HomeRouteDataExtension on HomeRouteData {
+mixin _$HomeRouteData {
   static HomeRouteData _fromState(GoRouterState state) => const HomeRouteData();
 
   String get location => GoRouteData.$location(
@@ -65,15 +65,17 @@ extension $HomeRouteDataExtension on HomeRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $NotificationsRouteDataExtension on NotificationsRouteData {
+mixin _$NotificationsRouteData {
   static NotificationsRouteData _fromState(GoRouterState state) =>
       NotificationsRouteData(
         section: _$NotificationsPageSectionEnumMap
             ._$fromName(state.pathParameters['section']!)!,
       );
 
+  NotificationsRouteData get _self => this as NotificationsRouteData;
+
   String get location => GoRouteData.$location(
-        '/notifications/${Uri.encodeComponent(_$NotificationsPageSectionEnumMap[section]!)}',
+        '/notifications/${Uri.encodeComponent(_$NotificationsPageSectionEnumMap[_self.section]!)}',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -92,7 +94,7 @@ const _$NotificationsPageSectionEnumMap = {
   NotificationsPageSection.archive: 'archive',
 };
 
-extension $OrdersRouteDataExtension on OrdersRouteData {
+mixin _$OrdersRouteData {
   static OrdersRouteData _fromState(GoRouterState state) =>
       const OrdersRouteData();
 

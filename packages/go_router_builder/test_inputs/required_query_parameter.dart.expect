@@ -1,19 +1,21 @@
 RouteBase get $nonNullableRequiredParamNotInPath => GoRouteData.$route(
       path: 'bob',
-      factory: $NonNullableRequiredParamNotInPathExtension._fromState,
+      factory: _$NonNullableRequiredParamNotInPath._fromState,
     );
 
-extension $NonNullableRequiredParamNotInPathExtension
-    on NonNullableRequiredParamNotInPath {
+mixin _$NonNullableRequiredParamNotInPath {
   static NonNullableRequiredParamNotInPath _fromState(GoRouterState state) =>
       NonNullableRequiredParamNotInPath(
         id: int.parse(state.uri.queryParameters['id']!)!,
       );
 
+  NonNullableRequiredParamNotInPath get _self =>
+      this as NonNullableRequiredParamNotInPath;
+
   String get location => GoRouteData.$location(
         'bob',
         queryParams: {
-          'id': id.toString(),
+          'id': _self.id.toString(),
         },
       );
 

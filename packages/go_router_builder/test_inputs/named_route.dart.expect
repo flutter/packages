@@ -1,10 +1,10 @@
 RouteBase get $namedRoute => GoRouteData.$route(
       path: '/named-route',
       name: 'namedRoute',
-      factory: $NamedRouteExtension._fromState,
+      factory: _$NamedRoute._fromState,
     );
 
-extension $NamedRouteExtension on NamedRoute {
+mixin _$NamedRoute {
   static NamedRoute _fromState(GoRouterState state) => NamedRoute();
 
   String get location => GoRouteData.$location(

@@ -14,16 +14,16 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
-      factory: $HomeRouteExtension._fromState,
+      factory: _$HomeRoute._fromState,
       routes: [
         GoRouteData.$route(
           path: 'sub-route',
-          factory: $SubRouteExtension._fromState,
+          factory: _$SubRoute._fromState,
         ),
       ],
     );
 
-extension $HomeRouteExtension on HomeRoute {
+mixin _$HomeRoute {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   String get location => GoRouteData.$location(
@@ -40,7 +40,7 @@ extension $HomeRouteExtension on HomeRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $SubRouteExtension on SubRoute {
+mixin _$SubRoute {
   static SubRoute _fromState(GoRouterState state) => const SubRoute();
 
   String get location => GoRouteData.$location(

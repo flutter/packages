@@ -15,16 +15,16 @@ List<RouteBase> get $appRoutes => [
 RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
       name: 'Home',
-      factory: $HomeRouteExtension._fromState,
+      factory: _$HomeRoute._fromState,
       routes: [
         GoRouteData.$route(
           path: 'family/:familyId',
-          factory: $FamilyRouteExtension._fromState,
+          factory: _$FamilyRoute._fromState,
         ),
       ],
     );
 
-extension $HomeRouteExtension on HomeRoute {
+mixin _$HomeRoute {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   String get location => GoRouteData.$location(
@@ -41,13 +41,15 @@ extension $HomeRouteExtension on HomeRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $FamilyRouteExtension on FamilyRoute {
+mixin _$FamilyRoute {
   static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
         state.pathParameters['familyId']!,
       );
 
+  FamilyRoute get _self => this as FamilyRoute;
+
   String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(familyId)}',
+        '/family/${Uri.encodeComponent(_self.familyId)}',
       );
 
   void go(BuildContext context) => context.go(location);

@@ -15,10 +15,10 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $caseSensitiveRoute => GoRouteData.$route(
       path: '/case-sensitive',
-      factory: $CaseSensitiveRouteExtension._fromState,
+      factory: _$CaseSensitiveRoute._fromState,
     );
 
-extension $CaseSensitiveRouteExtension on CaseSensitiveRoute {
+mixin _$CaseSensitiveRoute {
   static CaseSensitiveRoute _fromState(GoRouterState state) =>
       const CaseSensitiveRoute();
 
@@ -39,10 +39,10 @@ extension $CaseSensitiveRouteExtension on CaseSensitiveRoute {
 RouteBase get $notCaseSensitiveRoute => GoRouteData.$route(
       path: '/not-case-sensitive',
       caseSensitive: false,
-      factory: $NotCaseSensitiveRouteExtension._fromState,
+      factory: _$NotCaseSensitiveRoute._fromState,
     );
 
-extension $NotCaseSensitiveRouteExtension on NotCaseSensitiveRoute {
+mixin _$NotCaseSensitiveRoute {
   static NotCaseSensitiveRoute _fromState(GoRouterState state) =>
       const NotCaseSensitiveRoute();
 
