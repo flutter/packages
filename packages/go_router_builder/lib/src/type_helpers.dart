@@ -328,24 +328,12 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
       // get a type converter for values in iterable
       String entriesTypeDecoder = '(e) => e';
       String convertToNotNull = '';
-      String formatIterableType = '';
-      String asParameterType = ' as ${parameterElement.type}';
-
-      if (parameterElement.hasDefaultValue) {
-        asParameterType += '?';
-      }
 
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType) &&
             helper is _TypeHelperWithHelper) {
           if (!iterableType.isNullableType) {
-            if (parameterElement.type.isDartCoreList) {
-              formatIterableType = '?.toList()';
-            } else if (parameterElement.type.isDartCoreSet) {
-              formatIterableType = '?.toSet()';
-            }
-            convertToNotNull =
-                '.cast<$iterableType>()$formatIterableType$asParameterType';
+            convertToNotNull = '.cast<$iterableType>()';
           }
           entriesTypeDecoder = helper.helperName(iterableType);
         }
@@ -356,14 +344,14 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
       String fallBack = '';
       if (const TypeChecker.fromRuntime(List)
           .isAssignableFromType(parameterElement.type)) {
-        iterableCaster += '?.toList()';
+        iterableCaster += '.toList()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
           fallBack = '?? const []';
         }
       } else if (const TypeChecker.fromRuntime(Set)
           .isAssignableFromType(parameterElement.type)) {
-        iterableCaster += '?.toSet()';
+        iterableCaster += '.toSet()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
           fallBack = '?? const {}';
@@ -371,9 +359,9 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
       }
 
       return '''
-(state.uri.queryParametersAll[
+state.uri.queryParametersAll[
         ${escapeDartString(parameterElement.name.kebab)}]
-        ?.map($entriesTypeDecoder)$convertToNotNull)$iterableCaster$fallBack''';
+        ?.map($entriesTypeDecoder)$convertToNotNull$iterableCaster$fallBack''';
     }
     return '''
 state.uri.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
@@ -428,14 +416,20 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
           'state.uri.queryParameters, '
           '${helperName(paramType)})';
     }
+
+    final String nullableSuffix = paramType.isNullableType ||
+            (paramType.isEnum && !paramType.isNullableType)
+        ? '!'
+        : '';
+
     return '${helperName(paramType)}'
-        '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})!';
+        '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})$nullableSuffix';
   }
 }
 
 /// Extension helpers on [DartType].
 extension DartTypeExtension on DartType {
-  /// Convenient helper for nullability checks.
+  /// Convenient helper for nullability checks.parameterElement.isRequired
   String get ensureNotNull => isNullableType ? '!' : '';
 }
 
