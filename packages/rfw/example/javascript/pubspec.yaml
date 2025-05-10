@@ -1,0 +1,21 @@
+name: rfw_js
+description: Example of using JavaScript with RFW
+publish_to: none # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.4.0
+  flutter: ">=3.22.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  jsf: ^0.4.4
+  rfw:
+    path: ../../
+  
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/calculator.rfw
+    - assets/calculator.js
