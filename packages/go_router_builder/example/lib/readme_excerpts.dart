@@ -87,7 +87,7 @@ void otherDoc(BuildContext context) {
   ],
 )
 // #docregion HomeRoute
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteData with _$HomeRoute {
   const HomeRoute();
 
   @override
@@ -107,7 +107,7 @@ class RedirectRoute extends GoRouteData {
 
 // #docregion login
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData {
+class LoginRoute extends GoRouteData with _$LoginRoute {
   LoginRoute({this.from});
   final String? from;
 
@@ -142,7 +142,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-class FamilyRoute extends GoRouteData {
+class FamilyRoute extends GoRouteData with _$FamilyRoute {
   const FamilyRoute({this.fid});
 
   final String? fid;
@@ -218,7 +218,7 @@ class LoginScreen extends StatelessWidget {
 
 // #docregion MyRoute
 @TypedGoRoute<MyRoute>(path: '/my-route')
-class MyRoute extends GoRouteData {
+class MyRoute extends GoRouteData with _$MyRoute {
   MyRoute({this.queryParameter = 'defaultValue'});
   final String queryParameter;
 
@@ -245,7 +245,7 @@ class MyScreen extends StatelessWidget {
 
 @TypedGoRoute<PersonRouteWithExtra>(path: '/person')
 // #docregion PersonRouteWithExtra
-class PersonRouteWithExtra extends GoRouteData {
+class PersonRouteWithExtra extends GoRouteData with _$PersonRouteWithExtra {
   PersonRouteWithExtra(this.$extra);
   final Person? $extra;
 
@@ -272,7 +272,8 @@ class PersonScreen extends StatelessWidget {
 
 // #docregion HotdogRouteWithEverything
 @TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
-class HotdogRouteWithEverything extends GoRouteData {
+class HotdogRouteWithEverything extends GoRouteData
+    with _$HotdogRouteWithEverything {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
   final bool ketchup; // A required path parameter.
   final String? mustard; // An optional query parameter.

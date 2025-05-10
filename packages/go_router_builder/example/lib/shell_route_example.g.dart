@@ -18,11 +18,11 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/foo',
-          factory: $FooRouteDataExtension._fromState,
+          factory: _$FooRouteData._fromState,
         ),
         GoRouteData.$route(
           path: '/bar',
-          factory: $BarRouteDataExtension._fromState,
+          factory: _$BarRouteData._fromState,
         ),
       ],
     );
@@ -32,7 +32,7 @@ extension $MyShellRouteDataExtension on MyShellRouteData {
       const MyShellRouteData();
 }
 
-extension $FooRouteDataExtension on FooRouteData {
+mixin _$FooRouteData {
   static FooRouteData _fromState(GoRouterState state) => const FooRouteData();
 
   String get location => GoRouteData.$location(
@@ -49,7 +49,7 @@ extension $FooRouteDataExtension on FooRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $BarRouteDataExtension on BarRouteData {
+mixin _$BarRouteData {
   static BarRouteData _fromState(GoRouterState state) => const BarRouteData();
 
   String get location => GoRouteData.$location(
@@ -68,10 +68,10 @@ extension $BarRouteDataExtension on BarRouteData {
 
 RouteBase get $loginRoute => GoRouteData.$route(
       path: '/login',
-      factory: $LoginRouteExtension._fromState,
+      factory: _$LoginRoute._fromState,
     );
 
-extension $LoginRouteExtension on LoginRoute {
+mixin _$LoginRoute {
   static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
 
   String get location => GoRouteData.$location(

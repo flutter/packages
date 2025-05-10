@@ -18,16 +18,16 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
-      factory: $HomeRouteExtension._fromState,
+      factory: _$HomeRoute._fromState,
       routes: [
         GoRouteData.$route(
           path: 'family/:fid',
-          factory: $FamilyRouteExtension._fromState,
+          factory: _$FamilyRoute._fromState,
         ),
       ],
     );
 
-extension $HomeRouteExtension on HomeRoute {
+mixin _$HomeRoute {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   String get location => GoRouteData.$location(
@@ -44,13 +44,15 @@ extension $HomeRouteExtension on HomeRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $FamilyRouteExtension on FamilyRoute {
+mixin _$FamilyRoute {
   static FamilyRoute _fromState(GoRouterState state) => FamilyRoute(
         fid: state.pathParameters['fid'],
       );
 
+  FamilyRoute get _self => this as FamilyRoute;
+
   String get location => GoRouteData.$location(
-        '/family/${Uri.encodeComponent(fid ?? '')}',
+        '/family/${Uri.encodeComponent(_self.fid ?? '')}',
       );
 
   void go(BuildContext context) => context.go(location);
@@ -65,18 +67,20 @@ extension $FamilyRouteExtension on FamilyRoute {
 
 RouteBase get $loginRoute => GoRouteData.$route(
       path: '/login',
-      factory: $LoginRouteExtension._fromState,
+      factory: _$LoginRoute._fromState,
     );
 
-extension $LoginRouteExtension on LoginRoute {
+mixin _$LoginRoute {
   static LoginRoute _fromState(GoRouterState state) => LoginRoute(
         from: state.uri.queryParameters['from'],
       );
 
+  LoginRoute get _self => this as LoginRoute;
+
   String get location => GoRouteData.$location(
         '/login',
         queryParams: {
-          if (from != null) 'from': from,
+          if (_self.from != null) 'from': _self.from,
         },
       );
 
@@ -92,20 +96,22 @@ extension $LoginRouteExtension on LoginRoute {
 
 RouteBase get $myRoute => GoRouteData.$route(
       path: '/my-route',
-      factory: $MyRouteExtension._fromState,
+      factory: _$MyRoute._fromState,
     );
 
-extension $MyRouteExtension on MyRoute {
+mixin _$MyRoute {
   static MyRoute _fromState(GoRouterState state) => MyRoute(
         queryParameter:
             state.uri.queryParameters['query-parameter'] ?? 'defaultValue',
       );
 
+  MyRoute get _self => this as MyRoute;
+
   String get location => GoRouteData.$location(
         '/my-route',
         queryParams: {
-          if (queryParameter != 'defaultValue')
-            'query-parameter': queryParameter,
+          if (_self.queryParameter != 'defaultValue')
+            'query-parameter': _self.queryParameter,
         },
       );
 
@@ -121,37 +127,39 @@ extension $MyRouteExtension on MyRoute {
 
 RouteBase get $personRouteWithExtra => GoRouteData.$route(
       path: '/person',
-      factory: $PersonRouteWithExtraExtension._fromState,
+      factory: _$PersonRouteWithExtra._fromState,
     );
 
-extension $PersonRouteWithExtraExtension on PersonRouteWithExtra {
+mixin _$PersonRouteWithExtra {
   static PersonRouteWithExtra _fromState(GoRouterState state) =>
       PersonRouteWithExtra(
         state.extra as Person?,
       );
 
+  PersonRouteWithExtra get _self => this as PersonRouteWithExtra;
+
   String get location => GoRouteData.$location(
         '/person',
       );
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
+      context.push<T>(location, extra: _self.$extra);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location, extra: _self.$extra);
 
   void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
+      context.replace(location, extra: _self.$extra);
 }
 
 RouteBase get $hotdogRouteWithEverything => GoRouteData.$route(
       path: '/:ketchup',
-      factory: $HotdogRouteWithEverythingExtension._fromState,
+      factory: _$HotdogRouteWithEverything._fromState,
     );
 
-extension $HotdogRouteWithEverythingExtension on HotdogRouteWithEverything {
+mixin _$HotdogRouteWithEverything {
   static HotdogRouteWithEverything _fromState(GoRouterState state) =>
       HotdogRouteWithEverything(
         _$boolConverter(state.pathParameters['ketchup']!)!,
@@ -159,23 +167,25 @@ extension $HotdogRouteWithEverythingExtension on HotdogRouteWithEverything {
         state.extra as Sauce,
       );
 
+  HotdogRouteWithEverything get _self => this as HotdogRouteWithEverything;
+
   String get location => GoRouteData.$location(
-        '/${Uri.encodeComponent(ketchup.toString())}',
+        '/${Uri.encodeComponent(_self.ketchup.toString())}',
         queryParams: {
-          if (mustard != null) 'mustard': mustard,
+          if (_self.mustard != null) 'mustard': _self.mustard,
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
   Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
+      context.push<T>(location, extra: _self.$extra);
 
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location, extra: _self.$extra);
 
   void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
+      context.replace(location, extra: _self.$extra);
 }
 
 bool _$boolConverter(String value) {
