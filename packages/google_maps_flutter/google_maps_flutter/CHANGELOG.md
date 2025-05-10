@@ -2,6 +2,7 @@
 
 * Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Fixes exception when dispose is called while asynchronous update from didUpdateWidget is executed
 
 ## 2.12.1
 
