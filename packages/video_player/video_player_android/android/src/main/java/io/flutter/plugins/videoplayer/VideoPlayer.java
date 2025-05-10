@@ -14,6 +14,8 @@ import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.DefaultLoadControl;
+import androidx.media3.exoplayer.LoadControl;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
 
 /**
@@ -28,6 +30,10 @@ public abstract class VideoPlayer {
   @NonNull protected final VideoPlayerCallbacks videoPlayerEvents;
   @Nullable protected final SurfaceProducer surfaceProducer;
   @NonNull protected ExoPlayer exoPlayer;
+  
+  // Add a throttling mechanism for buffering updates to prevent excessive UI updates
+  private static final long BUFFER_UPDATE_INTERVAL_MS = 250;
+  private long lastBufferUpdateTime = 0;
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   public interface ExoPlayerProvider {
@@ -57,8 +63,36 @@ public abstract class VideoPlayer {
   @NonNull
   protected ExoPlayer createVideoPlayer() {
     ExoPlayer exoPlayer = exoPlayerProvider.get();
+    
+    // Set media item
     exoPlayer.setMediaItem(mediaItem);
+    
+    // Configure buffering parameters for smoother playback
+    // Increase buffer size to reduce buffering during playback
+    exoPlayer.setVideoBufferSize(20 * 1024 * 1024); // 20MB buffer
+    
+    // Configure buffering parameters for smoother performance
+    exoPlayer.setBackBuffer(10000, true); // 10 seconds back buffer
+    exoPlayer.setBufferSize(10 * 1024 * 1024); // 10MB buffer
+    
+    // Set low rebuffer time to prevent long loading times
+    exoPlayer.setMinBufferSize(2 * 1024 * 1024); // 2MB minimum buffer
+    
+    // Set preferred buffering parameters for smoother playback
+    exoPlayer.setLoadControl(
+        new androidx.media3.exoplayer.DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                2000, // Min buffer duration in ms
+                15000, // Max buffer duration in ms
+                1000, // Min playback start buffer in ms
+                2000) // Min rebuffer duration in ms
+            .setPrioritizeTimeOverSizeThresholds(true)
+            .build());
+    
+    // Prepare the player
     exoPlayer.prepare();
+    
+    // Add listener and set audio attributes
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
@@ -70,7 +104,12 @@ public abstract class VideoPlayer {
       @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer);
 
   void sendBufferingUpdate() {
-    videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
+    // Throttle buffer updates to prevent excessive UI updates and reduce flickering
+    long currentTimeMs = System.currentTimeMillis();
+    if (currentTimeMs - lastBufferUpdateTime >= BUFFER_UPDATE_INTERVAL_MS) {
+      videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
+      lastBufferUpdateTime = currentTimeMs;
+    }
   }
 
   private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {

@@ -5,48 +5,50 @@
 package io.flutter.plugins.videoplayer.platformview;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.annotation.VisibleForTesting;
-import androidx.media3.common.Format;
-import androidx.media3.common.util.UnstableApi;
+import androidx.media3.common.Player;
+import androidx.media3.common.VideoSize;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
-import java.util.Objects;
 
+/**
+ * Class for processing ExoPlayer events from a PlatformView.
+ */
 public final class PlatformViewExoPlayerEventListener extends ExoPlayerEventListener {
+  private long lastBufferUpdateTime = 0;
+  private static final long BUFFER_UPDATE_INTERVAL_MS = 500; // Limit buffer updates to prevent flicker
+
   @VisibleForTesting
   public PlatformViewExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events) {
-    this(exoPlayer, events, false);
+    super(exoPlayer, events, false);
   }
 
-  public PlatformViewExoPlayerEventListener(
-      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events, boolean initialized) {
-    super(exoPlayer, events, initialized);
-  }
-
-  @OptIn(markerClass = UnstableApi.class)
   @Override
   protected void sendInitialized() {
-    // We can't rely on VideoSize here, because at this point it is not available - the platform
-    // view was not created yet. We use the video format instead.
-    Format videoFormat = exoPlayer.getVideoFormat();
-    RotationDegrees rotationCorrection =
-        RotationDegrees.fromDegrees(Objects.requireNonNull(videoFormat).rotationDegrees);
-    int width = videoFormat.width;
-    int height = videoFormat.height;
-
-    // Switch the width/height if video was taken in portrait mode and a rotation
-    // correction was detected.
-    if (rotationCorrection == RotationDegrees.ROTATE_90
-        || rotationCorrection == RotationDegrees.ROTATE_270) {
-      width = videoFormat.height;
-      height = videoFormat.width;
-
-      rotationCorrection = RotationDegrees.fromDegrees(0);
+    VideoSize videoSize = exoPlayer.getVideoSize();
+    // PlatformView automatically handles rotation, so we don't need a rotation correction
+    events.onInitialized(
+        videoSize.width, videoSize.height, exoPlayer.getDuration(), 0 /* rotationCorrection */);
+  }
+  
+  @Override
+  public void onPlaybackStateChanged(final int playbackState) {
+    switch (playbackState) {
+      case Player.STATE_BUFFERING:
+        // Limit buffer updates to prevent flickering
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - lastBufferUpdateTime > BUFFER_UPDATE_INTERVAL_MS) {
+          events.onBufferingUpdate(exoPlayer.getBufferedPosition());
+          events.onBufferingStart();
+          lastBufferUpdateTime = currentTime;
+        }
+        break;
+      default:
+        // Use the parent implementation for other states
+        super.onPlaybackStateChanged(playbackState);
+        break;
     }
-
-    events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.getDegrees());
   }
 }

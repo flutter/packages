@@ -24,11 +24,16 @@ if (flutterVersionName == null) {
 
 android {
     namespace 'io.flutter.plugins.videoplayerexample'
+    ndkVersion = "26.3.11579264"
     compileSdk = flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     defaultConfig {
