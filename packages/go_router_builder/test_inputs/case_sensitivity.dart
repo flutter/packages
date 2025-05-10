@@ -4,6 +4,9 @@
 
 import 'package:go_router/go_router.dart';
 
+mixin _$CaseSensitiveRoute {}
+mixin _$NotCaseSensitiveRoute {}
+
 @TypedGoRoute<CaseSensitiveRoute>(path: '/case-sensitive-route')
 class CaseSensitiveRoute extends GoRouteData with _$CaseSensitiveRoute {}
 

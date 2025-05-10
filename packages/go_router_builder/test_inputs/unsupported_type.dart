@@ -4,6 +4,8 @@
 
 import 'package:go_router/go_router.dart';
 
+mixin _$UnsupportedType {}
+
 @TypedGoRoute<UnsupportedType>(path: 'bob/:id')
 class UnsupportedType extends GoRouteData with _$UnsupportedType {
   UnsupportedType({required this.id});
