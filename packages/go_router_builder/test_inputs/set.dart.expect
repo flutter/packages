@@ -1,9 +1,9 @@
 RouteBase get $setRoute => GoRouteData.$route(
       path: '/set-route',
-      factory: $SetRouteExtension._fromState,
+      factory: _$SetRoute._fromState,
     );
 
-extension $SetRouteExtension on SetRoute {
+mixin _$SetRoute on GoRouteData {
   static SetRoute _fromState(GoRouterState state) => SetRoute(
         ids: (state.uri.queryParametersAll['ids']
                     ?.map(int.parse)
@@ -25,25 +25,33 @@ extension $SetRouteExtension on SetRoute {
             const <int>{0},
       );
 
+  SetRoute get _self => this as SetRoute;
+
+  @override
   String get location => GoRouteData.$location(
         '/set-route',
         queryParams: {
-          'ids': ids.map((e) => e.toString()).toList(),
-          if (nullableIds != null)
-            'nullable-ids': nullableIds?.map((e) => e.toString()).toList(),
-          if (!_$iterablesEqual(idsWithDefaultValue, const <int>{0}))
+          'ids': _self.ids.map((e) => e.toString()).toList(),
+          if (_self.nullableIds != null)
+            'nullable-ids':
+                _self.nullableIds?.map((e) => e.toString()).toList(),
+          if (!_$iterablesEqual(_self.idsWithDefaultValue, const <int>{0}))
             'ids-with-default-value':
-                idsWithDefaultValue.map((e) => e.toString()).toList(),
+                _self.idsWithDefaultValue.map((e) => e.toString()).toList(),
         },
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 

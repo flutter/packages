@@ -1,23 +1,28 @@
 RouteBase get $namedEscapedRoute => GoRouteData.$route(
       path: '/named-route',
       name: r'named$Route',
-      factory: $NamedEscapedRouteExtension._fromState,
+      factory: _$NamedEscapedRoute._fromState,
     );
 
-extension $NamedEscapedRouteExtension on NamedEscapedRoute {
+mixin _$NamedEscapedRoute on GoRouteData {
   static NamedEscapedRoute _fromState(GoRouterState state) =>
       NamedEscapedRoute();
 
+  @override
   String get location => GoRouteData.$location(
         '/named-route',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
