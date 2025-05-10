@@ -14,6 +14,8 @@ import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.DefaultLoadControl;
+import androidx.media3.exoplayer.LoadControl;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
 
 /**
@@ -67,11 +69,25 @@ public abstract class VideoPlayer {
     
     // Configure buffering parameters for smoother playback
     // Increase buffer size to reduce buffering during playback
-    exoPlayer.setVideoBufferSize(10 * 1024 * 1024); // 10MB buffer
+    exoPlayer.setVideoBufferSize(20 * 1024 * 1024); // 20MB buffer
     
-    // Configure buffering parameters
-    exoPlayer.setBackBuffer(5000, true); // 5 seconds back buffer
-    exoPlayer.setBufferSize(5 * 1024 * 1024); // 5MB buffer
+    // Configure buffering parameters for smoother performance
+    exoPlayer.setBackBuffer(10000, true); // 10 seconds back buffer
+    exoPlayer.setBufferSize(10 * 1024 * 1024); // 10MB buffer
+    
+    // Set low rebuffer time to prevent long loading times
+    exoPlayer.setMinBufferSize(2 * 1024 * 1024); // 2MB minimum buffer
+    
+    // Set preferred buffering parameters for smoother playback
+    exoPlayer.setLoadControl(
+        new androidx.media3.exoplayer.DefaultLoadControl.Builder()
+            .setBufferDurationsMs(
+                2000, // Min buffer duration in ms
+                15000, // Max buffer duration in ms
+                1000, // Min playback start buffer in ms
+                2000) // Min rebuffer duration in ms
+            .setPrioritizeTimeOverSizeThresholds(true)
+            .build());
     
     // Prepare the player
     exoPlayer.prepare();

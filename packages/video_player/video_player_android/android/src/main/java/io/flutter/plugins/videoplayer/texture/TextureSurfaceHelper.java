@@ -24,7 +24,7 @@ public class TextureSurfaceHelper {
   private boolean surfaceValid = false;
   
   // Delay before applying surface changes to avoid rapid flickering
-  private static final int SURFACE_CHANGE_DELAY_MS = 50;
+  private static final int SURFACE_CHANGE_DELAY_MS = 16;
 
   public TextureSurfaceHelper(@NonNull ExoPlayer exoPlayer) {
     this.exoPlayer = exoPlayer;
@@ -47,16 +47,27 @@ public class TextureSurfaceHelper {
       return;
     }
     
-    // Store the new surface
-    currentSurface = surface;
-    
-    // Apply the surface change after a short delay to avoid rapid changes
-    mainHandler.postDelayed(() -> {
-      if (currentSurface == surface) {
+    // If we're setting a new surface and already have a valid one,
+    // apply immediately for critical surfaces without delay
+    if (currentSurface != surface) {
+      // Store the new surface
+      currentSurface = surface;
+      
+      // For immediate response on initial surface, set directly
+      if (!surfaceValid) {
         exoPlayer.setVideoSurface(surface);
         surfaceValid = true;
+        return;
       }
-    }, SURFACE_CHANGE_DELAY_MS);
+      
+      // For surface changes, apply after short delay to avoid flicker
+      mainHandler.postDelayed(() -> {
+        if (currentSurface == surface) {
+          exoPlayer.setVideoSurface(surface);
+          surfaceValid = true;
+        }
+      }, SURFACE_CHANGE_DELAY_MS);
+    }
   }
   
   /**

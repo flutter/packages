@@ -124,19 +124,18 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
   // https://github.com/flutter/flutter/issues/161256.
   @SuppressWarnings({"deprecation", "removal"})
   public void onSurfaceDestroyed() {
-    // Instead of immediately releasing the player, which causes flickering,
-    // we'll preserve the state and just pause playback temporarily
-    if (exoPlayer.isPlaying()) {
-      // Only save state if we're currently playing
-      savedStateDuring = ExoPlayerState.save(exoPlayer);
-      // Pause but don't release yet to prevent visual jitter
-      exoPlayer.pause();
-    } else if (savedStateDuring == null) {
-      // If we're not playing and don't have a saved state yet, save one
+    // Save the player state no matter what
+    if (savedStateDuring == null) {
       savedStateDuring = ExoPlayerState.save(exoPlayer);
     }
     
+    // If playing, we need to pause to prevent background playback with no surface
+    if (exoPlayer.isPlaying()) {
+      exoPlayer.pause();
+    }
+    
     // Use the helper to safely clear the surface
+    // This prevents texture destruction which causes flickering
     surfaceHelper.clearSurface();
   }
 

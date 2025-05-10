@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "/Users/amirhassanamirmahani/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/amirhassanamirmahani/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/amirhassanamirmahani/flutter_apps/packages/packages/video_player/video_player/example/android/app/.cxx/Debug/2ad5t6g4/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/amirhassanamirmahani/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/amirhassanamirmahani/flutter_apps/packages/packages/video_player/video_player/example/android/app/.cxx/Debug/2ad5t6g4/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {},
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/amirhassanamirmahani/Library/Android/sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/amirhassanamirmahani/Library/Android/sdk/ndk/26.3.11579264/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": []
+}

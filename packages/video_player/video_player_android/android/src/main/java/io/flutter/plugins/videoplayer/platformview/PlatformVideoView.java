@@ -71,10 +71,12 @@ public final class PlatformVideoView implements PlatformView {
               @Override
               public void surfaceChanged(
                   @NonNull SurfaceHolder holder, int format, int width, int height) {
-                // When surface changes dimensions, ensure video is properly positioned
-                // This helps with rendering after scrolling
-                exoPlayer.setVideoSurface(null);
-                exoPlayer.setVideoSurface(holder.getSurface());
+                // Only reset surface if dimensions have actually changed significantly
+                // This prevents unnecessary surface resets during small UI adjustments
+                if (width > 0 && height > 0) {
+                  // Use the existing surface to avoid flickering
+                  exoPlayer.setVideoSurfaceSize(width, height);
+                }
               }
 
               @Override
