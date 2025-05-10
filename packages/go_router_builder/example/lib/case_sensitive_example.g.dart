@@ -15,47 +15,57 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $caseSensitiveRoute => GoRouteData.$route(
       path: '/case-sensitive',
-      factory: $CaseSensitiveRouteExtension._fromState,
+      factory: _$CaseSensitiveRoute._fromState,
     );
 
-extension $CaseSensitiveRouteExtension on CaseSensitiveRoute {
+mixin _$CaseSensitiveRoute on GoRouteData {
   static CaseSensitiveRoute _fromState(GoRouterState state) =>
       const CaseSensitiveRoute();
 
+  @override
   String get location => GoRouteData.$location(
         '/case-sensitive',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 RouteBase get $notCaseSensitiveRoute => GoRouteData.$route(
       path: '/not-case-sensitive',
       caseSensitive: false,
-      factory: $NotCaseSensitiveRouteExtension._fromState,
+      factory: _$NotCaseSensitiveRoute._fromState,
     );
 
-extension $NotCaseSensitiveRouteExtension on NotCaseSensitiveRoute {
+mixin _$NotCaseSensitiveRoute on GoRouteData {
   static NotCaseSensitiveRoute _fromState(GoRouterState state) =>
       const NotCaseSensitiveRoute();
 
+  @override
   String get location => GoRouteData.$location(
         '/not-case-sensitive',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
