@@ -28,6 +28,10 @@ public abstract class VideoPlayer {
   @NonNull protected final VideoPlayerCallbacks videoPlayerEvents;
   @Nullable protected final SurfaceProducer surfaceProducer;
   @NonNull protected ExoPlayer exoPlayer;
+  
+  // Add a throttling mechanism for buffering updates to prevent excessive UI updates
+  private static final long BUFFER_UPDATE_INTERVAL_MS = 250;
+  private long lastBufferUpdateTime = 0;
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
   public interface ExoPlayerProvider {
@@ -57,8 +61,22 @@ public abstract class VideoPlayer {
   @NonNull
   protected ExoPlayer createVideoPlayer() {
     ExoPlayer exoPlayer = exoPlayerProvider.get();
+    
+    // Set media item
     exoPlayer.setMediaItem(mediaItem);
+    
+    // Configure buffering parameters for smoother playback
+    // Increase buffer size to reduce buffering during playback
+    exoPlayer.setVideoBufferSize(10 * 1024 * 1024); // 10MB buffer
+    
+    // Configure buffering parameters
+    exoPlayer.setBackBuffer(5000, true); // 5 seconds back buffer
+    exoPlayer.setBufferSize(5 * 1024 * 1024); // 5MB buffer
+    
+    // Prepare the player
     exoPlayer.prepare();
+    
+    // Add listener and set audio attributes
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
 
@@ -70,7 +88,12 @@ public abstract class VideoPlayer {
       @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer);
 
   void sendBufferingUpdate() {
-    videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
+    // Throttle buffer updates to prevent excessive UI updates and reduce flickering
+    long currentTimeMs = System.currentTimeMillis();
+    if (currentTimeMs - lastBufferUpdateTime >= BUFFER_UPDATE_INTERVAL_MS) {
+      videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
+      lastBufferUpdateTime = currentTimeMs;
+    }
   }
 
   private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {

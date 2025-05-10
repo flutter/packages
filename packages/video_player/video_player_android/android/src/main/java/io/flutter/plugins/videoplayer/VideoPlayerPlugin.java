@@ -25,6 +25,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   private final LongSparseArray<VideoPlayer> videoPlayers = new LongSparseArray<>();
   private FlutterState flutterState;
   private final VideoPlayerOptions options = new VideoPlayerOptions();
+  
+  // Keep track of app state
+  private boolean isPaused = false;
 
   // TODO(stuartmorgan): Decouple identifiers for platform views and texture views.
   /**
@@ -53,6 +56,21 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
         .registerViewFactory(
             "plugins.flutter.dev/video_player_android",
             new PlatformVideoViewFactory(videoPlayers::get));
+            
+    // Register activity lifecycle callbacks to handle app foreground/background transitions
+    binding.getApplicationContext().registerComponentCallbacks(
+        new android.content.ComponentCallbacks() {
+          @Override
+          public void onConfigurationChanged(@NonNull android.content.res.Configuration newConfig) {
+            // No-op
+          }
+          
+          @Override
+          public void onLowMemory() {
+            // When system is low on memory, pause all players to conserve resources
+            pauseAllPlayers();
+          }
+        });
   }
 
   @Override
@@ -258,5 +276,24 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     void stopListening(BinaryMessenger messenger) {
       AndroidVideoPlayerApi.setUp(messenger, null);
     }
+  }
+
+  private void pauseAllPlayers() {
+    if (isPaused) return;
+    
+    isPaused = true;
+    for (int i = 0; i < videoPlayers.size(); i++) {
+      VideoPlayer player = videoPlayers.valueAt(i);
+      if (player != null) {
+        player.pause();
+      }
+    }
+  }
+  
+  private void resumeAllPlayers() {
+    if (!isPaused) return;
+    
+    isPaused = false;
+    // Players will be resumed individually through regular plugin calls
   }
 }

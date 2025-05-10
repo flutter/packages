@@ -28,6 +28,7 @@ import io.flutter.view.TextureRegistry.SurfaceProducer;
  */
 public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProducer.Callback {
   @Nullable private ExoPlayerState savedStateDuring;
+  private TextureSurfaceHelper surfaceHelper;
 
   /**
    * Creates a texture video player.
@@ -69,8 +70,10 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
     super(events, mediaItem, options, surfaceProducer, exoPlayerProvider);
 
     surfaceProducer.setCallback(this);
-
-    this.exoPlayer.setVideoSurface(surfaceProducer.getSurface());
+    
+    // Initialize the surface helper
+    surfaceHelper = new TextureSurfaceHelper(exoPlayer);
+    surfaceHelper.setSurface(surfaceProducer.getSurface());
   }
 
   @NonNull
@@ -92,10 +95,27 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceAvailable() {
     if (savedStateDuring != null) {
-      exoPlayer = createVideoPlayer();
-      exoPlayer.setVideoSurface(surfaceProducer.getSurface());
+      // If we previously cleared the surface but didn't fully release the player
+      if (!exoPlayer.isPlaying() && exoPlayer.getPlayWhenReady()) {
+        // We need to recreate the player
+        exoPlayer = createVideoPlayer();
+        
+        // Also recreate surface helper for the new player
+        surfaceHelper = new TextureSurfaceHelper(exoPlayer);
+      }
+      
+      // Set the surface using the helper to avoid flickering
+      surfaceHelper.setSurface(surfaceProducer.getSurface());
+      
+      // Restore the saved state
       savedStateDuring.restore(exoPlayer);
+      
+      // Clear the saved state now that we've restored it
       savedStateDuring = null;
+    } else {
+      // If there's no saved state but surface became available,
+      // just ensure the surface is set
+      surfaceHelper.setSurface(surfaceProducer.getSurface());
     }
   }
 
@@ -104,23 +124,40 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
   // https://github.com/flutter/flutter/issues/161256.
   @SuppressWarnings({"deprecation", "removal"})
   public void onSurfaceDestroyed() {
-    // Intentionally do not call pause/stop here, because the surface has already been released
-    // at this point (see https://github.com/flutter/flutter/issues/156451).
-    savedStateDuring = ExoPlayerState.save(exoPlayer);
-    exoPlayer.release();
+    // Instead of immediately releasing the player, which causes flickering,
+    // we'll preserve the state and just pause playback temporarily
+    if (exoPlayer.isPlaying()) {
+      // Only save state if we're currently playing
+      savedStateDuring = ExoPlayerState.save(exoPlayer);
+      // Pause but don't release yet to prevent visual jitter
+      exoPlayer.pause();
+    } else if (savedStateDuring == null) {
+      // If we're not playing and don't have a saved state yet, save one
+      savedStateDuring = ExoPlayerState.save(exoPlayer);
+    }
+    
+    // Use the helper to safely clear the surface
+    surfaceHelper.clearSurface();
   }
 
-  private boolean playerHasBeenSuspended() {
-    return savedStateDuring != null;
-  }
-
+  @Override
   public void dispose() {
-    // Super must be called first to ensure the player is released before the surface.
+    // Release surface helper first
+    if (surfaceHelper != null) {
+      surfaceHelper.release();
+      surfaceHelper = null;
+    }
+    
+    // Super must be called to ensure the player is released before the surface.
     super.dispose();
 
     surfaceProducer.release();
     // TODO(matanlurey): Remove when embedder no longer calls-back once released.
     // https://github.com/flutter/flutter/issues/156434.
     surfaceProducer.setCallback(null);
+  }
+  
+  private boolean playerHasBeenSuspended() {
+    return savedStateDuring != null;
   }
 }
