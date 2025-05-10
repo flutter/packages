@@ -5,7 +5,7 @@
 import 'package:go_router/go_router.dart';
 
 @TypedGoRoute<UnsupportedType>(path: 'bob/:id')
-class UnsupportedType extends GoRouteData {
+class UnsupportedType extends GoRouteData with _$UnsupportedType {
   UnsupportedType({required this.id});
   final Stopwatch id;
 }

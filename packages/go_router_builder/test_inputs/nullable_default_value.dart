@@ -5,7 +5,8 @@
 import 'package:go_router/go_router.dart';
 
 @TypedGoRoute<NullableDefaultValueRoute>(path: '/nullable-default-value-route')
-class NullableDefaultValueRoute extends GoRouteData {
+class NullableDefaultValueRoute extends GoRouteData
+    with _$NullableDefaultValueRoute {
   NullableDefaultValueRoute({this.param = 0});
   final int? param;
 }

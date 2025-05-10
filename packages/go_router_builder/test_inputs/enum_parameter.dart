@@ -5,7 +5,7 @@
 import 'package:go_router/go_router.dart';
 
 @TypedGoRoute<EnumParam>(path: '/:y')
-class EnumParam extends GoRouteData {
+class EnumParam extends GoRouteData with _$EnumParam {
   EnumParam({required this.y});
   final EnumTest y;
 }

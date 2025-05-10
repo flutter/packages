@@ -1,9 +1,9 @@
 RouteBase get $iterableWithEnumRoute => GoRouteData.$route(
       path: '/iterable-with-enum',
-      factory: $IterableWithEnumRouteExtension._fromState,
+      factory: _$IterableWithEnumRoute._fromState,
     );
 
-extension $IterableWithEnumRouteExtension on IterableWithEnumRoute {
+mixin _$IterableWithEnumRoute {
   static IterableWithEnumRoute _fromState(GoRouterState state) =>
       IterableWithEnumRoute(
         param: (state.uri.queryParametersAll['param']
@@ -12,12 +12,15 @@ extension $IterableWithEnumRouteExtension on IterableWithEnumRoute {
             as Iterable<EnumOnlyUsedInIterable>?),
       );
 
+  IterableWithEnumRoute get _self => this as IterableWithEnumRoute;
+
   String get location => GoRouteData.$location(
         '/iterable-with-enum',
         queryParams: {
-          if (param != null)
-            'param':
-                param?.map((e) => _$EnumOnlyUsedInIterableEnumMap[e]).toList(),
+          if (_self.param != null)
+            'param': _self.param
+                ?.map((e) => _$EnumOnlyUsedInIterableEnumMap[e])
+                .toList(),
         },
       );
 
