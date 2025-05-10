@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:async';
-import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
@@ -455,12 +454,6 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
       assert(width != null && height != null);
 
-      double scale = 1.0;
-      scale = math.min(
-        pictureInfo.size.width / width!,
-        pictureInfo.size.height / height!,
-      );
-
       if (_webRenderObject) {
         child = _RawWebVectorGraphicWidget(
           pictureInfo: pictureInfo,
@@ -474,7 +467,6 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           assetKey: _pictureInfo!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
-          scale: scale,
         );
       } else {
         child = _RawPictureVectorGraphicWidget(
@@ -554,13 +546,11 @@ class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
     required this.pictureInfo,
     required this.colorFilter,
     required this.opacity,
-    required this.scale,
     required this.assetKey,
   });
 
   final PictureInfo pictureInfo;
   final ColorFilter? colorFilter;
-  final double scale;
   final Animation<double>? opacity;
   final Object assetKey;
 
@@ -572,7 +562,6 @@ class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
       colorFilter,
       MediaQuery.maybeOf(context)?.devicePixelRatio ?? 1.0,
       opacity,
-      scale,
     );
   }
 
@@ -586,8 +575,7 @@ class _RawVectorGraphicWidget extends SingleChildRenderObjectWidget {
       ..assetKey = assetKey
       ..colorFilter = colorFilter
       ..devicePixelRatio = MediaQuery.maybeOf(context)?.devicePixelRatio ?? 1.0
-      ..opacity = opacity
-      ..scale = scale;
+      ..opacity = opacity;
   }
 }
 
