@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -609,5 +611,29 @@ void main() {
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
     expect(map.circleUpdates.length, 1);
+  });
+
+  testWidgets('Update state after map is initialized only when mounted',
+      (WidgetTester tester) async {
+    platform.initCompleter = Completer<void>();
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+
+    await tester.pumpWidget(Container());
+
+    platform.initCompleter!.complete();
+
+    await tester.pumpAndSettle();
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.tileOverlaySets.length, 1);
   });
 }
