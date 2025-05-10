@@ -88,7 +88,7 @@ class OrdersShellBranchData extends StatefulShellBranchData {
   const OrdersShellBranchData();
 }
 
-class HomeRouteData extends GoRouteData {
+class HomeRouteData extends GoRouteData with _$HomeRouteData {
   const HomeRouteData();
 
   @override
@@ -103,7 +103,7 @@ enum NotificationsPageSection {
   archive,
 }
 
-class NotificationsRouteData extends GoRouteData {
+class NotificationsRouteData extends GoRouteData with _$NotificationsRouteData {
   const NotificationsRouteData({
     required this.section,
   });
@@ -118,7 +118,7 @@ class NotificationsRouteData extends GoRouteData {
   }
 }
 
-class OrdersRouteData extends GoRouteData {
+class OrdersRouteData extends GoRouteData with _$OrdersRouteData {
   const OrdersRouteData();
 
   @override
