@@ -1,3 +1,8 @@
+## NEXT
+
+* Adds a check that raises `MapUsedAfterWidgetDisposedError`
+  when map controller is used after its widget has been disposed.
+
 ## 2.13.1
 
 * Fixes exception when dispose is called while asynchronous update from
