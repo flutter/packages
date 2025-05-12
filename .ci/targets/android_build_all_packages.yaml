@@ -1,8 +1,17 @@
-# This only builds the legacy all_packages app, which requires jdk11
+# This builds the modern all_packages app and the legacy all_packages app.
 tasks:
   - name: prepare tool
     script: .ci/scripts/prepare_tool.sh
     infra_step: true # Note infra steps failing prevents "always" from running.
+  - name: create all_packages app
+    script: .ci/scripts/create_all_packages_app.sh
+    infra_step: true # Note infra steps failing prevents "always" from running.
+  - name: build all_packages for Android debug
+    script: .ci/scripts/build_all_packages_app.sh
+    args: ["apk", "debug"]
+  - name: build all_packages for Android release
+    script: .ci/scripts/build_all_packages_app.sh
+    args: ["apk", "release"]
   - name: create all_packages app - legacy version
     script: .ci/scripts/create_all_packages_app_legacy.sh
     # Output dir; must match the final argument to build_all_packages_app_legacy

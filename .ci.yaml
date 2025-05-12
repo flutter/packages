@@ -395,28 +395,8 @@ targets:
     properties:
       version_file: flutter_master.version
       # This builds the all_packages app only in a current JDK.
-      target_file: android_build_all_packages_jdk17.yaml
+      target_file: android_build_all_packages.yaml
       channel: master
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
-  - name: Linux_android android_build_all_packages_legacy master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_master.version
-      # TODO(stuartmorgan): Once stable requires JDK 17, and the
-      # legacy project is updated accordingly, this entire target
-      # can be merged back into android_build_all_packages.
-      # This file only builds a *legacy* version of the project.
-      target_file: android_build_all_packages_legacy.yaml
-      channel: master
-      dependencies: >-
-        [
-          {"dependency": "open_jdk", "version": "version:17"}
-        ]
       env_variables: >-
         {
           "CHANNEL": "master"
@@ -429,25 +409,8 @@ targets:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
       # This builds the all_packages app only in a current JDK.
-      target_file: android_build_all_packages_jdk17.yaml
+      target_file: android_build_all_packages.yaml
       channel: stable
-      env_variables: >-
-        {
-          "CHANNEL": "stable"
-        }
-
-  - name: Linux_android android_build_all_packages_legacy stable
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_stable.version
-      # This file only builds a *legacy* version of the project.
-      target_file: android_build_all_packages_legacy.yaml
-      channel: stable
-      dependencies: >-
-        [
-          {"dependency": "open_jdk", "version": "version:17"}
-        ]
       env_variables: >-
         {
           "CHANNEL": "stable"
