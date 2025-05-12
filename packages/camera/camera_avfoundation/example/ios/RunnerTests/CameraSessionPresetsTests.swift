@@ -43,7 +43,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.max)
 
-    let _ = FLTCam(configuration: configuration, error: nil)
+    let _ = CameraTestUtils.createTestCamera(configuration)
 
     waitForExpectations(timeout: 30, handler: nil)
   }
@@ -67,7 +67,7 @@ final class CameraSessionPresetsTests: XCTestCase {
       resolutionPreset: FCPPlatformResolutionPreset.max)
     configuration.captureDeviceFactory = { _ in MockCaptureDevice() }
 
-    let _ = FLTCam(configuration: configuration, error: nil)
+    let _ = CameraTestUtils.createTestCamera(configuration)
 
     waitForExpectations(timeout: 30, handler: nil)
   }
@@ -91,7 +91,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.ultraHigh)
 
-    let _ = FLTCam(configuration: configuration, error: nil)
+    let _ = CameraTestUtils.createTestCamera(configuration)
 
     waitForExpectations(timeout: 30, handler: nil)
   }

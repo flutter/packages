@@ -59,23 +59,13 @@ final class CameraOrientationTests: XCTestCase {
     )
   }
 
-  private func waitForRoundTrip(with queue: DispatchQueue) {
-    let expectation = self.expectation(description: "Queue flush")
-    queue.async {
-      DispatchQueue.main.async {
-        expectation.fulfill()
-      }
-    }
-    waitForExpectations(timeout: 30, handler: nil)
-  }
-
   private func sendOrientation(
     _ orientation: UIDeviceOrientation,
     to cameraPlugin: CameraPlugin,
     captureSessionQueue: DispatchQueue
   ) {
     cameraPlugin.orientationChanged(createMockNotification(for: orientation))
-    waitForRoundTrip(with: captureSessionQueue)
+    waitForQueueRoundTrip(with: captureSessionQueue)
   }
 
   private func createMockNotification(for deviceOrientation: UIDeviceOrientation) -> Notification {
