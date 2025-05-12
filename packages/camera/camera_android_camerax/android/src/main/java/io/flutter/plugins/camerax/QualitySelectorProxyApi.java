@@ -54,8 +54,7 @@ class QualitySelectorProxyApi extends PigeonApiQualitySelector {
 
   @Nullable
   @Override
-  public Size getResolution(
-          @NonNull CameraInfo cameraInfo, @NonNull VideoQuality quality) {
+  public Size getResolution(@NonNull CameraInfo cameraInfo, @NonNull VideoQuality quality) {
     return QualitySelector.getResolution(cameraInfo, getNativeQuality(quality));
   }
 

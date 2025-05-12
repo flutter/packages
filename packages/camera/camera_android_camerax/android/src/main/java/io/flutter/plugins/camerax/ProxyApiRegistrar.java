@@ -140,7 +140,8 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
     return 3000;
   }
 
-  @SuppressWarnings("deprecation") // getSystemService was the way of getting the default display prior to API 30
+  @SuppressWarnings(
+      "deprecation") // getSystemService was the way of getting the default display prior to API 30
   @Nullable
   Display getDisplay() {
     if (sdkIsAtLeast(Build.VERSION_CODES.R)) {

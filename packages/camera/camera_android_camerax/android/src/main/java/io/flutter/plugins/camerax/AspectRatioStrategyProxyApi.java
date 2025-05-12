@@ -32,6 +32,7 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
         break;
       case RATIO_DEFAULT:
         nativeAspectRatio = androidx.camera.core.AspectRatio.RATIO_DEFAULT;
+        break;
       case UNKNOWN:
       default:
         // Default to nativeAspectRatio -2.

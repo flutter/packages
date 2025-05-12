@@ -7,7 +7,6 @@ package io.flutter.plugins.camerax;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis.Analyzer;
 import androidx.camera.core.ImageProxy;
-
 import java.util.Objects;
 
 /**

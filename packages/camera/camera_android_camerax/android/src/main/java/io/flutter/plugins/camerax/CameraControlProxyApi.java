@@ -42,7 +42,7 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
     Futures.addCallback(
         enableTorchFuture,
         new FutureCallback<>() {
-            @Override
+          @Override
           public void onSuccess(Void voidResult) {
             ResultCompat.success(null, callback);
           }
@@ -66,13 +66,13 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
     Futures.addCallback(
         setZoomRatioFuture,
         new FutureCallback<>() {
-            @Override
+          @Override
           public void onSuccess(Void voidResult) {
             ResultCompat.success(null, callback);
           }
 
-            @Override
-            public void onFailure(@NonNull Throwable t) {
+          @Override
+          public void onFailure(@NonNull Throwable t) {
             if (t instanceof CameraControl.OperationCanceledException) {
               // Operation was canceled due to camera being closed or a new request was submitted, which
               // is not actionable and should not block a new value from potentially being submitted.
@@ -97,13 +97,13 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
     Futures.addCallback(
         focusMeteringResultFuture,
         new FutureCallback<>() {
-            @Override
-            public void onSuccess(FocusMeteringResult focusMeteringResult) {
+          @Override
+          public void onSuccess(FocusMeteringResult focusMeteringResult) {
             ResultCompat.success(focusMeteringResult, callback);
           }
 
-            @Override
-            public void onFailure(@NonNull Throwable t) {
+          @Override
+          public void onFailure(@NonNull Throwable t) {
             if (t instanceof CameraControl.OperationCanceledException) {
               // Operation was canceled due to camera being closed or a new request was submitted, which
               // is not actionable and should not block a new value from potentially being submitted.
@@ -126,13 +126,13 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
     Futures.addCallback(
         cancelFocusAndMeteringFuture,
         new FutureCallback<>() {
-            @Override
-            public void onSuccess(Void voidResult) {
+          @Override
+          public void onSuccess(Void voidResult) {
             ResultCompat.success(null, callback);
           }
 
-            @Override
-            public void onFailure(@NonNull Throwable t) {
+          @Override
+          public void onFailure(@NonNull Throwable t) {
             ResultCompat.failure(t, callback);
           }
         },
@@ -150,13 +150,13 @@ class CameraControlProxyApi extends PigeonApiCameraControl {
     Futures.addCallback(
         setExposureCompensationIndexFuture,
         new FutureCallback<>() {
-            @Override
-            public void onSuccess(Integer integerResult) {
+          @Override
+          public void onSuccess(Integer integerResult) {
             ResultCompat.success(integerResult.longValue(), callback);
           }
 
-            @Override
-            public void onFailure(@NonNull Throwable t) {
+          @Override
+          public void onFailure(@NonNull Throwable t) {
             if (t instanceof CameraControl.OperationCanceledException) {
               // Operation was canceled due to camera being closed or a new request was submitted, which
               // is not actionable and should not block a new value from potentially being submitted.

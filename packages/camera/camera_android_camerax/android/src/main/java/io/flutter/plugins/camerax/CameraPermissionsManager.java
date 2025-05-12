@@ -17,8 +17,7 @@ import io.flutter.plugin.common.PluginRegistry;
 
 public final class CameraPermissionsManager {
   interface PermissionsRegistry {
-    void addListener(
-        PluginRegistry.RequestPermissionsResultListener handler);
+    void addListener(PluginRegistry.RequestPermissionsResultListener handler);
   }
 
   interface ResultCallback {

@@ -52,7 +52,7 @@ class Camera2CameraControlProxyApi extends PigeonApiCamera2CameraControl {
     Futures.addCallback(
         addCaptureRequestOptionsFuture,
         new FutureCallback<>() {
-            @Override
+          @Override
           public void onSuccess(Void voidResult) {
             ResultCompat.success(null, callback);
           }

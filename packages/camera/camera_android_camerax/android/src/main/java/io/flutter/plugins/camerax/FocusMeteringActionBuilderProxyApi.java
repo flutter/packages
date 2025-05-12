@@ -51,8 +51,7 @@ class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBui
 
   @NonNull
   @Override
-  public FocusMeteringAction build(
-      FocusMeteringAction.Builder pigeonInstance) {
+  public FocusMeteringAction build(FocusMeteringAction.Builder pigeonInstance) {
     return pigeonInstance.build();
   }
 

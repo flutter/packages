@@ -5,7 +5,6 @@
 package io.flutter.plugins.camerax;
 
 import android.util.Size;
-
 import androidx.annotation.NonNull;
 import androidx.camera.core.ResolutionInfo;
 
