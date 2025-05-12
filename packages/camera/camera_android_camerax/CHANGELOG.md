@@ -1,3 +1,7 @@
+## 0.6.17
+
+* Makes Java style improvements.
+
 ## 0.6.16
 
 * Fixes incorrect camera preview rotation for landscape-oriented devices.
