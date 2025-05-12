@@ -137,6 +137,11 @@ class GoogleMapController {
   TileOverlaysController? _tileOverlaysController;
   GroundOverlaysController? _groundOverlaysController;
 
+  StreamSubscription<void>? _onClickSubscription;
+  StreamSubscription<void>? _onRightClickSubscription;
+  StreamSubscription<void>? _onBoundsChangedSubscription;
+  StreamSubscription<void>? _onIdleSubscription;
+
   // Keeps track if _attachGeometryControllers has been called or not.
   bool _controllersBoundToMap = false;
 
@@ -247,7 +252,8 @@ class GoogleMapController {
         _streamController.add(WebMapReadyEvent(_mapId));
       }
     });
-    map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
+    _onClickSubscription =
+        map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {
         _streamController.add(
@@ -255,7 +261,8 @@ class GoogleMapController {
         );
       }
     });
-    map.onRightclick.listen((gmaps.MapMouseEvent event) {
+    _onRightClickSubscription =
+        map.onRightclick.listen((gmaps.MapMouseEvent event) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {
         _streamController.add(
@@ -263,7 +270,7 @@ class GoogleMapController {
         );
       }
     });
-    map.onBoundsChanged.listen((void _) {
+    _onBoundsChangedSubscription = map.onBoundsChanged.listen((void _) {
       if (!_mapIsMoving) {
         _mapIsMoving = true;
         if (!_streamController.isClosed) {
@@ -276,7 +283,7 @@ class GoogleMapController {
         );
       }
     });
-    map.onIdle.listen((void _) {
+    _onIdleSubscription = map.onIdle.listen((void _) {
       _mapIsMoving = false;
       if (!_streamController.isClosed) {
         _streamController.add(CameraIdleEvent(_mapId));
@@ -600,6 +607,14 @@ class GoogleMapController {
     _clusterManagersController = null;
     _tileOverlaysController = null;
     _groundOverlaysController = null;
+    _onClickSubscription?.cancel();
+    _onClickSubscription = null;
+    _onRightClickSubscription?.cancel();
+    _onRightClickSubscription = null;
+    _onBoundsChangedSubscription?.cancel();
+    _onBoundsChangedSubscription = null;
+    _onIdleSubscription?.cancel();
+    _onIdleSubscription = null;
     _streamController.close();
   }
 }

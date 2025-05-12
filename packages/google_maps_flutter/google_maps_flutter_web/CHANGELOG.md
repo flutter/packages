@@ -1,3 +1,7 @@
+## 0.5.13
+
+* Stop processing events and cancel subscriptions when controller is disposed.
+
 ## 0.5.12
 
 * Adds support for ground overlay.
