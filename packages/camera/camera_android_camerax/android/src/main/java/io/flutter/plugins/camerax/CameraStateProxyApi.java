@@ -34,6 +34,7 @@ class CameraStateProxyApi extends PigeonApiCameraState {
       case CLOSED:
         return CameraStateType.CLOSED;
     }
+    return CameraStateType.UNKNOWN;
   }
 
   @Nullable
