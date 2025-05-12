@@ -221,7 +221,7 @@ final class ${swiftInstanceManagerClassName(options)} {
     lockQueue.sync {
       let weakInstancesEnumerator = weakInstances.objectEnumerator()!
       while let instance = weakInstancesEnumerator.nextObject() {
-        ProxyApiTestsPigeonInternalFinalizer.detach(from: instance as AnyObject)
+        ${_instanceManagerFinalizerName(options)}.detach(from: instance as AnyObject)
       }
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
