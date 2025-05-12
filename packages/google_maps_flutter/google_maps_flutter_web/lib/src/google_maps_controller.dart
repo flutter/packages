@@ -243,32 +243,44 @@ class GoogleMapController {
   void _attachMapEvents(gmaps.Map map) {
     map.onTilesloaded.first.then((void _) {
       // Report the map as ready to go the first time the tiles load
-      _streamController.add(WebMapReadyEvent(_mapId));
+      if (!_streamController.isClosed) {
+        _streamController.add(WebMapReadyEvent(_mapId));
+      }
     });
     map.onClick.listen((gmaps.MapMouseEventOrIconMouseEvent event) {
       assert(event.latLng != null);
-      _streamController.add(
-        MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
-      );
+      if (!_streamController.isClosed) {
+        _streamController.add(
+          MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
+        );
+      }
     });
     map.onRightclick.listen((gmaps.MapMouseEvent event) {
       assert(event.latLng != null);
-      _streamController.add(
-        MapLongPressEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
-      );
+      if (!_streamController.isClosed) {
+        _streamController.add(
+          MapLongPressEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
+        );
+      }
     });
     map.onBoundsChanged.listen((void _) {
       if (!_mapIsMoving) {
         _mapIsMoving = true;
-        _streamController.add(CameraMoveStartedEvent(_mapId));
+        if (!_streamController.isClosed) {
+          _streamController.add(CameraMoveStartedEvent(_mapId));
+        }
       }
-      _streamController.add(
-        CameraMoveEvent(_mapId, _gmViewportToCameraPosition(map)),
-      );
+      if (!_streamController.isClosed) {
+        _streamController.add(
+          CameraMoveEvent(_mapId, _gmViewportToCameraPosition(map)),
+        );
+      }
     });
     map.onIdle.listen((void _) {
       _mapIsMoving = false;
-      _streamController.add(CameraIdleEvent(_mapId));
+      if (!_streamController.isClosed) {
+        _streamController.add(CameraIdleEvent(_mapId));
+      }
     });
   }
 
