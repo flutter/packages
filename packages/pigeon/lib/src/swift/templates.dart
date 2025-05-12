@@ -37,7 +37,7 @@ protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject {
 String instanceManagerFinalizerTemplate(InternalSwiftOptions options) => '''
 // Attaches to an object to receive a callback when the object is deallocated.
 internal final class ${_instanceManagerFinalizerName(options)} {
-  private static let associatedObjectKey = malloc(1)!
+  internal static let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
@@ -219,6 +219,10 @@ final class ${swiftInstanceManagerClassName(options)} {
   /// The manager will be empty after this call returns.
   func removeAllObjects() throws {
     lockQueue.sync {
+      let weakInstancesEnumerator = weakInstances.objectEnumerator()!
+      while let instance = weakInstancesEnumerator.nextObject() {
+        ProxyApiTestsPigeonInternalFinalizer.detach(from: instance as AnyObject)
+      }
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
       strongInstances.removeAllObjects()
