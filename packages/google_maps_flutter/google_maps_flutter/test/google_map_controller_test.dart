@@ -32,22 +32,6 @@ void main() {
     );
 
     expect(controller, isNotNull);
-  });
-
-  testWidgets('controller can be used to access underlying map',
-      (WidgetTester tester) async {
-    GoogleMapController? controller;
-
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          initialCameraPosition: const CameraPosition(target: LatLng(0.0, 0.0)),
-          onMapCreated: (GoogleMapController value) => controller = value,
-        ),
-      ),
-    );
-
     await expectLater(controller?.getZoomLevel(), isNotNull);
   });
 
