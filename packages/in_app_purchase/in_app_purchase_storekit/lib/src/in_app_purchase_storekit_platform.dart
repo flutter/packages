@@ -259,9 +259,10 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   }
 
   /// Call this before `registerPlatform` to re-enable StoreKit1
-  static bool enableStoreKit1() {
-    _useStoreKit2 = false;
-    return false;
+  @Deprecated('Please note that StoreKit 1 will be removed in the future.')
+  static Future<bool> enableStoreKit1() async {
+    _useStoreKit2 = !(await SKRequestMaker.supportsStoreKit2());
+    return _useStoreKit2;
   }
 }
 
