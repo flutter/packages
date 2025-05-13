@@ -1,6 +1,11 @@
-## 2.8.3
+## 2.8.4
 
 * Fixes incorrect width/height swap ([bug](https://github.com/flutter/flutter/issues/166097)). The swap was originally required for the uncorrected width/height of `Format` but was mistakenly retained after [switching to `VideoSize`](https://github.com/flutter/packages/pull/6535), which already accounts for rotation.
+
+## 2.8.3
+
+* Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect
+  whether or not the video player rotation needs to be corrected.
 
 ## 2.8.2
 

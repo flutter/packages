@@ -16,15 +16,23 @@ import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
 import java.util.Objects;
 
 public final class TextureExoPlayerEventListener extends ExoPlayerEventListener {
+  private boolean surfaceProducerHandlesCropAndRotation;
+
   @VisibleForTesting
   public TextureExoPlayerEventListener(
-      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events) {
-    this(exoPlayer, events, false);
+      @NonNull ExoPlayer exoPlayer,
+      @NonNull VideoPlayerCallbacks events,
+      boolean surfaceProducerHandlesCropAndRotation) {
+    this(exoPlayer, events, surfaceProducerHandlesCropAndRotation, false);
   }
 
   public TextureExoPlayerEventListener(
-      @NonNull ExoPlayer exoPlayer, @NonNull VideoPlayerCallbacks events, boolean initialized) {
+      @NonNull ExoPlayer exoPlayer,
+      @NonNull VideoPlayerCallbacks events,
+      boolean surfaceProducerHandlesCropAndRotation,
+      boolean initialized) {
     super(exoPlayer, events, initialized);
+    this.surfaceProducerHandlesCropAndRotation = surfaceProducerHandlesCropAndRotation;
   }
 
   @Override
@@ -47,10 +55,7 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
           // unexpected, we apply no rotation correction.
           rotationCorrection = RotationDegrees.ROTATE_0;
         }
-      }
-      // TODO(camsim99): Replace this with a call to `handlesCropAndRotation` when it is
-      // available in stable. https://github.com/flutter/flutter/issues/157198
-      else if (Build.VERSION.SDK_INT < 29) {
+      } else if (surfaceProducerHandlesCropAndRotation) {
         // When the SurfaceTexture backend for Impeller is used, the preview should already
         // be correctly rotated.
         rotationCorrection = RotationDegrees.ROTATE_0;
