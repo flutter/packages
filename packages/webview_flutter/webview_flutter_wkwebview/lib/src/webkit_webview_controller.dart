@@ -1404,7 +1404,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
     return responseCompleter.future;
   }
 
-  Future<AuthenticationChallengeResponse> _handleSslAuthError({
+  static Future<AuthenticationChallengeResponse> _handleSslAuthError({
     required void Function(PlatformSslAuthError) onSslAuthError,
     required SecTrust serverTrust,
     required URLProtectionSpace protectionSpace,
