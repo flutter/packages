@@ -12,8 +12,10 @@ import XCTest
 #endif
 
 final class CameraCaptureSessionQueueRaceConditionTests: XCTestCase {
-  private func createCameraPlugin() -> CameraPlugin {
-    return CameraPlugin(
+  private func createCameraPlugin() -> (CameraPlugin, DispatchQueue) {
+    let captureSessionQueue = DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
+
+    let cameraPlugin = CameraPlugin(
       registry: MockFlutterTextureRegistry(),
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
@@ -21,12 +23,15 @@ final class CameraCaptureSessionQueueRaceConditionTests: XCTestCase {
       permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
-      captureDeviceInputFactory: MockCaptureDeviceInputFactory()
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      captureSessionQueue: captureSessionQueue
     )
+
+    return (cameraPlugin, captureSessionQueue)
   }
 
   func testFixForCaptureSessionQueueNullPointerCrashDueToRaceCondition() {
-    let cameraPlugin = createCameraPlugin()
+    let (cameraPlugin, captureSessionQueue) = createCameraPlugin()
     let disposeExpectation = expectation(description: "dispose's result block must be called")
     let createExpectation = expectation(description: "create's result block must be called")
 
@@ -55,6 +60,6 @@ final class CameraCaptureSessionQueueRaceConditionTests: XCTestCase {
     // `captureSessionQueue` passed into `AVCaptureVideoDataOutput::setSampleBufferDelegate:queue:`
     // API will cause a crash.
     XCTAssertNotNil(
-      cameraPlugin.captureSessionQueue, "captureSessionQueue must not be nil after create method.")
+      captureSessionQueue, "captureSessionQueue must not be nil after create method.")
   }
 }
