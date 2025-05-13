@@ -86,6 +86,7 @@ abstract class GoRouteData extends RouteData {
   static GoRoute $route<T extends GoRouteData>({
     required String path,
     String? name,
+    bool caseSensitive = true,
     required T Function(GoRouterState) factory,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
@@ -117,6 +118,7 @@ abstract class GoRouteData extends RouteData {
     return GoRoute(
       path: path,
       name: name,
+      caseSensitive: caseSensitive,
       builder: builder,
       pageBuilder: pageBuilder,
       redirect: redirect,

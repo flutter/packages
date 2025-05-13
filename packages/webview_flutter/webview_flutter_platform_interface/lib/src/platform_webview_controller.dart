@@ -241,8 +241,8 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'setHorizontalScrollBarEnabled is not implemented on the current platform');
   }
 
-  /// Whether the current platform supports enabling/disabling the scrollbars to
-  /// be drawn.
+  /// Returns true if the current platform supports setting whether scrollbars
+  /// should be drawn or not.
   ///
   /// See [setVerticalScrollBarEnabled] and [setHorizontalScrollBarEnabled].
   bool supportsSetScrollBarsEnabled() {

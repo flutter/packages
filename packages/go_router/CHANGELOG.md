@@ -1,3 +1,11 @@
+## 15.1.2
+
+- Fixes focus request propagation from `GoRouter` to `Navigator` by properly handling the `requestFocus` parameter.
+
+## 15.1.1
+
+- Adds missing `caseSensitive` to `GoRouteData.$route`.
+
 ## 15.1.0
 
 - Adds `caseSensitive` to `TypedGoRoute`.
