@@ -42,7 +42,7 @@ internal final class ${_instanceManagerFinalizerName(options)} {
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  private weak var delegate: ${instanceManagerFinalizerDelegateName(options)}?
+  internal weak var delegate: ${instanceManagerFinalizerDelegateName(options)}?
 
   private init(identifier: Int64, delegate: ${instanceManagerFinalizerDelegateName(options)}) {
     self.identifier = identifier
@@ -57,7 +57,11 @@ internal final class ${_instanceManagerFinalizerName(options)} {
   }
 
   static func detach(from instance: AnyObject) {
-    objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
+    let finalizer = objc_getAssociatedObject(instance, associatedObjectKey) as? ${_instanceManagerFinalizerName(options)}
+    if let finalizer = finalizer {
+      finalizer.delegate = nil
+      objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
+    }
   }
 
   deinit {

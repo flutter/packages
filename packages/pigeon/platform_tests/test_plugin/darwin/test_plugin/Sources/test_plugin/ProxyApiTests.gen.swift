@@ -87,7 +87,7 @@ internal final class ProxyApiTestsPigeonInternalFinalizer {
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  private weak var delegate: ProxyApiTestsPigeonInternalFinalizerDelegate?
+  internal weak var delegate: ProxyApiTestsPigeonInternalFinalizerDelegate?
 
   private init(identifier: Int64, delegate: ProxyApiTestsPigeonInternalFinalizerDelegate) {
     self.identifier = identifier
@@ -103,7 +103,13 @@ internal final class ProxyApiTestsPigeonInternalFinalizer {
   }
 
   static func detach(from instance: AnyObject) {
-    objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
+    let finalizer =
+      objc_getAssociatedObject(instance, associatedObjectKey)
+      as? ProxyApiTestsPigeonInternalFinalizer
+    if let finalizer = finalizer {
+      finalizer.delegate = nil
+      objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
+    }
   }
 
   deinit {

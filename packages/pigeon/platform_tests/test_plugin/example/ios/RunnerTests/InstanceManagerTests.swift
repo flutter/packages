@@ -136,9 +136,14 @@ final class InstanceManagerTests: XCTestCase {
 
     let object: NSObject? = NSObject()
     instanceManager.addDartCreatedInstance(object!, withIdentifier: 0)
+    let finalizer =
+      objc_getAssociatedObject(object!, ProxyApiTestsPigeonInternalFinalizer.associatedObjectKey)
+      as! ProxyApiTestsPigeonInternalFinalizer
+
     let _: AnyObject? = try! instanceManager.removeInstance(withIdentifier: 0)
     try? instanceManager.removeAllObjects()
 
+    XCTAssertNil(finalizer.delegate)
     XCTAssertNil(
       objc_getAssociatedObject(object!, ProxyApiTestsPigeonInternalFinalizer.associatedObjectKey))
   }
