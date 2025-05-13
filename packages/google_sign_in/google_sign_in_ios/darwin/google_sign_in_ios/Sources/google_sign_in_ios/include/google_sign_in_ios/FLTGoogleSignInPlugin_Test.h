@@ -19,6 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 // sign in, sign out, and requesting additional scopes.
 @property(strong, readonly) GIDSignIn *signIn;
 
+// A mapping of user IDs to GIDGoogleUser instances to use for follow-up calls.
+@property(nonatomic) NSMutableDictionary<NSString *, GIDGoogleUser *> *usersByIdentifier;
+
 /// Inject @c FlutterPluginRegistrar for testing.
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 

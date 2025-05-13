@@ -100,9 +100,6 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 // The plugin registrar, for querying views.
 @property(nonatomic) id<FlutterPluginRegistrar> registrar;
 
-// A mapping of user IDs to GIDGoogleUser instances to use for follow-up calls.
-@property(nonatomic) NSMutableDictionary<NSString *, GIDGoogleUser *> *usersByIdentifier;
-
 @end
 
 @implementation FLTGoogleSignInPlugin
@@ -202,10 +199,9 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 }
 
-- (void)getRefreshedAuthorizationTokensForUser:(NSString *)userId
-                                    completion:
-                                        (nonnull void (^)(FSISignInResult *_Nullable,
-                                                          FlutterError *_Nullable))completion {
+- (void)refreshedAuthorizationTokensForUser:(NSString *)userId
+                                 completion:(nonnull void (^)(FSISignInResult *_Nullable,
+                                                              FlutterError *_Nullable))completion {
   GIDGoogleUser *user = self.usersByIdentifier[userId];
   if (user == nil) {
     completion(

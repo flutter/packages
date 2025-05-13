@@ -142,9 +142,9 @@ NSObject<FlutterMessageCodec> *FSIGetMessagesCodec(void);
                  completion:
                      (void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion;
 /// Requests the access token for the current sign in.
-- (void)getRefreshedAuthorizationTokensForUser:(NSString *)userId
-                                    completion:(void (^)(FSISignInResult *_Nullable,
-                                                         FlutterError *_Nullable))completion;
+- (void)refreshedAuthorizationTokensForUser:(NSString *)userId
+                                 completion:(void (^)(FSISignInResult *_Nullable,
+                                                      FlutterError *_Nullable))completion;
 /// Requests authorization of the given additional scopes.
 - (void)addScopes:(NSArray<NSString *> *)scopes
           forUser:(NSString *)userId

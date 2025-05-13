@@ -141,7 +141,7 @@ abstract class GoogleSignInApi {
 
   /// Requests the access token for the current sign in.
   @async
-  @ObjCSelector('getRefreshedAuthorizationTokensForUser:')
+  @ObjCSelector('refreshedAuthorizationTokensForUser:')
   SignInResult getRefreshedAuthorizationTokens(String userId);
 
   /// Requests authorization of the given additional scopes.

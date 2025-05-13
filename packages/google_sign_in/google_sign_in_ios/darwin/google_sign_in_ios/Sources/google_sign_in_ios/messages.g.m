@@ -406,19 +406,18 @@ void SetUpFSIGoogleSignInApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenge
         binaryMessenger:binaryMessenger
                   codec:FSIGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getRefreshedAuthorizationTokensForUser:
-                                                                              completion:)],
+      NSCAssert([api respondsToSelector:@selector(refreshedAuthorizationTokensForUser:completion:)],
                 @"FSIGoogleSignInApi api (%@) doesn't respond to "
-                @"@selector(getRefreshedAuthorizationTokensForUser:completion:)",
+                @"@selector(refreshedAuthorizationTokensForUser:completion:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         NSString *arg_userId = GetNullableObjectAtIndex(args, 0);
-        [api getRefreshedAuthorizationTokensForUser:arg_userId
-                                         completion:^(FSISignInResult *_Nullable output,
-                                                      FlutterError *_Nullable error) {
-                                           callback(wrapResult(output, error));
-                                         }];
+        [api refreshedAuthorizationTokensForUser:arg_userId
+                                      completion:^(FSISignInResult *_Nullable output,
+                                                   FlutterError *_Nullable error) {
+                                        callback(wrapResult(output, error));
+                                      }];
       }];
     } else {
       [channel setMessageHandler:nil];
