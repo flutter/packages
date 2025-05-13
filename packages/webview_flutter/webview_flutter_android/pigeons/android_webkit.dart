@@ -80,6 +80,51 @@ enum ConsoleMessageLevel {
   unknown,
 }
 
+/// The over-scroll mode for a view.
+///
+/// See https://developer.android.com/reference/android/view/View#OVER_SCROLL_ALWAYS.
+enum OverScrollMode {
+  /// Always allow a user to over-scroll this view, provided it is a view that
+  /// can scroll.
+  always,
+
+  /// Allow a user to over-scroll this view only if the content is large enough
+  /// to meaningfully scroll, provided it is a view that can scroll.
+  ifContentScrolls,
+
+  /// Never allow a user to over-scroll this view.
+  never,
+
+  /// The type is not recognized by this wrapper.
+  unknown,
+}
+
+/// Type of error for a SslCertificate.
+///
+/// See https://developer.android.com/reference/android/net/http/SslError#SSL_DATE_INVALID.
+enum SslErrorType {
+  /// The date of the certificate is invalid.
+  dateInvalid,
+
+  /// The certificate has expired.
+  expired,
+
+  /// Hostname mismatch.
+  idMismatch,
+
+  /// A generic error occurred.
+  invalid,
+
+  /// The certificate is not yet valid.
+  notYetValid,
+
+  /// The certificate authority is not trusted.
+  untrusted,
+
+  /// The type is not recognized by this wrapper.
+  unknown,
+}
+
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
@@ -456,6 +501,49 @@ abstract class WebViewClient {
     String realm,
   )? onReceivedHttpAuthRequest;
 
+  /// Ask the host application if the browser should resend data as the
+  /// requested page was a result of a POST.
+  void Function(
+    WebView view,
+    AndroidMessage dontResend,
+    AndroidMessage resend,
+  )? onFormResubmission;
+
+  /// Notify the host application that the WebView will load the resource
+  /// specified by the given url.
+  void Function(WebView view, String url)? onLoadResource;
+
+  /// Notify the host application that WebView content left over from previous
+  /// page navigations will no longer be drawn.
+  void Function(WebView view, String url)? onPageCommitVisible;
+
+  /// Notify the host application to handle a SSL client certificate request.
+  void Function(
+    WebView view,
+    ClientCertRequest request,
+  )? onReceivedClientCertRequest;
+
+  /// Notify the host application that a request to automatically log in the
+  /// user has been processed.
+  void Function(
+    WebView view,
+    String realm,
+    String? account,
+    String args,
+  )? onReceivedLoginRequest;
+
+  /// Notifies the host application that an SSL error occurred while loading a
+  /// resource.
+  void Function(
+    WebView view,
+    SslErrorHandler handler,
+    SslError error,
+  )? onReceivedSslError;
+
+  /// Notify the host application that the scale applied to the WebView has
+  /// changed.
+  void Function(WebView view, double oldScale, double newScale)? onScaleChanged;
+
   /// Sets the required synchronous return value for the Java method,
   /// `WebViewClient.shouldOverrideUrlLoading(...)`.
   ///
@@ -513,7 +601,7 @@ abstract class WebChromeClient {
   late List<String> Function(
     WebView webView,
     FileChooserParams params,
-  )? onShowFileChooser;
+  ) onShowFileChooser;
 
   /// Notify the host application that web content is requesting permission to
   /// access the specified resources and the permission currently isn't granted
@@ -554,7 +642,7 @@ abstract class WebChromeClient {
   /// Notify the host application that the web page wants to display a
   /// JavaScript `confirm()` dialog.
   @async
-  late bool Function(WebView webView, String url, String message)? onJsConfirm;
+  late bool Function(WebView webView, String url, String message) onJsConfirm;
 
   /// Notify the host application that the web page wants to display a
   /// JavaScript `prompt()` dialog.
@@ -763,6 +851,9 @@ abstract class View {
 
   /// Return the scrolled position of this view.
   WebViewPoint getScrollPosition();
+
+  /// Set the over-scroll mode for this view.
+  void setOverScrollMode(OverScrollMode mode);
 }
 
 /// A callback interface used by the host application to set the Geolocation
@@ -799,4 +890,161 @@ abstract class HttpAuthHandler {
   /// Instructs the WebView to proceed with the authentication with the given
   /// credentials.
   void proceed(String username, String password);
+}
+
+/// Defines a message containing a description and arbitrary data object that
+/// can be sent to a `Handler`.
+///
+/// See https://developer.android.com/reference/android/os/Message.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(fullClassName: 'android.os.Message'),
+)
+abstract class AndroidMessage {
+  /// Sends this message to the Android native `Handler` specified by
+  /// getTarget().
+  ///
+  /// Throws a null pointer exception if this field has not been set.
+  void sendToTarget();
+}
+
+/// Defines a message containing a description and arbitrary data object that
+/// can be sent to a `Handler`.
+///
+/// See https://developer.android.com/reference/android/webkit/ClientCertRequest.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.ClientCertRequest',
+  ),
+)
+abstract class ClientCertRequest {
+  /// Cancel this request.
+  void cancel();
+
+  /// Ignore the request for now.
+  void ignore();
+
+  /// Proceed with the specified private key and client certificate chain.
+  void proceed(PrivateKey privateKey, List<X509Certificate> chain);
+}
+
+/// A private key.
+///
+/// The purpose of this interface is to group (and provide type safety for) all
+/// private key interfaces.
+///
+/// See https://developer.android.com/reference/java/security/PrivateKey.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'java.security.PrivateKey',
+  ),
+)
+abstract class PrivateKey {}
+
+/// Abstract class for X.509 certificates.
+///
+/// This provides a standard way to access all the attributes of an X.509
+/// certificate.
+///
+/// See https://developer.android.com/reference/java/security/cert/X509Certificate.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'java.security.cert.X509Certificate',
+  ),
+)
+abstract class X509Certificate {}
+
+/// Represents a request for handling an SSL error.
+///
+/// See https://developer.android.com/reference/android/webkit/SslErrorHandler.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.webkit.SslErrorHandler',
+  ),
+)
+abstract class SslErrorHandler {
+  /// Instructs the WebView that encountered the SSL certificate error to
+  /// terminate communication with the server.
+  void cancel();
+
+  /// Instructs the WebView that encountered the SSL certificate error to ignore
+  /// the error and continue communicating with the server.
+  void proceed();
+}
+
+/// This class represents a set of one or more SSL errors and the associated SSL
+/// certificate.
+///
+/// See https://developer.android.com/reference/android/net/http/SslError.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.net.http.SslError',
+  ),
+)
+abstract class SslError {
+  /// Gets the SSL certificate associated with this object.
+  late SslCertificate certificate;
+
+  /// Gets the URL associated with this object.
+  late String url;
+
+  /// Gets the most severe SSL error in this object's set of errors.
+  SslErrorType getPrimaryError();
+
+  /// Determines whether this object includes the supplied error.
+  bool hasError(SslErrorType error);
+}
+
+/// A distinguished name helper class.
+///
+/// A 3-tuple of:
+/// the most specific common name (CN)
+/// the most specific organization (O)
+/// the most specific organizational unit (OU)
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.net.http.SslCertificate.DName',
+  ),
+)
+abstract class SslCertificateDName {
+  /// The most specific Common-name (CN) component of this name.
+  String getCName();
+
+  /// The distinguished name (normally includes CN, O, and OU names).
+  String getDName();
+
+  /// The most specific Organization (O) component of this name.
+  String getOName();
+
+  /// The most specific Organizational Unit (OU) component of this name.
+  String getUName();
+}
+
+/// SSL certificate info (certificate details) class.
+///
+/// See https://developer.android.com/reference/android/net/http/SslCertificate.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'android.net.http.SslCertificate',
+  ),
+)
+abstract class SslCertificate {
+  /// Issued-by distinguished name or null if none has been set.
+  SslCertificateDName? getIssuedBy();
+
+  /// Issued-to distinguished name or null if none has been set.
+  SslCertificateDName? getIssuedTo();
+
+  /// Not-after date from the certificate validity period or null if none has been
+  /// set.
+  int? getValidNotAfterMsSinceEpoch();
+
+  /// Not-before date from the certificate validity period or null if none has
+  /// been set.
+  int? getValidNotBeforeMsSinceEpoch();
+
+  /// The X509Certificate used to create this SslCertificate or null if no
+  /// certificate was provided.
+  ///
+  /// Always returns null on Android versions below Q.
+  X509Certificate? getX509Certificate();
 }

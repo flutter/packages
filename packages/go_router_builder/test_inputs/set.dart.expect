@@ -5,15 +5,23 @@ RouteBase get $setRoute => GoRouteData.$route(
 
 extension $SetRouteExtension on SetRoute {
   static SetRoute _fromState(GoRouterState state) => SetRoute(
-        ids: state.uri.queryParametersAll['ids']?.map(int.parse).toSet() ??
+        ids: (state.uri.queryParametersAll['ids']
+                    ?.map(int.parse)
+                    .cast<int>()
+                    ?.toSet() as Set<int>)
+                ?.toSet() ??
             const {},
-        nullableIds: state.uri.queryParametersAll['nullable-ids']
-            ?.map(int.parse)
-            .toSet(),
-        idsWithDefaultValue: state
-                .uri.queryParametersAll['ids-with-default-value']
+        nullableIds: (state.uri.queryParametersAll['nullable-ids']
                 ?.map(int.parse)
-                .toSet() ??
+                .cast<int>()
+                ?.toSet() as Set<int>?)
+            ?.toSet(),
+        idsWithDefaultValue: (state
+                    .uri.queryParametersAll['ids-with-default-value']
+                    ?.map(int.parse)
+                    .cast<int>()
+                    ?.toSet() as Set<int>?)
+                ?.toSet() ??
             const <int>{0},
       );
 

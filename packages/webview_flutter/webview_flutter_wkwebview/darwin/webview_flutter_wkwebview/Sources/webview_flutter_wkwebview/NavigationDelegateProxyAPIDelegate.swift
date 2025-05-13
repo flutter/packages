@@ -230,6 +230,46 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
     }
   #endif
 
+  func handleAuthChallengeSuccessResponse(_ response: [Any?]) -> (
+    URLSession.AuthChallengeDisposition, URLCredential?
+  ) {
+    let disposition = response[0] as! UrlSessionAuthChallengeDisposition
+    var nativeDisposition: URLSession.AuthChallengeDisposition
+    switch disposition {
+    case .useCredential:
+      nativeDisposition = .useCredential
+    case .performDefaultHandling:
+      nativeDisposition = .performDefaultHandling
+    case .cancelAuthenticationChallenge:
+      nativeDisposition = .cancelAuthenticationChallenge
+    case .rejectProtectionSpace:
+      nativeDisposition = .rejectProtectionSpace
+    case .unknown:
+      print(
+        self.registrar.createUnknownEnumError(withEnum: disposition).localizedDescription)
+      nativeDisposition = .cancelAuthenticationChallenge
+    }
+    let credentialMap = response[1] as? [AnyHashable?: AnyHashable?]
+    var credential: URLCredential?
+    if let credentialMap = credentialMap {
+      let nativePersistence: URLCredential.Persistence
+      switch credentialMap["persistence"] as! UrlCredentialPersistence {
+      case .none:
+        nativePersistence = .none
+      case .forSession:
+        nativePersistence = .forSession
+      case .permanent:
+        nativePersistence = .permanent
+      case .synchronizable:
+        nativePersistence = .synchronizable
+      }
+      credential = URLCredential(
+        user: credentialMap["user"] as! String,
+        password: credentialMap["password"] as! String, persistence: nativePersistence)
+    }
+    return (nativeDisposition, credential)
+  }
+
   #if compiler(>=6.0)
     public func webView(
       _ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
@@ -244,7 +284,8 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
           DispatchQueue.main.async {
             switch result {
             case .success(let response):
-              completionHandler(response.disposition, response.credential)
+              let nativeValues = self.handleAuthChallengeSuccessResponse(response)
+              completionHandler(nativeValues.0, nativeValues.1)
             case .failure(let error):
               completionHandler(.cancelAuthenticationChallenge, nil)
               onFailure("WKNavigationDelegate.didReceiveAuthenticationChallenge", error)
@@ -266,7 +307,8 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
           DispatchQueue.main.async {
             switch result {
             case .success(let response):
-              completionHandler(response.disposition, response.credential)
+              let nativeValues = self.handleAuthChallengeSuccessResponse(response)
+              completionHandler(nativeValues.0, nativeValues.1)
             case .failure(let error):
               completionHandler(.cancelAuthenticationChallenge, nil)
               onFailure("WKNavigationDelegate.didReceiveAuthenticationChallenge", error)

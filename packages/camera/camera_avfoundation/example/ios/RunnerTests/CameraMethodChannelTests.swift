@@ -7,6 +7,11 @@ import XCTest
 
 @testable import camera_avfoundation
 
+// Import Objectice-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  @testable import camera_avfoundation_objc
+#endif
+
 final class CameraMethodChannelTests: XCTestCase {
   private func createCameraPlugin(with session: MockCaptureSession) -> CameraPlugin {
     return CameraPlugin(
@@ -14,15 +19,17 @@ final class CameraMethodChannelTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
+      permissionManager: MockFLTCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { session },
-      captureDeviceInputFactory: MockCaptureDeviceInputFactory()
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
   }
 
   func testCreate_ShouldCallResultOnMainThread() {
     let avCaptureSessionMock = MockCaptureSession()
-    avCaptureSessionMock.canSetSessionPreset = true
+    avCaptureSessionMock.canSetSessionPresetStub = { _ in true }
     let camera = createCameraPlugin(with: avCaptureSessionMock)
     let expectation = self.expectation(description: "Result finished")
 
@@ -47,7 +54,7 @@ final class CameraMethodChannelTests: XCTestCase {
 
   func testDisposeShouldDeallocCamera() {
     let avCaptureSessionMock = MockCaptureSession()
-    avCaptureSessionMock.canSetSessionPreset = true
+    avCaptureSessionMock.canSetSessionPresetStub = { _ in true }
     let camera = createCameraPlugin(with: avCaptureSessionMock)
     let createExpectation = self.expectation(description: "create's result block must be called")
 

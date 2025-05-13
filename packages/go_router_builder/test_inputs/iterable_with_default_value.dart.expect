@@ -6,7 +6,9 @@ RouteBase get $iterableDefaultValueRoute => GoRouteData.$route(
 extension $IterableDefaultValueRouteExtension on IterableDefaultValueRoute {
   static IterableDefaultValueRoute _fromState(GoRouterState state) =>
       IterableDefaultValueRoute(
-        param: state.uri.queryParametersAll['param']?.map(int.parse) ??
+        param: (state.uri.queryParametersAll['param']
+                ?.map(int.parse)
+                .cast<int>() as Iterable<int>?) ??
             const <int>[0],
       );
 

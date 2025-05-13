@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_identity_services_web: ^0.3.1
-  google_sign_in_platform_interface: ^2.4.0
+  google_sign_in_platform_interface: ^2.5.0
   google_sign_in_web:
     path: ../
 

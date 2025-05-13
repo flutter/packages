@@ -7,8 +7,11 @@ import 'dart:convert';
 import 'dart:io' as io;
 
 import 'package:file/file.dart';
+import 'package:flutter_plugin_tools/src/common/process_runner.dart';
 import 'package:mockito/mockito.dart';
 import 'package:platform/platform.dart';
+
+import 'common/package_command_test.mocks.dart';
 
 class MockPlatform extends Mock implements Platform {
   MockPlatform({
@@ -92,4 +95,28 @@ class MockIOSink extends Mock implements IOSink {
 
   @override
   void writeln([Object? obj = '']) => lines.add(obj.toString());
+}
+
+/// Creates a mockGitDir that uses [packagesDir]'s parent as its root, and
+/// forwards any git commands to [processRunner] to make it easy to mock their
+/// output the same way other process calls are mocked.
+///
+/// The first argument to any `git` command is added to the command to make
+/// targeting the mock results easier. For example, `git ls ...` will become
+/// a `git-ls ...` call to [processRunner].
+///
+MockGitDir createForwardingMockGitDir({
+  required Directory packagesDir,
+  required ProcessRunner processRunner,
+}) {
+  final MockGitDir gitDir = MockGitDir();
+  when(gitDir.path).thenReturn(packagesDir.parent.path);
+  when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')))
+      .thenAnswer((Invocation invocation) {
+    final List<String> arguments =
+        invocation.positionalArguments[0]! as List<String>;
+    final String gitCommand = arguments.removeAt(0);
+    return processRunner.run('git-$gitCommand', arguments);
+  });
+  return gitDir;
 }

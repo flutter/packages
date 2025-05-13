@@ -1383,6 +1383,30 @@ void main() {
       expect(urlChange.url, null);
     });
 
+    test('setOverScrollMode', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      await controller.setOverScrollMode(WebViewOverScrollMode.always);
+      verify(mockScrollView.setBounces(true));
+      verify(mockScrollView.setAlwaysBounceVertical(true));
+      verify(mockScrollView.setAlwaysBounceHorizontal(true));
+
+      clearInteractions(mockScrollView);
+      await controller
+          .setOverScrollMode(WebViewOverScrollMode.ifContentScrolls);
+      verify(mockScrollView.setBounces(true));
+      verify(mockScrollView.setAlwaysBounceVertical(false));
+      verify(mockScrollView.setAlwaysBounceHorizontal(false));
+
+      clearInteractions(mockScrollView);
+      await controller.setOverScrollMode(WebViewOverScrollMode.never);
+      verify(mockScrollView.setBounces(false));
+    });
+
     test('webViewIdentifier', () {
       final PigeonInstanceManager instanceManager = TestInstanceManager();
 
@@ -1576,6 +1600,17 @@ void main() {
 
       await controller.setInspectable(true);
       verify(mockWebView.setInspectable(true));
+    });
+
+    test('setAllowsLinkPreview', () async {
+      final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.setAllowsLinkPreview(true);
+      verify(mockWebView.setAllowsLinkPreview(true));
     });
 
     group('Console logging', () {
@@ -1888,10 +1923,10 @@ class CapturingNavigationDelegate extends WKNavigationDelegate {
       return NavigationResponsePolicy.cancel;
     },
     didReceiveAuthenticationChallenge: (_, __, ___) async {
-      return AuthenticationChallengeResponse.pigeon_detached(
-        disposition: UrlSessionAuthChallengeDisposition.performDefaultHandling,
-        pigeon_instanceManager: TestInstanceManager(),
-      );
+      return <Object?>[
+        UrlSessionAuthChallengeDisposition.performDefaultHandling,
+        null,
+      ];
     },
   );
 }

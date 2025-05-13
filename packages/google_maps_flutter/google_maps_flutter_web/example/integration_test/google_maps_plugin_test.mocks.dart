@@ -142,6 +142,7 @@ class MockGoogleMapController extends _i1.Mock
     _i4.PolylinesController? polylines,
     _i6.ClusterManagersController? clusterManagers,
     _i4.TileOverlaysController? tileOverlays,
+    _i4.GroundOverlaysController? groundOverlays,
   }) =>
       super.noSuchMethod(
         Invocation.method(
@@ -157,6 +158,7 @@ class MockGoogleMapController extends _i1.Mock
             #polylines: polylines,
             #clusterManagers: clusterManagers,
             #tileOverlays: tileOverlays,
+            #groundOverlays: groundOverlays,
           },
         ),
         returnValueForMissingStub: null,
@@ -334,6 +336,16 @@ class MockGoogleMapController extends _i1.Mock
       super.noSuchMethod(
         Invocation.method(
           #updateClusterManagers,
+          [updates],
+        ),
+        returnValueForMissingStub: null,
+      );
+
+  @override
+  void updateGroundOverlays(_i2.GroundOverlayUpdates? updates) =>
+      super.noSuchMethod(
+        Invocation.method(
+          #updateGroundOverlays,
           [updates],
         ),
         returnValueForMissingStub: null,

@@ -7,6 +7,11 @@ import XCTest
 
 @testable import camera_avfoundation
 
+// Import Objectice-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  @testable import camera_avfoundation_objc
+#endif
+
 private final class MockPermissionService: NSObject, FLTPermissionServicing {
   var authorizationStatusStub: ((AVMediaType) -> AVAuthorizationStatus)?
   var requestAccessStub: ((AVMediaType, @escaping (Bool) -> Void) -> Void)?

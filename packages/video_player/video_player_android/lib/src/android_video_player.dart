@@ -9,14 +9,17 @@ import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'messages.g.dart';
-
-// TODO(FirentisTFW): Remove the ignore and rename parameters when adding support for platform views.
-// ignore_for_file: avoid_renaming_method_parameters
+import 'platform_view_player.dart';
 
 /// An Android implementation of [VideoPlayerPlatform] that uses the
 /// Pigeon-generated [VideoPlayerApi].
 class AndroidVideoPlayer extends VideoPlayerPlatform {
   final AndroidVideoPlayerApi _api = AndroidVideoPlayerApi();
+
+  /// A map that associates player ID with a view state.
+  /// This is used to determine which view type to use when building a view.
+  final Map<int, _VideoPlayerViewState> _playerViewStates =
+      <int, _VideoPlayerViewState>{};
 
   /// Registers this class as the default instance of [PathProviderPlatform].
   static void registerWith() {
@@ -29,12 +32,27 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> dispose(int textureId) {
-    return _api.dispose(textureId);
+  Future<void> dispose(int playerId) async {
+    await _api.dispose(playerId);
+    _playerViewStates.remove(playerId);
   }
 
   @override
-  Future<int?> create(DataSource dataSource) async {
+  Future<int?> create(DataSource dataSource) {
+    return createWithOptions(
+      VideoCreationOptions(
+        dataSource: dataSource,
+        // Compatibility; "create" is always a textureView (createWithOptions
+        // allows selecting).
+        viewType: VideoViewType.textureView,
+      ),
+    );
+  }
+
+  @override
+  Future<int?> createWithOptions(VideoCreationOptions options) async {
+    final DataSource dataSource = options.dataSource;
+
     String? asset;
     String? packageName;
     String? uri;
@@ -60,52 +78,61 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       uri: uri,
       httpHeaders: httpHeaders,
       formatHint: formatHint,
+      viewType: _platformVideoViewTypeFromVideoViewType(options.viewType),
     );
 
-    return _api.create(message);
+    final int playerId = await _api.create(message);
+    _playerViewStates[playerId] = switch (options.viewType) {
+      // playerId is also the textureId when using texture view.
+      VideoViewType.textureView =>
+        _VideoPlayerTextureViewState(textureId: playerId),
+      VideoViewType.platformView => const _VideoPlayerPlatformViewState(),
+    };
+
+    return playerId;
   }
 
   @override
-  Future<void> setLooping(int textureId, bool looping) {
-    return _api.setLooping(textureId, looping);
+  Future<void> setLooping(int playerId, bool looping) {
+    return _api.setLooping(playerId, looping);
   }
 
   @override
-  Future<void> play(int textureId) {
-    return _api.play(textureId);
+  Future<void> play(int playerId) {
+    return _api.play(playerId);
   }
 
   @override
-  Future<void> pause(int textureId) {
-    return _api.pause(textureId);
+  Future<void> pause(int playerId) {
+    return _api.pause(playerId);
   }
 
   @override
-  Future<void> setVolume(int textureId, double volume) {
-    return _api.setVolume(textureId, volume);
+  Future<void> setVolume(int playerId, double volume) {
+    return _api.setVolume(playerId, volume);
   }
 
   @override
-  Future<void> setPlaybackSpeed(int textureId, double speed) {
+  Future<void> setPlaybackSpeed(int playerId, double speed) {
     assert(speed > 0);
 
-    return _api.setPlaybackSpeed(textureId, speed);
+    return _api.setPlaybackSpeed(playerId, speed);
   }
 
   @override
-  Future<void> seekTo(int textureId, Duration position) {
-    return _api.seekTo(textureId, position.inMilliseconds);
+  Future<void> seekTo(int playerId, Duration position) {
+    return _api.seekTo(playerId, position.inMilliseconds);
   }
 
   @override
-  Future<Duration> getPosition(int textureId) async {
-    final int position = await _api.position(textureId);
+  Future<Duration> getPosition(int playerId) async {
+    final int position = await _api.position(playerId);
     return Duration(milliseconds: position);
   }
 
   @override
-  Stream<VideoEvent> videoEventsFor(int textureId) {
-    return _eventChannelFor(textureId)
+  Stream<VideoEvent> videoEventsFor(int playerId) {
+    return _eventChannelFor(playerId)
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
@@ -145,8 +172,25 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Widget buildView(int textureId) {
-    return Texture(textureId: textureId);
+  Widget buildView(int playerId) {
+    return buildViewWithOptions(
+      VideoViewOptions(playerId: playerId),
+    );
+  }
+
+  @override
+  Widget buildViewWithOptions(VideoViewOptions options) {
+    final int playerId = options.playerId;
+    final _VideoPlayerViewState? viewState = _playerViewStates[playerId];
+
+    return switch (viewState) {
+      _VideoPlayerTextureViewState(:final int textureId) =>
+        Texture(textureId: textureId),
+      _VideoPlayerPlatformViewState() => PlatformViewPlayer(playerId: playerId),
+      null => throw Exception(
+          'Could not find corresponding view type for playerId: $playerId',
+        ),
+    };
   }
 
   @override
@@ -154,8 +198,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return _api.setMixWithOthers(mixWithOthers);
   }
 
-  EventChannel _eventChannelFor(int textureId) {
-    return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
+  EventChannel _eventChannelFor(int playerId) {
+    return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
   }
 
   static const Map<VideoFormat, String> _videoFormatStringMap =
@@ -173,4 +217,36 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       Duration(milliseconds: pair[1] as int),
     );
   }
+}
+
+PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
+  VideoViewType viewType,
+) {
+  return switch (viewType) {
+    VideoViewType.textureView => PlatformVideoViewType.textureView,
+    VideoViewType.platformView => PlatformVideoViewType.platformView,
+  };
+}
+
+/// Base class representing the state of a video player view.
+@immutable
+sealed class _VideoPlayerViewState {
+  const _VideoPlayerViewState();
+}
+
+/// Represents the state of a video player view that uses a texture.
+final class _VideoPlayerTextureViewState extends _VideoPlayerViewState {
+  /// Creates a new instance of [_VideoPlayerTextureViewState].
+  const _VideoPlayerTextureViewState({
+    required this.textureId,
+  });
+
+  /// The ID of the texture used by the video player.
+  final int textureId;
+}
+
+/// Represents the state of a video player view that uses a platform view.
+final class _VideoPlayerPlatformViewState extends _VideoPlayerViewState {
+  /// Creates a new instance of [_VideoPlayerPlatformViewState].
+  const _VideoPlayerPlatformViewState();
 }

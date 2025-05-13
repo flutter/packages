@@ -7,6 +7,11 @@ import XCTest
 
 @testable import camera_avfoundation
 
+// Import Objectice-C part of the implementation when SwiftPM is used.
+#if canImport(camera_avfoundation_objc)
+  @testable import camera_avfoundation_objc
+#endif
+
 final class SavePhotoDelegateTests: XCTestCase {
   func testHandlePhotoCaptureResult_mustCompleteWithErrorIfFailedToCapture() {
     let completionExpectation = expectation(
@@ -37,10 +42,8 @@ final class SavePhotoDelegateTests: XCTestCase {
     }
 
     let mockWritableData = MockWritableData()
-    mockWritableData.writeToFileStub = { path, options, error in
-      // TODO(FirentisTFW) Throw an error instead when migrating FLTWritableData to Swift
-      error?.pointee = ioError
-      return false
+    mockWritableData.writeToFileStub = { path, options in
+      throw ioError
     }
 
     delegate.handlePhotoCaptureResult(error: nil) { mockWritableData }
@@ -60,9 +63,7 @@ final class SavePhotoDelegateTests: XCTestCase {
     }
 
     let mockWritableData = MockWritableData()
-    mockWritableData.writeToFileStub = { path, options, error in
-      return true
-    }
+    mockWritableData.writeToFileStub = { path, options in }
 
     delegate.handlePhotoCaptureResult(error: nil) { mockWritableData }
 
@@ -80,11 +81,10 @@ final class SavePhotoDelegateTests: XCTestCase {
     ioQueue.setSpecific(key: ioQueueSpecific, value: ())
 
     let mockWritableData = MockWritableData()
-    mockWritableData.writeToFileStub = { path, options, error in
+    mockWritableData.writeToFileStub = { path, options in
       if DispatchQueue.getSpecific(key: ioQueueSpecific) != nil {
         writeFileQueueExpectation.fulfill()
       }
-      return true
     }
 
     let filePath = "test"

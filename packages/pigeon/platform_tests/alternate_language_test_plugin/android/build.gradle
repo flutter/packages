@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.0'
+        classpath 'com.android.tools.build:gradle:8.9.1'
     }
 }
 
@@ -23,7 +23,7 @@ apply plugin: 'com.android.library'
 
 android {
     namespace 'com.example.alternate_language_test_plugin'
-    compileSdk 34
+    compileSdk = flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
@@ -31,7 +31,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 21
     }
 
     testOptions {
@@ -54,6 +54,6 @@ android {
 
     dependencies {
         testImplementation 'junit:junit:4.13.2'
-        testImplementation "org.mockito:mockito-core:5.1.1"
+        testImplementation "org.mockito:mockito-core:5.17.0"
     }
 }

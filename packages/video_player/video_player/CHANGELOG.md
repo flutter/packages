@@ -1,6 +1,15 @@
+## NEXT
+
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Optimizes caption retrieval with binary search.
+
+## 2.9.5
+
+* Fixes layout issue caused by `Transform.rotate` not affecting space calculation.
+
 ## 2.9.4
 
-* Optimizes caption retrieval with binary search.
+* Reduces the position update interval from 500ms to 100ms.
 
 ## 2.9.3
 
