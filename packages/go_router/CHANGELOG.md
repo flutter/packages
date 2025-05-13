@@ -1,3 +1,22 @@
+## 15.1.2
+
+- Fixes focus request propagation from `GoRouter` to `Navigator` by properly handling the `requestFocus` parameter.
+
+## 15.1.1
+
+- Adds missing `caseSensitive` to `GoRouteData.$route`.
+
+## 15.1.0
+
+- Adds `caseSensitive` to `TypedGoRoute`.
+
+## 15.0.0
+
+- **BREAKING CHANGE**
+  - URLs are now case sensitive.
+  - Adds `caseSensitive` parameter to `GoRouter` (default to `true`).
+  - See [Migrating to 15.0.0](https://flutter.dev/go/go-router-v15-breaking-changes)
+
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.

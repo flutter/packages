@@ -15,7 +15,10 @@ const int _exitUnknownVersion = 3;
 /// A command to update the minimum Flutter and Dart SDKs of packages.
 class UpdateMinSdkCommand extends PackageLoopingCommand {
   /// Creates a publish metadata updater command instance.
-  UpdateMinSdkCommand(super.packagesDir) {
+  UpdateMinSdkCommand(
+    super.packagesDir, {
+    super.gitDir,
+  }) {
     argParser.addOption(_flutterMinFlag,
         mandatory: true,
         help: 'The minimum version of Flutter to set SDK constraints to.');

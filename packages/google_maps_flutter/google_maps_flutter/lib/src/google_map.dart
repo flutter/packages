@@ -122,6 +122,7 @@ class GoogleMap extends StatefulWidget {
     this.heatmaps = const <Heatmap>{},
     this.onCameraMoveStarted,
     this.tileOverlays = const <TileOverlay>{},
+    this.groundOverlays = const <GroundOverlay>{},
     this.onCameraMove,
     this.onCameraIdle,
     this.onTap,
@@ -227,6 +228,34 @@ class GoogleMap extends StatefulWidget {
   /// On the web, an extra step is required to enable clusters.
   /// See https://pub.dev/packages/google_maps_flutter_web.
   final Set<ClusterManager> clusterManagers;
+
+  /// Ground overlays to be initialized for the map.
+  ///
+  /// Support table for Ground Overlay features:
+  /// | Feature                     | Android                  | iOS                      | Web |
+  /// |-----------------------------|--------------------------|--------------------------|-----|
+  /// | [GroundOverlay.image]       | Yes                      | Yes                      | Yes |
+  /// | [GroundOverlay.bounds]      | Yes                      | Yes                      | Yes |
+  /// | [GroundOverlay.position]    | Yes                      | Yes                      | No  |
+  /// | [GroundOverlay.width]       | Yes (with position only) | No                       | No  |
+  /// | [GroundOverlay.height]      | Yes (with position only) | No                       | No  |
+  /// | [GroundOverlay.anchor]      | Yes                      | Yes                      | No  |
+  /// | [GroundOverlay.zoomLevel]   | No                       | Yes (with position only) | No  |
+  /// | [GroundOverlay.bearing]     | Yes                      | Yes                      | No  |
+  /// | [GroundOverlay.transparency]| Yes                      | Yes                      | Yes |
+  /// | [GroundOverlay.zIndex]      | Yes                      | Yes                      | No  |
+  /// | [GroundOverlay.visible]     | Yes                      | Yes                      | Yes |
+  /// | [GroundOverlay.clickable]   | Yes                      | Yes                      | Yes |
+  /// | [GroundOverlay.onTap]       | Yes                      | Yes                      | Yes |
+  ///
+  /// - On Android, [GroundOverlay.width] is required if
+  ///   [GroundOverlay.position] is set.
+  /// - On iOS, [GroundOverlay.zoomLevel] is required if
+  ///   [GroundOverlay.position] is set.
+  /// - [GroundOverlay.image] must be a [MapBitmap]. See [AssetMapBitmap] and
+  ///   [BytesMapBitmap]. [MapBitmap.bitmapScaling] must be set to
+  ///   [MapBitmapScaling.none].
+  final Set<GroundOverlay> groundOverlays;
 
   /// Called when the camera starts moving.
   ///
@@ -344,6 +373,8 @@ class _GoogleMapState extends State<GoogleMap> {
   Map<ClusterManagerId, ClusterManager> _clusterManagers =
       <ClusterManagerId, ClusterManager>{};
   Map<HeatmapId, Heatmap> _heatmaps = <HeatmapId, Heatmap>{};
+  Map<GroundOverlayId, GroundOverlay> _groundOverlays =
+      <GroundOverlayId, GroundOverlay>{};
   late MapConfiguration _mapConfiguration;
 
   @override
@@ -365,6 +396,7 @@ class _GoogleMapState extends State<GoogleMap> {
         circles: widget.circles,
         clusterManagers: widget.clusterManagers,
         heatmaps: widget.heatmaps,
+        groundOverlays: widget.groundOverlays,
       ),
       mapConfiguration: _mapConfiguration,
     );
@@ -380,6 +412,7 @@ class _GoogleMapState extends State<GoogleMap> {
     _polylines = keyByPolylineId(widget.polylines);
     _circles = keyByCircleId(widget.circles);
     _heatmaps = keyByHeatmapId(widget.heatmaps);
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   @override
@@ -404,6 +437,7 @@ class _GoogleMapState extends State<GoogleMap> {
     _updateCircles();
     _updateHeatmaps();
     _updateTileOverlays();
+    _updateGroundOverlays();
   }
 
   Future<void> _updateOptions() async {
@@ -429,6 +463,13 @@ class _GoogleMapState extends State<GoogleMap> {
     unawaited(controller._updateClusterManagers(ClusterManagerUpdates.from(
         _clusterManagers.values.toSet(), widget.clusterManagers)));
     _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
+  }
+
+  Future<void> _updateGroundOverlays() async {
+    final GoogleMapController controller = await _controller.future;
+    unawaited(controller._updateGroundOverlays(GroundOverlayUpdates.from(
+        _groundOverlays.values.toSet(), widget.groundOverlays)));
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   Future<void> _updatePolygons() async {
@@ -553,6 +594,17 @@ class _GoogleMapState extends State<GoogleMap> {
       throw UnknownMapObjectIdError('marker', circleId, 'onTap');
     }
     final VoidCallback? onTap = circle.onTap;
+    if (onTap != null) {
+      onTap();
+    }
+  }
+
+  void onGroundOverlayTap(GroundOverlayId groundOverlayId) {
+    final GroundOverlay? groundOverlay = _groundOverlays[groundOverlayId];
+    if (groundOverlay == null) {
+      throw UnknownMapObjectIdError('groundOverlay', groundOverlayId, 'onTap');
+    }
+    final VoidCallback? onTap = groundOverlay.onTap;
     if (onTap != null) {
       onTap();
     }

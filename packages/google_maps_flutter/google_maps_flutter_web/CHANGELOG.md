@@ -1,3 +1,7 @@
+## 0.5.12
+
+* Adds support for ground overlay.
+
 ## 0.5.11
 
 * Adds support for marker anchor.

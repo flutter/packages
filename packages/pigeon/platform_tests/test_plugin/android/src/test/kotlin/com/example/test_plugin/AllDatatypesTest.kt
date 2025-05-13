@@ -10,69 +10,12 @@ import io.mockk.mockk
 import java.nio.ByteBuffer
 import java.util.ArrayList
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 internal class AllDatatypesTest {
-
-  fun compareAllTypes(firstTypes: AllTypes?, secondTypes: AllTypes?) {
-    assertEquals(firstTypes == null, secondTypes == null)
-    if (firstTypes == null || secondTypes == null) {
-      return
-    }
-    assertEquals(firstTypes.aBool, secondTypes.aBool)
-    assertEquals(firstTypes.anInt, secondTypes.anInt)
-    assertEquals(firstTypes.anInt64, secondTypes.anInt64)
-    assertEquals(firstTypes.aDouble, secondTypes.aDouble, 0.0)
-    assertEquals(firstTypes.aString, secondTypes.aString)
-    assertTrue(firstTypes.aByteArray.contentEquals(secondTypes.aByteArray))
-    assertTrue(firstTypes.a4ByteArray.contentEquals(secondTypes.a4ByteArray))
-    assertTrue(firstTypes.a8ByteArray.contentEquals(secondTypes.a8ByteArray))
-    assertTrue(firstTypes.aFloatArray.contentEquals(secondTypes.aFloatArray))
-    assertEquals(firstTypes.anEnum, secondTypes.anEnum)
-    assertEquals(firstTypes.anotherEnum, secondTypes.anotherEnum)
-    assertEquals(firstTypes.anObject, secondTypes.anObject)
-    assertEquals(firstTypes.list, secondTypes.list)
-    assertEquals(firstTypes.boolList, secondTypes.boolList)
-    assertEquals(firstTypes.doubleList, secondTypes.doubleList)
-    assertEquals(firstTypes.intList, secondTypes.intList)
-    assertEquals(firstTypes.stringList, secondTypes.stringList)
-    assertEquals(firstTypes.map, secondTypes.map)
-  }
-
-  private fun compareAllNullableTypes(
-      firstTypes: AllNullableTypes?,
-      secondTypes: AllNullableTypes?
-  ) {
-    assertEquals(firstTypes == null, secondTypes == null)
-    if (firstTypes == null || secondTypes == null) {
-      return
-    }
-    assertEquals(firstTypes.aNullableBool, secondTypes.aNullableBool)
-    assertEquals(firstTypes.aNullableInt, secondTypes.aNullableInt)
-    assertEquals(firstTypes.aNullableDouble, secondTypes.aNullableDouble)
-    assertEquals(firstTypes.aNullableString, secondTypes.aNullableString)
-    assertTrue(firstTypes.aNullableByteArray.contentEquals(secondTypes.aNullableByteArray))
-    assertTrue(firstTypes.aNullable4ByteArray.contentEquals(secondTypes.aNullable4ByteArray))
-    assertTrue(firstTypes.aNullable8ByteArray.contentEquals(secondTypes.aNullable8ByteArray))
-    assertTrue(firstTypes.aNullableFloatArray.contentEquals(secondTypes.aNullableFloatArray))
-    assertEquals(firstTypes.aNullableObject, secondTypes.aNullableObject)
-    assertEquals(firstTypes.aNullableEnum, secondTypes.aNullableEnum)
-    assertEquals(firstTypes.anotherNullableEnum, secondTypes.anotherNullableEnum)
-    assertEquals(firstTypes.list, secondTypes.list)
-    assertEquals(firstTypes.boolList, secondTypes.boolList)
-    assertEquals(firstTypes.doubleList, secondTypes.doubleList)
-    assertEquals(firstTypes.intList, secondTypes.intList)
-    assertEquals(firstTypes.stringList, secondTypes.stringList)
-    assertEquals(firstTypes.listList, secondTypes.listList)
-    assertEquals(firstTypes.mapList, secondTypes.mapList)
-    assertEquals(firstTypes.map, secondTypes.map)
-    assertEquals(firstTypes.stringMap, secondTypes.stringMap)
-    assertEquals(firstTypes.intMap, secondTypes.intMap)
-    assertEquals(firstTypes.listMap, secondTypes.listMap)
-    assertEquals(firstTypes.mapMap, secondTypes.mapMap)
-  }
 
   @Test
   fun testNullValues() {
@@ -95,7 +38,7 @@ internal class AllDatatypesTest {
     var didCall = false
     api.echoAllNullableTypes(everything) { result ->
       didCall = true
-      val output = (result.getOrNull())?.let { compareAllNullableTypes(it, everything) }
+      val output = (result.getOrNull())?.let { it == everything }
       assertNotNull(output)
     }
 
@@ -148,9 +91,111 @@ internal class AllDatatypesTest {
     var didCall = false
     api.echoAllNullableTypes(everything) {
       didCall = true
-      compareAllNullableTypes(everything, it.getOrNull())
+      assertTrue(everything == it.getOrNull())
     }
 
     assertTrue(didCall)
+  }
+
+  private val correctList = listOf<Any?>("a", 2, "three")
+  private val matchingList = correctList.toMutableList()
+  private val differentList = listOf<Any?>("a", 2, "three", 4.0)
+
+  private val correctMap = mapOf<Any, Any?>("a" to 1, "b" to 2, "c" to "three")
+  private val matchingMap = correctMap.toMap()
+  private val differentKeyMap = mapOf<Any, Any?>("a" to 1, "b" to 2, "d" to "three")
+  private val differentValueMap = mapOf<Any, Any?>("a" to 1, "b" to 2, "c" to "five")
+
+  private val correctListInMap = mapOf<Any, Any?>("a" to 1, "b" to 2, "c" to correctList)
+  private val matchingListInMap = mapOf<Any, Any?>("a" to 1, "b" to 2, "c" to matchingList)
+  private val differentListInMap = mapOf<Any, Any?>("a" to 1, "b" to 2, "c" to differentList)
+
+  private val correctMapInList = listOf<Any?>("a", 2, correctMap)
+  private val matchingMapInList = listOf<Any?>("a", 2, matchingMap)
+  private val differentKeyMapInList = listOf<Any?>("a", 2, differentKeyMap)
+  private val differentValueMapInList = listOf<Any?>("a", 2, differentValueMap)
+
+  @Test
+  fun `equality method correctly checks deep equality`() {
+    val generic = AllNullableTypes(list = correctList, map = correctMap)
+    val identical = generic.copy()
+    assertEquals(generic, identical)
+  }
+
+  @Test
+  fun `equality method correctly identifies non-matching classes`() {
+    val generic = AllNullableTypes(list = correctList, map = correctMap)
+    val allNull = AllNullableTypes()
+    assertNotEquals(allNull, generic)
+  }
+
+  @Test
+  fun `equality method correctly identifies non-matching lists in classes`() {
+    val withList = AllNullableTypes(list = correctList)
+    val withDifferentList = AllNullableTypes(list = differentList)
+    assertNotEquals(withList, withDifferentList)
+  }
+
+  @Test
+  fun `equality method correctly identifies matching -but unique- lists in classes`() {
+    val withList = AllNullableTypes(list = correctList)
+    val withDifferentList = AllNullableTypes(list = matchingList)
+    assertEquals(withList, withDifferentList)
+  }
+
+  @Test
+  fun `equality method correctly identifies non-matching keys in maps in classes`() {
+    val withMap = AllNullableTypes(map = correctMap)
+    val withDifferentMap = AllNullableTypes(map = differentKeyMap)
+    assertNotEquals(withMap, withDifferentMap)
+  }
+
+  @Test
+  fun `equality method correctly identifies non-matching values in maps in classes`() {
+    val withMap = AllNullableTypes(map = correctMap)
+    val withDifferentMap = AllNullableTypes(map = differentValueMap)
+    assertNotEquals(withMap, withDifferentMap)
+  }
+
+  @Test
+  fun `equality method correctly identifies matching -but unique- maps in classes`() {
+    val withMap = AllNullableTypes(map = correctMap)
+    val withDifferentMap = AllNullableTypes(map = matchingMap)
+    assertEquals(withMap, withDifferentMap)
+  }
+
+  @Test
+  fun `equality method correctly identifies non-matching lists nested in maps in classes`() {
+    val withListInMap = AllNullableTypes(map = correctListInMap)
+    val withDifferentListInMap = AllNullableTypes(map = differentListInMap)
+    assertNotEquals(withListInMap, withDifferentListInMap)
+  }
+
+  @Test
+  fun `equality method correctly identifies matching -but unique- lists nested in maps in classes`() {
+    val withListInMap = AllNullableTypes(map = correctListInMap)
+    val withDifferentListInMap = AllNullableTypes(map = matchingListInMap)
+    assertEquals(withListInMap, withDifferentListInMap)
+  }
+
+  @Test
+  fun `equality method correctly identifies non-matching keys in maps nested in lists in classes`() {
+    val withMapInList = AllNullableTypes(list = correctMapInList)
+    val withDifferentMapInList = AllNullableTypes(list = differentKeyMapInList)
+    assertNotEquals(withMapInList, withDifferentMapInList)
+  }
+
+  @Test
+  fun `equality method correctly identifies non-matching values in maps nested in lists in classes`() {
+    val withMapInList = AllNullableTypes(list = correctMapInList)
+    val withDifferentMapInList = AllNullableTypes(list = differentValueMapInList)
+    assertNotEquals(withMapInList, withDifferentMapInList)
+  }
+
+  @Test
+  fun `equality method correctly identifies matching -but unique- maps nested in lists in classes`() {
+    val withMapInList = AllNullableTypes(list = correctMapInList)
+    val withDifferentMapInList = AllNullableTypes(list = matchingMapInList)
+    assertEquals(withMapInList, withDifferentMapInList)
   }
 }

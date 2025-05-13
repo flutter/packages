@@ -60,22 +60,6 @@ See the Dartdocs for [WebViewController](https://pub.dev/documentation/webview_f
 and [WebViewWidget](https://pub.dev/documentation/webview_flutter/latest/webview_flutter/WebViewWidget-class.html)
 for more details.
 
-### Android Platform Views
-
-This plugin uses
-[Platform Views](https://docs.flutter.dev/platform-integration/android/platform-views) to
-embed the Android's WebView within the Flutter app.
-
-You should however make sure to set the correct `minSdkVersion` in `android/app/build.gradle` if it was previously lower than 19:
-
-```groovy
-android {
-    defaultConfig {
-        minSdkVersion 19
-    }
-}
-```
-
 ### Platform-Specific Features
 
 Many classes have a subclass or an underlying implementation that provides access to platform-specific
@@ -175,7 +159,7 @@ for more details.
 ### PlatformView Implementation on Android
 
 The PlatformView implementation for Android uses Texture Layer Hybrid Composition on versions 23+
-and automatically fallbacks to Hybrid Composition for version 19-23. See section
+and automatically fallbacks to Hybrid Composition for version 21-23. See section
 `Platform-Specific Features` and [AndroidWebViewWidgetCreationParams.displayWithHybridComposition](https://pub.dev/documentation/webview_flutter_android/latest/webview_flutter_android/AndroidWebViewWidgetCreationParams/displayWithHybridComposition.html)
 to manually switch to Hybrid Composition on versions 23+.
 

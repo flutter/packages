@@ -14,6 +14,7 @@ import static org.mockito.Mockito.*;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.*;
 import android.hardware.camera2.params.SessionConfiguration;
@@ -64,9 +65,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
+import org.mockito.InOrder;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
 /**
  * As Pigeon-generated class, including FlutterError, do not implement equality, this helper class
@@ -134,6 +137,7 @@ class FakeCameraDeviceWrapper implements CameraDeviceWrapper {
 }
 
 public class CameraTest {
+  private Activity mockActivity;
   private CameraProperties mockCameraProperties;
   private TestCameraFeatureFactory mockCameraFeatureFactory;
   private DartMessenger mockDartMessenger;
@@ -160,9 +164,10 @@ public class CameraTest {
     mockHandlerFactory = mockStatic(Camera.HandlerFactory.class);
     mockHandler = mock(Handler.class);
 
-    final Activity mockActivity = mock(Activity.class);
-    final TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
+    mockActivity = mock(Activity.class);
+    TextureRegistry.SurfaceTextureEntry mockFlutterTexture =
         mock(TextureRegistry.SurfaceTextureEntry.class);
+    when(mockFlutterTexture.surfaceTexture()).thenReturn(mock(SurfaceTexture.class));
     final String cameraName = "1";
     final ResolutionPreset resolutionPreset = ResolutionPreset.high;
     final boolean enableAudio = false;
@@ -209,6 +214,67 @@ public class CameraTest {
     mockHandlerThreadFactory.close();
     mockHandlerFactory.close();
     mockRangeConstruction.close();
+  }
+
+  @Test
+  public void shouldSendCameraInitEventAfterCreatingTheSession()
+      throws CameraAccessException, InterruptedException {
+    // A spy is used so that we can properly configure the camera class with appropriate mocks
+    // when camera.startPreview is called
+    camera = spy(camera);
+
+    // Setup ImageReader
+    final ImageReader mockImageReader = mock(ImageReader.class);
+    final Surface mockSurface = mock(Surface.class);
+    when(mockImageReader.getSurface()).thenReturn(mockSurface);
+
+    // Setup camera device.
+    ArrayList<CaptureRequest.Builder> mockRequestBuilders = new ArrayList<>();
+    mockRequestBuilders.add(mock(CaptureRequest.Builder.class));
+    CameraDeviceWrapper fakeCameraDevice =
+        new FakeCameraDeviceWrapper(mockRequestBuilders, mock(CameraCaptureSession.class));
+
+    // When starting the preview, initialize with mock properties
+    doAnswer(
+            invocation -> {
+              camera.cameraDevice = fakeCameraDevice;
+              camera.pictureImageReader = mockImageReader;
+              return invocation.callRealMethod();
+            })
+        .when(camera)
+        .startPreview(any());
+
+    // Setup CameraManager
+    final CameraManager mockCameraManager = mock(CameraManager.class);
+    when(mockActivity.getSystemService(Context.CAMERA_SERVICE)).thenReturn(mockCameraManager);
+
+    // Trigger the onOpened callback when calling CameraManager.openCamera.
+    doAnswer(
+            (Answer<Object>)
+                invocation -> {
+                  CameraDevice.StateCallback cb = invocation.getArgument(1);
+                  cb.onOpened(mock(CameraDevice.class));
+                  return null;
+                })
+        .when(mockCameraManager)
+        .openCamera(any(), any(), any(Handler.class));
+
+    // Setup ResolutionFeature
+    ResolutionFeature resolutionFeature = mockCameraFeatureFactory.mockResolutionFeature;
+    when(resolutionFeature.checkIsSupported()).thenReturn(true);
+    final Size mockSize = mock(Size.class);
+    when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
+    when(resolutionFeature.getCaptureSize()).thenReturn(mockSize);
+
+    // Actual test that opens the camera, that mimics the camera initialize call.
+    camera.open(ImageFormat.JPEG);
+
+    // Make sure that the initialize event is called after configuring the session
+    InOrder inOrder = inOrder(camera.captureSession, mockDartMessenger);
+    inOrder.verify(camera.captureSession, times(1)).setRepeatingRequest(any(), any(), any());
+    inOrder
+        .verify(mockDartMessenger, times(1))
+        .sendCameraInitializedEvent(any(), any(), any(), any(), any(), any());
   }
 
   @Test
@@ -663,7 +729,7 @@ public class CameraTest {
     camera.mediaRecorder = mockMediaRecorder;
     camera.recordingVideo = true;
     camera.videoRenderer = mockVideoRenderer;
-    SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.LOLLIPOP;
+    SdkCapabilityChecker.SDK_VERSION = Build.VERSION_CODES.N;
 
     final CameraProperties newCameraProperties = mock(CameraProperties.class);
     assertThrows(
@@ -705,7 +771,7 @@ public class CameraTest {
     when(cameraFlutterTexture.surfaceTexture()).thenReturn(mockSurfaceTexture);
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
 
-    camera.startPreview();
+    camera.startPreview(null);
     verify(mockVideoRenderer, times(1))
         .getInputSurface(); // stream pulled from videoRenderer's surface.
   }
@@ -730,7 +796,7 @@ public class CameraTest {
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(mockImageReader.getSurface()).thenReturn(mock(Surface.class));
 
-    camera.startPreview();
+    camera.startPreview(null);
     verify(mockImageReader, times(2)) // we expect two calls to start regular preview.
         .getSurface(); // stream pulled from regular imageReader's surface.
   }
@@ -757,7 +823,7 @@ public class CameraTest {
     when(resolutionFeature.getPreviewSize()).thenReturn(mockSize);
     when(mockCameraProperties.getLensFacing()).thenReturn(CameraMetadata.LENS_FACING_FRONT);
 
-    camera.startPreview();
+    camera.startPreview(null);
     verify(mockVideoRenderer, times(1)).setRotation(180);
   }
 

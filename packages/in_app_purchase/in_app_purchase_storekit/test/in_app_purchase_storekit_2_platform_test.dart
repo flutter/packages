@@ -40,7 +40,6 @@ void main() {
     InAppPurchaseStoreKitPlatform.registerPlatform();
     iapStoreKitPlatform =
         InAppPurchasePlatform.instance as InAppPurchaseStoreKitPlatform;
-    InAppPurchaseStoreKitPlatform.enableStoreKit2();
     fakeStoreKit2Platform.reset();
   });
 
@@ -190,6 +189,14 @@ void main() {
         // In storekit 2, restored purchases don't have to finished.
         expect(actual.pendingCompletePurchase, false);
       }
+    });
+  });
+
+  group('billing configuration', () {
+    test('country_code', () async {
+      const String expectedCountryCode = 'ABC';
+      final String countryCode = await iapStoreKitPlatform.countryCode();
+      expect(countryCode, expectedCountryCode);
     });
   });
 }

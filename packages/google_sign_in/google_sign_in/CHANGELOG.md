@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
+
 ## 6.3.0
 
 * Adds a sign-in field to allow Android clients to explicitly specify an account name. This

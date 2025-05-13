@@ -278,6 +278,18 @@ class WebViewProxyAPITests: XCTestCase {
     XCTAssertFalse(instance.isInspectable)
   }
 
+  @MainActor func testSetAllowsLinkPreview() {
+    let registrar = TestProxyApiRegistrar()
+    let api = webViewProxyAPI(forRegistrar: registrar)
+
+    let instance = TestViewWKWebView()
+    let allow: Bool = true
+    try? api.pigeonDelegate.setAllowsLinkPreview(
+      pigeonApi: api, pigeonInstance: instance, allow: allow)
+
+    XCTAssertEqual(instance.allowsLinkPreview, allow)
+  }
+
   @MainActor func testGetCustomUserAgent() {
     let registrar = TestProxyApiRegistrar()
     let api = webViewProxyAPI(forRegistrar: registrar)

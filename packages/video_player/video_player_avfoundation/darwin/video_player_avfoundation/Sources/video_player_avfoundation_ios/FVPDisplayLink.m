@@ -67,4 +67,8 @@
   self.displayLink.paused = !running;
 }
 
+- (CFTimeInterval)duration {
+  return self.displayLink.duration;
+}
+
 @end

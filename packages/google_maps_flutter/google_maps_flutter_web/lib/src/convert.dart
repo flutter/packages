@@ -200,6 +200,12 @@ LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
   );
 }
 
+/// Converts a [LatLngBounds] into a [gmaps.LatLngBounds].
+gmaps.LatLngBounds latLngBoundsToGmlatLngBounds(LatLngBounds latLngBounds) {
+  return gmaps.LatLngBounds(_latLngToGmLatLng(latLngBounds.southwest),
+      _latLngToGmLatLng(latLngBounds.northeast));
+}
+
 CameraPosition _gmViewportToCameraPosition(gmaps.Map map) {
   return CameraPosition(
     target:
@@ -387,17 +393,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   gmaps.Icon? icon;
 
   if (bitmapDescriptor is MapBitmap) {
-    final String url = switch (bitmapDescriptor) {
-      (final BytesMapBitmap bytesMapBitmap) =>
-        _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
-          final Blob blob =
-              Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
-          return URL.createObjectURL(blob as JSObject);
-        }),
-      (final AssetMapBitmap assetMapBitmap) =>
-        ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
-      _ => throw UnimplementedError(),
-    };
+    final String url = urlFromMapBitmap(bitmapDescriptor);
 
     icon = gmaps.Icon()..url = url;
 
@@ -689,6 +685,22 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
     default:
       throw UnimplementedError('Unimplemented CameraMove: ${json[0]}.');
   }
+}
+
+/// Converts a [MapBitmap] into a URL.
+String urlFromMapBitmap(MapBitmap mapBitmap) {
+  return switch (mapBitmap) {
+    (final BytesMapBitmap bytesMapBitmap) =>
+      _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
+        final Blob blob =
+            Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
+        return URL.createObjectURL(blob as JSObject);
+      }),
+    (final AssetMapBitmap assetMapBitmap) =>
+      ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
+    _ => throw UnimplementedError(
+        'Only BytesMapBitmap and AssetMapBitmap are supported.'),
+  };
 }
 
 // original JS by: Byron Singh (https://stackoverflow.com/a/30541162)

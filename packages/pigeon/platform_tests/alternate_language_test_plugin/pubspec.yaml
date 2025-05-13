@@ -15,8 +15,10 @@ flutter:
         pluginClass: AlternateLanguageTestPlugin
       ios:
         pluginClass: AlternateLanguageTestPlugin
+        sharedDarwinSource: true
       macos:
         pluginClass: AlternateLanguageTestPlugin
+        sharedDarwinSource: true
 
 dependencies:
   flutter:

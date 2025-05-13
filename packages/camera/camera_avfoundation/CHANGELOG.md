@@ -1,3 +1,32 @@
+## 0.9.19
+
+* Migrates the CameraPlugin class to Swift.
+* Fixes camera name being ignored in `setDescriptionWhileRecording`.
+
+## 0.9.18+14
+
+* Creates Swift Package Manager target for Swift implementation.
+
+## 0.9.18+13
+
+* Migrates test utils and mocks to Swift.
+* Aligns `FLTCaptureDevice` more closely with the `AVCaptureDevice` interface.
+
+## 0.9.18+12
+
+* Migrates test utils and mocks to Swift.
+* Renames the methods of Objective-C type `FLTCaptureSession` when exported to Swift.
+
+## 0.9.18+11
+
+* Backfills unit tests for the `FLTCam` class.
+* Refactors implementation to allow mocking of `AVCaptureVideoDataOutput` in tests.
+
+## 0.9.18+10
+
+* Backfills unit tests for the `FLTCam` class.
+* Makes `exposureMode`, `focusMode`, and `flashMode` properties of `FLTCam` private.
+
 ## 0.9.18+9
 
 * Backfills unit tests for `CameraPlugin` class.

@@ -30,7 +30,8 @@ tasks.register("clean", Delete) {
 gradle.projectsEvaluated {
     project(":quick_actions_android") {
         tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:all" << "-Werror"
+            // Ignore classfile due to https://issuetracker.google.com/issues/342067844
+            options.compilerArgs << "-Xlint:all" << "-Werror" << "-Xlint:-classfile"
         }
     }
 }

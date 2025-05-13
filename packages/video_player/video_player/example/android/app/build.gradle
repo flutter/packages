@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace 'io.flutter.plugins.videoplayerexample'
-    compileSdk flutter.compileSdkVersion
+    compileSdk = flutter.compileSdkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11

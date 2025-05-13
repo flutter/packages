@@ -4,7 +4,6 @@
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/list_command.dart';
 import 'package:test/test.dart';
 
@@ -13,15 +12,14 @@ import 'util.dart';
 
 void main() {
   group('ListCommand', () {
-    late FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
     late CommandRunner<void> runner;
 
     setUp(() {
-      fileSystem = MemoryFileSystem();
       mockPlatform = MockPlatform();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
+      (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+          configureBaseCommandMocks(platform: mockPlatform);
       final ListCommand command =
           ListCommand(packagesDir, platform: mockPlatform);
 

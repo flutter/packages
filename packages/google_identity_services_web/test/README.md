@@ -1,6 +1,6 @@
 # Tests
 
-Use `dart run tool/run_tests.dart` to run tests in this package.
+Use `dart test -p chrome <test_name>.dart` to run tests in this package.
 
 ## Failed to run Chrome: No such file or directory
 
