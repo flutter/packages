@@ -10,7 +10,8 @@ import 'types/types.dart';
 ///
 /// The host application must call [cancel] or, contrary to secure web
 /// communication standards, [proceed] to provide the web view's response to the
-/// request.
+/// request. [proceed] should generally only be used in test environments, as
+/// using it in production can expose users to security and privacy risks.
 abstract class PlatformSslAuthError {
   /// Creates a [PlatformSslAuthError].
   @protected

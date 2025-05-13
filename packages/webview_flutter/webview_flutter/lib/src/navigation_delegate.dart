@@ -204,7 +204,8 @@ class NavigationDelegate {
 ///
 /// The host application must call [cancel] or, contrary to secure web
 /// communication standards, [proceed] to provide the web view's response to the
-/// error.
+/// error. [proceed] should generally only be used in test environments, as
+/// using it in production can expose users to security and privacy risks.
 ///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current
@@ -244,8 +245,8 @@ class SslAuthError {
   /// Instructs the WebView that encountered the SSL certificate error to ignore
   /// the error and continue communicating with the server.
   ///
-  /// **Warning:** When an SSL error occurs, the host application should always
-  /// call [cancel] rather than [proceed] because an invalid SSL certificate
-  /// means the connection is not secure.
+  /// **Warning:** Calling [proceed] in a production environment is strongly
+  /// discouraged, as an invalid SSL certificate means that the connection is
+  /// not secure, so proceeding can expose users to security and privacy risks.
   Future<void> proceed() => platform.proceed();
 }
