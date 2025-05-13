@@ -1243,8 +1243,6 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
         if (delegate != null && proxy != null) {
           final URLProtectionSpace protectionSpace =
               await challenge.getProtectionSpace();
-          final Completer<AuthenticationChallengeResponse> responseCompleter =
-              Completer<AuthenticationChallengeResponse>();
 
           switch (protectionSpace.authenticationMethod) {
             case NSUrlAuthenticationMethod.httpBasic:
@@ -1252,97 +1250,44 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
               final void Function(HttpAuthRequest)? callback =
                   delegate._onHttpAuthRequest;
               if (callback != null) {
-                callback(
-                  HttpAuthRequest(
-                    host: protectionSpace.host,
-                    realm: protectionSpace.realm,
-                    onProceed: (WebViewCredential credential) async {
-                      responseCompleter.complete(
-                        await proxy.createAsyncAuthenticationChallengeResponse(
-                          UrlSessionAuthChallengeDisposition.useCredential,
-                          await proxy.withUserAsyncURLCredential(
-                            credential.user,
-                            credential.password,
-                            UrlCredentialPersistence.forSession,
-                          ),
-                        ),
-                      );
-                    },
-                    onCancel: () async {
-                      responseCompleter.complete(
-                        await proxy.createAsyncAuthenticationChallengeResponse(
-                          UrlSessionAuthChallengeDisposition
-                              .cancelAuthenticationChallenge,
-                          null,
-                        ),
-                      );
-                    },
-                  ),
+                return _handleHttpAuthRequest(
+                  onHttpAuthRequest: callback,
+                  protectionSpace: protectionSpace,
+                  proxy: proxy,
                 );
-
-                return responseCompleter.future;
               }
             case NSUrlAuthenticationMethod.serverTrust:
               final void Function(PlatformSslAuthError)? callback =
                   delegate._onSslAuthError;
-              if (callback == null) {
-                break;
-              }
+              if (callback != null) {
+                final SecTrust? serverTrust =
+                    await protectionSpace.getServerTrust();
 
-              final SecTrust? serverTrust =
-                  await protectionSpace.getServerTrust();
-              if (serverTrust == null) {
-                break;
-              }
+                if (serverTrust != null) {
+                  try {
+                    final bool trusted =
+                        await proxy.evaluateWithErrorSecTrust(serverTrust);
+                    if (!trusted) {
+                      throw StateError(
+                        'Expected to throw an exception when evaluation fails.',
+                      );
+                    }
+                  } on PlatformException catch (exception) {
+                    final DartSecTrustResultType result =
+                        (await proxy.getTrustResultSecTrust(serverTrust))
+                            .result;
 
-              try {
-                final bool trusted =
-                    await proxy.evaluateWithErrorSecTrust(serverTrust);
-                if (!trusted) {
-                  throw StateError(
-                    'Expected to throw an exception when evaluation fails.',
-                  );
-                }
-              } on PlatformException catch (exception) {
-                final DartSecTrustResultType result =
-                    (await proxy.getTrustResultSecTrust(serverTrust)).result;
-                if (result == DartSecTrustResultType.recoverableTrustFailure) {
-                  final List<SecCertificate> certificates =
-                      (await proxy.copyCertificateChainSecTrust(serverTrust)) ??
-                          <SecCertificate>[];
-
-                  final SecCertificate? leafCertificate =
-                      certificates.firstOrNull;
-                  callback(
-                    WebKitSslAuthError(
-                      certificate: leafCertificate != null
-                          ? X509Certificate(
-                              data: await proxy.copyDataSecCertificate(
-                                leafCertificate,
-                              ),
-                            )
-                          : null,
-                      description: '${exception.code}: ${exception.message}',
-                      trust: serverTrust,
-                      host: protectionSpace.host,
-                      port: protectionSpace.port,
-                      proxy: proxy,
-                      onResponse: (
-                        UrlSessionAuthChallengeDisposition disposition,
-                        URLCredential? credential,
-                      ) async {
-                        responseCompleter.complete(
-                          await proxy
-                              .createAsyncAuthenticationChallengeResponse(
-                            disposition,
-                            credential,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-
-                  return responseCompleter.future;
+                    if (result ==
+                        DartSecTrustResultType.recoverableTrustFailure) {
+                      return _handleSslAuthError(
+                        onSslAuthError: callback,
+                        serverTrust: serverTrust,
+                        protectionSpace: protectionSpace,
+                        secTrustException: exception,
+                        proxy: proxy,
+                      );
+                    }
+                  }
                 }
               }
           }
@@ -1419,6 +1364,90 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
   @override
   Future<void> setOnSSlAuthError(SslAuthErrorCallback onSslAuthError) async {
     _onSslAuthError = onSslAuthError;
+  }
+
+  static Future<AuthenticationChallengeResponse> _handleHttpAuthRequest({
+    required void Function(HttpAuthRequest) onHttpAuthRequest,
+    required URLProtectionSpace protectionSpace,
+    required WebKitProxy proxy,
+  }) {
+    final Completer<AuthenticationChallengeResponse> responseCompleter =
+        Completer<AuthenticationChallengeResponse>();
+
+    onHttpAuthRequest(
+      HttpAuthRequest(
+        host: protectionSpace.host,
+        realm: protectionSpace.realm,
+        onProceed: (WebViewCredential credential) async {
+          responseCompleter.complete(
+            await proxy.createAsyncAuthenticationChallengeResponse(
+              UrlSessionAuthChallengeDisposition.useCredential,
+              await proxy.withUserAsyncURLCredential(
+                credential.user,
+                credential.password,
+                UrlCredentialPersistence.forSession,
+              ),
+            ),
+          );
+        },
+        onCancel: () async {
+          responseCompleter.complete(
+            await proxy.createAsyncAuthenticationChallengeResponse(
+              UrlSessionAuthChallengeDisposition.cancelAuthenticationChallenge,
+              null,
+            ),
+          );
+        },
+      ),
+    );
+
+    return responseCompleter.future;
+  }
+
+  Future<AuthenticationChallengeResponse> _handleSslAuthError({
+    required void Function(PlatformSslAuthError) onSslAuthError,
+    required SecTrust serverTrust,
+    required URLProtectionSpace protectionSpace,
+    required PlatformException secTrustException,
+    required WebKitProxy proxy,
+  }) async {
+    final Completer<AuthenticationChallengeResponse> responseCompleter =
+        Completer<AuthenticationChallengeResponse>();
+
+    final List<SecCertificate> certificates =
+        (await proxy.copyCertificateChainSecTrust(serverTrust)) ??
+            <SecCertificate>[];
+
+    final SecCertificate? leafCertificate = certificates.firstOrNull;
+    onSslAuthError(
+      WebKitSslAuthError(
+        certificate: leafCertificate != null
+            ? X509Certificate(
+                data: await proxy.copyDataSecCertificate(
+                  leafCertificate,
+                ),
+              )
+            : null,
+        description: '${secTrustException.code}: ${secTrustException.message}',
+        trust: serverTrust,
+        host: protectionSpace.host,
+        port: protectionSpace.port,
+        proxy: proxy,
+        onResponse: (
+          UrlSessionAuthChallengeDisposition disposition,
+          URLCredential? credential,
+        ) async {
+          responseCompleter.complete(
+            await proxy.createAsyncAuthenticationChallengeResponse(
+              disposition,
+              credential,
+            ),
+          );
+        },
+      ),
+    );
+
+    return responseCompleter.future;
   }
 }
 
