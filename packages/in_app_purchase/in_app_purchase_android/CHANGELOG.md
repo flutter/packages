@@ -1,6 +1,6 @@
 ## 0.4.0+2
 
-* GooglePlayPurchaseParam add possibility set selected offerToken
+* Adds support for setting the `offerToken` on `GooglePlayPurchaseParam`.
 
 ## 0.4.0+1
 
