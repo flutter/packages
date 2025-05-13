@@ -121,7 +121,7 @@ void main() {
       expect(instanceManager.containsIdentifier(0), isFalse);
     });
 
-    test('remove throws AssertionError is weak reference still exists', () {
+    test('remove throws AssertionError if weak reference still exists', () {
       final PigeonInstanceManager instanceManager =
           PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
 
