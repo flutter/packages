@@ -1,3 +1,7 @@
+## 2.9.1
+
+- Fixes an deprecated warning for using withNullability
+
 ## 2.9.0
 
 - Adds support for `caseSensitive` for go routes.
