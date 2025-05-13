@@ -51,6 +51,28 @@ public class ViewTest {
   }
 
   @Test
+  public void setVerticalScrollBarEnabled() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
+
+    final View instance = mock(View.class);
+    final boolean enabled = true;
+    api.setVerticalScrollBarEnabled(instance, enabled);
+
+    verify(instance).setVerticalScrollBarEnabled(enabled);
+  }
+
+  @Test
+  public void setHorizontalScrollBarEnabled() {
+    final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
+
+    final View instance = mock(View.class);
+    final boolean enabled = false;
+    api.setHorizontalScrollBarEnabled(instance, enabled);
+
+    verify(instance).setHorizontalScrollBarEnabled(enabled);
+  }
+
+  @Test
   public void setOverScrollMode() {
     final PigeonApiView api = new TestProxyApiRegistrar().getPigeonApiView();
 
