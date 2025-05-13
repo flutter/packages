@@ -23,7 +23,7 @@ dependencies:
     sdk: flutter
   in_app_purchase_android: ^0.4.0
   in_app_purchase_platform_interface: ^1.4.0
-  in_app_purchase_storekit: ^0.3.14
+  in_app_purchase_storekit: ^0.4.0
 
 dev_dependencies:
   flutter_test:
