@@ -1,12 +1,7 @@
-## 3.2.2
-
-* GooglePlayPurchaseParam add possibility set selected offerToken
-
 ## 3.2.1
 
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 * Updates `in_app_purchase_android` to 0.4.0.
-
 
 ## 3.2.0
 
