@@ -29,6 +29,7 @@ import androidx.credentials.exceptions.GetCredentialInterruptedException;
 import androidx.credentials.exceptions.GetCredentialProviderConfigurationException;
 import androidx.credentials.exceptions.GetCredentialUnsupportedException;
 import androidx.credentials.exceptions.NoCredentialException;
+import com.google.android.gms.auth.api.identity.AuthorizationClient;
 import com.google.android.gms.auth.api.identity.AuthorizationRequest;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -60,7 +61,13 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
   @VisibleForTesting
   public void initInstance(@NonNull BinaryMessenger messenger, @NonNull Context context) {
     this.messenger = messenger;
-    delegate = new Delegate(context);
+    delegate =
+        new Delegate(
+            context,
+            (@NonNull Context c) -> CredentialManager.create(c),
+            (@NonNull Context c) -> Identity.getAuthorizationClient(c),
+            (@Nullable Credential credential) ->
+                GoogleIdTokenCredential.createFrom(credential.getData()));
     GoogleSignInApi.Companion.setUp(messenger, delegate);
   }
 
@@ -115,6 +122,28 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
     disposeActivity();
   }
 
+  // Creates CredentialManager instances. This is provided to be overridden for tests.
+  @VisibleForTesting
+  public interface CredentialManagerFactory {
+    @NonNull
+    CredentialManager create(@NonNull Context context);
+  }
+
+  // Creates AuthorizationClient instances. This is provided to be overridden for tests.
+  @VisibleForTesting
+  public interface AuthorizationClientFactory {
+    @NonNull
+    AuthorizationClient create(@NonNull Context context);
+  }
+
+  // Creates GoogleIdTokenCredential instances from Credential instances. This is provided
+  // to be overridden for tests.
+  @VisibleForTesting
+  public interface GoogleIdCredentialConverter {
+    @NonNull
+    GoogleIdTokenCredential createFrom(@NonNull Credential credential);
+  }
+
   /**
    * Delegate class that does the work for the Google sign-in plugin. This is exposed as a dedicated
    * class for use in other plugins that wrap basic sign-in functionality.
@@ -125,16 +154,26 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
    * to guarantee such behavior; callers are responsible for providing such guarantees.
    */
   public static class Delegate implements PluginRegistry.ActivityResultListener, GoogleSignInApi {
-    private static final int REQUEST_CODE_AUTHORIZE = 53294;
+    @VisibleForTesting static final int REQUEST_CODE_AUTHORIZE = 53294;
 
     private final @NonNull Context context;
-    // Only set activity for v2 embedder. Always access activity from getActivity() method.
+    private final @NonNull CredentialManagerFactory credentialManagerFactory;
+    private final @NonNull AuthorizationClientFactory authorizationClientFactory;
+    final @NonNull GoogleIdCredentialConverter credentialConverter;
+    // Always access activity from getActivity() method.
     private @Nullable Activity activity;
 
     private Function1<? super Result<? extends AuthorizeResult>, Unit> pendingAuthorizationCallback;
 
-    public Delegate(@NonNull Context context) {
+    public Delegate(
+        @NonNull Context context,
+        @NonNull CredentialManagerFactory credentialManagerFactory,
+        @NonNull AuthorizationClientFactory authorizationClientFactory,
+        @NonNull GoogleIdCredentialConverter credentialConverter) {
       this.context = context;
+      this.credentialManagerFactory = credentialManagerFactory;
+      this.authorizationClientFactory = authorizationClientFactory;
+      this.credentialConverter = credentialConverter;
     }
 
     public void setActivity(@Nullable Activity activity) {
@@ -196,7 +235,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           requestBuilder.addCredentialOption(optionBuilder.build());
         }
 
-        CredentialManager credentialManager = CredentialManager.create(context);
+        CredentialManager credentialManager = credentialManagerFactory.create(context);
         credentialManager.getCredentialAsync(
             context,
             requestBuilder.build(),
@@ -211,7 +250,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                         .getType()
                         .equals(GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL)) {
                   GoogleIdTokenCredential googleIdTokenCredential =
-                      GoogleIdTokenCredential.createFrom(credential.getData());
+                      credentialConverter.createFrom(credential);
                   Uri profilePictureUri = googleIdTokenCredential.getProfilePictureUri();
                   ResultUtilsKt.completeWithGetGetCredentialResult(
                       callback,
@@ -267,7 +306,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
 
     @Override
     public void clearCredentialState(@NonNull Function1<? super Result<Unit>, Unit> callback) {
-      CredentialManager credentialManager = CredentialManager.create(context);
+      CredentialManager credentialManager = credentialManagerFactory.create(context);
       credentialManager.clearCredentialStateAsync(
           new ClearCredentialStateRequest(),
           null,
@@ -280,7 +319,6 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
 
             @Override
             public void onError(@NonNull ClearCredentialException e) {
-              // TODO(stuartmorgan): Consider a non-exception callback.
               ResultUtilsKt.completeWithClearCredentialStateError(
                   callback, new FlutterError("Clear Failed", e.getMessage(), null));
             }
@@ -311,7 +349,8 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
               new Account(params.getAccountEmail(), "com.google"));
         }
         AuthorizationRequest authorizationRequest = authorizationRequestBuilder.build();
-        Identity.getAuthorizationClient(context)
+        authorizationClientFactory
+            .create(context)
             .authorize(authorizationRequest)
             .addOnSuccessListener(
                 authorizationResult -> {
@@ -384,7 +423,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
         if (pendingAuthorizationCallback != null) {
           try {
             AuthorizationResult authorizationResult =
-                Identity.getAuthorizationClient(context).getAuthorizationResultFromIntent(data);
+                authorizationClientFactory.create(context).getAuthorizationResultFromIntent(data);
             ResultUtilsKt.completeWithAuthorizationResult(
                 pendingAuthorizationCallback,
                 new PlatformAuthorizationResult(
