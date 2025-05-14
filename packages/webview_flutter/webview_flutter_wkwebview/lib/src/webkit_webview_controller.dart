@@ -581,6 +581,30 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
+  Future<void> setVerticalScrollBarEnabled(bool enabled) {
+    return _webView.scrollView.setShowsVerticalScrollIndicator(enabled);
+  }
+
+  @override
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) {
+    return _webView.scrollView.setShowsHorizontalScrollIndicator(enabled);
+  }
+
+  @override
+  bool supportsSetScrollBarsEnabled() {
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.iOS:
+        return true;
+      case TargetPlatform.macOS:
+        return false;
+      case _:
+        throw UnsupportedError(
+          'This plugin does not support this platform: $defaultTargetPlatform',
+        );
+    }
+  }
+
+  @override
   Future<void> setBackgroundColor(Color color) {
     return Future.wait(<Future<void>>[
       _webView.setOpaque(false),
