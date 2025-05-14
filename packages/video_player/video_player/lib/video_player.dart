@@ -378,7 +378,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
   ClosedCaptionFile? _closedCaptionFile;
-  ClosedCaptionFile? _previousClosedCaptionFile;
   List<Caption>? _sortedCaptions;
 
   Timer? _timer;
@@ -509,7 +508,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     if (_closedCaptionFileFuture != null) {
       await _updateClosedCaptionWithFuture(_closedCaptionFileFuture);
-      _sortClosedCaption();
     }
 
     void errorListener(Object obj) {
@@ -786,29 +784,25 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ) async {
     await _updateClosedCaptionWithFuture(closedCaptionFile);
     _closedCaptionFileFuture = closedCaptionFile;
-    _sortClosedCaption();
-  }
-
-  void _sortClosedCaption() {
-    // Only sort if the file has changed
-    if (_previousClosedCaptionFile != _closedCaptionFile) {
-      _sortedCaptions = _closedCaptionFile?.captions;
-
-      /// Sort the captions by start time to allow a binary search.
-      _sortedCaptions?.sort((Caption a, Caption b) {
-        return a.start.compareTo(b.start);
-      });
-
-      _previousClosedCaptionFile = _closedCaptionFile;
-    }
   }
 
   Future<void> _updateClosedCaptionWithFuture(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {
-    _closedCaptionFile = await closedCaptionFile;
-
-    value = value.copyWith(caption: _getCaptionAt(value.position));
+    if (closedCaptionFile != null) {
+      await closedCaptionFile.whenComplete(() async {
+        _closedCaptionFile = await closedCaptionFile;
+        _sortedCaptions = _closedCaptionFile?.captions;
+        _sortedCaptions?.sort((Caption a, Caption b) {
+          return a.start.compareTo(b.start);
+        });
+        value = value.copyWith(caption: _getCaptionAt(value.position));
+      });
+    } else {
+      _closedCaptionFile = null;
+      _sortedCaptions = null;
+      value = value.copyWith(caption: Caption.none);
+    }
   }
 
   void _updatePosition(Duration position) {
