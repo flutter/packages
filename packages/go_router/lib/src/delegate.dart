@@ -105,15 +105,17 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     states.first.pop(result);
   }
 
-  /// Get a prioritized list of NavigatorStates
-  /// 1. Pop routes within branches of shell navigation which `canPop`
-  /// 2. Pop parent route
-  /// 3. Pop branch routes (which are exit routes as they cannot be popped)
+  /// Get a prioritized list of NavigatorStates,
+  /// which either can pop or are exit routes.
+  ///
+  /// 1. Sub route within branches of shell navigation
+  /// 2. Branch route
+  /// 3. Parent route
   List<NavigatorState> _findCurrentNavigators() {
     final List<NavigatorState> states = <NavigatorState>[];
     if (navigatorKey.currentState != null) {
-      states.add(navigatorKey
-          .currentState!); // Set state directly without canPop check
+      // Set state directly without canPop check
+      states.add(navigatorKey.currentState!);
     }
 
     RouteMatchBase walker = currentConfiguration.matches.last;
@@ -127,8 +129,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         // Stop if there is a pageless route on top of the shell route.
         break;
       }
-      states.insert(
-          potentialCandidate.canPop() ? 0 : states.length, potentialCandidate);
+      states.insert(0, potentialCandidate);
       walker = walker.matches.last;
     }
     return states;
