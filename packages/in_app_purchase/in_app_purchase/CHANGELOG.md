@@ -1,10 +1,8 @@
 ## 3.2.3
-* Bumps minimum `in_app_purchase_storekit` version to 0.4.0.
-* Bumps example `in_app_purchase_storekit` version to 0.4.0.
+* Updates minimum `in_app_purchase_storekit` version to 0.4.0.
 
 ## 3.2.2
 
-* Updates `in_app_purchase_storekit` to 0.4.0 
 * Updates README with Storekit 2 examples.
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
 
