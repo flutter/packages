@@ -127,6 +127,10 @@ class AndroidWebkitLibraryPigeonInstanceManager(
    */
   fun <T> remove(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
+    val instance: Any? = getInstance(identifier)
+    if (instance is WebViewProxyApi.WebViewPlatformView) {
+      instance.destroy()
+    }
     return strongInstances.remove(identifier) as T?
   }
 
@@ -4836,20 +4840,6 @@ abstract class PigeonApiView(
   /** Return the scrolled position of this view. */
   abstract fun getScrollPosition(pigeon_instance: android.view.View): WebViewPoint
 
-  /**
-   * Define whether the vertical scrollbar should be drawn or not.
-   *
-   * The scrollbar is not drawn by default.
-   */
-  abstract fun setVerticalScrollBarEnabled(pigeon_instance: android.view.View, enabled: Boolean)
-
-  /**
-   * Define whether the horizontal scrollbar should be drawn or not.
-   *
-   * The scrollbar is not drawn by default.
-   */
-  abstract fun setHorizontalScrollBarEnabled(pigeon_instance: android.view.View, enabled: Boolean)
-
   /** Set the over-scroll mode for this view. */
   abstract fun setOverScrollMode(pigeon_instance: android.view.View, mode: OverScrollMode)
 
@@ -4916,54 +4906,6 @@ abstract class PigeonApiView(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getScrollPosition(pigeon_instanceArg))
-                } catch (exception: Throwable) {
-                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
-                }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.View.setVerticalScrollBarEnabled",
-                codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as android.view.View
-            val enabledArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setVerticalScrollBarEnabled(pigeon_instanceArg, enabledArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
-                }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.webview_flutter_android.View.setHorizontalScrollBarEnabled",
-                codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val pigeon_instanceArg = args[0] as android.view.View
-            val enabledArg = args[1] as Boolean
-            val wrapped: List<Any?> =
-                try {
-                  api.setHorizontalScrollBarEnabled(pigeon_instanceArg, enabledArg)
-                  listOf(null)
                 } catch (exception: Throwable) {
                   AndroidWebkitLibraryPigeonUtils.wrapError(exception)
                 }
