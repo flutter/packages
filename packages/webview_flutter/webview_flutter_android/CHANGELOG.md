@@ -1,8 +1,7 @@
 ## 4.5.0
 
-* Adds support to set using wide view port.
-  Change default to `false` to align with native WebViews.
-  See `AndroidWebViewController.setUseWideViewPort`.
+* Adds support to set using wide view port. See `AndroidWebViewController.setUseWideViewPort`.
+* Changes default of `WebSettings.setUseWideViewPort` to `false` to align with native WebViews.
 
 ## 4.4.2
 
