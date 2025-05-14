@@ -618,8 +618,15 @@ class WebKitWebViewController extends PlatformWebViewController {
   Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) async {
     // Attempt to set the value that requires iOS 14+.
     try {
-      final WKWebpagePreferences webpagePreferences =
+      WKWebpagePreferences? webpagePreferences =
           await _webView.configuration.getDefaultWebpagePreferences();
+      if (webpagePreferences == null) {
+        webpagePreferences =
+            _webKitParams.webKitProxy.newWKWebpagePreferences();
+        unawaited(_webView.configuration.setDefaultWebpagePreferences(
+          webpagePreferences,
+        ));
+      }
       switch (javaScriptMode) {
         case JavaScriptMode.disabled:
           await webpagePreferences.setAllowsContentJavaScript(false);

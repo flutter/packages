@@ -29,6 +29,7 @@ class WebKitProxy {
     this.newPlatformWebView = PlatformWebView.new,
     this.newWKUIDelegate = WKUIDelegate.new,
     this.newUIScrollViewDelegate = UIScrollViewDelegate.new,
+    this.newWKWebpagePreferences = WKWebpagePreferences.new,
     this.withUserURLCredential = URLCredential.withUser,
     this.defaultDataStoreWKWebsiteDataStore =
         _defaultDataStoreWKWebsiteDataStore,
@@ -174,6 +175,9 @@ class WebKitProxy {
       double,
     )? scrollViewDidScroll,
   }) newUIScrollViewDelegate;
+
+  /// Constructs [WKWebpagePreferences].
+  final WKWebpagePreferences Function() newWKWebpagePreferences;
 
   /// Constructs [URLCredential].
   final URLCredential Function({
