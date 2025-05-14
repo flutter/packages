@@ -389,8 +389,7 @@ void main() {
 
     test('should throw platform exception when StoreKit2 is not supported',
         () async {
-      fakeStoreKitPlatform.enableStoreKit2Support = false;
-      await InAppPurchaseStoreKitPlatform.enableStoreKit2();
+      await InAppPurchaseStoreKitPlatform.enableStoreKit1();
 
       expect(
         () => iapStoreKitPlatform.checkWinBackOfferEligibility(

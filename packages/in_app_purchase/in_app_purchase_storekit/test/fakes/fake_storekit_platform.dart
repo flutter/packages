@@ -51,6 +51,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
         productWrapperMap['localizedDescription'] = null;
       }
       validProducts[validID] = SKProductWrapper.fromJson(productWrapperMap);
+      shouldStoreKit2BeEnabled = true;
     }
 
     finishedTransactions = <SKPaymentTransactionWrapper>[];

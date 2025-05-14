@@ -304,9 +304,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   ///
   /// Throws [PlatformException] if StoreKit2 is not enabled or if the check fails.
   Future<bool> checkWinBackOfferEligibility(
-      String productId,
-      String offerId,
-      ) async {
+    String productId,
+    String offerId,
+  ) async {
     if (!_useStoreKit2) {
       throw PlatformException(
         code: 'storekit2_not_enabled',
