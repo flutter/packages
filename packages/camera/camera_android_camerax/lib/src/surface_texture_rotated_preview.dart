@@ -58,6 +58,9 @@ final class _SurfaceTextureRotatedPreviewState
   Future<int> _getCurrentDefaultDisplayRotationQuarterTurns() async {
     final int currentDefaultDisplayRotationQuarterTurns =
         await widget.deviceOrientationManager.getDefaultDisplayRotation();
+    final String uiOrientation =
+        await widget.deviceOrientationManager.getUiOrientation();
+    print('>>>>>>>>>>>>>>>>CAMILLE uiOrientation: $uiOrientation');
     return getQuarterTurnsFromSurfaceRotationConstant(
         currentDefaultDisplayRotationQuarterTurns);
   }
@@ -78,6 +81,7 @@ final class _SurfaceTextureRotatedPreviewState
       }
 
       setState(() {
+        print('>>>>>>>>>>>>CAMILLE new device orientation event: $event');
         preappliedRotationQuarterTurns =
             getPreAppliedQuarterTurnsRotationFromDeviceOrientation(event);
         defaultDisplayRotationQuarterTurns =
@@ -104,6 +108,8 @@ final class _SurfaceTextureRotatedPreviewState
             // (see camera/camera/lib/src/camera_preview.dart) that is not
             // correct for this plugin.
             final int currentDefaultDisplayRotation = snapshot.data!;
+            print(
+                '>>>>>>>>>>>>>>>>>CAMILLE currentDefaultDisplayRotation: $currentDefaultDisplayRotation');
             final int rotationCorrection =
                 currentDefaultDisplayRotation - preappliedRotationQuarterTurns;
 

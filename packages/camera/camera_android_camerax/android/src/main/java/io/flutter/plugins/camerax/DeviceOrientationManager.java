@@ -17,6 +17,8 @@ import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import java.util.Objects;
 
+import android.util.Log;
+
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
  */
@@ -53,8 +55,11 @@ public class DeviceOrientationManager {
 
     broadcastReceiver =
         new BroadcastReceiver() {
+          int i = 0;
           @Override
           public void onReceive(Context context, Intent intent) {
+            Log.e("CAMILLE::ONRECEIVE", "onReceive + " + Integer.toString(i));
+            i++;
             handleUIOrientationChange();
           }
         };
@@ -136,6 +141,9 @@ public class DeviceOrientationManager {
   PlatformChannel.DeviceOrientation getUIOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = getContext().getResources().getConfiguration().orientation;
+
+    Log.e("CAMILLE", "rotation: " + Integer.toString(rotation));
+    Log.e("CAMILLE", "orientation: " + Integer.toString(orientation));
 
     switch (orientation) {
       case Configuration.ORIENTATION_PORTRAIT:
