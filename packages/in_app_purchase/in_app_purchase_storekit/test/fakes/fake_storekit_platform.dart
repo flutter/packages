@@ -33,7 +33,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   bool isPaymentQueueDelegateRegistered = false;
   String _countryCode = 'USA';
   String _countryIdentifier = 'LL';
-  bool enableStoreKit2Support = true;
+  bool shouldStoreKit2BeEnabled = true;
 
   void reset() {
     transactionList = <SKPaymentTransactionWrapper>[];
@@ -65,7 +65,6 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
     isPaymentQueueDelegateRegistered = false;
     _countryCode = 'USA';
     _countryIdentifier = 'LL';
-    enableStoreKit2Support = true;
   }
 
   SKPaymentTransactionWrapper createPendingTransaction(String id,
@@ -285,7 +284,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   bool supportsStoreKit2() {
-    return enableStoreKit2Support;
+    return shouldStoreKit2BeEnabled;
   }
 }
 

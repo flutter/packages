@@ -31,7 +31,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   InAppPurchaseStoreKitPlatform();
 
   /// Experimental flag for StoreKit2.
-  static bool _useStoreKit2 = false;
+  static bool _useStoreKit2 = true;
 
   /// StoreKit1
   static late SKPaymentQueueWrapper _skPaymentQueueWrapper;
@@ -286,13 +286,27 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @Deprecated('Use countryCode')
   Future<String?> getCountryCode() => countryCode();
 
+  /// StoreKit 2 is now the default.
+  @Deprecated('StoreKit 2 is now the default')
+  static Future<bool> enableStoreKit2() async {
+    _useStoreKit2 = true;
+    return true;
+  }
+
+  /// Call this before `registerPlatform` to re-enable StoreKit1
+  @Deprecated('Please note that StoreKit 1 will be removed in the future.')
+  static Future<bool> enableStoreKit1() async {
+    _useStoreKit2 = !(await SKRequestMaker.supportsStoreKit2());
+    return _useStoreKit2;
+  }
+
   /// Checks if the user is eligible for a specific win back offer (StoreKit2 only).
   ///
   /// Throws [PlatformException] if StoreKit2 is not enabled or if the check fails.
   Future<bool> checkWinBackOfferEligibility(
-    String productId,
-    String offerId,
-  ) async {
+      String productId,
+      String offerId,
+      ) async {
     if (!_useStoreKit2) {
       throw PlatformException(
         code: 'storekit2_not_enabled',
@@ -306,13 +320,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     );
 
     return eligibility;
-  }
-
-  /// Turns on StoreKit2. You cannot disable this after it is enabled.
-  /// This can only be enabled if your device supports StoreKit 2.
-  static Future<bool> enableStoreKit2() async {
-    _useStoreKit2 = await SKRequestMaker.supportsStoreKit2();
-    return _useStoreKit2;
   }
 }
 

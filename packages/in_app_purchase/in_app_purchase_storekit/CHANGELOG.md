@@ -1,10 +1,15 @@
-## 0.3.23
+## 0.4.1
 
-* Adds **Win Back Offers** support (requires Xcode 16 or later) for StoreKit2:
-  - Includes new `checkWinBackOfferEligibility` method for eligibility verification
+* Adds **Win Back Offers** support for StoreKit2:
+    - Includes new `checkWinBackOfferEligibility` method for eligibility verification
 * Adds **Promotional Offers** support in StoreKit2 purchases
-* Fixes introductory pricing handling in promotional offers list
+* Fixes introductory pricing handling in promotional offers list in StoreKit2
 * Ensures proper `appAccountToken` handling for StoreKit2 purchases
+
+## 0.4.0
+
+* **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.
+* To revert to StoreKit1 for devices below iOS 15, call `enableStoreKit1`
 
 ## 0.3.22+1
 
