@@ -45,7 +45,7 @@ class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
       return null;
     }
 
-    if (key.equals(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL)) {
+    if (CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL.equals(key)) {
       switch ((Integer) result) {
         case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_3:
           return InfoSupportedHardwareLevel.LEVEL3;
