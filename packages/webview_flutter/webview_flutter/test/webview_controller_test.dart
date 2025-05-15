@@ -315,7 +315,7 @@ void main() {
       mockPlatformWebViewController,
     );
 
-    expect(webViewController.supportsSetScrollBarsEnabled(), true);
+    expect(await webViewController.supportsSetScrollBarsEnabled(), true);
     verify(mockPlatformWebViewController.supportsSetScrollBarsEnabled());
   });
 

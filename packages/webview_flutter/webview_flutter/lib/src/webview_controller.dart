@@ -420,7 +420,7 @@ class WebViewController {
   /// should be drawn or not.
   ///
   /// See [setVerticalScrollBarEnabled] and [setHorizontalScrollBarEnabled].
-  bool supportsSetScrollBarsEnabled() {
+  Future<bool> supportsSetScrollBarsEnabled() async {
     return platform.supportsSetScrollBarsEnabled();
   }
 
