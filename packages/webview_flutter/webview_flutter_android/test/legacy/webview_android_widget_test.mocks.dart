@@ -548,6 +548,22 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
       ) as _i4.Future<_i2.WebViewPoint>);
 
   @override
+  _i4.Future<void> setVerticalScrollBarEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(#setVerticalScrollBarEnabled, [enabled]),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setHorizontalScrollBarEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(#setHorizontalScrollBarEnabled, [enabled]),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
   _i4.Future<void> setOverScrollMode(_i2.OverScrollMode? mode) =>
       (super.noSuchMethod(
         Invocation.method(#setOverScrollMode, [mode]),
