@@ -61,6 +61,7 @@ enum CameraTestUtils {
         resolutionPreset: FCPPlatformResolutionPreset.medium),
       mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
       captureDeviceFactory: { _ in captureDeviceMock },
+      audioCaptureDeviceFactory: { MockCaptureDevice() },
       captureSessionFactory: { videoSessionMock },
       captureSessionQueue: captureSessionQueue,
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -172,6 +173,14 @@ enum CameraTestUtils {
       sampleBufferOut: &sampleBuffer)
 
     return sampleBuffer!
+  }
+
+  static func createTestAudioOutput() -> AVCaptureOutput {
+    return AVCaptureAudioDataOutput()
+  }
+
+  static func createTestConnection(_ output: AVCaptureOutput) -> AVCaptureConnection {
+    return AVCaptureConnection(inputPorts: [], output: output)
   }
 }
 

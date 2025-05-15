@@ -28,10 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
 @property(assign, nonatomic) FCPPlatformImageFileFormat fileFormat;
-@property(assign, nonatomic) CGFloat minimumAvailableZoomFactor;
-@property(assign, nonatomic) CGFloat maximumAvailableZoomFactor;
-@property(assign, nonatomic) CGFloat minimumExposureOffset;
-@property(assign, nonatomic) CGFloat maximumExposureOffset;
+@property(readonly, nonatomic) CGFloat minimumAvailableZoomFactor;
+@property(readonly, nonatomic) CGFloat maximumAvailableZoomFactor;
+@property(readonly, nonatomic) CGFloat minimumExposureOffset;
+@property(readonly, nonatomic) CGFloat maximumExposureOffset;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
@@ -57,7 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
                                                    FlutterError *_Nullable))completion;
 - (void)pauseVideoRecording;
 - (void)resumeVideoRecording;
-- (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)orientation;
+- (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)orientation
+    NS_SWIFT_NAME(lockCaptureOrientation(_:));
 - (void)unlockCaptureOrientation;
 - (void)setFlashMode:(FCPPlatformFlashMode)mode
       withCompletion:(void (^)(FlutterError *_Nullable))completion;
