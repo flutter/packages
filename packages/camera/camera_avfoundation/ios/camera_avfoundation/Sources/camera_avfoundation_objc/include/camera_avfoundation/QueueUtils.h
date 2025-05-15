@@ -7,7 +7,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Queue-specific context data to be associated with the capture session queue.
-extern const char* FLTCaptureSessionQueueSpecific;
+extern const char *FLTCaptureSessionQueueSpecific;
 
 /// Ensures the given block to be run on the main queue.
 /// If caller site is already on the main queue, the block will be run
@@ -22,7 +22,6 @@ extern void FLTEnsureToRunOnMainQueue(dispatch_block_t block);
 /// is different, so Swift code need to call this method to set the key-value
 /// pair on the queue in a way that's compatible with the existing Objective-C
 /// code.
-extern void FLTDispatchQueueSetSpecific(dispatch_queue_t queue,
-                                        const void* key);
+extern void FLTDispatchQueueSetSpecific(dispatch_queue_t queue, const void *key);
 
 NS_ASSUME_NONNULL_END
