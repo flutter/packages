@@ -32,7 +32,7 @@ static id FSISanitizedUserInfo(id value) {
     NSError *error = value;
     return @{
       @"domain" : error.domain,
-      @"code" : [NSString stringWithFormat:@"%d", error.code],
+      @"code" : [NSString stringWithFormat:@"%ld", (long)error.code],
       @"localizedDescription" : error.localizedDescription,
       @"userInfo" : FSISanitizedUserInfo(error.userInfo),
     };
@@ -66,9 +66,10 @@ static id FSISanitizedUserInfo(id value) {
 /// This should only be used when an error can't be recognized and mapped to a
 /// GoogleSignInErrorCode.
 static FlutterError *FSIFlutterErrorForNSError(NSError *error) {
-  return [FlutterError errorWithCode:[NSString stringWithFormat:@"%@: %d", error.domain, error.code]
-                             message:error.localizedDescription
-                             details:FSISanitizedUserInfo(error.userInfo)];
+  return [FlutterError
+      errorWithCode:[NSString stringWithFormat:@"%@: %ld", error.domain, (long)error.code]
+            message:error.localizedDescription
+            details:FSISanitizedUserInfo(error.userInfo)];
 }
 
 /// Maps a GIDSignInErrorCode to the corresponding Pigeon GoogleSignInErrorCode
