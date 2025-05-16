@@ -9,16 +9,16 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('Can initialize the plugin', (WidgetTester tester) async {
+  testWidgets('Can instantiate the plugin', (WidgetTester tester) async {
     final GoogleSignInPlatform signIn = GoogleSignInPlatform.instance;
     expect(signIn, isNotNull);
   });
 
-  testWidgets('Method channel handler is present', (WidgetTester tester) async {
-    // isSignedIn can be called without initialization, so use it to validate
-    // that the native method handler is present (e.g., that the channel name
-    // is correct).
+  testWidgets('Can initialize the plugin', (WidgetTester tester) async {
+    // This is primarily to validate that the native method handler is present
+    // and correctly set up to receive messages (i.e., that this doesn't
+    // throw).
     final GoogleSignInPlatform signIn = GoogleSignInPlatform.instance;
-    await expectLater(signIn.isSignedIn(), completes);
+    await expectLater(signIn.init(const InitParameters()), completes);
   });
 }

@@ -34,7 +34,4 @@ abstract class GoogleIdentity {
   ///
   /// Not guaranteed to be present for all users, even when configured.
   String? get photoUrl;
-
-  /// Server auth code used to access Google Login
-  String? get serverAuthCode;
 }

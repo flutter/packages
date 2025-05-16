@@ -1,6 +1,13 @@
-## NEXT
+## 7.0.0
 
-* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* **BREAKING CHANGE**: Many APIs have changed or been replaced to reflect the
+  current APIs and best practices of the underlying platform SDKs. For full
+  details, see the README and migration guide, but notable highlights include:
+  * The `GoogleSignIn` instance is now a singleton.
+  * Clients must call and await the new `initialize` method before calling any
+    other methods on the instance.
+  * Authentication and authorization are now separate steps.
+  * Access tokens and server auth codes are obtained via separate calls.
 
 ## 6.3.0
 
