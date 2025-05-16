@@ -1,3 +1,7 @@
+## 1.1.19
+
+* Fix incorrect scaling under Transform in raster mode and reduce extra rendering cost from ColorFilter/Opacity in raster mode.
+
 ## 1.1.18
 
 * Allow transition between placeholder and loaded image to have an animation.
