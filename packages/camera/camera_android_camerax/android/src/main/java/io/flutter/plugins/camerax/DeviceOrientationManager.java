@@ -10,14 +10,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.view.Display;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import java.util.Objects;
-
-import android.util.Log;
 
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
@@ -30,6 +30,8 @@ public class DeviceOrientationManager {
   private PlatformChannel.DeviceOrientation lastOrientation;
   private BroadcastReceiver broadcastReceiver;
 
+  @VisibleForTesting @Nullable protected OrientationEventListener orientationEventListener;
+
   DeviceOrientationManager(DeviceOrientationManagerProxyApi api) {
     this.api = api;
   }
@@ -40,42 +42,40 @@ public class DeviceOrientationManager {
   }
 
   /**
-   * Starts listening to the device's sensors or UI for orientation updates.
+   * Starts listening to the device's sensors for device orientation updates.
    *
    * <p>When orientation information is updated, the callback method of the {@link
    * DeviceOrientationManagerProxyApi} is called with the new orientation.
-   *
-   * <p>If the device's ACCELEROMETER_ROTATION setting is enabled the {@link
-   * DeviceOrientationManager} will report orientation updates based on the sensor information. If
-   * the ACCELEROMETER_ROTATION is disabled the {@link DeviceOrientationManager} will fallback to
-   * the deliver orientation updates based on the UI orientation.
    */
   public void start() {
     stop();
 
-    broadcastReceiver =
-        new BroadcastReceiver() {
-          int i = 0;
-          @Override
-          public void onReceive(Context context, Intent intent) {
-            Log.e("CAMILLE::ONRECEIVE", "onReceive + " + Integer.toString(i));
-            i++;
-            handleUIOrientationChange();
-          }
-        };
-    getContext().registerReceiver(broadcastReceiver, orientationIntentFilter);
-    broadcastReceiver.onReceive(getContext(), null);
+    // Listen for changes in device orientation at the default rate that is suitable for monitoring
+    // typical screen orientation changes.
+    orientationEventListener = createOrientationEventListener();
+    orientationEventListener.enable();
+  }
+
+  @VisibleForTesting
+  @NonNull
+  protected OrientationEventListener createOrientationEventListener() {
+    return new OrientationEventListener(getContext()) {
+      @Override
+      public void onOrientationChanged(int orientation) {
+        handleUIOrientationChange();
+      }
+    };
   }
 
   /** Stops listening for orientation updates. */
   public void stop() {
-    if (broadcastReceiver == null) {
+    if (orientationEventListener == null) {
       return;
     }
-    getContext().unregisterReceiver(broadcastReceiver);
-    broadcastReceiver = null;
-
     lastOrientation = null;
+
+    orientationEventListener.disable();
+    orientationEventListener = null;
   }
 
   /**
@@ -92,8 +92,7 @@ public class DeviceOrientationManager {
   }
 
   /**
-   * Handles orientation changes coming from either the device's sensors or the
-   * OrientationIntentFilter.
+   * Handles orientation changes coming from either the device's sensors.
    *
    * <p>This method is visible for testing purposes only and should never be used outside this
    * class.
@@ -141,9 +140,6 @@ public class DeviceOrientationManager {
   PlatformChannel.DeviceOrientation getUIOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = getContext().getResources().getConfiguration().orientation;
-
-    Log.e("CAMILLE", "rotation: " + Integer.toString(rotation));
-    Log.e("CAMILLE", "orientation: " + Integer.toString(orientation));
 
     switch (orientation) {
       case Configuration.ORIENTATION_PORTRAIT:
