@@ -23,7 +23,7 @@ class GoogleSignInException implements Exception {
 
   @override
   String toString() =>
-      'CredentialException(code $code, $description, $details)';
+      'GoogleSignInException(code $code, $description, $details)';
 }
 
 /// Types of [GoogleSignInException]s, as indicated by

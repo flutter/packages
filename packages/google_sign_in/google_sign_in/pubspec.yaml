@@ -35,6 +35,7 @@ dev_dependencies:
     sdk: flutter
   http: ">=0.13.0 <2.0.0"
   mockito: ^5.4.4
+  plugin_platform_interface: ^2.1.8
 
 topics:
   - authentication

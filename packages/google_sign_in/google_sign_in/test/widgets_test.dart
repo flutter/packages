@@ -28,9 +28,6 @@ class _TestGoogleIdentity extends GoogleIdentity {
 
   @override
   String? get displayName => null;
-
-  @override
-  String? get serverAuthCode => null;
 }
 
 /// A mocked [HttpClient] which always returns a [_MockHttpRequest].
