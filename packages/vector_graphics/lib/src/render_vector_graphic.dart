@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math' as math;
 import 'dart:ui' as ui;
-
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
-
+import 'package:flutter/scheduler.dart';
 import 'debug.dart';
 import 'listener.dart';
 
@@ -40,6 +40,41 @@ class RasterKey {
   int get hashCode => Object.hash(assetKey, width, height);
 }
 
+/// The cache key for a auto rasterized vector graphic.
+@immutable
+class RasterKeyWithPaint {
+  /// Create a new [RasterKeyWithPaint].
+  const RasterKeyWithPaint(this.assetKey, this.width, this.height, this.paint);
+
+  /// An object that is used to identify the raster data this key will store.
+  ///
+  /// Typically this is the value returned from [BytesLoader.cacheKey].
+  final Object assetKey;
+
+  /// The height of this vector graphic raster, in physical pixels.
+  final int width;
+
+  /// The width of this vector graphic raster, in physical pixels.
+  final int height;
+
+  /// The paint of this vector graphic raster.
+  final Paint paint;
+
+  @override
+  bool operator ==(Object other) {
+    return other is RasterKeyWithPaint &&
+        other.assetKey == assetKey &&
+        other.width == width &&
+        other.height == height &&
+        other.paint.color == paint.color &&
+        other.paint.colorFilter == paint.colorFilter;
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(assetKey, width, height, paint.color, paint.colorFilter);
+}
+
 /// The cache entry for a rasterized vector graphic.
 class RasterData {
   /// Create a new [RasterData].
@@ -63,6 +98,29 @@ class RasterData {
   }
 }
 
+/// The cache entry for a rasterized vector graphic.
+class RasterDataWithPaint {
+  /// Create a new [RasterDataWithPaint].
+  RasterDataWithPaint(this._image, this.count, this.key);
+
+  /// The rasterized vector graphic.
+  ui.Image get image => _image!;
+  ui.Image? _image;
+
+  /// The cache key used to identify this vector graphic.
+  final RasterKeyWithPaint key;
+
+  /// The number of render objects currently using this
+  /// vector graphic raster data.
+  int count = 0;
+
+  /// Dispose this raster data.
+  void dispose() {
+    _image?.dispose();
+    _image = null;
+  }
+}
+
 /// For testing only, clear all pending rasters.
 @visibleForTesting
 void debugClearRasteCaches() {
@@ -70,6 +128,360 @@ void debugClearRasteCaches() {
     return;
   }
   RenderVectorGraphic._liveRasterCache.clear();
+}
+
+/// A render object which draws a vector graphic instance as a raster.
+class RenderAutoVectorGraphic extends RenderBox {
+  /// Create a new [RenderAutoVectorGraphic].
+  RenderAutoVectorGraphic(
+    this._pictureInfo,
+    this._assetKey,
+    this._colorFilter,
+    this._devicePixelRatio,
+    this._opacity,
+    this._scale,
+  ) {
+    _opacity?.addListener(_updateOpacity);
+    _updateOpacity();
+  }
+
+  static final Map<RasterKeyWithPaint, RasterDataWithPaint> _liveRasterCache =
+      <RasterKeyWithPaint, RasterDataWithPaint>{};
+
+  /// It ensures that multiple raster caches are not created simultaneously to avoid jank.
+  static int _globalRasterDelayFrames = 0;
+  int _delayFrames = 0;
+  bool _rasterIsCreating = false;
+  int _rasterTaskId = 0;
+  double _rasterScaleFactor = 1.0;
+  final Paint _colorPaint = Paint();
+  RasterKeyWithPaint? _rasterKey;
+
+  /// A key that uniquely identifies the [pictureInfo] used for this vg.
+  Object get assetKey => _assetKey;
+  Object _assetKey;
+  set assetKey(Object value) {
+    if (value == assetKey) {
+      return;
+    }
+    _assetKey = value;
+    // Dont call mark needs paint here since a change in just the asset key
+    // isn't sufficient to force a re-draw.
+  }
+
+  /// The [PictureInfo] which contains the vector graphic and size to draw.
+  PictureInfo get pictureInfo => _pictureInfo;
+  PictureInfo _pictureInfo;
+  set pictureInfo(PictureInfo value) {
+    if (identical(value, _pictureInfo)) {
+      return;
+    }
+    _pictureInfo = value;
+    markNeedsPaint();
+  }
+
+  /// An optional [ColorFilter] to apply to the rasterized vector graphic.
+  ColorFilter? get colorFilter => _colorFilter;
+  ColorFilter? _colorFilter;
+  set colorFilter(ColorFilter? value) {
+    if (colorFilter == value) {
+      return;
+    }
+    _colorFilter = value;
+    markNeedsPaint();
+  }
+
+  /// The device pixel ratio the vector graphic should be rasterized at.
+  double get devicePixelRatio => _devicePixelRatio;
+  double _devicePixelRatio;
+  set devicePixelRatio(double value) {
+    if (value == devicePixelRatio) {
+      return;
+    }
+    _devicePixelRatio = value;
+    markNeedsPaint();
+  }
+
+  double _opacityValue = 1.0;
+
+  /// An opacity to draw the rasterized vector graphic with.
+  Animation<double>? get opacity => _opacity;
+  Animation<double>? _opacity;
+  set opacity(Animation<double>? value) {
+    if (value == opacity) {
+      return;
+    }
+    _opacity?.removeListener(_updateOpacity);
+    _opacity = value;
+    _opacity?.addListener(_updateOpacity);
+    markNeedsPaint();
+  }
+
+  void _updateOpacity() {
+    if (opacity == null) {
+      return;
+    }
+    final double newValue = opacity!.value;
+    if (newValue == _opacityValue) {
+      return;
+    }
+    _opacityValue = newValue;
+    markNeedsPaint();
+  }
+
+  /// An additional ratio the picture will be transformed by.
+  ///
+  /// This value is used to ensure the computed raster does not
+  /// have extra pixelation from scaling in the case that a the [BoxFit]
+  /// value used in the [VectorGraphic] widget implies a scaling factor
+  /// greater than 1.0.
+  ///
+  /// For example, if the vector graphic widget is sized at 100x100,
+  /// the vector graphic itself has a size of 50x50, and [BoxFit.fill]
+  /// is used. This will compute a scale of 2.0, which will result in a
+  /// raster that is 100x100.
+  double get scale => _scale;
+  double _scale;
+  set scale(double value) {
+    assert(value != 0);
+    if (value == scale) {
+      return;
+    }
+    _scale = value;
+    markNeedsPaint();
+  }
+
+  @override
+  bool hitTestSelf(Offset position) => true;
+
+  @override
+  bool get sizedByParent => true;
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    return constraints.smallest;
+  }
+
+  static RasterDataWithPaint _createRaster(RasterKeyWithPaint key,
+      double scaleFactor, PictureInfo info, Paint colorPaint) {
+    final int scaledWidth = key.width;
+    final int scaledHeight = key.height;
+    // In order to scale a picture, it must be placed in a new picture
+    // with a transform applied. Surprisingly, the height and width
+    // arguments of Picture.toImage do not control the resolution that the
+    // picture is rendered at, instead it controls how much of the picture to
+    // capture in a raster.
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    final ui.Canvas canvas = ui.Canvas(recorder);
+    final Rect drawSize =
+        ui.Rect.fromLTWH(0, 0, scaledWidth.toDouble(), scaledHeight.toDouble());
+    canvas.clipRect(drawSize);
+    final int saveCount = canvas.getSaveCount();
+    if (colorPaint.color.opacity != 1.0 || colorPaint.colorFilter != null) {
+      canvas.saveLayer(drawSize, colorPaint);
+    }
+    canvas.scale(scaleFactor);
+    canvas.drawPicture(info.picture);
+    canvas.restoreToCount(saveCount);
+
+    final ui.Picture rasterPicture = recorder.endRecording();
+
+    final ui.Image pending =
+        rasterPicture.toImageSync(scaledWidth, scaledHeight);
+    return RasterDataWithPaint(pending, 0, key);
+  }
+
+  void _maybeReleaseRaster(RasterDataWithPaint? data) {
+    if (data == null) {
+      return;
+    }
+    data.count -= 1;
+    if (data.count == 0 && _liveRasterCache.containsKey(data.key)) {
+      _liveRasterCache.remove(data.key);
+      data.dispose();
+    }
+  }
+
+  void _buildRasterAfterDelayFrames(VoidCallback callback) {
+    if (_delayFrames <= 0) {
+      _buildRaster();
+      callback();
+      return;
+    }
+    if (_rasterKey != null && _liveRasterCache.containsKey(_rasterKey)) {
+      final RasterDataWithPaint data = _liveRasterCache[_rasterKey]!;
+      data.count += 1;
+      _rasterData = data;
+      callback();
+      return;
+    }
+    _delayFrames--;
+    _rasterTaskId = SchedulerBinding.instance.scheduleFrameCallback((_) {
+      _buildRasterAfterDelayFrames(callback);
+    });
+  }
+
+  void _buildRaster() {
+    // creating a new raster cache
+    if (_rasterKey == null) {
+      return;
+    }
+
+    final RasterDataWithPaint data = _createRaster(
+        _rasterKey!, _rasterScaleFactor, pictureInfo, _colorPaint);
+    data.count += 1;
+
+    assert(!_liveRasterCache.containsKey(_rasterKey));
+    assert(_rasterData == null);
+    assert(data.count == 1);
+    assert(!debugDisposed!);
+    _liveRasterCache[_rasterKey!] = data;
+    _rasterData = data;
+  }
+
+  // Re-create the raster for a given vector graphic if the target size
+  // is sufficiently different. Returns `null` if rasterData has been
+  // updated immediately.
+  void _maybeUpdateRaster(double drawScaleFactor) {
+    _rasterScaleFactor = devicePixelRatio * drawScaleFactor;
+    final int scaledWidth =
+        (pictureInfo.size.width * _rasterScaleFactor).round();
+    final int scaledHeight =
+        (pictureInfo.size.height * _rasterScaleFactor).round();
+    final RasterKeyWithPaint key =
+        RasterKeyWithPaint(assetKey, scaledWidth, scaledHeight, _colorPaint);
+    _rasterKey = key;
+    // First check if the raster is available synchronously. This also handles
+    // a no-op change that would resolve to an identical picture.
+    if (_liveRasterCache.containsKey(key)) {
+      final RasterDataWithPaint data = _liveRasterCache[key]!;
+      if (data != _rasterData) {
+        _maybeReleaseRaster(_rasterData);
+        data.count += 1;
+      }
+      _rasterData = data;
+      return;
+    }
+
+    _maybeReleaseRaster(_rasterData);
+    _rasterData = null;
+
+    if (scaledWidth > 2048 || scaledHeight > 2048) {
+      return;
+    }
+
+    // we need create raster cache
+    if (!_rasterIsCreating) {
+      _globalRasterDelayFrames++;
+      // +1 is to avoid frequent cache creation caused by frequent size changes.
+      _delayFrames = _globalRasterDelayFrames + 1;
+      _rasterIsCreating = true;
+
+      // need delay raster creating
+      _buildRasterAfterDelayFrames(() {
+        markNeedsPaint();
+        _rasterIsCreating = false;
+        _globalRasterDelayFrames--;
+        _rasterTaskId = 0;
+      });
+      return;
+    }
+    // Something changes during cache creation, so delay the creation to avoid frequent cache creation.
+    _delayFrames++;
+    return;
+  }
+
+  RasterDataWithPaint? _rasterData;
+
+  @override
+  void attach(covariant PipelineOwner owner) {
+    _opacity?.addListener(_updateOpacity);
+    _updateOpacity();
+    super.attach(owner);
+  }
+
+  @override
+  void detach() {
+    _opacity?.removeListener(_updateOpacity);
+    super.detach();
+  }
+
+  @override
+  void dispose() {
+    _maybeReleaseRaster(_rasterData);
+    _opacity?.removeListener(_updateOpacity);
+    if (_rasterTaskId != 0) {
+      SchedulerBinding.instance.cancelFrameCallbackWithId(_rasterTaskId);
+      _globalRasterDelayFrames--;
+    }
+    super.dispose();
+  }
+
+  @override
+  void paint(PaintingContext context, ui.Offset offset) {
+    assert(size == pictureInfo.size);
+    if (kDebugMode && debugSkipRaster) {
+      context.canvas
+          .drawRect(offset & size, Paint()..color = const Color(0xFFFF00FF));
+      return;
+    }
+
+    if (_opacityValue <= 0.0) {
+      return;
+    }
+
+    if (colorFilter != null) {
+      _colorPaint.colorFilter = colorFilter;
+    }
+    _colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
+
+    // Use this transform to get real x/y scale facotr.
+    final Float64List transformList = context.canvas.getTransform();
+    final double drawScaleFactor = math.max(
+      transformList[0 + 0 * 4],
+      transformList[1 + 1 * 4],
+    );
+    _maybeUpdateRaster(drawScaleFactor);
+
+    if (_rasterData != null) {
+      final ui.Image image = _rasterData!.image;
+      final int width = _rasterData!.key.width;
+      final int height = _rasterData!.key.height;
+
+      final Rect src = ui.Rect.fromLTWH(
+        0,
+        0,
+        width.toDouble(),
+        height.toDouble(),
+      );
+      final Rect dst = ui.Rect.fromLTWH(
+        offset.dx,
+        offset.dy,
+        pictureInfo.size.width,
+        pictureInfo.size.height,
+      );
+
+      context.canvas.drawImageRect(
+        image,
+        src,
+        dst,
+        Paint(),
+      );
+    } else {
+      final int saveCount = context.canvas.getSaveCount();
+      if (offset != Offset.zero) {
+        context.canvas.save();
+        context.canvas.translate(offset.dx, offset.dy);
+      }
+      if (_opacityValue != 1.0 || colorFilter != null) {
+        context.canvas.save();
+        context.canvas.clipRect(Offset.zero & size);
+        context.canvas.saveLayer(Offset.zero & size, _colorPaint);
+      }
+      context.canvas.drawPicture(pictureInfo.picture);
+      context.canvas.restoreToCount(saveCount);
+    }
+  }
 }
 
 /// A render object which draws a vector graphic instance as a raster.
