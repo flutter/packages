@@ -4,8 +4,6 @@
 
 package io.flutter.plugins.camerax;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.video.FileOutputOptions;

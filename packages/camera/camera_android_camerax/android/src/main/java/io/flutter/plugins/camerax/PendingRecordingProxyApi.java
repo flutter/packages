@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.camerax;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.Recording;
@@ -27,18 +29,15 @@ class PendingRecordingProxyApi extends PigeonApiPendingRecording {
 
   @NonNull
   @Override
-  public PendingRecording withAudioEnabled(PendingRecording pigeonInstance, @NonNull Boolean initialMuted) {
+  public PendingRecording withAudioEnabled(PendingRecording pigeonInstance, boolean initialMuted) {
     if (!initialMuted) {
-      return pigeonInstance.withAudioEnabled(false);
+      if (ContextCompat.checkSelfPermission(
+              getPigeonRegistrar().getContext(), Manifest.permission.RECORD_AUDIO)
+          == PackageManager.PERMISSION_GRANTED) {
+        return pigeonInstance.withAudioEnabled(false);
+      }
     }
-
-    if (ContextCompat.checkSelfPermission(
-            getPigeonRegistrar().getContext(), Manifest.permission.RECORD_AUDIO)
-        == PackageManager.PERMISSION_GRANTED) {
-      pendingRecording.withAudioEnabled(true);
-    } else {
-      throw new IllegalStateException("Recording audio was requested, but the recording will fail because the record audio permission was not granted.");
-    }
+    return pigeonInstance.withAudioEnabled(true);
   }
 
   @NonNull
