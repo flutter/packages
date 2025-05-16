@@ -11,14 +11,7 @@ G_BEGIN_DECLS
 #define FLUTTER_PLUGIN_EXPORT
 #endif
 
-typedef struct _CameraLinuxPlugin CameraLinuxPlugin;
-typedef struct {
-  GObjectClass parent_class;
-} CameraLinuxPluginClass;
-
-FLUTTER_PLUGIN_EXPORT GType camera_linux_plugin_get_type();
-
-FLUTTER_PLUGIN_EXPORT void camera_linux_plugin_register_with_registrar(
+FLUTTER_PLUGIN_EXPORT void camera_plugin_register_with_registrar(
     FlPluginRegistrar* registrar);
 
 G_END_DECLS

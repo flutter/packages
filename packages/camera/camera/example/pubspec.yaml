@@ -29,5 +29,11 @@ dev_dependencies:
     sdk: flutter
   leak_tracker_flutter_testing: any
 
+dependency_overrides:
+  camera_web:
+    path: ../../camera_web
+  camera_linux:
+    path: ../../camera_linux
+
 flutter:
   uses-material-design: true
