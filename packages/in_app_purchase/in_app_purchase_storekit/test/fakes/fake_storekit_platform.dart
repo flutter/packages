@@ -33,6 +33,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   bool isPaymentQueueDelegateRegistered = false;
   String _countryCode = 'USA';
   String _countryIdentifier = 'LL';
+  bool shouldStoreKit2BeEnabled = true;
 
   void reset() {
     transactionList = <SKPaymentTransactionWrapper>[];
@@ -283,7 +284,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
 
   @override
   bool supportsStoreKit2() {
-    return true;
+    return shouldStoreKit2BeEnabled;
   }
 }
 
