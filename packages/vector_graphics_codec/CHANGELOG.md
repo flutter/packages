@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 1.1.13
 
 * Works around a subtle Wasm bug in `writeRadialGradient`.

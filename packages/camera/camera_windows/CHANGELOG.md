@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.2.6+2
 
 * Fixes compile errors under strict standards mode.

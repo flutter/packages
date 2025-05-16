@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.1.2
 
 * Added a callback to the widget for testing to make unit tests more deterministic.

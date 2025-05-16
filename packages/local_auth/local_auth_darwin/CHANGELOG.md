@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 1.4.3
 
 * Handles when biometry hardware is available but permissions have been denied for the app.
