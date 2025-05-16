@@ -5,6 +5,7 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -88,7 +89,15 @@ public class DeviceOrientationManagerTest {
   }
 
   @Test
-  public void stop_disablesOrientationListenerAndClearsLastOrientation() {}
+  public void stop_disablesOrientationListener() {
+    OrientationEventListener mockOrientationEventListener = mock(OrientationEventListener.class);
+    deviceOrientationManager.orientationEventListener = mockOrientationEventListener;
+
+    deviceOrientationManager.stop();
+
+    verify(mockOrientationEventListener).disable();
+    assertNull(deviceOrientationManager.orientationEventListener);
+  }
 
   @Test
   public void handleOrientationChange_shouldSendMessageWhenOrientationIsUpdated() {
