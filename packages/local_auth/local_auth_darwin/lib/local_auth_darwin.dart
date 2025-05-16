@@ -99,9 +99,8 @@ class LocalAuthDarwin extends LocalAuthPlatform {
   @override
   Future<bool> isDeviceSupported() async => _api.isDeviceSupported();
 
-  /// Always returns false as this method is not supported on iOS or macOS.
   @override
-  Future<bool> stopAuthentication() async => false;
+  Future<bool> stopAuthentication() async => _api.stopAuthentication();
 
   AuthStrings _pigeonStringsFromiOSAuthMessages(
       String localizedReason, Iterable<AuthMessages> messagesList) {
