@@ -13,7 +13,7 @@ import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
 import 'package:stream_transform/stream_transform.dart';
 import 'camerax_library.dart';
 import 'camerax_proxy.dart';
-import 'rotated_preview.dart';
+import 'rotated_preview_delegate.dart';
 
 /// The Android implementation of [CameraPlatform] that uses the CameraX library.
 class AndroidCameraCameraX extends CameraPlatform {
@@ -256,6 +256,11 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The initial orientation of the device when the camera is created.
   late DeviceOrientation _initialDeviceOrientation;
 
+  /// The initial rotation of the Android default display when the camera is created.
+  ///
+  /// This is expressed in terms of one of the [Surface] rotation constant.
+  late int _initialDefaultDisplayRotation;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -430,6 +435,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     _initialDeviceOrientation = _deserializeDeviceOrientation(
       await deviceOrientationManager.getUiOrientation(),
     );
+    _initialDefaultDisplayRotation =
+        await deviceOrientationManager.getDefaultDisplayRotation();
 
     return flutterSurfaceTextureId;
   }
@@ -917,31 +924,20 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
+    final Stream<DeviceOrientation> deviceOrientationStream =
+        onDeviceOrientationChanged()
+            .map((DeviceOrientationChangedEvent e) => e.orientation);
     final Widget preview = Texture(textureId: cameraId);
 
-    if (_handlesCropAndRotation) {
-      return preview;
-    }
-
-    final Stream<DeviceOrientation> deviceOrientationStream =
-        onDeviceOrientationChanged().map(
-      (DeviceOrientationChangedEvent e) => e.orientation,
-    );
-    if (cameraIsFrontFacing) {
-      return RotatedPreview.frontFacingCamera(
-        _initialDeviceOrientation,
-        deviceOrientationStream,
+    return RotatedPreviewDelegate(
+        handlesCropAndRotation: _handlesCropAndRotation,
+        initialDeviceOrientation: _initialDeviceOrientation,
+        initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
+        deviceOrientationStream: deviceOrientationStream,
         sensorOrientationDegrees: sensorOrientationDegrees,
-        child: preview,
-      );
-    } else {
-      return RotatedPreview.backFacingCamera(
-        _initialDeviceOrientation,
-        deviceOrientationStream,
-        sensorOrientationDegrees: sensorOrientationDegrees,
-        child: preview,
-      );
-    }
+        cameraIsFrontFacing: cameraIsFrontFacing,
+        deviceOrientationManager: deviceOrientationManager,
+        child: preview);
   }
 
   /// Captures an image and returns the file where it was saved.

@@ -49,9 +49,8 @@ public class DeviceOrientationManager {
    * the deliver orientation updates based on the UI orientation.
    */
   public void start() {
-    if (broadcastReceiver != null) {
-      return;
-    }
+    stop();
+
     broadcastReceiver =
         new BroadcastReceiver() {
           @Override
@@ -70,6 +69,8 @@ public class DeviceOrientationManager {
     }
     getContext().unregisterReceiver(broadcastReceiver);
     broadcastReceiver = null;
+
+    lastOrientation = null;
   }
 
   /**

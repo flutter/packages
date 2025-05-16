@@ -26,7 +26,8 @@ final class CameraPluginCreateCameraTests: XCTestCase {
       permissionManager: mockPermissionManager,
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { mockCaptureSession },
-      captureDeviceInputFactory: MockCaptureDeviceInputFactory()
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
 
     return (cameraPlugin, mockPermissionManager, mockCaptureSession)
