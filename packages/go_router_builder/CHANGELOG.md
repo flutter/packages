@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 2.9.1
 
 - Fixes an deprecated warning for using withNullability

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.2.3+4
 
 * Updates README to remove contributor-focused documentation.

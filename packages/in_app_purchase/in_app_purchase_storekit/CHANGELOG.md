@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.4.0
 
 * **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.

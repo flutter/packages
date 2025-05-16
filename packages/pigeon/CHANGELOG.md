@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 25.3.2
 
 * [dart] Fixes null pointer crashes/exceptions caused by premature finalization of Dart instances
