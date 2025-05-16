@@ -70,7 +70,8 @@ public class DeviceOrientationManagerTest {
     doNothing().when(deviceOrientationManagerSpy).handleUIOrientationChange();
 
     deviceOrientationManagerSpy.start();
-    deviceOrientationManagerSpy.orientationEventListener.onOrientationChanged(3);
+    deviceOrientationManagerSpy.orientationEventListener.onOrientationChanged(
+        /* some device orientation */ 3);
 
     verify(deviceOrientationManagerSpy).handleUIOrientationChange();
   }
