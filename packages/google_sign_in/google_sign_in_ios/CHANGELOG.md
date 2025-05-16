@@ -1,3 +1,8 @@
+## 6.0.0
+
+* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
+  interface package, rather than 2.x, significantly changing the API surface.
+
 ## 5.9.0
 
 * Updates Google Sign-In SDK to 8.0+.

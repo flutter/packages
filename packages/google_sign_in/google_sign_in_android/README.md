@@ -18,7 +18,7 @@ should add it to your `pubspec.yaml` as usual.
 
 To use Google Sign-In, you'll need to
 [register your application](https://firebase.google.com/docs/android/setup).
-If you are using Google Cloud Platform directl, rather than Firebase, you will
+If you are using Google Cloud Platform directly, rather than Firebase, you will
 need to register both an Android application and a web application in the
 [Google Cloud Platform API manager](https://console.developers.google.com/).
 
@@ -35,6 +35,6 @@ Otherwise, you may encounter `APIException` errors.
 
 You will also need to enable any OAuth APIs that you want, using the
 [Google Cloud Platform API manager](https://console.developers.google.com/). For
-example, if you want to mimic the behavior of the Google Sign-In sample app,
+example, if you want to mimic the behavior of the Google Sign-In example app,
 you'll need to enable the
 [Google People API](https://developers.google.com/people/).

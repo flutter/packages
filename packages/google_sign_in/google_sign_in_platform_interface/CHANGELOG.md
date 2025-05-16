@@ -1,3 +1,10 @@
+## 3.0.0
+
+* **BREAKING CHANGE**: Overhauls the entire API surface to better abstract the
+  current set of underlying platform SDKs, and to use structured errors. See
+  API doc comments for details on the behaviors that platform implementations
+  must implement.
+
 ## 2.5.0
 
 * Adds a sign-in field to allow Android clients to explicitly specify an account name.

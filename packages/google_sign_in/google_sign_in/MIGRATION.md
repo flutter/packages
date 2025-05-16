@@ -5,13 +5,13 @@ SDK, which has been deprecated on both Android and Web, and replaced with new
 SDKs that have significantly different structures. As a result, the
 `google_sign_in` API surface has changed significantly. Notable differences
 include:
-* There is now an explicit `initialize` step that must be called excatly once,
+* `GoogleSignIn` is now a singleton, which is obtained via
+  `GoogleSignIn.instance`. In practice, creating multiple `GoogleSignIn`
+  instances in 6.x would not work correctly, so this just enforces an existing
+  restriction.
+* There is now an explicit `initialize` step that must be called exactly once,
   before any other methods. On some platforms the future will complete almost
   immediately, but on others (for example, web) it may take some time.
-  * `GoogleSignIn` is also now a singleton, which is obtained via
-    `GoogleSignIn.instance`. In practice, creating multiple `GoogleSignIn`
-    instances in 6.x would not work correctly, so this just enforces an existing
-    restriction.
 * The plugin no longer tracks a single "current" signed in user. Instead,
   applications that assume a single signed in user should track this at the
   application level using the `authenticationEvents` stream.
@@ -22,9 +22,9 @@ include:
   used.
   * In applications where these steps should happen at the same time, you can
     pass a `scopeHint` during the authentication step. On platforms that support
-    it this allows for a combined authentication and authorization UI flow, but
-    not all platforms allow combining them, so your application should be
-    prepared to trigger a separate authorization flow if necessary.
+    it this allows for a combined authentication and authorization UI flow.
+    Not all platforms allow combining these flows, so your application should be
+    prepared to trigger a separate authorization prompt if necessary.
   * Authorization is further separated into client and server authorization.
     Applications that need a `serverAuthCode` must now call a separate method,
     `authorizeServer`, to obtain that code.
@@ -44,13 +44,14 @@ include:
   7.0, on web this may show a floating sign-in card, and on Android it may show
   an account selection sheet.
   * This new method is no longer guaranteed to return a future. This allows
-    clients to distinguish, at runtime, platforms where a definitive "signed in"
-    or "not signed in" response can be returned quickly, and thus `await`-ing
-    completion is reasonable, in which case a `Future` is returned, and those
-    (such as web) where it could take an arbitrary amount of time, in which case
-    no `Future` is returned, and clients should assume a non-signed-in state
-    until/unless a sign-in event is eventually posted to the
-    `authenticationEvents` stream.
+    clients to distinguish, at runtime:
+      * platforms where a definitive "signed in" or "not signed in" response
+        can be returned quickly, and thus `await`-ing completion is reasonable,
+        in which case a `Future` is returned, and
+      * platforms (such as web) where it could take an arbitrary amount of time,
+        in which case no `Future` is returned, and clients should assume a
+        non-signed-in state until/unless a sign-in event is eventually posted to
+        the `authenticationEvents` stream.
 * `authenticate` replaces the authentication portion of `signIn` on platforms
   that support it (see below).
 * The new `supportsAuthenticate` method allows clients to determine at runtime

@@ -1,3 +1,10 @@
+## 7.0.0
+
+* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
+  interface package, rather than 2.x, significantly changing the API surface.
+* Switches to Sign in with Google (`CredentialManager`) as the underlying
+  SDK, removing usage of the deprecated Google Sign In for Android SDK.
+
 ## 6.2.1
 
 * Removes obsolete code related to supporting SDK <21.

@@ -11,24 +11,6 @@ so you do not need to add it to your `pubspec.yaml`.
 However, if you `import` this package to use any of its APIs directly, you
 should add it to your `pubspec.yaml` as usual.
 
-### macOS setup
-
-The GoogleSignIn SDK requires keychain sharing to be enabled, by [adding the
-following entitlements](https://flutter.dev/to/macos-entitlements):
-
-```xml
-    <key>keychain-access-groups</key>
-    <array>
-        <string>$(AppIdentifierPrefix)com.google.GIDSignIn</string>
-    </array>
-```
-
-Without this step, the plugin will throw a `keychain error` `PlatformException`
-when trying to sign in.
-
-[1]: https://pub.dev/packages/google_sign_in
-[2]: https://flutter.dev/to/endorsed-federated-plugin
-
 ### iOS integration
 
 1. [Create a Firebase project](https://firebase.google.com/docs/ios/setup#create-firebase-project)
@@ -87,3 +69,32 @@ final GoogleSignIn googleSignIn = GoogleSignIn(
 ```
 
 Note that step 6 is still required.
+
+#### App Store requirements
+
+Apple's App Review Guidelines impose
+[extra login option requirements](https://developer.apple.com/app-store/review/guidelines/#login-services)
+on apps that include Google Sign-In. Other packages, such as the Flutter Favorite
+[`sign_in_with_apple`](https://pub.dev/packages/sign_in_with_apple), may
+be useful in satisfying the review requirements.
+
+### macOS integration
+
+Follow the steps above for iOS integration, but using the `Info.plist` in the
+`macos` directory.
+
+In addition, the GoogleSignIn SDK requires keychain sharing to be enabled, by
+[adding the following entitlements](https://flutter.dev/to/macos-entitlements):
+
+```xml
+    <key>keychain-access-groups</key>
+    <array>
+        <string>$(AppIdentifierPrefix)com.google.GIDSignIn</string>
+    </array>
+```
+
+Without this step, the plugin will throw a `keychain error` `PlatformException`
+when trying to sign in.
+
+[1]: https://pub.dev/packages/google_sign_in
+[2]: https://flutter.dev/to/endorsed-federated-plugin

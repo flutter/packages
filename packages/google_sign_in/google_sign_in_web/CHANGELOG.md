@@ -1,3 +1,8 @@
+## 1.0.0
+
+* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
+  interface package, rather than 2.x, significantly changing the API surface.
+
 ## 0.12.4+4
 
 * Asserts that new `forceAccountName` parameter is null (not used in web).
