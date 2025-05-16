@@ -12,7 +12,6 @@ import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
-import androidx.core.content.ContextCompat;
 import java.io.File;
 
 /**
@@ -69,11 +68,6 @@ class RecorderProxyApi extends PigeonApiRecorder {
 
     final PendingRecording pendingRecording =
         pigeonInstance.prepareRecording(getPigeonRegistrar().getContext(), fileOutputOptions);
-    if (ContextCompat.checkSelfPermission(
-            getPigeonRegistrar().getContext(), Manifest.permission.RECORD_AUDIO)
-        == PackageManager.PERMISSION_GRANTED) {
-      pendingRecording.withAudioEnabled();
-    }
 
     return pendingRecording;
   }

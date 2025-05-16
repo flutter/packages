@@ -27,6 +27,22 @@ class PendingRecordingProxyApi extends PigeonApiPendingRecording {
 
   @NonNull
   @Override
+  public PendingRecording withAudioEnabled(PendingRecording pigeonInstance, @NonNull Boolean initialMuted) {
+    if (!initialMuted) {
+      return pigeonInstance.withAudioEnabled(false);
+    }
+
+    if (ContextCompat.checkSelfPermission(
+            getPigeonRegistrar().getContext(), Manifest.permission.RECORD_AUDIO)
+        == PackageManager.PERMISSION_GRANTED) {
+      pendingRecording.withAudioEnabled(true);
+    } else {
+      throw new IllegalStateException("Recording audio was requested, but the recording will fail because the record audio permission was not granted.");
+    }
+  }
+
+  @NonNull
+  @Override
   public Recording start(
       PendingRecording pigeonInstance, @NonNull VideoRecordEventListener listener) {
     return pigeonInstance.start(

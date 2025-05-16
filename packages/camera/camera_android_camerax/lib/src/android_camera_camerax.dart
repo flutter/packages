@@ -261,6 +261,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// This is expressed in terms of one of the [Surface] rotation constant.
   late int _initialDefaultDisplayRotation;
 
+  /// Whether or not audio should attempt to be enabled for recording video.
+  late final bool _enableRecordingAudio;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -349,9 +352,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     CameraDescription cameraDescription,
     MediaSettings? mediaSettings,
   ) async {
+    _enableRecordingAudio = mediaSettings?.enableAudio ?? false;
     final CameraPermissionsError? error =
         await systemServicesManager.requestCameraPermissions(
-      mediaSettings?.enableAudio ?? false,
+      _enableRecordingAudio,
     );
 
     if (error != null) {
@@ -1102,6 +1106,10 @@ class AndroidCameraCameraX extends CameraPlatform {
       '.temp',
     );
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
+
+    // Enable/disable recording audio as requested.
+    pendingRecording =
+        await pendingRecording!.withAudioEnabled(_enableRecordingAudio);
 
     recording = await pendingRecording!.start(_videoRecordingEventListener);
 
