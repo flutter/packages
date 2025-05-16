@@ -59,7 +59,7 @@ public class DeviceOrientationManager {
   @VisibleForTesting
   @NonNull
   /**
-   * Create an {@link OrientationEventListener} that will call the callback method of the {@link
+   * Creates an {@link OrientationEventListener} that will call the callback method of the {@link
    * DeviceOrientationManagerProxyApi} whenever it is notified of a new device orientation and this
    * {@code DeviceOrientationManager} instance determines that the orientation of the device {@link
    * Configuration} has changed.
