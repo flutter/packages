@@ -200,6 +200,11 @@ WebKitWebViewController createTestWebViewController(
         newWKWebViewConfiguration: () {
           return MockWKWebViewConfiguration();
         },
+        newWKWebpagePreferences: () {
+          return WKWebpagePreferences.pigeon_detached(
+            pigeon_instanceManager: TestInstanceManager(),
+          );
+        },
         newWKUIDelegate: ({
           dynamic onCreateWebView,
           dynamic requestMediaCapturePermission,

@@ -8,6 +8,14 @@ import XCTest
 @testable import webview_flutter_wkwebview
 
 class WebpagePreferencesProxyAPITests: XCTestCase {
+  func testPigeonDefaultConstructor() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiWKWebpagePreferences(registrar)
+
+    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
+    XCTAssertNotNil(instance)
+  }
+
   @available(iOS 14.0, macOS 11.0, *)
   @MainActor func testSetAllowsContentJavaScript() {
     let registrar = TestProxyApiRegistrar()

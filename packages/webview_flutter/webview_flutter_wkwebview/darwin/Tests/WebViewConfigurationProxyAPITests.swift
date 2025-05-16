@@ -135,4 +135,17 @@ class WebViewConfigurationProxyAPITests: XCTestCase {
 
     XCTAssertEqual(value, instance.defaultWebpagePreferences)
   }
+
+  @available(iOS 13.0, macOS 10.15, *)
+  @MainActor func testSetDefaultWebpagePreferences() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiWKWebViewConfiguration(registrar)
+
+    let instance = WKWebViewConfiguration()
+    let preferences = WKWebpagePreferences()
+    try? api.pigeonDelegate.setDefaultWebpagePreferences(
+      pigeonApi: api, pigeonInstance: instance, preferences: preferences)
+
+    XCTAssertEqual(instance.defaultWebpagePreferences, preferences)
+  }
 }
