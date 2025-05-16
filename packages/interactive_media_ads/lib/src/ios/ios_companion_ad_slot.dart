@@ -114,7 +114,7 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
       return s = IMACompanionAdSlot(view: _iosParams._proxy.newUIView());
     } else {
       s = IMACompanionAdSlot.size(
-        view: _iosParams._proxy.newUIView(),
+        view: viewController.view,
         width: _iosParams.width!,
         height: _iosParams.height!,
       );

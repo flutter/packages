@@ -20,6 +20,7 @@ final class IOSAdDisplayContainerCreationParams
   const IOSAdDisplayContainerCreationParams({
     super.key,
     required super.onContainerAdded,
+    super.companionSlots,
     @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
   })  : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
         super();
@@ -33,6 +34,7 @@ final class IOSAdDisplayContainerCreationParams
     return IOSAdDisplayContainerCreationParams(
       key: params.key,
       onContainerAdded: params.onContainerAdded,
+      companionSlots: params.companionSlots,
       imaProxy: imaProxy,
     );
   }
@@ -73,10 +75,10 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         adDisplayContainer = _iosParams._imaProxy.newIMAAdDisplayContainer(
           adContainer: _controller.view,
           adContainerViewController: _controller,
-          companionSlots: await Future.wait(_iosParams.companionSlots
+          companionSlots: coolerPrint(await Future.wait(_iosParams.companionSlots
               .cast<IOSCompanionAdSlot>()
               .map((IOSCompanionAdSlot slot) =>
-                  slot.getNativeCompanionAdSlot())),
+                  slot.getNativeCompanionAdSlot()))),
         );
         await _viewDidAppearCompleter.future;
         params.onContainerAdded(this);
@@ -104,4 +106,9 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
       },
     );
   }
+}
+
+T coolerPrint<T>(T object) {
+  print(object);
+  return object;
 }
