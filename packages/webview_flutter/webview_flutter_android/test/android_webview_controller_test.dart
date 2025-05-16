@@ -1451,6 +1451,28 @@ void main() {
       verify(mockWebView.scrollBy(4, 2)).called(1);
     });
 
+    test('verticalScrollBarEnabled', () async {
+      final MockWebView mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+      );
+
+      await controller.setVerticalScrollBarEnabled(false);
+
+      verify(mockWebView.setVerticalScrollBarEnabled(false)).called(1);
+    });
+
+    test('horizontalScrollBarEnabled', () async {
+      final MockWebView mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+      );
+
+      await controller.setHorizontalScrollBarEnabled(false);
+
+      verify(mockWebView.setHorizontalScrollBarEnabled(false)).called(1);
+    });
+
     test('getScrollPosition', () async {
       final MockWebView mockWebView = MockWebView();
       final AndroidWebViewController controller = createControllerWithMocks(
