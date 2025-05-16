@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Optimizes caption retrieval with binary search.
 
 ## 2.9.5
 
