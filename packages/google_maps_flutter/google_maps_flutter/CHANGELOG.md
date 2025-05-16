@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
-
 ## 2.12.2
 
 * Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.

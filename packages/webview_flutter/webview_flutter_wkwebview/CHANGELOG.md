@@ -1,7 +1,3 @@
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
-
 ## 3.21.0
 
 * Adds support to set whether to draw the scrollbar. See

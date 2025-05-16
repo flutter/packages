@@ -1,7 +1,6 @@
 ## NEXT
 
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
-* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 
 ## 6.3.0
 
