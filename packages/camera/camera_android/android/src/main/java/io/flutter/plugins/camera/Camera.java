@@ -5,7 +5,6 @@
 package io.flutter.plugins.camera;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.ImageFormat;
@@ -35,6 +34,7 @@ import android.view.Display;
 import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.BuildConfig;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
@@ -152,7 +152,7 @@ class Camera
       return cameraDevice.createCaptureRequest(templateType);
     }
 
-    @TargetApi(VERSION_CODES.P)
+    @RequiresApi(VERSION_CODES.P)
     @Override
     public void createCaptureSession(SessionConfiguration config) throws CameraAccessException {
       cameraDevice.createCaptureSession(config);
@@ -544,7 +544,7 @@ class Camera
     }
   }
 
-  @TargetApi(VERSION_CODES.P)
+  @RequiresApi(VERSION_CODES.P)
   private void createCaptureSessionWithSessionConfig(
       List<OutputConfiguration> outputConfigs, CameraCaptureSession.StateCallback callback)
       throws CameraAccessException {
