@@ -7,7 +7,7 @@ import 'package:camera_android_camerax/src/camerax_library.dart';
 import 'package:camera_android_camerax/src/camerax_proxy.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart' show RotatedBox, Texture;
+import 'package:flutter/widgets.dart' show RotatedBox, Texture, Transform;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -1031,8 +1031,13 @@ void main() {
           final RotatedBox rotatedBox =
               tester.widget<RotatedBox>(find.byType(RotatedBox));
 
-          expect(rotatedBox.child, isA<Texture>());
-          expect((rotatedBox.child! as Texture).textureId, cameraId);
+          // We expect a Transform widget to wrap the RotatedBox with the camera
+          // preview to mirror the preview, since the front camera is being
+          // used.
+          expect(rotatedBox.child, isA<Transform>());
+
+          final Transform tranformedPreview = rotatedBox.child! as Transform;
+          expect((tranformedPreview.child! as Texture).textureId, cameraId);
           expect(
             rotatedBox.quarterTurns,
             expectedQuarterTurns,
@@ -1077,8 +1082,14 @@ void main() {
           const int expectedQuarterTurns = _180DegreesClockwise;
           final RotatedBox rotatedBox =
               tester.widget<RotatedBox>(find.byType(RotatedBox));
-          expect(rotatedBox.child, isA<Texture>());
-          expect((rotatedBox.child! as Texture).textureId, cameraId);
+
+          // We expect a Transform widget to wrap the RotatedBox with the camera
+          // preview to mirror the preview, since the front camera is being
+          // used.
+          expect(rotatedBox.child, isA<Transform>());
+
+          final Transform tranformedPreview = rotatedBox.child! as Transform;
+          expect((tranformedPreview.child! as Texture).textureId, cameraId);
           expect(
             rotatedBox.quarterTurns,
             expectedQuarterTurns,
@@ -1122,8 +1133,14 @@ void main() {
           const int expectedQuarterTurns = _90DegreesClockwise;
           final RotatedBox rotatedBox =
               tester.widget<RotatedBox>(find.byType(RotatedBox));
-          expect(rotatedBox.child, isA<Texture>());
-          expect((rotatedBox.child! as Texture).textureId, cameraId);
+
+          // We expect a Transform widget to wrap the RotatedBox with the camera
+          // preview to mirror the preview, since the front camera is being
+          // used.
+          expect(rotatedBox.child, isA<Transform>());
+
+          final Transform tranformedPreview = rotatedBox.child! as Transform;
+          expect((tranformedPreview.child! as Texture).textureId, cameraId);
           expect(
             rotatedBox.quarterTurns,
             expectedQuarterTurns,
@@ -1168,8 +1185,14 @@ void main() {
         const int expectedQuarterTurns = _0DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
-        expect(rotatedBox.child, isA<Texture>());
-        expect((rotatedBox.child! as Texture).textureId, cameraId);
+
+        // We expect a Transform widget to wrap the RotatedBox with the camera
+        // preview to mirror the preview, since the front camera is being
+        // used.
+        expect(rotatedBox.child, isA<Transform>());
+
+        final Transform tranformedPreview = rotatedBox.child! as Transform;
+        expect((tranformedPreview.child! as Texture).textureId, cameraId);
         expect(rotatedBox.quarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
@@ -1245,8 +1268,13 @@ void main() {
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
 
-        expect(rotatedBox.child, isA<Texture>());
-        expect((rotatedBox.child! as Texture).textureId, cameraId);
+        // We expect a Transform widget to wrap the RotatedBox with the camera
+        // preview to mirror the preview, since the front camera is being
+        // used.
+        expect(rotatedBox.child, isA<Transform>());
+
+        final Transform tranformedPreview = rotatedBox.child! as Transform;
+        expect((tranformedPreview.child! as Texture).textureId, cameraId);
         expect(rotatedBox.quarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
@@ -1283,9 +1311,16 @@ void main() {
         const int expectedQuarterTurns = _90DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
+
+        // We expect a Transform widget to wrap the RotatedBox with the camera
+        // preview to mirror the preview, since the front camera is being
+        // used.
+        expect(rotatedBox.child, isA<Transform>());
+
+        final Transform tranformedPreview = rotatedBox.child! as Transform;
+        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
-        expect(rotatedBox.child, isA<Texture>());
-        expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
@@ -1320,9 +1355,16 @@ void main() {
         const int expectedQuarterTurns = _180DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
+
+        // We expect a Transform widget to wrap the RotatedBox with the camera
+        // preview to mirror the preview, since the front camera is being
+        // used.
+        expect(rotatedBox.child, isA<Transform>());
+
+        final Transform tranformedPreview = rotatedBox.child! as Transform;
+        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
-        expect(rotatedBox.child, isA<Texture>());
-        expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
@@ -1359,9 +1401,16 @@ void main() {
         const int expectedQuarterTurns = _270DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
+
+        // We expect a Transform widget to wrap the RotatedBox with the camera
+        // preview to mirror the preview, since the front camera is being
+        // used.
+        expect(rotatedBox.child, isA<Transform>());
+
+        final Transform tranformedPreview = rotatedBox.child! as Transform;
+        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
-        expect(rotatedBox.child, isA<Texture>());
-        expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
@@ -1449,11 +1498,18 @@ void main() {
                 currentDefaultDisplayRotation]!;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
+
+        // We expect a Transform widget to wrap the RotatedBox with the camera
+        // preview to mirror the preview, since the front camera is being
+        // used.
+        expect(rotatedBox.child, isA<Transform>());
+
+        final Transform tranformedPreview = rotatedBox.child! as Transform;
+        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
             ? rotatedBox.quarterTurns + 4
             : rotatedBox.quarterTurns;
-        expect(rotatedBox.child, isA<Texture>());
-        expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
             reason:
                 'When the default display rotation is $currentDefaultDisplayRotation, expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
@@ -1539,11 +1595,17 @@ void main() {
         final RotatedBox rotatedBox = tester.widget<RotatedBox>(
           find.byType(RotatedBox),
         );
+
+        // We expect a Transform widget to wrap the RotatedBox with the camera
+        // preview to mirror the preview, since the front camera is being
+        // used.
+        expect(rotatedBox.child, isA<Transform>());
+
+        final Transform tranformedPreview = rotatedBox.child! as Transform;
+        expect((tranformedPreview.child! as Texture).textureId, cameraId);
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
             ? rotatedBox.quarterTurns + 4
             : rotatedBox.quarterTurns;
-        expect(rotatedBox.child, isA<Texture>());
-        expect((rotatedBox.child! as Texture).textureId, cameraId);
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
             reason:
                 'When the device orientation is $currentDeviceOrientation, expected the preview to be rotated by $expectedQuarterTurns quarter turns (which is ${expectedQuarterTurns * 90} degrees clockwise) but instead was rotated ${rotatedBox.quarterTurns} quarter turns.');
@@ -1760,8 +1822,14 @@ void main() {
         const int expectedQuarterTurns = _90DegreesClockwise;
         final RotatedBox rotatedBox =
             tester.widget<RotatedBox>(find.byType(RotatedBox));
-        expect(rotatedBox.child, isA<Texture>());
-        expect((rotatedBox.child! as Texture).textureId, cameraId);
+
+        // We expect a Transform widget to wrap the RotatedBox with the camera
+        // preview to mirror the preview, since the front camera is being
+        // used.
+        expect(rotatedBox.child, isA<Transform>());
+
+        final Transform tranformedPreview = rotatedBox.child! as Transform;
+        expect((tranformedPreview.child! as Texture).textureId, cameraId);
         expect(rotatedBox.quarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
