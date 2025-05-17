@@ -590,7 +590,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     return Expanded(
       child: SizedBox(
-        height: kMinInteractiveDimension,
+        height: 56.0,
         child: ListView(scrollDirection: Axis.horizontal, children: toggles),
       ),
     );
