@@ -319,6 +319,12 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     return _map(mapId).lastStyleError;
   }
 
+  @override
+  Future<bool> isAdvancedMarkersAvailable({required int mapId}) async {
+    final GoogleMapController map = _map(mapId);
+    return map.isAdvancedMarkersAvailable();
+  }
+
   /// Disposes of the current map. It can't be used afterwards!
   @override
   void dispose({required int mapId}) {

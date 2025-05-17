@@ -4,6 +4,7 @@
 
 #import <Flutter/Flutter.h>
 #import <GoogleMaps/GoogleMaps.h>
+#import "FLTGoogleMapJSONConversions.h"
 #import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN

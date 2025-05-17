@@ -32,4 +32,6 @@ interface MarkerOptionsSink {
   void setVisible(boolean visible);
 
   void setZIndex(float zIndex);
+
+  void setCollisionBehavior(int collisionBehavior);
 }
