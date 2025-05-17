@@ -1,3 +1,7 @@
+## 0.5.12+1
+
+* Fix broken cameraTargetBounds option on web.
+
 ## 0.5.12
 
 * Adds support for ground overlay.
