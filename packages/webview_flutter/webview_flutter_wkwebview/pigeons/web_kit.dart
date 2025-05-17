@@ -547,7 +547,23 @@ abstract class HTTPCookie extends NSObject {
 /// values. The wrapper returns this class instead to handle this scenario.
 @ProxyApi()
 abstract class AuthenticationChallengeResponse {
+  /// Creates an [AuthenticationChallengeResponse].
+  ///
+  /// Due to https://github.com/flutter/flutter/issues/162437, this should only
+  /// be used for testing.
   AuthenticationChallengeResponse();
+
+  /// Creates an [AuthenticationChallengeResponse]
+  ///
+  /// This provides the native `AuthenticationChallengeResponse()` constructor
+  /// as an async method to ensure the class is added to the InstanceManager.
+  /// See https://github.com/flutter/flutter/issues/162437.
+  @async
+  @static
+  AuthenticationChallengeResponse createAsync(
+    UrlSessionAuthChallengeDisposition disposition,
+    URLCredential? credential,
+  );
 
   /// The option to use to handle the challenge.
   late UrlSessionAuthChallengeDisposition disposition;
@@ -788,22 +804,9 @@ abstract class WKNavigationDelegate extends NSObject {
   /// Tells the delegate that the web view’s content process was terminated.
   void Function(WKWebView webView)? webViewWebContentProcessDidTerminate;
 
-  // TODO(bparrishMines): This method should return an
-  // `AuthenticationChallengeResponse` once the cause of
-  // https://github.com/flutter/flutter/issues/162437 can be found and fixed.
   /// Asks the delegate to respond to an authentication challenge.
-  ///
-  /// This return value expects a List with:
-  ///
-  /// 1. `UrlSessionAuthChallengeDisposition`
-  /// 2. A nullable map to instantiate a `URLCredential`. The map structure is
-  /// [
-  ///   "user": "<nonnull String username>",
-  ///   "password": "<nonnull String user password>",
-  ///   "persistence": <nonnull enum value of `UrlCredentialPersistence`>,
-  /// ]
   @async
-  late List<Object?> Function(
+  late AuthenticationChallengeResponse Function(
     WKWebView webView,
     URLAuthenticationChallenge challenge,
   ) didReceiveAuthenticationChallenge;
@@ -1131,6 +1134,30 @@ abstract class URLCredential extends NSObject {
     String password,
     UrlCredentialPersistence persistence,
   );
+
+  /// Creates a URL credential instance for internet password authentication
+  /// with a given user name and password, using a given persistence setting.
+  ///
+  /// This provides the native `UrlCredential(user:password:persistence)`
+  /// constructor as an async method to ensure the class is added to the
+  /// InstanceManager. See https://github.com/flutter/flutter/issues/162437.
+  @async
+  @static
+  URLCredential withUserAsync(
+    String user,
+    String password,
+    UrlCredentialPersistence persistence,
+  );
+
+  /// Creates a URL credential instance for server trust authentication,
+  /// initialized with a accepted trust.
+  ///
+  /// This provides the native `UrlCredential(forTrust:)` constructor as an
+  /// async method to ensure the class is added to the InstanceManager. See
+  /// https://github.com/flutter/flutter/issues/162437.
+  @async
+  @static
+  URLCredential serverTrustAsync(SecTrust trust);
 }
 
 /// A server or an area on a server, commonly referred to as a realm, that
@@ -1152,7 +1179,7 @@ abstract class URLProtectionSpace extends NSObject {
   late String? authenticationMethod;
 
   /// A representation of the server’s SSL transaction state.
-  late SecTrust? getServerTrust;
+  SecTrust? getServerTrust();
 }
 
 /// A challenge from a server requiring authentication from the client.

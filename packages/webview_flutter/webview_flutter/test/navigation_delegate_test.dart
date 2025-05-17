@@ -111,6 +111,22 @@ void main() {
 
       verify(delegate.platform.setOnHttpError(onHttpError));
     });
+
+    test('onSslAuthError', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      final NavigationDelegate delegate = NavigationDelegate(
+        onSslAuthError: expectAsync1((_) {}),
+      );
+
+      final void Function(PlatformSslAuthError) callback = verify(
+              (delegate.platform as MockPlatformNavigationDelegate)
+                  .setOnSSlAuthError(captureAny))
+          .captured
+          .single as void Function(PlatformSslAuthError);
+
+      callback(TestPlatformSslAuthError());
+    });
   });
 }
 
@@ -125,3 +141,17 @@ class TestWebViewPlatform extends WebViewPlatform {
 
 class TestMockPlatformNavigationDelegate extends MockPlatformNavigationDelegate
     with MockPlatformInterfaceMixin {}
+
+class TestPlatformSslAuthError extends PlatformSslAuthError {
+  TestPlatformSslAuthError() : super(certificate: null, description: '');
+
+  @override
+  Future<void> cancel() {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> proceed() {
+    throw UnimplementedError();
+  }
+}

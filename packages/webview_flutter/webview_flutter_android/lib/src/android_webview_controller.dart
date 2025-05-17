@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_proxy.dart';
+import 'android_ssl_auth_error.dart';
 import 'android_webkit.g.dart' as android_webview;
 import 'android_webkit_constants.dart';
 import 'platform_views_service_proxy.dart';
@@ -1501,9 +1502,22 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         _,
         __,
         android_webview.SslErrorHandler handler,
-        ___,
-      ) {
-        handler.cancel();
+        android_webview.SslError error,
+      ) async {
+        final void Function(PlatformSslAuthError)? callback =
+            weakThis.target?._onSslAuthError;
+
+        if (callback != null) {
+          final AndroidSslAuthError authError =
+              await AndroidSslAuthError.fromNativeCallback(
+            error: error,
+            handler: handler,
+          );
+
+          callback(authError);
+        } else {
+          await handler.cancel();
+        }
       },
     );
 
@@ -1567,6 +1581,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
+  SslAuthErrorCallback? _onSslAuthError;
 
   void _handleNavigation(
     String url, {
@@ -1670,5 +1685,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;
+  }
+
+  @override
+  Future<void> setOnSSlAuthError(SslAuthErrorCallback onSslAuthError) async {
+    _onSslAuthError = onSslAuthError;
   }
 }
