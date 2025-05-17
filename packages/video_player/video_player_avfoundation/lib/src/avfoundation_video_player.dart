@@ -129,6 +129,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> seekToDefaultPosition(int playerId) {
+    return _api.seekToDefaultPosition(playerId);
+  }
+
+  @override
   Future<Duration> getPosition(int playerId) async {
     final int position = await _api.getPosition(playerId);
     return Duration(milliseconds: position);

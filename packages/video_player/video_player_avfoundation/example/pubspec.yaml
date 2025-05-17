@@ -6,6 +6,10 @@ environment:
   sdk: ^3.4.0
   flutter: ">=3.22.0"
 
+dependency_overrides:
+  video_player_platform_interface:
+    path: ../../video_player_platform_interface
+
 dependencies:
   flutter:
     sdk: flutter

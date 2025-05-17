@@ -660,6 +660,20 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _updatePosition(position);
   }
 
+  /// Seeks to the default position associated with the current MediaItem.
+  ///
+  /// The position can depend on the type of media being played.
+  /// For live streams it will typically be the live edge.
+  /// For other streams it will typically be the start.
+  Future<void> seekToDefaultPosition() async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+    await _videoPlayerPlatform.seekToDefaultPosition(_textureId);
+    final position = await _videoPlayerPlatform.getPosition(_textureId);
+    _updatePosition(position);
+  }
+
   /// Sets the audio volume of [this].
   ///
   /// [volume] indicates a value between 0.0 (silent) and 1.0 (full volume) on a
