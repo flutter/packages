@@ -37,7 +37,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // IMA sample tag for a pre-, mid-, and post-roll, single inline video ad. See more IMA sample
   // tags at https://developers.google.com/interactive-media-ads/docs/sdks/html5/client-side/tags
   static const String _adTagUrl =
-      'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/vmap_ad_samples&sz=640x480&cust_params=sample_ar%3Dpremidpost&ciu_szs=300x250&gdfp_req=1&ad_rule=1&output=vmap&unviewed_position_start=1&env=vp&impl=s&cmsid=496&vid=short_onecue&correlator=';
+      'https://pubads.g.doubleclick.net/gampad/ads?iu=/21775744923/external/single_preroll_skippable&sz=640x480&ciu_szs=300x250%2C728x90&gdfp_req=1&output=vast&unviewed_position_start=1&env=vp&impl=s&correlator=';
 
   // The AdsLoader instance exposes the request ads method.
   late final AdsLoader _adsLoader;
@@ -67,8 +67,14 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
       ContentProgressProvider();
   // #enddocregion example_widget
 
+  late final CompanionAdSlot companionAd = CompanionAdSlot.size(
+    width: 300,
+    height: 250,
+  );
+
   // #docregion ad_and_content_players
   late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
+    companionAds: <CompanionAdSlot>[companionAd],
     onContainerAdded: (AdDisplayContainer container) {
       _adsLoader = AdsLoader(
         container: container,
@@ -226,23 +232,37 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     // #enddocregion example_widget
     return Scaffold(
       body: Center(
-        child: SizedBox(
-          width: 300,
-          child: !_contentVideoController.value.isInitialized
-              ? Container()
-              : AspectRatio(
-                  aspectRatio: _contentVideoController.value.aspectRatio,
-                  child: Stack(
-                    children: <Widget>[
-                      // The display container must be on screen before any Ads can be
-                      // loaded and can't be removed between ads. This handles clicks for
-                      // ads.
-                      _adDisplayContainer,
-                      if (_shouldShowContentVideo)
-                        VideoPlayer(_contentVideoController)
-                    ],
-                  ),
-                ),
+        child: Column(
+          children: <Widget>[
+            const SizedBox(width: 100, height: 150),
+            SizedBox(
+              width: 300,
+              child: !_contentVideoController.value.isInitialized
+                  ? Container()
+                  : AspectRatio(
+                      aspectRatio: _contentVideoController.value.aspectRatio,
+                      child: Stack(
+                        children: <Widget>[
+                          // The display container must be on screen before any Ads can be
+                          // loaded and can't be removed between ads. This handles clicks for
+                          // ads.
+                          _adDisplayContainer,
+                          if (_shouldShowContentVideo)
+                            VideoPlayer(_contentVideoController)
+                        ],
+                      ),
+                    ),
+            ),
+            const SizedBox(width: 100, height: 150),
+            ColoredBox(
+              color: Colors.green,
+              child: SizedBox(
+                width: 300,
+                height: 250,
+                child: companionAd.buildWidget(context),
+              ),
+            ),
+          ],
         ),
       ),
       floatingActionButton:
