@@ -1,3 +1,7 @@
+## 15.1.3
+
+- Adds `TypedRelativeGoRoute`
+
 ## 15.1.2
 
 - Fixes focus request propagation from `GoRouter` to `Navigator` by properly handling the `requestFocus` parameter.
