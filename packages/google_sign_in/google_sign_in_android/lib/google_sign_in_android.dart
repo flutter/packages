@@ -29,12 +29,14 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     SignInOption signInOption = SignInOption.standard,
     String? hostedDomain,
     String? clientId,
+    String? forceAccountName,
   }) {
     return initWithParams(SignInInitParameters(
       signInOption: signInOption,
       scopes: scopes,
       hostedDomain: hostedDomain,
       clientId: clientId,
+      forceAccountName: forceAccountName,
     ));
   }
 
@@ -47,6 +49,7 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
       clientId: params.clientId,
       serverClientId: params.serverClientId,
       forceCodeForRefreshToken: params.forceCodeForRefreshToken,
+      forceAccountName: params.forceAccountName,
     ));
   }
 

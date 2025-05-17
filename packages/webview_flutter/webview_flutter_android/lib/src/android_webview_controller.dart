@@ -86,7 +86,7 @@ class AndroidWebViewController extends PlatformWebViewController {
     _webView.settings.setJavaScriptCanOpenWindowsAutomatically(true);
     _webView.settings.setSupportMultipleWindows(true);
     _webView.settings.setLoadWithOverviewMode(true);
-    _webView.settings.setUseWideViewPort(true);
+    _webView.settings.setUseWideViewPort(false);
     _webView.settings.setDisplayZoomControls(false);
     _webView.settings.setBuiltInZoomControls(true);
 
@@ -599,6 +599,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
 
+  /// Sets whether the WebView should enable support for the "viewport" HTML
+  /// meta tag or should use a wide viewport.
+  ///
+  /// The default is false.
+  Future<void> setUseWideViewPort(bool use) =>
+      _webView.settings.setUseWideViewPort(use);
+
   /// Enables or disables content URL access.
   ///
   /// The default is true.
@@ -730,6 +737,35 @@ class AndroidWebViewController extends PlatformWebViewController {
           onJavaScriptTextInputDialog) async {
     _onJavaScriptPrompt = onJavaScriptTextInputDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
+  }
+
+  @override
+  Future<void> setVerticalScrollBarEnabled(bool enabled) =>
+      _webView.setVerticalScrollBarEnabled(enabled);
+
+  @override
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) =>
+      _webView.setHorizontalScrollBarEnabled(enabled);
+
+  @override
+  bool supportsSetScrollBarsEnabled() => true;
+
+  @override
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
+    return switch (mode) {
+      WebViewOverScrollMode.always => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.always,
+        ),
+      WebViewOverScrollMode.ifContentScrolls => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.ifContentScrolls,
+        ),
+      WebViewOverScrollMode.never => _webView.setOverScrollMode(
+          android_webview.OverScrollMode.never,
+        ),
+      // This prevents future additions from causing a breaking change.
+      // ignore: unreachable_switch_case
+      _ => throw UnsupportedError('Android does not support $mode.'),
+    };
   }
 }
 
@@ -1450,6 +1486,25 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           httpAuthHandler.cancel();
         }
       },
+      onFormResubmission:
+          (_, __, android_webview.AndroidMessage dontResend, ___) {
+        dontResend.sendToTarget();
+      },
+      onReceivedClientCertRequest: (
+        _,
+        __,
+        android_webview.ClientCertRequest request,
+      ) {
+        request.cancel();
+      },
+      onReceivedSslError: (
+        _,
+        __,
+        android_webview.SslErrorHandler handler,
+        ___,
+      ) {
+        handler.cancel();
+      },
     );
 
     _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
@@ -1474,7 +1529,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
       params as AndroidNavigationDelegateCreationParams;
 
   late final android_webview.WebChromeClient _webChromeClient =
-      _androidParams.androidWebViewProxy.newWebChromeClient();
+      _androidParams.androidWebViewProxy.newWebChromeClient(
+    onJsConfirm: (_, __, ___, ____) async => false,
+    onShowFileChooser: (_, __, ___) async => <String>[],
+  );
 
   /// Gets the native [android_webview.WebChromeClient] that is bridged by this [AndroidNavigationDelegate].
   ///

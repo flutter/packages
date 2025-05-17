@@ -73,7 +73,11 @@ class SharedPreferencesPlugin extends SharedPreferencesStorePlatform {
     final Map<String, Object> allData = <String, Object>{};
     for (final String key
         in _getPrefixedKeys(filter.prefix, allowList: filter.allowList)) {
-      allData[key] = _decodeValue(html.window.localStorage.getItem(key)!);
+      final Object? value =
+          _decodeValue(html.window.localStorage.getItem(key)!);
+      if (value != null) {
+        allData[key] = value;
+      }
     }
     return allData;
   }
@@ -132,7 +136,11 @@ base class SharedPreferencesAsyncWeb extends SharedPreferencesAsyncPlatform {
   ) async {
     final Map<String, Object> allData = <String, Object>{};
     for (final String key in _getAllowedKeys(allowList: allowList)) {
-      allData[key] = _decodeValue(html.window.localStorage.getItem(key)!);
+      final Object? value =
+          _decodeValue(html.window.localStorage.getItem(key)!);
+      if (value != null) {
+        allData[key] = value;
+      }
     }
     return allData;
   }
@@ -258,8 +266,13 @@ String _encodeValue(Object? value) {
   return json.encode(value);
 }
 
-Object _decodeValue(String encodedValue) {
-  final Object? decodedValue = json.decode(encodedValue);
+Object? _decodeValue(String encodedValue) {
+  final Object? decodedValue;
+  try {
+    decodedValue = json.decode(encodedValue);
+  } on FormatException catch (_) {
+    return null;
+  }
 
   if (decodedValue is List) {
     // JSON does not preserve generics. The encode/decode roundtrip is
@@ -268,7 +281,7 @@ Object _decodeValue(String encodedValue) {
     return decodedValue.cast<String>();
   }
 
-  return decodedValue!;
+  return decodedValue;
 }
 
 /// Web specific SharedPreferences Options.

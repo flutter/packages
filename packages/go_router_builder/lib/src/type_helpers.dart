@@ -28,6 +28,9 @@ const String extraFieldName = r'$extra';
 /// Shared start of error message related to a likely code issue.
 const String likelyIssueMessage = 'Should never get here! File an issue!';
 
+/// The name of the generated, private helper for comparing iterables.
+const String iterablesEqualHelperName = r'_$iterablesEqual';
+
 const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperBigInt(),
   _TypeHelperBool(),
@@ -65,7 +68,7 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 
   throw InvalidGenerationSourceError(
     'The parameter type '
-    '`${paramType.getDisplayString(withNullability: false)}` is not supported.',
+    '`${withoutNullability(paramType.getDisplayString())}` is not supported.',
     element: element,
   );
 }
@@ -86,27 +89,52 @@ String encodeField(PropertyAccessorElement element) {
   );
 }
 
+/// Returns the comparison of a parameter with its default value.
+///
+/// Otherwise, throws an [InvalidGenerationSourceError].
+String compareField(ParameterElement param, String value1, String value2) {
+  for (final _TypeHelper helper in _helpers) {
+    if (helper._matchesType(param.type)) {
+      return helper._compare(param.name, param.defaultValueCode!);
+    }
+  }
+
+  throw InvalidGenerationSourceError(
+    'The type `${param.type}` is not supported.',
+    element: param,
+  );
+}
+
 /// Gets the name of the `const` map generated to help encode [Enum] types.
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
     // ignore: avoid_redundant_argument_values
-    return 'extra as ${element.type.getDisplayString(withNullability: true)}';
+    return 'extra as ${element.type.getDisplayString()}';
   }
 
   late String access;
+  final String suffix =
+      !element.type.isNullableType && !element.hasDefaultValue ? '!' : '';
   if (pathParameters.contains(element.name)) {
-    access = 'pathParameters[${escapeDartString(element.name)}]';
+    access = 'pathParameters[${escapeDartString(element.name)}]$suffix';
   } else {
-    access = 'uri.queryParameters[${escapeDartString(element.name.kebab)}]';
-  }
-  if (pathParameters.contains(element.name) ||
-      (!element.type.isNullableType && !element.hasDefaultValue)) {
-    access += '!';
+    access =
+        'uri.queryParameters[${escapeDartString(element.name.kebab)}]$suffix';
   }
 
   return access;
+}
+
+/// Returns `true` if the type string ends with a nullability marker (`?` or `*`)
+bool _isNullableType(String type) {
+  return type.endsWith('?') || type.endsWith('*');
+}
+
+/// Returns the type string without a trailing nullability marker
+String withoutNullability(String type) {
+  return _isNullableType(type) ? type.substring(0, type.length - 1) : type;
 }
 
 abstract class _TypeHelper {
@@ -119,13 +147,20 @@ abstract class _TypeHelper {
   String _encode(String fieldName, DartType type);
 
   bool _matchesType(DartType type);
+
+  String _compare(String value1, String value2) => '$value1 != $value2';
 }
 
 class _TypeHelperBigInt extends _TypeHelperWithHelper {
   const _TypeHelperBigInt();
 
   @override
-  String helperName(DartType paramType) => 'BigInt.parse';
+  String helperName(DartType paramType) {
+    if (paramType.isNullableType) {
+      return 'BigInt.tryParse';
+    }
+    return 'BigInt.parse';
+  }
 
   @override
   String _encode(String fieldName, DartType type) =>
@@ -154,7 +189,12 @@ class _TypeHelperDateTime extends _TypeHelperWithHelper {
   const _TypeHelperDateTime();
 
   @override
-  String helperName(DartType paramType) => 'DateTime.parse';
+  String helperName(DartType paramType) {
+    if (paramType.isNullableType) {
+      return 'DateTime.tryParse';
+    }
+    return 'DateTime.parse';
+  }
 
   @override
   String _encode(String fieldName, DartType type) =>
@@ -169,7 +209,12 @@ class _TypeHelperDouble extends _TypeHelperWithHelper {
   const _TypeHelperDouble();
 
   @override
-  String helperName(DartType paramType) => 'double.parse';
+  String helperName(DartType paramType) {
+    if (paramType.isNullableType) {
+      return 'double.tryParse';
+    }
+    return 'double.parse';
+  }
 
   @override
   String _encode(String fieldName, DartType type) =>
@@ -198,7 +243,12 @@ class _TypeHelperInt extends _TypeHelperWithHelper {
   const _TypeHelperInt();
 
   @override
-  String helperName(DartType paramType) => 'int.parse';
+  String helperName(DartType paramType) {
+    if (paramType.isNullableType) {
+      return 'int.tryParse';
+    }
+    return 'int.parse';
+  }
 
   @override
   String _encode(String fieldName, DartType type) =>
@@ -212,7 +262,12 @@ class _TypeHelperNum extends _TypeHelperWithHelper {
   const _TypeHelperNum();
 
   @override
-  String helperName(DartType paramType) => 'num.parse';
+  String helperName(DartType paramType) {
+    if (paramType.isNullableType) {
+      return 'num.tryParse';
+    }
+    return 'num.parse';
+  }
 
   @override
   String _encode(String fieldName, DartType type) =>
@@ -241,7 +296,12 @@ class _TypeHelperUri extends _TypeHelperWithHelper {
   const _TypeHelperUri();
 
   @override
-  String helperName(DartType paramType) => 'Uri.parse';
+  String helperName(DartType paramType) {
+    if (paramType.isNullableType) {
+      return 'Uri.tryParse';
+    }
+    return 'Uri.parse';
+  }
 
   @override
   String _encode(String fieldName, DartType type) =>
@@ -252,8 +312,11 @@ class _TypeHelperUri extends _TypeHelperWithHelper {
       const TypeChecker.fromRuntime(Uri).isAssignableFromType(type);
 }
 
-class _TypeHelperIterable extends _TypeHelper {
+class _TypeHelperIterable extends _TypeHelperWithHelper {
   const _TypeHelperIterable();
+
+  @override
+  String helperName(DartType paramType) => iterablesEqualHelperName;
 
   @override
   String _decode(
@@ -264,9 +327,26 @@ class _TypeHelperIterable extends _TypeHelper {
 
       // get a type converter for values in iterable
       String entriesTypeDecoder = '(e) => e';
+      String convertToNotNull = '';
+      String formatIterableType = '';
+      String asParameterType = ' as ${parameterElement.type}';
+
+      if (parameterElement.hasDefaultValue) {
+        asParameterType += '?';
+      }
+
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType) &&
             helper is _TypeHelperWithHelper) {
+          if (!iterableType.isNullableType) {
+            if (parameterElement.type.isDartCoreList) {
+              formatIterableType = '?.toList()';
+            } else if (parameterElement.type.isDartCoreSet) {
+              formatIterableType = '?.toSet()';
+            }
+            convertToNotNull =
+                '.cast<$iterableType>()$formatIterableType$asParameterType';
+          }
           entriesTypeDecoder = helper.helperName(iterableType);
         }
       }
@@ -276,14 +356,14 @@ class _TypeHelperIterable extends _TypeHelper {
       String fallBack = '';
       if (const TypeChecker.fromRuntime(List)
           .isAssignableFromType(parameterElement.type)) {
-        iterableCaster = '.toList()';
+        iterableCaster += '?.toList()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
           fallBack = '?? const []';
         }
       } else if (const TypeChecker.fromRuntime(Set)
           .isAssignableFromType(parameterElement.type)) {
-        iterableCaster = '.toSet()';
+        iterableCaster += '?.toSet()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
           fallBack = '?? const {}';
@@ -291,9 +371,9 @@ class _TypeHelperIterable extends _TypeHelper {
       }
 
       return '''
-state.uri.queryParametersAll[
+(state.uri.queryParametersAll[
         ${escapeDartString(parameterElement.name.kebab)}]
-        ?.map($entriesTypeDecoder)$iterableCaster$fallBack''';
+        ?.map($entriesTypeDecoder)$convertToNotNull)$iterableCaster$fallBack''';
     }
     return '''
 state.uri.queryParametersAll[${escapeDartString(parameterElement.name.kebab)}]''';
@@ -324,6 +404,10 @@ $fieldName$nullAwareAccess.map((e) => e.toString()).toList()''';
   @override
   bool _matchesType(DartType type) =>
       const TypeChecker.fromRuntime(Iterable).isAssignableFromType(type);
+
+  @override
+  String _compare(String value1, String value2) =>
+      '!$iterablesEqualHelperName($value1, $value2)';
 }
 
 abstract class _TypeHelperWithHelper extends _TypeHelper {
@@ -345,7 +429,7 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
           '${helperName(paramType)})';
     }
     return '${helperName(paramType)}'
-        '(state.${_stateValueAccess(parameterElement, pathParameters)})';
+        '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})!';
   }
 }
 

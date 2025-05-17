@@ -1,5 +1,11 @@
-## NEXT
+## 0.5.12
 
+* Adds support for ground overlay.
+
+## 0.5.11
+
+* Adds support for marker anchor.
+* Updates READMEs and API docs.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.5.10

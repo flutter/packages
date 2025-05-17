@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:pigeon/ast.dart';
-import 'package:pigeon/swift_generator.dart';
+import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/swift/swift_generator.dart';
 import 'package:test/test.dart';
 
 import 'dart_generator_test.dart';
@@ -39,7 +39,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -70,7 +71,8 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -109,7 +111,8 @@ void main() {
       ])
     ]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -169,7 +172,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -239,7 +243,8 @@ void main() {
     ], enums: <Enum>[]);
 
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -256,6 +261,28 @@ void main() {
     expect(code, contains('var aInt32List: FlutterStandardTypedData? = nil'));
     expect(code, contains('var aInt64List: FlutterStandardTypedData? = nil'));
     expect(code, contains('var aFloat64List: FlutterStandardTypedData? = nil'));
+  });
+
+  test('gen pigeon error type', () {
+    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final StringBuffer sink = StringBuffer();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
+    const SwiftGenerator generator = SwiftGenerator();
+
+    generator.generate(
+      swiftOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final String code = sink.toString();
+    expect(code, contains('class PigeonError: Error'));
+    expect(code, contains('let code: String'));
+    expect(code, contains('let message: String?'));
+    expect(code, contains('let details: Sendable?'));
+    expect(code,
+        contains('init(code: String, message: String?, details: Sendable?)'));
   });
 
   test('gen one flutter api', () {
@@ -299,7 +326,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -347,7 +375,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -390,7 +419,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -401,7 +431,7 @@ void main() {
     final String code = sink.toString();
     expect(code,
         contains('completion: @escaping (Result<Void, PigeonError>) -> Void'));
-    expect(code, contains('completion(.success(Void()))'));
+    expect(code, contains('completion(.success(()))'));
     expect(code, isNot(contains('if (')));
   });
 
@@ -430,7 +460,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -470,7 +501,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -499,7 +531,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -525,7 +558,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -569,7 +603,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -633,7 +668,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -690,7 +726,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -730,7 +767,8 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -748,7 +786,8 @@ void main() {
   test('header', () {
     final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions(
+    const InternalSwiftOptions swiftOptions = InternalSwiftOptions(
+      swiftOut: '',
       copyrightHeader: <String>['hello world', ''],
     );
     const SwiftGenerator generator = SwiftGenerator();
@@ -784,7 +823,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -818,7 +858,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -855,7 +896,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -891,7 +933,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -923,7 +966,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -957,7 +1001,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -995,7 +1040,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1033,7 +1079,8 @@ void main() {
       ])
     ], classes: <Class>[], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1071,7 +1118,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1102,7 +1150,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1139,7 +1188,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1173,7 +1223,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1217,7 +1268,8 @@ void main() {
       ]),
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1304,7 +1356,8 @@ void main() {
       ],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1361,7 +1414,8 @@ void main() {
       ])
     ], enums: <Enum>[]);
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1405,7 +1459,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1442,7 +1497,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1471,7 +1527,8 @@ void main() {
       enums: <Enum>[],
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions swiftOptions = SwiftOptions();
+    const InternalSwiftOptions swiftOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       swiftOptions,
@@ -1511,7 +1568,8 @@ void main() {
       containsFlutterApi: true,
     );
     final StringBuffer sink = StringBuffer();
-    const SwiftOptions kotlinOptions = SwiftOptions();
+    const InternalSwiftOptions kotlinOptions =
+        InternalSwiftOptions(swiftOut: '');
     const SwiftGenerator generator = SwiftGenerator();
     generator.generate(
       kotlinOptions,

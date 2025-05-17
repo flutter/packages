@@ -90,12 +90,12 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-13|Mac-14
+      os: Mac-14
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "15a240d"
+          "sdk_version": "16c5032a"
         }
   mac_x64:
     properties:
@@ -103,18 +103,18 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-13|Mac-14
+      os: Mac-14
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "15a240d"
+          "sdk_version": "16c5032a"
         }
 
 targets:
   - name: Linux repo_checks
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       target_file: repo_checks.yaml
@@ -247,7 +247,6 @@ targets:
 
   # Wasm unit tests in master
   - name: Linux_web web_dart_unit_test_wasm_shard_1 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -263,7 +262,6 @@ targets:
         }
 
   - name: Linux_web web_dart_unit_test_wasm_shard_2 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -343,7 +341,7 @@ targets:
 
   - name: Linux_android custom_package_tests master
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     dimensions:
       kvm: "1"
     properties:
@@ -369,7 +367,7 @@ targets:
 
   - name: Linux_android custom_package_tests stable
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     dimensions:
       kvm: "1"
     properties:
@@ -923,7 +921,6 @@ targets:
 
   # Wasm integration tests in master
   - name: Linux_web web_platform_tests_wasm_shard_1 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -938,7 +935,6 @@ targets:
         }
 
   - name: Linux_web web_platform_tests_wasm_shard_2 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -953,7 +949,6 @@ targets:
         }
 
   - name: Linux_web web_platform_tests_wasm_shard_3 master
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:

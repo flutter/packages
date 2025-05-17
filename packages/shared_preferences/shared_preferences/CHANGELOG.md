@@ -1,3 +1,28 @@
+## NEXT
+
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
+
+## 2.5.3
+
+* Fixes a bug in the example app.
+
+## 2.5.2
+
+* Fixes `setState` returning `Future` on `example/main.dart` error in example code.
+
+## 2.5.1
+
+* Exposes `SharedPreferencesOptions`.
+
+## 2.5.0
+
+* Adds shared preferences devtools extension.
+
+## 2.4.0
+
+* Adds migration tool to move from legacy `SharedPreferences` to `SharedPreferencesAsync`.
+* Adds clarifying comment about `allowList` handling with an updated prefix.
+
 ## 2.3.5
 
 * Adds information about Android SharedPreferences support.

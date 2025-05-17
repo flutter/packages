@@ -53,7 +53,7 @@ if (!configured) {
 
 android {
     namespace 'io.flutter.plugins.inapppurchaseexample'
-    compileSdk flutter.compileSdkVersion
+    compileSdk = flutter.compileSdkVersion
 
     signingConfigs {
         release {

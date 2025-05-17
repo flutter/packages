@@ -261,7 +261,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// Accessing this property via GoRouter.of(context).state will not
   /// cause rebuild if the state has changed, consider using
   /// GoRouterState.of(context) instead.
-  GoRouterState? get state => routerDelegate.state;
+  GoRouterState get state => routerDelegate.state;
 
   /// Whether the imperative API affects browser URL bar.
   ///
@@ -331,15 +331,15 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   /// Get a location from route name and parameters.
   /// This is useful for redirecting to a named location.
-  String namedLocation(
-    String name, {
-    Map<String, String> pathParameters = const <String, String>{},
-    Map<String, dynamic> queryParameters = const <String, dynamic>{},
-  }) =>
+  String namedLocation(String name,
+          {Map<String, String> pathParameters = const <String, String>{},
+          Map<String, dynamic> queryParameters = const <String, dynamic>{},
+          String? fragment}) =>
       configuration.namedLocation(
         name,
         pathParameters: pathParameters,
         queryParameters: queryParameters,
+        fragment: fragment,
       );
 
   /// Navigate to a URI location w/ optional query parameters, e.g.
@@ -366,10 +366,15 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    String? fragment,
   }) =>
+
+      /// Construct location with optional fragment, using null-safe navigation
       go(
         namedLocation(name,
-            pathParameters: pathParameters, queryParameters: queryParameters),
+            pathParameters: pathParameters,
+            queryParameters: queryParameters,
+            fragment: fragment),
         extra: extra,
       );
 

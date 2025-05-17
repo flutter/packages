@@ -1,3 +1,20 @@
+## 0.4.0
+
+* **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.
+* To revert to StoreKit1 for devices below iOS 15, call `enableStoreKit1`
+
+## 0.3.22+1
+
+* Fix a channel thread-safety issue when StoreKit2 is enabled.
+
+## 0.3.22
+
+* Adds `sync()` and `countryCode()`.
+
+## 0.3.21
+
+* Adds Swift Package Manager compatibility.
+
 ## 0.3.20+4
 
 * Exposes `jsonRepresentation` field for transactions.
