@@ -238,6 +238,9 @@ extension CameraPlugin: FCPCameraApi {
       mediaSettings: settings,
       mediaSettingsWrapper: mediaSettingsAVWrapper,
       captureDeviceFactory: captureDeviceFactory,
+      audioCaptureDeviceFactory: {
+        FLTDefaultCaptureDevice(device: AVCaptureDevice.default(for: .audio)!)
+      },
       captureSessionFactory: captureSessionFactory,
       captureSessionQueue: captureSessionQueue,
       captureDeviceInputFactory: captureDeviceInputFactory,
@@ -342,7 +345,7 @@ extension CameraPlugin: FCPCameraApi {
     completion: @escaping (FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
-      self?.camera?.lockCapture(orientation)
+      self?.camera?.lockCaptureOrientation(orientation)
       completion(nil)
     }
   }
