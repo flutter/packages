@@ -1857,7 +1857,7 @@ void main() {
   );
 
   test(
-    'createCamera sets sensor orientation, handlesCropAndRotation, initialDeviceOrientation as expected',
+    'createCamera sets sensorOrientationDegrees and enableRecordingAudio as expected',
     () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       const CameraLensDirection testLensDirection = CameraLensDirection.back;
@@ -1915,6 +1915,7 @@ void main() {
       );
 
       expect(camera.sensorOrientationDegrees, testSensorOrientation);
+      expect(camera.enableRecordingAudio, isTrue);
     },
   );
 
@@ -2548,11 +2549,13 @@ void main() {
 
   group('video recording', () {
     test(
-      'startVideoCapturing binds video capture use case, updates saved camera instance and its properties, and starts the recording',
+      'startVideoCapturing binds video capture use case, updates saved camera instance and its properties, and starts the recording with audio enabled as desired',
       () async {
         // Set up mocks and constants.
         final AndroidCameraCameraX camera = AndroidCameraCameraX();
         final MockPendingRecording mockPendingRecording =
+            MockPendingRecording();
+        final MockPendingRecording mockPendingRecordingWithAudio =
             MockPendingRecording();
         final MockRecording mockRecording = MockRecording();
         final MockCamera mockCamera = MockCamera();
@@ -2564,6 +2567,7 @@ void main() {
             MockLiveCameraState();
         final MockCamera2CameraInfo mockCamera2CameraInfo =
             MockCamera2CameraInfo();
+        const bool enableAudio = true;
 
         // Set directly for test versus calling createCamera.
         camera.processCameraProvider = MockProcessCameraProvider();
@@ -2574,6 +2578,7 @@ void main() {
         camera.liveCameraState = mockLiveCameraState;
         camera.cameraInfo = MockCameraInfo();
         camera.imageAnalysis = MockImageAnalysis();
+        camera.enableRecordingAudio = enableAudio;
 
         // Ignore setting target rotation for this test; tested separately.
         camera.captureOrientationLocked = true;
@@ -2646,8 +2651,10 @@ void main() {
         when(
           camera.recorder!.prepareRecording(outputPath),
         ).thenAnswer((_) async => mockPendingRecording);
+        when(mockPendingRecording.withAudioEnabled(enableAudio))
+            .thenAnswer((_) async => mockPendingRecordingWithAudio);
         when(
-          mockPendingRecording.start(any),
+          mockPendingRecordingWithAudio.start(any),
         ).thenAnswer((_) async => mockRecording);
         when(
           camera.processCameraProvider!.isBound(camera.videoCapture!),
@@ -2703,7 +2710,7 @@ void main() {
         );
 
         // Verify recording is started.
-        expect(camera.pendingRecording, equals(mockPendingRecording));
+        expect(camera.pendingRecording, equals(mockPendingRecordingWithAudio));
         expect(camera.recording, mockRecording);
       },
     );
@@ -2729,6 +2736,7 @@ void main() {
         camera.cameraSelector = MockCameraSelector();
         camera.cameraInfo = MockCameraInfo();
         camera.imageAnalysis = MockImageAnalysis();
+        camera.enableRecordingAudio = false;
 
         // Ignore setting target rotation for this test; tested seprately.
         camera.captureOrientationLocked = true;
@@ -2801,6 +2809,8 @@ void main() {
         when(
           camera.recorder!.prepareRecording(outputPath),
         ).thenAnswer((_) async => mockPendingRecording);
+        when(mockPendingRecording.withAudioEnabled(camera.enableRecordingAudio))
+            .thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.start(any),
         ).thenAnswer((_) async => mockRecording);
@@ -2855,6 +2865,7 @@ void main() {
         verify(camera.recorder!.prepareRecording(outputPath)).called(1);
         verifyNoMoreInteractions(camera.recorder);
         verify(mockPendingRecording.start(any)).called(1);
+        verify(mockPendingRecording.withAudioEnabled(any)).called(1);
         verifyNoMoreInteractions(mockPendingRecording);
       },
     );
@@ -2883,6 +2894,7 @@ void main() {
         camera.recorder = mockRecorder;
         camera.cameraInfo = initialCameraInfo;
         camera.imageCapture = MockImageCapture();
+        camera.enableRecordingAudio = true;
 
         // Ignore setting target rotation for this test; tested seprately.
         camera.captureOrientationLocked = true;
@@ -2977,6 +2989,8 @@ void main() {
         when(
           camera.recorder!.prepareRecording(outputPath),
         ).thenAnswer((_) async => mockPendingRecording);
+        when(mockPendingRecording.withAudioEnabled(camera.enableRecordingAudio))
+            .thenAnswer((_) async => mockPendingRecording);
         when(
           mockProcessCameraProvider.bindToLifecycle(any, any),
         ).thenAnswer((_) => Future<Camera>.value(camera.camera));
@@ -3028,6 +3042,7 @@ void main() {
         camera.cameraSelector = MockCameraSelector();
         camera.imageAnalysis = MockImageAnalysis();
         camera.cameraInfo = initialCameraInfo;
+        camera.enableRecordingAudio = false;
 
         // Tell plugin to mock call to get current video orientation and mock Camera2CameraInfo retrieval.
         const String outputPath = '/temp/REC123.temp';
@@ -3114,6 +3129,8 @@ void main() {
         when(
           camera.recorder!.prepareRecording(outputPath),
         ).thenAnswer((_) async => mockPendingRecording);
+        when(mockPendingRecording.withAudioEnabled(camera.enableRecordingAudio))
+            .thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.start(any),
         ).thenAnswer((_) async => mockRecording);
@@ -6058,6 +6075,7 @@ void main() {
       camera.cameraSelector = MockCameraSelector();
       camera.cameraInfo = MockCameraInfo();
       camera.imageAnalysis = MockImageAnalysis();
+      camera.enableRecordingAudio = false;
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
@@ -6130,6 +6148,8 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
+      when(mockPendingRecording.withAudioEnabled(camera.enableRecordingAudio))
+          .thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6191,6 +6211,7 @@ void main() {
       camera.cameraSelector = MockCameraSelector();
       camera.cameraInfo = MockCameraInfo();
       camera.imageAnalysis = MockImageAnalysis();
+      camera.enableRecordingAudio = true;
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
@@ -6263,6 +6284,8 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
+      when(mockPendingRecording.withAudioEnabled(camera.enableRecordingAudio))
+          .thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6324,6 +6347,7 @@ void main() {
       camera.cameraSelector = MockCameraSelector();
       camera.cameraInfo = MockCameraInfo();
       camera.imageAnalysis = MockImageAnalysis();
+      camera.enableRecordingAudio = false;
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
@@ -6396,6 +6420,8 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
+      when(mockPendingRecording.withAudioEnabled(camera.enableRecordingAudio))
+          .thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6462,6 +6488,7 @@ void main() {
       camera.cameraInfo = MockCameraInfo();
       camera.imageAnalysis = MockImageAnalysis();
       camera.imageCapture = MockImageCapture();
+      camera.enableRecordingAudio = true;
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
@@ -6548,6 +6575,8 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
+      when(mockPendingRecording.withAudioEnabled(camera.enableRecordingAudio))
+          .thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6618,6 +6647,7 @@ void main() {
       camera.imageAnalysis = MockImageAnalysis();
       camera.imageCapture = MockImageCapture();
       camera.preview = MockPreview();
+      camera.enableRecordingAudio = false;
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
@@ -6704,6 +6734,8 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
+      when(mockPendingRecording.withAudioEnabled(camera.enableRecordingAudio))
+          .thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6766,6 +6798,7 @@ void main() {
       camera.imageAnalysis = MockImageAnalysis();
       camera.imageCapture = MockImageCapture();
       camera.preview = MockPreview();
+      camera.enableRecordingAudio = true;
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
@@ -6852,6 +6885,8 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
+      when(mockPendingRecording.withAudioEnabled(camera.enableRecordingAudio))
+          .thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
