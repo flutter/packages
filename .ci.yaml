@@ -322,7 +322,7 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.27.7"
+      channel: "3.27.4"
       env_variables: >-
         {
           "CHANNEL": "3.27.4"
