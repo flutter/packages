@@ -42,12 +42,14 @@ extension $RelativeRouteExtension on RelativeRoute {
 
   void goRelative(BuildContext context) => context.go(relativeLocation);
 
-  Future<T?> pushRelative<T>(BuildContext context) => context.push<T>(relativeLocation);
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
 
   void pushReplacementRelative(BuildContext context) =>
       context.pushReplacement(relativeLocation);
 
-  void replaceRelative(BuildContext context) => context.replace(relativeLocation);
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
 }
 
 extension $InnerRelativeRouteExtension on InnerRelativeRoute {
@@ -61,12 +63,14 @@ extension $InnerRelativeRouteExtension on InnerRelativeRoute {
 
   void goRelative(BuildContext context) => context.go(relativeLocation);
 
-  Future<T?> pushRelative<T>(BuildContext context) => context.push<T>(relativeLocation);
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
 
   void pushReplacementRelative(BuildContext context) =>
       context.pushReplacement(relativeLocation);
 
-  void replaceRelative(BuildContext context) => context.replace(relativeLocation);
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
 }
 
 RouteBase get $route2 => GoRouteData.$route(
