@@ -4,8 +4,11 @@
 
 import 'package:go_router/go_router.dart';
 
+mixin _$IterableDefaultValueRoute {}
+
 @TypedGoRoute<IterableDefaultValueRoute>(path: '/iterable-default-value-route')
-class IterableDefaultValueRoute extends GoRouteData {
+class IterableDefaultValueRoute extends GoRouteData
+    with _$IterableDefaultValueRoute {
   IterableDefaultValueRoute({this.param = const <int>[0]});
   final Iterable<int> param;
 }

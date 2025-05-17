@@ -1,29 +1,36 @@
 RouteBase get $nullableRequiredParamNotInPath => GoRouteData.$route(
       path: 'bob',
-      factory: $NullableRequiredParamNotInPathExtension._fromState,
+      factory: _$NullableRequiredParamNotInPath._fromState,
     );
 
-extension $NullableRequiredParamNotInPathExtension
-    on NullableRequiredParamNotInPath {
+mixin _$NullableRequiredParamNotInPath on GoRouteData {
   static NullableRequiredParamNotInPath _fromState(GoRouterState state) =>
       NullableRequiredParamNotInPath(
         id: _$convertMapValue('id', state.uri.queryParameters, int.tryParse),
       );
 
+  NullableRequiredParamNotInPath get _self =>
+      this as NullableRequiredParamNotInPath;
+
+  @override
   String get location => GoRouteData.$location(
         'bob',
         queryParams: {
-          if (id != null) 'id': id!.toString(),
+          if (_self.id != null) 'id': _self.id!.toString(),
         },
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
