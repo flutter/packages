@@ -813,6 +813,16 @@ class MockAndroidWebViewController extends _i1.Mock
       ) as _i8.Future<void>);
 
   @override
+  _i8.Future<void> setUseWideViewPort(bool? use) => (super.noSuchMethod(
+        Invocation.method(
+          #setUseWideViewPort,
+          [use],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
   _i8.Future<void> setAllowContentAccess(bool? enabled) => (super.noSuchMethod(
         Invocation.method(
           #setAllowContentAccess,
@@ -958,7 +968,10 @@ class MockAndroidWebViewController extends _i1.Mock
   @override
   _i8.Future<void> setVerticalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
-        Invocation.method(#setVerticalScrollBarEnabled, [enabled]),
+        Invocation.method(
+          #setVerticalScrollBarEnabled,
+          [enabled],
+        ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
@@ -966,10 +979,23 @@ class MockAndroidWebViewController extends _i1.Mock
   @override
   _i8.Future<void> setHorizontalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
-        Invocation.method(#setHorizontalScrollBarEnabled, [enabled]),
+        Invocation.method(
+          #setHorizontalScrollBarEnabled,
+          [enabled],
+        ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
+  @override
+  bool supportsSetScrollBarsEnabled() => (super.noSuchMethod(
+        Invocation.method(
+          #supportsSetScrollBarsEnabled,
+          [],
+        ),
+        returnValue: false,
+        returnValueForMissingStub: false,
+      ) as bool);
 
   @override
   _i8.Future<void> setOverScrollMode(_i3.WebViewOverScrollMode? mode) =>
@@ -3373,7 +3399,10 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   @override
   _i8.Future<void> setVerticalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
-        Invocation.method(#setVerticalScrollBarEnabled, [enabled]),
+        Invocation.method(
+          #setVerticalScrollBarEnabled,
+          [enabled],
+        ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
@@ -3381,7 +3410,10 @@ class MockWebView extends _i1.Mock implements _i2.WebView {
   @override
   _i8.Future<void> setHorizontalScrollBarEnabled(bool? enabled) =>
       (super.noSuchMethod(
-        Invocation.method(#setHorizontalScrollBarEnabled, [enabled]),
+        Invocation.method(
+          #setHorizontalScrollBarEnabled,
+          [enabled],
+        ),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
