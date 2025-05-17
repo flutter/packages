@@ -94,7 +94,6 @@ packages/image_picker/image_picker_macos/**              @vashworth @louisehsu
 packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu @LongCatIsLooong
 packages/local_auth/local_auth_darwin/**                 @cbracken @vashworth
 packages/path_provider/path_provider_foundation/**       @cbracken @vashworth
-packages/pigeon/**/ios/**/*                              @louisehsu @hellohuanlin
 packages/pointer_interceptor/pointer_interceptor_ios/**  @louisehsu @hellohuanlin
 packages/quick_actions/quick_actions_ios/**              @LongCatIsLooong @hellohuanlin
 packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
