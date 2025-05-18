@@ -59,7 +59,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         case .success(let verification):
           switch verification {
           case .verified(let transaction):
-            self.sendTransactionUpdate(transaction: transaction)
+            self.sendTransactionUpdate(transaction: transaction, receipt: verification.jwsRepresentation)
             completion(.success(result.convertToPigeon()))
           case .unverified(_, let error):
             completion(.failure(error))
