@@ -413,5 +413,7 @@ SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {
       originalId: 2,
       productId: id,
       purchaseDate: 'purchaseDate',
-      appAccountToken: 'appAccountToken');
+      appAccountToken: 'appAccountToken',
+      receiptData: 'receiptData',
+      jsonRepresentation: 'jsonRepresentation');
 }

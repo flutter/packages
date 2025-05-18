@@ -153,6 +153,38 @@ void main() {
               purchaseParam: purchaseParam, autoConsume: false),
           throwsA(isInstanceOf<AssertionError>()));
     });
+
+    test(
+        'buying consumable, should get PurchaseVerificationData with serverVerificationData and localVerificationData',
+        () async {
+      final List<PurchaseDetails> details = <PurchaseDetails>[];
+      final Completer<List<PurchaseDetails>> completer =
+          Completer<List<PurchaseDetails>>();
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
+
+      late StreamSubscription<List<PurchaseDetails>> subscription;
+      subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        details.addAll(purchaseDetailsList);
+        if (purchaseDetailsList.first.status == PurchaseStatus.purchased) {
+          completer.complete(details);
+          subscription.cancel();
+        }
+      });
+      final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+          productDetails:
+              AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+          applicationUserName: 'appName');
+      await iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam);
+
+      final List<PurchaseDetails> result = await completer.future;
+      expect(result.length, 1);
+      expect(result.first.productID, dummyProductWrapper.id);
+      expect(
+          result.first.verificationData.serverVerificationData, 'receiptData');
+      expect(result.first.verificationData.localVerificationData,
+          'jsonRepresentation');
+    });
   });
 
   group('restore purchases', () {
