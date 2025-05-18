@@ -87,7 +87,11 @@ class SK2PurchaseDetails extends PurchaseDetails {
       required super.purchaseID,
       required super.verificationData,
       required super.transactionDate,
-      required super.status});
+      required super.status,
+      required this.jsonRepresentation});
+
+  /// The json representation of a transaction
+  final String? jsonRepresentation;
 
   @override
   bool get pendingCompletePurchase => status == PurchaseStatus.purchased;

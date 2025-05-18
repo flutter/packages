@@ -1,3 +1,7 @@
+## 0.4.1
+
+* Add `jsonRepresentation` to `SK2PurchaseDetails`
+
 ## 0.4.0
 
 * **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.
