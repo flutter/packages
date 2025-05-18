@@ -1,6 +1,7 @@
 ## 0.4.1
 
-* Add `jsonRepresentation` to `SK2PurchaseDetails`
+* Add `jwsRepresentation` to `SK2PurchaseDetails` as `serverVerificationData`
+* Add `jsonRepresentation` to `SK2PurchaseDetails` as `localVerificationData`
 
 ## 0.4.0
 
