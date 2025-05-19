@@ -156,6 +156,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
    * @return The best possible {@link android.media.CamcorderProfile} that matches the supplied
    *     {@link ResolutionPreset}.
    */
+  @SuppressLint("UseRequiresApi")
   @TargetApi(Build.VERSION_CODES.R)
   // All of these cases deliberately fall through to get the best available profile.
   @SuppressWarnings({"fallthrough", "deprecation"})
@@ -208,6 +209,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
     }
   }
 
+  @SuppressLint("UseRequiresApi")
   @TargetApi(Build.VERSION_CODES.S)
   // All of these cases deliberately fall through to get the best available profile.
   @SuppressWarnings("fallthrough")

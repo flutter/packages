@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.quickactions;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +16,6 @@ import android.os.Looper;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.core.content.pm.ShortcutInfoCompat;
 import androidx.core.content.pm.ShortcutManagerCompat;
 import androidx.core.graphics.drawable.IconCompat;
@@ -121,7 +122,8 @@ final class QuickActions implements AndroidQuickActionsApi {
     return launchAction;
   }
 
-  @RequiresApi(Build.VERSION_CODES.N_MR1)
+  @SuppressLint("UseRequiresApi")
+  @TargetApi(Build.VERSION_CODES.N_MR1)
   private List<ShortcutInfoCompat> shortcutItemMessageToShortcutInfo(
       @NonNull List<ShortcutItemMessage> shortcuts) {
     final List<ShortcutInfoCompat> shortcutInfos = new ArrayList<>();
