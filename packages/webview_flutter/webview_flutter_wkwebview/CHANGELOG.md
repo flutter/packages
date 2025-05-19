@@ -1,6 +1,7 @@
 ## 3.22.1
 
-* Fixes crash from native 
+* Fixes crash from native `WKWebViewConfiguration.defaultWebpagePreferences` sometimes returning
+  `nil`.
 
 ## 3.22.0
 
