@@ -1,3 +1,7 @@
+## 0.6.16+1
+
+* Fixes premature garbage collection of native objects when app is under memory pressure.
+
 ## 0.6.16
 
 * Fixes incorrect camera preview rotation for landscape-oriented devices.
