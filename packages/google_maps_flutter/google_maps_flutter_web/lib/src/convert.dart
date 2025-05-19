@@ -225,7 +225,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   // If both the title and snippet of an infowindow are empty, we don't really
   // want an infowindow...
-  if ((markerTitle.isEmpty) && (markerSnippet.isEmpty)) {
+  if (markerTitle.isEmpty && markerSnippet.isEmpty) {
     return null;
   }
 
