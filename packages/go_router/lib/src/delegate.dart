@@ -55,7 +55,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   @override
   Future<bool> popRoute() async {
-    final List<NavigatorState> states = _findCurrentNavigators();
+    final Iterable<NavigatorState> states = _findCurrentNavigators();
     for (final NavigatorState state in states) {
       final bool didPop = await state.maybePop(); // Call maybePop() directly
       if (didPop) {
@@ -111,7 +111,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// 1. Sub route within branches of shell navigation
   /// 2. Branch route
   /// 3. Parent route
-  List<NavigatorState> _findCurrentNavigators() {
+  Iterable<NavigatorState> _findCurrentNavigators() {
     final List<NavigatorState> states = <NavigatorState>[];
     if (navigatorKey.currentState != null) {
       // Set state directly without canPop check
@@ -132,7 +132,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       states.add(potentialCandidate);
       walker = walker.matches.last;
     }
-    return states.reversed.toList(growable: false);
+    return states.reversed;
   }
 
   bool _handlePopPageWithRouteMatch(
