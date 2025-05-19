@@ -1,3 +1,7 @@
+## 4.13.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `NavigationDelegate(onSSlAuthError)`.
+
 ## 4.12.0
 
 * Adds support to set whether to draw the scrollbar. See
