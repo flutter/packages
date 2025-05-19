@@ -98,7 +98,7 @@ public class DeviceOrientationManager {
   }
 
   /**
-   * Handles orientation changes coming from either the device's sensors.
+   * Handles orientation changes coming from the device's sensors.
    *
    * <p>This method is visible for testing purposes only and should never be used outside this
    * class.
