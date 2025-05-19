@@ -1,6 +1,6 @@
 ## NEXT
 
-- Fixes overflowed toggles in the camera example.
+* Fixes overflowed toggles in the camera example.
 
 ## 0.11.1
 
