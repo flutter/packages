@@ -1,3 +1,8 @@
+## 2.8.4
+
+* Fixes incorrect width/height swap ([bug](https://github.com/flutter/flutter/issues/166097)). The swap was originally required for the uncorrected width/height of `Format` but was mistakenly retained after [switching to `VideoSize`](https://github.com/flutter/packages/pull/6535), which already accounts for rotation.
+* Fixes example app layout issue caused by `Transform.rotate`  not affecting space calculation (following [#8685](https://github.com/flutter/packages/pull/8685)).
+
 ## 2.8.3
 
 * Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect

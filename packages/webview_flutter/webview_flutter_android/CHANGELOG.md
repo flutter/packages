@@ -1,3 +1,12 @@
+## 4.7.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `AndroidNavigationDelegate.setOnSSlAuthError`.
+
+## 4.6.0
+
+* Adds support to set using wide view port. See `AndroidWebViewController.setUseWideViewPort`.
+* Changes default of `WebSettings.setUseWideViewPort` to `false` to align with native WebViews.
+
 ## 4.5.0
 
 * Adds support to set whether to draw the scrollbar. See

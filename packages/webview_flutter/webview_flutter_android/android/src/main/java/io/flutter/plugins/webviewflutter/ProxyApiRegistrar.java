@@ -233,6 +233,12 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   }
 
   @NonNull
+  @Override
+  public PigeonApiCertificate getPigeonApiCertificate() {
+    return new CertificateProxyApi(this);
+  }
+
+  @NonNull
   public Context getContext() {
     return context;
   }

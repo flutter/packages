@@ -1,3 +1,11 @@
+## 3.22.1
+
+* Fixes crash from native 
+
+## 3.22.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `WebKitNavigationDelegate.setOnSSlAuthError`.
+
 ## 3.21.0
 
 * Adds support to set whether to draw the scrollbar. See

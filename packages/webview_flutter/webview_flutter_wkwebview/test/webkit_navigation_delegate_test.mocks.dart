@@ -4,10 +4,10 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
-import 'dart:typed_data' as _i4;
+import 'dart:typed_data' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i5;
+import 'package:mockito/src/dummies.dart' as _i4;
 import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart' as _i2;
 
 // ignore_for_file: type=lint
@@ -164,6 +164,100 @@ class MockURLAuthenticationChallenge extends _i1.Mock
       ) as _i3.Future<void>);
 }
 
+/// A class which mocks [URLProtectionSpace].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockURLProtectionSpace extends _i1.Mock
+    implements _i2.URLProtectionSpace {
+  MockURLProtectionSpace() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  String get host => (super.noSuchMethod(
+        Invocation.getter(#host),
+        returnValue: _i4.dummyValue<String>(
+          this,
+          Invocation.getter(#host),
+        ),
+      ) as String);
+
+  @override
+  int get port => (super.noSuchMethod(
+        Invocation.getter(#port),
+        returnValue: 0,
+      ) as int);
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_0(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i3.Future<_i2.SecTrust?> getServerTrust() => (super.noSuchMethod(
+        Invocation.method(
+          #getServerTrust,
+          [],
+        ),
+        returnValue: _i3.Future<_i2.SecTrust?>.value(),
+      ) as _i3.Future<_i2.SecTrust?>);
+
+  @override
+  _i2.URLProtectionSpace pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeURLProtectionSpace_1(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.URLProtectionSpace);
+
+  @override
+  _i3.Future<void> addObserver(
+    _i2.NSObject? observer,
+    String? keyPath,
+    List<_i2.KeyValueObservingOptions>? options,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #addObserver,
+          [
+            observer,
+            keyPath,
+            options,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> removeObserver(
+    _i2.NSObject? observer,
+    String? keyPath,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #removeObserver,
+          [
+            observer,
+            keyPath,
+          ],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+}
+
 /// A class which mocks [URLRequest].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -210,7 +304,7 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
       ) as _i3.Future<String?>);
 
   @override
-  _i3.Future<void> setHttpBody(_i4.Uint8List? body) => (super.noSuchMethod(
+  _i3.Future<void> setHttpBody(_i5.Uint8List? body) => (super.noSuchMethod(
         Invocation.method(
           #setHttpBody,
           [body],
@@ -220,13 +314,13 @@ class MockURLRequest extends _i1.Mock implements _i2.URLRequest {
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<_i4.Uint8List?> getHttpBody() => (super.noSuchMethod(
+  _i3.Future<_i5.Uint8List?> getHttpBody() => (super.noSuchMethod(
         Invocation.method(
           #getHttpBody,
           [],
         ),
-        returnValue: _i3.Future<_i4.Uint8List?>.value(),
-      ) as _i3.Future<_i4.Uint8List?>);
+        returnValue: _i3.Future<_i5.Uint8List?>.value(),
+      ) as _i3.Future<_i5.Uint8List?>);
 
   @override
   _i3.Future<void> setAllHttpHeaderFields(Map<String, String>? fields) =>
@@ -324,7 +418,7 @@ class MockURL extends _i1.Mock implements _i2.URL {
           #getAbsoluteString,
           [],
         ),
-        returnValue: _i3.Future<String>.value(_i5.dummyValue<String>(
+        returnValue: _i3.Future<String>.value(_i4.dummyValue<String>(
           this,
           Invocation.method(
             #getAbsoluteString,
