@@ -19,33 +19,6 @@ const ProductDetailsWrapper dummyOneTimeProductDetails = ProductDetailsWrapper(
   ),
 );
 
-const ProductDetailsWrapper dummySubscriptionProductDetails =
-    ProductDetailsWrapper(
-  description: 'description',
-  name: 'name',
-  productId: 'productId',
-  productType: ProductType.subs,
-  title: 'title',
-  subscriptionOfferDetails: <SubscriptionOfferDetailsWrapper>[
-    SubscriptionOfferDetailsWrapper(
-      basePlanId: 'basePlanId',
-      offerTags: <String>['offerTags'],
-      offerId: 'offerId',
-      offerIdToken: 'offerToken',
-      pricingPhases: <PricingPhaseWrapper>[
-        PricingPhaseWrapper(
-          billingCycleCount: 4,
-          billingPeriod: 'billingPeriod',
-          formattedPrice: r'$100',
-          priceAmountMicros: 100000000,
-          priceCurrencyCode: 'USD',
-          recurrenceMode: RecurrenceMode.finiteRecurring,
-        ),
-      ],
-    ),
-  ],
-);
-
 void main() {
   group('ProductDetailsResponseWrapper', () {
     test('toProductDetails() should return correct Product object', () {
