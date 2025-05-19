@@ -55,17 +55,19 @@ should add it to your `pubspec.yaml` as usual.
 ```
 
 As an alternative to editing the `Info.plist` in your Xcode project,
-you can instead configure your app in Dart code. In this case, skip steps 4 to 5
- and pass `clientId` and `serverClientId` to the `GoogleSignIn` constructor:
+you can instead configure your app in Dart code. In this case, skip steps 4 and
+5 and pass `clientId` and `serverClientId` to the `GoogleSignIn` initialization:
 
-<?code-excerpt "../google_sign_in/test/google_sign_in_test.dart (GoogleSignIn)"?>
+<?code-excerpt "example/integration_test/google_sign_in_test.dart (IDsInCode)"?>
 ```dart
-final GoogleSignIn googleSignIn = GoogleSignIn(
-  // The OAuth client id of your app. This is required.
+final GoogleSignInPlatform signIn = GoogleSignInPlatform.instance;
+await signIn.init(const InitParameters(
+  // The OAuth client ID of your app. This is required.
   clientId: 'Your Client ID',
-  // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
+  // If you need to authenticate to a backend server, specify the server's
+  // OAuth client ID. This is optional.
   serverClientId: 'Your Server ID',
-);
+));
 ```
 
 Note that step 6 is still required.
