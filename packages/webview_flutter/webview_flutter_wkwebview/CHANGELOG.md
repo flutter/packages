@@ -1,3 +1,10 @@
+## 3.21.0
+
+* Adds support to set whether to draw the scrollbar. See
+  `WebKitWebViewController.setVerticalScrollBarEnabled`,
+  `WebKitWebViewController.setHorizontalScrollBarEnabled`,
+  `WebKitWebViewController.supportsSetScrollBarsEnabled`.
+
 ## 3.20.0
 
 * Adds support to disable a preview of the destination for a link. See
