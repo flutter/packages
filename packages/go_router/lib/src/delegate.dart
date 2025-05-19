@@ -129,10 +129,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         // Stop if there is a pageless route on top of the shell route.
         break;
       }
-      states.insert(0, potentialCandidate);
+      states.add(potentialCandidate);
       walker = walker.matches.last;
     }
-    return states;
+    return states.reversed.toList(growable: false);
   }
 
   bool _handlePopPageWithRouteMatch(
