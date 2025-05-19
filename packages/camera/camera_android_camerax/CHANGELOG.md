@@ -1,3 +1,8 @@
+## 0.6.17
+
+* Adds support for the `MediaSettings.enableAudio` setting, which determines whether or not audio is
+  recorded during video recording.
+
 ## 0.6.16
 
 * Fixes incorrect camera preview rotation for landscape-oriented devices.
