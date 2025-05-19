@@ -102,8 +102,8 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
       ClientAuthorizationTokensForScopesParameters params) async {
-    final (:String? accessToken, :String? serverAuthCode) =
-        await _getAuthorizationTokens(params.request);
+    final String? accessToken =
+        (await _getAuthorizationTokens(params.request)).accessToken;
     return accessToken == null
         ? null
         : ClientAuthorizationTokenData(accessToken: accessToken);
@@ -112,8 +112,8 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
       ServerAuthorizationTokensForScopesParameters params) async {
-    final (:String? accessToken, :String? serverAuthCode) =
-        await _getAuthorizationTokens(params.request);
+    final String? serverAuthCode =
+        (await _getAuthorizationTokens(params.request)).serverAuthCode;
     return serverAuthCode == null
         ? null
         : ServerAuthorizationTokenData(serverAuthCode: serverAuthCode);
