@@ -86,7 +86,7 @@ class AndroidWebViewController extends PlatformWebViewController {
     _webView.settings.setJavaScriptCanOpenWindowsAutomatically(true);
     _webView.settings.setSupportMultipleWindows(true);
     _webView.settings.setLoadWithOverviewMode(true);
-    _webView.settings.setUseWideViewPort(true);
+    _webView.settings.setUseWideViewPort(false);
     _webView.settings.setDisplayZoomControls(false);
     _webView.settings.setBuiltInZoomControls(true);
 
@@ -599,6 +599,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
 
+  /// Sets whether the WebView should enable support for the "viewport" HTML
+  /// meta tag or should use a wide viewport.
+  ///
+  /// The default is false.
+  Future<void> setUseWideViewPort(bool use) =>
+      _webView.settings.setUseWideViewPort(use);
+
   /// Enables or disables content URL access.
   ///
   /// The default is true.
@@ -731,6 +738,17 @@ class AndroidWebViewController extends PlatformWebViewController {
     _onJavaScriptPrompt = onJavaScriptTextInputDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
   }
+
+  @override
+  Future<void> setVerticalScrollBarEnabled(bool enabled) =>
+      _webView.setVerticalScrollBarEnabled(enabled);
+
+  @override
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) =>
+      _webView.setHorizontalScrollBarEnabled(enabled);
+
+  @override
+  bool supportsSetScrollBarsEnabled() => true;
 
   @override
   Future<void> setOverScrollMode(WebViewOverScrollMode mode) {

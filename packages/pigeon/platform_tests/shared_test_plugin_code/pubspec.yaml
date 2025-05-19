@@ -19,3 +19,6 @@ dependencies:
   integration_test:
     sdk: flutter
   mockito: ^5.4.4
+
+dev_dependencies:
+  leak_tracker: any
