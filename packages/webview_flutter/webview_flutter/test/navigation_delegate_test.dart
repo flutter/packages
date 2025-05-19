@@ -11,7 +11,11 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'navigation_delegate_test.mocks.dart';
 
-@GenerateMocks(<Type>[WebViewPlatform, PlatformNavigationDelegate])
+@GenerateMocks(<Type>[
+  WebViewPlatform,
+  PlatformNavigationDelegate,
+  PlatformSslAuthError,
+])
 void main() {
   group('NavigationDelegate', () {
     test('onNavigationRequest', () async {
@@ -116,7 +120,9 @@ void main() {
       WebViewPlatform.instance = TestWebViewPlatform();
 
       final NavigationDelegate delegate = NavigationDelegate(
-        onSslAuthError: expectAsync1((_) {}),
+        onSslAuthError: expectAsync1((SslAuthError error) {
+          error.proceed();
+        }),
       );
 
       final void Function(PlatformSslAuthError) callback = verify(
@@ -125,7 +131,11 @@ void main() {
           .captured
           .single as void Function(PlatformSslAuthError);
 
-      callback(TestPlatformSslAuthError());
+      final MockPlatformSslAuthError mockPlatformError =
+          MockPlatformSslAuthError();
+      callback(mockPlatformError);
+
+      verify(mockPlatformError.proceed());
     });
   });
 }
@@ -141,17 +151,3 @@ class TestWebViewPlatform extends WebViewPlatform {
 
 class TestMockPlatformNavigationDelegate extends MockPlatformNavigationDelegate
     with MockPlatformInterfaceMixin {}
-
-class TestPlatformSslAuthError extends PlatformSslAuthError {
-  TestPlatformSslAuthError() : super(certificate: null, description: '');
-
-  @override
-  Future<void> cancel() {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> proceed() {
-    throw UnimplementedError();
-  }
-}
