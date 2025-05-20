@@ -127,24 +127,34 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
         .instanceImaSdkFactory()
         .createCompanionAdSlot();
 
-    await adSlot.setContainer(_frameLayout);
-    if (params.isFluid) {
-      await adSlot.setFluidSize();
-    } else {
-      await adSlot.setSize(params.width!, params.height!);
-    }
-
-    if (params.onClicked != null) {
-      await adSlot.addClickListener(
-        _androidParams._proxy.newCompanionAdSlotClickListener(
-          onCompanionAdClick: (_) {
-            // TODO:
-            params.onClicked!.call();
-          },
+    await Future.wait(<Future<void>>[
+      adSlot.setContainer(_frameLayout),
+      if (params.isFluid)
+        adSlot.setFluidSize()
+      else
+        adSlot.setSize(params.width!, params.height!),
+      if (params.onClicked != null)
+        adSlot.addClickListener(
+          _createAdSlotClickListener(
+            WeakReference<AndroidCompanionAdSlot>(this),
+          ),
         ),
-      );
-    }
+    ]);
 
     return adSlot;
+  }
+
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
+  static ima.CompanionAdSlotClickListener _createAdSlotClickListener(
+    WeakReference<AndroidCompanionAdSlot> weakThis,
+  ) {
+    return weakThis.target!._androidParams._proxy
+        .newCompanionAdSlotClickListener(
+      onCompanionAdClick: (_) {
+        weakThis.target?.params.onClicked!.call();
+      },
+    );
   }
 }

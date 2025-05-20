@@ -72,6 +72,10 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   // View used to display the Ad.
   late final UIView _view = _iosParams._proxy.newUIView();
 
+  late final IMACompanionDelegate _delegate = _createCompanionDelegate(
+    WeakReference<IOSCompanionAdSlot>(this),
+  );
+
   /// The native iOS IMACompanionAdSlot.
   @internal
   late final IMACompanionAdSlot nativeCompanionAdSlot = _initCompanionAdSlot();
@@ -113,16 +117,22 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
           );
 
     if (params.onClicked != null) {
-      adSlot.setDelegate(
-        _iosParams._proxy.newIMACompanionDelegate(
-          companionSlotWasClicked: (_, __) {
-            // TODO:
-            params.onClicked!.call();
-          },
-        ),
-      );
+      adSlot.setDelegate(_delegate);
     }
 
     return adSlot;
+  }
+
+  // This value is created in a static method because the callback methods for
+  // any wrapped classes must not reference the encapsulating object. This is to
+  // prevent a circular reference that prevents garbage collection.
+  static IMACompanionDelegate _createCompanionDelegate(
+    WeakReference<IOSCompanionAdSlot> weakThis,
+  ) {
+    return weakThis.target!._iosParams._proxy.newIMACompanionDelegate(
+      companionSlotWasClicked: (_, __) {
+        weakThis.target?.params.onClicked!.call();
+      },
+    );
   }
 }

@@ -70,6 +70,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   late final CompanionAdSlot companionAd = CompanionAdSlot.size(
     width: 300,
     height: 250,
+    onClicked: () => debugPrint('Companion Ad Clicked'),
   );
 
   // #docregion ad_and_content_players
