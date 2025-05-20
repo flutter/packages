@@ -71,7 +71,7 @@ public class PendingRecordingTest {
   }
 
   @Test
-  public void withAudioEnabled_doesNotEnableAudioWhenNotRequested() {
+  public void withAudioEnabled_doesNotEnableAudioWhenAudioNotRequested() {
     final PigeonApiPendingRecording api =
         new TestProxyApiRegistrar().getPigeonApiPendingRecording();
     final PendingRecording instance = mock(PendingRecording.class);

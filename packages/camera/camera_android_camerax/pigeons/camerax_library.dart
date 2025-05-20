@@ -518,7 +518,7 @@ abstract class VideoRecordEventListener {
   ),
 )
 abstract class PendingRecording {
-  /// Enables audio to be recorded for this recording.
+  /// Enables/disables audio to be recorded for this recording.
   PendingRecording withAudioEnabled(bool initialMuted);
 
   /// Starts the recording, making it an active recording.

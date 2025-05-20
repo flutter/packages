@@ -261,7 +261,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// This is expressed in terms of one of the [Surface] rotation constant.
   late int _initialDefaultDisplayRotation;
 
-  /// Whether or not audio should attempt to be enabled for recording video.
+  /// Whether or not audio should be enabled for recording video if permission is
+  /// granted.
   @visibleForTesting
   late bool enableRecordingAudio;
 
@@ -1108,7 +1109,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     pendingRecording = await recorder!.prepareRecording(videoOutputPath!);
 
-    // Attempt to enable/disable recording audio as requested.
+    // Enable/disable recording audio as requested. If enabling audio is requested
+    // and permission was not granted when the camera was created, then recording
+    // audio will be disabled to respect the denied permission.
     pendingRecording =
         await pendingRecording!.withAudioEnabled(enableRecordingAudio);
 
