@@ -29,6 +29,7 @@ void main() {
   setUpAll(() async {
     final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
     const VectorGraphicsCodec().writeSize(buffer, 50, 50);
+    TestWidgetsFlutterBinding.ensureInitialized();
 
     pictureInfo = await decodeVectorGraphics(
       buffer.done(),
@@ -426,6 +427,542 @@ void main() {
     expect(context.canvas.totalSaves, 1);
     expect(context.canvas.totalSaveLayers, 1);
   });
+
+  test('RenderAutoVectorGraphic paints picture correctly with default settings',
+      () async {
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testAutoPicture',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+
+    // When the rasterization is finished, it marks self as needing paint.
+    expect(renderAutoVectorGraphic.debugNeedsPaint, true);
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    // change offset
+    renderAutoVectorGraphic.paint(context, const Offset(20, 30));
+
+    expect(context.canvas.saveCount, 0);
+    expect(context.canvas.totalSaves, 1);
+    expect(context.canvas.totalSaveLayers, 0);
+
+    expect(context.canvas.lastImage, isNull);
+    renderAutoVectorGraphic.dispose();
+  });
+
+  test('RenderAutoVectorGraphic attaches and detaches listeners correctly',
+      () async {
+    final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.5);
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testAutoPictureListener',
+      null,
+      1.0,
+      opacity,
+      1.0,
+    );
+    final PipelineOwner pipelineOwner = PipelineOwner();
+    expect(opacity._listeners, hasLength(1));
+
+    renderAutoVectorGraphic.attach(pipelineOwner);
+    expect(opacity._listeners, hasLength(1));
+
+    renderAutoVectorGraphic.detach();
+    expect(opacity._listeners, hasLength(0));
+
+    renderAutoVectorGraphic.attach(pipelineOwner);
+    expect(opacity._listeners, hasLength(1));
+
+    renderAutoVectorGraphic.dispose();
+    expect(opacity._listeners, hasLength(0));
+  });
+
+  test('RasterDataWithPaint.dispose is safe to call multiple times', () async {
+    final ui.PictureRecorder recorder = ui.PictureRecorder();
+    ui.Canvas(recorder);
+    final ui.Image image = await recorder.endRecording().toImage(1, 1);
+    final RasterDataWithPaint data = RasterDataWithPaint(
+        image, 1, RasterKeyWithPaint('test', 1, 1, Paint()));
+
+    data.dispose();
+
+    expect(data.dispose, returnsNormally);
+  });
+
+  test('RenderAutoVectorGraphic applies color filter with clip correctly',
+      () async {
+    final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.5);
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'test',
+      null,
+      1.0,
+      opacity,
+      1.0,
+    );
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+
+    expect(context.canvas.lastClipRect,
+        equals(const ui.Rect.fromLTRB(0, 0, 50, 50)));
+    expect(context.canvas.saveCount, 0);
+    expect(context.canvas.totalSaves, 1);
+    expect(context.canvas.totalSaveLayers, 1);
+
+    renderAutoVectorGraphic.dispose();
+  });
+
+  testWidgets('Auto strategy triggers reater cache creation correctly',
+      (WidgetTester tester) async {
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testAuto',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+
+    final FakePaintingContext context = FakePaintingContext();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+
+    // When the rasterization is finished, it marks self as needing paint.
+    expect(renderAutoVectorGraphic.debugNeedsPaint, true);
+    expect(context.canvas.lastImage, isNull);
+
+    await tester.pump();
+    // a new paint will delay the raster cache creating.
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    await tester.pump();
+    // a new paint will delay the raster cache creating.
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    // two additional frame will create the raster cache.
+    await tester.pump();
+    await tester.pump();
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    renderAutoVectorGraphic.dispose();
+  });
+
+  testWidgets(
+      'Multiple RenderAutoVectorGraphics create raster cache sequentially',
+      (WidgetTester tester) async {
+    final List<RenderAutoVectorGraphic> renderAutoVectorGraphic =
+        List<RenderAutoVectorGraphic>.generate(
+      3,
+      (int index) => RenderAutoVectorGraphic(
+        pictureInfo,
+        'test_$index',
+        null,
+        1.0,
+        null,
+        1.0,
+      ),
+    );
+
+    final FakePaintingContext context = FakePaintingContext();
+
+    for (final RenderAutoVectorGraphic renderVectorGraphic
+        in renderAutoVectorGraphic) {
+      renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    }
+
+    // all image don't have raster cache
+    for (int i = 0; i < renderAutoVectorGraphic.length; i++) {
+      renderAutoVectorGraphic[i].paint(context, Offset.zero);
+      expect(context.canvas.lastImage, isNull);
+      context.canvas.resetImage();
+    }
+
+    await tester.pump();
+
+    // 2st frame:
+    await tester.pump();
+    for (int i = 0; i < renderAutoVectorGraphic.length; i++) {
+      renderAutoVectorGraphic[i].paint(context, Offset.zero);
+      if (i == 0) {
+        expect(context.canvas.lastImage, isNotNull);
+      } else {
+        expect(context.canvas.lastImage, isNull);
+      }
+      context.canvas.resetImage();
+    }
+    await tester.pump();
+
+    // 3st frame:
+    await tester.pump();
+
+    for (int i = 0; i < renderAutoVectorGraphic.length; i++) {
+      renderAutoVectorGraphic[i].paint(context, Offset.zero);
+      if (i <= 1) {
+        expect(context.canvas.lastImage, isNotNull);
+      } else {
+        expect(context.canvas.lastImage, isNull);
+      }
+      context.canvas.resetImage();
+    }
+    await tester.pump();
+
+    await tester.pump();
+    // 4st frame
+    for (int i = 0; i < renderAutoVectorGraphic.length; i++) {
+      renderAutoVectorGraphic[i].paint(context, Offset.zero);
+      expect(context.canvas.lastImage, isNotNull);
+      context.canvas.resetImage();
+      renderAutoVectorGraphic[i].dispose();
+    }
+
+    // now new widget will get a reset delay time:
+    final RenderAutoVectorGraphic renderAutoVectorGraphicEnd =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'test_end',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphicEnd.layout(BoxConstraints.tight(const Size(50, 50)));
+    expect(context.canvas.lastImage, isNull);
+
+    renderAutoVectorGraphicEnd.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    await tester.pump();
+    await tester.pump();
+    renderAutoVectorGraphicEnd.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    renderAutoVectorGraphicEnd.dispose();
+  });
+
+  testWidgets(
+      'The raster size is increased by the device pixel ratio in auto startegy',
+      (WidgetTester tester) async {
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testPixelRatio',
+      null,
+      2.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+
+    await tester.pump();
+    await tester.pump();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    expect(context.canvas.lastDst, const Rect.fromLTWH(0, 0, 50, 50));
+    expect(context.canvas.lastSrc, const Rect.fromLTWH(0, 0, 100, 100));
+    context.canvas.resetImage();
+
+    renderAutoVectorGraphic.devicePixelRatio = 3.0;
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    await tester.pump();
+    await tester.pump();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+
+    // devicePixelRatio change, raster cache will be a new one.
+    expect(context.canvas.lastDst, const Rect.fromLTWH(0, 0, 50, 50));
+    expect(context.canvas.lastSrc, const Rect.fromLTWH(0, 0, 150, 150));
+
+    renderAutoVectorGraphic.dispose();
+  });
+
+  testWidgets('Raster size scales when canvas is transformed',
+      (WidgetTester tester) async {
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testScaled',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    await tester.pump();
+    await tester.pump();
+    expect(context.canvas.lastImage, isNull);
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastSrc, const Rect.fromLTWH(0, 0, 50, 50));
+    expect(context.canvas.lastImage, isNotNull);
+
+    context.canvas.scale(2.0, 2.0);
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    await tester.pump();
+    await tester.pump();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastSrc, const Rect.fromLTWH(0, 0, 100, 100));
+    expect(context.canvas.lastImage, isNotNull);
+
+    renderAutoVectorGraphic.dispose();
+  });
+
+  testWidgets('Auto strategy reuses cache when creating image',
+      (WidgetTester tester) async {
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testCache',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    await tester.pump();
+    await tester.pump();
+    expect(context.canvas.lastImage, isNull);
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    final ui.Image? oldImage = context.canvas.lastImage;
+    context.canvas.resetImage();
+
+    final RenderAutoVectorGraphic renderAutoVectorGraphic2 =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testCache',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphic2.layout(BoxConstraints.tight(const Size(50, 50)));
+    renderAutoVectorGraphic2.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+    expect(context.canvas.lastImage, equals(oldImage));
+
+    renderAutoVectorGraphic.dispose();
+    renderAutoVectorGraphic2.dispose();
+  });
+
+  testWidgets('Changing color filter does re-rasterize in auto strategy',
+      (WidgetTester tester) async {
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testColorFilter',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    await tester.pump();
+    await tester.pump();
+    expect(context.canvas.lastImage, isNull);
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    final ui.Image? oldImage = context.canvas.lastImage;
+    context.canvas.resetImage();
+
+    renderAutoVectorGraphic.colorFilter =
+        const ui.ColorFilter.mode(Colors.red, ui.BlendMode.colorBurn);
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    await tester.pump();
+    await tester.pump();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+
+    expect(context.canvas.lastImage, isNotNull);
+    expect(context.canvas.lastImage, isNot(oldImage));
+
+    renderAutoVectorGraphic.dispose();
+  });
+
+  testWidgets('Changing offset does not re-rasterize in auto strategy',
+      (WidgetTester tester) async {
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testOffset',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    await tester.pump();
+    await tester.pump();
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    final ui.Image? oldImage = context.canvas.lastImage;
+    context.canvas.resetImage();
+
+    renderAutoVectorGraphic.paint(context, const Offset(20, 30));
+    expect(context.canvas.lastImage, isNotNull);
+    expect(context.canvas.lastImage, equals(oldImage));
+
+    renderAutoVectorGraphic.dispose();
+  });
+
+  testWidgets('RenderAutoVectorGraphic disposal during rasterization is safe',
+      (WidgetTester tester) async {
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testDispose',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+    await tester.pump();
+
+    renderAutoVectorGraphic.dispose();
+    await tester.pump();
+    await tester.pump();
+
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+  });
+
+  testWidgets('RenderAutoVectorGraphic re-rasterizes when opacity changes',
+      (WidgetTester tester) async {
+    final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.0);
+    final RenderAutoVectorGraphic renderAutoVectorGraphic =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testOpacity',
+      null,
+      1.0,
+      opacity,
+      1.0,
+    );
+
+    renderAutoVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    // full transparent means no raster cache.
+    await tester.pump();
+    await tester.pump();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    opacity.value = 0.5;
+    opacity.notifyListeners();
+
+    // Changing opacity requires painting.
+    expect(renderAutoVectorGraphic.debugNeedsPaint, true);
+
+    // Changing opacity need create new raster cache.
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    await tester.pump();
+    await tester.pump();
+    renderAutoVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    renderAutoVectorGraphic.dispose();
+  });
+
+  testWidgets(
+      'Identical widgets reuse raster cache when available in auto startegy',
+      (WidgetTester tester) async {
+    final RenderAutoVectorGraphic renderAutoVectorGraphic1 =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testOffset',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    final RenderAutoVectorGraphic renderAutoVectorGraphic2 =
+        RenderAutoVectorGraphic(
+      pictureInfo,
+      'testOffset',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderAutoVectorGraphic1.layout(BoxConstraints.tight(const Size(50, 50)));
+    renderAutoVectorGraphic2.layout(BoxConstraints.tight(const Size(50, 50)));
+
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderAutoVectorGraphic1.paint(context, Offset.zero);
+    renderAutoVectorGraphic2.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNull);
+
+    await tester.pump();
+    await tester.pump();
+
+    renderAutoVectorGraphic1.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+    final ui.Image? oldImage = context.canvas.lastImage;
+
+    context.canvas.resetImage();
+
+    renderAutoVectorGraphic2.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+    expect(context.canvas.lastImage, equals(oldImage));
+
+    renderAutoVectorGraphic1.dispose();
+    renderAutoVectorGraphic2.dispose();
+  });
 }
 
 class FakeCanvas extends Fake implements Canvas {
@@ -437,6 +974,8 @@ class FakeCanvas extends Fake implements Canvas {
   int saveCount = 0;
   int totalSaves = 0;
   int totalSaveLayers = 0;
+  double scaleX = 1.0;
+  double scaleY = 1.0;
 
   @override
   void drawImageRect(ui.Image image, Rect src, Rect dst, Paint paint) {
@@ -480,6 +1019,28 @@ class FakeCanvas extends Fake implements Canvas {
   void clipRect(ui.Rect rect,
       {ui.ClipOp clipOp = ui.ClipOp.intersect, bool doAntiAlias = true}) {
     lastClipRect = rect;
+  }
+
+  @override
+  void scale(double sx, [double? sy]) {
+    scaleX = sx;
+    scaleY = sx;
+    if (sy != null) {
+      scaleY = sy;
+    }
+  }
+
+  @override
+  void translate(double dx, double dy) {}
+
+  @override
+  Float64List getTransform() {
+    return Float64List.fromList(
+        <double>[scaleX, 0, 0, 0, 0, scaleY, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  }
+
+  void resetImage() {
+    lastImage = null;
   }
 }
 
