@@ -36,10 +36,12 @@ class CompanionAdSlot {
   CompanionAdSlot.size({
     required int width,
     required int height,
+    void Function()? onClicked,
   }) : this.fromPlatformCreationParams(
           params: PlatformCompanionAdSlotCreationParams.size(
             width: width,
             height: height,
+            onClicked: onClicked,
           ),
         );
 
@@ -47,9 +49,11 @@ class CompanionAdSlot {
   ///
   /// See [CompanionAdSlot.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
-  CompanionAdSlot.fluid()
+  CompanionAdSlot.fluid({void Function()? onClicked})
       : this.fromPlatformCreationParams(
-          params: const PlatformCompanionAdSlotCreationParams.fluid(),
+          params: PlatformCompanionAdSlotCreationParams.fluid(
+            onClicked: onClicked,
+          ),
         );
 
   /// Constructs an [CompanionAdSlot] from creation params for a specific platform.
@@ -88,6 +92,10 @@ class CompanionAdSlot {
 
   /// Implementation of [PlatformCompanionAdSlot] for the current platform.
   final PlatformCompanionAdSlot platform;
+
+  /// Called when the slot is clicked on by the user and will successfully
+  /// navigate away.
+  void Function()? get onClicked => platform.params.onClicked;
 
   /// Builds the Widget that contains the native View.
   Widget buildWidget(BuildContext context) {

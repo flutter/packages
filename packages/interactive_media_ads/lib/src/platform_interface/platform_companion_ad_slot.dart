@@ -49,11 +49,12 @@ base class PlatformCompanionAdSlotCreationParams {
   const PlatformCompanionAdSlotCreationParams.size({
     required int this.width,
     required int this.height,
+    this.onClicked,
   }) : isFluid = false;
 
   /// Used by the platform implementation to create a new
   /// [PlatformCompanionAdSlot].
-  const PlatformCompanionAdSlotCreationParams.fluid()
+  const PlatformCompanionAdSlotCreationParams.fluid({this.onClicked})
       : width = null,
         height = null,
         isFluid = true;
@@ -67,6 +68,10 @@ base class PlatformCompanionAdSlotCreationParams {
   ///
   /// Returns `null` when [isFluid] returns true;
   final int? height;
+
+  /// Called when the slot is clicked on by the user and will successfully
+  /// navigate away.
+  final void Function()? onClicked;
 
   /// Whether the companion ad has no fixed size, but rather adapts to fit the
   /// creative content they display.

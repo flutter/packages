@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
@@ -69,17 +71,12 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   late final IOSCompanionAdSlotCreationParams _iosParams =
       _initIOSParams(params);
 
+  // View used to display the Ad.
   late final UIView _view = _iosParams._proxy.newUIView();
 
   /// The native iOS IMACompanionAdSlot.
   @internal
-  late final IMACompanionAdSlot nativeCompanionAdSlot = _iosParams.isFluid
-      ? _iosParams._proxy.newIMACompanionAdSlot(view: _view)
-      : _iosParams._proxy.sizeIMACompanionAdSlot(
-          view: _view,
-          width: _iosParams.width!,
-          height: _iosParams.height!,
-        );
+  late final IMACompanionAdSlot nativeCompanionAdSlot = _initCompanionAdSlot();
 
   @override
   Widget buildWidget(BuildWidgetCreationParams params) {
@@ -106,5 +103,28 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
       return IOSCompanionAdSlotCreationParams
           .fromPlatformCompanionAdSlotCreationParamsSize(params);
     }
+  }
+
+  IMACompanionAdSlot _initCompanionAdSlot() {
+    final IMACompanionAdSlot adSlot = params.isFluid
+        ? _iosParams._proxy.newIMACompanionAdSlot(view: _view)
+        : _iosParams._proxy.sizeIMACompanionAdSlot(
+            view: _view,
+            width: _iosParams.width!,
+            height: _iosParams.height!,
+          );
+
+    if (params.onClicked != null) {
+      adSlot.setDelegate(
+        _iosParams._proxy.newIMACompanionDelegate(
+          companionSlotWasClicked: (_, __) {
+            // TODO:
+            params.onClicked!.call();
+          },
+        ),
+      );
+    }
+
+    return adSlot;
   }
 }

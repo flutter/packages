@@ -101,5 +101,15 @@ class InteractiveMediaAdsProxy {
   }) sizeIMACompanionAdSlot;
 
   /// Constructs [IMACompanionDelegate].
-  final IMACompanionDelegate Function() newIMACompanionDelegate;
+  final IMACompanionDelegate Function({
+    void Function(
+      IMACompanionDelegate,
+      IMACompanionAdSlot,
+      bool,
+    )? companionAdSlotFilled,
+    void Function(
+      IMACompanionDelegate,
+      IMACompanionAdSlot,
+    )? companionSlotWasClicked,
+  }) newIMACompanionDelegate;
 }

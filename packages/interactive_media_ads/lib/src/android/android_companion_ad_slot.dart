@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:nativewrappers/_internal/vm/lib/ffi_allocation_patch.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
@@ -19,6 +21,7 @@ final class AndroidCompanionAdSlotCreationParams
   const AndroidCompanionAdSlotCreationParams.size({
     required super.width,
     required super.height,
+    super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
@@ -28,6 +31,7 @@ final class AndroidCompanionAdSlotCreationParams
 
   /// Constructs a [AndroidCompanionAdSlotCreationParams].
   const AndroidCompanionAdSlotCreationParams.fluid({
+    super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
@@ -48,6 +52,7 @@ final class AndroidCompanionAdSlotCreationParams
     return AndroidCompanionAdSlotCreationParams.size(
       width: params.width!,
       height: params.height!,
+      onClicked: params.onClicked,
       proxy: proxy,
       platformViewsProxy: platformViewsProxy,
     );
@@ -58,12 +63,12 @@ final class AndroidCompanionAdSlotCreationParams
   factory AndroidCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsFluid(
     // Placeholder to prevent requiring a breaking change if params are added to
     // PlatformCompanionAdSlotCreationParams.
-    // ignore: avoid_unused_constructor_parameters
     PlatformCompanionAdSlotCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   }) {
     return AndroidCompanionAdSlotCreationParams.fluid(
+      onClicked: params.onClicked,
       proxy: proxy,
       platformViewsProxy: platformViewsProxy,
     );
@@ -83,6 +88,7 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   late final AndroidCompanionAdSlotCreationParams _androidParams =
       _initAndroidParams(params);
 
+  // ViewGroup used to display the Ad.
   late final ima.ViewGroup _frameLayout =
       _androidParams._proxy.newFrameLayout();
 
@@ -124,10 +130,21 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
         .createCompanionAdSlot();
 
     await adSlot.setContainer(_frameLayout);
-    if (_androidParams.isFluid) {
+    if (params.isFluid) {
       await adSlot.setFluidSize();
     } else {
       await adSlot.setSize(params.width!, params.height!);
+    }
+
+    if (params.onClicked != null) {
+      await adSlot.addClickListener(
+        _androidParams._proxy.newCompanionAdSlotClickListener(
+          onCompanionAdClick: (_) {
+            // TODO:
+            params.onClicked!.call();
+          },
+        ),
+      );
     }
 
     return adSlot;
