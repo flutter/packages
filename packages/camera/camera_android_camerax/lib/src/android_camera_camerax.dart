@@ -1112,8 +1112,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Enable/disable recording audio as requested. If enabling audio is requested
     // and permission was not granted when the camera was created, then recording
     // audio will be disabled to respect the denied permission.
-    pendingRecording =
-        await pendingRecording!.withAudioEnabled(enableRecordingAudio);
+    pendingRecording = await pendingRecording!
+        .withAudioEnabled(/* initialMuted */ !enableRecordingAudio);
 
     recording = await pendingRecording!.start(_videoRecordingEventListener);
 

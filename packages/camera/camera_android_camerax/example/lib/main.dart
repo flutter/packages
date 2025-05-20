@@ -637,11 +637,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     final CameraController cameraController = CameraController(
       cameraDescription,
-      mediaSettings: const MediaSettings(
+      mediaSettings: MediaSettings(
         resolutionPreset: ResolutionPreset.low,
         fps: 15,
         videoBitrate: 200000,
         audioBitrate: 32000,
+        enableAudio: enableAudio,
       ),
       imageFormatGroup: ImageFormatGroup.jpeg,
     );
