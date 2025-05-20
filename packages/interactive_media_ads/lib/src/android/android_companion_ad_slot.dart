@@ -77,7 +77,7 @@ final class AndroidCompanionAdSlotCreationParams
 base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   /// Constructs an [AndroidCompanionAdSlot].
   AndroidCompanionAdSlot(super.params) : super.implementation() {
-    _initCompanionAdSlot();
+    _adSlotFuture = _initCompanionAdSlot();
   }
 
   late final AndroidCompanionAdSlotCreationParams _androidParams =
@@ -91,19 +91,6 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   /// The future returning the native CompanionAdSlot.
   @internal
   Future<ima.CompanionAdSlot> getNativeCompanionAdSlot() => _adSlotFuture;
-
-  Future<void> _initCompanionAdSlot() async {
-    _adSlotFuture =
-        _androidParams._proxy.instanceImaSdkFactory().createCompanionAdSlot();
-    final ima.CompanionAdSlot adSlot = await _adSlotFuture;
-
-    await adSlot.setContainer(_frameLayout);
-    if (_androidParams.isFluid) {
-      await adSlot.setFluidSize();
-    } else {
-      await adSlot.setSize(params.width!, params.height!);
-    }
-  }
 
   @override
   Widget buildWidget(BuildWidgetCreationParams params) {
@@ -129,5 +116,20 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
       return AndroidCompanionAdSlotCreationParams
           .fromPlatformCompanionAdSlotCreationParamsSize(params);
     }
+  }
+
+  Future<ima.CompanionAdSlot> _initCompanionAdSlot() async {
+    final ima.CompanionAdSlot adSlot = await _androidParams._proxy
+        .instanceImaSdkFactory()
+        .createCompanionAdSlot();
+
+    await adSlot.setContainer(_frameLayout);
+    if (_androidParams.isFluid) {
+      await adSlot.setFluidSize();
+    } else {
+      await adSlot.setSize(params.width!, params.height!);
+    }
+
+    return adSlot;
   }
 }
