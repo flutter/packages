@@ -20,6 +20,33 @@ import 'billing_client_wrappers/product_details_wrapper_test.dart';
 import 'billing_client_wrappers/purchase_wrapper_test.dart';
 import 'test_conversion_utils.dart';
 
+const ProductDetailsWrapper dummySubscriptionProductDetails =
+    ProductDetailsWrapper(
+  description: 'description',
+  name: 'name',
+  productId: 'productId',
+  productType: ProductType.subs,
+  title: 'title',
+  subscriptionOfferDetails: <SubscriptionOfferDetailsWrapper>[
+    SubscriptionOfferDetailsWrapper(
+      basePlanId: 'basePlanId',
+      offerTags: <String>['offerTags'],
+      offerId: 'offerId',
+      offerIdToken: 'offerToken',
+      pricingPhases: <PricingPhaseWrapper>[
+        PricingPhaseWrapper(
+          billingCycleCount: 4,
+          billingPeriod: 'billingPeriod',
+          formattedPrice: r'$100',
+          priceAmountMicros: 100000000,
+          priceCurrencyCode: 'USD',
+          recurrenceMode: RecurrenceMode.finiteRecurring,
+        ),
+      ],
+    ),
+  ],
+);
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
