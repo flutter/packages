@@ -4,7 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 
-import '../interactive_media_ads.dart';
+import 'companion_ad_slot.dart';
 import 'platform_interface/platform_ad_display_container.dart';
 import 'platform_interface/platform_interface.dart';
 

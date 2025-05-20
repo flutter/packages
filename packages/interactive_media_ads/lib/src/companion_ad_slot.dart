@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'platform_interface/platform_interface.dart';
 
-/// A [Widget] for displaying loaded ads.
+/// Ad slot for companion ads.
 ///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current

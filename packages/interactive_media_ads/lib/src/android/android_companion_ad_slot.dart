@@ -1,4 +1,9 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
+import 'package:meta/meta.dart';
 
 import '../platform_interface/build_widget_creation_params.dart';
 import '../platform_interface/platform_companion_ad_slot.dart';
@@ -82,6 +87,7 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
 
   late final Future<ima.CompanionAdSlot> _adSlotFuture;
 
+  @internal
   Future<ima.CompanionAdSlot> getNativeCompanionAdSlot() => _adSlotFuture;
 
   Future<void> _initCompanionAdSlot() async {

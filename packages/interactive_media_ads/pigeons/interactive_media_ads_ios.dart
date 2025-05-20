@@ -657,8 +657,10 @@ abstract class IMACompanionAdSlot {
   /// instance should create an explicit reference to receive callbacks.
   void setDelegate(IMACompanionDelegate? delegate);
 
+  /// Width of the slot, in pixels.
   int width();
 
+  /// Height of the slot, in pixels.
   int height();
 }
 
