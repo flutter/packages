@@ -1,7 +1,13 @@
-## 0.6.17
+## 0.6.18
 
 * Adds support for the `MediaSettings.enableAudio` setting, which determines whether or not audio is
   recorded during video recording.
+
+## 0.6.17
+
+* Replaces `BroadcastReceiver` usage with an `OrientationEventListener` to detect changes in device
+  orientation to fix issue where some devices do not report changes in device configuration if it
+  is rotated between the same sort of orientation (landscape/portrait).
 
 ## 0.6.16
 
