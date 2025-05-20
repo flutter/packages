@@ -71,7 +71,7 @@ public class DeviceOrientationManager {
     return new OrientationEventListener(getContext()) {
       @Override
       public void onOrientationChanged(int orientation) {
-        handleUIOrientationChange();
+        handleUiOrientationChange();
       }
     };
   }
