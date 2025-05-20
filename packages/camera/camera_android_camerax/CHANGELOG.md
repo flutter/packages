@@ -1,6 +1,12 @@
-## 0.6.17
+## 0.6.18
 
 * Makes Java style improvements.
+
+## 0.6.17
+
+* Replaces `BroadcastReceiver` usage with an `OrientationEventListener` to detect changes in device
+  orientation to fix issue where some devices do not report changes in device configuration if it
+  is rotated between the same sort of orientation (landscape/portrait).
 
 ## 0.6.16
 
