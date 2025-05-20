@@ -63,6 +63,7 @@ base class PlatformAdDisplayContainerCreationParams {
   /// The layout direction to use for the embedded AdDisplayContainer.
   final TextDirection layoutDirection;
 
+  /// List of companion ad slots.
   final Iterable<PlatformCompanionAdSlot> companionSlots;
 }
 

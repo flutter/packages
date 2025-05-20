@@ -73,6 +73,7 @@ final class AndroidCompanionAdSlotCreationParams
   final PlatformViewsServiceProxy _platformViewsProxy;
 }
 
+/// Android implementation of [PlatformCompanionAdSlot].
 base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   /// Constructs an [AndroidCompanionAdSlot].
   AndroidCompanionAdSlot(super.params) : super.implementation() {
@@ -87,6 +88,7 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
 
   late final Future<ima.CompanionAdSlot> _adSlotFuture;
 
+  /// The future returning the native CompanionAdSlot.
   @internal
   Future<ima.CompanionAdSlot> getNativeCompanionAdSlot() => _adSlotFuture;
 

@@ -11,7 +11,7 @@ import '../platform_interface/platform_companion_ad_slot.dart';
 import 'interactive_media_ads.g.dart';
 import 'interactive_media_ads_proxy.dart';
 
-/// iOS implementation of [PlatformCompanionAdSlotCreationParams].
+/// Implementation of [PlatformCompanionAdSlotCreationParams] for iOS.
 final class IOSCompanionAdSlotCreationParams
     extends PlatformCompanionAdSlotCreationParams {
   /// Constructs a [IOSCompanionAdSlotCreationParams].
@@ -61,6 +61,7 @@ final class IOSCompanionAdSlotCreationParams
   final InteractiveMediaAdsProxy _proxy;
 }
 
+/// Implementation of [PlatformCompanionAdSlot] for iOS.
 base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   /// Constructs an [IOSCompanionAdSlot].
   IOSCompanionAdSlot(super.params) : super.implementation();
