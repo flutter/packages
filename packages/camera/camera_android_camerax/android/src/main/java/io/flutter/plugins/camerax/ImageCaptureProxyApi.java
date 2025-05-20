@@ -38,7 +38,7 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
   @NonNull
   @Override
   public ImageCapture pigeon_defaultConstructor(
-      @Nullable androidx.camera.core.resolutionselector.ResolutionSelector resolutionSelector,
+      @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
       @Nullable CameraXFlashMode flashMode) {
     final ImageCapture.Builder builder = new ImageCapture.Builder();

@@ -8,6 +8,7 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.Preview;
+import androidx.camera.core.ResolutionInfo;
 import androidx.camera.core.SurfaceRequest;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import io.flutter.view.TextureRegistry;
@@ -85,7 +86,7 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Nullable
   @Override
-  public androidx.camera.core.ResolutionInfo getResolutionInfo(Preview pigeonInstance) {
+  public ResolutionInfo getResolutionInfo(Preview pigeonInstance) {
     return pigeonInstance.getResolutionInfo();
   }
 
@@ -103,6 +104,7 @@ class PreviewProxyApi extends PigeonApiPreview {
       // get destroyed.
       surfaceProducer.setCallback(
           new TextureRegistry.SurfaceProducer.Callback() {
+            @Override
             public void onSurfaceAvailable() {
               // Do nothing. The Preview.SurfaceProvider will handle this whenever a new
               // Surface is needed.

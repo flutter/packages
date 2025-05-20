@@ -1,3 +1,7 @@
+## 0.6.18
+
+* Makes Java style improvements.
+
 ## 0.6.17
 
 * Replaces `BroadcastReceiver` usage with an `OrientationEventListener` to detect changes in device
