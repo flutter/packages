@@ -1,13 +1,10 @@
 package dev.flutter.packages.interactive_media_ads
 
-import com.google.ads.interactivemedia.v3.api.AdsRenderingSettings
 import com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
 import com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+import kotlin.test.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class BaseDisplayContainerProxyApiTest {
   @Test

@@ -15,10 +15,10 @@ import com.google.ads.interactivemedia.v3.api.CompanionAdSlot
  */
 class BaseDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiBaseDisplayContainer(pigeonRegistrar) {
-    override fun setCompanionSlots(
-        pigeon_instance: BaseDisplayContainer,
-        companionSlots: List<CompanionAdSlot>?
-    ) {
-        return pigeon_instance.setCompanionSlots(companionSlots)
-    }
+  override fun setCompanionSlots(
+      pigeon_instance: BaseDisplayContainer,
+      companionSlots: List<CompanionAdSlot>?
+  ) {
+    return pigeon_instance.setCompanionSlots(companionSlots)
+  }
 }
