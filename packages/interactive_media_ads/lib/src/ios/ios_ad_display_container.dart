@@ -77,8 +77,8 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
           adContainerViewController: _controller,
           companionSlots: _iosParams.companionSlots
               .cast<IOSCompanionAdSlot>()
-              .map((IOSCompanionAdSlot slot) =>
-                  slot.getNativeCompanionAdSlot()).toList(),
+              .map((IOSCompanionAdSlot slot) => slot.nativeCompanionAdSlot)
+              .toList(),
         );
         await _viewDidAppearCompleter.future;
         params.onContainerAdded(this);
