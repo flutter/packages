@@ -67,13 +67,13 @@ public class DeviceOrientationManagerTest {
   public void start_createsExpectedOrientationEventListener() {
     DeviceOrientationManager deviceOrientationManagerSpy = spy(deviceOrientationManager);
 
-    doNothing().when(deviceOrientationManagerSpy).handleUIOrientationChange();
+    doNothing().when(deviceOrientationManagerSpy).handleUiOrientationChange();
 
     deviceOrientationManagerSpy.start();
     deviceOrientationManagerSpy.orientationEventListener.onOrientationChanged(
         /* some device orientation */ 3);
 
-    verify(deviceOrientationManagerSpy).handleUIOrientationChange();
+    verify(deviceOrientationManagerSpy).handleUiOrientationChange();
   }
 
   @Test
