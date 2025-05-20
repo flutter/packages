@@ -1,3 +1,7 @@
+## 2.8.7
+
+* Adds note about known issue regarding platform views to the README.
+
 ## 2.8.6
 
 * Fixes a [bug](https://github.com/flutter/flutter/issues/165149) where the `isBuffering` flag
