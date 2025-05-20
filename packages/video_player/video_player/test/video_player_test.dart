@@ -772,7 +772,7 @@ void main() {
 
         // Simulate continuous playback by incrementing in 50ms steps.
         for (int ms = 0; ms <= totalDurationMs; ms += 50) {
-          fakeVideoPlayerPlatform._positions[controller.textureId] =
+          fakeVideoPlayerPlatform._positions[controller.playerId] =
               Duration(milliseconds: ms);
           await Future<void>.delayed(updateInterval);
         }
@@ -1048,7 +1048,7 @@ void main() {
     await controller.play();
     for (int i = 0; i < 3; i++) {
       await Future<void>.delayed(updatesInterval);
-      fakeVideoPlayerPlatform._positions[controller.textureId] =
+      fakeVideoPlayerPlatform._positions[controller.playerId] =
           Duration(milliseconds: i * updatesInterval.inMilliseconds);
     }
 
