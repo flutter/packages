@@ -66,13 +66,20 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   late final IOSCompanionAdSlotCreationParams _iosParams =
       _initIOSParams(params);
 
-  final Completer<IMACompanionAdSlot> viewDidAppearCompleter = Completer<IMACompanionAdSlot>();
+  //final Completer<IMACompanionAdSlot> viewDidAppearCompleter = Completer<IMACompanionAdSlot>();
 
-  late final UIViewController viewController = _createViewController(WeakReference(this));
+  //late final UIViewController viewController = _createViewController(WeakReference(this));
+
+  late final UIView view = _iosParams._proxy.newUIView();
+  late final IMACompanionAdSlot slot = IMACompanionAdSlot.size(
+    view: view,
+    width: _iosParams.width!,
+    height: _iosParams.height!,
+  );
 
   @internal
-  Future<IMACompanionAdSlot> getNativeCompanionAdSlot() {
-    return viewDidAppearCompleter.future;
+  IMACompanionAdSlot getNativeCompanionAdSlot() {
+    return slot;
   }
 
   @override
@@ -84,8 +91,7 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
         key: params.key,
         viewType: 'interactive_media_ads.packages.flutter.dev/view',
         layoutDirection: params.layoutDirection,
-        creationParams: viewController.view.pigeon_instanceManager
-            .getIdentifier(viewController.view),
+        creationParams: view.pigeon_instanceManager.getIdentifier(view),
         creationParamsCodec: const StandardMessageCodec(),
       ),
     );
@@ -107,40 +113,41 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
     }
   }
 
-  IMACompanionAdSlot? s;
-
-  IMACompanionAdSlot _initCompanionAdSlot() {
-    if (_iosParams.isFluid) {
-      return s = IMACompanionAdSlot(view: _iosParams._proxy.newUIView());
-    } else {
-      s = IMACompanionAdSlot.size(
-        view: viewController.view,
-        width: _iosParams.width!,
-        height: _iosParams.height!,
-      );
-      print('SIZE');
-      s!.width().then((int value) => print(value));
-      s!.height().then((int value) => print(value));
-      return s!;
-    }
-  }
+  // IMACompanionAdSlot? s;
+  //
+  // IMACompanionAdSlot _initCompanionAdSlot() {
+  //   if (_iosParams.isFluid) {
+  //     return s = IMACompanionAdSlot(view: _iosParams._proxy.newUIView());
+  //   } else {
+  //     s = IMACompanionAdSlot.size(
+  //       view: viewController.view,
+  //       width: _iosParams.width!,
+  //       height: _iosParams.height!,
+  //     );
+  //     print('SIZE');
+  //     s!.width().then((int value) => print(value));
+  //     s!.height().then((int value) => print(value));
+  //     return s!;
+  //   }
+  // }
 
   // This value is created in a static method because the callback methods for
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
-  static UIViewController _createViewController(
-    WeakReference<IOSCompanionAdSlot> interfaceContainer,
-  ) {
-    return interfaceContainer.target!._iosParams._proxy.newUIViewController(
-      viewDidAppear: (_, bool animated) {
-        print('VIEW appeared');
-        final IOSCompanionAdSlot? container = interfaceContainer.target;
-        if (container != null &&
-            !container.viewDidAppearCompleter.isCompleted) {
-          print('complete');
-          container.viewDidAppearCompleter.complete(container._initCompanionAdSlot());
-        }
-      },
-    );
-  }
+  // static UIViewController _createViewController(
+  //   WeakReference<IOSCompanionAdSlot> interfaceContainer,
+  // ) {
+  //   return interfaceContainer.target!._iosParams._proxy.newUIViewController(
+  //     viewDidAppear: (_, bool animated) {
+  //       print('VIEW appeared');
+  //       final IOSCompanionAdSlot? container = interfaceContainer.target;
+  //       if (container != null &&
+  //           !container.viewDidAppearCompleter.isCompleted) {
+  //         print('complete');
+  //         container.viewDidAppearCompleter
+  //             .complete(container._initCompanionAdSlot());
+  //       }
+  //     },
+  //   );
+  // }
 }

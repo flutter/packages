@@ -75,10 +75,10 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         adDisplayContainer = _iosParams._imaProxy.newIMAAdDisplayContainer(
           adContainer: _controller.view,
           adContainerViewController: _controller,
-          companionSlots: coolerPrint(await Future.wait(_iosParams.companionSlots
+          companionSlots: _iosParams.companionSlots
               .cast<IOSCompanionAdSlot>()
               .map((IOSCompanionAdSlot slot) =>
-                  slot.getNativeCompanionAdSlot()))),
+                  slot.getNativeCompanionAdSlot()).toList(),
         );
         await _viewDidAppearCompleter.future;
         params.onContainerAdded(this);
@@ -106,9 +106,4 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
       },
     );
   }
-}
-
-T coolerPrint<T>(T object) {
-  print(object);
-  return object;
 }
