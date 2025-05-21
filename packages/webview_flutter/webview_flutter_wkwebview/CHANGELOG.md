@@ -1,5 +1,9 @@
 ## 3.22.0
 
+* Introduces `WebKitLoadFileParams`, a platform-specific extension of `LoadFileParams` for iOS and macOS that adds support for `readAccessPath`.
+
+## 3.22.0
+
 * Adds support to respond to recoverable SSL certificate errors. See `WebKitNavigationDelegate.setOnSSlAuthError`.
 
 ## 3.21.0
@@ -21,7 +25,7 @@
 ## 3.18.6
 
 * Fixes `PlatformException` when calling `loadFlutterAsset` on macOS.
-* Updates native wrapper with methods handling `SecTust` and `SecCertificate`. 
+* Updates native wrapper with methods handling `SecTust` and `SecCertificate`.
 
 ## 3.18.5
 
