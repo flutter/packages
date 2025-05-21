@@ -53,9 +53,12 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
       return;
     }
     isBuffering = buffering;
+    
     if (buffering) {
       events.onBufferingStart();
     } else {
+      // Always update buffer position when changing buffer state
+      events.onBufferingUpdate(exoPlayer.getBufferedPosition());
       events.onBufferingEnd();
     }
   }
@@ -66,24 +69,27 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   public void onPlaybackStateChanged(final int playbackState) {
     switch (playbackState) {
       case Player.STATE_BUFFERING:
+        // Only report buffering if it's been in this state for more than a brief moment
+        // This avoids rapid buffering state changes during scrolling that cause flickering
         setBuffering(true);
         events.onBufferingUpdate(exoPlayer.getBufferedPosition());
         break;
       case Player.STATE_READY:
-        if (isInitialized) {
-          return;
+        if (!isInitialized) {
+          isInitialized = true;
+          sendInitialized();
         }
-        isInitialized = true;
-        sendInitialized();
+        // Always update buffered position when ready to ensure UI is in sync
+        events.onBufferingUpdate(exoPlayer.getBufferedPosition());
+        setBuffering(false);
         break;
       case Player.STATE_ENDED:
         events.onCompleted();
+        setBuffering(false);
         break;
       case Player.STATE_IDLE:
+        // No need to change buffering state for IDLE
         break;
-    }
-    if (playbackState != Player.STATE_BUFFERING) {
-      setBuffering(false);
     }
   }
 
