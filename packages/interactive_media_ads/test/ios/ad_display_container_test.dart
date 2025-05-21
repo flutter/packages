@@ -61,6 +61,7 @@ void main() {
         newIMAAdDisplayContainer: ({
           required UIView adContainer,
           UIViewController? adContainerViewController,
+          List<IMACompanionAdSlot>? companionSlots,
         }) =>
             MockIMAAdDisplayContainer(),
       );
