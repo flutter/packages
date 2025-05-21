@@ -1,0 +1,3 @@
+buildFlags:
+  global:
+    - "--no-tree-shake-icons"

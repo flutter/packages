@@ -1,3 +1,7 @@
+## NEXT
+
+* Adds an example using JavaScript.
+
 ## 1.0.31
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

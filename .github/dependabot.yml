@@ -56,6 +56,7 @@ updates:
       - /packages/rfw/example/hello/android/app
       - /packages/rfw/example/local/android/app
       - /packages/rfw/example/remote/android/app
+      - /packages/rfw/example/javascript/android/app
       - /packages/shared_preferences/shared_preferences/example/android/app
       - /packages/shared_preferences/shared_preferences_android/example/android/app
       - /packages/two_dimensional_scrollables/example/android/app
