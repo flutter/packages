@@ -961,7 +961,7 @@ abstract class PrivateKey {}
     fullClassName: 'java.security.cert.X509Certificate',
   ),
 )
-abstract class X509Certificate {}
+abstract class X509Certificate extends Certificate {}
 
 /// Represents a request for handling an SSL error.
 ///
@@ -1057,4 +1057,17 @@ abstract class SslCertificate {
   ///
   /// Always returns null on Android versions below Q.
   X509Certificate? getX509Certificate();
+}
+
+/// Abstract class for managing a variety of identity certificates.
+///
+/// See https://developer.android.com/reference/java/security/cert/Certificate.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'java.security.cert.Certificate',
+  ),
+)
+abstract class Certificate {
+  /// The encoded form of this certificate.
+  Uint8List getEncoded();
 }
