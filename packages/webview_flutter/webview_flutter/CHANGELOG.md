@@ -1,6 +1,10 @@
-## NEXT
+## 4.12.0
 
-* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Adds support to set whether to draw the scrollbar. See
+  `WebViewController.setVerticalScrollBarEnabled`,
+  `WebViewController.setHorizontalScrollBarEnabled`,
+  `WebViewController.supportsSetScrollBarsEnabled`.
+* Updates README to indicate that Android SDK <21 is no longer supported.
 
 ## 4.11.0
 
