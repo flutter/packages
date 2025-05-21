@@ -6,6 +6,12 @@ environment:
   sdk: ^3.5.0
   flutter: ">=3.24.0"
 
+dependency_overrides:
+  video_player_android:
+    path: ../../video_player_android
+  video_player_platform_interface:
+    path: ../../video_player_platform_interface
+
 dependencies:
   flutter:
     sdk: flutter
@@ -18,7 +24,8 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  video_player_platform_interface: ^6.3.0
+  video_player_platform_interface:
+    path: ../../video_player_platform_interface
 
 dev_dependencies:
   espresso: ^0.4.0

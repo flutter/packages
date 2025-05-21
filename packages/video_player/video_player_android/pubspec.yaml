@@ -17,6 +17,10 @@ flutter:
         package: io.flutter.plugins.videoplayer
         pluginClass: VideoPlayerPlugin
 
+dependency_overrides:
+  video_player_platform_interface:
+    path: ../video_player_platform_interface
+
 dependencies:
   flutter:
     sdk: flutter

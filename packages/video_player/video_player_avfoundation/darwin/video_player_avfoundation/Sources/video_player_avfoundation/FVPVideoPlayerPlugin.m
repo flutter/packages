@@ -302,6 +302,16 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
       }];
 }
 
+- (void)seekToDefaultPositionForPlayer:(NSInteger)playerIdentifier
+                            completion:(nonnull void (^)(FlutterError *_Nullable))completion {
+  FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
+  [player seekToDefaultPosition:^(BOOL finished) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+      completion(nil);
+    });
+  }];
+}
+
 - (void)pausePlayer:(NSInteger)playerIdentifier error:(FlutterError **)error {
   FVPVideoPlayer *player = self.playersByIdentifier[@(playerIdentifier)];
   [player pause];

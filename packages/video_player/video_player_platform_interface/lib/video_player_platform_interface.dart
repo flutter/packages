@@ -90,6 +90,16 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('seekTo() has not been implemented.');
   }
 
+  /// Seeks to the default position associated with the current MediaItem.
+  ///
+  /// The position can depend on the type of media being played.
+  /// For live streams it will typically be the live edge.
+  /// For other streams it will typically be the start.
+  Future<void> seekToDefaultPosition(int playerId) {
+    throw UnimplementedError(
+        'seekToDefaultPosition() has not been implemented.');
+  }
+
   /// Sets the playback speed to a [speed] value indicating the playback rate.
   Future<void> setPlaybackSpeed(int playerId, double speed) {
     throw UnimplementedError('setPlaybackSpeed() has not been implemented.');

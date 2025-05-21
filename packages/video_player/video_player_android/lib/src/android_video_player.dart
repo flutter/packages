@@ -125,6 +125,11 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> seekToDefaultPosition(int playerId) {
+    return _api.seekToDefaultPosition(playerId);
+  }
+
+  @override
   Future<Duration> getPosition(int playerId) async {
     final int position = await _api.position(playerId);
     return Duration(milliseconds: position);

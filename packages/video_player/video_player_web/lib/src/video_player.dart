@@ -226,6 +226,25 @@ class VideoPlayer {
     _videoElement.currentTime = position.inMilliseconds.toDouble() / 1000;
   }
 
+  /// Seeks to the default position associated with the current MediaItem.
+  ///
+  /// The position can depend on the type of media being played.
+  /// For live streams it will typically be the live edge.
+  /// For other streams it will typically be the start.
+  void seekToDefaultPosition() {
+    // Seek to the end of the video if it is a live stream.
+    if (_videoElement.seekable.length == 0) {
+      // not a live stream, so seek to the start
+      seekTo(Duration.zero);
+      return;
+    }
+
+    // Seek to the end of the video if it is a live stream.
+    final double liveEdgeTime =
+        _videoElement.seekable.end(_videoElement.seekable.length - 1);
+    seekTo(Duration(milliseconds: (liveEdgeTime * 1000).round()));
+  }
+
   /// Returns the current playback head position as a [Duration].
   Duration getPosition() {
     _sendBufferingRangesUpdate();

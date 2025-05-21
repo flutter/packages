@@ -50,6 +50,7 @@ abstract class AndroidVideoPlayerApi {
   void play(int playerId);
   int position(int playerId);
   void seekTo(int playerId, int position);
+  void seekToDefaultPosition(int playerId);
   void pause(int playerId);
   void setMixWithOthers(bool mixWithOthers);
 }

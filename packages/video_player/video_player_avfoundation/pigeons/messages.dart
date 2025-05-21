@@ -69,6 +69,9 @@ abstract class AVFoundationVideoPlayerApi {
   @async
   @ObjCSelector('seekTo:forPlayer:')
   void seekTo(int position, int playerId);
+  @async
+  @ObjCSelector('seekToDefaultPositionForPlayer:')
+  void seekToDefaultPosition(int playerId);
   @ObjCSelector('pausePlayer:')
   void pause(int playerId);
   @ObjCSelector('setMixWithOthers:')
