@@ -1,3 +1,7 @@
+## 2.9.2
+
+- Adds `TypedRelativeGoRoute` annotation which supports relative routes.
+
 ## 2.9.1
 
 - Fixes an deprecated warning for using withNullability
