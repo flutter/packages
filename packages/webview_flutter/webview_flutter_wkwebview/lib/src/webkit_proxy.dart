@@ -31,6 +31,7 @@ class WebKitProxy {
     this.newPlatformWebView = PlatformWebView.new,
     this.newWKUIDelegate = WKUIDelegate.new,
     this.newUIScrollViewDelegate = UIScrollViewDelegate.new,
+    this.newWKWebpagePreferences = WKWebpagePreferences.new,
     this.createAsyncAuthenticationChallengeResponse =
         AuthenticationChallengeResponse.createAsync,
     this.withUserAsyncURLCredential = URLCredential.withUserAsync,
@@ -186,6 +187,9 @@ class WebKitProxy {
       double,
     )? scrollViewDidScroll,
   }) newUIScrollViewDelegate;
+
+  /// Constructs [WKWebpagePreferences].
+  final WKWebpagePreferences Function() newWKWebpagePreferences;
 
   /// Calls to [AuthenticationChallengeResponse.createAsync].
   final Future<AuthenticationChallengeResponse> Function(

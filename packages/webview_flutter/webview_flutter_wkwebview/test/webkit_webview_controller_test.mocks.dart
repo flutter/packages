@@ -139,9 +139,9 @@ class _FakeWKWebsiteDataStore_10 extends _i1.SmartFake
         );
 }
 
-class _FakeWKWebpagePreferences_11 extends _i1.SmartFake
-    implements _i2.WKWebpagePreferences {
-  _FakeWKWebpagePreferences_11(
+class _FakeWKWebViewConfiguration_11 extends _i1.SmartFake
+    implements _i2.WKWebViewConfiguration {
+  _FakeWKWebViewConfiguration_11(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -150,9 +150,9 @@ class _FakeWKWebpagePreferences_11 extends _i1.SmartFake
         );
 }
 
-class _FakeWKWebViewConfiguration_12 extends _i1.SmartFake
-    implements _i2.WKWebViewConfiguration {
-  _FakeWKWebViewConfiguration_12(
+class _FakeWKWebpagePreferences_12 extends _i1.SmartFake
+    implements _i2.WKWebpagePreferences {
+  _FakeWKWebpagePreferences_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -309,7 +309,10 @@ class MockUIScrollView extends _i1.Mock implements _i2.UIScrollView {
   @override
   _i3.Future<void> setShowsVerticalScrollIndicator(bool? value) =>
       (super.noSuchMethod(
-        Invocation.method(#setShowsVerticalScrollIndicator, [value]),
+        Invocation.method(
+          #setShowsVerticalScrollIndicator,
+          [value],
+        ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
@@ -317,7 +320,10 @@ class MockUIScrollView extends _i1.Mock implements _i2.UIScrollView {
   @override
   _i3.Future<void> setShowsHorizontalScrollIndicator(bool? value) =>
       (super.noSuchMethod(
-        Invocation.method(#setShowsHorizontalScrollIndicator, [value]),
+        Invocation.method(
+          #setShowsHorizontalScrollIndicator,
+          [value],
+        ),
         returnValue: _i3.Future<void>.value(),
         returnValueForMissingStub: _i3.Future<void>.value(),
       ) as _i3.Future<void>);
@@ -1387,29 +1393,28 @@ class MockWKWebViewConfiguration extends _i1.Mock
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<_i2.WKWebpagePreferences> getDefaultWebpagePreferences() =>
+  _i3.Future<_i2.WKWebpagePreferences?> getDefaultWebpagePreferences() =>
       (super.noSuchMethod(
         Invocation.method(
           #getDefaultWebpagePreferences,
           [],
         ),
-        returnValue: _i3.Future<_i2.WKWebpagePreferences>.value(
-            _FakeWKWebpagePreferences_11(
-          this,
-          Invocation.method(
-            #getDefaultWebpagePreferences,
-            [],
-          ),
-        )),
-        returnValueForMissingStub: _i3.Future<_i2.WKWebpagePreferences>.value(
-            _FakeWKWebpagePreferences_11(
-          this,
-          Invocation.method(
-            #getDefaultWebpagePreferences,
-            [],
-          ),
-        )),
-      ) as _i3.Future<_i2.WKWebpagePreferences>);
+        returnValue: _i3.Future<_i2.WKWebpagePreferences?>.value(),
+        returnValueForMissingStub:
+            _i3.Future<_i2.WKWebpagePreferences?>.value(),
+      ) as _i3.Future<_i2.WKWebpagePreferences?>);
+
+  @override
+  _i3.Future<void> setDefaultWebpagePreferences(
+          _i2.WKWebpagePreferences? preferences) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setDefaultWebpagePreferences,
+          [preferences],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i2.WKWebViewConfiguration pigeon_copy() => (super.noSuchMethod(
@@ -1417,14 +1422,14 @@ class MockWKWebViewConfiguration extends _i1.Mock
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeWKWebViewConfiguration_12(
+        returnValue: _FakeWKWebViewConfiguration_11(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWKWebViewConfiguration_12(
+        returnValueForMissingStub: _FakeWKWebViewConfiguration_11(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -1505,14 +1510,14 @@ class MockWKWebpagePreferences extends _i1.Mock
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeWKWebpagePreferences_11(
+        returnValue: _FakeWKWebpagePreferences_12(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWKWebpagePreferences_11(
+        returnValueForMissingStub: _FakeWKWebpagePreferences_12(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -1565,11 +1570,11 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
   @override
   _i2.WKWebViewConfiguration get configuration => (super.noSuchMethod(
         Invocation.getter(#configuration),
-        returnValue: _FakeWKWebViewConfiguration_12(
+        returnValue: _FakeWKWebViewConfiguration_11(
           this,
           Invocation.getter(#configuration),
         ),
-        returnValueForMissingStub: _FakeWKWebViewConfiguration_12(
+        returnValueForMissingStub: _FakeWKWebViewConfiguration_11(
           this,
           Invocation.getter(#configuration),
         ),
@@ -1607,14 +1612,14 @@ class MockUIViewWKWebView extends _i1.Mock implements _i2.UIViewWKWebView {
           #pigeonVar_configuration,
           [],
         ),
-        returnValue: _FakeWKWebViewConfiguration_12(
+        returnValue: _FakeWKWebViewConfiguration_11(
           this,
           Invocation.method(
             #pigeonVar_configuration,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeWKWebViewConfiguration_12(
+        returnValueForMissingStub: _FakeWKWebViewConfiguration_11(
           this,
           Invocation.method(
             #pigeonVar_configuration,

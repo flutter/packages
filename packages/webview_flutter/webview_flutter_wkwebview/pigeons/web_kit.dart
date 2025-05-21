@@ -711,7 +711,10 @@ abstract class WKWebViewConfiguration extends NSObject {
   void setMediaTypesRequiringUserActionForPlayback(AudiovisualMediaType type);
 
   /// The default preferences to use when loading and rendering content.
-  WKWebpagePreferences getDefaultWebpagePreferences();
+  WKWebpagePreferences? getDefaultWebpagePreferences();
+
+  /// The default preferences to use when loading and rendering content.
+  void setDefaultWebpagePreferences(WKWebpagePreferences preferences);
 }
 
 /// An object for managing interactions between JavaScript code and your web
@@ -1213,6 +1216,9 @@ abstract class URL extends NSObject {
   ),
 )
 abstract class WKWebpagePreferences extends NSObject {
+  /// Creates a `WKWebpagePreferences`.
+  WKWebpagePreferences();
+
   /// A Boolean value that indicates whether JavaScript from web content is
   /// allowed to run.
   void setAllowsContentJavaScript(bool allow);

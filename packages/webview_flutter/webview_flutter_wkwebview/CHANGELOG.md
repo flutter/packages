@@ -1,3 +1,8 @@
+## 3.22.1
+
+* Fixes exception from native `WKWebViewConfiguration.defaultWebpagePreferences` sometimes returning
+  `nil`.
+
 ## 3.22.0
 
 * Adds support to respond to recoverable SSL certificate errors. See `WebKitNavigationDelegate.setOnSSlAuthError`.

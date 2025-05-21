@@ -161,20 +161,9 @@ class _FakeWKWebsiteDataStore_11 extends _i1.SmartFake
         );
 }
 
-class _FakeWKWebpagePreferences_12 extends _i1.SmartFake
-    implements _i2.WKWebpagePreferences {
-  _FakeWKWebpagePreferences_12(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeWKHTTPCookieStore_13 extends _i1.SmartFake
+class _FakeWKHTTPCookieStore_12 extends _i1.SmartFake
     implements _i2.WKHTTPCookieStore {
-  _FakeWKHTTPCookieStore_13(
+  _FakeWKHTTPCookieStore_12(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -183,8 +172,8 @@ class _FakeWKHTTPCookieStore_13 extends _i1.SmartFake
         );
 }
 
-class _FakeWKUIDelegate_14 extends _i1.SmartFake implements _i2.WKUIDelegate {
-  _FakeWKUIDelegate_14(
+class _FakeWKUIDelegate_13 extends _i1.SmartFake implements _i2.WKUIDelegate {
+  _FakeWKUIDelegate_13(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -193,9 +182,20 @@ class _FakeWKUIDelegate_14 extends _i1.SmartFake implements _i2.WKUIDelegate {
         );
 }
 
-class _FakePlatformWebView_15 extends _i1.SmartFake
+class _FakePlatformWebView_14 extends _i1.SmartFake
     implements _i3.PlatformWebView {
-  _FakePlatformWebView_15(
+  _FakePlatformWebView_14(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeWKWebpagePreferences_15 extends _i1.SmartFake
+    implements _i2.WKWebpagePreferences {
+  _FakeWKWebpagePreferences_15(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -329,7 +329,10 @@ class MockUIScrollView extends _i1.Mock implements _i2.UIScrollView {
   @override
   _i4.Future<void> setShowsVerticalScrollIndicator(bool? value) =>
       (super.noSuchMethod(
-        Invocation.method(#setShowsVerticalScrollIndicator, [value]),
+        Invocation.method(
+          #setShowsVerticalScrollIndicator,
+          [value],
+        ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
@@ -337,7 +340,10 @@ class MockUIScrollView extends _i1.Mock implements _i2.UIScrollView {
   @override
   _i4.Future<void> setShowsHorizontalScrollIndicator(bool? value) =>
       (super.noSuchMethod(
-        Invocation.method(#setShowsHorizontalScrollIndicator, [value]),
+        Invocation.method(
+          #setShowsHorizontalScrollIndicator,
+          [value],
+        ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
@@ -1404,21 +1410,26 @@ class MockWKWebViewConfiguration extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<_i2.WKWebpagePreferences> getDefaultWebpagePreferences() =>
+  _i4.Future<_i2.WKWebpagePreferences?> getDefaultWebpagePreferences() =>
       (super.noSuchMethod(
         Invocation.method(
           #getDefaultWebpagePreferences,
           [],
         ),
-        returnValue: _i4.Future<_i2.WKWebpagePreferences>.value(
-            _FakeWKWebpagePreferences_12(
-          this,
-          Invocation.method(
-            #getDefaultWebpagePreferences,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.WKWebpagePreferences>);
+        returnValue: _i4.Future<_i2.WKWebpagePreferences?>.value(),
+      ) as _i4.Future<_i2.WKWebpagePreferences?>);
+
+  @override
+  _i4.Future<void> setDefaultWebpagePreferences(
+          _i2.WKWebpagePreferences? preferences) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setDefaultWebpagePreferences,
+          [preferences],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
 
   @override
   _i2.WKWebViewConfiguration pigeon_copy() => (super.noSuchMethod(
@@ -1484,7 +1495,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
   @override
   _i2.WKHTTPCookieStore get httpCookieStore => (super.noSuchMethod(
         Invocation.getter(#httpCookieStore),
-        returnValue: _FakeWKHTTPCookieStore_13(
+        returnValue: _FakeWKHTTPCookieStore_12(
           this,
           Invocation.getter(#httpCookieStore),
         ),
@@ -1505,7 +1516,7 @@ class MockWKWebsiteDataStore extends _i1.Mock
           #pigeonVar_httpCookieStore,
           [],
         ),
-        returnValue: _FakeWKHTTPCookieStore_13(
+        returnValue: _FakeWKHTTPCookieStore_12(
           this,
           Invocation.method(
             #pigeonVar_httpCookieStore,
@@ -1653,7 +1664,7 @@ class MockWKUIDelegate extends _i1.Mock implements _i2.WKUIDelegate {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeWKUIDelegate_14(
+        returnValue: _FakeWKUIDelegate_13(
           this,
           Invocation.method(
             #pigeon_copy,
@@ -1957,7 +1968,7 @@ class MockWebViewWidgetProxy extends _i1.Mock
           [configuration],
           {#observeValue: observeValue},
         ),
-        returnValue: _FakePlatformWebView_15(
+        returnValue: _FakePlatformWebView_14(
           this,
           Invocation.method(
             #createWebView,
@@ -2021,7 +2032,7 @@ class MockWebViewWidgetProxy extends _i1.Mock
           [],
           {#onCreateWebView: onCreateWebView},
         ),
-        returnValue: _FakeWKUIDelegate_14(
+        returnValue: _FakeWKUIDelegate_13(
           this,
           Invocation.method(
             #createUIDelgate,
@@ -2112,6 +2123,21 @@ class MockWebViewWidgetProxy extends _i1.Mock
           ),
         ),
       ) as _i2.WKNavigationDelegate);
+
+  @override
+  _i2.WKWebpagePreferences createWebpagePreferences() => (super.noSuchMethod(
+        Invocation.method(
+          #createWebpagePreferences,
+          [],
+        ),
+        returnValue: _FakeWKWebpagePreferences_15(
+          this,
+          Invocation.method(
+            #createWebpagePreferences,
+            [],
+          ),
+        ),
+      ) as _i2.WKWebpagePreferences);
 }
 
 /// A class which mocks [WKWebpagePreferences].
@@ -2149,7 +2175,7 @@ class MockWKWebpagePreferences extends _i1.Mock
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeWKWebpagePreferences_12(
+        returnValue: _FakeWKWebpagePreferences_15(
           this,
           Invocation.method(
             #pigeon_copy,

@@ -3440,7 +3440,12 @@ protocol PigeonApiDelegateWKWebViewConfiguration {
   @available(iOS 13.0.0, macOS 10.15.0, *)
   func getDefaultWebpagePreferences(
     pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration
-  ) throws -> WKWebpagePreferences
+  ) throws -> WKWebpagePreferences?
+  /// The default preferences to use when loading and rendering content.
+  @available(iOS 13.0.0, macOS 10.15.0, *)
+  func setDefaultWebpagePreferences(
+    pigeonApi: PigeonApiWKWebViewConfiguration, pigeonInstance: WKWebViewConfiguration,
+    preferences: WKWebpagePreferences) throws
 }
 
 protocol PigeonApiProtocolWKWebViewConfiguration {
@@ -3703,6 +3708,47 @@ final class PigeonApiWKWebViewConfiguration: PigeonApiProtocolWKWebViewConfigura
         }
       } else {
         getDefaultWebpagePreferencesChannel.setMessageHandler(nil)
+      }
+    }
+    if #available(iOS 13.0.0, macOS 10.15.0, *) {
+      let setDefaultWebpagePreferencesChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setDefaultWebpagePreferences",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        setDefaultWebpagePreferencesChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonInstanceArg = args[0] as! WKWebViewConfiguration
+          let preferencesArg = args[1] as! WKWebpagePreferences
+          do {
+            try api.pigeonDelegate.setDefaultWebpagePreferences(
+              pigeonApi: api, pigeonInstance: pigeonInstanceArg, preferences: preferencesArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        setDefaultWebpagePreferencesChannel.setMessageHandler(nil)
+      }
+    } else {
+      let setDefaultWebpagePreferencesChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebViewConfiguration.setDefaultWebpagePreferences",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if api != nil {
+        setDefaultWebpagePreferencesChannel.setMessageHandler { message, reply in
+          reply(
+            wrapError(
+              FlutterError(
+                code: "PigeonUnsupportedOperationError",
+                message:
+                  "Call to setDefaultWebpagePreferences requires @available(iOS 13.0.0, macOS 10.15.0, *).",
+                details: nil
+              )))
+        }
+      } else {
+        setDefaultWebpagePreferencesChannel.setMessageHandler(nil)
       }
     }
   }
@@ -7150,6 +7196,10 @@ final class PigeonApiURL: PigeonApiProtocolURL {
   }
 }
 protocol PigeonApiDelegateWKWebpagePreferences {
+  /// Creates a `WKWebpagePreferences`.
+  @available(iOS 13.0.0, macOS 10.15.0, *)
+  func pigeonDefaultConstructor(pigeonApi: PigeonApiWKWebpagePreferences) throws
+    -> WKWebpagePreferences
   /// A Boolean value that indicates whether JavaScript from web content is
   /// allowed to run.
   @available(iOS 13.0.0, macOS 10.15.0, *)
@@ -7185,6 +7235,47 @@ final class PigeonApiWKWebpagePreferences: PigeonApiProtocolWKWebpagePreferences
         readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
           pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
+    if #available(iOS 13.0.0, macOS 10.15.0, *) {
+      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.pigeon_defaultConstructor",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonIdentifierArg = args[0] as! Int64
+          do {
+            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+              try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api),
+              withIdentifier: pigeonIdentifierArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        pigeonDefaultConstructorChannel.setMessageHandler(nil)
+      }
+    } else {
+      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+        name:
+          "dev.flutter.pigeon.webview_flutter_wkwebview.WKWebpagePreferences.pigeon_defaultConstructor",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if api != nil {
+        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+          reply(
+            wrapError(
+              FlutterError(
+                code: "PigeonUnsupportedOperationError",
+                message:
+                  "Call to pigeonDefaultConstructor requires @available(iOS 13.0.0, macOS 10.15.0, *).",
+                details: nil
+              )))
+        }
+      } else {
+        pigeonDefaultConstructorChannel.setMessageHandler(nil)
+      }
+    }
     if #available(iOS 13.0.0, macOS 10.15.0, *) {
       let setAllowsContentJavaScriptChannel = FlutterBasicMessageChannel(
         name:
