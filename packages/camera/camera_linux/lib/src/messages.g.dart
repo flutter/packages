@@ -28,15 +28,6 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
   return <Object?>[error.code, error.message, error.details];
 }
 
-enum PlatformCameraLensDirection {
-  /// Front facing camera (a user looking at the screen is seen by the camera).
-  front,
-  /// Back facing camera (a user looking at the screen is not seen by the camera).
-  back,
-  /// External camera which may not be mounted to the device.
-  external,
-}
-
 enum PlatformDeviceOrientation {
   portraitUp,
   landscapeLeft,
@@ -72,15 +63,6 @@ enum PlatformImageFormatGroup {
   yuv420,
 }
 
-enum PlatformResolutionPreset {
-  low,
-  medium,
-  high,
-  veryHigh,
-  ultraHigh,
-  max,
-}
-
 class PlatformSize {
   PlatformSize({
     required this.width,
@@ -103,34 +85,6 @@ class PlatformSize {
     return PlatformSize(
       width: result[0]! as double,
       height: result[1]! as double,
-    );
-  }
-}
-
-class PlatformCameraDescription {
-  PlatformCameraDescription({
-    required this.name,
-    required this.lensDirection,
-  });
-
-  /// The name of the camera device.
-  String name;
-
-  /// The direction the camera is facing.
-  PlatformCameraLensDirection lensDirection;
-
-  Object encode() {
-    return <Object?>[
-      name,
-      lensDirection,
-    ];
-  }
-
-  static PlatformCameraDescription decode(Object result) {
-    result as List<Object?>;
-    return PlatformCameraDescription(
-      name: result[0]! as String,
-      lensDirection: result[1]! as PlatformCameraLensDirection,
     );
   }
 }
@@ -181,47 +135,6 @@ class PlatformCameraState {
   }
 }
 
-class PlatformMediaSettings {
-  PlatformMediaSettings({
-    required this.resolutionPreset,
-    this.framesPerSecond,
-    this.videoBitrate,
-    this.audioBitrate,
-    required this.enableAudio,
-  });
-
-  PlatformResolutionPreset resolutionPreset;
-
-  int? framesPerSecond;
-
-  int? videoBitrate;
-
-  int? audioBitrate;
-
-  bool enableAudio;
-
-  Object encode() {
-    return <Object?>[
-      resolutionPreset,
-      framesPerSecond,
-      videoBitrate,
-      audioBitrate,
-      enableAudio,
-    ];
-  }
-
-  static PlatformMediaSettings decode(Object result) {
-    result as List<Object?>;
-    return PlatformMediaSettings(
-      resolutionPreset: result[0]! as PlatformResolutionPreset,
-      framesPerSecond: result[1] as int?,
-      videoBitrate: result[2] as int?,
-      audioBitrate: result[3] as int?,
-      enableAudio: result[4]! as bool,
-    );
-  }
-}
-
 class PlatformPoint {
   PlatformPoint({
     required this.x,
@@ -256,44 +169,32 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is PlatformCameraLensDirection) {
+    }    else if (value is PlatformDeviceOrientation) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformDeviceOrientation) {
+    }    else if (value is PlatformExposureMode) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformExposureMode) {
+    }    else if (value is PlatformFlashMode) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformFlashMode) {
+    }    else if (value is PlatformFocusMode) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformFocusMode) {
+    }    else if (value is PlatformImageFileFormat) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformImageFileFormat) {
+    }    else if (value is PlatformImageFormatGroup) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformImageFormatGroup) {
-      buffer.putUint8(135);
-      writeValue(buffer, value.index);
-    }    else if (value is PlatformResolutionPreset) {
-      buffer.putUint8(136);
-      writeValue(buffer, value.index);
     }    else if (value is PlatformSize) {
-      buffer.putUint8(137);
-      writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraDescription) {
-      buffer.putUint8(138);
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     }    else if (value is PlatformCameraState) {
-      buffer.putUint8(139);
-      writeValue(buffer, value.encode());
-    }    else if (value is PlatformMediaSettings) {
-      buffer.putUint8(140);
+      buffer.putUint8(136);
       writeValue(buffer, value.encode());
     }    else if (value is PlatformPoint) {
-      buffer.putUint8(141);
+      buffer.putUint8(137);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -305,37 +206,27 @@ class _PigeonCodec extends StandardMessageCodec {
     switch (type) {
       case 129: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformCameraLensDirection.values[value];
+        return value == null ? null : PlatformDeviceOrientation.values[value];
       case 130: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformDeviceOrientation.values[value];
+        return value == null ? null : PlatformExposureMode.values[value];
       case 131: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformExposureMode.values[value];
+        return value == null ? null : PlatformFlashMode.values[value];
       case 132: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformFlashMode.values[value];
+        return value == null ? null : PlatformFocusMode.values[value];
       case 133: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformFocusMode.values[value];
+        return value == null ? null : PlatformImageFileFormat.values[value];
       case 134: 
         final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformImageFileFormat.values[value];
-      case 135: 
-        final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformImageFormatGroup.values[value];
-      case 136: 
-        final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformResolutionPreset.values[value];
-      case 137: 
+      case 135: 
         return PlatformSize.decode(readValue(buffer)!);
-      case 138: 
-        return PlatformCameraDescription.decode(readValue(buffer)!);
-      case 139: 
+      case 136: 
         return PlatformCameraState.decode(readValue(buffer)!);
-      case 140: 
-        return PlatformMediaSettings.decode(readValue(buffer)!);
-      case 141: 
+      case 137: 
         return PlatformPoint.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -357,8 +248,8 @@ class CameraApi {
   final String pigeonVar_messageChannelSuffix;
 
   /// Returns the list of available cameras.
-  Future<List<PlatformCameraDescription>> getAvailableCameras() async {
-    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_linux.CameraApi.getAvailableCameras$pigeonVar_messageChannelSuffix';
+  Future<List<String>> getAvailableCamerasNames() async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_linux.CameraApi.getAvailableCamerasNames$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -380,12 +271,12 @@ class CameraApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<PlatformCameraDescription>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<String>();
     }
   }
 
   /// Create a new camera with the given settings, and returns its ID.
-  Future<int> create(String cameraName, PlatformMediaSettings settings) async {
+  Future<int> create(String cameraName) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_linux.CameraApi.create$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -393,7 +284,7 @@ class CameraApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[cameraName, settings]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[cameraName]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -478,6 +369,29 @@ class CameraApi {
       );
     } else {
       return;
+    }
+  }
+
+  /// Get the texture ID for the camera with the given ID.
+  Future<int?> getTextureId(int cameraId) async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_linux.CameraApi.getTextureId$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[cameraId]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as int?);
     }
   }
 
@@ -1122,43 +1036,6 @@ class CameraApi {
       );
     } else {
       return;
-    }
-  }
-}
-
-/// Handler for native callbacks that are not tied to a specific camera ID.
-abstract class CameraGlobalEventApi {
-  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
-
-  /// Called when the device's physical orientation changes.
-  void deviceOrientationChanged(PlatformDeviceOrientation orientation);
-
-  static void setUp(CameraGlobalEventApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
-    {
-      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.camera_linux.CameraGlobalEventApi.deviceOrientationChanged$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.camera_linux.CameraGlobalEventApi.deviceOrientationChanged was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final PlatformDeviceOrientation? arg_orientation = (args[0] as PlatformDeviceOrientation?);
-          assert(arg_orientation != null,
-              'Argument for dev.flutter.pigeon.camera_linux.CameraGlobalEventApi.deviceOrientationChanged was null, expected non-null PlatformDeviceOrientation.');
-          try {
-            api.deviceOrientationChanged(arg_orientation!);
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
     }
   }
 }

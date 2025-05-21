@@ -12,22 +12,6 @@
 G_BEGIN_DECLS
 
 /**
- * CameraLinuxPlatformCameraLensDirection:
- * CAMERA_LINUX_PLATFORM_CAMERA_LENS_DIRECTION_FRONT:
- * Front facing camera (a user looking at the screen is seen by the camera).
- * CAMERA_LINUX_PLATFORM_CAMERA_LENS_DIRECTION_BACK:
- * Back facing camera (a user looking at the screen is not seen by the camera).
- * CAMERA_LINUX_PLATFORM_CAMERA_LENS_DIRECTION_EXTERNAL:
- * External camera which may not be mounted to the device.
- *
- */
-typedef enum {
-  CAMERA_LINUX_PLATFORM_CAMERA_LENS_DIRECTION_FRONT = 0,
-  CAMERA_LINUX_PLATFORM_CAMERA_LENS_DIRECTION_BACK = 1,
-  CAMERA_LINUX_PLATFORM_CAMERA_LENS_DIRECTION_EXTERNAL = 2
-} CameraLinuxPlatformCameraLensDirection;
-
-/**
  * CameraLinuxPlatformDeviceOrientation:
  * CAMERA_LINUX_PLATFORM_DEVICE_ORIENTATION_PORTRAIT_UP:
  * CAMERA_LINUX_PLATFORM_DEVICE_ORIENTATION_LANDSCAPE_LEFT:
@@ -103,25 +87,6 @@ typedef enum {
 } CameraLinuxPlatformImageFormatGroup;
 
 /**
- * CameraLinuxPlatformResolutionPreset:
- * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_LOW:
- * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_MEDIUM:
- * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_HIGH:
- * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_VERY_HIGH:
- * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_ULTRA_HIGH:
- * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_MAX:
- *
- */
-typedef enum {
-  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_LOW = 0,
-  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_MEDIUM = 1,
-  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_HIGH = 2,
-  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_VERY_HIGH = 3,
-  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_ULTRA_HIGH = 4,
-  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_MAX = 5
-} CameraLinuxPlatformResolutionPreset;
-
-/**
  * CameraLinuxPlatformSize:
  *
  */
@@ -158,44 +123,6 @@ double camera_linux_platform_size_get_width(CameraLinuxPlatformSize* object);
  * Returns: the field value.
  */
 double camera_linux_platform_size_get_height(CameraLinuxPlatformSize* object);
-
-/**
- * CameraLinuxPlatformCameraDescription:
- *
- */
-
-G_DECLARE_FINAL_TYPE(CameraLinuxPlatformCameraDescription, camera_linux_platform_camera_description, CAMERA_LINUX, PLATFORM_CAMERA_DESCRIPTION, GObject)
-
-/**
- * camera_linux_platform_camera_description_new:
- * name: field in this object.
- * lens_direction: field in this object.
- *
- * Creates a new #PlatformCameraDescription object.
- *
- * Returns: a new #CameraLinuxPlatformCameraDescription
- */
-CameraLinuxPlatformCameraDescription* camera_linux_platform_camera_description_new(const gchar* name, CameraLinuxPlatformCameraLensDirection lens_direction);
-
-/**
- * camera_linux_platform_camera_description_get_name
- * @object: a #CameraLinuxPlatformCameraDescription.
- *
- * The name of the camera device.
- *
- * Returns: the field value.
- */
-const gchar* camera_linux_platform_camera_description_get_name(CameraLinuxPlatformCameraDescription* object);
-
-/**
- * camera_linux_platform_camera_description_get_lens_direction
- * @object: a #CameraLinuxPlatformCameraDescription.
- *
- * The direction the camera is facing.
- *
- * Returns: the field value.
- */
-CameraLinuxPlatformCameraLensDirection camera_linux_platform_camera_description_get_lens_direction(CameraLinuxPlatformCameraDescription* object);
 
 /**
  * CameraLinuxPlatformCameraState:
@@ -269,77 +196,6 @@ gboolean camera_linux_platform_camera_state_get_exposure_point_supported(CameraL
 gboolean camera_linux_platform_camera_state_get_focus_point_supported(CameraLinuxPlatformCameraState* object);
 
 /**
- * CameraLinuxPlatformMediaSettings:
- *
- */
-
-G_DECLARE_FINAL_TYPE(CameraLinuxPlatformMediaSettings, camera_linux_platform_media_settings, CAMERA_LINUX, PLATFORM_MEDIA_SETTINGS, GObject)
-
-/**
- * camera_linux_platform_media_settings_new:
- * resolution_preset: field in this object.
- * frames_per_second: field in this object.
- * video_bitrate: field in this object.
- * audio_bitrate: field in this object.
- * enable_audio: field in this object.
- *
- * Creates a new #PlatformMediaSettings object.
- *
- * Returns: a new #CameraLinuxPlatformMediaSettings
- */
-CameraLinuxPlatformMediaSettings* camera_linux_platform_media_settings_new(CameraLinuxPlatformResolutionPreset resolution_preset, int64_t* frames_per_second, int64_t* video_bitrate, int64_t* audio_bitrate, gboolean enable_audio);
-
-/**
- * camera_linux_platform_media_settings_get_resolution_preset
- * @object: a #CameraLinuxPlatformMediaSettings.
- *
- * Gets the value of the resolutionPreset field of @object.
- *
- * Returns: the field value.
- */
-CameraLinuxPlatformResolutionPreset camera_linux_platform_media_settings_get_resolution_preset(CameraLinuxPlatformMediaSettings* object);
-
-/**
- * camera_linux_platform_media_settings_get_frames_per_second
- * @object: a #CameraLinuxPlatformMediaSettings.
- *
- * Gets the value of the framesPerSecond field of @object.
- *
- * Returns: the field value.
- */
-int64_t* camera_linux_platform_media_settings_get_frames_per_second(CameraLinuxPlatformMediaSettings* object);
-
-/**
- * camera_linux_platform_media_settings_get_video_bitrate
- * @object: a #CameraLinuxPlatformMediaSettings.
- *
- * Gets the value of the videoBitrate field of @object.
- *
- * Returns: the field value.
- */
-int64_t* camera_linux_platform_media_settings_get_video_bitrate(CameraLinuxPlatformMediaSettings* object);
-
-/**
- * camera_linux_platform_media_settings_get_audio_bitrate
- * @object: a #CameraLinuxPlatformMediaSettings.
- *
- * Gets the value of the audioBitrate field of @object.
- *
- * Returns: the field value.
- */
-int64_t* camera_linux_platform_media_settings_get_audio_bitrate(CameraLinuxPlatformMediaSettings* object);
-
-/**
- * camera_linux_platform_media_settings_get_enable_audio
- * @object: a #CameraLinuxPlatformMediaSettings.
- *
- * Gets the value of the enableAudio field of @object.
- *
- * Returns: the field value.
- */
-gboolean camera_linux_platform_media_settings_get_enable_audio(CameraLinuxPlatformMediaSettings* object);
-
-/**
  * CameraLinuxPlatformPoint:
  *
  */
@@ -389,11 +245,12 @@ G_DECLARE_FINAL_TYPE(CameraLinuxCameraApiResponseHandle, camera_linux_camera_api
  * Table of functions exposed by CameraApi to be implemented by the API provider.
  */
 typedef struct {
-  void (*get_available_cameras)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*create)(const gchar* camera_name, CameraLinuxPlatformMediaSettings* settings, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*get_available_cameras_names)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*create)(const gchar* camera_name, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*initialize)(int64_t camera_id, CameraLinuxPlatformImageFormatGroup image_format, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*start_image_stream)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*stop_image_stream)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*get_texture_id)(int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*received_image_stream_data)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*dispose)(int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*lock_capture_orientation)(CameraLinuxPlatformDeviceOrientation orientation, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
@@ -446,24 +303,24 @@ void camera_linux_camera_api_set_method_handlers(FlBinaryMessenger* messenger, c
 void camera_linux_camera_api_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix);
 
 /**
- * camera_linux_camera_api_respond_get_available_cameras:
+ * camera_linux_camera_api_respond_get_available_cameras_names:
  * @response_handle: a #CameraLinuxCameraApiResponseHandle.
  * @return_value: location to write the value returned by this method.
  *
- * Responds to CameraApi.getAvailableCameras. 
+ * Responds to CameraApi.getAvailableCamerasNames. 
  */
-void camera_linux_camera_api_respond_get_available_cameras(CameraLinuxCameraApiResponseHandle* response_handle, FlValue* return_value);
+void camera_linux_camera_api_respond_get_available_cameras_names(CameraLinuxCameraApiResponseHandle* response_handle, FlValue* return_value);
 
 /**
- * camera_linux_camera_api_respond_error_get_available_cameras:
+ * camera_linux_camera_api_respond_error_get_available_cameras_names:
  * @response_handle: a #CameraLinuxCameraApiResponseHandle.
  * @code: error code.
  * @message: error message.
  * @details: (allow-none): error details or %NULL.
  *
- * Responds with an error to CameraApi.getAvailableCameras. 
+ * Responds with an error to CameraApi.getAvailableCamerasNames. 
  */
-void camera_linux_camera_api_respond_error_get_available_cameras(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
+void camera_linux_camera_api_respond_error_get_available_cameras_names(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
 /**
  * camera_linux_camera_api_respond_create:
@@ -541,6 +398,26 @@ void camera_linux_camera_api_respond_stop_image_stream(CameraLinuxCameraApiRespo
  * Responds with an error to CameraApi.stopImageStream. 
  */
 void camera_linux_camera_api_respond_error_stop_image_stream(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
+
+/**
+ * camera_linux_camera_api_respond_get_texture_id:
+ * @response_handle: a #CameraLinuxCameraApiResponseHandle.
+ * @return_value: location to write the value returned by this method.
+ *
+ * Responds to CameraApi.getTextureId. 
+ */
+void camera_linux_camera_api_respond_get_texture_id(CameraLinuxCameraApiResponseHandle* response_handle, int64_t* return_value);
+
+/**
+ * camera_linux_camera_api_respond_error_get_texture_id:
+ * @response_handle: a #CameraLinuxCameraApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to CameraApi.getTextureId. 
+ */
+void camera_linux_camera_api_respond_error_get_texture_id(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
 /**
  * camera_linux_camera_api_respond_received_image_stream_data:
@@ -1041,91 +918,6 @@ void camera_linux_camera_api_respond_set_image_file_format(CameraLinuxCameraApiR
  * Responds with an error to CameraApi.setImageFileFormat. 
  */
 void camera_linux_camera_api_respond_error_set_image_file_format(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-G_DECLARE_FINAL_TYPE(CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse, camera_linux_camera_global_event_api_device_orientation_changed_response, CAMERA_LINUX, CAMERA_GLOBAL_EVENT_API_DEVICE_ORIENTATION_CHANGED_RESPONSE, GObject)
-
-/**
- * camera_linux_camera_global_event_api_device_orientation_changed_response_is_error:
- * @response: a #CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse.
- *
- * Checks if a response to CameraGlobalEventApi.deviceOrientationChanged is an error.
- *
- * Returns: a %TRUE if this response is an error.
- */
-gboolean camera_linux_camera_global_event_api_device_orientation_changed_response_is_error(CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse* response);
-
-/**
- * camera_linux_camera_global_event_api_device_orientation_changed_response_get_error_code:
- * @response: a #CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse.
- *
- * Get the error code for this response.
- *
- * Returns: an error code or %NULL if not an error.
- */
-const gchar* camera_linux_camera_global_event_api_device_orientation_changed_response_get_error_code(CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse* response);
-
-/**
- * camera_linux_camera_global_event_api_device_orientation_changed_response_get_error_message:
- * @response: a #CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse.
- *
- * Get the error message for this response.
- *
- * Returns: an error message.
- */
-const gchar* camera_linux_camera_global_event_api_device_orientation_changed_response_get_error_message(CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse* response);
-
-/**
- * camera_linux_camera_global_event_api_device_orientation_changed_response_get_error_details:
- * @response: a #CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse.
- *
- * Get the error details for this response.
- *
- * Returns: (allow-none): an error details or %NULL.
- */
-FlValue* camera_linux_camera_global_event_api_device_orientation_changed_response_get_error_details(CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse* response);
-
-/**
- * CameraLinuxCameraGlobalEventApi:
- *
- * Handler for native callbacks that are not tied to a specific camera ID.
- */
-
-G_DECLARE_FINAL_TYPE(CameraLinuxCameraGlobalEventApi, camera_linux_camera_global_event_api, CAMERA_LINUX, CAMERA_GLOBAL_EVENT_API, GObject)
-
-/**
- * camera_linux_camera_global_event_api_new:
- * @messenger: an #FlBinaryMessenger.
- * @suffix: (allow-none): a suffix to add to the API or %NULL for none.
- *
- * Creates a new object to access the CameraGlobalEventApi API.
- *
- * Returns: a new #CameraLinuxCameraGlobalEventApi
- */
-CameraLinuxCameraGlobalEventApi* camera_linux_camera_global_event_api_new(FlBinaryMessenger* messenger, const gchar* suffix);
-
-/**
- * camera_linux_camera_global_event_api_device_orientation_changed:
- * @api: a #CameraLinuxCameraGlobalEventApi.
- * @orientation: parameter for this method.
- * @cancellable: (allow-none): a #GCancellable or %NULL.
- * @callback: (scope async): (allow-none): a #GAsyncReadyCallback to call when the call is complete or %NULL to ignore the response.
- * @user_data: (closure): user data to pass to @callback.
- *
- * Called when the device's physical orientation changes.
- */
-void camera_linux_camera_global_event_api_device_orientation_changed(CameraLinuxCameraGlobalEventApi* api, CameraLinuxPlatformDeviceOrientation orientation, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data);
-
-/**
- * camera_linux_camera_global_event_api_device_orientation_changed_finish:
- * @api: a #CameraLinuxCameraGlobalEventApi.
- * @result: a #GAsyncResult.
- * @error: (allow-none): #GError location to store the error occurring, or %NULL to ignore.
- *
- * Completes a camera_linux_camera_global_event_api_device_orientation_changed() call.
- *
- * Returns: a #CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse or %NULL on error.
- */
-CameraLinuxCameraGlobalEventApiDeviceOrientationChangedResponse* camera_linux_camera_global_event_api_device_orientation_changed_finish(CameraLinuxCameraGlobalEventApi* api, GAsyncResult* result, GError** error);
 
 G_DECLARE_FINAL_TYPE(CameraLinuxCameraEventApiInitializedResponse, camera_linux_camera_event_api_initialized_response, CAMERA_LINUX, CAMERA_EVENT_API_INITIALIZED_RESPONSE, GObject)
 

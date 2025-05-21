@@ -12,18 +12,6 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-// Pigeon version of CameraLensDirection.
-enum PlatformCameraLensDirection {
-  /// Front facing camera (a user looking at the screen is seen by the camera).
-  front,
-
-  /// Back facing camera (a user looking at the screen is not seen by the camera).
-  back,
-
-  /// External camera which may not be mounted to the device.
-  external,
-}
-
 // Pigeon equivalent of CGSize.
 class PlatformSize {
   PlatformSize({required this.width, required this.height});
@@ -72,30 +60,6 @@ enum PlatformImageFormatGroup {
   yuv420,
 }
 
-// Pigeon version of ResolutionPreset.
-enum PlatformResolutionPreset {
-  low,
-  medium,
-  high,
-  veryHigh,
-  ultraHigh,
-  max,
-}
-
-// Pigeon version of CameraDescription.
-class PlatformCameraDescription {
-  PlatformCameraDescription({
-    required this.name,
-    required this.lensDirection,
-  });
-
-  /// The name of the camera device.
-  final String name;
-
-  /// The direction the camera is facing.
-  final PlatformCameraLensDirection lensDirection;
-}
-
 // Pigeon version of the data needed for a CameraInitializedEvent.
 class PlatformCameraState {
   PlatformCameraState({
@@ -122,23 +86,6 @@ class PlatformCameraState {
   final bool focusPointSupported;
 }
 
-// Pigeon version of to MediaSettings.
-class PlatformMediaSettings {
-  PlatformMediaSettings({
-    required this.resolutionPreset,
-    required this.framesPerSecond,
-    required this.videoBitrate,
-    required this.audioBitrate,
-    required this.enableAudio,
-  });
-
-  final PlatformResolutionPreset resolutionPreset;
-  final int? framesPerSecond;
-  final int? videoBitrate;
-  final int? audioBitrate;
-  final bool enableAudio;
-}
-
 // Pigeon equivalent of CGPoint.
 class PlatformPoint {
   PlatformPoint({required this.x, required this.y});
@@ -150,15 +97,12 @@ class PlatformPoint {
 @HostApi()
 abstract class CameraApi {
   /// Returns the list of available cameras.
-  // TODO(stuartmorgan): Make the generic type non-nullable once supported.
-  // https://github.com/flutter/flutter/issues/97848
-  // The consuming code treats it as non-nullable.
   @async
-  List<PlatformCameraDescription> getAvailableCameras();
+  List<String> getAvailableCamerasNames();
 
   /// Create a new camera with the given settings, and returns its ID.
   @async
-  int create(String cameraName, PlatformMediaSettings settings);
+  int create(String cameraName);
 
   /// Initializes the camera with the given ID.
   @async
@@ -171,6 +115,10 @@ abstract class CameraApi {
   /// Stops streaming frames from the camera.
   @async
   void stopImageStream();
+
+  /// Get the texture ID for the camera with the given ID.
+  @async
+  int? getTextureId(int cameraId);
 
   /// Called by the Dart side of the plugin when it has received the last image
   /// frame sent.
@@ -291,13 +239,6 @@ abstract class CameraApi {
   /// Sets the file format used for taking pictures.
   @async
   void setImageFileFormat(PlatformImageFileFormat format);
-}
-
-/// Handler for native callbacks that are not tied to a specific camera ID.
-@FlutterApi()
-abstract class CameraGlobalEventApi {
-  /// Called when the device's physical orientation changes.
-  void deviceOrientationChanged(PlatformDeviceOrientation orientation);
 }
 
 /// Handler for native callbacks that are tied to a specific camera ID.
