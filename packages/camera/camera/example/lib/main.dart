@@ -1043,6 +1043,9 @@ class CameraApp extends StatelessWidget {
   }
 }
 
+/// Getting available cameras for testing.
+@visibleForTesting
+List<CameraDescription> get cameras => _cameras;
 List<CameraDescription> _cameras = <CameraDescription>[];
 
 Future<void> main() async {
