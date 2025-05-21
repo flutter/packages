@@ -11,7 +11,11 @@ import 'package:webview_flutter_platform_interface/webview_flutter_platform_inte
 
 import 'navigation_delegate_test.mocks.dart';
 
-@GenerateMocks(<Type>[WebViewPlatform, PlatformNavigationDelegate])
+@GenerateMocks(<Type>[
+  WebViewPlatform,
+  PlatformNavigationDelegate,
+  PlatformSslAuthError,
+])
 void main() {
   group('NavigationDelegate', () {
     test('onNavigationRequest', () async {
@@ -110,6 +114,28 @@ void main() {
       );
 
       verify(delegate.platform.setOnHttpError(onHttpError));
+    });
+
+    test('onSslAuthError', () async {
+      WebViewPlatform.instance = TestWebViewPlatform();
+
+      final NavigationDelegate delegate = NavigationDelegate(
+        onSslAuthError: expectAsync1((SslAuthError error) {
+          error.proceed();
+        }),
+      );
+
+      final void Function(PlatformSslAuthError) callback = verify(
+              (delegate.platform as MockPlatformNavigationDelegate)
+                  .setOnSSlAuthError(captureAny))
+          .captured
+          .single as void Function(PlatformSslAuthError);
+
+      final MockPlatformSslAuthError mockPlatformError =
+          MockPlatformSslAuthError();
+      callback(mockPlatformError);
+
+      verify(mockPlatformError.proceed());
     });
   });
 }
