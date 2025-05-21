@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.5.12
 
 * Adds support for ground overlay.

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 2.15.2
 
 * Fixes regression where updating a marker hides its info window.
