@@ -10,12 +10,11 @@ import 'package:file/file.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/common/output_utils.dart';
 import 'package:flutter_plugin_tools/src/common/package_looping_command.dart';
-import 'package:mockito/mockito.dart';
+import 'package:git/git.dart';
 import 'package:test/test.dart';
 
 import '../mocks.dart';
 import '../util.dart';
-import 'package_command_test.mocks.dart';
 
 // Constants for colorized output start and end.
 const String _startElapsedTimeColor = '\x1B[90m';
@@ -79,10 +78,12 @@ void main() {
   late MockPlatform mockPlatform;
   late Directory packagesDir;
   late Directory thirdPartyPackagesDir;
+  late GitDir gitDir;
+  late RecordingProcessRunner gitProcessRunner;
 
   setUp(() {
     mockPlatform = MockPlatform();
-    (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
+    (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
     // Correct color handling is part of the behavior being tested here.
     useColorForOutput = true;
@@ -96,10 +97,8 @@ void main() {
     useColorForOutput = io.stdout.supportsAnsiEscapes;
   });
 
-  /// Creates a TestPackageLoopingCommand instance that uses [gitDiffResponse]
-  /// for git diffs, and logs output to [printOutput].
+  /// Creates a TestPackageLoopingCommand with the given configuration.
   TestPackageLoopingCommand createTestCommand({
-    String gitDiffResponse = '',
     bool hasLongOutput = true,
     PackageLoopingType packageLoopingType = PackageLoopingType.topLevelOnly,
     bool failsDuringInit = false,
@@ -108,20 +107,6 @@ void main() {
     String? customFailureListHeader,
     String? customFailureListFooter,
   }) {
-    // Set up the git diff response.
-    final MockGitDir gitDir = MockGitDir();
-    when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')))
-        .thenAnswer((Invocation invocation) {
-      final List<String> arguments =
-          invocation.positionalArguments[0]! as List<String>;
-      String? gitStdOut;
-      if (arguments[0] == 'diff') {
-        gitStdOut = gitDiffResponse;
-      }
-      return Future<io.ProcessResult>.value(
-          io.ProcessResult(0, 0, gitStdOut ?? '', ''));
-    });
-
     return TestPackageLoopingCommand(
       packagesDir,
       platform: mockPlatform,
@@ -208,6 +193,77 @@ void main() {
             '${_startHeadingColor}Running for package_a...$_endColor',
             '${_startHeadingColor}Running for package_b...$_endColor',
             '${_startHeadingColor}Running for package_c...$_endColor',
+          ]));
+    });
+  });
+
+  group('file filtering', () {
+    test('runs command if the changed files list is empty', () async {
+      createFakePackage('package_a', packagesDir);
+
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '')),
+      ];
+
+      final TestPackageLoopingCommand command =
+          createTestCommand(hasLongOutput: false);
+      final List<String> output = await runCommand(command);
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            '${_startHeadingColor}Running for package_a...$_endColor',
+          ]));
+    });
+
+    test('runs command if any files are not ignored', () async {
+      createFakePackage('package_a', packagesDir);
+
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
+skip/a
+other
+skip/b
+''')),
+      ];
+
+      final TestPackageLoopingCommand command =
+          createTestCommand(hasLongOutput: false);
+      final List<String> output = await runCommand(command);
+
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            '${_startHeadingColor}Running for package_a...$_endColor',
+          ]));
+    });
+
+    test('skips commands if all files should be ignored', () async {
+      createFakePackage('package_a', packagesDir);
+
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
+skip/a
+skip/b
+''')),
+      ];
+
+      final TestPackageLoopingCommand command =
+          createTestCommand(hasLongOutput: false);
+      final List<String> output = await runCommand(command);
+
+      expect(
+          output,
+          isNot(containsAllInOrder(<Matcher>[
+            contains('Running for package_a'),
+          ])));
+      expect(
+          output,
+          containsAllInOrder(<String>[
+            '${_startSkipColor}SKIPPING ALL PACKAGES: No changed files affect this command$_endColor',
           ]));
     });
   });
@@ -897,6 +953,11 @@ class TestPackageLoopingCommand extends PackageLoopingCommand {
 
   @override
   final String description = 'sample package looping command';
+
+  @override
+  bool shouldIgnoreFile(String path) {
+    return path.startsWith('skip/');
+  }
 
   @override
   Future<void> initializeRun() async {

@@ -44,7 +44,7 @@ public class InAppPurchasePlugin: NSObject, FlutterPlugin, FIAInAppPurchaseAPI {
     self._updateListenerTask = task
   }
 
-  var transactionCallbackAPI: InAppPurchase2CallbackAPI? = nil
+  var transactionCallbackAPI: InAppPurchase2CallbackAPIProtocol? = nil
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)

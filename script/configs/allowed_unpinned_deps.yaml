@@ -41,6 +41,7 @@
 - io
 - js
 - json_serializable
+- leak_tracker
 - leak_tracker_flutter_testing
 - lints
 - logging

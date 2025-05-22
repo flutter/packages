@@ -1,3 +1,18 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 2.13.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `PlatformNavigationDelegate.setOnSSlAuthError`.
+
+## 2.12.0
+
+* Adds support to set whether to draw the scrollbar. See
+  `PlatformWebViewController.setVerticalScrollBarEnabled`,
+  `PlatformWebViewController.setHorizontalScrollBarEnabled`,
+  `PlatformWebViewController.supportsSetScrollBarsEnabled`.
+
 ## 2.11.0
 
 * Adds support to set the over-scroll mode for the WebView. See `PlatformWebViewController.setOverScrollMode`.

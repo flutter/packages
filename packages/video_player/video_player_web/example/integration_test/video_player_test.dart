@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -25,6 +27,18 @@ void main() {
       video = web.HTMLVideoElement()
         ..controls = true
         ..playsInline = false;
+    });
+
+    testWidgets('initialize() calls load', (WidgetTester _) async {
+      bool loadCalled = false;
+
+      video['load'] = () {
+        loadCalled = true;
+      }.toJS;
+
+      VideoPlayer(videoElement: video).initialize();
+
+      expect(loadCalled, isTrue);
     });
 
     testWidgets('fixes critical video element config', (WidgetTester _) async {
@@ -130,6 +144,11 @@ void main() {
         );
       });
 
+      tearDown(() {
+        streamController.close();
+        player.dispose();
+      });
+
       testWidgets('buffering dispatches only when it changes',
           (WidgetTester tester) async {
         // Take all the "buffering" events that we see during the next few seconds
@@ -222,8 +241,7 @@ void main() {
         expect(events[0].eventType, VideoEventType.initialized);
       });
 
-      // Issue: https://github.com/flutter/flutter/issues/137023
-      testWidgets('loadedmetadata dispatches initialized',
+      testWidgets('loadedmetadata does not dispatch initialized',
           (WidgetTester tester) async {
         video.dispatchEvent(web.Event('loadedmetadata'));
         video.dispatchEvent(web.Event('loadedmetadata'));
@@ -235,8 +253,22 @@ void main() {
 
         final List<VideoEvent> events = await stream;
 
-        expect(events, hasLength(1));
-        expect(events[0].eventType, VideoEventType.initialized);
+        expect(events, isEmpty);
+      });
+
+      testWidgets('loadeddata does not dispatch initialized',
+          (WidgetTester tester) async {
+        video.dispatchEvent(web.Event('loadeddata'));
+        video.dispatchEvent(web.Event('loadeddata'));
+
+        final Future<List<VideoEvent>> stream = timedStream
+            .where((VideoEvent event) =>
+                event.eventType == VideoEventType.initialized)
+            .toList();
+
+        final List<VideoEvent> events = await stream;
+
+        expect(events, isEmpty);
       });
 
       // Issue: https://github.com/flutter/flutter/issues/105649

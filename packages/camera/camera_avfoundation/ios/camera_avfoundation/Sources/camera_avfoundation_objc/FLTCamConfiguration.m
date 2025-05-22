@@ -12,7 +12,8 @@
                 captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
             captureDeviceInputFactory:
-                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory {
+                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory
+                    initialCameraName:(NSString *)initialCameraName {
   self = [super init];
   if (self) {
     _mediaSettings = mediaSettings;
@@ -27,6 +28,7 @@
       return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
     };
     _captureDeviceInputFactory = captureDeviceInputFactory;
+    _initialCameraName = initialCameraName;
     _assetWriterFactory = ^id<FLTAssetWriter>(NSURL *url, AVFileType fileType, NSError **error) {
       return [[FLTDefaultAssetWriter alloc] initWithURL:url fileType:fileType error:error];
     };

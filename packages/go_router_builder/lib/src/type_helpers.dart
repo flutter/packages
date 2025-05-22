@@ -68,7 +68,7 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 
   throw InvalidGenerationSourceError(
     'The parameter type '
-    '`${paramType.getDisplayString(withNullability: false)}` is not supported.',
+    '`${withoutNullability(paramType.getDisplayString())}` is not supported.',
     element: element,
   );
 }
@@ -111,7 +111,7 @@ String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
     // ignore: avoid_redundant_argument_values
-    return 'extra as ${element.type.getDisplayString(withNullability: true)}';
+    return 'extra as ${element.type.getDisplayString()}';
   }
 
   late String access;
@@ -125,6 +125,16 @@ String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   }
 
   return access;
+}
+
+/// Returns `true` if the type string ends with a nullability marker (`?` or `*`)
+bool _isNullableType(String type) {
+  return type.endsWith('?') || type.endsWith('*');
+}
+
+/// Returns the type string without a trailing nullability marker
+String withoutNullability(String type) {
+  return _isNullableType(type) ? type.substring(0, type.length - 1) : type;
 }
 
 abstract class _TypeHelper {

@@ -1,3 +1,12 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
+## 0.9.19
+
+* Migrates the CameraPlugin class to Swift.
+* Fixes camera name being ignored in `setDescriptionWhileRecording`.
+
 ## 0.9.18+14
 
 * Creates Swift Package Manager target for Swift implementation.

@@ -101,9 +101,11 @@ Future<int> generateTestPigeons(
     'proxy_api_tests',
   };
 
-  final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');
+  const String testPluginName = 'test_plugin';
+  const String alternateTestPluginName = 'alternate_language_test_plugin';
+  final String outputBase = p.join(baseDir, 'platform_tests', testPluginName);
   final String alternateOutputBase =
-      p.join(baseDir, 'platform_tests', 'alternate_language_test_plugin');
+      p.join(baseDir, 'platform_tests', alternateTestPluginName);
   final String sharedDartOutputBase =
       p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
 
@@ -144,7 +146,7 @@ Future<int> generateTestPigeons(
       // iOS/macOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
-          : '$outputBase/darwin/Classes/$pascalCaseName.gen.swift',
+          : '$outputBase/darwin/$testPluginName/Sources/$testPluginName/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
       // Linux
@@ -170,6 +172,10 @@ Future<int> generateTestPigeons(
     }
 
     // Generate the alternate language test plugin output.
+    final String objcBase =
+        '$alternateOutputBase/darwin/$alternateTestPluginName/Sources/$alternateTestPluginName/';
+    final String objcBaseRelativeHeaderPath =
+        'include/$alternateTestPluginName/$pascalCaseName.gen.h';
     generateCode = await runPigeon(
       input: './pigeons/$input.dart',
       // Android
@@ -183,10 +189,11 @@ Future<int> generateTestPigeons(
       // iOS/macOS
       objcHeaderOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
-          : '$alternateOutputBase/darwin/Classes/$pascalCaseName.gen.h',
+          : '$objcBase/$objcBaseRelativeHeaderPath',
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
-          : '$alternateOutputBase/darwin/Classes/$pascalCaseName.gen.m',
+          : '$objcBase/$pascalCaseName.gen.m',
+      objcHeaderIncludePath: './$objcBaseRelativeHeaderPath',
       objcPrefix: input == 'core_tests'
           ? 'FLT'
           : input == 'enum'
@@ -226,6 +233,7 @@ Future<int> runPigeon({
   String? objcHeaderOut,
   String? objcSourceOut,
   String objcPrefix = '',
+  String? objcHeaderIncludePath,
   bool suppressVersion = false,
   String copyrightHeader = './copyright_header.txt',
   String? basePath,
@@ -285,7 +293,10 @@ Future<int> runPigeon({
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,
-      objcOptions: ObjcOptions(prefix: objcPrefix),
+      objcOptions: ObjcOptions(
+        prefix: objcPrefix,
+        headerIncludePath: objcHeaderIncludePath,
+      ),
       swiftOut: swiftOut,
       swiftOptions: SwiftOptions(
         errorClassName: swiftErrorClassName,

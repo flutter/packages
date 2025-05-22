@@ -1,3 +1,24 @@
+## 0.6.17
+
+* Replaces `BroadcastReceiver` usage with an `OrientationEventListener` to detect changes in device
+  orientation to fix issue where some devices do not report changes in device configuration if it
+  is rotated between the same sort of orientation (landscape/portrait).
+
+## 0.6.16
+
+* Fixes incorrect camera preview rotation for landscape-oriented devices.
+* Fixes regression where `onDeviceOrientationChanged` was not triggering with an initial orientation
+  after calling `createCameraWithSettings`.
+
+## 0.6.15+2
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
+## 0.6.15+1
+
+* Ensures DeviceOrientationManager is stopped on dispose.
+
 ## 0.6.15
 
 * Updates internal API wrapper to use ProxyApis.

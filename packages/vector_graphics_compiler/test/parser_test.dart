@@ -10,6 +10,24 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'test_svg_strings.dart';
 
+class _TestOpacityColorMapper implements ColorMapper {
+  const _TestOpacityColorMapper();
+
+  @override
+  Color substitute(
+    String? id,
+    String elementName,
+    String attributeName,
+    Color color,
+  ) {
+    if (color.value == 0xff000000) {
+      return const Color(0x7fff0000);
+    } else {
+      return color;
+    }
+  }
+}
+
 void main() {
   test('Reuse ID self-referentially', () {
     final VectorInstructions instructions = parseWithoutOptimizers('''
@@ -266,6 +284,24 @@ void main() {
     );
   });
 
+  test('preserve opacity from color mapper for strokes', () {
+    const String strokeOpacitySvg = '''
+<svg viewBox="0 0 10 10" fill="none">
+  <rect x="0" y="0" width="5" height="5" stroke="#000000" />
+</svg>
+''';
+
+    final VectorInstructions instructions = parseWithoutOptimizers(
+      strokeOpacitySvg,
+      colorMapper: const _TestOpacityColorMapper(),
+    );
+
+    expect(
+      instructions.paints.single,
+      const Paint(stroke: Stroke(color: Color(0x7fff0000))),
+    );
+  });
+
   test('text attributes are preserved', () {
     final VectorInstructions instructions = parseWithoutOptimizers(textTspan);
     expect(
@@ -349,6 +385,39 @@ void main() {
     expect(
       redInstructions.paints.single,
       const Paint(fill: Fill(color: Color(0xFFFF0000))),
+    );
+  });
+
+  test('currentColor stoke opacity', () {
+    const String currentColorSvg = '''
+<svg viewBox="0 0 10 10">
+  <rect x="0" y="0" width="5" height="5" fill="currentColor" stroke="currentColor" />
+</svg>
+''';
+
+    final VectorInstructions blueInstructions = parseWithoutOptimizers(
+      currentColorSvg,
+      theme: const SvgTheme(currentColor: Color(0x7F0000FF)),
+    );
+    final VectorInstructions redInstructions = parseWithoutOptimizers(
+      currentColorSvg,
+      theme: const SvgTheme(currentColor: Color(0x7FFF0000)),
+    );
+
+    expect(
+      blueInstructions.paints.single,
+      const Paint(
+        fill: Fill(color: Color(0x7F0000FF)),
+        stroke: Stroke(color: Color(0x7F0000FF)),
+      ),
+    );
+
+    expect(
+      redInstructions.paints.single,
+      const Paint(
+        fill: Fill(color: Color(0x7FFF0000)),
+        stroke: Stroke(color: Color(0x7FFF0000)),
+      ),
     );
   });
 

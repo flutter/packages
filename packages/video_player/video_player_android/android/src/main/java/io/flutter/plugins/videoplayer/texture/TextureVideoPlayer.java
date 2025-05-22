@@ -17,7 +17,7 @@ import io.flutter.plugins.videoplayer.VideoAsset;
 import io.flutter.plugins.videoplayer.VideoPlayer;
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
 import io.flutter.plugins.videoplayer.VideoPlayerOptions;
-import io.flutter.view.TextureRegistry;
+import io.flutter.view.TextureRegistry.SurfaceProducer;
 
 /**
  * A subclass of {@link VideoPlayer} that adds functionality related to texture view as a way of
@@ -26,9 +26,7 @@ import io.flutter.view.TextureRegistry;
  * <p>It manages the lifecycle of the texture and ensures that the video is properly displayed on
  * the texture.
  */
-public final class TextureVideoPlayer extends VideoPlayer
-    implements TextureRegistry.SurfaceProducer.Callback {
-  @NonNull private final TextureRegistry.SurfaceProducer surfaceProducer;
+public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProducer.Callback {
   @Nullable private ExoPlayerState savedStateDuring;
 
   /**
@@ -45,7 +43,7 @@ public final class TextureVideoPlayer extends VideoPlayer
   public static TextureVideoPlayer create(
       @NonNull Context context,
       @NonNull VideoPlayerCallbacks events,
-      @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
+      @NonNull SurfaceProducer surfaceProducer,
       @NonNull VideoAsset asset,
       @NonNull VideoPlayerOptions options) {
     return new TextureVideoPlayer(
@@ -64,13 +62,12 @@ public final class TextureVideoPlayer extends VideoPlayer
   @VisibleForTesting
   public TextureVideoPlayer(
       @NonNull VideoPlayerCallbacks events,
-      @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
+      @NonNull SurfaceProducer surfaceProducer,
       @NonNull MediaItem mediaItem,
       @NonNull VideoPlayerOptions options,
       @NonNull ExoPlayerProvider exoPlayerProvider) {
-    super(events, mediaItem, options, exoPlayerProvider);
+    super(events, mediaItem, options, surfaceProducer, exoPlayerProvider);
 
-    this.surfaceProducer = surfaceProducer;
     surfaceProducer.setCallback(this);
 
     this.exoPlayer.setVideoSurface(surfaceProducer.getSurface());
@@ -78,9 +75,18 @@ public final class TextureVideoPlayer extends VideoPlayer
 
   @NonNull
   @Override
-  protected ExoPlayerEventListener createExoPlayerEventListener(@NonNull ExoPlayer exoPlayer) {
+  protected ExoPlayerEventListener createExoPlayerEventListener(
+      @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer) {
+    if (surfaceProducer == null) {
+      throw new IllegalArgumentException(
+          "surfaceProducer cannot be null to create an ExoPlayerEventListener for TextureVideoPlayer.");
+    }
+    boolean surfaceProducerHandlesCropAndRotation = surfaceProducer.handlesCropAndRotation();
     return new TextureExoPlayerEventListener(
-        exoPlayer, videoPlayerEvents, playerHasBeenSuspended());
+        exoPlayer,
+        videoPlayerEvents,
+        surfaceProducerHandlesCropAndRotation,
+        playerHasBeenSuspended());
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)

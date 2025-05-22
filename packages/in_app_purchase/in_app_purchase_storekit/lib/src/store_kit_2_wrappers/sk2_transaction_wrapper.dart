@@ -27,7 +27,8 @@ class SK2Transaction {
       required this.appAccountToken,
       this.subscriptionGroupID,
       this.price,
-      this.error});
+      this.error,
+      this.jsonRepresentation});
 
   /// The unique identifier for the transaction.
   final String id;
@@ -61,6 +62,9 @@ class SK2Transaction {
 
   /// Any error returned from StoreKit
   final SKError? error;
+
+  /// The json representation of a transaction
+  final String? jsonRepresentation;
 
   /// Wrapper around [Transaction.finish]
   /// https://developer.apple.com/documentation/storekit/transaction/3749694-finish
@@ -105,7 +109,8 @@ extension on SK2TransactionMessage {
         productId: productId,
         purchaseDate: purchaseDate,
         expirationDate: expirationDate,
-        appAccountToken: appAccountToken);
+        appAccountToken: appAccountToken,
+        jsonRepresentation: jsonRepresentation);
   }
 
   PurchaseDetails convertToDetails() {
