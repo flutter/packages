@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 2.3.5
 
 * Fixes blank first frame on iOS.
