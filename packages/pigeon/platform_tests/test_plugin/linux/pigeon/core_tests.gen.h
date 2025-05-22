@@ -1433,6 +1433,23 @@ G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestMessageCodec,
                      CORE_TESTS_PIGEON_TEST, MESSAGE_CODEC,
                      FlStandardMessageCodec)
 
+/**
+ * Custom type ID constants:
+ *
+ * Constants used to identify custom types in the codec.
+ * They are used in the codec to encode and decode custom types.
+ * They may be used in custom object creation functions to identify the type.
+ */
+extern const int core_tests_pigeon_test_an_enum_type_id;
+extern const int core_tests_pigeon_test_another_enum_type_id;
+extern const int core_tests_pigeon_test_unused_class_type_id;
+extern const int core_tests_pigeon_test_all_types_type_id;
+extern const int core_tests_pigeon_test_all_nullable_types_type_id;
+extern const int
+    core_tests_pigeon_test_all_nullable_types_without_recursion_type_id;
+extern const int core_tests_pigeon_test_all_classes_wrapper_type_id;
+extern const int core_tests_pigeon_test_test_message_type_id;
+
 G_DECLARE_FINAL_TYPE(CoreTestsPigeonTestHostIntegrationCoreApi,
                      core_tests_pigeon_test_host_integration_core_api,
                      CORE_TESTS_PIGEON_TEST, HOST_INTEGRATION_CORE_API, GObject)
