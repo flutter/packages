@@ -438,6 +438,9 @@ targets:
         }
 
   - name: Linux_android android_build_all_packages_legacy stable
+    # Temporarily disabled to unblock roll to 3.32.
+    # See https://github.com/flutter/flutter/issues/169290
+    bringup: true
     recipe: packages/packages
     timeout: 30
     properties:
