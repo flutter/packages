@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 0.12.4+4
 
 * Asserts that new `forceAccountName` parameter is null (not used in web).

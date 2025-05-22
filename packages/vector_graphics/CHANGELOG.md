@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 1.1.18
 
 * Allow transition between placeholder and loaded image to have an animation.
