@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 6.3.0
 
 * Adds support for platform views as an optional way of displaying a video.
