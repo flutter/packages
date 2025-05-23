@@ -270,6 +270,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
+  ///
+  /// **Android and iOS only**. The [viewType] option allows the caller to
+  /// specify the type of native view used to display the video.
   VideoPlayerController.asset(
     this.dataSource, {
     this.package,
@@ -288,6 +291,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
+  ///
+  /// **Android and iOS only**. The [viewType] option allows the caller to
+  /// specify the type of native view used to display the video.
   ///
   /// [httpHeaders] option allows to specify HTTP headers
   /// for the request to the [dataSource].
