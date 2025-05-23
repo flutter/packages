@@ -95,6 +95,19 @@ public final class ExoPlayerEventListenerTest {
   }
 
   @Test
+  public void onPlaybackStateChangedReadyAfterBufferingSendsBufferingEnd() {
+    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
+    eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
+    verify(mockCallbacks).onBufferingStart();
+    verify(mockCallbacks).onBufferingUpdate(10L);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockCallbacks).onBufferingEnd();
+
+    verifyNoMoreInteractions(mockCallbacks);
+  }
+
+  @Test
   public void onPlaybackStateChangedIdleDoNothing() {
     eventListener.onPlaybackStateChanged(Player.STATE_IDLE);
 
