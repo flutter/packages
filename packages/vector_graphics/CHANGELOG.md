@@ -1,4 +1,5 @@
-## 1.1.19
+## NEXT
+
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 * Enhance image handling by adding validity checks and clear error messages for improved robustness and maintainability.
 
