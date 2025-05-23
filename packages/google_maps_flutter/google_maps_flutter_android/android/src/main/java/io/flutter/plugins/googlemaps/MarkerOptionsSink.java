@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.googlemaps;
 
+import com.google.android.gms.maps.model.AdvancedMarkerOptions;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -32,4 +33,6 @@ interface MarkerOptionsSink {
   void setVisible(boolean visible);
 
   void setZIndex(float zIndex);
+
+  void setCollisionBehavior(@AdvancedMarkerOptions.CollisionBehavior int collisionBehavior);
 }
