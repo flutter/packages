@@ -1415,6 +1415,7 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Completer<bool> initialized = Completer<bool>();
   List<String> calls = <String>[];
   List<DataSource> dataSources = <DataSource>[];
+  List<VideoViewType> viewTypes = <VideoViewType>[];
   final Map<int, StreamController<VideoEvent>> streams =
       <int, StreamController<VideoEvent>>{};
   bool forceInitError = false;
@@ -1438,6 +1439,25 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
           duration: const Duration(seconds: 1)));
     }
     dataSources.add(dataSource);
+    return nextPlayerId++;
+  }
+
+  @override
+  Future<int?> createWithOptions(VideoCreationOptions options) async {
+    calls.add('createWithOptions');
+    final StreamController<VideoEvent> stream = StreamController<VideoEvent>();
+    streams[nextPlayerId] = stream;
+    if (forceInitError) {
+      stream.addError(PlatformException(
+          code: 'VideoError', message: 'Video player had error XYZ'));
+    } else {
+      stream.add(VideoEvent(
+          eventType: VideoEventType.initialized,
+          size: const Size(100, 100),
+          duration: const Duration(seconds: 1)));
+    }
+    dataSources.add(options.dataSource);
+    viewTypes.add(options.viewType);
     return nextPlayerId++;
   }
 
