@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+
 ## 15.1.2
 
 - Fixes focus request propagation from `GoRouter` to `Navigator` by properly handling the `requestFocus` parameter.

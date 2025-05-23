@@ -155,6 +155,19 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test(
+      'Default implementation of setOnSSlAuthError should throw unimplemented error',
+      () {
+    final PlatformNavigationDelegate callbackDelegate =
+        ExtendsPlatformNavigationDelegate(
+            const PlatformNavigationDelegateCreationParams());
+
+    expect(
+      () => callbackDelegate.setOnSSlAuthError((PlatformSslAuthError eror) {}),
+      throwsUnimplementedError,
+    );
+  });
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform
