@@ -1,5 +1,6 @@
-## NEXT
+## 0.9.19+1
 
+* Corrects pigeon configuration output paths
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 
 ## 0.9.19
