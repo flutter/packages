@@ -270,6 +270,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
+  ///
+  /// The [viewType] option allows the caller to request a specific display mode
+  /// for the video. Platforms that do not support the request view type will
+  /// ignore this parameter.
   VideoPlayerController.asset(
     this.dataSource, {
     this.package,
@@ -288,6 +292,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
+  ///
+  /// The [viewType] option allows the caller to request a specific display mode
+  /// for the video. Platforms that do not support the request view type will
+  /// ignore this parameter.
   ///
   /// [httpHeaders] option allows to specify HTTP headers
   /// for the request to the [dataSource].
@@ -385,12 +393,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
 
-  /// **Android and iOS only**. The type of view used to display the video.
+  /// The requested display mode for the video.
   ///
-  /// Regardless of the value of this parameter, the video will always be
-  /// displayed using a platform view on web. On macOS, the video will always
-  /// be displayed using a texture view (the plugin does not support
-  /// platform views on macOS yet).
+  /// Platforms that do not support the request view type will ignore this.
   final VideoViewType viewType;
 
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
