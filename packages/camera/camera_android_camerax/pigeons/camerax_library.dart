@@ -18,7 +18,6 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
-
 /// Immutable class for describing width and height dimensions in pixels.
 ///
 /// See https://developer.android.com/reference/android/util/Size.html.
