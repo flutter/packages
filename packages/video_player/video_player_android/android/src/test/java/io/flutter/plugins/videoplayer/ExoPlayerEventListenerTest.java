@@ -44,7 +44,7 @@ public final class ExoPlayerEventListenerTest {
    */
   private static final class TestExoPlayerEventListener extends ExoPlayerEventListener {
     public TestExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks callbacks) {
-      super(exoPlayer, callbacks, false);
+      super(exoPlayer, callbacks);
     }
 
     @Override

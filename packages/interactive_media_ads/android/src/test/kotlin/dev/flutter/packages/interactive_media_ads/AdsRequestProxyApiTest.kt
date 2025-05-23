@@ -23,6 +23,19 @@ class AdsRequestProxyApiTest {
   }
 
   @Test
+  fun setAdTagUrlDoesNotAddRequestAgentToIncompatibleUrls() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdsRequest()
+
+    val instance = mock<AdsRequest>()
+
+    api.setAdTagUrl(instance, "adTag#")
+    verify(instance).adTagUrl = "adTag#"
+
+    api.setAdTagUrl(instance, "adTag?#")
+    verify(instance).adTagUrl = "adTag?#"
+  }
+
+  @Test
   fun setContentProgressProvider() {
     val api = TestProxyApiRegistrar().getPigeonApiAdsRequest()
 
