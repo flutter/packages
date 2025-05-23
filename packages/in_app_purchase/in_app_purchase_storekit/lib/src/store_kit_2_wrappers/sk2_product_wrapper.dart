@@ -282,7 +282,7 @@ enum SK2ProductPurchaseResult {
 /// Wrapper around [PurchaseOption]
 /// https://developer.apple.com/documentation/storekit/product/purchaseoption
 class SK2ProductPurchaseOptions {
-  /// Creates a new instance of [SK2ProductPurchaseOptions]
+  /// Creates a new instance of [SK2ProductPurchaseOptions].
   SK2ProductPurchaseOptions({
     this.appAccountToken,
     this.quantity,
