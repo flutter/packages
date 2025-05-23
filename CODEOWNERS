@@ -29,7 +29,6 @@ packages/pigeon/**                                       @tarrinneal
 packages/platform/**                                     @stuartmorgan-g
 packages/plugin_platform_interface/**                    @stuartmorgan-g
 packages/pointer_interceptor/**                          @ditman
-packages/process/**                                      @stuartmorgan-g
 packages/quick_actions/**                                @bparrishMines
 packages/rfw/**                                          @Hixie
 packages/shared_preferences/**                           @tarrinneal
