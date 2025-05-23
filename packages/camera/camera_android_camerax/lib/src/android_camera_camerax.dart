@@ -759,7 +759,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
       if (newIndex == null) {
         cameraErrorStreamController.add(
-            'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.');
+          'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
+        );
         throw CameraException(
           setExposureOffsetFailedErrorCode,
           'Setting exposure compensation index was canceled due to the camera being closed or a new request being submitted.',
@@ -768,8 +769,9 @@ class AndroidCameraCameraX extends CameraPlatform {
 
       return newIndex.toDouble();
     } on PlatformException catch (e) {
-      cameraErrorStreamController.add(e.message ??
-          'Setting the camera exposure compensation index failed.');
+      cameraErrorStreamController.add(
+        e.message ?? 'Setting the camera exposure compensation index failed.',
+      );
       // Surfacing error to plugin layer to maintain consistency of
       // setExposureOffset implementation across platform implementations.
 
@@ -826,8 +828,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     try {
       await camera2Control.addCaptureRequestOptions(captureRequestOptions);
     } on PlatformException catch (e) {
-      cameraErrorStreamController.add(e.message ??
-          'The camera was unable to set new capture request options due to new options being unavailable or the camera being closed.');
+      cameraErrorStreamController.add(
+        e.message ??
+            'The camera was unable to set new capture request options due to new options being unavailable or the camera being closed.',
+      );
     }
 
     _currentExposureMode = mode;
@@ -877,8 +881,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     try {
       await cameraControl.setZoomRatio(zoom);
     } on PlatformException catch (e) {
-      cameraErrorStreamController.add(e.message ??
-          'Zoom ratio was unable to be set. If ratio was not out of range, newer value may have been set; otherwise, the camera may be closed.');
+      cameraErrorStreamController.add(
+        e.message ??
+            'Zoom ratio was unable to be set. If ratio was not out of range, newer value may have been set; otherwise, the camera may be closed.',
+      );
     }
   }
 
@@ -931,19 +937,21 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     final Stream<DeviceOrientation> deviceOrientationStream =
-        onDeviceOrientationChanged()
-            .map((DeviceOrientationChangedEvent e) => e.orientation);
+        onDeviceOrientationChanged().map(
+      (DeviceOrientationChangedEvent e) => e.orientation,
+    );
     final Widget preview = Texture(textureId: cameraId);
 
     return RotatedPreviewDelegate(
-        handlesCropAndRotation: _handlesCropAndRotation,
-        initialDeviceOrientation: _initialDeviceOrientation,
-        initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
-        deviceOrientationStream: deviceOrientationStream,
-        sensorOrientationDegrees: sensorOrientationDegrees,
-        cameraIsFrontFacing: cameraIsFrontFacing,
-        deviceOrientationManager: deviceOrientationManager,
-        child: preview);
+      handlesCropAndRotation: _handlesCropAndRotation,
+      initialDeviceOrientation: _initialDeviceOrientation,
+      initialDefaultDisplayRotation: _initialDefaultDisplayRotation,
+      deviceOrientationStream: deviceOrientationStream,
+      sensorOrientationDegrees: sensorOrientationDegrees,
+      cameraIsFrontFacing: cameraIsFrontFacing,
+      deviceOrientationManager: deviceOrientationManager,
+      child: preview,
+    );
   }
 
   /// Captures an image and returns the file where it was saved.
@@ -1733,8 +1741,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     try {
       await cameraControl.enableTorch(value);
     } on PlatformException catch (e) {
-      cameraErrorStreamController
-          .add(e.message ?? 'The camera was unable to change torch modes.');
+      cameraErrorStreamController.add(
+        e.message ?? 'The camera was unable to change torch modes.',
+      );
     }
   }
 
