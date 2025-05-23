@@ -388,9 +388,8 @@ void main() {
       late int cameraId;
       late DeviceOrientation testInitialDeviceOrientation;
       late MockProcessCameraProvider mockProcessCameraProvider;
-      late MockCameraSelector Function(
-      // ignore: non_constant_identifier_names
-      {
+      late MockCameraSelector Function({
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
         // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
@@ -639,9 +638,8 @@ void main() {
       late int cameraId;
       late int testInitialDefaultDisplayRotation;
       late MockProcessCameraProvider mockProcessCameraProvider;
-      late MockCameraSelector Function(
-      // ignore: non_constant_identifier_names
-      {
+      late MockCameraSelector Function({
+        // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
         // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
@@ -895,9 +893,8 @@ void main() {
         // Create and set up mock CameraSelector, mock ProcessCameraProvider, and media settings for test front camera.
         // These settings do not matter for this test.
         final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-        final MockCameraSelector Function(
-        // ignore: non_constant_identifier_names
-        {
+        final MockCameraSelector Function({
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
@@ -1005,9 +1002,8 @@ void main() {
         // Create and set up mock CameraSelector, mock ProcessCameraProvider, and media settings for test front camera.
         // These settings do not matter for this test.
         final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-        final MockCameraSelector Function(
-        // ignore: non_constant_identifier_names
-        {
+        final MockCameraSelector Function({
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
@@ -1341,9 +1337,8 @@ void main() {
         late int cameraId;
         late MockCameraSelector mockFrontCameraSelector;
         late MockProcessCameraProvider mockProcessCameraProviderForFrontCamera;
-        late MockCameraSelector Function(
-        // ignore: non_constant_identifier_names
-        {
+        late MockCameraSelector Function({
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
@@ -1586,9 +1581,8 @@ void main() {
         // Create and set up mock front camera CameraSelector, mock ProcessCameraProvider, 270 degree sensor orientation,
         // media settings for test front camera.
         final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
-        final MockCameraSelector Function(
-        // ignore: non_constant_identifier_names
-        {
+        final MockCameraSelector Function({
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
@@ -1790,9 +1784,8 @@ void main() {
         late AndroidCameraCameraX camera;
         late int cameraId;
         late MockCameraSelector mockBackCameraSelector;
-        late MockCameraSelector Function(
-        // ignore: non_constant_identifier_names
-        {
+        late MockCameraSelector Function({
+          // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
@@ -1980,9 +1973,8 @@ void main() {
                   sensorRotationDegrees: testSensorOrientation,
                 );
             // Set up front camera selection and initial device orientation as landscape right.
-            final MockCameraSelector Function(
-            // ignore: non_constant_identifier_names
-            {
+            final MockCameraSelector Function({
+              // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
@@ -2047,9 +2039,8 @@ void main() {
                 );
 
             // Set up front camera selection and initial device orientation as landscape right.
-            final MockCameraSelector Function(
-            // ignore: non_constant_identifier_names
-            {
+            final MockCameraSelector Function({
+              // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
