@@ -114,7 +114,7 @@ public class PreviewTest {
     final TextureRegistry.SurfaceProducer.Callback callback = callbackCaptor.getValue();
 
     // Verify callback's onSurfaceCleanup invalidates SurfaceRequest.
-    simulateSurfaceDestruction(callback);
+    simulateSurfaceCleanup(callback);
     verify(mockSurfaceRequest).invalidate();
 
     reset(mockSurfaceRequest);
