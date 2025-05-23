@@ -4,6 +4,7 @@
   interface package, rather than 2.x, significantly changing the API surface.
 * Switches to Sign in with Google (`CredentialManager`) as the underlying
   SDK, removing usage of the deprecated Google Sign In for Android SDK.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 6.2.1
 

@@ -4,6 +4,7 @@
   current set of underlying platform SDKs, and to use structured errors. See
   API doc comments for details on the behaviors that platform implementations
   must implement.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.5.0
 
