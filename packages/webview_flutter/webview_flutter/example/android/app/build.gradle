@@ -25,6 +25,7 @@ if (flutterVersionName == null) {
 android {
     namespace 'io.flutter.plugins.webviewflutterexample'
     compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
 
 
     defaultConfig {
