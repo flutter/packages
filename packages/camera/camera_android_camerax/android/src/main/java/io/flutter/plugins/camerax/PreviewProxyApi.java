@@ -109,10 +109,7 @@ class PreviewProxyApi extends PigeonApiPreview {
             }
 
             @Override
-            // TODO(bparrishMines): Replace with onSurfaceCleanup once available on stable. See
-            // https://github.com/flutter/flutter/issues/161256.
-            @SuppressWarnings({"deprecation", "removal"})
-            public void onSurfaceDestroyed() {
+            public void onSurfaceCleanup() {
               // Invalidate the SurfaceRequest so that CameraX knows to to make a new request
               // for a surface.
               request.invalidate();
