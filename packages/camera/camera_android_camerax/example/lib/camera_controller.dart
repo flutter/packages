@@ -57,20 +57,20 @@ class CameraValue {
 
   /// Creates a new camera controller state for an uninitialized controller.
   const CameraValue.uninitialized()
-      : this(
-          isInitialized: false,
-          isRecordingVideo: false,
-          isTakingPicture: false,
-          isStreamingImages: false,
-          isRecordingPaused: false,
-          flashMode: FlashMode.auto,
-          exposureMode: ExposureMode.auto,
-          exposurePointSupported: false,
-          focusMode: FocusMode.auto,
-          focusPointSupported: false,
-          deviceOrientation: DeviceOrientation.portraitUp,
-          isPreviewPaused: false,
-        );
+    : this(
+        isInitialized: false,
+        isRecordingVideo: false,
+        isTakingPicture: false,
+        isStreamingImages: false,
+        isRecordingPaused: false,
+        flashMode: FlashMode.auto,
+        exposureMode: ExposureMode.auto,
+        exposurePointSupported: false,
+        focusMode: FocusMode.auto,
+        focusPointSupported: false,
+        deviceOrientation: DeviceOrientation.portraitUp,
+        isPreviewPaused: false,
+      );
 
   /// True after [CameraController.initialize] has completed successfully.
   final bool isInitialized;
@@ -181,16 +181,19 @@ class CameraValue {
           exposurePointSupported ?? this.exposurePointSupported,
       focusPointSupported: focusPointSupported ?? this.focusPointSupported,
       deviceOrientation: deviceOrientation ?? this.deviceOrientation,
-      lockedCaptureOrientation: lockedCaptureOrientation == null
-          ? this.lockedCaptureOrientation
-          : lockedCaptureOrientation.orNull,
-      recordingOrientation: recordingOrientation == null
-          ? this.recordingOrientation
-          : recordingOrientation.orNull,
+      lockedCaptureOrientation:
+          lockedCaptureOrientation == null
+              ? this.lockedCaptureOrientation
+              : lockedCaptureOrientation.orNull,
+      recordingOrientation:
+          recordingOrientation == null
+              ? this.recordingOrientation
+              : recordingOrientation.orNull,
       isPreviewPaused: isPreviewPaused ?? this.isPreviewPaused,
-      previewPauseOrientation: previewPauseOrientation == null
-          ? this.previewPauseOrientation
-          : previewPauseOrientation.orNull,
+      previewPauseOrientation:
+          previewPauseOrientation == null
+              ? this.previewPauseOrientation
+              : previewPauseOrientation.orNull,
     );
   }
 
@@ -255,7 +258,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   StreamSubscription<CameraImageData>? _imageStreamSubscription;
   FutureOr<bool>? _initCalled;
   StreamSubscription<DeviceOrientationChangedEvent>?
-      _deviceOrientationSubscription;
+  _deviceOrientationSubscription;
 
   /// Checks whether [CameraController.dispose] has completed successfully.
   ///
@@ -284,8 +287,8 @@ class CameraController extends ValueNotifier<CameraValue> {
       _deviceOrientationSubscription = CameraPlatform.instance
           .onDeviceOrientationChanged()
           .listen((DeviceOrientationChangedEvent event) {
-        value = value.copyWith(deviceOrientation: event.orientation);
-      });
+            value = value.copyWith(deviceOrientation: event.orientation);
+          });
 
       _cameraId = await CameraPlatform.instance.createCameraWithSettings(
         description,
@@ -442,8 +445,8 @@ class CameraController extends ValueNotifier<CameraValue> {
       _imageStreamSubscription = CameraPlatform.instance
           .onStreamedFrameAvailable(_cameraId)
           .listen((CameraImageData imageData) {
-        onAvailable(CameraImage.fromPlatformInterface(imageData));
-      });
+            onAvailable(CameraImage.fromPlatformInterface(imageData));
+          });
       value = value.copyWith(isStreamingImages: true);
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
