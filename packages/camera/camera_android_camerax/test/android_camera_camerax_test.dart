@@ -2659,8 +2659,9 @@ void main() {
         when(
           camera.recorder!.prepareRecording(outputPath),
         ).thenAnswer((_) async => mockPendingRecording);
-        when(mockPendingRecording.withAudioEnabled(!enableAudio))
-            .thenAnswer((_) async => mockPendingRecordingWithAudio);
+        when(
+          mockPendingRecording.withAudioEnabled(!enableAudio),
+        ).thenAnswer((_) async => mockPendingRecordingWithAudio);
         when(
           mockPendingRecordingWithAudio.start(any),
         ).thenAnswer((_) async => mockRecording);
@@ -2817,9 +2818,9 @@ void main() {
         when(
           camera.recorder!.prepareRecording(outputPath),
         ).thenAnswer((_) async => mockPendingRecording);
-        when(mockPendingRecording
-                .withAudioEnabled(!camera.enableRecordingAudio))
-            .thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+        ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.start(any),
         ).thenAnswer((_) async => mockRecording);
@@ -2999,9 +3000,9 @@ void main() {
         when(
           camera.recorder!.prepareRecording(outputPath),
         ).thenAnswer((_) async => mockPendingRecording);
-        when(mockPendingRecording
-                .withAudioEnabled(!camera.enableRecordingAudio))
-            .thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+        ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockProcessCameraProvider.bindToLifecycle(any, any),
         ).thenAnswer((_) => Future<Camera>.value(camera.camera));
@@ -3141,9 +3142,9 @@ void main() {
         when(
           camera.recorder!.prepareRecording(outputPath),
         ).thenAnswer((_) async => mockPendingRecording);
-        when(mockPendingRecording
-                .withAudioEnabled(!camera.enableRecordingAudio))
-            .thenAnswer((_) async => mockPendingRecording);
+        when(
+          mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+        ).thenAnswer((_) async => mockPendingRecording);
         when(
           mockPendingRecording.start(any),
         ).thenAnswer((_) async => mockRecording);
@@ -6159,8 +6160,9 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
-      when(mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio))
-          .thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6295,8 +6297,9 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
-      when(mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio))
-          .thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6431,8 +6434,9 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
-      when(mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio))
-          .thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6586,8 +6590,9 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
-      when(mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio))
-          .thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6745,8 +6750,9 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
-      when(mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio))
-          .thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
@@ -6896,8 +6902,9 @@ void main() {
       when(
         camera.recorder!.prepareRecording(outputPath),
       ).thenAnswer((_) async => mockPendingRecording);
-      when(mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio))
-          .thenAnswer((_) async => mockPendingRecording);
+      when(
+        mockPendingRecording.withAudioEnabled(!camera.enableRecordingAudio),
+      ).thenAnswer((_) async => mockPendingRecording);
       when(
         mockPendingRecording.start(any),
       ).thenAnswer((_) async => mockRecording);
