@@ -3,7 +3,7 @@ description: Pigeon test harness for alternate plugin languages.
 publish_to: 'none'
 
 environment:
-  sdk: ^3.5.0
+  sdk: ^3.6.0
 
 dependencies:
   alternate_language_test_plugin:
