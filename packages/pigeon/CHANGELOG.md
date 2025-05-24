@@ -1,6 +1,7 @@
-## NEXT
+## 25.4.0
 
-* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* [gobject] Adds type id constants in header files so that they can be used by the user.
+* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 
 ## 25.3.2
 

@@ -95,6 +95,10 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageCodec,
                      PIGEON_EXAMPLE_PACKAGE, MESSAGE_CODEC,
                      FlStandardMessageCodec)
 
+extern const int pigeon_example_package_code_type_id;
+
+extern const int pigeon_example_package_message_data_type_id;
+
 G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApi,
                      pigeon_example_package_example_host_api,
                      PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API, GObject)
