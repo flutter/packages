@@ -97,6 +97,61 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     return SKPaymentQueueWrapper.canMakePayments();
   }
 
+  /// Initiates the purchase flow for a non-consumable product.
+  ///
+  /// If StoreKit2 is enabled (`_useStoreKit2` is true), this method uses
+  /// the StoreKit2 APIs to handle the purchase, including support for
+  /// win-back offers, promotional offers, or any future StoreKit2-specific
+  /// offer types. Otherwise, it falls back to StoreKit1 (`SKPaymentQueue`).
+  ///
+  /// The [purchaseParam] can be an instance of:
+  /// - [Sk2PurchaseParam] — to include StoreKit2-specific fields like:
+  ///   - [winBackOfferId]: Applies a win-back offer.
+  ///   - [promotionalOffer]: Applies a promotional offer (requires a valid signature).
+  ///
+  /// - [AppStorePurchaseParam] — for StoreKit1 flows using `SKPaymentQueue`.
+  ///
+  /// - [PurchaseParam] — the generic, cross-platform parameter for purchases
+  ///   without any platform-specific fields.
+  ///
+  /// Returns `true` if the purchase flow was initiated successfully.
+  /// Note that a `true` return value does not mean the purchase was completed.
+  /// The final purchase result (success, failure, or pending) is delivered
+  /// via the purchase updates stream.
+  ///
+  /// Throws a [PlatformException] if the purchase could not be initiated due
+  /// to configuration issues or platform errors.
+  ///
+  /// Example:
+  /// ```dart
+  /// final productDetails = ...; // Obtained from queryProductDetails
+  ///
+  /// // Example using StoreKit 2:
+  /// final purchaseParamSk2 = Sk2PurchaseParam(
+  ///   productDetails: productDetails,
+  ///   promotionalOffer: myPromotionalOffer,
+  /// );
+  /// await InAppPurchase.instance.buyNonConsumable(
+  ///   purchaseParam: purchaseParamSk2,
+  /// );
+  ///
+  /// // Example using StoreKit 1 fallback:
+  /// final purchaseParamSk1 = AppStorePurchaseParam(
+  ///   productDetails: productDetails,
+  ///   quantity: 1,
+  /// );
+  /// await InAppPurchase.instance.buyNonConsumable(
+  ///   purchaseParam: purchaseParamSk1,
+  /// );
+  ///
+  /// // Example using the generic PurchaseParam (works on any store):
+  /// final purchaseParamGeneric = PurchaseParam(
+  ///   productDetails: productDetails,
+  /// );
+  /// await InAppPurchase.instance.buyNonConsumable(
+  ///   purchaseParam: purchaseParamGeneric,
+  /// );
+  /// ```
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
     if (_useStoreKit2) {
