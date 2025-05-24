@@ -1,7 +1,7 @@
 ## 0.4.1
 
 * Adds **Win Back Offers** support for StoreKit2:
-    - Includes new `checkWinBackOfferEligibility` method for eligibility verification
+    - Includes new `isWinBackOfferEligible` function for eligibility verification
 * Adds **Promotional Offers** support in StoreKit2 purchases
 * Fixes introductory pricing handling in promotional offers list in StoreKit2
 * Ensures proper `appAccountToken` handling for StoreKit2 purchases
