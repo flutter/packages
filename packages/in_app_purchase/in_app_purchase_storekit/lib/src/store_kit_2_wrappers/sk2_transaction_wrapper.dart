@@ -121,7 +121,10 @@ extension on SK2TransactionMessage {
       // receipt isn’t necessary with SK2 as a Transaction can only be returned
       // from validated purchases.
       verificationData: PurchaseVerificationData(
-          localVerificationData: '', serverVerificationData: '', source: ''),
+          localVerificationData: jsonRepresentation ?? '',
+          // receiptData is the JWS representation of the transaction
+          serverVerificationData: receiptData ?? '',
+          source: kIAPSource),
       transactionDate: purchaseDate,
       // Note that with SK2, any transactions that *can* be returned will
       // require to be finished, and are already purchased.
