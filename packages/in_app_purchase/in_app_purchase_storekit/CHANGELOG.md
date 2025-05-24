@@ -1,6 +1,11 @@
-## NEXT
+## 0.4.1
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Adds **Win Back Offers** support for StoreKit2:
+    - Includes new `isWinBackOfferEligible` function for eligibility verification
+* Adds **Promotional Offers** support in StoreKit2 purchases
+* Fixes introductory pricing handling in promotional offers list in StoreKit2
+* Ensures proper `appAccountToken` handling for StoreKit2 purchases
 
 ## 0.4.0
 
