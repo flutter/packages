@@ -141,7 +141,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     return true; // There's no error feedback from iOS here to return.
   }
 
-  SK2SubscriptionOfferPurchaseMessage? _convertPromotionalOffer(
+  static SK2SubscriptionOfferPurchaseMessage? _convertPromotionalOffer(
     SK2PromotionalOffer? promotionalOffer,
   ) {
     if (promotionalOffer == null) {
