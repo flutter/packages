@@ -401,11 +401,11 @@ class SK2Product {
   }
 
   /// Checks if the user is eligible for a specific win back offer.
-  static Future<bool> checkWinBackOfferEligibility(
+  static Future<bool> isWinBackOfferEligible(
     String productId,
     String offerId,
   ) async {
-    final bool result = await _hostApi.checkWinBackOfferEligibility(
+    final bool result = await _hostApi.isWinBackOfferEligible(
       productId,
       offerId,
     );

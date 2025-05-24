@@ -308,8 +308,7 @@ void main() {
         priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
       );
 
-      final bool result =
-          await iapStoreKitPlatform.checkWinBackOfferEligibility(
+      final bool result = await iapStoreKitPlatform.isWinBackOfferEligible(
         'sub1',
         'winback1',
       );
@@ -338,8 +337,7 @@ void main() {
         priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
       );
 
-      final bool result =
-          await iapStoreKitPlatform.checkWinBackOfferEligibility(
+      final bool result = await iapStoreKitPlatform.isWinBackOfferEligible(
         'sub1',
         'winback1',
       );
@@ -349,7 +347,7 @@ void main() {
 
     test('should throw product not found error for invalid product', () async {
       expect(
-        () => iapStoreKitPlatform.checkWinBackOfferEligibility(
+        () => iapStoreKitPlatform.isWinBackOfferEligible(
           'invalid_product',
           'winback1',
         ),
@@ -375,7 +373,7 @@ void main() {
       );
 
       expect(
-        () => iapStoreKitPlatform.checkWinBackOfferEligibility(
+        () => iapStoreKitPlatform.isWinBackOfferEligible(
           'consumable1',
           'winback1',
         ),
@@ -392,7 +390,7 @@ void main() {
       await InAppPurchaseStoreKitPlatform.enableStoreKit1();
 
       expect(
-        () => iapStoreKitPlatform.checkWinBackOfferEligibility(
+        () => iapStoreKitPlatform.isWinBackOfferEligible(
           'sub1',
           'winback1',
         ),

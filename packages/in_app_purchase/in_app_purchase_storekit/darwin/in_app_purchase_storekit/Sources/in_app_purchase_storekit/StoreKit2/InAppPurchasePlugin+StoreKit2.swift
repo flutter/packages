@@ -125,7 +125,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   ///   - completion: Returns `Bool` for eligibility or `Error` on failure.
   ///
   /// - Availability: iOS 18.0+, macOS 15.0+, Swift 6.0+ (Xcode 16+).
-  func checkWinBackOfferEligibility(
+  func isWinBackOfferEligible(
     productId: String,
     offerId: String,
     completion: @escaping (Result<Bool, Error>) -> Void

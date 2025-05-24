@@ -303,7 +303,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   /// Checks if the user is eligible for a specific win back offer (StoreKit2 only).
   ///
   /// Throws [PlatformException] if StoreKit2 is not enabled or if the check fails.
-  Future<bool> checkWinBackOfferEligibility(
+  Future<bool> isWinBackOfferEligible(
     String productId,
     String offerId,
   ) async {
@@ -314,7 +314,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
       );
     }
 
-    final bool eligibility = await SK2Product.checkWinBackOfferEligibility(
+    final bool eligibility = await SK2Product.isWinBackOfferEligible(
       productId,
       offerId,
     );

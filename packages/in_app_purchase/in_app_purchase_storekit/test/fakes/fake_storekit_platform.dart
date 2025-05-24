@@ -412,7 +412,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   }
 
   @override
-  Future<bool> checkWinBackOfferEligibility(
+  Future<bool> isWinBackOfferEligible(
     String productId,
     String offerId,
   ) async {

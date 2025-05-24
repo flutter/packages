@@ -346,7 +346,7 @@ class _MyAppState extends State<_MyApp> {
         for (final SK2SubscriptionOffer offer in offers) {
           if (offer.type == SK2SubscriptionOfferType.winBack) {
             final bool eligible =
-                await _iapStoreKitPlatform.checkWinBackOfferEligibility(
+                await _iapStoreKitPlatform.isWinBackOfferEligible(
               detail.id,
               offer.id ?? '',
             );

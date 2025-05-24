@@ -911,10 +911,9 @@ class InAppPurchase2API {
     }
   }
 
-  Future<bool> checkWinBackOfferEligibility(
-      String productId, String offerId) async {
+  Future<bool> isWinBackOfferEligible(String productId, String offerId) async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.checkWinBackOfferEligibility$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isWinBackOfferEligible$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,

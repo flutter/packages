@@ -134,7 +134,7 @@ abstract class TestInAppPurchase2Api {
   Future<SK2ProductPurchaseResultMessage> purchase(String id,
       {SK2ProductPurchaseOptionsMessage? options});
 
-  Future<bool> checkWinBackOfferEligibility(String productId, String offerId);
+  Future<bool> isWinBackOfferEligible(String productId, String offerId);
 
   Future<List<SK2TransactionMessage>> transactions();
 
@@ -256,7 +256,7 @@ abstract class TestInAppPurchase2Api {
       final BasicMessageChannel<
           Object?> pigeonVar_channel = BasicMessageChannel<
               Object?>(
-          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.checkWinBackOfferEligibility$messageChannelSuffix',
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isWinBackOfferEligible$messageChannelSuffix',
           pigeonChannelCodec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
@@ -267,17 +267,17 @@ abstract class TestInAppPurchase2Api {
             .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
                 (Object? message) async {
           assert(message != null,
-              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.checkWinBackOfferEligibility was null.');
+              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isWinBackOfferEligible was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_productId = (args[0] as String?);
           assert(arg_productId != null,
-              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.checkWinBackOfferEligibility was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isWinBackOfferEligible was null, expected non-null String.');
           final String? arg_offerId = (args[1] as String?);
           assert(arg_offerId != null,
-              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.checkWinBackOfferEligibility was null, expected non-null String.');
+              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isWinBackOfferEligible was null, expected non-null String.');
           try {
-            final bool output = await api.checkWinBackOfferEligibility(
-                arg_productId!, arg_offerId!);
+            final bool output =
+                await api.isWinBackOfferEligible(arg_productId!, arg_offerId!);
             return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

@@ -432,7 +432,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     let expectation = self.expectation(description: "Eligibility check should return true")
 
-    plugin.checkWinBackOfferEligibility(
+    plugin.isWinBackOfferEligible(
       productId: "subscription_silver",
       offerId: "subscription_silver_winback_offer"
     ) { result in
@@ -453,7 +453,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
   func testCheckWinBackOfferEligibilityNotEligible() async throws {
     let expectation = self.expectation(description: "Eligibility check should return false")
 
-    plugin.checkWinBackOfferEligibility(
+    plugin.isWinBackOfferEligible(
       productId: "subscription_silver",
       offerId: "invalid_offer_id"
     ) { result in
@@ -473,7 +473,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
   func testCheckWinBackOfferEligibilityProductNotFound() async throws {
     let expectation = self.expectation(description: "Should throw product not found error")
 
-    plugin.checkWinBackOfferEligibility(
+    plugin.isWinBackOfferEligible(
       productId: "invalid_product",
       offerId: "winback_offer"
     ) { result in
@@ -495,7 +495,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
   func testCheckWinBackOfferEligibilityNonSubscription() async throws {
     let expectation = self.expectation(description: "Should throw non-subscription error")
 
-    plugin.checkWinBackOfferEligibility(
+    plugin.isWinBackOfferEligible(
       productId: "consumable",
       offerId: "winback_offer"
     ) { result in

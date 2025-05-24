@@ -689,7 +689,7 @@ protocol InAppPurchase2API {
   func purchase(
     id: String, options: SK2ProductPurchaseOptionsMessage?,
     completion: @escaping (Result<SK2ProductPurchaseResultMessage, Error>) -> Void)
-  func checkWinBackOfferEligibility(
+  func isWinBackOfferEligible(
     productId: String, offerId: String, completion: @escaping (Result<Bool, Error>) -> Void)
   func transactions(completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void)
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void)
@@ -766,16 +766,16 @@ class InAppPurchase2APISetup {
     } else {
       purchaseChannel.setMessageHandler(nil)
     }
-    let checkWinBackOfferEligibilityChannel = FlutterBasicMessageChannel(
+    let isWinBackOfferEligibleChannel = FlutterBasicMessageChannel(
       name:
-        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.checkWinBackOfferEligibility\(channelSuffix)",
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isWinBackOfferEligible\(channelSuffix)",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      checkWinBackOfferEligibilityChannel.setMessageHandler { message, reply in
+      isWinBackOfferEligibleChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let productIdArg = args[0] as! String
         let offerIdArg = args[1] as! String
-        api.checkWinBackOfferEligibility(productId: productIdArg, offerId: offerIdArg) { result in
+        api.isWinBackOfferEligible(productId: productIdArg, offerId: offerIdArg) { result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -785,7 +785,7 @@ class InAppPurchase2APISetup {
         }
       }
     } else {
-      checkWinBackOfferEligibilityChannel.setMessageHandler(nil)
+      isWinBackOfferEligibleChannel.setMessageHandler(nil)
     }
     let transactionsChannel = FlutterBasicMessageChannel(
       name:
