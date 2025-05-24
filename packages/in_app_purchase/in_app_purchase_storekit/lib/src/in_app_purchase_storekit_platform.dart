@@ -302,7 +302,15 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
 
   /// Checks if the user is eligible for a specific win back offer (StoreKit2 only).
   ///
-  /// Throws [PlatformException] if StoreKit2 is not enabled or if the check fails.
+  /// Throws [PlatformException] if StoreKit2 is not enabled, if the product is not found,
+  /// if the product is not a subscription, or if any error occurs during the eligibility check.
+  ///
+  /// [PlatformException.code] can be one of:
+  /// - `storekit2_not_enabled`
+  /// - `storekit2_unsupported_platform_version`
+  /// - `storekit2_failed_to_fetch_product`
+  /// - `storekit2_not_subscription`
+  /// - `storekit2_eligibility_check_failed`
   Future<bool> isWinBackOfferEligible(
     String productId,
     String offerId,
