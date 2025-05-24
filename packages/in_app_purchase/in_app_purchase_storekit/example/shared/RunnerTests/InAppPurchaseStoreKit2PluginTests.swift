@@ -415,7 +415,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   @available(iOS 18.0, macOS 15.0, *)
-  func testCheckWinBackOfferEligibilityEligible() async throws {
+  func testIsWinBackOfferEligibleEligible() async throws {
     let purchaseExpectation = self.expectation(description: "Purchase should succeed")
 
     plugin.purchase(id: "subscription_silver", options: nil) { result in
@@ -450,7 +450,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   @available(iOS 18.0, macOS 15.0, *)
-  func testCheckWinBackOfferEligibilityNotEligible() async throws {
+  func testIsWinBackOfferEligibleNotEligible() async throws {
     let expectation = self.expectation(description: "Eligibility check should return false")
 
     plugin.isWinBackOfferEligible(
@@ -470,7 +470,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   @available(iOS 18.0, macOS 15.0, *)
-  func testCheckWinBackOfferEligibilityProductNotFound() async throws {
+  func testIsWinBackOfferEligibleProductNotFound() async throws {
     let expectation = self.expectation(description: "Should throw product not found error")
 
     plugin.isWinBackOfferEligible(
@@ -492,7 +492,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
   }
 
   @available(iOS 18.0, macOS 15.0, *)
-  func testCheckWinBackOfferEligibilityNonSubscription() async throws {
+  func testIsWinBackOfferEligibleNonSubscription() async throws {
     let expectation = self.expectation(description: "Should throw non-subscription error")
 
     plugin.isWinBackOfferEligible(
