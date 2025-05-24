@@ -26,7 +26,7 @@ enum SK2ProductType {
 }
 
 extension on SK2ProductTypeMessage {
-  /// Convert the equivalent pigeon class of [SK2ProductTypeMessage] into an instance of [SK2ProductType]
+  /// Convert the equivalent pigeon class of [SK2ProductTypeMessage] into an instance of [SK2ProductType].
   SK2ProductType convertFromPigeon() {
     switch (this) {
       case SK2ProductTypeMessage.autoRenewable:
@@ -296,13 +296,13 @@ class SK2ProductPurchaseOptions {
   /// Indicates the quantity of items the customer is purchasing.
   final int? quantity;
 
-  /// Sets a promotional offer to a purchase
+  /// Sets a promotional offer to a purchase.
   final SK2SubscriptionOfferPurchaseMessage? promotionalOffer;
 
-  /// Sets a win back offer to a purchase
+  /// Sets a win back offer to a purchase.
   final String? winBackOfferId;
 
-  /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage]
+  /// Convert to pigeon representation [SK2ProductPurchaseOptionsMessage].
   SK2ProductPurchaseOptionsMessage convertToPigeon() {
     return SK2ProductPurchaseOptionsMessage(
       appAccountToken: appAccountToken,
