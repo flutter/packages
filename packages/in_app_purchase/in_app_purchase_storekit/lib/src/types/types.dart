@@ -8,4 +8,3 @@ export 'app_store_purchase_details.dart';
 export 'app_store_purchase_param.dart';
 export 'sk2_promotional_offer.dart';
 export 'sk2_purchase_param.dart';
-export 'sk2_subscription_offer_signature.dart';
