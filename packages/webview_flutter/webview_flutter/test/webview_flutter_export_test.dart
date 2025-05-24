@@ -30,6 +30,7 @@ void main() {
         main_file.PlatformWebViewPermissionRequest;
         main_file.PlatformWebViewWidgetCreationParams;
         main_file.ProgressCallback;
+        main_file.UrlChange;
         main_file.WebViewOverScrollMode;
         main_file.WebViewPermissionResourceType;
         main_file.WebResourceError;
@@ -39,7 +40,7 @@ void main() {
         main_file.WebResourceErrorType;
         main_file.WebResourceRequest;
         main_file.WebResourceResponse;
-        main_file.UrlChange;
+        main_file.X509Certificate;
       },
     );
   });

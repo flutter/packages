@@ -25,3 +25,4 @@ export 'web_resource_request.dart';
 export 'web_resource_response.dart';
 export 'webview_cookie.dart';
 export 'webview_credential.dart';
+export 'x509_certificate.dart';
