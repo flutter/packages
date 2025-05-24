@@ -140,3 +140,10 @@ and so on.
 To learn about playback speed limitations, see the [`setPlaybackSpeed` method documentation](https://pub.dev/documentation/video_player/latest/video_player/VideoPlayerController/setPlaybackSpeed.html).
 
 Furthermore, see the example app for an example playback speed implementation.
+
+### Video view type
+
+You can set the video view type of your controller (instance of `VideoPlayerController`) during its creation by passing the `videoViewType` argument.  
+If set to `VideoViewType.platformView`, platform views will be used instead of texture view on supported platforms (Android and iOS).
+
+Using `VideoViewType.platformView` is not recommended on Android due to a known [issue][3] affecting platform views on Android.
