@@ -4,8 +4,8 @@ version: 0.0.1
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
 
 dependencies:
   build_runner: ^2.1.10
@@ -19,3 +19,6 @@ dependencies:
   integration_test:
     sdk: flutter
   mockito: ^5.4.4
+
+dev_dependencies:
+  leak_tracker: any

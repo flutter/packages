@@ -201,7 +201,9 @@ void main() {
               isPlaying: true,
             )
           ]));
-    });
+    },
+        // MEDIA_ELEMENT_ERROR, see https://github.com/flutter/flutter/issues/169219
+        skip: true);
 
     testWidgets('video playback lifecycle', (WidgetTester tester) async {
       final int videoPlayerId = await playerId;
@@ -238,7 +240,9 @@ void main() {
             VideoEventType.initialized,
             VideoEventType.bufferingEnd,
           ]));
-    });
+    },
+        // MEDIA_ELEMENT_ERROR, see https://github.com/flutter/flutter/issues/169219
+        skip: true);
 
     testWidgets('can set web options', (WidgetTester tester) async {
       expect(

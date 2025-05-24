@@ -152,6 +152,7 @@ class Camera
       return cameraDevice.createCaptureRequest(templateType);
     }
 
+    @SuppressLint("UseRequiresApi")
     @TargetApi(VERSION_CODES.P)
     @Override
     public void createCaptureSession(SessionConfiguration config) throws CameraAccessException {
@@ -544,6 +545,7 @@ class Camera
     }
   }
 
+  @SuppressLint("UseRequiresApi")
   @TargetApi(VERSION_CODES.P)
   private void createCaptureSessionWithSessionConfig(
       List<OutputConfiguration> outputConfigs, CameraCaptureSession.StateCallback callback)

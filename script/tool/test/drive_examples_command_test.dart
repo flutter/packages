@@ -1763,6 +1763,7 @@ packages/package_a/$file
           FakeProcessInfo(MockProcess(stdout: '''
 README.md
 CODEOWNERS
+.gitignore
 packages/package_a/CHANGELOG.md
 ''')),
         ];
