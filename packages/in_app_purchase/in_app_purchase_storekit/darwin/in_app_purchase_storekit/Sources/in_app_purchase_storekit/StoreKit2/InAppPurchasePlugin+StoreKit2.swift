@@ -153,19 +153,11 @@ extension InAppPurchasePlugin: InAppPurchase2API {
             return
           }
 
-          let statuses = try await subscription.status
-
-          var isEligible = false
-          for status in statuses {
-            switch status.renewalInfo {
-            case .verified(let renewalInfo):
-              if renewalInfo.eligibleWinBackOfferIDs.contains(offerId) {
-                isEligible = true
-                break
-              }
-            default:
-              continue
+          let isEligible = try await subscription.status.contains { status in
+            if case .verified(let renewalInfo) = status.renewalInfo {
+              return renewalInfo.eligibleWinBackOfferIDs.contains(offerId)
             }
+            return false
           }
 
           completion(.success(isEligible))
