@@ -380,30 +380,16 @@ class _MyAppState extends State<_MyApp> {
           foregroundColor: Colors.white,
         ),
         onPressed: () {
-          late PurchaseParam purchaseParam;
-          if (offer.type == SK2SubscriptionOfferType.winBack) {
-            purchaseParam = Sk2PurchaseParam(
-              productDetails: productDetails,
-              winBackOfferId: offer.id,
-            );
-          } else if (offer.type == SK2SubscriptionOfferType.promotional) {
-            purchaseParam = Sk2PurchaseParam(
-              productDetails: productDetails,
-              promotionalOffer: SK2PromotionalOffer(
-                offerId: offer.id ?? '',
-                signature: SK2SubscriptionOfferSignature(
-                  keyID: 'keyID',
-                  nonce: '1ac96421-947d-45e9-a0a0-5bb3a6937284',
-                  timestamp: DateTime.now().millisecondsSinceEpoch,
-                  signature: 'dmFsaWRzaWduYXR1cmU=',
-                ),
-              ),
-            );
-          } else {
-            purchaseParam = Sk2PurchaseParam(
-              productDetails: productDetails,
-            );
-          }
+          final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam.fromOffer(
+            productDetails: productDetails,
+            offer: offer,
+            signature: SK2SubscriptionOfferSignature(
+              keyID: 'keyID',
+              nonce: '1ac96421-947d-45e9-a0a0-5bb3a6937284',
+              timestamp: DateTime.now().millisecondsSinceEpoch,
+              signature: 'dmFsaWRzaWduYXR1cmU=',
+            ),
+          );
 
           _iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
         },
