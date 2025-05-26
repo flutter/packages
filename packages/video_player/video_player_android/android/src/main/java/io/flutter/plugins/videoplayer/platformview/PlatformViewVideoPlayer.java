@@ -62,8 +62,6 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
   @Override
   protected ExoPlayerEventListener createExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer) {
-    // Platform view video player does not suspend and re-create the exoPlayer, hence initialized
-    // is always false. It also does not require a reference to the SurfaceProducer.
-    return new PlatformViewExoPlayerEventListener(exoPlayer, videoPlayerEvents, false);
+    return new PlatformViewExoPlayerEventListener(exoPlayer, videoPlayerEvents);
   }
 }

@@ -1,6 +1,7 @@
 ## 15.1.3
 
 - Fixes calling `PopScope.onPopInvokedWithResult` in branch routes.
+- Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 15.1.2
 
