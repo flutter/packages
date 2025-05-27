@@ -92,6 +92,7 @@ class ExampleTests: XCTestCase {
       canChooseFiles: true,
       baseOptions: SavePanelOptions(
         directoryPath: "/some/dir",
+        nameFieldStringValue: "a name",
         prompt: "Open it!"))
     plugin.displayOpenPanel(options: options) { result in
       switch result {
@@ -107,6 +108,8 @@ class ExampleTests: XCTestCase {
     XCTAssertNotNil(panelController.openPanel)
     if let panel = panelController.openPanel {
       XCTAssertEqual(panel.directoryURL?.path, "/some/dir")
+      // nameFieldStringValue is not set for NSOpenPanel, only for NSSavePanel
+      XCTAssertNotEqual(panel.nameFieldStringValue, "a name")
       XCTAssertEqual(panel.prompt, "Open it!")
     }
   }

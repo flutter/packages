@@ -92,7 +92,9 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
       panel.directoryURL = URL(fileURLWithPath: directoryPath)
     }
     if let suggestedName = options.nameFieldStringValue {
-      panel.nameFieldStringValue = suggestedName
+      if !(panel is NSOpenPanel) {
+        panel.nameFieldStringValue = suggestedName
+      }
     }
     if let prompt = options.prompt {
       panel.prompt = prompt
