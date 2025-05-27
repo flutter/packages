@@ -80,7 +80,6 @@ you can silently request an access token for those scopes:
 <?code-excerpt "example/lib/main.dart (CheckAuthorization)"?>
 ```dart
 const List<String> scopes = <String>[
-  'email',
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
 // ···

@@ -12,7 +12,6 @@ import 'package:google_sign_in_platform_interface/google_sign_in_platform_interf
 import 'package:http/http.dart' as http;
 
 const List<String> _scopes = <String>[
-  'email',
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
 
