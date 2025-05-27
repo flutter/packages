@@ -110,12 +110,13 @@ void main() {
       await googleSignIn.initialize();
       // This doesn't throw, since reportAllExceptions is false.
       await googleSignIn.attemptLightweightAuthentication();
-      final GoogleSignInAuthenticationEvent event = await eventFuture;
 
-      expect(event, isA<GoogleSignInAuthenticationEventException>());
-      final GoogleSignInAuthenticationEventException exceptionEvent =
-          event as GoogleSignInAuthenticationEventException;
-      expect(exceptionEvent.exception, exception);
+      try {
+        await eventFuture;
+        fail('The stream should throw before returning an event.');
+      } on GoogleSignInException catch (e) {
+        expect(e, exception);
+      }
     });
 
     test('reports success from authenticate', () async {
@@ -152,12 +153,13 @@ void main() {
       await googleSignIn.initialize();
       await expectLater(
           googleSignIn.authenticate(), throwsA(isA<GoogleSignInException>()));
-      final GoogleSignInAuthenticationEvent event = await eventFuture;
 
-      expect(event, isA<GoogleSignInAuthenticationEventException>());
-      final GoogleSignInAuthenticationEventException exceptionEvent =
-          event as GoogleSignInAuthenticationEventException;
-      expect(exceptionEvent.exception, exception);
+      try {
+        await eventFuture;
+        fail('The stream should throw before returning an event.');
+      } on GoogleSignInException catch (e) {
+        expect(e, exception);
+      }
     });
 
     test('reports sign out from signOut', () async {

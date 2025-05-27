@@ -298,8 +298,7 @@ class GoogleSignIn {
         _authenticationStreamController
             .add(GoogleSignInAuthenticationEventSignOut());
       case AuthenticationEventException():
-        _authenticationStreamController
-            .add(GoogleSignInAuthenticationEventException(event.exception));
+        _authenticationStreamController.addError(event.exception);
     }
   }
 
@@ -377,8 +376,7 @@ class GoogleSignIn {
       return account;
     } on GoogleSignInException catch (e) {
       if (_createAuthenticationStreamEvents) {
-        _authenticationStreamController
-            .add(GoogleSignInAuthenticationEventException(e));
+        _authenticationStreamController.addError(e);
       }
 
       if (!reportAllExceptions) {
@@ -437,8 +435,7 @@ class GoogleSignIn {
       return account;
     } on GoogleSignInException catch (e) {
       if (_createAuthenticationStreamEvents) {
-        _authenticationStreamController
-            .add(GoogleSignInAuthenticationEventException(e));
+        _authenticationStreamController.addError(e);
       }
       rethrow;
     }

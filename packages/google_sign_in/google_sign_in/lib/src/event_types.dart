@@ -34,14 +34,3 @@ class GoogleSignInAuthenticationEventSignIn
 @immutable
 class GoogleSignInAuthenticationEventSignOut
     extends GoogleSignInAuthenticationEvent {}
-
-/// An authentication failure that resulted in an exception.
-@immutable
-class GoogleSignInAuthenticationEventException
-    extends GoogleSignInAuthenticationEvent {
-  /// Creates an exception event.
-  const GoogleSignInAuthenticationEventException(this.exception);
-
-  /// The exception thrown during authentication.
-  final GoogleSignInException exception;
-}

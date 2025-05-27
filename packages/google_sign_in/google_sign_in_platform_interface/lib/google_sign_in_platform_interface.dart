@@ -105,6 +105,11 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   /// These will normally come from asynchronous flows, like the authenticate
   /// and signOut methods, as well as potentially from platform-specific methods
   /// (such as the Google Sign-In Button Widget from the Web implementation).
+  ///
+  /// Implementations should never intentionally call `addError` for this
+  /// stream, and should instead use AuthenticationEventException. This is to
+  /// ensure via the type system that implementations are always sending
+  /// [GoogleSignInException] for know failure cases.
   Stream<AuthenticationEvent>? get authenticationEvents => null;
 }
 

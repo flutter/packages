@@ -63,7 +63,9 @@ class _SignInDemoState extends State<SignInDemo> {
     unawaited(signIn
         .initialize(clientId: clientId, serverClientId: serverClientId)
         .then((_) {
-      signIn.authenticationEvents.listen(_handleAuthenticationEvent);
+      signIn.authenticationEvents
+          .listen(_handleAuthenticationEvent)
+          .onError(_handleAuthenticationError);
 
       /// This example always uses the stream-based approach to determining
       /// which UI state to show, rather than using the future returned here,
@@ -78,16 +80,11 @@ class _SignInDemoState extends State<SignInDemo> {
     // #docregion CheckAuthorization
     GoogleSignInAccount? user;
     // #enddocregion CheckAuthorization
-    String error = '';
     switch (event) {
       case GoogleSignInAuthenticationEventSignIn():
         user = event.user;
       case GoogleSignInAuthenticationEventSignOut():
         user = null;
-      case GoogleSignInAuthenticationEventException():
-        user = null;
-        final GoogleSignInException e = event.exception;
-        error = 'GoogleSignInException ${e.code}: ${e.description}';
     }
 
     // Check for existing authorization.
@@ -102,14 +99,24 @@ class _SignInDemoState extends State<SignInDemo> {
     setState(() {
       _currentUser = user;
       _isAuthorized = authorization != null;
-      _errorMessage = error;
+      _errorMessage = '';
     });
 
-    // Now that we know that the user can access the required scopes, the app
-    // can call the REST API.
+    // If the user has already granted access to the required scopes, call the
+    // REST API.
     if (user != null && authorization != null) {
       unawaited(_handleGetContact(user));
     }
+  }
+
+  Future<void> _handleAuthenticationError(Object e) async {
+    setState(() {
+      _currentUser = null;
+      _isAuthorized = false;
+      _errorMessage = e is GoogleSignInException
+          ? 'GoogleSignInException ${e.code}: ${e.description}'
+          : 'Unknown error: $e';
+    });
   }
 
   // Calls the People API REST endpoint for the signed-in user to retrieve information.
@@ -121,7 +128,8 @@ class _SignInDemoState extends State<SignInDemo> {
         await user.authorizationClient.authorizationHeaders(scopes);
     if (headers == null) {
       setState(() {
-        _contactText = 'Failed to construct authorization headers.';
+        _contactText = '';
+        _errorMessage = 'Failed to construct authorization headers.';
       });
       return;
     }
@@ -131,11 +139,19 @@ class _SignInDemoState extends State<SignInDemo> {
       headers: headers,
     );
     if (response.statusCode != 200) {
-      setState(() {
-        _contactText = 'People API gave a ${response.statusCode} '
-            'response. Check logs for details.';
-      });
-      print('People API ${response.statusCode} response: ${response.body}');
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        setState(() {
+          _isAuthorized = false;
+          _errorMessage = 'People API gave a ${response.statusCode} response. '
+              'Please re-authorize access.';
+        });
+      } else {
+        print('People API ${response.statusCode} response: ${response.body}');
+        setState(() {
+          _contactText = 'People API gave a ${response.statusCode} '
+              'response. Check logs for details.';
+        });
+      }
       return;
     }
     final Map<String, dynamic> data =
@@ -181,7 +197,12 @@ class _SignInDemoState extends State<SignInDemo> {
       // #enddocregion RequestScopes
 
       // The returned tokens are ignored since _handleGetContact uses the
-      // authorizationHeaders method to re-read the token cached by this call.
+      // authorizationHeaders method to re-read the token cached by
+      // authorizeScopes. The code above is used as a README excerpt, so shows
+      // the much more common pattern of getting the authorization and
+      // immediately using it. That results in an unused variable, which this
+      // statement suppresses (without adding an ignore: directive to the README
+      // excerpt).
       // ignore: unnecessary_statements
       authorization;
 
