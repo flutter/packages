@@ -92,7 +92,6 @@ class ExampleTests: XCTestCase {
       canChooseFiles: true,
       baseOptions: SavePanelOptions(
         directoryPath: "/some/dir",
-        nameFieldStringValue: "a name",
         prompt: "Open it!"))
     plugin.displayOpenPanel(options: options) { result in
       switch result {
@@ -108,7 +107,6 @@ class ExampleTests: XCTestCase {
     XCTAssertNotNil(panelController.openPanel)
     if let panel = panelController.openPanel {
       XCTAssertEqual(panel.directoryURL?.path, "/some/dir")
-      XCTAssertEqual(panel.nameFieldStringValue, "a name")
       XCTAssertEqual(panel.prompt, "Open it!")
     }
   }
@@ -343,6 +341,7 @@ class ExampleTests: XCTestCase {
     let called = XCTestExpectation()
     let options = SavePanelOptions(
       directoryPath: "/some/dir",
+      nameFieldStringValue: "a name",
       prompt: "Save it!")
     plugin.displaySavePanel(options: options) { result in
       switch result {
@@ -358,6 +357,7 @@ class ExampleTests: XCTestCase {
     XCTAssertNotNil(panelController.savePanel)
     if let panel = panelController.savePanel {
       XCTAssertEqual(panel.directoryURL?.path, "/some/dir")
+      XCTAssertEqual(panel.nameFieldStringValue, "a name")
       XCTAssertEqual(panel.prompt, "Save it!")
     }
   }
