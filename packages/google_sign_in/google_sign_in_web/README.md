@@ -60,6 +60,12 @@ On the web, instead of providing custom UI that calls `authenticate`, you should
 display the Widget returned by `renderButton` (from `web_only.dart`), and listen
 to `authenticationEvents` to know when the user has signed in.
 
+The GIS SDK does not renew authentication sessions. Once the token expires
+(after 3600 seconds), if you need to use the `idToken` again you must trigger
+a new authentication flow. In most cases, you should use the `idToken`
+immediately after authentication, and track sign-in state at the application
+level, or via a separate server backend.
+
 ### Migration from versions before 0.12
 
 See [Migrating from Google Sign-In](https://developers.google.com/identity/gsi/web/guides/migration)
