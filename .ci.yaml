@@ -90,7 +90,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
@@ -103,7 +103,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
@@ -1124,6 +1124,8 @@ targets:
         {
           "CHANNEL": "master"
         }
+      # TODO(vashworth): Remove once https://github.com/flutter/flutter/issues/169511 is fixed.
+      os: Mac-14
 
   - name: Mac_arm64 macos_platform_tests stable - packages
     recipe: packages/packages
@@ -1137,6 +1139,8 @@ targets:
         {
           "CHANNEL": "stable"
         }
+      # TODO(vashworth): Remove once https://github.com/flutter/flutter/issues/169511 is fixed.
+      os: Mac-14
 
   - name: Mac_arm64 custom_package_tests master
     recipe: packages/packages
