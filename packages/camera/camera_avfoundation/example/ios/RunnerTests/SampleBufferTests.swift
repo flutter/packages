@@ -95,7 +95,10 @@ final class CameraSampleBufferTests: XCTestCase {
     }
 
     return (
-      CameraTestUtils.createTestCamera(configuration), assetWriter, adaptor, input
+      CameraTestUtils.createTestCamera(configuration),
+      assetWriter,
+      adaptor,
+      input
     )
   }
 
