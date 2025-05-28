@@ -94,8 +94,9 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   @override
   Future<void> disconnect(DisconnectParams params) async {
     // TODO(stuartmorgan): Implement this once Credential Manager adds the
-    // necessary API (or temporarily implement it with the deprecated SDK).
-
+    //  necessary API (or temporarily implement it with the deprecated SDK if
+    //  it becomes a significant issue before the API is added).
+    //  https://github.com/flutter/flutter/issues/169612
     await signOut(const SignOutParams());
   }
 
@@ -119,6 +120,13 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         : ServerAuthorizationTokenData(serverAuthCode: serverAuthCode);
   }
 
+  /// Authenticates with the platform credential manager using either the
+  /// button-initiated flow (useButtonFlow = true, nonButtonFlowOptions are
+  /// ignored), or the lightweight flow (useButtonFlow = false,
+  /// nonButtonFlowOptions are used to configure the request).
+  ///
+  /// See https://developer.android.com/identity/sign-in/credential-manager-siwg
+  /// for discussion of the two different flows
   Future<PlatformGoogleIdTokenCredential?> _authenticate({
     required bool useButtonFlow,
     required _LightweightAuthenticationOptions nonButtonFlowOptions,
