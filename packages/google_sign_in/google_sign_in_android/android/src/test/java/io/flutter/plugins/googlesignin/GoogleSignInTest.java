@@ -5,6 +5,7 @@
 package io.flutter.plugins.googlesignin;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -37,6 +38,7 @@ import androidx.credentials.exceptions.GetCredentialUnknownException;
 import androidx.credentials.exceptions.GetCredentialUnsupportedException;
 import androidx.credentials.exceptions.NoCredentialException;
 import com.google.android.gms.auth.api.identity.AuthorizationClient;
+import com.google.android.gms.auth.api.identity.AuthorizationRequest;
 import com.google.android.gms.auth.api.identity.AuthorizationResult;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
@@ -170,7 +172,6 @@ public class GoogleSignInTest {
 
   @Test
   public void getCredential_returnsAuthenticationInfo() {
-
     GetCredentialRequestParams params =
         new GetCredentialRequestParams(
             false,
@@ -632,6 +633,66 @@ public class GoogleSignInTest {
 
     callbackCaptor.getValue().onError(new GetCredentialUnknownException());
     assertTrue(callbackCalled[0]);
+  }
+
+  @Test
+  public void authorize_passesNullParamaters() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, null, null, null);
+
+    final String accessToken = "accessToken";
+    final String serverAuthCode = "serverAuthCode";
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+
+    plugin.authorize(
+        params,
+        false,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              return null;
+            }));
+
+    ArgumentCaptor<AuthorizationRequest> authRequestCaptor =
+        ArgumentCaptor.forClass(AuthorizationRequest.class);
+    verify(mockAuthorizationClient).authorize(authRequestCaptor.capture());
+
+    AuthorizationRequest request = authRequestCaptor.getValue();
+    assertNull(request.getHostedDomain());
+    assertNull(request.getServerClientId());
+    assertNull(request.getAccount());
+  }
+
+  @Test
+  public void authorize_passesOptionalParameters() {
+    final List<String> scopes = new ArrayList<>(Arrays.asList("scope1", "scope1"));
+    final String hostedDomain = "example.com";
+    final String accountEmail = "someone@example.com";
+    final String serverClientId = "serverClientId";
+    PlatformAuthorizationRequest params =
+        new PlatformAuthorizationRequest(scopes, hostedDomain, accountEmail, serverClientId);
+
+    final String accessToken = "accessToken";
+    final String serverAuthCode = "serverAuthCode";
+    when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
+
+    plugin.authorize(
+        params,
+        false,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              return null;
+            }));
+
+    ArgumentCaptor<AuthorizationRequest> authRequestCaptor =
+        ArgumentCaptor.forClass(AuthorizationRequest.class);
+    verify(mockAuthorizationClient).authorize(authRequestCaptor.capture());
+
+    AuthorizationRequest request = authRequestCaptor.getValue();
+    assertEquals(hostedDomain, request.getHostedDomain());
+    assertEquals(serverClientId, request.getServerClientId());
+    // Account is mostly opaque, so just verify that one was set if an email was provided.
+    assertNotNull(request.getAccount());
   }
 
   @Test
