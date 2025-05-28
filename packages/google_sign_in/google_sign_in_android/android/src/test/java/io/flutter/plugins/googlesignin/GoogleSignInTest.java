@@ -45,6 +45,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption;
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption;
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -59,6 +60,7 @@ public class GoogleSignInTest {
   @Mock Context mockContext;
   @Mock Resources mockResources;
   @Mock Activity mockActivity;
+  @Mock ActivityPluginBinding mockActivityPluginBinding;
   @Mock PendingIntent mockAuthorizationIntent;
   @Mock IntentSender mockAuthorizationIntentSender;
   @Mock AuthorizeResult mockAuthorizeResult;
@@ -68,6 +70,9 @@ public class GoogleSignInTest {
   @Mock GoogleIdTokenCredential mockGoogleCredential;
   @Mock Task<AuthorizationResult> mockAuthorizationTask;
 
+  private GoogleSignInPlugin flutterPlugin;
+  // Technically this is not the plugin, but in practice almost all of the functionality is in this
+  // class so it is given the simpler name.
   private GoogleSignInPlugin.Delegate plugin;
   private AutoCloseable mockCloseable;
 
@@ -82,6 +87,7 @@ public class GoogleSignInTest {
     when(mockAuthorizationTask.addOnSuccessListener(any())).thenReturn(mockAuthorizationTask);
     when(mockAuthorizationTask.addOnFailureListener(any())).thenReturn(mockAuthorizationTask);
     when(mockAuthorizationIntent.getIntentSender()).thenReturn(mockAuthorizationIntentSender);
+    when(mockActivityPluginBinding.getActivity()).thenReturn(mockActivity);
 
     plugin =
         new GoogleSignInPlugin.Delegate(
@@ -94,6 +100,48 @@ public class GoogleSignInTest {
   @After
   public void tearDown() throws Exception {
     mockCloseable.close();
+  }
+
+  @Test
+  public void onAttachedToActivity_updatesDelegate() {
+    flutterPlugin = new GoogleSignInPlugin();
+    flutterPlugin.initWithDelegate(mock(io.flutter.plugin.common.BinaryMessenger.class), plugin);
+    flutterPlugin.onAttachedToActivity(mockActivityPluginBinding);
+
+    verify(mockActivityPluginBinding).addActivityResultListener(plugin);
+    assertEquals(mockActivity, plugin.getActivity());
+  }
+
+  @Test
+  public void onDetachedFromActivity_updatesDelegate() {
+    flutterPlugin = new GoogleSignInPlugin();
+    flutterPlugin.initWithDelegate(mock(io.flutter.plugin.common.BinaryMessenger.class), plugin);
+    flutterPlugin.onAttachedToActivity(mockActivityPluginBinding);
+    flutterPlugin.onDetachedFromActivity();
+
+    verify(mockActivityPluginBinding).removeActivityResultListener(plugin);
+    assertNull(plugin.getActivity());
+  }
+
+  @Test
+  public void onReattachedToActivityForConfigChanges_updatesDelegate() {
+    flutterPlugin = new GoogleSignInPlugin();
+    flutterPlugin.initWithDelegate(mock(io.flutter.plugin.common.BinaryMessenger.class), plugin);
+    flutterPlugin.onReattachedToActivityForConfigChanges(mockActivityPluginBinding);
+
+    verify(mockActivityPluginBinding).addActivityResultListener(plugin);
+    assertEquals(mockActivity, plugin.getActivity());
+  }
+
+  @Test
+  public void onDetachedFromActivityForConfigChanges_updatesDelegate() {
+    flutterPlugin = new GoogleSignInPlugin();
+    flutterPlugin.initWithDelegate(mock(io.flutter.plugin.common.BinaryMessenger.class), plugin);
+    flutterPlugin.onAttachedToActivity(mockActivityPluginBinding);
+    flutterPlugin.onDetachedFromActivityForConfigChanges();
+
+    verify(mockActivityPluginBinding).removeActivityResultListener(plugin);
+    assertNull(plugin.getActivity());
   }
 
   @Test

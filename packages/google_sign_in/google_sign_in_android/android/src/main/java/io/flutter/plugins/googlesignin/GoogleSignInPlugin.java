@@ -58,16 +58,21 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
   private @Nullable BinaryMessenger messenger;
   private ActivityPluginBinding activityPluginBinding;
 
-  @VisibleForTesting
-  public void initInstance(@NonNull BinaryMessenger messenger, @NonNull Context context) {
-    this.messenger = messenger;
-    delegate =
+  private void initInstance(@NonNull BinaryMessenger messenger, @NonNull Context context) {
+    initWithDelegate(
+        messenger,
         new Delegate(
             context,
             (@NonNull Context c) -> CredentialManager.create(c),
             (@NonNull Context c) -> Identity.getAuthorizationClient(c),
-            (@Nullable Credential credential) ->
-                GoogleIdTokenCredential.createFrom(credential.getData()));
+            (@NonNull Credential credential) ->
+                GoogleIdTokenCredential.createFrom(credential.getData())));
+  }
+
+  @VisibleForTesting
+  void initWithDelegate(@NonNull BinaryMessenger messenger, @NonNull Delegate delegate) {
+    this.messenger = messenger;
+    this.delegate = delegate;
     GoogleSignInApi.Companion.setUp(messenger, delegate);
   }
 
@@ -374,11 +379,11 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
                         activity.startIntentSenderForResult(
                             pendingIntent.getIntentSender(),
                             REQUEST_CODE_AUTHORIZE,
-                            null,
-                            0,
-                            0,
-                            0,
-                            null);
+                            /* fillInIntent */ null,
+                            /* flagsMask */ 0,
+                            /* flagsValue */ 0,
+                            /* extraFlags */ 0,
+                            /* options */ null);
                       } catch (IntentSender.SendIntentException e) {
                         pendingAuthorizationCallback = null;
                         ResultUtilsKt.completeWithAuthorizeFailure(
