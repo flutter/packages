@@ -88,12 +88,12 @@ class _TableExampleState extends State<TableExample> {
                     ),
                   ],
                   selected: <_TableSelection>{_selectionMode},
-                  onSelectionChanged: (Set<_TableSelection> newSelection) {
+                  onSelectionChanged: (Set<_TableSelection> newSelectionMode) {
                     setState(() {
                       // By default there is only a single segment that can be
                       // selected at one time, so its value is always the first
                       // item in the selected set.
-                      _selectionMode = newSelection.first;
+                      _selectionMode = newSelectionMode.first;
                     });
                   },
                 ),
