@@ -237,6 +237,18 @@ void main() {
         expect(arguments.elementAt(1), true);
         expect(arguments.elementAt(2), someUserId);
       });
+
+      testWidgets('asserts no scopes have any spaces', (_) async {
+        expect(
+            plugin.clientAuthorizationTokensForScopes(
+                const ClientAuthorizationTokensForScopesParameters(
+                    request: AuthorizationRequestDetails(
+                        scopes: <String>['bad scope', ...scopes],
+                        userId: 'user',
+                        email: 'someone@example.com',
+                        promptIfUnauthorized: true))),
+            throwsAssertionError);
+      });
     });
 
     group('serverAuthorizationTokensForScopes', () {
@@ -277,6 +289,18 @@ void main() {
         expect(passedRequest.email, request.email);
         expect(
             passedRequest.promptIfUnauthorized, request.promptIfUnauthorized);
+      });
+
+      testWidgets('asserts no scopes have any spaces', (_) async {
+        expect(
+            plugin.serverAuthorizationTokensForScopes(
+                const ServerAuthorizationTokensForScopesParameters(
+                    request: AuthorizationRequestDetails(
+                        scopes: <String>['bad scope', ...scopes],
+                        userId: 'user',
+                        email: 'someone@example.com',
+                        promptIfUnauthorized: true))),
+            throwsAssertionError);
       });
     });
   });

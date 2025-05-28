@@ -186,6 +186,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
       ClientAuthorizationTokensForScopesParameters params) async {
     await initialized;
+    _validateScopes(params.request.scopes);
 
     final String? token = await _gisClient.requestScopes(params.request.scopes,
         promptIfUnauthorized: params.request.promptIfUnauthorized,
@@ -199,6 +200,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
       ServerAuthorizationTokensForScopesParameters params) async {
     await initialized;
+    _validateScopes(params.request.scopes);
 
     // There is no way to know whether the flow will prompt in advance, so
     // always return null if prompting isn't allowed.
@@ -210,6 +212,17 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     return code == null
         ? null
         : ServerAuthorizationTokenData(serverAuthCode: code);
+  }
+
+  void _validateScopes(List<String> scopes) {
+    // Scope lists are space-delimited in the underlying implementation, so
+    // scopes must not contain any spaces.
+    // https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#redirecting
+    assert(
+        !scopes.any((String scope) => scope.contains(' ')),
+        "OAuth 2.0 Scopes for Google APIs can't contain spaces. "
+        'Check https://developers.google.com/identity/protocols/googlescopes '
+        'for a list of valid OAuth 2.0 scopes.');
   }
 
   @override
