@@ -103,7 +103,7 @@ void main() {
       const GoogleSignInException exception =
           GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
       when(mockPlatform.attemptLightweightAuthentication(any))
-          .thenThrow(exception);
+          .thenAnswer((_) async => throw exception);
 
       final Future<GoogleSignInAuthenticationEvent> eventFuture =
           googleSignIn.authenticationEvents.first;
@@ -115,6 +115,8 @@ void main() {
         await eventFuture;
         fail('The stream should throw before returning an event.');
       } on GoogleSignInException catch (e) {
+        print(e);
+        print(exception);
         expect(e, exception);
       }
     });
@@ -146,7 +148,8 @@ void main() {
 
       const GoogleSignInException exception =
           GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
-      when(mockPlatform.authenticate(any)).thenThrow(exception);
+      when(mockPlatform.authenticate(any))
+          .thenAnswer((_) async => throw exception);
 
       final Future<GoogleSignInAuthenticationEvent> eventFuture =
           googleSignIn.authenticationEvents.first;
@@ -197,6 +200,180 @@ void main() {
         expect(googleSignIn.supportsAuthenticate(), support);
       });
     }
+  });
+
+  group('attemptLightweightAuthentication', () {
+    test('returns successful authentication', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const String idToken = 'idToken';
+      when(mockPlatform.attemptLightweightAuthentication(any)).thenAnswer(
+          (_) async => const AuthenticationResults(
+              user: defaultUser,
+              authenticationTokens: AuthenticationTokenData(idToken: idToken)));
+
+      final Future<GoogleSignInAccount?>? signInFuture =
+          googleSignIn.attemptLightweightAuthentication();
+      expect(signInFuture, isNotNull);
+      final GoogleSignInAccount? signIn = await signInFuture;
+      expect(signIn?.displayName, defaultUser.displayName);
+      expect(signIn?.email, defaultUser.email);
+      expect(signIn?.id, defaultUser.id);
+      expect(signIn?.photoUrl, defaultUser.photoUrl);
+      expect(signIn?.authentication.idToken, idToken);
+    });
+
+    test('reports all exceptions when requested - sync', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const GoogleSignInException exception =
+          GoogleSignInException(code: GoogleSignInExceptionCode.canceled);
+      when(mockPlatform.attemptLightweightAuthentication(any))
+          .thenThrow(exception);
+
+      await googleSignIn.initialize();
+      expect(
+          googleSignIn.attemptLightweightAuthentication(
+              reportAllExceptions: true),
+          throwsA(isA<GoogleSignInException>().having(
+              (GoogleSignInException e) => e.code,
+              'code',
+              GoogleSignInExceptionCode.canceled)));
+    });
+
+    test(
+        'reports serious exceptions even when all exceptions are not requested - sync',
+        () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const GoogleSignInException exception = GoogleSignInException(
+          code: GoogleSignInExceptionCode.clientConfigurationError);
+      when(mockPlatform.attemptLightweightAuthentication(any))
+          .thenThrow(exception);
+
+      await googleSignIn.initialize();
+      expect(
+          googleSignIn.attemptLightweightAuthentication(),
+          throwsA(isA<GoogleSignInException>().having(
+              (GoogleSignInException e) => e.code,
+              'code',
+              GoogleSignInExceptionCode.clientConfigurationError)));
+    });
+
+    test('reports all exceptions when requested - async', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const GoogleSignInException exception =
+          GoogleSignInException(code: GoogleSignInExceptionCode.canceled);
+      when(mockPlatform.attemptLightweightAuthentication(any))
+          .thenAnswer((_) async => throw exception);
+
+      await googleSignIn.initialize();
+      expect(
+          googleSignIn.attemptLightweightAuthentication(
+              reportAllExceptions: true),
+          throwsA(isA<GoogleSignInException>().having(
+              (GoogleSignInException e) => e.code,
+              'code',
+              GoogleSignInExceptionCode.canceled)));
+    });
+
+    test(
+        'reports serious exceptions even when all exceptions are not requested - async',
+        () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const GoogleSignInException exception = GoogleSignInException(
+          code: GoogleSignInExceptionCode.clientConfigurationError);
+      when(mockPlatform.attemptLightweightAuthentication(any))
+          .thenAnswer((_) async => throw exception);
+
+      await googleSignIn.initialize();
+      expect(
+          googleSignIn.attemptLightweightAuthentication(),
+          throwsA(isA<GoogleSignInException>().having(
+              (GoogleSignInException e) => e.code,
+              'code',
+              GoogleSignInExceptionCode.clientConfigurationError)));
+    });
+
+    test('returns a null future from the platform', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      when(mockPlatform.attemptLightweightAuthentication(any)).thenReturn(null);
+
+      final Future<GoogleSignInAccount?>? signInFuture =
+          googleSignIn.attemptLightweightAuthentication();
+      expect(signInFuture, isNull);
+    });
+
+    test('returns a future that resolves to null from the platform', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      when(mockPlatform.attemptLightweightAuthentication(any))
+          .thenAnswer((_) async => null);
+
+      final Future<GoogleSignInAccount?>? signInFuture =
+          googleSignIn.attemptLightweightAuthentication();
+      expect(signInFuture, isNotNull);
+      final GoogleSignInAccount? signIn = await signInFuture;
+      expect(signIn, isNull);
+    });
+  });
+
+  group('authenticate', () {
+    test('passes expected paramaters', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const List<String> scopes = <String>['scope1', 'scope2'];
+      when(mockPlatform.authenticate(any)).thenAnswer((_) async =>
+          const AuthenticationResults(
+              user: defaultUser,
+              authenticationTokens:
+                  AuthenticationTokenData(idToken: 'idToken')));
+
+      await googleSignIn.initialize();
+      await googleSignIn.authenticate(scopeHint: scopes);
+
+      final VerificationResult verification =
+          verify(mockPlatform.authenticate(captureAny));
+      final AuthenticateParameters params =
+          verification.captured[0] as AuthenticateParameters;
+      expect(params.scopeHint, scopes);
+    });
+
+    test('returns successful authentication', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const String idToken = 'idToken';
+      when(mockPlatform.authenticate(any)).thenAnswer((_) async =>
+          const AuthenticationResults(
+              user: defaultUser,
+              authenticationTokens: AuthenticationTokenData(idToken: idToken)));
+
+      final GoogleSignInAccount signIn = await googleSignIn.authenticate();
+      expect(signIn.displayName, defaultUser.displayName);
+      expect(signIn.email, defaultUser.email);
+      expect(signIn.id, defaultUser.id);
+      expect(signIn.photoUrl, defaultUser.photoUrl);
+      expect(signIn.authentication.idToken, idToken);
+    });
+
+    test('reports exceptions', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const GoogleSignInException exception =
+          GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
+      when(mockPlatform.authenticate(any)).thenThrow(exception);
+
+      await googleSignIn.initialize();
+      expect(
+          googleSignIn.authenticate(),
+          throwsA(isA<GoogleSignInException>().having(
+              (GoogleSignInException e) => e.code,
+              'code',
+              GoogleSignInExceptionCode.interrupted)));
+    });
   });
 
   group('authorizationForScopes', () {

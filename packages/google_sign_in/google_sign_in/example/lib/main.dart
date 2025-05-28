@@ -199,10 +199,9 @@ class _SignInDemoState extends State<SignInDemo> {
       // The returned tokens are ignored since _handleGetContact uses the
       // authorizationHeaders method to re-read the token cached by
       // authorizeScopes. The code above is used as a README excerpt, so shows
-      // the much more common pattern of getting the authorization and
-      // immediately using it. That results in an unused variable, which this
-      // statement suppresses (without adding an ignore: directive to the README
-      // excerpt).
+      // the simpler pattern of getting the authorization for immediate use.
+      // That results in an unused variable, which this statement suppresses
+      // (without adding an ignore: directive to the README excerpt).
       // ignore: unnecessary_statements
       authorization;
 

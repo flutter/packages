@@ -354,7 +354,7 @@ class GoogleSignIn {
   /// for those cases instead, set [reportAllExceptions] to true.
   Future<GoogleSignInAccount?>? attemptLightweightAuthentication({
     bool reportAllExceptions = false,
-  }) async {
+  }) {
     try {
       final Future<AuthenticationResults?>? future =
           GoogleSignInPlatform.instance.attemptLightweightAuthentication(
@@ -362,9 +362,38 @@ class GoogleSignIn {
       if (future == null) {
         return null;
       }
+      return _resolveLightweightAuthenticationAttempt(future,
+          reportAllExceptions: reportAllExceptions);
+    } catch (e) {
+      if (e is GoogleSignInException) {
+        if (_createAuthenticationStreamEvents) {
+          _authenticationStreamController.addError(e);
+        }
+
+        // For exceptions that should not be reported out, just return null.
+        if (!_shouldRethrowLightweightAuthenticationException(e,
+            reportAllExceptions: reportAllExceptions)) {
+          return Future<GoogleSignInAccount?>.value();
+        }
+      }
+      return Future<GoogleSignInAccount?>.error(e);
+    }
+  }
+
+  /// Resolves a future from the platform implementation's
+  /// attemptLightweightAuthentication.
+  ///
+  /// This is a separate method from [attemptLightweightAuthentication] to allow
+  /// using async/await, since [attemptLightweightAuthentication] can't use
+  /// async without losing the ability to return a null future.
+  Future<GoogleSignInAccount?> _resolveLightweightAuthenticationAttempt(
+    Future<AuthenticationResults?> future, {
+    required bool reportAllExceptions,
+  }) async {
+    try {
       final AuthenticationResults? result = await future;
       if (result == null) {
-        return Future<GoogleSignInAccount?>.value();
+        return null;
       }
 
       final GoogleSignInAccount account =
@@ -379,19 +408,30 @@ class GoogleSignIn {
         _authenticationStreamController.addError(e);
       }
 
-      if (!reportAllExceptions) {
-        switch (e.code) {
-          case GoogleSignInExceptionCode.canceled:
-          case GoogleSignInExceptionCode.interrupted:
-          case GoogleSignInExceptionCode.uiUnavailable:
-            return null;
-          // Only specific types are ignored, everything else should rethrow.
-          // ignore: no_default_cases
-          default:
-            rethrow;
-        }
+      if (_shouldRethrowLightweightAuthenticationException(e,
+          reportAllExceptions: reportAllExceptions)) {
+        rethrow;
       }
-      rethrow;
+      return null;
+    }
+  }
+
+  bool _shouldRethrowLightweightAuthenticationException(
+    GoogleSignInException e, {
+    required bool reportAllExceptions,
+  }) {
+    if (reportAllExceptions) {
+      return true;
+    }
+    switch (e.code) {
+      case GoogleSignInExceptionCode.canceled:
+      case GoogleSignInExceptionCode.interrupted:
+      case GoogleSignInExceptionCode.uiUnavailable:
+        return false;
+      // Only specific types are ignored, everything else should rethrow.
+      // ignore: no_default_cases
+      default:
+        return true;
     }
   }
 
