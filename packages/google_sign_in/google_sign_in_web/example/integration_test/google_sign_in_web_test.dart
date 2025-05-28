@@ -8,14 +8,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 import 'package:google_sign_in_web/google_sign_in_web.dart';
 import 'package:google_sign_in_web/src/gis_client.dart';
-import 'package:google_sign_in_web/src/people.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart' as mockito;
 import 'package:web/web.dart' as web;
 
 import 'google_sign_in_web_test.mocks.dart';
-import 'src/person.dart';
 
 // Mock GisSdkClient so we can simulate any response from the JS side.
 @GenerateMocks(<Type>[], customMocks: <MockSpec<dynamic>>[
@@ -321,8 +319,9 @@ void main() {
       final Future<AuthenticationEvent> event =
           plugin.authenticationEvents.first;
 
-      final AuthenticationEvent expected = AuthenticationEventSignIn(
-          user: extractUserData(person)!,
+      const AuthenticationEvent expected = AuthenticationEventSignIn(
+          user:
+              GoogleSignInUserData(email: 'someone@example.com', id: 'user_id'),
           authenticationTokens:
               const AuthenticationTokenData(idToken: 'someToken'));
       controller.add(expected);
