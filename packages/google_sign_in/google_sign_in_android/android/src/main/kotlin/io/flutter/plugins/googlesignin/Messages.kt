@@ -151,30 +151,52 @@ data class GetCredentialRequestParams(
      * potential sign-in.
      */
     val useButtonFlow: Boolean,
-    val filterToAuthorized: Boolean,
-    val autoSelectEnabled: Boolean,
+    /**
+     * Parameters specific to GetGoogleIdOption.
+     *
+     * Ignored if useButtonFlow is true.
+     */
+    val googleIdOptionParams: GetCredentialRequestGoogleIdOptionParams,
     val serverClientId: String? = null,
     val nonce: String? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): GetCredentialRequestParams {
       val useButtonFlow = pigeonVar_list[0] as Boolean
-      val filterToAuthorized = pigeonVar_list[1] as Boolean
-      val autoSelectEnabled = pigeonVar_list[2] as Boolean
-      val serverClientId = pigeonVar_list[3] as String?
-      val nonce = pigeonVar_list[4] as String?
-      return GetCredentialRequestParams(
-          useButtonFlow, filterToAuthorized, autoSelectEnabled, serverClientId, nonce)
+      val googleIdOptionParams = pigeonVar_list[1] as GetCredentialRequestGoogleIdOptionParams
+      val serverClientId = pigeonVar_list[2] as String?
+      val nonce = pigeonVar_list[3] as String?
+      return GetCredentialRequestParams(useButtonFlow, googleIdOptionParams, serverClientId, nonce)
     }
   }
 
   fun toList(): List<Any?> {
     return listOf(
         useButtonFlow,
-        filterToAuthorized,
-        autoSelectEnabled,
+        googleIdOptionParams,
         serverClientId,
         nonce,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class GetCredentialRequestGoogleIdOptionParams(
+    val filterToAuthorized: Boolean,
+    val autoSelectEnabled: Boolean
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): GetCredentialRequestGoogleIdOptionParams {
+      val filterToAuthorized = pigeonVar_list[0] as Boolean
+      val autoSelectEnabled = pigeonVar_list[1] as Boolean
+      return GetCredentialRequestGoogleIdOptionParams(filterToAuthorized, autoSelectEnabled)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        filterToAuthorized,
+        autoSelectEnabled,
     )
   }
 }
@@ -365,19 +387,24 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
       }
       133.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PlatformGoogleIdTokenCredential.fromList(it)
+          GetCredentialRequestGoogleIdOptionParams.fromList(it)
         }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { GetCredentialFailure.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let {
+          PlatformGoogleIdTokenCredential.fromList(it)
+        }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { GetCredentialSuccess.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { GetCredentialFailure.fromList(it) }
       }
       136.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let { AuthorizeFailure.fromList(it) }
+        return (readValue(buffer) as? List<Any?>)?.let { GetCredentialSuccess.fromList(it) }
       }
       137.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { AuthorizeFailure.fromList(it) }
+      }
+      138.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let { PlatformAuthorizationResult.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
@@ -402,24 +429,28 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is PlatformGoogleIdTokenCredential -> {
+      is GetCredentialRequestGoogleIdOptionParams -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is GetCredentialFailure -> {
+      is PlatformGoogleIdTokenCredential -> {
         stream.write(134)
         writeValue(stream, value.toList())
       }
-      is GetCredentialSuccess -> {
+      is GetCredentialFailure -> {
         stream.write(135)
         writeValue(stream, value.toList())
       }
-      is AuthorizeFailure -> {
+      is GetCredentialSuccess -> {
         stream.write(136)
         writeValue(stream, value.toList())
       }
-      is PlatformAuthorizationResult -> {
+      is AuthorizeFailure -> {
         stream.write(137)
+        writeValue(stream, value.toList())
+      }
+      is PlatformAuthorizationResult -> {
+        stream.write(138)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)

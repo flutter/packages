@@ -224,10 +224,11 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           }
           requestBuilder.addCredentialOption(optionBuilder.build());
         } else {
+          GetCredentialRequestGoogleIdOptionParams optionParams = params.getGoogleIdOptionParams();
           GetGoogleIdOption.Builder optionBuilder =
               new GetGoogleIdOption.Builder()
-                  .setFilterByAuthorizedAccounts(params.getFilterToAuthorized())
-                  .setAutoSelectEnabled(params.getAutoSelectEnabled())
+                  .setFilterByAuthorizedAccounts(optionParams.getFilterToAuthorized())
+                  .setAutoSelectEnabled(optionParams.getAutoSelectEnabled())
                   .setServerClientId(serverClientId);
           if (nonce != null) {
             optionBuilder.setNonce(nonce);

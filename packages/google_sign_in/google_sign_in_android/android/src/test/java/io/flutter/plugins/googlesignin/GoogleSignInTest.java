@@ -122,8 +122,13 @@ public class GoogleSignInTest {
 
   @Test
   public void getCredential_returnsAuthenticationInfo() {
+
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
     final String displayName = "Jane User";
     final String givenName = "Jane";
@@ -173,9 +178,12 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_usesGetSignInWithGoogleOptionForButtonFlow() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(true, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            true,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
-    final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -197,9 +205,12 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_usesGetGoogleIdOptionForNonButtonFlow() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
-    final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -221,9 +232,12 @@ public class GoogleSignInTest {
   public void getCredential_passesNonceInButtonFlow() {
     final String nonce = "nonce";
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(true, false, false, "serverClientId", nonce);
+        new GetCredentialRequestParams(
+            true,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            nonce);
 
-    final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -247,9 +261,12 @@ public class GoogleSignInTest {
   public void getCredential_passesNonceInNonButtonFlow() {
     final String nonce = "nonce";
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", nonce);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            nonce);
 
-    final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -271,7 +288,8 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_reportsMissingServerClientId() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, null, null);
+        new GetCredentialRequestParams(
+            false, new GetCredentialRequestGoogleIdOptionParams(false, false), null, null);
 
     final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
@@ -293,7 +311,11 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_reportsWrongCredentialType() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
     final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
@@ -332,7 +354,11 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_reportsCancellation() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
     final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
@@ -367,7 +393,11 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_reportsInterrupted() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
     final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
@@ -402,7 +432,11 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_reportsProviderConfigurationIssue() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
     final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
@@ -438,7 +472,11 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_reportsUnsupported() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
     final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
@@ -473,7 +511,11 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_reportsNoCredential() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
     final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
@@ -508,7 +550,11 @@ public class GoogleSignInTest {
   @Test
   public void getCredential_reportsUnknown() {
     GetCredentialRequestParams params =
-        new GetCredentialRequestParams(false, false, false, "serverClientId", null);
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
 
     final Boolean[] callbackCalled = new Boolean[1];
     plugin.getCredential(
@@ -585,8 +631,6 @@ public class GoogleSignInTest {
     PlatformAuthorizationRequest params =
         new PlatformAuthorizationRequest(scopes, null, null, null);
 
-    final String accessToken = "accessToken";
-    final String serverAuthCode = "serverAuthCode";
     when(mockAuthorizationClient.authorize(any())).thenThrow(new RuntimeException());
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -614,8 +658,6 @@ public class GoogleSignInTest {
     PlatformAuthorizationRequest params =
         new PlatformAuthorizationRequest(scopes, null, null, null);
 
-    final String accessToken = "accessToken";
-    final String serverAuthCode = "serverAuthCode";
     when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
 
     final Boolean[] callbackCalled = new Boolean[1];
@@ -652,8 +694,6 @@ public class GoogleSignInTest {
     PlatformAuthorizationRequest params =
         new PlatformAuthorizationRequest(scopes, null, null, null);
 
-    final String accessToken = "accessToken";
-    final String serverAuthCode = "serverAuthCode";
     when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
 
     plugin.setActivity(null);
@@ -754,8 +794,6 @@ public class GoogleSignInTest {
     PlatformAuthorizationRequest params =
         new PlatformAuthorizationRequest(scopes, null, null, null);
 
-    final String accessToken = "accessToken";
-    final String serverAuthCode = "serverAuthCode";
     when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
     try {
       doThrow(new IntentSender.SendIntentException())
@@ -807,8 +845,6 @@ public class GoogleSignInTest {
     PlatformAuthorizationRequest params =
         new PlatformAuthorizationRequest(scopes, null, null, null);
 
-    final String accessToken = "accessToken";
-    final String serverAuthCode = "serverAuthCode";
     when(mockAuthorizationClient.authorize(any())).thenReturn(mockAuthorizationTask);
     try {
       when(mockAuthorizationClient.getAuthorizationResultFromIntent(any()))

@@ -117,8 +117,7 @@ class PlatformAuthorizationRequest {
 class GetCredentialRequestParams {
   GetCredentialRequestParams({
     required this.useButtonFlow,
-    required this.filterToAuthorized,
-    required this.autoSelectEnabled,
+    required this.googleIdOptionParams,
     this.serverClientId,
     this.nonce,
   });
@@ -129,9 +128,10 @@ class GetCredentialRequestParams {
   /// sign-in.
   bool useButtonFlow;
 
-  bool filterToAuthorized;
-
-  bool autoSelectEnabled;
+  /// Parameters specific to GetGoogleIdOption.
+  ///
+  /// Ignored if useButtonFlow is true.
+  GetCredentialRequestGoogleIdOptionParams googleIdOptionParams;
 
   String? serverClientId;
 
@@ -140,8 +140,7 @@ class GetCredentialRequestParams {
   Object encode() {
     return <Object?>[
       useButtonFlow,
-      filterToAuthorized,
-      autoSelectEnabled,
+      googleIdOptionParams,
       serverClientId,
       nonce,
     ];
@@ -151,10 +150,36 @@ class GetCredentialRequestParams {
     result as List<Object?>;
     return GetCredentialRequestParams(
       useButtonFlow: result[0]! as bool,
-      filterToAuthorized: result[1]! as bool,
-      autoSelectEnabled: result[2]! as bool,
-      serverClientId: result[3] as String?,
-      nonce: result[4] as String?,
+      googleIdOptionParams:
+          result[1]! as GetCredentialRequestGoogleIdOptionParams,
+      serverClientId: result[2] as String?,
+      nonce: result[3] as String?,
+    );
+  }
+}
+
+class GetCredentialRequestGoogleIdOptionParams {
+  GetCredentialRequestGoogleIdOptionParams({
+    required this.filterToAuthorized,
+    required this.autoSelectEnabled,
+  });
+
+  bool filterToAuthorized;
+
+  bool autoSelectEnabled;
+
+  Object encode() {
+    return <Object?>[
+      filterToAuthorized,
+      autoSelectEnabled,
+    ];
+  }
+
+  static GetCredentialRequestGoogleIdOptionParams decode(Object result) {
+    result as List<Object?>;
+    return GetCredentialRequestGoogleIdOptionParams(
+      filterToAuthorized: result[0]! as bool,
+      autoSelectEnabled: result[1]! as bool,
     );
   }
 }
@@ -362,20 +387,23 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is GetCredentialRequestParams) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformGoogleIdTokenCredential) {
+    } else if (value is GetCredentialRequestGoogleIdOptionParams) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is GetCredentialFailure) {
+    } else if (value is PlatformGoogleIdTokenCredential) {
       buffer.putUint8(134);
       writeValue(buffer, value.encode());
-    } else if (value is GetCredentialSuccess) {
+    } else if (value is GetCredentialFailure) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    } else if (value is AuthorizeFailure) {
+    } else if (value is GetCredentialSuccess) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformAuthorizationResult) {
+    } else if (value is AuthorizeFailure) {
       buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    } else if (value is PlatformAuthorizationResult) {
+      buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -396,14 +424,17 @@ class _PigeonCodec extends StandardMessageCodec {
       case 132:
         return GetCredentialRequestParams.decode(readValue(buffer)!);
       case 133:
-        return PlatformGoogleIdTokenCredential.decode(readValue(buffer)!);
+        return GetCredentialRequestGoogleIdOptionParams.decode(
+            readValue(buffer)!);
       case 134:
-        return GetCredentialFailure.decode(readValue(buffer)!);
+        return PlatformGoogleIdTokenCredential.decode(readValue(buffer)!);
       case 135:
-        return GetCredentialSuccess.decode(readValue(buffer)!);
+        return GetCredentialFailure.decode(readValue(buffer)!);
       case 136:
-        return AuthorizeFailure.decode(readValue(buffer)!);
+        return GetCredentialSuccess.decode(readValue(buffer)!);
       case 137:
+        return AuthorizeFailure.decode(readValue(buffer)!);
+      case 138:
         return PlatformAuthorizationResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

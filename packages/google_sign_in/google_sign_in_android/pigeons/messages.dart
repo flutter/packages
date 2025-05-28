@@ -33,8 +33,7 @@ class PlatformAuthorizationRequest {
 class GetCredentialRequestParams {
   GetCredentialRequestParams({
     required this.useButtonFlow,
-    required this.filterToAuthorized,
-    required this.autoSelectEnabled,
+    required this.googleIdOptionParams,
     this.serverClientId,
     this.nonce,
   });
@@ -45,10 +44,23 @@ class GetCredentialRequestParams {
   /// sign-in.
   bool useButtonFlow;
 
-  bool filterToAuthorized;
-  bool autoSelectEnabled;
+  /// Parameters specific to GetGoogleIdOption.
+  ///
+  /// Ignored if useButtonFlow is true.
+  GetCredentialRequestGoogleIdOptionParams googleIdOptionParams;
+
   String? serverClientId;
   String? nonce;
+}
+
+class GetCredentialRequestGoogleIdOptionParams {
+  GetCredentialRequestGoogleIdOptionParams({
+    required this.filterToAuthorized,
+    required this.autoSelectEnabled,
+  });
+
+  bool filterToAuthorized;
+  bool autoSelectEnabled;
 }
 
 /// Pigeon equivalent of the native GoogleIdTokenCredential.

@@ -43,16 +43,20 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
       AttemptLightweightAuthenticationParameters params) async {
     // Attempt to auto-sign-in, for single-account or returning users.
     PlatformGoogleIdTokenCredential? credential = await _authenticate(
-      filterToAuthorized: true,
-      autoSelectEnabled: true,
       useButtonFlow: false,
+      nonButtonFlowOptions: _LightweightAuthenticationOptions(
+        filterToAuthorized: true,
+        autoSelectEnabled: true,
+      ),
     );
     // If no auto-sign-in is available, potentially prompt for an account via
     // the bottom sheet flow.
     credential ??= await _authenticate(
-      filterToAuthorized: false,
-      autoSelectEnabled: false,
       useButtonFlow: false,
+      nonButtonFlowOptions: _LightweightAuthenticationOptions(
+        filterToAuthorized: false,
+        autoSelectEnabled: false,
+      ),
     );
     return credential == null
         ? null
@@ -64,10 +68,13 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
       AuthenticateParameters params) async {
     // Attempt to authorize with minimal interaction.
     final PlatformGoogleIdTokenCredential? credential = await _authenticate(
-      filterToAuthorized: false,
-      autoSelectEnabled: false,
       useButtonFlow: true,
       throwForNoAuth: true,
+      // Ignored, since useButtonFlow is true.
+      nonButtonFlowOptions: _LightweightAuthenticationOptions(
+        filterToAuthorized: false,
+        autoSelectEnabled: false,
+      ),
     );
     // It's not clear from the documentation if this can happen; if it does,
     // no information is available
@@ -113,16 +120,16 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   Future<PlatformGoogleIdTokenCredential?> _authenticate({
-    required bool filterToAuthorized,
-    required bool autoSelectEnabled,
     required bool useButtonFlow,
+    required _LightweightAuthenticationOptions nonButtonFlowOptions,
     bool throwForNoAuth = false,
   }) async {
     final GetCredentialResult authnResult = await _hostApi.getCredential(
         GetCredentialRequestParams(
-            filterToAuthorized: filterToAuthorized,
-            autoSelectEnabled: autoSelectEnabled,
             useButtonFlow: useButtonFlow,
+            googleIdOptionParams: GetCredentialRequestGoogleIdOptionParams(
+                filterToAuthorized: nonButtonFlowOptions.filterToAuthorized,
+                autoSelectEnabled: nonButtonFlowOptions.autoSelectEnabled),
             serverClientId: _serverClientId,
             nonce: _nonce));
     switch (authnResult) {
@@ -261,4 +268,24 @@ String? _idFromIdToken(String idToken) {
     }
   }
   return null;
+}
+
+/// Options specific to authentication with the lightweight authentication
+/// flow, rather than the explict user-requested login flow.
+///
+/// These correspond to builder options specific to GetGoogleIdOption on the
+/// platform side.
+class _LightweightAuthenticationOptions {
+  _LightweightAuthenticationOptions({
+    required this.filterToAuthorized,
+    required this.autoSelectEnabled,
+  });
+
+  /// If true, only allows selection of accounts that have already authorized
+  /// the app.
+  bool filterToAuthorized;
+
+  /// If true, automatically selects an account if there is only one
+  /// authorized account and no additional user action is required.
+  bool autoSelectEnabled;
 }
