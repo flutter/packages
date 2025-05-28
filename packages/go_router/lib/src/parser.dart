@@ -168,6 +168,18 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     return redirectedFuture;
   }
 
+  /// Ensures the replacement routes can resolve the originating route completer.
+  Completer<T?>? _createInheritedCompleter<T>(
+    Completer<T?> current,
+    RouteMatch lastRouteMatch,
+  ) {
+    if (lastRouteMatch is ImperativeRouteMatch) {
+      return _InheritedCompleter<T?>(current, lastRouteMatch.completer);
+    } else {
+      return current;
+    }
+  }
+
   RouteMatchList _updateRouteMatchList(
     RouteMatchList newMatchList, {
     required RouteMatchList? baseRouteMatchList,
@@ -185,6 +197,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         );
       case NavigatingType.pushReplacement:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
+        completer = _createInheritedCompleter(completer!, routeMatch);
         baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
         if (baseRouteMatchList.isEmpty) {
           return newMatchList;
@@ -198,6 +211,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         );
       case NavigatingType.replace:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
+        completer = _createInheritedCompleter(completer!, routeMatch);
         baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
         if (baseRouteMatchList.isEmpty) {
           return newMatchList;
@@ -223,4 +237,35 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     return ValueKey<String>(String.fromCharCodes(
         List<int>.generate(32, (_) => _random.nextInt(33) + 89)));
   }
+}
+
+/// Ensures the replacement routes can resolve the originating route completer.
+/// Mainly used by [GoRouteInformationParser._createInheritedCompleter].
+class _InheritedCompleter<T extends Object?> implements Completer<T> {
+  _InheritedCompleter(this._current, this._last);
+
+  final Completer<T> _current;
+  final Completer<Object?> _last;
+
+  @override
+  void complete([FutureOr<T>? value]) {
+    _current.complete(value);
+    if (!_last.isCompleted) {
+      _last.complete(value);
+    }
+  }
+
+  @override
+  void completeError(Object error, [StackTrace? stackTrace]) {
+    _current.completeError(error, stackTrace);
+    if (!_last.isCompleted) {
+      _last.completeError(error, stackTrace);
+    }
+  }
+
+  @override
+  Future<T> get future => _current.future;
+
+  @override
+  bool get isCompleted => _current.isCompleted;
 }
