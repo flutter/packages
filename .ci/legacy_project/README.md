@@ -46,7 +46,7 @@ and then deleting everything but `android/` from it:
   one that we support.
 - Modifies `settings.gradle` to upgrade the Android Gradle Plugin (AGP)
   from version 4.1.0 (originally set in `build.gradle`; see bullet below)
-  to 8.1.0. If a user runs into an error with the AGP version, the warning
+  to 8.3.0. If a user runs into an error with the AGP version, the warning
   is clear on how to upgrade the version to one that we support.
 - Refactor plugin to use declarative Gradle apply instead of the
   imperative apply (this includes moving where the Android Gradle
