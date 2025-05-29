@@ -121,7 +121,7 @@
   [self setConsumeTapEvents:platformMarker.consumeTapEvents];
   [self setPosition:FGMGetCoordinateForPigeonLatLng(platformMarker.position)];
   [self setRotation:platformMarker.rotation];
-  [self setZIndexInt:platformMarker.zIndexInt];
+  [self setZIndex:platformMarker.zIndex];
   FGMPlatformInfoWindow *infoWindow = platformMarker.infoWindow;
   [self setInfoWindowAnchor:FGMGetCGPointForPigeonPoint(infoWindow.anchor)];
   if (infoWindow.title) {
