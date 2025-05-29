@@ -473,9 +473,9 @@ class GoogleSignIn {
             .add(GoogleSignInAuthenticationEventSignIn(user: account));
       }
       return account;
-    } on GoogleSignInException catch (e) {
+    } on GoogleSignInException catch (e, stack) {
       if (_createAuthenticationStreamEvents) {
-        _authenticationStreamController.addError(e);
+        _authenticationStreamController.addError(e, stack);
       }
       rethrow;
     }
