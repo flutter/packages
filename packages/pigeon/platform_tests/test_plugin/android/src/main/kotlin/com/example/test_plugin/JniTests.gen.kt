@@ -44,112 +44,142 @@ private fun deepEqualsJniTests(a: Any?, b: Any?): Boolean {
   return a == b
 }
 
-enum class SomeEnum(val raw: Int) {
-  VALUE1(0),
-  VALUE2(1),
-  VALUE3(2);
+enum class JniAnEnum(val raw: Int) {
+  ONE(0),
+  TWO(1),
+  THREE(2),
+  FORTY_TWO(3),
+  FOUR_HUNDRED_TWENTY_TWO(4);
 
   companion object {
-    fun ofRaw(raw: Int): SomeEnum? {
+    fun ofRaw(raw: Int): JniAnEnum? {
       return values().firstOrNull { it.raw == raw }
     }
   }
 }
 
-enum class SomeOtherEnum(val raw: Int) {
-  VALUE1(0),
-  VALUE2(1),
-  VALUE3(2);
+enum class JniAnotherEnum(val raw: Int) {
+  JUST_IN_CASE(0);
 
   companion object {
-    fun ofRaw(raw: Int): SomeOtherEnum? {
+    fun ofRaw(raw: Int): JniAnotherEnum? {
       return values().firstOrNull { it.raw == raw }
     }
   }
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class SomeTypes(
-    val aString: String,
-    val anInt: Long,
-    val aDouble: Double,
+data class JniUnusedClass(val aField: Any? = null) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): JniUnusedClass {
+      val aField = pigeonVar_list[0]
+      return JniUnusedClass(aField)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        aField,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is JniUnusedClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return aField == other.aField
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * A class containing all supported types.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class JniAllTypes(
     val aBool: Boolean,
+    val anInt: Long,
+    val anInt64: Long,
+    val aDouble: Double,
     val aByteArray: ByteArray,
     val a4ByteArray: IntArray,
     val a8ByteArray: LongArray,
     val aFloatArray: DoubleArray,
+    val anEnum: JniAnEnum,
+    val anotherEnum: JniAnotherEnum,
+    val aString: String,
     val anObject: Any,
-    val anEnum: SomeEnum,
-    val someNullableTypes: SomeNullableTypes,
     val list: List<Any?>,
     val stringList: List<String>,
     val intList: List<Long>,
     val doubleList: List<Double>,
     val boolList: List<Boolean>,
-    val enumList: List<SomeEnum>,
-    val classList: List<SomeNullableTypes>,
+    val enumList: List<JniAnEnum>,
     val objectList: List<Any>,
     val listList: List<List<Any?>>,
     val mapList: List<Map<Any?, Any?>>,
     val map: Map<Any, Any?>,
     val stringMap: Map<String, String>,
     val intMap: Map<Long, Long>,
-    val enumMap: Map<SomeEnum, SomeEnum>,
-    val classMap: Map<SomeNullableTypes, SomeNullableTypes>,
+    val enumMap: Map<JniAnEnum, JniAnEnum>,
     val objectMap: Map<Any, Any>,
     val listMap: Map<Long, List<Any?>>,
     val mapMap: Map<Long, Map<Any?, Any?>>
 ) {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): SomeTypes {
-      val aString = pigeonVar_list[0] as String
+    fun fromList(pigeonVar_list: List<Any?>): JniAllTypes {
+      val aBool = pigeonVar_list[0] as Boolean
       val anInt = pigeonVar_list[1] as Long
-      val aDouble = pigeonVar_list[2] as Double
-      val aBool = pigeonVar_list[3] as Boolean
+      val anInt64 = pigeonVar_list[2] as Long
+      val aDouble = pigeonVar_list[3] as Double
       val aByteArray = pigeonVar_list[4] as ByteArray
       val a4ByteArray = pigeonVar_list[5] as IntArray
       val a8ByteArray = pigeonVar_list[6] as LongArray
       val aFloatArray = pigeonVar_list[7] as DoubleArray
-      val anObject = pigeonVar_list[8] as Any
-      val anEnum = pigeonVar_list[9] as SomeEnum
-      val someNullableTypes = pigeonVar_list[10] as SomeNullableTypes
-      val list = pigeonVar_list[11] as List<Any?>
-      val stringList = pigeonVar_list[12] as List<String>
-      val intList = pigeonVar_list[13] as List<Long>
-      val doubleList = pigeonVar_list[14] as List<Double>
-      val boolList = pigeonVar_list[15] as List<Boolean>
-      val enumList = pigeonVar_list[16] as List<SomeEnum>
-      val classList = pigeonVar_list[17] as List<SomeNullableTypes>
+      val anEnum = pigeonVar_list[8] as JniAnEnum
+      val anotherEnum = pigeonVar_list[9] as JniAnotherEnum
+      val aString = pigeonVar_list[10] as String
+      val anObject = pigeonVar_list[11] as Any
+      val list = pigeonVar_list[12] as List<Any?>
+      val stringList = pigeonVar_list[13] as List<String>
+      val intList = pigeonVar_list[14] as List<Long>
+      val doubleList = pigeonVar_list[15] as List<Double>
+      val boolList = pigeonVar_list[16] as List<Boolean>
+      val enumList = pigeonVar_list[17] as List<JniAnEnum>
       val objectList = pigeonVar_list[18] as List<Any>
       val listList = pigeonVar_list[19] as List<List<Any?>>
       val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>>
       val map = pigeonVar_list[21] as Map<Any, Any?>
       val stringMap = pigeonVar_list[22] as Map<String, String>
       val intMap = pigeonVar_list[23] as Map<Long, Long>
-      val enumMap = pigeonVar_list[24] as Map<SomeEnum, SomeEnum>
-      val classMap = pigeonVar_list[25] as Map<SomeNullableTypes, SomeNullableTypes>
-      val objectMap = pigeonVar_list[26] as Map<Any, Any>
-      val listMap = pigeonVar_list[27] as Map<Long, List<Any?>>
-      val mapMap = pigeonVar_list[28] as Map<Long, Map<Any?, Any?>>
-      return SomeTypes(
-          aString,
-          anInt,
-          aDouble,
+      val enumMap = pigeonVar_list[24] as Map<JniAnEnum, JniAnEnum>
+      val objectMap = pigeonVar_list[25] as Map<Any, Any>
+      val listMap = pigeonVar_list[26] as Map<Long, List<Any?>>
+      val mapMap = pigeonVar_list[27] as Map<Long, Map<Any?, Any?>>
+      return JniAllTypes(
           aBool,
+          anInt,
+          anInt64,
+          aDouble,
           aByteArray,
           a4ByteArray,
           a8ByteArray,
           aFloatArray,
-          anObject,
           anEnum,
-          someNullableTypes,
+          anotherEnum,
+          aString,
+          anObject,
           list,
           stringList,
           intList,
           doubleList,
           boolList,
           enumList,
-          classList,
           objectList,
           listList,
           mapList,
@@ -157,7 +187,6 @@ data class SomeTypes(
           stringMap,
           intMap,
           enumMap,
-          classMap,
           objectMap,
           listMap,
           mapMap)
@@ -166,24 +195,24 @@ data class SomeTypes(
 
   fun toList(): List<Any?> {
     return listOf(
-        aString,
-        anInt,
-        aDouble,
         aBool,
+        anInt,
+        anInt64,
+        aDouble,
         aByteArray,
         a4ByteArray,
         a8ByteArray,
         aFloatArray,
-        anObject,
         anEnum,
-        someNullableTypes,
+        anotherEnum,
+        aString,
+        anObject,
         list,
         stringList,
         intList,
         doubleList,
         boolList,
         enumList,
-        classList,
         objectList,
         listList,
         mapList,
@@ -191,7 +220,6 @@ data class SomeTypes(
         stringMap,
         intMap,
         enumMap,
-        classMap,
         objectMap,
         listMap,
         mapMap,
@@ -199,30 +227,30 @@ data class SomeTypes(
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is SomeTypes) {
+    if (other !is JniAllTypes) {
       return false
     }
     if (this === other) {
       return true
     }
-    return aString == other.aString &&
+    return aBool == other.aBool &&
         anInt == other.anInt &&
+        anInt64 == other.anInt64 &&
         aDouble == other.aDouble &&
-        aBool == other.aBool &&
         deepEqualsJniTests(aByteArray, other.aByteArray) &&
         deepEqualsJniTests(a4ByteArray, other.a4ByteArray) &&
         deepEqualsJniTests(a8ByteArray, other.a8ByteArray) &&
         deepEqualsJniTests(aFloatArray, other.aFloatArray) &&
-        anObject == other.anObject &&
         anEnum == other.anEnum &&
-        someNullableTypes == other.someNullableTypes &&
+        anotherEnum == other.anotherEnum &&
+        aString == other.aString &&
+        anObject == other.anObject &&
         deepEqualsJniTests(list, other.list) &&
         deepEqualsJniTests(stringList, other.stringList) &&
         deepEqualsJniTests(intList, other.intList) &&
         deepEqualsJniTests(doubleList, other.doubleList) &&
         deepEqualsJniTests(boolList, other.boolList) &&
         deepEqualsJniTests(enumList, other.enumList) &&
-        deepEqualsJniTests(classList, other.classList) &&
         deepEqualsJniTests(objectList, other.objectList) &&
         deepEqualsJniTests(listList, other.listList) &&
         deepEqualsJniTests(mapList, other.mapList) &&
@@ -230,7 +258,6 @@ data class SomeTypes(
         deepEqualsJniTests(stringMap, other.stringMap) &&
         deepEqualsJniTests(intMap, other.intMap) &&
         deepEqualsJniTests(enumMap, other.enumMap) &&
-        deepEqualsJniTests(classMap, other.classMap) &&
         deepEqualsJniTests(objectMap, other.objectMap) &&
         deepEqualsJniTests(listMap, other.listMap) &&
         deepEqualsJniTests(mapMap, other.mapMap)
@@ -239,228 +266,886 @@ data class SomeTypes(
   override fun hashCode(): Int = toList().hashCode()
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
-data class SomeNullableTypes(
-    val aString: String? = null,
-    val anInt: Long? = null,
-    val aDouble: Double? = null,
-    val aBool: Boolean? = null,
-    val aByteArray: ByteArray? = null,
-    val a4ByteArray: IntArray? = null,
-    val a8ByteArray: LongArray? = null,
-    val aFloatArray: DoubleArray? = null,
-    val anObject: Any? = null,
-    val anEnum: SomeEnum? = null,
-    val someTypes: SomeTypes? = null,
+/**
+ * A class containing all supported nullable types.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class JniAllNullableTypes(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
+    val aNullableEnum: JniAnEnum? = null,
+    val anotherNullableEnum: JniAnotherEnum? = null,
+    val aNullableString: String? = null,
+    val aNullableObject: Any? = null,
+    val allNullableTypes: JniAllNullableTypes? = null,
     val list: List<Any?>? = null,
-    val map: Map<Any, Any?>? = null
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val enumList: List<JniAnEnum?>? = null,
+    val objectList: List<Any?>? = null,
+    val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
+    val recursiveClassList: List<JniAllNullableTypes?>? = null,
+    val map: Map<Any, Any?>? = null,
+    val stringMap: Map<String?, String?>? = null,
+    val intMap: Map<Long?, Long?>? = null,
+    val enumMap: Map<JniAnEnum?, JniAnEnum?>? = null,
+    val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
+    val recursiveClassMap: Map<Long?, JniAllNullableTypes?>? = null
 ) {
   companion object {
-    fun fromList(pigeonVar_list: List<Any?>): SomeNullableTypes {
-      val aString = pigeonVar_list[0] as String?
-      val anInt = pigeonVar_list[1] as Long?
-      val aDouble = pigeonVar_list[2] as Double?
-      val aBool = pigeonVar_list[3] as Boolean?
-      val aByteArray = pigeonVar_list[4] as ByteArray?
-      val a4ByteArray = pigeonVar_list[5] as IntArray?
-      val a8ByteArray = pigeonVar_list[6] as LongArray?
-      val aFloatArray = pigeonVar_list[7] as DoubleArray?
-      val anObject = pigeonVar_list[8]
-      val anEnum = pigeonVar_list[9] as SomeEnum?
-      val someTypes = pigeonVar_list[10] as SomeTypes?
-      val list = pigeonVar_list[11] as List<Any?>?
-      val map = pigeonVar_list[12] as Map<Any, Any?>?
-      return SomeNullableTypes(
-          aString,
-          anInt,
-          aDouble,
-          aBool,
-          aByteArray,
-          a4ByteArray,
-          a8ByteArray,
-          aFloatArray,
-          anObject,
-          anEnum,
-          someTypes,
+    fun fromList(pigeonVar_list: List<Any?>): JniAllNullableTypes {
+      val aNullableBool = pigeonVar_list[0] as Boolean?
+      val aNullableInt = pigeonVar_list[1] as Long?
+      val aNullableInt64 = pigeonVar_list[2] as Long?
+      val aNullableDouble = pigeonVar_list[3] as Double?
+      val aNullableByteArray = pigeonVar_list[4] as ByteArray?
+      val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
+      val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
+      val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
+      val aNullableEnum = pigeonVar_list[8] as JniAnEnum?
+      val anotherNullableEnum = pigeonVar_list[9] as JniAnotherEnum?
+      val aNullableString = pigeonVar_list[10] as String?
+      val aNullableObject = pigeonVar_list[11]
+      val allNullableTypes = pigeonVar_list[12] as JniAllNullableTypes?
+      val list = pigeonVar_list[13] as List<Any?>?
+      val stringList = pigeonVar_list[14] as List<String?>?
+      val intList = pigeonVar_list[15] as List<Long?>?
+      val doubleList = pigeonVar_list[16] as List<Double?>?
+      val boolList = pigeonVar_list[17] as List<Boolean?>?
+      val enumList = pigeonVar_list[18] as List<JniAnEnum?>?
+      val objectList = pigeonVar_list[19] as List<Any?>?
+      val listList = pigeonVar_list[20] as List<List<Any?>?>?
+      val mapList = pigeonVar_list[21] as List<Map<Any?, Any?>?>?
+      val recursiveClassList = pigeonVar_list[22] as List<JniAllNullableTypes?>?
+      val map = pigeonVar_list[23] as Map<Any, Any?>?
+      val stringMap = pigeonVar_list[24] as Map<String?, String?>?
+      val intMap = pigeonVar_list[25] as Map<Long?, Long?>?
+      val enumMap = pigeonVar_list[26] as Map<JniAnEnum?, JniAnEnum?>?
+      val objectMap = pigeonVar_list[27] as Map<Any?, Any?>?
+      val listMap = pigeonVar_list[28] as Map<Long?, List<Any?>?>?
+      val mapMap = pigeonVar_list[29] as Map<Long?, Map<Any?, Any?>?>?
+      val recursiveClassMap = pigeonVar_list[30] as Map<Long?, JniAllNullableTypes?>?
+      return JniAllNullableTypes(
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
+          aNullableEnum,
+          anotherNullableEnum,
+          aNullableString,
+          aNullableObject,
+          allNullableTypes,
           list,
-          map)
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          recursiveClassList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap,
+          recursiveClassMap)
     }
   }
 
   fun toList(): List<Any?> {
     return listOf(
-        aString,
-        anInt,
-        aDouble,
-        aBool,
-        aByteArray,
-        a4ByteArray,
-        a8ByteArray,
-        aFloatArray,
-        anObject,
-        anEnum,
-        someTypes,
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
+        aNullableEnum,
+        anotherNullableEnum,
+        aNullableString,
+        aNullableObject,
+        allNullableTypes,
         list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        recursiveClassList,
         map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
+        recursiveClassMap,
     )
   }
 
   override fun equals(other: Any?): Boolean {
-    if (other !is SomeNullableTypes) {
+    if (other !is JniAllNullableTypes) {
       return false
     }
     if (this === other) {
       return true
     }
-    return aString == other.aString &&
-        anInt == other.anInt &&
-        aDouble == other.aDouble &&
-        aBool == other.aBool &&
-        deepEqualsJniTests(aByteArray, other.aByteArray) &&
-        deepEqualsJniTests(a4ByteArray, other.a4ByteArray) &&
-        deepEqualsJniTests(a8ByteArray, other.a8ByteArray) &&
-        deepEqualsJniTests(aFloatArray, other.aFloatArray) &&
-        anObject == other.anObject &&
-        anEnum == other.anEnum &&
-        someTypes == other.someTypes &&
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        deepEqualsJniTests(aNullableByteArray, other.aNullableByteArray) &&
+        deepEqualsJniTests(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        deepEqualsJniTests(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        deepEqualsJniTests(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        allNullableTypes == other.allNullableTypes &&
         deepEqualsJniTests(list, other.list) &&
-        deepEqualsJniTests(map, other.map)
+        deepEqualsJniTests(stringList, other.stringList) &&
+        deepEqualsJniTests(intList, other.intList) &&
+        deepEqualsJniTests(doubleList, other.doubleList) &&
+        deepEqualsJniTests(boolList, other.boolList) &&
+        deepEqualsJniTests(enumList, other.enumList) &&
+        deepEqualsJniTests(objectList, other.objectList) &&
+        deepEqualsJniTests(listList, other.listList) &&
+        deepEqualsJniTests(mapList, other.mapList) &&
+        deepEqualsJniTests(recursiveClassList, other.recursiveClassList) &&
+        deepEqualsJniTests(map, other.map) &&
+        deepEqualsJniTests(stringMap, other.stringMap) &&
+        deepEqualsJniTests(intMap, other.intMap) &&
+        deepEqualsJniTests(enumMap, other.enumMap) &&
+        deepEqualsJniTests(objectMap, other.objectMap) &&
+        deepEqualsJniTests(listMap, other.listMap) &&
+        deepEqualsJniTests(mapMap, other.mapMap) &&
+        deepEqualsJniTests(recursiveClassMap, other.recursiveClassMap)
   }
 
   override fun hashCode(): Int = toList().hashCode()
 }
 
-val JniMessageApiInstances: MutableMap<String, JniMessageApiRegistrar> = mutableMapOf()
+/**
+ * The primary purpose for this class is to ensure coverage of Swift structs with nullable items, as
+ * the primary [JniAllNullableTypes] class is being used to test Swift classes.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class JniAllNullableTypesWithoutRecursion(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
+    val aNullableEnum: JniAnEnum? = null,
+    val anotherNullableEnum: JniAnotherEnum? = null,
+    val aNullableString: String? = null,
+    val aNullableObject: Any? = null,
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val enumList: List<JniAnEnum?>? = null,
+    val objectList: List<Any?>? = null,
+    val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
+    val map: Map<Any, Any?>? = null,
+    val stringMap: Map<String?, String?>? = null,
+    val intMap: Map<Long?, Long?>? = null,
+    val enumMap: Map<JniAnEnum?, JniAnEnum?>? = null,
+    val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): JniAllNullableTypesWithoutRecursion {
+      val aNullableBool = pigeonVar_list[0] as Boolean?
+      val aNullableInt = pigeonVar_list[1] as Long?
+      val aNullableInt64 = pigeonVar_list[2] as Long?
+      val aNullableDouble = pigeonVar_list[3] as Double?
+      val aNullableByteArray = pigeonVar_list[4] as ByteArray?
+      val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
+      val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
+      val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
+      val aNullableEnum = pigeonVar_list[8] as JniAnEnum?
+      val anotherNullableEnum = pigeonVar_list[9] as JniAnotherEnum?
+      val aNullableString = pigeonVar_list[10] as String?
+      val aNullableObject = pigeonVar_list[11]
+      val list = pigeonVar_list[12] as List<Any?>?
+      val stringList = pigeonVar_list[13] as List<String?>?
+      val intList = pigeonVar_list[14] as List<Long?>?
+      val doubleList = pigeonVar_list[15] as List<Double?>?
+      val boolList = pigeonVar_list[16] as List<Boolean?>?
+      val enumList = pigeonVar_list[17] as List<JniAnEnum?>?
+      val objectList = pigeonVar_list[18] as List<Any?>?
+      val listList = pigeonVar_list[19] as List<List<Any?>?>?
+      val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>?>?
+      val map = pigeonVar_list[21] as Map<Any, Any?>?
+      val stringMap = pigeonVar_list[22] as Map<String?, String?>?
+      val intMap = pigeonVar_list[23] as Map<Long?, Long?>?
+      val enumMap = pigeonVar_list[24] as Map<JniAnEnum?, JniAnEnum?>?
+      val objectMap = pigeonVar_list[25] as Map<Any?, Any?>?
+      val listMap = pigeonVar_list[26] as Map<Long?, List<Any?>?>?
+      val mapMap = pigeonVar_list[27] as Map<Long?, Map<Any?, Any?>?>?
+      return JniAllNullableTypesWithoutRecursion(
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
+          aNullableEnum,
+          anotherNullableEnum,
+          aNullableString,
+          aNullableObject,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
+        aNullableEnum,
+        anotherNullableEnum,
+        aNullableString,
+        aNullableObject,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is JniAllNullableTypesWithoutRecursion) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        deepEqualsJniTests(aNullableByteArray, other.aNullableByteArray) &&
+        deepEqualsJniTests(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        deepEqualsJniTests(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        deepEqualsJniTests(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        deepEqualsJniTests(list, other.list) &&
+        deepEqualsJniTests(stringList, other.stringList) &&
+        deepEqualsJniTests(intList, other.intList) &&
+        deepEqualsJniTests(doubleList, other.doubleList) &&
+        deepEqualsJniTests(boolList, other.boolList) &&
+        deepEqualsJniTests(enumList, other.enumList) &&
+        deepEqualsJniTests(objectList, other.objectList) &&
+        deepEqualsJniTests(listList, other.listList) &&
+        deepEqualsJniTests(mapList, other.mapList) &&
+        deepEqualsJniTests(map, other.map) &&
+        deepEqualsJniTests(stringMap, other.stringMap) &&
+        deepEqualsJniTests(intMap, other.intMap) &&
+        deepEqualsJniTests(enumMap, other.enumMap) &&
+        deepEqualsJniTests(objectMap, other.objectMap) &&
+        deepEqualsJniTests(listMap, other.listMap) &&
+        deepEqualsJniTests(mapMap, other.mapMap)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * A class for testing nested class handling.
+ *
+ * This is needed to test nested nullable and non-nullable classes, `JniAllNullableTypes` is
+ * non-nullable here as it is easier to instantiate than `JniAllTypes` when testing doesn't require
+ * both (ie. testing null classes).
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class JniAllClassesWrapper(
+    val allNullableTypes: JniAllNullableTypes,
+    val allNullableTypesWithoutRecursion: JniAllNullableTypesWithoutRecursion? = null,
+    val allTypes: JniAllTypes? = null,
+    val classList: List<JniAllTypes?>,
+    val nullableClassList: List<JniAllNullableTypesWithoutRecursion?>? = null,
+    val classMap: Map<Long?, JniAllTypes?>,
+    val nullableClassMap: Map<Long?, JniAllNullableTypesWithoutRecursion?>? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): JniAllClassesWrapper {
+      val allNullableTypes = pigeonVar_list[0] as JniAllNullableTypes
+      val allNullableTypesWithoutRecursion =
+          pigeonVar_list[1] as JniAllNullableTypesWithoutRecursion?
+      val allTypes = pigeonVar_list[2] as JniAllTypes?
+      val classList = pigeonVar_list[3] as List<JniAllTypes?>
+      val nullableClassList = pigeonVar_list[4] as List<JniAllNullableTypesWithoutRecursion?>?
+      val classMap = pigeonVar_list[5] as Map<Long?, JniAllTypes?>
+      val nullableClassMap = pigeonVar_list[6] as Map<Long?, JniAllNullableTypesWithoutRecursion?>?
+      return JniAllClassesWrapper(
+          allNullableTypes,
+          allNullableTypesWithoutRecursion,
+          allTypes,
+          classList,
+          nullableClassList,
+          classMap,
+          nullableClassMap)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        allNullableTypes,
+        allNullableTypesWithoutRecursion,
+        allTypes,
+        classList,
+        nullableClassList,
+        classMap,
+        nullableClassMap,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is JniAllClassesWrapper) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return allNullableTypes == other.allNullableTypes &&
+        allNullableTypesWithoutRecursion == other.allNullableTypesWithoutRecursion &&
+        allTypes == other.allTypes &&
+        deepEqualsJniTests(classList, other.classList) &&
+        deepEqualsJniTests(nullableClassList, other.nullableClassList) &&
+        deepEqualsJniTests(classMap, other.classMap) &&
+        deepEqualsJniTests(nullableClassMap, other.nullableClassMap)
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+val JniHostIntegrationCoreApiInstances: MutableMap<String, JniHostIntegrationCoreApiRegistrar> =
+    mutableMapOf()
 
 @Keep
-abstract class JniMessageApi {
-  abstract fun doNothing()
-
-  abstract fun echoString(request: String): String
-
-  abstract fun echoInt(request: Long): Long
-
-  abstract fun echoDouble(request: Double): Double
-
-  abstract fun echoBool(request: Boolean): Boolean
-
-  abstract fun echoObj(request: Any): Any
-
-  abstract fun sendSomeTypes(someTypes: SomeTypes): SomeTypes
-
-  abstract fun sendSomeEnum(anEnum: SomeEnum): SomeEnum
-
+abstract class JniHostIntegrationCoreApi {
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
+  abstract fun noop()
+  /** Returns the passed object, to test serialization and deserialization. */
+  abstract fun echoAllTypes(everything: JniAllTypes): JniAllTypes
+  /** Returns an error, to test error handling. */
+  abstract fun throwError(): Any?
+  /** Returns an error from a void function, to test error handling. */
+  abstract fun throwErrorFromVoid()
+  /** Returns a Flutter error, to test error handling. */
+  abstract fun throwFlutterError(): Any?
+  /** Returns passed in int. */
+  abstract fun echoInt(anInt: Long): Long
+  /** Returns passed in double. */
+  abstract fun echoDouble(aDouble: Double): Double
+  /** Returns the passed in boolean. */
+  abstract fun echoBool(aBool: Boolean): Boolean
+  /** Returns the passed in string. */
+  abstract fun echoString(aString: String): String
+  /** Returns the passed in Uint8List. */
+  abstract fun echoUint8List(aUint8List: ByteArray): ByteArray
+  /** Returns the passed in Int32List. */
+  abstract fun echoInt32List(aInt32List: IntArray): IntArray
+  /** Returns the passed in Int64List. */
+  abstract fun echoInt64List(aInt64List: LongArray): LongArray
+  /** Returns the passed in Float64List. */
+  abstract fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray
+  /** Returns the passed in generic Object. */
+  abstract fun echoObject(anObject: Any): Any
+  /** Returns the passed list, to test serialization and deserialization. */
   abstract fun echoList(list: List<Any?>): List<Any?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoEnumList(enumList: List<JniAnEnum?>): List<JniAnEnum?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoClassList(classList: List<JniAllNullableTypes?>): List<JniAllNullableTypes?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNonNullEnumList(enumList: List<JniAnEnum>): List<JniAnEnum>
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNonNullClassList(classList: List<JniAllNullableTypes>): List<JniAllNullableTypes>
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoEnumMap(enumMap: Map<JniAnEnum?, JniAnEnum?>): Map<JniAnEnum?, JniAnEnum?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>
+  ): Map<Long?, JniAllNullableTypes?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNonNullEnumMap(enumMap: Map<JniAnEnum, JniAnEnum>): Map<JniAnEnum, JniAnEnum>
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>
+  ): Map<Long, JniAllNullableTypes>
+  /** Returns the passed class to test nested class serialization and deserialization. */
+  abstract fun echoClassWrapper(wrapper: JniAllClassesWrapper): JniAllClassesWrapper
+  /** Returns the passed enum to test serialization and deserialization. */
+  abstract fun echoEnum(anEnum: JniAnEnum): JniAnEnum
+  /** Returns the passed enum to test serialization and deserialization. */
+  abstract fun echoAnotherEnum(anotherEnum: JniAnotherEnum): JniAnotherEnum
+  /** Returns the default string. */
+  abstract fun echoNamedDefaultString(aString: String): String
+  /** Returns passed in double. */
+  abstract fun echoOptionalDefaultDouble(aDouble: Double): Double
+  /** Returns passed in int. */
+  abstract fun echoRequiredInt(anInt: Long): Long
+  /** Returns the passed object, to test serialization and deserialization. */
+  abstract fun echoAllNullableTypes(everything: JniAllNullableTypes?): JniAllNullableTypes?
+  /** Returns the passed object, to test serialization and deserialization. */
+  abstract fun echoAllNullableTypesWithoutRecursion(
+      everything: JniAllNullableTypesWithoutRecursion?
+  ): JniAllNullableTypesWithoutRecursion?
+  /**
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
+   */
+  abstract fun extractNestedNullableString(wrapper: JniAllClassesWrapper): String?
+  /**
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
+   */
+  abstract fun createNestedNullableString(nullableString: String?): JniAllClassesWrapper
+  /** Returns passed in arguments of multiple types. */
+  abstract fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypes
+  /** Returns passed in arguments of multiple types. */
+  abstract fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypesWithoutRecursion
+  /** Returns passed in int. */
+  abstract fun echoNullableInt(aNullableInt: Long?): Long?
+  /** Returns passed in double. */
+  abstract fun echoNullableDouble(aNullableDouble: Double?): Double?
+  /** Returns the passed in boolean. */
+  abstract fun echoNullableBool(aNullableBool: Boolean?): Boolean?
+  /** Returns the passed in string. */
+  abstract fun echoNullableString(aNullableString: String?): String?
+  /** Returns the passed in Uint8List. */
+  abstract fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray?
+  /** Returns the passed in Int32List. */
+  abstract fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray?
+  /** Returns the passed in Int64List. */
+  abstract fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray?
+  /** Returns the passed in Float64List. */
+  abstract fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray?
+  /** Returns the passed in generic Object. */
+  abstract fun echoNullableObject(aNullableObject: Any?): Any?
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableList(aNullableList: List<Any?>?): List<Any?>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableEnumList(enumList: List<JniAnEnum?>?): List<JniAnEnum?>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableClassList(
+      classList: List<JniAllNullableTypes?>?
+  ): List<JniAllNullableTypes?>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableNonNullEnumList(enumList: List<JniAnEnum>?): List<JniAnEnum>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  abstract fun echoNullableNonNullClassList(
+      classList: List<JniAllNullableTypes>?
+  ): List<JniAllNullableTypes>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>?
+  ): Map<JniAnEnum?, JniAnEnum?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>?
+  ): Map<Long?, JniAllNullableTypes?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableNonNullEnumMap(
+      enumMap: Map<JniAnEnum, JniAnEnum>?
+  ): Map<JniAnEnum, JniAnEnum>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  abstract fun echoNullableNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>?
+  ): Map<Long, JniAllNullableTypes>?
 
-  abstract fun echoMap(map: Map<Any, Any?>): Map<Any, Any?>
+  abstract fun echoNullableEnum(anEnum: JniAnEnum?): JniAnEnum?
+
+  abstract fun echoAnotherNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum?
+  /** Returns passed in int. */
+  abstract fun echoOptionalNullableInt(aNullableInt: Long?): Long?
+  /** Returns the passed in string. */
+  abstract fun echoNamedNullableString(aNullableString: String?): String?
+  /**
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
+   */
+  abstract suspend fun noopAsync()
+  /** Returns passed in int asynchronously. */
+  abstract suspend fun echoAsyncInt(anInt: Long): Long
+  /** Returns passed in double asynchronously. */
+  abstract suspend fun echoAsyncDouble(aDouble: Double): Double
+  /** Returns the passed in boolean asynchronously. */
+  abstract suspend fun echoAsyncBool(aBool: Boolean): Boolean
+  /** Returns the passed string asynchronously. */
+  abstract suspend fun echoAsyncString(aString: String): String
+  /** Returns the passed in Uint8List asynchronously. */
+  abstract suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray
+  /** Returns the passed in Int32List asynchronously. */
+  abstract suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray
+  /** Returns the passed in Int64List asynchronously. */
+  abstract suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray
+  /** Returns the passed in Float64List asynchronously. */
+  abstract suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray
+  /** Returns the passed in generic Object asynchronously. */
+  abstract suspend fun echoAsyncObject(anObject: Any): Any
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncList(list: List<Any?>): List<Any?>
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncEnumList(enumList: List<JniAnEnum?>): List<JniAnEnum?>
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncClassList(
+      classList: List<JniAllNullableTypes?>
+  ): List<JniAllNullableTypes?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>
+  ): Map<JniAnEnum?, JniAnEnum?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>
+  ): Map<Long?, JniAllNullableTypes?>
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncEnum(anEnum: JniAnEnum): JniAnEnum
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAnotherAsyncEnum(anotherEnum: JniAnotherEnum): JniAnotherEnum
+  /** Responds with an error from an async function returning a value. */
+  abstract suspend fun throwAsyncError(): Any?
+  /** Responds with an error from an async void function. */
+  abstract suspend fun throwAsyncErrorFromVoid()
+  /** Responds with a Flutter error from an async function returning a value. */
+  abstract suspend fun throwAsyncFlutterError(): Any?
+  /** Returns the passed object, to test async serialization and deserialization. */
+  abstract suspend fun echoAsyncJniAllTypes(everything: JniAllTypes): JniAllTypes
+  /** Returns the passed object, to test serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableJniAllNullableTypes(
+      everything: JniAllNullableTypes?
+  ): JniAllNullableTypes?
+  /** Returns the passed object, to test serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableJniAllNullableTypesWithoutRecursion(
+      everything: JniAllNullableTypesWithoutRecursion?
+  ): JniAllNullableTypesWithoutRecursion?
+  /** Returns passed in int asynchronously. */
+  abstract suspend fun echoAsyncNullableInt(anInt: Long?): Long?
+  /** Returns passed in double asynchronously. */
+  abstract suspend fun echoAsyncNullableDouble(aDouble: Double?): Double?
+  /** Returns the passed in boolean asynchronously. */
+  abstract suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean?
+  /** Returns the passed string asynchronously. */
+  abstract suspend fun echoAsyncNullableString(aString: String?): String?
+  /** Returns the passed in Uint8List asynchronously. */
+  abstract suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray?
+  /** Returns the passed in Int32List asynchronously. */
+  abstract suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray?
+  /** Returns the passed in Int64List asynchronously. */
+  abstract suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray?
+  /** Returns the passed in Float64List asynchronously. */
+  abstract suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray?
+  /** Returns the passed in generic Object asynchronously. */
+  abstract suspend fun echoAsyncNullableObject(anObject: Any?): Any?
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableEnumList(enumList: List<JniAnEnum?>?): List<JniAnEnum?>?
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableClassList(
+      classList: List<JniAllNullableTypes?>?
+  ): List<JniAllNullableTypes?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>?
+  ): Map<JniAnEnum?, JniAnEnum?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>?
+  ): Map<Long?, JniAllNullableTypes?>?
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableEnum(anEnum: JniAnEnum?): JniAnEnum?
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAnotherAsyncNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum?
 }
 
 @Keep
-class JniMessageApiRegistrar : JniMessageApi() {
-  var api: JniMessageApi? = null
+class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
+  var api: JniHostIntegrationCoreApi? = null
 
   fun register(
-      api: JniMessageApi,
+      api: JniHostIntegrationCoreApi,
       name: String = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-  ): JniMessageApiRegistrar {
+  ): JniHostIntegrationCoreApiRegistrar {
     this.api = api
-    JniMessageApiInstances[name] = this
+    JniHostIntegrationCoreApiInstances[name] = this
     return this
   }
 
   @Keep
-  fun getInstance(name: String): JniMessageApiRegistrar? {
-    return JniMessageApiInstances[name]
+  fun getInstance(name: String): JniHostIntegrationCoreApiRegistrar? {
+    return JniHostIntegrationCoreApiInstances[name]
   }
-
-  override fun doNothing() {
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
+  override fun noop() {
     api?.let {
       try {
-        return api!!.doNothing()
+        return api!!.noop()
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
   }
-
-  override fun echoString(request: String): String {
+  /** Returns the passed object, to test serialization and deserialization. */
+  override fun echoAllTypes(everything: JniAllTypes): JniAllTypes {
     api?.let {
       try {
-        return api!!.echoString(request)
+        return api!!.echoAllTypes(everything)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
   }
-
-  override fun echoInt(request: Long): Long {
+  /** Returns an error, to test error handling. */
+  override fun throwError(): Any? {
     api?.let {
       try {
-        return api!!.echoInt(request)
+        return api!!.throwError()
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
   }
-
-  override fun echoDouble(request: Double): Double {
+  /** Returns an error from a void function, to test error handling. */
+  override fun throwErrorFromVoid() {
     api?.let {
       try {
-        return api!!.echoDouble(request)
+        return api!!.throwErrorFromVoid()
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
   }
-
-  override fun echoBool(request: Boolean): Boolean {
+  /** Returns a Flutter error, to test error handling. */
+  override fun throwFlutterError(): Any? {
     api?.let {
       try {
-        return api!!.echoBool(request)
+        return api!!.throwFlutterError()
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
   }
-
-  override fun echoObj(request: Any): Any {
+  /** Returns passed in int. */
+  override fun echoInt(anInt: Long): Long {
     api?.let {
       try {
-        return api!!.echoObj(request)
+        return api!!.echoInt(anInt)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
   }
-
-  override fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
+  /** Returns passed in double. */
+  override fun echoDouble(aDouble: Double): Double {
     api?.let {
       try {
-        return api!!.sendSomeTypes(someTypes)
+        return api!!.echoDouble(aDouble)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
   }
-
-  override fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
+  /** Returns the passed in boolean. */
+  override fun echoBool(aBool: Boolean): Boolean {
     api?.let {
       try {
-        return api!!.sendSomeEnum(anEnum)
+        return api!!.echoBool(aBool)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
   }
-
+  /** Returns the passed in string. */
+  override fun echoString(aString: String): String {
+    api?.let {
+      try {
+        return api!!.echoString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Uint8List. */
+  override fun echoUint8List(aUint8List: ByteArray): ByteArray {
+    api?.let {
+      try {
+        return api!!.echoUint8List(aUint8List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int32List. */
+  override fun echoInt32List(aInt32List: IntArray): IntArray {
+    api?.let {
+      try {
+        return api!!.echoInt32List(aInt32List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int64List. */
+  override fun echoInt64List(aInt64List: LongArray): LongArray {
+    api?.let {
+      try {
+        return api!!.echoInt64List(aInt64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Float64List. */
+  override fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray {
+    api?.let {
+      try {
+        return api!!.echoFloat64List(aFloat64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in generic Object. */
+  override fun echoObject(anObject: Any): Any {
+    api?.let {
+      try {
+        return api!!.echoObject(anObject)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
   override fun echoList(list: List<Any?>): List<Any?> {
     api?.let {
       try {
@@ -469,10 +1154,56 @@ class JniMessageApiRegistrar : JniMessageApi() {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
   }
-
-  override fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoEnumList(enumList: List<JniAnEnum?>): List<JniAnEnum?> {
+    api?.let {
+      try {
+        return api!!.echoEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoClassList(classList: List<JniAllNullableTypes?>): List<JniAllNullableTypes?> {
+    api?.let {
+      try {
+        return api!!.echoClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNonNullEnumList(enumList: List<JniAnEnum>): List<JniAnEnum> {
+    api?.let {
+      try {
+        return api!!.echoNonNullEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNonNullClassList(
+      classList: List<JniAllNullableTypes>
+  ): List<JniAllNullableTypes> {
+    api?.let {
+      try {
+        return api!!.echoNonNullClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
     api?.let {
       try {
         return api!!.echoMap(map)
@@ -480,444 +1211,1157 @@ class JniMessageApiRegistrar : JniMessageApi() {
         throw e
       }
     }
-    error("JniMessageApi has not been set")
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+    api?.let {
+      try {
+        return api!!.echoStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
+    api?.let {
+      try {
+        return api!!.echoIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoEnumMap(enumMap: Map<JniAnEnum?, JniAnEnum?>): Map<JniAnEnum?, JniAnEnum?> {
+    api?.let {
+      try {
+        return api!!.echoEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>
+  ): Map<Long?, JniAllNullableTypes?> {
+    api?.let {
+      try {
+        return api!!.echoClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
+    api?.let {
+      try {
+        return api!!.echoNonNullStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
+    api?.let {
+      try {
+        return api!!.echoNonNullIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNonNullEnumMap(enumMap: Map<JniAnEnum, JniAnEnum>): Map<JniAnEnum, JniAnEnum> {
+    api?.let {
+      try {
+        return api!!.echoNonNullEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>
+  ): Map<Long, JniAllNullableTypes> {
+    api?.let {
+      try {
+        return api!!.echoNonNullClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed class to test nested class serialization and deserialization. */
+  override fun echoClassWrapper(wrapper: JniAllClassesWrapper): JniAllClassesWrapper {
+    api?.let {
+      try {
+        return api!!.echoClassWrapper(wrapper)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum to test serialization and deserialization. */
+  override fun echoEnum(anEnum: JniAnEnum): JniAnEnum {
+    api?.let {
+      try {
+        return api!!.echoEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum to test serialization and deserialization. */
+  override fun echoAnotherEnum(anotherEnum: JniAnotherEnum): JniAnotherEnum {
+    api?.let {
+      try {
+        return api!!.echoAnotherEnum(anotherEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the default string. */
+  override fun echoNamedDefaultString(aString: String): String {
+    api?.let {
+      try {
+        return api!!.echoNamedDefaultString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in double. */
+  override fun echoOptionalDefaultDouble(aDouble: Double): Double {
+    api?.let {
+      try {
+        return api!!.echoOptionalDefaultDouble(aDouble)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in int. */
+  override fun echoRequiredInt(anInt: Long): Long {
+    api?.let {
+      try {
+        return api!!.echoRequiredInt(anInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed object, to test serialization and deserialization. */
+  override fun echoAllNullableTypes(everything: JniAllNullableTypes?): JniAllNullableTypes? {
+    api?.let {
+      try {
+        return api!!.echoAllNullableTypes(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed object, to test serialization and deserialization. */
+  override fun echoAllNullableTypesWithoutRecursion(
+      everything: JniAllNullableTypesWithoutRecursion?
+  ): JniAllNullableTypesWithoutRecursion? {
+    api?.let {
+      try {
+        return api!!.echoAllNullableTypesWithoutRecursion(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /**
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
+   */
+  override fun extractNestedNullableString(wrapper: JniAllClassesWrapper): String? {
+    api?.let {
+      try {
+        return api!!.extractNestedNullableString(wrapper)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /**
+   * Returns the inner `aString` value from the wrapped object, to test sending of nested objects.
+   */
+  override fun createNestedNullableString(nullableString: String?): JniAllClassesWrapper {
+    api?.let {
+      try {
+        return api!!.createNestedNullableString(nullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in arguments of multiple types. */
+  override fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypes {
+    api?.let {
+      try {
+        return api!!.sendMultipleNullableTypes(aNullableBool, aNullableInt, aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in arguments of multiple types. */
+  override fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypesWithoutRecursion {
+    api?.let {
+      try {
+        return api!!.sendMultipleNullableTypesWithoutRecursion(
+            aNullableBool, aNullableInt, aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in int. */
+  override fun echoNullableInt(aNullableInt: Long?): Long? {
+    api?.let {
+      try {
+        return api!!.echoNullableInt(aNullableInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in double. */
+  override fun echoNullableDouble(aNullableDouble: Double?): Double? {
+    api?.let {
+      try {
+        return api!!.echoNullableDouble(aNullableDouble)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in boolean. */
+  override fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
+    api?.let {
+      try {
+        return api!!.echoNullableBool(aNullableBool)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in string. */
+  override fun echoNullableString(aNullableString: String?): String? {
+    api?.let {
+      try {
+        return api!!.echoNullableString(aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Uint8List. */
+  override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
+    api?.let {
+      try {
+        return api!!.echoNullableUint8List(aNullableUint8List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int32List. */
+  override fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray? {
+    api?.let {
+      try {
+        return api!!.echoNullableInt32List(aNullableInt32List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int64List. */
+  override fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray? {
+    api?.let {
+      try {
+        return api!!.echoNullableInt64List(aNullableInt64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Float64List. */
+  override fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray? {
+    api?.let {
+      try {
+        return api!!.echoNullableFloat64List(aNullableFloat64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in generic Object. */
+  override fun echoNullableObject(aNullableObject: Any?): Any? {
+    api?.let {
+      try {
+        return api!!.echoNullableObject(aNullableObject)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableList(aNullableList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNullableEnumList(enumList: List<JniAnEnum?>?): List<JniAnEnum?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNullableClassList(
+      classList: List<JniAllNullableTypes?>?
+  ): List<JniAllNullableTypes?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNullableNonNullEnumList(enumList: List<JniAnEnum>?): List<JniAnEnum>? {
+    api?.let {
+      try {
+        return api!!.echoNullableNonNullEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test serialization and deserialization. */
+  override fun echoNullableNonNullClassList(
+      classList: List<JniAllNullableTypes>?
+  ): List<JniAllNullableTypes>? {
+    api?.let {
+      try {
+        return api!!.echoNullableNonNullClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>?
+  ): Map<JniAnEnum?, JniAnEnum?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>?
+  ): Map<Long?, JniAllNullableTypes?>? {
+    api?.let {
+      try {
+        return api!!.echoNullableClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
+    api?.let {
+      try {
+        return api!!.echoNullableNonNullStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
+    api?.let {
+      try {
+        return api!!.echoNullableNonNullIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableNonNullEnumMap(
+      enumMap: Map<JniAnEnum, JniAnEnum>?
+  ): Map<JniAnEnum, JniAnEnum>? {
+    api?.let {
+      try {
+        return api!!.echoNullableNonNullEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test serialization and deserialization. */
+  override fun echoNullableNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>?
+  ): Map<Long, JniAllNullableTypes>? {
+    api?.let {
+      try {
+        return api!!.echoNullableNonNullClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun echoNullableEnum(anEnum: JniAnEnum?): JniAnEnum? {
+    api?.let {
+      try {
+        return api!!.echoNullableEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun echoAnotherNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum? {
+    api?.let {
+      try {
+        return api!!.echoAnotherNullableEnum(anotherEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in int. */
+  override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
+    api?.let {
+      try {
+        return api!!.echoOptionalNullableInt(aNullableInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in string. */
+  override fun echoNamedNullableString(aNullableString: String?): String? {
+    api?.let {
+      try {
+        return api!!.echoNamedNullableString(aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /**
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
+   */
+  override suspend fun noopAsync() {
+    api?.let {
+      try {
+        return api!!.noopAsync()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in int asynchronously. */
+  override suspend fun echoAsyncInt(anInt: Long): Long {
+    api?.let {
+      try {
+        return api!!.echoAsyncInt(anInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in double asynchronously. */
+  override suspend fun echoAsyncDouble(aDouble: Double): Double {
+    api?.let {
+      try {
+        return api!!.echoAsyncDouble(aDouble)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in boolean asynchronously. */
+  override suspend fun echoAsyncBool(aBool: Boolean): Boolean {
+    api?.let {
+      try {
+        return api!!.echoAsyncBool(aBool)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed string asynchronously. */
+  override suspend fun echoAsyncString(aString: String): String {
+    api?.let {
+      try {
+        return api!!.echoAsyncString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Uint8List asynchronously. */
+  override suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray {
+    api?.let {
+      try {
+        return api!!.echoAsyncUint8List(aUint8List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int32List asynchronously. */
+  override suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray {
+    api?.let {
+      try {
+        return api!!.echoAsyncInt32List(aInt32List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int64List asynchronously. */
+  override suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray {
+    api?.let {
+      try {
+        return api!!.echoAsyncInt64List(aInt64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Float64List asynchronously. */
+  override suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray {
+    api?.let {
+      try {
+        return api!!.echoAsyncFloat64List(aFloat64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in generic Object asynchronously. */
+  override suspend fun echoAsyncObject(anObject: Any): Any {
+    api?.let {
+      try {
+        return api!!.echoAsyncObject(anObject)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncEnumList(enumList: List<JniAnEnum?>): List<JniAnEnum?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncClassList(
+      classList: List<JniAllNullableTypes?>
+  ): List<JniAllNullableTypes?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>
+  ): Map<JniAnEnum?, JniAnEnum?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>
+  ): Map<Long?, JniAllNullableTypes?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncEnum(anEnum: JniAnEnum): JniAnEnum {
+    api?.let {
+      try {
+        return api!!.echoAsyncEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAnotherAsyncEnum(anotherEnum: JniAnotherEnum): JniAnotherEnum {
+    api?.let {
+      try {
+        return api!!.echoAnotherAsyncEnum(anotherEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Responds with an error from an async function returning a value. */
+  override suspend fun throwAsyncError(): Any? {
+    api?.let {
+      try {
+        return api!!.throwAsyncError()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Responds with an error from an async void function. */
+  override suspend fun throwAsyncErrorFromVoid() {
+    api?.let {
+      try {
+        return api!!.throwAsyncErrorFromVoid()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Responds with a Flutter error from an async function returning a value. */
+  override suspend fun throwAsyncFlutterError(): Any? {
+    api?.let {
+      try {
+        return api!!.throwAsyncFlutterError()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed object, to test async serialization and deserialization. */
+  override suspend fun echoAsyncJniAllTypes(everything: JniAllTypes): JniAllTypes {
+    api?.let {
+      try {
+        return api!!.echoAsyncJniAllTypes(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed object, to test serialization and deserialization. */
+  override suspend fun echoAsyncNullableJniAllNullableTypes(
+      everything: JniAllNullableTypes?
+  ): JniAllNullableTypes? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableJniAllNullableTypes(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed object, to test serialization and deserialization. */
+  override suspend fun echoAsyncNullableJniAllNullableTypesWithoutRecursion(
+      everything: JniAllNullableTypesWithoutRecursion?
+  ): JniAllNullableTypesWithoutRecursion? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableJniAllNullableTypesWithoutRecursion(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in int asynchronously. */
+  override suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableInt(anInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in double asynchronously. */
+  override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableDouble(aDouble)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in boolean asynchronously. */
+  override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableBool(aBool)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed string asynchronously. */
+  override suspend fun echoAsyncNullableString(aString: String?): String? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Uint8List asynchronously. */
+  override suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableUint8List(aUint8List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int32List asynchronously. */
+  override suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableInt32List(aInt32List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int64List asynchronously. */
+  override suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableInt64List(aInt64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Float64List asynchronously. */
+  override suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableFloat64List(aFloat64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in generic Object asynchronously. */
+  override suspend fun echoAsyncNullableObject(anObject: Any?): Any? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableObject(anObject)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableEnumList(enumList: List<JniAnEnum?>?): List<JniAnEnum?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableClassList(
+      classList: List<JniAllNullableTypes?>?
+  ): List<JniAllNullableTypes?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>?
+  ): Map<JniAnEnum?, JniAnEnum?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>?
+  ): Map<Long?, JniAllNullableTypes?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableEnum(anEnum: JniAnEnum?): JniAnEnum? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAnotherAsyncNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum? {
+    api?.let {
+      try {
+        return api!!.echoAnotherAsyncNullableEnum(anotherEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
   }
 }
 
-val JniMessageApiNullableInstances: MutableMap<String, JniMessageApiNullableRegistrar> =
-    mutableMapOf()
+val JniHostTrivialApiInstances: MutableMap<String, JniHostTrivialApiRegistrar> = mutableMapOf()
 
 @Keep
-abstract class JniMessageApiNullable {
-  abstract fun echoString(request: String?): String?
-
-  abstract fun echoInt(request: Long?): Long?
-
-  abstract fun echoDouble(request: Double?): Double?
-
-  abstract fun echoBool(request: Boolean?): Boolean?
-
-  abstract fun echoObj(request: Any?): Any?
-
-  abstract fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes?
-
-  abstract fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum?
-
-  abstract fun echoList(list: List<Any?>?): List<Any?>?
-
-  abstract fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>?
+abstract class JniHostTrivialApi {
+  abstract fun noop()
 }
 
 @Keep
-class JniMessageApiNullableRegistrar : JniMessageApiNullable() {
-  var api: JniMessageApiNullable? = null
+class JniHostTrivialApiRegistrar : JniHostTrivialApi() {
+  var api: JniHostTrivialApi? = null
 
   fun register(
-      api: JniMessageApiNullable,
+      api: JniHostTrivialApi,
       name: String = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-  ): JniMessageApiNullableRegistrar {
+  ): JniHostTrivialApiRegistrar {
     this.api = api
-    JniMessageApiNullableInstances[name] = this
+    JniHostTrivialApiInstances[name] = this
     return this
   }
 
   @Keep
-  fun getInstance(name: String): JniMessageApiNullableRegistrar? {
-    return JniMessageApiNullableInstances[name]
+  fun getInstance(name: String): JniHostTrivialApiRegistrar? {
+    return JniHostTrivialApiInstances[name]
   }
 
-  override fun echoString(request: String?): String? {
+  override fun noop() {
     api?.let {
       try {
-        return api!!.echoString(request)
+        return api!!.noop()
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApiNullable has not been set")
-  }
-
-  override fun echoInt(request: Long?): Long? {
-    api?.let {
-      try {
-        return api!!.echoInt(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullable has not been set")
-  }
-
-  override fun echoDouble(request: Double?): Double? {
-    api?.let {
-      try {
-        return api!!.echoDouble(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullable has not been set")
-  }
-
-  override fun echoBool(request: Boolean?): Boolean? {
-    api?.let {
-      try {
-        return api!!.echoBool(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullable has not been set")
-  }
-
-  override fun echoObj(request: Any?): Any? {
-    api?.let {
-      try {
-        return api!!.echoObj(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullable has not been set")
-  }
-
-  override fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
-    api?.let {
-      try {
-        return api!!.sendSomeNullableTypes(someTypes)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullable has not been set")
-  }
-
-  override fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
-    api?.let {
-      try {
-        return api!!.sendSomeEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullable has not been set")
-  }
-
-  override fun echoList(list: List<Any?>?): List<Any?>? {
-    api?.let {
-      try {
-        return api!!.echoList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullable has not been set")
-  }
-
-  override fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>? {
-    api?.let {
-      try {
-        return api!!.echoMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullable has not been set")
+    error("JniHostTrivialApi has not been set")
   }
 }
 
-val JniMessageApiAsyncInstances: MutableMap<String, JniMessageApiAsyncRegistrar> = mutableMapOf()
+val JniHostSmallApiInstances: MutableMap<String, JniHostSmallApiRegistrar> = mutableMapOf()
 
 @Keep
-abstract class JniMessageApiAsync {
-  abstract suspend fun doNothing()
+abstract class JniHostSmallApi {
+  abstract suspend fun echo(aString: String): String
 
-  abstract suspend fun echoString(request: String): String
-
-  abstract suspend fun echoInt(request: Long): Long
-
-  abstract suspend fun echoDouble(request: Double): Double
-
-  abstract suspend fun echoBool(request: Boolean): Boolean
-
-  abstract suspend fun echoObj(request: Any): Any
-
-  abstract suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes
-
-  abstract suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum
-
-  abstract suspend fun echoList(list: List<Any?>): List<Any?>
-
-  abstract suspend fun echoMap(map: Map<Any, Any?>): Map<Any, Any?>
+  abstract suspend fun voidVoid()
 }
 
 @Keep
-class JniMessageApiAsyncRegistrar : JniMessageApiAsync() {
-  var api: JniMessageApiAsync? = null
+class JniHostSmallApiRegistrar : JniHostSmallApi() {
+  var api: JniHostSmallApi? = null
 
   fun register(
-      api: JniMessageApiAsync,
+      api: JniHostSmallApi,
       name: String = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-  ): JniMessageApiAsyncRegistrar {
+  ): JniHostSmallApiRegistrar {
     this.api = api
-    JniMessageApiAsyncInstances[name] = this
+    JniHostSmallApiInstances[name] = this
     return this
   }
 
   @Keep
-  fun getInstance(name: String): JniMessageApiAsyncRegistrar? {
-    return JniMessageApiAsyncInstances[name]
+  fun getInstance(name: String): JniHostSmallApiRegistrar? {
+    return JniHostSmallApiInstances[name]
   }
 
-  override suspend fun doNothing() {
+  override suspend fun echo(aString: String): String {
     api?.let {
       try {
-        return api!!.doNothing()
+        return api!!.echo(aString)
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApiAsync has not been set")
+    error("JniHostSmallApi has not been set")
   }
 
-  override suspend fun echoString(request: String): String {
+  override suspend fun voidVoid() {
     api?.let {
       try {
-        return api!!.echoString(request)
+        return api!!.voidVoid()
       } catch (e: Exception) {
         throw e
       }
     }
-    error("JniMessageApiAsync has not been set")
-  }
-
-  override suspend fun echoInt(request: Long): Long {
-    api?.let {
-      try {
-        return api!!.echoInt(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiAsync has not been set")
-  }
-
-  override suspend fun echoDouble(request: Double): Double {
-    api?.let {
-      try {
-        return api!!.echoDouble(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiAsync has not been set")
-  }
-
-  override suspend fun echoBool(request: Boolean): Boolean {
-    api?.let {
-      try {
-        return api!!.echoBool(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiAsync has not been set")
-  }
-
-  override suspend fun echoObj(request: Any): Any {
-    api?.let {
-      try {
-        return api!!.echoObj(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiAsync has not been set")
-  }
-
-  override suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
-    api?.let {
-      try {
-        return api!!.sendSomeTypes(someTypes)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiAsync has not been set")
-  }
-
-  override suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
-    api?.let {
-      try {
-        return api!!.sendSomeEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiAsync has not been set")
-  }
-
-  override suspend fun echoList(list: List<Any?>): List<Any?> {
-    api?.let {
-      try {
-        return api!!.echoList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiAsync has not been set")
-  }
-
-  override suspend fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
-    api?.let {
-      try {
-        return api!!.echoMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiAsync has not been set")
-  }
-}
-
-val JniMessageApiNullableAsyncInstances: MutableMap<String, JniMessageApiNullableAsyncRegistrar> =
-    mutableMapOf()
-
-@Keep
-abstract class JniMessageApiNullableAsync {
-  abstract suspend fun echoString(request: String?): String?
-
-  abstract suspend fun echoInt(request: Long?): Long?
-
-  abstract suspend fun echoDouble(request: Double?): Double?
-
-  abstract suspend fun echoBool(request: Boolean?): Boolean?
-
-  abstract suspend fun echoObj(request: Any?): Any?
-
-  abstract suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes?
-
-  abstract suspend fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum?
-
-  abstract suspend fun echoList(list: List<Any?>?): List<Any?>?
-
-  abstract suspend fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>?
-}
-
-@Keep
-class JniMessageApiNullableAsyncRegistrar : JniMessageApiNullableAsync() {
-  var api: JniMessageApiNullableAsync? = null
-
-  fun register(
-      api: JniMessageApiNullableAsync,
-      name: String = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-  ): JniMessageApiNullableAsyncRegistrar {
-    this.api = api
-    JniMessageApiNullableAsyncInstances[name] = this
-    return this
-  }
-
-  @Keep
-  fun getInstance(name: String): JniMessageApiNullableAsyncRegistrar? {
-    return JniMessageApiNullableAsyncInstances[name]
-  }
-
-  override suspend fun echoString(request: String?): String? {
-    api?.let {
-      try {
-        return api!!.echoString(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullableAsync has not been set")
-  }
-
-  override suspend fun echoInt(request: Long?): Long? {
-    api?.let {
-      try {
-        return api!!.echoInt(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullableAsync has not been set")
-  }
-
-  override suspend fun echoDouble(request: Double?): Double? {
-    api?.let {
-      try {
-        return api!!.echoDouble(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullableAsync has not been set")
-  }
-
-  override suspend fun echoBool(request: Boolean?): Boolean? {
-    api?.let {
-      try {
-        return api!!.echoBool(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullableAsync has not been set")
-  }
-
-  override suspend fun echoObj(request: Any?): Any? {
-    api?.let {
-      try {
-        return api!!.echoObj(request)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullableAsync has not been set")
-  }
-
-  override suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
-    api?.let {
-      try {
-        return api!!.sendSomeNullableTypes(someTypes)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullableAsync has not been set")
-  }
-
-  override suspend fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
-    api?.let {
-      try {
-        return api!!.sendSomeEnum(anEnum)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullableAsync has not been set")
-  }
-
-  override suspend fun echoList(list: List<Any?>?): List<Any?>? {
-    api?.let {
-      try {
-        return api!!.echoList(list)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullableAsync has not been set")
-  }
-
-  override suspend fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>? {
-    api?.let {
-      try {
-        return api!!.echoMap(map)
-      } catch (e: Exception) {
-        throw e
-      }
-    }
-    error("JniMessageApiNullableAsync has not been set")
+    error("JniHostSmallApi has not been set")
   }
 }

@@ -30,12 +30,16 @@ bool _deepEquals(Object? a, Object? b) {
   return a == b;
 }
 
+bool isType<T>(Type t) => T == t;
+
+bool isTypeOrNullableType<T>(Type t) => isType<T>(t) || isType<T?>(t);
+
 class _PigeonJniCodec {
   static Object? readValue(JObject? value) {
     if (value == null) {
       return null;
     } else if (value.isA<JLong>(JLong.type)) {
-      return (value.as(JLong.type)).intValue();
+      return (value.as(JLong.type)).longValue();
     } else if (value.isA<JDouble>(JDouble.type)) {
       return (value.as(JDouble.type)).doubleValue();
     } else if (value.isA<JString>(JString.type)) {
@@ -67,7 +71,8 @@ class _PigeonJniCodec {
       }
       return list;
     } else if (value.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
-      final JList<JObject> list = (value.as(JList.type<JObject>(JObject.type)));
+      final JList<JObject?> list =
+          (value.as(JList.type<JObject?>(JObject.nullableType)));
       final List<Object?> res = <Object?>[];
       for (int i = 0; i < list.length; i++) {
         res.add(readValue(list[i]));
@@ -75,22 +80,34 @@ class _PigeonJniCodec {
       return res;
     } else if (value.isA<JMap<JObject, JObject>>(
         JMap.type<JObject, JObject>(JObject.type, JObject.type))) {
-      final JMap<JObject, JObject> map =
-          (value.as(JMap.type<JObject, JObject>(JObject.type, JObject.type)));
-      final Map<Object?, Object?> res = <Object, Object>{};
+      final JMap<JObject?, JObject?> map = (value.as(
+          JMap.type<JObject?, JObject?>(
+              JObject.nullableType, JObject.nullableType)));
+      final Map<Object?, Object?> res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
-    } else if (value.isA<bridge.SomeTypes>(bridge.SomeTypes.type)) {
-      return SomeTypes.fromJni(value.as(bridge.SomeTypes.type));
+    } else if (value.isA<bridge.JniUnusedClass>(bridge.JniUnusedClass.type)) {
+      return JniUnusedClass.fromJni(value.as(bridge.JniUnusedClass.type));
+    } else if (value.isA<bridge.JniAllTypes>(bridge.JniAllTypes.type)) {
+      return JniAllTypes.fromJni(value.as(bridge.JniAllTypes.type));
     } else if (value
-        .isA<bridge.SomeNullableTypes>(bridge.SomeNullableTypes.type)) {
-      return SomeNullableTypes.fromJni(value.as(bridge.SomeNullableTypes.type));
-    } else if (value.isA<bridge.SomeEnum>(bridge.SomeEnum.type)) {
-      return SomeEnum.fromJni(value.as(bridge.SomeEnum.type));
-    } else if (value.isA<bridge.SomeOtherEnum>(bridge.SomeOtherEnum.type)) {
-      return SomeOtherEnum.fromJni(value.as(bridge.SomeOtherEnum.type));
+        .isA<bridge.JniAllNullableTypes>(bridge.JniAllNullableTypes.type)) {
+      return JniAllNullableTypes.fromJni(
+          value.as(bridge.JniAllNullableTypes.type));
+    } else if (value.isA<bridge.JniAllNullableTypesWithoutRecursion>(
+        bridge.JniAllNullableTypesWithoutRecursion.type)) {
+      return JniAllNullableTypesWithoutRecursion.fromJni(
+          value.as(bridge.JniAllNullableTypesWithoutRecursion.type));
+    } else if (value
+        .isA<bridge.JniAllClassesWrapper>(bridge.JniAllClassesWrapper.type)) {
+      return JniAllClassesWrapper.fromJni(
+          value.as(bridge.JniAllClassesWrapper.type));
+    } else if (value.isA<bridge.JniAnEnum>(bridge.JniAnEnum.type)) {
+      return JniAnEnum.fromJni(value.as(bridge.JniAnEnum.type));
+    } else if (value.isA<bridge.JniAnotherEnum>(bridge.JniAnotherEnum.type)) {
+      return JniAnotherEnum.fromJni(value.as(bridge.JniAnotherEnum.type));
     } else {
       throw ArgumentError.value(value);
     }
@@ -108,43 +125,37 @@ class _PigeonJniCodec {
       return JLong(value) as T;
     } else if (value is String) {
       return JString.fromString(value) as T;
-    } else if (T == JByteArray) {
+    } else if (isTypeOrNullableType<JByteArray>(T)) {
       value as List<int>;
       final JByteArray array = JByteArray(value.length);
       for (int i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
-    } else if (T == JIntArray) {
+    } else if (isTypeOrNullableType<JIntArray>(T)) {
       value as List<int>;
       final JIntArray array = JIntArray(value.length);
       for (int i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
-    } else if (T == JLongArray) {
+    } else if (isTypeOrNullableType<JLongArray>(T)) {
       value as List<int>;
       final JLongArray array = JLongArray(value.length);
       for (int i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
-    } else if (T == JDoubleArray) {
+    } else if (isTypeOrNullableType<JDoubleArray>(T)) {
       value as List<double>;
       final JDoubleArray array = JDoubleArray(value.length);
       for (int i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
-    } else if (value is List<String>) {
-      final JList<JString> res = JList<JString>.array(JString.type);
-      for (final String entry in value) {
-        res.add(writeValue(entry));
-      }
-      return res as T;
-    } else if (value is List<int>) {
-      final JList<JLong> res = JList<JLong>.array(JLong.type);
-      for (final int entry in value) {
+    } else if (value is List<bool>) {
+      final JList<JBoolean> res = JList<JBoolean>.array(JBoolean.type);
+      for (final bool entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
@@ -154,38 +165,115 @@ class _PigeonJniCodec {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<bool>) {
-      final JList<JBoolean> res = JList<JBoolean>.array(JBoolean.type);
-      for (final bool entry in value) {
+    } else if (value is List<int>) {
+      final JList<JLong> res = JList<JLong>.array(JLong.type);
+      for (final int entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<SomeEnum>) {
-      final JList<bridge.SomeEnum> res =
-          JList<bridge.SomeEnum>.array(bridge.SomeEnum.type);
-      for (final SomeEnum entry in value) {
+    } else if (value is List<String>) {
+      final JList<JString> res = JList<JString>.array(JString.type);
+      for (final String entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<SomeNullableTypes>) {
-      final JList<bridge.SomeNullableTypes> res =
-          JList<bridge.SomeNullableTypes>.array(bridge.SomeNullableTypes.type);
-      for (final SomeNullableTypes entry in value) {
+    } else if (value is List<JniAllNullableTypes>) {
+      final JList<bridge.JniAllNullableTypes> res =
+          JList<bridge.JniAllNullableTypes>.array(
+              bridge.JniAllNullableTypes.type);
+      for (final JniAllNullableTypes entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<JniAnEnum>) {
+      final JList<bridge.JniAnEnum> res =
+          JList<bridge.JniAnEnum>.array(bridge.JniAnEnum.type);
+      for (final JniAnEnum entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<JniAllNullableTypesWithoutRecursion?>) {
+      final JList<bridge.JniAllNullableTypesWithoutRecursion?> res =
+          JList<bridge.JniAllNullableTypesWithoutRecursion?>.array(
+              bridge.JniAllNullableTypesWithoutRecursion.nullableType);
+      for (final JniAllNullableTypesWithoutRecursion? entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<JniAllTypes?>) {
+      final JList<bridge.JniAllTypes?> res =
+          JList<bridge.JniAllTypes?>.array(bridge.JniAllTypes.nullableType);
+      for (final JniAllTypes? entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<bool?>) {
+      final JList<JBoolean?> res =
+          JList<JBoolean?>.array(JBoolean.nullableType);
+      for (final bool? entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<double?>) {
+      final JList<JDouble?> res = JList<JDouble?>.array(JDouble.nullableType);
+      for (final double? entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<int?>) {
+      final JList<JLong?> res = JList<JLong?>.array(JLong.nullableType);
+      for (final int? entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<String?>) {
+      final JList<JString?> res = JList<JString?>.array(JString.nullableType);
+      for (final String? entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<JniAllNullableTypes?>) {
+      final JList<bridge.JniAllNullableTypes?> res =
+          JList<bridge.JniAllNullableTypes?>.array(
+              bridge.JniAllNullableTypes.nullableType);
+      for (final JniAllNullableTypes? entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<JniAnEnum?>) {
+      final JList<bridge.JniAnEnum?> res =
+          JList<bridge.JniAnEnum?>.array(bridge.JniAnEnum.nullableType);
+      for (final JniAnEnum? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (value is List<List<Object?>>) {
       final JList<JList<JObject?>> res =
-          JList<JList<JObject?>>.array(JList.type(JObject.type));
+          JList<JList<JObject?>>.array(JList.type(JObject.nullableType));
       for (final List<Object?> entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<List<Object?>?>) {
+      final JList<JList<JObject?>?> res = JList<JList<JObject?>?>.array(
+          JList.nullableType(JObject.nullableType));
+      for (final List<Object?>? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (value is List<Map<Object?, Object?>>) {
       final JList<JMap<JObject?, JObject?>> res =
           JList<JMap<JObject?, JObject?>>.array(
-              JMap.type(JObject.type, JObject.type));
+              JMap.type(JObject.nullableType, JObject.nullableType));
       for (final Map<Object?, Object?> entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<Map<Object?, Object?>?>) {
+      final JList<JMap<JObject?, JObject?>?> res =
+          JList<JMap<JObject?, JObject?>?>.array(
+              JMap.nullableType(JObject.nullableType, JObject.nullableType));
+      for (final Map<Object?, Object?>? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
@@ -196,15 +284,24 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (value is List) {
-      final JList<JObject?> res = JList<JObject?>.array(JObject.type);
+      final JList<JObject?> res = JList<JObject?>.array(JObject.nullableType);
       for (int i = 0; i < value.length; i++) {
         res.add(writeValue(value[i]));
       }
       return res as T;
-    } else if (value is Map<String, String>) {
-      final JMap<JString, JString> res =
-          JMap<JString, JString>.hash(JString.type, JString.type);
-      for (final MapEntry<String, String> entry in value.entries) {
+    } else if (value is Map<int, JniAllNullableTypes>) {
+      final JMap<JLong, bridge.JniAllNullableTypes> res =
+          JMap<JLong, bridge.JniAllNullableTypes>.hash(
+              JLong.type, bridge.JniAllNullableTypes.type);
+      for (final MapEntry<int, JniAllNullableTypes> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<JniAnEnum, JniAnEnum>) {
+      final JMap<bridge.JniAnEnum, bridge.JniAnEnum> res =
+          JMap<bridge.JniAnEnum, bridge.JniAnEnum>.hash(
+              bridge.JniAnEnum.type, bridge.JniAnEnum.type);
+      for (final MapEntry<JniAnEnum, JniAnEnum> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
@@ -215,36 +312,91 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<SomeEnum, SomeEnum>) {
-      final JMap<bridge.SomeEnum, bridge.SomeEnum> res =
-          JMap<bridge.SomeEnum, bridge.SomeEnum>.hash(
-              bridge.SomeEnum.type, bridge.SomeEnum.type);
-      for (final MapEntry<SomeEnum, SomeEnum> entry in value.entries) {
+    } else if (value is Map<String, String>) {
+      final JMap<JString, JString> res =
+          JMap<JString, JString>.hash(JString.type, JString.type);
+      for (final MapEntry<String, String> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<SomeNullableTypes, SomeNullableTypes>) {
-      final JMap<bridge.SomeNullableTypes, bridge.SomeNullableTypes> res =
-          JMap<bridge.SomeNullableTypes, bridge.SomeNullableTypes>.hash(
-              bridge.SomeNullableTypes.type, bridge.SomeNullableTypes.type);
-      for (final MapEntry<SomeNullableTypes, SomeNullableTypes> entry
+    } else if (value is Map<int?, JniAllNullableTypesWithoutRecursion?>) {
+      final JMap<JLong?, bridge.JniAllNullableTypesWithoutRecursion?> res =
+          JMap<JLong?, bridge.JniAllNullableTypesWithoutRecursion?>.hash(
+              JLong.nullableType,
+              bridge.JniAllNullableTypesWithoutRecursion.nullableType);
+      for (final MapEntry<int?, JniAllNullableTypesWithoutRecursion?> entry
           in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, JniAllTypes?>) {
+      final JMap<JLong?, bridge.JniAllTypes?> res =
+          JMap<JLong?, bridge.JniAllTypes?>.hash(
+              JLong.nullableType, bridge.JniAllTypes.nullableType);
+      for (final MapEntry<int?, JniAllTypes?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, JniAllNullableTypes?>) {
+      final JMap<JLong?, bridge.JniAllNullableTypes?> res =
+          JMap<JLong?, bridge.JniAllNullableTypes?>.hash(
+              JLong.nullableType, bridge.JniAllNullableTypes.nullableType);
+      for (final MapEntry<int?, JniAllNullableTypes?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<JniAnEnum?, JniAnEnum?>) {
+      final JMap<bridge.JniAnEnum?, bridge.JniAnEnum?> res =
+          JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>.hash(
+              bridge.JniAnEnum.nullableType, bridge.JniAnEnum.nullableType);
+      for (final MapEntry<JniAnEnum?, JniAnEnum?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, int?>) {
+      final JMap<JLong?, JLong?> res =
+          JMap<JLong?, JLong?>.hash(JLong.nullableType, JLong.nullableType);
+      for (final MapEntry<int?, int?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<String?, String?>) {
+      final JMap<JString?, JString?> res = JMap<JString?, JString?>.hash(
+          JString.nullableType, JString.nullableType);
+      for (final MapEntry<String?, String?> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
     } else if (value is Map<int, List<Object?>>) {
       final JMap<JLong, JList<JObject?>> res =
           JMap<JLong, JList<JObject?>>.hash(
-              JLong.type, JList.type(JObject.type));
+              JLong.type, JList.type(JObject.nullableType));
       for (final MapEntry<int, List<Object?>> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, List<Object?>?>) {
+      final JMap<JLong?, JList<JObject?>?> res =
+          JMap<JLong?, JList<JObject?>?>.hash(
+              JLong.nullableType, JList.nullableType(JObject.nullableType));
+      for (final MapEntry<int?, List<Object?>?> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
     } else if (value is Map<int, Map<Object?, Object?>>) {
       final JMap<JLong, JMap<JObject?, JObject?>> res =
-          JMap<JLong, JMap<JObject?, JObject?>>.hash(
-              JLong.type, JMap.type(JObject.type, JObject.type));
+          JMap<JLong, JMap<JObject?, JObject?>>.hash(JLong.type,
+              JMap.type(JObject.nullableType, JObject.nullableType));
       for (final MapEntry<int, Map<Object?, Object?>> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, Map<Object?, Object?>?>) {
+      final JMap<JLong?, JMap<JObject?, JObject?>?> res =
+          JMap<JLong?, JMap<JObject?, JObject?>?>.hash(JLong.nullableType,
+              JMap.nullableType(JObject.nullableType, JObject.nullableType));
+      for (final MapEntry<int?, Map<Object?, Object?>?> entry
+          in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
@@ -257,25 +409,31 @@ class _PigeonJniCodec {
       return res as T;
     } else if (value is Map<Object, Object?>) {
       final JMap<JObject, JObject?> res =
-          JMap<JObject, JObject?>.hash(JObject.type, JObject.type);
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
       for (final MapEntry<Object, Object?> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
     } else if (value is Map) {
       final JMap<JObject, JObject?> res =
-          JMap<JObject, JObject?>.hash(JObject.type, JObject.type);
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
       for (final MapEntry<Object?, Object?> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is SomeTypes) {
+    } else if (value is JniUnusedClass) {
       return value.toJni() as T;
-    } else if (value is SomeNullableTypes) {
+    } else if (value is JniAllTypes) {
       return value.toJni() as T;
-    } else if (value is SomeEnum) {
+    } else if (value is JniAllNullableTypes) {
       return value.toJni() as T;
-    } else if (value is SomeOtherEnum) {
+    } else if (value is JniAllNullableTypesWithoutRecursion) {
+      return value.toJni() as T;
+    } else if (value is JniAllClassesWrapper) {
+      return value.toJni() as T;
+    } else if (value is JniAnEnum) {
+      return value.toJni() as T;
+    } else if (value is JniAnotherEnum) {
       return value.toJni() as T;
     } else {
       throw ArgumentError.value(value);
@@ -283,54 +441,110 @@ class _PigeonJniCodec {
   }
 }
 
-enum SomeEnum {
-  value1,
-  value2,
-  value3;
+enum JniAnEnum {
+  one,
+  two,
+  three,
+  fortyTwo,
+  fourHundredTwentyTwo;
 
-  bridge.SomeEnum toJni() {
-    return bridge.SomeEnum.Companion.ofRaw(index)!;
+  bridge.JniAnEnum toJni() {
+    return bridge.JniAnEnum.Companion.ofRaw(index)!;
   }
 
-  static SomeEnum? fromJni(bridge.SomeEnum? jniEnum) {
-    return jniEnum == null ? null : SomeEnum.values[jniEnum.getRaw()];
-  }
-}
-
-enum SomeOtherEnum {
-  value1,
-  value2,
-  value3;
-
-  bridge.SomeOtherEnum toJni() {
-    return bridge.SomeOtherEnum.Companion.ofRaw(index)!;
-  }
-
-  static SomeOtherEnum? fromJni(bridge.SomeOtherEnum? jniEnum) {
-    return jniEnum == null ? null : SomeOtherEnum.values[jniEnum.getRaw()];
+  static JniAnEnum? fromJni(bridge.JniAnEnum? jniEnum) {
+    return jniEnum == null ? null : JniAnEnum.values[jniEnum.getRaw()];
   }
 }
 
-class SomeTypes {
-  SomeTypes({
-    required this.aString,
-    required this.anInt,
-    required this.aDouble,
-    required this.aBool,
+enum JniAnotherEnum {
+  justInCase;
+
+  bridge.JniAnotherEnum toJni() {
+    return bridge.JniAnotherEnum.Companion.ofRaw(index)!;
+  }
+
+  static JniAnotherEnum? fromJni(bridge.JniAnotherEnum? jniEnum) {
+    return jniEnum == null ? null : JniAnotherEnum.values[jniEnum.getRaw()];
+  }
+}
+
+class JniUnusedClass {
+  JniUnusedClass({
+    this.aField,
+  });
+
+  Object? aField;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      aField,
+    ];
+  }
+
+  bridge.JniUnusedClass toJni() {
+    return bridge.JniUnusedClass(
+      _PigeonJniCodec.writeValue<JObject?>(aField),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static JniUnusedClass? fromJni(bridge.JniUnusedClass? jniClass) {
+    return jniClass == null
+        ? null
+        : JniUnusedClass(
+            aField: _PigeonJniCodec.readValue(jniClass.getAField()),
+          );
+  }
+
+  static JniUnusedClass decode(Object result) {
+    result as List<Object?>;
+    return JniUnusedClass(
+      aField: result[0],
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! JniUnusedClass || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aField == other.aField;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// A class containing all supported types.
+class JniAllTypes {
+  JniAllTypes({
+    this.aBool = false,
+    this.anInt = 0,
+    this.anInt64 = 0,
+    this.aDouble = 0,
     required this.aByteArray,
     required this.a4ByteArray,
     required this.a8ByteArray,
     required this.aFloatArray,
-    required this.anObject,
-    required this.anEnum,
-    required this.someNullableTypes,
+    this.anEnum = JniAnEnum.one,
+    this.anotherEnum = JniAnotherEnum.justInCase,
+    this.aString = '',
+    this.anObject = 0,
     required this.list,
     required this.stringList,
     required this.intList,
     required this.doubleList,
     required this.boolList,
     required this.enumList,
-    required this.classList,
     required this.objectList,
     required this.listList,
     required this.mapList,
@@ -338,19 +552,18 @@ class SomeTypes {
     required this.stringMap,
     required this.intMap,
     required this.enumMap,
-    required this.classMap,
     required this.objectMap,
     required this.listMap,
     required this.mapMap,
   });
 
-  String aString;
+  bool aBool;
 
   int anInt;
 
-  double aDouble;
+  int anInt64;
 
-  bool aBool;
+  double aDouble;
 
   Uint8List aByteArray;
 
@@ -360,11 +573,13 @@ class SomeTypes {
 
   Float64List aFloatArray;
 
+  JniAnEnum anEnum;
+
+  JniAnotherEnum anotherEnum;
+
+  String aString;
+
   Object anObject;
-
-  SomeEnum anEnum;
-
-  SomeNullableTypes someNullableTypes;
 
   List<Object?> list;
 
@@ -376,9 +591,7 @@ class SomeTypes {
 
   List<bool> boolList;
 
-  List<SomeEnum> enumList;
-
-  List<SomeNullableTypes> classList;
+  List<JniAnEnum> enumList;
 
   List<Object> objectList;
 
@@ -392,9 +605,7 @@ class SomeTypes {
 
   Map<int, int> intMap;
 
-  Map<SomeEnum, SomeEnum> enumMap;
-
-  Map<SomeNullableTypes, SomeNullableTypes> classMap;
+  Map<JniAnEnum, JniAnEnum> enumMap;
 
   Map<Object, Object> objectMap;
 
@@ -404,24 +615,24 @@ class SomeTypes {
 
   List<Object?> _toList() {
     return <Object?>[
-      aString,
-      anInt,
-      aDouble,
       aBool,
+      anInt,
+      anInt64,
+      aDouble,
       aByteArray,
       a4ByteArray,
       a8ByteArray,
       aFloatArray,
-      anObject,
       anEnum,
-      someNullableTypes,
+      anotherEnum,
+      aString,
+      anObject,
       list,
       stringList,
       intList,
       doubleList,
       boolList,
       enumList,
-      classList,
       objectList,
       listList,
       mapList,
@@ -429,43 +640,40 @@ class SomeTypes {
       stringMap,
       intMap,
       enumMap,
-      classMap,
       objectMap,
       listMap,
       mapMap,
     ];
   }
 
-  bridge.SomeTypes toJni() {
-    return bridge.SomeTypes(
-      _PigeonJniCodec.writeValue<JString>(aString),
-      anInt,
-      aDouble,
+  bridge.JniAllTypes toJni() {
+    return bridge.JniAllTypes(
       aBool,
+      anInt,
+      anInt64,
+      aDouble,
       _PigeonJniCodec.writeValue<JByteArray>(aByteArray),
       _PigeonJniCodec.writeValue<JIntArray>(a4ByteArray),
       _PigeonJniCodec.writeValue<JLongArray>(a8ByteArray),
       _PigeonJniCodec.writeValue<JDoubleArray>(aFloatArray),
-      _PigeonJniCodec.writeValue<JObject>(anObject),
       anEnum.toJni(),
-      someNullableTypes.toJni(),
+      anotherEnum.toJni(),
+      _PigeonJniCodec.writeValue<JString>(aString),
+      _PigeonJniCodec.writeValue<JObject>(anObject),
       _PigeonJniCodec.writeValue<JList<JObject?>>(list),
       _PigeonJniCodec.writeValue<JList<JString>>(stringList),
       _PigeonJniCodec.writeValue<JList<JLong>>(intList),
       _PigeonJniCodec.writeValue<JList<JDouble>>(doubleList),
       _PigeonJniCodec.writeValue<JList<JBoolean>>(boolList),
-      _PigeonJniCodec.writeValue<JList<bridge.SomeEnum>>(enumList),
-      _PigeonJniCodec.writeValue<JList<bridge.SomeNullableTypes>>(classList),
+      _PigeonJniCodec.writeValue<JList<bridge.JniAnEnum>>(enumList),
       _PigeonJniCodec.writeValue<JList<JObject>>(objectList),
       _PigeonJniCodec.writeValue<JList<JList<JObject?>>>(listList),
       _PigeonJniCodec.writeValue<JList<JMap<JObject?, JObject?>>>(mapList),
-      _PigeonJniCodec.writeValue<JMap<JObject, JObject?>>(map),
+      _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(map),
       _PigeonJniCodec.writeValue<JMap<JString, JString>>(stringMap),
       _PigeonJniCodec.writeValue<JMap<JLong, JLong>>(intMap),
-      _PigeonJniCodec.writeValue<JMap<bridge.SomeEnum, bridge.SomeEnum>>(
+      _PigeonJniCodec.writeValue<JMap<bridge.JniAnEnum, bridge.JniAnEnum>>(
           enumMap),
-      _PigeonJniCodec.writeValue<
-          JMap<bridge.SomeNullableTypes, bridge.SomeNullableTypes>>(classMap),
       _PigeonJniCodec.writeValue<JMap<JObject, JObject>>(objectMap),
       _PigeonJniCodec.writeValue<JMap<JLong, JList<JObject?>>>(listMap),
       _PigeonJniCodec.writeValue<JMap<JLong, JMap<JObject?, JObject?>>>(mapMap),
@@ -476,14 +684,14 @@ class SomeTypes {
     return _toList();
   }
 
-  static SomeTypes? fromJni(bridge.SomeTypes? jniClass) {
+  static JniAllTypes? fromJni(bridge.JniAllTypes? jniClass) {
     return jniClass == null
         ? null
-        : SomeTypes(
-            aString: jniClass.getAString().toDartString(releaseOriginal: true),
-            anInt: jniClass.getAnInt(),
-            aDouble: jniClass.getADouble(),
+        : JniAllTypes(
             aBool: jniClass.getABool(),
+            anInt: jniClass.getAnInt(),
+            anInt64: jniClass.getAnInt64(),
+            aDouble: jniClass.getADouble(),
             aByteArray: (_PigeonJniCodec.readValue(jniClass.getAByteArray())!
                 as Uint8List),
             a4ByteArray: (_PigeonJniCodec.readValue(jniClass.getA4ByteArray())!
@@ -492,10 +700,10 @@ class SomeTypes {
                 as Int64List),
             aFloatArray: (_PigeonJniCodec.readValue(jniClass.getAFloatArray())!
                 as Float64List),
+            anEnum: JniAnEnum.fromJni(jniClass.getAnEnum())!,
+            anotherEnum: JniAnotherEnum.fromJni(jniClass.getAnotherEnum())!,
+            aString: jniClass.getAString().toDartString(releaseOriginal: true),
             anObject: _PigeonJniCodec.readValue(jniClass.getAnObject())!,
-            anEnum: SomeEnum.fromJni(jniClass.getAnEnum())!,
-            someNullableTypes:
-                SomeNullableTypes.fromJni(jniClass.getSomeNullableTypes())!,
             list: (_PigeonJniCodec.readValue(jniClass.getList())!
                     as List<Object?>)
                 .cast<Object?>(),
@@ -513,10 +721,7 @@ class SomeTypes {
                 .cast<bool>(),
             enumList: (_PigeonJniCodec.readValue(jniClass.getEnumList())!
                     as List<Object?>)
-                .cast<SomeEnum>(),
-            classList: (_PigeonJniCodec.readValue(jniClass.getClassList())!
-                    as List<Object?>)
-                .cast<SomeNullableTypes>(),
+                .cast<JniAnEnum>(),
             objectList: (_PigeonJniCodec.readValue(jniClass.getObjectList())!
                     as List<Object?>)
                 .cast<Object>(),
@@ -537,10 +742,7 @@ class SomeTypes {
                 .cast<int, int>(),
             enumMap: (_PigeonJniCodec.readValue(jniClass.getEnumMap())!
                     as Map<Object?, Object?>)
-                .cast<SomeEnum, SomeEnum>(),
-            classMap: (_PigeonJniCodec.readValue(jniClass.getClassMap())!
-                    as Map<Object?, Object?>)
-                .cast<SomeNullableTypes, SomeNullableTypes>(),
+                .cast<JniAnEnum, JniAnEnum>(),
             objectMap: (_PigeonJniCodec.readValue(jniClass.getObjectMap())!
                     as Map<Object?, Object?>)
                 .cast<Object, Object>(),
@@ -553,27 +755,27 @@ class SomeTypes {
           );
   }
 
-  static SomeTypes decode(Object result) {
+  static JniAllTypes decode(Object result) {
     result as List<Object?>;
-    return SomeTypes(
-      aString: result[0]! as String,
+    return JniAllTypes(
+      aBool: result[0]! as bool,
       anInt: result[1]! as int,
-      aDouble: result[2]! as double,
-      aBool: result[3]! as bool,
+      anInt64: result[2]! as int,
+      aDouble: result[3]! as double,
       aByteArray: result[4]! as Uint8List,
       a4ByteArray: result[5]! as Int32List,
       a8ByteArray: result[6]! as Int64List,
       aFloatArray: result[7]! as Float64List,
-      anObject: result[8]!,
-      anEnum: result[9]! as SomeEnum,
-      someNullableTypes: result[10]! as SomeNullableTypes,
-      list: result[11]! as List<Object?>,
-      stringList: (result[12] as List<Object?>?)!.cast<String>(),
-      intList: (result[13] as List<Object?>?)!.cast<int>(),
-      doubleList: (result[14] as List<Object?>?)!.cast<double>(),
-      boolList: (result[15] as List<Object?>?)!.cast<bool>(),
-      enumList: (result[16] as List<Object?>?)!.cast<SomeEnum>(),
-      classList: (result[17] as List<Object?>?)!.cast<SomeNullableTypes>(),
+      anEnum: result[8]! as JniAnEnum,
+      anotherEnum: result[9]! as JniAnotherEnum,
+      aString: result[10]! as String,
+      anObject: result[11]!,
+      list: result[12]! as List<Object?>,
+      stringList: (result[13] as List<Object?>?)!.cast<String>(),
+      intList: (result[14] as List<Object?>?)!.cast<int>(),
+      doubleList: (result[15] as List<Object?>?)!.cast<double>(),
+      boolList: (result[16] as List<Object?>?)!.cast<bool>(),
+      enumList: (result[17] as List<Object?>?)!.cast<JniAnEnum>(),
       objectList: (result[18] as List<Object?>?)!.cast<Object>(),
       listList: (result[19] as List<Object?>?)!.cast<List<Object?>>(),
       mapList: (result[20] as List<Object?>?)!.cast<Map<Object?, Object?>>(),
@@ -581,13 +783,11 @@ class SomeTypes {
       stringMap: (result[22] as Map<Object?, Object?>?)!.cast<String, String>(),
       intMap: (result[23] as Map<Object?, Object?>?)!.cast<int, int>(),
       enumMap:
-          (result[24] as Map<Object?, Object?>?)!.cast<SomeEnum, SomeEnum>(),
-      classMap: (result[25] as Map<Object?, Object?>?)!
-          .cast<SomeNullableTypes, SomeNullableTypes>(),
-      objectMap: (result[26] as Map<Object?, Object?>?)!.cast<Object, Object>(),
+          (result[24] as Map<Object?, Object?>?)!.cast<JniAnEnum, JniAnEnum>(),
+      objectMap: (result[25] as Map<Object?, Object?>?)!.cast<Object, Object>(),
       listMap:
-          (result[27] as Map<Object?, Object?>?)!.cast<int, List<Object?>>(),
-      mapMap: (result[28] as Map<Object?, Object?>?)!
+          (result[26] as Map<Object?, Object?>?)!.cast<int, List<Object?>>(),
+      mapMap: (result[27] as Map<Object?, Object?>?)!
           .cast<int, Map<Object?, Object?>>(),
     );
   }
@@ -595,30 +795,30 @@ class SomeTypes {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SomeTypes || other.runtimeType != runtimeType) {
+    if (other is! JniAllTypes || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return aString == other.aString &&
+    return aBool == other.aBool &&
         anInt == other.anInt &&
+        anInt64 == other.anInt64 &&
         aDouble == other.aDouble &&
-        aBool == other.aBool &&
         _deepEquals(aByteArray, other.aByteArray) &&
         _deepEquals(a4ByteArray, other.a4ByteArray) &&
         _deepEquals(a8ByteArray, other.a8ByteArray) &&
         _deepEquals(aFloatArray, other.aFloatArray) &&
-        anObject == other.anObject &&
         anEnum == other.anEnum &&
-        someNullableTypes == other.someNullableTypes &&
+        anotherEnum == other.anotherEnum &&
+        aString == other.aString &&
+        anObject == other.anObject &&
         _deepEquals(list, other.list) &&
         _deepEquals(stringList, other.stringList) &&
         _deepEquals(intList, other.intList) &&
         _deepEquals(doubleList, other.doubleList) &&
         _deepEquals(boolList, other.boolList) &&
         _deepEquals(enumList, other.enumList) &&
-        _deepEquals(classList, other.classList) &&
         _deepEquals(objectList, other.objectList) &&
         _deepEquals(listList, other.listList) &&
         _deepEquals(mapList, other.mapList) &&
@@ -626,7 +826,6 @@ class SomeTypes {
         _deepEquals(stringMap, other.stringMap) &&
         _deepEquals(intMap, other.intMap) &&
         _deepEquals(enumMap, other.enumMap) &&
-        _deepEquals(classMap, other.classMap) &&
         _deepEquals(objectMap, other.objectMap) &&
         _deepEquals(listMap, other.listMap) &&
         _deepEquals(mapMap, other.mapMap);
@@ -637,82 +836,177 @@ class SomeTypes {
   int get hashCode => Object.hashAll(_toList());
 }
 
-class SomeNullableTypes {
-  SomeNullableTypes({
-    this.aString,
-    this.anInt,
-    this.aDouble,
-    this.aBool,
-    this.aByteArray,
-    this.a4ByteArray,
-    this.a8ByteArray,
-    this.aFloatArray,
-    this.anObject,
-    this.anEnum,
-    this.someTypes,
+/// A class containing all supported nullable types.
+class JniAllNullableTypes {
+  JniAllNullableTypes({
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableEnum,
+    this.anotherNullableEnum,
+    this.aNullableString,
+    this.aNullableObject,
+    this.allNullableTypes,
     this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.enumList,
+    this.objectList,
+    this.listList,
+    this.mapList,
+    this.recursiveClassList,
     this.map,
+    this.stringMap,
+    this.intMap,
+    this.enumMap,
+    this.objectMap,
+    this.listMap,
+    this.mapMap,
+    this.recursiveClassMap,
   });
 
-  String? aString;
+  bool? aNullableBool;
 
-  int? anInt;
+  int? aNullableInt;
 
-  double? aDouble;
+  int? aNullableInt64;
 
-  bool? aBool;
+  double? aNullableDouble;
 
-  Uint8List? aByteArray;
+  Uint8List? aNullableByteArray;
 
-  Int32List? a4ByteArray;
+  Int32List? aNullable4ByteArray;
 
-  Int64List? a8ByteArray;
+  Int64List? aNullable8ByteArray;
 
-  Float64List? aFloatArray;
+  Float64List? aNullableFloatArray;
 
-  Object? anObject;
+  JniAnEnum? aNullableEnum;
 
-  SomeEnum? anEnum;
+  JniAnotherEnum? anotherNullableEnum;
 
-  SomeTypes? someTypes;
+  String? aNullableString;
+
+  Object? aNullableObject;
+
+  JniAllNullableTypes? allNullableTypes;
 
   List<Object?>? list;
 
+  List<String?>? stringList;
+
+  List<int?>? intList;
+
+  List<double?>? doubleList;
+
+  List<bool?>? boolList;
+
+  List<JniAnEnum?>? enumList;
+
+  List<Object?>? objectList;
+
+  List<List<Object?>?>? listList;
+
+  List<Map<Object?, Object?>?>? mapList;
+
+  List<JniAllNullableTypes?>? recursiveClassList;
+
   Map<Object?, Object?>? map;
+
+  Map<String?, String?>? stringMap;
+
+  Map<int?, int?>? intMap;
+
+  Map<JniAnEnum?, JniAnEnum?>? enumMap;
+
+  Map<Object?, Object?>? objectMap;
+
+  Map<int?, List<Object?>?>? listMap;
+
+  Map<int?, Map<Object?, Object?>?>? mapMap;
+
+  Map<int?, JniAllNullableTypes?>? recursiveClassMap;
 
   List<Object?> _toList() {
     return <Object?>[
-      aString,
-      anInt,
-      aDouble,
-      aBool,
-      aByteArray,
-      a4ByteArray,
-      a8ByteArray,
-      aFloatArray,
-      anObject,
-      anEnum,
-      someTypes,
+      aNullableBool,
+      aNullableInt,
+      aNullableInt64,
+      aNullableDouble,
+      aNullableByteArray,
+      aNullable4ByteArray,
+      aNullable8ByteArray,
+      aNullableFloatArray,
+      aNullableEnum,
+      anotherNullableEnum,
+      aNullableString,
+      aNullableObject,
+      allNullableTypes,
       list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      enumList,
+      objectList,
+      listList,
+      mapList,
+      recursiveClassList,
       map,
+      stringMap,
+      intMap,
+      enumMap,
+      objectMap,
+      listMap,
+      mapMap,
+      recursiveClassMap,
     ];
   }
 
-  bridge.SomeNullableTypes toJni() {
-    return bridge.SomeNullableTypes(
-      _PigeonJniCodec.writeValue<JString?>(aString),
-      _PigeonJniCodec.writeValue<JLong?>(anInt),
-      _PigeonJniCodec.writeValue<JDouble?>(aDouble),
-      _PigeonJniCodec.writeValue<JBoolean?>(aBool),
-      _PigeonJniCodec.writeValue<JByteArray?>(aByteArray),
-      _PigeonJniCodec.writeValue<JIntArray?>(a4ByteArray),
-      _PigeonJniCodec.writeValue<JLongArray?>(a8ByteArray),
-      _PigeonJniCodec.writeValue<JDoubleArray?>(aFloatArray),
-      _PigeonJniCodec.writeValue<JObject?>(anObject),
-      anEnum == null ? null : anEnum!.toJni(),
-      someTypes == null ? null : someTypes!.toJni(),
+  bridge.JniAllNullableTypes toJni() {
+    return bridge.JniAllNullableTypes(
+      _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
+      _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
+      _PigeonJniCodec.writeValue<JLong?>(aNullableInt64),
+      _PigeonJniCodec.writeValue<JDouble?>(aNullableDouble),
+      _PigeonJniCodec.writeValue<JByteArray?>(aNullableByteArray),
+      _PigeonJniCodec.writeValue<JIntArray?>(aNullable4ByteArray),
+      _PigeonJniCodec.writeValue<JLongArray?>(aNullable8ByteArray),
+      _PigeonJniCodec.writeValue<JDoubleArray?>(aNullableFloatArray),
+      aNullableEnum == null ? null : aNullableEnum!.toJni(),
+      anotherNullableEnum == null ? null : anotherNullableEnum!.toJni(),
+      _PigeonJniCodec.writeValue<JString?>(aNullableString),
+      _PigeonJniCodec.writeValue<JObject?>(aNullableObject),
+      allNullableTypes == null ? null : allNullableTypes!.toJni(),
       _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
-      _PigeonJniCodec.writeValue<JMap<JObject, JObject?>?>(map),
+      _PigeonJniCodec.writeValue<JList<JString?>?>(stringList),
+      _PigeonJniCodec.writeValue<JList<JLong?>?>(intList),
+      _PigeonJniCodec.writeValue<JList<JDouble?>?>(doubleList),
+      _PigeonJniCodec.writeValue<JList<JBoolean?>?>(boolList),
+      _PigeonJniCodec.writeValue<JList<bridge.JniAnEnum?>?>(enumList),
+      _PigeonJniCodec.writeValue<JList<JObject?>?>(objectList),
+      _PigeonJniCodec.writeValue<JList<JList<JObject?>?>?>(listList),
+      _PigeonJniCodec.writeValue<JList<JMap<JObject?, JObject?>?>?>(mapList),
+      _PigeonJniCodec.writeValue<JList<bridge.JniAllNullableTypes?>?>(
+          recursiveClassList),
+      _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map),
+      _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap),
+      _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap),
+      _PigeonJniCodec.writeValue<JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>?>(
+          enumMap),
+      _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(objectMap),
+      _PigeonJniCodec.writeValue<JMap<JLong?, JList<JObject?>?>?>(listMap),
+      _PigeonJniCodec.writeValue<JMap<JLong?, JMap<JObject?, JObject?>?>?>(
+          mapMap),
+      _PigeonJniCodec.writeValue<JMap<JLong?, bridge.JniAllNullableTypes?>?>(
+          recursiveClassMap),
     );
   }
 
@@ -720,75 +1014,650 @@ class SomeNullableTypes {
     return _toList();
   }
 
-  static SomeNullableTypes? fromJni(bridge.SomeNullableTypes? jniClass) {
+  static JniAllNullableTypes? fromJni(bridge.JniAllNullableTypes? jniClass) {
     return jniClass == null
         ? null
-        : SomeNullableTypes(
-            aString: jniClass.getAString()?.toDartString(releaseOriginal: true),
-            anInt: jniClass.getAnInt()?.intValue(releaseOriginal: true),
-            aDouble: jniClass.getADouble()?.doubleValue(releaseOriginal: true),
-            aBool: jniClass.getABool()?.booleanValue(releaseOriginal: true),
-            aByteArray: (_PigeonJniCodec.readValue(jniClass.getAByteArray())
-                as Uint8List?),
-            a4ByteArray: (_PigeonJniCodec.readValue(jniClass.getA4ByteArray())
-                as Int32List?),
-            a8ByteArray: (_PigeonJniCodec.readValue(jniClass.getA8ByteArray())
-                as Int64List?),
-            aFloatArray: (_PigeonJniCodec.readValue(jniClass.getAFloatArray())
-                as Float64List?),
-            anObject: _PigeonJniCodec.readValue(jniClass.getAnObject()),
-            anEnum: SomeEnum.fromJni(jniClass.getAnEnum()),
-            someTypes: SomeTypes.fromJni(jniClass.getSomeTypes()),
+        : JniAllNullableTypes(
+            aNullableBool: jniClass
+                .getANullableBool()
+                ?.booleanValue(releaseOriginal: true),
+            aNullableInt:
+                jniClass.getANullableInt()?.longValue(releaseOriginal: true),
+            aNullableInt64:
+                jniClass.getANullableInt64()?.longValue(releaseOriginal: true),
+            aNullableDouble: jniClass
+                .getANullableDouble()
+                ?.doubleValue(releaseOriginal: true),
+            aNullableByteArray:
+                (_PigeonJniCodec.readValue(jniClass.getANullableByteArray())
+                    as Uint8List?),
+            aNullable4ByteArray:
+                (_PigeonJniCodec.readValue(jniClass.getANullable4ByteArray())
+                    as Int32List?),
+            aNullable8ByteArray:
+                (_PigeonJniCodec.readValue(jniClass.getANullable8ByteArray())
+                    as Int64List?),
+            aNullableFloatArray:
+                (_PigeonJniCodec.readValue(jniClass.getANullableFloatArray())
+                    as Float64List?),
+            aNullableEnum: JniAnEnum.fromJni(jniClass.getANullableEnum()),
+            anotherNullableEnum:
+                JniAnotherEnum.fromJni(jniClass.getAnotherNullableEnum()),
+            aNullableString: jniClass
+                .getANullableString()
+                ?.toDartString(releaseOriginal: true),
+            aNullableObject:
+                _PigeonJniCodec.readValue(jniClass.getANullableObject()),
+            allNullableTypes:
+                JniAllNullableTypes.fromJni(jniClass.getAllNullableTypes()),
             list: (_PigeonJniCodec.readValue(jniClass.getList())
                     as List<Object?>?)
                 ?.cast<Object?>(),
+            stringList: (_PigeonJniCodec.readValue(jniClass.getStringList())
+                    as List<Object?>?)
+                ?.cast<String?>(),
+            intList: (_PigeonJniCodec.readValue(jniClass.getIntList())
+                    as List<Object?>?)
+                ?.cast<int?>(),
+            doubleList: (_PigeonJniCodec.readValue(jniClass.getDoubleList())
+                    as List<Object?>?)
+                ?.cast<double?>(),
+            boolList: (_PigeonJniCodec.readValue(jniClass.getBoolList())
+                    as List<Object?>?)
+                ?.cast<bool?>(),
+            enumList: (_PigeonJniCodec.readValue(jniClass.getEnumList())
+                    as List<Object?>?)
+                ?.cast<JniAnEnum?>(),
+            objectList: (_PigeonJniCodec.readValue(jniClass.getObjectList())
+                    as List<Object?>?)
+                ?.cast<Object?>(),
+            listList: (_PigeonJniCodec.readValue(jniClass.getListList())
+                    as List<Object?>?)
+                ?.cast<List<Object?>?>(),
+            mapList: (_PigeonJniCodec.readValue(jniClass.getMapList())
+                    as List<Object?>?)
+                ?.cast<Map<Object?, Object?>?>(),
+            recursiveClassList:
+                (_PigeonJniCodec.readValue(jniClass.getRecursiveClassList())
+                        as List<Object?>?)
+                    ?.cast<JniAllNullableTypes?>(),
             map: (_PigeonJniCodec.readValue(jniClass.getMap())
                     as Map<Object?, Object?>?)
                 ?.cast<Object?, Object?>(),
+            stringMap: (_PigeonJniCodec.readValue(jniClass.getStringMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<String?, String?>(),
+            intMap: (_PigeonJniCodec.readValue(jniClass.getIntMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<int?, int?>(),
+            enumMap: (_PigeonJniCodec.readValue(jniClass.getEnumMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<JniAnEnum?, JniAnEnum?>(),
+            objectMap: (_PigeonJniCodec.readValue(jniClass.getObjectMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<Object?, Object?>(),
+            listMap: (_PigeonJniCodec.readValue(jniClass.getListMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<int?, List<Object?>?>(),
+            mapMap: (_PigeonJniCodec.readValue(jniClass.getMapMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<int?, Map<Object?, Object?>?>(),
+            recursiveClassMap:
+                (_PigeonJniCodec.readValue(jniClass.getRecursiveClassMap())
+                        as Map<Object?, Object?>?)
+                    ?.cast<int?, JniAllNullableTypes?>(),
           );
   }
 
-  static SomeNullableTypes decode(Object result) {
+  static JniAllNullableTypes decode(Object result) {
     result as List<Object?>;
-    return SomeNullableTypes(
-      aString: result[0] as String?,
-      anInt: result[1] as int?,
-      aDouble: result[2] as double?,
-      aBool: result[3] as bool?,
-      aByteArray: result[4] as Uint8List?,
-      a4ByteArray: result[5] as Int32List?,
-      a8ByteArray: result[6] as Int64List?,
-      aFloatArray: result[7] as Float64List?,
-      anObject: result[8],
-      anEnum: result[9] as SomeEnum?,
-      someTypes: result[10] as SomeTypes?,
-      list: result[11] as List<Object?>?,
-      map: result[12] as Map<Object?, Object?>?,
+    return JniAllNullableTypes(
+      aNullableBool: result[0] as bool?,
+      aNullableInt: result[1] as int?,
+      aNullableInt64: result[2] as int?,
+      aNullableDouble: result[3] as double?,
+      aNullableByteArray: result[4] as Uint8List?,
+      aNullable4ByteArray: result[5] as Int32List?,
+      aNullable8ByteArray: result[6] as Int64List?,
+      aNullableFloatArray: result[7] as Float64List?,
+      aNullableEnum: result[8] as JniAnEnum?,
+      anotherNullableEnum: result[9] as JniAnotherEnum?,
+      aNullableString: result[10] as String?,
+      aNullableObject: result[11],
+      allNullableTypes: result[12] as JniAllNullableTypes?,
+      list: result[13] as List<Object?>?,
+      stringList: (result[14] as List<Object?>?)?.cast<String?>(),
+      intList: (result[15] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[16] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[17] as List<Object?>?)?.cast<bool?>(),
+      enumList: (result[18] as List<Object?>?)?.cast<JniAnEnum?>(),
+      objectList: (result[19] as List<Object?>?)?.cast<Object?>(),
+      listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
+      mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
+      recursiveClassList:
+          (result[22] as List<Object?>?)?.cast<JniAllNullableTypes?>(),
+      map: result[23] as Map<Object?, Object?>?,
+      stringMap:
+          (result[24] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+      enumMap: (result[26] as Map<Object?, Object?>?)
+          ?.cast<JniAnEnum?, JniAnEnum?>(),
+      objectMap:
+          (result[27] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
+      listMap:
+          (result[28] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[29] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
+      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
+          ?.cast<int?, JniAllNullableTypes?>(),
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! SomeNullableTypes || other.runtimeType != runtimeType) {
+    if (other is! JniAllNullableTypes || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
       return true;
     }
-    return aString == other.aString &&
-        anInt == other.anInt &&
-        aDouble == other.aDouble &&
-        aBool == other.aBool &&
-        _deepEquals(aByteArray, other.aByteArray) &&
-        _deepEquals(a4ByteArray, other.a4ByteArray) &&
-        _deepEquals(a8ByteArray, other.a8ByteArray) &&
-        _deepEquals(aFloatArray, other.aFloatArray) &&
-        anObject == other.anObject &&
-        anEnum == other.anEnum &&
-        someTypes == other.someTypes &&
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        allNullableTypes == other.allNullableTypes &&
         _deepEquals(list, other.list) &&
-        _deepEquals(map, other.map);
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(recursiveClassList, other.recursiveClassList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap) &&
+        _deepEquals(recursiveClassMap, other.recursiveClassMap);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// The primary purpose for this class is to ensure coverage of Swift structs
+/// with nullable items, as the primary [JniAllNullableTypes] class is being used to
+/// test Swift classes.
+class JniAllNullableTypesWithoutRecursion {
+  JniAllNullableTypesWithoutRecursion({
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableEnum,
+    this.anotherNullableEnum,
+    this.aNullableString,
+    this.aNullableObject,
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.enumList,
+    this.objectList,
+    this.listList,
+    this.mapList,
+    this.map,
+    this.stringMap,
+    this.intMap,
+    this.enumMap,
+    this.objectMap,
+    this.listMap,
+    this.mapMap,
+  });
+
+  bool? aNullableBool;
+
+  int? aNullableInt;
+
+  int? aNullableInt64;
+
+  double? aNullableDouble;
+
+  Uint8List? aNullableByteArray;
+
+  Int32List? aNullable4ByteArray;
+
+  Int64List? aNullable8ByteArray;
+
+  Float64List? aNullableFloatArray;
+
+  JniAnEnum? aNullableEnum;
+
+  JniAnotherEnum? anotherNullableEnum;
+
+  String? aNullableString;
+
+  Object? aNullableObject;
+
+  List<Object?>? list;
+
+  List<String?>? stringList;
+
+  List<int?>? intList;
+
+  List<double?>? doubleList;
+
+  List<bool?>? boolList;
+
+  List<JniAnEnum?>? enumList;
+
+  List<Object?>? objectList;
+
+  List<List<Object?>?>? listList;
+
+  List<Map<Object?, Object?>?>? mapList;
+
+  Map<Object?, Object?>? map;
+
+  Map<String?, String?>? stringMap;
+
+  Map<int?, int?>? intMap;
+
+  Map<JniAnEnum?, JniAnEnum?>? enumMap;
+
+  Map<Object?, Object?>? objectMap;
+
+  Map<int?, List<Object?>?>? listMap;
+
+  Map<int?, Map<Object?, Object?>?>? mapMap;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      aNullableBool,
+      aNullableInt,
+      aNullableInt64,
+      aNullableDouble,
+      aNullableByteArray,
+      aNullable4ByteArray,
+      aNullable8ByteArray,
+      aNullableFloatArray,
+      aNullableEnum,
+      anotherNullableEnum,
+      aNullableString,
+      aNullableObject,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      enumList,
+      objectList,
+      listList,
+      mapList,
+      map,
+      stringMap,
+      intMap,
+      enumMap,
+      objectMap,
+      listMap,
+      mapMap,
+    ];
+  }
+
+  bridge.JniAllNullableTypesWithoutRecursion toJni() {
+    return bridge.JniAllNullableTypesWithoutRecursion(
+      _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
+      _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
+      _PigeonJniCodec.writeValue<JLong?>(aNullableInt64),
+      _PigeonJniCodec.writeValue<JDouble?>(aNullableDouble),
+      _PigeonJniCodec.writeValue<JByteArray?>(aNullableByteArray),
+      _PigeonJniCodec.writeValue<JIntArray?>(aNullable4ByteArray),
+      _PigeonJniCodec.writeValue<JLongArray?>(aNullable8ByteArray),
+      _PigeonJniCodec.writeValue<JDoubleArray?>(aNullableFloatArray),
+      aNullableEnum == null ? null : aNullableEnum!.toJni(),
+      anotherNullableEnum == null ? null : anotherNullableEnum!.toJni(),
+      _PigeonJniCodec.writeValue<JString?>(aNullableString),
+      _PigeonJniCodec.writeValue<JObject?>(aNullableObject),
+      _PigeonJniCodec.writeValue<JList<JObject?>?>(list),
+      _PigeonJniCodec.writeValue<JList<JString?>?>(stringList),
+      _PigeonJniCodec.writeValue<JList<JLong?>?>(intList),
+      _PigeonJniCodec.writeValue<JList<JDouble?>?>(doubleList),
+      _PigeonJniCodec.writeValue<JList<JBoolean?>?>(boolList),
+      _PigeonJniCodec.writeValue<JList<bridge.JniAnEnum?>?>(enumList),
+      _PigeonJniCodec.writeValue<JList<JObject?>?>(objectList),
+      _PigeonJniCodec.writeValue<JList<JList<JObject?>?>?>(listList),
+      _PigeonJniCodec.writeValue<JList<JMap<JObject?, JObject?>?>?>(mapList),
+      _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map),
+      _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap),
+      _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap),
+      _PigeonJniCodec.writeValue<JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>?>(
+          enumMap),
+      _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(objectMap),
+      _PigeonJniCodec.writeValue<JMap<JLong?, JList<JObject?>?>?>(listMap),
+      _PigeonJniCodec.writeValue<JMap<JLong?, JMap<JObject?, JObject?>?>?>(
+          mapMap),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static JniAllNullableTypesWithoutRecursion? fromJni(
+      bridge.JniAllNullableTypesWithoutRecursion? jniClass) {
+    return jniClass == null
+        ? null
+        : JniAllNullableTypesWithoutRecursion(
+            aNullableBool: jniClass
+                .getANullableBool()
+                ?.booleanValue(releaseOriginal: true),
+            aNullableInt:
+                jniClass.getANullableInt()?.longValue(releaseOriginal: true),
+            aNullableInt64:
+                jniClass.getANullableInt64()?.longValue(releaseOriginal: true),
+            aNullableDouble: jniClass
+                .getANullableDouble()
+                ?.doubleValue(releaseOriginal: true),
+            aNullableByteArray:
+                (_PigeonJniCodec.readValue(jniClass.getANullableByteArray())
+                    as Uint8List?),
+            aNullable4ByteArray:
+                (_PigeonJniCodec.readValue(jniClass.getANullable4ByteArray())
+                    as Int32List?),
+            aNullable8ByteArray:
+                (_PigeonJniCodec.readValue(jniClass.getANullable8ByteArray())
+                    as Int64List?),
+            aNullableFloatArray:
+                (_PigeonJniCodec.readValue(jniClass.getANullableFloatArray())
+                    as Float64List?),
+            aNullableEnum: JniAnEnum.fromJni(jniClass.getANullableEnum()),
+            anotherNullableEnum:
+                JniAnotherEnum.fromJni(jniClass.getAnotherNullableEnum()),
+            aNullableString: jniClass
+                .getANullableString()
+                ?.toDartString(releaseOriginal: true),
+            aNullableObject:
+                _PigeonJniCodec.readValue(jniClass.getANullableObject()),
+            list: (_PigeonJniCodec.readValue(jniClass.getList())
+                    as List<Object?>?)
+                ?.cast<Object?>(),
+            stringList: (_PigeonJniCodec.readValue(jniClass.getStringList())
+                    as List<Object?>?)
+                ?.cast<String?>(),
+            intList: (_PigeonJniCodec.readValue(jniClass.getIntList())
+                    as List<Object?>?)
+                ?.cast<int?>(),
+            doubleList: (_PigeonJniCodec.readValue(jniClass.getDoubleList())
+                    as List<Object?>?)
+                ?.cast<double?>(),
+            boolList: (_PigeonJniCodec.readValue(jniClass.getBoolList())
+                    as List<Object?>?)
+                ?.cast<bool?>(),
+            enumList: (_PigeonJniCodec.readValue(jniClass.getEnumList())
+                    as List<Object?>?)
+                ?.cast<JniAnEnum?>(),
+            objectList: (_PigeonJniCodec.readValue(jniClass.getObjectList())
+                    as List<Object?>?)
+                ?.cast<Object?>(),
+            listList: (_PigeonJniCodec.readValue(jniClass.getListList())
+                    as List<Object?>?)
+                ?.cast<List<Object?>?>(),
+            mapList: (_PigeonJniCodec.readValue(jniClass.getMapList())
+                    as List<Object?>?)
+                ?.cast<Map<Object?, Object?>?>(),
+            map: (_PigeonJniCodec.readValue(jniClass.getMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<Object?, Object?>(),
+            stringMap: (_PigeonJniCodec.readValue(jniClass.getStringMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<String?, String?>(),
+            intMap: (_PigeonJniCodec.readValue(jniClass.getIntMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<int?, int?>(),
+            enumMap: (_PigeonJniCodec.readValue(jniClass.getEnumMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<JniAnEnum?, JniAnEnum?>(),
+            objectMap: (_PigeonJniCodec.readValue(jniClass.getObjectMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<Object?, Object?>(),
+            listMap: (_PigeonJniCodec.readValue(jniClass.getListMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<int?, List<Object?>?>(),
+            mapMap: (_PigeonJniCodec.readValue(jniClass.getMapMap())
+                    as Map<Object?, Object?>?)
+                ?.cast<int?, Map<Object?, Object?>?>(),
+          );
+  }
+
+  static JniAllNullableTypesWithoutRecursion decode(Object result) {
+    result as List<Object?>;
+    return JniAllNullableTypesWithoutRecursion(
+      aNullableBool: result[0] as bool?,
+      aNullableInt: result[1] as int?,
+      aNullableInt64: result[2] as int?,
+      aNullableDouble: result[3] as double?,
+      aNullableByteArray: result[4] as Uint8List?,
+      aNullable4ByteArray: result[5] as Int32List?,
+      aNullable8ByteArray: result[6] as Int64List?,
+      aNullableFloatArray: result[7] as Float64List?,
+      aNullableEnum: result[8] as JniAnEnum?,
+      anotherNullableEnum: result[9] as JniAnotherEnum?,
+      aNullableString: result[10] as String?,
+      aNullableObject: result[11],
+      list: result[12] as List<Object?>?,
+      stringList: (result[13] as List<Object?>?)?.cast<String?>(),
+      intList: (result[14] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[15] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[16] as List<Object?>?)?.cast<bool?>(),
+      enumList: (result[17] as List<Object?>?)?.cast<JniAnEnum?>(),
+      objectList: (result[18] as List<Object?>?)?.cast<Object?>(),
+      listList: (result[19] as List<Object?>?)?.cast<List<Object?>?>(),
+      mapList: (result[20] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
+      map: result[21] as Map<Object?, Object?>?,
+      stringMap:
+          (result[22] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      intMap: (result[23] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+      enumMap: (result[24] as Map<Object?, Object?>?)
+          ?.cast<JniAnEnum?, JniAnEnum?>(),
+      objectMap:
+          (result[25] as Map<Object?, Object?>?)?.cast<Object?, Object?>(),
+      listMap:
+          (result[26] as Map<Object?, Object?>?)?.cast<int?, List<Object?>?>(),
+      mapMap: (result[27] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! JniAllNullableTypesWithoutRecursion ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// A class for testing nested class handling.
+///
+/// This is needed to test nested nullable and non-nullable classes,
+/// `JniAllNullableTypes` is non-nullable here as it is easier to instantiate
+/// than `JniAllTypes` when testing doesn't require both (ie. testing null classes).
+class JniAllClassesWrapper {
+  JniAllClassesWrapper({
+    required this.allNullableTypes,
+    this.allNullableTypesWithoutRecursion,
+    this.allTypes,
+    required this.classList,
+    this.nullableClassList,
+    required this.classMap,
+    this.nullableClassMap,
+  });
+
+  JniAllNullableTypes allNullableTypes;
+
+  JniAllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
+
+  JniAllTypes? allTypes;
+
+  List<JniAllTypes?> classList;
+
+  List<JniAllNullableTypesWithoutRecursion?>? nullableClassList;
+
+  Map<int?, JniAllTypes?> classMap;
+
+  Map<int?, JniAllNullableTypesWithoutRecursion?>? nullableClassMap;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      allNullableTypes,
+      allNullableTypesWithoutRecursion,
+      allTypes,
+      classList,
+      nullableClassList,
+      classMap,
+      nullableClassMap,
+    ];
+  }
+
+  bridge.JniAllClassesWrapper toJni() {
+    return bridge.JniAllClassesWrapper(
+      allNullableTypes.toJni(),
+      allNullableTypesWithoutRecursion == null
+          ? null
+          : allNullableTypesWithoutRecursion!.toJni(),
+      allTypes == null ? null : allTypes!.toJni(),
+      _PigeonJniCodec.writeValue<JList<bridge.JniAllTypes?>>(classList),
+      _PigeonJniCodec.writeValue<
+              JList<bridge.JniAllNullableTypesWithoutRecursion?>?>(
+          nullableClassList),
+      _PigeonJniCodec.writeValue<JMap<JLong?, bridge.JniAllTypes?>>(classMap),
+      _PigeonJniCodec.writeValue<
+              JMap<JLong?, bridge.JniAllNullableTypesWithoutRecursion?>?>(
+          nullableClassMap),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static JniAllClassesWrapper? fromJni(bridge.JniAllClassesWrapper? jniClass) {
+    return jniClass == null
+        ? null
+        : JniAllClassesWrapper(
+            allNullableTypes:
+                JniAllNullableTypes.fromJni(jniClass.getAllNullableTypes())!,
+            allNullableTypesWithoutRecursion:
+                JniAllNullableTypesWithoutRecursion.fromJni(
+                    jniClass.getAllNullableTypesWithoutRecursion()),
+            allTypes: JniAllTypes.fromJni(jniClass.getAllTypes()),
+            classList: (_PigeonJniCodec.readValue(jniClass.getClassList())!
+                    as List<Object?>)
+                .cast<JniAllTypes?>(),
+            nullableClassList:
+                (_PigeonJniCodec.readValue(jniClass.getNullableClassList())
+                        as List<Object?>?)
+                    ?.cast<JniAllNullableTypesWithoutRecursion?>(),
+            classMap: (_PigeonJniCodec.readValue(jniClass.getClassMap())!
+                    as Map<Object?, Object?>)
+                .cast<int?, JniAllTypes?>(),
+            nullableClassMap:
+                (_PigeonJniCodec.readValue(jniClass.getNullableClassMap())
+                        as Map<Object?, Object?>?)
+                    ?.cast<int?, JniAllNullableTypesWithoutRecursion?>(),
+          );
+  }
+
+  static JniAllClassesWrapper decode(Object result) {
+    result as List<Object?>;
+    return JniAllClassesWrapper(
+      allNullableTypes: result[0]! as JniAllNullableTypes,
+      allNullableTypesWithoutRecursion:
+          result[1] as JniAllNullableTypesWithoutRecursion?,
+      allTypes: result[2] as JniAllTypes?,
+      classList: (result[3] as List<Object?>?)!.cast<JniAllTypes?>(),
+      nullableClassList: (result[4] as List<Object?>?)
+          ?.cast<JniAllNullableTypesWithoutRecursion?>(),
+      classMap:
+          (result[5] as Map<Object?, Object?>?)!.cast<int?, JniAllTypes?>(),
+      nullableClassMap: (result[6] as Map<Object?, Object?>?)
+          ?.cast<int?, JniAllNullableTypesWithoutRecursion?>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! JniAllClassesWrapper || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return allNullableTypes == other.allNullableTypes &&
+        allNullableTypesWithoutRecursion ==
+            other.allNullableTypesWithoutRecursion &&
+        allTypes == other.allTypes &&
+        _deepEquals(classList, other.classList) &&
+        _deepEquals(nullableClassList, other.nullableClassList) &&
+        _deepEquals(classMap, other.classMap) &&
+        _deepEquals(nullableClassMap, other.nullableClassMap);
   }
 
   @override
@@ -799,14 +1668,17 @@ class SomeNullableTypes {
 const String defaultInstanceName =
     'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
-class JniMessageApi {
-  JniMessageApi._withRegistrar(bridge.JniMessageApiRegistrar api) : _api = api;
+class JniHostIntegrationCoreApi {
+  JniHostIntegrationCoreApi._withRegistrar(
+      bridge.JniHostIntegrationCoreApiRegistrar api)
+      : _api = api;
 
-  /// Returns instance of JniMessageApi with specified [channelName] if one has been registered.
-  static JniMessageApi? getInstance(
+  /// Returns instance of JniHostIntegrationCoreApi with specified [channelName] if one has been registered.
+  static JniHostIntegrationCoreApi? getInstance(
       {String channelName = defaultInstanceName}) {
-    final bridge.JniMessageApiRegistrar? link = bridge.JniMessageApiRegistrar()
-        .getInstance(JString.fromString(channelName));
+    final bridge.JniHostIntegrationCoreApiRegistrar? link =
+        bridge.JniHostIntegrationCoreApiRegistrar()
+            .getInstance(JString.fromString(channelName));
     if (link == null) {
       String nameString = 'named $channelName';
       if (channelName == defaultInstanceName) {
@@ -815,82 +1687,1832 @@ class JniMessageApi {
       final String error = 'No instance $nameString has been registered.';
       throw ArgumentError(error);
     }
-    final JniMessageApi res = JniMessageApi._withRegistrar(link);
+    final JniHostIntegrationCoreApi res =
+        JniHostIntegrationCoreApi._withRegistrar(link);
     return res;
   }
 
-  late final bridge.JniMessageApiRegistrar _api;
+  late final bridge.JniHostIntegrationCoreApiRegistrar _api;
 
-  void doNothing() {
-    return _api.doNothing();
+  void noop() {
+    try {
+      return _api.noop();
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 
-  String echoString(String request) {
-    final JString res =
-        _api.echoString(_PigeonJniCodec.writeValue<JString>(request));
-    final String dartTypeRes = res.toDartString(releaseOriginal: true);
-    return dartTypeRes;
+  JniAllTypes echoAllTypes(JniAllTypes everything) {
+    try {
+      final bridge.JniAllTypes res = _api.echoAllTypes(everything.toJni());
+      final JniAllTypes dartTypeRes = JniAllTypes.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 
-  int echoInt(int request) {
-    return _api.echoInt(request);
+  Object? throwError() {
+    try {
+      final JObject? res = _api.throwError();
+      final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 
-  double echoDouble(double request) {
-    return _api.echoDouble(request);
+  void throwErrorFromVoid() {
+    try {
+      return _api.throwErrorFromVoid();
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 
-  bool echoBool(bool request) {
-    return _api.echoBool(request);
+  Object? throwFlutterError() {
+    try {
+      final JObject? res = _api.throwFlutterError();
+      final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 
-  Object echoObj(Object request) {
-    final JObject res =
-        _api.echoObj(_PigeonJniCodec.writeValue<JObject>(request));
-    final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
-    return dartTypeRes;
+  int echoInt(int anInt) {
+    try {
+      return _api.echoInt(anInt);
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 
-  SomeTypes sendSomeTypes(SomeTypes someTypes) {
-    final bridge.SomeTypes res = _api.sendSomeTypes(someTypes.toJni());
-    final SomeTypes dartTypeRes = SomeTypes.fromJni(res)!;
-    return dartTypeRes;
+  double echoDouble(double aDouble) {
+    try {
+      return _api.echoDouble(aDouble);
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 
-  SomeEnum sendSomeEnum(SomeEnum anEnum) {
-    final bridge.SomeEnum res = _api.sendSomeEnum(anEnum.toJni());
-    final SomeEnum dartTypeRes = SomeEnum.fromJni(res)!;
-    return dartTypeRes;
+  bool echoBool(bool aBool) {
+    try {
+      return _api.echoBool(aBool);
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  String echoString(String aString) {
+    try {
+      final JString res =
+          _api.echoString(_PigeonJniCodec.writeValue<JString>(aString));
+      final String dartTypeRes = res.toDartString(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Uint8List echoUint8List(Uint8List aUint8List) {
+    try {
+      final JByteArray res = _api
+          .echoUint8List(_PigeonJniCodec.writeValue<JByteArray>(aUint8List));
+      final Uint8List dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Uint8List);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Int32List echoInt32List(Int32List aInt32List) {
+    try {
+      final JIntArray res =
+          _api.echoInt32List(_PigeonJniCodec.writeValue<JIntArray>(aInt32List));
+      final Int32List dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Int32List);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Int64List echoInt64List(Int64List aInt64List) {
+    try {
+      final JLongArray res = _api
+          .echoInt64List(_PigeonJniCodec.writeValue<JLongArray>(aInt64List));
+      final Int64List dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Int64List);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Float64List echoFloat64List(Float64List aFloat64List) {
+    try {
+      final JDoubleArray res = _api.echoFloat64List(
+          _PigeonJniCodec.writeValue<JDoubleArray>(aFloat64List));
+      final Float64List dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Float64List);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Object echoObject(Object anObject) {
+    try {
+      final JObject res =
+          _api.echoObject(_PigeonJniCodec.writeValue<JObject>(anObject));
+      final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 
   List<Object?> echoList(List<Object?> list) {
-    final JList<JObject?> res =
-        _api.echoList(_PigeonJniCodec.writeValue<JList<JObject?>>(list));
-    final List<Object?> dartTypeRes =
-        (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<Object?>();
-    return dartTypeRes;
+    try {
+      final JList<JObject?> res =
+          _api.echoList(_PigeonJniCodec.writeValue<JList<JObject?>>(list));
+      final List<Object?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<Object?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  List<JniAnEnum?> echoEnumList(List<JniAnEnum?> enumList) {
+    try {
+      final JList<bridge.JniAnEnum?> res = _api.echoEnumList(
+          _PigeonJniCodec.writeValue<JList<bridge.JniAnEnum?>>(enumList));
+      final List<JniAnEnum?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<JniAnEnum?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  List<JniAllNullableTypes?> echoClassList(
+      List<JniAllNullableTypes?> classList) {
+    try {
+      final JList<bridge.JniAllNullableTypes?> res = _api.echoClassList(
+          _PigeonJniCodec.writeValue<JList<bridge.JniAllNullableTypes?>>(
+              classList));
+      final List<JniAllNullableTypes?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as List<Object?>)
+              .cast<JniAllNullableTypes?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  List<JniAnEnum> echoNonNullEnumList(List<JniAnEnum> enumList) {
+    try {
+      final JList<bridge.JniAnEnum> res = _api.echoNonNullEnumList(
+          _PigeonJniCodec.writeValue<JList<bridge.JniAnEnum>>(enumList));
+      final List<JniAnEnum> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<JniAnEnum>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  List<JniAllNullableTypes> echoNonNullClassList(
+      List<JniAllNullableTypes> classList) {
+    try {
+      final JList<bridge.JniAllNullableTypes> res = _api.echoNonNullClassList(
+          _PigeonJniCodec.writeValue<JList<bridge.JniAllNullableTypes>>(
+              classList));
+      final List<JniAllNullableTypes> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as List<Object?>)
+              .cast<JniAllNullableTypes>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 
   Map<Object?, Object?> echoMap(Map<Object?, Object?> map) {
-    final JMap<JObject, JObject?> res =
-        _api.echoMap(_PigeonJniCodec.writeValue<JMap<JObject, JObject?>>(map));
-    final Map<Object?, Object?> dartTypeRes =
-        (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
-            .cast<Object?, Object?>();
-    return dartTypeRes;
+    try {
+      final JMap<JObject?, JObject?> res = _api
+          .echoMap(_PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(map));
+      final Map<Object?, Object?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<Object?, Object?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<String?, String?> echoStringMap(Map<String?, String?> stringMap) {
+    try {
+      final JMap<JString?, JString?> res = _api.echoStringMap(
+          _PigeonJniCodec.writeValue<JMap<JString?, JString?>>(stringMap));
+      final Map<String?, String?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<String?, String?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<int?, int?> echoIntMap(Map<int?, int?> intMap) {
+    try {
+      final JMap<JLong?, JLong?> res = _api
+          .echoIntMap(_PigeonJniCodec.writeValue<JMap<JLong?, JLong?>>(intMap));
+      final Map<int?, int?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<int?, int?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<JniAnEnum?, JniAnEnum?> echoEnumMap(Map<JniAnEnum?, JniAnEnum?> enumMap) {
+    try {
+      final JMap<bridge.JniAnEnum?, bridge.JniAnEnum?> res = _api.echoEnumMap(
+          _PigeonJniCodec.writeValue<
+              JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>>(enumMap));
+      final Map<JniAnEnum?, JniAnEnum?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<JniAnEnum?, JniAnEnum?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<int?, JniAllNullableTypes?> echoClassMap(
+      Map<int?, JniAllNullableTypes?> classMap) {
+    try {
+      final JMap<JLong?, bridge.JniAllNullableTypes?> res = _api.echoClassMap(
+          _PigeonJniCodec.writeValue<JMap<JLong?, bridge.JniAllNullableTypes?>>(
+              classMap));
+      final Map<int?, JniAllNullableTypes?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<int?, JniAllNullableTypes?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<String, String> echoNonNullStringMap(Map<String, String> stringMap) {
+    try {
+      final JMap<JString, JString> res = _api.echoNonNullStringMap(
+          _PigeonJniCodec.writeValue<JMap<JString, JString>>(stringMap));
+      final Map<String, String> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<String, String>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<int, int> echoNonNullIntMap(Map<int, int> intMap) {
+    try {
+      final JMap<JLong, JLong> res = _api.echoNonNullIntMap(
+          _PigeonJniCodec.writeValue<JMap<JLong, JLong>>(intMap));
+      final Map<int, int> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<int, int>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<JniAnEnum, JniAnEnum> echoNonNullEnumMap(
+      Map<JniAnEnum, JniAnEnum> enumMap) {
+    try {
+      final JMap<bridge.JniAnEnum, bridge.JniAnEnum> res =
+          _api.echoNonNullEnumMap(_PigeonJniCodec.writeValue<
+              JMap<bridge.JniAnEnum, bridge.JniAnEnum>>(enumMap));
+      final Map<JniAnEnum, JniAnEnum> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<JniAnEnum, JniAnEnum>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<int, JniAllNullableTypes> echoNonNullClassMap(
+      Map<int, JniAllNullableTypes> classMap) {
+    try {
+      final JMap<JLong, bridge.JniAllNullableTypes> res =
+          _api.echoNonNullClassMap(_PigeonJniCodec.writeValue<
+              JMap<JLong, bridge.JniAllNullableTypes>>(classMap));
+      final Map<int, JniAllNullableTypes> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<int, JniAllNullableTypes>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAllClassesWrapper echoClassWrapper(JniAllClassesWrapper wrapper) {
+    try {
+      final bridge.JniAllClassesWrapper res =
+          _api.echoClassWrapper(wrapper.toJni());
+      final JniAllClassesWrapper dartTypeRes =
+          JniAllClassesWrapper.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAnEnum echoEnum(JniAnEnum anEnum) {
+    try {
+      final bridge.JniAnEnum res = _api.echoEnum(anEnum.toJni());
+      final JniAnEnum dartTypeRes = JniAnEnum.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAnotherEnum echoAnotherEnum(JniAnotherEnum anotherEnum) {
+    try {
+      final bridge.JniAnotherEnum res =
+          _api.echoAnotherEnum(anotherEnum.toJni());
+      final JniAnotherEnum dartTypeRes = JniAnotherEnum.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  String echoNamedDefaultString({String aString = 'default'}) {
+    try {
+      final JString res = _api
+          .echoNamedDefaultString(_PigeonJniCodec.writeValue<JString>(aString));
+      final String dartTypeRes = res.toDartString(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  double echoOptionalDefaultDouble([double aDouble = 3.14]) {
+    try {
+      return _api.echoOptionalDefaultDouble(aDouble);
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  int echoRequiredInt({required int anInt}) {
+    try {
+      return _api.echoRequiredInt(anInt);
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAllNullableTypes? echoAllNullableTypes(JniAllNullableTypes? everything) {
+    try {
+      final bridge.JniAllNullableTypes? res = _api
+          .echoAllNullableTypes(everything == null ? null : everything.toJni());
+      final JniAllNullableTypes? dartTypeRes = JniAllNullableTypes.fromJni(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
+      JniAllNullableTypesWithoutRecursion? everything) {
+    try {
+      final bridge.JniAllNullableTypesWithoutRecursion? res =
+          _api.echoAllNullableTypesWithoutRecursion(
+              everything == null ? null : everything.toJni());
+      final JniAllNullableTypesWithoutRecursion? dartTypeRes =
+          JniAllNullableTypesWithoutRecursion.fromJni(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  String? extractNestedNullableString(JniAllClassesWrapper wrapper) {
+    try {
+      final JString? res = _api.extractNestedNullableString(wrapper.toJni());
+      final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAllClassesWrapper createNestedNullableString(String? nullableString) {
+    try {
+      final bridge.JniAllClassesWrapper res = _api.createNestedNullableString(
+          _PigeonJniCodec.writeValue<JString?>(nullableString));
+      final JniAllClassesWrapper dartTypeRes =
+          JniAllClassesWrapper.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAllNullableTypes sendMultipleNullableTypes(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString) {
+    try {
+      final bridge.JniAllNullableTypes res = _api.sendMultipleNullableTypes(
+          _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
+          _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
+          _PigeonJniCodec.writeValue<JString?>(aNullableString));
+      final JniAllNullableTypes dartTypeRes = JniAllNullableTypes.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+      bool? aNullableBool, int? aNullableInt, String? aNullableString) {
+    try {
+      final bridge.JniAllNullableTypesWithoutRecursion res =
+          _api.sendMultipleNullableTypesWithoutRecursion(
+              _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool),
+              _PigeonJniCodec.writeValue<JLong?>(aNullableInt),
+              _PigeonJniCodec.writeValue<JString?>(aNullableString));
+      final JniAllNullableTypesWithoutRecursion dartTypeRes =
+          JniAllNullableTypesWithoutRecursion.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  int? echoNullableInt(int? aNullableInt) {
+    try {
+      final JLong? res = _api
+          .echoNullableInt(_PigeonJniCodec.writeValue<JLong?>(aNullableInt));
+      final int? dartTypeRes = res?.longValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  double? echoNullableDouble(double? aNullableDouble) {
+    try {
+      final JDouble? res = _api.echoNullableDouble(
+          _PigeonJniCodec.writeValue<JDouble?>(aNullableDouble));
+      final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  bool? echoNullableBool(bool? aNullableBool) {
+    try {
+      final JBoolean? res = _api.echoNullableBool(
+          _PigeonJniCodec.writeValue<JBoolean?>(aNullableBool));
+      final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  String? echoNullableString(String? aNullableString) {
+    try {
+      final JString? res = _api.echoNullableString(
+          _PigeonJniCodec.writeValue<JString?>(aNullableString));
+      final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Uint8List? echoNullableUint8List(Uint8List? aNullableUint8List) {
+    try {
+      final JByteArray? res = _api.echoNullableUint8List(
+          _PigeonJniCodec.writeValue<JByteArray?>(aNullableUint8List));
+      final Uint8List? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Uint8List?);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Int32List? echoNullableInt32List(Int32List? aNullableInt32List) {
+    try {
+      final JIntArray? res = _api.echoNullableInt32List(
+          _PigeonJniCodec.writeValue<JIntArray?>(aNullableInt32List));
+      final Int32List? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Int32List?);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Int64List? echoNullableInt64List(Int64List? aNullableInt64List) {
+    try {
+      final JLongArray? res = _api.echoNullableInt64List(
+          _PigeonJniCodec.writeValue<JLongArray?>(aNullableInt64List));
+      final Int64List? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Int64List?);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Float64List? echoNullableFloat64List(Float64List? aNullableFloat64List) {
+    try {
+      final JDoubleArray? res = _api.echoNullableFloat64List(
+          _PigeonJniCodec.writeValue<JDoubleArray?>(aNullableFloat64List));
+      final Float64List? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Float64List?);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Object? echoNullableObject(Object? aNullableObject) {
+    try {
+      final JObject? res = _api.echoNullableObject(
+          _PigeonJniCodec.writeValue<JObject?>(aNullableObject));
+      final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  List<Object?>? echoNullableList(List<Object?>? aNullableList) {
+    try {
+      final JList<JObject?>? res = _api.echoNullableList(
+          _PigeonJniCodec.writeValue<JList<JObject?>?>(aNullableList));
+      final List<Object?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as List<Object?>?)?.cast<Object?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  List<JniAnEnum?>? echoNullableEnumList(List<JniAnEnum?>? enumList) {
+    try {
+      final JList<bridge.JniAnEnum?>? res = _api.echoNullableEnumList(
+          _PigeonJniCodec.writeValue<JList<bridge.JniAnEnum?>?>(enumList));
+      final List<JniAnEnum?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as List<Object?>?)
+              ?.cast<JniAnEnum?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  List<JniAllNullableTypes?>? echoNullableClassList(
+      List<JniAllNullableTypes?>? classList) {
+    try {
+      final JList<bridge.JniAllNullableTypes?>? res =
+          _api.echoNullableClassList(
+              _PigeonJniCodec.writeValue<JList<bridge.JniAllNullableTypes?>?>(
+                  classList));
+      final List<JniAllNullableTypes?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as List<Object?>?)
+              ?.cast<JniAllNullableTypes?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  List<JniAnEnum>? echoNullableNonNullEnumList(List<JniAnEnum>? enumList) {
+    try {
+      final JList<bridge.JniAnEnum>? res = _api.echoNullableNonNullEnumList(
+          _PigeonJniCodec.writeValue<JList<bridge.JniAnEnum>?>(enumList));
+      final List<JniAnEnum>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as List<Object?>?)?.cast<JniAnEnum>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  List<JniAllNullableTypes>? echoNullableNonNullClassList(
+      List<JniAllNullableTypes>? classList) {
+    try {
+      final JList<bridge.JniAllNullableTypes>? res =
+          _api.echoNullableNonNullClassList(
+              _PigeonJniCodec.writeValue<JList<bridge.JniAllNullableTypes>?>(
+                  classList));
+      final List<JniAllNullableTypes>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as List<Object?>?)
+              ?.cast<JniAllNullableTypes>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map) {
+    try {
+      final JMap<JObject?, JObject?>? res = _api.echoNullableMap(
+          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map));
+      final Map<Object?, Object?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<Object?, Object?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<String?, String?>? echoNullableStringMap(
+      Map<String?, String?>? stringMap) {
+    try {
+      final JMap<JString?, JString?>? res = _api.echoNullableStringMap(
+          _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap));
+      final Map<String?, String?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<String?, String?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap) {
+    try {
+      final JMap<JLong?, JLong?>? res = _api.echoNullableIntMap(
+          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap));
+      final Map<int?, int?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<int?, int?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<JniAnEnum?, JniAnEnum?>? echoNullableEnumMap(
+      Map<JniAnEnum?, JniAnEnum?>? enumMap) {
+    try {
+      final JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>? res =
+          _api.echoNullableEnumMap(_PigeonJniCodec.writeValue<
+              JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>?>(enumMap));
+      final Map<JniAnEnum?, JniAnEnum?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<JniAnEnum?, JniAnEnum?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<int?, JniAllNullableTypes?>? echoNullableClassMap(
+      Map<int?, JniAllNullableTypes?>? classMap) {
+    try {
+      final JMap<JLong?, bridge.JniAllNullableTypes?>? res =
+          _api.echoNullableClassMap(_PigeonJniCodec.writeValue<
+              JMap<JLong?, bridge.JniAllNullableTypes?>?>(classMap));
+      final Map<int?, JniAllNullableTypes?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<int?, JniAllNullableTypes?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<String, String>? echoNullableNonNullStringMap(
+      Map<String, String>? stringMap) {
+    try {
+      final JMap<JString, JString>? res = _api.echoNullableNonNullStringMap(
+          _PigeonJniCodec.writeValue<JMap<JString, JString>?>(stringMap));
+      final Map<String, String>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<String, String>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<int, int>? echoNullableNonNullIntMap(Map<int, int>? intMap) {
+    try {
+      final JMap<JLong, JLong>? res = _api.echoNullableNonNullIntMap(
+          _PigeonJniCodec.writeValue<JMap<JLong, JLong>?>(intMap));
+      final Map<int, int>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<int, int>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<JniAnEnum, JniAnEnum>? echoNullableNonNullEnumMap(
+      Map<JniAnEnum, JniAnEnum>? enumMap) {
+    try {
+      final JMap<bridge.JniAnEnum, bridge.JniAnEnum>? res =
+          _api.echoNullableNonNullEnumMap(_PigeonJniCodec.writeValue<
+              JMap<bridge.JniAnEnum, bridge.JniAnEnum>?>(enumMap));
+      final Map<JniAnEnum, JniAnEnum>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<JniAnEnum, JniAnEnum>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Map<int, JniAllNullableTypes>? echoNullableNonNullClassMap(
+      Map<int, JniAllNullableTypes>? classMap) {
+    try {
+      final JMap<JLong, bridge.JniAllNullableTypes>? res =
+          _api.echoNullableNonNullClassMap(_PigeonJniCodec.writeValue<
+              JMap<JLong, bridge.JniAllNullableTypes>?>(classMap));
+      final Map<int, JniAllNullableTypes>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<int, JniAllNullableTypes>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAnEnum? echoNullableEnum(JniAnEnum? anEnum) {
+    try {
+      final bridge.JniAnEnum? res =
+          _api.echoNullableEnum(anEnum == null ? null : anEnum.toJni());
+      final JniAnEnum? dartTypeRes = JniAnEnum.fromJni(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  JniAnotherEnum? echoAnotherNullableEnum(JniAnotherEnum? anotherEnum) {
+    try {
+      final bridge.JniAnotherEnum? res = _api.echoAnotherNullableEnum(
+          anotherEnum == null ? null : anotherEnum.toJni());
+      final JniAnotherEnum? dartTypeRes = JniAnotherEnum.fromJni(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  int? echoOptionalNullableInt([int? aNullableInt]) {
+    try {
+      final JLong? res = _api.echoOptionalNullableInt(
+          _PigeonJniCodec.writeValue<JLong?>(aNullableInt));
+      final int? dartTypeRes = res?.longValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  String? echoNamedNullableString({String? aNullableString}) {
+    try {
+      final JString? res = _api.echoNamedNullableString(
+          _PigeonJniCodec.writeValue<JString?>(aNullableString));
+      final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<void> noopAsync() async {
+    try {
+      await _api.noopAsync();
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<int> echoAsyncInt(int anInt) async {
+    try {
+      final JLong res = await _api.echoAsyncInt(anInt);
+      final int dartTypeRes = res.longValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<double> echoAsyncDouble(double aDouble) async {
+    try {
+      final JDouble res = await _api.echoAsyncDouble(aDouble);
+      final double dartTypeRes = res.doubleValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<bool> echoAsyncBool(bool aBool) async {
+    try {
+      final JBoolean res = await _api.echoAsyncBool(aBool);
+      final bool dartTypeRes = res.booleanValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<String> echoAsyncString(String aString) async {
+    try {
+      final JString res = await _api
+          .echoAsyncString(_PigeonJniCodec.writeValue<JString>(aString));
+      final String dartTypeRes = res.toDartString(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Uint8List> echoAsyncUint8List(Uint8List aUint8List) async {
+    try {
+      final JByteArray res = await _api.echoAsyncUint8List(
+          _PigeonJniCodec.writeValue<JByteArray>(aUint8List));
+      final Uint8List dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Uint8List);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Int32List> echoAsyncInt32List(Int32List aInt32List) async {
+    try {
+      final JIntArray res = await _api.echoAsyncInt32List(
+          _PigeonJniCodec.writeValue<JIntArray>(aInt32List));
+      final Int32List dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Int32List);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Int64List> echoAsyncInt64List(Int64List aInt64List) async {
+    try {
+      final JLongArray res = await _api.echoAsyncInt64List(
+          _PigeonJniCodec.writeValue<JLongArray>(aInt64List));
+      final Int64List dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Int64List);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Float64List> echoAsyncFloat64List(Float64List aFloat64List) async {
+    try {
+      final JDoubleArray res = await _api.echoAsyncFloat64List(
+          _PigeonJniCodec.writeValue<JDoubleArray>(aFloat64List));
+      final Float64List dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Float64List);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Object> echoAsyncObject(Object anObject) async {
+    try {
+      final JObject res = await _api
+          .echoAsyncObject(_PigeonJniCodec.writeValue<JObject>(anObject));
+      final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<List<Object?>> echoAsyncList(List<Object?> list) async {
+    try {
+      final JList<JObject?> res = await _api
+          .echoAsyncList(_PigeonJniCodec.writeValue<JList<JObject?>>(list));
+      final List<Object?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<Object?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<List<JniAnEnum?>> echoAsyncEnumList(List<JniAnEnum?> enumList) async {
+    try {
+      final JList<bridge.JniAnEnum?> res = await _api.echoAsyncEnumList(
+          _PigeonJniCodec.writeValue<JList<bridge.JniAnEnum?>>(enumList));
+      final List<JniAnEnum?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<JniAnEnum?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<List<JniAllNullableTypes?>> echoAsyncClassList(
+      List<JniAllNullableTypes?> classList) async {
+    try {
+      final JList<bridge.JniAllNullableTypes?> res =
+          await _api.echoAsyncClassList(
+              _PigeonJniCodec.writeValue<JList<bridge.JniAllNullableTypes?>>(
+                  classList));
+      final List<JniAllNullableTypes?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as List<Object?>)
+              .cast<JniAllNullableTypes?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<Object?, Object?>> echoAsyncMap(Map<Object?, Object?> map) async {
+    try {
+      final JMap<JObject?, JObject?> res = await _api.echoAsyncMap(
+          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(map));
+      final Map<Object?, Object?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<Object?, Object?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<String?, String?>> echoAsyncStringMap(
+      Map<String?, String?> stringMap) async {
+    try {
+      final JMap<JString?, JString?> res = await _api.echoAsyncStringMap(
+          _PigeonJniCodec.writeValue<JMap<JString?, JString?>>(stringMap));
+      final Map<String?, String?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<String?, String?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<int?, int?>> echoAsyncIntMap(Map<int?, int?> intMap) async {
+    try {
+      final JMap<JLong?, JLong?> res = await _api.echoAsyncIntMap(
+          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>>(intMap));
+      final Map<int?, int?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<int?, int?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<JniAnEnum?, JniAnEnum?>> echoAsyncEnumMap(
+      Map<JniAnEnum?, JniAnEnum?> enumMap) async {
+    try {
+      final JMap<bridge.JniAnEnum?, bridge.JniAnEnum?> res =
+          await _api.echoAsyncEnumMap(_PigeonJniCodec.writeValue<
+              JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>>(enumMap));
+      final Map<JniAnEnum?, JniAnEnum?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<JniAnEnum?, JniAnEnum?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<int?, JniAllNullableTypes?>> echoAsyncClassMap(
+      Map<int?, JniAllNullableTypes?> classMap) async {
+    try {
+      final JMap<JLong?, bridge.JniAllNullableTypes?> res =
+          await _api.echoAsyncClassMap(_PigeonJniCodec.writeValue<
+              JMap<JLong?, bridge.JniAllNullableTypes?>>(classMap));
+      final Map<int?, JniAllNullableTypes?> dartTypeRes =
+          (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
+              .cast<int?, JniAllNullableTypes?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<JniAnEnum> echoAsyncEnum(JniAnEnum anEnum) async {
+    try {
+      final bridge.JniAnEnum res = await _api.echoAsyncEnum(anEnum.toJni());
+      final JniAnEnum dartTypeRes = JniAnEnum.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<JniAnotherEnum> echoAnotherAsyncEnum(
+      JniAnotherEnum anotherEnum) async {
+    try {
+      final bridge.JniAnotherEnum res =
+          await _api.echoAnotherAsyncEnum(anotherEnum.toJni());
+      final JniAnotherEnum dartTypeRes = JniAnotherEnum.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Object?> throwAsyncError() async {
+    try {
+      final JObject? res = await _api.throwAsyncError();
+      final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<void> throwAsyncErrorFromVoid() async {
+    try {
+      await _api.throwAsyncErrorFromVoid();
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Object?> throwAsyncFlutterError() async {
+    try {
+      final JObject? res = await _api.throwAsyncFlutterError();
+      final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<JniAllTypes> echoAsyncJniAllTypes(JniAllTypes everything) async {
+    try {
+      final bridge.JniAllTypes res =
+          await _api.echoAsyncJniAllTypes(everything.toJni());
+      final JniAllTypes dartTypeRes = JniAllTypes.fromJni(res)!;
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<JniAllNullableTypes?> echoAsyncNullableJniAllNullableTypes(
+      JniAllNullableTypes? everything) async {
+    try {
+      final bridge.JniAllNullableTypes? res =
+          await _api.echoAsyncNullableJniAllNullableTypes(
+              everything == null ? null : everything.toJni());
+      final JniAllNullableTypes? dartTypeRes = JniAllNullableTypes.fromJni(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<JniAllNullableTypesWithoutRecursion?>
+      echoAsyncNullableJniAllNullableTypesWithoutRecursion(
+          JniAllNullableTypesWithoutRecursion? everything) async {
+    try {
+      final bridge.JniAllNullableTypesWithoutRecursion? res =
+          await _api.echoAsyncNullableJniAllNullableTypesWithoutRecursion(
+              everything == null ? null : everything.toJni());
+      final JniAllNullableTypesWithoutRecursion? dartTypeRes =
+          JniAllNullableTypesWithoutRecursion.fromJni(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<int?> echoAsyncNullableInt(int? anInt) async {
+    try {
+      final JLong? res = await _api
+          .echoAsyncNullableInt(_PigeonJniCodec.writeValue<JLong?>(anInt));
+      final int? dartTypeRes = res?.longValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<double?> echoAsyncNullableDouble(double? aDouble) async {
+    try {
+      final JDouble? res = await _api.echoAsyncNullableDouble(
+          _PigeonJniCodec.writeValue<JDouble?>(aDouble));
+      final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<bool?> echoAsyncNullableBool(bool? aBool) async {
+    try {
+      final JBoolean? res = await _api
+          .echoAsyncNullableBool(_PigeonJniCodec.writeValue<JBoolean?>(aBool));
+      final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<String?> echoAsyncNullableString(String? aString) async {
+    try {
+      final JString? res = await _api.echoAsyncNullableString(
+          _PigeonJniCodec.writeValue<JString?>(aString));
+      final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Uint8List?> echoAsyncNullableUint8List(Uint8List? aUint8List) async {
+    try {
+      final JByteArray? res = await _api.echoAsyncNullableUint8List(
+          _PigeonJniCodec.writeValue<JByteArray?>(aUint8List));
+      final Uint8List? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Uint8List?);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Int32List?> echoAsyncNullableInt32List(Int32List? aInt32List) async {
+    try {
+      final JIntArray? res = await _api.echoAsyncNullableInt32List(
+          _PigeonJniCodec.writeValue<JIntArray?>(aInt32List));
+      final Int32List? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Int32List?);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Int64List?> echoAsyncNullableInt64List(Int64List? aInt64List) async {
+    try {
+      final JLongArray? res = await _api.echoAsyncNullableInt64List(
+          _PigeonJniCodec.writeValue<JLongArray?>(aInt64List));
+      final Int64List? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Int64List?);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Float64List?> echoAsyncNullableFloat64List(
+      Float64List? aFloat64List) async {
+    try {
+      final JDoubleArray? res = await _api.echoAsyncNullableFloat64List(
+          _PigeonJniCodec.writeValue<JDoubleArray?>(aFloat64List));
+      final Float64List? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Float64List?);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Object?> echoAsyncNullableObject(Object? anObject) async {
+    try {
+      final JObject? res = await _api.echoAsyncNullableObject(
+          _PigeonJniCodec.writeValue<JObject?>(anObject));
+      final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<List<Object?>?> echoAsyncNullableList(List<Object?>? list) async {
+    try {
+      final JList<JObject?>? res = await _api.echoAsyncNullableList(
+          _PigeonJniCodec.writeValue<JList<JObject?>?>(list));
+      final List<Object?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as List<Object?>?)?.cast<Object?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<List<JniAnEnum?>?> echoAsyncNullableEnumList(
+      List<JniAnEnum?>? enumList) async {
+    try {
+      final JList<bridge.JniAnEnum?>? res =
+          await _api.echoAsyncNullableEnumList(
+              _PigeonJniCodec.writeValue<JList<bridge.JniAnEnum?>?>(enumList));
+      final List<JniAnEnum?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as List<Object?>?)
+              ?.cast<JniAnEnum?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<List<JniAllNullableTypes?>?> echoAsyncNullableClassList(
+      List<JniAllNullableTypes?>? classList) async {
+    try {
+      final JList<bridge.JniAllNullableTypes?>? res =
+          await _api.echoAsyncNullableClassList(
+              _PigeonJniCodec.writeValue<JList<bridge.JniAllNullableTypes?>?>(
+                  classList));
+      final List<JniAllNullableTypes?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as List<Object?>?)
+              ?.cast<JniAllNullableTypes?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<Object?, Object?>?> echoAsyncNullableMap(
+      Map<Object?, Object?>? map) async {
+    try {
+      final JMap<JObject?, JObject?>? res = await _api.echoAsyncNullableMap(
+          _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map));
+      final Map<Object?, Object?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<Object?, Object?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<String?, String?>?> echoAsyncNullableStringMap(
+      Map<String?, String?>? stringMap) async {
+    try {
+      final JMap<JString?, JString?>? res =
+          await _api.echoAsyncNullableStringMap(
+              _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap));
+      final Map<String?, String?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<String?, String?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<int?, int?>?> echoAsyncNullableIntMap(
+      Map<int?, int?>? intMap) async {
+    try {
+      final JMap<JLong?, JLong?>? res = await _api.echoAsyncNullableIntMap(
+          _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap));
+      final Map<int?, int?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<int?, int?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<JniAnEnum?, JniAnEnum?>?> echoAsyncNullableEnumMap(
+      Map<JniAnEnum?, JniAnEnum?>? enumMap) async {
+    try {
+      final JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>? res =
+          await _api.echoAsyncNullableEnumMap(_PigeonJniCodec.writeValue<
+              JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>?>(enumMap));
+      final Map<JniAnEnum?, JniAnEnum?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<JniAnEnum?, JniAnEnum?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<Map<int?, JniAllNullableTypes?>?> echoAsyncNullableClassMap(
+      Map<int?, JniAllNullableTypes?>? classMap) async {
+    try {
+      final JMap<JLong?, bridge.JniAllNullableTypes?>? res =
+          await _api.echoAsyncNullableClassMap(_PigeonJniCodec.writeValue<
+              JMap<JLong?, bridge.JniAllNullableTypes?>?>(classMap));
+      final Map<int?, JniAllNullableTypes?>? dartTypeRes =
+          (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
+              ?.cast<int?, JniAllNullableTypes?>();
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<JniAnEnum?> echoAsyncNullableEnum(JniAnEnum? anEnum) async {
+    try {
+      final bridge.JniAnEnum? res = await _api
+          .echoAsyncNullableEnum(anEnum == null ? null : anEnum.toJni());
+      final JniAnEnum? dartTypeRes = JniAnEnum.fromJni(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
+  }
+
+  Future<JniAnotherEnum?> echoAnotherAsyncNullableEnum(
+      JniAnotherEnum? anotherEnum) async {
+    try {
+      final bridge.JniAnotherEnum? res =
+          await _api.echoAnotherAsyncNullableEnum(
+              anotherEnum == null ? null : anotherEnum.toJni());
+      final JniAnotherEnum? dartTypeRes = JniAnotherEnum.fromJni(res);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 }
 
-class JniMessageApiNullable {
-  JniMessageApiNullable._withRegistrar(
-      bridge.JniMessageApiNullableRegistrar api)
+class JniHostTrivialApi {
+  JniHostTrivialApi._withRegistrar(bridge.JniHostTrivialApiRegistrar api)
       : _api = api;
 
-  /// Returns instance of JniMessageApiNullable with specified [channelName] if one has been registered.
-  static JniMessageApiNullable? getInstance(
+  /// Returns instance of JniHostTrivialApi with specified [channelName] if one has been registered.
+  static JniHostTrivialApi? getInstance(
       {String channelName = defaultInstanceName}) {
-    final bridge.JniMessageApiNullableRegistrar? link =
-        bridge.JniMessageApiNullableRegistrar()
+    final bridge.JniHostTrivialApiRegistrar? link =
+        bridge.JniHostTrivialApiRegistrar()
             .getInstance(JString.fromString(channelName));
     if (link == null) {
       String nameString = 'named $channelName';
@@ -900,89 +3522,34 @@ class JniMessageApiNullable {
       final String error = 'No instance $nameString has been registered.';
       throw ArgumentError(error);
     }
-    final JniMessageApiNullable res =
-        JniMessageApiNullable._withRegistrar(link);
+    final JniHostTrivialApi res = JniHostTrivialApi._withRegistrar(link);
     return res;
   }
 
-  late final bridge.JniMessageApiNullableRegistrar _api;
+  late final bridge.JniHostTrivialApiRegistrar _api;
 
-  String? echoString(String? request) {
-    final JString? res =
-        _api.echoString(_PigeonJniCodec.writeValue<JString?>(request));
-    final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  int? echoInt(int? request) {
-    final JLong? res =
-        _api.echoInt(_PigeonJniCodec.writeValue<JLong?>(request));
-    final int? dartTypeRes = res?.intValue(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  double? echoDouble(double? request) {
-    final JDouble? res =
-        _api.echoDouble(_PigeonJniCodec.writeValue<JDouble?>(request));
-    final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  bool? echoBool(bool? request) {
-    final JBoolean? res =
-        _api.echoBool(_PigeonJniCodec.writeValue<JBoolean?>(request));
-    final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  Object? echoObj(Object? request) {
-    final JObject? res =
-        _api.echoObj(_PigeonJniCodec.writeValue<JObject?>(request));
-    final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
-    return dartTypeRes;
-  }
-
-  SomeNullableTypes? sendSomeNullableTypes(SomeNullableTypes? someTypes) {
-    final bridge.SomeNullableTypes? res = _api
-        .sendSomeNullableTypes(someTypes == null ? null : someTypes.toJni());
-    final SomeNullableTypes? dartTypeRes = SomeNullableTypes.fromJni(res);
-    return dartTypeRes;
-  }
-
-  SomeEnum? sendSomeEnum(SomeEnum? anEnum) {
-    final bridge.SomeEnum? res =
-        _api.sendSomeEnum(anEnum == null ? null : anEnum.toJni());
-    final SomeEnum? dartTypeRes = SomeEnum.fromJni(res);
-    return dartTypeRes;
-  }
-
-  List<Object?>? echoList(List<Object?>? list) {
-    final JList<JObject?>? res =
-        _api.echoList(_PigeonJniCodec.writeValue<JList<JObject?>?>(list));
-    final List<Object?>? dartTypeRes =
-        (_PigeonJniCodec.readValue(res) as List<Object?>?)?.cast<Object?>();
-    return dartTypeRes;
-  }
-
-  Map<Object?, Object?>? echoMap(Map<Object?, Object?>? map) {
-    final JMap<JObject, JObject?>? res =
-        _api.echoMap(_PigeonJniCodec.writeValue<JMap<JObject, JObject?>?>(map));
-    final Map<Object?, Object?>? dartTypeRes =
-        (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
-            ?.cast<Object?, Object?>();
-    return dartTypeRes;
+  void noop() {
+    try {
+      return _api.noop();
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 }
 
-class JniMessageApiAsync {
-  JniMessageApiAsync._withRegistrar(bridge.JniMessageApiAsyncRegistrar api)
+class JniHostSmallApi {
+  JniHostSmallApi._withRegistrar(bridge.JniHostSmallApiRegistrar api)
       : _api = api;
 
-  /// Returns instance of JniMessageApiAsync with specified [channelName] if one has been registered.
-  static JniMessageApiAsync? getInstance(
+  /// Returns instance of JniHostSmallApi with specified [channelName] if one has been registered.
+  static JniHostSmallApi? getInstance(
       {String channelName = defaultInstanceName}) {
-    final bridge.JniMessageApiAsyncRegistrar? link =
-        bridge.JniMessageApiAsyncRegistrar()
+    final bridge.JniHostSmallApiRegistrar? link =
+        bridge.JniHostSmallApiRegistrar()
             .getInstance(JString.fromString(channelName));
     if (link == null) {
       String nameString = 'named $channelName';
@@ -992,168 +3559,36 @@ class JniMessageApiAsync {
       final String error = 'No instance $nameString has been registered.';
       throw ArgumentError(error);
     }
-    final JniMessageApiAsync res = JniMessageApiAsync._withRegistrar(link);
+    final JniHostSmallApi res = JniHostSmallApi._withRegistrar(link);
     return res;
   }
 
-  late final bridge.JniMessageApiAsyncRegistrar _api;
+  late final bridge.JniHostSmallApiRegistrar _api;
 
-  Future<void> doNothing() async {
-    await _api.doNothing();
-  }
-
-  Future<String> echoString(String request) async {
-    final JString res =
-        await _api.echoString(_PigeonJniCodec.writeValue<JString>(request));
-    final String dartTypeRes = res.toDartString(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  Future<int> echoInt(int request) async {
-    final JLong res = await _api.echoInt(request);
-    final int dartTypeRes = res.intValue(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  Future<double> echoDouble(double request) async {
-    final JDouble res = await _api.echoDouble(request);
-    final double dartTypeRes = res.doubleValue(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  Future<bool> echoBool(bool request) async {
-    final JBoolean res = await _api.echoBool(request);
-    final bool dartTypeRes = res.booleanValue(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  Future<Object> echoObj(Object request) async {
-    final JObject res =
-        await _api.echoObj(_PigeonJniCodec.writeValue<JObject>(request));
-    final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
-    return dartTypeRes;
-  }
-
-  Future<SomeTypes> sendSomeTypes(SomeTypes someTypes) async {
-    final bridge.SomeTypes res = await _api.sendSomeTypes(someTypes.toJni());
-    final SomeTypes dartTypeRes = SomeTypes.fromJni(res)!;
-    return dartTypeRes;
-  }
-
-  Future<SomeEnum> sendSomeEnum(SomeEnum anEnum) async {
-    final bridge.SomeEnum res = await _api.sendSomeEnum(anEnum.toJni());
-    final SomeEnum dartTypeRes = SomeEnum.fromJni(res)!;
-    return dartTypeRes;
-  }
-
-  Future<List<Object?>> echoList(List<Object?> list) async {
-    final JList<JObject?> res =
-        await _api.echoList(_PigeonJniCodec.writeValue<JList<JObject?>>(list));
-    final List<Object?> dartTypeRes =
-        (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<Object?>();
-    return dartTypeRes;
-  }
-
-  Future<Map<Object?, Object?>> echoMap(Map<Object?, Object?> map) async {
-    final JMap<JObject, JObject?> res = await _api
-        .echoMap(_PigeonJniCodec.writeValue<JMap<JObject, JObject?>>(map));
-    final Map<Object?, Object?> dartTypeRes =
-        (_PigeonJniCodec.readValue(res)! as Map<Object?, Object?>)
-            .cast<Object?, Object?>();
-    return dartTypeRes;
-  }
-}
-
-class JniMessageApiNullableAsync {
-  JniMessageApiNullableAsync._withRegistrar(
-      bridge.JniMessageApiNullableAsyncRegistrar api)
-      : _api = api;
-
-  /// Returns instance of JniMessageApiNullableAsync with specified [channelName] if one has been registered.
-  static JniMessageApiNullableAsync? getInstance(
-      {String channelName = defaultInstanceName}) {
-    final bridge.JniMessageApiNullableAsyncRegistrar? link =
-        bridge.JniMessageApiNullableAsyncRegistrar()
-            .getInstance(JString.fromString(channelName));
-    if (link == null) {
-      String nameString = 'named $channelName';
-      if (channelName == defaultInstanceName) {
-        nameString = 'with no name';
-      }
-      final String error = 'No instance $nameString has been registered.';
-      throw ArgumentError(error);
+  Future<String> echo(String aString) async {
+    try {
+      final JString res =
+          await _api.echo(_PigeonJniCodec.writeValue<JString>(aString));
+      final String dartTypeRes = res.toDartString(releaseOriginal: true);
+      return dartTypeRes;
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
     }
-    final JniMessageApiNullableAsync res =
-        JniMessageApiNullableAsync._withRegistrar(link);
-    return res;
   }
 
-  late final bridge.JniMessageApiNullableAsyncRegistrar _api;
-
-  Future<String?> echoString(String? request) async {
-    final JString? res =
-        await _api.echoString(_PigeonJniCodec.writeValue<JString?>(request));
-    final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  Future<int?> echoInt(int? request) async {
-    final JLong? res =
-        await _api.echoInt(_PigeonJniCodec.writeValue<JLong?>(request));
-    final int? dartTypeRes = res?.intValue(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  Future<double?> echoDouble(double? request) async {
-    final JDouble? res =
-        await _api.echoDouble(_PigeonJniCodec.writeValue<JDouble?>(request));
-    final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  Future<bool?> echoBool(bool? request) async {
-    final JBoolean? res =
-        await _api.echoBool(_PigeonJniCodec.writeValue<JBoolean?>(request));
-    final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
-    return dartTypeRes;
-  }
-
-  Future<Object?> echoObj(Object? request) async {
-    final JObject? res =
-        await _api.echoObj(_PigeonJniCodec.writeValue<JObject?>(request));
-    final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
-    return dartTypeRes;
-  }
-
-  Future<SomeNullableTypes?> sendSomeNullableTypes(
-      SomeNullableTypes? someTypes) async {
-    final bridge.SomeNullableTypes? res = await _api
-        .sendSomeNullableTypes(someTypes == null ? null : someTypes.toJni());
-    final SomeNullableTypes? dartTypeRes = SomeNullableTypes.fromJni(res);
-    return dartTypeRes;
-  }
-
-  Future<SomeEnum?> sendSomeEnum(SomeEnum? anEnum) async {
-    final bridge.SomeEnum? res =
-        await _api.sendSomeEnum(anEnum == null ? null : anEnum.toJni());
-    final SomeEnum? dartTypeRes = SomeEnum.fromJni(res);
-    return dartTypeRes;
-  }
-
-  Future<List<Object?>?> echoList(List<Object?>? list) async {
-    final JList<JObject?>? res =
-        await _api.echoList(_PigeonJniCodec.writeValue<JList<JObject?>?>(list));
-    final List<Object?>? dartTypeRes =
-        (_PigeonJniCodec.readValue(res) as List<Object?>?)?.cast<Object?>();
-    return dartTypeRes;
-  }
-
-  Future<Map<Object?, Object?>?> echoMap(Map<Object?, Object?>? map) async {
-    final JMap<JObject, JObject?>? res = await _api
-        .echoMap(_PigeonJniCodec.writeValue<JMap<JObject, JObject?>?>(map));
-    final Map<Object?, Object?>? dartTypeRes =
-        (_PigeonJniCodec.readValue(res) as Map<Object?, Object?>?)
-            ?.cast<Object?, Object?>();
-    return dartTypeRes;
+  Future<void> voidVoid() async {
+    try {
+      await _api.voidVoid();
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    }
   }
 }

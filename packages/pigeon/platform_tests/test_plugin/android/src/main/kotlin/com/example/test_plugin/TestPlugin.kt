@@ -4,17 +4,16 @@
 
 package com.example.test_plugin
 
-import JniMessageApi
-import JniMessageApiAsync
-import JniMessageApiAsyncRegistrar
-import JniMessageApiNullable
-import JniMessageApiNullableAsync
-import JniMessageApiNullableAsyncRegistrar
-import JniMessageApiNullableRegistrar
-import JniMessageApiRegistrar
-import SomeEnum
-import SomeNullableTypes
-import SomeTypes
+import JniAllClassesWrapper
+import JniAllNullableTypes
+import JniAllNullableTypesWithoutRecursion
+import JniAllTypes
+import JniAnEnum
+import JniAnotherEnum
+import JniHostIntegrationCoreApi
+import JniHostIntegrationCoreApiRegistrar
+import JniHostSmallApi
+import JniHostSmallApiRegistrar
 import android.os.Handler
 import android.os.Looper
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -26,12 +25,9 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   private var flutterSmallApiOne: FlutterSmallApi? = null
   private var flutterSmallApiTwo: FlutterSmallApi? = null
   private var proxyApiRegistrar: ProxyApiRegistrar? = null
-  private var jniMessageApi: JniMessageApiRegistrar? = null
-  private var jniMessageApiNamed: JniMessageApiRegistrar? = null
-  private var jniMessageApiNullable: JniMessageApiNullableRegistrar? = null
-  private var jniMessageApiAsync: JniMessageApiAsyncRegistrar? = null
-  private var jniMessageApiAsyncNamed: JniMessageApiAsyncRegistrar? = null
-  private var jniMessageApiNullableAsync: JniMessageApiNullableAsyncRegistrar? = null
+  private var jniMessageApi: JniHostIntegrationCoreApiRegistrar? = null
+  private var jniSmallApiOne: JniHostSmallApiRegistrar? = null
+  private var jniSmallApiTwo: JniHostSmallApiRegistrar? = null
 
   override fun onAttachedToEngine(binding: FlutterPluginBinding) {
     HostIntegrationCoreApi.setUp(binding.binaryMessenger, this)
@@ -40,14 +36,9 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
     val testSuffixApiTwo = TestPluginWithSuffix()
     testSuffixApiTwo.setUp(binding, "suffixTwo")
 
-    jniMessageApi = JniMessageApiRegistrar().register(JniMessageApiImpl())
-    jniMessageApiNamed = JniMessageApiRegistrar().register(JniMessageApiImpl2(), "name")
-    jniMessageApiNullable = JniMessageApiNullableRegistrar().register(JniMessageApiNullableImpl())
-    jniMessageApiAsync = JniMessageApiAsyncRegistrar().register(JniMessageApiAsyncImpl())
-    jniMessageApiAsyncNamed =
-        JniMessageApiAsyncRegistrar().register(JniMessageApiAsyncImpl2(), "name")
-    jniMessageApiNullableAsync =
-        JniMessageApiNullableAsyncRegistrar().register(JniMessageApiNullableAsyncImpl())
+    jniMessageApi = JniHostIntegrationCoreApiRegistrar().register(JniIntegrationTests())
+    jniSmallApiOne = JniHostSmallApiRegistrar().register(JniHostSmallApiTests(), "suffixOne")
+    jniSmallApiTwo = JniHostSmallApiRegistrar().register(JniHostSmallApiTests(), "suffixTwo")
 
     flutterApi = FlutterIntegrationCoreApi(binding.binaryMessenger)
     flutterSmallApiOne = FlutterSmallApi(binding.binaryMessenger, "suffixOne")
@@ -897,253 +888,6 @@ class TestPlugin : FlutterPlugin, HostIntegrationCoreApi {
   }
 }
 
-class JniMessageApiImpl : JniMessageApi() {
-  override fun doNothing() {
-    return
-  }
-
-  override fun echoString(request: String): String {
-    return request
-  }
-
-  override fun echoInt(request: Long): Long {
-    return request
-  }
-
-  override fun echoDouble(request: Double): Double {
-    return request
-  }
-
-  override fun echoBool(request: Boolean): Boolean {
-    return request
-  }
-
-  override fun echoObj(request: Any): Any {
-    return request
-  }
-
-  override fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
-    return someTypes
-  }
-
-  override fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
-    return anEnum
-  }
-
-  override fun echoList(list: List<Any?>): List<Any?> {
-    return list
-  }
-
-  override fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
-    return map
-  }
-}
-
-class JniMessageApiImpl2 : JniMessageApi() {
-  override fun doNothing() {
-    return
-  }
-
-  override fun echoString(request: String): String {
-    return request + "1"
-  }
-
-  override fun echoInt(request: Long): Long {
-    return request + 1
-  }
-
-  override fun echoDouble(request: Double): Double {
-    return request + 1
-  }
-
-  override fun echoBool(request: Boolean): Boolean {
-    return !request
-  }
-
-  override fun echoObj(request: Any): Any {
-    return request
-  }
-
-  override fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
-    val newSomeTypes = someTypes.copy(anInt = someTypes.anInt + 1)
-    return newSomeTypes
-  }
-
-  override fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
-    return anEnum
-  }
-
-  override fun echoList(list: List<Any?>): List<Any?> {
-    return list
-  }
-
-  override fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
-    return map
-  }
-}
-
-class JniMessageApiNullableImpl : JniMessageApiNullable() {
-  override fun echoString(request: String?): String? {
-    return request
-  }
-
-  override fun echoInt(request: Long?): Long? {
-    return request
-  }
-
-  override fun echoDouble(request: Double?): Double? {
-    return request
-  }
-
-  override fun echoBool(request: Boolean?): Boolean? {
-    return request
-  }
-
-  override fun echoObj(request: Any?): Any? {
-    return request
-  }
-
-  override fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
-    return someTypes
-  }
-
-  override fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
-    return anEnum
-  }
-
-  override fun echoList(list: List<Any?>?): List<Any?>? {
-    return list
-  }
-
-  override fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>? {
-    return map
-  }
-}
-
-class JniMessageApiAsyncImpl : JniMessageApiAsync() {
-  override suspend fun doNothing() {
-    return
-  }
-
-  override suspend fun echoString(request: String): String {
-    return request
-  }
-
-  override suspend fun echoInt(request: Long): Long {
-    return request
-  }
-
-  override suspend fun echoDouble(request: Double): Double {
-    return request
-  }
-
-  override suspend fun echoBool(request: Boolean): Boolean {
-    return request
-  }
-
-  override suspend fun echoObj(request: Any): Any {
-    return request
-  }
-
-  override suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
-    return someTypes
-  }
-
-  override suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
-    return anEnum
-  }
-
-  override suspend fun echoList(list: List<Any?>): List<Any?> {
-    return list
-  }
-
-  override suspend fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
-    return map
-  }
-}
-
-class JniMessageApiAsyncImpl2 : JniMessageApiAsync() {
-  override suspend fun doNothing() {
-    return
-  }
-
-  override suspend fun echoString(request: String): String {
-    return request + "1"
-  }
-
-  override suspend fun echoInt(request: Long): Long {
-    return request + 1
-  }
-
-  override suspend fun echoDouble(request: Double): Double {
-    return request + 1
-  }
-
-  override suspend fun echoBool(request: Boolean): Boolean {
-    return !request
-  }
-
-  override suspend fun echoObj(request: Any): Any {
-    return request
-  }
-
-  override suspend fun sendSomeTypes(someTypes: SomeTypes): SomeTypes {
-    val newSomeTypes = someTypes.copy(anInt = someTypes.anInt + 1)
-    return newSomeTypes
-  }
-
-  override suspend fun sendSomeEnum(anEnum: SomeEnum): SomeEnum {
-    return anEnum
-  }
-
-  override suspend fun echoList(list: List<Any?>): List<Any?> {
-    return list
-  }
-
-  override suspend fun echoMap(map: Map<Any, Any?>): Map<Any, Any?> {
-    return map
-  }
-}
-
-class JniMessageApiNullableAsyncImpl : JniMessageApiNullableAsync() {
-
-  override suspend fun echoString(request: String?): String? {
-    return request
-  }
-
-  override suspend fun echoInt(request: Long?): Long? {
-    return request
-  }
-
-  override suspend fun echoDouble(request: Double?): Double? {
-    return request
-  }
-
-  override suspend fun echoBool(request: Boolean?): Boolean? {
-    return request
-  }
-
-  override suspend fun echoObj(request: Any?): Any? {
-    return request
-  }
-
-  override suspend fun sendSomeNullableTypes(someTypes: SomeNullableTypes?): SomeNullableTypes? {
-    return someTypes
-  }
-
-  override suspend fun sendSomeEnum(anEnum: SomeEnum?): SomeEnum? {
-    return anEnum
-  }
-
-  override suspend fun echoList(list: List<Any?>?): List<Any?>? {
-    return list
-  }
-
-  override suspend fun echoMap(map: Map<Any, Any?>?): Map<Any, Any?>? {
-    return map
-  }
-}
-
 class TestPluginWithSuffix : HostSmallApi {
 
   fun setUp(binding: FlutterPluginBinding, suffix: String) {
@@ -1156,6 +900,519 @@ class TestPluginWithSuffix : HostSmallApi {
 
   override fun voidVoid(callback: (Result<Unit>) -> Unit) {
     callback(Result.success(Unit))
+  }
+}
+
+class JniIntegrationTests : JniHostIntegrationCoreApi() {
+  override fun noop() {}
+
+  override fun echoAllTypes(everything: JniAllTypes): JniAllTypes {
+    return everything
+  }
+
+  override fun throwError(): Any? {
+    throw Exception("An error")
+  }
+
+  override fun throwErrorFromVoid() {
+    throw Exception("An error")
+  }
+
+  override fun throwFlutterError(): Any? {
+    throw FlutterError("code1111111", "message22222222", "details33333333")
+  }
+
+  override fun echoInt(anInt: Long): Long {
+    return anInt
+  }
+
+  override fun echoDouble(aDouble: Double): Double {
+    return aDouble
+  }
+
+  override fun echoBool(aBool: Boolean): Boolean {
+    return aBool
+  }
+
+  override fun echoString(aString: String): String {
+    return aString
+  }
+
+  override fun echoUint8List(aUint8List: ByteArray): ByteArray {
+    return aUint8List
+  }
+
+  override fun echoInt32List(aInt32List: IntArray): IntArray {
+    return aInt32List
+  }
+
+  override fun echoInt64List(aInt64List: LongArray): LongArray {
+    return aInt64List
+  }
+
+  override fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray {
+    return aFloat64List
+  }
+
+  override fun echoObject(anObject: Any): Any {
+    return anObject
+  }
+
+  override fun echoList(list: List<Any?>): List<Any?> {
+    return list
+  }
+
+  override fun echoEnumList(enumList: List<JniAnEnum?>): List<JniAnEnum?> {
+    return enumList
+  }
+
+  override fun echoClassList(classList: List<JniAllNullableTypes?>): List<JniAllNullableTypes?> {
+    return classList
+  }
+
+  override fun echoNonNullEnumList(enumList: List<JniAnEnum>): List<JniAnEnum> {
+    return enumList
+  }
+
+  override fun echoNonNullClassList(
+      classList: List<JniAllNullableTypes>
+  ): List<JniAllNullableTypes> {
+    return classList
+  }
+
+  override fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
+    return map
+  }
+
+  override fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+    return stringMap
+  }
+
+  override fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
+    return intMap
+  }
+
+  override fun echoEnumMap(enumMap: Map<JniAnEnum?, JniAnEnum?>): Map<JniAnEnum?, JniAnEnum?> {
+    return enumMap
+  }
+
+  override fun echoClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>
+  ): Map<Long?, JniAllNullableTypes?> {
+    return classMap
+  }
+
+  override fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String> {
+    return stringMap
+  }
+
+  override fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
+    return intMap
+  }
+
+  override fun echoNonNullEnumMap(enumMap: Map<JniAnEnum, JniAnEnum>): Map<JniAnEnum, JniAnEnum> {
+    return enumMap
+  }
+
+  override fun echoNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>
+  ): Map<Long, JniAllNullableTypes> {
+    return classMap
+  }
+
+  override fun echoClassWrapper(wrapper: JniAllClassesWrapper): JniAllClassesWrapper {
+    return wrapper
+  }
+
+  override fun echoEnum(anEnum: JniAnEnum): JniAnEnum {
+    return anEnum
+  }
+
+  override fun echoAnotherEnum(anotherEnum: JniAnotherEnum): JniAnotherEnum {
+    return anotherEnum
+  }
+
+  override fun echoNamedDefaultString(aString: String): String {
+    return aString
+  }
+
+  override fun echoOptionalDefaultDouble(aDouble: Double): Double {
+    return aDouble
+  }
+
+  override fun echoRequiredInt(anInt: Long): Long {
+    return anInt
+  }
+
+  override fun echoAllNullableTypes(everything: JniAllNullableTypes?): JniAllNullableTypes? {
+    return everything
+  }
+
+  override fun echoAllNullableTypesWithoutRecursion(
+      everything: JniAllNullableTypesWithoutRecursion?
+  ): JniAllNullableTypesWithoutRecursion? {
+    return everything
+  }
+
+  override fun extractNestedNullableString(wrapper: JniAllClassesWrapper): String? {
+    return wrapper.allNullableTypes.aNullableString
+  }
+
+  override fun createNestedNullableString(nullableString: String?): JniAllClassesWrapper {
+    return JniAllClassesWrapper(
+        JniAllNullableTypes(aNullableString = nullableString),
+        classList = arrayOf<JniAllTypes>().toList(),
+        classMap = HashMap())
+  }
+
+  override fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypes {
+    return JniAllNullableTypes(
+        aNullableBool = aNullableBool,
+        aNullableInt = aNullableInt,
+        aNullableString = aNullableString)
+  }
+
+  override fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypesWithoutRecursion {
+    return JniAllNullableTypesWithoutRecursion(
+        aNullableBool = aNullableBool,
+        aNullableInt = aNullableInt,
+        aNullableString = aNullableString)
+  }
+
+  override fun echoNullableInt(aNullableInt: Long?): Long? {
+    return aNullableInt
+  }
+
+  override fun echoNullableDouble(aNullableDouble: Double?): Double? {
+    return aNullableDouble
+  }
+
+  override fun echoNullableBool(aNullableBool: Boolean?): Boolean? {
+    return aNullableBool
+  }
+
+  override fun echoNullableString(aNullableString: String?): String? {
+    return aNullableString
+  }
+
+  override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
+    return aNullableUint8List
+  }
+
+  override fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray? {
+    return aNullableInt32List
+  }
+
+  override fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray? {
+    return aNullableInt64List
+  }
+
+  override fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray? {
+    return aNullableFloat64List
+  }
+
+  override fun echoNullableObject(aNullableObject: Any?): Any? {
+    return aNullableObject
+  }
+
+  override fun echoNullableList(aNullableList: List<Any?>?): List<Any?>? {
+    return aNullableList
+  }
+
+  override fun echoNullableEnumList(enumList: List<JniAnEnum?>?): List<JniAnEnum?>? {
+    return enumList
+  }
+
+  override fun echoNullableClassList(
+      classList: List<JniAllNullableTypes?>?
+  ): List<JniAllNullableTypes?>? {
+    return classList
+  }
+
+  override fun echoNullableNonNullEnumList(enumList: List<JniAnEnum>?): List<JniAnEnum>? {
+    return enumList
+  }
+
+  override fun echoNullableNonNullClassList(
+      classList: List<JniAllNullableTypes>?
+  ): List<JniAllNullableTypes>? {
+    return classList
+  }
+
+  override fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
+    return map
+  }
+
+  override fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>? {
+    return stringMap
+  }
+
+  override fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
+    return intMap
+  }
+
+  override fun echoNullableEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>?
+  ): Map<JniAnEnum?, JniAnEnum?>? {
+    return enumMap
+  }
+
+  override fun echoNullableClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>?
+  ): Map<Long?, JniAllNullableTypes?>? {
+    return classMap
+  }
+
+  override fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>? {
+    return stringMap
+  }
+
+  override fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
+    return intMap
+  }
+
+  override fun echoNullableNonNullEnumMap(
+      enumMap: Map<JniAnEnum, JniAnEnum>?
+  ): Map<JniAnEnum, JniAnEnum>? {
+    return enumMap
+  }
+
+  override fun echoNullableNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>?
+  ): Map<Long, JniAllNullableTypes>? {
+    return classMap
+  }
+
+  override fun echoNullableEnum(anEnum: JniAnEnum?): JniAnEnum? {
+    return anEnum
+  }
+
+  override fun echoAnotherNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum? {
+    return anotherEnum
+  }
+
+  override fun echoOptionalNullableInt(aNullableInt: Long?): Long? {
+    return aNullableInt
+  }
+
+  override fun echoNamedNullableString(aNullableString: String?): String? {
+    return aNullableString
+  }
+
+  override suspend fun noopAsync() {
+    return
+  }
+
+  override suspend fun echoAsyncInt(anInt: Long): Long {
+    return anInt
+  }
+
+  override suspend fun echoAsyncDouble(aDouble: Double): Double {
+    return aDouble
+  }
+
+  override suspend fun echoAsyncBool(aBool: Boolean): Boolean {
+    return aBool
+  }
+
+  override suspend fun echoAsyncString(aString: String): String {
+    return aString
+  }
+
+  override suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray {
+    return aUint8List
+  }
+
+  override suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray {
+    return aInt32List
+  }
+
+  override suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray {
+    return aInt64List
+  }
+
+  override suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray {
+    return aFloat64List
+  }
+
+  override suspend fun echoAsyncObject(anObject: Any): Any {
+    return anObject
+  }
+
+  override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
+    return list
+  }
+
+  override suspend fun echoAsyncEnumList(enumList: List<JniAnEnum?>): List<JniAnEnum?> {
+    return enumList
+  }
+
+  override suspend fun echoAsyncClassList(
+      classList: List<JniAllNullableTypes?>
+  ): List<JniAllNullableTypes?> {
+    return classList
+  }
+
+  override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
+    return map
+  }
+
+  override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+    return stringMap
+  }
+
+  override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
+    return intMap
+  }
+
+  override suspend fun echoAsyncEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>
+  ): Map<JniAnEnum?, JniAnEnum?> {
+    return enumMap
+  }
+
+  override suspend fun echoAsyncClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>
+  ): Map<Long?, JniAllNullableTypes?> {
+    return classMap
+  }
+
+  override suspend fun echoAsyncEnum(anEnum: JniAnEnum): JniAnEnum {
+    return anEnum
+  }
+
+  override suspend fun echoAnotherAsyncEnum(anotherEnum: JniAnotherEnum): JniAnotherEnum {
+    return anotherEnum
+  }
+
+  override suspend fun throwAsyncError(): Any? {
+    throw Exception("An error")
+  }
+
+  override suspend fun throwAsyncErrorFromVoid() {
+    throw Exception("An error")
+  }
+
+  override suspend fun throwAsyncFlutterError(): Any? {
+    throw FlutterError("code", "message", "details")
+  }
+
+  override suspend fun echoAsyncJniAllTypes(everything: JniAllTypes): JniAllTypes {
+    return everything
+  }
+
+  override suspend fun echoAsyncNullableJniAllNullableTypes(
+      everything: JniAllNullableTypes?
+  ): JniAllNullableTypes? {
+    return everything
+  }
+
+  override suspend fun echoAsyncNullableJniAllNullableTypesWithoutRecursion(
+      everything: JniAllNullableTypesWithoutRecursion?
+  ): JniAllNullableTypesWithoutRecursion? {
+    return everything
+  }
+
+  override suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
+    return anInt
+  }
+
+  override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
+    return aDouble
+  }
+
+  override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
+    return aBool
+  }
+
+  override suspend fun echoAsyncNullableString(aString: String?): String? {
+    return aString
+  }
+
+  override suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray? {
+    return aUint8List
+  }
+
+  override suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray? {
+    return aInt32List
+  }
+
+  override suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray? {
+    return aInt64List
+  }
+
+  override suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray? {
+    return aFloat64List
+  }
+
+  override suspend fun echoAsyncNullableObject(anObject: Any?): Any? {
+    return anObject
+  }
+
+  override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>? {
+    return list
+  }
+
+  override suspend fun echoAsyncNullableEnumList(enumList: List<JniAnEnum?>?): List<JniAnEnum?>? {
+    return enumList
+  }
+
+  override suspend fun echoAsyncNullableClassList(
+      classList: List<JniAllNullableTypes?>?
+  ): List<JniAllNullableTypes?>? {
+    return classList
+  }
+
+  override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
+    return map
+  }
+
+  override suspend fun echoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>? {
+    return stringMap
+  }
+
+  override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
+    return intMap
+  }
+
+  override suspend fun echoAsyncNullableEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>?
+  ): Map<JniAnEnum?, JniAnEnum?>? {
+    return enumMap
+  }
+
+  override suspend fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>?
+  ): Map<Long?, JniAllNullableTypes?>? {
+    return classMap
+  }
+
+  override suspend fun echoAsyncNullableEnum(anEnum: JniAnEnum?): JniAnEnum? {
+    return anEnum
+  }
+
+  override suspend fun echoAnotherAsyncNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum? {
+    return anotherEnum
+  }
+}
+
+class JniHostSmallApiTests : JniHostSmallApi() {
+  override suspend fun echo(aString: String): String {
+    return aString
+  }
+
+  override suspend fun voidVoid() {
+    return
   }
 }
 

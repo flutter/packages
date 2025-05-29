@@ -511,19 +511,19 @@ class TypeDeclaration {
   final AstProxyApi? associatedProxyApi;
 
   /// Returns the full annotated name of the type.
-  String get fullName {
+  String getFullName({bool withNullable = true}) {
     if (baseName == 'List' || baseName == 'Map') {
-      return '$baseName<$typeArgumentsString>${isNullable ? '?' : ''}';
+      return '$baseName<$typeArgumentsString>${isNullable && withNullable ? '?' : ''}';
     }
-    return '$baseName${isNullable ? '?' : ''}';
+    return '$baseName${isNullable && withNullable ? '?' : ''}';
   }
 
   /// Returns the Type Arguments in annotation form.
   String get typeArgumentsString {
     if (baseName == 'List') {
-      return typeArguments.firstOrNull?.fullName ?? 'Object?';
+      return typeArguments.firstOrNull?.getFullName() ?? 'Object?';
     } else if (baseName == 'Map') {
-      return '${typeArguments.firstOrNull?.fullName ?? 'Object?'}, ${typeArguments.lastOrNull?.fullName ?? 'Object?'}';
+      return '${typeArguments.firstOrNull?.getFullName() ?? 'Object?'}, ${typeArguments.lastOrNull?.getFullName() ?? 'Object?'}';
     }
     return '';
   }

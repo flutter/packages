@@ -1296,9 +1296,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
 
     for (final TypeDeclaration type in referencedTypesAfterAssoc.keys) {
       if (type.baseName == 'List') {
-        referencedLists[type.fullName] = type;
+        referencedLists[type.getFullName(withNullable: false)] = type;
       } else if (type.baseName == 'Map') {
-        referencedMaps[type.fullName] = type;
+        referencedMaps[type.getFullName(withNullable: false)] = type;
       }
     }
 

@@ -202,6 +202,10 @@ class _JniType {
     }
   }
 
+  String get jniTypeGetter {
+    return type.isNullable ? 'nullableType' : 'type';
+  }
+
   String get fullJniName {
     if (type.baseName == 'List' || type.baseName == 'Map') {
       return jniName + jniCollectionTypeAnnotations;
@@ -211,20 +215,20 @@ class _JniType {
 
   String get fullJniType {
     if (type.baseName == 'List' || type.baseName == 'Map') {
-      return '$jniName.type($getJniCollectionTypeTypes)';
+      return '$jniName.$jniTypeGetter($getJniCollectionTypeTypes)';
     }
-    return '$jniName.type';
+    return '$jniName.$jniTypeGetter';
   }
 
   String get getJniCollectionTypeTypes {
     if (type.baseName == 'List') {
-      return subTypeOne?.fullJniType ?? 'JObject.type';
+      return subTypeOne?.fullJniType ?? 'JObject.nullableType';
     }
     if (type.baseName == 'Map') {
-      return '${subTypeOne?.fullJniType ?? 'JObject.type'}, ${subTypeTwo?.fullJniType ?? 'JObject.type'}';
+      return '${subTypeOne?.fullJniType ?? 'JObject.nullableType'}, ${subTypeTwo?.fullJniType ?? 'JObject.nullableType'}';
     }
 
-    return '$jniName.type';
+    return '$jniName.$jniTypeGetter';
   }
 
   bool get nonNullableNeedsUnwrapping {
@@ -233,7 +237,11 @@ class _JniType {
         type.baseName == 'String' ||
         type.baseName == 'Object' ||
         type.baseName == 'List' ||
-        type.baseName == 'Map') {
+        type.baseName == 'Map' ||
+        type.baseName == 'Uint8List' ||
+        type.baseName == 'Int32List' ||
+        type.baseName == 'Int64List' ||
+        type.baseName == 'Float64List') {
       return true;
     }
     return false;
@@ -248,8 +256,9 @@ class _JniType {
       case 'String':
         return 'toDartString';
       case 'int':
+        return 'longValue';
       case 'double':
-        return '${type.baseName}Value';
+        return 'doubleValue';
       case 'bool':
         return 'booleanValue';
       default:
@@ -365,7 +374,7 @@ class _JniType {
     if (type.baseName == 'List') {
       return subTypeOne?.getJniCallReturnType(true) ?? 'JObject?';
     } else if (type.baseName == 'Map') {
-      return '${subTypeOne?.getJniCallReturnType(true) ?? 'JObject'}, ${subTypeTwo?.getJniCallReturnType(true) ?? 'JObject?'}';
+      return '${subTypeOne?.getJniCallReturnType(true) ?? 'JObject?'}, ${subTypeTwo?.getJniCallReturnType(true) ?? 'JObject?'}';
     }
     return '';
   }
@@ -976,16 +985,22 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                       !method.isAsynchronous)
                   ? 'return '
                   : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} res = ';
-          indent.writeln(
-              '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_api.${method.name}(${_getJniMethodCallArguments(method.parameters)});');
-          if ((method.returnType.isNullable ||
-                  method.isAsynchronous ||
-                  returnType.nonNullableNeedsUnwrapping) &&
-              returnType.type.baseName != 'void') {
+          indent.writeScoped('try {', '}', () {
             indent.writeln(
-                'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};');
-            indent.writeln('return dartTypeRes;');
-          }
+                '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_api.${method.name}(${_getJniMethodCallArguments(method.parameters)});');
+            if ((method.returnType.isNullable ||
+                    method.isAsynchronous ||
+                    returnType.nonNullableNeedsUnwrapping) &&
+                returnType.type.baseName != 'void') {
+              indent.writeln(
+                  'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};');
+              indent.writeln('return dartTypeRes;');
+            }
+          });
+          indent.writeScoped(' on JniException catch (e) {', '}', () {
+            indent.writeln(
+                "throw PlatformException(code: 'PlatformException', message: e.message, stacktrace: e.stackTrace,);");
+          });
         });
         indent.newln();
       }
@@ -1545,20 +1560,31 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
   }
 
   int _sortByObjectCount(TypeDeclaration a, TypeDeclaration b) {
-    return a.fullName.split('Object').length > b.fullName.split('Object').length
-        ? 1
-        : -1;
+    int aTotal = 0;
+    int bTotal = 0;
+
+    aTotal += a.getFullName(withNullable: false).split('?').length;
+    bTotal += b.getFullName(withNullable: false).split('?').length;
+
+    aTotal += a.getFullName(withNullable: false).split('Object').length * 100;
+    bTotal += b.getFullName(withNullable: false).split('Object').length * 100;
+
+    return aTotal < bTotal ? -1 : 1;
   }
 
   void _writeJniCodec(Indent indent, Root root) {
     indent.newln();
     indent.format('''
+bool isType<T> (Type t) => T == t;
+
+bool isTypeOrNullableType<T> (Type t) => isType<T>(t) || isType<T?>(t);
+  
 class _PigeonJniCodec {
   static Object? readValue(JObject? value) {
     if (value == null) {
       return null;
     } else if (value.isA<JLong>(JLong.type)) {
-      return (value.as(JLong.type)).intValue();
+      return (value.as(JLong.type)).longValue();
     } else if (value.isA<JDouble>(JDouble.type)) {
       return (value.as(JDouble.type)).doubleValue();
     } else if (value.isA<JString>(JString.type)) {
@@ -1590,7 +1616,7 @@ class _PigeonJniCodec {
       }
       return list;
     } else if (value.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
-      final JList<JObject> list = (value.as(JList.type<JObject>(JObject.type)));
+      final JList<JObject?> list = (value.as(JList.type<JObject?>(JObject.nullableType)));
       final List<Object?> res = <Object?>[];
       for (int i = 0; i < list.length; i++) {
         res.add(readValue(list[i]));
@@ -1598,9 +1624,9 @@ class _PigeonJniCodec {
       return res;
     } else if (value.isA<JMap<JObject, JObject>>(
         JMap.type<JObject, JObject>(JObject.type, JObject.type))) {
-      final JMap<JObject, JObject> map =
-          (value.as(JMap.type<JObject, JObject>(JObject.type, JObject.type)));
-      final Map<Object?, Object?> res = <Object, Object>{};
+      final JMap<JObject?, JObject?> map =
+          (value.as(JMap.type<JObject?, JObject?>(JObject.nullableType, JObject.nullableType)));
+      final Map<Object?, Object?> res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
         res[readValue(entry.key)] = readValue(entry.value);
       }
@@ -1638,28 +1664,28 @@ class _PigeonJniCodec {
       return JLong(value) as T;
     } else if (value is String) {
       return JString.fromString(value) as T;
-    } else if (T == JByteArray) {
+    } else if (isTypeOrNullableType<JByteArray>(T)) {
       value as List<int>;
       final JByteArray array = JByteArray(value.length);
       for (int i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
-    } else if (T == JIntArray) {
+    } else if (isTypeOrNullableType<JIntArray>(T)) {
       value as List<int>;
       final JIntArray array = JIntArray(value.length);
       for (int i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
-    } else if (T == JLongArray) {
+    } else if (isTypeOrNullableType<JLongArray>(T)) {
       value as List<int>;
       final JLongArray array = JLongArray(value.length);
       for (int i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
-    } else if (T == JDoubleArray) {
+    } else if (isTypeOrNullableType<JDoubleArray>(T)) {
       value as List<double>;
       final JDoubleArray array = JDoubleArray(value.length);
       for (int i = 0; i < value.length; i++) {
@@ -1673,9 +1699,9 @@ class _PigeonJniCodec {
       }
       final _JniType jniType = _JniType.fromTypeDeclaration(list);
       return '''
-    } else if (value is ${jniType.type.fullName}) {
+    } else if (value is ${jniType.type.getFullName(withNullable: false)}) {
       final ${jniType.fullJniName} res =
-          ${jniType.fullJniName}.array(${jniType.subTypeOne?.fullJniType ?? 'JObject.type'});
+          ${jniType.fullJniName}.array(${jniType.subTypeOne?.fullJniType ?? 'JObject.nullableType'});
       for (final ${jniType.dartCollectionTypes} entry in value) {
         res.add(writeValue(entry));
       }
@@ -1689,7 +1715,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (value is List) {
-      final JList<JObject?> res = JList<JObject?>.array(JObject.type);
+      final JList<JObject?> res = JList<JObject?>.array(JObject.nullableType);
       for (int i = 0; i < value.length; i++) {
         res.add(writeValue(value[i]));
       }
@@ -1702,9 +1728,9 @@ class _PigeonJniCodec {
       }
       final _JniType jniType = _JniType.fromTypeDeclaration(mapType.value);
       return '''
-    } else if (value is ${jniType.type.fullName}) {
+    } else if (value is ${jniType.type.getFullName(withNullable: false)}) {
       final ${jniType.fullJniName} res =
-          ${jniType.fullJniName}.hash(${jniType.subTypeOne?.fullJniType ?? 'JObject.type'}, ${jniType.subTypeTwo?.fullJniType ?? 'JObject.type'});
+          ${jniType.fullJniName}.hash(${jniType.subTypeOne?.fullJniType ?? 'JObject.nullableType'}, ${jniType.subTypeTwo?.fullJniType ?? 'JObject.nullableType'});
       for (final MapEntry${jniType.dartCollectionTypeAnnotations} entry in value.entries) {
         res[writeValue(entry.key)] = 
             writeValue(entry.value);
@@ -1722,7 +1748,7 @@ class _PigeonJniCodec {
       return res as T;
     } else if (value is Map<Object, Object?>) {
       final JMap<JObject, JObject?> res =
-          JMap<JObject, JObject?>.hash(JObject.type, JObject.type);
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
       for (final MapEntry<Object, Object?> entry in value.entries) {
         res[writeValue(entry.key)] = 
             writeValue(entry.value);
@@ -1730,7 +1756,7 @@ class _PigeonJniCodec {
       return res as T;
     } else if (value is Map) {
       final JMap<JObject, JObject?> res =
-          JMap<JObject, JObject?>.hash(JObject.type, JObject.type);
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
       for (final MapEntry<Object?, Object?> entry in value.entries) {
         res[writeValue(entry.key)] = 
             writeValue(entry.value);

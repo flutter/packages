@@ -11,8 +11,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'ffi_integration_tests.dart' as ffi_tests
+    show TargetGenerator, runPigeonIntegrationTests;
 import 'generated.dart';
-import 'src/generated/jni_tests.gen.dart';
 import 'test_types.dart';
 
 /// Possible host languages that test can target.
@@ -46,164 +47,12 @@ const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('jni', (WidgetTester _) async {
-    final JniMessageApi? jniMessage = JniMessageApi.getInstance();
-    expect(jniMessage, isNotNull);
-    expect(jniMessage!.echoString('hello'), 'hello');
-    final SomeTypes toSend = SomeTypes(
-      aString: 'hi',
-      anInt: 5,
-      aDouble: 5.0,
-      aBool: false,
-      a4ByteArray: Int32List(1),
-      a8ByteArray: Int64List(1),
-      aByteArray: Uint8List(1),
-      aFloatArray: Float64List(1),
-      anObject: 'obj',
-      anEnum: SomeEnum.value2,
-      someNullableTypes: SomeNullableTypes(),
-      list: nonNullList,
-      map: nonNullMap,
-      stringList: nonNullStringList,
-      intList: nonNullIntList,
-      doubleList: nonNullDoubleList,
-      boolList: nonNullBoolList,
-      objectList: nonNullList,
-      enumList: <SomeEnum>[SomeEnum.value1, SomeEnum.value3],
-      classList: <SomeNullableTypes>[SomeNullableTypes()],
-      mapList: <Map<Object, Object>>[
-        nonNullMap,
-        nonNullStringMap,
-        nonNullDoubleMap,
-        nonNullIntMap,
-        nonNullBoolMap,
-      ],
-      stringMap: nonNullStringMap,
-      intMap: nonNullIntMap,
-      objectMap: nonNullMap,
-      enumMap: <SomeEnum, SomeEnum>{
-        SomeEnum.value1: SomeEnum.value1,
-        SomeEnum.value2: SomeEnum.value3
-      },
-      classMap: <SomeNullableTypes, SomeNullableTypes>{
-        SomeNullableTypes(): SomeNullableTypes()
-      },
-      listList: <List<Object>>[
-        nonNullList,
-        nonNullStringList,
-        nonNullIntList,
-        nonNullDoubleList,
-        nonNullBoolList,
-      ],
-      mapMap: <int, Map<Object, Object>>{
-        0: nonNullMap,
-        1: nonNullStringMap,
-        2: nonNullDoubleMap,
-        4: nonNullIntMap,
-        5: nonNullBoolMap,
-      },
-      listMap: <int, List<Object>>{
-        0: nonNullList,
-        1: nonNullStringList,
-        2: nonNullDoubleList,
-        4: nonNullIntList,
-        5: nonNullBoolList,
-      },
-    );
-    final SomeTypes sync = jniMessage.sendSomeTypes(toSend);
-    expect(sync, toSend);
-    expect(jniMessage.echoBool(true), true);
-    expect(jniMessage.echoBool(false), false);
-    expect(jniMessage.echoDouble(2.0), 2.0);
-    expect(jniMessage.echoInt(2), 2);
-    expect(jniMessage.echoString('hello'), 'hello');
-    expect(jniMessage.echoObj('hello'), 'hello');
-    expect(jniMessage.echoObj(toSend), toSend);
-    expect(jniMessage.sendSomeEnum(SomeEnum.value2), SomeEnum.value2);
-    //nullable
-    final JniMessageApiNullable? jniMessageNullable =
-        JniMessageApiNullable.getInstance();
-    expect(jniMessageNullable, isNotNull);
-    expect(jniMessageNullable!.echoString('hello'), 'hello');
-    expect(jniMessageNullable.echoString(null), null);
-    final SomeNullableTypes? syncNullable =
-        jniMessageNullable.sendSomeNullableTypes(SomeNullableTypes());
-    expect(syncNullable!.aString, null);
-    expect(syncNullable.anInt, null);
-    expect(syncNullable.aDouble, null);
-    expect(syncNullable.aBool, null);
-    expect(syncNullable.anObject, null);
-    final SomeNullableTypes? syncNull =
-        jniMessageNullable.sendSomeNullableTypes(null);
-    expect(syncNull, null);
-    expect(jniMessageNullable.echoBool(true), true);
-    expect(jniMessageNullable.echoBool(false), false);
-    expect(jniMessageNullable.echoDouble(2.0), 2.0);
-    expect(jniMessageNullable.echoInt(2), 2);
-    expect(jniMessageNullable.echoString('hello'), 'hello');
-    expect(jniMessageNullable.echoObj('hello'), 'hello');
-    expect(jniMessageNullable.echoObj(syncNullable), syncNullable);
-    expect(jniMessageNullable.sendSomeEnum(SomeEnum.value3), SomeEnum.value3);
-    expect(jniMessageNullable.echoBool(null), null);
-    expect(jniMessageNullable.echoDouble(null), null);
-    expect(jniMessageNullable.echoInt(null), null);
-    expect(jniMessageNullable.echoString(null), null);
-    expect(jniMessageNullable.echoObj(null), null);
-    //async
-    final JniMessageApiAsync? jniMessageAsync =
-        JniMessageApiAsync.getInstance();
-
-    final SomeTypes nonSync = await jniMessageAsync!.sendSomeTypes(toSend);
-    expect(nonSync, toSend);
-    expect(await jniMessageAsync.echoBool(true), true);
-    expect(await jniMessageAsync.echoBool(false), false);
-    expect(await jniMessageAsync.echoDouble(2.0), 2.0);
-    expect(await jniMessageAsync.echoInt(2), 2);
-    expect(await jniMessageAsync.echoString('hello'), 'hello');
-    expect(await jniMessageAsync.echoObj('hello'), 'hello');
-    expect(await jniMessageAsync.echoObj(sync), sync);
-    expect(
-        await jniMessageAsync.sendSomeEnum(SomeEnum.value3), SomeEnum.value3);
-    //nullable async
-    final JniMessageApiNullableAsync? jniMessageNullableAsync =
-        JniMessageApiNullableAsync.getInstance();
-    expect(jniMessageNullableAsync, isNotNull);
-    expect(await jniMessageNullableAsync!.echoString('hello'), 'hello');
-    expect(await jniMessageNullableAsync.echoString(null), null);
-    final SomeNullableTypes? syncNullableAsync = await jniMessageNullableAsync
-        .sendSomeNullableTypes(SomeNullableTypes());
-    expect(syncNullableAsync!.aString, null);
-    expect(syncNullableAsync.anInt, null);
-    expect(syncNullableAsync.aDouble, null);
-    expect(syncNullableAsync.aBool, null);
-    expect(syncNullableAsync.anObject, null);
-    final SomeNullableTypes? syncNullAsync =
-        await jniMessageNullableAsync.sendSomeNullableTypes(null);
-    expect(syncNull, null);
-    expect(await jniMessageNullableAsync.echoBool(true), true);
-    expect(await jniMessageNullableAsync.echoBool(false), false);
-    expect(await jniMessageNullableAsync.echoDouble(2.0), 2.0);
-    expect(await jniMessageNullableAsync.echoInt(2), 2);
-    expect(await jniMessageNullableAsync.echoString('hello'), 'hello');
-    expect(await jniMessageNullableAsync.echoObj('hello'), 'hello');
-    expect(await jniMessageNullableAsync.echoObj(syncNullable), syncNullable);
-    expect(await jniMessageNullableAsync.sendSomeEnum(SomeEnum.value3),
-        SomeEnum.value3);
-    expect(await jniMessageNullableAsync.echoBool(null), null);
-    expect(await jniMessageNullableAsync.echoDouble(null), null);
-    expect(await jniMessageNullableAsync.echoInt(null), null);
-    expect(await jniMessageNullableAsync.echoString(null), null);
-    expect(await jniMessageNullableAsync.echoObj(null), null);
-    //named
-    final JniMessageApi? jniMessageNamed =
-        JniMessageApi.getInstance(channelName: 'name');
-    final JniMessageApiAsync? jniMessageAsyncNamed =
-        JniMessageApiAsync.getInstance(channelName: 'name');
-    expect(jniMessageNamed, isNotNull);
-    expect(jniMessageNamed!.echoString('hello'), 'hello1');
-    expect(await jniMessageAsync.echoInt(5), 5);
-    expect(await jniMessageAsyncNamed!.echoInt(5), 6);
-  }, skip: targetGenerator != TargetGenerator.kotlin);
+  if (targetGenerator == TargetGenerator.kotlin) {
+    ffi_tests.runPigeonIntegrationTests(
+        targetGenerator == TargetGenerator.kotlin
+            ? ffi_tests.TargetGenerator.kotlin
+            : ffi_tests.TargetGenerator.swift);
+  }
 
   group('Host sync API tests', () {
     testWidgets('basic void->void call works', (WidgetTester _) async {
