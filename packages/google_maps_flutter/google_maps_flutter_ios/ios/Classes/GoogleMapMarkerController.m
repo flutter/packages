@@ -104,8 +104,8 @@
   }
 }
 
-- (void)setZIndex:(int)zIndexInt {
-  self.marker.zIndexInt = zIndexInt;
+- (void)setZIndex:(int)zIndex {
+  self.marker.zIndex = zIndex;
 }
 
 - (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker
