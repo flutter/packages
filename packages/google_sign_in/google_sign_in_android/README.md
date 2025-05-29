@@ -16,22 +16,19 @@ should add it to your `pubspec.yaml` as usual.
 
 ## Integration
 
-To use Google Sign-In, you'll need to
-[register your application](https://firebase.google.com/docs/android/setup).
-If you are using Google Cloud Platform directly, rather than Firebase, you will
-need to register both an Android application and a web application in the
-[Google Cloud Platform API manager](https://console.developers.google.com/).
+To use Google Sign-In, you'll need to register your application, either
+[using Firebase](https://firebase.google.com/docs/android/setup), or
+[directly with Google Cloud Platform](https://developer.android.com/identity/sign-in/credential-manager-siwg#set-google).
 
 * If you are use the `google-services.json` file and Gradle-based registration
   system, no identifiers need to be provided in Dart when initializing the
-  `GoogleSignIn` instance.
+  `GoogleSignIn` instance when running on Android.
 * If you are not using `google-services.json`, you need to pass the client
   ID of the *web* application you registered as the `serverClientId` when
   initializing the `GoogleSignIn` instance.
 
-Make sure you've filled out all required fields in the console for
-[OAuth consent screen](https://console.developers.google.com/apis/credentials/consent).
-Otherwise, you may encounter `APIException` errors.
+If you encounter `APIException` errors, double-check that you have followed all
+of the registration steps in the instructions above.
 
 You will also need to enable any OAuth APIs that you want, using the
 [Google Cloud Platform API manager](https://console.developers.google.com/). For
