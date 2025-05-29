@@ -11143,7 +11143,7 @@ class JniAllTypes extends jni$_.JObject {
     jni$_.JList<jni$_.JObject> list6,
     jni$_.JList<jni$_.JList<jni$_.JObject?>> list7,
     jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> list8,
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    jni$_.JMap<jni$_.JObject, jni$_.JObject?> map,
     jni$_.JMap<jni$_.JString, jni$_.JString> map1,
     jni$_.JMap<jni$_.JLong, jni$_.JLong> map2,
     jni$_.JMap<JniAnEnum, JniAnEnum> map3,
@@ -11752,11 +11752,11 @@ class JniAllTypes extends jni$_.JObject {
 
   /// from: `public final java.util.Map<java.lang.Object, java.lang.Object> getMap()`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> getMap() {
+  jni$_.JMap<jni$_.JObject, jni$_.JObject?> getMap() {
     return _getMap(reference.pointer, _id_getMap as jni$_.JMethodIDPtr)
-        .object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-            const jni$_.JMapType<jni$_.JObject?, jni$_.JObject?>(
-                jni$_.JObjectNullableType(), jni$_.JObjectNullableType()));
+        .object<jni$_.JMap<jni$_.JObject, jni$_.JObject?>>(
+            const jni$_.JMapType<jni$_.JObject, jni$_.JObject?>(
+                jni$_.JObjectType(), jni$_.JObjectNullableType()));
   }
 
   static final _id_getStringMap = _class.instanceMethodId(
@@ -12540,12 +12540,12 @@ class JniAllTypes extends jni$_.JObject {
 
   /// from: `public final java.util.Map<java.lang.Object, java.lang.Object> component22()`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?> component22() {
+  jni$_.JMap<jni$_.JObject, jni$_.JObject?> component22() {
     return _component22(
             reference.pointer, _id_component22 as jni$_.JMethodIDPtr)
-        .object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>>(
-            const jni$_.JMapType<jni$_.JObject?, jni$_.JObject?>(
-                jni$_.JObjectNullableType(), jni$_.JObjectNullableType()));
+        .object<jni$_.JMap<jni$_.JObject, jni$_.JObject?>>(
+            const jni$_.JMapType<jni$_.JObject, jni$_.JObject?>(
+                jni$_.JObjectType(), jni$_.JObjectNullableType()));
   }
 
   static final _id_component23 = _class.instanceMethodId(
@@ -12814,7 +12814,7 @@ class JniAllTypes extends jni$_.JObject {
     jni$_.JList<jni$_.JObject> list6,
     jni$_.JList<jni$_.JList<jni$_.JObject?>> list7,
     jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>> list8,
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?> map,
+    jni$_.JMap<jni$_.JObject, jni$_.JObject?> map,
     jni$_.JMap<jni$_.JString, jni$_.JString> map1,
     jni$_.JMap<jni$_.JLong, jni$_.JLong> map2,
     jni$_.JMap<JniAnEnum, JniAnEnum> map3,
@@ -13262,7 +13262,7 @@ class JniAllNullableTypes extends jni$_.JObject {
     jni$_.JList<jni$_.JList<jni$_.JObject?>?>? list7,
     jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>? list8,
     jni$_.JList<JniAllNullableTypes?>? list9,
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    jni$_.JMap<jni$_.JObject, jni$_.JObject?>? map,
     jni$_.JMap<jni$_.JString?, jni$_.JString?>? map1,
     jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map2,
     jni$_.JMap<JniAnEnum?, JniAnEnum?>? map3,
@@ -14148,11 +14148,11 @@ class JniAllNullableTypes extends jni$_.JObject {
 
   /// from: `public final java.util.Map<java.lang.Object, java.lang.Object> getMap()`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? getMap() {
+  jni$_.JMap<jni$_.JObject, jni$_.JObject?>? getMap() {
     return _getMap(reference.pointer, _id_getMap as jni$_.JMethodIDPtr)
-        .object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>(
-            const jni$_.JMapNullableType<jni$_.JObject?, jni$_.JObject?>(
-                jni$_.JObjectNullableType(), jni$_.JObjectNullableType()));
+        .object<jni$_.JMap<jni$_.JObject, jni$_.JObject?>?>(
+            const jni$_.JMapNullableType<jni$_.JObject, jni$_.JObject?>(
+                jni$_.JObjectType(), jni$_.JObjectNullableType()));
   }
 
   static final _id_getStringMap = _class.instanceMethodId(
@@ -15033,12 +15033,12 @@ class JniAllNullableTypes extends jni$_.JObject {
 
   /// from: `public final java.util.Map<java.lang.Object, java.lang.Object> component24()`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? component24() {
+  jni$_.JMap<jni$_.JObject, jni$_.JObject?>? component24() {
     return _component24(
             reference.pointer, _id_component24 as jni$_.JMethodIDPtr)
-        .object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>(
-            const jni$_.JMapNullableType<jni$_.JObject?, jni$_.JObject?>(
-                jni$_.JObjectNullableType(), jni$_.JObjectNullableType()));
+        .object<jni$_.JMap<jni$_.JObject, jni$_.JObject?>?>(
+            const jni$_.JMapNullableType<jni$_.JObject, jni$_.JObject?>(
+                jni$_.JObjectType(), jni$_.JObjectNullableType()));
   }
 
   static final _id_component25 = _class.instanceMethodId(
@@ -15345,7 +15345,7 @@ class JniAllNullableTypes extends jni$_.JObject {
     jni$_.JList<jni$_.JList<jni$_.JObject?>?>? list7,
     jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>? list8,
     jni$_.JList<JniAllNullableTypes?>? list9,
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    jni$_.JMap<jni$_.JObject, jni$_.JObject?>? map,
     jni$_.JMap<jni$_.JString?, jni$_.JString?>? map1,
     jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map2,
     jni$_.JMap<JniAnEnum?, JniAnEnum?>? map3,
@@ -15838,7 +15838,7 @@ class JniAllNullableTypesWithoutRecursion extends jni$_.JObject {
     jni$_.JList<jni$_.JObject?>? list6,
     jni$_.JList<jni$_.JList<jni$_.JObject?>?>? list7,
     jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>? list8,
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    jni$_.JMap<jni$_.JObject, jni$_.JObject?>? map,
     jni$_.JMap<jni$_.JString?, jni$_.JString?>? map1,
     jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map2,
     jni$_.JMap<JniAnEnum?, JniAnEnum?>? map3,
@@ -16647,11 +16647,11 @@ class JniAllNullableTypesWithoutRecursion extends jni$_.JObject {
 
   /// from: `public final java.util.Map<java.lang.Object, java.lang.Object> getMap()`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? getMap() {
+  jni$_.JMap<jni$_.JObject, jni$_.JObject?>? getMap() {
     return _getMap(reference.pointer, _id_getMap as jni$_.JMethodIDPtr)
-        .object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>(
-            const jni$_.JMapNullableType<jni$_.JObject?, jni$_.JObject?>(
-                jni$_.JObjectNullableType(), jni$_.JObjectNullableType()));
+        .object<jni$_.JMap<jni$_.JObject, jni$_.JObject?>?>(
+            const jni$_.JMapNullableType<jni$_.JObject, jni$_.JObject?>(
+                jni$_.JObjectType(), jni$_.JObjectNullableType()));
   }
 
   static final _id_getStringMap = _class.instanceMethodId(
@@ -17451,12 +17451,12 @@ class JniAllNullableTypesWithoutRecursion extends jni$_.JObject {
 
   /// from: `public final java.util.Map<java.lang.Object, java.lang.Object> component22()`
   /// The returned object must be released after use, by calling the [release] method.
-  jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? component22() {
+  jni$_.JMap<jni$_.JObject, jni$_.JObject?>? component22() {
     return _component22(
             reference.pointer, _id_component22 as jni$_.JMethodIDPtr)
-        .object<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>(
-            const jni$_.JMapNullableType<jni$_.JObject?, jni$_.JObject?>(
-                jni$_.JObjectNullableType(), jni$_.JObjectNullableType()));
+        .object<jni$_.JMap<jni$_.JObject, jni$_.JObject?>?>(
+            const jni$_.JMapNullableType<jni$_.JObject, jni$_.JObject?>(
+                jni$_.JObjectType(), jni$_.JObjectNullableType()));
   }
 
   static final _id_component23 = _class.instanceMethodId(
@@ -17727,7 +17727,7 @@ class JniAllNullableTypesWithoutRecursion extends jni$_.JObject {
     jni$_.JList<jni$_.JObject?>? list6,
     jni$_.JList<jni$_.JList<jni$_.JObject?>?>? list7,
     jni$_.JList<jni$_.JMap<jni$_.JObject?, jni$_.JObject?>?>? list8,
-    jni$_.JMap<jni$_.JObject?, jni$_.JObject?>? map,
+    jni$_.JMap<jni$_.JObject, jni$_.JObject?>? map,
     jni$_.JMap<jni$_.JString?, jni$_.JString?>? map1,
     jni$_.JMap<jni$_.JLong?, jni$_.JLong?>? map2,
     jni$_.JMap<JniAnEnum?, JniAnEnum?>? map3,

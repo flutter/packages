@@ -153,31 +153,35 @@ class _PigeonJniCodec {
         array[i] = value[i];
       }
       return array as T;
-    } else if (value is List<bool>) {
+    } else if (value is List<bool> &&
+        isTypeOrNullableType<JList<JBoolean>>(T)) {
       final JList<JBoolean> res = JList<JBoolean>.array(JBoolean.type);
       for (final bool entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<double>) {
+    } else if (value is List<double> &&
+        isTypeOrNullableType<JList<JDouble>>(T)) {
       final JList<JDouble> res = JList<JDouble>.array(JDouble.type);
       for (final double entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<int>) {
+    } else if (value is List<int> && isTypeOrNullableType<JList<JLong>>(T)) {
       final JList<JLong> res = JList<JLong>.array(JLong.type);
       for (final int entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<String>) {
+    } else if (value is List<String> &&
+        isTypeOrNullableType<JList<JString>>(T)) {
       final JList<JString> res = JList<JString>.array(JString.type);
       for (final String entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<JniAllNullableTypes>) {
+    } else if (value is List<JniAllNullableTypes> &&
+        isTypeOrNullableType<JList<bridge.JniAllNullableTypes>>(T)) {
       final JList<bridge.JniAllNullableTypes> res =
           JList<bridge.JniAllNullableTypes>.array(
               bridge.JniAllNullableTypes.type);
@@ -185,14 +189,17 @@ class _PigeonJniCodec {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<JniAnEnum>) {
+    } else if (value is List<JniAnEnum> &&
+        isTypeOrNullableType<JList<bridge.JniAnEnum>>(T)) {
       final JList<bridge.JniAnEnum> res =
           JList<bridge.JniAnEnum>.array(bridge.JniAnEnum.type);
       for (final JniAnEnum entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<JniAllNullableTypesWithoutRecursion?>) {
+    } else if (value is List<JniAllNullableTypesWithoutRecursion?> &&
+        isTypeOrNullableType<
+            JList<bridge.JniAllNullableTypesWithoutRecursion?>>(T)) {
       final JList<bridge.JniAllNullableTypesWithoutRecursion?> res =
           JList<bridge.JniAllNullableTypesWithoutRecursion?>.array(
               bridge.JniAllNullableTypesWithoutRecursion.nullableType);
@@ -200,39 +207,44 @@ class _PigeonJniCodec {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<JniAllTypes?>) {
+    } else if (value is List<JniAllTypes?> &&
+        isTypeOrNullableType<JList<bridge.JniAllTypes?>>(T)) {
       final JList<bridge.JniAllTypes?> res =
           JList<bridge.JniAllTypes?>.array(bridge.JniAllTypes.nullableType);
       for (final JniAllTypes? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<bool?>) {
+    } else if (value is List<bool?> &&
+        isTypeOrNullableType<JList<JBoolean?>>(T)) {
       final JList<JBoolean?> res =
           JList<JBoolean?>.array(JBoolean.nullableType);
       for (final bool? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<double?>) {
+    } else if (value is List<double?> &&
+        isTypeOrNullableType<JList<JDouble?>>(T)) {
       final JList<JDouble?> res = JList<JDouble?>.array(JDouble.nullableType);
       for (final double? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<int?>) {
+    } else if (value is List<int?> && isTypeOrNullableType<JList<JLong?>>(T)) {
       final JList<JLong?> res = JList<JLong?>.array(JLong.nullableType);
       for (final int? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<String?>) {
+    } else if (value is List<String?> &&
+        isTypeOrNullableType<JList<JString?>>(T)) {
       final JList<JString?> res = JList<JString?>.array(JString.nullableType);
       for (final String? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<JniAllNullableTypes?>) {
+    } else if (value is List<JniAllNullableTypes?> &&
+        isTypeOrNullableType<JList<bridge.JniAllNullableTypes?>>(T)) {
       final JList<bridge.JniAllNullableTypes?> res =
           JList<bridge.JniAllNullableTypes?>.array(
               bridge.JniAllNullableTypes.nullableType);
@@ -240,28 +252,32 @@ class _PigeonJniCodec {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<JniAnEnum?>) {
+    } else if (value is List<JniAnEnum?> &&
+        isTypeOrNullableType<JList<bridge.JniAnEnum?>>(T)) {
       final JList<bridge.JniAnEnum?> res =
           JList<bridge.JniAnEnum?>.array(bridge.JniAnEnum.nullableType);
       for (final JniAnEnum? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<List<Object?>>) {
+    } else if (value is List<List<Object?>> &&
+        isTypeOrNullableType<JList<JList<JObject?>>>(T)) {
       final JList<JList<JObject?>> res =
           JList<JList<JObject?>>.array(JList.type(JObject.nullableType));
       for (final List<Object?> entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<List<Object?>?>) {
+    } else if (value is List<List<Object?>?> &&
+        isTypeOrNullableType<JList<JList<JObject?>?>>(T)) {
       final JList<JList<JObject?>?> res = JList<JList<JObject?>?>.array(
           JList.nullableType(JObject.nullableType));
       for (final List<Object?>? entry in value) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<Map<Object?, Object?>>) {
+    } else if (value is List<Map<Object?, Object?>> &&
+        isTypeOrNullableType<JList<JMap<JObject?, JObject?>>>(T)) {
       final JList<JMap<JObject?, JObject?>> res =
           JList<JMap<JObject?, JObject?>>.array(
               JMap.type(JObject.nullableType, JObject.nullableType));
@@ -269,7 +285,8 @@ class _PigeonJniCodec {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<Map<Object?, Object?>?>) {
+    } else if (value is List<Map<Object?, Object?>?> &&
+        isTypeOrNullableType<JList<JMap<JObject?, JObject?>?>>(T)) {
       final JList<JMap<JObject?, JObject?>?> res =
           JList<JMap<JObject?, JObject?>?>.array(
               JMap.nullableType(JObject.nullableType, JObject.nullableType));
@@ -289,7 +306,8 @@ class _PigeonJniCodec {
         res.add(writeValue(value[i]));
       }
       return res as T;
-    } else if (value is Map<int, JniAllNullableTypes>) {
+    } else if (value is Map<int, JniAllNullableTypes> &&
+        isTypeOrNullableType<JMap<JLong, bridge.JniAllNullableTypes>>(T)) {
       final JMap<JLong, bridge.JniAllNullableTypes> res =
           JMap<JLong, bridge.JniAllNullableTypes>.hash(
               JLong.type, bridge.JniAllNullableTypes.type);
@@ -297,7 +315,8 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<JniAnEnum, JniAnEnum>) {
+    } else if (value is Map<JniAnEnum, JniAnEnum> &&
+        isTypeOrNullableType<JMap<bridge.JniAnEnum, bridge.JniAnEnum>>(T)) {
       final JMap<bridge.JniAnEnum, bridge.JniAnEnum> res =
           JMap<bridge.JniAnEnum, bridge.JniAnEnum>.hash(
               bridge.JniAnEnum.type, bridge.JniAnEnum.type);
@@ -305,21 +324,25 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int, int>) {
+    } else if (value is Map<int, int> &&
+        isTypeOrNullableType<JMap<JLong, JLong>>(T)) {
       final JMap<JLong, JLong> res =
           JMap<JLong, JLong>.hash(JLong.type, JLong.type);
       for (final MapEntry<int, int> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<String, String>) {
+    } else if (value is Map<String, String> &&
+        isTypeOrNullableType<JMap<JString, JString>>(T)) {
       final JMap<JString, JString> res =
           JMap<JString, JString>.hash(JString.type, JString.type);
       for (final MapEntry<String, String> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, JniAllNullableTypesWithoutRecursion?>) {
+    } else if (value is Map<int?, JniAllNullableTypesWithoutRecursion?> &&
+        isTypeOrNullableType<
+            JMap<JLong?, bridge.JniAllNullableTypesWithoutRecursion?>>(T)) {
       final JMap<JLong?, bridge.JniAllNullableTypesWithoutRecursion?> res =
           JMap<JLong?, bridge.JniAllNullableTypesWithoutRecursion?>.hash(
               JLong.nullableType,
@@ -329,7 +352,8 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, JniAllTypes?>) {
+    } else if (value is Map<int?, JniAllTypes?> &&
+        isTypeOrNullableType<JMap<JLong?, bridge.JniAllTypes?>>(T)) {
       final JMap<JLong?, bridge.JniAllTypes?> res =
           JMap<JLong?, bridge.JniAllTypes?>.hash(
               JLong.nullableType, bridge.JniAllTypes.nullableType);
@@ -337,7 +361,8 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, JniAllNullableTypes?>) {
+    } else if (value is Map<int?, JniAllNullableTypes?> &&
+        isTypeOrNullableType<JMap<JLong?, bridge.JniAllNullableTypes?>>(T)) {
       final JMap<JLong?, bridge.JniAllNullableTypes?> res =
           JMap<JLong?, bridge.JniAllNullableTypes?>.hash(
               JLong.nullableType, bridge.JniAllNullableTypes.nullableType);
@@ -345,7 +370,8 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<JniAnEnum?, JniAnEnum?>) {
+    } else if (value is Map<JniAnEnum?, JniAnEnum?> &&
+        isTypeOrNullableType<JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>>(T)) {
       final JMap<bridge.JniAnEnum?, bridge.JniAnEnum?> res =
           JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>.hash(
               bridge.JniAnEnum.nullableType, bridge.JniAnEnum.nullableType);
@@ -353,21 +379,24 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, int?>) {
+    } else if (value is Map<int?, int?> &&
+        isTypeOrNullableType<JMap<JLong?, JLong?>>(T)) {
       final JMap<JLong?, JLong?> res =
           JMap<JLong?, JLong?>.hash(JLong.nullableType, JLong.nullableType);
       for (final MapEntry<int?, int?> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<String?, String?>) {
+    } else if (value is Map<String?, String?> &&
+        isTypeOrNullableType<JMap<JString?, JString?>>(T)) {
       final JMap<JString?, JString?> res = JMap<JString?, JString?>.hash(
           JString.nullableType, JString.nullableType);
       for (final MapEntry<String?, String?> entry in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int, List<Object?>>) {
+    } else if (value is Map<int, List<Object?>> &&
+        isTypeOrNullableType<JMap<JLong, JList<JObject?>>>(T)) {
       final JMap<JLong, JList<JObject?>> res =
           JMap<JLong, JList<JObject?>>.hash(
               JLong.type, JList.type(JObject.nullableType));
@@ -375,7 +404,8 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, List<Object?>?>) {
+    } else if (value is Map<int?, List<Object?>?> &&
+        isTypeOrNullableType<JMap<JLong?, JList<JObject?>?>>(T)) {
       final JMap<JLong?, JList<JObject?>?> res =
           JMap<JLong?, JList<JObject?>?>.hash(
               JLong.nullableType, JList.nullableType(JObject.nullableType));
@@ -383,7 +413,8 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int, Map<Object?, Object?>>) {
+    } else if (value is Map<int, Map<Object?, Object?>> &&
+        isTypeOrNullableType<JMap<JLong, JMap<JObject?, JObject?>>>(T)) {
       final JMap<JLong, JMap<JObject?, JObject?>> res =
           JMap<JLong, JMap<JObject?, JObject?>>.hash(JLong.type,
               JMap.type(JObject.nullableType, JObject.nullableType));
@@ -391,7 +422,8 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, Map<Object?, Object?>?>) {
+    } else if (value is Map<int?, Map<Object?, Object?>?> &&
+        isTypeOrNullableType<JMap<JLong?, JMap<JObject?, JObject?>?>>(T)) {
       final JMap<JLong?, JMap<JObject?, JObject?>?> res =
           JMap<JLong?, JMap<JObject?, JObject?>?>.hash(JLong.nullableType,
               JMap.nullableType(JObject.nullableType, JObject.nullableType));
@@ -669,7 +701,7 @@ class JniAllTypes {
       _PigeonJniCodec.writeValue<JList<JObject>>(objectList),
       _PigeonJniCodec.writeValue<JList<JList<JObject?>>>(listList),
       _PigeonJniCodec.writeValue<JList<JMap<JObject?, JObject?>>>(mapList),
-      _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>>(map),
+      _PigeonJniCodec.writeValue<JMap<JObject, JObject?>>(map),
       _PigeonJniCodec.writeValue<JMap<JString, JString>>(stringMap),
       _PigeonJniCodec.writeValue<JMap<JLong, JLong>>(intMap),
       _PigeonJniCodec.writeValue<JMap<bridge.JniAnEnum, bridge.JniAnEnum>>(
@@ -996,7 +1028,7 @@ class JniAllNullableTypes {
       _PigeonJniCodec.writeValue<JList<JMap<JObject?, JObject?>?>?>(mapList),
       _PigeonJniCodec.writeValue<JList<bridge.JniAllNullableTypes?>?>(
           recursiveClassList),
-      _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map),
+      _PigeonJniCodec.writeValue<JMap<JObject, JObject?>?>(map),
       _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap),
       _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap),
       _PigeonJniCodec.writeValue<JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>?>(
@@ -1347,7 +1379,7 @@ class JniAllNullableTypesWithoutRecursion {
       _PigeonJniCodec.writeValue<JList<JObject?>?>(objectList),
       _PigeonJniCodec.writeValue<JList<JList<JObject?>?>?>(listList),
       _PigeonJniCodec.writeValue<JList<JMap<JObject?, JObject?>?>?>(mapList),
-      _PigeonJniCodec.writeValue<JMap<JObject?, JObject?>?>(map),
+      _PigeonJniCodec.writeValue<JMap<JObject, JObject?>?>(map),
       _PigeonJniCodec.writeValue<JMap<JString?, JString?>?>(stringMap),
       _PigeonJniCodec.writeValue<JMap<JLong?, JLong?>?>(intMap),
       _PigeonJniCodec.writeValue<JMap<bridge.JniAnEnum?, bridge.JniAnEnum?>?>(

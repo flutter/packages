@@ -225,7 +225,7 @@ class _JniType {
       return subTypeOne?.fullJniType ?? 'JObject.nullableType';
     }
     if (type.baseName == 'Map') {
-      return '${subTypeOne?.fullJniType ?? 'JObject.nullableType'}, ${subTypeTwo?.fullJniType ?? 'JObject.nullableType'}';
+      return '${subTypeOne?.fullJniType ?? 'JObject.type'}, ${subTypeTwo?.fullJniType ?? 'JObject.nullableType'}';
     }
 
     return '$jniName.$jniTypeGetter';
@@ -374,7 +374,7 @@ class _JniType {
     if (type.baseName == 'List') {
       return subTypeOne?.getJniCallReturnType(true) ?? 'JObject?';
     } else if (type.baseName == 'Map') {
-      return '${subTypeOne?.getJniCallReturnType(true) ?? 'JObject?'}, ${subTypeTwo?.getJniCallReturnType(true) ?? 'JObject?'}';
+      return '${subTypeOne?.getJniCallReturnType(true) ?? 'JObject'}, ${subTypeTwo?.getJniCallReturnType(true) ?? 'JObject?'}';
     }
     return '';
   }
@@ -1699,7 +1699,7 @@ class _PigeonJniCodec {
       }
       final _JniType jniType = _JniType.fromTypeDeclaration(list);
       return '''
-    } else if (value is ${jniType.type.getFullName(withNullable: false)}) {
+    } else if (value is ${jniType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${jniType.fullJniName}>(T)) {
       final ${jniType.fullJniName} res =
           ${jniType.fullJniName}.array(${jniType.subTypeOne?.fullJniType ?? 'JObject.nullableType'});
       for (final ${jniType.dartCollectionTypes} entry in value) {
@@ -1728,7 +1728,7 @@ class _PigeonJniCodec {
       }
       final _JniType jniType = _JniType.fromTypeDeclaration(mapType.value);
       return '''
-    } else if (value is ${jniType.type.getFullName(withNullable: false)}) {
+    } else if (value is ${jniType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${jniType.fullJniName}>(T)) {
       final ${jniType.fullJniName} res =
           ${jniType.fullJniName}.hash(${jniType.subTypeOne?.fullJniType ?? 'JObject.nullableType'}, ${jniType.subTypeTwo?.fullJniType ?? 'JObject.nullableType'});
       for (final MapEntry${jniType.dartCollectionTypeAnnotations} entry in value.entries) {
