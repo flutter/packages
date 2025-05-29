@@ -90,7 +90,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
@@ -103,7 +103,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
