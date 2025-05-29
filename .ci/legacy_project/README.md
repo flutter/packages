@@ -41,7 +41,7 @@ and then deleting everything but `android/` from it:
   `build.gradle` to maintain compatibility with plugins that use
   Flutter's most recently supported API version.
 - Modifies `gradle-wrapper.properties` to upgrade the Gradle version
-  from 6.7 to 8.0. If a user runs into an error with the Gradle
+  from 6.7 to 8.4. If a user runs into an error with the Gradle
   version, the warning is clear on how to upgrade the version to
   one that we support.
 - Modifies `settings.gradle` to upgrade the Android Gradle Plugin (AGP)
