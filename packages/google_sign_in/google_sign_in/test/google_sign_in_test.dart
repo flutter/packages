@@ -115,8 +115,6 @@ void main() {
         await eventFuture;
         fail('The stream should throw before returning an event.');
       } on GoogleSignInException catch (e) {
-        print(e);
-        print(exception);
         expect(e, exception);
       }
     });

@@ -322,8 +322,7 @@ void main() {
       const AuthenticationEvent expected = AuthenticationEventSignIn(
           user:
               GoogleSignInUserData(email: 'someone@example.com', id: 'user_id'),
-          authenticationTokens:
-              const AuthenticationTokenData(idToken: 'someToken'));
+          authenticationTokens: AuthenticationTokenData(idToken: 'someToken'));
       controller.add(expected);
 
       expect(await event, expected,
