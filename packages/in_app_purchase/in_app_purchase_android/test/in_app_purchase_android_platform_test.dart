@@ -282,8 +282,10 @@ void main() {
   });
 
   group('make payment', () {
-    test('buy non consumable subscribe offer, serializes and deserializes data', () async {
-      const ProductDetailsWrapper productDetails = dummySubscriptionProductDetails;
+    test('buy non consumable subscribe offer, serializes and deserializes data',
+        () async {
+      const ProductDetailsWrapper productDetails =
+          dummySubscriptionProductDetails;
       const String accountId = 'hashedAccountId';
       const String debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.ok;
@@ -326,9 +328,10 @@ void main() {
         subscription.cancel();
       }, onDone: () {});
       final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          offerToken: productDetails.subscriptionOfferDetails?.first.offerIdToken,
+          offerToken:
+              productDetails.subscriptionOfferDetails?.first.offerIdToken,
           productDetails:
-          GooglePlayProductDetails.fromProductDetails(productDetails).first,
+              GooglePlayProductDetails.fromProductDetails(productDetails).first,
           applicationUserName: accountId);
       final bool launchResult = await iapAndroidPlatform.buyNonConsumable(
           purchaseParam: purchaseParam);
