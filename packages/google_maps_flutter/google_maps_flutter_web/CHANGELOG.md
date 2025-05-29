@@ -1,6 +1,7 @@
 ## 0.5.13
 
 * Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 0.5.12
 
