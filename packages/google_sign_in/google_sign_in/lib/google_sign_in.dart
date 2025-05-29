@@ -364,10 +364,10 @@ class GoogleSignIn {
       }
       return _resolveLightweightAuthenticationAttempt(future,
           reportAllExceptions: reportAllExceptions);
-    } catch (e) {
+    } catch (e, stack) {
       if (e is GoogleSignInException) {
         if (_createAuthenticationStreamEvents) {
-          _authenticationStreamController.addError(e);
+          _authenticationStreamController.addError(e, stack);
         }
 
         // For exceptions that should not be reported out, just return null.
@@ -376,7 +376,7 @@ class GoogleSignIn {
           return Future<GoogleSignInAccount?>.value();
         }
       }
-      return Future<GoogleSignInAccount?>.error(e);
+      return Future<GoogleSignInAccount?>.error(e, stack);
     }
   }
 
@@ -403,9 +403,9 @@ class GoogleSignIn {
             .add(GoogleSignInAuthenticationEventSignIn(user: account));
       }
       return account;
-    } on GoogleSignInException catch (e) {
+    } on GoogleSignInException catch (e, stack) {
       if (_createAuthenticationStreamEvents) {
-        _authenticationStreamController.addError(e);
+        _authenticationStreamController.addError(e, stack);
       }
 
       if (_shouldRethrowLightweightAuthenticationException(e,
