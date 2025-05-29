@@ -12,7 +12,7 @@ import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockito/mockito.dart';
 import 'package:web/web.dart';
 
 import 'helpers/helpers.dart';
@@ -44,10 +44,6 @@ void main() {
       }
     }
   }
-
-  setUpAll(() {
-    registerFallbackValue(MockCameraOptions());
-  });
 
   testWidgets('Camera allows to control video bitrate',
       (WidgetTester tester) async {
@@ -97,14 +93,11 @@ void main() {
       final int cameraId = videoBitrate;
 
       when(
-        () {
-          return cameraService.getMediaStreamForOptions(
-            options,
-            cameraId: cameraId,
-          );
-        },
-      ).thenAnswer(
-          (_) => Future<MediaStream>.value(canvasElement.captureStream()));
+        cameraService.getMediaStreamForOptions(
+          options,
+          cameraId: cameraId,
+        ),
+      ).thenAnswer((_) async => canvasElement.captureStream());
 
       final Camera camera = Camera(
           textureId: cameraId,

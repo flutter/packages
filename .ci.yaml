@@ -90,7 +90,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
@@ -103,7 +103,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
@@ -322,10 +322,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.24.5"
+      channel: "3.29.3"
       env_variables: >-
         {
-          "CHANNEL": "3.24.5"
+          "CHANNEL": "3.29.3"
         }
 
   - name: Linux analyze_legacy N-2
@@ -333,10 +333,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.22.3"
+      channel: "3.27.4"
       env_variables: >-
         {
-          "CHANNEL": "3.22.3"
+          "CHANNEL": "3.27.4"
         }
 
   - name: Linux_android custom_package_tests master

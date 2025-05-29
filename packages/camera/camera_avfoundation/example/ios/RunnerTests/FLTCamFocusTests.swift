@@ -9,7 +9,7 @@ import XCTest
 
 // Import Objectice-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
+  import camera_avfoundation_objc
 #endif
 
 final class FLTCamSetFocusModeTests: XCTestCase {
@@ -18,9 +18,9 @@ final class FLTCamSetFocusModeTests: XCTestCase {
     let mockDeviceOrientationProvider = MockDeviceOrientationProvider()
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.captureDeviceFactory = { mockDevice }
+    configuration.captureDeviceFactory = { _ in mockDevice }
     configuration.deviceOrientationProvider = mockDeviceOrientationProvider
-    let camera = FLTCam(configuration: configuration, error: nil)
+    let camera = CameraTestUtils.createTestCamera(configuration)
 
     return (camera, mockDevice, mockDeviceOrientationProvider)
   }

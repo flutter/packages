@@ -3,13 +3,13 @@ description: go_router_builder examples
 publish_to: none
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
 
 dependencies:
   collection: ^1.15.0
   flutter:
     sdk: flutter
-  go_router: ^14.1.1
+  go_router: ^15.1.1
   provider: 6.0.5
 
 dev_dependencies:
