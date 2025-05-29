@@ -10,11 +10,7 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'mini_controller.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
-      home: _App(),
-    ),
-  );
+  runApp(MaterialApp(home: _App()));
 }
 
 class _App extends StatelessWidget {
@@ -38,15 +34,15 @@ class _App extends StatelessWidget {
         body: TabBarView(
           children: <Widget>[
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _BumbleBeeRemoteVideo(viewType),
+              builder:
+                  (VideoViewType viewType) => _BumbleBeeRemoteVideo(viewType),
             ),
             _ViewTypeTabBar(
               builder: (VideoViewType viewType) => _RtspRemoteVideo(viewType),
             ),
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _ButterFlyAssetVideo(viewType),
+              builder:
+                  (VideoViewType viewType) => _ButterFlyAssetVideo(viewType),
             ),
           ],
         ),
@@ -56,9 +52,7 @@ class _App extends StatelessWidget {
 }
 
 class _ViewTypeTabBar extends StatefulWidget {
-  const _ViewTypeTabBar({
-    required this.builder,
-  });
+  const _ViewTypeTabBar({required this.builder});
 
   final Widget Function(VideoViewType) builder;
 
@@ -90,14 +84,8 @@ class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
           controller: _tabController,
           isScrollable: true,
           tabs: const <Widget>[
-            Tab(
-              icon: Icon(Icons.texture),
-              text: 'Texture view',
-            ),
-            Tab(
-              icon: Icon(Icons.construction),
-              text: 'Platform view',
-            ),
+            Tab(icon: Icon(Icons.texture), text: 'Texture view'),
+            Tab(icon: Icon(Icons.construction), text: 'Platform view'),
           ],
         ),
         Expanded(
@@ -151,9 +139,7 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(top: 20.0),
-          ),
+          Container(padding: const EdgeInsets.only(top: 20.0)),
           const Text('With assets mp4'),
           Container(
             padding: const EdgeInsets.all(20),
@@ -258,10 +244,7 @@ class _RtspRemoteVideoState extends State<_RtspRemoteVideo> {
     }
 
     setState(() {
-      _controller = MiniController.network(
-        url,
-        viewType: widget.viewType,
-      );
+      _controller = MiniController.network(url, viewType: widget.viewType);
     });
 
     _controller!.addListener(() {
@@ -348,20 +331,21 @@ class _ControlsOverlay extends StatelessWidget {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 50),
           reverseDuration: const Duration(milliseconds: 200),
-          child: controller.value.isPlaying
-              ? const SizedBox.shrink()
-              : const ColoredBox(
-                  color: Colors.black26,
-                  child: Center(
-                    child: Icon(
-                      key: ValueKey<String>('Play'),
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 100.0,
-                      semanticLabel: 'Play',
+          child:
+              controller.value.isPlaying
+                  ? const SizedBox.shrink()
+                  : const ColoredBox(
+                    color: Colors.black26,
+                    child: Center(
+                      child: Icon(
+                        key: ValueKey<String>('Play'),
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        size: 100.0,
+                        semanticLabel: 'Play',
+                      ),
                     ),
                   ),
-                ),
         ),
         GestureDetector(
           onTap: () {
@@ -379,10 +363,7 @@ class _ControlsOverlay extends StatelessWidget {
             itemBuilder: (BuildContext context) {
               return <PopupMenuItem<double>>[
                 for (final double speed in _examplePlaybackRates)
-                  PopupMenuItem<double>(
-                    value: speed,
-                    child: Text('${speed}x'),
-                  )
+                  PopupMenuItem<double>(value: speed, child: Text('${speed}x')),
               ];
             },
             child: Padding(
