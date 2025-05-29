@@ -266,8 +266,8 @@ public class GoogleSignInTest {
         ResultCompat.asCompatCallback(
             reply -> {
               // This test doesn't trigger the getCredentialsAsync callback that would call this,
-                // so if this is reached something has gone wrong.
-                fail();
+              // so if this is reached something has gone wrong.
+              fail();
               return null;
             }));
 
@@ -294,9 +294,9 @@ public class GoogleSignInTest {
         params,
         ResultCompat.asCompatCallback(
             reply -> {
-                // This test doesn't trigger the getCredentialsAsync callback that would call this,
-                // so if this is reached something has gone wrong.
-                fail();
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
               return null;
             }));
 
@@ -325,9 +325,9 @@ public class GoogleSignInTest {
         params,
         ResultCompat.asCompatCallback(
             reply -> {
-                // This test doesn't trigger the getCredentialsAsync callback that would call this,
-                // so if this is reached something has gone wrong.
-                fail();
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
               return null;
             }));
 
@@ -657,9 +657,9 @@ public class GoogleSignInTest {
         false,
         ResultCompat.asCompatCallback(
             reply -> {
-                // This test doesn't trigger the getCredentialsAsync callback that would call this,
-                // so if this is reached something has gone wrong.
-                fail();
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
               return null;
             }));
 
@@ -691,9 +691,9 @@ public class GoogleSignInTest {
         false,
         ResultCompat.asCompatCallback(
             reply -> {
-                // This test doesn't trigger the getCredentialsAsync callback that would call this,
-                // so if this is reached something has gone wrong.
-                fail();
+              // This test doesn't trigger the getCredentialsAsync callback that would call this,
+              // so if this is reached something has gone wrong.
+              fail();
               return null;
             }));
 
