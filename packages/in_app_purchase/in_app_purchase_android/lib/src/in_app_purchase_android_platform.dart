@@ -149,7 +149,6 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
       offerToken = purchaseParam.offerToken;
     }
 
-
     if (offerToken == null &&
         purchaseParam.productDetails is GooglePlayProductDetails) {
       offerToken =
