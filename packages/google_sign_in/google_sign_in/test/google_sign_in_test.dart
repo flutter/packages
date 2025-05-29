@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
@@ -97,7 +99,31 @@ void main() {
       expect(signIn.user.authentication.idToken, idToken);
     });
 
-    test('reports exceptions from attemptLightweightAuthentication', () async {
+    test('reports sync exceptions from attemptLightweightAuthentication',
+        () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const GoogleSignInException exception =
+          GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
+      when(mockPlatform.attemptLightweightAuthentication(any))
+          .thenThrow(exception);
+
+      final Completer<Object> errorCompleter = Completer<Object>();
+      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription =
+          googleSignIn.authenticationEvents
+              .handleError((Object e) => errorCompleter.complete(e))
+              .listen((_) => fail('The only event should be an error'));
+      await googleSignIn.initialize();
+      // This doesn't throw, since reportAllExceptions is false.
+      await googleSignIn.attemptLightweightAuthentication();
+
+      final Object e = await errorCompleter.future;
+      expect(e, exception);
+      await subscription.cancel();
+    });
+
+    test('reports async exceptions from attemptLightweightAuthentication',
+        () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
       const GoogleSignInException exception =
@@ -105,18 +131,18 @@ void main() {
       when(mockPlatform.attemptLightweightAuthentication(any))
           .thenAnswer((_) async => throw exception);
 
-      final Future<GoogleSignInAuthenticationEvent> eventFuture =
-          googleSignIn.authenticationEvents.first;
+      final Completer<Object> errorCompleter = Completer<Object>();
+      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription =
+          googleSignIn.authenticationEvents
+              .handleError((Object e) => errorCompleter.complete(e))
+              .listen((_) => fail('The only event should be an error'));
       await googleSignIn.initialize();
       // This doesn't throw, since reportAllExceptions is false.
       await googleSignIn.attemptLightweightAuthentication();
 
-      try {
-        await eventFuture;
-        fail('The stream should throw before returning an event.');
-      } on GoogleSignInException catch (e) {
-        expect(e, exception);
-      }
+      final Object e = await errorCompleter.future;
+      expect(e, exception);
+      await subscription.cancel();
     });
 
     test('reports success from authenticate', () async {
@@ -141,7 +167,28 @@ void main() {
       expect(signIn.user.authentication.idToken, idToken);
     });
 
-    test('reports exceptions from authenticate', () async {
+    test('reports sync exceptions from authenticate', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const GoogleSignInException exception =
+          GoogleSignInException(code: GoogleSignInExceptionCode.interrupted);
+      when(mockPlatform.authenticate(any)).thenThrow(exception);
+
+      final Completer<Object> errorCompleter = Completer<Object>();
+      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription =
+          googleSignIn.authenticationEvents
+              .handleError((Object e) => errorCompleter.complete(e))
+              .listen((_) => fail('The only event should be an error'));
+      await googleSignIn.initialize();
+      await expectLater(
+          googleSignIn.authenticate(), throwsA(isA<GoogleSignInException>()));
+
+      final Object e = await errorCompleter.future;
+      expect(e, exception);
+      await subscription.cancel();
+    });
+
+    test('reports async exceptions from authenticate', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;
 
       const GoogleSignInException exception =
@@ -149,18 +196,18 @@ void main() {
       when(mockPlatform.authenticate(any))
           .thenAnswer((_) async => throw exception);
 
-      final Future<GoogleSignInAuthenticationEvent> eventFuture =
-          googleSignIn.authenticationEvents.first;
+      final Completer<Object> errorCompleter = Completer<Object>();
+      final StreamSubscription<GoogleSignInAuthenticationEvent> subscription =
+          googleSignIn.authenticationEvents
+              .handleError((Object e) => errorCompleter.complete(e))
+              .listen((_) => fail('The only event should be an error'));
       await googleSignIn.initialize();
       await expectLater(
           googleSignIn.authenticate(), throwsA(isA<GoogleSignInException>()));
 
-      try {
-        await eventFuture;
-        fail('The stream should throw before returning an event.');
-      } on GoogleSignInException catch (e) {
-        expect(e, exception);
-      }
+      final Object e = await errorCompleter.future;
+      expect(e, exception);
+      await subscription.cancel();
     });
 
     test('reports sign out from signOut', () async {
