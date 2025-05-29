@@ -18,12 +18,14 @@ final class IOSCompanionAdSlotCreationParams
   const IOSCompanionAdSlotCreationParams.size({
     required super.width,
     required super.height,
+    super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
         super.size();
 
   /// Constructs a [IOSCompanionAdSlotCreationParams].
   const IOSCompanionAdSlotCreationParams.fluid({
+    super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
         super.fluid();
@@ -40,6 +42,7 @@ final class IOSCompanionAdSlotCreationParams
     return IOSCompanionAdSlotCreationParams.size(
       width: params.width!,
       height: params.height!,
+      onClicked: params.onClicked,
       proxy: proxy,
     );
   }
@@ -54,6 +57,7 @@ final class IOSCompanionAdSlotCreationParams
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   }) {
     return IOSCompanionAdSlotCreationParams.fluid(
+      onClicked: params.onClicked,
       proxy: proxy,
     );
   }

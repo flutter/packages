@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/build_widget_creation_params.dart';
@@ -79,9 +80,7 @@ final class AndroidCompanionAdSlotCreationParams
 /// Android implementation of [PlatformCompanionAdSlot].
 base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   /// Constructs an [AndroidCompanionAdSlot].
-  AndroidCompanionAdSlot(super.params) : super.implementation() {
-    _adSlotFuture = _initCompanionAdSlot();
-  }
+  AndroidCompanionAdSlot(super.params) : super.implementation();
 
   late final AndroidCompanionAdSlotCreationParams _androidParams =
       _initAndroidParams(params);
@@ -90,7 +89,7 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   late final ima.ViewGroup _frameLayout =
       _androidParams._proxy.newFrameLayout();
 
-  late final Future<ima.CompanionAdSlot> _adSlotFuture;
+  late final Future<ima.CompanionAdSlot> _adSlotFuture = _initCompanionAdSlot();
 
   /// The future returning the native CompanionAdSlot.
   @internal
