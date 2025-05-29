@@ -34,7 +34,9 @@ final GoogleSignIn signIn = GoogleSignIn.instance;
 unawaited(signIn
     .initialize(clientId: clientId, serverClientId: serverClientId)
     .then((_) {
-  signIn.authenticationEvents.listen(_handleAuthenticationEvent);
+  signIn.authenticationEvents
+      .listen(_handleAuthenticationEvent)
+      .onError(_handleAuthenticationError);
 
   /// This example always uses the stream-based approach to determining
   /// which UI state to show, rather than using the future returned here,
