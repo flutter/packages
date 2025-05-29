@@ -1,4 +1,4 @@
-## 0.5.12 + 1
+## 0.5.13
 
 * Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
 
