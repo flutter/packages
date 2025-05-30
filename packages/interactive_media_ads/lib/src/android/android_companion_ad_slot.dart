@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/build_widget_creation_params.dart';
