@@ -21,21 +21,19 @@ class PlaceMarkerPage extends GoogleMapExampleAppPage {
 
   @override
   Widget build(BuildContext context) {
-    return const PlaceMarkerBody();
+    return const _PlaceMarkerBody();
   }
 }
 
-class PlaceMarkerBody extends StatefulWidget {
-  const PlaceMarkerBody({super.key});
+class _PlaceMarkerBody extends StatefulWidget {
+  const _PlaceMarkerBody();
 
   @override
-  State<StatefulWidget> createState() => PlaceMarkerBodyState();
+  State<StatefulWidget> createState() => _PlaceMarkerBodyState();
 }
 
-typedef MarkerUpdateAction = Marker Function(Marker marker);
-
-class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
-  PlaceMarkerBodyState();
+class _PlaceMarkerBodyState extends State<_PlaceMarkerBody> {
+  _PlaceMarkerBodyState();
   static const LatLng center = LatLng(-33.86711, 151.1947171);
 
   ExampleGoogleMapController? controller;
@@ -46,9 +44,10 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
   // A helper text for Xcode UITests.
   String _onDragXcodeUITestHelperText = '';
 
-  // ignore: use_setters_to_change_properties
   void _onMapCreated(ExampleGoogleMapController controller) {
-    this.controller = controller;
+    setState(() {
+      this.controller = controller;
+    });
   }
 
   @override
@@ -62,16 +61,12 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
       setState(() {
         final MarkerId? previousMarkerId = selectedMarker;
         if (previousMarkerId != null && markers.containsKey(previousMarkerId)) {
-          final Marker resetOld = markers[previousMarkerId]!
-              .copyWith(iconParam: BitmapDescriptor.defaultMarker);
+          final Marker resetOld =
+              copyWithSelectedState(markers[previousMarkerId]!, false);
           markers[previousMarkerId] = resetOld;
         }
         selectedMarker = markerId;
-        final Marker newMarker = tappedMarker.copyWith(
-          iconParam: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueGreen,
-          ),
-        );
+        final Marker newMarker = copyWithSelectedState(tappedMarker, true);
         markers[markerId] = newMarker;
 
         markerPosition = null;
@@ -292,6 +287,15 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
     return BytesMapBitmap(bytes.buffer.asUint8List());
   }
 
+  /// Performs customizations of the [marker] to mark it as selected or not.
+  Marker copyWithSelectedState(Marker marker, bool isSelected) {
+    return marker.copyWith(
+      iconParam: isSelected
+          ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
+          : BitmapDescriptor.defaultMarker,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final MarkerId? selectedId = selectedMarker;
@@ -420,5 +424,64 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
         ),
       ),
     ]);
+  }
+}
+
+/// Widget displaying the status of advanced markers capability check.
+class AdvancedMarkersCapabilityStatus extends StatefulWidget {
+  /// Default constructor.
+  const AdvancedMarkersCapabilityStatus({
+    super.key,
+    required this.controller,
+  });
+
+  /// Controller of the map to check for advanced markers capability.
+  final ExampleGoogleMapController? controller;
+
+  @override
+  State<AdvancedMarkersCapabilityStatus> createState() =>
+      _AdvancedMarkersCapabilityStatusState();
+}
+
+class _AdvancedMarkersCapabilityStatusState
+    extends State<AdvancedMarkersCapabilityStatus> {
+  /// Whether map supports advanced markers. Null indicates capability check
+  /// is in progress.
+  bool? _isAdvancedMarkersAvailable;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.controller != null) {
+      GoogleMapsFlutterPlatform.instance
+          .isAdvancedMarkersAvailable(mapId: widget.controller!.mapId)
+          .then((bool result) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            _isAdvancedMarkersAvailable = result;
+          });
+        });
+      });
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Text(
+        switch (_isAdvancedMarkersAvailable) {
+          null => 'Checking map capabilities…',
+          true =>
+            'Map capabilities check result:\nthis map supports advanced markers',
+          false =>
+            "Map capabilities check result:\nthis map doesn't support advanced markers. Please check that map ID is provided and correct map renderer is used",
+        },
+        textAlign: TextAlign.center,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              color: switch (_isAdvancedMarkersAvailable) {
+                true => Colors.green.shade700,
+                false => Colors.red,
+                null => Colors.black,
+              },
+            ),
+      ),
+    );
   }
 }
