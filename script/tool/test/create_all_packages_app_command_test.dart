@@ -339,7 +339,7 @@ android {
           buildGradle,
           containsAll(<Matcher>[
             contains('This is the legacy file'),
-            contains('compileSdk 34'),
+            contains('compileSdk 35'),
           ]));
     });
 
@@ -372,7 +372,7 @@ android {
       expect(
           buildGradle,
           containsAll(<Matcher>[
-            contains('compileSdk 34'),
+            contains('compileSdk 35'),
             contains('androidx.lifecycle:lifecycle-runtime'),
           ]));
     });
