@@ -158,8 +158,17 @@ class PigeonInstanceManager {
   ///
   /// Returns the randomly generated id of the [instance] added.
   int addDartCreatedInstance(PigeonInternalProxyApiBaseClass instance) {
+    assert(getIdentifier(instance) == null);
+
     final int identifier = _nextUniqueIdentifier();
-    _addInstanceWithIdentifier(instance, identifier);
+    _identifiers[instance] = identifier;
+    _weakInstances[identifier] =
+        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
+    _finalizer.attach(instance, identifier, detach: instance);
+
+    final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
+    _identifiers[copy] = identifier;
+    _strongInstances[identifier] = copy;
     return identifier;
   }
 
@@ -191,9 +200,15 @@ class PigeonInstanceManager {
   /// it was removed. Returns `null` if [identifier] was not associated with
   /// any strong reference.
   ///
-  /// This does not remove the weak referenced instance associated with
-  /// [identifier]. This can be done with [removeWeakReference].
+  /// Throws an `AssertionError` if the weak referenced instance associated with
+  /// [identifier] is not removed first. This can be done with
+  /// [removeWeakReference].
   T? remove<T extends PigeonInternalProxyApiBaseClass>(int identifier) {
+    final T? instance = _weakInstances[identifier]?.target as T?;
+    assert(
+      instance == null,
+      'A strong instance with identifier $identifier is being removed despite the weak reference still existing: $instance',
+    );
     return _strongInstances.remove(identifier) as T?;
   }
 
@@ -244,27 +259,14 @@ class PigeonInstanceManager {
   ///
   /// Throws assertion error if the instance or its identifier has already been
   /// added.
-  ///
-  /// Returns unique identifier of the [instance] added.
   void addHostCreatedInstance(
-      PigeonInternalProxyApiBaseClass instance, int identifier) {
-    _addInstanceWithIdentifier(instance, identifier);
-  }
-
-  void _addInstanceWithIdentifier(
       PigeonInternalProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] =
-        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
-    _finalizer.attach(instance, identifier, detach: instance);
-
-    final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
-    _identifiers[copy] = identifier;
-    _strongInstances[identifier] = copy;
+    _strongInstances[identifier] = instance;
   }
 
   /// Whether this manager contains the given [identifier].

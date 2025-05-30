@@ -1,3 +1,17 @@
+## 0.9.19+1
+
+* Adds `audioCaptureDeviceFactory` to `FLTCamConfiguration`.
+* Renames the `lockCaptureOrientation` method of Objective-C type `FLTCam` when exported to Swift.
+* Renames arguments of the `captureOutput` method of Objective-C type `FLTCam` when exported to Swift.
+* Changes the `connection` argument type of the `captureOutput` method of the of `FLTCam` class to `AVCaptureConnection`.
+* Makes `minimum/maximumAvailableZoomFactor` and `minimum/maximumExposureOffset` fields of `FLTCam` readonly.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 0.9.19
+
+* Migrates the CameraPlugin class to Swift.
+* Fixes camera name being ignored in `setDescriptionWhileRecording`.
+
 ## 0.9.18+14
 
 * Creates Swift Package Manager target for Swift implementation.

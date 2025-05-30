@@ -2,6 +2,11 @@
 
 - Adds new top level `onEnter` callback with access to current and next route states.
 - Deprecates top level `redirect` in favor of `onEnter`.
+- Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 15.1.2
+
+- Fixes focus request propagation from `GoRouter` to `Navigator` by properly handling the `requestFocus` parameter.
 
 ## 15.1.1
 
