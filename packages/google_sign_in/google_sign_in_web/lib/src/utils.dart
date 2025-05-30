@@ -5,7 +5,6 @@
 import 'dart:convert';
 
 import 'package:google_identity_services_web/id.dart';
-import 'package:google_identity_services_web/oauth2.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 
 /// A codec that can encode/decode JWT payloads.
@@ -65,7 +64,7 @@ Map<String, Object?>? getResponsePayload(CredentialResponse? response) {
 ///
 /// May return `null`, if the `credentialResponse` is null, or its `credential`
 /// cannot be decoded.
-GoogleSignInUserData? gisResponsesToUserData(
+AuthenticationEvent? gisResponsesToAuthenticationEvent(
     CredentialResponse? credentialResponse) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   if (payload == null) {
@@ -75,12 +74,15 @@ GoogleSignInUserData? gisResponsesToUserData(
   assert(credentialResponse?.credential != null,
       'The CredentialResponse cannot be null and have a payload.');
 
-  return GoogleSignInUserData(
-    email: payload['email']! as String,
-    id: payload['sub']! as String,
-    displayName: payload['name'] as String?,
-    photoUrl: payload['picture'] as String?,
-    idToken: credentialResponse!.credential,
+  return AuthenticationEventSignIn(
+    user: GoogleSignInUserData(
+      email: payload['email']! as String,
+      id: payload['sub']! as String,
+      displayName: payload['name'] as String?,
+      photoUrl: payload['picture'] as String?,
+    ),
+    authenticationTokens:
+        AuthenticationTokenData(idToken: credentialResponse!.credential),
   );
 }
 
@@ -95,17 +97,4 @@ DateTime? getCredentialResponseExpirationTimestamp(
   final int? exp = (payload != null) ? payload['exp'] as int? : null;
   // Return 'exp' (a timestamp in seconds since Epoch) as a DateTime.
   return (exp != null) ? DateTime.fromMillisecondsSinceEpoch(exp * 1000) : null;
-}
-
-/// Converts responses from the GIS library into TokenData for the plugin.
-GoogleSignInTokenData gisResponsesToTokenData(
-  CredentialResponse? credentialResponse,
-  TokenResponse? tokenResponse, [
-  CodeResponse? codeResponse,
-]) {
-  return GoogleSignInTokenData(
-    idToken: credentialResponse?.credential,
-    accessToken: tokenResponse?.access_token,
-    serverAuthCode: codeResponse?.code,
-  );
 }
