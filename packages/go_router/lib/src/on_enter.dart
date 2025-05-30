@@ -9,7 +9,13 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-import '../go_router.dart';
+import 'configuration.dart';
+import 'information_provider.dart';
+import 'match.dart';
+import 'misc/errors.dart';
+import 'parser.dart';
+import 'router.dart';
+import 'state.dart';
 
 /// The signature for the top-level [onEnter] callback.
 ///
