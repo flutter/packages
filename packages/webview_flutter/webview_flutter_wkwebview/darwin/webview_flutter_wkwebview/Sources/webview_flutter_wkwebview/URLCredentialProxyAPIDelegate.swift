@@ -26,4 +26,22 @@ class URLCredentialProxyAPIDelegate: PigeonApiDelegateURLCredential {
     }
     return URLCredential(user: user, password: password, persistence: nativePersistence)
   }
+
+  func withUserAsync(
+    pigeonApi: PigeonApiURLCredential, user: String, password: String,
+    persistence: UrlCredentialPersistence,
+    completion: @escaping (Result<URLCredential, Error>) -> Void
+  ) {
+    completion(
+      Result.success(
+        try! withUser(
+          pigeonApi: pigeonApi, user: user, password: password, persistence: persistence)))
+  }
+
+  func serverTrustAsync(
+    pigeonApi: PigeonApiURLCredential, trust: SecTrustWrapper,
+    completion: @escaping (Result<URLCredential, Error>) -> Void
+  ) {
+    completion(Result.success(URLCredential(trust: trust.value)))
+  }
 }

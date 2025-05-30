@@ -289,7 +289,7 @@ void main() {
           .called(1);
       verify(mockWebSettings.setLoadWithOverviewMode(true)).called(1);
       verify(mockWebSettings.setSupportMultipleWindows(true)).called(1);
-      verify(mockWebSettings.setUseWideViewPort(true)).called(1);
+      verify(mockWebSettings.setUseWideViewPort(false)).called(1);
     });
 
     test('loadFile without file prefix', () async {
@@ -1451,6 +1451,28 @@ void main() {
       verify(mockWebView.scrollBy(4, 2)).called(1);
     });
 
+    test('verticalScrollBarEnabled', () async {
+      final MockWebView mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+      );
+
+      await controller.setVerticalScrollBarEnabled(false);
+
+      verify(mockWebView.setVerticalScrollBarEnabled(false)).called(1);
+    });
+
+    test('horizontalScrollBarEnabled', () async {
+      final MockWebView mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+      );
+
+      await controller.setHorizontalScrollBarEnabled(false);
+
+      verify(mockWebView.setHorizontalScrollBarEnabled(false)).called(1);
+    });
+
     test('getScrollPosition', () async {
       final MockWebView mockWebView = MockWebView();
       final AndroidWebViewController controller = createControllerWithMocks(
@@ -1574,6 +1596,22 @@ void main() {
     await controller.setMediaPlaybackRequiresUserGesture(true);
 
     verify(mockSettings.setMediaPlaybackRequiresUserGesture(true)).called(1);
+  });
+
+  test('setUseWideViewPort', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setUseWideViewPort(true);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setUseWideViewPort(true)).called(1);
   });
 
   test('setAllowContentAccess', () async {

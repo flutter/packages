@@ -1,5 +1,2 @@
 # Packages that are excluded from dart unit tests
-# 
-# We exclude flutter_image because its tests need a test server,
-# so are run via custom_package_tests.
-- flutter_image
+[]

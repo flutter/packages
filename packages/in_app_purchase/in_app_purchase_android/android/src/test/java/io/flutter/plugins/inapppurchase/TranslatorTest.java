@@ -40,7 +40,7 @@ public class TranslatorTest {
 
   @Before
   public void setup() throws NoSuchMethodException {
-    Locale locale = new Locale("en", "us");
+    Locale locale = Locale.US;
     Locale.setDefault(locale);
 
     productDetailsConstructor = ProductDetails.class.getDeclaredConstructor(String.class);
