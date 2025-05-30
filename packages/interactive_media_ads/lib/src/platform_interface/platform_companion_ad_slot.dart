@@ -45,7 +45,7 @@ import 'interactive_media_ads_platform.dart';
 @immutable
 base class PlatformCompanionAdSlotCreationParams {
   /// Used by the platform implementation to create a new
-  /// [PlatformCompanionAdSlot].
+  /// [PlatformCompanionAdSlot] with ad width and height.
   const PlatformCompanionAdSlotCreationParams.size({
     required int this.width,
     required int this.height,
@@ -53,7 +53,7 @@ base class PlatformCompanionAdSlotCreationParams {
   }) : isFluid = false;
 
   /// Used by the platform implementation to create a new
-  /// [PlatformCompanionAdSlot].
+  /// [PlatformCompanionAdSlot] with fluid size.
   const PlatformCompanionAdSlotCreationParams.fluid({this.onClicked})
       : width = null,
         height = null,

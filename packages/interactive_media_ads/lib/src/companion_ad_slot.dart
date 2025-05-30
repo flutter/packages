@@ -29,7 +29,8 @@ import 'platform_interface/platform_interface.dart';
 /// }
 /// ```
 class CompanionAdSlot {
-  /// Constructs an [CompanionAdSlot].
+  /// Constructs an instance of a [CompanionAdSlot] with design ad width and
+  /// height.
   ///
   /// See [CompanionAdSlot.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
@@ -45,7 +46,7 @@ class CompanionAdSlot {
           ),
         );
 
-  /// Constructs an [CompanionAdSlot].
+  /// Constructs an instance of a [CompanionAdSlot] with fluid size.
   ///
   /// See [CompanionAdSlot.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
