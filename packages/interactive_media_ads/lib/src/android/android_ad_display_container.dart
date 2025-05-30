@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_interface.dart';
+import 'android_companion_ad_slot.dart';
 import 'android_view_widget.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
@@ -20,6 +21,7 @@ final class AndroidAdDisplayContainerCreationParams
   const AndroidAdDisplayContainerCreationParams({
     super.key,
     required super.onContainerAdded,
+    super.companionSlots,
     @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   })  : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
@@ -37,6 +39,7 @@ final class AndroidAdDisplayContainerCreationParams
     return AndroidAdDisplayContainerCreationParams(
       key: params.key,
       onContainerAdded: params.onContainerAdded,
+      companionSlots: params.companionSlots,
       imaProxy: imaProxy,
       platformViewsProxy: platformViewsProxy,
     );
@@ -143,6 +146,18 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
             .createAdDisplayContainerImaSdkFactory(
           _frameLayout,
           _videoAdPlayer,
+        );
+        final Iterable<ima.CompanionAdSlot> nativeCompanionSlots =
+            await Future.wait(
+          _androidParams.companionSlots.map(
+            (PlatformCompanionAdSlot slot) {
+              return (slot as AndroidCompanionAdSlot)
+                  .getNativeCompanionAdSlot();
+            },
+          ),
+        );
+        await adDisplayContainer!.setCompanionSlots(
+          nativeCompanionSlots.toList(),
         );
         params.onContainerAdded(this);
       },

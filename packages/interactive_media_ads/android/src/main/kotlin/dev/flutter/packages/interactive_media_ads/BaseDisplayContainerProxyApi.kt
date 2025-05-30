@@ -4,6 +4,9 @@
 
 package dev.flutter.packages.interactive_media_ads
 
+import com.google.ads.interactivemedia.v3.api.BaseDisplayContainer
+import com.google.ads.interactivemedia.v3.api.CompanionAdSlot
+
 /**
  * ProxyApi implementation for [com.google.ads.interactivemedia.v3.api.BaseDisplayContainer].
  *
@@ -11,4 +14,11 @@ package dev.flutter.packages.interactive_media_ads
  * instance or handle method calls on the associated native class or an instance of that class.
  */
 class BaseDisplayContainerProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
-    PigeonApiBaseDisplayContainer(pigeonRegistrar)
+    PigeonApiBaseDisplayContainer(pigeonRegistrar) {
+  override fun setCompanionSlots(
+      pigeon_instance: BaseDisplayContainer,
+      companionSlots: List<CompanionAdSlot>?
+  ) {
+    return pigeon_instance.setCompanionSlots(companionSlots)
+  }
+}
