@@ -1,29 +1,36 @@
 RouteBase get $defaultValueRoute => GoRouteData.$route(
       path: '/default-value-route',
-      factory: $DefaultValueRouteExtension._fromState,
+      factory: _$DefaultValueRoute._fromState,
     );
 
-extension $DefaultValueRouteExtension on DefaultValueRoute {
+mixin _$DefaultValueRoute on GoRouteData {
   static DefaultValueRoute _fromState(GoRouterState state) => DefaultValueRoute(
         param:
             _$convertMapValue('param', state.uri.queryParameters, int.parse) ??
                 0,
       );
 
+  DefaultValueRoute get _self => this as DefaultValueRoute;
+
+  @override
   String get location => GoRouteData.$location(
         '/default-value-route',
         queryParams: {
-          if (param != 0) 'param': param.toString(),
+          if (_self.param != 0) 'param': _self.param.toString(),
         },
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 

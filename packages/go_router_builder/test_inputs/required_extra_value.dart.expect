@@ -1,26 +1,33 @@
 RouteBase get $requiredExtraValueRoute => GoRouteData.$route(
       path: '/default-value-route',
-      factory: $RequiredExtraValueRouteExtension._fromState,
+      factory: _$RequiredExtraValueRoute._fromState,
     );
 
-extension $RequiredExtraValueRouteExtension on RequiredExtraValueRoute {
+mixin _$RequiredExtraValueRoute on GoRouteData {
   static RequiredExtraValueRoute _fromState(GoRouterState state) =>
       RequiredExtraValueRoute(
         $extra: state.extra as int,
       );
 
+  RequiredExtraValueRoute get _self => this as RequiredExtraValueRoute;
+
+  @override
   String get location => GoRouteData.$location(
         '/default-value-route',
       );
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
+  @override
   Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
+      context.push<T>(location, extra: _self.$extra);
 
+  @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location, extra: _self.$extra);
 
+  @override
   void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
+      context.replace(location, extra: _self.$extra);
 }
