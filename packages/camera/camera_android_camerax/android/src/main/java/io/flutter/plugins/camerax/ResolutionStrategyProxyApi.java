@@ -22,7 +22,7 @@ class ResolutionStrategyProxyApi extends PigeonApiResolutionStrategy {
   @NonNull
   @Override
   public ResolutionStrategy pigeon_defaultConstructor(
-      @NonNull android.util.Size boundSize, @NonNull ResolutionStrategyFallbackRule fallbackRule) {
+      @NonNull Size boundSize, @NonNull ResolutionStrategyFallbackRule fallbackRule) {
     int nativeFallbackRule = -1;
     switch (fallbackRule) {
       case CLOSEST_HIGHER:
@@ -39,6 +39,9 @@ class ResolutionStrategyProxyApi extends PigeonApiResolutionStrategy {
         break;
       case NONE:
         nativeFallbackRule = ResolutionStrategy.FALLBACK_RULE_NONE;
+        break;
+      case UNKNOWN:
+        // Default to nativeFallbackRule -1.
         break;
     }
     return new ResolutionStrategy(boundSize, nativeFallbackRule);
@@ -71,8 +74,8 @@ class ResolutionStrategyProxyApi extends PigeonApiResolutionStrategy {
         return ResolutionStrategyFallbackRule.CLOSEST_LOWER_THEN_HIGHER;
       case ResolutionStrategy.FALLBACK_RULE_NONE:
         return ResolutionStrategyFallbackRule.NONE;
+      default:
+        return ResolutionStrategyFallbackRule.UNKNOWN;
     }
-
-    return ResolutionStrategyFallbackRule.UNKNOWN;
   }
 }

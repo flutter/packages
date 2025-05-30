@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ResolutionInfo;
 
@@ -20,7 +21,7 @@ class ResolutionInfoProxyApi extends PigeonApiResolutionInfo {
 
   @NonNull
   @Override
-  public android.util.Size resolution(ResolutionInfo pigeonInstance) {
+  public Size resolution(ResolutionInfo pigeonInstance) {
     return pigeonInstance.getResolution();
   }
 }

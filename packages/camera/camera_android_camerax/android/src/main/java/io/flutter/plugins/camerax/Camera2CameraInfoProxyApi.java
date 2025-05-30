@@ -45,7 +45,7 @@ class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
       return null;
     }
 
-    if (key == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL) {
+    if (CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL.equals(key)) {
       switch ((Integer) result) {
         case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_3:
           return InfoSupportedHardwareLevel.LEVEL3;
@@ -57,9 +57,11 @@ class Camera2CameraInfoProxyApi extends PigeonApiCamera2CameraInfo {
           return InfoSupportedHardwareLevel.LEGACY;
         case CameraMetadata.INFO_SUPPORTED_HARDWARE_LEVEL_LIMITED:
           return InfoSupportedHardwareLevel.LIMITED;
+        default:
+          // Fall through to return result.
+          break;
       }
     }
-
     return result;
   }
 }

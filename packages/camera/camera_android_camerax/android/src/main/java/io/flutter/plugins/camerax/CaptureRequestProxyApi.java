@@ -19,7 +19,7 @@ class CaptureRequestProxyApi extends PigeonApiCaptureRequest {
 
   @NonNull
   @Override
-  public android.hardware.camera2.CaptureRequest.Key<?> controlAELock() {
+  public CaptureRequest.Key<?> controlAELock() {
     return CaptureRequest.CONTROL_AE_LOCK;
   }
 }

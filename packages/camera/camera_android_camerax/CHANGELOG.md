@@ -1,3 +1,7 @@
+## 0.6.18+1
+
+* Makes Java style improvements.
+
 ## 0.6.18
 
 * Adds support for the `MediaSettings.enableAudio` setting, which determines whether or not audio is
