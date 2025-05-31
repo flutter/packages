@@ -225,43 +225,33 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   /// Display the thumbnail of the captured image or video.
   Widget _thumbnailWidget() {
-    final VideoPlayerController? localVideoController = videoController;
-
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            if (localVideoController == null && imageFile == null)
-              Container()
-            else
-              SizedBox(
-                width: 64.0,
-                height: 64.0,
-                child: (localVideoController == null)
-                    ? (
-                        // The captured image on the web contains a network-accessible URL
-                        // pointing to a location within the browser. It may be displayed
-                        // either with Image.network or Image.memory after loading the image
-                        // bytes to memory.
-                        kIsWeb
-                            ? Image.network(imageFile!.path)
-                            : Image.file(File(imageFile!.path)))
-                    : Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.pink)),
-                        child: Center(
-                          child: AspectRatio(
-                              aspectRatio:
-                                  localVideoController.value.aspectRatio,
-                              child: VideoPlayer(localVideoController)),
-                        ),
-                      ),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (videoController case final VideoPlayerController controller?)
+          Container(
+            width: 64.0,
+            height: 64.0,
+            decoration: BoxDecoration(border: Border.all(color: Colors.pink)),
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: controller.value.aspectRatio,
+                child: VideoPlayer(controller),
               ),
-          ],
-        ),
-      ),
+            ),
+          )
+        else if (imageFile?.path case final String path)
+          Container(
+            width: 64.0,
+            height: 64.0,
+            decoration: BoxDecoration(border: Border.all(color: Colors.pink)),
+            // The captured image on the web contains a network-accessible URL
+            // pointing to a location within the browser. It may be displayed
+            // either with Image.network or Image.memory after loading the image
+            // bytes to memory.
+            child: kIsWeb ? Image.network(path) : Image.file(File(path)),
+          ),
+      ],
     );
   }
 
@@ -598,7 +588,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       }
     }
 
-    return Row(children: toggles);
+    return Expanded(
+      child: SizedBox(
+        height: 56.0,
+        child: ListView(scrollDirection: Axis.horizontal, children: toggles),
+      ),
+    );
   }
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
@@ -1048,6 +1043,9 @@ class CameraApp extends StatelessWidget {
   }
 }
 
+/// Getting available cameras for testing.
+@visibleForTesting
+List<CameraDescription> get cameras => _cameras;
 List<CameraDescription> _cameras = <CameraDescription>[];
 
 Future<void> main() async {
