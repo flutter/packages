@@ -1,5 +1,7 @@
-## NEXT
+## 15.1.3
 
+* Fixes an issue where `replace` and `pushReplacement` caused the originating route's completer to hang.
+  [flutter#141251](https://github.com/flutter/flutter/issues/141251)
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 15.1.2
