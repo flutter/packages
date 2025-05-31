@@ -155,7 +155,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   @override
   Future<bool> buyNonConsumable({required PurchaseParam purchaseParam}) async {
     if (_useStoreKit2) {
-      late SK2ProductPurchaseOptions options;
+      final SK2ProductPurchaseOptions options;
 
       if (purchaseParam is Sk2PurchaseParam) {
         options = SK2ProductPurchaseOptions(
