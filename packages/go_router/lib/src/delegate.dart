@@ -55,8 +55,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   @override
   Future<bool> popRoute() async {
-    final NavigatorState? state = _findCurrentNavigator();
-    if (state != null) {
+    final Iterable<NavigatorState> states = _findCurrentNavigators();
+    for (final NavigatorState state in states) {
       final bool didPop = await state.maybePop(); // Call maybePop() directly
       if (didPop) {
         return true; // Return true if maybePop handled the pop
@@ -96,17 +96,27 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   /// Pops the top-most route.
   void pop<T extends Object?>([T? result]) {
-    final NavigatorState? state = _findCurrentNavigator();
-    if (state == null || !state.canPop()) {
+    final Iterable<NavigatorState> states = _findCurrentNavigators().where(
+      (NavigatorState element) => element.canPop(),
+    );
+    if (states.isEmpty) {
       throw GoError('There is nothing to pop');
     }
-    state.pop(result);
+    states.first.pop(result);
   }
 
-  NavigatorState? _findCurrentNavigator() {
-    NavigatorState? state;
-    state =
-        navigatorKey.currentState; // Set state directly without canPop check
+  /// Get a prioritized list of NavigatorStates,
+  /// which either can pop or are exit routes.
+  ///
+  /// 1. Sub route within branches of shell navigation
+  /// 2. Branch route
+  /// 3. Parent route
+  Iterable<NavigatorState> _findCurrentNavigators() {
+    final List<NavigatorState> states = <NavigatorState>[];
+    if (navigatorKey.currentState != null) {
+      // Set state directly without canPop check
+      states.add(navigatorKey.currentState!);
+    }
 
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
@@ -119,13 +129,10 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         // Stop if there is a pageless route on top of the shell route.
         break;
       }
-
-      if (potentialCandidate.canPop()) {
-        state = walker.navigatorKey.currentState;
-      }
+      states.add(potentialCandidate);
       walker = walker.matches.last;
     }
-    return state;
+    return states.reversed;
   }
 
   bool _handlePopPageWithRouteMatch(
