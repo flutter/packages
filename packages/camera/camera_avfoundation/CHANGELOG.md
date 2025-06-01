@@ -1,3 +1,9 @@
+## 0.9.19+2
+
+* Adds the `Camera` Swift protocol.
+* Adds `DefaultCamera`, a `FLTCam`-based implementation of the `Camera` protocol.
+* Migrates sample buffer delegates and `FlutterTexture` protocol implementations to `DefaultCamera`.
+
 ## 0.9.19+1
 
 * Adds `audioCaptureDeviceFactory` to `FLTCamConfiguration`.

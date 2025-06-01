@@ -69,7 +69,7 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
 /// Includes test cases related to sample buffer handling for FLTCam class.
 final class CameraSampleBufferTests: XCTestCase {
   private func createCamera() -> (
-    FLTCam,
+    DefaultCamera,
     MockAssetWriter,
     MockAssetWriterInputPixelBufferAdaptor,
     MockAssetWriterInput

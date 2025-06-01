@@ -13,7 +13,7 @@ import XCTest
 #endif
 
 final class FLTCamSetFlashModeTests: XCTestCase {
-  private func createCamera() -> (FLTCam, MockCaptureDevice, MockCapturePhotoOutput) {
+  private func createCamera() -> (Camera, MockCaptureDevice, MockCapturePhotoOutput) {
     let mockDevice = MockCaptureDevice()
     let mockCapturePhotoOutput = MockCapturePhotoOutput()
 

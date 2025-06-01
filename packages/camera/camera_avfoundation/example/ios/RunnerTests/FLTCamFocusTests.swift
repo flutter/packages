@@ -13,7 +13,7 @@ import XCTest
 #endif
 
 final class FLTCamSetFocusModeTests: XCTestCase {
-  private func createCamera() -> (FLTCam, MockCaptureDevice, MockDeviceOrientationProvider) {
+  private func createCamera() -> (Camera, MockCaptureDevice, MockDeviceOrientationProvider) {
     let mockDevice = MockCaptureDevice()
     let mockDeviceOrientationProvider = MockDeviceOrientationProvider()
 

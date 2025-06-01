@@ -31,13 +31,6 @@
 @property(readonly, nonatomic)
     NSMutableDictionary<NSNumber *, FLTSavePhotoDelegate *> *inProgressSavePhotoDelegates;
 
-/// Delegate callback when receiving a new video or audio sample.
-/// Exposed for unit tests.
-- (void)captureOutput:(AVCaptureOutput *)output
-    didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-           fromConnection:(AVCaptureConnection *)connection
-    NS_SWIFT_NAME(captureOutput(_:didOutput:from:));
-
 /// Start streaming images.
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                    imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler;
