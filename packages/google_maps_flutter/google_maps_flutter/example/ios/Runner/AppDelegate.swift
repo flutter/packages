@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Flutter
+import GoogleMaps
 import UIKit
 
 @main
@@ -11,6 +12,9 @@ import UIKit
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
+    var mapsApiKey = ProcessInfo.processInfo.environment["MAPS_API_KEY"] ?? "YOUR KEY HERE"
+    GMSServices.provideAPIKey(mapsApiKey)
+
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
