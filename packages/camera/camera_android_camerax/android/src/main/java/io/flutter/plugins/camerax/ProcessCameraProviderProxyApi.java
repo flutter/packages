@@ -19,8 +19,6 @@ import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
-import android.util.Log;
-
 /**
  * ProxyApi implementation for {@link ProcessCameraProvider}. This class may handle instantiating
  * native object instances that are attached to a Dart instance or handle method calls on the
@@ -67,7 +65,6 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
       @NonNull ProcessCameraProvider pigeonInstance,
       @NonNull CameraSelector cameraSelector,
       @NonNull List<? extends UseCase> useCases) {
-    Log.e("CAMILLE"," BIND CALLED!!!!!!!!!!!!!!!****************************");
     final LifecycleOwner lifecycleOwner = getPigeonRegistrar().getLifecycleOwner();
     if (lifecycleOwner != null) {
       return pigeonInstance.bindToLifecycle(
@@ -86,7 +83,6 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
   @Override
   public void unbind(
       ProcessCameraProvider pigeonInstance, @NonNull List<? extends UseCase> useCases) {
-    Log.e("CAMILLE"," UNBIND CALLED!!!!!!!!!!!!!!!****************************");
     pigeonInstance.unbind(useCases.toArray(new UseCase[0]));
   }
 

@@ -16,8 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
-import android.util.Log;
-
 /**
  * ProxyApi implementation for {@link Preview}. This class may handle instantiating native object
  * instances that are attached to a Dart instance or handle method calls on the associated native
@@ -97,9 +95,6 @@ class PreviewProxyApi extends PigeonApiPreview {
     pigeonInstance.setTargetRotation((int) rotation);
   }
 
-  int surfaceRequestNum = 0;
-  int resultNum = 0;
-
   @NonNull
   Preview.SurfaceProvider createSurfaceProvider(
       @NonNull TextureRegistry.SurfaceProducer surfaceProducer,
@@ -132,11 +127,9 @@ class PreviewProxyApi extends PigeonApiPreview {
           flutterSurface,
           Executors.newSingleThreadExecutor(),
           (result) -> {
-            Log.e("CAMILLE RESULT #:", "--------------------------------------------------------------");
-            Log.e("CAMILLE RESULT #:", Integer.toString(resultNum));
-            Log.e("CAMILLE SURFACE HASHCODE:", Integer.toString(flutterSurface.hashCode()));
-            Log.e("CAMILLE RESULT #:", "--------------------------------------------------------------");
-            resultNum++;
+            // RACE CONDITION EXPLANATION: Sometimes, this callback is called after the next SurfaceRequest comes in,
+            // making a call on line 123 to get a `Surface`, which is the same `Surface` that was (potentially)
+            // successfully used and should not be re-used.
             // See
             // https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result
             // for documentation.
@@ -155,11 +148,6 @@ class PreviewProxyApi extends PigeonApiPreview {
                 systemServicesManager.onCameraError(getProvideSurfaceErrorDescription(resultCode));
             }
           });
-          Log.e("CAMILLE RESULT #:", "--------------------------------------------------------------");
-          Log.e("CAMILLE SURFACE REQUEST #:", Integer.toString(surfaceRequestNum));
-          Log.e("CAMILLE SURFACE HASHCODE:", Integer.toString(flutterSurface.hashCode()));
-          Log.e("CAMILLE RESULT #:", "--------------------------------------------------------------");
-          surfaceRequestNum++;
     };
   }
 
