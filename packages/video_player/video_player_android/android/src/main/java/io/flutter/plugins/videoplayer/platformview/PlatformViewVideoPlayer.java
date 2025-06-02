@@ -6,6 +6,7 @@ package io.flutter.plugins.videoplayer.platformview;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
@@ -14,6 +15,7 @@ import io.flutter.plugins.videoplayer.VideoAsset;
 import io.flutter.plugins.videoplayer.VideoPlayer;
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
 import io.flutter.plugins.videoplayer.VideoPlayerOptions;
+import io.flutter.view.TextureRegistry.SurfaceProducer;
 
 /**
  * A subclass of {@link VideoPlayer} that adds functionality related to platform view as a way of
@@ -26,7 +28,7 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
       @NonNull MediaItem mediaItem,
       @NonNull VideoPlayerOptions options,
       @NonNull ExoPlayerProvider exoPlayerProvider) {
-    super(events, mediaItem, options, exoPlayerProvider);
+    super(events, mediaItem, options, /* surfaceProducer */ null, exoPlayerProvider);
   }
 
   /**
@@ -58,9 +60,8 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
 
   @NonNull
   @Override
-  protected ExoPlayerEventListener createExoPlayerEventListener(@NonNull ExoPlayer exoPlayer) {
-    // Platform view video player does not suspend and re-create the exoPlayer, hence initialized
-    // is always false.
-    return new PlatformViewExoPlayerEventListener(exoPlayer, videoPlayerEvents, false);
+  protected ExoPlayerEventListener createExoPlayerEventListener(
+      @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer) {
+    return new PlatformViewExoPlayerEventListener(exoPlayer, videoPlayerEvents);
   }
 }
