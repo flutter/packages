@@ -1036,8 +1036,13 @@ void main() {
           // used.
           expect(rotatedBox.child, isA<Transform>());
 
-          final Transform tranformedPreview = rotatedBox.child! as Transform;
-          expect((tranformedPreview.child! as Texture).textureId, cameraId);
+          final Transform transformedPreview = rotatedBox.child! as Transform;
+          final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+          // Since the front camera is in portrait mode, we expect the camera
+          // preview to be mirrored across the y-axis.
+          expect(transformedPreviewMatrix.storage[5], closeTo(-1.0, 0.0001));
+          expect((transformedPreview.child! as Texture).textureId, cameraId);
           expect(
             rotatedBox.quarterTurns,
             expectedQuarterTurns,
@@ -1088,8 +1093,13 @@ void main() {
           // used.
           expect(rotatedBox.child, isA<Transform>());
 
-          final Transform tranformedPreview = rotatedBox.child! as Transform;
-          expect((tranformedPreview.child! as Texture).textureId, cameraId);
+          final Transform transformedPreview = rotatedBox.child! as Transform;
+          final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+          // Since the front camera is in landscape mode, we expect the camera
+          // preview to be mirrored across the x-axis.
+          expect(transformedPreviewMatrix.storage[0], closeTo(-1.0, 0.0001));
+          expect((transformedPreview.child! as Texture).textureId, cameraId);
           expect(
             rotatedBox.quarterTurns,
             expectedQuarterTurns,
@@ -1139,8 +1149,13 @@ void main() {
           // used.
           expect(rotatedBox.child, isA<Transform>());
 
-          final Transform tranformedPreview = rotatedBox.child! as Transform;
-          expect((tranformedPreview.child! as Texture).textureId, cameraId);
+          final Transform transformedPreview = rotatedBox.child! as Transform;
+          final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+          // Since the front camera is in portrait mode, we expect the camera
+          // preview to be mirrored across the y-axis.
+          expect(transformedPreviewMatrix.storage[5], closeTo(-1.0, 0.0001));
+          expect((transformedPreview.child! as Texture).textureId, cameraId);
           expect(
             rotatedBox.quarterTurns,
             expectedQuarterTurns,
@@ -1191,8 +1206,13 @@ void main() {
         // used.
         expect(rotatedBox.child, isA<Transform>());
 
-        final Transform tranformedPreview = rotatedBox.child! as Transform;
-        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+        final Transform transformedPreview = rotatedBox.child! as Transform;
+        final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+        // Since the front camera is in landscape mode, we expect the camera
+        // preview to be mirrored across the x-axis.
+        expect(transformedPreviewMatrix.storage[0], closeTo(-1.0, 0.0001));
+        expect((transformedPreview.child! as Texture).textureId, cameraId);
         expect(rotatedBox.quarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
@@ -1273,8 +1293,13 @@ void main() {
         // used.
         expect(rotatedBox.child, isA<Transform>());
 
-        final Transform tranformedPreview = rotatedBox.child! as Transform;
-        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+        final Transform transformedPreview = rotatedBox.child! as Transform;
+        final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+        // Since the front camera is in landscape mode, we expect the camera
+        // preview to be mirrored across the x-axis.
+        expect(transformedPreviewMatrix.storage[0], closeTo(-1.0, 0.0001));
+        expect((transformedPreview.child! as Texture).textureId, cameraId);
         expect(rotatedBox.quarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
@@ -1317,8 +1342,13 @@ void main() {
         // used.
         expect(rotatedBox.child, isA<Transform>());
 
-        final Transform tranformedPreview = rotatedBox.child! as Transform;
-        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+        final Transform transformedPreview = rotatedBox.child! as Transform;
+        final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+        // Since the front camera is in landscape mode, we expect the camera
+        // preview to be mirrored across the x-axis.
+        expect(transformedPreviewMatrix.storage[0], closeTo(-1.0, 0.0001));
+        expect((transformedPreview.child! as Texture).textureId, cameraId);
 
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
@@ -1361,8 +1391,13 @@ void main() {
         // used.
         expect(rotatedBox.child, isA<Transform>());
 
-        final Transform tranformedPreview = rotatedBox.child! as Transform;
-        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+        final Transform transformedPreview = rotatedBox.child! as Transform;
+        final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+        // Since the front camera is in landscape mode, we expect the camera
+        // preview to be mirrored across the x-axis.
+        expect(transformedPreviewMatrix.storage[0], closeTo(-1.0, 0.0001));
+        expect((transformedPreview.child! as Texture).textureId, cameraId);
 
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
@@ -1407,8 +1442,13 @@ void main() {
         // used.
         expect(rotatedBox.child, isA<Transform>());
 
-        final Transform tranformedPreview = rotatedBox.child! as Transform;
-        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+        final Transform transformedPreview = rotatedBox.child! as Transform;
+        final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+        // Since the front camera is in landscape mode, we expect the camera
+        // preview to be mirrored across the x-axis.
+        expect(transformedPreviewMatrix.storage[0], closeTo(-1.0, 0.0001));
+        expect((transformedPreview.child! as Texture).textureId, cameraId);
 
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns + 4;
         expect(clockwiseQuarterTurns, expectedQuarterTurns,
@@ -1504,8 +1544,13 @@ void main() {
         // used.
         expect(rotatedBox.child, isA<Transform>());
 
-        final Transform tranformedPreview = rotatedBox.child! as Transform;
-        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+        final Transform transformedPreview = rotatedBox.child! as Transform;
+        final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+        // Since the front camera is in landscape mode, we expect the camera
+        // preview to be mirrored across the x-axis.
+        expect(transformedPreviewMatrix.storage[0], closeTo(-1.0, 0.0001));
+        expect((transformedPreview.child! as Texture).textureId, cameraId);
 
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
             ? rotatedBox.quarterTurns + 4
@@ -1601,8 +1646,20 @@ void main() {
         // used.
         expect(rotatedBox.child, isA<Transform>());
 
-        final Transform tranformedPreview = rotatedBox.child! as Transform;
-        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+        final Transform transformedPreview = rotatedBox.child! as Transform;
+        final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+        // When the front camera is in landscape mode, we expect the camera
+        // preview to be mirrored across the x-axis. When the front camera
+        // is in portrait mode, we expect the camera preview to be mirrored
+        // across the y-axis.
+        if (currentDeviceOrientation == DeviceOrientation.landscapeLeft ||
+            currentDeviceOrientation == DeviceOrientation.landscapeRight) {
+          expect(transformedPreviewMatrix.storage[0], closeTo(-1.0, 0.0001));
+        } else {
+          expect(transformedPreviewMatrix.storage[5], closeTo(-1.0, 0.0001));
+        }
+        expect((transformedPreview.child! as Texture).textureId, cameraId);
         final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
             ? rotatedBox.quarterTurns + 4
             : rotatedBox.quarterTurns;
@@ -1828,8 +1885,13 @@ void main() {
         // used.
         expect(rotatedBox.child, isA<Transform>());
 
-        final Transform tranformedPreview = rotatedBox.child! as Transform;
-        expect((tranformedPreview.child! as Texture).textureId, cameraId);
+        final Transform transformedPreview = rotatedBox.child! as Transform;
+        final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
+
+        // Since the front camera is in landscape mode, we expect the camera
+        // preview to be mirrored across the x-axis.
+        expect(transformedPreviewMatrix.storage[0], closeTo(-1.0, 0.0001));
+        expect((transformedPreview.child! as Texture).textureId, cameraId);
         expect(rotatedBox.quarterTurns, expectedQuarterTurns,
             reason: getExpectedRotationTestFailureReason(
                 expectedQuarterTurns, rotatedBox.quarterTurns));
