@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:js_interop';
+
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'package:pointer_interceptor_platform_interface/pointer_interceptor_platform_interface.dart';
@@ -17,7 +19,7 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
   }
 
   // Slightly modify the created `element` (for `debug` mode).
-  void _onElementCreated(Object element) {
+  void _debugOnElementCreated(Object element) {
     (element as web.HTMLElement)
       ..style.width = '100%'
       ..style.height = '100%'
@@ -41,7 +43,20 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
           child: HtmlElementView.fromTagName(
             tagName: 'div',
             isVisible: false,
-            onElementCreated: debug ? _onElementCreated : null,
+            onElementCreated: (Object element) {
+              if (debug) {
+                _debugOnElementCreated(element);
+              }
+
+              // Prevent the default action of `mousedown` events to avoid
+              // input focus loss.
+              (element as web.HTMLElement).addEventListener(
+                'mousedown',
+                (web.Event event) {
+                  event.preventDefault();
+                }.toJS,
+              );
+            },
           ),
         ),
         child,
