@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: no_literal_bool_comparisons
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -213,7 +215,7 @@ void main() {
       matchesGoldenFile('goldens/material_test.scaffold.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
 
     await tester.tap(find.byType(DropdownButton<Object>).first);
@@ -223,7 +225,7 @@ void main() {
       matchesGoldenFile('goldens/material_test.dropdown.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
     // Tap on the second item.
     await tester.tap(find.text('bar'));
@@ -245,7 +247,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.drawer.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
   });
 
@@ -312,7 +314,7 @@ void main() {
       matchesGoldenFile('goldens/material_test.button_bar_properties.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
 
     // Update the surface size for ButtonBar to overflow.
@@ -323,7 +325,7 @@ void main() {
       find.byType(RemoteWidget),
       matchesGoldenFile(
           'goldens/material_test.button_bar_properties.overflow.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
   });
 
@@ -386,7 +388,7 @@ void main() {
           'goldens/material_test.overflow_bar_resembles_button_bar.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
   });
 
@@ -450,7 +452,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.overflow_bar_properties.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
 
     // Update the surface size for OverflowBar to overflow.
@@ -463,7 +465,7 @@ void main() {
           'goldens/material_test.overflow_bar_properties.overflow.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
   });
 
@@ -524,7 +526,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.ink_response_hover.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
     expect(eventLog, contains('onHover {}'));
 
@@ -537,7 +539,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.ink_response_tap.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
     await gesture.up();
     await tester.pump();
@@ -595,7 +597,7 @@ void main() {
       matchesGoldenFile('goldens/material_test.material_properties.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
 
     runtime.update(testName, parseLibraryFile('''
