@@ -380,7 +380,7 @@ void main() {
       matchesGoldenFile('goldens/argument_decoders_test.containers.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens || true,
+      skip: !runGoldens,
     );
     expect(find.byType(DecoratedBox), findsNWidgets(6));
     const String matrix = kIsWeb ? '1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1'

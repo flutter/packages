@@ -213,7 +213,7 @@ void main() {
       matchesGoldenFile('goldens/material_test.scaffold.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens || true,
+      skip: !runGoldens,
     );
 
     await tester.tap(find.byType(DropdownButton<Object>).first);
@@ -223,7 +223,7 @@ void main() {
       matchesGoldenFile('goldens/material_test.dropdown.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens || true,
+      skip: !runGoldens,
     );
     // Tap on the second item.
     await tester.tap(find.text('bar'));
@@ -312,7 +312,7 @@ void main() {
       matchesGoldenFile('goldens/material_test.button_bar_properties.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens || true,
+      skip: !runGoldens,
     );
 
     // Update the surface size for ButtonBar to overflow.
@@ -386,7 +386,7 @@ void main() {
           'goldens/material_test.overflow_bar_resembles_button_bar.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens || true,
+      skip: !runGoldens,
     );
   });
 
@@ -463,7 +463,7 @@ void main() {
           'goldens/material_test.overflow_bar_properties.overflow.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens || true,
+      skip: !runGoldens,
     );
   });
 
@@ -595,7 +595,7 @@ void main() {
       matchesGoldenFile('goldens/material_test.material_properties.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens || true,
+      skip: !runGoldens,
     );
 
     runtime.update(testName, parseLibraryFile('''
