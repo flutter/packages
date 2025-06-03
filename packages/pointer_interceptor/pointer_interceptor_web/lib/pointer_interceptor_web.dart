@@ -19,8 +19,8 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
   }
 
   // Slightly modify the created `element` (for `debug` mode).
-  void _debugOnElementCreated(Object element) {
-    (element as web.HTMLElement)
+  void _debugOnElementCreated(web.HTMLElement element) {
+    element
       ..style.width = '100%'
       ..style.height = '100%'
       ..style.backgroundColor = 'rgba(255, 0, 0, .5)';
@@ -44,13 +44,14 @@ class PointerInterceptorWeb extends PointerInterceptorPlatform {
             tagName: 'div',
             isVisible: false,
             onElementCreated: (Object element) {
+              element as web.HTMLElement;
               if (debug) {
                 _debugOnElementCreated(element);
               }
 
               // Prevent the default action of `mousedown` events to avoid
               // input focus loss.
-              (element as web.HTMLElement).addEventListener(
+              element.addEventListener(
                 'mousedown',
                 (web.Event event) {
                   event.preventDefault();
