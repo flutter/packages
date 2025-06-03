@@ -21,6 +21,7 @@ class GooglePlayPurchaseParam extends PurchaseParam {
   final ChangeSubscriptionParam? changeSubscriptionParam;
 
   /// For One-time product, "offerToken" shouldn't be filled.
+  ///
   /// For subscriptions, to get the offer token corresponding to the selected
   /// offer call productDetails.subscriptionOfferDetails?.get(selectedOfferIndex)?.offerToken
   final String? offerToken;
