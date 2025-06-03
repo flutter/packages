@@ -83,7 +83,7 @@ class CompanionAdSlot {
   ///   params,
   /// );
   /// ```
-  /// {@endtemplate}/// Builds the Widget that contains the native View.
+  /// {@endtemplate}
   CompanionAdSlot.fromPlatformCreationParams({
     required PlatformCompanionAdSlotCreationParams params,
   }) : this.fromPlatform(PlatformCompanionAdSlot(params));

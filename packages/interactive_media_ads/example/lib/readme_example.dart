@@ -11,17 +11,6 @@ import 'package:interactive_media_ads/interactive_media_ads.dart';
 import 'package:video_player/video_player.dart';
 // #enddocregion imports
 
-/// Entry point for integration tests that require espresso.
-@pragma('vm:entry-point')
-void integrationTestMain() {
-  enableFlutterDriverExtension();
-  main();
-}
-
-void main() {
-  runApp(const MaterialApp(home: AdExampleWidget()));
-}
-
 // #docregion example_widget
 /// Example widget displaying an Ad before a video.
 class AdExampleWidget extends StatefulWidget {
