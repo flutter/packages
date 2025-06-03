@@ -114,7 +114,11 @@ class GoRouterPushSpy extends GoRouter {
   Object? extra;
 
   @override
-  Future<T?> push<T extends Object?>(String location, {Object? extra}) {
+  Future<T?> push<T extends Object?>(
+    String location, {
+    Object? extra,
+    MapRouteResultCallback<T?>? mapReplacementResult,
+  }) {
     myLocation = location;
     this.extra = extra;
     return Future<T?>.value(extra as T?);
@@ -138,6 +142,7 @@ class GoRouterPushNamedSpy extends GoRouter {
     Map<String, String> pathParameters = const <String, String>{},
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
+    MapRouteResultCallback<T?>? mapReplacementResult,
   }) {
     this.name = name;
     this.pathParameters = pathParameters;

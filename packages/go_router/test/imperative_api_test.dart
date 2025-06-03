@@ -302,18 +302,15 @@ void main() {
     final List<RouteBase> routes = <RouteBase>[
       GoRoute(
         path: '/initial',
-        builder: (BuildContext context, GoRouterState state) =>
-            const DummyScreen(),
+        builder: (_, __) => const DummyScreen(),
       ),
       GoRoute(
         path: '/intermediate',
-        builder: (BuildContext context, GoRouterState state) =>
-            const DummyScreen(),
+        builder: (_, __) => const DummyScreen(),
       ),
       GoRoute(
         path: '/final',
-        builder: (BuildContext context, GoRouterState state) =>
-            const DummyScreen(),
+        builder: (_, __) => const DummyScreen(),
       ),
     ];
 
@@ -323,22 +320,48 @@ void main() {
       initialLocation: '/initial',
     );
 
-    final int random = Random().nextInt(1000);
+    final Random random = Random();
 
-    final Future<Object?> push = router.push('/intermediate');
-    await tester.pumpAndSettle();
-    expect(router.state.path, '/intermediate');
+    /** resolve to null by default **/ {
+      final int result = random.nextInt(1000);
+      final Future<String?> push = router.push('/intermediate');
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/intermediate');
 
-    final Future<int?> replace = router.replace<int>('/final');
-    await tester.pumpAndSettle();
-    expect(router.state.path, '/final');
+      final Future<int?> replace = router.replace<int>('/final');
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/final');
 
-    router.pop(random);
-    await tester.pumpAndSettle();
-    expect(router.state.path, '/initial');
-    await tester.pumpAndSettle();
+      router.pop(result);
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/initial');
+      await tester.pumpAndSettle();
 
-    await expectLater(push, completion(random));
-    await expectLater(replace, completion(random));
+      await expectLater(push, completion(null));
+      await expectLater(replace, completion(result));
+    }
+
+    /** map and resolve **/ {
+      final int result = random.nextInt(1000);
+      final Future<String?> push = router.push(
+        '/intermediate',
+        mapReplacementResult: (Object? result) =>
+            result is num ? result.toString() : null,
+      );
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/intermediate');
+
+      final Future<int?> replace = router.replace<int>('/final');
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/final');
+
+      router.pop(result);
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/initial');
+      await tester.pumpAndSettle();
+
+      await expectLater(push, completion(result.toString()));
+      await expectLater(replace, completion(result));
+    }
   });
 }

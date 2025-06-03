@@ -223,30 +223,62 @@ void main() {
 
     test('can equal and has', () async {
       ImperativeRouteMatch match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+        pipeCompleter: <Next>(Completer<Next?> next) => next,
+      );
       ImperativeRouteMatch match2 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+        pipeCompleter: <Next>(Completer<Next?> next) => next,
+      );
       expect(match1 == match2, isTrue);
       expect(match1.hashCode == match2.hashCode, isTrue);
 
       match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+        pipeCompleter: <Next>(Completer<Next?> next) => next,
+      );
       match2 = ImperativeRouteMatch(
-          pageKey: key2, matches: matchList1, completer: completer1);
+        pageKey: key2,
+        matches: matchList1,
+        completer: completer1,
+        pipeCompleter: <Next>(Completer<Next?> next) => next,
+      );
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
 
       match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+        pipeCompleter: <Next>(Completer<Next?> next) => next,
+      );
       match2 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList2, completer: completer1);
+        pageKey: key1,
+        matches: matchList2,
+        completer: completer1,
+        pipeCompleter: <Next>(Completer<Next?> next) => next,
+      );
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
 
       match1 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer1);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer1,
+        pipeCompleter: <Next>(Completer<Next?> next) => next,
+      );
       match2 = ImperativeRouteMatch(
-          pageKey: key1, matches: matchList1, completer: completer2);
+        pageKey: key1,
+        matches: matchList1,
+        completer: completer2,
+        pipeCompleter: <Next>(Completer<Next?> next) => next,
+      );
       expect(match1 == match2, isFalse);
       expect(match1.hashCode == match2.hashCode, isFalse);
     });

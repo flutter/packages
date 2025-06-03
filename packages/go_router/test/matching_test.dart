@@ -95,9 +95,11 @@ void main() {
     final RouteMatchList list1 = configuration.findMatch(Uri.parse('/a'));
     final RouteMatchList list2 = configuration.findMatch(Uri.parse('/b'));
     list1.push(ImperativeRouteMatch(
-        pageKey: const ValueKey<String>('/b-p0'),
-        matches: list2,
-        completer: Completer<Object?>()));
+      pageKey: const ValueKey<String>('/b-p0'),
+      matches: list2,
+      completer: Completer<Object?>(),
+      pipeCompleter: <Next>(Completer<Next?> next) => next,
+    ));
 
     final Map<Object?, Object?> encoded = codec.encode(list1);
     final RouteMatchList decoded = codec.decode(encoded);

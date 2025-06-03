@@ -319,10 +319,12 @@ class RouteConfiguration {
     for (final ImperativeRouteMatch imperativeMatch
         in matchList.matches.whereType<ImperativeRouteMatch>()) {
       final ImperativeRouteMatch match = ImperativeRouteMatch(
-          pageKey: imperativeMatch.pageKey,
-          matches: findMatch(imperativeMatch.matches.uri,
-              extra: imperativeMatch.matches.extra),
-          completer: imperativeMatch.completer);
+        pageKey: imperativeMatch.pageKey,
+        matches: findMatch(imperativeMatch.matches.uri,
+            extra: imperativeMatch.matches.extra),
+        completer: imperativeMatch.completer,
+        pipeCompleter: imperativeMatch.pipeCompleter,
+      );
       result = result.push(match);
     }
     return result;
