@@ -24,12 +24,17 @@ if (flutterVersionName == null) {
 
 android {
     namespace 'io.flutter.plugins.cameraxexample'
-    compileSdk flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    compileSdk = flutter.compileSdkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
+    }
+
+    kotlinOptions {
+        // This must match the Java version provided in compileOptions.
+        jvmTarget = '11'
     }
 
     defaultConfig {

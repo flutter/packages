@@ -113,6 +113,15 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Future<void> updateGroundOverlays(
+    GroundOverlayUpdates groundOverlayUpdates, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]?.groundOverlayUpdates.add(groundOverlayUpdates);
+    await _fakeDelay();
+  }
+
+  @override
   Future<void> clearTileCache(
     TileOverlayId tileOverlayId, {
     required int mapId,
@@ -122,7 +131,28 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   Future<void> animateCamera(
     CameraUpdate cameraUpdate, {
     required int mapId,
-  }) async {}
+  }) async {
+    mapInstances[mapId]?.animateCameraConfiguration =
+        CameraUpdateWithConfiguration(
+      cameraUpdate: cameraUpdate,
+      configuration: null,
+    );
+    await _fakeDelay();
+  }
+
+  @override
+  Future<void> animateCameraWithConfiguration(
+    CameraUpdate cameraUpdate,
+    CameraUpdateAnimationConfiguration configuration, {
+    required int mapId,
+  }) async {
+    mapInstances[mapId]?.animateCameraConfiguration =
+        CameraUpdateWithConfiguration(
+      cameraUpdate: cameraUpdate,
+      configuration: configuration,
+    );
+    await _fakeDelay();
+  }
 
   @override
   Future<void> moveCamera(
@@ -265,6 +295,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<GroundOverlayTapEvent> onGroundOverlayTap({required int mapId}) {
+    return mapEventStreamController.stream.whereType<GroundOverlayTapEvent>();
+  }
+
+  @override
   void dispose({required int mapId}) {
     disposed = true;
   }
@@ -307,6 +342,8 @@ class PlatformMapStateRecorder {
   }) {
     clusterManagerUpdates.add(ClusterManagerUpdates.from(
         const <ClusterManager>{}, mapObjects.clusterManagers));
+    groundOverlayUpdates.add(GroundOverlayUpdates.from(
+        const <GroundOverlay>{}, mapObjects.groundOverlays));
     markerUpdates.add(MarkerUpdates.from(const <Marker>{}, mapObjects.markers));
     polygonUpdates
         .add(PolygonUpdates.from(const <Polygon>{}, mapObjects.polygons));
@@ -321,6 +358,7 @@ class PlatformMapStateRecorder {
   MapWidgetConfiguration widgetConfiguration;
   MapObjects mapObjects;
   MapConfiguration mapConfiguration;
+  CameraUpdateWithConfiguration? animateCameraConfiguration;
 
   final List<MarkerUpdates> markerUpdates = <MarkerUpdates>[];
   final List<PolygonUpdates> polygonUpdates = <PolygonUpdates>[];
@@ -330,4 +368,17 @@ class PlatformMapStateRecorder {
   final List<Set<TileOverlay>> tileOverlaySets = <Set<TileOverlay>>[];
   final List<ClusterManagerUpdates> clusterManagerUpdates =
       <ClusterManagerUpdates>[];
+  final List<GroundOverlayUpdates> groundOverlayUpdates =
+      <GroundOverlayUpdates>[];
+}
+
+/// Helper class to store animateCameraWithConfiguration data.
+class CameraUpdateWithConfiguration {
+  CameraUpdateWithConfiguration({
+    required this.cameraUpdate,
+    required this.configuration,
+  });
+
+  final CameraUpdate cameraUpdate;
+  final CameraUpdateAnimationConfiguration? configuration;
 }

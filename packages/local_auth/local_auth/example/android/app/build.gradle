@@ -24,13 +24,13 @@ if (flutterVersionName == null) {
 
 android {
     namespace 'io.flutter.plugins.localauthexample'
-    compileSdk flutter.compileSdkVersion
+    compileSdk = flutter.compileSdkVersion
 
 
     defaultConfig {
         applicationId "io.flutter.plugins.localauthexample"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion 35
+        targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

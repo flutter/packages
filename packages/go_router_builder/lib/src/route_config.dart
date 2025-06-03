@@ -118,7 +118,7 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
   Iterable<String> classDeclarations() => <String>[
         '''
 extension $_extensionName on $_className {
-  static $_className _fromState(GoRouterState state) => const $_className();
+  static $_className _fromState(GoRouterState state) =>${routeDataClass.unnamedConstructor!.isConst ? ' const' : ''}   $_className();
 }
 '''
       ];
@@ -149,6 +149,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
     required this.observers,
     this.restorationScopeId,
     this.initialLocation,
+    this.preload,
   }) : super._();
 
   /// The command for calling the navigator key getter from the ShellRouteData.
@@ -163,17 +164,22 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   /// The navigator observers.
   final String? observers;
 
+  /// The preload parameter.
+  final String? preload;
+
   @override
   Iterable<String> classDeclarations() => <String>[];
 
   @override
   String get factorConstructorParameters => '';
+
   @override
   String get routeConstructorParameters =>
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
       '${restorationScopeId == null ? '' : 'restorationScopeId: $restorationScopeId,'}'
       '${initialLocation == null ? '' : 'initialLocation: $initialLocation,'}'
-      '${observers == null ? '' : 'observers: $observers,'}';
+      '${observers == null ? '' : 'observers: $observers,'}'
+      '${preload == null ? '' : 'preload: $preload,'}';
 
   @override
   String get routeDataClassName => 'StatefulShellBranchData';
@@ -187,6 +193,7 @@ class GoRouteConfig extends RouteBaseConfig {
   GoRouteConfig._({
     required this.path,
     required this.name,
+    required this.caseSensitive,
     required this.parentNavigatorKey,
     required super.routeDataClass,
     required super.parent,
@@ -197,6 +204,9 @@ class GoRouteConfig extends RouteBaseConfig {
 
   /// The name of the GoRoute to be created by this configuration.
   final String? name;
+
+  /// The case sensitivity of the GoRoute to be created by this configuration.
+  final bool caseSensitive;
 
   /// The parent navigator key.
   final String? parentNavigatorKey;
@@ -226,8 +236,9 @@ class GoRouteConfig extends RouteBaseConfig {
         // Enum types are encoded using a map, so we need a nullability check
         // here to ensure it matches Uri.encodeComponent nullability
         final DartType? type = _field(pathParameter)?.returnType;
+
         final String value =
-            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${type?.isEnum ?? false ? '!' : ''})}';
+            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${(type?.isEnum ?? false) ? '!' : (type?.isNullableType ?? false) ? "?? ''" : ''})}';
         return MapEntry<String, String>(pathParameter, value);
       }),
     );
@@ -313,7 +324,9 @@ class GoRouteConfig extends RouteBaseConfig {
         if (param.type.isNullableType) {
           throw NullableDefaultValueError(param);
         }
-        conditions.add('$parameterName != ${param.defaultValueCode!}');
+        conditions.add(
+          compareField(param, parameterName, param.defaultValueCode!),
+        );
       } else if (param.type.isNullableType) {
         conditions.add('$parameterName != null');
       }
@@ -414,6 +427,7 @@ extension $_extensionName on $_className {
   String get routeConstructorParameters => '''
     path: ${escapeDartString(path)},
     ${name != null ? 'name: ${escapeDartString(name!)},' : ''}
+    ${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}
     ${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}
 ''';
 
@@ -530,6 +544,10 @@ abstract class RouteBaseConfig {
             classElement,
             parameterName: r'$observers',
           ),
+          preload: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$preload',
+          ),
         );
       case 'TypedGoRoute':
         final ConstantReader pathValue = reader.read('path');
@@ -540,9 +558,11 @@ abstract class RouteBaseConfig {
           );
         }
         final ConstantReader nameValue = reader.read('name');
+        final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
         value = GoRouteConfig._(
           path: pathValue.stringValue,
           name: nameValue.isNull ? null : nameValue.stringValue,
+          caseSensitive: caseSensitiveValue.boolValue,
           routeDataClass: classElement,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(
@@ -597,7 +617,7 @@ abstract class RouteBaseConfig {
               return false;
             }
             final DartType typeArgument = typeArguments.single;
-            if (typeArgument.getDisplayString(withNullability: false) !=
+            if (withoutNullability(typeArgument.getDisplayString()) !=
                 'NavigatorState') {
               return false;
             }
@@ -734,13 +754,14 @@ const Map<String, String> helperNames = <String, String>{
   convertMapValueHelperName: _convertMapValueHelper,
   boolConverterHelperName: _boolConverterHelper,
   enumExtensionHelperName: _enumConverterHelper,
+  iterablesEqualHelperName: _iterableEqualsHelper,
 };
 
 const String _convertMapValueHelper = '''
 T? $convertMapValueHelperName<T>(
   String key,
   Map<String, String> map,
-  T Function(String) converter,
+  T? Function(String) converter,
 ) {
   final value = map[key];
   return value == null ? null : converter(value);
@@ -762,6 +783,21 @@ bool $boolConverterHelperName(String value) {
 
 const String _enumConverterHelper = '''
 extension<T extends Enum> on Map<T, String> {
-  T $enumExtensionHelperName(String value) =>
-      entries.singleWhere((element) => element.value == value).key;
+  T? $enumExtensionHelperName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
+}''';
+
+const String _iterableEqualsHelper = '''
+bool $iterablesEqualHelperName<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
+  if (identical(iterable1, iterable2)) return true;
+  if (iterable1 == null || iterable2 == null) return false;
+  final iterator1 = iterable1.iterator;
+  final iterator2 = iterable2.iterator;
+  while (true) {
+    final hasNext1 = iterator1.moveNext();
+    final hasNext2 = iterator2.moveNext();
+    if (hasNext1 != hasNext2) return false;
+    if (!hasNext1) return true;
+    if (iterator1.current != iterator2.current) return false;
+  }
 }''';

@@ -5,11 +5,13 @@
 package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -18,53 +20,84 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.provider.Settings;
 import android.view.Display;
+import android.view.OrientationEventListener;
 import android.view.Surface;
-import android.view.WindowManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
-import io.flutter.plugins.camerax.DeviceOrientationManager.DeviceOrientationChangeCallback;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockedStatic;
 
 public class DeviceOrientationManagerTest {
   private Activity mockActivity;
-  private DeviceOrientationChangeCallback mockDeviceOrientationChangeCallback;
-  private WindowManager mockWindowManager;
   private Display mockDisplay;
+
+  private DeviceOrientationManagerProxyApi mockApi;
   private DeviceOrientationManager deviceOrientationManager;
 
   @Before
-  @SuppressWarnings("deprecation")
   public void before() {
     mockActivity = mock(Activity.class);
     mockDisplay = mock(Display.class);
-    mockWindowManager = mock(WindowManager.class);
-    mockDeviceOrientationChangeCallback = mock(DeviceOrientationChangeCallback.class);
 
-    when(mockActivity.getSystemService(Context.WINDOW_SERVICE)).thenReturn(mockWindowManager);
-    when(mockWindowManager.getDefaultDisplay()).thenReturn(mockDisplay);
+    mockApi = mock(DeviceOrientationManagerProxyApi.class);
 
-    deviceOrientationManager =
-        new DeviceOrientationManager(mockActivity, false, 0, mockDeviceOrientationChangeCallback);
+    final TestProxyApiRegistrar proxyApiRegistrar =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          public Context getContext() {
+            return mockActivity;
+          }
+
+          @Nullable
+          @Override
+          Display getDisplay() {
+            return mockDisplay;
+          }
+        };
+
+    when(mockApi.getPigeonRegistrar()).thenReturn(proxyApiRegistrar);
+
+    deviceOrientationManager = new DeviceOrientationManager(mockApi);
   }
 
   @Test
-  public void handleUIOrientationChange_shouldSendMessageWhenSensorAccessIsAllowed() {
-    try (MockedStatic<Settings.System> mockedSystem = mockStatic(Settings.System.class)) {
-      mockedSystem
-          .when(
-              () ->
-                  Settings.System.getInt(any(), eq(Settings.System.ACCELEROMETER_ROTATION), eq(0)))
-          .thenReturn(0);
-      setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_0);
+  public void start_createsExpectedOrientationEventListener() {
+    DeviceOrientationManager deviceOrientationManagerSpy = spy(deviceOrientationManager);
 
-      deviceOrientationManager.handleUIOrientationChange();
-    }
+    doNothing().when(deviceOrientationManagerSpy).handleUIOrientationChange();
 
-    verify(mockDeviceOrientationChangeCallback, times(1))
-        .onChange(DeviceOrientation.LANDSCAPE_LEFT);
+    deviceOrientationManagerSpy.start();
+    deviceOrientationManagerSpy.orientationEventListener.onOrientationChanged(
+        /* some device orientation */ 3);
+
+    verify(deviceOrientationManagerSpy).handleUIOrientationChange();
+  }
+
+  @Test
+  public void start_enablesOrientationEventListener() {
+    DeviceOrientationManager deviceOrientationManagerSpy = spy(deviceOrientationManager);
+    OrientationEventListener mockOrientationEventListener = mock(OrientationEventListener.class);
+
+    when(deviceOrientationManagerSpy.createOrientationEventListener())
+        .thenReturn(mockOrientationEventListener);
+
+    deviceOrientationManagerSpy.start();
+
+    verify(mockOrientationEventListener).enable();
+  }
+
+  @Test
+  public void stop_disablesOrientationListener() {
+    OrientationEventListener mockOrientationEventListener = mock(OrientationEventListener.class);
+    deviceOrientationManager.orientationEventListener = mockOrientationEventListener;
+
+    deviceOrientationManager.stop();
+
+    verify(mockOrientationEventListener).disable();
+    assertNull(deviceOrientationManager.orientationEventListener);
   }
 
   @Test
@@ -73,9 +106,11 @@ public class DeviceOrientationManagerTest {
     DeviceOrientation newOrientation = DeviceOrientation.LANDSCAPE_LEFT;
 
     DeviceOrientationManager.handleOrientationChange(
-        newOrientation, previousOrientation, mockDeviceOrientationChangeCallback);
+        deviceOrientationManager, newOrientation, previousOrientation, mockApi);
 
-    verify(mockDeviceOrientationChangeCallback, times(1)).onChange(newOrientation);
+    verify(mockApi, times(1))
+        .onDeviceOrientationChanged(
+            eq(deviceOrientationManager), eq(newOrientation.toString()), any());
   }
 
   @Test
@@ -84,9 +119,9 @@ public class DeviceOrientationManagerTest {
     DeviceOrientation newOrientation = DeviceOrientation.PORTRAIT_UP;
 
     DeviceOrientationManager.handleOrientationChange(
-        newOrientation, previousOrientation, mockDeviceOrientationChangeCallback);
+        deviceOrientationManager, newOrientation, previousOrientation, mockApi);
 
-    verify(mockDeviceOrientationChangeCallback, never()).onChange(any());
+    verify(mockApi, never()).onDeviceOrientationChanged(any(), any(), any());
   }
 
   @Test

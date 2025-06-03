@@ -1,0 +1,62 @@
+RouteBase get $setRoute => GoRouteData.$route(
+      path: '/set-route',
+      factory: $SetRouteExtension._fromState,
+    );
+
+extension $SetRouteExtension on SetRoute {
+  static SetRoute _fromState(GoRouterState state) => SetRoute(
+        ids: (state.uri.queryParametersAll['ids']
+                    ?.map(int.parse)
+                    .cast<int>()
+                    ?.toSet() as Set<int>)
+                ?.toSet() ??
+            const {},
+        nullableIds: (state.uri.queryParametersAll['nullable-ids']
+                ?.map(int.parse)
+                .cast<int>()
+                ?.toSet() as Set<int>?)
+            ?.toSet(),
+        idsWithDefaultValue: (state
+                    .uri.queryParametersAll['ids-with-default-value']
+                    ?.map(int.parse)
+                    .cast<int>()
+                    ?.toSet() as Set<int>?)
+                ?.toSet() ??
+            const <int>{0},
+      );
+
+  String get location => GoRouteData.$location(
+        '/set-route',
+        queryParams: {
+          'ids': ids.map((e) => e.toString()).toList(),
+          if (nullableIds != null)
+            'nullable-ids': nullableIds?.map((e) => e.toString()).toList(),
+          if (!_$iterablesEqual(idsWithDefaultValue, const <int>{0}))
+            'ids-with-default-value':
+                idsWithDefaultValue.map((e) => e.toString()).toList(),
+        },
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+bool _$iterablesEqual<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
+  if (identical(iterable1, iterable2)) return true;
+  if (iterable1 == null || iterable2 == null) return false;
+  final iterator1 = iterable1.iterator;
+  final iterator2 = iterable2.iterator;
+  while (true) {
+    final hasNext1 = iterator1.moveNext();
+    final hasNext2 = iterator2.moveNext();
+    if (hasNext1 != hasNext2) return false;
+    if (!hasNext1) return true;
+    if (iterator1.current != iterator2.current) return false;
+  }
+}

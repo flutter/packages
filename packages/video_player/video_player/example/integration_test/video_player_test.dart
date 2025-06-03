@@ -56,15 +56,6 @@ void main() {
     testWidgets(
       'live stream duration != 0',
       (WidgetTester tester) async {
-        // This test requires network access, and won't pass until a LUCI recipe
-        // change is made.
-        // TODO(camsim99): Remove once https://github.com/flutter/flutter/issues/160797 is fixed.
-        if (!kIsWeb && Platform.isAndroid) {
-          markTestSkipped(
-              'Skipping due to https://github.com/flutter/flutter/issues/160797');
-          return;
-        }
-
         final VideoPlayerController networkController =
             VideoPlayerController.networkUrl(
           Uri.parse(
@@ -199,6 +190,10 @@ void main() {
         expect(controller.value.position,
             lessThanOrEqualTo(controller.value.duration));
       },
+      // Flaky on the web, headless browsers don't like to seek to non-buffered
+      // positions of a video (and since this isn't even injecting the video
+      // element on the page, the video never starts buffering with the test)
+      skip: kIsWeb,
     );
 
     testWidgets('test video player view with local asset',
@@ -275,15 +270,6 @@ void main() {
     testWidgets(
       'reports buffering status',
       (WidgetTester tester) async {
-        // This test requires network access, and won't pass until a LUCI recipe
-        // change is made.
-        // TODO(camsim99): Remove once https://github.com/flutter/flutter/issues/160797 is fixed.
-        if (!kIsWeb && Platform.isAndroid) {
-          markTestSkipped(
-              'Skipping due to https://github.com/flutter/flutter/issues/160797');
-          return;
-        }
-
         await controller.initialize();
         // Mute to allow playing without DOM interaction on Web.
         // See https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
@@ -313,7 +299,11 @@ void main() {
         await expectLater(started.future, completes);
         await expectLater(ended.future, completes);
       },
-      skip: !(kIsWeb || defaultTargetPlatform == TargetPlatform.android),
+      skip:
+          // MEDIA_ELEMENT_ERROR on web, see https://github.com/flutter/flutter/issues/169219
+          kIsWeb ||
+              // Hanging on Android, see https://github.com/flutter/flutter/issues/160797
+              defaultTargetPlatform == TargetPlatform.android,
     );
   });
 

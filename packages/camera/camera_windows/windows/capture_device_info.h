@@ -25,8 +25,7 @@ class CaptureDeviceInfo {
 
   // Parses display name and device id from unique device name format.
   // Format: "display_name <device_id>".
-  bool CaptureDeviceInfo::ParseDeviceInfoFromCameraName(
-      const std::string& camera_name);
+  bool ParseDeviceInfoFromCameraName(const std::string& camera_name);
 
   // Updates display name.
   void SetDisplayName(const std::string& display_name) {

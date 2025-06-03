@@ -1,3 +1,58 @@
+## 4.7.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `AndroidNavigationDelegate.setOnSSlAuthError`.
+
+## 4.6.0
+
+* Adds support to set using wide view port. See `AndroidWebViewController.setUseWideViewPort`.
+* Changes default of `WebSettings.setUseWideViewPort` to `false` to align with native WebViews.
+
+## 4.5.0
+
+* Adds support to set whether to draw the scrollbar. See
+  `AndroidWebViewController.setVerticalScrollBarEnabled`,
+  `AndroidWebViewController.setHorizontalScrollBarEnabled`,
+  `AndroidWebViewController.supportsSetScrollBarsEnabled`.
+
+## 4.4.2
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
+## 4.4.1
+
+* Removes obsolete code related to supporting SDK <21.
+
+## 4.4.0
+
+* Adds support to set the over-scroll mode for the WebView. See `AndroidWebViewController.setOverScrollMode`.
+
+## 4.3.5
+
+* Adds internal wrapper methods for native `WebViewClient`.
+
+## 4.3.4
+
+* Bumps gradle from 8.0.0 to 8.9.0.
+
+## 4.3.3
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 4.3.2
+
+* Bumps gradle-plugin to 2.1.10.
+
+## 4.3.1
+
+* Bumps gradle-plugin to 2.1.0.
+
+## 4.3.0
+
+* Adds support for disabling content URL access within WebView and disabling the Geolocation API.
+  See `AndroidWebViewController.setAllowContentAccess` and
+  `AndroidWebViewController.setGeolocationEnabled`.
+
 ## 4.2.0
 
 * Adds support for configuring file access permissions. See `AndroidWebViewController.setAllowFileAccess`.

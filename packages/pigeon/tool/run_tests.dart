@@ -184,6 +184,7 @@ Future<void> main(List<String> args) async {
     androidJavaUnitTests,
     androidJavaLint,
     androidKotlinUnitTests,
+    androidKotlinLint,
     androidJavaIntegrationTests,
     androidKotlinIntegrationTests,
     linuxUnitTests,

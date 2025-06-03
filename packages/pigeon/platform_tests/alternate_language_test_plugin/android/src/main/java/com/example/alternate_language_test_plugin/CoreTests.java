@@ -3166,6 +3166,18 @@ public class CoreTests {
     /** Returns the passed enum, to test asynchronous serialization and deserialization. */
     void echoAnotherAsyncNullableEnum(
         @Nullable AnotherEnum anotherEnum, @NonNull NullableResult<AnotherEnum> result);
+    /**
+     * Returns true if the handler is run on a main thread, which should be true since there is no
+     * TaskQueue annotation.
+     */
+    @NonNull
+    Boolean defaultIsMainThread();
+    /**
+     * Returns true if the handler is run on a non-main thread, which should be true for any
+     * platform with TaskQueue support.
+     */
+    @NonNull
+    Boolean taskQueueIsBackgroundThread();
 
     void callFlutterNoop(@NonNull VoidResult result);
 
@@ -3340,6 +3352,7 @@ public class CoreTests {
         @NonNull String messageChannelSuffix,
         @Nullable HostIntegrationCoreApi api) {
       messageChannelSuffix = messageChannelSuffix.isEmpty() ? "" : "." + messageChannelSuffix;
+      BinaryMessenger.TaskQueue taskQueue = binaryMessenger.makeBackgroundTaskQueue();
       {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
@@ -6104,6 +6117,53 @@ public class CoreTests {
                     };
 
                 api.echoAnotherAsyncNullableEnum(anotherEnumArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.defaultIsMainThread"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  Boolean output = api.defaultIsMainThread();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.pigeon_integration_tests.HostIntegrationCoreApi.taskQueueIsBackgroundThread"
+                    + messageChannelSuffix,
+                getCodec(),
+                taskQueue);
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  Boolean output = api.taskQueueIsBackgroundThread();
+                  wrapped.add(0, output);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

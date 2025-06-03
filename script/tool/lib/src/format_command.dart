@@ -49,6 +49,7 @@ class FormatCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addFlag(_failonChangeArg, hide: true);
     argParser.addFlag(_dartArg, help: 'Format Dart files', defaultsTo: true);

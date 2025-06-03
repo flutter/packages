@@ -7,7 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/sk2_pigeon.g.dart',
   dartTestOut: 'test/sk2_test_api.g.dart',
-  swiftOut: 'darwin/Classes/StoreKit2/sk2_pigeon.g.swift',
+  swiftOut:
+      'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit/StoreKit2/sk2_pigeon.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 enum SK2ProductTypeMessage {
@@ -24,7 +25,11 @@ enum SK2ProductTypeMessage {
   autoRenewable
 }
 
-enum SK2SubscriptionOfferTypeMessage { introductory, promotional }
+enum SK2SubscriptionOfferTypeMessage {
+  introductory,
+  promotional,
+  winBack,
+}
 
 enum SK2SubscriptionOfferPaymentModeMessage {
   payAsYouGo,
@@ -126,13 +131,44 @@ class SK2PriceLocaleMessage {
   final String currencySymbol;
 }
 
+/// A Pigeon message class representing a Signature
+/// https://developer.apple.com/documentation/storekit/product/subscriptionoffer/signature
+class SK2SubscriptionOfferSignatureMessage {
+  SK2SubscriptionOfferSignatureMessage({
+    required this.keyID,
+    required this.nonce,
+    required this.timestamp,
+    required this.signature,
+  });
+
+  final String keyID;
+  final String nonce;
+  final int timestamp;
+  final String signature;
+}
+
+class SK2SubscriptionOfferPurchaseMessage {
+  SK2SubscriptionOfferPurchaseMessage({
+    required this.promotionalOfferId,
+    required this.promotionalOfferSignature,
+  });
+
+  final String promotionalOfferId;
+  final SK2SubscriptionOfferSignatureMessage promotionalOfferSignature;
+}
+
 class SK2ProductPurchaseOptionsMessage {
   SK2ProductPurchaseOptionsMessage({
     this.appAccountToken,
     this.quantity = 1,
+    this.promotionalOffer,
+    this.winBackOfferId,
   });
+
   final String? appAccountToken;
   final int? quantity;
+  final SK2SubscriptionOfferPurchaseMessage? promotionalOffer;
+  final String? winBackOfferId;
 }
 
 class SK2TransactionMessage {
@@ -146,6 +182,7 @@ class SK2TransactionMessage {
       this.appAccountToken,
       this.error,
       this.receiptData,
+      this.jsonRepresentation,
       this.restoring = false});
   final int id;
   final int originalId;
@@ -157,6 +194,7 @@ class SK2TransactionMessage {
   final bool restoring;
   final String? receiptData;
   final SK2ErrorMessage? error;
+  final String? jsonRepresentation;
 }
 
 class SK2ErrorMessage {
@@ -185,6 +223,9 @@ abstract class InAppPurchase2API {
       {SK2ProductPurchaseOptionsMessage? options});
 
   @async
+  bool isWinBackOfferEligible(String productId, String offerId);
+
+  @async
   List<SK2TransactionMessage> transactions();
 
   @async
@@ -196,6 +237,12 @@ abstract class InAppPurchase2API {
 
   @async
   void restorePurchases();
+
+  @async
+  String countryCode();
+
+  @async
+  void sync();
 }
 
 @FlutterApi()

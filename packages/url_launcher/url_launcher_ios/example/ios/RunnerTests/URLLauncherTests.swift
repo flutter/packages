@@ -131,6 +131,24 @@ final class URLLauncherTests: XCTestCase {
     XCTAssertEqual(launcher.passedOptions?[.universalLinksOnly] as? Bool, true)
   }
 
+  func testLaunchSafariViewControllerWithClose() {
+    let launcher = FakeLauncher()
+    let plugin = createPlugin(launcher: launcher)
+
+    let expectation = XCTestExpectation(description: "completion called")
+    plugin.openUrlInSafariViewController(url: "https://flutter.dev") { result in
+      switch result {
+      case .success(let details):
+        XCTAssertEqual(details, .dismissed)
+      case .failure(let error):
+        XCTFail("Unexpected error: \(error)")
+      }
+      expectation.fulfill()
+    }
+    plugin.closeSafariViewController()
+    wait(for: [expectation], timeout: 30)
+  }
+
 }
 
 final private class FakeLauncher: NSObject, Launcher {

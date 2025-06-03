@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.urllauncher;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -50,27 +49,10 @@ public class WebViewActivity extends Activity {
 
   private final WebViewClient webViewClient =
       new WebViewClient() {
-
-        /*
-         * This method is deprecated in API 24. Still overridden to support
-         * earlier Android versions.
-         */
-        @SuppressWarnings("deprecation")
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-          if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            view.loadUrl(url);
-            return false;
-          }
-          return super.shouldOverrideUrlLoading(view, url);
-        }
-
         @RequiresApi(Build.VERSION_CODES.N)
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            view.loadUrl(request.getUrl().toString());
-          }
+          view.loadUrl(request.getUrl().toString());
           return false;
         }
       };
@@ -87,7 +69,6 @@ public class WebViewActivity extends Activity {
         final WebView view, boolean isDialog, boolean isUserGesture, Message resultMsg) {
       final WebViewClient webViewClient =
           new WebViewClient() {
-            @TargetApi(Build.VERSION_CODES.LOLLIPOP)
             @Override
             public boolean shouldOverrideUrlLoading(
                 @NonNull WebView view, @NonNull WebResourceRequest request) {

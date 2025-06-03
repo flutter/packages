@@ -1,5 +1,36 @@
-## NEXT
+## 0.4.1
 
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Adds **Win Back Offers** support for StoreKit2:
+    - Includes new `isWinBackOfferEligible` function for eligibility verification
+* Adds **Promotional Offers** support in StoreKit2 purchases
+* Fixes introductory pricing handling in promotional offers list in StoreKit2
+* Ensures proper `appAccountToken` handling for StoreKit2 purchases
+
+## 0.4.0
+
+* **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.
+* To revert to StoreKit1 for devices below iOS 15, call `enableStoreKit1`
+
+## 0.3.22+1
+
+* Fix a channel thread-safety issue when StoreKit2 is enabled.
+
+## 0.3.22
+
+* Adds `sync()` and `countryCode()`.
+
+## 0.3.21
+
+* Adds Swift Package Manager compatibility.
+
+## 0.3.20+4
+
+* Exposes `jsonRepresentation` field for transactions.
+
+## 0.3.20+3
+
+* Fixes `finishTransaction` not completing.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 
 ## 0.3.20+2

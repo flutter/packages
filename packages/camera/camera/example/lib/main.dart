@@ -54,12 +54,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   double _minAvailableExposureOffset = 0.0;
   double _maxAvailableExposureOffset = 0.0;
   double _currentExposureOffset = 0.0;
-  late AnimationController _flashModeControlRowAnimationController;
-  late Animation<double> _flashModeControlRowAnimation;
-  late AnimationController _exposureModeControlRowAnimationController;
-  late Animation<double> _exposureModeControlRowAnimation;
-  late AnimationController _focusModeControlRowAnimationController;
-  late Animation<double> _focusModeControlRowAnimation;
+  late final AnimationController _flashModeControlRowAnimationController;
+  late final CurvedAnimation _flashModeControlRowAnimation;
+  late final AnimationController _exposureModeControlRowAnimationController;
+  late final CurvedAnimation _exposureModeControlRowAnimation;
+  late final AnimationController _focusModeControlRowAnimationController;
+  late final CurvedAnimation _focusModeControlRowAnimation;
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _currentScale = 1.0;
@@ -103,7 +103,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _flashModeControlRowAnimationController.dispose();
+    _flashModeControlRowAnimation.dispose();
     _exposureModeControlRowAnimationController.dispose();
+    _exposureModeControlRowAnimation.dispose();
+    _focusModeControlRowAnimationController.dispose();
+    _focusModeControlRowAnimation.dispose();
     super.dispose();
   }
 

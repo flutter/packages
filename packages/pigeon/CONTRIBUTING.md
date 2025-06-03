@@ -18,18 +18,18 @@ generators with that AST.
 
 ## Source Index
 
-* [ast.dart](./lib/ast.dart) - The data structure for representing the Abstract Syntax Tree.
-* [dart_generator.dart](./lib/dart_generator.dart) - The Dart code generator.
-* [java_generator.dart](./lib/java_generator.dart) - The Java code generator.
-* [kotlin_generator.dart](./lib/kotlin_generator.dart) - The Kotlin code generator.
-* [objc_generator.dart](./lib/objc_generator.dart) - The Objective-C code
+* [ast.dart](./lib/src/ast.dart) - The data structure for representing the Abstract Syntax Tree.
+* [dart_generator.dart](./lib/src/dart_generator.dart) - The Dart code generator.
+* [java_generator.dart](./lib/src/java_generator.dart) - The Java code generator.
+* [kotlin_generator.dart](./lib/src/kotlin_generator.dart) - The Kotlin code generator.
+* [objc_generator.dart](./lib/src/objc_generator.dart) - The Objective-C code
   generator (header and source files).
-* [swift_generator.dart](./lib/swift_generator.dart) - The Swift code generator.
-* [cpp_generator.dart](./lib/cpp_generator.dart) - The C++ code generator.
-* [generator_tools.dart](./lib/generator_tools.dart) - Shared code between generators.
-* [pigeon_cl.dart](./lib/pigeon_cl.dart) - The top-level function executed by
+* [swift_generator.dart](./lib/src/swift_generator.dart) - The Swift code generator.
+* [cpp_generator.dart](./lib/src/cpp_generator.dart) - The C++ code generator.
+* [generator_tools.dart](./lib/src/generator_tools.dart) - Shared code between generators.
+* [pigeon_cl.dart](./lib/src/pigeon_cl.dart) - The top-level function executed by
   the command line tool in [bin/][./bin].
-* [pigeon_lib.dart](./lib/pigeon_lib.dart) - The top-level function for the
+* [pigeon_lib.dart](./lib/src/pigeon_lib.dart) - The top-level function for the
   PigeonIsolate and the AST generation code.
 * [pigeon.dart](./lib/pigeon.dart) - A file of exported modules, the intended
   import for users of Pigeon.

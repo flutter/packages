@@ -383,6 +383,61 @@ void main() {
           (shellNavigatorKey.currentWidget as Navigator?)?.restorationScopeId,
           'scope1');
     });
+
+    testWidgets('GoRouter requestFocus defaults to true',
+        (WidgetTester tester) async {
+      final GoRouter router = GoRouter(
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Scaffold(
+              body: Center(child: Text('Home')),
+            ),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+        ),
+      );
+
+      addTearDown(() => router.dispose());
+
+      final Navigator navigator =
+          tester.widget<Navigator>(find.byType(Navigator));
+      expect(navigator.requestFocus, isTrue);
+    });
+
+    testWidgets('GoRouter requestFocus can be set to false',
+        (WidgetTester tester) async {
+      final GoRouter router = GoRouter(
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) =>
+                const Scaffold(
+              body: Center(child: Text('Home')),
+            ),
+          ),
+        ],
+        requestFocus: false,
+      );
+
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+        ),
+      );
+
+      addTearDown(() => router.dispose());
+
+      final Navigator navigator =
+          tester.widget<Navigator>(find.byType(Navigator));
+      expect(navigator.requestFocus, isFalse);
+    });
   });
 }
 

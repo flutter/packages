@@ -1,6 +1,11 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 3.1.4
+
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Fixes an issue where the URL logged would not be unescaped on failure.
 
 ## 3.1.3
 

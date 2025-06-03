@@ -46,11 +46,11 @@ void main() {
       void Function(
               android_webview.WebChromeClient, android_webview.WebView, int)?
           onProgressChanged,
-      Future<List<String>> Function(
+      required Future<List<String>> Function(
         android_webview.WebChromeClient,
         android_webview.WebView,
         android_webview.FileChooserParams,
-      )? onShowFileChooser,
+      ) onShowFileChooser,
       void Function(android_webview.WebChromeClient,
               android_webview.PermissionRequest)?
           onPermissionRequest,
@@ -71,12 +71,12 @@ void main() {
       Future<void> Function(android_webview.WebChromeClient,
               android_webview.WebView, String, String)?
           onJsAlert,
-      Future<bool> Function(
+      required Future<bool> Function(
         android_webview.WebChromeClient,
         android_webview.WebView,
         String,
         String,
-      )? onJsConfirm,
+      ) onJsConfirm,
       Future<String?> Function(
         android_webview.WebChromeClient,
         android_webview.WebView,
@@ -196,6 +196,46 @@ void main() {
                         String,
                         String)?
                     onReceivedHttpAuthRequest,
+                void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  android_webview.AndroidMessage,
+                  android_webview.AndroidMessage,
+                )? onFormResubmission,
+                void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  String,
+                )? onLoadResource,
+                void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  String,
+                )? onPageCommitVisible,
+                void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  android_webview.ClientCertRequest,
+                )? onReceivedClientCertRequest,
+                void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  String,
+                  String,
+                  String,
+                )? onReceivedLoginRequest,
+                void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  android_webview.SslErrorHandler,
+                  android_webview.SslError,
+                )? onReceivedSslError,
+                void Function(
+                  android_webview.WebViewClient,
+                  android_webview.WebView,
+                  double,
+                  double,
+                )? onScaleChanged,
               }) =>
                   mockWebViewClient ?? MockWebViewClient(),
               instanceFlutterAssetManager: () =>
@@ -249,7 +289,7 @@ void main() {
           .called(1);
       verify(mockWebSettings.setLoadWithOverviewMode(true)).called(1);
       verify(mockWebSettings.setSupportMultipleWindows(true)).called(1);
-      verify(mockWebSettings.setUseWideViewPort(true)).called(1);
+      verify(mockWebSettings.setUseWideViewPort(false)).called(1);
     });
 
     test('loadFile without file prefix', () async {
@@ -629,7 +669,10 @@ void main() {
       controller.setPlatformNavigationDelegate(androidNavigationDelegate);
 
       CapturingWebChromeClient.lastCreatedDelegate.onProgressChanged!(
-        TestWebChromeClient(),
+        TestWebChromeClient(
+          onJsConfirm: (_, __, ___, ____) async => false,
+          onShowFileChooser: (_, __, ___) async => <String>[],
+        ),
         MockWebView(),
         42,
       );
@@ -645,7 +688,10 @@ void main() {
 
       // Should not cause LateInitializationError
       CapturingWebChromeClient.lastCreatedDelegate.onProgressChanged!(
-        TestWebChromeClient(),
+        TestWebChromeClient(
+          onJsConfirm: (_, __, ___, ____) async => false,
+          onShowFileChooser: (_, __, ___) async => <String>[],
+        ),
         MockWebView(),
         42,
       );
@@ -895,6 +941,8 @@ void main() {
 
       onPermissionRequestCallback(
         android_webview.WebChromeClient.pigeon_detached(
+            onJsConfirm: (_, __, ___, ____) async => false,
+            onShowFileChooser: (_, __, ___) async => <String>[],
             pigeon_instanceManager: testInstanceManager),
         mockPermissionRequest,
       );
@@ -949,6 +997,8 @@ void main() {
 
       onPermissionRequestCallback(
         android_webview.WebChromeClient.pigeon_detached(
+          onJsConfirm: (_, __, ___, ____) async => false,
+          onShowFileChooser: (_, __, ___) async => <String>[],
           pigeon_instanceManager: testInstanceManager,
         ),
         mockPermissionRequest,
@@ -1401,6 +1451,28 @@ void main() {
       verify(mockWebView.scrollBy(4, 2)).called(1);
     });
 
+    test('verticalScrollBarEnabled', () async {
+      final MockWebView mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+      );
+
+      await controller.setVerticalScrollBarEnabled(false);
+
+      verify(mockWebView.setVerticalScrollBarEnabled(false)).called(1);
+    });
+
+    test('horizontalScrollBarEnabled', () async {
+      final MockWebView mockWebView = MockWebView();
+      final AndroidWebViewController controller = createControllerWithMocks(
+        mockWebView: mockWebView,
+      );
+
+      await controller.setHorizontalScrollBarEnabled(false);
+
+      verify(mockWebView.setHorizontalScrollBarEnabled(false)).called(1);
+    });
+
     test('getScrollPosition', () async {
       final MockWebView mockWebView = MockWebView();
       final AndroidWebViewController controller = createControllerWithMocks(
@@ -1526,6 +1598,54 @@ void main() {
     verify(mockSettings.setMediaPlaybackRequiresUserGesture(true)).called(1);
   });
 
+  test('setUseWideViewPort', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setUseWideViewPort(true);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setUseWideViewPort(true)).called(1);
+  });
+
+  test('setAllowContentAccess', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setAllowContentAccess(false);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setAllowContentAccess(false)).called(1);
+  });
+
+  test('setGeolocationEnabled', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    clearInteractions(mockWebView);
+
+    await controller.setGeolocationEnabled(false);
+
+    verify(mockWebView.settings).called(1);
+    verify(mockSettings.setGeolocationEnabled(false)).called(1);
+  });
+
   test('setTextZoom', () async {
     final MockWebView mockWebView = MockWebView();
     final MockWebSettings mockSettings = MockWebSettings();
@@ -1540,6 +1660,21 @@ void main() {
 
     verify(mockWebView.settings).called(1);
     verify(mockSettings.setTextZoom(100)).called(1);
+  });
+
+  test('setOverScrollMode', () async {
+    final MockWebView mockWebView = MockWebView();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+    );
+
+    await controller.setOverScrollMode(WebViewOverScrollMode.always);
+
+    verify(
+      mockWebView.setOverScrollMode(
+        android_webview.OverScrollMode.always,
+      ),
+    ).called(1);
   });
 
   test('webViewIdentifier', () {
@@ -2037,6 +2172,13 @@ class TestWebViewClient extends android_webview.WebViewClient {
     super.urlLoading,
     super.doUpdateVisitedHistory,
     super.onReceivedHttpAuthRequest,
+    super.onFormResubmission,
+    super.onLoadResource,
+    super.onPageCommitVisible,
+    super.onReceivedClientCertRequest,
+    super.onReceivedLoginRequest,
+    super.onReceivedSslError,
+    super.onScaleChanged,
   }) : super.pigeon_detached(
           pigeon_instanceManager: android_webview.PigeonInstanceManager(
             onWeakReferenceRemoved: (_) {},
@@ -2047,7 +2189,7 @@ class TestWebViewClient extends android_webview.WebViewClient {
 class TestWebChromeClient extends android_webview.WebChromeClient {
   TestWebChromeClient({
     super.onProgressChanged,
-    super.onShowFileChooser,
+    required super.onShowFileChooser,
     super.onPermissionRequest,
     super.onShowCustomView,
     super.onHideCustomView,
@@ -2055,7 +2197,7 @@ class TestWebChromeClient extends android_webview.WebChromeClient {
     super.onGeolocationPermissionsHidePrompt,
     super.onConsoleMessage,
     super.onJsAlert,
-    super.onJsConfirm,
+    required super.onJsConfirm,
     super.onJsPrompt,
   }) : super.pigeon_detached(
           pigeon_instanceManager: android_webview.PigeonInstanceManager(
