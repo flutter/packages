@@ -8,9 +8,6 @@
 /// video.
 library;
 
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -58,27 +55,20 @@ class _App extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: !kIsWeb && (Platform.isIOS || Platform.isAndroid)
-              ? <Widget>[
-                  _ViewTypeTabBar(
-                    builder: (VideoViewType viewType) =>
-                        _BumbleBeeRemoteVideo(viewType),
-                  ),
-                  _ViewTypeTabBar(
-                    builder: (VideoViewType viewType) =>
-                        _ButterFlyAssetVideo(viewType),
-                  ),
-                  _ViewTypeTabBar(
-                    builder: (VideoViewType viewType) =>
-                        _ButterFlyAssetVideoInList(viewType),
-                  ),
-                ]
-              // The plugin does not support platform views on other platforms yet.
-              : const <Widget>[
-                  _BumbleBeeRemoteVideo(VideoViewType.textureView),
-                  _ButterFlyAssetVideo(VideoViewType.textureView),
-                  _ButterFlyAssetVideoInList(VideoViewType.textureView),
-                ],
+          children: <Widget>[
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _BumbleBeeRemoteVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _ButterFlyAssetVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _ButterFlyAssetVideoInList(viewType),
+            ),
+          ],
         ),
       ),
     );
