@@ -51,6 +51,7 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
         productWrapperMap['localizedDescription'] = null;
       }
       validProducts[validID] = SKProductWrapper.fromJson(productWrapperMap);
+      shouldStoreKit2BeEnabled = true;
     }
 
     finishedTransactions = <SKPaymentTransactionWrapper>[];
@@ -298,6 +299,8 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
 
   PlatformException? queryProductException;
   bool isListenerRegistered = false;
+  SK2ProductPurchaseOptionsMessage? lastPurchaseOptions;
+  Map<String, Set<String>> eligibleWinBackOffers = <String, Set<String>>{};
 
   void reset() {
     validProductIDs = <String>{'123', '456'};
@@ -314,6 +317,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
               SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'));
       validProducts[validID] = product;
     }
+    eligibleWinBackOffers = <String, Set<String>>{};
   }
 
   SK2TransactionMessage createRestoredTransaction(
@@ -356,6 +360,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   @override
   Future<SK2ProductPurchaseResultMessage> purchase(String id,
       {SK2ProductPurchaseOptionsMessage? options}) {
+    lastPurchaseOptions = options;
     final SK2TransactionMessage transaction = createPendingTransaction(id);
 
     InAppPurchaseStoreKitPlatform.sk2TransactionObserver
@@ -404,6 +409,30 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   @override
   Future<void> sync() {
     return Future<void>.value();
+  }
+
+  @override
+  Future<bool> isWinBackOfferEligible(
+    String productId,
+    String offerId,
+  ) async {
+    if (!validProductIDs.contains(productId)) {
+      throw PlatformException(
+        code: 'storekit2_failed_to_fetch_product',
+        message: 'StoreKit failed to fetch product',
+        details: 'Product ID: $productId',
+      );
+    }
+
+    if (validProducts[productId]?.type != SK2ProductType.autoRenewable) {
+      throw PlatformException(
+        code: 'storekit2_not_subscription',
+        message: 'Product is not a subscription',
+        details: 'Product ID: $productId',
+      );
+    }
+
+    return eligibleWinBackOffers[productId]?.contains(offerId) ?? false;
   }
 }
 

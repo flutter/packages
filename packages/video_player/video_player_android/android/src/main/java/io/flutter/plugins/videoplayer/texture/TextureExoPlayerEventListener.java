@@ -7,7 +7,6 @@ package io.flutter.plugins.videoplayer.texture;
 import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
-import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.Format;
 import androidx.media3.common.VideoSize;
 import androidx.media3.exoplayer.ExoPlayer;
@@ -18,20 +17,11 @@ import java.util.Objects;
 public final class TextureExoPlayerEventListener extends ExoPlayerEventListener {
   private boolean surfaceProducerHandlesCropAndRotation;
 
-  @VisibleForTesting
   public TextureExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer,
       @NonNull VideoPlayerCallbacks events,
       boolean surfaceProducerHandlesCropAndRotation) {
-    this(exoPlayer, events, surfaceProducerHandlesCropAndRotation, false);
-  }
-
-  public TextureExoPlayerEventListener(
-      @NonNull ExoPlayer exoPlayer,
-      @NonNull VideoPlayerCallbacks events,
-      boolean surfaceProducerHandlesCropAndRotation,
-      boolean initialized) {
-    super(exoPlayer, events, initialized);
+    super(exoPlayer, events);
     this.surfaceProducerHandlesCropAndRotation = surfaceProducerHandlesCropAndRotation;
   }
 

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 2.4.3
 
 * Fixes issue where non-JSON formatted strings cause parsing errors.
