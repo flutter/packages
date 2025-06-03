@@ -185,9 +185,7 @@ void main() {
       expect(result.first.verificationData.localVerificationData,
           'jsonRepresentation');
     });
-  });
 
-  group('purchase param', () {
     test('should process Sk2PurchaseParam with winBackOfferId only', () async {
       final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam(
         productDetails:
