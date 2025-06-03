@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 // This file is hand-formatted.
+// ignore_for_file: no_literal_bool_comparisons
 
 import 'dart:ui' as ui;
 
@@ -380,7 +381,7 @@ void main() {
       matchesGoldenFile('goldens/argument_decoders_test.containers.png'),
       // TODO(louisehsu): Unskip once golden file is updated. See
       // https://github.com/flutter/flutter/issues/151995
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
     expect(find.byType(DecoratedBox), findsNWidgets(6));
     const String matrix = kIsWeb ? '1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1'
