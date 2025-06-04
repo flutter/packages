@@ -43,10 +43,6 @@ enum PlaybackMediaTypes {
 @immutable
 class WebKitLoadFileParams extends LoadFileParams {
   /// Constructs a [WebKitLoadFileParams], the subclass of a [LoadFileParams].
-  ///
-  /// The optional [readAccessPath] defines the directory that the WebView is
-  /// allowed to read from. If not provided, it defaults to the parent directory
-  /// of [absoluteFilePath].
   WebKitLoadFileParams({
     required super.absoluteFilePath,
     String? readAccessPath,
@@ -65,6 +61,8 @@ class WebKitLoadFileParams extends LoadFileParams {
   }
 
   /// The directory to which the WebView is granted read access.
+  /// If not provided at initialization time, it defaults to
+  /// the parent directory of [absoluteFilePath].
   ///
   /// On iOS/macOS, this is required by WebKit to define the scope of readable
   /// files when loading a local HTML file. It must include the location of
@@ -438,7 +436,18 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> loadFileWithParams(LoadFileParams params) {
+  Future<void> loadFile(
+    String absoluteFilePath,
+  ) {
+    return loadFileWithParams(
+      WebKitLoadFileParams(absoluteFilePath: absoluteFilePath),
+    );
+  }
+
+  @override
+  Future<void> loadFileWithParams(
+    LoadFileParams params,
+  ) {
     switch (params) {
       case final WebKitLoadFileParams params:
         return _webView.loadFileUrl(
@@ -448,7 +457,8 @@ class WebKitWebViewController extends PlatformWebViewController {
 
       default:
         return loadFileWithParams(
-            WebKitLoadFileParams.fromLoadFileParams(params));
+          WebKitLoadFileParams.fromLoadFileParams(params),
+        );
     }
   }
 

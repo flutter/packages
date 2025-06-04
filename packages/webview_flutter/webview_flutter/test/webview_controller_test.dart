@@ -24,7 +24,13 @@ void main() {
     );
 
     await webViewController.loadFile('file/path');
-    verify(mockPlatformWebViewController.loadFile('file/path'));
+    verify(mockPlatformWebViewController.loadFileWithParams(
+      argThat(
+        predicate<LoadFileParams>((LoadFileParams params) {
+          return params.absoluteFilePath == 'file/path';
+        }, 'LoadFileParams with absoluteFilePath == "file/path"'),
+      ),
+    ));
   });
 
   test('loadFileWithParams', () async {

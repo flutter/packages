@@ -131,10 +131,12 @@ class WebViewController {
   /// `/Users/username/Documents/www/index.html`.
   ///
   /// Throws a `PlatformException` if the [absoluteFilePath] does not exist.
-  @Deprecated('Use loadFileWithParams(LocalFileParams params) instead. '
-      'This method will be removed in a future release.')
   Future<void> loadFile(String absoluteFilePath) {
-    return platform.loadFile(absoluteFilePath);
+    return platform.loadFileWithParams(
+      LoadFileParams(
+        absoluteFilePath: absoluteFilePath,
+      ),
+    );
   }
 
   /// Loads a local HTML file using the provided [params].

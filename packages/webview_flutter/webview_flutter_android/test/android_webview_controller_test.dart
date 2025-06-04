@@ -292,6 +292,60 @@ void main() {
       verify(mockWebSettings.setUseWideViewPort(false)).called(1);
     });
 
+    group('loadFile', () {
+      test('Without file prefix', () async {
+        final MockWebView mockWebView = MockWebView();
+        final MockWebSettings mockWebSettings = MockWebSettings();
+        final AndroidWebViewController controller = createControllerWithMocks(
+          mockWebView: mockWebView,
+          mockSettings: mockWebSettings,
+        );
+
+        await controller.loadFile('/path/to/file.html');
+
+        verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+        verify(mockWebView.loadUrl(
+          'file:///path/to/file.html',
+          <String, String>{},
+        )).called(1);
+      });
+
+      test('Without file prefix and characters to be escaped', () async {
+        final MockWebView mockWebView = MockWebView();
+        final MockWebSettings mockWebSettings = MockWebSettings();
+        final AndroidWebViewController controller = createControllerWithMocks(
+          mockWebView: mockWebView,
+          mockSettings: mockWebSettings,
+        );
+
+        await controller.loadFile('/path/to/?_<_>_.html');
+
+        verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+        verify(mockWebView.loadUrl(
+          'file:///path/to/%3F_%3C_%3E_.html',
+          <String, String>{},
+        )).called(1);
+      });
+
+      test('With file prefix', () async {
+        final MockWebView mockWebView = MockWebView();
+        final MockWebSettings mockWebSettings = MockWebSettings();
+        final AndroidWebViewController controller = createControllerWithMocks(
+          mockWebView: mockWebView,
+        );
+
+        when(mockWebView.settings).thenReturn(mockWebSettings);
+
+        await controller.loadFile('file:///path/to/file.html');
+
+        verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+        verify(mockWebView.loadUrl(
+          'file:///path/to/file.html',
+          <String, String>{},
+        )).called(1);
+      });
+    });
+
     group('loadFileWithParams', () {
       group('Using LoadFileParams model', () {
         test('Without file prefix', () async {
