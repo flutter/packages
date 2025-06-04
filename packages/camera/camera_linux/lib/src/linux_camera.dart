@@ -10,7 +10,8 @@ import 'package:stream_transform/stream_transform.dart';
 class CameraLinux extends CameraPlatform {
   final CameraApi _hostApi;
 
-  CameraLinux({@visibleForTesting CameraApi? api}) : _hostApi = api ?? CameraApi();
+  CameraLinux({@visibleForTesting CameraApi? api})
+      : _hostApi = api ?? CameraApi();
 
   static void registerWith() {
     CameraPlatform.instance = CameraLinux();
@@ -24,15 +25,18 @@ class CameraLinux extends CameraPlatform {
   /// This is only exposed for test purposes. It shouldn't be used by clients of
   /// the plugin as it may break or change at any time.
   @visibleForTesting
-  final StreamController<CameraEvent> cameraEventStreamController = StreamController<CameraEvent>.broadcast();
+  final StreamController<CameraEvent> cameraEventStreamController =
+      StreamController<CameraEvent>.broadcast();
 
   /// The per-camera handlers for messages that should be rebroadcast to
   /// clients as [CameraEvent]s.
   @visibleForTesting
-  final Map<int, HostCameraMessageHandler> hostCameraHandlers = <int, HostCameraMessageHandler>{};
+  final Map<int, HostCameraMessageHandler> hostCameraHandlers =
+      <int, HostCameraMessageHandler>{};
 
   Stream<CameraEvent> _cameraEvents(int cameraId) =>
-      cameraEventStreamController.stream.where((CameraEvent event) => event.cameraId == cameraId);
+      cameraEventStreamController.stream
+          .where((CameraEvent event) => event.cameraId == cameraId);
 
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -44,7 +48,6 @@ class CameraLinux extends CameraPlatform {
             name: name,
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
-            lensType: CameraLensType.unknown,
           );
         },
       ).toList();
@@ -74,7 +77,8 @@ class CameraLinux extends CameraPlatform {
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) async {
-    hostCameraHandlers.putIfAbsent(cameraId, () => HostCameraMessageHandler(cameraId, cameraEventStreamController));
+    hostCameraHandlers.putIfAbsent(cameraId,
+        () => HostCameraMessageHandler(cameraId, cameraEventStreamController));
     final Completer<void> completer = Completer<void>();
 
     unawaited(
@@ -128,7 +132,8 @@ class CameraLinux extends CameraPlatform {
   /// The following methods are not implemented for Linux, as they are not
   /// supported by the underlying camera API.
   @override
-  Future<void> lockCaptureOrientation(int cameraId, DeviceOrientation orientation) {
+  Future<void> lockCaptureOrientation(
+      int cameraId, DeviceOrientation orientation) {
     return Future<void>.value();
   }
 
@@ -152,7 +157,9 @@ class CameraLinux extends CameraPlatform {
   @override
   Future<void> startVideoRecording(
     int cameraId, {
-    @Deprecated('This parameter is unused, and will be ignored on all platforms') Duration? maxVideoDuration,
+    @Deprecated(
+        'This parameter is unused, and will be ignored on all platforms')
+    Duration? maxVideoDuration,
   }) {
     throw UnimplementedError('startVideoRecording() is not implemented.');
   }
@@ -227,14 +234,16 @@ class CameraLinux extends CameraPlatform {
   Future<void> resumePreview(int cameraId) async {}
 
   @override
-  Future<void> setDescriptionWhileRecording(CameraDescription description) async {}
+  Future<void> setDescriptionWhileRecording(
+      CameraDescription description) async {}
 
   @override
   Widget buildPreview(int cameraId) {
     return FutureBuilder<int?>(
       future: _hostApi.getTextureId(cameraId),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+        if (snapshot.connectionState == ConnectionState.done &&
+            snapshot.data != null) {
           print('Texture ID from dart: ${snapshot.data}');
           return RepaintBoundary(
             child: Texture(
