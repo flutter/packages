@@ -5,17 +5,32 @@ cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Path to SDK tar.gz
-set(PYLON_ARCHIVE ${CMAKE_CURRENT_SOURCE_DIR}/../deps/pylon-8.0.2.16314_linux-aarch64.tar.gz)
+# Set variables
+set(PYLON_VERSION "8.0.2.16314")
+set(PYLON_ARCHIVE_NAME "pylon-${PYLON_VERSION}_linux-aarch64.tar.gz")
+set(PYLON_ARCHIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../deps/${PYLON_ARCHIVE_NAME})
+set(PYLON_DOWNLOAD_URL "https://github.com/LightX-Innovations/flutter_packages/releases/download/camera_linux_v0.1/pylon-${PYLON_VERSION}_linux-aarch64.tar.gz")
 set(PYLON_ROOT ${CMAKE_BINARY_DIR}/pylon-sdk)
+
+# Download the archive if it does not exist
+if(NOT EXISTS "${PYLON_ARCHIVE_PATH}")
+    message(STATUS "Downloading Pylon SDK archive...")
+    file(DOWNLOAD
+        "${PYLON_DOWNLOAD_URL}"
+        "${PYLON_ARCHIVE_PATH}"
+        SHOW_PROGRESS
+        EXPECTED_MD5 ""  # Optionally add checksum here
+        STATUS DOWNLOAD_STATUS
+    )
+    list(GET DOWNLOAD_STATUS 0 DOWNLOAD_RESULT)
+endif()
 
 # Extract the archive only if not already extracted
 if(NOT EXISTS "${PYLON_ROOT}")
     message(STATUS "Extracting Pylon SDK to ${PYLON_ROOT}...")
-    message(STATUS "Command: ${CMAKE_COMMAND} -E tar -xzf ${PYLON_ARCHIVE}")
     file(MAKE_DIRECTORY "${PYLON_ROOT}")
     execute_process(
-        COMMAND ${CMAKE_COMMAND} -E tar -xzf "${PYLON_ARCHIVE}"
+        COMMAND ${CMAKE_COMMAND} -E tar -xzf "${PYLON_ARCHIVE_PATH}"
         WORKING_DIRECTORY "${PYLON_ROOT}"
     )
 endif()
