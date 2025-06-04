@@ -19,7 +19,6 @@ if(NOT EXISTS "${PYLON_ARCHIVE_PATH}")
         "${PYLON_DOWNLOAD_URL}"
         "${PYLON_ARCHIVE_PATH}"
         SHOW_PROGRESS
-        EXPECTED_MD5 ""  # Optionally add checksum here
         STATUS DOWNLOAD_STATUS
     )
     list(GET DOWNLOAD_STATUS 0 DOWNLOAD_RESULT)
