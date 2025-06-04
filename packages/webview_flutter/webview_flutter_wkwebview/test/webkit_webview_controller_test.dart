@@ -330,6 +330,17 @@ void main() {
       });
     });
 
+    test('loadFile', () async {
+      final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.loadFile('/path/to/file.html');
+      verify(mockWebView.loadFileUrl('/path/to/file.html', '/path/to'));
+    });
+
     group('loadFileWithParams', () {
       test('Using LoadFileParams model', () async {
         final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();

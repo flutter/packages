@@ -9,25 +9,23 @@ import 'package:flutter/material.dart';
 /// Platform-specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
-/// This example demonstrates how to extend [LocalFileParams] to provide
+/// This example demonstrates how to extend [LoadFileParams] to provide
 /// additional platform-specific parameters.
 ///
-/// When extending [LocalFileParams], additional parameters should always accept
+/// When extending [LoadFileParams], additional parameters should always accept
 /// `null` or have a default value to prevent breaking changes.
 ///
 /// ```dart
 /// class WebKitLoadFileParams extends LoadFileParams {
 ///   const WebKitLoadFileParams({
 ///     required super.absoluteFilePath,
-///     required String readAccessPath,
+///     required this.readAccessPath,
 ///   });
 ///
 ///   /// The directory to which the WebView is granted read access.
 ///   final String readAccessPath;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class LoadFileParams {
   /// Used by the platform implementation to load local HTML page.
