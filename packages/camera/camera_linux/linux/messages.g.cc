@@ -120,7 +120,7 @@ gboolean camera_linux_platform_camera_state_get_focus_point_supported(CameraLinu
 
 static FlValue* camera_linux_platform_camera_state_to_list(CameraLinuxPlatformCameraState* self) {
   FlValue* values = fl_value_new_list();
-  fl_value_append_take(values, fl_value_new_custom_object(135, G_OBJECT(self->preview_size)));
+  fl_value_append_take(values, fl_value_new_custom_object(136, G_OBJECT(self->preview_size)));
   fl_value_append_take(values, fl_value_new_custom(130, fl_value_new_int(self->exposure_mode), (GDestroyNotify)fl_value_unref));
   fl_value_append_take(values, fl_value_new_custom(132, fl_value_new_int(self->focus_mode), (GDestroyNotify)fl_value_unref));
   fl_value_append_take(values, fl_value_new_bool(self->exposure_point_supported));
@@ -237,22 +237,28 @@ static gboolean camera_linux_message_codec_write_camera_linux_platform_image_for
   return fl_standard_message_codec_write_value(codec, buffer, value, error);
 }
 
-static gboolean camera_linux_message_codec_write_camera_linux_platform_size(FlStandardMessageCodec* codec, GByteArray* buffer, CameraLinuxPlatformSize* value, GError** error) {
+static gboolean camera_linux_message_codec_write_camera_linux_platform_resolution_preset(FlStandardMessageCodec* codec, GByteArray* buffer, FlValue* value, GError** error) {
   uint8_t type = 135;
+  g_byte_array_append(buffer, &type, sizeof(uint8_t));
+  return fl_standard_message_codec_write_value(codec, buffer, value, error);
+}
+
+static gboolean camera_linux_message_codec_write_camera_linux_platform_size(FlStandardMessageCodec* codec, GByteArray* buffer, CameraLinuxPlatformSize* value, GError** error) {
+  uint8_t type = 136;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values = camera_linux_platform_size_to_list(value);
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
 }
 
 static gboolean camera_linux_message_codec_write_camera_linux_platform_camera_state(FlStandardMessageCodec* codec, GByteArray* buffer, CameraLinuxPlatformCameraState* value, GError** error) {
-  uint8_t type = 136;
+  uint8_t type = 137;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values = camera_linux_platform_camera_state_to_list(value);
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
 }
 
 static gboolean camera_linux_message_codec_write_camera_linux_platform_point(FlStandardMessageCodec* codec, GByteArray* buffer, CameraLinuxPlatformPoint* value, GError** error) {
-  uint8_t type = 137;
+  uint8_t type = 138;
   g_byte_array_append(buffer, &type, sizeof(uint8_t));
   g_autoptr(FlValue) values = camera_linux_platform_point_to_list(value);
   return fl_standard_message_codec_write_value(codec, buffer, values, error);
@@ -274,10 +280,12 @@ static gboolean camera_linux_message_codec_write_value(FlStandardMessageCodec* c
       case 134:
         return camera_linux_message_codec_write_camera_linux_platform_image_format_group(codec, buffer, reinterpret_cast<FlValue*>(const_cast<gpointer>(fl_value_get_custom_value(value))), error);
       case 135:
-        return camera_linux_message_codec_write_camera_linux_platform_size(codec, buffer, CAMERA_LINUX_PLATFORM_SIZE(fl_value_get_custom_value_object(value)), error);
+        return camera_linux_message_codec_write_camera_linux_platform_resolution_preset(codec, buffer, reinterpret_cast<FlValue*>(const_cast<gpointer>(fl_value_get_custom_value(value))), error);
       case 136:
-        return camera_linux_message_codec_write_camera_linux_platform_camera_state(codec, buffer, CAMERA_LINUX_PLATFORM_CAMERA_STATE(fl_value_get_custom_value_object(value)), error);
+        return camera_linux_message_codec_write_camera_linux_platform_size(codec, buffer, CAMERA_LINUX_PLATFORM_SIZE(fl_value_get_custom_value_object(value)), error);
       case 137:
+        return camera_linux_message_codec_write_camera_linux_platform_camera_state(codec, buffer, CAMERA_LINUX_PLATFORM_CAMERA_STATE(fl_value_get_custom_value_object(value)), error);
+      case 138:
         return camera_linux_message_codec_write_camera_linux_platform_point(codec, buffer, CAMERA_LINUX_PLATFORM_POINT(fl_value_get_custom_value_object(value)), error);
     }
   }
@@ -309,6 +317,10 @@ static FlValue* camera_linux_message_codec_read_camera_linux_platform_image_form
   return fl_value_new_custom(134, fl_standard_message_codec_read_value(codec, buffer, offset, error), (GDestroyNotify)fl_value_unref);
 }
 
+static FlValue* camera_linux_message_codec_read_camera_linux_platform_resolution_preset(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {
+  return fl_value_new_custom(135, fl_standard_message_codec_read_value(codec, buffer, offset, error), (GDestroyNotify)fl_value_unref);
+}
+
 static FlValue* camera_linux_message_codec_read_camera_linux_platform_size(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {
   g_autoptr(FlValue) values = fl_standard_message_codec_read_value(codec, buffer, offset, error);
   if (values == nullptr) {
@@ -321,7 +333,7 @@ static FlValue* camera_linux_message_codec_read_camera_linux_platform_size(FlSta
     return nullptr;
   }
 
-  return fl_value_new_custom_object(135, G_OBJECT(value));
+  return fl_value_new_custom_object(136, G_OBJECT(value));
 }
 
 static FlValue* camera_linux_message_codec_read_camera_linux_platform_camera_state(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {
@@ -336,7 +348,7 @@ static FlValue* camera_linux_message_codec_read_camera_linux_platform_camera_sta
     return nullptr;
   }
 
-  return fl_value_new_custom_object(136, G_OBJECT(value));
+  return fl_value_new_custom_object(137, G_OBJECT(value));
 }
 
 static FlValue* camera_linux_message_codec_read_camera_linux_platform_point(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, GError** error) {
@@ -351,7 +363,7 @@ static FlValue* camera_linux_message_codec_read_camera_linux_platform_point(FlSt
     return nullptr;
   }
 
-  return fl_value_new_custom_object(137, G_OBJECT(value));
+  return fl_value_new_custom_object(138, G_OBJECT(value));
 }
 
 static FlValue* camera_linux_message_codec_read_value_of_type(FlStandardMessageCodec* codec, GBytes* buffer, size_t* offset, int type, GError** error) {
@@ -369,10 +381,12 @@ static FlValue* camera_linux_message_codec_read_value_of_type(FlStandardMessageC
     case 134:
       return camera_linux_message_codec_read_camera_linux_platform_image_format_group(codec, buffer, offset, error);
     case 135:
-      return camera_linux_message_codec_read_camera_linux_platform_size(codec, buffer, offset, error);
+      return camera_linux_message_codec_read_camera_linux_platform_resolution_preset(codec, buffer, offset, error);
     case 136:
-      return camera_linux_message_codec_read_camera_linux_platform_camera_state(codec, buffer, offset, error);
+      return camera_linux_message_codec_read_camera_linux_platform_size(codec, buffer, offset, error);
     case 137:
+      return camera_linux_message_codec_read_camera_linux_platform_camera_state(codec, buffer, offset, error);
+    case 138:
       return camera_linux_message_codec_read_camera_linux_platform_point(codec, buffer, offset, error);
     default:
       return FL_STANDARD_MESSAGE_CODEC_CLASS(camera_linux_message_codec_parent_class)->read_value_of_type(codec, buffer, offset, type, error);
@@ -1724,8 +1738,10 @@ static void camera_linux_camera_api_create_cb(FlBasicMessageChannel* channel, Fl
 
   FlValue* value0 = fl_value_get_list_value(message_, 0);
   const gchar* camera_name = fl_value_get_string(value0);
+  FlValue* value1 = fl_value_get_list_value(message_, 1);
+  CameraLinuxPlatformResolutionPreset resolution_preset = static_cast<CameraLinuxPlatformResolutionPreset>(fl_value_get_int(reinterpret_cast<FlValue*>(const_cast<gpointer>(fl_value_get_custom_value(value1)))));
   g_autoptr(CameraLinuxCameraApiResponseHandle) handle = camera_linux_camera_api_response_handle_new(channel, response_handle);
-  self->vtable->create(camera_name, handle, self->user_data);
+  self->vtable->create(camera_name, resolution_preset, handle, self->user_data);
 }
 
 static void camera_linux_camera_api_initialize_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
@@ -2896,7 +2912,7 @@ static void camera_linux_camera_event_api_initialized_cb(GObject* object, GAsync
 
 void camera_linux_camera_event_api_initialized(CameraLinuxCameraEventApi* self, CameraLinuxPlatformCameraState* initial_state, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data) {
   g_autoptr(FlValue) args = fl_value_new_list();
-  fl_value_append_take(args, fl_value_new_custom_object(136, G_OBJECT(initial_state)));
+  fl_value_append_take(args, fl_value_new_custom_object(137, G_OBJECT(initial_state)));
   g_autofree gchar* channel_name = g_strdup_printf("dev.flutter.pigeon.camera_linux.CameraEventApi.initialized%s", self->suffix);
   g_autoptr(CameraLinuxMessageCodec) codec = camera_linux_message_codec_new();
   FlBasicMessageChannel* channel = fl_basic_message_channel_new(self->messenger, channel_name, FL_MESSAGE_CODEC(codec));

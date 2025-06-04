@@ -50,6 +50,7 @@ list(APPEND PLUGIN_SOURCES
   "camera_plugin.cpp"
   "camera_host_plugin.cpp"
   "camera_texture_image_event_handler.cpp"
+  "camera.cpp"
  
   "messages.g.cc"
 )

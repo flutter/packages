@@ -33,8 +33,9 @@ static void fl_my_texture_gl_class_init(FlMyTextureGLClass* klass) {
 static void fl_my_texture_gl_init(FlMyTextureGL* self) {}
 
 CameraTextureImageEventHandler::CameraTextureImageEventHandler(
-    FlPluginRegistrar* registrar)
-    : m_registrar(registrar),
+    const Camera& camera, FlPluginRegistrar* registrar)
+    : camera(camera),
+      m_registrar(registrar),
       m_texture_registrar(
           fl_plugin_registrar_get_texture_registrar(registrar)) {}
 
@@ -56,14 +57,10 @@ int64_t CameraTextureImageEventHandler::get_texture_id() {
 }
 
 void CameraTextureImageEventHandler::OnImageEventHandlerRegistered(
-    Pylon::CInstantCamera& camera) {
+    Pylon::CInstantCamera& _) {
   FlView* fl_view = FL_VIEW(fl_plugin_registrar_get_view(m_registrar));
   GdkWindow* window = gtk_widget_get_parent_window(GTK_WIDGET(fl_view));
   m_gl_context = gdk_window_create_gl_context(window, NULL);
-
-  // Camera frame size, update if you get dynamic size
-  int width = 1920;
-  int height = 1080;
 
   // Create GL texture for the camera preview
   gdk_gl_context_make_current(m_gl_context);
@@ -71,12 +68,12 @@ void CameraTextureImageEventHandler::OnImageEventHandlerRegistered(
   glBindTexture(GL_TEXTURE_2D, m_texture_name);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, width, height, 0, GL_RGB,
-               GL_UNSIGNED_BYTE, nullptr);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, camera.width, camera.height, 0,
+               GL_RGB, GL_UNSIGNED_BYTE, nullptr);
 
   // Wrap GL texture for Flutter
-  m_texture =
-      fl_my_texture_gl_new(GL_TEXTURE_2D, m_texture_name, width, height);
+  m_texture = fl_my_texture_gl_new(GL_TEXTURE_2D, m_texture_name, camera.width,
+                                   camera.height);
   fl_texture_registrar_register_texture(m_texture_registrar,
                                         FL_TEXTURE(m_texture));
   fl_texture_registrar_mark_texture_frame_available(m_texture_registrar,
@@ -84,13 +81,15 @@ void CameraTextureImageEventHandler::OnImageEventHandlerRegistered(
 }
 
 void CameraTextureImageEventHandler::OnImageGrabbed(
-    Pylon::CInstantCamera& camera, const Pylon::CGrabResultPtr& ptr) {
+    Pylon::CInstantCamera& _, const Pylon::CGrabResultPtr& ptr) {
   if (!m_texture) {
     return;
   }
 
-  static std::chrono::steady_clock::time_point m_last_fps_time;
-  static int m_frame_count = 0;
+  if (!ptr->GrabSucceeded()) {
+    std::cerr << "Error grabbing image" << std::endl;
+    return;
+  }
 
   gdk_gl_context_make_current(m_gl_context);
   glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, ptr->GetWidth(), ptr->GetHeight(),
@@ -98,22 +97,4 @@ void CameraTextureImageEventHandler::OnImageGrabbed(
   glFlush();
   fl_texture_registrar_mark_texture_frame_available(m_texture_registrar,
                                                     FL_TEXTURE(m_texture));
-
-  // Track frame count
-  m_frame_count++;
-  auto now = std::chrono::steady_clock::now();
-  auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-                     now - m_last_fps_time)
-                     .count();
-
-  if (elapsed >= 1000) {  // 1 second has passed
-    std::cout << "FPS: " << m_frame_count << std::endl;
-    m_frame_count = 0;
-    m_last_fps_time = now;
-  }
-
-  if (!ptr->GrabSucceeded()) {
-    std::cerr << "Error grabbing image" << std::endl;
-    return;
-  }
 }

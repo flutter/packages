@@ -1,11 +1,6 @@
 #include "camera_host_plugin.h"
 
-std::map<int64_t, CameraTextureImageEventHandler*>
-    CameraHostPlugin::cameraTextureImageEventHandlers = {};
-std::map<int64_t, std::unique_ptr<Pylon::CInstantCamera>>
-    CameraHostPlugin::cameras = {};
-std::map<int64_t, CameraLinuxCameraEventApi*>
-    CameraHostPlugin::cameraLinuxCameraEventApis = {};
+std::vector<Camera> CameraHostPlugin::cameras = {};
 FlPluginRegistrar* CameraHostPlugin::registrar = nullptr;
 
 CameraHostPlugin::CameraHostPlugin(FlPluginRegistrar* registrar)
@@ -53,18 +48,18 @@ CameraHostPlugin::CameraHostPlugin(FlPluginRegistrar* registrar)
 }
 
 CameraHostPlugin::~CameraHostPlugin() {
-  for (auto&& it = cameraLinuxCameraEventApis.begin();
-       it != cameraLinuxCameraEventApis.end(); ++it) {
-    g_object_unref(it->second);
-  }
-  cameraLinuxCameraEventApis.clear();
-  for (auto&& it = cameras.begin(); it != cameras.end(); ++it) {
-    it->second->Close();
-  }
   cameras.clear();
-  cameraTextureImageEventHandlers.clear();
   g_object_unref(m_registrar);
   Pylon::PylonTerminate();
+}
+
+inline Camera& CameraHostPlugin::get_camera_by_id(int64_t camera_id) {
+  for (size_t i = 0; i < cameras.size(); ++i) {
+    if (cameras[i].camera_id == camera_id) {
+      return cameras[i];
+    }
+  }
+  throw std::runtime_error("Camera not found");
 }
 
 void CameraHostPlugin::get_available_cameras_names(
@@ -87,6 +82,7 @@ void CameraHostPlugin::get_available_cameras_names(
 
 void CameraHostPlugin::create(
     const gchar* camera_name,
+    CameraLinuxPlatformResolutionPreset resolution_preset,
     CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
   CAMERA_HOST_ERROR_HANDLING(create, {
     Pylon::CTlFactory& TlFactory = Pylon::CTlFactory::GetInstance();
@@ -97,21 +93,15 @@ void CameraHostPlugin::create(
       if (it->GetFriendlyName() == camera_name) {
         std::string serialNumber = it->GetSerialNumber().c_str();
         int64_t camera_id = std::stoll(serialNumber);
-        if (cameras.find(camera_id) != cameras.end()) {
-          cameras[camera_id]->Close();
-          cameras.erase(camera_id);
+        for (auto&& camera_it = cameras.begin(); camera_it != cameras.end();
+             ++camera_it) {
+          if (camera_it->camera_id == camera_id) {
+            cameras.erase(camera_it);
+            break;
+          }
         }
-
-        cameras[camera_id] = std::make_unique<Pylon::CInstantCamera>(
-            TlFactory.CreateDevice(*it));
-
-        if (cameraLinuxCameraEventApis.find(camera_id) ==
-            cameraLinuxCameraEventApis.end()) {
-          cameraLinuxCameraEventApis[camera_id] =
-              camera_linux_camera_event_api_new(
-                  fl_plugin_registrar_get_messenger(registrar),
-                  std::to_string(camera_id).c_str());
-        }
+        cameras.emplace_back(TlFactory.CreateDevice(*it), camera_id, registrar,
+                             resolution_preset);
 
         CAMERA_HOST_RETURN(camera_id);
         return;
@@ -129,56 +119,8 @@ void CameraHostPlugin::initialize(
     int64_t camera_id, CameraLinuxPlatformImageFormatGroup image_format,
     CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
   CAMERA_HOST_ERROR_HANDLING(initialize, {
-    const auto camera_it = cameras.find(camera_id);
-    if (camera_it == cameras.end()) {
-      CAMERA_HOST_RAISE_ERROR("Camera not created");
-    }
-
-    CameraTextureImageEventHandler* cameraTextureImageEventHandler =
-        new CameraTextureImageEventHandler(registrar);
-    cameraTextureImageEventHandlers[camera_id] = cameraTextureImageEventHandler;
-
-    Pylon::CInstantCamera* camera = camera_it->second.get();
-    camera->Open();
-    GenApi::INodeMap& nodemap = camera->GetNodeMap();
-    Pylon::CEnumParameter(nodemap, "DeviceLinkThroughputLimitMode")
-        .TrySetValue("Off");
-    Pylon::CBooleanParameter(nodemap, "AcquisitionFrameRateEnable")
-        .TrySetValue(true);
-    Pylon::CFloatParameter(nodemap, "AcquisitionFrameRate").TrySetValue(60.0);
-    Pylon::CFloatParameter(nodemap, "ResultingFrameRate").TrySetValue(60.0);
-    Pylon::CEnumParameter(nodemap, "PixelFormat").TrySetValue("RGB8");
-    Pylon::CIntegerParameter(nodemap, "DecimationHorizontal").TrySetValue(2);
-    Pylon::CIntegerParameter(nodemap, "DecimationVertical").TrySetValue(2);
-    Pylon::CEnumParameter(nodemap, "TriggerMode").SetValue("Off");
-    Pylon::CIntegerParameter(nodemap, "Width").TrySetValue(1920);
-    Pylon::CIntegerParameter(nodemap, "Height").TrySetValue(1080);
-    Pylon::CIntegerParameter(nodemap, "OffsetX").TrySetValue(0);
-    Pylon::CIntegerParameter(nodemap, "OffsetY").TrySetValue(0);
-
-    camera->RegisterImageEventHandler(cameraTextureImageEventHandler,
-                                      Pylon::RegistrationMode_Append,
-                                      Pylon::Cleanup_Delete);
-    camera->StartGrabbing(Pylon::GrabStrategy_LatestImages,
-                          Pylon::EGrabLoop::GrabLoop_ProvidedByInstantCamera);
-
-    std::cout << "Texture ID: "
-              << cameraTextureImageEventHandler->get_texture_id() << std::endl;
-
-    CameraLinuxPlatformSize* size = camera_linux_platform_size_new(1920, 1080);
-    CameraLinuxPlatformCameraState* cameraState =
-        camera_linux_platform_camera_state_new(
-            size,
-            CameraLinuxPlatformExposureMode::
-                CAMERA_LINUX_PLATFORM_EXPOSURE_MODE_LOCKED,
-            CameraLinuxPlatformFocusMode::
-                CAMERA_LINUX_PLATFORM_FOCUS_MODE_LOCKED,
-            true, true);
-    camera_linux_camera_event_api_initialized(
-        cameraLinuxCameraEventApis[camera_id], cameraState, nullptr,
-        camera_linux_camera_event_api_initialized_callback, nullptr);
-    g_object_unref(cameraState);
-    g_object_unref(size);
+    Camera& camera = get_camera_by_id(camera_id);
+    camera.initialize(image_format);
     CAMERA_HOST_VOID_RETURN();
   });
 }
@@ -187,18 +129,8 @@ void CameraHostPlugin::get_texture_id(
     int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle,
     gpointer user_data) {
   CAMERA_HOST_ERROR_HANDLING(get_texture_id, {
-    const auto cameraTextureImageEventHandler_it =
-        cameraTextureImageEventHandlers.find(camera_id);
-    if (cameraTextureImageEventHandler_it ==
-        cameraTextureImageEventHandlers.end()) {
-      CAMERA_HOST_RAISE_ERROR("Camera not created");
-    }
-    CameraTextureImageEventHandler* cameraTextureImageEventHandler =
-        cameraTextureImageEventHandler_it->second;
-    if (cameraTextureImageEventHandler == nullptr) {
-      CAMERA_HOST_RAISE_ERROR("Camera not initialized");
-    }
-    int64_t texture_id = cameraTextureImageEventHandler->get_texture_id();
+    Camera& camera = get_camera_by_id(camera_id);
+    int64_t texture_id = camera.getTextureId();
     if (texture_id == -1) {
       CAMERA_HOST_RAISE_ERROR("Texture not created");
     }

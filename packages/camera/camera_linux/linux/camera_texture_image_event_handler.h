@@ -4,6 +4,7 @@
 
 #include <GL/gl.h>
 
+#include "camera.h"
 #include "flutter_linux/flutter_linux.h"
 #include "messages.g.h"
 
@@ -32,12 +33,14 @@ FlMyTextureGL* fl_my_texture_gl_new(uint32_t target, uint32_t name,
 class CameraTextureImageEventHandler : public Pylon::CImageEventHandler {
   FlMyTextureGL* m_texture;
   unsigned int m_texture_name;
+  const Camera& camera;
   FlPluginRegistrar* m_registrar;
   FlTextureRegistrar* m_texture_registrar;
   GdkGLContext* m_gl_context;
 
  public:
-  CameraTextureImageEventHandler(FlPluginRegistrar* registrar);
+  CameraTextureImageEventHandler(const Camera& camera,
+                                 FlPluginRegistrar* registrar);
 
   ~CameraTextureImageEventHandler() override;
 

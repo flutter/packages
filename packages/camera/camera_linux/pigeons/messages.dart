@@ -60,6 +60,15 @@ enum PlatformImageFormatGroup {
   yuv420,
 }
 
+enum PlatformResolutionPreset {
+  low, // 352x288 on iOS, ~240p on Android and Web
+  medium, // ~480p
+  high, // ~720p
+  veryHigh, // ~1080p
+  ultraHigh, // ~2160p
+  max, // The highest resolution available.
+}
+
 // Pigeon version of the data needed for a CameraInitializedEvent.
 class PlatformCameraState {
   PlatformCameraState({
@@ -102,7 +111,7 @@ abstract class CameraApi {
 
   /// Create a new camera with the given settings, and returns its ID.
   @async
-  int create(String cameraName);
+  int create(String cameraName, PlatformResolutionPreset resolutionPreset);
 
   /// Initializes the camera with the given ID.
   @async

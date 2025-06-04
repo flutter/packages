@@ -87,6 +87,25 @@ typedef enum {
 } CameraLinuxPlatformImageFormatGroup;
 
 /**
+ * CameraLinuxPlatformResolutionPreset:
+ * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_LOW:
+ * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_MEDIUM:
+ * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_HIGH:
+ * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_VERY_HIGH:
+ * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_ULTRA_HIGH:
+ * CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_MAX:
+ *
+ */
+typedef enum {
+  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_LOW = 0,
+  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_MEDIUM = 1,
+  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_HIGH = 2,
+  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_VERY_HIGH = 3,
+  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_ULTRA_HIGH = 4,
+  CAMERA_LINUX_PLATFORM_RESOLUTION_PRESET_MAX = 5
+} CameraLinuxPlatformResolutionPreset;
+
+/**
  * CameraLinuxPlatformSize:
  *
  */
@@ -246,7 +265,7 @@ G_DECLARE_FINAL_TYPE(CameraLinuxCameraApiResponseHandle, camera_linux_camera_api
  */
 typedef struct {
   void (*get_available_cameras_names)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*create)(const gchar* camera_name, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*create)(const gchar* camera_name, CameraLinuxPlatformResolutionPreset resolution_preset, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*initialize)(int64_t camera_id, CameraLinuxPlatformImageFormatGroup image_format, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*start_image_stream)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*stop_image_stream)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);

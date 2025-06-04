@@ -63,6 +63,15 @@ enum PlatformImageFormatGroup {
   yuv420,
 }
 
+enum PlatformResolutionPreset {
+  low,
+  medium,
+  high,
+  veryHigh,
+  ultraHigh,
+  max,
+}
+
 class PlatformSize {
   PlatformSize({
     required this.width,
@@ -187,14 +196,17 @@ class _PigeonCodec extends StandardMessageCodec {
     }    else if (value is PlatformImageFormatGroup) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformSize) {
+    }    else if (value is PlatformResolutionPreset) {
       buffer.putUint8(135);
-      writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraState) {
+      writeValue(buffer, value.index);
+    }    else if (value is PlatformSize) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPoint) {
+    }    else if (value is PlatformCameraState) {
       buffer.putUint8(137);
+      writeValue(buffer, value.encode());
+    }    else if (value is PlatformPoint) {
+      buffer.putUint8(138);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -223,10 +235,13 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformImageFormatGroup.values[value];
       case 135: 
-        return PlatformSize.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformResolutionPreset.values[value];
       case 136: 
-        return PlatformCameraState.decode(readValue(buffer)!);
+        return PlatformSize.decode(readValue(buffer)!);
       case 137: 
+        return PlatformCameraState.decode(readValue(buffer)!);
+      case 138: 
         return PlatformPoint.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -276,7 +291,7 @@ class CameraApi {
   }
 
   /// Create a new camera with the given settings, and returns its ID.
-  Future<int> create(String cameraName) async {
+  Future<int> create(String cameraName, PlatformResolutionPreset resolutionPreset) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_linux.CameraApi.create$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -284,7 +299,7 @@ class CameraApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[cameraName]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[cameraName, resolutionPreset]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

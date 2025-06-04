@@ -65,7 +65,32 @@ class CameraLinux extends CameraPlatform {
     bool enableAudio = false,
   }) async {
     try {
-      final cameraId = await _hostApi.create(cameraDescription.name);
+      PlatformResolutionPreset pigeonResolutionPreset =
+          PlatformResolutionPreset.veryHigh;
+
+      if (resolutionPreset != null) {
+        switch (resolutionPreset) {
+          case ResolutionPreset.low:
+            pigeonResolutionPreset = PlatformResolutionPreset.low;
+            break;
+          case ResolutionPreset.medium:
+            pigeonResolutionPreset = PlatformResolutionPreset.medium;
+            break;
+          case ResolutionPreset.high:
+            pigeonResolutionPreset = PlatformResolutionPreset.high;
+            break;
+          case ResolutionPreset.veryHigh:
+            pigeonResolutionPreset = PlatformResolutionPreset.veryHigh;
+            break;
+          case ResolutionPreset.ultraHigh:
+            pigeonResolutionPreset = PlatformResolutionPreset.ultraHigh;
+            break;
+          case ResolutionPreset.max:
+            pigeonResolutionPreset = PlatformResolutionPreset.max;
+        }
+      }
+      final cameraId =
+          await _hostApi.create(cameraDescription.name, pigeonResolutionPreset);
       return cameraId;
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
@@ -244,7 +269,6 @@ class CameraLinux extends CameraPlatform {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.data != null) {
-          print('Texture ID from dart: ${snapshot.data}');
           return RepaintBoundary(
             child: Texture(
               textureId: snapshot.data!,

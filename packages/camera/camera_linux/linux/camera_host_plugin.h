@@ -14,6 +14,8 @@
 
 #include <pylon/PylonIncludes.h>
 
+#include "camera.h"
+
 #pragma clang diagnostic pop
 
 #define CAMERA_HOST_ERROR_HANDLING(method_name, code)                          \
@@ -47,21 +49,20 @@
 class CameraHostPlugin {
   static FlPluginRegistrar* registrar;
   FlPluginRegistrar* m_registrar;
-  static std::map<int64_t, std::unique_ptr<Pylon::CInstantCamera>> cameras;
-  static std::map<int64_t, CameraTextureImageEventHandler*>
-      cameraTextureImageEventHandlers;
-  static std::map<int64_t, CameraLinuxCameraEventApi*>
-      cameraLinuxCameraEventApis;
+  static std::vector<Camera> cameras;
 
  public:
   CameraHostPlugin(FlPluginRegistrar* registrar);
 
   ~CameraHostPlugin();
 
+  inline static Camera& get_camera_by_id(int64_t camera_id);
+
   static void get_available_cameras_names(
       CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
 
   static void create(const gchar* camera_name,
+                     CameraLinuxPlatformResolutionPreset resolution_preset,
                      CameraLinuxCameraApiResponseHandle* response_handle,
                      gpointer user_data);
 
