@@ -135,7 +135,7 @@ class Marker implements MapsObject<Marker> {
   /// * is positioned at 0, 0; [position] is `LatLng(0.0, 0.0)`
   /// * has an axis-aligned icon; [rotation] is 0.0
   /// * is visible; [visible] is true
-  /// * is placed at the base of the drawing order; [zIndex] is 0.0
+  /// * is placed at the base of the drawing order; [zIndexInt] is 0
   /// * reports [onTap] events
   /// * reports [onDragEnd] events
   const Marker({
@@ -150,13 +150,21 @@ class Marker implements MapsObject<Marker> {
     this.position = const LatLng(0.0, 0.0),
     this.rotation = 0.0,
     this.visible = true,
-    this.zIndex = 0.0,
+    @Deprecated(
+      'Use zIndexInt instead. '
+      'On some platforms zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
+    )
+    double zIndex = 0.0,
+    int zIndexInt = 0,
     this.clusterManagerId,
     this.onTap,
     this.onDrag,
     this.onDragStart,
     this.onDragEnd,
-  }) : assert(0.0 <= alpha && alpha <= 1.0);
+  })  : assert(0.0 <= alpha && alpha <= 1.0),
+        assert(zIndex == 0.0 || zIndexInt == 0,
+            'Only one of zIndex and zIndexInt can be provided'),
+        _zIndexNum = zIndexInt == 0 ? zIndex : zIndexInt;
 
   /// Uniquely identifies a [Marker].
   final MarkerId markerId;
@@ -214,12 +222,26 @@ class Marker implements MapsObject<Marker> {
   /// True if the marker is visible.
   final bool visible;
 
+  final num _zIndexNum;
+
   /// The z-index of the marker, used to determine relative drawing order of
   /// map overlays.
   ///
   /// Overlays are drawn in order of z-index, so that lower values means drawn
   /// earlier, and thus appearing to be closer to the surface of the Earth.
-  final double zIndex;
+  // TODO(stuartmorgan): Make this an int when removing the deprecated double zIndex parameter.
+  @Deprecated(
+    'Use zIndexInt instead. '
+    'On some platforms zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
+  )
+  double get zIndex => _zIndexNum.toDouble();
+
+  /// The z-index of the marker, used to determine relative drawing order of
+  /// map overlays.
+  ///
+  /// Overlays are drawn in order of z-index, so that lower values means drawn
+  /// earlier, and thus appearing to be closer to the surface of the Earth.
+  int get zIndexInt => _zIndexNum.round();
 
   /// Callbacks to receive tap events for markers placed on this map.
   final VoidCallback? onTap;
@@ -246,7 +268,12 @@ class Marker implements MapsObject<Marker> {
     LatLng? positionParam,
     double? rotationParam,
     bool? visibleParam,
+    @Deprecated(
+      'Use zIndexIntParam instead. '
+      'On some platforms zIndex is truncated to an int, which can lead to incorrect/unstable ordering.',
+    )
     double? zIndexParam,
+    int? zIndexIntParam,
     VoidCallback? onTapParam,
     ValueChanged<LatLng>? onDragStartParam,
     ValueChanged<LatLng>? onDragParam,
@@ -266,6 +293,7 @@ class Marker implements MapsObject<Marker> {
       rotation: rotationParam ?? rotation,
       visible: visibleParam ?? visible,
       zIndex: zIndexParam ?? zIndex,
+      zIndexInt: zIndexIntParam ?? zIndexInt,
       onTap: onTapParam ?? onTap,
       onDragStart: onDragStartParam ?? onDragStart,
       onDrag: onDragParam ?? onDrag,
@@ -301,6 +329,7 @@ class Marker implements MapsObject<Marker> {
     addIfPresent('rotation', rotation);
     addIfPresent('visible', visible);
     addIfPresent('zIndex', zIndex);
+    addIfPresent('zIndexInt', zIndexInt);
     addIfPresent('clusterManagerId', clusterManagerId?.value);
     return json;
   }
@@ -326,6 +355,7 @@ class Marker implements MapsObject<Marker> {
         rotation == other.rotation &&
         visible == other.visible &&
         zIndex == other.zIndex &&
+        zIndexInt == other.zIndexInt &&
         clusterManagerId == other.clusterManagerId;
   }
 
@@ -337,7 +367,7 @@ class Marker implements MapsObject<Marker> {
     return 'Marker{markerId: $markerId, alpha: $alpha, anchor: $anchor, '
         'consumeTapEvents: $consumeTapEvents, draggable: $draggable, flat: $flat, '
         'icon: $icon, infoWindow: $infoWindow, position: $position, rotation: $rotation, '
-        'visible: $visible, zIndex: $zIndex, onTap: $onTap, onDragStart: $onDragStart, '
+        'visible: $visible, zIndex: $zIndex, zIndexInt:$zIndexInt onTap: $onTap, onDragStart: $onDragStart, '
         'onDrag: $onDrag, onDragEnd: $onDragEnd, clusterManagerId: $clusterManagerId}';
   }
 }
