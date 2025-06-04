@@ -99,7 +99,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 @property(nonatomic, nullable) NSDictionary<NSString *, id> *googleServiceProperties;
 
 // The plugin registrar, for querying views.
-@property(nonatomic) id<FlutterPluginRegistrar> registrar;
+@property(nonatomic, nonnull) id<FlutterPluginRegistrar> registrar;
 
 @end
 
@@ -226,7 +226,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 }
 
 - (void)addScopes:(nonnull NSArray<NSString *> *)scopes
-          forUser:(NSString *)userId
+          forUser:(nonnull NSString *)userId
        completion:
            (nonnull void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion {
   GIDGoogleUser *user = self.usersByIdentifier[userId];
@@ -258,7 +258,9 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 
 - (void)signOutWithError:(FlutterError *_Nullable *_Nonnull)error {
   [self.signIn signOut];
-  [self.usersByIdentifier removeAllObjects];
+  // usersByIdentifier is left populated, because the SDK may still support some operations on the
+  // GIDGoogleUser object (e.g., returning existing, non-expired tokens). Operations that the SDK
+  // doesn't support will return SDK errors that we can handle as normal.
 }
 
 - (void)disconnectWithCompletion:(nonnull void (^)(FlutterError *_Nullable))completion {
@@ -292,8 +294,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 }
 
 // Wraps the iOS and macOS scope addition methods.
-- (void)addScopes:(NSArray<NSString *> *)scopes
-    forGoogleSignInUser:(GIDGoogleUser *)user
+- (void)addScopes:(nonnull NSArray<NSString *> *)scopes
+    forGoogleSignInUser:(nonnull GIDGoogleUser *)user
              completion:(void (^)(GIDSignInResult *_Nullable signInResult,
                                   NSError *_Nullable error))completion {
 #if TARGET_OS_OSX
@@ -305,9 +307,10 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 
 /// @return @c nil if GoogleService-Info.plist not found and runtimeClientIdentifier is not
 /// provided.
-- (GIDConfiguration *)configurationWithClientIdentifier:(NSString *)runtimeClientIdentifier
-                                 serverClientIdentifier:(NSString *)runtimeServerClientIdentifier
-                                           hostedDomain:(NSString *)hostedDomain {
+- (GIDConfiguration *)configurationWithClientIdentifier:(nullable NSString *)runtimeClientIdentifier
+                                 serverClientIdentifier:
+                                     (nullable NSString *)runtimeServerClientIdentifier
+                                           hostedDomain:(nullable NSString *)hostedDomain {
   NSString *clientID = runtimeClientIdentifier ?: self.googleServiceProperties[kClientIdKey];
   if (!clientID) {
     // Creating a GIDConfiguration requires a client identifier.
@@ -347,7 +350,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   }
 }
 
-- (void)didSignInForUser:(GIDGoogleUser *)user
+- (void)didSignInForUser:(nonnull GIDGoogleUser *)user
       withServerAuthCode:(nullable NSString *)serverAuthCode
               completion:(void (^)(FSISignInResult *_Nullable, FlutterError *_Nullable))completion {
   self.usersByIdentifier[user.userID] = user;

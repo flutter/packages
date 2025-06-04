@@ -437,9 +437,9 @@ class GoogleSignIn {
 
   /// Whether or not the current platform supports the [authenticate] method.
   ///
-  /// If this returns false, [authenticate] will throw an UnsupportedError if
+  /// If this returns false, [authenticate] will throw an [UnsupportedError] if
   /// called. See the platform-specific documentation for the package to
-  /// determine how authentication his handled. For instance, the platform may
+  /// determine how authentication is handled. For instance, the platform may
   /// provide platform-controlled sign-in UI elements that must be used instead
   /// of application-specific UI.
   bool supportsAuthenticate() =>

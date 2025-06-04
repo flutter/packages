@@ -78,7 +78,7 @@ class _SignInDemoState extends State<SignInDemo> {
   Future<void> _handleAuthenticationEvent(
       GoogleSignInAuthenticationEvent event) async {
     // #docregion CheckAuthorization
-    GoogleSignInAccount? user;
+    final GoogleSignInAccount? user;
     // #enddocregion CheckAuthorization
     switch (event) {
       case GoogleSignInAuthenticationEventSignIn():
