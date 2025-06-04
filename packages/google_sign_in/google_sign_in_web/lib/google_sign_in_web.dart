@@ -162,6 +162,9 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   bool supportsAuthenticate() => false;
 
   @override
+  bool authorizationRequiresUserInteraction() => true;
+
+  @override
   Future<AuthenticationResults> authenticate(
       AuthenticateParameters params) async {
     throw UnimplementedError('authenticate is not supported on the web. '

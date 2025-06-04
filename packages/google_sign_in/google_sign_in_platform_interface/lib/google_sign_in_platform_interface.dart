@@ -74,6 +74,14 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   /// flow.
   bool supportsAuthenticate() => true;
 
+  /// Whether or not authorization calls that could show UI must be called from
+  /// a user interaction, such as a button press, on the current platform.
+  ///
+  /// The default is true, but platforms that can fail to show UI without an
+  /// active user interaction should override this to return true. For instance,
+  /// this should return true for a web implementations that uses popups.
+  bool authorizationRequiresUserInteraction() => false;
+
   /// Returns the tokens used to authenticate other API calls from a client.
   ///
   /// This should only return null if prompting would be necessary but [params]

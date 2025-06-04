@@ -139,8 +139,9 @@ class GoogleSignInAuthorizationClient {
   /// details.
   ///
   /// This should only be called from a context where user interaction is
-  /// allowed (for example, during a user event handler on web, or while the
-  /// app is foregrounded on mobile).
+  /// allowed (for example, while the app is foregrounded on mobile), and if
+  /// [GoogleSignIn.authorizationRequiresUserInteraction] returns true this
+  /// should only be called from an user interaction handler.
   Future<GoogleSignInClientAuthorization> authorizeScopes(
       List<String> scopes) async {
     final GoogleSignInClientAuthorization? authz =
@@ -189,8 +190,9 @@ class GoogleSignInAuthorizationClient {
   /// the server side using that token.
   ///
   /// This should only be called from a context where user interaction is
-  /// allowed (for example, during a user event handler on web, or while the
-  /// app is foregrounded on mobile).
+  /// allowed (for example, while the app is foregrounded on mobile), and if
+  /// [GoogleSignIn.authorizationRequiresUserInteraction] returns true this
+  /// should only be called from an user interaction handler.
   Future<GoogleSignInServerAuthorization?> authorizeServer(
       List<String> scopes) async {
     final ServerAuthorizationTokenData? tokens =
@@ -444,6 +446,15 @@ class GoogleSignIn {
   /// of application-specific UI.
   bool supportsAuthenticate() =>
       GoogleSignInPlatform.instance.supportsAuthenticate();
+
+  /// Whether or not authorization calls that could show UI must be called from
+  /// a user interaction, such as a button press, on the current platform.
+  ///
+  /// For instance, this would return true on web if the sign in SDK uses popups
+  /// in its flow, since browsers may block popups that are not triggered
+  /// within the context of a user interaction.
+  bool authorizationRequiresUserInteraction() =>
+      GoogleSignInPlatform.instance.authorizationRequiresUserInteraction();
 
   /// Starts an interactive sign-in process.
   ///

@@ -188,7 +188,9 @@ class _SignInDemoState extends State<SignInDemo> {
 
   // Prompts the user to authorize `scopes`.
   //
-  // On the web, this must be called from an user interaction (button click).
+  // If authorizationRequiresUserInteraction() is true, this must be called from
+  // a user interaction (button click). In this example app, a button is used
+  // regardless, so authorizationRequiresUserInteraction() is not checked.
   Future<void> _handleAuthorizeScopes(GoogleSignInAccount user) async {
     try {
       // #docregion RequestScopes
@@ -217,7 +219,9 @@ class _SignInDemoState extends State<SignInDemo> {
 
   // Requests a server auth code for the authorized scopes.
   //
-  // On the web, this must be called from an user interaction (button click).
+  // If authorizationRequiresUserInteraction() is true, this must be called from
+  // a user interaction (button click). In this example app, a button is used
+  // regardless, so authorizationRequiresUserInteraction() is not checked.
   Future<void> _handleGetAuthCode(GoogleSignInAccount user) async {
     try {
       // #docregion RequestServerAuth

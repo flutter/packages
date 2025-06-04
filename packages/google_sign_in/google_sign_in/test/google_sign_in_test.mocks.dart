@@ -75,6 +75,12 @@ class MockGoogleSignInPlatform extends _i1.Mock
       ) as bool);
 
   @override
+  bool authorizationRequiresUserInteraction() => (super.noSuchMethod(
+        Invocation.method(#authorizationRequiresUserInteraction, []),
+        returnValue: false,
+      ) as bool);
+
+  @override
   _i4.Future<_i2.ClientAuthorizationTokenData?>
       clientAuthorizationTokensForScopes(
     _i2.ClientAuthorizationTokensForScopesParameters? params,

@@ -247,6 +247,19 @@ void main() {
     }
   });
 
+  group('authorizationRequiresUserInteraction', () {
+    for (final bool support in <bool>[true, false]) {
+      test('reports $support from platform', () async {
+        final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+        when(mockPlatform.authorizationRequiresUserInteraction())
+            .thenReturn(support);
+
+        expect(googleSignIn.authorizationRequiresUserInteraction(), support);
+      });
+    }
+  });
+
   group('attemptLightweightAuthentication', () {
     test('returns successful authentication', () async {
       final GoogleSignIn googleSignIn = GoogleSignIn.instance;

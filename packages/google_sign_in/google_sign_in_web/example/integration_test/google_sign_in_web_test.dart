@@ -118,6 +118,25 @@ void main() {
     });
   });
 
+  group('support queries', () {
+    testWidgets('reports lack of support for authenticate', (_) async {
+      final GoogleSignInPlugin plugin = GoogleSignInPlugin(
+        debugOverrideLoader: true,
+      );
+
+      expect(plugin.supportsAuthenticate(), false);
+    });
+
+    testWidgets('reports requirement for user interaction to authorize',
+        (_) async {
+      final GoogleSignInPlugin plugin = GoogleSignInPlugin(
+        debugOverrideLoader: true,
+      );
+
+      expect(plugin.authorizationRequiresUserInteraction(), true);
+    });
+  });
+
   group('(with mocked GIS)', () {
     late GoogleSignInPlugin plugin;
     late MockGisSdkClient mockGis;

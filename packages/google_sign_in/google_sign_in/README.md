@@ -99,7 +99,8 @@ const List<String> scopes = <String>[
 ### Requesting more scopes when needed
 
 If an app determines that the user hasn't granted the scopes it requires, it
-should initiate an Authorization request. On some platforms, such as web,
+should initiate an Authorization request. On platforms where
+`authorizationRequiresUserInteraction()` returns true,
 this request **must be initiated from an user interaction** like a button press.
 
 <?code-excerpt "example/lib/main.dart (RequestScopes)"?>
@@ -137,6 +138,9 @@ not for subsequent authentications via the lightweight process. If you
 need a server auth code you should request it as soon as possible after initial
 sign-in, and manage server tokens for that user entirely on the server side
 unless the signed in user changes.
+
+On platforms where `authorizationRequiresUserInteraction()` returns true,
+this request **must be initiated from an user interaction** like a button press.
 
 ## Example
 
