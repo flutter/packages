@@ -1,3 +1,7 @@
+## 0.6.18+1
+
+* Fixes incorrect camera preview mirroring for front cameras of devices using the `ImageReader` Impeller backend.
+
 ## 0.6.18
 
 * Adds support for the `MediaSettings.enableAudio` setting, which determines whether or not audio is
