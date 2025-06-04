@@ -8,7 +8,7 @@ version: 2.12.0
 
 environment:
   sdk: ^3.6.0
-  flutter: '>=3.27.0'
+  flutter: ">=3.27.0"
 
 dependencies:
   collection: ^1.15.0
