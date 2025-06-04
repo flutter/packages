@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 2.5.0
 
 * Adds a sign-in field to allow Android clients to explicitly specify an account name.
