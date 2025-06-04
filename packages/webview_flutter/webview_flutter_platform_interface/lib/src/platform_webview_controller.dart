@@ -54,13 +54,11 @@ abstract class PlatformWebViewController extends PlatformInterface {
   /// `/Users/username/Documents/www/index.html`.
   ///
   /// Throws an ArgumentError if the [absoluteFilePath] does not exist.
-  @Deprecated('Use loadFileWithParams(LocalFileParams params) instead. '
-      'This method will be removed in a future release.')
   Future<void> loadFile(
     String absoluteFilePath,
   ) {
-    return loadFileWithParams(
-        LoadFileParams(absoluteFilePath: absoluteFilePath));
+    throw UnimplementedError(
+        'loadFile is not implemented on the current platform');
   }
 
   /// Loads a local HTML file using the provided [params].
@@ -71,9 +69,6 @@ abstract class PlatformWebViewController extends PlatformInterface {
   ///
   /// Platform-specific implementations may extend [LocalFileParams] to support
   /// additional parameters, such as iOS/macOS-specific read access options.
-  ///
-  /// Throws an [ArgumentError] if the file specified in
-  /// [params.absoluteFilePath] does not exist.
   Future<void> loadFileWithParams(
     LoadFileParams params,
   ) {
