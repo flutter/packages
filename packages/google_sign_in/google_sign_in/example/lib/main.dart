@@ -78,22 +78,17 @@ class _SignInDemoState extends State<SignInDemo> {
   Future<void> _handleAuthenticationEvent(
       GoogleSignInAuthenticationEvent event) async {
     // #docregion CheckAuthorization
-    final GoogleSignInAccount? user;
-    // #enddocregion CheckAuthorization
-    switch (event) {
-      case GoogleSignInAuthenticationEventSignIn():
-        user = event.user;
-      case GoogleSignInAuthenticationEventSignOut():
-        user = null;
-    }
+    final GoogleSignInAccount? user = // ...
+        // #enddocregion CheckAuthorization
+        switch (event) {
+      GoogleSignInAuthenticationEventSignIn() => event.user,
+      GoogleSignInAuthenticationEventSignOut() => null,
+    };
 
     // Check for existing authorization.
     // #docregion CheckAuthorization
-    GoogleSignInClientAuthorization? authorization;
-    if (user != null) {
-      authorization =
-          await user.authorizationClient.authorizationForScopes(scopes);
-    }
+    final GoogleSignInClientAuthorization? authorization =
+        await user?.authorizationClient.authorizationForScopes(scopes);
     // #enddocregion CheckAuthorization
 
     setState(() {

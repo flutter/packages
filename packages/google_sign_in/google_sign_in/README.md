@@ -79,19 +79,14 @@ else ...<Widget>[
 If the user has previously authorized the scopes required by your application,
 you can silently request an access token for those scopes:
 
-<?code-excerpt "example/lib/main.dart (CheckAuthorization)"?>
+<?code-excerpt "example/lib/main.dart (CheckAuthorization)" plaster="none"?>
 ```dart
 const List<String> scopes = <String>[
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
-// ···
-    GoogleSignInAccount? user;
-    // ···
-    GoogleSignInClientAuthorization? authorization;
-    if (user != null) {
-      authorization =
-          await user.authorizationClient.authorizationForScopes(scopes);
-    }
+    final GoogleSignInAccount? user = // ...
+    final GoogleSignInClientAuthorization? authorization =
+        await user?.authorizationClient.authorizationForScopes(scopes);
 ```
 
 [Full list of available scopes](https://developers.google.com/identity/protocols/googlescopes).
