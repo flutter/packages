@@ -27,15 +27,13 @@ class FocusMeteringActionProxyApi extends PigeonApiFocusMeteringAction {
 
   @NonNull
   @Override
-  public List<androidx.camera.core.MeteringPoint> meteringPointsAf(
-      FocusMeteringAction pigeonInstance) {
+  public List<MeteringPoint> meteringPointsAf(FocusMeteringAction pigeonInstance) {
     return pigeonInstance.getMeteringPointsAf();
   }
 
   @NonNull
   @Override
-  public List<androidx.camera.core.MeteringPoint> meteringPointsAwb(
-      FocusMeteringAction pigeonInstance) {
+  public List<MeteringPoint> meteringPointsAwb(FocusMeteringAction pigeonInstance) {
     return pigeonInstance.getMeteringPointsAwb();
   }
 
