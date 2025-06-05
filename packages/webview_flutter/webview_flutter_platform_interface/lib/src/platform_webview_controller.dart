@@ -61,6 +61,24 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'loadFile is not implemented on the current platform');
   }
 
+  /// Loads a local HTML file using the provided [params].
+  ///
+  /// The [params.absoluteFilePath] should contain the absolute path to the file
+  /// on the device.
+  /// For example: `/Users/username/Documents/www/index.html`.
+  ///
+  /// Platform-specific implementations may extend [LocalFileParams] to support
+  /// additional parameters, such as iOS/macOS-specific read access options.
+  ///
+  /// Throws an [ArgumentError] if the file specified in
+  /// [params.absoluteFilePath] does not exist.
+  Future<void> loadFileWithParams(
+    LoadFileParams params,
+  ) {
+    throw UnimplementedError(
+        'loadFileWithParams is not implemented on the current platform');
+  }
+
   /// Loads the Flutter asset specified in the pubspec.yaml file.
   ///
   /// Throws an ArgumentError if [key] is not part of the specified assets

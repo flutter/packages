@@ -1,3 +1,8 @@
+## 4.14.0
+
+* Deprecates `WebViewController.loadFile(String)` in favor of `WebViewController.loadFileWithParams(LoadFileParams)`.
+* Introduces `AndroidLoadFileParams` and `WebKitLoadFileParams` to support platform-specific parameters when loading local HTML files on Android and iOS/macOS.
+
 ## 4.13.0
 
 * Adds support to respond to recoverable SSL certificate errors. See `NavigationDelegate(onSSlAuthError)`.

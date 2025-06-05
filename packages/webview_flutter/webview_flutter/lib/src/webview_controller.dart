@@ -132,7 +132,24 @@ class WebViewController {
   ///
   /// Throws a `PlatformException` if the [absoluteFilePath] does not exist.
   Future<void> loadFile(String absoluteFilePath) {
-    return platform.loadFile(absoluteFilePath);
+    return platform.loadFileWithParams(
+      LoadFileParams(
+        absoluteFilePath: absoluteFilePath,
+      ),
+    );
+  }
+
+  /// Loads a local HTML file using the provided [params].
+  ///
+  /// The [params] object should contain the absolute path to the
+  /// file as it is stored on the device. For example:
+  /// `/Users/username/Documents/www/index.html`.
+  /// In addition, it may include platform-specific fields,
+  /// such as headers (on Android) or resource paths (on iOS/macOS).
+  ///
+  /// Throws a `PlatformException` if the [absoluteFilePath] does not exist.
+  Future<void> loadFileWithParams(LoadFileParams params) {
+    return platform.loadFileWithParams(params);
   }
 
   /// Loads the Flutter asset specified in the pubspec.yaml file.

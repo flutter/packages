@@ -24,7 +24,29 @@ void main() {
     );
 
     await webViewController.loadFile('file/path');
-    verify(mockPlatformWebViewController.loadFile('file/path'));
+    verify(mockPlatformWebViewController.loadFileWithParams(
+      argThat(
+        predicate<LoadFileParams>((LoadFileParams params) {
+          return params.absoluteFilePath == 'file/path';
+        }, 'LoadFileParams with absoluteFilePath == "file/path"'),
+      ),
+    ));
+  });
+
+  test('loadFileWithParams', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    await webViewController.loadFileWithParams(
+      const LoadFileParams(absoluteFilePath: 'file/path'),
+    );
+    verify(mockPlatformWebViewController.loadFileWithParams(
+      const LoadFileParams(absoluteFilePath: 'file/path'),
+    ));
   });
 
   test('loadFlutterAsset', () async {
