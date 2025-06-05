@@ -21,5 +21,9 @@ dev_dependencies:
     path: ..
   test: ^1.17.0
 
+dependency_overrides:
+  go_router: 
+    path: ../../go_router
+
 flutter:
   uses-material-design: true
