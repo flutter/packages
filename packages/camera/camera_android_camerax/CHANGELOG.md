@@ -1,3 +1,7 @@
+## 0.6.18+2
+
+* Fixes premature garbage collection of native objects when app is under memory pressure.
+
 ## 0.6.18+1
 
 * Makes Java style improvements.
