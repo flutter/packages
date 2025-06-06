@@ -1,3 +1,7 @@
+## 2.12.1
+
+* Fix the `zIndex` issue in the `copyWith` method.
+
 ## 2.12.0
 
 * Deprecates `zIndex` parameter in `Marker` in favor of `zIndexInt`.
