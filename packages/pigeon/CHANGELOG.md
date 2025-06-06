@@ -1,5 +1,7 @@
-## NEXT
+## 25.4.0
 
+* [dart] Changes the default InstanceManager and its initialization to no longer make a method calls
+  when used in a Flutter unit test.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 25.3.2

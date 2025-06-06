@@ -192,6 +192,44 @@ void main() {
 
       expect(weakReferencedRemovedCalled, isFalse);
     });
+
+    testWidgets(
+      'instantiating default InstanceManager in a Flutter test does not set handlers or make a message call',
+      (WidgetTester tester) async {
+        // Initialize default InstanceManager
+        // ignore: unnecessary_statements
+        PigeonInstanceManager.instance;
+
+        final TestDefaultBinaryMessenger testBinaryMessenger =
+            TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
+        expect(testBinaryMessenger.allMessagesHandler, isNull);
+
+        await expectLater(
+          testBinaryMessenger.platformMessagesFinished,
+          completes,
+        );
+      },
+    );
+
+    testWidgets(
+      'default InstanceManager does not make message call when weak reference is removed',
+      (WidgetTester tester) async {
+        // Initialize default InstanceManager
+        // ignore: unnecessary_statements
+        final PigeonInstanceManager instanceManager =
+            PigeonInstanceManager.instance;
+
+        final int identifier =
+            instanceManager.addDartCreatedInstance(CopyableObject());
+        instanceManager.onWeakReferenceRemoved(identifier);
+
+        await expectLater(
+          TestDefaultBinaryMessengerBinding
+              .instance.defaultBinaryMessenger.platformMessagesFinished,
+          completes,
+        );
+      },
+    );
   });
 }
 
