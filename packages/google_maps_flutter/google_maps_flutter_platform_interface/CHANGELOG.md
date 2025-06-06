@@ -1,6 +1,6 @@
 ## 2.12.1
 
-* Fix the `zIndex` issue in the `copyWith` method.
+* Fixes the `zIndex` issue in the `copyWith` method.
 
 ## 2.12.0
 
