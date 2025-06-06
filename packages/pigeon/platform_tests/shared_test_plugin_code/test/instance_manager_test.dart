@@ -202,8 +202,8 @@ void main() {
 
         final TestDefaultBinaryMessenger testBinaryMessenger =
             TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger;
-        expect(testBinaryMessenger.allMessagesHandler, isNull);
 
+        expect(testBinaryMessenger.allMessagesHandler, isNull);
         await expectLater(
           testBinaryMessenger.platformMessagesFinished,
           completes,
@@ -214,8 +214,6 @@ void main() {
     testWidgets(
       'default InstanceManager does not make message call when weak reference is removed',
       (WidgetTester tester) async {
-        // Initialize default InstanceManager
-        // ignore: unnecessary_statements
         final PigeonInstanceManager instanceManager =
             PigeonInstanceManager.instance;
 
