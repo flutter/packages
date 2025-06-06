@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
+## 1.1.19
+
+* Moved color and colorFilter effects into the raster cache to reduce subsequent rendering overhead.
+
 ## 1.1.18
 
 * Allow transition between placeholder and loaded image to have an animation.
