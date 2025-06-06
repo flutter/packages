@@ -199,6 +199,10 @@ Page resource error:
           })
           ..setOnHttpAuthRequest((HttpAuthRequest request) {
             openDialog(request);
+          })
+          ..setOnSSlAuthError((PlatformSslAuthError error) {
+            debugPrint('SSL error from ${(error as WebKitSslAuthError).host}');
+            error.cancel();
           }),
       )
       ..addJavaScriptChannel(JavaScriptChannelParams(
