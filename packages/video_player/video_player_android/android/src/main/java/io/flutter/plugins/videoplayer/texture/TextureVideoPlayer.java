@@ -29,6 +29,7 @@ import io.flutter.view.TextureRegistry.SurfaceProducer;
 public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProducer.Callback {
   // True when the ExoPlayer instance has a null surface.
   private boolean needsSurface = true;
+  @Nullable private final VideoPlayerOptions options;
   /**
    * Creates a texture video player.
    *
@@ -69,6 +70,7 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
     super(events, mediaItem, options, surfaceProducer, exoPlayerProvider);
 
     surfaceProducer.setCallback(this);
+    this.options = options;
 
     Surface surface = surfaceProducer.getSurface();
     this.exoPlayer.setVideoSurface(surface);
