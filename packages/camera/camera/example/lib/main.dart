@@ -6,6 +6,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:camera_linux/camera_linux.dart';
+import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -155,6 +157,38 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           ),
           _captureControlRowWidget(),
           _modeControlRowWidget(),
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    if (TargetPlatform.linux != defaultTargetPlatform) {
+                      return;
+                    }
+                    final CameraLinux nativeCamera =
+                        CameraPlatform.instance as CameraLinux;
+                    nativeCamera.setImageFormatGroup(
+                        controller!.cameraId, PlatformImageFormatGroup.mono8);
+                  });
+                },
+                child: Text('mono8'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    if (TargetPlatform.linux != defaultTargetPlatform) {
+                      return;
+                    }
+                    final CameraLinux nativeCamera =
+                        CameraPlatform.instance as CameraLinux;
+                    nativeCamera.setImageFormatGroup(
+                        controller!.cameraId, PlatformImageFormatGroup.rgb8);
+                  });
+                },
+                child: Text('rgb8'),
+              ),
+            ],
+          ),
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: Row(
@@ -635,7 +669,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   ) async {
     final cameraController = CameraController(
       cameraDescription,
-      kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
+      ResolutionPreset.max,
       enableAudio: enableAudio,
       imageFormatGroup: ImageFormatGroup.jpeg,
     );

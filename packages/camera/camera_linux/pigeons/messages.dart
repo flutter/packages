@@ -56,8 +56,8 @@ enum PlatformImageFileFormat {
 
 // Pigeon version of the subset of ImageFormatGroup supported on iOS.
 enum PlatformImageFormatGroup {
-  bgra8888,
-  yuv420,
+  rgb8,
+  mono8,
 }
 
 enum PlatformResolutionPreset {
@@ -248,6 +248,11 @@ abstract class CameraApi {
   /// Sets the file format used for taking pictures.
   @async
   void setImageFileFormat(PlatformImageFileFormat format);
+
+  //Sets the ImageFormatGroup.
+  @async
+  void setImageFormatGroup(
+      int cameraId, PlatformImageFormatGroup imageFormatGroup);
 }
 
 /// Handler for native callbacks that are tied to a specific camera ID.
@@ -257,6 +262,8 @@ abstract class CameraApi {
 abstract class CameraEventApi {
   /// Called when the camera is inialitized for use.
   void initialized(PlatformCameraState initialState);
+
+  void textureId(int textureId);
 
   /// Called when an error occurs in the camera.
   ///

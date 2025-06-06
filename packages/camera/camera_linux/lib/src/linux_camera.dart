@@ -112,8 +112,22 @@ class CameraLinux extends CameraPlatform {
           ),
     );
 
+    PlatformImageFormatGroup imageFormat = PlatformImageFormatGroup.rgb8;
+    switch (imageFormatGroup) {
+      case ImageFormatGroup.jpeg:
+        imageFormat = PlatformImageFormatGroup.rgb8;
+        break;
+      case ImageFormatGroup.unknown:
+      case ImageFormatGroup.yuv420:
+      case ImageFormatGroup.nv21:
+      case ImageFormatGroup.bgra8888:
+      default:
+        imageFormat = PlatformImageFormatGroup.mono8;
+        break;
+    }
+
     try {
-      await _hostApi.initialize(cameraId, _pigeonImageFormat(imageFormatGroup));
+      await _hostApi.initialize(cameraId, imageFormat);
     } on PlatformException catch (e, s) {
       completer.completeError(
         CameraException(e.code, e.message),
@@ -264,20 +278,28 @@ class CameraLinux extends CameraPlatform {
 
   @override
   Widget buildPreview(int cameraId) {
-    return FutureBuilder<int?>(
-      future: _hostApi.getTextureId(cameraId),
+    unawaited(
+      _hostApi.getTextureId(cameraId).then(
+        (int? textureId) {
+          cameraEventStreamController.add(TextureIdEvent(cameraId, textureId));
+        },
+      ),
+    );
+    return StreamBuilder<int?>(
+      stream: _cameraEvents(cameraId)
+          .whereType<TextureIdEvent>()
+          .map((event) => event.textureId),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.data != null) {
-          return RepaintBoundary(
-            child: Texture(
-              textureId: snapshot.data!,
-              filterQuality: FilterQuality.none,
-            ),
-          );
-        } else {
+        if (snapshot.data == null || snapshot.data == -1) {
           return const Center(child: CircularProgressIndicator());
         }
+
+        return RepaintBoundary(
+          child: Texture(
+            textureId: snapshot.data!,
+            filterQuality: FilterQuality.none,
+          ),
+        );
       },
     );
   }
@@ -288,29 +310,48 @@ class CameraLinux extends CameraPlatform {
   @override
   Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) async {}
 
-  /// Returns an [ImageFormatGroup]'s Pigeon representation.
-  PlatformImageFormatGroup _pigeonImageFormat(ImageFormatGroup format) {
-    switch (format) {
-      // "unknown" is used to indicate the default.
-      case ImageFormatGroup.unknown:
-      case ImageFormatGroup.bgra8888:
-        return PlatformImageFormatGroup.bgra8888;
-      case ImageFormatGroup.yuv420:
-        return PlatformImageFormatGroup.yuv420;
-      case ImageFormatGroup.jpeg:
-      case ImageFormatGroup.nv21:
-      // Fall through.
+  Future<void> setImageFormatGroup(
+      int cameraId, PlatformImageFormatGroup format) async {
+    try {
+      await _hostApi.setImageFormatGroup(cameraId, format);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
     }
-    // The enum comes from a different package, which could get a new value at
-    // any time, so provide a fallback that ensures this won't break when used
-    // with a version that contains new values. This is deliberately outside
-    // the switch rather than a `default` so that the linter will flag the
-    // switch as needing an update.
-    // TODO(stuartmorgan): Consider throwing an UnsupportedError, instead of
-    // doing fallback, when a specific unsupported format is requested. This
-    // would require a breaking change at this layer and the app-facing layer.
-    return PlatformImageFormatGroup.bgra8888;
   }
+}
+
+/// An event fired when the camera texture id changed.
+class TextureIdEvent extends CameraEvent {
+  const TextureIdEvent(
+    super.cameraId,
+    this.textureId,
+  );
+
+  TextureIdEvent.fromJson(Map<String, dynamic> json)
+      : textureId = json['textureId']! as int?,
+        super(json['cameraId']! as int);
+
+  /// The texture ID of the camera.
+  final int? textureId;
+
+  Map<String, dynamic> toJson() => <String, Object>{
+        'cameraId': cameraId,
+        if (textureId != null) 'textureId': textureId!,
+      };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      super == other &&
+          other is TextureIdEvent &&
+          runtimeType == other.runtimeType &&
+          textureId == other.textureId;
+
+  @override
+  int get hashCode => Object.hash(
+        super.hashCode,
+        textureId,
+      );
 }
 
 /// Callback handler for camera-level events from the platform host.
@@ -352,6 +393,11 @@ class HostCameraMessageHandler implements CameraEventApi {
         initialState.focusPointSupported,
       ),
     );
+  }
+
+  @override
+  void textureId(int textureId) {
+    streamController.add(TextureIdEvent(cameraId, textureId));
   }
 }
 

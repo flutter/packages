@@ -1684,6 +1684,45 @@ static CameraLinuxCameraApiSetImageFileFormatResponse* camera_linux_camera_api_s
   return self;
 }
 
+G_DECLARE_FINAL_TYPE(CameraLinuxCameraApiSetImageFormatGroupResponse, camera_linux_camera_api_set_image_format_group_response, CAMERA_LINUX, CAMERA_API_SET_IMAGE_FORMAT_GROUP_RESPONSE, GObject)
+
+struct _CameraLinuxCameraApiSetImageFormatGroupResponse {
+  GObject parent_instance;
+
+  FlValue* value;
+};
+
+G_DEFINE_TYPE(CameraLinuxCameraApiSetImageFormatGroupResponse, camera_linux_camera_api_set_image_format_group_response, G_TYPE_OBJECT)
+
+static void camera_linux_camera_api_set_image_format_group_response_dispose(GObject* object) {
+  CameraLinuxCameraApiSetImageFormatGroupResponse* self = CAMERA_LINUX_CAMERA_API_SET_IMAGE_FORMAT_GROUP_RESPONSE(object);
+  g_clear_pointer(&self->value, fl_value_unref);
+  G_OBJECT_CLASS(camera_linux_camera_api_set_image_format_group_response_parent_class)->dispose(object);
+}
+
+static void camera_linux_camera_api_set_image_format_group_response_init(CameraLinuxCameraApiSetImageFormatGroupResponse* self) {
+}
+
+static void camera_linux_camera_api_set_image_format_group_response_class_init(CameraLinuxCameraApiSetImageFormatGroupResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = camera_linux_camera_api_set_image_format_group_response_dispose;
+}
+
+static CameraLinuxCameraApiSetImageFormatGroupResponse* camera_linux_camera_api_set_image_format_group_response_new() {
+  CameraLinuxCameraApiSetImageFormatGroupResponse* self = CAMERA_LINUX_CAMERA_API_SET_IMAGE_FORMAT_GROUP_RESPONSE(g_object_new(camera_linux_camera_api_set_image_format_group_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_null());
+  return self;
+}
+
+static CameraLinuxCameraApiSetImageFormatGroupResponse* camera_linux_camera_api_set_image_format_group_response_new_error(const gchar* code, const gchar* message, FlValue* details) {
+  CameraLinuxCameraApiSetImageFormatGroupResponse* self = CAMERA_LINUX_CAMERA_API_SET_IMAGE_FORMAT_GROUP_RESPONSE(g_object_new(camera_linux_camera_api_set_image_format_group_response_get_type(), nullptr));
+  self->value = fl_value_new_list();
+  fl_value_append_take(self->value, fl_value_new_string(code));
+  fl_value_append_take(self->value, fl_value_new_string(message != nullptr ? message : ""));
+  fl_value_append_take(self->value, details != nullptr ? fl_value_ref(details) : fl_value_new_null());
+  return self;
+}
+
 struct _CameraLinuxCameraApi {
   GObject parent_instance;
 
@@ -2106,6 +2145,21 @@ static void camera_linux_camera_api_set_image_file_format_cb(FlBasicMessageChann
   self->vtable->set_image_file_format(format, handle, self->user_data);
 }
 
+static void camera_linux_camera_api_set_image_format_group_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {
+  CameraLinuxCameraApi* self = CAMERA_LINUX_CAMERA_API(user_data);
+
+  if (self->vtable == nullptr || self->vtable->set_image_format_group == nullptr) {
+    return;
+  }
+
+  FlValue* value0 = fl_value_get_list_value(message_, 0);
+  int64_t camera_id = fl_value_get_int(value0);
+  FlValue* value1 = fl_value_get_list_value(message_, 1);
+  CameraLinuxPlatformImageFormatGroup image_format_group = static_cast<CameraLinuxPlatformImageFormatGroup>(fl_value_get_int(reinterpret_cast<FlValue*>(const_cast<gpointer>(fl_value_get_custom_value(value1)))));
+  g_autoptr(CameraLinuxCameraApiResponseHandle) handle = camera_linux_camera_api_response_handle_new(channel, response_handle);
+  self->vtable->set_image_format_group(camera_id, image_format_group, handle, self->user_data);
+}
+
 void camera_linux_camera_api_set_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix, const CameraLinuxCameraApiVTable* vtable, gpointer user_data, GDestroyNotify user_data_free_func) {
   g_autofree gchar* dot_suffix = suffix != nullptr ? g_strdup_printf(".%s", suffix) : g_strdup("");
   g_autoptr(CameraLinuxCameraApi) api_data = camera_linux_camera_api_new(vtable, user_data, user_data_free_func);
@@ -2207,6 +2261,9 @@ void camera_linux_camera_api_set_method_handlers(FlBinaryMessenger* messenger, c
   g_autofree gchar* set_image_file_format_channel_name = g_strdup_printf("dev.flutter.pigeon.camera_linux.CameraApi.setImageFileFormat%s", dot_suffix);
   g_autoptr(FlBasicMessageChannel) set_image_file_format_channel = fl_basic_message_channel_new(messenger, set_image_file_format_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(set_image_file_format_channel, camera_linux_camera_api_set_image_file_format_cb, g_object_ref(api_data), g_object_unref);
+  g_autofree gchar* set_image_format_group_channel_name = g_strdup_printf("dev.flutter.pigeon.camera_linux.CameraApi.setImageFormatGroup%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) set_image_format_group_channel = fl_basic_message_channel_new(messenger, set_image_format_group_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(set_image_format_group_channel, camera_linux_camera_api_set_image_format_group_cb, g_object_ref(api_data), g_object_unref);
 }
 
 void camera_linux_camera_api_clear_method_handlers(FlBinaryMessenger* messenger, const gchar* suffix) {
@@ -2309,6 +2366,9 @@ void camera_linux_camera_api_clear_method_handlers(FlBinaryMessenger* messenger,
   g_autofree gchar* set_image_file_format_channel_name = g_strdup_printf("dev.flutter.pigeon.camera_linux.CameraApi.setImageFileFormat%s", dot_suffix);
   g_autoptr(FlBasicMessageChannel) set_image_file_format_channel = fl_basic_message_channel_new(messenger, set_image_file_format_channel_name, FL_MESSAGE_CODEC(codec));
   fl_basic_message_channel_set_message_handler(set_image_file_format_channel, nullptr, nullptr, nullptr);
+  g_autofree gchar* set_image_format_group_channel_name = g_strdup_printf("dev.flutter.pigeon.camera_linux.CameraApi.setImageFormatGroup%s", dot_suffix);
+  g_autoptr(FlBasicMessageChannel) set_image_format_group_channel = fl_basic_message_channel_new(messenger, set_image_format_group_channel_name, FL_MESSAGE_CODEC(codec));
+  fl_basic_message_channel_set_message_handler(set_image_format_group_channel, nullptr, nullptr, nullptr);
 }
 
 void camera_linux_camera_api_respond_get_available_cameras_names(CameraLinuxCameraApiResponseHandle* response_handle, FlValue* return_value) {
@@ -2823,6 +2883,22 @@ void camera_linux_camera_api_respond_error_set_image_file_format(CameraLinuxCame
   }
 }
 
+void camera_linux_camera_api_respond_set_image_format_group(CameraLinuxCameraApiResponseHandle* response_handle) {
+  g_autoptr(CameraLinuxCameraApiSetImageFormatGroupResponse) response = camera_linux_camera_api_set_image_format_group_response_new();
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel, response_handle->response_handle, response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "CameraApi", "setImageFormatGroup", error->message);
+  }
+}
+
+void camera_linux_camera_api_respond_error_set_image_format_group(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details) {
+  g_autoptr(CameraLinuxCameraApiSetImageFormatGroupResponse) response = camera_linux_camera_api_set_image_format_group_response_new_error(code, message, details);
+  g_autoptr(GError) error = nullptr;
+  if (!fl_basic_message_channel_respond(response_handle->channel, response_handle->response_handle, response->value, &error)) {
+    g_warning("Failed to send response to %s.%s: %s", "CameraApi", "setImageFormatGroup", error->message);
+  }
+}
+
 struct _CameraLinuxCameraEventApi {
   GObject parent_instance;
 
@@ -2930,6 +3006,85 @@ CameraLinuxCameraEventApiInitializedResponse* camera_linux_camera_event_api_init
     return nullptr;
   }
   return camera_linux_camera_event_api_initialized_response_new(response);
+}
+
+struct _CameraLinuxCameraEventApiTextureIdResponse {
+  GObject parent_instance;
+
+  FlValue* error;
+};
+
+G_DEFINE_TYPE(CameraLinuxCameraEventApiTextureIdResponse, camera_linux_camera_event_api_texture_id_response, G_TYPE_OBJECT)
+
+static void camera_linux_camera_event_api_texture_id_response_dispose(GObject* object) {
+  CameraLinuxCameraEventApiTextureIdResponse* self = CAMERA_LINUX_CAMERA_EVENT_API_TEXTURE_ID_RESPONSE(object);
+  g_clear_pointer(&self->error, fl_value_unref);
+  G_OBJECT_CLASS(camera_linux_camera_event_api_texture_id_response_parent_class)->dispose(object);
+}
+
+static void camera_linux_camera_event_api_texture_id_response_init(CameraLinuxCameraEventApiTextureIdResponse* self) {
+}
+
+static void camera_linux_camera_event_api_texture_id_response_class_init(CameraLinuxCameraEventApiTextureIdResponseClass* klass) {
+  G_OBJECT_CLASS(klass)->dispose = camera_linux_camera_event_api_texture_id_response_dispose;
+}
+
+static CameraLinuxCameraEventApiTextureIdResponse* camera_linux_camera_event_api_texture_id_response_new(FlValue* response) {
+  CameraLinuxCameraEventApiTextureIdResponse* self = CAMERA_LINUX_CAMERA_EVENT_API_TEXTURE_ID_RESPONSE(g_object_new(camera_linux_camera_event_api_texture_id_response_get_type(), nullptr));
+  if (fl_value_get_length(response) > 1) {
+    self->error = fl_value_ref(response);
+  }
+  return self;
+}
+
+gboolean camera_linux_camera_event_api_texture_id_response_is_error(CameraLinuxCameraEventApiTextureIdResponse* self) {
+  g_return_val_if_fail(CAMERA_LINUX_IS_CAMERA_EVENT_API_TEXTURE_ID_RESPONSE(self), FALSE);
+  return self->error != nullptr;
+}
+
+const gchar* camera_linux_camera_event_api_texture_id_response_get_error_code(CameraLinuxCameraEventApiTextureIdResponse* self) {
+  g_return_val_if_fail(CAMERA_LINUX_IS_CAMERA_EVENT_API_TEXTURE_ID_RESPONSE(self), nullptr);
+  g_assert(camera_linux_camera_event_api_texture_id_response_is_error(self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 0));
+}
+
+const gchar* camera_linux_camera_event_api_texture_id_response_get_error_message(CameraLinuxCameraEventApiTextureIdResponse* self) {
+  g_return_val_if_fail(CAMERA_LINUX_IS_CAMERA_EVENT_API_TEXTURE_ID_RESPONSE(self), nullptr);
+  g_assert(camera_linux_camera_event_api_texture_id_response_is_error(self));
+  return fl_value_get_string(fl_value_get_list_value(self->error, 1));
+}
+
+FlValue* camera_linux_camera_event_api_texture_id_response_get_error_details(CameraLinuxCameraEventApiTextureIdResponse* self) {
+  g_return_val_if_fail(CAMERA_LINUX_IS_CAMERA_EVENT_API_TEXTURE_ID_RESPONSE(self), nullptr);
+  g_assert(camera_linux_camera_event_api_texture_id_response_is_error(self));
+  return fl_value_get_list_value(self->error, 2);
+}
+
+static void camera_linux_camera_event_api_texture_id_cb(GObject* object, GAsyncResult* result, gpointer user_data) {
+  GTask* task = G_TASK(user_data);
+  g_task_return_pointer(task, result, g_object_unref);
+}
+
+void camera_linux_camera_event_api_texture_id(CameraLinuxCameraEventApi* self, int64_t texture_id, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data) {
+  g_autoptr(FlValue) args = fl_value_new_list();
+  fl_value_append_take(args, fl_value_new_int(texture_id));
+  g_autofree gchar* channel_name = g_strdup_printf("dev.flutter.pigeon.camera_linux.CameraEventApi.textureId%s", self->suffix);
+  g_autoptr(CameraLinuxMessageCodec) codec = camera_linux_message_codec_new();
+  FlBasicMessageChannel* channel = fl_basic_message_channel_new(self->messenger, channel_name, FL_MESSAGE_CODEC(codec));
+  GTask* task = g_task_new(self, cancellable, callback, user_data);
+  g_task_set_task_data(task, channel, g_object_unref);
+  fl_basic_message_channel_send(channel, args, cancellable, camera_linux_camera_event_api_texture_id_cb, task);
+}
+
+CameraLinuxCameraEventApiTextureIdResponse* camera_linux_camera_event_api_texture_id_finish(CameraLinuxCameraEventApi* self, GAsyncResult* result, GError** error) {
+  g_autoptr(GTask) task = G_TASK(result);
+  GAsyncResult* r = G_ASYNC_RESULT(g_task_propagate_pointer(task, nullptr));
+  FlBasicMessageChannel* channel = FL_BASIC_MESSAGE_CHANNEL(g_task_get_task_data(task));
+  g_autoptr(FlValue) response = fl_basic_message_channel_send_finish(channel, r, error);
+  if (response == nullptr) { 
+    return nullptr;
+  }
+  return camera_linux_camera_event_api_texture_id_response_new(response);
 }
 
 struct _CameraLinuxCameraEventApiErrorResponse {

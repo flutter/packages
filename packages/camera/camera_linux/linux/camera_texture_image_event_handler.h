@@ -38,6 +38,12 @@ class CameraTextureImageEventHandler : public Pylon::CImageEventHandler {
   FlTextureRegistrar* m_texture_registrar;
   GdkGLContext* m_gl_context;
 
+  GLuint m_input_texture = 0;
+  GLuint m_output_texture = 0;
+  GLuint m_fbo = 0;
+  GLuint m_shader_program = 0;
+  GLuint m_vao = 0, m_vbo = 0;
+
  public:
   CameraTextureImageEventHandler(const Camera& camera,
                                  FlPluginRegistrar* registrar);
@@ -50,6 +56,8 @@ class CameraTextureImageEventHandler : public Pylon::CImageEventHandler {
 
   void OnImageGrabbed(Pylon::CInstantCamera& camera,
                       const Pylon::CGrabResultPtr& ptr) override;
+
+  void OnImageEventHandlerDeregistered(Pylon::CInstantCamera& camera) override;
 };
 
 #endif  // CAMERA_TEXTURE_IMAGE_EVENT_HANDLER_H_

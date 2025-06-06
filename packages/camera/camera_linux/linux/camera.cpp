@@ -13,8 +13,10 @@ Camera::Camera(Pylon::IPylonDevice* device, int64_t camera_id,
                         CAMERA_LINUX_PLATFORM_EXPOSURE_MODE_AUTO),
       focus_mode(CameraLinuxPlatformFocusMode::
                      CAMERA_LINUX_PLATFORM_FOCUS_MODE_LOCKED),
-      width(1920),
-      height(1080),
+      width(3840),
+      height(2160),
+      imageFormatGroup(CameraLinuxPlatformImageFormatGroup::
+                           CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_RGB8),
       resolution_preset(resolution_preset),
       registrar(registrar) {
   camera = std::make_unique<Pylon::CInstantCamera>(device);
@@ -23,12 +25,18 @@ Camera::Camera(Pylon::IPylonDevice* device, int64_t camera_id,
 }
 
 Camera::~Camera() {
-  if (camera) camera->Close();
+  if (cameraTextureImageEventHandler && camera)
+    camera->DeregisterImageEventHandler(cameraTextureImageEventHandler.get());
+  if (camera) {
+    if (camera->IsGrabbing()) camera->StopGrabbing();
+    if (camera->IsOpen()) camera->Close();
+  }
   if (cameraLinuxCameraEventApi) g_object_unref(cameraLinuxCameraEventApi);
   if (registrar) g_object_unref(registrar);
 }
 
-void Camera::initialize(CameraLinuxPlatformImageFormatGroup image_format) {
+void Camera::initialize(CameraLinuxPlatformImageFormatGroup imageFormat) {
+  imageFormatGroup = imageFormat;
   cameraTextureImageEventHandler =
       std::make_unique<CameraTextureImageEventHandler>(*this, registrar);
   camera->Open();
@@ -39,20 +47,60 @@ void Camera::initialize(CameraLinuxPlatformImageFormatGroup image_format) {
       .TrySetValue(true);
   Pylon::CFloatParameter(nodemap, "AcquisitionFrameRate").TrySetValue(60.0);
   Pylon::CFloatParameter(nodemap, "ResultingFrameRate").TrySetValue(60.0);
-  Pylon::CEnumParameter(nodemap, "PixelFormat").TrySetValue("RGB8");
+  setImageFormatGroup(imageFormat);
   Pylon::CEnumParameter(nodemap, "TriggerMode").SetValue("Off");
   Pylon::CIntegerParameter(nodemap, "Width").TrySetValue(width);
   Pylon::CIntegerParameter(nodemap, "Height").TrySetValue(height);
   Pylon::CIntegerParameter(nodemap, "OffsetX").TrySetValue(0);
   Pylon::CIntegerParameter(nodemap, "OffsetY").TrySetValue(0);
+  Pylon::CStringParameter(nodemap, "ExposureAuto").TrySetValue("Continuous");
+  Pylon::CBooleanParameter(nodemap, "ReverseY").TrySetValue(true);
+  Pylon::CBooleanParameter(nodemap, "AutoFunctionROIUseBrightness")
+      .TrySetValue(true);
+  Pylon::CBooleanParameter(nodemap, "AutoFunctionROIUseWhiteBalance")
+      .TrySetValue(true);
+  Pylon::CEnumParameter(nodemap, "BslDefectPixelCorrectionMode")
+      .TrySetValue("On");
 
   camera->RegisterImageEventHandler(cameraTextureImageEventHandler.get(),
                                     Pylon::RegistrationMode_Append,
-                                    Pylon::Cleanup_Delete);
+                                    Pylon::Cleanup_None);
   camera->StartGrabbing(Pylon::GrabStrategy_LatestImages,
                         Pylon::EGrabLoop::GrabLoop_ProvidedByInstantCamera);
 
   emitState();
+}
+
+void Camera::setImageFormatGroup(
+    CameraLinuxPlatformImageFormatGroup imageFormatGroup) {
+  if (!camera) return;
+  bool wasGrabbing = camera->IsGrabbing();
+  if (wasGrabbing) {
+    camera->StopGrabbing();
+    camera->DeregisterImageEventHandler(cameraTextureImageEventHandler.get());
+    cameraTextureImageEventHandler.reset();
+  }
+  GenApi::INodeMap& nodemap = camera->GetNodeMap();
+  switch (imageFormatGroup) {
+    case CameraLinuxPlatformImageFormatGroup::
+        CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_MONO8:
+      Pylon::CEnumParameter(nodemap, "PixelFormat").SetValue("Mono8");
+      break;
+    case CameraLinuxPlatformImageFormatGroup::
+        CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_RGB8:
+    default:
+      Pylon::CEnumParameter(nodemap, "PixelFormat").SetValue("RGB8");
+      break;
+  }
+  if (wasGrabbing) {
+    cameraTextureImageEventHandler =
+        std::make_unique<CameraTextureImageEventHandler>(*this, registrar);
+    camera->RegisterImageEventHandler(cameraTextureImageEventHandler.get(),
+                                      Pylon::RegistrationMode_Append,
+                                      Pylon::Cleanup_None);
+    camera->StartGrabbing(Pylon::GrabStrategy_LatestImages,
+                          Pylon::EGrabLoop::GrabLoop_ProvidedByInstantCamera);
+  }
 }
 
 int64_t Camera::getTextureId() {
@@ -75,6 +123,14 @@ void Camera::emitState() {
       camera_linux_camera_event_api_initialized_callback, nullptr);
   g_object_unref(cameraState);
   g_object_unref(size);
+}
+
+void Camera::emitTextureId(int64_t textureId) const {
+  if (!cameraLinuxCameraEventApi) return;
+
+  camera_linux_camera_event_api_texture_id(
+      cameraLinuxCameraEventApi, textureId, nullptr,
+      camera_linux_camera_event_api_initialized_callback, nullptr);
 }
 
 Camera& Camera::setResolutionPreset(

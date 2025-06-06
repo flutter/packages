@@ -59,8 +59,8 @@ enum PlatformImageFileFormat {
 }
 
 enum PlatformImageFormatGroup {
-  bgra8888,
-  yuv420,
+  rgb8,
+  mono8,
 }
 
 enum PlatformResolutionPreset {
@@ -1053,6 +1053,28 @@ class CameraApi {
       return;
     }
   }
+
+  Future<void> setImageFormatGroup(int cameraId, PlatformImageFormatGroup imageFormatGroup) async {
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_linux.CameraApi.setImageFormatGroup$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[cameraId, imageFormatGroup]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 }
 
 /// Handler for native callbacks that are tied to a specific camera ID.
@@ -1063,6 +1085,8 @@ abstract class CameraEventApi {
 
   /// Called when the camera is inialitized for use.
   void initialized(PlatformCameraState initialState);
+
+  void textureId(int textureId);
 
   /// Called when an error occurs in the camera.
   ///
@@ -1088,6 +1112,31 @@ abstract class CameraEventApi {
               'Argument for dev.flutter.pigeon.camera_linux.CameraEventApi.initialized was null, expected non-null PlatformCameraState.');
           try {
             api.initialized(arg_initialState!);
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          }          catch (e) {
+            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.camera_linux.CameraEventApi.textureId$messageChannelSuffix', pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.camera_linux.CameraEventApi.textureId was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_textureId = (args[0] as int?);
+          assert(arg_textureId != null,
+              'Argument for dev.flutter.pigeon.camera_linux.CameraEventApi.textureId was null, expected non-null int.');
+          try {
+            api.textureId(arg_textureId!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

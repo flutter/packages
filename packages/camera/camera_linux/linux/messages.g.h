@@ -77,13 +77,13 @@ typedef enum {
 
 /**
  * CameraLinuxPlatformImageFormatGroup:
- * CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_BGRA8888:
- * CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_YUV420:
+ * CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_RGB8:
+ * CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_MONO8:
  *
  */
 typedef enum {
-  CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_BGRA8888 = 0,
-  CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_YUV420 = 1
+  CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_RGB8 = 0,
+  CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_MONO8 = 1
 } CameraLinuxPlatformImageFormatGroup;
 
 /**
@@ -296,6 +296,7 @@ typedef struct {
   void (*resume_preview)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*update_description_while_recording)(const gchar* camera_name, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*set_image_file_format)(CameraLinuxPlatformImageFileFormat format, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*set_image_format_group)(int64_t camera_id, CameraLinuxPlatformImageFormatGroup image_format_group, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
 } CameraLinuxCameraApiVTable;
 
 /**
@@ -938,6 +939,25 @@ void camera_linux_camera_api_respond_set_image_file_format(CameraLinuxCameraApiR
  */
 void camera_linux_camera_api_respond_error_set_image_file_format(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
+/**
+ * camera_linux_camera_api_respond_set_image_format_group:
+ * @response_handle: a #CameraLinuxCameraApiResponseHandle.
+ *
+ * Responds to CameraApi.setImageFormatGroup. 
+ */
+void camera_linux_camera_api_respond_set_image_format_group(CameraLinuxCameraApiResponseHandle* response_handle);
+
+/**
+ * camera_linux_camera_api_respond_error_set_image_format_group:
+ * @response_handle: a #CameraLinuxCameraApiResponseHandle.
+ * @code: error code.
+ * @message: error message.
+ * @details: (allow-none): error details or %NULL.
+ *
+ * Responds with an error to CameraApi.setImageFormatGroup. 
+ */
+void camera_linux_camera_api_respond_error_set_image_format_group(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
+
 G_DECLARE_FINAL_TYPE(CameraLinuxCameraEventApiInitializedResponse, camera_linux_camera_event_api_initialized_response, CAMERA_LINUX, CAMERA_EVENT_API_INITIALIZED_RESPONSE, GObject)
 
 /**
@@ -979,6 +999,48 @@ const gchar* camera_linux_camera_event_api_initialized_response_get_error_messag
  * Returns: (allow-none): an error details or %NULL.
  */
 FlValue* camera_linux_camera_event_api_initialized_response_get_error_details(CameraLinuxCameraEventApiInitializedResponse* response);
+
+G_DECLARE_FINAL_TYPE(CameraLinuxCameraEventApiTextureIdResponse, camera_linux_camera_event_api_texture_id_response, CAMERA_LINUX, CAMERA_EVENT_API_TEXTURE_ID_RESPONSE, GObject)
+
+/**
+ * camera_linux_camera_event_api_texture_id_response_is_error:
+ * @response: a #CameraLinuxCameraEventApiTextureIdResponse.
+ *
+ * Checks if a response to CameraEventApi.textureId is an error.
+ *
+ * Returns: a %TRUE if this response is an error.
+ */
+gboolean camera_linux_camera_event_api_texture_id_response_is_error(CameraLinuxCameraEventApiTextureIdResponse* response);
+
+/**
+ * camera_linux_camera_event_api_texture_id_response_get_error_code:
+ * @response: a #CameraLinuxCameraEventApiTextureIdResponse.
+ *
+ * Get the error code for this response.
+ *
+ * Returns: an error code or %NULL if not an error.
+ */
+const gchar* camera_linux_camera_event_api_texture_id_response_get_error_code(CameraLinuxCameraEventApiTextureIdResponse* response);
+
+/**
+ * camera_linux_camera_event_api_texture_id_response_get_error_message:
+ * @response: a #CameraLinuxCameraEventApiTextureIdResponse.
+ *
+ * Get the error message for this response.
+ *
+ * Returns: an error message.
+ */
+const gchar* camera_linux_camera_event_api_texture_id_response_get_error_message(CameraLinuxCameraEventApiTextureIdResponse* response);
+
+/**
+ * camera_linux_camera_event_api_texture_id_response_get_error_details:
+ * @response: a #CameraLinuxCameraEventApiTextureIdResponse.
+ *
+ * Get the error details for this response.
+ *
+ * Returns: (allow-none): an error details or %NULL.
+ */
+FlValue* camera_linux_camera_event_api_texture_id_response_get_error_details(CameraLinuxCameraEventApiTextureIdResponse* response);
 
 G_DECLARE_FINAL_TYPE(CameraLinuxCameraEventApiErrorResponse, camera_linux_camera_event_api_error_response, CAMERA_LINUX, CAMERA_EVENT_API_ERROR_RESPONSE, GObject)
 
@@ -1066,6 +1128,29 @@ void camera_linux_camera_event_api_initialized(CameraLinuxCameraEventApi* api, C
  * Returns: a #CameraLinuxCameraEventApiInitializedResponse or %NULL on error.
  */
 CameraLinuxCameraEventApiInitializedResponse* camera_linux_camera_event_api_initialized_finish(CameraLinuxCameraEventApi* api, GAsyncResult* result, GError** error);
+
+/**
+ * camera_linux_camera_event_api_texture_id:
+ * @api: a #CameraLinuxCameraEventApi.
+ * @texture_id: parameter for this method.
+ * @cancellable: (allow-none): a #GCancellable or %NULL.
+ * @callback: (scope async): (allow-none): a #GAsyncReadyCallback to call when the call is complete or %NULL to ignore the response.
+ * @user_data: (closure): user data to pass to @callback.
+ *
+ */
+void camera_linux_camera_event_api_texture_id(CameraLinuxCameraEventApi* api, int64_t texture_id, GCancellable* cancellable, GAsyncReadyCallback callback, gpointer user_data);
+
+/**
+ * camera_linux_camera_event_api_texture_id_finish:
+ * @api: a #CameraLinuxCameraEventApi.
+ * @result: a #GAsyncResult.
+ * @error: (allow-none): #GError location to store the error occurring, or %NULL to ignore.
+ *
+ * Completes a camera_linux_camera_event_api_texture_id() call.
+ *
+ * Returns: a #CameraLinuxCameraEventApiTextureIdResponse or %NULL on error.
+ */
+CameraLinuxCameraEventApiTextureIdResponse* camera_linux_camera_event_api_texture_id_finish(CameraLinuxCameraEventApi* api, GAsyncResult* result, GError** error);
 
 /**
  * camera_linux_camera_event_api_error:

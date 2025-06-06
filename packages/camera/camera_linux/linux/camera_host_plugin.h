@@ -230,6 +230,10 @@ class CameraHostPlugin {
 
   static void camera_linux_camera_event_api_initialized_callback(
       GObject* object, GAsyncResult* result, gpointer user_data);
+
+  static void set_image_format_group(
+      int64_t camera_id, CameraLinuxPlatformImageFormatGroup image_format_group,
+      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
 };
 
 #endif  // CAMERA_HOST_PLUGIN_PRIVATE_H_

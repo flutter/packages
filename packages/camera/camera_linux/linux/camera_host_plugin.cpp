@@ -39,6 +39,7 @@ CameraHostPlugin::CameraHostPlugin(FlPluginRegistrar* registrar)
       .resume_preview = resume_preview,
       .update_description_while_recording = update_description_while_recording,
       .set_image_file_format = set_image_file_format,
+      .set_image_format_group = set_image_format_group,
   };
 
   camera_linux_camera_api_set_method_handlers(
@@ -114,6 +115,16 @@ void CameraHostPlugin::create(
 
 void CameraHostPlugin::camera_linux_camera_event_api_initialized_callback(
     GObject* object, GAsyncResult* result, gpointer user_data) {}
+
+void CameraHostPlugin::set_image_format_group(
+    int64_t camera_id, CameraLinuxPlatformImageFormatGroup image_format_group,
+    CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
+  CAMERA_HOST_ERROR_HANDLING(set_image_format_group, {
+    Camera& camera = get_camera_by_id(camera_id);
+    camera.setImageFormatGroup(image_format_group);
+    CAMERA_HOST_VOID_RETURN();
+  });
+}
 
 void CameraHostPlugin::initialize(
     int64_t camera_id, CameraLinuxPlatformImageFormatGroup image_format,

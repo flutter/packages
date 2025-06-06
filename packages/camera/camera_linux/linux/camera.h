@@ -31,8 +31,12 @@ class Camera {
 
   ~Camera();
 
-  void initialize(CameraLinuxPlatformImageFormatGroup image_format);
+  void initialize(CameraLinuxPlatformImageFormatGroup imageFormat);
+
   int64_t getTextureId();
+
+  void setImageFormatGroup(
+      CameraLinuxPlatformImageFormatGroup imageFormatGroup);
 
   // State
  public:
@@ -40,8 +44,10 @@ class Camera {
   CameraLinuxPlatformFocusMode focus_mode;
   int width;
   int height;
+  CameraLinuxPlatformImageFormatGroup imageFormatGroup;
 
   void emitState();
+  void emitTextureId(int64_t textureId) const;
 
   Camera& setResolutionPreset(CameraLinuxPlatformResolutionPreset preset);
 
