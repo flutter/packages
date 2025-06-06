@@ -1,3 +1,7 @@
+## 0.9.19+3
+
+* Migrates `start`, `stop`, `close`, `receivedImageStreamData` methods to Swift.
+
 ## 0.9.19+2
 
 * Adds the `Camera` Swift protocol.

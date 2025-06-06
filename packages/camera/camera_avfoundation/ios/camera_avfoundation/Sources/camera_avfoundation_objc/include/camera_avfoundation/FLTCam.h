@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(strong, nonatomic, nullable) NSObject<FLTAssetWriterInput> *videoWriterInput;
 @property(strong, nonatomic, nullable) NSObject<FLTAssetWriterInput> *audioWriterInput;
 @property(nullable) NSObject<FLTAssetWriterInputPixelBufferAdaptor> *videoAdaptor;
+@property(readonly, nonatomic) NSObject<FLTCaptureSession> *videoCaptureSession;
+@property(readonly, nonatomic) NSObject<FLTCaptureSession> *audioCaptureSession;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
@@ -56,12 +58,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Informs the Dart side of the plugin of the current camera state and capabilities.
 - (void)reportInitializationState;
-- (void)start;
-- (void)stop;
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
 - (void)captureToFileWithCompletion:(void (^)(NSString *_Nullable,
                                               FlutterError *_Nullable))completion;
-- (void)close;
 - (void)setImageFileFormat:(FCPPlatformImageFileFormat)fileFormat;
 /// Starts recording a video with an optional streaming messenger.
 /// If the messenger is non-nil then it will be called for each
@@ -92,12 +91,6 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// @param mode The focus mode that should be applied.
 - (void)setFocusMode:(FCPPlatformFocusMode)mode;
-
-/// Acknowledges the receipt of one image stream frame.
-///
-/// This should be called each time a frame is received. Failing to call it may
-/// cause later frames to be dropped instead of streamed.
-- (void)receivedImageStreamData;
 
 - (void)pausePreview;
 - (void)resumePreview;
