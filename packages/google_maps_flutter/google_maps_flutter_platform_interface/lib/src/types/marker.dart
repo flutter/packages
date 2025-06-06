@@ -294,7 +294,7 @@ class Marker implements MapsObject<Marker> {
       position: positionParam ?? position,
       rotation: rotationParam ?? rotation,
       visible: visibleParam ?? visible,
-      zIndexInt: zIndexIntParam ?? zIndexParam?.round() ?? zIndexInt,
+      zIndex: zIndexIntParam?.toDouble() ?? zIndexParam ?? zIndex,
       onTap: onTapParam ?? onTap,
       onDragStart: onDragStartParam ?? onDragStart,
       onDrag: onDragParam ?? onDrag,
