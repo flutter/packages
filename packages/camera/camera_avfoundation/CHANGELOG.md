@@ -1,3 +1,7 @@
+## 0.9.20+1
+
+* Migrates `start`, `stop`, `close`, `receivedImageStreamData` methods to Swift.
+
 ## 0.9.20
 
 * Fixes incorrect types in image stream events.

@@ -27,6 +27,20 @@ final class DefaultCamera: FLTCam, Camera {
   /// https://github.com/flutter/plugins/pull/4520#discussion_r766335637
   private var maxStreamingPendingFramesCount = 4
 
+  func receivedImageStreamData() {
+    streamingPendingFramesCount -= 1
+  }
+
+  func start() {
+    videoCaptureSession.startRunning()
+    audioCaptureSession.startRunning()
+  }
+
+  func stop() {
+    videoCaptureSession.stopRunning()
+    audioCaptureSession.stopRunning()
+  }
+
   func captureOutput(
     _ output: AVCaptureOutput,
     didOutput sampleBuffer: CMSampleBuffer,
@@ -237,6 +251,22 @@ final class DefaultCamera: FLTCam, Camera {
       if !(audioWriterInput?.append(sampleBuffer) ?? false) {
         reportErrorMessage("Unable to write to audio input")
       }
+    }
+  }
+
+  func close() {
+    stop()
+    for input in videoCaptureSession.inputs {
+      videoCaptureSession.removeInput(FLTDefaultCaptureInput(input: input))
+    }
+    for output in videoCaptureSession.outputs {
+      videoCaptureSession.removeOutput(output)
+    }
+    for input in audioCaptureSession.inputs {
+      audioCaptureSession.removeInput(FLTDefaultCaptureInput(input: input))
+    }
+    for output in audioCaptureSession.outputs {
+      audioCaptureSession.removeOutput(output)
     }
   }
 

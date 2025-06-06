@@ -32,8 +32,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) int64_t textureId;
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
-@property(readonly, nonatomic) NSObject<FLTCaptureSession> *videoCaptureSession;
-@property(readonly, nonatomic) NSObject<FLTCaptureSession> *audioCaptureSession;
 
 @property(readonly, nonatomic) NSObject<FLTCaptureInput> *captureVideoInput;
 @property(readonly, nonatomic) CGSize captureSize;
@@ -220,16 +218,6 @@ NSString *const errorMethod = @"error";
                                     // Ignore any errors, as this is just an event broadcast.
                                 }];
   });
-}
-
-- (void)start {
-  [_videoCaptureSession startRunning];
-  [_audioCaptureSession startRunning];
-}
-
-- (void)stop {
-  [_videoCaptureSession stopRunning];
-  [_audioCaptureSession stopRunning];
 }
 
 - (void)setVideoFormat:(OSType)videoFormat {
@@ -476,22 +464,6 @@ NSString *const errorMethod = @"error";
     }
   }
   return bestFormat;
-}
-
-- (void)close {
-  [self stop];
-  for (AVCaptureInput *input in [_videoCaptureSession inputs]) {
-    [_videoCaptureSession removeInput:[[FLTDefaultCaptureInput alloc] initWithInput:input]];
-  }
-  for (AVCaptureOutput *output in [_videoCaptureSession outputs]) {
-    [_videoCaptureSession removeOutput:output];
-  }
-  for (AVCaptureInput *input in [_audioCaptureSession inputs]) {
-    [_audioCaptureSession removeInput:[[FLTDefaultCaptureInput alloc] initWithInput:input]];
-  }
-  for (AVCaptureOutput *output in [_audioCaptureSession outputs]) {
-    [_audioCaptureSession removeOutput:output];
-  }
 }
 
 - (void)dealloc {
@@ -892,10 +864,6 @@ NSString *const errorMethod = @"error";
   } else {
     [self reportErrorMessage:@"Images from camera are not streaming!"];
   }
-}
-
-- (void)receivedImageStreamData {
-  self.streamingPendingFramesCount--;
 }
 
 - (void)setZoomLevel:(CGFloat)zoom withCompletion:(void (^)(FlutterError *_Nullable))completion {
