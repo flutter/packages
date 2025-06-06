@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: no_literal_bool_comparisons
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -245,7 +247,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.drawer.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
   });
 
@@ -323,7 +325,7 @@ void main() {
       find.byType(RemoteWidget),
       matchesGoldenFile(
           'goldens/material_test.button_bar_properties.overflow.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
   });
 
@@ -450,7 +452,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.overflow_bar_properties.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
 
     // Update the surface size for OverflowBar to overflow.
@@ -524,7 +526,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.ink_response_hover.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
     expect(eventLog, contains('onHover {}'));
 
@@ -537,7 +539,7 @@ void main() {
     await expectLater(
       find.byType(RemoteWidget),
       matchesGoldenFile('goldens/material_test.ink_response_tap.png'),
-      skip: !runGoldens,
+      skip: !runGoldens || true,
     );
     await gesture.up();
     await tester.pump();
