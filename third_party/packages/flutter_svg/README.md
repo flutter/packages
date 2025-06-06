@@ -130,10 +130,15 @@ import 'dart:ui' as ui;
 ```
 
 The `SvgPicture` helps to automate this logic, and it provides some convenience
-wrappers for getting assets from multiple sources. Unlike the `vector_graphics`
-package, this package _does not render the data to an `Image` at any point_.
-This carries a performance penalty for some common use cases, but also allows
-for more flexibility around scaling.
+wrappers for getting assets from multiple sources.
+
+This package now supports a render strategy setting, allowing certain
+applications to achieve better performance when needed. By default, the
+rendering uses the original `picture` mode, which retains full flexibility in
+scaling. Alternatively, when using the `raster` strategy, the SVG data is
+rendered into an `Image`, which is then drawn using drawImage. This approach may
+sacrifice some flexibility—especially around resolution scaling—but can
+significantly improve rendering performance in specific use cases.
 
 ## Precompiling and Optimizing SVGs
 

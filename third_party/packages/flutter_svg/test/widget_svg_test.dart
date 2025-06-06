@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
+import 'package:vector_graphics/vector_graphics_compat.dart';
 
 class _TolerantComparator extends LocalFileComparator {
   _TolerantComparator(super.testFile);
@@ -130,6 +131,28 @@ void main() {
             svgStr,
             width: 100.0,
             height: 100.0,
+          ),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.string.png');
+  });
+
+  testWidgets('SvgPicture.string with renderingStrategy',
+      (WidgetTester tester) async {
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      MediaQuery(
+        data: mediaQueryData,
+        child: RepaintBoundary(
+          key: key,
+          child: SvgPicture.string(
+            svgStr,
+            width: 100.0,
+            height: 100.0,
+            renderingStrategy: RenderingStrategy.raster,
           ),
         ),
       ),
@@ -295,6 +318,25 @@ void main() {
     await _checkWidgetAndGolden(key, 'flutter_logo.memory.png');
   });
 
+  testWidgets('SvgPicture.memory with strategy', (WidgetTester tester) async {
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      MediaQuery(
+        data: mediaQueryData,
+        child: RepaintBoundary(
+          key: key,
+          child: SvgPicture.memory(
+            svgBytes,
+            renderingStrategy: RenderingStrategy.raster,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await _checkWidgetAndGolden(key, 'flutter_logo.memory.png');
+  });
+
   testWidgets('SvgPicture.memory with colorMapper',
       (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
@@ -326,6 +368,26 @@ void main() {
           child: SvgPicture.asset(
             'test.svg',
             bundle: fakeAsset,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.asset.png');
+  });
+
+  testWidgets('SvgPicture.asset with strategy', (WidgetTester tester) async {
+    final FakeAssetBundle fakeAsset = FakeAssetBundle();
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      MediaQuery(
+        data: mediaQueryData,
+        child: RepaintBoundary(
+          key: key,
+          child: SvgPicture.asset(
+            'test.svg',
+            bundle: fakeAsset,
+            renderingStrategy: RenderingStrategy.raster,
           ),
         ),
       ),
@@ -380,6 +442,33 @@ void main() {
     await _checkWidgetAndGolden(key, 'flutter_logo.asset.png');
   });
 
+  testWidgets('SvgPicture.asset DefaultAssetBundle with strategy',
+      (WidgetTester tester) async {
+    final FakeAssetBundle fakeAsset = FakeAssetBundle();
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: MediaQuery(
+          data: mediaQueryData,
+          child: DefaultAssetBundle(
+            bundle: fakeAsset,
+            child: RepaintBoundary(
+              key: key,
+              child: SvgPicture.asset(
+                'test.svg',
+                semanticsLabel: 'Test SVG',
+                renderingStrategy: RenderingStrategy.raster,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.asset.png');
+  });
+
   testWidgets('SvgPicture.asset DefaultAssetBundle with colorMapper',
       (WidgetTester tester) async {
     final FakeAssetBundle fakeAsset = FakeAssetBundle();
@@ -417,6 +506,25 @@ void main() {
           child: SvgPicture.network(
             'test.svg',
             httpClient: FakeHttpClient(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await _checkWidgetAndGolden(key, 'flutter_logo.network.png');
+  });
+
+  testWidgets('SvgPicture.network with strategy', (WidgetTester tester) async {
+    final GlobalKey key = GlobalKey();
+    await tester.pumpWidget(
+      MediaQuery(
+        data: mediaQueryData,
+        child: RepaintBoundary(
+          key: key,
+          child: SvgPicture.network(
+            'test.svg',
+            httpClient: FakeHttpClient(),
+            renderingStrategy: RenderingStrategy.raster,
           ),
         ),
       ),
