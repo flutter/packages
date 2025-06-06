@@ -108,6 +108,13 @@
   self.marker.zIndex = zIndex;
 }
 
+- (void)setCollisionBehavior:(FGMPlatformMarkerCollisionBehaviorBox *)collisionBehavior {
+  if ([self.marker isKindOfClass:[GMSAdvancedMarker class]]) {
+    GMSCollisionBehavior collitionBehaviorValue = (GMSCollisionBehavior)collisionBehavior.value;
+    [(GMSAdvancedMarker *)self.marker setCollisionBehavior:(collitionBehaviorValue)];
+  }
+}
+
 - (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker
                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                      screenScale:(CGFloat)screenScale {
@@ -122,6 +129,7 @@
   [self setPosition:FGMGetCoordinateForPigeonLatLng(platformMarker.position)];
   [self setRotation:platformMarker.rotation];
   [self setZIndex:platformMarker.zIndex];
+  [self setCollisionBehavior:platformMarker.collisionBehavior];
   FGMPlatformInfoWindow *infoWindow = platformMarker.infoWindow;
   [self setInfoWindowAnchor:FGMGetCGPointForPigeonPoint(infoWindow.anchor)];
   if (infoWindow.title) {
@@ -147,6 +155,7 @@
 @property(weak, nonatomic, nullable) FGMClusterManagersController *clusterManagersController;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
+@property(nonatomic) FGMPlatformMarkerType markerType;
 
 @end
 
@@ -155,7 +164,8 @@
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
       clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                     markerType:(FGMPlatformMarkerType)markerType {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
@@ -163,6 +173,7 @@
     _clusterManagersController = clusterManagersController;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
     _registrar = registrar;
+    _markerType = markerType;
   }
   return self;
 }
@@ -177,7 +188,10 @@
   CLLocationCoordinate2D position = FGMGetCoordinateForPigeonLatLng(markerToAdd.position);
   NSString *markerIdentifier = markerToAdd.markerId;
   NSString *clusterManagerIdentifier = markerToAdd.clusterManagerId;
-  GMSMarker *marker = [GMSMarker markerWithPosition:position];
+  GMSMarker *marker = (self.markerType == FGMPlatformMarkerTypeAdvancedMarker)
+                          ? [GMSAdvancedMarker markerWithPosition:position]
+                          : [GMSMarker markerWithPosition:position];
+
   FLTGoogleMapMarkerController *controller =
       [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
                                           markerIdentifier:markerIdentifier

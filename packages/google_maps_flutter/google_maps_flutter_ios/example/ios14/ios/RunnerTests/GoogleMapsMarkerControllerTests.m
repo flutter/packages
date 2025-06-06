@@ -33,7 +33,8 @@
   return [[FLTMarkersController alloc] initWithMapView:mapView
                                        callbackHandler:[[FGMMapsCallbackApi alloc] init]
                              clusterManagersController:nil
-                                             registrar:mockRegistrar];
+                                             registrar:mockRegistrar
+                                            markerType:FGMPlatformMarkerTypeMarker];
 }
 
 - (FGMPlatformBitmap *)placeholderBitmap {
@@ -53,23 +54,24 @@
   double latitutde = 10.0;
   double longitude = 20.0;
   [controller addMarkers:@[ [FGMPlatformMarker
-                                makeWithAlpha:alpha
-                                       anchor:[FGMPlatformPoint makeWithX:anchorX y:anchorY]
-                             consumeTapEvents:YES
-                                    draggable:YES
-                                         flat:YES
-                                         icon:[self placeholderBitmap]
-                                   infoWindow:[FGMPlatformInfoWindow
-                                                  makeWithTitle:@"info title"
-                                                        snippet:@"info snippet"
-                                                         anchor:[FGMPlatformPoint makeWithX:0 y:0]]
-                                     position:[FGMPlatformLatLng makeWithLatitude:latitutde
-                                                                        longitude:longitude]
-                                     rotation:rotation
-                                      visible:YES
-                                       zIndex:zIndex
-                                     markerId:markerIdentifier
-                             clusterManagerId:nil] ]];
+                                 makeWithAlpha:alpha
+                                        anchor:[FGMPlatformPoint makeWithX:anchorX y:anchorY]
+                              consumeTapEvents:YES
+                                     draggable:YES
+                                          flat:YES
+                                          icon:[self placeholderBitmap]
+                                    infoWindow:[FGMPlatformInfoWindow
+                                                   makeWithTitle:@"info title"
+                                                         snippet:@"info snippet"
+                                                          anchor:[FGMPlatformPoint makeWithX:0 y:0]]
+                                      position:[FGMPlatformLatLng makeWithLatitude:latitutde
+                                                                         longitude:longitude]
+                                      rotation:rotation
+                                       visible:YES
+                                        zIndex:zIndex
+                                      markerId:markerIdentifier
+                              clusterManagerId:nil
+                             collisionBehavior:nil] ]];
 
   FLTGoogleMapMarkerController *markerController =
       controller.markerIdentifierToController[markerIdentifier];
@@ -93,22 +95,24 @@
 
   NSString *markerIdentifier = @"marker";
   [controller addMarkers:@[ [FGMPlatformMarker
-                                makeWithAlpha:1.0
-                                       anchor:[FGMPlatformPoint makeWithX:0 y:0]
-                             consumeTapEvents:NO
-                                    draggable:YES
-                                         flat:NO
-                                         icon:[self placeholderBitmap]
-                                   infoWindow:[FGMPlatformInfoWindow
-                                                  makeWithTitle:@"info title"
-                                                        snippet:@"info snippet"
-                                                         anchor:[FGMPlatformPoint makeWithX:0 y:0]]
-                                     position:[FGMPlatformLatLng makeWithLatitude:0.0 longitude:0.0]
-                                     rotation:0
-                                      visible:NO
-                                       zIndex:0
-                                     markerId:markerIdentifier
-                             clusterManagerId:nil] ]];
+                                 makeWithAlpha:1.0
+                                        anchor:[FGMPlatformPoint makeWithX:0 y:0]
+                              consumeTapEvents:NO
+                                     draggable:YES
+                                          flat:NO
+                                          icon:[self placeholderBitmap]
+                                    infoWindow:[FGMPlatformInfoWindow
+                                                   makeWithTitle:@"info title"
+                                                         snippet:@"info snippet"
+                                                          anchor:[FGMPlatformPoint makeWithX:0 y:0]]
+                                      position:[FGMPlatformLatLng makeWithLatitude:0.0
+                                                                         longitude:0.0]
+                                      rotation:0
+                                       visible:NO
+                                        zIndex:0
+                                      markerId:markerIdentifier
+                              clusterManagerId:nil
+                             collisionBehavior:nil] ]];
 
   FLTGoogleMapMarkerController *markerController =
       controller.markerIdentifierToController[markerIdentifier];
@@ -125,22 +129,24 @@
 
   NSString *markerIdentifier = @"marker";
   [controller addMarkers:@[ [FGMPlatformMarker
-                                makeWithAlpha:1.0
-                                       anchor:[FGMPlatformPoint makeWithX:0 y:0]
-                             consumeTapEvents:NO
-                                    draggable:NO
-                                         flat:YES
-                                         icon:[self placeholderBitmap]
-                                   infoWindow:[FGMPlatformInfoWindow
-                                                  makeWithTitle:@"info title"
-                                                        snippet:@"info snippet"
-                                                         anchor:[FGMPlatformPoint makeWithX:0 y:0]]
-                                     position:[FGMPlatformLatLng makeWithLatitude:0.0 longitude:0.0]
-                                     rotation:0
-                                      visible:NO
-                                       zIndex:0
-                                     markerId:markerIdentifier
-                             clusterManagerId:nil] ]];
+                                 makeWithAlpha:1.0
+                                        anchor:[FGMPlatformPoint makeWithX:0 y:0]
+                              consumeTapEvents:NO
+                                     draggable:NO
+                                          flat:YES
+                                          icon:[self placeholderBitmap]
+                                    infoWindow:[FGMPlatformInfoWindow
+                                                   makeWithTitle:@"info title"
+                                                         snippet:@"info snippet"
+                                                          anchor:[FGMPlatformPoint makeWithX:0 y:0]]
+                                      position:[FGMPlatformLatLng makeWithLatitude:0.0
+                                                                         longitude:0.0]
+                                      rotation:0
+                                       visible:NO
+                                        zIndex:0
+                                      markerId:markerIdentifier
+                              clusterManagerId:nil
+                             collisionBehavior:nil] ]];
 
   FLTGoogleMapMarkerController *markerController =
       controller.markerIdentifierToController[markerIdentifier];
@@ -157,22 +163,24 @@
 
   NSString *markerIdentifier = @"marker";
   [controller addMarkers:@[ [FGMPlatformMarker
-                                makeWithAlpha:1.0
-                                       anchor:[FGMPlatformPoint makeWithX:0 y:0]
-                             consumeTapEvents:NO
-                                    draggable:NO
-                                         flat:NO
-                                         icon:[self placeholderBitmap]
-                                   infoWindow:[FGMPlatformInfoWindow
-                                                  makeWithTitle:@"info title"
-                                                        snippet:@"info snippet"
-                                                         anchor:[FGMPlatformPoint makeWithX:0 y:0]]
-                                     position:[FGMPlatformLatLng makeWithLatitude:0.0 longitude:0.0]
-                                     rotation:0
-                                      visible:YES
-                                       zIndex:0
-                                     markerId:markerIdentifier
-                             clusterManagerId:nil] ]];
+                                 makeWithAlpha:1.0
+                                        anchor:[FGMPlatformPoint makeWithX:0 y:0]
+                              consumeTapEvents:NO
+                                     draggable:NO
+                                          flat:NO
+                                          icon:[self placeholderBitmap]
+                                    infoWindow:[FGMPlatformInfoWindow
+                                                   makeWithTitle:@"info title"
+                                                         snippet:@"info snippet"
+                                                          anchor:[FGMPlatformPoint makeWithX:0 y:0]]
+                                      position:[FGMPlatformLatLng makeWithLatitude:0.0
+                                                                         longitude:0.0]
+                                      rotation:0
+                                       visible:YES
+                                        zIndex:0
+                                      markerId:markerIdentifier
+                              clusterManagerId:nil
+                             collisionBehavior:nil] ]];
 
   FLTGoogleMapMarkerController *markerController =
       controller.markerIdentifierToController[markerIdentifier];
@@ -193,23 +201,24 @@
   double anchorY = 2.718;
   [controller
       addMarkers:@[ [FGMPlatformMarker
-                        makeWithAlpha:1.0
-                               anchor:[FGMPlatformPoint makeWithX:0 y:0]
-                     consumeTapEvents:YES
-                            draggable:YES
-                                 flat:YES
-                                 icon:[self placeholderBitmap]
-                           infoWindow:[FGMPlatformInfoWindow
-                                          makeWithTitle:title
-                                                snippet:snippet
-                                                 anchor:[FGMPlatformPoint makeWithX:anchorX
-                                                                                  y:anchorY]]
-                             position:[FGMPlatformLatLng makeWithLatitude:0 longitude:0]
-                             rotation:0
-                              visible:YES
-                               zIndex:0
-                             markerId:markerIdentifier
-                     clusterManagerId:nil] ]];
+                         makeWithAlpha:1.0
+                                anchor:[FGMPlatformPoint makeWithX:0 y:0]
+                      consumeTapEvents:YES
+                             draggable:YES
+                                  flat:YES
+                                  icon:[self placeholderBitmap]
+                            infoWindow:[FGMPlatformInfoWindow
+                                           makeWithTitle:title
+                                                 snippet:snippet
+                                                  anchor:[FGMPlatformPoint makeWithX:anchorX
+                                                                                   y:anchorY]]
+                              position:[FGMPlatformLatLng makeWithLatitude:0 longitude:0]
+                              rotation:0
+                               visible:YES
+                                zIndex:0
+                              markerId:markerIdentifier
+                      clusterManagerId:nil
+                     collisionBehavior:nil] ]];
 
   FLTGoogleMapMarkerController *markerController =
       controller.markerIdentifierToController[markerIdentifier];

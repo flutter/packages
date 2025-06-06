@@ -23,6 +23,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerCollisionBehavior;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.List;
@@ -81,7 +83,8 @@ public class MarkersControllerTest {
         .setZIndex(0.0)
         .setConsumeTapEvents(false)
         .setIcon(icon)
-        .setInfoWindow(infoWindow);
+        .setInfoWindow(infoWindow)
+        .setCollisionBehavior(PlatformMarkerCollisionBehavior.REQUIRED_DISPLAY);
   }
 
   @Before
@@ -90,14 +93,16 @@ public class MarkersControllerTest {
     assetManager = ApplicationProvider.getApplicationContext().getAssets();
     context = ApplicationProvider.getApplicationContext();
     flutterApi = spy(new MapsCallbackApi(mock(BinaryMessenger.class)));
-    clusterManagersController = spy(new ClusterManagersController(flutterApi, context));
+    clusterManagersController =
+        spy(new ClusterManagersController(flutterApi, context, PlatformMarkerType.MARKER));
     controller =
         new MarkersController(
             flutterApi,
             clusterManagersController,
             assetManager,
             density,
-            bitmapDescriptorFactoryWrapper);
+            bitmapDescriptorFactoryWrapper,
+            PlatformMarkerType.MARKER);
     googleMap = mock(GoogleMap.class);
     markerManager = new MarkerManager(googleMap);
     markerCollection = markerManager.newCollection();

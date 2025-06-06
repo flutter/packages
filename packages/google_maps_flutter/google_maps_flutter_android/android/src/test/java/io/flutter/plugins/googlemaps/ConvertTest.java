@@ -37,6 +37,7 @@ import com.google.maps.android.heatmaps.WeightedLatLng;
 import com.google.maps.android.projection.SphericalMercatorProjection;
 import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -97,11 +98,11 @@ public class ConvertTest {
 
     StaticCluster<MarkerBuilder> cluster = new StaticCluster<>(clusterPosition);
 
-    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId);
+    MarkerBuilder marker1 = new MarkerBuilder("m_1", clusterManagerId, PlatformMarkerType.MARKER);
     marker1.setPosition(markerPosition1);
     cluster.add(marker1);
 
-    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId);
+    MarkerBuilder marker2 = new MarkerBuilder("m_2", clusterManagerId, PlatformMarkerType.MARKER);
     marker2.setPosition(markerPosition2);
     cluster.add(marker2);
 
@@ -325,6 +326,20 @@ public class ConvertTest {
     }
 
     fail("Expected an IllegalArgumentException to be thrown");
+  }
+
+  @Test
+  public void GetBitmapFromPinConfig() {
+    Messages.PlatformBitmapPinConfig bitmap =
+        new Messages.PlatformBitmapPinConfig.Builder()
+            .setBackgroundColor(0xFFFFFFL)
+            .setBorderColor(0xFFFFFFL)
+            .build();
+
+    when(bitmapDescriptorFactoryWrapper.fromPinConfig(any())).thenReturn(mockBitmapDescriptor);
+    BitmapDescriptor result =
+        Convert.getBitmapFromPinConfig(bitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper);
+    Assert.assertEquals(mockBitmapDescriptor, result);
   }
 
   @Test
