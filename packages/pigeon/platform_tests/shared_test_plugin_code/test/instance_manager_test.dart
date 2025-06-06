@@ -199,11 +199,7 @@ void main() {
       (WidgetTester tester) async {
         bool messageCallMade = false;
         TestDefaultBinaryMessengerBinding
-            .instance.defaultBinaryMessenger.allMessagesHandler = (
-          String channel,
-          MessageHandler? handler,
-          ByteData? message,
-        ) {
+            .instance.defaultBinaryMessenger.allMessagesHandler = (_, __, ___) {
           messageCallMade = true;
           return null;
         };
@@ -221,11 +217,7 @@ void main() {
       (WidgetTester tester) async {
         bool messageCallMade = false;
         TestDefaultBinaryMessengerBinding
-            .instance.defaultBinaryMessenger.allMessagesHandler = (
-          String channel,
-          MessageHandler? handler,
-          ByteData? message,
-        ) {
+            .instance.defaultBinaryMessenger.allMessagesHandler = (_, __, ___) {
           messageCallMade = true;
           return null;
         };
