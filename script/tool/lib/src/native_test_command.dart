@@ -399,8 +399,7 @@ this command.
           const List<String> abis = <String>[
             'android-arm',
             'android-arm64',
-            'android-x64',
-            'android-x86'
+            'android-x64'
           ];
           final int exitCode = await project.runCommand(
             'app:connectedAndroidTest',
