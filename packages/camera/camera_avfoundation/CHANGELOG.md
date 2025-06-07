@@ -1,3 +1,9 @@
+## 0.9.19+3
+
+* Migrates lifecycle methods (`start`, `stop`, `close`) to Swift.
+* Migrates exposure and focus related methods to Swift.
+* Migrates `receivedImageStreamData` and `reportInitializationState` methods to Swift.
+
 ## 0.9.19+2
 
 * Adds the `Camera` Swift protocol.
