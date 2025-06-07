@@ -303,7 +303,12 @@ class GoRouteConfig extends RouteBaseConfig {
         );
       }
     }
-    final String fromStateExpression = decodeParameter(element, _pathParams);
+    final List<ElementAnnotation>? metadata = _fieldMetadata(element.name);
+    final String fromStateExpression = decodeParameter(
+      element,
+      _pathParams,
+      metadata,
+    );
 
     if (element.isPositional) {
       return '$fromStateExpression,';
@@ -328,7 +333,8 @@ class GoRouteConfig extends RouteBaseConfig {
       );
     }
 
-    return encodeField(field);
+    final List<ElementAnnotation>? metadata = _fieldMetadata(fieldName);
+    return encodeField(field, metadata);
   }
 
   String get _locationQueryParams {
@@ -751,6 +757,10 @@ $routeDataClassName.$dataConvertionFunctionName(
 
   PropertyAccessorElement? _field(String name) =>
       routeDataClass.getGetter(name);
+
+  List<ElementAnnotation>? _fieldMetadata(String name) => routeDataClass.fields
+      .firstWhereOrNull((FieldElement element) => element.displayName == name)
+      ?.metadata;
 
   /// The name of `RouteData` subclass this configuration represents.
   @protected
