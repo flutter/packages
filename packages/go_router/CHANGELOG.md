@@ -1,6 +1,7 @@
-## NEXT
+## 15.1.3
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Fixes typo in API docs.
 
 ## 15.1.2
 
