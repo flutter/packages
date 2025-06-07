@@ -1,3 +1,7 @@
+## 15.1.4
+
+- Adds annotation for go_router_builder that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781)
+
 ## 15.1.3
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
