@@ -1,0 +1,51 @@
+RouteBase get $goodJson =>
+    GoRouteData.$route(path: '/', factory: $GoodJson._fromState);
+
+mixin $GoodJson on GoRouteData {
+  static GoodJson _fromState(GoRouterState state) => GoodJson(
+    id: (String json0) {
+      return JsonExample.fromJson(jsonDecode(json0) as Map<String, dynamic>);
+    }(state.uri.queryParameters['id']!),
+    optionalField: _$convertMapValue(
+      'optional-field',
+      state.uri.queryParameters,
+      (String json0) {
+        return JsonExample.fromJson(jsonDecode(json0) as Map<String, dynamic>);
+      },
+    ),
+  );
+
+  GoodJson get _self => this as GoodJson;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/',
+    queryParams: {
+      'id': jsonEncode(_self.id.toJson()),
+      if (_self.optionalField != null)
+        'optional-field': jsonEncode(_self.optionalField!.toJson()),
+    },
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
