@@ -167,7 +167,7 @@ void main() {
       instanceManager.addDartCreatedInstance(object);
 
       object = null;
-      await forceGC();
+      await forceGC(fullGcCycles: 2);
 
       expect(weakReferencedRemovedCalled, isTrue);
     });
