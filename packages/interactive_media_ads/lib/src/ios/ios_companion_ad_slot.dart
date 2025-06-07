@@ -33,9 +33,6 @@ final class IOSCompanionAdSlotCreationParams
   /// Creates a [IOSCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
   factory IOSCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
-    // Placeholder to prevent requiring a breaking change if params are added to
-    // PlatformCompanionAdSlotCreationParams.
-    // ignore: avoid_unused_constructor_parameters
     PlatformCompanionAdSlotCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   }) {
@@ -50,9 +47,6 @@ final class IOSCompanionAdSlotCreationParams
   /// Creates a [IOSCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
   factory IOSCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsFluid(
-    // Placeholder to prevent requiring a breaking change if params are added to
-    // PlatformCompanionAdSlotCreationParams.
-    // ignore: avoid_unused_constructor_parameters
     PlatformCompanionAdSlotCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   }) {

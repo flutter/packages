@@ -40,9 +40,6 @@ final class AndroidCompanionAdSlotCreationParams
   /// Creates a [AndroidCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
   factory AndroidCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
-    // Placeholder to prevent requiring a breaking change if params are added to
-    // PlatformCompanionAdSlotCreationParams.
-    // ignore: avoid_unused_constructor_parameters
     PlatformCompanionAdSlotCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
@@ -59,8 +56,6 @@ final class AndroidCompanionAdSlotCreationParams
   /// Creates a [AndroidCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
   factory AndroidCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsFluid(
-    // Placeholder to prevent requiring a breaking change if params are added to
-    // PlatformCompanionAdSlotCreationParams.
     PlatformCompanionAdSlotCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
