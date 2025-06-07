@@ -188,7 +188,7 @@ void main() {
       instanceManager.addHostCreatedInstance(object, 0);
 
       object = null;
-      await forceGC();
+      await forceGC(fullGcCycles: 2);
 
       expect(weakReferencedRemovedCalled, isFalse);
     });
