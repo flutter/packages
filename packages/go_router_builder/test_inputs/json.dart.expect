@@ -1,0 +1,36 @@
+RouteBase get $goodJson => GoRouteData.$route(
+      path: '/',
+      factory: _$GoodJson._fromState,
+    );
+
+mixin _$GoodJson on GoRouteData {
+  static GoodJson _fromState(GoRouterState state) => GoodJson(
+        id: (String json0) {
+          return JsonExample.fromJson(
+              jsonDecode(json0) as Map<String, dynamic>);
+        }(state.uri.queryParameters['id']!),
+      );
+
+  GoodJson get _self => this as GoodJson;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/',
+        queryParams: {
+          'id': jsonEncode(_self.id.toJson()),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
