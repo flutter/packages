@@ -14,6 +14,7 @@ class InteractiveMediaAdsProxy {
   /// Constructs an [InteractiveMediaAdsProxy].
   const InteractiveMediaAdsProxy({
     this.newIMAAdDisplayContainer = IMAAdDisplayContainer.new,
+    this.newUIView = UIView.new,
     this.newUIViewController = UIViewController.new,
     this.newIMAContentPlayhead = IMAContentPlayhead.new,
     this.newIMAAdsLoader = IMAAdsLoader.new,
@@ -31,7 +32,11 @@ class InteractiveMediaAdsProxy {
   final IMAAdDisplayContainer Function({
     required UIView adContainer,
     UIViewController? adContainerViewController,
+    List<IMACompanionAdSlot>? companionSlots,
   }) newIMAAdDisplayContainer;
+
+  /// Constructs [UIView].
+  final UIView Function() newUIView;
 
   /// Constructs [UIViewController].
   final UIViewController Function({
@@ -96,5 +101,15 @@ class InteractiveMediaAdsProxy {
   }) sizeIMACompanionAdSlot;
 
   /// Constructs [IMACompanionDelegate].
-  final IMACompanionDelegate Function() newIMACompanionDelegate;
+  final IMACompanionDelegate Function({
+    void Function(
+      IMACompanionDelegate,
+      IMACompanionAdSlot,
+      bool,
+    )? companionAdSlotFilled,
+    void Function(
+      IMACompanionDelegate,
+      IMACompanionAdSlot,
+    )? companionSlotWasClicked,
+  }) newIMACompanionDelegate;
 }

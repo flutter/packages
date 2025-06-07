@@ -55,7 +55,7 @@ If building on Android, add the user permissions required by the IMA SDK for req
 Add the import statements for the `interactive_media_ads` and [video_player][7]. Both plugins should
 already be added to your `pubspec.yaml`.
 
-<?code-excerpt "example/lib/main.dart (imports)"?>
+<?code-excerpt "example/lib/readme_example.dart (imports)"?>
 ```dart
 import 'package:interactive_media_ads/interactive_media_ads.dart';
 import 'package:video_player/video_player.dart';
@@ -66,7 +66,7 @@ import 'package:video_player/video_player.dart';
 Create a new [StatefulWidget](https://api.flutter.dev/flutter/widgets/StatefulWidget-class.html)
 that handles displaying Ads and playing content.
 
-<?code-excerpt "example/lib/main.dart (example_widget)"?>
+<?code-excerpt "example/lib/readme_example.dart (example_widget)"?>
 ```dart
 /// Example widget displaying an Ad before a video.
 class AdExampleWidget extends StatefulWidget {
@@ -120,7 +120,7 @@ Instantiate the [AdDisplayContainer][3] for playing Ads and the
 [VideoPlayerController](https://pub.dev/documentation/video_player/latest/video_player/VideoPlayerController-class.html)
 for playing content.
 
-<?code-excerpt "example/lib/main.dart (ad_and_content_players)"?>
+<?code-excerpt "example/lib/readme_example.dart (ad_and_content_players)"?>
 ```dart
 late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
   onContainerAdded: (AdDisplayContainer container) {
@@ -194,7 +194,7 @@ void initState() {
 
 Return a `Widget` that contains the ad player and the content player.
 
-<?code-excerpt "example/lib/main.dart (widget_build)"?>
+<?code-excerpt "example/lib/readme_example.dart (widget_build)"?>
 ```dart
 @override
 Widget build(BuildContext context) {
@@ -244,7 +244,7 @@ Widget build(BuildContext context) {
 
 Handle requesting ads and add event listeners to handle when content should be displayed or hidden.
 
-<?code-excerpt "example/lib/main.dart (request_ads)"?>
+<?code-excerpt "example/lib/readme_example.dart (request_ads)"?>
 ```dart
 Future<void> _requestAds(AdDisplayContainer container) {
   return _adsLoader.requestAds(AdsRequest(
@@ -292,7 +292,7 @@ Future<void> _pauseContent() {
 
 Dispose the content player and destroy the [AdsManager][6].
 
-<?code-excerpt "example/lib/main.dart (dispose)"?>
+<?code-excerpt "example/lib/readme_example.dart (dispose)"?>
 ```dart
 @override
 void dispose() {

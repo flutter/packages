@@ -101,4 +101,14 @@ class CompanionAdSlotProxyApiTest {
 
     verify(instance).setSize(width.toInt(), height.toInt())
   }
+
+  @Test
+  fun setFluidSize() {
+    val api = TestProxyApiRegistrar().getPigeonApiCompanionAdSlot()
+
+    val instance = mock<CompanionAdSlot>()
+    api.setFluidSize(instance)
+
+    verify(instance).setSize(CompanionAdSlot.FLUID_SIZE, CompanionAdSlot.FLUID_SIZE)
+  }
 }

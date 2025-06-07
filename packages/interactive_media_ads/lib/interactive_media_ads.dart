@@ -9,6 +9,7 @@ export 'src/ads_rendering_settings.dart';
 export 'src/ads_request.dart';
 export 'src/android/android_interactive_media_ads.dart'
     show AndroidInteractiveMediaAds;
+export 'src/companion_ad_slot.dart';
 export 'src/content_progress_provider.dart';
 export 'src/ios/ios_interactive_media_ads.dart' show IOSInteractiveMediaAds;
 export 'src/platform_interface/platform_interface.dart'
@@ -20,4 +21,7 @@ export 'src/platform_interface/platform_interface.dart'
         AdEvent,
         AdEventType,
         AdUIElement,
-        AdsLoadErrorData;
+        AdsLoadErrorData,
+        CompanionAdSlotSize,
+        CompanionAdSlotSizeFixed,
+        CompanionAdSlotSizeFluid;

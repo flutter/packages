@@ -32,7 +32,11 @@ void main() {
             }) {
               expect(currentTimeMs, 1000);
               expect(durationMs, 10000);
-              return ima.VideoProgressUpdate.pigeon_detached();
+              return ima.VideoProgressUpdate.pigeon_detached(
+                pigeon_instanceManager: ima.PigeonInstanceManager(
+                  onWeakReferenceRemoved: (_) {},
+                ),
+              );
             },
           ),
         ),

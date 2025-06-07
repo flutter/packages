@@ -235,6 +235,7 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
     newIMAAdDisplayContainer: ({
       required ima.UIView adContainer,
       ima.UIViewController? adContainerViewController,
+      List<ima.IMACompanionAdSlot>? companionSlots,
     }) =>
         MockIMAAdDisplayContainer(),
   );
