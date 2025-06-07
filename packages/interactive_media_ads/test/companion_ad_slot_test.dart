@@ -14,7 +14,7 @@ void main() {
 
   testWidgets('buildWidget', (WidgetTester tester) async {
     final TestCompanionAdSlot slot = TestCompanionAdSlot(
-      const PlatformCompanionAdSlotCreationParams.fluid(),
+      PlatformCompanionAdSlotCreationParams(size: CompanionAdSlotSize.fluid()),
       onBuildWidget: (_) => Container(),
     );
 

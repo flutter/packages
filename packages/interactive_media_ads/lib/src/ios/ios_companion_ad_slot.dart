@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/build_widget_creation_params.dart';
+import '../platform_interface/companion_ad_slot_size.dart';
 import '../platform_interface/platform_companion_ad_slot.dart';
 import 'interactive_media_ads.g.dart';
 import 'interactive_media_ads_proxy.dart';
@@ -14,43 +15,22 @@ import 'interactive_media_ads_proxy.dart';
 /// Implementation of [PlatformCompanionAdSlotCreationParams] for iOS.
 final class IOSCompanionAdSlotCreationParams
     extends PlatformCompanionAdSlotCreationParams {
-  /// Constructs a [IOSCompanionAdSlotCreationParams].
-  const IOSCompanionAdSlotCreationParams.size({
-    required super.width,
-    required super.height,
+  /// Constructs an [IOSCompanionAdSlotCreationParams].
+  const IOSCompanionAdSlotCreationParams({
+    required super.size,
     super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super.size();
+        super();
 
-  /// Constructs a [IOSCompanionAdSlotCreationParams].
-  const IOSCompanionAdSlotCreationParams.fluid({
-    super.onClicked,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super.fluid();
-
-  /// Creates a [IOSCompanionAdSlotCreationParams] from an instance of
+  /// Creates an [IOSCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
   factory IOSCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
     PlatformCompanionAdSlotCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   }) {
-    return IOSCompanionAdSlotCreationParams.size(
-      width: params.width!,
-      height: params.height!,
-      onClicked: params.onClicked,
-      proxy: proxy,
-    );
-  }
-
-  /// Creates a [IOSCompanionAdSlotCreationParams] from an instance of
-  /// [PlatformCompanionAdSlotCreationParams].
-  factory IOSCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsFluid(
-    PlatformCompanionAdSlotCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) {
-    return IOSCompanionAdSlotCreationParams.fluid(
+    return IOSCompanionAdSlotCreationParams(
+      size: params.size,
       onClicked: params.onClicked,
       proxy: proxy,
     );
@@ -96,23 +76,21 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
       return params;
     }
 
-    if (params.isFluid) {
-      return IOSCompanionAdSlotCreationParams
-          .fromPlatformCompanionAdSlotCreationParamsFluid(params);
-    } else {
-      return IOSCompanionAdSlotCreationParams
-          .fromPlatformCompanionAdSlotCreationParamsSize(params);
-    }
+    return IOSCompanionAdSlotCreationParams
+        .fromPlatformCompanionAdSlotCreationParamsSize(params);
   }
 
   IMACompanionAdSlot _initCompanionAdSlot() {
-    final IMACompanionAdSlot adSlot = params.isFluid
-        ? _iosParams._proxy.newIMACompanionAdSlot(view: _view)
-        : _iosParams._proxy.sizeIMACompanionAdSlot(
-            view: _view,
-            width: _iosParams.width!,
-            height: _iosParams.height!,
-          );
+    final IMACompanionAdSlot adSlot = switch (params.size) {
+      final CompanionAdSlotSizeFixed size =>
+        _iosParams._proxy.sizeIMACompanionAdSlot(
+          view: _view,
+          width: size.width,
+          height: size.height,
+        ),
+      CompanionAdSlotSizeFluid() =>
+        _iosParams._proxy.newIMACompanionAdSlot(view: _view),
+    };
 
     if (params.onClicked != null) {
       adSlot.setDelegate(_delegate);

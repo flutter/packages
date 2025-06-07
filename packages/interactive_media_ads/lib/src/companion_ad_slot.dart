@@ -29,35 +29,22 @@ import 'platform_interface/platform_interface.dart';
 /// }
 /// ```
 class CompanionAdSlot {
-  /// Constructs an instance of a [CompanionAdSlot] with design ad width and
-  /// height.
+  /// Constructs an instance of a [CompanionAdSlot].
   ///
   /// See [CompanionAdSlot.fromPlatformCreationParams] for setting parameters
   /// for a specific platform.
-  CompanionAdSlot.size({
-    required int width,
-    required int height,
+  CompanionAdSlot({
+    required CompanionAdSlotSize size,
     void Function()? onClicked,
   }) : this.fromPlatformCreationParams(
-          params: PlatformCompanionAdSlotCreationParams.size(
-            width: width,
-            height: height,
+          params: PlatformCompanionAdSlotCreationParams(
+            size: size,
             onClicked: onClicked,
           ),
         );
 
-  /// Constructs an instance of a [CompanionAdSlot] with fluid size.
-  ///
-  /// See [CompanionAdSlot.fromPlatformCreationParams] for setting parameters
-  /// for a specific platform.
-  CompanionAdSlot.fluid({void Function()? onClicked})
-      : this.fromPlatformCreationParams(
-          params: PlatformCompanionAdSlotCreationParams.fluid(
-            onClicked: onClicked,
-          ),
-        );
-
-  /// Constructs an [CompanionAdSlot] from creation params for a specific platform.
+  /// Constructs an [CompanionAdSlot] from creation params for a specific
+  /// platform.
   ///
   /// {@template interactive_media_ads.CompanionAdSlot.fromPlatformCreationParams}
   /// Below is an example of setting platform-specific creation parameters for

@@ -21,4 +21,7 @@ export 'src/platform_interface/platform_interface.dart'
         AdEvent,
         AdEventType,
         AdUIElement,
-        AdsLoadErrorData;
+        AdsLoadErrorData,
+        CompanionAdSlotSize,
+        CompanionAdSlotSizeFixed,
+        CompanionAdSlotSizeFluid;

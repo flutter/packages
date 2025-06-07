@@ -7,6 +7,7 @@ import 'package:interactive_media_ads/src/android/android_companion_ad_slot.dart
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
 import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';
+import 'package:interactive_media_ads/src/platform_interface/companion_ad_slot_size.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -25,9 +26,8 @@ void main() {
       );
       final MockCompanionAdSlot mockCompanionAdSlot = MockCompanionAdSlot();
       final AndroidCompanionAdSlotCreationParams params =
-          AndroidCompanionAdSlotCreationParams.size(
-        width: 300,
-        height: 400,
+          AndroidCompanionAdSlotCreationParams(
+        size: CompanionAdSlotSize.fixed(width: 300, height: 400),
         proxy: InteractiveMediaAdsProxy(
           newFrameLayout: () {
             return frameLayout;
@@ -52,9 +52,8 @@ void main() {
     test('AndroidCompanionAdSlot receives onClick', () async {
       final MockCompanionAdSlot mockCompanionAdSlot = MockCompanionAdSlot();
       final AndroidCompanionAdSlotCreationParams params =
-          AndroidCompanionAdSlotCreationParams.size(
-        width: 300,
-        height: 400,
+          AndroidCompanionAdSlotCreationParams(
+        size: CompanionAdSlotSize.fixed(width: 300, height: 400),
         onClicked: expectAsync0(() {}),
         proxy: InteractiveMediaAdsProxy(
           newFrameLayout: () {

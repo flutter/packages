@@ -151,9 +151,8 @@ void main() {
           onContainerAdded: (_) => onContainerAddedCompleter.complete(),
           companionSlots: <PlatformCompanionAdSlot>[
             IOSCompanionAdSlot(
-              IOSCompanionAdSlotCreationParams.size(
-                width: 300,
-                height: 400,
+              IOSCompanionAdSlotCreationParams(
+                size: CompanionAdSlotSize.fixed(width: 300, height: 400),
                 proxy: imaProxy,
               ),
             )

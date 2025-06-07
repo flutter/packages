@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart';
 import 'package:interactive_media_ads/src/ios/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/ios/ios_companion_ad_slot.dart';
+import 'package:interactive_media_ads/src/platform_interface/companion_ad_slot_size.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -20,9 +21,8 @@ void main() {
       final MockIMACompanionAdSlot mockCompanionAdSlot =
           MockIMACompanionAdSlot();
       final IOSCompanionAdSlotCreationParams params =
-          IOSCompanionAdSlotCreationParams.size(
-        width: 300,
-        height: 400,
+          IOSCompanionAdSlotCreationParams(
+        size: CompanionAdSlotSize.fixed(width: 300, height: 400),
         proxy: InteractiveMediaAdsProxy(
           sizeIMACompanionAdSlot: ({
             required int width,
@@ -49,9 +49,8 @@ void main() {
       final MockIMACompanionAdSlot mockCompanionAdSlot =
           MockIMACompanionAdSlot();
       final IOSCompanionAdSlotCreationParams params =
-          IOSCompanionAdSlotCreationParams.size(
-        width: 300,
-        height: 400,
+          IOSCompanionAdSlotCreationParams(
+        size: CompanionAdSlotSize.fixed(width: 300, height: 400),
         onClicked: expectAsync0(() {}),
         proxy: InteractiveMediaAdsProxy(
           sizeIMACompanionAdSlot: ({

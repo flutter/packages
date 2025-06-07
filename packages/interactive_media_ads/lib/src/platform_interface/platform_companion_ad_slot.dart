@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'build_widget_creation_params.dart';
+import 'companion_ad_slot_size.dart';
 import 'interactive_media_ads_platform.dart';
 
 /// Object specifying creation parameters for creating a
@@ -45,37 +46,18 @@ import 'interactive_media_ads_platform.dart';
 @immutable
 base class PlatformCompanionAdSlotCreationParams {
   /// Used by the platform implementation to create a new
-  /// [PlatformCompanionAdSlot] with ad width and height.
-  const PlatformCompanionAdSlotCreationParams.size({
-    required int this.width,
-    required int this.height,
+  /// [PlatformCompanionAdSlot].
+  const PlatformCompanionAdSlotCreationParams({
+    required this.size,
     this.onClicked,
-  }) : isFluid = false;
+  });
 
-  /// Used by the platform implementation to create a new
-  /// [PlatformCompanionAdSlot] with fluid size.
-  const PlatformCompanionAdSlotCreationParams.fluid({this.onClicked})
-      : width = null,
-        height = null,
-        isFluid = true;
-
-  /// The width of the companion slot.
-  ///
-  /// Returns `null` when [isFluid] returns true;
-  final int? width;
-
-  /// The height of the companion slot.
-  ///
-  /// Returns `null` when [isFluid] returns true;
-  final int? height;
+  /// The size of the slot.
+  final CompanionAdSlotSize size;
 
   /// Called when the slot is clicked on by the user and will successfully
   /// navigate away.
   final void Function()? onClicked;
-
-  /// Whether the companion ad has no fixed size, but rather adapts to fit the
-  /// creative content they display.
-  final bool isFluid;
 }
 
 /// Ad slot for companion ads.

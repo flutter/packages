@@ -754,9 +754,8 @@ void main() {
           platformViewsProxy: mockPlatformViewsProxy,
           companionSlots: <PlatformCompanionAdSlot>[
             AndroidCompanionAdSlot(
-              AndroidCompanionAdSlotCreationParams.size(
-                width: 300,
-                height: 444,
+              AndroidCompanionAdSlotCreationParams(
+                size: CompanionAdSlotSize.fixed(width: 300, height: 444),
                 proxy: imaProxy,
               ),
             )

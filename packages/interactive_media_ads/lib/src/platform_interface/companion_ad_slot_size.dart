@@ -20,7 +20,7 @@ sealed class CompanionAdSlotSize {
   /// A slot for a companion had with no fixed size, but rather adapts to fit the
   /// creative content they display.
   factory CompanionAdSlotSize.fluid() {
-    return const CompanionAdSizeSlotFluid._();
+    return const CompanionAdSlotSizeFluid._();
   }
 }
 
@@ -42,6 +42,6 @@ class CompanionAdSlotSizeFixed extends CompanionAdSlotSize {
 /// A slot for a companion had with no fixed size, but rather adapts to fit the
 /// creative content they display.
 @immutable
-class CompanionAdSizeSlotFluid extends CompanionAdSlotSize {
-  const CompanionAdSizeSlotFluid._() : super._();
+class CompanionAdSlotSizeFluid extends CompanionAdSlotSize {
+  const CompanionAdSlotSizeFluid._() : super._();
 }

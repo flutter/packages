@@ -61,9 +61,8 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   final ContentProgressProvider _contentProgressProvider =
       ContentProgressProvider();
 
-  late final CompanionAdSlot companionAd = CompanionAdSlot.size(
-    width: 300,
-    height: 250,
+  late final CompanionAdSlot companionAd = CompanionAdSlot(
+    size: CompanionAdSlotSize.fixed(width: 300, height: 250),
     onClicked: () => debugPrint('Companion Ad Clicked'),
   );
 

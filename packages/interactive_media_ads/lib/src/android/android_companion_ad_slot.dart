@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
 import '../platform_interface/build_widget_creation_params.dart';
+import '../platform_interface/companion_ad_slot_size.dart';
 import '../platform_interface/platform_companion_ad_slot.dart';
 import 'android_view_widget.dart';
 import 'interactive_media_ads.g.dart' as ima;
@@ -15,52 +16,26 @@ import 'platform_views_service_proxy.dart';
 /// Android implementation of [PlatformCompanionAdSlotCreationParams].
 final class AndroidCompanionAdSlotCreationParams
     extends PlatformCompanionAdSlotCreationParams {
-  /// Constructs a [AndroidCompanionAdSlotCreationParams].
-  const AndroidCompanionAdSlotCreationParams.size({
-    required super.width,
-    required super.height,
+  /// Constructs an [AndroidCompanionAdSlotCreationParams].
+  const AndroidCompanionAdSlotCreationParams({
+    required super.size,
     super.onClicked,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
         _platformViewsProxy =
             platformViewsProxy ?? const PlatformViewsServiceProxy(),
-        super.size();
+        super();
 
-  /// Constructs a [AndroidCompanionAdSlotCreationParams].
-  const AndroidCompanionAdSlotCreationParams.fluid({
-    super.onClicked,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-    @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        _platformViewsProxy =
-            platformViewsProxy ?? const PlatformViewsServiceProxy(),
-        super.fluid();
-
-  /// Creates a [AndroidCompanionAdSlotCreationParams] from an instance of
+  /// Creates a  [AndroidCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
   factory AndroidCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
     PlatformCompanionAdSlotCreationParams params, {
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   }) {
-    return AndroidCompanionAdSlotCreationParams.size(
-      width: params.width!,
-      height: params.height!,
-      onClicked: params.onClicked,
-      proxy: proxy,
-      platformViewsProxy: platformViewsProxy,
-    );
-  }
-
-  /// Creates a [AndroidCompanionAdSlotCreationParams] from an instance of
-  /// [PlatformCompanionAdSlotCreationParams].
-  factory AndroidCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsFluid(
-    PlatformCompanionAdSlotCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-    @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  }) {
-    return AndroidCompanionAdSlotCreationParams.fluid(
+    return AndroidCompanionAdSlotCreationParams(
+      size: params.size,
       onClicked: params.onClicked,
       proxy: proxy,
       platformViewsProxy: platformViewsProxy,
@@ -106,13 +81,8 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
       return params;
     }
 
-    if (params.isFluid) {
-      return AndroidCompanionAdSlotCreationParams
-          .fromPlatformCompanionAdSlotCreationParamsFluid(params);
-    } else {
-      return AndroidCompanionAdSlotCreationParams
-          .fromPlatformCompanionAdSlotCreationParamsSize(params);
-    }
+    return AndroidCompanionAdSlotCreationParams
+        .fromPlatformCompanionAdSlotCreationParamsSize(params);
   }
 
   Future<ima.CompanionAdSlot> _initCompanionAdSlot() async {
@@ -122,10 +92,11 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
 
     await Future.wait(<Future<void>>[
       adSlot.setContainer(_frameLayout),
-      if (params.isFluid)
-        adSlot.setFluidSize()
-      else
-        adSlot.setSize(params.width!, params.height!),
+      switch (params.size) {
+        final CompanionAdSlotSizeFixed size =>
+          adSlot.setSize(size.width, size.height),
+        CompanionAdSlotSizeFluid() => adSlot.setFluidSize(),
+      },
       if (params.onClicked != null)
         adSlot.addClickListener(
           _createAdSlotClickListener(
