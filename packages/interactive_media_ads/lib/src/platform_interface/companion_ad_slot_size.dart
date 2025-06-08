@@ -17,7 +17,7 @@ sealed class CompanionAdSlotSize {
     return CompanionAdSlotSizeFixed._(width: width, height: height);
   }
 
-  /// A slot for a companion had with no fixed size, but rather adapts to fit the
+  /// A slot for a companion ad with no fixed size, but rather adapts to fit the
   /// creative content they display.
   factory CompanionAdSlotSize.fluid() {
     return const CompanionAdSlotSizeFluid._();
