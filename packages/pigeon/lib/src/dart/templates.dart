@@ -87,7 +87,7 @@ class $dartInstanceManagerClassName {
   late final void Function(int) onWeakReferenceRemoved;
 
   static $dartInstanceManagerClassName _initInstance() {
-    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+    if (Platform.environment['FLUTTER_TEST'] == 'true') {
       return $dartInstanceManagerClassName(onWeakReferenceRemoved: (_) {});
     }
     WidgetsFlutterBinding.ensureInitialized();

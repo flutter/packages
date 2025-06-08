@@ -127,7 +127,7 @@ class PigeonInstanceManager {
   late final void Function(int) onWeakReferenceRemoved;
 
   static PigeonInstanceManager _initInstance() {
-    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+    if (Platform.environment['FLUTTER_TEST'] == 'true') {
       return PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
     }
     WidgetsFlutterBinding.ensureInitialized();
