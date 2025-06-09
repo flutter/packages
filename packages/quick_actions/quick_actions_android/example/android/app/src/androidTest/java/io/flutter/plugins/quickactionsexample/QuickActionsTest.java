@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -86,6 +87,8 @@ public class QuickActionsTest {
   }
 
   @Test
+  @Ignore(
+      "This is crashing in Firebase Test Lab. See https://github.com/flutter/flutter/issues/170141")
   public void appShortcutLaunchActivityAfterStarting() {
     // Arrange
     List<ShortcutInfo> shortcuts = createMockShortcuts();

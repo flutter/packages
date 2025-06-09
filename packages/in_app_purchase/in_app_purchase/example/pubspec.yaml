@@ -3,8 +3,8 @@ description: Demonstrates how to use the in_app_purchase plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.5.0
-  flutter: ">=3.24.0"
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
 
 dependencies:
   flutter:
@@ -17,7 +17,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   in_app_purchase_android: ^0.4.0
-  in_app_purchase_storekit: ^0.3.4
+  in_app_purchase_storekit: ^0.4.0
   shared_preferences: ^2.0.0
 
 dev_dependencies:

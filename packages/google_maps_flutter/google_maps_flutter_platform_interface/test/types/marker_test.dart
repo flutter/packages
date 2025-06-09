@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 void main() {
@@ -24,6 +23,7 @@ void main() {
       expect(marker.rotation, equals(0.0));
       expect(marker.visible, equals(true));
       expect(marker.zIndex, equals(0.0));
+      expect(marker.zIndexInt, equals(0));
       expect(marker.onTap, equals(null));
       expect(marker.onDrag, equals(null));
       expect(marker.onDragStart, equals(null));
@@ -60,7 +60,7 @@ void main() {
         position: const LatLng(50, 50),
         rotation: 100,
         visible: false,
-        zIndex: 100,
+        zIndexInt: 100,
         onTap: () {},
         onDragStart: (LatLng latLng) {},
         onDrag: (LatLng latLng) {},
@@ -86,6 +86,7 @@ void main() {
         'rotation': 100.0,
         'visible': false,
         'zIndex': 100.0,
+        'zIndexInt': 100,
       });
     });
     test('clone', () {
@@ -168,6 +169,57 @@ void main() {
 
       copy.onDragEnd!(const LatLng(0, 1));
       expect(log, contains('onDragEndParam'));
+    });
+
+    test("Assert that both zIndex and zIndex int aren't passed in", () {
+      expect(
+        () => Marker(
+          markerId: const MarkerId('ABC123'),
+          zIndex: 5,
+          zIndexInt: 10,
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('zIndex param', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndex: 5.00,
+      );
+
+      expect(marker.zIndexInt, 5);
+      expect(marker.zIndex, 5.00);
+    });
+
+    test('zIndexInt param', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndexInt: 5,
+      );
+
+      expect(marker.zIndexInt, 5);
+      expect(marker.zIndex, 5.00);
+    });
+
+    test('zIndexInt param copyWith', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndexInt: 5,
+      );
+      final Marker copy = marker.copyWith(zIndexIntParam: 10);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
+    });
+
+    test('zIndex param copyWith', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndexInt: 5,
+      );
+      final Marker copy = marker.copyWith(zIndexParam: 10.0);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
     });
   });
 }

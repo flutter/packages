@@ -27,13 +27,13 @@ void main() {
 
   final Map<ResolutionPreset, Size> presetExpectedSizes =
       <ResolutionPreset, Size>{
-    ResolutionPreset.low: const Size(240, 320),
-    ResolutionPreset.medium: const Size(480, 720),
-    ResolutionPreset.high: const Size(720, 1280),
-    ResolutionPreset.veryHigh: const Size(1080, 1920),
-    ResolutionPreset.ultraHigh: const Size(2160, 3840),
-    // Don't bother checking for max here since it could be anything.
-  };
+        ResolutionPreset.low: const Size(240, 320),
+        ResolutionPreset.medium: const Size(480, 720),
+        ResolutionPreset.high: const Size(720, 1280),
+        ResolutionPreset.veryHigh: const Size(1080, 1920),
+        ResolutionPreset.ultraHigh: const Size(2160, 3840),
+        // Don't bother checking for max here since it could be anything.
+      };
 
   /// Verify that [actual] has dimensions that are at most as large as
   /// [expectedSize]. Allows for a mismatch in portrait vs landscape. Returns
@@ -45,20 +45,24 @@ void main() {
         actual.longestSide == expectedSize.longestSide;
   }
 
-  testWidgets('availableCameras only supports valid back or front cameras',
-      (WidgetTester tester) async {
+  testWidgets('availableCameras only supports valid back or front cameras', (
+    WidgetTester tester,
+  ) async {
     final List<CameraDescription> availableCameras =
         await CameraPlatform.instance.availableCameras();
 
     for (final CameraDescription cameraDescription in availableCameras) {
       expect(
-          cameraDescription.lensDirection, isNot(CameraLensDirection.external));
+        cameraDescription.lensDirection,
+        isNot(CameraLensDirection.external),
+      );
       expect(cameraDescription.sensorOrientation, anyOf(0, 90, 180, 270));
     }
   });
 
-  testWidgets('Preview takes expected resolution from preset',
-      (WidgetTester tester) async {
+  testWidgets('Preview takes expected resolution from preset', (
+    WidgetTester tester,
+  ) async {
     final List<CameraDescription> cameras =
         await CameraPlatform.instance.availableCameras();
     if (cameras.isEmpty) {
@@ -80,21 +84,26 @@ void main() {
         }
 
         final bool presetExactlySupported = assertExpectedDimensions(
-            preset.value, controller.value.previewSize!);
+          preset.value,
+          controller.value.previewSize!,
+        );
         // Ensures that if a lower resolution was used for previous (lower)
         // resolution preset, then the current (higher) preset also is adjusted,
         // as it demands a hgher resolution.
         expect(
-            previousPresetExactlySupported || !presetExactlySupported, isTrue,
-            reason: 'The preview has a lower resolution than that specified.');
+          previousPresetExactlySupported || !presetExactlySupported,
+          isTrue,
+          reason: 'The preview has a lower resolution than that specified.',
+        );
         previousPresetExactlySupported = presetExactlySupported;
         await controller.dispose();
       }
     }
   });
 
-  testWidgets('Images from streaming have expected resolution from preset',
-      (WidgetTester tester) async {
+  testWidgets('Images from streaming have expected resolution from preset', (
+    WidgetTester tester,
+  ) async {
     final List<CameraDescription> cameras =
         await CameraPlatform.instance.availableCameras();
     if (cameras.isEmpty) {
@@ -117,14 +126,17 @@ void main() {
 
         final CameraImage image = await imageCompleter.future;
         final bool presetExactlySupported = assertExpectedDimensions(
-            preset.value,
-            Size(image.height.toDouble(), image.width.toDouble()));
+          preset.value,
+          Size(image.height.toDouble(), image.width.toDouble()),
+        );
         // Ensures that if a lower resolution was used for previous (lower)
         // resolution preset, then the current (higher) preset also is adjusted,
         // as it demands a hgher resolution.
         expect(
-            previousPresetExactlySupported || !presetExactlySupported, isTrue,
-            reason: 'The preview has a lower resolution than that specified.');
+          previousPresetExactlySupported || !presetExactlySupported,
+          isTrue,
+          reason: 'The preview has a lower resolution than that specified.',
+        );
         previousPresetExactlySupported = presetExactlySupported;
 
         await controller.dispose();
@@ -138,9 +150,12 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(cameras[0],
-        mediaSettings:
-            const MediaSettings(resolutionPreset: ResolutionPreset.low));
+    final CameraController controller = CameraController(
+      cameras[0],
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+      ),
+    );
     await controller.initialize();
     await controller.prepareForVideoRecording();
 
@@ -170,9 +185,12 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(cameras[0],
-        mediaSettings:
-            const MediaSettings(resolutionPreset: ResolutionPreset.low));
+    final CameraController controller = CameraController(
+      cameras[0],
+      mediaSettings: const MediaSettings(
+        resolutionPreset: ResolutionPreset.low,
+      ),
+    );
     await controller.initialize();
     await controller.prepareForVideoRecording();
 

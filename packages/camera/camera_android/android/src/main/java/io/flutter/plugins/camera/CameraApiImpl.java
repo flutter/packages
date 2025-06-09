@@ -282,7 +282,8 @@ final class CameraApiImpl implements Messages.CameraApi {
   @Override
   public void stopImageStream() {
     try {
-      camera.startPreview();
+      // Don't wait for start preview
+      camera.startPreview(null);
     } catch (Exception e) {
       throw new Messages.FlutterError(e.getClass().getName(), e.getMessage(), null);
     }

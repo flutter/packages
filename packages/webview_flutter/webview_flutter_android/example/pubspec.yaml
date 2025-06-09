@@ -3,8 +3,8 @@ description: Demonstrates how to use the webview_flutter_android plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.5.0
-  flutter: ">=3.24.0"
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
 
 dependencies:
   flutter:
@@ -17,7 +17,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  webview_flutter_platform_interface: ^2.10.0
+  webview_flutter_platform_interface: ^2.13.0
 
 dev_dependencies:
   espresso: ^0.4.0

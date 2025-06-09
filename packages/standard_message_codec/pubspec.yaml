@@ -5,7 +5,7 @@ repository: https://github.com/flutter/packages/tree/main/packages/standard_mess
 issue_tracker:  https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3Astandard_message_codec
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
 
 dev_dependencies:
   test: ^1.16.0

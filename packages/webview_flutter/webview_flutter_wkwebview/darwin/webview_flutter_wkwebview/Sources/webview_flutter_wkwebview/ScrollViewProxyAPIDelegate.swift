@@ -88,5 +88,17 @@ class ScrollViewProxyAPIDelegate: PigeonApiDelegateUIScrollView {
     ) throws {
       pigeonInstance.alwaysBounceHorizontal = value
     }
+
+    func setShowsVerticalScrollIndicator(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
+    ) throws {
+      pigeonInstance.showsVerticalScrollIndicator = value
+    }
+
+    func setShowsHorizontalScrollIndicator(
+      pigeonApi: PigeonApiUIScrollView, pigeonInstance: UIScrollView, value: Bool
+    ) throws {
+      pigeonInstance.showsHorizontalScrollIndicator = value
+    }
   #endif
 }

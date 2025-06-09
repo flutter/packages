@@ -1,3 +1,32 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 3.22.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `WebKitNavigationDelegate.setOnSSlAuthError`.
+
+## 3.21.0
+
+* Adds support to set whether to draw the scrollbar. See
+  `WebKitWebViewController.setVerticalScrollBarEnabled`,
+  `WebKitWebViewController.setHorizontalScrollBarEnabled`,
+  `WebKitWebViewController.supportsSetScrollBarsEnabled`.
+
+## 3.20.0
+
+* Adds support to disable a preview of the destination for a link. See
+  `WebKitWebViewController.setAllowsLinkPreview`.
+
+## 3.19.0
+
+* Adds support to set the over-scroll mode for the WebView. See `WebKitWebViewController.setOverScrollMode`.
+
+## 3.18.6
+
+* Fixes `PlatformException` when calling `loadFlutterAsset` on macOS.
+* Updates native wrapper with methods handling `SecTust` and `SecCertificate`. 
+
 ## 3.18.5
 
 * Fixes crash when sending undefined message via JavaScript channel.

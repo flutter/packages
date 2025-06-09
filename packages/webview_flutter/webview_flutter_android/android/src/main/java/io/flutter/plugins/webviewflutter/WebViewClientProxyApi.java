@@ -14,6 +14,7 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.webkit.WebResourceErrorCompat;
 import androidx.webkit.WebViewClientCompat;
@@ -126,6 +127,63 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
     }
 
     @Override
+    public void onFormResubmission(
+        @NonNull android.webkit.WebView view,
+        @NonNull android.os.Message dontResend,
+        @NonNull android.os.Message resend) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onFormResubmission(this, view, dontResend, resend, reply -> null));
+    }
+
+    @Override
+    public void onLoadResource(@NonNull android.webkit.WebView view, @NonNull String url) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onLoadResource(this, view, url, reply -> null));
+    }
+
+    @Override
+    public void onPageCommitVisible(@NonNull android.webkit.WebView view, @NonNull String url) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onPageCommitVisible(this, view, url, reply -> null));
+    }
+
+    @Override
+    public void onReceivedClientCertRequest(
+        @NonNull android.webkit.WebView view, @NonNull android.webkit.ClientCertRequest request) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedClientCertRequest(this, view, request, reply -> null));
+    }
+
+    @Override
+    public void onReceivedLoginRequest(
+        @NonNull android.webkit.WebView view,
+        @NonNull String realm,
+        @Nullable String account,
+        @NonNull String args) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedLoginRequest(this, view, realm, account, args, reply -> null));
+    }
+
+    @Override
+    public void onReceivedSslError(
+        @NonNull android.webkit.WebView view,
+        @NonNull android.webkit.SslErrorHandler handler,
+        @NonNull android.net.http.SslError error) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onReceivedSslError(this, view, handler, error, reply -> null));
+    }
+
+    @Override
+    public void onScaleChanged(
+        @NonNull android.webkit.WebView view, float oldScale, float newScale) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onScaleChanged(this, view, oldScale, newScale, reply -> null));
+    }
+
+    @Override
     public void onUnhandledKeyEvent(@NonNull WebView view, @NonNull KeyEvent event) {
       // Deliberately empty. Occasionally the webview will mark events as having failed to be
       // handled even though they were handled. We don't want to propagate those as they're not
@@ -234,6 +292,63 @@ public class WebViewClientProxyApi extends PigeonApiWebViewClient {
       api.getPigeonRegistrar()
           .runOnMainThread(
               () -> api.onReceivedHttpAuthRequest(this, view, handler, host, realm, reply -> null));
+    }
+
+    @Override
+    public void onFormResubmission(
+        @NonNull android.webkit.WebView view,
+        @NonNull android.os.Message dontResend,
+        @NonNull android.os.Message resend) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onFormResubmission(this, view, dontResend, resend, reply -> null));
+    }
+
+    @Override
+    public void onLoadResource(@NonNull android.webkit.WebView view, @NonNull String url) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onLoadResource(this, view, url, reply -> null));
+    }
+
+    @Override
+    public void onPageCommitVisible(@NonNull android.webkit.WebView view, @NonNull String url) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onPageCommitVisible(this, view, url, reply -> null));
+    }
+
+    @Override
+    public void onReceivedClientCertRequest(
+        @NonNull android.webkit.WebView view, @NonNull android.webkit.ClientCertRequest request) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedClientCertRequest(this, view, request, reply -> null));
+    }
+
+    @Override
+    public void onReceivedLoginRequest(
+        @NonNull android.webkit.WebView view,
+        @NonNull String realm,
+        @Nullable String account,
+        @NonNull String args) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(
+              () -> api.onReceivedLoginRequest(this, view, realm, account, args, reply -> null));
+    }
+
+    @Override
+    public void onReceivedSslError(
+        @NonNull android.webkit.WebView view,
+        @NonNull android.webkit.SslErrorHandler handler,
+        @NonNull android.net.http.SslError error) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onReceivedSslError(this, view, handler, error, reply -> null));
+    }
+
+    @Override
+    public void onScaleChanged(
+        @NonNull android.webkit.WebView view, float oldScale, float newScale) {
+      api.getPigeonRegistrar()
+          .runOnMainThread(() -> api.onScaleChanged(this, view, oldScale, newScale, reply -> null));
     }
 
     @Override

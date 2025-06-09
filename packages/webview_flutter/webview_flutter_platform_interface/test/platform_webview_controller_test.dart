@@ -312,6 +312,41 @@ void main() {
   });
 
   test(
+      'Default implementation of setVerticalScrollBarEnabled should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setVerticalScrollBarEnabled(false),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
+      'Default implementation of setHorizontalScrollBarEnabled should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setHorizontalScrollBarEnabled(false),
+      throwsUnimplementedError,
+    );
+  });
+
+  test('Default implementation of supportsSetScrollBarsEnabled returns false',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(controller.supportsSetScrollBarsEnabled(), isFalse);
+  });
+
+  test(
       'Default implementation of getScrollPosition should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -454,6 +489,19 @@ void main() {
       () => controller.setOnJavaScriptTextInputDialog((_) async {
         return '';
       }),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
+      'Default implementation of setOverScrollMode should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setOverScrollMode(WebViewOverScrollMode.always),
       throwsUnimplementedError,
     );
   });

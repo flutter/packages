@@ -152,6 +152,7 @@ class Camera
       return cameraDevice.createCaptureRequest(templateType);
     }
 
+    @SuppressLint("UseRequiresApi")
     @TargetApi(VERSION_CODES.P)
     @Override
     public void createCaptureSession(SessionConfiguration config) throws CameraAccessException {
@@ -372,16 +373,19 @@ class Camera
           public void onOpened(@NonNull CameraDevice device) {
             cameraDevice = new DefaultCameraDeviceWrapper(device);
             try {
-              startPreview();
-              if (!recordingVideo) { // only send initialization if we werent already recording and switching cameras
-                dartMessenger.sendCameraInitializedEvent(
-                    resolutionFeature.getPreviewSize().getWidth(),
-                    resolutionFeature.getPreviewSize().getHeight(),
-                    cameraFeatures.getExposureLock().getValue(),
-                    cameraFeatures.getAutoFocus().getValue(),
-                    cameraFeatures.getExposurePoint().checkIsSupported(),
-                    cameraFeatures.getFocusPoint().checkIsSupported());
-              }
+              // only send initialization if we werent already recording and switching cameras
+              Runnable onSuccess =
+                  recordingVideo
+                      ? null
+                      : () ->
+                          dartMessenger.sendCameraInitializedEvent(
+                              resolutionFeature.getPreviewSize().getWidth(),
+                              resolutionFeature.getPreviewSize().getHeight(),
+                              cameraFeatures.getExposureLock().getValue(),
+                              cameraFeatures.getAutoFocus().getValue(),
+                              cameraFeatures.getExposurePoint().checkIsSupported(),
+                              cameraFeatures.getFocusPoint().checkIsSupported());
+              startPreview(onSuccess);
             } catch (Exception e) {
               String message =
                   (e.getMessage() == null)
@@ -541,6 +545,7 @@ class Camera
     }
   }
 
+  @SuppressLint("UseRequiresApi")
   @TargetApi(VERSION_CODES.P)
   private void createCaptureSessionWithSessionConfig(
       List<OutputConfiguration> outputConfigs, CameraCaptureSession.StateCallback callback)
@@ -870,7 +875,8 @@ class Camera
     }
     mediaRecorder.reset();
     try {
-      startPreview();
+      // Don't wait for start preview
+      startPreview(null);
     } catch (CameraAccessException | IllegalStateException | InterruptedException e) {
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
@@ -1159,24 +1165,40 @@ class Camera
         null, (code, message) -> dartMessenger.sendCameraErrorEvent(message));
   }
 
-  public void startPreview() throws CameraAccessException, InterruptedException {
+  public void startPreview(@Nullable Runnable onSuccessCallback)
+      throws CameraAccessException, InterruptedException {
     // If recording is already in progress, the camera is being flipped, so send it through the VideoRenderer to keep the correct orientation.
     if (recordingVideo) {
-      startPreviewWithVideoRendererStream();
+      startPreviewWithVideoRendererStream(onSuccessCallback);
     } else {
-      startRegularPreview();
+      startRegularPreview(onSuccessCallback);
     }
   }
 
-  private void startRegularPreview() throws CameraAccessException {
-    if (pictureImageReader == null || pictureImageReader.getSurface() == null) return;
+  private void startRegularPreview(@Nullable Runnable onSuccessCallback)
+      throws CameraAccessException {
+    if (pictureImageReader == null || pictureImageReader.getSurface() == null) {
+      // noop
+      if (onSuccessCallback != null) {
+        onSuccessCallback.run();
+      }
+      return;
+    }
+
     Log.i(TAG, "startPreview");
-    createCaptureSession(CameraDevice.TEMPLATE_PREVIEW, pictureImageReader.getSurface());
+    createCaptureSession(
+        CameraDevice.TEMPLATE_PREVIEW, onSuccessCallback, pictureImageReader.getSurface());
   }
 
-  private void startPreviewWithVideoRendererStream()
+  private void startPreviewWithVideoRendererStream(@Nullable Runnable onSuccessCallback)
       throws CameraAccessException, InterruptedException {
-    if (videoRenderer == null) return;
+    if (videoRenderer == null) {
+      // noop
+      if (onSuccessCallback != null) {
+        onSuccessCallback.run();
+      }
+      return;
+    }
 
     // get rotation for rendered video
     final PlatformChannel.DeviceOrientation lockedOrientation =
@@ -1200,7 +1222,8 @@ class Camera
     }
     videoRenderer.setRotation(rotation);
 
-    createCaptureSession(CameraDevice.TEMPLATE_RECORD, videoRenderer.getInputSurface());
+    createCaptureSession(
+        CameraDevice.TEMPLATE_RECORD, onSuccessCallback, videoRenderer.getInputSurface());
   }
 
   public void startPreviewWithImageStream(EventChannel imageStreamChannel)

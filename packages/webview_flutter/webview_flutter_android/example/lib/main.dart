@@ -139,6 +139,26 @@ const String kAlertTestPage = '''
 </html>  
 ''';
 
+const String kViewportMetaPage = '''
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>Viewport meta example</title>
+  </head>
+  <meta name="viewport" content="width=1000, initial-scale=1" />
+  <style type="text/css">
+      body { background: transparent; margin: 0; padding: 0; }
+      #shape { background: red; width: 50vw; height: 50vw; }
+  </style>
+  <body>
+  <div>
+      <p>Viewport meta example</p>
+      <img id="shape" src="https://storage.googleapis.com/cms-storage-bucket/4fd5520fe28ebf839174.svg"/>
+  </div>
+  </body>
+  </html>
+''';
+
 class WebViewExample extends StatefulWidget {
   const WebViewExample({super.key, this.cookieManager});
 
@@ -201,6 +221,10 @@ Page resource error:
           })
           ..setOnHttpAuthRequest((HttpAuthRequest request) {
             openDialog(request);
+          })
+          ..setOnSSlAuthError((PlatformSslAuthError error) {
+            debugPrint('SSL error from ${(error as AndroidSslAuthError).url}');
+            error.cancel();
           }),
       )
       ..addJavaScriptChannel(JavaScriptChannelParams(
@@ -325,6 +349,7 @@ enum MenuOptions {
   logExample,
   basicAuthentication,
   javaScriptAlert,
+  viewportMeta,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -380,6 +405,8 @@ class SampleMenu extends StatelessWidget {
             _promptForUrl(context);
           case MenuOptions.javaScriptAlert:
             _onJavaScriptAlertExample(context);
+          case MenuOptions.viewportMeta:
+            _onViewportMetaExample();
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -451,6 +478,10 @@ class SampleMenu extends StatelessWidget {
         const PopupMenuItem<MenuOptions>(
           value: MenuOptions.javaScriptAlert,
           child: Text('JavaScript Alert Example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.viewportMeta,
+          child: Text('Viewport meta example'),
         ),
       ],
     );
@@ -747,6 +778,10 @@ class SampleMenu extends StatelessWidget {
               );
             }) ??
         '';
+  }
+
+  Future<void> _onViewportMetaExample() {
+    return webViewController.loadHtmlString(kViewportMetaPage);
   }
 }
 

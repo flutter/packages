@@ -8,7 +8,9 @@ import XCTest
 
 class TestProxyApiRegistrar: ProxyAPIRegistrar {
   init() {
-    super.init(binaryMessenger: TestBinaryMessenger(), bundle: TestBundle())
+    super.init(
+      binaryMessenger: TestBinaryMessenger(),
+      assetManager: FlutterAssetManager(bundle: TestBundle()))
   }
 
   override func dispatchOnMainThread(

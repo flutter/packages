@@ -101,9 +101,11 @@ Future<int> generateTestPigeons(
     'proxy_api_tests',
   };
 
-  final String outputBase = p.join(baseDir, 'platform_tests', 'test_plugin');
+  const String testPluginName = 'test_plugin';
+  const String alternateTestPluginName = 'alternate_language_test_plugin';
+  final String outputBase = p.join(baseDir, 'platform_tests', testPluginName);
   final String alternateOutputBase =
-      p.join(baseDir, 'platform_tests', 'alternate_language_test_plugin');
+      p.join(baseDir, 'platform_tests', alternateTestPluginName);
   final String sharedDartOutputBase =
       p.join(baseDir, 'platform_tests', 'shared_test_plugin_code');
 
@@ -141,10 +143,10 @@ Future<int> generateTestPigeons(
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
       kotlinIncludeErrorClass: input != 'primitive',
-      // iOS
+      // iOS/macOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
-          : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
+          : '$outputBase/darwin/$testPluginName/Sources/$testPluginName/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
       // Linux
@@ -169,25 +171,11 @@ Future<int> generateTestPigeons(
       return generateCode;
     }
 
-    // macOS has to be run as a separate generation, since currently Pigeon
-    // doesn't have a way to output separate macOS and iOS Swift output in a
-    // single invocation.
-    generateCode = await runPigeon(
-      input: './pigeons/$input.dart',
-      swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
-          ? null
-          : '$outputBase/macos/Classes/$pascalCaseName.gen.swift',
-      swiftErrorClassName: swiftErrorClassName,
-      swiftIncludeErrorClass: input != 'primitive',
-      suppressVersion: true,
-      dartPackageName: 'pigeon_integration_tests',
-      injectOverflowTypes: includeOverflow && input == 'core_tests',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-
     // Generate the alternate language test plugin output.
+    final String objcBase =
+        '$alternateOutputBase/darwin/$alternateTestPluginName/Sources/$alternateTestPluginName/';
+    final String objcBaseRelativeHeaderPath =
+        'include/$alternateTestPluginName/$pascalCaseName.gen.h';
     generateCode = await runPigeon(
       input: './pigeons/$input.dart',
       // Android
@@ -198,38 +186,14 @@ Future<int> generateTestPigeons(
           : '$alternateOutputBase/android/src/main/java/com/example/'
               'alternate_language_test_plugin/${_javaFilenameForName(input)}.java',
       javaPackage: 'com.example.alternate_language_test_plugin',
-      // iOS
+      // iOS/macOS
       objcHeaderOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
-          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.h',
+          : '$objcBase/$objcBaseRelativeHeaderPath',
       objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
           ? null
-          : '$alternateOutputBase/ios/Classes/$pascalCaseName.gen.m',
-      objcPrefix: input == 'core_tests'
-          ? 'FLT'
-          : input == 'enum'
-              ? 'PGN'
-              : '',
-      suppressVersion: true,
-      dartPackageName: 'pigeon_integration_tests',
-      injectOverflowTypes: includeOverflow && input == 'core_tests',
-      mergeDefinitionFileOptions: input != 'enum',
-    );
-    if (generateCode != 0) {
-      return generateCode;
-    }
-
-    // macOS has to be run as a separate generation, since currently Pigeon
-    // doesn't have a way to output separate macOS and iOS Swift output in a
-    // single invocation.
-    generateCode = await runPigeon(
-      input: './pigeons/$input.dart',
-      objcHeaderOut: skipLanguages.contains(GeneratorLanguage.objc)
-          ? null
-          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.h',
-      objcSourceOut: skipLanguages.contains(GeneratorLanguage.objc)
-          ? null
-          : '$alternateOutputBase/macos/Classes/$pascalCaseName.gen.m',
+          : '$objcBase/$pascalCaseName.gen.m',
+      objcHeaderIncludePath: './$objcBaseRelativeHeaderPath',
       objcPrefix: input == 'core_tests'
           ? 'FLT'
           : input == 'enum'
@@ -269,6 +233,7 @@ Future<int> runPigeon({
   String? objcHeaderOut,
   String? objcSourceOut,
   String objcPrefix = '',
+  String? objcHeaderIncludePath,
   bool suppressVersion = false,
   String copyrightHeader = './copyright_header.txt',
   String? basePath,
@@ -328,7 +293,10 @@ Future<int> runPigeon({
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,
-      objcOptions: ObjcOptions(prefix: objcPrefix),
+      objcOptions: ObjcOptions(
+        prefix: objcPrefix,
+        headerIncludePath: objcHeaderIncludePath,
+      ),
       swiftOut: swiftOut,
       swiftOptions: SwiftOptions(
         errorClassName: swiftErrorClassName,
