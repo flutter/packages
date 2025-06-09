@@ -4,14 +4,17 @@
 
 package io.flutter.plugins.camerax;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.view.Display;
+import android.view.OrientationEventListener;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
@@ -28,6 +31,8 @@ public class DeviceOrientationManager {
   private PlatformChannel.DeviceOrientation lastOrientation;
   private BroadcastReceiver broadcastReceiver;
 
+  @VisibleForTesting @Nullable protected OrientationEventListener orientationEventListener;
+
   DeviceOrientationManager(DeviceOrientationManagerProxyApi api) {
     this.api = api;
   }
@@ -38,38 +43,48 @@ public class DeviceOrientationManager {
   }
 
   /**
-   * Starts listening to the device's sensors or UI for orientation updates.
+   * Starts listening to the device's sensors for device orientation updates.
    *
    * <p>When orientation information is updated, the callback method of the {@link
    * DeviceOrientationManagerProxyApi} is called with the new orientation.
-   *
-   * <p>If the device's ACCELEROMETER_ROTATION setting is enabled the {@link
-   * DeviceOrientationManager} will report orientation updates based on the sensor information. If
-   * the ACCELEROMETER_ROTATION is disabled the {@link DeviceOrientationManager} will fallback to
-   * the deliver orientation updates based on the UI orientation.
    */
+  @SuppressLint(
+      "UnprotectedReceiver") // orientationIntentFilter only listens to protected broadcast
   public void start() {
-    if (broadcastReceiver != null) {
-      return;
-    }
-    broadcastReceiver =
-        new BroadcastReceiver() {
-          @Override
-          public void onReceive(Context context, Intent intent) {
-            handleUIOrientationChange();
-          }
-        };
-    getContext().registerReceiver(broadcastReceiver, orientationIntentFilter);
-    broadcastReceiver.onReceive(getContext(), null);
+    stop();
+
+    // Listen for changes in device orientation at the default rate that is suitable for monitoring
+    // typical screen orientation changes.
+    orientationEventListener = createOrientationEventListener();
+    orientationEventListener.enable();
+  }
+
+  @VisibleForTesting
+  @NonNull
+  /**
+   * Creates an {@link OrientationEventListener} that will call the callback method of the {@link
+   * DeviceOrientationManagerProxyApi} whenever it is notified of a new device orientation and this
+   * {@code DeviceOrientationManager} instance determines that the orientation of the device {@link
+   * Configuration} has changed.
+   */
+  protected OrientationEventListener createOrientationEventListener() {
+    return new OrientationEventListener(getContext()) {
+      @Override
+      public void onOrientationChanged(int orientation) {
+        handleUiOrientationChange();
+      }
+    };
   }
 
   /** Stops listening for orientation updates. */
   public void stop() {
-    if (broadcastReceiver == null) {
+    if (orientationEventListener == null) {
       return;
     }
-    getContext().unregisterReceiver(broadcastReceiver);
-    broadcastReceiver = null;
+    lastOrientation = null;
+
+    orientationEventListener.disable();
+    orientationEventListener = null;
   }
 
   /**
@@ -79,15 +94,14 @@ public class DeviceOrientationManager {
    * class.
    */
   @VisibleForTesting
-  void handleUIOrientationChange() {
-    PlatformChannel.DeviceOrientation orientation = getUIOrientation();
+  void handleUiOrientationChange() {
+    PlatformChannel.DeviceOrientation orientation = getUiOrientation();
     handleOrientationChange(this, orientation, lastOrientation, api);
     lastOrientation = orientation;
   }
 
   /**
-   * Handles orientation changes coming from either the device's sensors or the
-   * OrientationIntentFilter.
+   * Handles orientation changes coming from the device's sensors.
    *
    * <p>This method is visible for testing purposes only and should never be used outside this
    * class.
@@ -132,7 +146,7 @@ public class DeviceOrientationManager {
   // Configuration.ORIENTATION_SQUARE is deprecated.
   @SuppressWarnings("deprecation")
   @NonNull
-  PlatformChannel.DeviceOrientation getUIOrientation() {
+  PlatformChannel.DeviceOrientation getUiOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = getContext().getResources().getConfiguration().orientation;
 

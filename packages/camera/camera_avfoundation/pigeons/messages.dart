@@ -7,9 +7,9 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
   objcHeaderOut:
-      'ios/camera_avfoundation/Sources/camera_avfoundation/include/camera_avfoundation/messages.g.h',
+      'ios/camera_avfoundation/Sources/camera_avfoundation_objc/include/camera_avfoundation/messages.g.h',
   objcSourceOut:
-      'ios/camera_avfoundation/Sources/camera_avfoundation/messages.g.m',
+      'ios/camera_avfoundation/Sources/camera_avfoundation_objc/messages.g.m',
   objcOptions: ObjcOptions(
     prefix: 'FCP',
     headerIncludePath: './include/camera_avfoundation/messages.g.h',
