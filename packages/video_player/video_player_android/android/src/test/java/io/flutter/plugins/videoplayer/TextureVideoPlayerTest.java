@@ -55,6 +55,7 @@ public final class TextureVideoPlayerTest {
   public void setUp() {
     fakeVideoAsset = new FakeVideoAsset(FAKE_ASSET_URL);
     when(mockProducer.getSurface()).thenReturn(mock(Surface.class));
+    when(mockProducer.handlesCropAndRotation()).thenReturn(true);
   }
 
   private VideoPlayer createVideoPlayer() {
@@ -76,16 +77,17 @@ public final class TextureVideoPlayerTest {
     verify(mockExoPlayer).setVideoSurface(any());
 
     verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(true));
-    assertEquals(attributesCaptor.getValue().contentType, C.AUDIO_CONTENT_TYPE_MOVIE);
+    assertEquals(C.AUDIO_CONTENT_TYPE_MOVIE, attributesCaptor.getValue().contentType);
 
     videoPlayer.dispose();
   }
 
   @Test
-  public void onSurfaceProducerDestroyedAndAvailableReleasesAndThenRecreatesAndResumesPlayer() {
+  public void onSurfaceProducerCleanupAndAvailableRemovesAndRestoresSurface() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     verify(mockProducer).setCallback(callbackCaptor.capture());
+    verify(mockExoPlayer).setVideoSurface(notNull());
     verify(mockExoPlayer, never()).release();
 
     when(mockExoPlayer.getCurrentPosition()).thenReturn(10L);
@@ -94,46 +96,31 @@ public final class TextureVideoPlayerTest {
     when(mockExoPlayer.getPlaybackParameters()).thenReturn(new PlaybackParameters(2.5f));
 
     TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
-    simulateSurfaceDestruction(producerLifecycle);
+    producerLifecycle.onSurfaceCleanup();
 
-    verify(mockExoPlayer).release();
+    verify(mockExoPlayer).setVideoSurface(null);
 
-    // Create a new mock exo player so that we get a new instance.
-    mockExoPlayer = mock(ExoPlayer.class);
+    reset(mockExoPlayer);
     producerLifecycle.onSurfaceAvailable();
 
-    verify(mockExoPlayer).setVideoSurface(any());
-    verify(mockExoPlayer).seekTo(10L);
-    verify(mockExoPlayer).setRepeatMode(Player.REPEAT_MODE_ALL);
-    verify(mockExoPlayer).setVolume(0.5f);
-    verify(mockExoPlayer).setPlaybackParameters(new PlaybackParameters(2.5f));
+    verify(mockExoPlayer).setVideoSurface(notNull());
 
     videoPlayer.dispose();
   }
 
   @Test
-  public void onSurfaceProducerDestroyedDoesNotStopOrPauseVideo() {
+  public void onSurfaceProducerCleanupDoesNotStopOrPauseVideo() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     verify(mockProducer).setCallback(callbackCaptor.capture());
     TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
-    simulateSurfaceDestruction(producerLifecycle);
+    producerLifecycle.onSurfaceCleanup();
 
     verify(mockExoPlayer, never()).stop();
     verify(mockExoPlayer, never()).pause();
     verify(mockExoPlayer, never()).setPlayWhenReady(anyBoolean());
 
     videoPlayer.dispose();
-  }
-
-  @Test
-  public void onDisposeSurfaceProducerCallbackIsDisconnected() {
-    // Regression test for https://github.com/flutter/flutter/issues/156158.
-    VideoPlayer videoPlayer = createVideoPlayer();
-    verify(mockProducer).setCallback(any());
-
-    videoPlayer.dispose();
-    verify(mockProducer).setCallback(null);
   }
 
   @Test
@@ -162,38 +149,39 @@ public final class TextureVideoPlayerTest {
     VideoPlayer videoPlayer = createVideoPlayer();
     when(mockExoPlayer.getVideoSize()).thenReturn(new VideoSize(300, 200));
 
-    // Capture the lifecycle events so we can simulate onSurfaceAvailableDestroyed.
+    // Capture the lifecycle events so we can simulate onSurfaceAvailable/Cleanup.
     verify(mockProducer).setCallback(callbackCaptor.capture());
     TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
 
-    // Trigger destroyed/available.
-    simulateSurfaceDestruction(producerLifecycle);
-    producerLifecycle.onSurfaceAvailable();
-
-    // Initial listener, and the new one from the resume.
-    verify(mockExoPlayer, times(2)).addListener(listenerCaptor.capture());
+    verify(mockExoPlayer).addListener(listenerCaptor.capture());
     Player.Listener listener = listenerCaptor.getValue();
 
-    // Now trigger that same event, which would happen in the case of a background/resume.
+    // Trigger ready state, which should trigger initialization.
     listener.onPlaybackStateChanged(Player.STATE_READY);
+    verify(mockEvents).onInitialized(anyInt(), anyInt(), anyLong(), anyInt());
 
-    // Was not called because it was a result of a background/resume.
-    verify(mockEvents, never()).onInitialized(anyInt(), anyInt(), anyLong(), anyInt());
+    // Trigger cleanup/available.
+    producerLifecycle.onSurfaceCleanup();
+    producerLifecycle.onSurfaceAvailable();
+
+    // It should still only have been called the one time.
+    verify(mockEvents).onInitialized(anyInt(), anyInt(), anyLong(), anyInt());
 
     videoPlayer.dispose();
   }
 
   @Test
-  public void onSurfaceAvailableWithoutDestroyDoesNotRecreate() {
+  public void onSurfaceAvailableWithoutCleanupDoesNotRecreate() {
     // Initially create the video player, which creates the initial surface.
     VideoPlayer videoPlayer = createVideoPlayer();
     verify(mockProducer).getSurface();
+    verify(mockProducer).handlesCropAndRotation();
 
-    // Capture the lifecycle events so we can simulate onSurfaceAvailable/Destroyed.
+    // Capture the lifecycle events so we can simulate onSurfaceAvailable/Cleanup.
     verify(mockProducer).setCallback(callbackCaptor.capture());
     TextureRegistry.SurfaceProducer.Callback producerLifecycle = callbackCaptor.getValue();
 
-    // Calling onSurfaceAvailable does not do anything, since the surface was never destroyed.
+    // Calling onSurfaceAvailable does not do anything, since the surface was never cleaned up.
     producerLifecycle.onSurfaceAvailable();
     verifyNoMoreInteractions(mockProducer);
 
@@ -211,21 +199,5 @@ public final class TextureVideoPlayerTest {
     InOrder inOrder = inOrder(mockExoPlayer, mockProducer);
     inOrder.verify(mockExoPlayer).release();
     inOrder.verify(mockProducer).release();
-  }
-
-  // TODO(matanlurey): Replace with inline calls to onSurfaceAvailable once
-  // available on stable; see https://github.com/flutter/flutter/issues/155131.
-  // This separate method only exists to scope the suppression.
-  @SuppressWarnings({"deprecation", "removal"})
-  void simulateSurfaceCreation(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
-    producerLifecycle.onSurfaceCreated();
-  }
-
-  // TODO(bparrishMines): Replace with inline calls to onSurfaceCleanup once available on stable;
-  // see https://github.com/flutter/flutter/issues/16125. This separate method only exists to scope
-  // the suppression.
-  @SuppressWarnings({"deprecation", "removal"})
-  void simulateSurfaceDestruction(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
-    producerLifecycle.onSurfaceDestroyed();
   }
 }

@@ -852,6 +852,16 @@ abstract class View {
   /// Return the scrolled position of this view.
   WebViewPoint getScrollPosition();
 
+  /// Define whether the vertical scrollbar should be drawn or not.
+  ///
+  /// The scrollbar is not drawn by default.
+  void setVerticalScrollBarEnabled(bool enabled);
+
+  /// Define whether the horizontal scrollbar should be drawn or not.
+  ///
+  /// The scrollbar is not drawn by default.
+  void setHorizontalScrollBarEnabled(bool enabled);
+
   /// Set the over-scroll mode for this view.
   void setOverScrollMode(OverScrollMode mode);
 }
@@ -951,7 +961,7 @@ abstract class PrivateKey {}
     fullClassName: 'java.security.cert.X509Certificate',
   ),
 )
-abstract class X509Certificate {}
+abstract class X509Certificate extends Certificate {}
 
 /// Represents a request for handling an SSL error.
 ///
@@ -1047,4 +1057,17 @@ abstract class SslCertificate {
   ///
   /// Always returns null on Android versions below Q.
   X509Certificate? getX509Certificate();
+}
+
+/// Abstract class for managing a variety of identity certificates.
+///
+/// See https://developer.android.com/reference/java/security/cert/Certificate.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'java.security.cert.Certificate',
+  ),
+)
+abstract class Certificate {
+  /// The encoded form of this certificate.
+  Uint8List getEncoded();
 }
