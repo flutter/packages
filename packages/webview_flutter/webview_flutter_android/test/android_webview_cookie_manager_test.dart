@@ -91,8 +91,8 @@ void main() {
       pigeon_instanceManager: instanceManager,
     );
 
-    const int webViewIdentifier = 4;
-    instanceManager.addHostCreatedInstance(webView, webViewIdentifier);
+    final int webViewIdentifier =
+        instanceManager.addDartCreatedInstance(webView);
 
     when(mockController.webViewIdentifier).thenReturn(webViewIdentifier);
 
@@ -101,7 +101,7 @@ void main() {
             .fromPlatformWebViewCookieManagerCreationParams(
                 const PlatformWebViewCookieManagerCreationParams());
 
-    final android_webview.CookieManager mockCookieManager = MockCookieManager();
+    final MockCookieManager mockCookieManager = MockCookieManager();
     // ignore: invalid_use_of_protected_member
     when(mockCookieManager.pigeon_instanceManager).thenReturn(instanceManager);
 

@@ -25,7 +25,7 @@ class CameraCharacteristicsProxyApi extends PigeonApiCameraCharacteristics {
 
   @NonNull
   @Override
-  public android.hardware.camera2.CameraCharacteristics.Key<?> sensorOrientation() {
+  public CameraCharacteristics.Key<?> sensorOrientation() {
     return CameraCharacteristics.SENSOR_ORIENTATION;
   }
 }

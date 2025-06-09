@@ -1,6 +1,7 @@
-## NEXT
+## 0.10.3
 
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Fixes `TextField` internal focus loss when wrapped with `PointerInterceptor`.
 
 ## 0.10.2+1
 

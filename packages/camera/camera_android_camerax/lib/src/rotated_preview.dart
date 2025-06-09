@@ -90,7 +90,7 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
     // https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation.
     double rotationDegrees =
         (sensorOrientationDegrees - deviceOrientationDegrees * sign + 360) %
-            360;
+        360;
 
     // Then, subtract the rotation already applied in the CameraPreview widget
     // (see camera/camera/lib/src/camera_preview.dart).
