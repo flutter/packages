@@ -13,11 +13,6 @@
     - any-glob-to-any-file:
       - packages/cross_file/**/*
 
-'p: css_colors':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/css_colors/**/*
-
 'p: cupertino_icons':
   - changed-files:
     - any-glob-to-any-file:
@@ -38,25 +33,10 @@
     - any-glob-to-any-file:
       - packages/file_selector/**/*
 
-'p: flutter_adaptive_scaffold':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/flutter_adaptive_scaffold/**/*
-
-'p: flutter_image':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/flutter_image/**/*
-
 'p: flutter_lints':
   - changed-files:
     - any-glob-to-any-file:
       - packages/flutter_lints/**/*
-
-'p: flutter_markdown':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/flutter_markdown/**/*
 
 'p: flutter_migrate':
   - changed-files:
@@ -124,11 +104,6 @@
     - any-glob-to-any-file:
       - packages/interactive_media_ads/**/*
 
-'p: ios_platform_images':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/ios_platform_images/**/*
-
 'p: local_auth':
   - changed-files:
     - any-glob-to-any-file:
@@ -143,11 +118,6 @@
   - changed-files:
     - any-glob-to-any-file:
       - packages/multicast_dns/**/*
-
-'p: palette_generator':
-  - changed-files:
-    - any-glob-to-any-file:
-      - packages/palette_generator/**/*
 
 'p: path_parsing':
   - changed-files:

@@ -18,16 +18,16 @@ RouteBase get $myShellRouteData => ShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/home',
-          factory: $HomeRouteDataExtension._fromState,
+          factory: _$HomeRouteData._fromState,
         ),
         GoRouteData.$route(
           path: '/users',
-          factory: $UsersRouteDataExtension._fromState,
+          factory: _$UsersRouteData._fromState,
           routes: [
             GoRouteData.$route(
               path: ':id',
               parentNavigatorKey: UserRouteData.$parentNavigatorKey,
-              factory: $UserRouteDataExtension._fromState,
+              factory: _$UserRouteData._fromState,
             ),
           ],
         ),
@@ -39,56 +39,73 @@ extension $MyShellRouteDataExtension on MyShellRouteData {
       const MyShellRouteData();
 }
 
-extension $HomeRouteDataExtension on HomeRouteData {
+mixin _$HomeRouteData on GoRouteData {
   static HomeRouteData _fromState(GoRouterState state) => const HomeRouteData();
 
+  @override
   String get location => GoRouteData.$location(
         '/home',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $UsersRouteDataExtension on UsersRouteData {
+mixin _$UsersRouteData on GoRouteData {
   static UsersRouteData _fromState(GoRouterState state) =>
       const UsersRouteData();
 
+  @override
   String get location => GoRouteData.$location(
         '/users',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $UserRouteDataExtension on UserRouteData {
+mixin _$UserRouteData on GoRouteData {
   static UserRouteData _fromState(GoRouterState state) => UserRouteData(
         id: int.parse(state.pathParameters['id']!)!,
       );
 
+  UserRouteData get _self => this as UserRouteData;
+
+  @override
   String get location => GoRouteData.$location(
-        '/users/${Uri.encodeComponent(id.toString())}',
+        '/users/${Uri.encodeComponent(_self.id.toString())}',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }

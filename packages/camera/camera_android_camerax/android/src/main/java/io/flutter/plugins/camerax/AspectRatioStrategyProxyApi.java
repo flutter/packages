@@ -32,6 +32,11 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
         break;
       case RATIO_DEFAULT:
         nativeAspectRatio = androidx.camera.core.AspectRatio.RATIO_DEFAULT;
+        break;
+      case UNKNOWN:
+      default:
+        // Default to nativeAspectRatio -2.
+        break;
     }
     int nativeFallbackRule = -1;
     switch (fallbackRule) {
@@ -40,6 +45,10 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
         break;
       case NONE:
         nativeFallbackRule = AspectRatioStrategy.FALLBACK_RULE_NONE;
+        break;
+      case UNKNOWN:
+      default:
+        // Default to nativeFallbackRule -1.
         break;
     }
     return new AspectRatioStrategy(nativeAspectRatio, nativeFallbackRule);
@@ -66,9 +75,9 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
         return AspectRatioStrategyFallbackRule.AUTO;
       case AspectRatioStrategy.FALLBACK_RULE_NONE:
         return AspectRatioStrategyFallbackRule.NONE;
+      default:
+        return AspectRatioStrategyFallbackRule.UNKNOWN;
     }
-
-    return AspectRatioStrategyFallbackRule.UNKNOWN;
   }
 
   @NonNull
@@ -81,8 +90,8 @@ class AspectRatioStrategyProxyApi extends PigeonApiAspectRatioStrategy {
         return AspectRatio.RATIO4TO3;
       case androidx.camera.core.AspectRatio.RATIO_DEFAULT:
         return AspectRatio.RATIO_DEFAULT;
+      default:
+        return AspectRatio.UNKNOWN;
     }
-
-    return AspectRatio.UNKNOWN;
   }
 }
