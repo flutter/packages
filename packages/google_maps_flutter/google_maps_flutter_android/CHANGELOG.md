@@ -1,3 +1,7 @@
+## 2.16.1
+
+* Removes obsolete code related to supporting SDK <21.
+
 ## 2.16.0
 
 * Adds support for animating the camera with a duration.

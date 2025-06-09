@@ -78,6 +78,7 @@ ${parser.usage}''');
       androidJavaIntegrationTests,
       androidKotlinIntegrationTests,
       androidJavaLint,
+      androidKotlinLint,
     ];
     const List<String> iOSTests = <String>[
       iOSObjCUnitTests,

@@ -13,7 +13,6 @@ import '../platform_webview_controller.dart';
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [PlatformWebViewWidgetCreationParams] to
 /// provide additional platform specific parameters.
 ///
@@ -44,7 +43,6 @@ import '../platform_webview_controller.dart';
 ///   final Object? platformSpecificFieldExample;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class PlatformWebViewWidgetCreationParams {
   /// Used by the platform implementation to create a new [PlatformWebViewWidget].

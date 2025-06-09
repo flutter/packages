@@ -8,7 +8,7 @@ A Flutter plugin for iOS, Android and Web for playing back video on a Widget sur
 
 |             | Android | iOS   | macOS  | Web   |
 |-------------|---------|-------|--------|-------|
-| **Support** | SDK 16+ | 12.0+ | 10.14+ | Any\* |
+| **Support** | SDK 21+ | 12.0+ | 10.14+ | Any\* |
 
 ![The example app running in iOS](https://github.com/flutter/packages/blob/main/packages/video_player/video_player/doc/demo_ipod.gif?raw=true)
 
@@ -140,3 +140,10 @@ and so on.
 To learn about playback speed limitations, see the [`setPlaybackSpeed` method documentation](https://pub.dev/documentation/video_player/latest/video_player/VideoPlayerController/setPlaybackSpeed.html).
 
 Furthermore, see the example app for an example playback speed implementation.
+
+### Video view type
+
+You can set the video view type of your controller (instance of `VideoPlayerController`) during its creation by passing the `videoViewType` argument.  
+If set to `VideoViewType.platformView`, platform views will be used instead of texture view on supported platforms.
+
+The relative performance of the different view types may vary by platform, and on some platforms the use of platform views may have correctness issues in certain circumstances due to limitations of Flutter's platform view system.

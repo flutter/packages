@@ -1,3 +1,15 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 2.15.2
+
+* Fixes regression where updating a marker hides its info window.
+
+## 2.15.1
+
+* Fixes regression in displaying info windows.
+
 ## 2.15.0
 
 * Adds support for animating the camera with a duration.

@@ -1,3 +1,15 @@
+## 3.0.0
+
+- Route classes now required to use a mixin `with _$RouteName`.
+
+## 2.9.1
+
+- Fixes an deprecated warning for using withNullability
+
+## 2.9.0
+
+- Adds support for `caseSensitive` for go routes.
+
 ## 2.8.2
 
 - Fixes an issue when enum params are not required

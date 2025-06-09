@@ -73,13 +73,75 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+func deepEqualsMessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
+  let cleanLhs = nilOrValue(lhs) as Any?
+  let cleanRhs = nilOrValue(rhs) as Any?
+  switch (cleanLhs, cleanRhs) {
+  case (nil, nil):
+    return true
+
+  case (nil, _), (_, nil):
+    return false
+
+  case is (Void, Void):
+    return true
+
+  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
+    return cleanLhsHashable == cleanRhsHashable
+
+  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
+    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
+    for (index, element) in cleanLhsArray.enumerated() {
+      if !deepEqualsMessages(element, cleanRhsArray[index]) {
+        return false
+      }
+    }
+    return true
+
+  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
+    for (key, cleanLhsValue) in cleanLhsDictionary {
+      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
+      if !deepEqualsMessages(cleanLhsValue, cleanRhsDictionary[key]!) {
+        return false
+      }
+    }
+    return true
+
+  default:
+    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
+    return false
+  }
+}
+
+func deepHashMessages(value: Any?, hasher: inout Hasher) {
+  if let valueList = value as? [AnyHashable] {
+    for item in valueList { deepHashMessages(value: item, hasher: &hasher) }
+    return
+  }
+
+  if let valueDict = value as? [AnyHashable: AnyHashable] {
+    for key in valueDict.keys {
+      hasher.combine(key)
+      deepHashMessages(value: valueDict[key]!, hasher: &hasher)
+    }
+    return
+  }
+
+  if let hashableValue = value as? AnyHashable {
+    hasher.combine(hashableValue.hashValue)
+  }
+
+  return hasher.combine(String(describing: value))
+}
+
 enum Code: Int {
   case one = 0
   case two = 1
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct MessageData {
+struct MessageData: Hashable {
   var name: String? = nil
   var description: String? = nil
   var code: Code
@@ -106,6 +168,12 @@ struct MessageData {
       code,
       data,
     ]
+  }
+  static func == (lhs: MessageData, rhs: MessageData) -> Bool {
+    return deepEqualsMessages(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashMessages(value: toList(), hasher: &hasher)
   }
 }
 
