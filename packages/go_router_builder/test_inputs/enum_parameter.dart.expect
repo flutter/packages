@@ -1,24 +1,31 @@
 RouteBase get $enumParam => GoRouteData.$route(
       path: '/:y',
-      factory: $EnumParamExtension._fromState,
+      factory: _$EnumParam._fromState,
     );
 
-extension $EnumParamExtension on EnumParam {
+mixin _$EnumParam on GoRouteData {
   static EnumParam _fromState(GoRouterState state) => EnumParam(
         y: _$EnumTestEnumMap._$fromName(state.pathParameters['y']!)!,
       );
 
+  EnumParam get _self => this as EnumParam;
+
+  @override
   String get location => GoRouteData.$location(
-        '/${Uri.encodeComponent(_$EnumTestEnumMap[y]!)}',
+        '/${Uri.encodeComponent(_$EnumTestEnumMap[_self.y]!)}',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
