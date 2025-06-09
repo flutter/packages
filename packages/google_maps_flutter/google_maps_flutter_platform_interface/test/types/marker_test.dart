@@ -170,5 +170,56 @@ void main() {
       copy.onDragEnd!(const LatLng(0, 1));
       expect(log, contains('onDragEndParam'));
     });
+
+    test("Assert that both zIndex and zIndex int aren't passed in", () {
+      expect(
+        () => Marker(
+          markerId: const MarkerId('ABC123'),
+          zIndex: 5,
+          zIndexInt: 10,
+        ),
+        throwsAssertionError,
+      );
+    });
+
+    test('zIndex param', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndex: 5.00,
+      );
+
+      expect(marker.zIndexInt, 5);
+      expect(marker.zIndex, 5.00);
+    });
+
+    test('zIndexInt param', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndexInt: 5,
+      );
+
+      expect(marker.zIndexInt, 5);
+      expect(marker.zIndex, 5.00);
+    });
+
+    test('zIndexInt param copyWith', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndexInt: 5,
+      );
+      final Marker copy = marker.copyWith(zIndexIntParam: 10);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
+    });
+
+    test('zIndex param copyWith', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndexInt: 5,
+      );
+      final Marker copy = marker.copyWith(zIndexParam: 10.0);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
+    });
   });
 }

@@ -280,6 +280,8 @@ class Marker implements MapsObject<Marker> {
     ValueChanged<LatLng>? onDragEndParam,
     ClusterManagerId? clusterManagerIdParam,
   }) {
+    assert(zIndexParam == null || zIndexIntParam == null,
+        'Only one of zIndexParam and zIndexIntParam can be provided');
     return Marker(
       markerId: markerId,
       alpha: alphaParam ?? alpha,
@@ -292,8 +294,7 @@ class Marker implements MapsObject<Marker> {
       position: positionParam ?? position,
       rotation: rotationParam ?? rotation,
       visible: visibleParam ?? visible,
-      zIndex: zIndexParam ?? zIndex,
-      zIndexInt: zIndexIntParam ?? zIndexInt,
+      zIndex: zIndexIntParam?.toDouble() ?? zIndexParam ?? zIndex,
       onTap: onTapParam ?? onTap,
       onDragStart: onDragStartParam ?? onDragStart,
       onDrag: onDragParam ?? onDrag,
