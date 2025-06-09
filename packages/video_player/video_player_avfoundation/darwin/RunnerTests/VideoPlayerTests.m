@@ -16,15 +16,6 @@
 #import <video_player_avfoundation/FVPNativeVideoViewFactory.h>
 #endif
 
-// TODO(stuartmorgan): Convert to using mock registrars instead.
-NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
-#if TARGET_OS_IOS
-  return (NSObject<FlutterPluginRegistry> *)[[UIApplication sharedApplication] delegate];
-#else
-  return (FlutterViewController *)NSApplication.sharedApplication.windows[0].contentViewController;
-#endif
-}
-
 #if TARGET_OS_IOS
 @interface FakeAVAssetTrack : AVAssetTrack
 @property(readonly, nonatomic) CGAffineTransform preferredTransform;
@@ -168,17 +159,14 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 @implementation VideoPlayerTests
 
 - (void)testCreateWithOptionsReturnsErrorForInvalidAssetPath {
-  NSObject<FlutterPluginRegistrar> *registrar = [GetPluginRegistry()
-      registrarForPlugin:@"testCreateWithOptionsReturnsErrorForInvalidAssetPath"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  OCMStub([registrar lookupKeyForAsset:[OCMArg any]]).andReturn(nil);
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
   FlutterError *initializationError;
   [videoPlayerPlugin initialize:&initializationError];
   XCTAssertNil(initializationError);
-
-  id mockRegistrar = OCMPartialMock(registrar);
-  OCMStub([mockRegistrar lookupKeyForAsset:[OCMArg any]]).andReturn(nil);
 
   FVPCreationOptions *create =
       [FVPCreationOptions makeWithAsset:@"invalid/path/to/asset"
@@ -202,8 +190,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
   // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
   // for issue #1, and restore the correct width and height for issue #2.
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testPlayerLayerWorkaround"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
@@ -232,10 +219,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 - (void)testPlayerForPlatformViewDoesNotRegisterTexture {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testPlayerForPlatformViewDoesNotRegisterTexture"];
-  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
-  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
   FVPDisplayLink *mockDisplayLink =
       OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
                                                       callback:^(){
@@ -246,7 +231,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-               registrar:partialRegistrar];
+               registrar:registrar];
 
   FlutterError *initalizationError;
   [videoPlayerPlugin initialize:&initalizationError];
@@ -267,10 +252,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 - (void)testSeekToWhilePausedStartsDisplayLinkTemporarily {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"SeekToWhilePausedStartsDisplayLinkTemporarily"];
-  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
-  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
   FVPDisplayLink *mockDisplayLink =
       OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
                                                       callback:^(){
@@ -281,7 +264,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-               registrar:partialRegistrar];
+               registrar:registrar];
 
   FlutterError *initalizationError;
   [videoPlayerPlugin initialize:&initalizationError];
@@ -338,10 +321,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 - (void)testInitStartsDisplayLinkTemporarily {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"InitStartsDisplayLinkTemporarily"];
-  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
-  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
   FVPDisplayLink *mockDisplayLink =
       OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
                                                       callback:^(){
@@ -354,7 +335,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                            output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-               registrar:partialRegistrar];
+               registrar:registrar];
 
   FlutterError *initalizationError;
   [videoPlayerPlugin initialize:&initalizationError];
@@ -393,10 +374,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 - (void)testSeekToWhilePlayingDoesNotStopDisplayLink {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"SeekToWhilePlayingDoesNotStopDisplayLink"];
-  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
-  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
   FVPDisplayLink *mockDisplayLink =
       OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
                                                       callback:^(){
@@ -407,7 +386,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-               registrar:partialRegistrar];
+               registrar:registrar];
 
   FlutterError *initalizationError;
   [videoPlayerPlugin initialize:&initalizationError];
@@ -463,10 +442,8 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 - (void)testPauseWhileWaitingForFrameDoesNotStopDisplayLink {
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"PauseWhileWaitingForFrameDoesNotStopDisplayLink"];
-  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
-  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
   FVPDisplayLink *mockDisplayLink =
       OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
                                                       callback:^(){
@@ -477,7 +454,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-               registrar:partialRegistrar];
+               registrar:registrar];
 
   FlutterError *initalizationError;
   [videoPlayerPlugin initialize:&initalizationError];
@@ -502,8 +479,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testDeregistersFromPlayer {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testDeregistersFromPlayer"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
@@ -535,8 +511,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testBufferingStateFromPlayer {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testLiveStreamBufferEndFromPlayer"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
 
@@ -580,8 +555,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testVideoControls {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"TestVideoControls"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
@@ -595,8 +569,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testAudioControls {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"TestAudioControls"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
@@ -611,8 +584,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testHLSControls {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"TestHLSControls"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
@@ -627,8 +599,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
 - (void)testAudioOnlyHLSControls {
   XCTSkip(@"Flaky; see https://github.com/flutter/flutter/issues/164381");
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"TestAudioOnlyHLSControls"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
@@ -656,8 +627,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 #endif
 
 - (void)testSeekToleranceWhenNotSeekingToEnd {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"TestSeekTolerance"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
@@ -695,8 +665,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testSeekToleranceWhenSeekingToEnd {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"TestSeekToEndTolerance"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
@@ -792,8 +761,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 //
 // Failing to de-register results in a crash in [AVPlayer willChangeValueForKey:].
 - (void)testDoesNotCrashOnRateObservationAfterDisposal {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testDoesNotCrashOnRateObservationAfterDisposal"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   AVPlayer *avPlayer = nil;
   __weak FVPVideoPlayer *weakPlayer = nil;
@@ -848,8 +816,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 // Both of these methods dispatch [FVPVideoPlayer dispose] on the main thread
 // leading to a possible crash when de-registering observers twice.
 - (void)testHotReloadDoesNotCrash {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testHotReloadDoesNotCrash"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   __weak FVPVideoPlayer *weakPlayer = nil;
 
@@ -900,42 +867,32 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
 #if TARGET_OS_IOS
 - (void)testNativeVideoViewFactoryRegistration {
-  NSObject<FlutterPluginRegistry> *registry = GetPluginRegistry();
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [registry registrarForPlugin:@"testNativeVideoViewFactoryRegistration"];
-  id mockRegistrar = OCMPartialMock(registrar);
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
-  OCMExpect([mockRegistrar
-      registerViewFactory:[OCMArg isKindOfClass:[FVPNativeVideoViewFactory class]]
-                   withId:@"plugins.flutter.dev/video_player_ios"]);
-  [FVPVideoPlayerPlugin registerWithRegistrar:mockRegistrar];
+  OCMExpect([registrar registerViewFactory:[OCMArg isKindOfClass:[FVPNativeVideoViewFactory class]]
+                                    withId:@"plugins.flutter.dev/video_player_ios"]);
+  [FVPVideoPlayerPlugin registerWithRegistrar:registrar];
 
-  OCMVerifyAll(mockRegistrar);
+  OCMVerifyAll(registrar);
 }
 #endif
 
 - (void)testPublishesInRegistration {
-  NSString *pluginKey = @"TestRegistration";
-  NSObject<FlutterPluginRegistry> *registry = GetPluginRegistry();
-  NSObject<FlutterPluginRegistrar> *registrar = [registry registrarForPlugin:pluginKey];
-  id mockRegistrar = OCMPartialMock(registrar);
-  // Empty stub to pass a check in Flutter's engine (double factory registration).
-  // registerWithRegistrar gets called at the beginning of the test, and factory is registered
-  // there. Additional call would try to register the same factory another time, which would fail a
-  // check in the engine.
-  OCMStub([mockRegistrar registerViewFactory:[OCMArg any] withId:[OCMArg any]]);
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  __block NSObject *publishedValue;
+  OCMStub([registrar publish:[OCMArg checkWithBlock:^BOOL(id value) {
+                       publishedValue = value;
+                       return YES;
+                     }]]);
 
-  [FVPVideoPlayerPlugin registerWithRegistrar:mockRegistrar];
-
-  id publishedValue = [registry valuePublishedByPlugin:pluginKey];
+  [FVPVideoPlayerPlugin registerWithRegistrar:registrar];
 
   XCTAssertNotNil(publishedValue);
   XCTAssertTrue([publishedValue isKindOfClass:[FVPVideoPlayerPlugin class]]);
 }
 
 - (void)testFailedToLoadVideoEventShouldBeAlwaysSent {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testFailedToLoadVideoEventShouldBeAlwaysSent"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
   FlutterError *error;
@@ -969,8 +926,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testUpdatePlayingStateShouldNotResetRate {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testUpdatePlayingStateShouldNotResetRate"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
 
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
@@ -1005,12 +961,10 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 }
 
 - (void)testPlayerShouldNotDropEverySecondFrame {
-  NSObject<FlutterPluginRegistrar> *registrar =
-      [GetPluginRegistry() registrarForPlugin:@"testPlayerShouldNotDropEverySecondFrame"];
-  NSObject<FlutterPluginRegistrar> *partialRegistrar = OCMPartialMock(registrar);
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   NSObject<FlutterTextureRegistry> *mockTextureRegistry =
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  OCMStub([partialRegistrar textures]).andReturn(mockTextureRegistry);
+  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
 
   FVPDisplayLink *displayLink = [[FVPDisplayLink alloc] initWithRegistrar:registrar
                                                                  callback:^(){
@@ -1021,7 +975,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-               registrar:partialRegistrar];
+               registrar:registrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
@@ -1084,8 +1038,7 @@ NSObject<FlutterPluginRegistry> *GetPluginRegistry(void) {
 
 #if TARGET_OS_IOS
 - (void)testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker {
-  NSObject<FlutterPluginRegistrar> *registrar = [GetPluginRegistry()
-      registrarForPlugin:@"testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker"];
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
   FlutterError *error;
