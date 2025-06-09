@@ -25,4 +25,28 @@ final class AdsRequestTests: XCTestCase {
       "adTag?&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)")
     XCTAssertIdentical(instance?.adDisplayContainer, container)
   }
+
+  func testPigeonDefaultConstructorDoesNotAddRequestAgentToIncompatibleURLs() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
+
+    let container = IMAAdDisplayContainer(adContainer: UIView(), viewController: nil)
+    let contentPlayhead = ContentPlayheadImpl()
+
+    var instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api, adTagUrl: "adTag#", adDisplayContainer: container,
+      contentPlayhead: contentPlayhead)
+    XCTAssertNotNil(instance)
+    XCTAssertEqual(
+      instance?.adTagUrl,
+      "adTag#")
+
+    instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api, adTagUrl: "adTag#?", adDisplayContainer: container,
+      contentPlayhead: contentPlayhead)
+    XCTAssertNotNil(instance)
+    XCTAssertEqual(
+      instance?.adTagUrl,
+      "adTag#?")
+  }
 }

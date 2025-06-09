@@ -9,14 +9,12 @@ import 'dart:js_interop_unsafe';
 
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
-import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
-import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockito/mockito.dart';
 import 'package:web/web.dart' as web;
 
 import 'helpers/helpers.dart';
@@ -35,7 +33,7 @@ void main() {
     late web.Navigator navigator;
     late web.MediaDevices mediaDevices;
 
-    late JsUtil jsUtil;
+    late MockJsUtil jsUtil;
 
     late CameraService cameraService;
 
@@ -54,10 +52,8 @@ void main() {
 
       jsUtil = MockJsUtil();
 
-      registerFallbackValue(createJSInteropWrapper(MockWindow()));
-
       // Mock JsUtil to return the real getProperty from dart:js_util.
-      when<dynamic>(() => jsUtil.getProperty(any(), any())).thenAnswer(
+      when(jsUtil.getProperty(any, any)).thenAnswer(
         (Invocation invocation) =>
             (invocation.positionalArguments[0] as JSObject)
                 .getProperty(invocation.positionalArguments[1] as JSAny),
@@ -427,7 +423,7 @@ void main() {
     });
 
     group('getZoomLevelCapabilityForCamera', () {
-      late Camera camera;
+      late MockCamera camera;
       late MockMediaStreamTrack mockVideoTrack;
       late List<web.MediaStreamTrack> videoTracks;
 
@@ -440,8 +436,8 @@ void main() {
               as web.MediaStreamTrack,
         ];
 
-        when(() => camera.textureId).thenReturn(0);
-        when(() => camera.stream).thenReturn(
+        when(camera.textureId).thenReturn(0);
+        when(camera.stream).thenReturn(
           createJSInteropWrapper(FakeMediaStream(videoTracks))
               as web.MediaStream,
         );
@@ -512,7 +508,7 @@ void main() {
           }.toJS;
 
           // Create a camera stream with no video tracks.
-          when(() => camera.stream).thenReturn(
+          when(camera.stream).thenReturn(
             createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[]))
                 as web.MediaStream,
           );
@@ -566,7 +562,7 @@ void main() {
           videoTrack =
               createJSInteropWrapper(mockVideoTrack) as web.MediaStreamTrack;
 
-          when(() => jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
+          when(jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
               .thenReturn(true);
 
           mockMediaDevices.getSupportedConstraints = () {
@@ -601,7 +597,7 @@ void main() {
             );
           }.toJS;
 
-          when(() => jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
+          when(jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
               .thenReturn(true);
 
           final String? facingMode =
@@ -636,7 +632,7 @@ void main() {
             return web.MediaTrackSettings(facingMode: '');
           }.toJS;
 
-          when(() => jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
+          when(jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS))
               .thenReturn(false);
 
           final String? facingMode =
