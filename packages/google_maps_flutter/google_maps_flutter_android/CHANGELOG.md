@@ -1,3 +1,7 @@
+## 2.16.2
+
+* Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
+
 ## 2.16.1
 
 * Removes obsolete code related to supporting SDK <21.
