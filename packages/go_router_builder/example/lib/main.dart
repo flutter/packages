@@ -80,7 +80,7 @@ class App extends StatelessWidget {
     TypedGoRoute<FamilyCountRoute>(path: 'family-count/:count'),
   ],
 )
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteData with _$HomeRoute {
   const HomeRoute();
 
   @override
@@ -90,7 +90,7 @@ class HomeRoute extends GoRouteData {
 @TypedGoRoute<LoginRoute>(
   path: '/login',
 )
-class LoginRoute extends GoRouteData {
+class LoginRoute extends GoRouteData with _$LoginRoute {
   const LoginRoute({this.fromPage});
 
   final String? fromPage;
@@ -100,7 +100,7 @@ class LoginRoute extends GoRouteData {
       LoginScreen(from: fromPage);
 }
 
-class FamilyRoute extends GoRouteData {
+class FamilyRoute extends GoRouteData with _$FamilyRoute {
   const FamilyRoute(this.fid);
 
   final String fid;
@@ -110,7 +110,7 @@ class FamilyRoute extends GoRouteData {
       FamilyScreen(family: familyById(fid));
 }
 
-class PersonRoute extends GoRouteData {
+class PersonRoute extends GoRouteData with _$PersonRoute {
   const PersonRoute(this.fid, this.pid);
 
   final String fid;
@@ -124,7 +124,7 @@ class PersonRoute extends GoRouteData {
   }
 }
 
-class PersonDetailsRoute extends GoRouteData {
+class PersonDetailsRoute extends GoRouteData with _$PersonDetailsRoute {
   const PersonDetailsRoute(this.fid, this.pid, this.details, {this.$extra});
 
   final String fid;
@@ -150,7 +150,7 @@ class PersonDetailsRoute extends GoRouteData {
   }
 }
 
-class FamilyCountRoute extends GoRouteData {
+class FamilyCountRoute extends GoRouteData with _$FamilyCountRoute {
   const FamilyCountRoute(this.count);
 
   final int count;
