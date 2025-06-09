@@ -229,6 +229,14 @@ void main() {
           throwsA(isA<PlatformException>()));
     });
 
+    test('cannot send e-mail with forceSafariVC: false and forceWebView: true',
+        () async {
+      expect(
+          () async => launch('mailto:gmail-noreply@google.com?subject=Hello',
+              forceSafariVC: false, forceWebView: true),
+          throwsA(isA<PlatformException>()));
+    });
+
     test('controls system UI when changing statusBarBrightness', () async {
       mock
         ..setLaunchExpectations(
