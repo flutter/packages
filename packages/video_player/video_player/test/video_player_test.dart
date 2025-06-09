@@ -1520,6 +1520,11 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) async {
+    calls.add('setAllowBackgroundPlayback');
+  }
+
+  @override
   Widget buildView(int playerId) {
     return Texture(textureId: playerId);
   }

@@ -180,6 +180,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) async {}
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(
       VideoViewOptions(playerId: playerId),

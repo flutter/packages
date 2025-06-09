@@ -49,7 +49,7 @@ public abstract class VideoPlayer {
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
-    setAudioAttributes(exoPlayer, options.mixWithOthers);
+    setAudioAttributes(exoPlayer, options.mixWithOthers, options.allowBackgroundPlayback);
   }
 
   @NonNull
@@ -60,7 +60,11 @@ public abstract class VideoPlayer {
     videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
   }
 
-  private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {
+  private static void setAudioAttributes(
+      ExoPlayer exoPlayer, boolean isMixMode, boolean allowBackgroundPlayback) {
+    if (allowBackgroundPlayback) {
+      exoPlayer.setWakeMode(C.WAKE_MODE_NETWORK);
+    }
     exoPlayer.setAudioAttributes(
         new AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(),
         !isMixMode);

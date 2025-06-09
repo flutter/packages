@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Implements background playback functionality using allowBackgroundPlayback option.
+
 ## 2.8.7
 
 * Adds note about known issue regarding platform views to the README.

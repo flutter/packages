@@ -1,8 +1,12 @@
+## 2.11.0
+
+* Implements background playback functionality using allowBackgroundPlayback option.
+
 ## 2.10.0
 
 * Adds support for platform views as an optional way of displaying a video on Android and iOS.
-* Updates README to indicate that Andoid SDK <21 is no longer supported.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Updates README to indicate that Android SDK <21 is no longer supported.
 
 ## 2.9.5
 
