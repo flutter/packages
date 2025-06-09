@@ -6,7 +6,6 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps/google_maps.dart' as gmaps;
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 // ignore: implementation_imports
 import 'package:google_maps_flutter_web/src/utils.dart';
@@ -205,21 +204,6 @@ void main() {
           controller.hideInfoWindow();
         }, throwsAssertionError);
       });
-    });
-
-    testWidgets('interpretCorrectZIndexInConversion',
-        (WidgetTester tester) async {
-      final gmaps.Marker newGmMarker = gmaps.Marker();
-      const Marker marker = Marker(
-        markerId: MarkerId('1'),
-        zIndexInt: 4,
-      );
-
-      final gmaps.MarkerOptions markerOptions =
-          await markerOptionsFromMarker(marker, newGmMarker);
-      final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
-
-      expect(gmMarker.zIndex, 4);
     });
   });
 }

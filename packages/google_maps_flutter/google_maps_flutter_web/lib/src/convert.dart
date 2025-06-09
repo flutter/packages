@@ -455,8 +455,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
 
 /// Computes the options for a new [gmaps.Marker] from an incoming set of options
 /// [marker], and the existing marker registered with the map: [currentMarker].
-@visibleForTesting
-Future<gmaps.MarkerOptions> markerOptionsFromMarker(
+Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
   Marker marker,
   gmaps.Marker? currentMarker,
 ) async {
