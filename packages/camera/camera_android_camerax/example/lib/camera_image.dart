@@ -15,20 +15,20 @@ import 'package:flutter/foundation.dart';
 /// format of the Image.
 class Plane {
   Plane._fromPlatformInterface(CameraImagePlane plane)
-      : bytes = plane.bytes,
-        bytesPerPixel = plane.bytesPerPixel,
-        bytesPerRow = plane.bytesPerRow,
-        height = plane.height,
-        width = plane.width;
+    : bytes = plane.bytes,
+      bytesPerPixel = plane.bytesPerPixel,
+      bytesPerRow = plane.bytesPerRow,
+      height = plane.height,
+      width = plane.width;
 
   // Only used by the deprecated codepath that's kept to avoid breaking changes.
   // Never called by the plugin itself.
   Plane._fromPlatformData(Map<dynamic, dynamic> data)
-      : bytes = data['bytes'] as Uint8List,
-        bytesPerPixel = data['bytesPerPixel'] as int?,
-        bytesPerRow = data['bytesPerRow'] as int,
-        height = data['height'] as int?,
-        width = data['width'] as int?;
+    : bytes = data['bytes'] as Uint8List,
+      bytesPerPixel = data['bytesPerPixel'] as int?,
+      bytesPerRow = data['bytesPerRow'] as int,
+      height = data['height'] as int?,
+      width = data['width'] as int?;
 
   /// Bytes representing this plane.
   final Uint8List bytes;
@@ -55,8 +55,8 @@ class Plane {
 /// Describes how pixels are represented in an image.
 class ImageFormat {
   ImageFormat._fromPlatformInterface(CameraImageFormat format)
-      : group = format.group,
-        raw = format.raw;
+    : group = format.group,
+      raw = format.raw;
 
   // Only used by the deprecated codepath that's kept to avoid breaking changes.
   // Never called by the plugin itself.
@@ -115,27 +115,33 @@ ImageFormatGroup _asImageFormatGroup(dynamic rawFormat) {
 class CameraImage {
   /// Creates a [CameraImage] from the platform interface version.
   CameraImage.fromPlatformInterface(CameraImageData data)
-      : format = ImageFormat._fromPlatformInterface(data.format),
-        height = data.height,
-        width = data.width,
-        planes = List<Plane>.unmodifiable(data.planes.map<Plane>(
-            (CameraImagePlane plane) => Plane._fromPlatformInterface(plane))),
-        lensAperture = data.lensAperture,
-        sensorExposureTime = data.sensorExposureTime,
-        sensorSensitivity = data.sensorSensitivity;
+    : format = ImageFormat._fromPlatformInterface(data.format),
+      height = data.height,
+      width = data.width,
+      planes = List<Plane>.unmodifiable(
+        data.planes.map<Plane>(
+          (CameraImagePlane plane) => Plane._fromPlatformInterface(plane),
+        ),
+      ),
+      lensAperture = data.lensAperture,
+      sensorExposureTime = data.sensorExposureTime,
+      sensorSensitivity = data.sensorSensitivity;
 
   /// Creates a [CameraImage] from method channel data.
   @Deprecated('Use fromPlatformInterface instead')
   CameraImage.fromPlatformData(Map<dynamic, dynamic> data)
-      : format = ImageFormat._fromPlatformData(data['format']),
-        height = data['height'] as int,
-        width = data['width'] as int,
-        lensAperture = data['lensAperture'] as double?,
-        sensorExposureTime = data['sensorExposureTime'] as int?,
-        sensorSensitivity = data['sensorSensitivity'] as double?,
-        planes = List<Plane>.unmodifiable((data['planes'] as List<dynamic>)
-            .map<Plane>((dynamic planeData) =>
-                Plane._fromPlatformData(planeData as Map<dynamic, dynamic>)));
+    : format = ImageFormat._fromPlatformData(data['format']),
+      height = data['height'] as int,
+      width = data['width'] as int,
+      lensAperture = data['lensAperture'] as double?,
+      sensorExposureTime = data['sensorExposureTime'] as int?,
+      sensorSensitivity = data['sensorSensitivity'] as double?,
+      planes = List<Plane>.unmodifiable(
+        (data['planes'] as List<dynamic>).map<Plane>(
+          (dynamic planeData) =>
+              Plane._fromPlatformData(planeData as Map<dynamic, dynamic>),
+        ),
+      );
 
   /// Format of the image provided.
   ///

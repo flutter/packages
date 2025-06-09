@@ -4,11 +4,11 @@ repository: https://github.com/flutter/packages/tree/main/packages/google_maps_f
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+maps%22
 # NOTE: We strongly prefer non-breaking changes, even at the expense of a
 # less-clean API. See https://flutter.dev/go/platform-interface-breaking-changes
-version: 2.11.1
+version: 2.12.1
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
 
 dependencies:
   collection: ^1.15.0

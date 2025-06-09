@@ -86,7 +86,7 @@ class BranchBData extends StatefulShellBranchData {
   static const String $restorationScopeId = 'restorationScopeId';
 }
 
-class DetailsARouteData extends GoRouteData {
+class DetailsARouteData extends GoRouteData with _$DetailsARouteData {
   const DetailsARouteData();
 
   @override
@@ -95,7 +95,7 @@ class DetailsARouteData extends GoRouteData {
   }
 }
 
-class DetailsBRouteData extends GoRouteData {
+class DetailsBRouteData extends GoRouteData with _$DetailsBRouteData {
   const DetailsBRouteData();
 
   @override
