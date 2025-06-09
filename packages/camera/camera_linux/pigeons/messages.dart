@@ -48,12 +48,6 @@ enum PlatformFocusMode {
   locked,
 }
 
-/// Pigeon version of ImageFileFormat.
-enum PlatformImageFileFormat {
-  jpeg,
-  heif,
-}
-
 // Pigeon version of the subset of ImageFormatGroup supported on iOS.
 enum PlatformImageFormatGroup {
   rgb8,
@@ -117,137 +111,36 @@ abstract class CameraApi {
   @async
   void initialize(int cameraId, PlatformImageFormatGroup imageFormat);
 
-  /// Begins streaming frames from the camera.
-  @async
-  void startImageStream();
-
-  /// Stops streaming frames from the camera.
-  @async
-  void stopImageStream();
-
   /// Get the texture ID for the camera with the given ID.
   @async
   int? getTextureId(int cameraId);
-
-  /// Called by the Dart side of the plugin when it has received the last image
-  /// frame sent.
-  ///
-  /// This is used to throttle sending frames across the channel.
-  @async
-  void receivedImageStreamData();
 
   /// Indicates that the given camera is no longer being used on the Dart side,
   /// and any associated resources can be cleaned up.
   @async
   void dispose(int cameraId);
 
-  /// Locks the camera capture to the current device orientation.
-  @async
-  void lockCaptureOrientation(PlatformDeviceOrientation orientation);
-
-  /// Unlocks camera capture orientation, allowing it to automatically adapt to
-  /// device orientation.
-  @async
-  void unlockCaptureOrientation();
-
   /// Takes a picture with the current settings, and returns the path to the
   /// resulting file.
   @async
-  String takePicture();
-
-  /// Does any preprocessing necessary before beginning to record video.
-  @async
-  void prepareForVideoRecording();
+  void takePicture(int cameraId, String path);
 
   /// Begins recording video, optionally enabling streaming to Dart at the same
   /// time.
   @async
-  void startVideoRecording(bool enableStream);
+  void startVideoRecording(int cameraId, bool enableStream);
 
   /// Stops recording video, and results the path to the resulting file.
   @async
-  String stopVideoRecording();
-
-  /// Pauses video recording.
-  @async
-  void pauseVideoRecording();
-
-  /// Resumes a previously paused video recording.
-  @async
-  void resumeVideoRecording();
-
-  /// Switches the camera to the given flash mode.
-  @async
-  void setFlashMode(PlatformFlashMode mode);
+  String stopVideoRecording(int cameraId);
 
   /// Switches the camera to the given exposure mode.
   @async
-  void setExposureMode(PlatformExposureMode mode);
-
-  /// Anchors auto-exposure to the given point in (0,1) coordinate space.
-  ///
-  /// A null value resets to the default exposure point.
-  @async
-  void setExposurePoint(PlatformPoint? point);
-
-  /// Sets the lens position manually to the given value.
-  /// The value should be between 0 and 1.
-  /// 0 means the lens is at the minimum position.
-  /// 1 means the lens is at the maximum position.
-  @async
-  void setLensPosition(double position);
-
-  /// Returns the minimum exposure offset supported by the camera.
-  @async
-  double getMinExposureOffset();
-
-  /// Returns the maximum exposure offset supported by the camera.
-  @async
-  double getMaxExposureOffset();
-
-  /// Sets the exposure offset manually to the given value.
-  @async
-  void setExposureOffset(double offset);
+  void setExposureMode(int cameraId, PlatformExposureMode mode);
 
   /// Switches the camera to the given focus mode.
   @async
-  void setFocusMode(PlatformFocusMode mode);
-
-  /// Anchors auto-focus to the given point in (0,1) coordinate space.
-  ///
-  /// A null value resets to the default focus point.
-  @async
-  void setFocusPoint(PlatformPoint? point);
-
-  /// Returns the minimum zoom level supported by the camera.
-  @async
-  double getMinZoomLevel();
-
-  /// Returns the maximum zoom level supported by the camera.
-  @async
-  double getMaxZoomLevel();
-
-  /// Sets the zoom factor.
-  @async
-  void setZoomLevel(double zoom);
-
-  /// Pauses streaming of preview frames.
-  @async
-  void pausePreview();
-
-  /// Resumes a previously paused preview stream.
-  @async
-  void resumePreview();
-
-  /// Changes the camera used while recording video.
-  ///
-  /// This should only be called while video recording is active.
-  @async
-  void updateDescriptionWhileRecording(String cameraName);
-
-  /// Sets the file format used for taking pictures.
-  @async
-  void setImageFileFormat(PlatformImageFileFormat format);
+  void setFocusMode(int cameraId, PlatformFocusMode mode);
 
   //Sets the ImageFormatGroup.
   @async

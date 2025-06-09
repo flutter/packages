@@ -2,6 +2,8 @@
 #ifndef CAMERA_H_
 #define CAMERA_H_
 
+#include <functional>
+
 #include "flutter_linux/flutter_linux.h"
 #include "messages.g.h"
 
@@ -35,8 +37,14 @@ class Camera {
 
   int64_t getTextureId();
 
+  void takePicture(std::string file_path);
+  // void startVideoRecording();
+  // void stopVideoRecording();
+
   void setImageFormatGroup(
       CameraLinuxPlatformImageFormatGroup imageFormatGroup);
+  void setExposureMode(CameraLinuxPlatformExposureMode mode);
+  void setFocusMode(CameraLinuxPlatformFocusMode mode);
 
   // State
  public:
@@ -55,5 +63,31 @@ class Camera {
   CameraLinuxPlatformResolutionPreset resolution_preset;
   FlPluginRegistrar* registrar;
 };
+
+#define CAMERA_CONFIG_LOCK(code)                                              \
+  do {                                                                        \
+    bool wasGrabbing = camera->IsGrabbing();                                  \
+    if (!camera) {                                                            \
+      std::cerr << "Camera is not initialized." << std::endl;                 \
+      return;                                                                 \
+    }                                                                         \
+    if (wasGrabbing) {                                                        \
+      camera->StopGrabbing();                                                 \
+      camera->DeregisterImageEventHandler(                                    \
+          cameraTextureImageEventHandler.get());                              \
+      cameraTextureImageEventHandler.reset();                                 \
+    }                                                                         \
+    {code};                                                                   \
+    if (wasGrabbing) {                                                        \
+      cameraTextureImageEventHandler =                                        \
+          std::make_unique<CameraTextureImageEventHandler>(*this, registrar); \
+      camera->RegisterImageEventHandler(cameraTextureImageEventHandler.get(), \
+                                        Pylon::RegistrationMode_Append,       \
+                                        Pylon::Cleanup_None);                 \
+      camera->StartGrabbing(                                                  \
+          Pylon::GrabStrategy_LatestImages,                                   \
+          Pylon::EGrabLoop::GrabLoop_ProvidedByInstantCamera);                \
+    }                                                                         \
+  } while (0)
 
 #endif  // CAMERA_H_

@@ -10,35 +10,13 @@ CameraHostPlugin::CameraHostPlugin(FlPluginRegistrar* registrar)
       .get_available_cameras_names = get_available_cameras_names,
       .create = create,
       .initialize = initialize,
-      .start_image_stream = start_image_stream,
-      .stop_image_stream = stop_image_stream,
       .get_texture_id = get_texture_id,
-      .received_image_stream_data = received_image_stream_data,
       .dispose = dispose,
-      .lock_capture_orientation = lock_capture_orientation,
-      .unlock_capture_orientation = unlock_capture_orientation,
       .take_picture = take_picture,
-      .prepare_for_video_recording = prepare_for_video_recording,
       .start_video_recording = start_video_recording,
       .stop_video_recording = stop_video_recording,
-      .pause_video_recording = pause_video_recording,
-      .resume_video_recording = resume_video_recording,
-      .set_flash_mode = set_flash_mode,
       .set_exposure_mode = set_exposure_mode,
-      .set_exposure_point = set_exposure_point,
-      .set_lens_position = set_lens_position,
-      .get_min_exposure_offset = get_min_exposure_offset,
-      .get_max_exposure_offset = get_max_exposure_offset,
-      .set_exposure_offset = set_exposure_offset,
       .set_focus_mode = set_focus_mode,
-      .set_focus_point = set_focus_point,
-      .get_min_zoom_level = get_min_zoom_level,
-      .get_max_zoom_level = get_max_zoom_level,
-      .set_zoom_level = set_zoom_level,
-      .pause_preview = pause_preview,
-      .resume_preview = resume_preview,
-      .update_description_while_recording = update_description_while_recording,
-      .set_image_file_format = set_image_file_format,
       .set_image_format_group = set_image_format_group,
   };
 
@@ -113,6 +91,20 @@ void CameraHostPlugin::create(
   });
 }
 
+void CameraHostPlugin::dispose(
+    int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle,
+    gpointer user_data) {
+  CAMERA_HOST_ERROR_HANDLING(dispose, {
+    for (auto&& camera_it = cameras.begin(); camera_it != cameras.end();
+         ++camera_it) {
+      if (camera_it->camera_id == camera_id) {
+        cameras.erase(camera_it);
+      }
+    }
+    CAMERA_HOST_VOID_RETURN();
+  });
+}
+
 void CameraHostPlugin::camera_linux_camera_event_api_initialized_callback(
     GObject* object, GAsyncResult* result, gpointer user_data) {}
 
@@ -146,5 +138,38 @@ void CameraHostPlugin::get_texture_id(
       CAMERA_HOST_RAISE_ERROR("Texture not created");
     }
     CAMERA_HOST_RETURN(&texture_id);
+  });
+}
+
+void CameraHostPlugin::set_exposure_mode(
+    int64_t camera_id, CameraLinuxPlatformExposureMode mode,
+    CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
+  CAMERA_HOST_ERROR_HANDLING(set_exposure_mode, {
+    Camera& camera = get_camera_by_id(camera_id);
+    camera.setExposureMode(mode);
+
+    CAMERA_HOST_VOID_RETURN();
+  });
+}
+
+void CameraHostPlugin::set_focus_mode(
+    int64_t camera_id, CameraLinuxPlatformFocusMode mode,
+    CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
+  CAMERA_HOST_ERROR_HANDLING(set_focus_mode, {
+    Camera& camera = get_camera_by_id(camera_id);
+    camera.setFocusMode(mode);
+
+    CAMERA_HOST_VOID_RETURN();
+  });
+}
+
+void CameraHostPlugin::take_picture(
+    int64_t camera_id, const gchar* path,
+    CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
+  CAMERA_HOST_ERROR_HANDLING(take_picture, {
+    Camera& camera = get_camera_by_id(camera_id);
+
+    camera.takePicture(std::string(path));
+    CAMERA_HOST_VOID_RETURN();
   });
 }

@@ -50,6 +50,7 @@ list(APPEND PLUGIN_SOURCES
   "camera_plugin.cpp"
   "camera_host_plugin.cpp"
   "camera_texture_image_event_handler.cpp"
+  "camera_video_recorder_image_event_handler.cpp"
   "camera.cpp"
  
   "messages.g.cc"
@@ -92,6 +93,10 @@ target_link_libraries(${PLUGIN_NAME}
 )
 find_package(PkgConfig REQUIRED)
 
+# --- OpenCV Integration ---
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+target_link_libraries(${PLUGIN_NAME} PRIVATE ${OpenCV_LIBS})
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an

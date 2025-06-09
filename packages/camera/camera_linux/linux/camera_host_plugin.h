@@ -26,11 +26,13 @@
         &camera_linux_camera_api_respond_error_##method_name;                  \
     code                                                                       \
   } catch (const Pylon::GenericException& e) {                                 \
+    std::cerr << e.GetDescription() << std::endl;                              \
     camera_linux_camera_api_respond_error_##method_name(                       \
-        response_handle, nullptr, e.what(), nullptr);                          \
+        response_handle, nullptr, e.GetDescription(), nullptr);                \
   } catch (const std::exception& e) {                                          \
     camera_linux_camera_api_respond_error_##method_name(                       \
         response_handle, nullptr, e.what(), nullptr);                          \
+    std::cerr << "Exception occurred: " << e.what() << std::endl;              \
   } catch (...) {                                                              \
     camera_linux_camera_api_respond_error_##method_name(                       \
         response_handle, nullptr, "CameraLinuxPlugin Unknown error", nullptr); \
@@ -71,162 +73,37 @@ class CameraHostPlugin {
                          CameraLinuxCameraApiResponseHandle* response_handle,
                          gpointer user_data);
 
-  static void start_image_stream(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void stop_image_stream(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void received_image_stream_data(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
   static void dispose(int64_t camera_id,
                       CameraLinuxCameraApiResponseHandle* response_handle,
-                      gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void lock_capture_orientation(
-      CameraLinuxPlatformDeviceOrientation orientation,
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void unlock_capture_orientation(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
+                      gpointer user_data);
 
   static void get_texture_id(
       int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle,
       gpointer user_data);
 
-  static void take_picture(CameraLinuxCameraApiResponseHandle* response_handle,
-                           gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void prepare_for_video_recording(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
+  static void take_picture(int64_t camera_id, const gchar* path,
+                           CameraLinuxCameraApiResponseHandle* response_handle,
+                           gpointer user_data);
 
   static void start_video_recording(
-      gboolean enable_stream,
+      int64_t camera_id, gboolean enable_stream,
       CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
     throw new std::runtime_error("Not Implemented");
   }
 
   static void stop_video_recording(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void pause_video_recording(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void resume_video_recording(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void set_flash_mode(
-      CameraLinuxPlatformFlashMode mode,
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
+      int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle,
+      gpointer user_data) {
     throw new std::runtime_error("Not Implemented");
   }
 
   static void set_exposure_mode(
-      CameraLinuxPlatformExposureMode mode,
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void set_exposure_point(
-      CameraLinuxPlatformPoint* point,
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void set_lens_position(
-      double position, CameraLinuxCameraApiResponseHandle* response_handle,
-      gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void get_min_exposure_offset(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void get_max_exposure_offset(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void set_exposure_offset(
-      double offset, CameraLinuxCameraApiResponseHandle* response_handle,
-      gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
+      int64_t camera_id, CameraLinuxPlatformExposureMode mode,
+      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
 
   static void set_focus_mode(
-      CameraLinuxPlatformFocusMode mode,
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void set_focus_point(
-      CameraLinuxPlatformPoint* point,
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void get_min_zoom_level(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void get_max_zoom_level(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void set_zoom_level(
-      double zoom, CameraLinuxCameraApiResponseHandle* response_handle,
-      gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void pause_preview(CameraLinuxCameraApiResponseHandle* response_handle,
-                            gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void resume_preview(
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void update_description_while_recording(
-      const gchar* camera_name,
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
-
-  static void set_image_file_format(
-      CameraLinuxPlatformImageFileFormat format,
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
+      int64_t camera_id, CameraLinuxPlatformFocusMode mode,
+      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
 
   static void camera_linux_camera_event_api_initialized_callback(
       GObject* object, GAsyncResult* result, gpointer user_data);

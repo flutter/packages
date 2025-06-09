@@ -1,5 +1,7 @@
 #include "camera.h"
 
+#include <opencv2/opencv.hpp>
+
 #include "camera_texture_image_event_handler.h"
 
 Camera::Camera(Pylon::IPylonDevice* device, int64_t camera_id,
@@ -73,39 +75,55 @@ void Camera::initialize(CameraLinuxPlatformImageFormatGroup imageFormat) {
 
 void Camera::setImageFormatGroup(
     CameraLinuxPlatformImageFormatGroup imageFormatGroup) {
-  if (!camera) return;
-  bool wasGrabbing = camera->IsGrabbing();
-  if (wasGrabbing) {
-    camera->StopGrabbing();
-    camera->DeregisterImageEventHandler(cameraTextureImageEventHandler.get());
-    cameraTextureImageEventHandler.reset();
-  }
-  GenApi::INodeMap& nodemap = camera->GetNodeMap();
-  switch (imageFormatGroup) {
-    case CameraLinuxPlatformImageFormatGroup::
-        CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_MONO8:
-      Pylon::CEnumParameter(nodemap, "PixelFormat").SetValue("Mono8");
-      break;
-    case CameraLinuxPlatformImageFormatGroup::
-        CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_RGB8:
-    default:
-      Pylon::CEnumParameter(nodemap, "PixelFormat").SetValue("RGB8");
-      break;
-  }
-  if (wasGrabbing) {
-    cameraTextureImageEventHandler =
-        std::make_unique<CameraTextureImageEventHandler>(*this, registrar);
-    camera->RegisterImageEventHandler(cameraTextureImageEventHandler.get(),
-                                      Pylon::RegistrationMode_Append,
-                                      Pylon::Cleanup_None);
-    camera->StartGrabbing(Pylon::GrabStrategy_LatestImages,
-                          Pylon::EGrabLoop::GrabLoop_ProvidedByInstantCamera);
-  }
+  CAMERA_CONFIG_LOCK({
+    GenApi::INodeMap& nodemap = camera->GetNodeMap();
+    switch (imageFormatGroup) {
+      case CameraLinuxPlatformImageFormatGroup::
+          CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_MONO8:
+        Pylon::CEnumParameter(nodemap, "PixelFormat").SetValue("Mono8");
+        break;
+      case CameraLinuxPlatformImageFormatGroup::
+          CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_RGB8:
+      default:
+        Pylon::CEnumParameter(nodemap, "PixelFormat").SetValue("RGB8");
+        break;
+    }
+  });
 }
 
 int64_t Camera::getTextureId() {
   if (!cameraTextureImageEventHandler) return -1;
   return cameraTextureImageEventHandler->get_texture_id();
+}
+
+void Camera::takePicture(std::string file_path) {
+  CAMERA_CONFIG_LOCK(
+      Pylon::CGrabResultPtr grabResult;
+
+      if (camera->IsGrabbing()) { camera->StopGrabbing(); }
+
+      if (!camera->GrabOne(Pylon::INFINITE, grabResult,
+                           Pylon::TimeoutHandling_Return)) {
+        std::cerr << "Failed to grab image within timeout." << std::endl;
+        return;
+      }
+
+      if (!grabResult.IsValid() || !grabResult->GrabSucceeded()) {
+        std::cerr << "Failed to grab image." << std::endl;
+        return;
+      };
+      Pylon::CPylonImage image; image.AttachGrabResultBuffer(grabResult);
+      bool isMono = image.GetPixelType() == Pylon::PixelType_Mono8 ||
+                    image.GetPixelType() == Pylon::PixelType_Mono12 ||
+                    image.GetPixelType() == Pylon::PixelType_Mono16;
+
+      cv::Mat mat(grabResult->GetHeight(), grabResult->GetWidth(),
+                  isMono ? CV_8UC1 : CV_8UC3, (uint8_t*)image.GetBuffer());
+      cv::Mat bgr;
+      cv::cvtColor(mat, bgr, isMono ? cv::COLOR_GRAY2BGR : cv::COLOR_RGB2BGR);
+      cv::imwrite(file_path, bgr);
+
+  );
 }
 
 void camera_linux_camera_event_api_initialized_callback(GObject* object,
@@ -170,4 +188,45 @@ Camera& Camera::setResolutionPreset(
   }
   resolution_preset = preset;
   return *this;
+}
+
+void Camera::setExposureMode(CameraLinuxPlatformExposureMode mode) {
+  CAMERA_CONFIG_LOCK({
+    GenApi::INodeMap& nodemap = camera->GetNodeMap();
+    switch (mode) {
+      case CameraLinuxPlatformExposureMode::
+          CAMERA_LINUX_PLATFORM_EXPOSURE_MODE_AUTO:
+        Pylon::CEnumParameter(nodemap, "ExposureAuto").SetValue("Continuous");
+        break;
+      case CameraLinuxPlatformExposureMode::
+          CAMERA_LINUX_PLATFORM_EXPOSURE_MODE_LOCKED:
+        Pylon::CEnumParameter(nodemap, "ExposureAuto").SetValue("Off");
+        break;
+      default:
+        Pylon::CEnumParameter(nodemap, "ExposureAuto").SetValue("Continuous");
+        break;
+    }
+    exposure_mode = mode;
+    emitState();
+  });
+}
+
+void Camera::setFocusMode(CameraLinuxPlatformFocusMode mode) {
+  CAMERA_CONFIG_LOCK({
+    GenApi::INodeMap& nodemap = camera->GetNodeMap();
+    switch (mode) {
+      case CameraLinuxPlatformFocusMode::CAMERA_LINUX_PLATFORM_FOCUS_MODE_AUTO:
+        Pylon::CEnumParameter(nodemap, "FocusMode").SetValue("Auto");
+        break;
+      case CameraLinuxPlatformFocusMode::
+          CAMERA_LINUX_PLATFORM_FOCUS_MODE_LOCKED:
+        Pylon::CEnumParameter(nodemap, "FocusMode").SetValue("Locked");
+        break;
+      default:
+        Pylon::CEnumParameter(nodemap, "FocusMode").SetValue("Auto");
+        break;
+    }
+    focus_mode = mode;
+    emitState();
+  });
 }

@@ -5,6 +5,7 @@ import 'package:camera_linux/src/messages.g.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 class CameraLinux extends CameraPlatform {
@@ -184,13 +185,21 @@ class CameraLinux extends CameraPlatform {
   }
 
   @override
-  Future<XFile> takePicture(int cameraId) {
-    throw UnimplementedError('takePicture() is not implemented.');
+  Future<XFile> takePicture(int cameraId) async {
+    try {
+      final directory = await getTemporaryDirectory();
+      final uuid = DateTime.now().millisecondsSinceEpoch.toString();
+      final path = '${directory.path}/$uuid.jpg';
+      await _hostApi.takePicture(cameraId, path);
+      return XFile(path);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
   }
 
   @override
-  Future<void> prepareForVideoRecording() {
-    throw UnimplementedError('prepareForVideoRecording() is not implemented.');
+  Future<void> prepareForVideoRecording() async {
+// No-op for Linux no preparation is needed.
   }
 
   @override
@@ -219,13 +228,23 @@ class CameraLinux extends CameraPlatform {
   }
 
   @override
-  Future<void> setFlashMode(int cameraId, FlashMode mode) async {}
+  Future<void> setFlashMode(int cameraId, FlashMode mode) async {
+    // No-op for Linux, as flash mode is not supported.
+  }
 
   @override
-  Future<void> setExposureMode(int cameraId, ExposureMode mode) async {}
+  Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
+    try {
+      await _hostApi.setExposureMode(cameraId, exposureModeToPlatform(mode));
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
 
   @override
-  Future<void> setExposurePoint(int cameraId, Point<double>? point) async {}
+  Future<void> setExposurePoint(int cameraId, Point<double>? point) async {
+    // No-op for Linux, as exposure point is not supported.
+  }
 
   @override
   Future<double> getMinExposureOffset(int cameraId) async {
@@ -248,14 +267,22 @@ class CameraLinux extends CameraPlatform {
   }
 
   @override
-  Future<void> setFocusMode(int cameraId, FocusMode mode) async {}
+  Future<void> setFocusMode(int cameraId, FocusMode mode) async {
+    try {
+      await _hostApi.setFocusMode(cameraId, focusModeToPlatform(mode));
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
 
   @override
-  Future<void> setFocusPoint(int cameraId, Point<double>? point) async {}
+  Future<void> setFocusPoint(int cameraId, Point<double>? point) async {
+    // No-op for Linux, as focus point is not supported.
+  }
 
   @override
   Future<double> getMaxZoomLevel(int cameraId) async {
-    return 1.0;
+    return 0.0;
   }
 
   @override
@@ -264,17 +291,26 @@ class CameraLinux extends CameraPlatform {
   }
 
   @override
-  Future<void> setZoomLevel(int cameraId, double zoom) async {}
+  Future<void> setZoomLevel(int cameraId, double zoom) async {
+    // No-op for Linux, as zoom is not supported.
+  }
 
   @override
-  Future<void> pausePreview(int cameraId) async {}
+  Future<void> pausePreview(int cameraId) async {
+    throw UnimplementedError('pausePreview() is not implemented.');
+  }
 
   @override
-  Future<void> resumePreview(int cameraId) async {}
+  Future<void> resumePreview(int cameraId) async {
+    throw UnimplementedError('resumePreview() is not implemented.');
+  }
 
   @override
   Future<void> setDescriptionWhileRecording(
-      CameraDescription description) async {}
+      CameraDescription description) async {
+    throw UnimplementedError(
+        'setDescriptionWhileRecording() is not implemented.');
+  }
 
   @override
   Widget buildPreview(int cameraId) {
@@ -305,8 +341,20 @@ class CameraLinux extends CameraPlatform {
   }
 
   @override
-  Future<void> dispose(int cameraId) async {}
+  Future<void> dispose(int cameraId) async {
+    // Remove the handler for this camera.
+    final HostCameraMessageHandler? handler =
+        hostCameraHandlers.remove(cameraId);
+    handler?.dispose();
 
+    try {
+      await _hostApi.dispose(cameraId);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+  }
+
+  /// The following methods are not implemented for Linux, as only jpeg is supported
   @override
   Future<void> setImageFileFormat(int cameraId, ImageFileFormat format) async {}
 
@@ -414,5 +462,19 @@ FocusMode focusModeFromPlatform(PlatformFocusMode mode) {
   return switch (mode) {
     PlatformFocusMode.auto => FocusMode.auto,
     PlatformFocusMode.locked => FocusMode.locked,
+  };
+}
+
+PlatformFocusMode focusModeToPlatform(FocusMode mode) {
+  return switch (mode) {
+    FocusMode.auto => PlatformFocusMode.auto,
+    FocusMode.locked => PlatformFocusMode.locked,
+  };
+}
+
+PlatformExposureMode exposureModeToPlatform(ExposureMode mode) {
+  return switch (mode) {
+    ExposureMode.auto => PlatformExposureMode.auto,
+    ExposureMode.locked => PlatformExposureMode.locked,
   };
 }

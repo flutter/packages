@@ -12,6 +12,7 @@ dependencies:
   plugin_platform_interface: ^2.0.2
   camera_platform_interface: ^2.7.0
   stream_transform: ^2.1.1
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:

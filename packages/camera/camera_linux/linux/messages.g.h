@@ -64,18 +64,6 @@ typedef enum {
 } CameraLinuxPlatformFocusMode;
 
 /**
- * CameraLinuxPlatformImageFileFormat:
- * CAMERA_LINUX_PLATFORM_IMAGE_FILE_FORMAT_JPEG:
- * CAMERA_LINUX_PLATFORM_IMAGE_FILE_FORMAT_HEIF:
- *
- * Pigeon version of ImageFileFormat.
- */
-typedef enum {
-  CAMERA_LINUX_PLATFORM_IMAGE_FILE_FORMAT_JPEG = 0,
-  CAMERA_LINUX_PLATFORM_IMAGE_FILE_FORMAT_HEIF = 1
-} CameraLinuxPlatformImageFileFormat;
-
-/**
  * CameraLinuxPlatformImageFormatGroup:
  * CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_RGB8:
  * CAMERA_LINUX_PLATFORM_IMAGE_FORMAT_GROUP_MONO8:
@@ -267,35 +255,13 @@ typedef struct {
   void (*get_available_cameras_names)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*create)(const gchar* camera_name, CameraLinuxPlatformResolutionPreset resolution_preset, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*initialize)(int64_t camera_id, CameraLinuxPlatformImageFormatGroup image_format, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*start_image_stream)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*stop_image_stream)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*get_texture_id)(int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*received_image_stream_data)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*dispose)(int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*lock_capture_orientation)(CameraLinuxPlatformDeviceOrientation orientation, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*unlock_capture_orientation)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*take_picture)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*prepare_for_video_recording)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*start_video_recording)(gboolean enable_stream, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*stop_video_recording)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*pause_video_recording)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*resume_video_recording)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*set_flash_mode)(CameraLinuxPlatformFlashMode mode, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*set_exposure_mode)(CameraLinuxPlatformExposureMode mode, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*set_exposure_point)(CameraLinuxPlatformPoint* point, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*set_lens_position)(double position, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*get_min_exposure_offset)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*get_max_exposure_offset)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*set_exposure_offset)(double offset, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*set_focus_mode)(CameraLinuxPlatformFocusMode mode, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*set_focus_point)(CameraLinuxPlatformPoint* point, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*get_min_zoom_level)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*get_max_zoom_level)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*set_zoom_level)(double zoom, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*pause_preview)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*resume_preview)(CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*update_description_while_recording)(const gchar* camera_name, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*set_image_file_format)(CameraLinuxPlatformImageFileFormat format, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*take_picture)(int64_t camera_id, const gchar* path, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*start_video_recording)(int64_t camera_id, gboolean enable_stream, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*stop_video_recording)(int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*set_exposure_mode)(int64_t camera_id, CameraLinuxPlatformExposureMode mode, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*set_focus_mode)(int64_t camera_id, CameraLinuxPlatformFocusMode mode, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*set_image_format_group)(int64_t camera_id, CameraLinuxPlatformImageFormatGroup image_format_group, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
 } CameraLinuxCameraApiVTable;
 
@@ -382,44 +348,6 @@ void camera_linux_camera_api_respond_initialize(CameraLinuxCameraApiResponseHand
 void camera_linux_camera_api_respond_error_initialize(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
 /**
- * camera_linux_camera_api_respond_start_image_stream:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.startImageStream. 
- */
-void camera_linux_camera_api_respond_start_image_stream(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_start_image_stream:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.startImageStream. 
- */
-void camera_linux_camera_api_respond_error_start_image_stream(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_stop_image_stream:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.stopImageStream. 
- */
-void camera_linux_camera_api_respond_stop_image_stream(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_stop_image_stream:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.stopImageStream. 
- */
-void camera_linux_camera_api_respond_error_stop_image_stream(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
  * camera_linux_camera_api_respond_get_texture_id:
  * @response_handle: a #CameraLinuxCameraApiResponseHandle.
  * @return_value: location to write the value returned by this method.
@@ -438,25 +366,6 @@ void camera_linux_camera_api_respond_get_texture_id(CameraLinuxCameraApiResponse
  * Responds with an error to CameraApi.getTextureId. 
  */
 void camera_linux_camera_api_respond_error_get_texture_id(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_received_image_stream_data:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.receivedImageStreamData. 
- */
-void camera_linux_camera_api_respond_received_image_stream_data(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_received_image_stream_data:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.receivedImageStreamData. 
- */
-void camera_linux_camera_api_respond_error_received_image_stream_data(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
 /**
  * camera_linux_camera_api_respond_dispose:
@@ -478,51 +387,12 @@ void camera_linux_camera_api_respond_dispose(CameraLinuxCameraApiResponseHandle*
 void camera_linux_camera_api_respond_error_dispose(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
 /**
- * camera_linux_camera_api_respond_lock_capture_orientation:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.lockCaptureOrientation. 
- */
-void camera_linux_camera_api_respond_lock_capture_orientation(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_lock_capture_orientation:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.lockCaptureOrientation. 
- */
-void camera_linux_camera_api_respond_error_lock_capture_orientation(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_unlock_capture_orientation:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.unlockCaptureOrientation. 
- */
-void camera_linux_camera_api_respond_unlock_capture_orientation(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_unlock_capture_orientation:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.unlockCaptureOrientation. 
- */
-void camera_linux_camera_api_respond_error_unlock_capture_orientation(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
  * camera_linux_camera_api_respond_take_picture:
  * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @return_value: location to write the value returned by this method.
  *
  * Responds to CameraApi.takePicture. 
  */
-void camera_linux_camera_api_respond_take_picture(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* return_value);
+void camera_linux_camera_api_respond_take_picture(CameraLinuxCameraApiResponseHandle* response_handle);
 
 /**
  * camera_linux_camera_api_respond_error_take_picture:
@@ -534,25 +404,6 @@ void camera_linux_camera_api_respond_take_picture(CameraLinuxCameraApiResponseHa
  * Responds with an error to CameraApi.takePicture. 
  */
 void camera_linux_camera_api_respond_error_take_picture(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_prepare_for_video_recording:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.prepareForVideoRecording. 
- */
-void camera_linux_camera_api_respond_prepare_for_video_recording(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_prepare_for_video_recording:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.prepareForVideoRecording. 
- */
-void camera_linux_camera_api_respond_error_prepare_for_video_recording(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
 /**
  * camera_linux_camera_api_respond_start_video_recording:
@@ -594,63 +445,6 @@ void camera_linux_camera_api_respond_stop_video_recording(CameraLinuxCameraApiRe
 void camera_linux_camera_api_respond_error_stop_video_recording(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
 /**
- * camera_linux_camera_api_respond_pause_video_recording:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.pauseVideoRecording. 
- */
-void camera_linux_camera_api_respond_pause_video_recording(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_pause_video_recording:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.pauseVideoRecording. 
- */
-void camera_linux_camera_api_respond_error_pause_video_recording(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_resume_video_recording:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.resumeVideoRecording. 
- */
-void camera_linux_camera_api_respond_resume_video_recording(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_resume_video_recording:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.resumeVideoRecording. 
- */
-void camera_linux_camera_api_respond_error_resume_video_recording(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_set_flash_mode:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.setFlashMode. 
- */
-void camera_linux_camera_api_respond_set_flash_mode(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_set_flash_mode:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.setFlashMode. 
- */
-void camera_linux_camera_api_respond_error_set_flash_mode(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
  * camera_linux_camera_api_respond_set_exposure_mode:
  * @response_handle: a #CameraLinuxCameraApiResponseHandle.
  *
@@ -670,103 +464,6 @@ void camera_linux_camera_api_respond_set_exposure_mode(CameraLinuxCameraApiRespo
 void camera_linux_camera_api_respond_error_set_exposure_mode(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
 /**
- * camera_linux_camera_api_respond_set_exposure_point:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.setExposurePoint. 
- */
-void camera_linux_camera_api_respond_set_exposure_point(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_set_exposure_point:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.setExposurePoint. 
- */
-void camera_linux_camera_api_respond_error_set_exposure_point(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_set_lens_position:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.setLensPosition. 
- */
-void camera_linux_camera_api_respond_set_lens_position(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_set_lens_position:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.setLensPosition. 
- */
-void camera_linux_camera_api_respond_error_set_lens_position(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_get_min_exposure_offset:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @return_value: location to write the value returned by this method.
- *
- * Responds to CameraApi.getMinExposureOffset. 
- */
-void camera_linux_camera_api_respond_get_min_exposure_offset(CameraLinuxCameraApiResponseHandle* response_handle, double return_value);
-
-/**
- * camera_linux_camera_api_respond_error_get_min_exposure_offset:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.getMinExposureOffset. 
- */
-void camera_linux_camera_api_respond_error_get_min_exposure_offset(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_get_max_exposure_offset:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @return_value: location to write the value returned by this method.
- *
- * Responds to CameraApi.getMaxExposureOffset. 
- */
-void camera_linux_camera_api_respond_get_max_exposure_offset(CameraLinuxCameraApiResponseHandle* response_handle, double return_value);
-
-/**
- * camera_linux_camera_api_respond_error_get_max_exposure_offset:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.getMaxExposureOffset. 
- */
-void camera_linux_camera_api_respond_error_get_max_exposure_offset(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_set_exposure_offset:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.setExposureOffset. 
- */
-void camera_linux_camera_api_respond_set_exposure_offset(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_set_exposure_offset:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.setExposureOffset. 
- */
-void camera_linux_camera_api_respond_error_set_exposure_offset(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
  * camera_linux_camera_api_respond_set_focus_mode:
  * @response_handle: a #CameraLinuxCameraApiResponseHandle.
  *
@@ -784,160 +481,6 @@ void camera_linux_camera_api_respond_set_focus_mode(CameraLinuxCameraApiResponse
  * Responds with an error to CameraApi.setFocusMode. 
  */
 void camera_linux_camera_api_respond_error_set_focus_mode(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_set_focus_point:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.setFocusPoint. 
- */
-void camera_linux_camera_api_respond_set_focus_point(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_set_focus_point:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.setFocusPoint. 
- */
-void camera_linux_camera_api_respond_error_set_focus_point(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_get_min_zoom_level:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @return_value: location to write the value returned by this method.
- *
- * Responds to CameraApi.getMinZoomLevel. 
- */
-void camera_linux_camera_api_respond_get_min_zoom_level(CameraLinuxCameraApiResponseHandle* response_handle, double return_value);
-
-/**
- * camera_linux_camera_api_respond_error_get_min_zoom_level:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.getMinZoomLevel. 
- */
-void camera_linux_camera_api_respond_error_get_min_zoom_level(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_get_max_zoom_level:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @return_value: location to write the value returned by this method.
- *
- * Responds to CameraApi.getMaxZoomLevel. 
- */
-void camera_linux_camera_api_respond_get_max_zoom_level(CameraLinuxCameraApiResponseHandle* response_handle, double return_value);
-
-/**
- * camera_linux_camera_api_respond_error_get_max_zoom_level:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.getMaxZoomLevel. 
- */
-void camera_linux_camera_api_respond_error_get_max_zoom_level(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_set_zoom_level:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.setZoomLevel. 
- */
-void camera_linux_camera_api_respond_set_zoom_level(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_set_zoom_level:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.setZoomLevel. 
- */
-void camera_linux_camera_api_respond_error_set_zoom_level(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_pause_preview:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.pausePreview. 
- */
-void camera_linux_camera_api_respond_pause_preview(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_pause_preview:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.pausePreview. 
- */
-void camera_linux_camera_api_respond_error_pause_preview(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_resume_preview:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.resumePreview. 
- */
-void camera_linux_camera_api_respond_resume_preview(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_resume_preview:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.resumePreview. 
- */
-void camera_linux_camera_api_respond_error_resume_preview(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_update_description_while_recording:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.updateDescriptionWhileRecording. 
- */
-void camera_linux_camera_api_respond_update_description_while_recording(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_update_description_while_recording:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.updateDescriptionWhileRecording. 
- */
-void camera_linux_camera_api_respond_error_update_description_while_recording(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
-
-/**
- * camera_linux_camera_api_respond_set_image_file_format:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- *
- * Responds to CameraApi.setImageFileFormat. 
- */
-void camera_linux_camera_api_respond_set_image_file_format(CameraLinuxCameraApiResponseHandle* response_handle);
-
-/**
- * camera_linux_camera_api_respond_error_set_image_file_format:
- * @response_handle: a #CameraLinuxCameraApiResponseHandle.
- * @code: error code.
- * @message: error message.
- * @details: (allow-none): error details or %NULL.
- *
- * Responds with an error to CameraApi.setImageFileFormat. 
- */
-void camera_linux_camera_api_respond_error_set_image_file_format(CameraLinuxCameraApiResponseHandle* response_handle, const gchar* code, const gchar* message, FlValue* details);
 
 /**
  * camera_linux_camera_api_respond_set_image_format_group:
