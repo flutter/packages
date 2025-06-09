@@ -31,7 +31,7 @@ buildFeatures {
         buildConfig true
     }
     namespace 'io.flutter.plugins.camera'
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
 
     defaultConfig {
         minSdkVersion 21
@@ -68,7 +68,7 @@ buildFeatures {
 dependencies {
     implementation 'androidx.annotation:annotation:1.9.1'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-inline:5.0.0'
-    testImplementation 'androidx.test:core:1.4.0'
-    testImplementation 'org.robolectric:robolectric:4.10.3'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'androidx.test:core:1.6.1'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
 }

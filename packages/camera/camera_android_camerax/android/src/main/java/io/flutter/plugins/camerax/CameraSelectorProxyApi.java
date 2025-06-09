@@ -47,13 +47,13 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
 
   @NonNull
   @Override
-  public androidx.camera.core.CameraSelector defaultBackCamera() {
+  public CameraSelector defaultBackCamera() {
     return CameraSelector.DEFAULT_BACK_CAMERA;
   }
 
   @NonNull
   @Override
-  public androidx.camera.core.CameraSelector defaultFrontCamera() {
+  public CameraSelector defaultFrontCamera() {
     return CameraSelector.DEFAULT_FRONT_CAMERA;
   }
 

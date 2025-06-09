@@ -7,13 +7,9 @@
 packages/animations/**                                   @hannah-hyj
 packages/camera/**                                       @bparrishMines
 packages/cross_file/**                                   @ditman
-packages/css_colors/**                                   @stuartmorgan-g
 packages/extension_google_sign_in_as_googleapis_auth/**  @ditman
 packages/file_selector/**                                @stuartmorgan-g
-packages/flutter_adaptive_scaffold/**                    @gspencergoog
-packages/flutter_image/**                                @stuartmorgan-g
 packages/flutter_lints/**                                @chunhtai
-packages/flutter_markdown/**                             @domesticmouse
 packages/flutter_migrate/**                              @stuartmorgan-g
 packages/flutter_template_images/**                      @stuartmorgan-g
 packages/go_router/**                                    @chunhtai
@@ -28,13 +24,11 @@ packages/in_app_purchase/**                              @bparrishMines
 packages/local_auth/**                                   @stuartmorgan-g
 packages/metrics_center/**                               @christopherfujino
 packages/multicast_dns/**                                @vashworth
-packages/palette_generator/**                            @gspencergoog
 packages/path_provider/**                                @stuartmorgan-g
 packages/pigeon/**                                       @tarrinneal
 packages/platform/**                                     @stuartmorgan-g
 packages/plugin_platform_interface/**                    @stuartmorgan-g
 packages/pointer_interceptor/**                          @ditman
-packages/process/**                                      @stuartmorgan-g
 packages/quick_actions/**                                @bparrishMines
 packages/rfw/**                                          @Hixie
 packages/shared_preferences/**                           @tarrinneal
@@ -72,42 +66,40 @@ packages/webview_flutter/webview_flutter_web/**          @ditman
 # - Android
 packages/camera/camera_android/**                        @camsim99
 packages/camera/camera_android_camerax/**                @camsim99
-packages/espresso/**                                     @reidbaker
-packages/file_selector/file_selector_android/**          @gmackall
+packages/espresso/**                                     @jesswrd
+packages/file_selector/file_selector_android/**          @mboetger
 packages/flutter_plugin_android_lifecycle/**             @reidbaker
 packages/google_maps_flutter/google_maps_flutter_android/**  @reidbaker
-packages/google_sign_in/google_sign_in_android/**        @camsim99
+packages/google_sign_in/google_sign_in_android/**        @ash2moon
 packages/image_picker/image_picker_android/**            @gmackall
 packages/in_app_purchase/in_app_purchase_android/**      @gmackall
-packages/local_auth/local_auth_android/**                @camsim99
+packages/local_auth/local_auth_android/**                @mboetger
 packages/path_provider/path_provider_android/**          @camsim99
-packages/quick_actions/quick_actions_android/**          @camsim99
-packages/shared_preferences/shared_preferences_android/**  @reidbaker
+packages/quick_actions/quick_actions_android/**          @ash2moon
+packages/shared_preferences/shared_preferences_android/**  @jesswrd
 packages/url_launcher/url_launcher_android/**            @gmackall
-packages/video_player/video_player_android/**            @camsim99
+packages/video_player/video_player_android/**            @ash2moon
 # Owned by ecosystem team for now during the wrapper evaluation.
 packages/webview_flutter/webview_flutter_android/**      @bparrishMines
 
 # - Darwin
-packages/camera/camera_avfoundation/**                   @hellohuanlin
-packages/file_selector/file_selector_ios/**              @vashworth
-packages/file_selector/file_selector_macos/**            @vashworth
-packages/google_maps_flutter/google_maps_flutter_ios/**  @cbracken
-packages/google_sign_in/google_sign_in_ios/**            @loic-sharma
-packages/image_picker/image_picker_ios/**                @loic-sharma @vashworth
-packages/image_picker/image_picker_macos/**              @vashworth
-packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu
-packages/ios_platform_images/**                          @vashworth
-packages/local_auth/local_auth_darwin/**                 @louisehsu
-packages/path_provider/path_provider_foundation/**       @hellohuanlin
-packages/pigeon/**/ios/**/*                              @hellohuanlin @louisehsu
-packages/pointer_interceptor/pointer_interceptor_ios/**  @louisehsu
-packages/quick_actions/quick_actions_ios/**              @vashworth
+packages/camera/camera_avfoundation/**                   @hellohuanlin @vashworth
+packages/file_selector/file_selector_ios/**              @vashworth @cbracken
+packages/file_selector/file_selector_macos/**            @vashworth @cbracken
+packages/google_maps_flutter/google_maps_flutter_ios/**  @vashworth @cbracken
+packages/google_sign_in/google_sign_in_ios/**            @LongCatIsLooong @cbracken
+packages/image_picker/image_picker_ios/**                @vashworth @louisehsu
+packages/image_picker/image_picker_macos/**              @vashworth @louisehsu
+packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu @LongCatIsLooong
+packages/local_auth/local_auth_darwin/**                 @cbracken @vashworth
+packages/path_provider/path_provider_foundation/**       @cbracken @vashworth
+packages/pointer_interceptor/pointer_interceptor_ios/**  @louisehsu @hellohuanlin
+packages/quick_actions/quick_actions_ios/**              @LongCatIsLooong @hellohuanlin
 packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
-packages/url_launcher/url_launcher_ios/**                @loic-sharma
-packages/url_launcher/url_launcher_macos/**              @loic-sharma
-packages/video_player/video_player_avfoundation/**       @hellohuanlin
-packages/webview_flutter/webview_flutter_wkwebview/**    @cbracken
+packages/url_launcher/url_launcher_ios/**                @hellohuanlin @LongCatIsLooong
+packages/url_launcher/url_launcher_macos/**              @hellohuanlin @LongCatIsLooong
+packages/video_player/video_player_avfoundation/**       @LongCatIsLooong @hellohuanlin
+packages/webview_flutter/webview_flutter_wkwebview/**    @cbracken @louisehsu
 
 # - Linux
 packages/file_selector/file_selector_linux/**            @cbracken

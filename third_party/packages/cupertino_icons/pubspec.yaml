@@ -6,7 +6,7 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 1.0.8
 
 environment:
-  sdk: ^3.4.0
+  sdk: ^3.6.0
 
 dev_dependencies:
   collection: ^1.18.0

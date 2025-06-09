@@ -1,3 +1,20 @@
+## 15.1.3
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Fixes typo in API docs.
+
+## 15.1.2
+
+- Fixes focus request propagation from `GoRouter` to `Navigator` by properly handling the `requestFocus` parameter.
+
+## 15.1.1
+
+- Adds missing `caseSensitive` to `GoRouteData.$route`.
+
+## 15.1.0
+
+- Adds `caseSensitive` to `TypedGoRoute`.
+
 ## 15.0.0
 
 - **BREAKING CHANGE**
