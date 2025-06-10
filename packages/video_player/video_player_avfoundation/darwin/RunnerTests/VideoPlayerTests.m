@@ -82,6 +82,26 @@
 
 @end
 
+// Convience to avoid having two copies of the StubViewProvider code.
+#if TARGET_OS_OSX
+#define PROVIDED_VIEW_TYPE NSView
+#else
+#define PROVIDED_VIEW_TYPE UIView
+#endif
+
+@interface StubViewProvider : NSObject <FVPViewProvider>
+- (instancetype)initWithView:(PROVIDED_VIEW_TYPE *)view;
+@property(nonatomic, nullable) PROVIDED_VIEW_TYPE *view;
+@end
+
+@implementation StubViewProvider
+- (instancetype)initWithView:(PROVIDED_VIEW_TYPE *)view {
+  self = [super init];
+  _view = view;
+  return self;
+}
+@end
+
 @interface StubFVPAVFactory : NSObject <FVPAVFactory>
 
 @property(nonatomic, strong) StubAVPlayer *stubAVPlayer;
@@ -190,9 +210,18 @@
   // video streams (not just iOS 16).  (https://github.com/flutter/flutter/issues/109116). An
   // invisible AVPlayerLayer is used to overwrite the protection of pixel buffers in those streams
   // for issue #1, and restore the correct width and height for issue #2.
+#if TARGET_OS_OSX
+  NSView *view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
+  view.wantsLayer = true;
+#else
+  UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+#endif
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  FVPVideoPlayerPlugin *videoPlayerPlugin =
-      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+      displayLinkFactory:nil
+            viewProvider:[[StubViewProvider alloc] initWithView:view]
+               registrar:registrar];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
@@ -213,7 +242,8 @@
   XCTAssertNotNil(player);
 
   XCTAssertNotNil(player.playerLayer, @"AVPlayerLayer should be present.");
-  XCTAssertNotNil(player.playerLayer.superlayer, @"AVPlayerLayer should be added on screen.");
+  XCTAssertEqual(player.playerLayer.superlayer, view.layer,
+                 @"AVPlayerLayer should be added on screen.");
 }
 
 - (void)testPlayerForPlatformViewDoesNotRegisterTexture {
@@ -231,6 +261,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+            viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
   FlutterError *initalizationError;
@@ -264,6 +295,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+            viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
   FlutterError *initalizationError;
@@ -335,6 +367,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                            output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+            viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
   FlutterError *initalizationError;
@@ -386,6 +419,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+            viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
   FlutterError *initalizationError;
@@ -454,6 +488,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+            viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
   FlutterError *initalizationError;
@@ -635,6 +670,7 @@
   FVPVideoPlayerPlugin *pluginWithMockAVPlayer =
       [[FVPVideoPlayerPlugin alloc] initWithAVFactory:stubAVFactory
                                    displayLinkFactory:nil
+                                         viewProvider:[[StubViewProvider alloc] initWithView:nil]
                                             registrar:registrar];
 
   FlutterError *initializationError;
@@ -673,6 +709,7 @@
   FVPVideoPlayerPlugin *pluginWithMockAVPlayer =
       [[FVPVideoPlayerPlugin alloc] initWithAVFactory:stubAVFactory
                                    displayLinkFactory:nil
+                                         viewProvider:[[StubViewProvider alloc] initWithView:nil]
                                             registrar:registrar];
 
   FlutterError *initializationError;
@@ -931,6 +968,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
       displayLinkFactory:nil
+            viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
   FlutterError *error;
@@ -975,6 +1013,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+            viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
   FlutterError *error;
