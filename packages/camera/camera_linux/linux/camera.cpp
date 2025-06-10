@@ -196,14 +196,16 @@ void Camera::setExposureMode(CameraLinuxPlatformExposureMode mode) {
     switch (mode) {
       case CameraLinuxPlatformExposureMode::
           CAMERA_LINUX_PLATFORM_EXPOSURE_MODE_AUTO:
-        Pylon::CEnumParameter(nodemap, "ExposureAuto").SetValue("Continuous");
+        Pylon::CEnumParameter(nodemap, "ExposureAuto")
+            .TrySetValue("Continuous");
         break;
       case CameraLinuxPlatformExposureMode::
           CAMERA_LINUX_PLATFORM_EXPOSURE_MODE_LOCKED:
-        Pylon::CEnumParameter(nodemap, "ExposureAuto").SetValue("Off");
+        Pylon::CEnumParameter(nodemap, "ExposureAuto").TrySetValue("Off");
         break;
       default:
-        Pylon::CEnumParameter(nodemap, "ExposureAuto").SetValue("Continuous");
+        Pylon::CEnumParameter(nodemap, "ExposureAuto")
+            .TrySetValue("Continuous");
         break;
     }
     exposure_mode = mode;
@@ -216,14 +218,17 @@ void Camera::setFocusMode(CameraLinuxPlatformFocusMode mode) {
     GenApi::INodeMap& nodemap = camera->GetNodeMap();
     switch (mode) {
       case CameraLinuxPlatformFocusMode::CAMERA_LINUX_PLATFORM_FOCUS_MODE_AUTO:
-        Pylon::CEnumParameter(nodemap, "FocusMode").SetValue("Auto");
+        Pylon::CEnumParameter(nodemap, "FocusAuto")
+            .TrySetValue("FocusAuto_Continuous");
         break;
       case CameraLinuxPlatformFocusMode::
           CAMERA_LINUX_PLATFORM_FOCUS_MODE_LOCKED:
-        Pylon::CEnumParameter(nodemap, "FocusMode").SetValue("Locked");
+        Pylon::CEnumParameter(nodemap, "FocusAuto")
+            .TrySetValue("FocusAuto_Off");
         break;
       default:
-        Pylon::CEnumParameter(nodemap, "FocusMode").SetValue("Auto");
+        Pylon::CEnumParameter(nodemap, "FocusAuto")
+            .TrySetValue("FocusAuto_Continuous");
         break;
     }
     focus_mode = mode;
