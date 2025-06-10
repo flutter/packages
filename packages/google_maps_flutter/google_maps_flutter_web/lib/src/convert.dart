@@ -272,7 +272,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   return gmaps.InfoWindowOptions()
     ..content = container
-    ..zIndex = marker.zIndex;
+    ..zIndex = marker.effectiveZIndex;
   // TODO(ditman): Compute the pixelOffset of the infoWindow, from the size of the Marker,
   // and the marker.infoWindow.anchor property.
 }
@@ -453,8 +453,8 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   return icon;
 }
 
-// Computes the options for a new [gmaps.Marker] from an incoming set of options
-// [marker], and the existing marker registered with the map: [currentMarker].
+/// Computes the options for a new [gmaps.Marker] from an incoming set of options
+/// [marker], and the existing marker registered with the map: [currentMarker].
 Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
   Marker marker,
   gmaps.Marker? currentMarker,
@@ -465,7 +465,7 @@ Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
       marker.position.longitude,
     )
     ..title = sanitizeHtml(marker.infoWindow.title ?? '')
-    ..zIndex = marker.zIndex
+    ..zIndex = marker.effectiveZIndex
     ..visible = marker.visible
     ..opacity = marker.alpha
     ..draggable = marker.draggable
@@ -729,4 +729,14 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
       gmaps.Point((x / scale) + bottomLeft.x, (y / scale) + topRight.y);
 
   return projection.fromPointToLatLng(point)!;
+}
+
+extension on Marker {
+  // We compare with zero because zIndexInt if non zero should get higher priority than zIndex
+  num? get effectiveZIndex {
+    if (zIndexInt != 0) {
+      return zIndexInt;
+    }
+    return zIndex;
+  }
 }
