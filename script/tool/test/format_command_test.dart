@@ -745,6 +745,72 @@ void main() {
             contains('Failed to format Swift files: exit code 1.'),
           ]));
     });
+
+      // ─── BEGIN xcrun fallback test ─────────────────────────────────────────────
+    test('uses xcrun fallback when swift-format not on PATH or --swift-format-path',
+        () async {
+      // 1) Force macOS behavior
+      mockPlatform.isMacOS = true;
+
+      // 2) Make a fake plugin with one Swift file
+      const files = <String>['macos/foo.swift'];
+      final plugin = createFakePlugin('a_plugin', packagesDir, extraFiles: files);
+      fakePubGet(plugin);
+
+      // 3) Stub out the default `swift-format --version` to fail
+      processRunner.mockProcessesForExecutable['swift-format'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(exitCode: 1), <String>['--version']),
+      ];
+
+      // 4) Stub `which -a swift-format` to return nothing
+      processRunner.mockProcessesForExecutable['which'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: ''), <String>['-a', 'swift-format']),
+      ];
+
+      // 5) Stub `xcrun --find swift-format` to return a real path
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+          MockProcess(stdout: '/usr/bin/swift-format\n'),
+          <String>['--find', 'swift-format'],
+        ),
+      ];
+
+      // 6) Stub the fallback binary so that --version, -i and lint all succeed
+      processRunner.mockProcessesForExecutable['/usr/bin/swift-format'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['--version']),
+        FakeProcessInfo(MockProcess(), <String>['-i']),
+        FakeProcessInfo(MockProcess(), <String>['lint', '--parallel', '--strict']),
+      ];
+
+      // 7) Run the command
+      await runCapturingPrint(runner, <String>['format', '--swift']);
+
+      // 8) Verify we called the fallback binary (not `xcrun` in the final recording)
+      expect(
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          // First invocation of the fallback swift-format
+          const ProcessCall(
+            '/usr/bin/swift-format',
+            <String>['--version'],
+            null,
+          ),
+          // Then formatting
+          ProcessCall(
+            '/usr/bin/swift-format',
+            <String>['-i', ...getPackagesDirRelativePaths(plugin, files)],
+            packagesDir.path,
+          ),
+          // Finally linting
+          ProcessCall(
+            '/usr/bin/swift-format',
+            <String>['lint', '--parallel', '--strict', ...getPackagesDirRelativePaths(plugin, files)],
+            packagesDir.path,
+          ),
+        ]),
+      );
+    });
+    // ─── END xcrun fallback test ────────────────────────────────────────────────
   });
 
   test('skips known non-repo files', () async {
