@@ -163,7 +163,7 @@ void main() {
       final Stream<List<PurchaseDetails>> stream =
           iapStoreKitPlatform.purchaseStream;
 
-      late StreamSubscription<List<PurchaseDetails>> subscription;
+      late final StreamSubscription<List<PurchaseDetails>> subscription;
       subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
         details.addAll(purchaseDetailsList);
         if (purchaseDetailsList.first.status == PurchaseStatus.purchased) {
