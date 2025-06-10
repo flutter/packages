@@ -137,7 +137,7 @@ final class DefaultCamera: FLTCam, Camera {
     // A nil point resets to the center.
     captureDevice.setFocusPointOfInterest(
       cgPoint(
-        for: point ?? FCPPlatformPoint.makeWith(x: 0.5, y: 0.5),
+        for: point ?? .makeWith(x: 0.5, y: 0.5),
         withOrientation: orientation)
     )
     captureDevice.unlockForConfiguration()
