@@ -128,7 +128,7 @@ abstract class CameraApi {
   /// Begins recording video, optionally enabling streaming to Dart at the same
   /// time.
   @async
-  void startVideoRecording(int cameraId, bool enableStream);
+  void startVideoRecording(int cameraId, String path);
 
   /// Stops recording video, and results the path to the resulting file.
   @async

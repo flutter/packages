@@ -208,13 +208,27 @@ class CameraLinux extends CameraPlatform {
     @Deprecated(
         'This parameter is unused, and will be ignored on all platforms')
     Duration? maxVideoDuration,
-  }) {
-    throw UnimplementedError('startVideoRecording() is not implemented.');
+  }) async {
+    try {
+      final directory = await getTemporaryDirectory();
+      final uuid = DateTime.now().millisecondsSinceEpoch.toString();
+      final path = '${directory.path}/$uuid.mp4';
+      await _hostApi.startVideoRecording(cameraId, path);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
+    // No-op for Linux, as video recording is not supported.
+    return Future<void>.value();
   }
 
   @override
-  Future<XFile> stopVideoRecording(int cameraId) {
-    throw UnimplementedError('stopVideoRecording() is not implemented.');
+  Future<XFile> stopVideoRecording(int cameraId) async {
+    try {
+      final path = await _hostApi.stopVideoRecording(cameraId);
+      return XFile(path);
+    } on PlatformException catch (e) {
+      throw CameraException(e.code, e.message);
+    }
   }
 
   @override

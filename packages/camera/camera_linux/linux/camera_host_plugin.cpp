@@ -173,3 +173,29 @@ void CameraHostPlugin::take_picture(
     CAMERA_HOST_VOID_RETURN();
   });
 }
+
+void CameraHostPlugin::start_video_recording(
+    int64_t camera_id, const gchar* path,
+    CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
+  CAMERA_HOST_ERROR_HANDLING(start_video_recording, {
+    Camera& camera = get_camera_by_id(camera_id);
+
+    camera.startVideoRecording(std::string(path));
+    CAMERA_HOST_VOID_RETURN();
+  });
+}
+
+void CameraHostPlugin::stop_video_recording(
+    int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle,
+    gpointer user_data) {
+  CAMERA_HOST_ERROR_HANDLING(stop_video_recording, {
+    Camera& camera = get_camera_by_id(camera_id);
+
+    std::string path;
+    camera.stopVideoRecording(path);
+    if (path.empty()) {
+      CAMERA_HOST_RAISE_ERROR("Video recording not started");
+    }
+    CAMERA_HOST_RETURN(path.c_str());
+  });
+}

@@ -977,9 +977,9 @@ static void camera_linux_camera_api_start_video_recording_cb(FlBasicMessageChann
   FlValue* value0 = fl_value_get_list_value(message_, 0);
   int64_t camera_id = fl_value_get_int(value0);
   FlValue* value1 = fl_value_get_list_value(message_, 1);
-  gboolean enable_stream = fl_value_get_bool(value1);
+  const gchar* path = fl_value_get_string(value1);
   g_autoptr(CameraLinuxCameraApiResponseHandle) handle = camera_linux_camera_api_response_handle_new(channel, response_handle);
-  self->vtable->start_video_recording(camera_id, enable_stream, handle, self->user_data);
+  self->vtable->start_video_recording(camera_id, path, handle, self->user_data);
 }
 
 static void camera_linux_camera_api_stop_video_recording_cb(FlBasicMessageChannel* channel, FlValue* message_, FlBasicMessageChannelResponseHandle* response_handle, gpointer user_data) {

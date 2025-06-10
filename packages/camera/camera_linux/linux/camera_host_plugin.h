@@ -86,16 +86,12 @@ class CameraHostPlugin {
                            gpointer user_data);
 
   static void start_video_recording(
-      int64_t camera_id, gboolean enable_stream,
-      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
+      int64_t camera_id, const gchar* path,
+      CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
 
   static void stop_video_recording(
       int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle,
-      gpointer user_data) {
-    throw new std::runtime_error("Not Implemented");
-  }
+      gpointer user_data);
 
   static void set_exposure_mode(
       int64_t camera_id, CameraLinuxPlatformExposureMode mode,

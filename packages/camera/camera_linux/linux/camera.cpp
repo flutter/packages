@@ -96,7 +96,7 @@ int64_t Camera::getTextureId() {
   return cameraTextureImageEventHandler->get_texture_id();
 }
 
-void Camera::takePicture(std::string file_path) {
+void Camera::takePicture(std::string filePath) {
   CAMERA_CONFIG_LOCK(
       Pylon::CGrabResultPtr grabResult;
 
@@ -121,7 +121,7 @@ void Camera::takePicture(std::string file_path) {
                   isMono ? CV_8UC1 : CV_8UC3, (uint8_t*)image.GetBuffer());
       cv::Mat bgr;
       cv::cvtColor(mat, bgr, isMono ? cv::COLOR_GRAY2BGR : cv::COLOR_RGB2BGR);
-      cv::imwrite(file_path, bgr);
+      cv::imwrite(filePath, bgr);
 
   );
 }
@@ -228,5 +228,34 @@ void Camera::setFocusMode(CameraLinuxPlatformFocusMode mode) {
     }
     focus_mode = mode;
     emitState();
+  });
+}
+
+void Camera::startVideoRecording(std::string filePath) {
+  if (!camera || !Pylon::CVideoWriter::IsSupported() ||
+      cameraVideoRecorderImageEventHandler) {
+    std::cerr << "Video recording is not supported or camera is not "
+                 "initialized. or already recording."
+              << std::endl;
+    return;
+  }
+  CAMERA_CONFIG_LOCK({
+    cameraVideoRecorderImageEventHandler =
+        std::make_unique<CameraVideoRecorderImageEventHandler>(filePath);
+    camera->RegisterImageEventHandler(
+        cameraVideoRecorderImageEventHandler.get(),
+        Pylon::RegistrationMode_Append, Pylon::Cleanup_None);
+  });
+}
+
+void Camera::stopVideoRecording(std::string& filePath) {
+  if (!camera || !cameraVideoRecorderImageEventHandler) {
+    return;
+  }
+  CAMERA_CONFIG_LOCK({
+    filePath = cameraVideoRecorderImageEventHandler->m_videoFilePath;
+    camera->DeregisterImageEventHandler(
+        cameraVideoRecorderImageEventHandler.get());
+    cameraVideoRecorderImageEventHandler.reset();
   });
 }

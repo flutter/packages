@@ -402,7 +402,7 @@ class CameraApi {
 
   /// Begins recording video, optionally enabling streaming to Dart at the same
   /// time.
-  Future<void> startVideoRecording(int cameraId, bool enableStream) async {
+  Future<void> startVideoRecording(int cameraId, String path) async {
     final String pigeonVar_channelName = 'dev.flutter.pigeon.camera_linux.CameraApi.startVideoRecording$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -410,7 +410,7 @@ class CameraApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[cameraId, enableStream]) as List<Object?>?;
+        await pigeonVar_channel.send(<Object?>[cameraId, path]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

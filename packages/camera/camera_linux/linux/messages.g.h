@@ -258,7 +258,7 @@ typedef struct {
   void (*get_texture_id)(int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*dispose)(int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*take_picture)(int64_t camera_id, const gchar* path, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
-  void (*start_video_recording)(int64_t camera_id, gboolean enable_stream, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
+  void (*start_video_recording)(int64_t camera_id, const gchar* path, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*stop_video_recording)(int64_t camera_id, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*set_exposure_mode)(int64_t camera_id, CameraLinuxPlatformExposureMode mode, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);
   void (*set_focus_mode)(int64_t camera_id, CameraLinuxPlatformFocusMode mode, CameraLinuxCameraApiResponseHandle* response_handle, gpointer user_data);

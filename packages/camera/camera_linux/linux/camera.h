@@ -4,6 +4,7 @@
 
 #include <functional>
 
+#include "camera_video_recorder_image_event_handler.h"
 #include "flutter_linux/flutter_linux.h"
 #include "messages.g.h"
 
@@ -23,6 +24,8 @@ class Camera {
   std::unique_ptr<class CameraTextureImageEventHandler>
       cameraTextureImageEventHandler;
   CameraLinuxCameraEventApi* cameraLinuxCameraEventApi;
+  std::unique_ptr<CameraVideoRecorderImageEventHandler>
+      cameraVideoRecorderImageEventHandler;
 
   Camera(Pylon::IPylonDevice* device, int64_t camera_id,
          FlPluginRegistrar* registrar,
@@ -37,9 +40,9 @@ class Camera {
 
   int64_t getTextureId();
 
-  void takePicture(std::string file_path);
-  // void startVideoRecording();
-  // void stopVideoRecording();
+  void takePicture(std::string filePath);
+  void startVideoRecording(std::string filePath);
+  void stopVideoRecording(std::string& filePath);
 
   void setImageFormatGroup(
       CameraLinuxPlatformImageFormatGroup imageFormatGroup);

@@ -8,11 +8,15 @@ set(CMAKE_CXX_STANDARD 17)
 # Set variables
 set(PYLON_VERSION "8.0.2.16314")
 set(PYLON_ARCHIVE_NAME "pylon-${PYLON_VERSION}_linux-aarch64.tar.gz")
-set(PYLON_ARCHIVE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../deps/${PYLON_ARCHIVE_NAME})
+set(PYLON_ARCHIVE_PATH ${CMAKE_BINARY_DIR}/downloads/${PYLON_ARCHIVE_NAME})
 set(PYLON_DOWNLOAD_URL "https://github.com/LightX-Innovations/flutter_packages/releases/download/camera_linux_v0.1/pylon-${PYLON_VERSION}_linux-aarch64.tar.gz")
 set(PYLON_ROOT ${CMAKE_BINARY_DIR}/pylon-sdk)
 
-# Download the archive if it does not exist
+set(PYLON_MPEG_ARCHIVE_NAME "pylon-supplementary-package-for-mpeg-4-1.0.2.121_aarch64.tar.gz")
+set(PYLON_MPEG_ARCHIVE_PATH ${CMAKE_BINARY_DIR}/downloads/${PYLON_MPEG_ARCHIVE_NAME})
+set(PYLON_MPEG_DOWNLOAD_URL "https://github.com/LightX-Innovations/flutter_packages/releases/download/camera_linux_v0.1/pylon-supplementary-package-for-mpeg-4-1.0.2.121_aarch64.tar.gz")
+
+# Download the archives if they do not exist
 if(NOT EXISTS "${PYLON_ARCHIVE_PATH}")
     message(STATUS "Downloading Pylon SDK archive...")
     file(DOWNLOAD
@@ -24,7 +28,18 @@ if(NOT EXISTS "${PYLON_ARCHIVE_PATH}")
     list(GET DOWNLOAD_STATUS 0 DOWNLOAD_RESULT)
 endif()
 
-# Extract the archive only if not already extracted
+if(NOT EXISTS "${PYLON_MPEG_ARCHIVE_PATH}")
+    message(STATUS "Downloading Pylon SDK MPEG archive...")
+    file(DOWNLOAD
+        "${PYLON_MPEG_DOWNLOAD_URL}"
+        "${PYLON_MPEG_ARCHIVE_PATH}"
+        SHOW_PROGRESS
+        STATUS DOWNLOAD_STATUS
+    )
+    list(GET DOWNLOAD_STATUS 0 DOWNLOAD_RESULT)
+endif()
+
+
 if(NOT EXISTS "${PYLON_ROOT}")
     message(STATUS "Extracting Pylon SDK to ${PYLON_ROOT}...")
     file(MAKE_DIRECTORY "${PYLON_ROOT}")
@@ -32,9 +47,15 @@ if(NOT EXISTS "${PYLON_ROOT}")
         COMMAND ${CMAKE_COMMAND} -E tar -xzf "${PYLON_ARCHIVE_PATH}"
         WORKING_DIRECTORY "${PYLON_ROOT}"
     )
+    message(STATUS "Extracting Pylon MPEG SDK to ${PYLON_ROOT}...")
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E tar -xzf "${PYLON_MPEG_ARCHIVE_PATH}"
+        WORKING_DIRECTORY "${PYLON_ROOT}"
+    )
 endif()
 
 include_directories(${PYLON_ROOT}/include)
+
 link_directories(${PYLON_ROOT}/lib)
 
 # Project-level configuration.

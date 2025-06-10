@@ -2,11 +2,7 @@
 #ifndef CAMERA_VIDEO_RECORDER_IMAGE_EVENT_HANDLER_H_
 #define CAMERA_VIDEO_RECORDER_IMAGE_EVENT_HANDLER_H_
 
-#include <GL/gl.h>
-
-#include "camera.h"
 #include "flutter_linux/flutter_linux.h"
-#include "messages.g.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Woverloaded-virtual"
@@ -16,15 +12,18 @@
 
 #pragma clang diagnostic pop
 
+#define CAMERA_VIDEO_RECORDER_PLAY_BACK_FRAME_RATE 60.0
+#define CAMERA_VIDEO_RECORDER_QUALITY 100
+
 class CameraVideoRecorderImageEventHandler : public Pylon::CImageEventHandler {
-  const Camera& camera;
+  Pylon::CVideoWriter m_videoWriter;
 
  public:
-  CameraVideoRecorderImageEventHandler(const Camera& camera);
+  std::string m_videoFilePath;
+
+  CameraVideoRecorderImageEventHandler(std::string videoFilePath);
 
   ~CameraVideoRecorderImageEventHandler() override;
-
-  void OnImageEventHandlerRegistered(Pylon::CInstantCamera& camera) override;
 
   void OnImageGrabbed(Pylon::CInstantCamera& camera,
                       const Pylon::CGrabResultPtr& ptr) override;
