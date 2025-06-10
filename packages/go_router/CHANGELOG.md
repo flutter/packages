@@ -1,4 +1,4 @@
-## 15.1.3
+## 15.1.4
 
 - Fixes Popping state and re-rendering scaffold at the same time doesn't update the URL on web.
 
