@@ -1,4 +1,4 @@
-## 2.16.2
+## NEXT
 
 * Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
 
