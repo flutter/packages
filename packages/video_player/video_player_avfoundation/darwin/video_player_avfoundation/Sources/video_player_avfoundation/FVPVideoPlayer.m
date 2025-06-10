@@ -20,33 +20,33 @@ static void *rateContext = &rateContext;
 @implementation FVPVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
                     avFactory:(id<FVPAVFactory>)avFactory
-                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   return [self initWithURL:[NSURL fileURLWithPath:[FVPVideoPlayer absolutePathForAssetName:asset]]
                httpHeaders:@{}
                  avFactory:avFactory
-                 registrar:registrar];
+              viewProvider:viewProvider];
 }
 
 - (instancetype)initWithURL:(NSURL *)url
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+               viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
   }
   AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
   AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
-  return [self initWithPlayerItem:item avFactory:avFactory registrar:registrar];
+  return [self initWithPlayerItem:item avFactory:avFactory viewProvider:viewProvider];
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                          avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
 
-  _registrar = registrar;
+  _viewProvider = viewProvider;
 
   AVAsset *asset = [item asset];
   void (^assetCompletionHandler)(void) = ^{
