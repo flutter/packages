@@ -168,7 +168,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     throw UnimplementedError('Unknown ImageSource: $source');
   }
 
-  // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not currently
+  // `maxWidth`, `maxHeight`, `limit`, and `imageQuality` arguments are not currently
   // supported. If any of these arguments are supplied, they will be silently
   // ignored.
   @override
@@ -176,6 +176,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) async {
     const XTypeGroup typeGroup =
         XTypeGroup(label: 'Images', extensions: imageFormats);

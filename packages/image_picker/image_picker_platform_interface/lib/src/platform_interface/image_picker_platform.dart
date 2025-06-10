@@ -209,6 +209,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) {
     throw UnimplementedError('getMultiImage() has not been implemented.');
   }

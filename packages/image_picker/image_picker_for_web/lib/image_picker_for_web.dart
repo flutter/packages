@@ -205,6 +205,7 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) async {
     return getMultiImageWithOptions(
       options: MultiImagePickerOptions(

@@ -204,11 +204,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     double? maxWidth,
     double? maxHeight,
     int? imageQuality,
+    int? limit,
   }) async {
     final List<String> paths = await _getMultiImagePath(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,
+      limit: limit,
     );
     if (paths.isEmpty) {
       return null;
