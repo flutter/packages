@@ -230,7 +230,12 @@ enum UiElement {
         'com.google.ads.interactivemedia.v3.api.BaseDisplayContainer',
   ),
 )
-abstract class BaseDisplayContainer {}
+abstract class BaseDisplayContainer {
+  /// Sets slots for displaying companions.
+  ///
+  /// Passing null will reset the container to having no companion slots.
+  void setCompanionSlots(List<CompanionAdSlot>? companionSlots);
+}
 
 /// A container in which to display the ads.
 ///
@@ -240,7 +245,7 @@ abstract class BaseDisplayContainer {}
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdDisplayContainer',
   ),
 )
-abstract class AdDisplayContainer implements BaseDisplayContainer {}
+abstract class AdDisplayContainer extends BaseDisplayContainer {}
 
 /// An object which allows publishers to request ads from ad servers or a
 /// dynamic ad insertion stream.
@@ -456,6 +461,9 @@ abstract class ImaSdkFactory {
     ViewGroup container,
     VideoAdPlayer player,
   );
+
+  /// Creates a CompanionAdSlot for the SDK to fill with companion ads.
+  CompanionAdSlot createCompanionAdSlot();
 
   /// Creates an `ImaSdkSettings` object for configuring the IMA SDK.
   ImaSdkSettings createImaSdkSettings();
@@ -1083,4 +1091,10 @@ abstract class CompanionAdSlot {
   ///
   /// Only companions matching the slot size will be displayed in the slot.
   void setSize(int width, int height);
+
+  /// Sets the size of the slot as fluid.
+  ///
+  /// This is a convenience method that sets both parameters of [setSize] to
+  /// [CompanionAdSlot.FLUID_SIZE](https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot#FLUID_SIZE()).
+  void setFluidSize();
 }

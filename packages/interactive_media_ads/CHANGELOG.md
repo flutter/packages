@@ -1,3 +1,7 @@
+## 0.2.4
+
+* Adds support for companion ads. See `CompanionAdSlot` and `AdDisplayContainer(companionAds)`.
+
 ## 0.2.3+12
 
 * Fixes appending request agent to ad tags that contain a query.
