@@ -5,6 +5,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 #import "FVPAVFactory.h"
+#import "FVPViewProvider.h"
 
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
@@ -31,17 +32,18 @@ NS_ASSUME_NONNULL_BEGIN
 /// The current playback position of the video, in milliseconds.
 @property(nonatomic, readonly) int64_t position;
 
-/// Initializes a new instance of FVPVideoPlayer with the given asset, AV factory, and registrar.
+/// Initializes a new instance of FVPVideoPlayer with the given asset, AV factory, and view
+/// provider.
 - (instancetype)initWithAsset:(NSString *)asset
                     avFactory:(id<FVPAVFactory>)avFactory
-                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
 /// Initializes a new instance of FVPVideoPlayer with the given URL, HTTP headers, AV factory, and
-/// registrar.
+/// view provider.
 - (instancetype)initWithURL:(NSURL *)url
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+               viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
 /// Disposes the video player and releases any resources it holds.
 - (void)dispose;

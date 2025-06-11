@@ -34,7 +34,7 @@ class Extra {
 }
 
 @TypedGoRoute<RequiredExtraRoute>(path: '/requiredExtra')
-class RequiredExtraRoute extends GoRouteData {
+class RequiredExtraRoute extends GoRouteData with _$RequiredExtraRoute {
   const RequiredExtraRoute({required this.$extra});
 
   final Extra $extra;
@@ -59,7 +59,7 @@ class RequiredExtraScreen extends StatelessWidget {
 }
 
 @TypedGoRoute<OptionalExtraRoute>(path: '/optionalExtra')
-class OptionalExtraRoute extends GoRouteData {
+class OptionalExtraRoute extends GoRouteData with _$OptionalExtraRoute {
   const OptionalExtraRoute({this.$extra});
 
   final Extra? $extra;
@@ -84,7 +84,7 @@ class OptionalExtraScreen extends StatelessWidget {
 }
 
 @TypedGoRoute<SplashRoute>(path: '/splash')
-class SplashRoute extends GoRouteData {
+class SplashRoute extends GoRouteData with _$SplashRoute {
   const SplashRoute();
 
   @override

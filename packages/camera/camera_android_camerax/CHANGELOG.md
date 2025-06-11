@@ -1,6 +1,10 @@
+## 0.6.18+2
+
+* Fixes premature garbage collection of native objects when app is under memory pressure.
+
 ## 0.6.18+1
 
-* Fixes incorrect camera preview mirroring for front cameras of devices using the `ImageReader` Impeller backend.
+* Makes Java style improvements.
 
 ## 0.6.18
 
