@@ -7,7 +7,8 @@ import 'package:camera_android_camerax/src/camerax_library.dart';
 import 'package:camera_android_camerax/src/camerax_proxy.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart' show MatrixUtils, RotatedBox, Texture, Transform;
+import 'package:flutter/widgets.dart'
+    show MatrixUtils, RotatedBox, Texture, Transform;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -388,13 +389,28 @@ void main() {
   ///  [ 0.0,  0.0,  0.0,  1.0]]
   void checkXAxisIsMirrored(Matrix4 transformationMatrix) {
     final Matrix4 mirrorAcrossXMatrix = Matrix4(
-        -1.0, 0.0, 0.0, 0.0,
-        0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0, 1.0
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
     );
 
-    expect(MatrixUtils.matrixEquals(mirrorAcrossXMatrix, transformationMatrix), isTrue);
+    expect(
+      MatrixUtils.matrixEquals(mirrorAcrossXMatrix, transformationMatrix),
+      isTrue,
+    );
   }
 
   /// Checks that the transform matrix (Matrix4) mirrors across the y-axis by
@@ -405,13 +421,28 @@ void main() {
   ///  [ 0.0,  0.0,  0.0,  1.0]]
   void checkYAxisIsMirrored(Matrix4 transformationMatrix) {
     final Matrix4 mirrorAcrossYMatrix = Matrix4(
-        1.0, 0.0, 0.0, 0.0,
-        0.0, -1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0,
-        0.0, 0.0, 0.0, 1.0
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      -1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.0,
     );
 
-    expect(MatrixUtils.matrixEquals(mirrorAcrossYMatrix, transformationMatrix), isTrue);
+    expect(
+      MatrixUtils.matrixEquals(mirrorAcrossYMatrix, transformationMatrix),
+      isTrue,
+    );
   }
 
   group('when handlesCropAndRotation is true', () {
