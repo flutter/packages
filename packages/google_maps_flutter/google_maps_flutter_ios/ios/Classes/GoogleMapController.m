@@ -665,7 +665,8 @@
                                  details:nil];
     return;
   }
-  FGMCATransactionWrapper *transaction = durationMilliseconds != nil ? self.transactionWrapper : nil;
+  FGMCATransactionWrapper *transaction =
+      durationMilliseconds != nil ? self.transactionWrapper : nil;
   [transaction begin];
   [transaction setAnimationDuration:[durationMilliseconds doubleValue] / 1000];
   [self.controller.mapView animateWithCameraUpdate:update];
