@@ -354,7 +354,7 @@ targets:
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
@@ -377,7 +377,7 @@ targets:
       # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
@@ -427,7 +427,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -445,7 +445,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -463,7 +463,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -481,7 +481,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -499,7 +499,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -517,7 +517,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -536,7 +536,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -555,7 +555,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -574,7 +574,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -593,7 +593,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -612,7 +612,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -631,7 +631,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
