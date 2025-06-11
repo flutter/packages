@@ -307,6 +307,44 @@ void main() {
         expect(events[4], isA<CameraIdleEvent>());
       });
 
+      testWidgets('stops listening to map events once disposed',
+          (WidgetTester tester) async {
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, __) => map,
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
+
+        controller.dispose();
+
+        // Trigger events on the map, and verify they've been broadcast to the stream
+        final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(5);
+
+        gmaps.event.trigger(
+          map,
+          'click',
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        );
+        gmaps.event.trigger(
+          map,
+          'rightclick',
+          gmaps.MapMouseEvent()..latLng = gmaps.LatLng(0, 0),
+        );
+        // The following line causes 2 events
+        gmaps.event.trigger(map, 'bounds_changed');
+        gmaps.event.trigger(map, 'idle');
+
+        final List<MapEvent<Object?>> events = await capturedEvents.toList();
+
+        expect(events, isEmpty);
+      });
+
       testWidgets("binds geometry controllers to map's",
           (WidgetTester tester) async {
         controller = createController()
