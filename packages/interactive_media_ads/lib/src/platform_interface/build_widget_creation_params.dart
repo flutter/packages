@@ -5,6 +5,7 @@
 import 'package:flutter/widgets.dart';
 
 /// Object specifying creation parameters for creating a native view.
+@immutable
 base class BuildWidgetCreationParams {
   /// Used by the platform implementation to create a new
   /// [BuildWidgetCreationParams].

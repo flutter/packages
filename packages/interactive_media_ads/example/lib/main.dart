@@ -67,7 +67,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   );
 
   late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
-    companionAds: <CompanionAdSlot>[companionAd],
+    companionSlots: <CompanionAdSlot>[companionAd],
     onContainerAdded: (AdDisplayContainer container) {
       _adsLoader = AdsLoader(
         container: container,

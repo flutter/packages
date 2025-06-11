@@ -37,7 +37,7 @@ class AdDisplayContainer extends StatelessWidget {
   AdDisplayContainer({
     Key? key,
     required void Function(AdDisplayContainer container) onContainerAdded,
-    Iterable<CompanionAdSlot> companionAds = const <CompanionAdSlot>[],
+    Iterable<CompanionAdSlot> companionSlots = const <CompanionAdSlot>[],
     TextDirection layoutDirection = TextDirection.ltr,
   }) : this.fromPlatformCreationParams(
           key: key,
@@ -47,7 +47,7 @@ class AdDisplayContainer extends StatelessWidget {
                 platform: container,
               ));
             },
-            companionSlots: companionAds.map(
+            companionSlots: companionSlots.map(
               (CompanionAdSlot slot) => slot.platform,
             ),
             layoutDirection: layoutDirection,
@@ -102,7 +102,7 @@ class AdDisplayContainer extends StatelessWidget {
       platform.params.onContainerAdded;
 
   /// List of companion ad slots.
-  Iterable<CompanionAdSlot> get companionAds =>
+  Iterable<CompanionAdSlot> get companionSlots =>
       platform.params.companionSlots.map(
         (PlatformCompanionAdSlot slot) => CompanionAdSlot.fromPlatform(slot),
       );

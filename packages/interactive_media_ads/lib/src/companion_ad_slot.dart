@@ -43,7 +43,7 @@ class CompanionAdSlot {
           ),
         );
 
-  /// Constructs an [CompanionAdSlot] from creation params for a specific
+  /// Constructs a [CompanionAdSlot] from creation params for a specific
   /// platform.
   ///
   /// {@template interactive_media_ads.CompanionAdSlot.fromPlatformCreationParams}
@@ -75,7 +75,7 @@ class CompanionAdSlot {
     required PlatformCompanionAdSlotCreationParams params,
   }) : this.fromPlatform(PlatformCompanionAdSlot(params));
 
-  /// Constructs an [CompanionAdSlot] from a specific platform implementation.
+  /// Constructs a [CompanionAdSlot] from a specific platform implementation.
   const CompanionAdSlot.fromPlatform(this.platform);
 
   /// Implementation of [PlatformCompanionAdSlot] for the current platform.
