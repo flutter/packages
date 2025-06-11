@@ -101,4 +101,14 @@ class NonWebImplementation extends GoogleSignInPlatform {
   Future<void> signOut(SignOutParams params) {
     throw UnimplementedError();
   }
+
+  @override
+  bool authorizationRequiresUserInteraction() {
+    throw UnimplementedError();
+  }
+
+  @override
+  bool supportsAuthenticate() {
+    throw UnimplementedError();
+  }
 }

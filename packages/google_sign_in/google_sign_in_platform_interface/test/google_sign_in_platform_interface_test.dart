@@ -113,9 +113,15 @@ class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
   }
 
   @override
+  bool supportsAuthenticate() => false;
+
+  @override
   Future<AuthenticationResults> authenticate(AuthenticateParameters params) {
     throw UnimplementedError();
   }
+
+  @override
+  bool authorizationRequiresUserInteraction() => false;
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(

@@ -64,6 +64,9 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   @override
+  bool supportsAuthenticate() => true;
+
+  @override
   Future<AuthenticationResults> authenticate(
       AuthenticateParameters params) async {
     // Attempt to authorize with minimal interaction.
@@ -99,6 +102,9 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     //  https://github.com/flutter/flutter/issues/169612
     await signOut(const SignOutParams());
   }
+
+  @override
+  bool authorizationRequiresUserInteraction() => false;
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(

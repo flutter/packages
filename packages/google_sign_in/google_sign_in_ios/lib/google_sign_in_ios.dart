@@ -60,6 +60,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   }
 
   @override
+  bool supportsAuthenticate() => true;
+
+  @override
   Future<AuthenticationResults> authenticate(
       AuthenticateParameters params) async {
     final SignInResult result = await _api.signIn(params.scopeHint, _nonce);
@@ -98,6 +101,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     await _api.disconnect();
     await signOut(const SignOutParams());
   }
+
+  @override
+  bool authorizationRequiresUserInteraction() => false;
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(

@@ -59,12 +59,6 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   Future<AuthenticationResults?>? attemptLightweightAuthentication(
       AttemptLightweightAuthenticationParameters params);
 
-  /// Signs in with explicit user intent.
-  ///
-  /// This is intended to support the use case where the user has expressed
-  /// an explicit intent to sign in.
-  Future<AuthenticationResults> authenticate(AuthenticateParameters params);
-
   /// Returns true if the platform implementation supports the [authenticate]
   /// method.
   ///
@@ -72,15 +66,20 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   /// override this to return false, throw [UnsupportedError] from
   /// [authenticate], and provide a different, platform-specific authentication
   /// flow.
-  bool supportsAuthenticate() => true;
+  bool supportsAuthenticate();
+
+  /// Signs in with explicit user intent.
+  ///
+  /// This is intended to support the use case where the user has expressed
+  /// an explicit intent to sign in.
+  Future<AuthenticationResults> authenticate(AuthenticateParameters params);
 
   /// Whether or not authorization calls that could show UI must be called from
   /// a user interaction, such as a button press, on the current platform.
   ///
-  /// The default is true, but platforms that can fail to show UI without an
-  /// active user interaction should override this to return true. For instance,
-  /// this should return true for a web implementations that uses popups.
-  bool authorizationRequiresUserInteraction() => false;
+  /// Platforms that can fail to show UI without an active user interaction,
+  /// such as a web implementations that uses popups, should return false.
+  bool authorizationRequiresUserInteraction();
 
   /// Returns the tokens used to authenticate other API calls from a client.
   ///
@@ -99,8 +98,8 @@ abstract class GoogleSignInPlatform extends PlatformInterface {
   /// Signs out previously signed in accounts.
   Future<void> signOut(SignOutParams params);
 
-  /// Revokes all of the scopes that all signed in users granted, and then them
-  /// out.
+  /// Revokes all of the scopes that all signed in users granted, and then signs
+  /// them out.
   Future<void> disconnect(DisconnectParams params);
 
   /// Returns a stream of authentication events.
@@ -137,7 +136,17 @@ class _PlaceholderImplementation extends GoogleSignInPlatform {
   }
 
   @override
+  bool supportsAuthenticate() {
+    throw UnimplementedError();
+  }
+
+  @override
   Future<AuthenticationResults> authenticate(AuthenticateParameters params) {
+    throw UnimplementedError();
+  }
+
+  @override
+  bool authorizationRequiresUserInteraction() {
     throw UnimplementedError();
   }
 

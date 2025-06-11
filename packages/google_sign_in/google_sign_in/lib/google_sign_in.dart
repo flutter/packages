@@ -54,9 +54,11 @@ class GoogleSignInAccount implements GoogleIdentity {
   /// Returns authentication tokens for this account.
   ///
   /// This returns the authentication information that was returned at the time
-  /// of the initial authentication. Clients are strongly encouraged to use this
-  /// information immediately after authentication, as tokens are subject to
-  /// expiration, and obtaining new tokens requires re-authenticating.
+  /// of the initial authentication.
+  ///
+  /// Clients are strongly encouraged to use this information immediately after
+  /// authentication, as tokens are subject to expiration, and obtaining new
+  /// tokens requires re-authenticating.
   GoogleSignInAuthentication get authentication {
     return GoogleSignInAuthentication(idToken: _authenticationTokens.idToken);
   }

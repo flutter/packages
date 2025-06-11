@@ -35,6 +35,16 @@ void main() {
     expect(GoogleSignInPlatform.instance, isA<GoogleSignInIOS>());
   });
 
+  group('support queries', () {
+    test('reports support for authenticate', () {
+      expect(googleSignIn.supportsAuthenticate(), true);
+    });
+
+    test('reports no requirement for user interaction to authorize', () {
+      expect(googleSignIn.authorizationRequiresUserInteraction(), false);
+    });
+  });
+
   group('init', () {
     test('passes expected values', () async {
       const String clientId = 'aClient';
