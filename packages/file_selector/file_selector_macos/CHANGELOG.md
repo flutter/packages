@@ -1,6 +1,7 @@
-## NEXT
+## 0.9.4+3
 
-* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+* Updates configuration to not set `nameFieldStringValue` for `NSOpenPanel`.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 0.9.4+2
 

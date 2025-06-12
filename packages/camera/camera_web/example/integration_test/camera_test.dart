@@ -11,11 +11,10 @@ import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
-import 'package:camera_web/src/camera_service.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockito/mockito.dart';
 import 'package:web/web.dart';
 
 import 'helpers/helpers.dart';
@@ -35,7 +34,7 @@ void main() {
     late MediaDevices mediaDevices;
 
     late MediaStream mediaStream;
-    late CameraService cameraService;
+    late MockCameraService cameraService;
 
     setUp(() {
       mockWindow = MockWindow();
@@ -56,15 +55,11 @@ void main() {
       mediaStream = videoElement.captureStream();
 
       when(
-        () => cameraService.getMediaStreamForOptions(
-          any(),
-          cameraId: any(named: 'cameraId'),
+        cameraService.getMediaStreamForOptions(
+          any,
+          cameraId: anyNamed('cameraId'),
         ),
       ).thenAnswer((_) => Future<MediaStream>.value(mediaStream));
-    });
-
-    setUpAll(() {
-      registerFallbackValue(MockCameraOptions());
     });
 
     group('initialize', () {
@@ -87,7 +82,7 @@ void main() {
         await camera.initialize();
 
         verify(
-          () => cameraService.getMediaStreamForOptions(
+          cameraService.getMediaStreamForOptions(
             options,
             cameraId: textureId,
           ),
@@ -189,8 +184,12 @@ void main() {
         final Exception exception =
             Exception('A media stream exception occured.');
 
-        when(() => cameraService.getMediaStreamForOptions(any(),
-            cameraId: any(named: 'cameraId'))).thenThrow(exception);
+        when(
+          cameraService.getMediaStreamForOptions(
+            any,
+            cameraId: anyNamed('cameraId'),
+          ),
+        ).thenThrow(exception);
 
         final Camera camera = Camera(
           textureId: textureId,
@@ -253,7 +252,7 @@ void main() {
 
         // Should be called twice: for initialize and play.
         verify(
-          () => cameraService.getMediaStreamForOptions(
+          cameraService.getMediaStreamForOptions(
             options,
             cameraId: textureId,
           ),
@@ -697,12 +696,12 @@ void main() {
                 as MediaStreamTrack,
           );
 
-          when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
+          when(cameraService.getZoomLevelCapabilityForCamera(camera))
               .thenReturn(zoomLevelCapability);
 
           final double maximumZoomLevel = camera.getMaxZoomLevel();
 
-          verify(() => cameraService.getZoomLevelCapabilityForCamera(camera))
+          verify(cameraService.getZoomLevelCapabilityForCamera(camera))
               .called(1);
 
           expect(
@@ -729,12 +728,12 @@ void main() {
                 as MediaStreamTrack,
           );
 
-          when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
+          when(cameraService.getZoomLevelCapabilityForCamera(camera))
               .thenReturn(zoomLevelCapability);
 
           final double minimumZoomLevel = camera.getMinZoomLevel();
 
-          verify(() => cameraService.getZoomLevelCapabilityForCamera(camera))
+          verify(cameraService.getZoomLevelCapabilityForCamera(camera))
               .called(1);
 
           expect(
@@ -775,7 +774,7 @@ void main() {
             return Future<JSAny?>.value().toJS;
           }.toJS;
 
-          when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
+          when(cameraService.getZoomLevelCapabilityForCamera(camera))
               .thenReturn(zoomLevelCapability);
 
           const double zoom = 75.0;
@@ -803,7 +802,7 @@ void main() {
                   as MediaStreamTrack,
             );
 
-            when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
+            when(cameraService.getZoomLevelCapabilityForCamera(camera))
                 .thenReturn(zoomLevelCapability);
 
             expect(
@@ -839,7 +838,7 @@ void main() {
                   as MediaStreamTrack,
             );
 
-            when(() => cameraService.getZoomLevelCapabilityForCamera(camera))
+            when(cameraService.getZoomLevelCapabilityForCamera(camera))
                 .thenReturn(zoomLevelCapability);
 
             expect(
@@ -893,7 +892,7 @@ void main() {
           return MediaTrackSettings(facingMode: 'environment');
         }.toJS;
 
-        when(() => cameraService.mapFacingModeToLensDirection('environment'))
+        when(cameraService.mapFacingModeToLensDirection('environment'))
             .thenReturn(CameraLensDirection.external);
 
         expect(
@@ -1439,7 +1438,7 @@ void main() {
             ..isVideoTypeSupported = isVideoTypeSupported
             ..mediaRecorderOnErrorProvider = provider;
 
-          when(() => provider.forTarget(mediaRecorder))
+          when(provider.forTarget(mediaRecorder))
               .thenAnswer((_) => onErrorStreamController.stream);
 
           await camera.initialize();
@@ -1681,7 +1680,7 @@ void main() {
             ..mediaRecorder = mediaRecorder
             ..mediaRecorderOnErrorProvider = provider;
 
-          when(() => provider.forTarget(mediaRecorder))
+          when(provider.forTarget(mediaRecorder))
               .thenAnswer((_) => errorController.stream);
 
           final StreamQueue<ErrorEvent> streamQueue =

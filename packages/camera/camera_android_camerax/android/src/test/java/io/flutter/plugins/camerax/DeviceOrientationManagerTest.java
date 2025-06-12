@@ -67,13 +67,13 @@ public class DeviceOrientationManagerTest {
   public void start_createsExpectedOrientationEventListener() {
     DeviceOrientationManager deviceOrientationManagerSpy = spy(deviceOrientationManager);
 
-    doNothing().when(deviceOrientationManagerSpy).handleUIOrientationChange();
+    doNothing().when(deviceOrientationManagerSpy).handleUiOrientationChange();
 
     deviceOrientationManagerSpy.start();
     deviceOrientationManagerSpy.orientationEventListener.onOrientationChanged(
         /* some device orientation */ 3);
 
-    verify(deviceOrientationManagerSpy).handleUIOrientationChange();
+    verify(deviceOrientationManagerSpy).handleUiOrientationChange();
   }
 
   @Test
@@ -125,50 +125,50 @@ public class DeviceOrientationManagerTest {
   }
 
   @Test
-  public void getUIOrientation() {
+  public void getUiOrientation() {
     // Orientation portrait and rotation of 0 should translate to "PORTRAIT_UP".
     setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_0);
-    DeviceOrientation uiOrientation = deviceOrientationManager.getUIOrientation();
+    DeviceOrientation uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_UP, uiOrientation);
 
     // Orientation portrait and rotation of 90 should translate to "PORTRAIT_UP".
     setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_90);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_UP, uiOrientation);
 
     // Orientation portrait and rotation of 180 should translate to "PORTRAIT_DOWN".
     setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_180);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_DOWN, uiOrientation);
 
     // Orientation portrait and rotation of 270 should translate to "PORTRAIT_DOWN".
     setUpUIOrientationMocks(Configuration.ORIENTATION_PORTRAIT, Surface.ROTATION_270);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_DOWN, uiOrientation);
 
     // Orientation landscape and rotation of 0 should translate to "LANDSCAPE_LEFT".
     setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_0);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.LANDSCAPE_LEFT, uiOrientation);
 
     // Orientation landscape and rotation of 90 should translate to "LANDSCAPE_LEFT".
     setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_90);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.LANDSCAPE_LEFT, uiOrientation);
 
     // Orientation landscape and rotation of 180 should translate to "LANDSCAPE_RIGHT".
     setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_180);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.LANDSCAPE_RIGHT, uiOrientation);
 
     // Orientation landscape and rotation of 270 should translate to "LANDSCAPE_RIGHT".
     setUpUIOrientationMocks(Configuration.ORIENTATION_LANDSCAPE, Surface.ROTATION_270);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.LANDSCAPE_RIGHT, uiOrientation);
 
     // Orientation undefined should default to "PORTRAIT_UP".
     setUpUIOrientationMocks(Configuration.ORIENTATION_UNDEFINED, Surface.ROTATION_0);
-    uiOrientation = deviceOrientationManager.getUIOrientation();
+    uiOrientation = deviceOrientationManager.getUiOrientation();
     assertEquals(DeviceOrientation.PORTRAIT_UP, uiOrientation);
   }
 

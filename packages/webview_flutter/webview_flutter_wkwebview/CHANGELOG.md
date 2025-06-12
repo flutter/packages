@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 3.22.0
 
 * Adds support to respond to recoverable SSL certificate errors. See `WebKitNavigationDelegate.setOnSSlAuthError`.

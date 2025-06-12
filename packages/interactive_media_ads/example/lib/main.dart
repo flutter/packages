@@ -6,10 +6,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_driver/driver_extension.dart';
-// #docregion imports
 import 'package:interactive_media_ads/interactive_media_ads.dart';
 import 'package:video_player/video_player.dart';
-// #enddocregion imports
 
 /// Entry point for integration tests that require espresso.
 @pragma('vm:entry-point')
@@ -22,7 +20,6 @@ void main() {
   runApp(const MaterialApp(home: AdExampleWidget()));
 }
 
-// #docregion example_widget
 /// Example widget displaying an Ad before a video.
 class AdExampleWidget extends StatefulWidget {
   /// Constructs an [AdExampleWidget].
@@ -45,11 +42,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // AdsManager exposes methods to control ad playback and listen to ad events.
   AdsManager? _adsManager;
 
-  // #enddocregion example_widget
   // Last state received in `didChangeAppLifecycleState`.
   AppLifecycleState _lastLifecycleState = AppLifecycleState.resumed;
 
-  // #docregion example_widget
   // Whether the widget should be displaying the content video. The content
   // player is hidden while Ads are playing.
   bool _shouldShowContentVideo = false;
@@ -65,10 +60,14 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   // This is required to support mid-roll ads.
   final ContentProgressProvider _contentProgressProvider =
       ContentProgressProvider();
-  // #enddocregion example_widget
 
-  // #docregion ad_and_content_players
+  late final CompanionAdSlot companionAd = CompanionAdSlot(
+    size: CompanionAdSlotSize.fixed(width: 300, height: 250),
+    onClicked: () => debugPrint('Companion Ad Clicked'),
+  );
+
   late final AdDisplayContainer _adDisplayContainer = AdDisplayContainer(
+    companionSlots: <CompanionAdSlot>[companionAd],
     onContainerAdded: (AdDisplayContainer container) {
       _adsLoader = AdsLoader(
         container: container,
@@ -117,11 +116,9 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
   @override
   void initState() {
     super.initState();
-    // #enddocregion ad_and_content_players
     // Adds this instance as an observer for `AppLifecycleState` changes.
     WidgetsBinding.instance.addObserver(this);
 
-    // #docregion ad_and_content_players
     _contentVideoController = VideoPlayerController.networkUrl(
       Uri.parse(
         'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
@@ -138,7 +135,6 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
         setState(() {});
       });
   }
-  // #enddocregion ad_and_content_players
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -163,7 +159,6 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     _lastLifecycleState = state;
   }
 
-  // #docregion request_ads
   Future<void> _requestAds(AdDisplayContainer container) {
     return _adsLoader.requestAds(AdsRequest(
       adTagUrl: _adTagUrl,
@@ -204,45 +199,51 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     _contentProgressTimer = null;
     return _contentVideoController.pause();
   }
-  // #enddocregion request_ads
 
-  // #docregion dispose
   @override
   void dispose() {
     super.dispose();
     _contentProgressTimer?.cancel();
     _contentVideoController.dispose();
     _adsManager?.destroy();
-    // #enddocregion dispose
     WidgetsBinding.instance.removeObserver(this);
-    // #docregion dispose
   }
-  // #enddocregion dispose
 
-  // #docregion example_widget
-  // #docregion widget_build
   @override
   Widget build(BuildContext context) {
-    // #enddocregion example_widget
     return Scaffold(
       body: Center(
-        child: SizedBox(
-          width: 300,
-          child: !_contentVideoController.value.isInitialized
-              ? Container()
-              : AspectRatio(
-                  aspectRatio: _contentVideoController.value.aspectRatio,
-                  child: Stack(
-                    children: <Widget>[
-                      // The display container must be on screen before any Ads can be
-                      // loaded and can't be removed between ads. This handles clicks for
-                      // ads.
-                      _adDisplayContainer,
-                      if (_shouldShowContentVideo)
-                        VideoPlayer(_contentVideoController)
-                    ],
-                  ),
-                ),
+        child: Column(
+          spacing: 100,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              width: 300,
+              child: !_contentVideoController.value.isInitialized
+                  ? Container()
+                  : AspectRatio(
+                      aspectRatio: _contentVideoController.value.aspectRatio,
+                      child: Stack(
+                        children: <Widget>[
+                          // The display container must be on screen before any Ads can be
+                          // loaded and can't be removed between ads. This handles clicks for
+                          // ads.
+                          _adDisplayContainer,
+                          if (_shouldShowContentVideo)
+                            VideoPlayer(_contentVideoController)
+                        ],
+                      ),
+                    ),
+            ),
+            ColoredBox(
+              color: Colors.green,
+              child: SizedBox(
+                width: 300,
+                height: 250,
+                child: companionAd.buildWidget(context),
+              ),
+            ),
+          ],
         ),
       ),
       floatingActionButton:
@@ -263,8 +264,5 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
                 )
               : null,
     );
-    // #docregion example_widget
   }
-  // #enddocregion widget_build
 }
-// #enddocregion example_widget

@@ -9,12 +9,12 @@ import XCTest
 
 // Import Objectice-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
+  import camera_avfoundation_objc
 #endif
 
 /// Includes test cases related to photo capture operations for FLTCam class.
 final class PhotoCaptureTests: XCTestCase {
-  private func createCam(with captureSessionQueue: DispatchQueue) -> FLTCam {
+  private func createCam(with captureSessionQueue: DispatchQueue) -> DefaultCamera {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
     return CameraTestUtils.createTestCamera(configuration)

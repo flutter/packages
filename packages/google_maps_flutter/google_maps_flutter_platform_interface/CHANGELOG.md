@@ -1,6 +1,11 @@
-## NEXT
+## 2.12.1
 
-* Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
+* Fixes the `zIndex` issue in the `copyWith` method.
+
+## 2.12.0
+
+* Deprecates `zIndex` parameter in `Marker` in favor of `zIndexInt`.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.11.1
 

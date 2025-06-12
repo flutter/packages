@@ -1,3 +1,20 @@
+## 0.6.18+2
+
+* Fixes premature garbage collection of native objects when app is under memory pressure.
+
+## 0.6.18+1
+
+* Makes Java style improvements.
+
+## 0.6.18
+
+* Adds support for the `MediaSettings.enableAudio` setting, which determines whether or not audio is
+  recorded during video recording.
+
+## 0.6.17+1
+
+* Replaces deprecated `onSurfaceDestroyed` with `onSurfaceCleanup`.
+
 ## 0.6.17
 
 * Replaces `BroadcastReceiver` usage with an `OrientationEventListener` to detect changes in device
