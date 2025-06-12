@@ -116,9 +116,9 @@ class CameraLinux extends CameraPlatform {
     PlatformImageFormatGroup imageFormat = PlatformImageFormatGroup.rgb8;
     switch (imageFormatGroup) {
       case ImageFormatGroup.jpeg:
+      case ImageFormatGroup.unknown:
         imageFormat = PlatformImageFormatGroup.rgb8;
         break;
-      case ImageFormatGroup.unknown:
       case ImageFormatGroup.yuv420:
       case ImageFormatGroup.nv21:
       case ImageFormatGroup.bgra8888:
