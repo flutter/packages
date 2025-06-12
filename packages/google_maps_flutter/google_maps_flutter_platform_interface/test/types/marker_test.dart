@@ -201,5 +201,25 @@ void main() {
       expect(marker.zIndexInt, 5);
       expect(marker.zIndex, 5.00);
     });
+
+    test('zIndexInt param copyWith', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndexInt: 5,
+      );
+      final Marker copy = marker.copyWith(zIndexIntParam: 10);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
+    });
+
+    test('zIndex param copyWith', () {
+      const Marker marker = Marker(
+        markerId: MarkerId('ABC123'),
+        zIndexInt: 5,
+      );
+      final Marker copy = marker.copyWith(zIndexParam: 10.0);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
+    });
   });
 }

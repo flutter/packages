@@ -5,6 +5,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import "FVPAVFactory.h"
 #import "FVPVideoPlayer.h"
+#import "FVPViewProvider.h"
 
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
@@ -18,8 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FVPVideoPlayer ()
 /// The AVPlayerItemVideoOutput associated with this video player.
 @property(nonatomic, readonly) AVPlayerItemVideoOutput *videoOutput;
-/// The plugin registrar, to obtain view information from.
-@property(nonatomic, readonly) NSObject<FlutterPluginRegistrar> *registrar;
+/// The view provider, to obtain view information from.
+@property(nonatomic, readonly, nullable) NSObject<FVPViewProvider> *viewProvider;
 /// The Flutter event sink used to send events to the Flutter engine.
 @property(nonatomic) FlutterEventSink eventSink;
 /// The preferred transform for the video. It can be used to handle the rotation of the video.
@@ -32,10 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) BOOL isInitialized;
 
 /// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, frame updater, display
-/// link, AV factory, and registrar.
+/// link, AV factory, and view provider.
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                          avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
