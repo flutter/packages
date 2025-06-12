@@ -1,3 +1,7 @@
+## 15.1.4
+
+- Fixes Popping state and re-rendering scaffold at the same time doesn't update the URL on web.
+
 ## 15.1.3
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
