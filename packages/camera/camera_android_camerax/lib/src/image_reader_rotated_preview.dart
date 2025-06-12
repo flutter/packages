@@ -152,7 +152,8 @@ final class _ImageReaderRotatedPreviewState
               sign: widget.facingSign,
             );
 
-            // If the camera is front facing, mirror the camera preview
+            // If the camera is front facing (widget.facingSign is 1 for front
+            // cameras, -1 for back cameras), mirror the camera preview
             // according to the current device orientation.
             Widget cameraPreview = widget.child;
             if (widget.facingSign == 1) {
