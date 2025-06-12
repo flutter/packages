@@ -86,7 +86,7 @@ mixin _$UsersRouteData on GoRouteData {
 
 mixin _$UserRouteData on GoRouteData {
   static UserRouteData _fromState(GoRouterState state) => UserRouteData(
-        id: int.parse(state.pathParameters['id']!)!,
+        id: int.parse(state.pathParameters['id']!),
       );
 
   UserRouteData get _self => this as UserRouteData;
