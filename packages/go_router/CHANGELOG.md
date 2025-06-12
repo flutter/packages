@@ -1,3 +1,9 @@
+## 15.2.0
+
+- Adds new top level `onEnter` callback with access to current and next route states.
+- Deprecates top level `redirect` in favor of `onEnter`.
+- Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 15.1.3
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
@@ -25,7 +31,7 @@
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
- 
+
 ## 14.8.0
 
 - Adds `preload` parameter to `StatefulShellBranchData.$branch`.
