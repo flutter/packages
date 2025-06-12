@@ -1,3 +1,7 @@
+## 0.9.20
+
+* Fixes incorrect types in image stream events.
+
 ## 0.9.19+2
 
 * Adds the `Camera` Swift protocol.
