@@ -1,3 +1,7 @@
+## 0.6.18+3
+
+* Fixes incorrect camera preview mirroring for front cameras of devices using the Impeller backend.
+
 ## 0.6.18+2
 
 * Fixes premature garbage collection of native objects when app is under memory pressure.
