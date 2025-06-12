@@ -7,6 +7,7 @@ package io.flutter.plugins.camerax;
 import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.CameraInfo;
 import androidx.camera.video.FallbackStrategy;
 import androidx.camera.video.Quality;
 import androidx.camera.video.QualitySelector;
@@ -53,8 +54,7 @@ class QualitySelectorProxyApi extends PigeonApiQualitySelector {
 
   @Nullable
   @Override
-  public Size getResolution(
-      @NonNull androidx.camera.core.CameraInfo cameraInfo, @NonNull VideoQuality quality) {
+  public Size getResolution(@NonNull CameraInfo cameraInfo, @NonNull VideoQuality quality) {
     return QualitySelector.getResolution(cameraInfo, getNativeQuality(quality));
   }
 

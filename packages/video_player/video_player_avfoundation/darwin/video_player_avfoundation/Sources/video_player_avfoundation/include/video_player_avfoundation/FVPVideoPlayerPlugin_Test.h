@@ -23,6 +23,7 @@
 
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
                displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
+                     viewProvider:(NSObject<FVPViewProvider> *)viewProvider
                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 @end

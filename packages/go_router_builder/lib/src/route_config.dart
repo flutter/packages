@@ -4,6 +4,7 @@
 
 import 'dart:collection';
 
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
@@ -172,6 +173,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 
   @override
   String get factorConstructorParameters => '';
+
   @override
   String get routeConstructorParameters =>
       '${navigatorKey == null ? '' : 'navigatorKey: $navigatorKey,'}'
@@ -236,9 +238,20 @@ class GoRouteConfig extends RouteBaseConfig {
         // here to ensure it matches Uri.encodeComponent nullability
         final DartType? type = _field(pathParameter)?.returnType;
 
-        final String value =
-            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${(type?.isEnum ?? false) ? '!' : (type?.isNullableType ?? false) ? "?? ''" : ''})}';
-        return MapEntry<String, String>(pathParameter, value);
+        final StringBuffer valueBuffer = StringBuffer();
+
+        valueBuffer.write(r'${Uri.encodeComponent(');
+        valueBuffer.write(_encodeFor(pathParameter));
+
+        if (type?.isEnum ?? false) {
+          valueBuffer.write('!');
+        } else if (type?.isNullableType ?? false) {
+          valueBuffer.write("?? ''");
+        }
+
+        valueBuffer.write(')}');
+
+        return MapEntry<String, String>(pathParameter, valueBuffer.toString());
       }),
     );
     final String location = patternToPath(_rawJoinedPath, pathParameters);
@@ -268,6 +281,16 @@ class GoRouteConfig extends RouteBaseConfig {
     buffer.writeln(');');
 
     return buffer.toString();
+  }
+
+  String get _castedSelf {
+    if (_pathParams.isEmpty &&
+        _ctorQueryParams.isEmpty &&
+        _extraParam == null) {
+      return '';
+    }
+
+    return '\n$_className get $selfFieldName => this as $_className;\n';
   }
 
   String _decodeFor(ParameterElement element) {
@@ -327,7 +350,7 @@ class GoRouteConfig extends RouteBaseConfig {
           compareField(param, parameterName, param.defaultValueCode!),
         );
       } else if (param.type.isNullableType) {
-        conditions.add('$parameterName != null');
+        conditions.add('$selfFieldName.$parameterName != null');
       }
       String line = '';
       if (conditions.isNotEmpty) {
@@ -371,29 +394,49 @@ class GoRouteConfig extends RouteBaseConfig {
 
   @override
   Iterable<String> classDeclarations() => <String>[
-        _extensionDefinition,
+        _mixinDefinition,
         ..._enumDeclarations(),
       ];
 
-  String get _extensionDefinition => '''
-extension $_extensionName on $_className {
+  String get _mixinDefinition {
+    final bool hasMixin = getNodeDeclaration<ClassDeclaration>(routeDataClass)
+            ?.withClause
+            ?.mixinTypes
+            .any((NamedType e) => e.name2.toString() == _mixinName) ??
+        false;
+
+    if (!hasMixin) {
+      throw InvalidGenerationSourceError(
+        'Missing mixin clause `with $_mixinName`',
+        element: routeDataClass,
+      );
+    }
+
+    return '''
+mixin $_mixinName on GoRouteData {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
-
+  $_castedSelf
+  @override
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
-
+  
+  @override
   void go(BuildContext context) =>
-      context.go(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
-
+      context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
   Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
-
+      context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
-
+      context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
   void replace(BuildContext context) =>
-      context.replace(location${_extraParam != null ? ', extra: $extraFieldName' : ''});
+      context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
 }
 ''';
+  }
 
   /// Returns code representing the constant maps that contain the `enum` to
   /// [String] mapping for each referenced enum.
@@ -419,8 +462,7 @@ extension $_extensionName on $_className {
   }
 
   @override
-  String get factorConstructorParameters =>
-      'factory: $_extensionName._fromState,';
+  String get factorConstructorParameters => 'factory: $_mixinName._fromState,';
 
   @override
   String get routeConstructorParameters => '''
@@ -616,7 +658,7 @@ abstract class RouteBaseConfig {
               return false;
             }
             final DartType typeArgument = typeArguments.single;
-            if (typeArgument.getDisplayString(withNullability: false) !=
+            if (withoutNullability(typeArgument.getDisplayString()) !=
                 'NavigatorState') {
               return false;
             }
@@ -686,6 +728,8 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 ''';
 
   String get _className => routeDataClass.name;
+
+  String get _mixinName => '_\$$_className';
 
   String get _extensionName => '\$${_className}Extension';
 

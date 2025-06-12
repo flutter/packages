@@ -224,6 +224,28 @@ class MockPlatformWebViewController extends _i1.Mock
       ) as _i5.Future<void>);
 
   @override
+  _i5.Future<void> setVerticalScrollBarEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(#setVerticalScrollBarEnabled, [enabled]),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setHorizontalScrollBarEnabled(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(#setHorizontalScrollBarEnabled, [enabled]),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  bool supportsSetScrollBarsEnabled() => (super.noSuchMethod(
+        Invocation.method(#supportsSetScrollBarsEnabled, []),
+        returnValue: false,
+      ) as bool);
+
+  @override
   _i5.Future<_i3.Offset> getScrollPosition() => (super.noSuchMethod(
         Invocation.method(#getScrollPosition, []),
         returnValue: _i5.Future<_i3.Offset>.value(
@@ -433,6 +455,16 @@ class MockPlatformNavigationDelegate extends _i1.Mock
   ) =>
       (super.noSuchMethod(
         Invocation.method(#setOnHttpAuthRequest, [onHttpAuthRequest]),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setOnSSlAuthError(
+    _i6.SslAuthErrorCallback? onSslAuthError,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(#setOnSSlAuthError, [onSslAuthError]),
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
