@@ -1,6 +1,10 @@
-## 2.9.2
+## 3.0.1
 
 - Adds `TypedRelativeGoRoute` annotation which supports relative routes.
+
+## 3.0.0
+
+- Route classes now required to use a mixin `with _$RouteName`.
 
 ## 2.9.1
 
