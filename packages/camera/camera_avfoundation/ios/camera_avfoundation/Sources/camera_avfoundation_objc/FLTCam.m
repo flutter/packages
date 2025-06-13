@@ -499,7 +499,7 @@ NSString *const errorMethod = @"error";
 }
 
 /// Main logic to setup the video recording.
-- (void)videoRecordingSetupWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+- (void)setUpVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   NSError *error;
   _videoRecordingPath = [self getTemporaryFilePathWithExtension:@"mp4"
                                                       subfolder:@"videos"
@@ -536,12 +536,12 @@ NSString *const errorMethod = @"error";
     if (messenger != nil) {
       [self startImageStreamWithMessenger:messenger
                                completion:^(FlutterError *_Nullable error) {
-                                 [self videoRecordingSetupWithCompletion:completion];
+                                 [self setUpVideoRecordingWithCompletion:completion];
                                }];
       return;
     }
 
-    [self videoRecordingSetupWithCompletion:completion];
+    [self setUpVideoRecordingWithCompletion:completion];
   } else {
     completion([FlutterError errorWithCode:@"Error"
                                    message:@"Video is already recording"
