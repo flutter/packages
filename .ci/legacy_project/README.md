@@ -37,16 +37,17 @@ and then deleting everything but `android/` from it:
 - Added license boilerplate.
 - Replaced `jcenter` in build.gradle with `mavenCentral`, due to the
   jcenter.bintray.com shutdown.
-- Update `compileSdkVersion` from 30 to 33 to maintain compatibility
-  with plugins that use API 34.
-- Updates `gradle-wrapper.properties` from `6.7` to `6.7.1`, to add
-  support for the Kotlin gradle plugin. If a user runs into this
-  error, the error message is clear on how to upgrade.
-- Modifies `build.gradle` to upgrade the Android Gradle Plugin (AGP)
-  from version 4.1.0 to 7.0.0. If a user runs into an error with
-  the AGP version, the warning is clear on how to upgrade
-  the version to one that we support.
+- Update `compileSdkVersion` from 30 to `flutter.compileSdkVersion` in
+  `build.gradle` to maintain compatibility with plugins that use
+  Flutter's most recently supported API version.
 - Modifies `gradle-wrapper.properties` to upgrade the Gradle version
-  from 6.7.1 to 7.0.2. If a user runs into an error with the Gradle
+  from 6.7 to 8.4. If a user runs into an error with the Gradle
   version, the warning is clear on how to upgrade the version to
   one that we support.
+- Modifies `settings.gradle` to upgrade the Android Gradle Plugin (AGP)
+  from version 4.1.0 (originally set in `build.gradle`; see bullet below)
+  to 8.3.0. If a user runs into an error with the AGP version, the warning
+  is clear on how to upgrade the version to one that we support.
+- Refactor plugin to use declarative Gradle apply instead of the
+  imperative apply (this includes moving where the Android Gradle
+  Plugin (AGP) version is set from `build.gradle` to `settings.gradle`).

@@ -9,10 +9,12 @@
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                  mediaSettingsWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsWrapper
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+            audioCaptureDeviceFactory:(AudioCaptureDeviceFactory)audioCaptureDeviceFactory
                 captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
             captureDeviceInputFactory:
-                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory {
+                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory
+                    initialCameraName:(NSString *)initialCameraName {
   self = [super init];
   if (self) {
     _mediaSettings = mediaSettings;
@@ -21,12 +23,14 @@
     _videoCaptureSession = captureSessionFactory();
     _audioCaptureSession = captureSessionFactory();
     _captureDeviceFactory = captureDeviceFactory;
+    _audioCaptureDeviceFactory = audioCaptureDeviceFactory;
     _orientation = [[UIDevice currentDevice] orientation];
     _deviceOrientationProvider = [[FLTDefaultDeviceOrientationProvider alloc] init];
     _videoDimensionsForFormat = ^CMVideoDimensions(NSObject<FLTCaptureDeviceFormat> *format) {
       return CMVideoFormatDescriptionGetDimensions(format.formatDescription);
     };
     _captureDeviceInputFactory = captureDeviceInputFactory;
+    _initialCameraName = initialCameraName;
     _assetWriterFactory = ^id<FLTAssetWriter>(NSURL *url, AVFileType fileType, NSError **error) {
       return [[FLTDefaultAssetWriter alloc] initWithURL:url fileType:fileType error:error];
     };

@@ -38,12 +38,15 @@ platform_properties:
       os: Ubuntu
       cores: "8"
       device_type: none
+      # The android_virtual_device here should be as old as is feasible. Currently it's 31
+      # because the older devices available (see link above for options) are all x86, which
+      # is no longer supported by Flutter.
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "android_virtual_device", "version": "generic_android22.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_31_google_apis_x64.textpb"},
           {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"}
         ]
   linux_desktop:
@@ -90,7 +93,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
@@ -103,7 +106,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14
+      os: Mac-14|Mac-15.5
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
@@ -247,6 +250,9 @@ targets:
 
   # Wasm unit tests in master
   - name: Linux_web web_dart_unit_test_wasm_shard_1 master
+    # Broken on master. See flutter/flutter#170433 and
+    # flutter/flutter#170434
+    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -262,6 +268,9 @@ targets:
         }
 
   - name: Linux_web web_dart_unit_test_wasm_shard_2 master
+    # Broken on master. See flutter/flutter#170433 and
+    # flutter/flutter#170434
+    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -322,10 +331,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.24.5"
+      channel: "3.29.3"
       env_variables: >-
         {
-          "CHANNEL": "3.24.5"
+          "CHANNEL": "3.29.3"
         }
 
   - name: Linux analyze_legacy N-2
@@ -333,10 +342,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.22.3"
+      channel: "3.27.4"
       env_variables: >-
         {
-          "CHANNEL": "3.22.3"
+          "CHANNEL": "3.27.4"
         }
 
   - name: Linux_android custom_package_tests master
@@ -395,29 +404,8 @@ targets:
     properties:
       version_file: flutter_master.version
       # This builds the all_packages app only in a current JDK.
-      target_file: android_build_all_packages_jdk17.yaml
+      target_file: android_build_all_packages.yaml
       channel: master
-      env_variables: >-
-        {
-          "CHANNEL": "master"
-        }
-
-  - name: Linux_android android_build_all_packages_legacy master
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_master.version
-      # TODO(stuartmorgan): Once stable requires JDK 17, and the
-      # legacy project is updated accordingly, this entire target
-      # can be merged back into android_build_all_packages.
-      # This file only builds a *legacy* version of the project.
-      target_file: android_build_all_packages_legacy.yaml
-      channel: master
-      # The legacy project build requires an older JDK.
-      dependencies: >-
-        [
-          {"dependency": "open_jdk", "version": "version:11"}
-        ]
       env_variables: >-
         {
           "CHANNEL": "master"
@@ -430,26 +418,8 @@ targets:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
       # This builds the all_packages app only in a current JDK.
-      target_file: android_build_all_packages_jdk17.yaml
+      target_file: android_build_all_packages.yaml
       channel: stable
-      env_variables: >-
-        {
-          "CHANNEL": "stable"
-        }
-
-  - name: Linux_android android_build_all_packages_legacy stable
-    recipe: packages/packages
-    timeout: 30
-    properties:
-      version_file: flutter_stable.version
-      # This file only builds a *legacy* version of the project.
-      target_file: android_build_all_packages_legacy.yaml
-      channel: stable
-      # The legacy project build requires an older JDK.
-      dependencies: >-
-        [
-          {"dependency": "open_jdk", "version": "version:11"}
-        ]
       env_variables: >-
         {
           "CHANNEL": "stable"

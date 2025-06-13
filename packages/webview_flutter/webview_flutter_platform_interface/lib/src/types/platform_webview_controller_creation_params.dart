@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [PlatformWebViewControllerCreationParams] to
 /// provide additional platform specific parameters.
 ///
@@ -37,7 +36,6 @@ import 'package:flutter/material.dart';
 ///   final String? domain;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class PlatformWebViewControllerCreationParams {
   /// Used by the platform implementation to create a new [PlatformWebViewController].

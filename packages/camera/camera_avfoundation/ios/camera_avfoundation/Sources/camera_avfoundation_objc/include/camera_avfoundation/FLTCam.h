@@ -11,27 +11,44 @@
 #import "FLTCamMediaSettingsAVWrapper.h"
 #import "FLTCaptureDevice.h"
 #import "FLTDeviceOrientationProviding.h"
+#import "FLTImageStreamHandler.h"
 #import "messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// A class that manages camera's state and performs camera operations.
-@interface FLTCam : NSObject <FlutterTexture>
+@interface FLTCam : NSObject
 
 @property(readonly, nonatomic) NSObject<FLTCaptureDevice> *captureDevice;
 @property(readonly, nonatomic) CGSize previewSize;
 @property(assign, nonatomic) BOOL isPreviewPaused;
-@property(nonatomic, copy) void (^onFrameAvailable)(void);
+@property(nonatomic, copy, nullable) void (^onFrameAvailable)(void);
 /// The API instance used to communicate with the Dart side of the plugin. Once initially set, this
 /// should only ever be accessed on the main thread.
-@property(nonatomic) FCPCameraEventApi *dartAPI;
+@property(nonatomic, nullable) FCPCameraEventApi *dartAPI;
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
 @property(assign, nonatomic) FCPPlatformImageFileFormat fileFormat;
-@property(assign, nonatomic) CGFloat minimumAvailableZoomFactor;
-@property(assign, nonatomic) CGFloat maximumAvailableZoomFactor;
-@property(assign, nonatomic) CGFloat minimumExposureOffset;
-@property(assign, nonatomic) CGFloat maximumExposureOffset;
+@property(readonly, nonatomic) CGFloat minimumAvailableZoomFactor;
+@property(readonly, nonatomic) CGFloat maximumAvailableZoomFactor;
+@property(readonly, nonatomic) CGFloat minimumExposureOffset;
+@property(readonly, nonatomic) CGFloat maximumExposureOffset;
+
+// Properties exposed for the Swift DefaultCamera subclass
+@property(nonatomic, nullable) FLTImageStreamHandler *imageStreamHandler;
+/// Number of frames currently pending processing.
+@property(assign, nonatomic) int streamingPendingFramesCount;
+@property(assign, nonatomic) BOOL isFirstVideoSample;
+@property(assign, nonatomic) BOOL isRecording;
+@property(assign, nonatomic) BOOL isRecordingPaused;
+@property(strong, nonatomic, nullable) NSObject<FLTAssetWriter> *videoWriter;
+@property(assign, nonatomic) BOOL videoIsDisconnected;
+@property(assign, nonatomic) BOOL audioIsDisconnected;
+@property(assign, nonatomic) CMTime videoTimeOffset;
+@property(assign, nonatomic) CMTime audioTimeOffset;
+@property(strong, nonatomic, nullable) NSObject<FLTAssetWriterInput> *videoWriterInput;
+@property(strong, nonatomic, nullable) NSObject<FLTAssetWriterInput> *audioWriterInput;
+@property(nullable) NSObject<FLTAssetWriterInputPixelBufferAdaptor> *videoAdaptor;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
@@ -57,7 +74,8 @@ NS_ASSUME_NONNULL_BEGIN
                                                    FlutterError *_Nullable))completion;
 - (void)pauseVideoRecording;
 - (void)resumeVideoRecording;
-- (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)orientation;
+- (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)orientation
+    NS_SWIFT_NAME(lockCaptureOrientation(_:));
 - (void)unlockCaptureOrientation;
 - (void)setFlashMode:(FCPPlatformFlashMode)mode
       withCompletion:(void (^)(FlutterError *_Nullable))completion;

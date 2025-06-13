@@ -24,6 +24,7 @@ class InteractiveMediaAdsProxy {
     this.newAdsLoadedListener = AdsLoadedListener.new,
     this.newAdErrorListener = AdErrorListener.new,
     this.newAdEventListener = AdEventListener.new,
+    this.newCompanionAdSlotClickListener = CompanionAdSlotClickListener.new,
     this.createAdDisplayContainerImaSdkFactory =
         ImaSdkFactory.createAdDisplayContainer,
     this.instanceImaSdkFactory = _instanceImaSdkFactory,
@@ -76,6 +77,11 @@ class InteractiveMediaAdsProxy {
   final AdEventListener Function({
     required void Function(AdEventListener, AdEvent) onAdEvent,
   }) newAdEventListener;
+
+  /// Constructs [CompanionAdSlotClickListener].
+  final CompanionAdSlotClickListener Function({
+    required void Function(CompanionAdSlotClickListener) onCompanionAdClick,
+  }) newCompanionAdSlotClickListener;
 
   /// Calls to [ImaSdkFactory.createAdDisplayContainer].
   final Future<AdDisplayContainer> Function(ViewGroup, VideoAdPlayer)

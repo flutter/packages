@@ -1,5 +1,6 @@
-## NEXT
+## 2.12.2
 
+* Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
 
 ## 2.12.1
