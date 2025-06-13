@@ -306,7 +306,7 @@ NSString *const errorMethod = @"error";
   NSString *path = [self getTemporaryFilePathWithExtension:extension
                                                  subfolder:@"pictures"
                                                     prefix:@"CAP_"
-                                                     error:error];
+                                                     error:&error];
   if (error) {
     completion(nil, FlutterErrorFromNSError(error));
     return;
@@ -362,7 +362,7 @@ NSString *const errorMethod = @"error";
 - (NSString *)getTemporaryFilePathWithExtension:(NSString *)extension
                                       subfolder:(NSString *)subfolder
                                          prefix:(NSString *)prefix
-                                          error:(NSError *)error {
+                                          error:(NSError **)error {
   NSString *docDir =
       NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
   NSString *fileDir =
@@ -373,11 +373,11 @@ NSString *const errorMethod = @"error";
 
   NSFileManager *fm = [NSFileManager defaultManager];
   if (![fm fileExistsAtPath:fileDir]) {
-    [[NSFileManager defaultManager] createDirectoryAtPath:fileDir
+    BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:fileDir
                               withIntermediateDirectories:true
                                                attributes:nil
-                                                    error:&error];
-    if (error) {
+                                                    error:error];
+    if (!success) {
       return nil;
     }
   }
@@ -504,7 +504,7 @@ NSString *const errorMethod = @"error";
   _videoRecordingPath = [self getTemporaryFilePathWithExtension:@"mp4"
                                                       subfolder:@"videos"
                                                          prefix:@"REC_"
-                                                          error:error];
+                                                          error:&error];
   if (error) {
     completion(FlutterErrorFromNSError(error));
     return;
