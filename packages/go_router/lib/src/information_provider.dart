@@ -36,6 +36,13 @@ enum NavigatingType {
   restore,
 }
 
+/// Maps the replacement route result to the correct generic type.
+typedef MapRouteResultCallback<T extends Object?> = T Function(Object? result);
+
+/// Pipe completer to the last route match completer.
+typedef PipeRouteCompleterCallback = Completer<Next?>
+    Function<Next extends Object?>(Completer<Next?> next);
+
 /// The data class to be stored in [RouteInformation.state] to be used by
 /// [GoRouteInformationParser].
 ///
@@ -49,9 +56,16 @@ class RouteInformationState<T> {
     this.completer,
     this.baseRouteMatchList,
     required this.type,
+    MapRouteResultCallback<T?>? mapReplacementResult,
   })  : assert((type == NavigatingType.go || type == NavigatingType.restore) ==
             (completer == null)),
-        assert((type != NavigatingType.go) == (baseRouteMatchList != null));
+        assert((type != NavigatingType.go) == (baseRouteMatchList != null)),
+        mapReplacementResult =
+            mapReplacementResult ?? _defaultMapReplacementResult;
+
+  static T? _defaultMapReplacementResult<T>(Object? result) {
+    return null;
+  }
 
   /// The extra object used when navigating with [GoRouter].
   final Object? extra;
@@ -63,6 +77,10 @@ class RouteInformationState<T> {
   /// [NavigatingType.restore].
   final Completer<T?>? completer;
 
+  /// Maps the replacement result to the appropriate type, to resolve the
+  /// [completer].
+  final MapRouteResultCallback<T?> mapReplacementResult;
+
   /// The base route match list to push on top to.
   ///
   /// This is only null if [type] is [NavigatingType.go].
@@ -70,6 +88,19 @@ class RouteInformationState<T> {
 
   /// The type of navigation.
   final NavigatingType type;
+
+  /// Pipes the completer to the next completer in the chain.
+  Completer<Next?> pipeCompleter<Next extends Object?>(Completer<Next?> next) {
+    if (completer == null) {
+      return next;
+    }
+
+    return _PipeCompleter<T?, Next?>(
+      next: next,
+      current: completer!,
+      mapReplacementResult: mapReplacementResult,
+    );
+  }
 }
 
 /// The [RouteInformationProvider] created by go_router.
@@ -156,8 +187,12 @@ class GoRouteInformationProvider extends RouteInformationProvider
   }
 
   /// Pushes the `location` as a new route on top of `base`.
-  Future<T?> push<T>(String location,
-      {required RouteMatchList base, Object? extra}) {
+  Future<T?> push<T>(
+    String location, {
+    required RouteMatchList base,
+    Object? extra,
+    MapRouteResultCallback<T?>? mapReplacementResult,
+  }) {
     final Completer<T?> completer = Completer<T?>();
     _setValue(
       location,
@@ -166,6 +201,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
         baseRouteMatchList: base,
         completer: completer,
         type: NavigatingType.push,
+        mapReplacementResult: mapReplacementResult,
       ),
     );
     return completer.future;
@@ -196,8 +232,12 @@ class GoRouteInformationProvider extends RouteInformationProvider
 
   /// Removes the top-most route match from `base` and pushes the `location` as a
   /// new route on top.
-  Future<T?> pushReplacement<T>(String location,
-      {required RouteMatchList base, Object? extra}) {
+  Future<T?> pushReplacement<T>(
+    String location, {
+    required RouteMatchList base,
+    Object? extra,
+    MapRouteResultCallback<T?>? mapReplacementResult,
+  }) {
     final Completer<T?> completer = Completer<T?>();
     _setValue(
       location,
@@ -206,14 +246,19 @@ class GoRouteInformationProvider extends RouteInformationProvider
         baseRouteMatchList: base,
         completer: completer,
         type: NavigatingType.pushReplacement,
+        mapReplacementResult: mapReplacementResult,
       ),
     );
     return completer.future;
   }
 
   /// Replaces the top-most route match from `base` with the `location`.
-  Future<T?> replace<T>(String location,
-      {required RouteMatchList base, Object? extra}) {
+  Future<T?> replace<T>(
+    String location, {
+    required RouteMatchList base,
+    Object? extra,
+    MapRouteResultCallback<T?>? mapReplacementResult,
+  }) {
     final Completer<T?> completer = Completer<T?>();
     _setValue(
       location,
@@ -289,4 +334,43 @@ class GoRouteInformationProvider extends RouteInformationProvider
     _platformReportsNewRouteInformation(routeInformation);
     return SynchronousFuture<bool>(true);
   }
+}
+
+/// Ensures the replacement routes can resolve the originating route completer.
+/// Mainly used by [RouteInformationState.pipeCompleter]
+class _PipeCompleter<Current extends Object?, Next extends Object?>
+    implements Completer<Next> {
+  _PipeCompleter({
+    required Completer<Next> next,
+    required Completer<Current> current,
+    required MapRouteResultCallback<Current> mapReplacementResult,
+  })  : _next = next,
+        _current = current,
+        _mapReplacementResult = mapReplacementResult;
+
+  final Completer<Next> _next;
+  final Completer<Current> _current;
+  final MapRouteResultCallback<Current> _mapReplacementResult;
+
+  @override
+  void complete([FutureOr<Next>? value]) {
+    _next.complete(value);
+    if (!_current.isCompleted) {
+      _current.complete(_mapReplacementResult(value));
+    }
+  }
+
+  @override
+  void completeError(Object error, [StackTrace? stackTrace]) {
+    _next.completeError(error, stackTrace);
+    if (!_current.isCompleted) {
+      _current.completeError(error, stackTrace);
+    }
+  }
+
+  @override
+  Future<Next> get future => _next.future;
+
+  @override
+  bool get isCompleted => _next.isCompleted;
 }

@@ -12,6 +12,7 @@ import 'package:logging/logging.dart';
 import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
+import 'information_provider.dart';
 import 'logging.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
@@ -432,9 +433,12 @@ class ShellRouteMatch extends RouteMatchBase {
 /// The route match that represent route pushed through [GoRouter.push].
 class ImperativeRouteMatch extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
-  ImperativeRouteMatch(
-      {required super.pageKey, required this.matches, required this.completer})
-      : super(
+  ImperativeRouteMatch({
+    required super.pageKey,
+    required this.matches,
+    required this.completer,
+    required this.pipeCompleter,
+  }) : super(
           route: _getsLastRouteFromMatches(matches),
           matchedLocation: _getsMatchedLocationFromMatches(matches),
         );
@@ -459,6 +463,9 @@ class ImperativeRouteMatch extends RouteMatch {
 
   /// The completer for the future returned by [GoRouter.push].
   final Completer<Object?> completer;
+
+  /// Pipes the completer to the next completer in the chain.
+  final PipeRouteCompleterCallback pipeCompleter;
 
   /// Called when the corresponding [Route] associated with this route match is
   /// completed.
@@ -967,6 +974,8 @@ class _RouteMatchListDecoder
           // https://github.com/flutter/flutter/issues/128122.
           completer: Completer<Object?>(),
           matches: imperativeMatchList,
+          // TODO(nouvist): Sorry, I don't know what convert does.
+          pipeCompleter: <Next>(Completer<Next?> next) => next,
         );
         matchList = matchList.push(imperativeMatch);
       }
