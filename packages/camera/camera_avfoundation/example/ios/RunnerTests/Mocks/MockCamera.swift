@@ -63,6 +63,7 @@ final class MockCamera: NSObject, Camera {
   var videoFormat: FourCharCode = kCVPixelFormatType_32BGRA
 
   var isPreviewPaused: Bool = false
+  var isStreamingImages: Bool = false
 
   var minimumExposureOffset: CGFloat {
     return getMinimumExposureOffsetStub?() ?? 0

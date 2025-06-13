@@ -25,6 +25,7 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   var videoFormat: FourCharCode { get set }
 
   var isPreviewPaused: Bool { get }
+  var isStreamingImages: Bool { get }
 
   var minimumAvailableZoomFactor: CGFloat { get }
   var maximumAvailableZoomFactor: CGFloat { get }
@@ -85,8 +86,9 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
     _ cameraName: String,
     withCompletion: @escaping (_ error: FlutterError?) -> Void
   )
+  
 
-  func startImageStream(with: FlutterBinaryMessenger)
+  func startImageStream(with: FlutterBinaryMessenger,     completion: @escaping (_ error: FlutterError?) -> Void)
   func stopImageStream()
 
   // Override to make `AVCaptureVideoDataOutputSampleBufferDelegate`/
