@@ -14,6 +14,10 @@ List<RouteBase> get $appRoutes => [
       $myRoute,
       $personRouteWithExtra,
       $hotdogRouteWithEverything,
+      $booksRoute,
+      $myMaterialRouteWithKey,
+      $fancyRoute,
+      $myShellRouteData,
     ];
 
 RouteBase get $homeRoute => GoRouteData.$route(
@@ -227,4 +231,155 @@ bool _$boolConverter(String value) {
     default:
       throw UnsupportedError('Cannot convert "$value" into a bool.');
   }
+}
+
+RouteBase get $booksRoute => GoRouteData.$route(
+      path: '/books',
+      factory: _$BooksRoute._fromState,
+    );
+
+mixin _$BooksRoute on GoRouteData {
+  static BooksRoute _fromState(GoRouterState state) => BooksRoute(
+        kind: _$convertMapValue('kind', state.uri.queryParameters,
+                _$BookKindEnumMap._$fromName) ??
+            BookKind.popular,
+      );
+
+  BooksRoute get _self => this as BooksRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/books',
+        queryParams: {
+          if (_self.kind != BookKind.popular)
+            'kind': _$BookKindEnumMap[_self.kind],
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+const _$BookKindEnumMap = {
+  BookKind.all: 'all',
+  BookKind.popular: 'popular',
+  BookKind.recent: 'recent',
+};
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}
+
+extension<T extends Enum> on Map<T, String> {
+  T? _$fromName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
+}
+
+RouteBase get $myMaterialRouteWithKey => GoRouteData.$route(
+      path: '/my-material-route-with-key',
+      factory: _$MyMaterialRouteWithKey._fromState,
+    );
+
+mixin _$MyMaterialRouteWithKey on GoRouteData {
+  static MyMaterialRouteWithKey _fromState(GoRouterState state) =>
+      const MyMaterialRouteWithKey();
+
+  @override
+  String get location => GoRouteData.$location(
+        '/my-material-route-with-key',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $fancyRoute => GoRouteData.$route(
+      path: '/fancy',
+      factory: _$FancyRoute._fromState,
+    );
+
+mixin _$FancyRoute on GoRouteData {
+  static FancyRoute _fromState(GoRouterState state) => const FancyRoute();
+
+  @override
+  String get location => GoRouteData.$location(
+        '/fancy',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $myShellRouteData => ShellRouteData.$route(
+      navigatorKey: MyShellRouteData.$navigatorKey,
+      factory: $MyShellRouteDataExtension._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'my-go-route',
+          parentNavigatorKey: MyGoRouteData.$parentNavigatorKey,
+          factory: _$MyGoRouteData._fromState,
+        ),
+      ],
+    );
+
+extension $MyShellRouteDataExtension on MyShellRouteData {
+  static MyShellRouteData _fromState(GoRouterState state) =>
+      const MyShellRouteData();
+}
+
+mixin _$MyGoRouteData on GoRouteData {
+  static MyGoRouteData _fromState(GoRouterState state) => const MyGoRouteData();
+
+  @override
+  String get location => GoRouteData.$location(
+        'my-go-route',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
 }
