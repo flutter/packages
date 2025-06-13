@@ -660,9 +660,20 @@ class RouteMatchList with Diagnosticable {
         matches: newMatches,
       );
     }
+
+    if (newMatches.isEmpty) {
+      return RouteMatchList.empty;
+    }
+
+    RouteBase newRoute = newMatches.last.route;
+    while (newRoute is ShellRouteBase) {
+      newRoute = newRoute.routes.last;
+    }
+    newRoute as GoRoute;
     // Need to remove path parameters that are no longer in the fullPath.
     final List<String> newParameters = <String>[];
-    patternToRegExp(fullPath, newParameters);
+    patternToRegExp(fullPath, newParameters,
+        caseSensitive: newRoute.caseSensitive);
     final Set<String> validParameters = newParameters.toSet();
     final Map<String, String> newPathParameters =
         Map<String, String>.fromEntries(

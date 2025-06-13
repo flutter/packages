@@ -23,7 +23,8 @@ final RegExp _parameterRegExp = RegExp(r':(\w+)(\((?:\\.|[^\\()])+\))?');
 /// To extract the path parameter values from a [RegExpMatch], pass the
 /// [RegExpMatch] into [extractPathParameters] with the `parameters` that are
 /// used for generating the [RegExp].
-RegExp patternToRegExp(String pattern, List<String> parameters) {
+RegExp patternToRegExp(String pattern, List<String> parameters,
+    {required bool caseSensitive}) {
   final StringBuffer buffer = StringBuffer('^');
   int start = 0;
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
@@ -47,7 +48,7 @@ RegExp patternToRegExp(String pattern, List<String> parameters) {
   if (!pattern.endsWith('/')) {
     buffer.write(r'(?=/|$)');
   }
-  return RegExp(buffer.toString(), caseSensitive: false);
+  return RegExp(buffer.toString(), caseSensitive: caseSensitive);
 }
 
 String _escapeGroup(String group, [String? name]) {
