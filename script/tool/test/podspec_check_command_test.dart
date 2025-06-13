@@ -155,6 +155,7 @@ void main() {
                     .path,
                 '--configuration=Debug',
                 '--skip-tests',
+                '--allow-warnings',
                 '--use-libraries'
               ],
               packagesDir.path),
@@ -169,6 +170,7 @@ void main() {
                     .path,
                 '--configuration=Debug',
                 '--skip-tests',
+                '--allow-warnings',
               ],
               packagesDir.path),
         ]),
@@ -209,6 +211,7 @@ void main() {
                     .path,
                 '--configuration=Debug',
                 '--skip-tests',
+                '--allow-warnings',
                 '--use-libraries'
               ],
               packagesDir.path),
@@ -223,6 +226,7 @@ void main() {
                     .path,
                 '--configuration=Debug',
                 '--skip-tests',
+                '--allow-warnings',
               ],
               packagesDir.path),
         ]),
