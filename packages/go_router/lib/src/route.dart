@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
+import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
 import 'match.dart';
@@ -459,7 +459,7 @@ class GoRoute extends RouteBase {
       extractPathParameters(pathParameters, match);
 
   /// The path parameters in this route.
-  @internal
+  @meta.internal
   final List<String> pathParameters = <String>[];
 
   @override

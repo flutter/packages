@@ -9,7 +9,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
-import 'package:meta/meta.dart';
+import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
 import 'logging.dart';
@@ -402,7 +402,7 @@ class ShellRouteMatch extends RouteMatchBase {
   ///
   /// This is typically used when pushing or popping [RouteMatchBase] from
   /// [RouteMatchList].
-  @internal
+  @meta.internal
   ShellRouteMatch copyWith({
     required List<RouteMatchBase>? matches,
   }) {
@@ -766,7 +766,7 @@ class RouteMatchList with Diagnosticable {
   /// returns false.
   ///
   /// This method visit recursively into shell route matches.
-  @internal
+  @meta.internal
   void visitRouteMatches(RouteMatchVisitor visitor) {
     _visitRouteMatches(matches, visitor);
   }
@@ -786,7 +786,7 @@ class RouteMatchList with Diagnosticable {
   }
 
   /// Create a new [RouteMatchList] with given parameter replaced.
-  @internal
+  @meta.internal
   RouteMatchList copyWith({
     List<RouteMatchBase>? matches,
     Uri? uri,
@@ -841,7 +841,7 @@ class RouteMatchList with Diagnosticable {
 /// suitable for using with [StandardMessageCodec].
 ///
 /// The primary use of this class is for state restoration and browser history.
-@internal
+@meta.internal
 class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
   /// Creates a new [RouteMatchListCodec] object.
   RouteMatchListCodec(RouteConfiguration configuration)
