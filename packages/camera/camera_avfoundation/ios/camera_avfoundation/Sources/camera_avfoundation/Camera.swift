@@ -86,9 +86,9 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
     _ cameraName: String,
     withCompletion: @escaping (_ error: FlutterError?) -> Void
   )
-  
 
-  func startImageStream(with: FlutterBinaryMessenger,     completion: @escaping (_ error: FlutterError?) -> Void)
+  func startImageStream(
+    with: FlutterBinaryMessenger, completion: @escaping (_ error: FlutterError?) -> Void)
   func stopImageStream()
 
   // Override to make `AVCaptureVideoDataOutputSampleBufferDelegate`/

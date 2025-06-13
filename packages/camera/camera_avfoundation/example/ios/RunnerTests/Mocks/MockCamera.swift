@@ -194,7 +194,6 @@ final class MockCamera: NSObject, Camera {
     startImageStreamStub?(messenger, completion)
   }
 
-
   func stopImageStream() {
     stopImageStreamStub?()
   }

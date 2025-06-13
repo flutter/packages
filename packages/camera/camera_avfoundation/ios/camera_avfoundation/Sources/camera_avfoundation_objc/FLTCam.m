@@ -498,21 +498,18 @@ NSString *const errorMethod = @"error";
   [_motionManager stopAccelerometerUpdates];
 }
 
-
 /// Main logic to setup the video recording.
 - (void)videoRecordingSetupWithCompletion:(void (^)(FlutterError *_Nullable))completion {
-
-/*
   NSError *error;
-  self->_videoRecordingPath = [self getTemporaryFilePathWithExtension:@"mp4"
-                                                            subfolder:@"videos"
-                                                               prefix:@"REC_"
-                                                                error:error];
+  _videoRecordingPath = [self getTemporaryFilePathWithExtension:@"mp4"
+                                                      subfolder:@"videos"
+                                                         prefix:@"REC_"
+                                                          error:error];
   if (error) {
     completion(FlutterErrorFromNSError(error));
     return;
   }
-  if (![self setupWriterForPath:self->_videoRecordingPath]) {
+  if (![self setupWriterForPath:_videoRecordingPath]) {
     completion([FlutterError errorWithCode:@"IOError" message:@"Setup Writer Failed" details:nil]);
     return;
   }
@@ -522,49 +519,15 @@ NSString *const errorMethod = @"error";
   // didOutputSampleBuffer had chance to call startWriting and lag at start of video
   // https://github.com/flutter/flutter/issues/132016
   // https://github.com/flutter/flutter/issues/151319
-  [self->_videoWriter startWriting];
-  self->_isFirstVideoSample = YES;
-  self->_isRecording = YES;
-  self->_isRecordingPaused = NO;
-  self->_videoTimeOffset = CMTimeMake(0, 1);
-  self->_audioTimeOffset = CMTimeMake(0, 1);
-  self->_videoIsDisconnected = NO;
-  self->_audioIsDisconnected = NO;
+  [_videoWriter startWriting];
+  _isFirstVideoSample = YES;
+  _isRecording = YES;
+  _isRecordingPaused = NO;
+  _videoTimeOffset = CMTimeMake(0, 1);
+  _audioTimeOffset = CMTimeMake(0, 1);
+  _videoIsDisconnected = NO;
+  _audioIsDisconnected = NO;
   completion(nil);
-
-*/
-
-  NSError *error;
-    _videoRecordingPath = [self getTemporaryFilePathWithExtension:@"mp4"
-                                                        subfolder:@"videos"
-                                                           prefix:@"REC_"
-                                                            error:error];
-    if (error) {
-      completion(FlutterErrorFromNSError(error));
-      return;
-    }
-    if (![self setupWriterForPath:_videoRecordingPath]) {
-      completion([FlutterError errorWithCode:@"IOError"
-                                     message:@"Setup Writer Failed"
-                                     details:nil]);
-      return;
-    }
-    // startWriting should not be called in didOutputSampleBuffer where it can cause state
-    // in which _isRecording is YES but _videoWriter.status is AVAssetWriterStatusUnknown
-    // in stopVideoRecording if it is called after startVideoRecording but before
-    // didOutputSampleBuffer had chance to call startWriting and lag at start of video
-    // https://github.com/flutter/flutter/issues/132016
-    // https://github.com/flutter/flutter/issues/151319
-    [_videoWriter startWriting];
-    _isFirstVideoSample = YES;
-    _isRecording = YES;
-    _isRecordingPaused = NO;
-    _videoTimeOffset = CMTimeMake(0, 1);
-    _audioTimeOffset = CMTimeMake(0, 1);
-    _videoIsDisconnected = NO;
-    _audioIsDisconnected = NO;
-    completion(nil);
-
 }
 
 - (void)startVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion

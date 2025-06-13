@@ -313,7 +313,7 @@ extension CameraPlugin: FCPCameraApi {
         completion(nil)
         return
       }
-      strongSelf.camera?.startImageStream(with: strongSelf.messenger, completion:  completion)
+      strongSelf.camera?.startImageStream(with: strongSelf.messenger, completion: completion)
     }
   }
 
