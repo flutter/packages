@@ -151,7 +151,7 @@ One can use typed routes to provide an error builder as well:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (ErrorRoute)"?>
 ```dart
-class ErrorRoute extends GoRouteData {
+class ErrorRoute extends GoRouteData with _$ErrorRoute{
   ErrorRoute({required this.error});
   final Exception error;
 
@@ -341,7 +341,7 @@ The code generator can convert simple types like `int` and `enum` to/from the
 ```dart
 enum BookKind { all, popular, recent }
 
-class BooksRoute extends GoRouteData {
+class BooksRoute extends GoRouteData with _$BooksRoute {
   BooksRoute({this.kind = BookKind.popular});
   final BookKind kind;
 
@@ -370,7 +370,7 @@ method of the base class instead of the `build` method:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (MyMaterialRouteWithKey)"?>
 ```dart
-class MyMaterialRouteWithKey extends GoRouteData {
+class MyMaterialRouteWithKey extends GoRouteData with _$MyMaterialRouteWithKey {
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
   MaterialPage<void> buildPage(BuildContext context, GoRouterState state) {
@@ -388,7 +388,7 @@ Overriding the `buildPage` method is also useful for custom transitions:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (FancyRoute)"?>
 ```dart
-class FancyRoute extends GoRouteData {
+class FancyRoute extends GoRouteData with _$FancyRoute {
   @override
   CustomTransitionPage<void> buildPage(
     BuildContext context,
@@ -433,7 +433,7 @@ class MyShellRouteData extends ShellRouteData {
 }
 
 // For GoRoutes:
-class MyGoRouteData extends GoRouteData {
+class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
   const MyGoRouteData();
 
   static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
