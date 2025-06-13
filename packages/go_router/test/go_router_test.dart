@@ -820,6 +820,41 @@ void main() {
       expect(find.byType(FamilyScreen), findsOne);
     });
 
+    testWidgets('supports routes with a different case',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/abc',
+          builder: (BuildContext context, GoRouterState state) =>
+              const SizedBox(key: Key('abc')),
+        ),
+        GoRoute(
+          path: '/ABC',
+          builder: (BuildContext context, GoRouterState state) =>
+              const SizedBox(key: Key('ABC')),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      const String loc1 = '/abc';
+
+      router.go(loc1);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('abc')), findsOne);
+
+      const String loc = '/ABC';
+      router.go(loc);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('ABC')), findsOne);
+    });
+
     testWidgets(
         'If there is more than one route to match, use the first match.',
         (WidgetTester tester) async {
