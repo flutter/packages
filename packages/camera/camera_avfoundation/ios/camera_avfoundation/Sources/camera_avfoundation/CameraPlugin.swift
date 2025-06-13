@@ -309,9 +309,11 @@ extension CameraPlugin: FCPCameraApi {
 
   public func startImageStream(completion: @escaping (FlutterError?) -> Void) {
     captureSessionQueue.async { [weak self] in
-      guard let strongSelf = self else { return }
-      strongSelf.camera?.startImageStream(with: strongSelf.messenger)
-      completion(nil)
+      guard let strongSelf = self else {
+        completion(nil)
+        return
+      }
+      strongSelf.camera?.startImageStream(with: strongSelf.messenger, completion: completion)
     }
   }
 

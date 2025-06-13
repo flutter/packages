@@ -1,3 +1,8 @@
+## 0.9.19+3
+
+* Fixes race condition when starting image stream.
+
+
 ## 0.9.19+2
 
 * Adds the `Camera` Swift protocol.
