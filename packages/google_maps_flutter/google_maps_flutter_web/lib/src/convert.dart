@@ -272,6 +272,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   return gmaps.InfoWindowOptions()
     ..content = container
+    // The deprecated parameter is used here to avoid losing precision.
     ..zIndex = marker.zIndex;
   // TODO(ditman): Compute the pixelOffset of the infoWindow, from the size of the Marker,
   // and the marker.infoWindow.anchor property.
@@ -453,8 +454,8 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   return icon;
 }
 
-// Computes the options for a new [gmaps.Marker] from an incoming set of options
-// [marker], and the existing marker registered with the map: [currentMarker].
+/// Computes the options for a new [gmaps.Marker] from an incoming set of options
+/// [marker], and the existing marker registered with the map: [currentMarker].
 Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
   Marker marker,
   gmaps.Marker? currentMarker,
@@ -465,6 +466,7 @@ Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
       marker.position.longitude,
     )
     ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+    // The deprecated parameter is used here to avoid losing precision.
     ..zIndex = marker.zIndex
     ..visible = marker.visible
     ..opacity = marker.alpha

@@ -269,10 +269,10 @@ class PlaceMarkerBodyState extends State<PlaceMarkerBody> {
 
   Future<void> _changeZIndex(MarkerId markerId) async {
     final Marker marker = markers[markerId]!;
-    final double current = marker.zIndex;
+    final int current = marker.zIndexInt;
     setState(() {
       markers[markerId] = marker.copyWith(
-        zIndexParam: current == 12.0 ? 0.0 : current + 1.0,
+        zIndexIntParam: current == 12 ? 0 : current + 1,
       );
     });
   }
