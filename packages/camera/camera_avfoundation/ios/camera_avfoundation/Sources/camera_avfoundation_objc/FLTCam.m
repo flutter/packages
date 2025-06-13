@@ -374,9 +374,9 @@ NSString *const errorMethod = @"error";
   NSFileManager *fm = [NSFileManager defaultManager];
   if (![fm fileExistsAtPath:fileDir]) {
     BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:fileDir
-                              withIntermediateDirectories:true
-                                               attributes:nil
-                                                    error:error];
+                                             withIntermediateDirectories:true
+                                                              attributes:nil
+                                                                   error:error];
     if (!success) {
       return nil;
     }
