@@ -1,12 +1,18 @@
+## 15.3.0
+
+- Resolves an issue where `replace` and `pushReplacement` caused the originating
+  route's completer to hang by adding `mapReplacementResult` to
+  `RouteInformationState` and `ImperativeRouteMatch`.
+  [flutter#141251](https://github.com/flutter/flutter/issues/141251)
+
 ## 15.2.0
 
 - `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
 
 ## 15.1.3
 
-* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
-* Fixes typo in API docs.
-
+- Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+- Fixes typo in API docs.
 
 ## 15.1.2
 
@@ -30,7 +36,7 @@
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
- 
+
 ## 14.8.0
 
 - Adds `preload` parameter to `StatefulShellBranchData.$branch`.
@@ -1194,4 +1200,3 @@
 ## 0.1.0
 
 - squatting on the package name (I'm not too proud to admit it)
-

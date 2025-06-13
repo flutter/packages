@@ -117,6 +117,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         baseRouteMatchList: state.baseRouteMatchList,
         completer: state.completer,
         type: state.type,
+        pipeCompleter: state.pipeCompleter,
       );
     });
   }
@@ -168,11 +169,24 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     return redirectedFuture;
   }
 
+  /// Ensures the replacement routes can resolve the originating route completer.
+  Completer<T?> _pipeCompleter<T extends Object?>(
+    Completer<T?> currentCompleter,
+    RouteMatch lastRouteMatch,
+  ) {
+    if (lastRouteMatch is ImperativeRouteMatch) {
+      return lastRouteMatch.pipeCompleter(currentCompleter);
+    } else {
+      return currentCompleter;
+    }
+  }
+
   RouteMatchList _updateRouteMatchList(
     RouteMatchList newMatchList, {
     required RouteMatchList? baseRouteMatchList,
     required Completer<Object?>? completer,
     required NavigatingType type,
+    required PipeRouteCompleterCallback pipeCompleter,
   }) {
     switch (type) {
       case NavigatingType.push:
@@ -181,10 +195,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
             pageKey: _getUniqueValueKey(),
             completer: completer!,
             matches: newMatchList,
+            pipeCompleter: pipeCompleter,
           ),
         );
       case NavigatingType.pushReplacement:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
+        completer = _pipeCompleter(completer!, routeMatch);
         baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
         if (baseRouteMatchList.isEmpty) {
           return newMatchList;
@@ -192,12 +208,14 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         return baseRouteMatchList.push(
           ImperativeRouteMatch(
             pageKey: _getUniqueValueKey(),
-            completer: completer!,
+            completer: completer,
             matches: newMatchList,
+            pipeCompleter: pipeCompleter,
           ),
         );
       case NavigatingType.replace:
         final RouteMatch routeMatch = baseRouteMatchList!.last;
+        completer = _pipeCompleter(completer!, routeMatch);
         baseRouteMatchList = baseRouteMatchList.remove(routeMatch);
         if (baseRouteMatchList.isEmpty) {
           return newMatchList;
@@ -205,8 +223,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         return baseRouteMatchList.push(
           ImperativeRouteMatch(
             pageKey: routeMatch.pageKey,
-            completer: completer!,
+            completer: completer,
             matches: newMatchList,
+            pipeCompleter: pipeCompleter,
           ),
         );
       case NavigatingType.go:
