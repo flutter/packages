@@ -1,3 +1,8 @@
+
+## 3.0.1
+
+- Fixes warnings in generated code of iterable parameters.
+
 ## 3.0.0
 
 - Route classes now required to use a mixin `with _$RouteName`.
