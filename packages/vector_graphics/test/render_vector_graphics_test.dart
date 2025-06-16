@@ -156,7 +156,7 @@ void main() {
     expect(identical(context.canvas.images[0], context.canvas.images[1]), true);
   });
 
-  test('Changing color filter does not re-rasterize', () async {
+  test('Changing color filter does re-rasterize', () async {
     final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
       pictureInfo,
       'test',
@@ -175,11 +175,11 @@ void main() {
         const ui.ColorFilter.mode(Colors.red, ui.BlendMode.colorBurn);
     renderVectorGraphic.paint(context, Offset.zero);
 
-    expect(firstImage.debugDisposed, false);
+    expect(firstImage.debugDisposed, true);
 
     renderVectorGraphic.paint(context, Offset.zero);
 
-    expect(context.canvas.lastImage, equals(firstImage));
+    expect(context.canvas.lastImage, isNot(firstImage));
   });
 
   test('Changing device pixel ratio does re-rasterize and dispose old raster',
@@ -350,7 +350,8 @@ void main() {
     final FakePaintingContext context = FakePaintingContext();
     renderVectorGraphic.paint(context, Offset.zero);
 
-    expect(context.canvas.lastPaint?.color, const Color.fromRGBO(0, 0, 0, 0.5));
+    // opaque is used to generate raster cache.
+    expect(context.canvas.lastPaint?.color, const Color.fromRGBO(0, 0, 0, 1.0));
   });
 
   test('Disposing render object disposes picture', () async {
@@ -403,7 +404,9 @@ void main() {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     ui.Canvas(recorder);
     final ui.Image image = await recorder.endRecording().toImage(1, 1);
-    final RasterData data = RasterData(image, 1, const RasterKey('test', 1, 1));
+    final Paint paint = Paint();
+    final RasterData data =
+        RasterData(image, 1, RasterKey('test', 1, 1, paint));
 
     data.dispose();
 
@@ -425,6 +428,99 @@ void main() {
     expect(context.canvas.saveCount, 0);
     expect(context.canvas.totalSaves, 1);
     expect(context.canvas.totalSaveLayers, 1);
+  });
+
+  testWidgets('Changing offset does not re-rasterize in raster strategy',
+      (WidgetTester tester) async {
+    final RenderVectorGraphic renderVectorGraphic =
+        RenderVectorGraphic(pictureInfo, 'testOffset', null, 1.0, null, 1.0);
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    final ui.Image? oldImage = context.canvas.lastImage;
+
+    renderVectorGraphic.paint(context, const Offset(20, 30));
+    expect(context.canvas.lastImage, isNotNull);
+    expect(context.canvas.lastImage, equals(oldImage));
+
+    renderVectorGraphic.dispose();
+  });
+
+  testWidgets('RenderVectorGraphic re-rasterizes when opacity changes',
+      (WidgetTester tester) async {
+    final FixedOpacityAnimation opacity = FixedOpacityAnimation(0.2);
+    final RenderVectorGraphic renderVectorGraphic = RenderVectorGraphic(
+      pictureInfo,
+      'testOpacity',
+      null,
+      1.0,
+      opacity,
+      1.0,
+    );
+
+    renderVectorGraphic.layout(BoxConstraints.tight(const Size(50, 50)));
+    final FakePaintingContext context = FakePaintingContext();
+    renderVectorGraphic.paint(context, Offset.zero);
+
+    final ui.Image? oldImage = context.canvas.lastImage;
+
+    opacity.value = 0.5;
+    opacity.notifyListeners();
+
+    // Changing opacity requires painting.
+    expect(renderVectorGraphic.debugNeedsPaint, true);
+
+    // Changing opacity need create new raster cache.
+    renderVectorGraphic.paint(context, Offset.zero);
+    expect(context.canvas.lastImage, isNotNull);
+
+    expect(context.canvas.lastImage, isNot(oldImage));
+
+    renderVectorGraphic.dispose();
+  });
+
+  testWidgets(
+      'Identical widgets reuse raster cache when available in raster startegy',
+      (WidgetTester tester) async {
+    final RenderVectorGraphic renderVectorGraphic1 = RenderVectorGraphic(
+      pictureInfo,
+      'testOffset',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    final RenderVectorGraphic renderVectorGraphic2 = RenderVectorGraphic(
+      pictureInfo,
+      'testOffset',
+      null,
+      1.0,
+      null,
+      1.0,
+    );
+    renderVectorGraphic1.layout(BoxConstraints.tight(const Size(50, 50)));
+    renderVectorGraphic2.layout(BoxConstraints.tight(const Size(50, 50)));
+
+    final FakePaintingContext context = FakePaintingContext();
+
+    renderVectorGraphic1.paint(context, Offset.zero);
+
+    final ui.Image? image1 = context.canvas.lastImage;
+
+    renderVectorGraphic2.paint(context, Offset.zero);
+
+    final ui.Image? image2 = context.canvas.lastImage;
+
+    expect(image1, isNotNull);
+    expect(image2, isNotNull);
+
+    expect(image1, equals(image2));
+
+    renderVectorGraphic1.dispose();
+    renderVectorGraphic2.dispose();
   });
 }
 

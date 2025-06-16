@@ -3,6 +3,10 @@
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.
 * Enhance image handling by adding validity checks and clear error messages for improved robustness and maintainability.
 
+## 1.1.19
+
+* Moved color and colorFilter effects into the raster cache to reduce subsequent rendering overhead.
+
 ## 1.1.18
 
 * Allow transition between placeholder and loaded image to have an animation.
