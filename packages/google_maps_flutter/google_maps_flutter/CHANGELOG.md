@@ -1,10 +1,10 @@
 ## 2.12.3
 
-* Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.
+* Updates the example app to use the zIndexInt param instead of the deprecated zIndex.
 
 ## 2.12.2
 
-* Updates the example app to use the zIndexInt param instead of the deprecated zIndex.
+* Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.
 * Updates README to indicate that Andoid SDK <21 is no longer supported.
 
 ## 2.12.1
