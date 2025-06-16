@@ -889,7 +889,6 @@ Marker _copyMarkerWithClusterManagerId(
     position: marker.position,
     rotation: marker.rotation,
     visible: marker.visible,
-    zIndex: marker.zIndex,
     zIndexInt: marker.zIndexInt,
     onTap: marker.onTap,
     onDragStart: marker.onDragStart,
