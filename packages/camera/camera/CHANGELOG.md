@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes overflowed toggles in the camera example.
+
 ## 0.11.1
 
 * Adds API support query for image streaming.
