@@ -732,13 +732,3 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
 
   return projection.fromPointToLatLng(point)!;
 }
-
-extension on Marker {
-  // We compare with zero because zIndexInt if non zero should get higher priority than zIndex
-  num? get effectiveZIndex {
-    if (zIndexInt != 0) {
-      return zIndexInt;
-    }
-    return zIndex;
-  }
-}
