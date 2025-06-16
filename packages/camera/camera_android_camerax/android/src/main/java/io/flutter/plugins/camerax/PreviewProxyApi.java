@@ -119,17 +119,18 @@ class PreviewProxyApi extends PigeonApiPreview {
           });
 
       // Provide surface.
-      surfaceProducer.invalidateSurface();
       surfaceProducer.setSize(
           request.getResolution().getWidth(), request.getResolution().getHeight());
-      Surface flutterSurface = surfaceProducer.getSurface();
+      Surface flutterSurface = surfaceProducer.getSurface(true);
       request.provideSurface(
           flutterSurface,
           Executors.newSingleThreadExecutor(),
           (result) -> {
-            // RACE CONDITION EXPLANATION: Sometimes, this callback is called after the next SurfaceRequest comes in,
-            // making a call on line 123 to get a `Surface`, which is the same `Surface` that was (potentially)
+            // RACE CONDITION EXPLANATION for https://github.com/flutter/flutter/pull/169899:
+            // Sometimes, this callback is called after the next SurfaceRequest comes in,
+            // making a call on line 122 to get a `Surface`, which is the same `Surface` that was (potentially)
             // successfully used and should not be re-used.
+            //
             // See
             // https://developer.android.com/reference/androidx/camera/core/SurfaceRequest.Result
             // for documentation.
