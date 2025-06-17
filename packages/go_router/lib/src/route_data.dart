@@ -201,6 +201,7 @@ abstract class ShellRouteData extends RouteData {
     GlobalKey<NavigatorState>? navigatorKey,
     GlobalKey<NavigatorState>? parentNavigatorKey,
     List<RouteBase> routes = const <RouteBase>[],
+    bool mergeObservers = true,
     List<NavigatorObserver>? observers,
     String? restorationScopeId,
   }) {
@@ -239,6 +240,7 @@ abstract class ShellRouteData extends RouteData {
       parentNavigatorKey: parentNavigatorKey,
       routes: routes,
       navigatorKey: navigatorKey,
+      mergeObservers: mergeObservers,
       observers: observers,
       restorationScopeId: restorationScopeId,
       redirect: redirect,
@@ -435,8 +437,14 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
 class TypedShellRoute<T extends ShellRouteData> extends TypedRoute<T> {
   /// Default const constructor
   const TypedShellRoute({
+    this.mergeObservers = true,
     this.routes = const <TypedRoute<RouteData>>[],
   });
+
+  /// Determines whether the observers should be merged.
+  ///
+  /// See [ShellRouteBase.mergeObservers].
+  final bool mergeObservers;
 
   /// Child route definitions.
   ///
@@ -450,8 +458,14 @@ class TypedStatefulShellRoute<T extends StatefulShellRouteData>
     extends TypedRoute<T> {
   /// Default const constructor
   const TypedStatefulShellRoute({
+    this.mergeObservers = true,
     this.branches = const <TypedStatefulShellBranch<StatefulShellBranchData>>[],
   });
+
+  /// Determines whether the observers should be merged.
+  ///
+  /// See [ShellRouteBase.mergeObservers].
+  final bool mergeObservers;
 
   /// Child route definitions.
   ///

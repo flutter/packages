@@ -1,3 +1,8 @@
+## 15.3.0
+
+- `ShellRoute` will auto merge the `observers` passed into `GoRouter`.
+- Adds `mergeObservers` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`.
+
 ## 15.2.0
 
 - `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
