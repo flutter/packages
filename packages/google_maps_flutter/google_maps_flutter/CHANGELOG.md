@@ -1,3 +1,7 @@
+## 2.12.3
+
+* Updates the example app to use the zIndexInt param instead of the deprecated zIndex.
+
 ## 2.12.2
 
 * Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.
