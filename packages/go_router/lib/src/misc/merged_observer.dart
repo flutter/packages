@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-/// A [NavigatorObserver] that merges the observers of the current 
+/// A [NavigatorObserver] that merges the observers of the current
 /// route with the observers of the previous route.
 class MergedNavigatorObserver extends NavigatorObserver {
   /// Default constructor for the merged navigator observer.
@@ -45,7 +45,8 @@ class MergedNavigatorObserver extends NavigatorObserver {
   }
 
   @override
-  void didStartUserGesture(Route<dynamic> route, Route<dynamic>? previousRoute) {
+  void didStartUserGesture(
+      Route<dynamic> route, Route<dynamic>? previousRoute) {
     for (final NavigatorObserver observer in observers) {
       observer.didStartUserGesture(route, previousRoute);
     }

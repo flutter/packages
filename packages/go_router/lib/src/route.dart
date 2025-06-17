@@ -492,6 +492,8 @@ abstract class ShellRouteBase extends RouteBase {
   /// When `true`, the observers of the shell route's parent will be merged with
   /// the observers of the shell route.
   ///
+  /// Only effective for `observers` passed into `GoRouter`.
+  ///
   /// Defaults to `false`.
   final bool mergeObservers;
 
@@ -568,13 +570,19 @@ class ShellRouteContext {
       bool mergeObservers,
       String? restorationScopeId) {
     final List<NavigatorObserver> effectiveObservers = <NavigatorObserver>[
-      ...?observers,
-      if (mergeObservers)
-        MergedNavigatorObserver(
-        // ignore: invalid_use_of_visible_for_testing_member
-          GoRouter.of(context).routerDelegate.builder.observers,
-        ),
+      ...?observers
     ];
+
+    if (mergeObservers) {
+      final List<NavigatorObserver>? rootObservers =
+          // ignore: invalid_use_of_visible_for_testing_member
+          GoRouter.maybeOf(context)?.routerDelegate.builder.observers;
+      if (rootObservers != null) {
+        effectiveObservers.add(MergedNavigatorObserver(
+          rootObservers,
+        ));
+      }
+    }
 
     return navigatorBuilder(navigatorKey, match, routeMatchList,
         effectiveObservers, restorationScopeId);
