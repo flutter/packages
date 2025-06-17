@@ -1,5 +1,4 @@
-## NEXT
-
+* Add html 5 video poster support as a VideoPlayerWebOptions.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 6.3.0
