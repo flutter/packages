@@ -1,3 +1,8 @@
+## 2.12.3
+
+* Adds a check that raises `MapUsedAfterWidgetDisposedError`
+  when map controller is used after its widget has been disposed.
+
 ## 2.12.2
 
 * Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.

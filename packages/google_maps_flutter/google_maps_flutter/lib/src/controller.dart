@@ -236,6 +236,7 @@ class GoogleMapController {
   /// in-memory cache of tiles. If you want to cache tiles for longer, you
   /// should implement an on-disk cache.
   Future<void> clearTileCache(TileOverlayId tileOverlayId) async {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance
         .clearTileCache(tileOverlayId, mapId: mapId);
   }
@@ -248,6 +249,7 @@ class GoogleMapController {
   /// The returned [Future] completes after the change has been started on the
   /// platform side.
   Future<void> animateCamera(CameraUpdate cameraUpdate, {Duration? duration}) {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance.animateCameraWithConfiguration(
         cameraUpdate, CameraUpdateAnimationConfiguration(duration: duration),
         mapId: mapId);
@@ -258,6 +260,7 @@ class GoogleMapController {
   /// The returned [Future] completes after the change has been made on the
   /// platform side.
   Future<void> moveCamera(CameraUpdate cameraUpdate) {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance
         .moveCamera(cameraUpdate, mapId: mapId);
   }
@@ -277,17 +280,20 @@ class GoogleMapController {
   /// style reference for more information regarding the supported styles.
   @Deprecated('Use GoogleMap.style instead.')
   Future<void> setMapStyle(String? mapStyle) {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance
         .setMapStyle(mapStyle, mapId: mapId);
   }
 
   /// Returns the last style error, if any.
   Future<String?> getStyleError() {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance.getStyleError(mapId: mapId);
   }
 
   /// Return [LatLngBounds] defining the region that is visible in a map.
   Future<LatLngBounds> getVisibleRegion() {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance.getVisibleRegion(mapId: mapId);
   }
 
@@ -297,6 +303,7 @@ class GoogleMapController {
   /// Screen location is in screen pixels (not display pixels) with respect to the top left corner
   /// of the map, not necessarily of the whole screen.
   Future<ScreenCoordinate> getScreenCoordinate(LatLng latLng) {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance
         .getScreenCoordinate(latLng, mapId: mapId);
   }
@@ -306,6 +313,7 @@ class GoogleMapController {
   /// Returned [LatLng] corresponds to a screen location. The screen location is specified in screen
   /// pixels (not display pixels) relative to the top left of the map, not top left of the whole screen.
   Future<LatLng> getLatLng(ScreenCoordinate screenCoordinate) {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance
         .getLatLng(screenCoordinate, mapId: mapId);
   }
@@ -319,6 +327,7 @@ class GoogleMapController {
   ///   * [hideMarkerInfoWindow] to hide the Info Window.
   ///   * [isMarkerInfoWindowShown] to check if the Info Window is showing.
   Future<void> showMarkerInfoWindow(MarkerId markerId) {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance
         .showMarkerInfoWindow(markerId, mapId: mapId);
   }
@@ -332,6 +341,7 @@ class GoogleMapController {
   ///   * [showMarkerInfoWindow] to show the Info Window.
   ///   * [isMarkerInfoWindowShown] to check if the Info Window is showing.
   Future<void> hideMarkerInfoWindow(MarkerId markerId) {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance
         .hideMarkerInfoWindow(markerId, mapId: mapId);
   }
@@ -345,17 +355,20 @@ class GoogleMapController {
   ///   * [showMarkerInfoWindow] to show the Info Window.
   ///   * [hideMarkerInfoWindow] to hide the Info Window.
   Future<bool> isMarkerInfoWindowShown(MarkerId markerId) {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance
         .isMarkerInfoWindowShown(markerId, mapId: mapId);
   }
 
   /// Returns the current zoom level of the map
   Future<double> getZoomLevel() {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance.getZoomLevel(mapId: mapId);
   }
 
   /// Returns the image bytes of the map
   Future<Uint8List?> takeSnapshot() {
+    _checkWidgetMountedOrThrow();
     return GoogleMapsFlutterPlatform.instance.takeSnapshot(mapId: mapId);
   }
 
@@ -367,5 +380,42 @@ class GoogleMapController {
     }
     _streamSubscriptions.clear();
     GoogleMapsFlutterPlatform.instance.dispose(mapId: mapId);
+  }
+
+  /// It is relatively easy to mistakenly call a method on the controller
+  /// after the [GoogleMap] widget has already been disposed.
+  /// Historically, this led to Platform-side errors such as
+  /// `MissingPluginException` or `Unable to establish connection on channel`
+  /// errors.
+  ///
+  /// To facilitate debugging, this guard function
+  /// raises [MapUsedAfterWidgetDisposedError].
+  void _checkWidgetMountedOrThrow() {
+    if (!_googleMapState.mounted) {
+      throw MapUsedAfterWidgetDisposedError(mapId: mapId);
+    }
+  }
+}
+
+/// Error thrown when any [GoogleMapController] method is called after
+/// its associated [GoogleMap] widget has been disposed.
+///
+/// To avoid this error:
+///
+/// 1. Set the map controller field to `null` in your widget state's
+///    `dispose()` method, or
+/// 2. Check the [State.mounted] state before each use of the controller.
+class MapUsedAfterWidgetDisposedError extends Error {
+  /// Creates the use-after-disposed error for the provided [mapId]
+  /// and with the provided [diagnosticString].
+  MapUsedAfterWidgetDisposedError({required this.mapId});
+
+  /// The map ID of the map for which this error is being raised.
+  final int mapId;
+
+  @override
+  String toString() {
+    return 'GoogleMapController for map ID $mapId was used after '
+        'the associated GoogleMap widget had already been disposed.';
   }
 }
