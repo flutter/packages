@@ -1,6 +1,10 @@
+## 15.2.1
+
+* Fixes Popping state and re-rendering scaffold at the same time doesn't update the URL on web.
+
 ## 15.2.0
 
-- `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
+* `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
 
 ## 15.1.3
 
