@@ -14,6 +14,7 @@ import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
 import 'misc/inherited_router.dart';
+import 'on_enter.dart';
 import 'parser.dart';
 import 'route.dart';
 import 'state.dart';
@@ -41,6 +42,11 @@ class RoutingConfig {
   /// The [routes] must not be empty.
   const RoutingConfig({
     required this.routes,
+    this.onEnter,
+    @Deprecated(
+      'Use onEnter instead. '
+      'This feature will be removed in a future release.',
+    )
     this.redirect = _defaultRedirect,
     this.redirectLimit = 5,
   });
@@ -66,12 +72,45 @@ class RoutingConfig {
   /// changes.
   ///
   /// See [GoRouter].
+  @Deprecated(
+    'Use onEnter instead. '
+    'This feature will be removed in a future release.',
+  )
   final GoRouterRedirect redirect;
 
   /// The maximum number of redirection allowed.
   ///
   /// See [GoRouter].
   final int redirectLimit;
+
+  /// A callback invoked for every incoming route before it is processed.
+  ///
+  /// This callback allows you to control navigation by inspecting the incoming
+  /// route and conditionally preventing the navigation. If the callback returns
+  /// `true`, the GoRouter proceeds with the regular navigation and redirection
+  /// logic. If the callback returns `false`, the navigation is canceled.
+  ///
+  /// When a deep link opens the app and `onEnter` returns `false`,  GoRouter
+  /// will automatically redirect to the initial route or '/'.
+  ///
+  /// Example:
+  /// ```dart
+  /// final GoRouter router = GoRouter(
+  ///   routes: [...],
+  ///   onEnter: (BuildContext context, Uri uri) {
+  ///     if (uri.path == '/login' && isUserLoggedIn()) {
+  ///       return false; // Prevent navigation to /login
+  ///     }
+  ///     if (uri.path == '/referral') {
+  ///       // Save the referral code and prevent navigation
+  ///       saveReferralCode(uri.queryParameters['code']);
+  ///       return false;
+  ///     }
+  ///     return true; // Allow navigation
+  ///   },
+  /// );
+  /// ```
+  final OnEnter? onEnter;
 }
 
 /// The route configuration for the app.
@@ -122,13 +161,18 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   /// The `routes` must not be null and must contain an [GoRouter] to match `/`.
   factory GoRouter({
     required List<RouteBase> routes,
+    OnEnter? onEnter,
     Codec<Object?, Object?>? extraCodec,
     GoExceptionHandler? onException,
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
+    @Deprecated(
+      'Use onEnter instead. '
+      'This feature will be removed in a future release.',
+    )
     GoRouterRedirect? redirect,
-    Listenable? refreshListenable,
     int redirectLimit = 5,
+    Listenable? refreshListenable,
     bool routerNeglect = false,
     String? initialLocation,
     bool overridePlatformDefaultLocation = false,
@@ -142,9 +186,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     return GoRouter.routingConfig(
       routingConfig: _ConstantRoutingConfig(
         RoutingConfig(
-            routes: routes,
-            redirect: redirect ?? RoutingConfig._defaultRedirect,
-            redirectLimit: redirectLimit),
+          routes: routes,
+          redirect: redirect ?? RoutingConfig._defaultRedirect,
+          onEnter: onEnter,
+          redirectLimit: redirectLimit,
+        ),
       ),
       extraCodec: extraCodec,
       onException: onException,
@@ -224,6 +270,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     routeInformationParser = GoRouteInformationParser(
       onParserException: parserExceptionHandler,
       configuration: configuration,
+      initialLocation: initialLocation,
+      router: this,
     );
 
     routeInformationProvider = GoRouteInformationProvider(
@@ -570,6 +618,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 /// A routing config that is never going to change.
 class _ConstantRoutingConfig extends ValueListenable<RoutingConfig> {
   const _ConstantRoutingConfig(this.value);
+
   @override
   void addListener(VoidCallback listener) {
     // Intentionally empty because listener will never be called.
