@@ -32,48 +32,22 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) int64_t textureId;
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
-@property(nonatomic) FLTImageStreamHandler *imageStreamHandler;
 @property(readonly, nonatomic) NSObject<FLTCaptureSession> *videoCaptureSession;
 @property(readonly, nonatomic) NSObject<FLTCaptureSession> *audioCaptureSession;
 
 @property(readonly, nonatomic) NSObject<FLTCaptureInput> *captureVideoInput;
-/// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
-/// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
-@property(readwrite, nonatomic) CVPixelBufferRef latestPixelBuffer;
 @property(readonly, nonatomic) CGSize captureSize;
-@property(strong, nonatomic) NSObject<FLTAssetWriter> *videoWriter;
-@property(strong, nonatomic) NSObject<FLTAssetWriterInput> *videoWriterInput;
-@property(strong, nonatomic) NSObject<FLTAssetWriterInput> *audioWriterInput;
 @property(strong, nonatomic)
     NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
 @property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(strong, nonatomic) NSString *videoRecordingPath;
-@property(assign, nonatomic) BOOL isFirstVideoSample;
-@property(assign, nonatomic) BOOL isRecording;
-@property(assign, nonatomic) BOOL isRecordingPaused;
-@property(assign, nonatomic) BOOL videoIsDisconnected;
-@property(assign, nonatomic) BOOL audioIsDisconnected;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
-/// Number of frames currently pending processing.
-@property(assign, nonatomic) int streamingPendingFramesCount;
-
-/// Maximum number of frames pending processing.
-@property(assign, nonatomic) int maxStreamingPendingFramesCount;
-
 @property(assign, nonatomic) UIDeviceOrientation lockedCaptureOrientation;
-@property(assign, nonatomic) CMTime lastVideoSampleTime;
-@property(assign, nonatomic) CMTime lastAudioSampleTime;
-@property(assign, nonatomic) CMTime videoTimeOffset;
-@property(assign, nonatomic) CMTime audioTimeOffset;
 @property(nonatomic) CMMotionManager *motionManager;
-@property NSObject<FLTAssetWriterInputPixelBufferAdaptor> *videoAdaptor;
 /// All FLTCam's state access and capture session related operations should be on run on this queue.
 @property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
-/// The queue on which `latestPixelBuffer` property is accessed.
-/// To avoid unnecessary contention, do not access `latestPixelBuffer` on the `captureSessionQueue`.
-@property(strong, nonatomic) dispatch_queue_t pixelBufferSynchronizationQueue;
 /// The queue on which captured photos (not videos) are written to disk.
 /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
 @property(strong, nonatomic) dispatch_queue_t photoIOQueue;
@@ -109,8 +83,6 @@ NSString *const errorMethod = @"error";
   _mediaSettingsAVWrapper = configuration.mediaSettingsWrapper;
 
   _captureSessionQueue = configuration.captureSessionQueue;
-  _pixelBufferSynchronizationQueue =
-      dispatch_queue_create("io.flutter.camera.pixelBufferSynchronizationQueue", NULL);
   _photoIOQueue = dispatch_queue_create("io.flutter.camera.photoIOQueue", NULL);
   _videoCaptureSession = configuration.videoCaptureSession;
   _audioCaptureSession = configuration.audioCaptureSession;
@@ -131,11 +103,6 @@ NSString *const errorMethod = @"error";
   _audioCaptureSession.automaticallyConfiguresApplicationAudioSession = NO;
   _assetWriterFactory = configuration.assetWriterFactory;
   _inputPixelBufferAdaptorFactory = configuration.inputPixelBufferAdaptorFactory;
-
-  // To limit memory consumption, limit the number of frames pending processing.
-  // After some testing, 4 was determined to be the best maximum value.
-  // https://github.com/flutter/plugins/pull/4520#discussion_r766335637
-  _maxStreamingPendingFramesCount = 4;
 
   NSError *localError = nil;
   AVCaptureConnection *connection = [self createConnection:&localError];
@@ -339,7 +306,7 @@ NSString *const errorMethod = @"error";
   NSString *path = [self getTemporaryFilePathWithExtension:extension
                                                  subfolder:@"pictures"
                                                     prefix:@"CAP_"
-                                                     error:error];
+                                                     error:&error];
   if (error) {
     completion(nil, FlutterErrorFromNSError(error));
     return;
@@ -395,7 +362,7 @@ NSString *const errorMethod = @"error";
 - (NSString *)getTemporaryFilePathWithExtension:(NSString *)extension
                                       subfolder:(NSString *)subfolder
                                          prefix:(NSString *)prefix
-                                          error:(NSError *)error {
+                                          error:(NSError **)error {
   NSString *docDir =
       NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
   NSString *fileDir =
@@ -406,11 +373,11 @@ NSString *const errorMethod = @"error";
 
   NSFileManager *fm = [NSFileManager defaultManager];
   if (![fm fileExistsAtPath:fileDir]) {
-    [[NSFileManager defaultManager] createDirectoryAtPath:fileDir
-                              withIntermediateDirectories:true
-                                               attributes:nil
-                                                    error:&error];
-    if (error) {
+    BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:fileDir
+                                             withIntermediateDirectories:true
+                                                              attributes:nil
+                                                                   error:error];
+    if (!success) {
       return nil;
     }
   }
@@ -511,227 +478,6 @@ NSString *const errorMethod = @"error";
   return bestFormat;
 }
 
-- (void)captureOutput:(AVCaptureOutput *)output
-    didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-           fromConnection:(AVCaptureConnection *)connection {
-  if (output == _captureVideoOutput.avOutput) {
-    CVPixelBufferRef newBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-    CFRetain(newBuffer);
-
-    __block CVPixelBufferRef previousPixelBuffer = nil;
-    // Use `dispatch_sync` to avoid unnecessary context switch under common non-contest scenarios;
-    // Under rare contest scenarios, it will not block for too long since the critical section is
-    // quite lightweight.
-    dispatch_sync(self.pixelBufferSynchronizationQueue, ^{
-      // No need weak self because it's dispatch_sync.
-      previousPixelBuffer = self.latestPixelBuffer;
-      self.latestPixelBuffer = newBuffer;
-    });
-    if (previousPixelBuffer) {
-      CFRelease(previousPixelBuffer);
-    }
-    if (_onFrameAvailable) {
-      _onFrameAvailable();
-    }
-  }
-  if (!CMSampleBufferDataIsReady(sampleBuffer)) {
-    [self reportErrorMessage:@"sample buffer is not ready. Skipping sample"];
-    return;
-  }
-  if (_isStreamingImages) {
-    FlutterEventSink eventSink = _imageStreamHandler.eventSink;
-    if (eventSink && (self.streamingPendingFramesCount < self.maxStreamingPendingFramesCount)) {
-      self.streamingPendingFramesCount++;
-      CVPixelBufferRef pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-      // Must lock base address before accessing the pixel data
-      CVPixelBufferLockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-
-      size_t imageWidth = CVPixelBufferGetWidth(pixelBuffer);
-      size_t imageHeight = CVPixelBufferGetHeight(pixelBuffer);
-
-      NSMutableArray *planes = [NSMutableArray array];
-
-      const Boolean isPlanar = CVPixelBufferIsPlanar(pixelBuffer);
-      size_t planeCount;
-      if (isPlanar) {
-        planeCount = CVPixelBufferGetPlaneCount(pixelBuffer);
-      } else {
-        planeCount = 1;
-      }
-
-      for (int i = 0; i < planeCount; i++) {
-        void *planeAddress;
-        size_t bytesPerRow;
-        size_t height;
-        size_t width;
-
-        if (isPlanar) {
-          planeAddress = CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, i);
-          bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, i);
-          height = CVPixelBufferGetHeightOfPlane(pixelBuffer, i);
-          width = CVPixelBufferGetWidthOfPlane(pixelBuffer, i);
-        } else {
-          planeAddress = CVPixelBufferGetBaseAddress(pixelBuffer);
-          bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
-          height = CVPixelBufferGetHeight(pixelBuffer);
-          width = CVPixelBufferGetWidth(pixelBuffer);
-        }
-
-        NSNumber *length = @(bytesPerRow * height);
-        NSData *bytes = [NSData dataWithBytes:planeAddress length:length.unsignedIntegerValue];
-
-        NSMutableDictionary *planeBuffer = [NSMutableDictionary dictionary];
-        planeBuffer[@"bytesPerRow"] = @(bytesPerRow);
-        planeBuffer[@"width"] = @(width);
-        planeBuffer[@"height"] = @(height);
-        planeBuffer[@"bytes"] = [FlutterStandardTypedData typedDataWithBytes:bytes];
-
-        [planes addObject:planeBuffer];
-      }
-      // Lock the base address before accessing pixel data, and unlock it afterwards.
-      // Done accessing the `pixelBuffer` at this point.
-      CVPixelBufferUnlockBaseAddress(pixelBuffer, kCVPixelBufferLock_ReadOnly);
-
-      NSMutableDictionary *imageBuffer = [NSMutableDictionary dictionary];
-      imageBuffer[@"width"] = [NSNumber numberWithUnsignedLong:imageWidth];
-      imageBuffer[@"height"] = [NSNumber numberWithUnsignedLong:imageHeight];
-      imageBuffer[@"format"] = @(_videoFormat);
-      imageBuffer[@"planes"] = planes;
-      imageBuffer[@"lensAperture"] = [NSNumber numberWithFloat:[_captureDevice lensAperture]];
-      Float64 exposureDuration = CMTimeGetSeconds([_captureDevice exposureDuration]);
-      Float64 nsExposureDuration = 1000000000 * exposureDuration;
-      imageBuffer[@"sensorExposureTime"] = [NSNumber numberWithInt:nsExposureDuration];
-      imageBuffer[@"sensorSensitivity"] = [NSNumber numberWithFloat:[_captureDevice ISO]];
-
-      dispatch_async(dispatch_get_main_queue(), ^{
-        eventSink(imageBuffer);
-      });
-    }
-  }
-  if (_isRecording && !_isRecordingPaused) {
-    if (_videoWriter.status == AVAssetWriterStatusFailed) {
-      [self reportErrorMessage:[NSString stringWithFormat:@"%@", _videoWriter.error]];
-      return;
-    }
-
-    // ignore audio samples until the first video sample arrives to avoid black frames
-    // https://github.com/flutter/flutter/issues/57831
-    if (_isFirstVideoSample && output != _captureVideoOutput.avOutput) {
-      return;
-    }
-
-    CMTime currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
-
-    if (_isFirstVideoSample) {
-      [_videoWriter startSessionAtSourceTime:currentSampleTime];
-      // fix sample times not being numeric when pause/resume happens before first sample buffer
-      // arrives
-      // https://github.com/flutter/flutter/issues/132014
-      _lastVideoSampleTime = currentSampleTime;
-      _lastAudioSampleTime = currentSampleTime;
-      _isFirstVideoSample = NO;
-    }
-
-    if (output == _captureVideoOutput.avOutput) {
-      if (_videoIsDisconnected) {
-        _videoIsDisconnected = NO;
-
-        if (_videoTimeOffset.value == 0) {
-          _videoTimeOffset = CMTimeSubtract(currentSampleTime, _lastVideoSampleTime);
-        } else {
-          CMTime offset = CMTimeSubtract(currentSampleTime, _lastVideoSampleTime);
-          _videoTimeOffset = CMTimeAdd(_videoTimeOffset, offset);
-        }
-
-        return;
-      }
-
-      _lastVideoSampleTime = currentSampleTime;
-
-      CVPixelBufferRef nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer);
-      CMTime nextSampleTime = CMTimeSubtract(_lastVideoSampleTime, _videoTimeOffset);
-      // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
-      // https://github.com/flutter/flutter/issues/132073
-      if (_videoWriterInput.readyForMoreMediaData) {
-        [_videoAdaptor appendPixelBuffer:nextBuffer withPresentationTime:nextSampleTime];
-      }
-    } else {
-      CMTime dur = CMSampleBufferGetDuration(sampleBuffer);
-
-      if (dur.value > 0) {
-        currentSampleTime = CMTimeAdd(currentSampleTime, dur);
-      }
-
-      if (_audioIsDisconnected) {
-        _audioIsDisconnected = NO;
-
-        if (_audioTimeOffset.value == 0) {
-          _audioTimeOffset = CMTimeSubtract(currentSampleTime, _lastAudioSampleTime);
-        } else {
-          CMTime offset = CMTimeSubtract(currentSampleTime, _lastAudioSampleTime);
-          _audioTimeOffset = CMTimeAdd(_audioTimeOffset, offset);
-        }
-
-        return;
-      }
-
-      _lastAudioSampleTime = currentSampleTime;
-
-      if (_audioTimeOffset.value != 0) {
-        CMSampleBufferRef adjustedSampleBuffer =
-            [self copySampleBufferWithAdjustedTime:sampleBuffer by:_audioTimeOffset];
-        [self newAudioSample:adjustedSampleBuffer];
-        CFRelease(adjustedSampleBuffer);
-      } else {
-        [self newAudioSample:sampleBuffer];
-      }
-    }
-  }
-}
-
-- (CMSampleBufferRef)copySampleBufferWithAdjustedTime:(CMSampleBufferRef)sample by:(CMTime)offset {
-  CMItemCount count;
-  CMSampleBufferGetSampleTimingInfoArray(sample, 0, nil, &count);
-  CMSampleTimingInfo *pInfo = malloc(sizeof(CMSampleTimingInfo) * count);
-  CMSampleBufferGetSampleTimingInfoArray(sample, count, pInfo, &count);
-  for (CMItemCount i = 0; i < count; i++) {
-    pInfo[i].decodeTimeStamp = CMTimeSubtract(pInfo[i].decodeTimeStamp, offset);
-    pInfo[i].presentationTimeStamp = CMTimeSubtract(pInfo[i].presentationTimeStamp, offset);
-  }
-  CMSampleBufferRef sout;
-  CMSampleBufferCreateCopyWithNewTiming(nil, sample, count, pInfo, &sout);
-  free(pInfo);
-  return sout;
-}
-
-- (void)newVideoSample:(CMSampleBufferRef)sampleBuffer {
-  if (_videoWriter.status != AVAssetWriterStatusWriting) {
-    if (_videoWriter.status == AVAssetWriterStatusFailed) {
-      [self reportErrorMessage:[NSString stringWithFormat:@"%@", _videoWriter.error]];
-    }
-    return;
-  }
-  if (_videoWriterInput.readyForMoreMediaData) {
-    if (![_videoWriterInput appendSampleBuffer:sampleBuffer]) {
-      [self reportErrorMessage:@"Unable to write to video input"];
-    }
-  }
-}
-
-- (void)newAudioSample:(CMSampleBufferRef)sampleBuffer {
-  if (_videoWriter.status != AVAssetWriterStatusWriting) {
-    if (_videoWriter.status == AVAssetWriterStatusFailed) {
-      [self reportErrorMessage:[NSString stringWithFormat:@"%@", _videoWriter.error]];
-    }
-    return;
-  }
-  if (_audioWriterInput.readyForMoreMediaData) {
-    if (![_audioWriterInput appendSampleBuffer:sampleBuffer]) {
-      [self reportErrorMessage:@"Unable to write to audio input"];
-    }
-  }
-}
-
 - (void)close {
   [self stop];
   for (AVCaptureInput *input in [_videoCaptureSession inputs]) {
@@ -749,60 +495,53 @@ NSString *const errorMethod = @"error";
 }
 
 - (void)dealloc {
-  if (_latestPixelBuffer) {
-    CFRelease(_latestPixelBuffer);
-  }
   [_motionManager stopAccelerometerUpdates];
 }
 
-- (CVPixelBufferRef)copyPixelBuffer {
-  __block CVPixelBufferRef pixelBuffer = nil;
-  // Use `dispatch_sync` because `copyPixelBuffer` API requires synchronous return.
-  dispatch_sync(self.pixelBufferSynchronizationQueue, ^{
-    // No need weak self because it's dispatch_sync.
-    pixelBuffer = self.latestPixelBuffer;
-    self.latestPixelBuffer = nil;
-  });
-  return pixelBuffer;
+/// Main logic to setup the video recording.
+- (void)setUpVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion {
+  NSError *error;
+  _videoRecordingPath = [self getTemporaryFilePathWithExtension:@"mp4"
+                                                      subfolder:@"videos"
+                                                         prefix:@"REC_"
+                                                          error:&error];
+  if (error) {
+    completion(FlutterErrorFromNSError(error));
+    return;
+  }
+  if (![self setupWriterForPath:_videoRecordingPath]) {
+    completion([FlutterError errorWithCode:@"IOError" message:@"Setup Writer Failed" details:nil]);
+    return;
+  }
+  // startWriting should not be called in didOutputSampleBuffer where it can cause state
+  // in which _isRecording is YES but _videoWriter.status is AVAssetWriterStatusUnknown
+  // in stopVideoRecording if it is called after startVideoRecording but before
+  // didOutputSampleBuffer had chance to call startWriting and lag at start of video
+  // https://github.com/flutter/flutter/issues/132016
+  // https://github.com/flutter/flutter/issues/151319
+  [_videoWriter startWriting];
+  _isFirstVideoSample = YES;
+  _isRecording = YES;
+  _isRecordingPaused = NO;
+  _videoTimeOffset = CMTimeMake(0, 1);
+  _audioTimeOffset = CMTimeMake(0, 1);
+  _videoIsDisconnected = NO;
+  _audioIsDisconnected = NO;
+  completion(nil);
 }
 
 - (void)startVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
   if (!_isRecording) {
     if (messenger != nil) {
-      [self startImageStreamWithMessenger:messenger];
+      [self startImageStreamWithMessenger:messenger
+                               completion:^(FlutterError *_Nullable error) {
+                                 [self setUpVideoRecordingWithCompletion:completion];
+                               }];
+      return;
     }
 
-    NSError *error;
-    _videoRecordingPath = [self getTemporaryFilePathWithExtension:@"mp4"
-                                                        subfolder:@"videos"
-                                                           prefix:@"REC_"
-                                                            error:error];
-    if (error) {
-      completion(FlutterErrorFromNSError(error));
-      return;
-    }
-    if (![self setupWriterForPath:_videoRecordingPath]) {
-      completion([FlutterError errorWithCode:@"IOError"
-                                     message:@"Setup Writer Failed"
-                                     details:nil]);
-      return;
-    }
-    // startWriting should not be called in didOutputSampleBuffer where it can cause state
-    // in which _isRecording is YES but _videoWriter.status is AVAssetWriterStatusUnknown
-    // in stopVideoRecording if it is called after startVideoRecording but before
-    // didOutputSampleBuffer had chance to call startWriting and lag at start of video
-    // https://github.com/flutter/flutter/issues/132016
-    // https://github.com/flutter/flutter/issues/151319
-    [_videoWriter startWriting];
-    _isFirstVideoSample = YES;
-    _isRecording = YES;
-    _isRecordingPaused = NO;
-    _videoTimeOffset = CMTimeMake(0, 1);
-    _audioTimeOffset = CMTimeMake(0, 1);
-    _videoIsDisconnected = NO;
-    _audioIsDisconnected = NO;
-    completion(nil);
+    [self setUpVideoRecordingWithCompletion:completion];
   } else {
     completion([FlutterError errorWithCode:@"Error"
                                    message:@"Video is already recording"
@@ -1099,14 +838,17 @@ NSString *const errorMethod = @"error";
   [_captureDevice unlockForConfiguration];
 }
 
-- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger {
+- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
+                           completion:(void (^)(FlutterError *))completion {
   [self startImageStreamWithMessenger:messenger
                    imageStreamHandler:[[FLTImageStreamHandler alloc]
-                                          initWithCaptureSessionQueue:_captureSessionQueue]];
+                                          initWithCaptureSessionQueue:_captureSessionQueue]
+                           completion:completion];
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler {
+                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
+                           completion:(void (^)(FlutterError *))completion {
   if (!_isStreamingImages) {
     id<FLTEventChannel> eventChannel = [FlutterEventChannel
         eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
@@ -1119,19 +861,27 @@ NSString *const errorMethod = @"error";
     [threadSafeEventChannel setStreamHandler:_imageStreamHandler
                                   completion:^{
                                     typeof(self) strongSelf = weakSelf;
-                                    if (!strongSelf) return;
+                                    if (!strongSelf) {
+                                      completion(nil);
+                                      return;
+                                    }
 
                                     dispatch_async(strongSelf.captureSessionQueue, ^{
                                       // cannot use the outter strongSelf
                                       typeof(self) strongSelf = weakSelf;
-                                      if (!strongSelf) return;
+                                      if (!strongSelf) {
+                                        completion(nil);
+                                        return;
+                                      }
 
                                       strongSelf.isStreamingImages = YES;
                                       strongSelf.streamingPendingFramesCount = 0;
+                                      completion(nil);
                                     });
                                   }];
   } else {
     [self reportErrorMessage:@"Images from camera are already streaming!"];
+    completion(nil);
   }
 }
 

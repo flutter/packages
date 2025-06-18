@@ -1,3 +1,11 @@
+## 3.0.1
+
+- Updates README.md to use the mixin `with _$RouteName`.
+
+## 3.0.0
+
+- Route classes now required to use a mixin `with _$RouteName`.
+
 ## 2.9.1
 
 - Fixes an deprecated warning for using withNullability
