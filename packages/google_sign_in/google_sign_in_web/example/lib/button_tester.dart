@@ -14,7 +14,7 @@ import 'src/button_configuration_column.dart';
 final GoogleSignInPlatform _platform = GoogleSignInPlatform.instance;
 
 Future<void> main() async {
-  await _platform.init(const InitParameters(
+  await _platform.initWithParams(const SignInInitParameters(
     clientId: 'your-client_id.apps.googleusercontent.com',
   ));
   runApp(
@@ -41,21 +41,19 @@ class _ButtonConfiguratorState extends State<ButtonConfiguratorDemo> {
   @override
   void initState() {
     super.initState();
-    _platform.authenticationEvents?.listen((AuthenticationEvent authEvent) {
+    _platform.userDataEvents?.listen((GoogleSignInUserData? userData) {
       setState(() {
-        switch (authEvent) {
-          case AuthenticationEventSignIn():
-            _userData = authEvent.user;
-          case AuthenticationEventSignOut():
-          case AuthenticationEventException():
-            _userData = null;
-        }
+        _userData = userData;
       });
     });
   }
 
   void _handleSignOut() {
-    _platform.signOut(const SignOutParams());
+    _platform.signOut();
+    setState(() {
+      // signOut does not broadcast through the userDataEvents, so we fake it.
+      _userData = null;
+    });
   }
 
   void _handleNewWebButtonConfiguration(GSIButtonConfiguration newConfig) {

@@ -39,3 +39,10 @@ GoogleSignInPlugin get _plugin {
 Widget renderButton({GSIButtonConfiguration? configuration}) {
   return _plugin.renderButton(configuration: configuration);
 }
+
+/// Requests server auth code from the GIS Client.
+///
+/// See: https://developers.google.com/identity/oauth2/web/guides/use-code-model
+Future<String?> requestServerAuthCode() async {
+  return _plugin.requestServerAuthCode();
+}

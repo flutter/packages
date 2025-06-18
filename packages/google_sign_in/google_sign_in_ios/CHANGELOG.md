@@ -1,7 +1,5 @@
-## 6.0.0
+## NEXT
 
-* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
-  interface package, rather than 2.x, significantly changing the API surface.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 5.9.0
