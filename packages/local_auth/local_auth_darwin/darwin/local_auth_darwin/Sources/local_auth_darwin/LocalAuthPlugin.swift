@@ -153,17 +153,17 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     if context.canEvaluatePolicy(policy, error: &authError) {
       context.evaluatePolicy(
         policy,
-        localizedReason: strings.reason,
-        reply: { (success: Bool, error: (any Error)?) in
-          DispatchQueue.main.async {
-            self.handleAuthReply(
-              success: success,
-              error: error,
-              options: options,
-              strings: strings,
-              completion: completion)
-          }
-        })
+        localizedReason: strings.reason
+      ) { (success: Bool, error: (any Error)?) in
+        DispatchQueue.main.async {
+          self.handleAuthReply(
+            success: success,
+            error: error,
+            options: options,
+            strings: strings,
+            completion: completion)
+        }
+      }
     } else {
       if let authError = authError {
         handleError(authError, options: options, strings: strings, completion: completion)
@@ -248,10 +248,10 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       alert.addButton(withTitle: dismissButtonTitle)
       if let window = viewProvider.view?.window {
         alert.beginSheetModal(
-          for: window,
-          completionHandler: { code in
-            self.handleResult(succeeded: false, completion: completion)
-          })
+          for: window
+        ) { code in
+          self.handleResult(succeeded: false, completion: completion)
+        }
       } else {
         alert.runModal()
         self.handleResult(succeeded: false, completion: completion)
@@ -268,12 +268,12 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
 
         let defaultAction = UIAlertAction(
           title: dismissButtonTitle,
-          style: UIAlertAction.Style.default,
-          handler: { action in
-            self.handleResult(
-              succeeded: false,
-              completion: completion)
-          })
+          style: UIAlertAction.Style.default
+        ) { action in
+          self.handleResult(
+            succeeded: false,
+            completion: completion)
+        }
 
         alert.addAction(defaultAction)
         if let openSettingsButtonTitle = openSettingsButtonTitle {
@@ -281,14 +281,14 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
           if let url = url {
             let additionalAction = UIAlertAction(
               title: openSettingsButtonTitle,
-              style: UIAlertAction.Style.default,
-              handler: { action in
-                UIApplication.shared.open(
-                  url,
-                  options: [:],
-                  completionHandler: nil)
-                self.handleResult(succeeded: false, completion: completion)
-              })
+              style: UIAlertAction.Style.default
+            ) { action in
+              UIApplication.shared.open(
+                url,
+                options: [:],
+                completionHandler: nil)
+              self.handleResult(succeeded: false, completion: completion)
+            }
             alert.addAction(additionalAction)
           }
         }
