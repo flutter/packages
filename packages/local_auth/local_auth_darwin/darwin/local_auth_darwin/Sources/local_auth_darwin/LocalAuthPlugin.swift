@@ -68,6 +68,12 @@ struct DefaultAlertFactory: AuthAlertFactory {
             message: message,
             preferredStyle: preferredStyle))
     }
+
+    func createAlertAction(
+      title: String?, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)? = nil
+    ) -> UIAlertAction {
+      return UIAlertAction(title: title, style: style, handler: handler)
+    }
   #endif
 }
 
@@ -97,7 +103,9 @@ struct StickyAuthState {
 // MARK: -
 
 /// A flutter plugin for local authentication.
-public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
+// TODO(stuartmorgan): Remove the @unchecked Sendable, and convert to strict thread enforcement.
+// This was added to minimize the changes while converting from Swift to Objective-C.
+public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unchecked Sendable {
 
   /// Manages the last call state for sticky auth.
   var lastCallState: StickyAuthState?
@@ -136,7 +144,6 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
 
   // MARK: LocalAuthApi
 
-  @MainActor
   func authenticate(
     options: AuthOptions, strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
@@ -166,7 +173,7 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       }
     } else {
       if let authError = authError {
-        handleError(authError, options: options, strings: strings, completion: completion)
+        self.handleError(authError, options: options, strings: strings, completion: completion)
       } else {
         // This should not happen according to docs, but if it ever does the plugin should still
         // fire the completion.
@@ -266,7 +273,7 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
             message: message,
             preferredStyle: UIAlertController.Style.alert)
 
-        let defaultAction = UIAlertAction(
+        let defaultAction = alertFactory.createAlertAction(
           title: dismissButtonTitle,
           style: UIAlertAction.Style.default
         ) { action in
@@ -303,7 +310,6 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     #endif
   }
 
-  @MainActor
   private func handleAuthReply(
     success: Bool,
     error: (any Error)?,
@@ -311,7 +317,6 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
-    assert(Thread.isMainThread, "Response handling must be done on the main thread.")
     if success {
       handleResult(succeeded: true, completion: completion)
     } else {
@@ -347,7 +352,7 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
             AuthResultDetails(
               result: AuthResult.failure,
               errorMessage: "Unknown error from evaluatePolicy",
-              errorDetails: "\(error)")
+              errorDetails: error?.localizedDescription)
           ))
       }
     }
@@ -365,7 +370,6 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
       ))
   }
 
-  @MainActor
   private func handleError(
     _ authError: NSError,
     options: AuthOptions,
@@ -378,11 +382,13 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
     case LAError.passcodeNotSet,
       LAError.biometryNotEnrolled:
       if options.useErrorDialogs {
-        showAlert(
-          message: strings.goToSettingsDescription,
-          dismissButtonTitle: strings.cancelButton,
-          openSettingsButtonTitle: strings.goToSettingsButton,
-          completion: completion)
+        DispatchQueue.main.async {
+          self.showAlert(
+            message: strings.goToSettingsDescription,
+            dismissButtonTitle: strings.cancelButton,
+            openSettingsButtonTitle: strings.goToSettingsButton,
+            completion: completion)
+        }
         return
       }
       result =
@@ -390,11 +396,13 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
         ? AuthResult.errorPasscodeNotSet
         : AuthResult.errorNotEnrolled
     case LAError.biometryLockout:
-      showAlert(
-        message: strings.lockOut,
-        dismissButtonTitle: strings.cancelButton,
-        openSettingsButtonTitle: nil,
-        completion: completion)
+      DispatchQueue.main.async {
+        self.showAlert(
+          message: strings.lockOut,
+          dismissButtonTitle: strings.cancelButton,
+          openSettingsButtonTitle: nil,
+          completion: completion)
+      }
       return
     default:
       // TODO(stuartmorgan): Improve the error mapping as part of a cross-platform overhaul of
@@ -414,7 +422,6 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi {
 
   // This method is called when the app is resumed from the background only on iOS
   #if os(iOS)
-    @MainActor
     public func applicationDidBecomeActive(_ application: UIApplication) {
       if let lastCallState = self.lastCallState {
         authenticate(

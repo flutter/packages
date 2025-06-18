@@ -24,7 +24,7 @@ protocol AuthContext {
   func evaluatePolicy(
     _ policy: LAPolicy,
     localizedReason: String,
-    reply: @escaping (Bool, (any Error)?) -> Void
+    reply: @escaping @Sendable (Bool, (any Error)?) -> Void
   )
 }
 
@@ -46,14 +46,14 @@ protocol AuthContextFactory {
     @MainActor
     var messageText: String { get set }
     @MainActor
-    func addButton(withTitle title: String) -> NSButton
+    @discardableResult func addButton(withTitle title: String) -> NSButton
     @MainActor
     func beginSheetModal(
       for sheetWindow: NSWindow,
       completionHandler handler: ((NSApplication.ModalResponse) -> Void)?
     )
     @MainActor
-    func runModal() -> NSApplication.ModalResponse
+    @discardableResult func runModal() -> NSApplication.ModalResponse
   }
 
   /// AuthAlert is intentionally a direct passthroguh to NSAlert.
@@ -77,8 +77,8 @@ protocol AuthContextFactory {
   }
 #endif  // iOS
 
-/// Protocol for a source of alert factory that wraps standard UIAlertController and NSAlert
-/// allocation for iOS and macOS respectfully. Used to allow context injection in unit tests.
+/// Protocol for a factory that wraps standard UIAlertController and NSAlert creation for
+/// iOS and macOS. Used to allow context injection in unit tests.
 protocol AuthAlertFactory {
   #if os(macOS)
     func createAlert() -> AuthAlert
@@ -88,6 +88,9 @@ protocol AuthAlertFactory {
       message: String?,
       preferredStyle: UIAlertController.Style
     ) -> AuthAlertController
+    func createAlertAction(
+      title: String?, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?
+    ) -> UIAlertAction
   #endif
 }
 

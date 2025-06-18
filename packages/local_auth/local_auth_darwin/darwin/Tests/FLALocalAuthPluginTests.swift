@@ -17,7 +17,7 @@ import XCTest
 private let timeout: TimeInterval = 30.0
 
 /// A context factory that returns preset contexts.
-final class StubAuthContextFactory: NSObject, AuthContextFactory {
+final class StubAuthContextFactory: AuthContextFactory {
 
   var contexts: [AuthContext]
   init(contexts: [AuthContext]) {
@@ -30,11 +30,11 @@ final class StubAuthContextFactory: NSObject, AuthContextFactory {
   }
 }
 
-final class StubViewProvider: NSObject, ViewProvider {
+final class StubViewProvider: ViewProvider {
   #if os(macOS)
     var view: NSView?
     var window: NSWindow
-    override init() {
+    init() {
       self.window = NSWindow()
       self.view = NSView()
       self.window.contentView = self.view
@@ -43,7 +43,7 @@ final class StubViewProvider: NSObject, ViewProvider {
 }
 
 #if os(macOS)
-  final class TestAlert: NSObject, AuthAlert {
+  final class TestAlert: AuthAlert {
     var messageText: String = ""
     var buttons: [String] = []
     var presentingWindow: NSWindow?
@@ -58,9 +58,7 @@ final class StubViewProvider: NSObject, ViewProvider {
       completionHandler handler: ((NSApplication.ModalResponse) -> Void)? = nil
     ) {
       presentingWindow = sheetWindow
-      if let handler = handler {
-        handler(NSApplication.ModalResponse.OK)
-      }
+      handler?(NSApplication.ModalResponse.OK)
     }
 
     func runModal() -> NSApplication.ModalResponse {
@@ -68,10 +66,12 @@ final class StubViewProvider: NSObject, ViewProvider {
     }
   }
 #else
-  final class TestAlertController: NSObject, AuthAlertController {
+  final class TestAlertController: AuthAlertController {
     var actions: [UIAlertAction] = []
     var presented = false
     var presentingViewController: UIViewController?
+    // The handler to trigger when present is called, to simulate an action selection.
+    var onPresentActionHandler: ((UIAlertAction) -> Void)?
 
     func addAction(_ action: UIAlertAction) {
       actions.append(action)
@@ -83,11 +83,15 @@ final class StubViewProvider: NSObject, ViewProvider {
     ) {
       presented = true
       self.presentingViewController = presentingViewController
+      // The plugin does not use the passed action, so just send a dummy value. If that ever
+      // changes, the test will need to track the action along with the handler.
+      onPresentActionHandler?(UIAlertAction())
     }
   }
+
 #endif
 
-final class StubAlertFactory: NSObject, AuthAlertFactory {
+final class StubAlertFactory: AuthAlertFactory {
   #if os(macOS)
     var alert: TestAlert = TestAlert()
   #else
@@ -103,6 +107,16 @@ final class StubAlertFactory: NSObject, AuthAlertFactory {
       title: String?, message: String?, preferredStyle: UIAlertController.Style
     ) -> AuthAlertController {
       return self.alertController
+    }
+
+    func createAlertAction(
+      title: String?, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?
+    ) -> UIAlertAction {
+      // Configure the fake controller to trigger this button when presented. This is currently an
+      // arbitrary button, just to ensure that the completion handler is triggered so that the
+      // test can wait for the full cycle of async calls to complete.
+      alertController.onPresentActionHandler = handler
+      return UIAlertAction(title: title, style: style, handler: handler)
     }
   #endif
 }
@@ -376,9 +390,7 @@ class LocalAuthPluginTests: XCTestCase {
     stubAuthContext.canEvaluateError = NSError(
       domain: "error", code: LAError.biometryNotEnrolled.rawValue)
 
-    #if os(macOS)
-      let expectation = expectation(description: "Result is called")
-    #endif
+    let expectation = expectation(description: "Result is called")
     plugin.authenticate(
       options: AuthOptions(
         biometricOnly: false,
@@ -386,14 +398,11 @@ class LocalAuthPluginTests: XCTestCase {
         useErrorDialogs: true),
       strings: strings
     ) { resultDetails in
-      // TODO(stuartmorgan): Add a wrapper around UIAction to allow accessing the handler, so
-      // that the test can trigger the callback on iOS as well, and then unfork this.
-      #if os(macOS)
-        expectation.fulfill()
-      #endif
+      expectation.fulfill()
     }
+
+    self.waitForExpectations(timeout: timeout)
     #if os(macOS)
-      self.waitForExpectations(timeout: timeout)
       XCTAssertEqual(alertFactory.alert.presentingWindow, viewProvider.view?.window)
     #else
       XCTAssertTrue(alertFactory.alertController.presented)
@@ -620,7 +629,8 @@ class LocalAuthPluginTests: XCTestCase {
     let viewProvider = StubViewProvider()
     let plugin = LocalAuthPlugin(
       contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]),
-      alertFactory: alertFactory, viewProvider: viewProvider)
+      alertFactory: alertFactory,
+      viewProvider: viewProvider)
 
     do {
       let result = try plugin.isDeviceSupported()
