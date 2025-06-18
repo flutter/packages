@@ -78,6 +78,28 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
 
 void main() {
   group('pop', () {
+    testWidgets('restore() update currentConfiguration in pop()',
+        (WidgetTester tester) async {
+      final ValueNotifier<int> valueNotifier = ValueNotifier<int>(0);
+      final GoRouter goRouter = await createGoRouter(tester,
+          refreshListenable: valueNotifier, dispose: false);
+
+      goRouter.push('/a');
+      await tester.pumpAndSettle();
+
+      goRouter.pop();
+      valueNotifier.notifyListeners();
+      await tester.pumpAndSettle();
+      expect(
+        goRouter
+            .routerDelegate.currentConfiguration.matches.last.matchedLocation,
+        '/',
+      );
+
+      addTearDown(valueNotifier.dispose);
+      addTearDown(goRouter.dispose);
+    });
+
     testWidgets('removes the last element', (WidgetTester tester) async {
       final GoRouter goRouter = await createGoRouter(tester)
         ..push('/error');
