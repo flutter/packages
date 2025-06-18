@@ -105,10 +105,9 @@ final class DefaultCamera: FLTCam, Camera {
           "height": imageHeight,
           "format": videoFormat,
           "planes": planes,
-          "lensAperture": captureDevice.lensAperture,
-          "sensorExposureTime": NSNumber(
-            value: captureDevice.exposureDuration().seconds * 1_000_000_000),
-          "sensorSensitivity": NSNumber(value: captureDevice.iso()),
+          "lensAperture": Double(captureDevice.lensAperture()),
+          "sensorExposureTime": Int(captureDevice.exposureDuration().seconds * 1_000_000_000),
+          "sensorSensitivity": Double(captureDevice.iso()),
         ]
 
         DispatchQueue.main.async {
