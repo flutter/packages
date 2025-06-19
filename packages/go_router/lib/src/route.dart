@@ -575,8 +575,7 @@ class ShellRouteContext {
 
     if (mergeObservers) {
       final List<NavigatorObserver>? rootObservers =
-          // ignore: invalid_use_of_visible_for_testing_member
-          GoRouter.maybeOf(context)?.routerDelegate.builder.observers;
+          GoRouter.maybeOf(context)?.observers;
       if (rootObservers != null) {
         effectiveObservers.add(MergedNavigatorObserver(
           rootObservers,
