@@ -43,6 +43,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperDateTime(),
   _TypeHelperDouble(),
   _TypeHelperEnum(),
+  _TypeHelperExtensionType(),
   _TypeHelperInt(),
   _TypeHelperNum(),
   _TypeHelperString(),
@@ -261,6 +262,49 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
 
   @override
   bool _matchesType(DartType type) => type.isEnum;
+}
+
+/// A type helper for extension types.
+class _TypeHelperExtensionType extends _TypeHelper {
+  const _TypeHelperExtensionType();
+
+  @override
+  String _decode(
+      ParameterElement parameterElement, Set<String> pathParameters) {
+    final DartType paramType = parameterElement.type;
+    if (paramType.isNullableType && parameterElement.hasDefaultValue) {
+      throw NullableDefaultValueError(parameterElement);
+    }
+
+    final String stateValue =
+        'state.${_stateValueAccess(parameterElement, pathParameters)}';
+    final String castType;
+    if (paramType.isNullableType || parameterElement.hasDefaultValue) {
+      castType = '$paramType${paramType.isNullableType ? '' : '?'}';
+    } else {
+      castType = '$paramType';
+    }
+
+    final DartType extensionTypeErasure = paramType.extensionTypeErasure;
+    if (extensionTypeErasure.isDartCoreString) {
+      return '$stateValue as $castType';
+    }
+
+    final String parseTypeName =
+        withoutNullability(extensionTypeErasure.getDisplayString());
+    if (paramType.isNullableType || parameterElement.hasDefaultValue) {
+      return "$parseTypeName.tryParse($stateValue ?? '') as $castType";
+    } else {
+      return '$parseTypeName.parse($stateValue) as $castType';
+    }
+  }
+
+  @override
+  String _encode(String fieldName, DartType type) =>
+      '$fieldName${type.isNullableType ? '?' : ''}.toString()';
+
+  @override
+  bool _matchesType(DartType type) => type != type.extensionTypeErasure;
 }
 
 class _TypeHelperInt extends _TypeHelperWithHelper {
