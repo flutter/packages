@@ -1,3 +1,7 @@
+## 15.2.2
+
+- Fixes calling `PopScope.onPopInvokedWithResult` in branch routes.
+
 ## 15.2.1
 
 * Fixes Popping state and re-rendering scaffold at the same time doesn't update the URL on web.
@@ -10,7 +14,6 @@
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 * Fixes typo in API docs.
-
 
 ## 15.1.2
 
