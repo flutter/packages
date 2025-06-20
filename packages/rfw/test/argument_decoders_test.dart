@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 // This file is hand-formatted.
+// ignore_for_file: no_literal_bool_comparisons
 
 import 'dart:ui' as ui;
 
