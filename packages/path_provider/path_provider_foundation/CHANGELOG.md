@@ -1,5 +1,6 @@
-## NEXT
+## 2.4.2
 
+* Updates to Pigeon 25.5.0.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.4.1
