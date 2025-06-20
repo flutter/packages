@@ -1,7 +1,10 @@
+## 0.9.20
+
+* Fixes incorrect types in image stream events.
+
 ## 0.9.19+3
 
 * Fixes race condition when starting image stream.
-
 
 ## 0.9.19+2
 
