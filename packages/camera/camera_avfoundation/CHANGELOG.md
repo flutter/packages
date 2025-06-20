@@ -1,3 +1,7 @@
+## 0.9.20+2
+
+* Uses `RadioGroup` for `groupValue` and `onChanged`.
+
 ## 0.9.20+1
 
 * Migrates lifecycle methods (`start`, `stop`, `close`) to Swift.

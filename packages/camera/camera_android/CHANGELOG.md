@@ -1,3 +1,7 @@
+## 0.10.10+4
+
+* Uses `RadioGroup` for `groupValue` and `onChanged`.
+
 ## 0.10.10+3
 
 * Waits for the creation of the capture session when initializing the camera to avoid thread race conditions.
