@@ -537,6 +537,7 @@ Future<void> main() async {
 
       final bool fullScreen = await controller
           .runJavaScriptReturningResult('isFullScreen();') as bool;
+
       expect(fullScreen, false);
     });
 
