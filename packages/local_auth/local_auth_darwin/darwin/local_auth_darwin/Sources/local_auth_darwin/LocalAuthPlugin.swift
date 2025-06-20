@@ -161,7 +161,7 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unchecked 
       context.evaluatePolicy(
         policy,
         localizedReason: strings.reason
-      ) { (success: Bool, error: (any Error)?) in
+      ) { (success: Bool, error: Error?) in
         DispatchQueue.main.async {
           self.handleAuthReply(
             success: success,
@@ -312,7 +312,7 @@ public class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unchecked 
 
   private func handleAuthReply(
     success: Bool,
-    error: (any Error)?,
+    error: Error?,
     options: AuthOptions,
     strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void

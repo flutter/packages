@@ -24,7 +24,7 @@ protocol AuthContext {
   func evaluatePolicy(
     _ policy: LAPolicy,
     localizedReason: String,
-    reply: @escaping @Sendable (Bool, (any Error)?) -> Void
+    reply: @escaping @Sendable (Bool, Error?) -> Void
   )
 }
 
