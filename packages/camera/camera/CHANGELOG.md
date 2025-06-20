@@ -1,5 +1,6 @@
-## NEXT
+## 0.11.1+1
 
+* Uses `RadioGroup` for `groupValue` and `onChanged`.
 * Fixes overflowed toggles in the camera example.
 
 ## 0.11.1
