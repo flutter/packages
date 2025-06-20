@@ -535,9 +535,8 @@ Future<void> main() async {
       // Makes sure we get the correct event that indicates the video is actually playing.
       await videoPlaying.future;
 
-      final String fullScreenString = await controller
-          .runJavaScriptReturningResult('isFullScreen();') as String;
-      final bool fullScreen = fullScreenString == 'true';
+      final bool fullScreen = await controller
+          .runJavaScriptReturningResult('isFullScreen();') as bool;
 
       expect(fullScreen, false);
     });
