@@ -307,7 +307,8 @@ class HotdogScreen extends StatelessWidget {
 // #docregion BookKind
 enum BookKind { all, popular, recent }
 
-class BooksRoute extends GoRouteData {
+@TypedGoRoute<BooksRoute>(path: '/books')
+class BooksRoute extends GoRouteData with _$BooksRoute {
   BooksRoute({this.kind = BookKind.popular});
   final BookKind kind;
 
@@ -332,8 +333,10 @@ class BooksScreen extends StatelessWidget {
   }
 }
 
+@TypedGoRoute<MyMaterialRouteWithKey>(path: '/my-material-route-with-key')
 // #docregion MyMaterialRouteWithKey
-class MyMaterialRouteWithKey extends GoRouteData {
+class MyMaterialRouteWithKey extends GoRouteData with _$MyMaterialRouteWithKey {
+  const MyMaterialRouteWithKey();
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
   MaterialPage<void> buildPage(BuildContext context, GoRouterState state) {
@@ -373,8 +376,10 @@ class MyShellRoutePage extends StatelessWidget {
   }
 }
 
+@TypedGoRoute<FancyRoute>(path: '/fancy')
 // #docregion FancyRoute
-class FancyRoute extends GoRouteData {
+class FancyRoute extends GoRouteData with _$FancyRoute {
+  const FancyRoute();
   @override
   CustomTransitionPage<void> buildPage(
     BuildContext context,
@@ -395,6 +400,11 @@ class FancyRoute extends GoRouteData {
 final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
+@TypedShellRoute<MyShellRouteData>(
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<MyGoRouteData>(path: 'my-go-route'),
+  ],
+)
 class MyShellRouteData extends ShellRouteData {
   const MyShellRouteData();
 
@@ -407,7 +417,7 @@ class MyShellRouteData extends ShellRouteData {
 }
 
 // For GoRoutes:
-class MyGoRouteData extends GoRouteData {
+class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
   const MyGoRouteData();
 
   static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
