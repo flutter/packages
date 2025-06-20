@@ -23,9 +23,181 @@ final class DefaultCamera: FLTCam, Camera {
 
   /// Maximum number of frames pending processing.
   /// To limit memory consumption, limit the number of frames pending processing.
-  /// After some testing, 4 was determined to be the best maximuńm value.
+  /// After some testing, 4 was determined to be the best maximum value.
   /// https://github.com/flutter/plugins/pull/4520#discussion_r766335637
   private var maxStreamingPendingFramesCount = 4
+
+  private var exposureMode = FCPPlatformExposureMode.auto
+  private var focusMode = FCPPlatformFocusMode.auto
+
+  func reportInitializationState() {
+    // Get all the state on the current thread, not the main thread.
+    let state = FCPPlatformCameraState.make(
+      withPreviewSize: FCPPlatformSize.make(
+        withWidth: Double(previewSize.width),
+        height: Double(previewSize.height)
+      ),
+      exposureMode: exposureMode,
+      focusMode: focusMode,
+      exposurePointSupported: captureDevice.isExposurePointOfInterestSupported,
+      focusPointSupported: captureDevice.isFocusPointOfInterestSupported
+    )
+
+    FLTEnsureToRunOnMainQueue { [weak self] in
+      self?.dartAPI?.initialized(with: state) { _ in
+        // Ignore any errors, as this is just an event broadcast.
+      }
+    }
+  }
+
+  func receivedImageStreamData() {
+    streamingPendingFramesCount -= 1
+  }
+
+  func start() {
+    videoCaptureSession.startRunning()
+    audioCaptureSession.startRunning()
+  }
+
+  func stop() {
+    videoCaptureSession.stopRunning()
+    audioCaptureSession.stopRunning()
+  }
+
+  func setExposureMode(_ mode: FCPPlatformExposureMode) {
+    exposureMode = mode
+    applyExposureMode()
+  }
+
+  private func applyExposureMode() {
+    try? captureDevice.lockForConfiguration()
+    switch exposureMode {
+    case .locked:
+      // AVCaptureExposureMode.autoExpose automatically adjusts the exposure one time, and then locks exposure for the device
+      captureDevice.setExposureMode(.autoExpose)
+    case .auto:
+      if captureDevice.isExposureModeSupported(.continuousAutoExposure) {
+        captureDevice.setExposureMode(.continuousAutoExposure)
+      } else {
+        captureDevice.setExposureMode(.autoExpose)
+      }
+    @unknown default:
+      assertionFailure("Unknown exposure mode")
+    }
+    captureDevice.unlockForConfiguration()
+  }
+
+  func setExposureOffset(_ offset: Double) {
+    try? captureDevice.lockForConfiguration()
+    captureDevice.setExposureTargetBias(Float(offset), completionHandler: nil)
+    captureDevice.unlockForConfiguration()
+  }
+
+  func setExposurePoint(
+    _ point: FCPPlatformPoint?, withCompletion completion: @escaping (FlutterError?) -> Void
+  ) {
+    guard captureDevice.isExposurePointOfInterestSupported else {
+      completion(
+        FlutterError(
+          code: "setExposurePointFailed",
+          message: "Device does not have exposure point capabilities",
+          details: nil))
+      return
+    }
+
+    let orientation = UIDevice.current.orientation
+    try? captureDevice.lockForConfiguration()
+    // A nil point resets to the center.
+    let exposurePoint = cgPoint(
+      for: point ?? FCPPlatformPoint.makeWith(x: 0.5, y: 0.5), withOrientation: orientation)
+    captureDevice.setExposurePointOfInterest(exposurePoint)
+    captureDevice.unlockForConfiguration()
+    // Retrigger auto exposure
+    applyExposureMode()
+    completion(nil)
+  }
+
+  func setFocusMode(_ mode: FCPPlatformFocusMode) {
+    focusMode = mode
+    applyFocusMode()
+  }
+
+  func setFocusPoint(_ point: FCPPlatformPoint?, completion: @escaping (FlutterError?) -> Void) {
+    guard captureDevice.isFocusPointOfInterestSupported else {
+      completion(
+        FlutterError(
+          code: "setFocusPointFailed",
+          message: "Device does not have focus point capabilities",
+          details: nil))
+      return
+    }
+
+    let orientation = deviceOrientationProvider.orientation()
+    try? captureDevice.lockForConfiguration()
+    // A nil point resets to the center.
+    captureDevice.setFocusPointOfInterest(
+      cgPoint(
+        for: point ?? .makeWith(x: 0.5, y: 0.5),
+        withOrientation: orientation)
+    )
+    captureDevice.unlockForConfiguration()
+    // Retrigger auto focus
+    applyFocusMode()
+    completion(nil)
+  }
+
+  private func applyFocusMode() {
+    applyFocusMode(focusMode, onDevice: captureDevice)
+  }
+
+  private func applyFocusMode(
+    _ focusMode: FCPPlatformFocusMode, onDevice captureDevice: FLTCaptureDevice
+  ) {
+    try? captureDevice.lockForConfiguration()
+    switch focusMode {
+    case .locked:
+      // AVCaptureFocusMode.autoFocus automatically adjusts the focus one time, and then locks focus
+      if captureDevice.isFocusModeSupported(.autoFocus) {
+        captureDevice.setFocusMode(.autoFocus)
+      }
+    case .auto:
+      if captureDevice.isFocusModeSupported(.continuousAutoFocus) {
+        captureDevice.setFocusMode(.continuousAutoFocus)
+      } else if captureDevice.isFocusModeSupported(.autoFocus) {
+        captureDevice.setFocusMode(.autoFocus)
+      }
+    @unknown default:
+      assertionFailure("Unknown focus mode")
+    }
+    captureDevice.unlockForConfiguration()
+  }
+
+  private func cgPoint(
+    for point: FCPPlatformPoint, withOrientation orientation: UIDeviceOrientation
+  )
+    -> CGPoint
+  {
+    var x = point.x
+    var y = point.y
+    switch orientation {
+    case .portrait:  // 90 ccw
+      y = 1 - point.x
+      x = point.y
+    case .portraitUpsideDown:  // 90 cw
+      x = 1 - point.y
+      y = point.x
+    case .landscapeRight:  // 180
+      x = 1 - point.x
+      y = 1 - point.y
+    case .landscapeLeft:
+      // No rotation required
+      break
+    default:
+      // No rotation required
+      break
+    }
+    return CGPoint(x: x, y: y)
+  }
 
   func captureOutput(
     _ output: AVCaptureOutput,
@@ -237,6 +409,22 @@ final class DefaultCamera: FLTCam, Camera {
       if !(audioWriterInput?.append(sampleBuffer) ?? false) {
         reportErrorMessage("Unable to write to audio input")
       }
+    }
+  }
+
+  func close() {
+    stop()
+    for input in videoCaptureSession.inputs {
+      videoCaptureSession.removeInput(FLTDefaultCaptureInput(input: input))
+    }
+    for output in videoCaptureSession.outputs {
+      videoCaptureSession.removeOutput(output)
+    }
+    for input in audioCaptureSession.inputs {
+      audioCaptureSession.removeInput(FLTDefaultCaptureInput(input: input))
+    }
+    for output in audioCaptureSession.outputs {
+      audioCaptureSession.removeOutput(output)
     }
   }
 
