@@ -272,15 +272,46 @@ class FormatCommand extends PackageLoopingCommand {
   }
 
   Future<String> _findValidSwiftFormat() async {
-    final String swiftFormat = getStringArg(_swiftFormatPathArg);
-    if (await _hasDependency(swiftFormat)) {
-      return swiftFormat;
-    }
+  final String swiftFormatArg = getStringArg(_swiftFormatPathArg);
 
-    printError('Unable to run "swift-format". Make sure that it is in your '
-        'path, or provide a full path with --$_swiftFormatPathArg.');
-    throw ToolExit(_exitDependencyMissing);
+  // 1) Explicit override.
+  if (await _hasDependency(swiftFormatArg)) {
+    return swiftFormatArg;
   }
+
+  // 2) Scan for any `swift-format` on PATH.
+  for (final String candidate in await _whichAll('swift-format')) {
+    if (await _hasDependency(candidate)) {
+      return candidate;
+    }
+  }
+
+  // 3) On macOS, fall back to Xcode’s bundled tool via xcrun.
+  if (platform.isMacOS) {
+    try {
+      final io.ProcessResult result = await processRunner.run(
+        'xcrun',
+        <String>['--find', 'swift-format'],
+      );
+      if (result.exitCode == 0) {
+        final String found = (result.stdout as String).trim();
+        if (found.isNotEmpty && await _hasDependency(found)) {
+          return found;
+        }
+      }
+    } on io.ProcessException {
+      // Ignore and continue to error.
+    }
+  }
+
+  printError(
+    'Unable to run "swift-format". Make sure it is in your '
+    'path, provide a full path with --$_swiftFormatPathArg, '
+    'or install Xcode 16+.',
+  );
+  throw ToolExit(_exitDependencyMissing);
+}
+
 
   Future<void> _formatJava(Iterable<String> files, String formatterPath) async {
     final Iterable<String> javaFiles =
