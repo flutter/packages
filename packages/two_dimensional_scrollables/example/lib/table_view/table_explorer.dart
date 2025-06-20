@@ -51,45 +51,29 @@ class _TableExplorerState extends State<TableExplorer> {
   }
 
   Widget _getRadioRow() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: <Widget>[
-          const Spacer(),
-          Radio<TableType>(
-            value: TableType.simple,
-            groupValue: _currentExample,
-            onChanged: (TableType? value) {
-              setState(() {
-                _currentExample = value!;
-              });
-            },
-          ),
-          const Text('Simple'),
-          _spacer,
-          Radio<TableType>(
-            value: TableType.merged,
-            groupValue: _currentExample,
-            onChanged: (TableType? value) {
-              setState(() {
-                _currentExample = value!;
-              });
-            },
-          ),
-          const Text('Merged'),
-          _spacer,
-          Radio<TableType>(
-            value: TableType.infinite,
-            groupValue: _currentExample,
-            onChanged: (TableType? value) {
-              setState(() {
-                _currentExample = value!;
-              });
-            },
-          ),
-          const Text('Infinite'),
-          const Spacer(),
-        ],
+    return RadioGroup<TableType>(
+      groupValue: _currentExample,
+      onChanged: (TableType? value) {
+        setState(() {
+          _currentExample = value!;
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: <Widget>[
+            const Spacer(),
+            const Radio<TableType>(value: TableType.simple),
+            const Text('Simple'),
+            _spacer,
+            const Radio<TableType>(value: TableType.merged),
+            const Text('Merged'),
+            _spacer,
+            const Radio<TableType>(value: TableType.infinite),
+            const Text('Infinite'),
+            const Spacer(),
+          ],
+        ),
       ),
     );
   }

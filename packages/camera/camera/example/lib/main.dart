@@ -598,9 +598,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             width: 90.0,
             child: RadioListTile<CameraDescription>(
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
-              groupValue: controller?.description,
               value: cameraDescription,
-              onChanged: onChanged,
             ),
           ),
         );
@@ -610,7 +608,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     return Expanded(
       child: SizedBox(
         height: 56.0,
-        child: ListView(scrollDirection: Axis.horizontal, children: toggles),
+        child: RadioGroup<CameraDescription>(
+          groupValue: controller?.description,
+          onChanged: onChanged,
+          child: ListView(scrollDirection: Axis.horizontal, children: toggles),
+        ),
       ),
     );
   }

@@ -169,21 +169,26 @@ Widget _renderRadioListTileCard<T extends Enum>({
   T? selected,
   void Function(T?)? onChanged,
 }) {
-  return _renderConfigCard(
-    title: title,
-    children:
-        values
-            .map(
-              (T value) => RadioListTile<T>(
-                value: value,
-                groupValue: selected,
-                onChanged: onChanged,
-                selected: value == selected,
-                title: Text(value.name),
-                dense: true,
-              ),
-            )
-            .toList(),
+  return RadioGroup<T>(
+    groupValue: selected,
+    onChanged: (T? value) {
+      onChanged?.call(value);
+    },
+    child: _renderConfigCard(
+      title: title,
+      children:
+          values
+              .map(
+                (T value) => RadioListTile<T>(
+                  value: value,
+                  selected: value == selected,
+                  title: Text(value.name),
+                  enabled: onChanged != null,
+                  dense: true,
+                ),
+              )
+              .toList(),
+    ),
   );
 }
 
