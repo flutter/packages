@@ -301,7 +301,7 @@ class _TypeHelperExtensionType extends _TypeHelper {
 
   @override
   String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.isNullableType ? '?' : ''}.toString()';
+      '$fieldName${type.ensureNotNull}.toString()';
 
   @override
   bool _matchesType(DartType type) => type != type.extensionTypeErasure;

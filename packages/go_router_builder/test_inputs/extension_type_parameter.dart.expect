@@ -86,7 +86,7 @@ mixin _$ExtenstionTypeStringParam on GoRouteData {
         queryParams: {
           'required-value': _self.requiredValue.toString(),
           if (_self.optionalNullableValue != null)
-            'optional-nullable-value': _self.optionalNullableValue?.toString(),
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
           if (_self.optionalDefaultValue !=
               const StringExtensionType('default'))
             'optional-default-value': _self.optionalDefaultValue.toString(),
@@ -159,7 +159,7 @@ mixin _$ExtenstionTypeIntParam on GoRouteData {
         queryParams: {
           'required-value': _self.requiredValue.toString(),
           if (_self.optionalNullableValue != null)
-            'optional-nullable-value': _self.optionalNullableValue?.toString(),
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
           if (_self.optionalDefaultValue != const IntExtensionType(42))
             'optional-default-value': _self.optionalDefaultValue.toString(),
         },
@@ -232,7 +232,7 @@ mixin _$ExtenstionTypeDoubleParam on GoRouteData {
         queryParams: {
           'required-value': _self.requiredValue.toString(),
           if (_self.optionalNullableValue != null)
-            'optional-nullable-value': _self.optionalNullableValue?.toString(),
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
           if (_self.optionalDefaultValue != const DoubleExtensionType(3.14))
             'optional-default-value': _self.optionalDefaultValue.toString(),
         },
@@ -275,7 +275,7 @@ mixin _$ExtenstionTypeNumParam on GoRouteData {
         queryParams: {
           'required-value': _self.requiredValue.toString(),
           if (_self.optionalNullableValue != null)
-            'optional-nullable-value': _self.optionalNullableValue?.toString(),
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
           if (_self.optionalDefaultValue != const NumExtensionType(3.14))
             'optional-default-value': _self.optionalDefaultValue.toString(),
         },
@@ -318,7 +318,7 @@ mixin _$ExtenstionTypeBoolParam on GoRouteData {
         queryParams: {
           'required-value': _self.requiredValue.toString(),
           if (_self.optionalNullableValue != null)
-            'optional-nullable-value': _self.optionalNullableValue?.toString(),
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
           if (_self.optionalDefaultValue != const BoolExtensionType(true))
             'optional-default-value': _self.optionalDefaultValue.toString(),
         },
@@ -361,9 +361,9 @@ mixin _$ExtenstionTypeBigIntParam on GoRouteData {
         queryParams: {
           'required-value': _self.requiredValue.toString(),
           if (_self.optionalValue != null)
-            'optional-value': _self.optionalValue?.toString(),
+            'optional-value': _self.optionalValue!.toString(),
           if (_self.optionalNullableValue != null)
-            'optional-nullable-value': _self.optionalNullableValue?.toString(),
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
         },
       );
 
@@ -402,7 +402,7 @@ mixin _$ExtenstionTypeDateTimeParam on GoRouteData {
         queryParams: {
           'optional-value': _self.optionalValue.toString(),
           if (_self.optionalNullableValue != null)
-            'optional-nullable-value': _self.optionalNullableValue?.toString(),
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
         },
       );
 
