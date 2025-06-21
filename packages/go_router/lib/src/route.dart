@@ -285,7 +285,8 @@ class GoRoute extends RouteBase {
             'if onExit is provided, one of pageBuilder or builder must be provided'),
         super._() {
     // cache the path regexp and parameters
-    _pathRE = patternToRegExp(path, pathParameters);
+    _pathRE =
+        patternToRegExp(path, pathParameters, caseSensitive: caseSensitive);
   }
 
   /// Whether this [GoRoute] only redirects to another route.
@@ -1193,7 +1194,8 @@ class StatefulNavigationShell extends StatefulWidget {
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
       final List<String> parameters = <String>[];
-      patternToRegExp(route.path, parameters);
+      patternToRegExp(route.path, parameters,
+          caseSensitive: route.caseSensitive);
       assert(parameters.isEmpty);
       final String fullPath = _router.configuration.locationForRoute(route)!;
       return patternToPath(
