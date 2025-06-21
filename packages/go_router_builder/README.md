@@ -334,7 +334,7 @@ class RedirectRoute extends GoRouteData {
 
 ## Type conversions
 
-The code generator can convert simple types like `int` and `enum` to/from the
+The code generator can convert simple types like `int`, `enum`, and `extension type` to/from the
 `String` type of the underlying pathParameters:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (BookKind)"?>

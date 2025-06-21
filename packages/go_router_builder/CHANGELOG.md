@@ -1,6 +1,7 @@
-## NEXT
+## 3.0.2
 
 - Restricts `build` to versions less than 2.5.0.
+- Support `extension type`.
 
 ## 3.0.1
 
