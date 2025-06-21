@@ -6,10 +6,8 @@ import 'package:go_router/go_router.dart';
 
 mixin _$ExtenstionTypeParam {}
 mixin _$ExtenstionTypeStringParam {}
-mixin _$ExtenstionTypeStringOptionalParam {}
 mixin _$ExtenstionTypeStringDefaultParam {}
 mixin _$ExtenstionTypeIntParam {}
-mixin _$ExtenstionTypeIntOptionalParam {}
 mixin _$ExtenstionTypeIntDefaultParam {}
 mixin _$ExtenstionTypeDoubleParam {}
 mixin _$ExtenstionTypeNumParam {}
@@ -19,10 +17,8 @@ mixin _$ExtenstionTypeDateTimeParam {}
 
 @TypedGoRoute<ExtenstionTypeParam>(path: '/', routes: <TypedRoute<RouteData>>[
   TypedGoRoute<ExtenstionTypeStringParam>(path: 'string/:s'),
-  TypedGoRoute<ExtenstionTypeStringOptionalParam>(path: 'string_optional/:s'),
   TypedGoRoute<ExtenstionTypeStringDefaultParam>(path: 'string_default/:s'),
   TypedGoRoute<ExtenstionTypeIntParam>(path: 'int/:x'),
-  TypedGoRoute<ExtenstionTypeIntOptionalParam>(path: 'int_optional/:x'),
   TypedGoRoute<ExtenstionTypeIntDefaultParam>(path: 'int_default/:x'),
   TypedGoRoute<ExtenstionTypeDoubleParam>(path: 'double/:d'),
   TypedGoRoute<ExtenstionTypeNumParam>(path: 'num/:n'),
@@ -48,14 +44,6 @@ class ExtenstionTypeStringParam extends GoRouteData
   final StringExtensionType optionalDefaultValue;
 }
 
-class ExtenstionTypeStringOptionalParam extends GoRouteData
-    with _$ExtenstionTypeStringOptionalParam {
-  ExtenstionTypeStringOptionalParam({
-    this.s,
-  });
-  final StringExtensionType? s;
-}
-
 class ExtenstionTypeStringDefaultParam extends GoRouteData
     with _$ExtenstionTypeStringDefaultParam {
   ExtenstionTypeStringDefaultParam({
@@ -75,14 +63,6 @@ class ExtenstionTypeIntParam extends GoRouteData with _$ExtenstionTypeIntParam {
   final IntExtensionType requiredValue;
   final IntExtensionType? optionalNullableValue;
   final IntExtensionType optionalDefaultValue;
-}
-
-class ExtenstionTypeIntOptionalParam extends GoRouteData
-    with _$ExtenstionTypeIntOptionalParam {
-  ExtenstionTypeIntOptionalParam({
-    this.x,
-  });
-  final IntExtensionType? x;
 }
 
 class ExtenstionTypeIntDefaultParam extends GoRouteData
@@ -161,9 +141,9 @@ class ExtenstionTypeDateTimeParam extends GoRouteData
 }
 
 extension type const StringExtensionType(String value) {}
-extension type const NumExtensionType(num value) {}
 extension type const IntExtensionType(int value) {}
 extension type const DoubleExtensionType(double value) {}
+extension type const NumExtensionType(num value) {}
 extension type const BoolExtensionType(bool value) {}
 extension type const BigIntExtensionType(BigInt value) {}
 extension type const DateTimeExtensionType(DateTime value) {}

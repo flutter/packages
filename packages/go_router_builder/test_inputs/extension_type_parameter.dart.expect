@@ -7,20 +7,12 @@ RouteBase get $extenstionTypeParam => GoRouteData.$route(
           factory: _$ExtenstionTypeStringParam._fromState,
         ),
         GoRouteData.$route(
-          path: 'string_optional/:s',
-          factory: _$ExtenstionTypeStringOptionalParam._fromState,
-        ),
-        GoRouteData.$route(
           path: 'string_default/:s',
           factory: _$ExtenstionTypeStringDefaultParam._fromState,
         ),
         GoRouteData.$route(
           path: 'int/:x',
           factory: _$ExtenstionTypeIntParam._fromState,
-        ),
-        GoRouteData.$route(
-          path: 'int_optional/:x',
-          factory: _$ExtenstionTypeIntOptionalParam._fromState,
         ),
         GoRouteData.$route(
           path: 'int_default/:x',
@@ -115,34 +107,6 @@ mixin _$ExtenstionTypeStringParam on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$ExtenstionTypeStringOptionalParam on GoRouteData {
-  static ExtenstionTypeStringOptionalParam _fromState(GoRouterState state) =>
-      ExtenstionTypeStringOptionalParam(
-        s: state.pathParameters['s'] as StringExtensionType?,
-      );
-
-  ExtenstionTypeStringOptionalParam get _self =>
-      this as ExtenstionTypeStringOptionalParam;
-
-  @override
-  String get location => GoRouteData.$location(
-        '/string_optional/${Uri.encodeComponent(_self.s?.toString() ?? '')}',
-      );
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
 mixin _$ExtenstionTypeStringDefaultParam on GoRouteData {
   static ExtenstionTypeStringDefaultParam _fromState(GoRouterState state) =>
       ExtenstionTypeStringDefaultParam(
@@ -199,34 +163,6 @@ mixin _$ExtenstionTypeIntParam on GoRouteData {
           if (_self.optionalDefaultValue != const IntExtensionType(42))
             'optional-default-value': _self.optionalDefaultValue.toString(),
         },
-      );
-
-  @override
-  void go(BuildContext context) => context.go(location);
-
-  @override
-  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
-
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location);
-
-  @override
-  void replace(BuildContext context) => context.replace(location);
-}
-
-mixin _$ExtenstionTypeIntOptionalParam on GoRouteData {
-  static ExtenstionTypeIntOptionalParam _fromState(GoRouterState state) =>
-      ExtenstionTypeIntOptionalParam(
-        x: int.tryParse(state.pathParameters['x'] ?? '') as IntExtensionType?,
-      );
-
-  ExtenstionTypeIntOptionalParam get _self =>
-      this as ExtenstionTypeIntOptionalParam;
-
-  @override
-  String get location => GoRouteData.$location(
-        '/int_optional/${Uri.encodeComponent(_self.x?.toString() ?? '')}',
       );
 
   @override
