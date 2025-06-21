@@ -10,7 +10,9 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Can initialize the plugin', (WidgetTester tester) async {
-    final GoogleSignIn signIn = GoogleSignIn();
+    final GoogleSignIn signIn = GoogleSignIn.instance;
     expect(signIn, isNotNull);
+
+    await signIn.initialize();
   });
 }
