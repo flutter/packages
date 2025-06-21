@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -293,5 +295,73 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('shell'), findsNothing);
     expect(find.byKey(e), findsOneWidget);
+  });
+
+  testWidgets('completer able to be passed on replace',
+      (WidgetTester tester) async {
+    final List<RouteBase> routes = <RouteBase>[
+      GoRoute(
+        path: '/initial',
+        builder: (_, __) => const DummyScreen(),
+      ),
+      GoRoute(
+        path: '/intermediate',
+        builder: (_, __) => const DummyScreen(),
+      ),
+      GoRoute(
+        path: '/final',
+        builder: (_, __) => const DummyScreen(),
+      ),
+    ];
+
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/initial',
+    );
+
+    final Random random = Random();
+
+    /** resolve to null by default **/ {
+      final int result = random.nextInt(1000);
+      final Future<String?> push = router.push('/intermediate');
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/intermediate');
+
+      final Future<int?> replace = router.replace<int>('/final');
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/final');
+
+      router.pop(result);
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/initial');
+      await tester.pumpAndSettle();
+
+      await expectLater(push, completion(null));
+      await expectLater(replace, completion(result));
+    }
+
+    /** map and resolve **/ {
+      final int result = random.nextInt(1000);
+      final Future<String?> push = router.push(
+        '/intermediate',
+        mapReplacementResult: (Object? result) =>
+            result is num ? result.toString() : null,
+      );
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/intermediate');
+
+      final Future<int?> replace = router.replace<int>('/final');
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/final');
+
+      router.pop(result);
+      await tester.pumpAndSettle();
+      expect(router.state.path, '/initial');
+      await tester.pumpAndSettle();
+
+      await expectLater(push, completion(result.toString()));
+      await expectLater(replace, completion(result));
+    }
   });
 }
