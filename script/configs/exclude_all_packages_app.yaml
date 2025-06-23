@@ -11,3 +11,6 @@
 
 # This is a permanent entry, as it should never be a direct app dependency.
 - plugin_platform_interface
+# Breaking change in the process of being landed. This will be removed
+# once all the layers have landed.
+- google_sign_in_platform_interface

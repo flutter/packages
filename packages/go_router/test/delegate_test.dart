@@ -76,8 +76,81 @@ Future<GoRouter> createGoRouterWithStatefulShellRoute(
   return router;
 }
 
+Future<GoRouter> createGoRouterWithStatefulShellRouteAndPopScopes(
+  WidgetTester tester, {
+  bool canPopShellRouteBuilder = true,
+  bool canPopBranch = true,
+  bool canPopBranchSubRoute = true,
+  PopInvokedWithResultCallback<bool>? onPopShellRouteBuilder,
+  PopInvokedWithResultCallback<bool>? onPopBranch,
+  PopInvokedWithResultCallback<bool>? onPopBranchSubRoute,
+}) async {
+  final GoRouter router = GoRouter(
+    initialLocation: '/c',
+    routes: <RouteBase>[
+      StatefulShellRoute.indexedStack(
+        branches: <StatefulShellBranch>[
+          StatefulShellBranch(routes: <RouteBase>[
+            GoRoute(
+                path: '/c',
+                builder: (_, __) => PopScope(
+                    onPopInvokedWithResult: onPopBranch,
+                    canPop: canPopBranch,
+                    child: const Text('Home')),
+                routes: <RouteBase>[
+                  GoRoute(
+                    path: 'c1',
+                    builder: (_, __) => PopScope(
+                      onPopInvokedWithResult: onPopBranchSubRoute,
+                      canPop: canPopBranchSubRoute,
+                      child: const Text('SubRoute'),
+                    ),
+                  ),
+                ]),
+          ]),
+        ],
+        builder: (BuildContext context, GoRouterState state,
+                StatefulNavigationShell navigationShell) =>
+            PopScope(
+          onPopInvokedWithResult: onPopShellRouteBuilder,
+          canPop: canPopShellRouteBuilder,
+          child: navigationShell,
+        ),
+      ),
+    ],
+  );
+
+  addTearDown(router.dispose);
+  await tester.pumpWidget(MaterialApp.router(
+    routerConfig: router,
+  ));
+  return router;
+}
+
 void main() {
   group('pop', () {
+    testWidgets('restore() update currentConfiguration in pop()',
+        (WidgetTester tester) async {
+      final ValueNotifier<int> valueNotifier = ValueNotifier<int>(0);
+      final GoRouter goRouter = await createGoRouter(tester,
+          refreshListenable: valueNotifier, dispose: false);
+
+      goRouter.push('/a');
+      await tester.pumpAndSettle();
+
+      goRouter.pop();
+      valueNotifier.notifyListeners();
+      await tester.pumpAndSettle();
+      expect(
+        goRouter
+            .routerDelegate.currentConfiguration.matches.last.matchedLocation,
+        '/',
+      );
+
+      addTearDown(valueNotifier.dispose);
+      addTearDown(goRouter.dispose);
+    });
+
     testWidgets('removes the last element', (WidgetTester tester) async {
       final GoRouter goRouter = await createGoRouter(tester)
         ..push('/error');
@@ -128,6 +201,91 @@ void main() {
       // Verify that PopScope intercepted the back button
       expect(didPop, isTrue);
       expect(find.text('Home'), findsOneWidget);
+    });
+
+    testWidgets(
+        'PopScope intercepts back button on StatefulShellRoute builder route',
+        (WidgetTester tester) async {
+      bool didPopShellRouteBuilder = false;
+      bool didPopBranch = false;
+      bool didPopBranchSubRoute = false;
+
+      await createGoRouterWithStatefulShellRouteAndPopScopes(
+        tester,
+        canPopShellRouteBuilder: false,
+        onPopShellRouteBuilder: (_, __) => didPopShellRouteBuilder = true,
+        onPopBranch: (_, __) => didPopBranch = true,
+        onPopBranchSubRoute: (_, __) => didPopBranchSubRoute = true,
+      );
+
+      expect(find.text('Home'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      // Verify that PopScope intercepted the back button
+      expect(didPopShellRouteBuilder, isTrue);
+      expect(didPopBranch, isFalse);
+      expect(didPopBranchSubRoute, isFalse);
+
+      expect(find.text('Home'), findsOneWidget);
+    });
+
+    testWidgets(
+        'PopScope intercepts back button on StatefulShellRoute branch route',
+        (WidgetTester tester) async {
+      bool didPopShellRouteBuilder = false;
+      bool didPopBranch = false;
+      bool didPopBranchSubRoute = false;
+
+      await createGoRouterWithStatefulShellRouteAndPopScopes(
+        tester,
+        canPopBranch: false,
+        onPopShellRouteBuilder: (_, __) => didPopShellRouteBuilder = true,
+        onPopBranch: (_, __) => didPopBranch = true,
+        onPopBranchSubRoute: (_, __) => didPopBranchSubRoute = true,
+      );
+
+      expect(find.text('Home'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      // Verify that PopScope intercepted the back button
+      expect(didPopShellRouteBuilder, isFalse);
+      expect(didPopBranch, isTrue);
+      expect(didPopBranchSubRoute, isFalse);
+
+      expect(find.text('Home'), findsOneWidget);
+    });
+
+    testWidgets(
+        'PopScope intercepts back button on StatefulShellRoute branch sub route',
+        (WidgetTester tester) async {
+      bool didPopShellRouteBuilder = false;
+      bool didPopBranch = false;
+      bool didPopBranchSubRoute = false;
+
+      final GoRouter goRouter =
+          await createGoRouterWithStatefulShellRouteAndPopScopes(
+        tester,
+        canPopBranchSubRoute: false,
+        onPopShellRouteBuilder: (_, __) => didPopShellRouteBuilder = true,
+        onPopBranch: (_, __) => didPopBranch = true,
+        onPopBranchSubRoute: (_, __) => didPopBranchSubRoute = true,
+      );
+
+      goRouter.push('/c/c1');
+      await tester.pumpAndSettle();
+
+      expect(find.text('SubRoute'), findsOneWidget);
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      // Verify that PopScope intercepted the back button
+      expect(didPopShellRouteBuilder, isFalse);
+      expect(didPopBranch, isFalse);
+      expect(didPopBranchSubRoute, isTrue);
+
+      expect(find.text('SubRoute'), findsOneWidget);
     });
 
     testWidgets('pops more than matches count should return false',

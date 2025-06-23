@@ -38,12 +38,15 @@ platform_properties:
       os: Ubuntu
       cores: "8"
       device_type: none
+      # The android_virtual_device here should be as old as is feasible. Currently it's 31
+      # because the older devices available (see link above for options) are all x86, which
+      # is no longer supported by Flutter.
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:33v6"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "android_virtual_device", "version": "generic_android22.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_31_google_apis_x64.textpb"},
           {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"}
         ]
   linux_desktop:
@@ -247,6 +250,9 @@ targets:
 
   # Wasm unit tests in master
   - name: Linux_web web_dart_unit_test_wasm_shard_1 master
+    # Broken on master. See flutter/flutter#170433 and
+    # flutter/flutter#170434
+    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -262,6 +268,9 @@ targets:
         }
 
   - name: Linux_web web_dart_unit_test_wasm_shard_2 master
+    # Broken on master. See flutter/flutter#170433 and
+    # flutter/flutter#170434
+    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:

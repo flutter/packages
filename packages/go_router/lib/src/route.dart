@@ -7,7 +7,7 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
+import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
 import 'match.dart';
@@ -301,7 +301,6 @@ class GoRoute extends RouteBase {
   /// property can be used to navigate to this route without knowing exact the
   /// URI of it.
   ///
-  /// {@tool snippet}
   /// Typical usage is as follows:
   ///
   /// ```dart
@@ -326,7 +325,6 @@ class GoRoute extends RouteBase {
   ///   queryParameters: <String, String>{'qid': 'quid'},
   /// );
   /// ```
-  /// {@end-tool}
   ///
   /// See the [named routes example](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/named_routes.dart)
   /// for a complete runnable app.
@@ -461,7 +459,7 @@ class GoRoute extends RouteBase {
       extractPathParameters(pathParameters, match);
 
   /// The path parameters in this route.
-  @internal
+  @meta.internal
   final List<String> pathParameters = <String>[];
 
   @override
