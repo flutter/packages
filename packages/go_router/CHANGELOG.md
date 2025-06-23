@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-## 15.2.4
-
-
-=======
 ## 16.0.0
+
 - **BREAKING CHANGE**
   - Bump major version for `GoRouteData` breaking changes.
   - (Previously 15.2.4) Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
