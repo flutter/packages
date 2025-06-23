@@ -14,3 +14,6 @@
 # Breaking change in the process of being landed. This will be removed
 # once all the layers have landed.
 - google_sign_in_platform_interface
+- google_sign_in_android
+- google_sign_in_ios
+- google_sign_in_web
