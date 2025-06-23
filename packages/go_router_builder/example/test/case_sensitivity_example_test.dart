@@ -27,6 +27,9 @@ void main() {
   });
 
   testWidgets(
+      // TODO(ValentinVignal): Migrate and unskip the test once
+      // https://github.com/flutter/packages/pull/9426 is merged
+      skip: true,
       'It should throw an error when the route is case sensitive and the path does not match',
       (WidgetTester tester) async {
     final FlutterExceptionHandler? oldFlutterError = FlutterError.onError;
