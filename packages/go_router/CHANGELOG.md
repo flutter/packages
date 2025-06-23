@@ -1,6 +1,6 @@
-## 16.0.0
+## 16.2.4
 
-- Bump major version for `GoRouteData` breaking changes.
+- Adds breaking change doc for 15.2.0
 
 ## 15.2.3
 
