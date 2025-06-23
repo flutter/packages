@@ -11,8 +11,8 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 2.0.13
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
 
 dependencies:
   flutter:
@@ -32,4 +32,3 @@ topics:
 
 false_secrets:
  - example/android/app/google-services.json
- - example/ios/Runner/GoogleService-Info.plist

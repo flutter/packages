@@ -71,7 +71,13 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
   @override
   bool shouldIgnoreFile(String path) {
-    return isRepoLevelNonCodeImpactingFile(path) || isPackageSupportFile(path);
+    return isRepoLevelNonCodeImpactingFile(path) ||
+        isPackageSupportFile(path) ||
+        // This isn't part of isRepoLevelNonCodeImpactingFile since there could
+        // potentially be code-based commands that it could affect, but it
+        // should not affect integration tests, and they are the most expensive
+        // and flaky tests.
+        path == '.gitignore';
   }
 
   @override
@@ -134,6 +140,10 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         platformWeb: <String>[
           '-d',
           'web-server',
+          // TODO(stuartmorgan): Remove once drive works without it. See
+          // https://github.com/dart-lang/sdk/issues/60289 and
+          // https://github.com/flutter/flutter/pull/169174
+          '--no-web-experimental-hot-reload',
           '--web-port=7357',
           '--browser-name=chrome',
           if (useWasm) '--wasm',

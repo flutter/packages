@@ -1,3 +1,37 @@
+## 0.9.20+1
+
+* Migrates lifecycle methods (`start`, `stop`, `close`) to Swift.
+* Migrates exposure and focus related methods to Swift.
+* Migrates `receivedImageStreamData` and `reportInitializationState` methods to Swift.
+
+## 0.9.20
+
+* Fixes incorrect types in image stream events.
+
+## 0.9.19+3
+
+* Fixes race condition when starting image stream.
+
+## 0.9.19+2
+
+* Adds the `Camera` Swift protocol.
+* Adds `DefaultCamera`, a `FLTCam`-based implementation of the `Camera` protocol.
+* Migrates sample buffer delegates and `FlutterTexture` protocol implementations to `DefaultCamera`.
+
+## 0.9.19+1
+
+* Adds `audioCaptureDeviceFactory` to `FLTCamConfiguration`.
+* Renames the `lockCaptureOrientation` method of Objective-C type `FLTCam` when exported to Swift.
+* Renames arguments of the `captureOutput` method of Objective-C type `FLTCam` when exported to Swift.
+* Changes the `connection` argument type of the `captureOutput` method of the of `FLTCam` class to `AVCaptureConnection`.
+* Makes `minimum/maximumAvailableZoomFactor` and `minimum/maximumExposureOffset` fields of `FLTCam` readonly.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 0.9.19
+
+* Migrates the CameraPlugin class to Swift.
+* Fixes camera name being ignored in `setDescriptionWhileRecording`.
+
 ## 0.9.18+14
 
 * Creates Swift Package Manager target for Swift implementation.
