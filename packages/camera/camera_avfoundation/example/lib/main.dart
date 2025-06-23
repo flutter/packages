@@ -576,6 +576,10 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         return;
       }
 
+      if (controller?.value.isRecordingVideo ?? false) {
+        return;
+      }
+
       onNewCameraSelected(description);
     }
 
@@ -591,18 +595,18 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
             width: 90.0,
             child: RadioListTile<CameraDescription>(
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
-              groupValue: controller?.description,
               value: cameraDescription,
-              onChanged: (controller?.value.isRecordingVideo ?? false)
-                  ? null
-                  : onChanged,
             ),
           ),
         );
       }
     }
 
-    return Row(children: toggles);
+    return RadioGroup<CameraDescription>(
+      groupValue: controller?.description,
+      onChanged: onChanged,
+      child: Row(children: toggles),
+    );
   }
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();

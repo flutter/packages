@@ -1,3 +1,7 @@
+## NEXT
+
+* Uses `RadioGroup` for `groupValue` and `onChanged`.
+
 ## 0.3.6
 
 * Fixes typo in API docs.

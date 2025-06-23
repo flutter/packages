@@ -160,20 +160,22 @@ Widget _renderRadioListTileCard<T extends Enum>({
   required String title,
   required List<T> values,
   T? selected,
-  void Function(T?)? onChanged,
+  required void Function(T?) onChanged,
 }) {
-  return _renderConfigCard(
-      title: title,
-      children: values
-          .map((T value) => RadioListTile<T>(
-                value: value,
-                groupValue: selected,
-                onChanged: onChanged,
-                selected: value == selected,
-                title: Text(value.name),
-                dense: true,
-              ))
-          .toList());
+  return RadioGroup<T>(
+    groupValue: selected,
+    onChanged: onChanged,
+    child: _renderConfigCard(
+        title: title,
+        children: values
+            .map((T value) => RadioListTile<T>(
+                  value: value,
+                  selected: value == selected,
+                  title: Text(value.name),
+                  dense: true,
+                ))
+            .toList()),
+  );
 }
 
 /// Renders a Card where we render some `children` that change config.
@@ -217,12 +219,12 @@ GSIButtonConfiguration _copyConfigWith<T>(
 }
 
 /// Returns a function that modifies the `current` configuration with a `value`, then calls `fn` with it.
-void Function(T?)? _onChanged<T>(
+void Function(T?) _onChanged<T>(
   GSIButtonConfiguration? current,
   OnWebConfigChangeFn? fn,
 ) {
   if (fn == null) {
-    return null;
+    return (_) {};
   }
   return (T? value) {
     fn(_copyConfigWith<T>(current, value));

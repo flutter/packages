@@ -1,3 +1,7 @@
+## 0.6.18+4
+
+* Uses `RadioGroup` for `groupValue` and `onChanged`.
+
 ## 0.6.18+3
 
 * Fixes incorrect camera preview mirroring for front cameras of devices using the Impeller backend.
