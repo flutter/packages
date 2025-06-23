@@ -1,4 +1,4 @@
-## 16.2.4
+## 15.2.4
 
 - Adds breaking change doc for 15.2.0
 
