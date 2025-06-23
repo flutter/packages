@@ -1,3 +1,7 @@
+## 16.0.0
+
+- Bump major version for `GoRouteData` breaking changes.
+
 ## 15.2.3
 
 - Updates Type-safe routes topic documentation to use the mixin from `go_router_builder` 3.0.0.
