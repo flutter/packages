@@ -58,6 +58,11 @@ class FormatCommand extends PackageLoopingCommand {
     argParser.addFlag(_kotlinArg,
         help: 'Format Kotlin files', defaultsTo: true);
     argParser.addFlag(_javaArg, help: 'Format Java files', defaultsTo: true);
+    // Currently swift-format is run via xcrun, so only works on macOS. If that
+    // ever becomes an issue, the ability to find it in the path and/or allow
+    // providing a path could be restored, to allow developers on Linux or
+    // Windows to build swift-format from source and use that. See
+    // https://github.com/flutter/packages/pull/9460.
     argParser.addFlag(_swiftArg,
         help: 'Format and lint Swift files', defaultsTo: platform.isMacOS);
     argParser.addOption(_clangFormatPathArg,
