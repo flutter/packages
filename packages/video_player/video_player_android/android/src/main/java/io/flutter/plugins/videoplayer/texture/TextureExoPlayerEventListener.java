@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.videoplayer.texture;
 
-import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.media3.common.Format;
