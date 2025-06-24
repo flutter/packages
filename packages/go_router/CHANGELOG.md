@@ -1,3 +1,7 @@
+## 15.2.4
+
+- Adds breaking change doc for 15.2.0
+
 ## 15.2.3
 
 - Updates Type-safe routes topic documentation to use the mixin from `go_router_builder` 3.0.0.
