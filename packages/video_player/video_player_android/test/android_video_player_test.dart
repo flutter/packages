@@ -5,21 +5,20 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 import 'package:video_player_android/src/messages.g.dart';
 import 'package:video_player_android/src/platform_view_player.dart';
 import 'package:video_player_android/video_player_android.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
+import 'android_video_player_test.mocks.dart';
 import 'test_api.g.dart';
 
 class _ApiLogger implements TestHostVideoPlayerApi {
   final List<String> log = <String>[];
   int? passedPlayerId;
   CreateMessage? passedCreateMessage;
-  int? passedPosition;
-  bool? passedLooping;
-  double? passedVolume;
-  double? passedPlaybackSpeed;
   bool? passedMixWithOthers;
 
   @override
@@ -41,69 +40,33 @@ class _ApiLogger implements TestHostVideoPlayerApi {
   }
 
   @override
-  void pause(int playerId) {
-    log.add('pause');
-    passedPlayerId = playerId;
-  }
-
-  @override
-  void play(int playerId) {
-    log.add('play');
-    passedPlayerId = playerId;
-  }
-
-  @override
   void setMixWithOthers(bool mixWithOthers) {
     log.add('setMixWithOthers');
     passedMixWithOthers = mixWithOthers;
   }
-
-  @override
-  int position(int playerId) {
-    log.add('position');
-    passedPlayerId = playerId;
-    return 234;
-  }
-
-  @override
-  void seekTo(int playerId, int position) {
-    log.add('seekTo');
-    passedPlayerId = playerId;
-    passedPosition = position;
-  }
-
-  @override
-  void setLooping(int playerId, bool looping) {
-    log.add('setLooping');
-    passedPlayerId = playerId;
-    passedLooping = looping;
-  }
-
-  @override
-  void setVolume(int playerId, double volume) {
-    log.add('setVolume');
-    passedPlayerId = playerId;
-    passedVolume = volume;
-  }
-
-  @override
-  void setPlaybackSpeed(int playerId, double speed) {
-    log.add('setPlaybackSpeed');
-    passedPlayerId = playerId;
-    passedPlaybackSpeed = speed;
-  }
 }
 
+@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<VideoPlayerInstanceApi>()])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  (AndroidVideoPlayer, MockVideoPlayerInstanceApi) setUpMockPlayer({
+    required int playerId,
+  }) {
+    final MockVideoPlayerInstanceApi api = MockVideoPlayerInstanceApi();
+    final AndroidVideoPlayer player = AndroidVideoPlayer(
+      apiProvider: (_) => api,
+    );
+    player.ensureApiInitialized(playerId);
+    return (player, api);
+  }
 
   test('registration', () async {
     AndroidVideoPlayer.registerWith();
     expect(VideoPlayerPlatform.instance, isA<AndroidVideoPlayer>());
   });
 
-  group('$AndroidVideoPlayer', () {
-    final AndroidVideoPlayer player = AndroidVideoPlayer();
+  group('AndroidVideoPlayer', () {
     late _ApiLogger log;
 
     setUp(() {
@@ -112,17 +75,20 @@ void main() {
     });
 
     test('init', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       await player.init();
       expect(log.log.last, 'init');
     });
 
     test('dispose', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       await player.dispose(1);
       expect(log.log.last, 'dispose');
       expect(log.passedPlayerId, 1);
     });
 
     test('create with asset', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.create(
         DataSource(
           sourceType: DataSourceType.asset,
@@ -141,6 +107,7 @@ void main() {
     });
 
     test('create with network', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.create(
         DataSource(
           sourceType: DataSourceType.network,
@@ -162,6 +129,7 @@ void main() {
     });
 
     test('create with network (some headers)', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.create(
         DataSource(
           sourceType: DataSourceType.network,
@@ -185,6 +153,7 @@ void main() {
     });
 
     test('create with file', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.create(
         DataSource(sourceType: DataSourceType.file, uri: 'someUri'),
       );
@@ -198,6 +167,7 @@ void main() {
     });
 
     test('create with file (some headers)', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.create(
         DataSource(
           sourceType: DataSourceType.file,
@@ -218,6 +188,7 @@ void main() {
     });
 
     test('createWithOptions with asset', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -239,6 +210,7 @@ void main() {
     });
 
     test('createWithOptions with network', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -263,6 +235,7 @@ void main() {
     });
 
     test('createWithOptions with network (some headers)', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -289,6 +262,7 @@ void main() {
     });
 
     test('createWithOptions with file', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -308,6 +282,7 @@ void main() {
     });
 
     test('createWithOptions with file (some headers)', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -331,6 +306,7 @@ void main() {
     });
 
     test('createWithOptions with platform view', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -353,25 +329,37 @@ void main() {
     });
 
     test('setLooping', () async {
+      final (
+        AndroidVideoPlayer player,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(playerId: 1);
       await player.setLooping(1, true);
-      expect(log.log.last, 'setLooping');
-      expect(log.passedPlayerId, 1);
-      expect(log.passedLooping, true);
+
+      verify(playerApi.setLooping(true));
     });
 
     test('play', () async {
+      final (
+        AndroidVideoPlayer player,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(playerId: 1);
       await player.play(1);
-      expect(log.log.last, 'play');
-      expect(log.passedPlayerId, 1);
+
+      verify(playerApi.play());
     });
 
     test('pause', () async {
+      final (
+        AndroidVideoPlayer player,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(playerId: 1);
       await player.pause(1);
-      expect(log.log.last, 'pause');
-      expect(log.passedPlayerId, 1);
+
+      verify(playerApi.pause());
     });
 
     test('setMixWithOthers', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       await player.setMixWithOthers(true);
       expect(log.log.last, 'setMixWithOthers');
       expect(log.passedMixWithOthers, true);
@@ -382,34 +370,57 @@ void main() {
     });
 
     test('setVolume', () async {
-      await player.setVolume(1, 0.7);
-      expect(log.log.last, 'setVolume');
-      expect(log.passedPlayerId, 1);
-      expect(log.passedVolume, 0.7);
+      final (
+        AndroidVideoPlayer player,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(playerId: 1);
+      const double volume = 0.7;
+      await player.setVolume(1, volume);
+
+      verify(playerApi.setVolume(volume));
     });
 
     test('setPlaybackSpeed', () async {
-      await player.setPlaybackSpeed(1, 1.5);
-      expect(log.log.last, 'setPlaybackSpeed');
-      expect(log.passedPlayerId, 1);
-      expect(log.passedPlaybackSpeed, 1.5);
+      final (
+        AndroidVideoPlayer player,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(playerId: 1);
+      const double speed = 1.5;
+      await player.setPlaybackSpeed(1, speed);
+
+      verify(playerApi.setPlaybackSpeed(speed));
     });
 
     test('seekTo', () async {
-      await player.seekTo(1, const Duration(milliseconds: 12345));
-      expect(log.log.last, 'seekTo');
-      expect(log.passedPlayerId, 1);
-      expect(log.passedPosition, 12345);
+      final (
+        AndroidVideoPlayer player,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(playerId: 1);
+      const int positionMilliseconds = 12345;
+      await player.seekTo(
+        1,
+        const Duration(milliseconds: positionMilliseconds),
+      );
+
+      verify(playerApi.seekTo(positionMilliseconds));
     });
 
     test('getPosition', () async {
+      final (
+        AndroidVideoPlayer player,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(playerId: 1);
+      const int positionMilliseconds = 12345;
+      when(
+        playerApi.getPosition(),
+      ).thenAnswer((_) async => positionMilliseconds);
+
       final Duration position = await player.getPosition(1);
-      expect(log.log.last, 'position');
-      expect(log.passedPlayerId, 1);
-      expect(position, const Duration(milliseconds: 234));
+      expect(position, const Duration(milliseconds: positionMilliseconds));
     });
 
     test('videoEventsFor', () async {
+      final (AndroidVideoPlayer player, _) = setUpMockPlayer(playerId: 1);
       const String mockChannel = 'flutter.io/videoPlayer/videoEvents123';
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler(mockChannel, (ByteData? message) async {

@@ -39,12 +39,16 @@ abstract class AndroidVideoPlayerApi {
   void initialize();
   int create(CreateMessage msg);
   void dispose(int playerId);
-  void setLooping(int playerId, bool looping);
-  void setVolume(int playerId, double volume);
-  void setPlaybackSpeed(int playerId, double speed);
-  void play(int playerId);
-  int position(int playerId);
-  void seekTo(int playerId, int position);
-  void pause(int playerId);
   void setMixWithOthers(bool mixWithOthers);
+}
+
+@HostApi()
+abstract class VideoPlayerInstanceApi {
+  void setLooping(bool looping);
+  void setVolume(double volume);
+  void setPlaybackSpeed(double speed);
+  void play();
+  int getPosition();
+  void seekTo(int position);
+  void pause();
 }
