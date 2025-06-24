@@ -1,3 +1,7 @@
+## 15.2.4
+
+- Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
+
 ## 15.2.3
 
 - Updates Type-safe routes topic documentation to use the mixin from `go_router_builder` 3.0.0.
