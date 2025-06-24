@@ -96,7 +96,7 @@ const List<String> scopes = <String>[
 If an app determines that the user hasn't granted the scopes it requires, it
 should initiate an Authorization request. On platforms where
 `authorizationRequiresUserInteraction()` returns true,
-this request **must be initiated from an user interaction** like a button press.
+this request **must be initiated from a user interaction** like a button press.
 
 <?code-excerpt "example/lib/main.dart (RequestScopes)"?>
 ```dart
@@ -135,7 +135,7 @@ sign-in, and manage server tokens for that user entirely on the server side
 unless the signed in user changes.
 
 On platforms where `authorizationRequiresUserInteraction()` returns true,
-this request **must be initiated from an user interaction** like a button press.
+this request **must be initiated from a user interaction** like a button press.
 
 ## Example
 
