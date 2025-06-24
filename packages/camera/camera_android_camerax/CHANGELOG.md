@@ -1,3 +1,8 @@
+## 0.6.19
+
+* Ensures that a new surface is provided every time that one is requested to render the camera preview
+  to fix pausing and resuming the preview.
+
 ## 0.6.18+3
 
 * Fixes incorrect camera preview mirroring for front cameras of devices using the Impeller backend.
