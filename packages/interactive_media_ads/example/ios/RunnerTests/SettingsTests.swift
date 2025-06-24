@@ -33,7 +33,7 @@ class SettingsTests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
     let instance = IMASettings()
-    let language = "myString"
+    let language = "en"
     try? api.pigeonDelegate.setLanguage(
       pigeonApi: api, pigeonInstance: instance, language: language)
 
