@@ -371,26 +371,26 @@
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
-- (void)testSignInException {
+- (void)testSignInExceptionReturnsError {
   OCMExpect([self configureMock:self.mockSignIn
                 forSignInWithHint:OCMOCK_ANY
                  additionalScopes:OCMOCK_ANY
                        completion:OCMOCK_ANY])
       .andThrow([NSException exceptionWithName:@"MockName" reason:@"MockReason" userInfo:nil]);
 
-  __block FlutterError *error;
-  XCTAssertThrows([self.plugin
-      signInWithScopeHint:@[]
-                    nonce:nil
-               completion:^(FSISignInResult *result, FlutterError *signInError) {
-                 // Unexpected errors, such as runtime exceptions, are returned as FlutterError.
-                 XCTAssertNil(result);
-                 error = signInError;
-               }]);
-
-  XCTAssertEqualObjects(error.code, @"google_sign_in");
-  XCTAssertEqualObjects(error.message, @"MockReason");
-  XCTAssertEqualObjects(error.details, @"MockName");
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin signInWithScopeHint:@[]
+                             nonce:nil
+                        completion:^(FSISignInResult *result, FlutterError *error) {
+                          // Unexpected errors, such as runtime exceptions, are returned as
+                          // FlutterError.
+                          XCTAssertNil(result);
+                          XCTAssertEqualObjects(error.code, @"google_sign_in");
+                          XCTAssertEqualObjects(error.message, @"MockReason");
+                          XCTAssertEqualObjects(error.details, @"MockName");
+                          [expectation fulfill];
+                        }];
+  [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
 #pragma mark - refreshedAuthorizationTokens
