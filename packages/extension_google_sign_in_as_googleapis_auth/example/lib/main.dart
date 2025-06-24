@@ -10,9 +10,9 @@ import 'package:extension_google_sign_in_as_googleapis_auth/extension_google_sig
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/people/v1.dart';
-// #docregion Import
+// #docregion CreateAPIClient
 import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
-// #enddocregion Import
+// #enddocregion CreateAPIClient
 
 /// The scopes used by this example.
 const List<String> scopes = <String>[PeopleServiceApi.contactsReadonlyScope];
@@ -79,7 +79,7 @@ class SignInDemoState extends State<SignInDemo> {
     });
 
     if (authorization != null) {
-      unawaited(_handleGetContact());
+      unawaited(_handleGetContact(authorization));
     }
   }
 
@@ -93,19 +93,18 @@ class SignInDemoState extends State<SignInDemo> {
         .authorizeScopes(<String>[PeopleServiceApi.contactsReadonlyScope]));
   }
 
-  Future<void> _handleGetContact() async {
+  Future<void> _handleGetContact(
+      GoogleSignInClientAuthorization authorization) async {
     setState(() {
       _contactText = 'Loading contact info...';
     });
 
     // #docregion CreateAPIClient
     // Retrieve an [auth.AuthClient] from a GoogleSignInClientAuthorization.
-    final auth.AuthClient? client = _authorization?.authClient(scopes: scopes);
-
-    assert(client != null, 'Authenticated client missing!');
+    final auth.AuthClient client = authorization.authClient(scopes: scopes);
 
     // Prepare a People Service authenticated client.
-    final PeopleServiceApi peopleApi = PeopleServiceApi(client!);
+    final PeopleServiceApi peopleApi = PeopleServiceApi(client);
     // Retrieve a list of connected contacts' names.
     final ListConnectionsResponse response =
         await peopleApi.people.connections.list(
@@ -154,6 +153,7 @@ class SignInDemoState extends State<SignInDemo> {
         future: _signInInitialized,
         builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
           final GoogleSignInAccount? user = _currentUser;
+          final GoogleSignInClientAuthorization? authorization = _authorization;
           final List<Widget> children;
           if (snapshot.hasError) {
             children = <Widget>[
@@ -170,10 +170,10 @@ class SignInDemoState extends State<SignInDemo> {
                   subtitle: Text(user.email),
                 ),
                 const Text('Signed in successfully.'),
-                if (_authorization != null) ...<Widget>[
+                if (authorization != null) ...<Widget>[
                   Text(_contactText),
                   ElevatedButton(
-                    onPressed: _handleGetContact,
+                    onPressed: () => _handleGetContact(authorization),
                     child: const Text('REFRESH'),
                   ),
                 ] else ...<Widget>[

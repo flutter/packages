@@ -23,7 +23,7 @@ void main() {
         FakeGoogleSignInClientAuthorization();
     final gapis.AuthClient client = signInAuth.authClient(
       scopes: scopes,
-    )!;
+    );
     expect(client.credentials.accessToken.data, equals(SOME_FAKE_ACCESS_TOKEN));
     expect(client.credentials.scopes, equals(scopes));
   });
