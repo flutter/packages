@@ -417,8 +417,8 @@ abstract class IMASettings extends NSObject {
   /// Specifies maximum number of redirects after which subsequent redirects
   /// will be denied, and the ad load aborted.
   ///
-  /// If the number of redirects exceeds |maxRedirects|, the ad request will
-  /// fail with error code 302.
+  /// If the number of redirects exceeds `max`, the ad request will fail with
+  /// error code 302.
   ///
   /// The default value is 4.
   void setMaxRedirects(int max);
