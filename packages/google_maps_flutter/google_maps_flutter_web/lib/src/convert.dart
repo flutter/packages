@@ -69,9 +69,12 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
       ..maxZoom = zoomPreference.maxZoom;
   }
 
-  if (configuration.cameraTargetBounds != null) {
-    // Needs gmaps.MapOptions.restriction and gmaps.MapRestriction
-    // see: https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions.restriction
+  final LatLngBounds? cameraTargetLatLngBounds =
+      configuration.cameraTargetBounds?.bounds;
+  if (cameraTargetLatLngBounds != null) {
+    options.restriction = gmaps.MapRestriction(
+      latLngBounds: latLngBoundsToGmlatLngBounds(cameraTargetLatLngBounds),
+    );
   }
 
   if (configuration.zoomControlsEnabled != null) {
