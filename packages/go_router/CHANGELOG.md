@@ -3,9 +3,23 @@
 - Adds new top level `onEnter` callback with access to current and next route states.
 - Deprecates top level `redirect` in favor of `onEnter`.
 
+## 15.2.4
+
+- Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
+
+## 15.2.3
+
+- Updates Type-safe routes topic documentation to use the mixin from `go_router_builder` 3.0.0.
+
+## 15.2.2
+
+- Fixes calling `PopScope.onPopInvokedWithResult` in branch routes.
+
+## 15.2.1
+
 ## 15.2.0
 
-- `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
+* `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
 
 ## 15.1.3
 

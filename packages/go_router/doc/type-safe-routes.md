@@ -1,5 +1,5 @@
 Instead of using URL strings to navigate, go_router supports
-type-safe routes using the go_router_builder package. 
+type-safe routes using the go_router_builder package.
 
 To get started, add [go_router_builder][], [build_runner][], and
 [build_verify][] to the dev_dependencies section of your pubspec.yaml:
@@ -28,7 +28,7 @@ part 'go_router_builder.g.dart';
     ]
 )
 @immutable
-class HomeScreenRoute extends GoRouteData {
+class HomeScreenRoute extends GoRouteData with _$HomeScreenRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const HomeScreen();
@@ -36,7 +36,7 @@ class HomeScreenRoute extends GoRouteData {
 }
 
 @immutable
-class SongRoute extends GoRouteData {
+class SongRoute extends GoRouteData with _$SongRoute {
   final int id;
 
   const SongRoute({

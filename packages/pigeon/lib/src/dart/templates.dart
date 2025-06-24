@@ -87,6 +87,9 @@ class $dartInstanceManagerClassName {
   late final void Function(int) onWeakReferenceRemoved;
 
   static $dartInstanceManagerClassName _initInstance() {
+    if (Platform.environment['FLUTTER_TEST'] == 'true') {
+      return $dartInstanceManagerClassName(onWeakReferenceRemoved: (_) {});
+    }
     WidgetsFlutterBinding.ensureInitialized();
     final $dartInstanceManagerApiClassName api = $dartInstanceManagerApiClassName();
     // Clears the native `$dartInstanceManagerClassName` on the initial use of the Dart one.
