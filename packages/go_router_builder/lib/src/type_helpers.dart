@@ -265,6 +265,16 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
 }
 
 /// A type helper for extension types.
+/// Suppoted extension types are:
+/// - [String]
+/// - [int]
+/// - [double]
+/// - [num]
+/// - [bool]
+/// - [Enum]
+/// - [BigInt]
+/// - [DateTime]
+/// - [Uri]
 class _TypeHelperExtensionType extends _TypeHelper {
   const _TypeHelperExtensionType();
 
@@ -285,26 +295,61 @@ class _TypeHelperExtensionType extends _TypeHelper {
       castType = '$paramType';
     }
 
-    final DartType extensionTypeErasure = paramType.extensionTypeErasure;
-    if (extensionTypeErasure.isDartCoreString) {
+    final DartType representationType = paramType.extensionTypeErasure;
+    if (representationType.isDartCoreString) {
       return '$stateValue as $castType';
     }
 
-    final String parseTypeName =
-        withoutNullability(extensionTypeErasure.getDisplayString());
+    if (representationType.isEnum) {
+      return '${enumMapName(representationType as InterfaceType)}'
+          '.$enumExtensionHelperName($stateValue) as $castType';
+    }
+
+    final String representationTypeName =
+        withoutNullability(representationType.getDisplayString());
     if (paramType.isNullableType || parameterElement.hasDefaultValue) {
-      return "$parseTypeName.tryParse($stateValue ?? '') as $castType";
+      return "$representationTypeName.tryParse($stateValue ?? '') as $castType";
     } else {
-      return '$parseTypeName.parse($stateValue) as $castType';
+      return '$representationTypeName.parse($stateValue) as $castType';
     }
   }
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type) {
+    final DartType representationType = type.extensionTypeErasure;
+    if (representationType.isDartCoreString) {
+      return '$fieldName${type.ensureNotNull} as String';
+    }
+
+    if (representationType.isEnum) {
+      return '${enumMapName(representationType as InterfaceType)}'
+          '[$fieldName${type.ensureNotNull} as ${withoutNullability(representationType.getDisplayString())}]!';
+    }
+
+    return '$fieldName${representationType.ensureNotNull}.toString()';
+  }
 
   @override
-  bool _matchesType(DartType type) => type != type.extensionTypeErasure;
+  bool _matchesType(DartType type) {
+    final DartType representationType = type.extensionTypeErasure;
+    if (type == representationType) {
+      // `type` is not an extension type.
+      return false;
+    }
+
+    return representationType.isDartCoreString ||
+        representationType.isDartCoreInt ||
+        representationType.isDartCoreDouble ||
+        representationType.isDartCoreNum ||
+        representationType.isDartCoreBool ||
+        representationType.isEnum ||
+        const TypeChecker.fromRuntime(BigInt)
+            .isAssignableFromType(representationType) ||
+        const TypeChecker.fromRuntime(DateTime)
+            .isAssignableFromType(representationType) ||
+        const TypeChecker.fromRuntime(Uri)
+            .isAssignableFromType(representationType);
+  }
 }
 
 class _TypeHelperInt extends _TypeHelperWithHelper {
