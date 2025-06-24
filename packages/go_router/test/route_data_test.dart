@@ -50,7 +50,7 @@ class _ShellRouteDataWithKey extends ShellRouteData {
     GoRouterState state,
     Widget navigator,
   ) =>
-      SizedBox(
+      KeyedSubtree(
         key: key,
         child: navigator,
       );
