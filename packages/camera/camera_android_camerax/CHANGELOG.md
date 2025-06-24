@@ -1,6 +1,6 @@
 ## 0.6.20
 
-* Ensures a new surface is provided every timethat one is requested to render the camera preview into
+* Ensures that a new surface is provided every time that one is requested to render the camera preview into
   to fix pausing and resuming the preview.
 
 
