@@ -11,9 +11,6 @@
 
 # This is a permanent entry, as it should never be a direct app dependency.
 - plugin_platform_interface
-# Breaking change in the process of being landed. This will be removed
-# once all the layers have landed.
-- google_sign_in_platform_interface
-- google_sign_in_android
-- google_sign_in_ios
-- google_sign_in_web
+# Temporarily excluded since it hasn't been updated for the major version
+# change in google_sign_in. https://github.com/flutter/flutter/issues/171048
+- extension_google_sign_in_as_googleapis_auth
