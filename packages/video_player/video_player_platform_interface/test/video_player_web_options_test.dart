@@ -42,10 +42,10 @@ void main() {
     test(
       'with a value',
       () {
-        const VideoPlayerWebOptions options = VideoPlayerWebOptions(
-          poster: 'https://example.com/poster.jpg',
+        final VideoPlayerWebOptions options = VideoPlayerWebOptions(
+          poster: Uri.parse('https://example.com/poster.jpg'),
         );
-        expect(options.poster, 'https://example.com/poster.jpg');
+        expect(options.poster, Uri.parse('https://example.com/poster.jpg'));
       },
     );
   });
