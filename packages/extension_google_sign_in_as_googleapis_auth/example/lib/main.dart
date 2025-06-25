@@ -51,6 +51,9 @@ class SignInDemoState extends State<SignInDemo> {
         // Add your client IDs here as necessary for your supported platforms.
         );
     signIn.authenticationEvents.listen((GoogleSignInAuthenticationEvent event) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         switch (event) {
           case GoogleSignInAuthenticationEventSignIn():
@@ -74,6 +77,9 @@ class SignInDemoState extends State<SignInDemo> {
   }
 
   void _updateAuthorization(GoogleSignInClientAuthorization? authorization) {
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _authorization = authorization;
     });
@@ -95,6 +101,9 @@ class SignInDemoState extends State<SignInDemo> {
 
   Future<void> _handleGetContact(
       GoogleSignInClientAuthorization authorization) async {
+    if (!mounted) {
+      return;
+    }
     setState(() {
       _contactText = 'Loading contact info...';
     });
@@ -116,13 +125,15 @@ class SignInDemoState extends State<SignInDemo> {
     final String? firstNamedContactName =
         _pickFirstNamedContact(response.connections);
 
-    setState(() {
-      if (firstNamedContactName != null) {
-        _contactText = 'I see you know $firstNamedContactName!';
-      } else {
-        _contactText = 'No contacts to display.';
-      }
-    });
+    if (mounted) {
+      setState(() {
+        if (firstNamedContactName != null) {
+          _contactText = 'I see you know $firstNamedContactName!';
+        } else {
+          _contactText = 'No contacts to display.';
+        }
+      });
+    }
   }
 
   String? _pickFirstNamedContact(List<Person>? connections) {
