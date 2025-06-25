@@ -392,7 +392,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Configure ImageCapture instance.
     imageCapture = proxy.newImageCapture(
       resolutionSelector: presetResolutionSelector,
-      /* use CameraX default target rotation */ targetRotation: null,
+      /* use CameraX default target rotation */ targetRotation:
+          await deviceOrientationManager.getDefaultDisplayRotation(),
     );
 
     // Configure ImageAnalysis instance.
@@ -431,6 +432,7 @@ class AndroidCameraCameraX extends CameraPlatform {
             .toDouble();
 
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
+    print('CAMILLE: sensorOrientationDegrees: $sensorOrientationDegrees');
     _handlesCropAndRotation =
         await preview!.surfaceProducerHandlesCropAndRotation();
     _initialDeviceOrientation = _deserializeDeviceOrientation(
@@ -966,9 +968,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       await imageCapture!.setFlashMode(CameraXFlashMode.off);
     }
 
-    // Set target rotation to default CameraX rotation only if capture
-    // orientation not locked.
-    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+    // Set target rotation to the current default CameraX rotation if
+    // the capture orientation is not locked.
+    if (!captureOrientationLocked) {
       await imageCapture!.setTargetRotation(
         await deviceOrientationManager.getDefaultDisplayRotation(),
       );
