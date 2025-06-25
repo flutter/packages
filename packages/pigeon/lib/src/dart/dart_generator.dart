@@ -975,9 +975,14 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ),
     );
 
+    final cb.Class proxyApiOverrides = _proxyApiOverridesClass(api);
+
+    final DartFormatter formatter = DartFormatter(
+      languageVersion: Version(3, 6, 0),
+    );
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
-    indent.format(DartFormatter(languageVersion: Version(3, 6, 0))
-        .format('${proxyApi.accept(emitter)}'));
+    indent.format(formatter.format('${proxyApi.accept(emitter)}'));
+    indent.format(formatter.format('${proxyApiOverrides.accept(emitter)}'));
   }
 
   /// Generates Dart source code for test support libraries based on the given AST
@@ -2220,6 +2225,131 @@ if (${varNamePrefix}replyList == null) {
               .statement,
         ]),
     );
+  }
+
+  cb.Class _proxyApiOverridesClass(AstProxyApi api) {
+    return cb.Class((cb.ClassBuilder builder) => builder
+          ..name = '$proxyApiClassNamePrefix${api.name}Overrides'
+          ..fields.addAll(<cb.Field>[
+            for (final Constructor constructor in api.constructors)
+              cb.Field(
+                (cb.FieldBuilder builder) {
+                  final String constructorName =
+                      constructor.name.isEmpty ? 'new' : constructor.name;
+                  builder
+                    ..name =
+                        constructor.name.isEmpty ? 'new_' : constructor.name
+                    ..static = true
+                    ..docs.add('/// Overrides [${api.name}.$constructorName].')
+                    ..type = cb.FunctionType(
+                      (cb.FunctionTypeBuilder builder) => builder
+                        ..returnType = cb.refer(api.name)
+                        ..isNullable = true
+                        ..namedRequiredParameters.addAll(
+                          <String, cb.Reference>{
+                            for (final Parameter parameter in constructor
+                                .parameters
+                                .where((Parameter p) => !p.type.isNullable))
+                              parameter.name: _refer(parameter.type),
+                            for (final Method method in api.flutterMethods
+                                .where((Method m) => m.isRequired))
+                              method.name: cb.FunctionType(
+                                  (cb.FunctionTypeBuilder builder) {
+                                builder
+                                  ..returnType = _refer(
+                                    method.returnType,
+                                    asFuture: method.isAsynchronous,
+                                  )
+                                  ..requiredParameters.addAll(<cb.Reference>[
+                                    cb.refer('${api.name} pigeon_instance'),
+                                    for (final Parameter parameter
+                                        in method.parameters)
+                                      cb.refer(
+                                          '${_addGenericTypesNullable(parameter.type)} ${parameter.name}'),
+                                  ]);
+                              }),
+                            for (final ApiField field in api.unattachedFields
+                                .where((ApiField f) => !f.type.isNullable))
+                              field.name: _refer(field.type)
+                          },
+                        )
+                        ..namedParameters.addAll(
+                          <String, cb.Reference>{
+                            for (final Parameter parameter in constructor
+                                .parameters
+                                .where((Parameter p) => p.type.isNullable))
+                              parameter.name: _refer(parameter.type),
+                            for (final Method method in api.flutterMethods
+                                .where((Method m) => !m.isRequired))
+                              method.name: cb.FunctionType(
+                                  (cb.FunctionTypeBuilder builder) {
+                                builder
+                                  ..isNullable = true
+                                  ..returnType = _refer(
+                                    method.returnType,
+                                    asFuture: method.isAsynchronous,
+                                  )
+                                  ..requiredParameters.addAll(<cb.Reference>[
+                                    cb.refer('${api.name} pigeon_instance'),
+                                    for (final Parameter parameter
+                                        in method.parameters)
+                                      cb.refer(
+                                          '${_addGenericTypesNullable(parameter.type)} ${parameter.name}'),
+                                  ]);
+                              }),
+                            for (final ApiField field in api.unattachedFields
+                                .where((ApiField f) => f.type.isNullable))
+                              field.name: _refer(field.type),
+                          },
+                        ),
+                    );
+                },
+              ),
+          ])
+        // ..fields.addAll(<cb.Field>[
+        //   for (final AstProxyApi api in root.apis.whereType<AstProxyApi>())
+        //     for (final Method method
+        //         in api.methods.where((Method m) => m.isStatic))
+        //       cb.Field((cb.FieldBuilder builder) {
+        //         builder
+        //           ..name = '${method.name}${api.name}'
+        //           ..modifier = cb.FieldModifier.final$
+        //           ..docs.add('/// Calls to [${api.name}.${method.name}].')
+        //           ..type = cb.FunctionType((cb.FunctionTypeBuilder builder) {
+        //             builder
+        //               ..returnType = _refer(method.returnType, asFuture: true)
+        //               ..requiredParameters.addAll(<cb.Reference>[
+        //                 for (final Parameter parameter in method.parameters)
+        //                   _refer(parameter.type),
+        //               ])
+        //               ..namedParameters.addAll(
+        //                 <String, cb.Reference>{
+        //                   binaryMessengerParameter.name:
+        //                       binaryMessengerParameter.type!,
+        //                   instanceManagerParameter.name:
+        //                       instanceManagerParameter.type!,
+        //                 },
+        //               );
+        //           });
+        //       }),
+        // ])
+        // ..fields.addAll(
+        //   <cb.Field>[
+        //     for (final AstProxyApi api in root.apis.whereType<AstProxyApi>())
+        //       for (final ApiField field
+        //           in api.attachedFields.where((ApiField f) => f.isStatic))
+        //         cb.Field((cb.FieldBuilder builder) {
+        //           builder
+        //             ..name = '${field.name}${api.name}'
+        //             ..modifier = cb.FieldModifier.final$
+        //             ..docs.add('/// Calls to [${api.name}.${field.name}].')
+        //             ..type = cb.FunctionType((cb.FunctionTypeBuilder builder) {
+        //               builder.returnType = _refer(field.type);
+        //             });
+        //         }),
+        //   ],
+        // ),
+        );
   }
 }
 
