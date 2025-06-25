@@ -444,6 +444,7 @@ void main() {
       expect(firstChanged.position.longitude, object2new.position.longitude);
       expect(firstChanged.rotation, object2new.rotation);
       expect(firstChanged.visible, object2new.visible);
+      // ignore: deprecated_member_use
       expect(firstChanged.zIndex, object2new.zIndex);
       expect(firstChanged.markerId, object2new.markerId.value);
       expect(firstChanged.clusterManagerId, object2new.clusterManagerId?.value);
@@ -472,6 +473,7 @@ void main() {
       expect(firstAdded.position.longitude, object3.position.longitude);
       expect(firstAdded.rotation, object3.rotation);
       expect(firstAdded.visible, object3.visible);
+      // ignore: deprecated_member_use
       expect(firstAdded.zIndex, object3.zIndex);
       expect(firstAdded.markerId, object3.markerId.value);
       expect(firstAdded.clusterManagerId, object3.clusterManagerId?.value);
