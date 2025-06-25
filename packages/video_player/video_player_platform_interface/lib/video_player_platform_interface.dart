@@ -442,7 +442,7 @@ class VideoPlayerWebOptions {
   final bool allowRemotePlayback;
 
   /// The URL of the poster image to be displayed before the video starts
-  final String? poster;
+  final Uri? poster;
 }
 
 /// [VideoPlayerWebOptions] can be used to set how control options are displayed
