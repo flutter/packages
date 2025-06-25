@@ -264,7 +264,7 @@ class VideoPlayer {
     }
 
     if (options.poster != null) {
-      _videoElement.poster = options.poster!;
+      _videoElement.poster = options.poster!.toString();
     }
   }
 
