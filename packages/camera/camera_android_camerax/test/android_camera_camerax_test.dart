@@ -3531,7 +3531,9 @@ void main() {
       // Orientation is unlocked and plugin does not need to set default target
       // rotation manually.
       await camera.takePicture(cameraId);
-      verifyNever(mockImageCapture.setTargetRotation(any));
+      verifyNever(
+        mockImageCapture.setTargetRotation(any),
+      ); // TODO(camsim99): fix
 
       // Orientation is locked and plugin does not need to set default target
       // rotation manually.

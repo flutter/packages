@@ -432,7 +432,6 @@ class AndroidCameraCameraX extends CameraPlatform {
             .toDouble();
 
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
-    print('CAMILLE: sensorOrientationDegrees: $sensorOrientationDegrees');
     _handlesCropAndRotation =
         await preview!.surfaceProducerHandlesCropAndRotation();
     _initialDeviceOrientation = _deserializeDeviceOrientation(

@@ -221,9 +221,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   /// Display the thumbnail of the captured image or video.
   Widget _thumbnailWidget() {
-    print(
-      'CAMILLE: current device orientation -- ${controller?.value.deviceOrientation}',
-    );
     final VideoPlayerController? localVideoController = videoController;
 
     return Expanded(
