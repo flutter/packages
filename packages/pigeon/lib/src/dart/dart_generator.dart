@@ -1701,25 +1701,7 @@ if (${varNamePrefix}replyList == null) {
             ],
             _docCommentSpec,
           ))
-          ..type = cb.FunctionType(
-            (cb.FunctionTypeBuilder builder) => builder
-              ..returnType = _refer(
-                method.returnType,
-                asFuture: method.isAsynchronous,
-              )
-              ..isNullable = !method.isRequired
-              ..requiredParameters.addAll(<cb.Reference>[
-                cb.refer('$apiName ${classMemberNamePrefix}instance'),
-                ...indexMap(
-                  method.parameters,
-                  (int index, NamedType parameter) {
-                    return cb.refer(
-                      '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
-                    );
-                  },
-                ),
-              ]),
-          ),
+          ..type = _methodAsFunctionType(method, apiName: apiName),
       );
     }
   }
@@ -2227,6 +2209,32 @@ if (${varNamePrefix}replyList == null) {
     );
   }
 
+  cb.FunctionType _methodAsFunctionType(
+    Method method, {
+    required String apiName,
+  }) {
+    return cb.FunctionType(
+      (cb.FunctionTypeBuilder builder) => builder
+        ..returnType = _refer(
+          method.returnType,
+          asFuture: method.isAsynchronous,
+        )
+        ..isNullable = !method.isRequired
+        ..requiredParameters.addAll(<cb.Reference>[
+          if (method.location == ApiLocation.flutter)
+            cb.refer('$apiName ${classMemberNamePrefix}instance'),
+          ...indexMap(
+            method.parameters,
+            (int index, NamedType parameter) {
+              return cb.refer(
+                '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
+              );
+            },
+          ),
+        ]),
+    );
+  }
+
   cb.Class _proxyApiOverridesClass(AstProxyApi api) {
     return cb.Class((cb.ClassBuilder builder) => builder
           ..name = '$proxyApiClassNamePrefix${api.name}Overrides'
@@ -2301,19 +2309,7 @@ if (${varNamePrefix}replyList == null) {
                     for (final Method method
                         in api.flutterMethods.where((Method m) => m.isRequired))
                       method.name:
-                          cb.FunctionType((cb.FunctionTypeBuilder builder) {
-                        builder
-                          ..returnType = _refer(
-                            method.returnType,
-                            asFuture: method.isAsynchronous,
-                          )
-                          ..requiredParameters.addAll(<cb.Reference>[
-                            cb.refer('${api.name} pigeon_instance'),
-                            for (final Parameter parameter in method.parameters)
-                              cb.refer(
-                                  '${_addGenericTypesNullable(parameter.type)} ${parameter.name}'),
-                          ]);
-                      }),
+                          _methodAsFunctionType(method, apiName: api.name),
                     for (final ApiField field in api.unattachedFields
                         .where((ApiField f) => !f.type.isNullable))
                       field.name: _refer(field.type)
@@ -2327,20 +2323,7 @@ if (${varNamePrefix}replyList == null) {
                     for (final Method method in api.flutterMethods
                         .where((Method m) => !m.isRequired))
                       method.name:
-                          cb.FunctionType((cb.FunctionTypeBuilder builder) {
-                        builder
-                          ..isNullable = true
-                          ..returnType = _refer(
-                            method.returnType,
-                            asFuture: method.isAsynchronous,
-                          )
-                          ..requiredParameters.addAll(<cb.Reference>[
-                            cb.refer('${api.name} pigeon_instance'),
-                            for (final Parameter parameter in method.parameters)
-                              cb.refer(
-                                  '${_addGenericTypesNullable(parameter.type)} ${parameter.name}'),
-                          ]);
-                      }),
+                          _methodAsFunctionType(method, apiName: api.name),
                     for (final ApiField field in api.unattachedFields
                         .where((ApiField f) => f.type.isNullable))
                       field.name: _refer(field.type),
