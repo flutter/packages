@@ -1,3 +1,8 @@
+## 7.0.1
+
+* Passes an activity context when requesting credentials, fixing an issue that
+  prevented signing in on some devices.
+
 ## 7.0.0
 
 * **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
