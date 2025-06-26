@@ -1448,6 +1448,14 @@ if (${varNamePrefix}replyList == null) {
 
       yield cb.Constructor(
         (cb.ConstructorBuilder builder) {
+          final Iterable<cb.Parameter> parameters = _asConstructorParameters(
+            constructor,
+            apiName: apiName,
+            unattachedFields: unattachedFields,
+            flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+            flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+            declaredFlutterMethods: declaredFlutterMethods,
+          );
           builder
             ..name = constructor.name.isNotEmpty ? constructor.name : null
             ..factory = true
@@ -1455,32 +1463,34 @@ if (${varNamePrefix}replyList == null) {
               constructor.documentationComments,
               _docCommentSpec,
             ))
-            ..optionalParameters.addAll(_asConstructorParameters(
-              constructor,
-              apiName: apiName,
-              unattachedFields: unattachedFields,
-              flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
-              flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
-              declaredFlutterMethods: declaredFlutterMethods,
-              setTypeAndNotThisOrSuper: true,
-            ))
+            ..optionalParameters.addAll(parameters)
             ..body = cb.Block(
               (cb.BlockBuilder builder) {
                 final String overridesClassName =
                     _getProxyApiOverridesClassName(apiName);
                 final String overridesConstructorName =
                     constructor.name.isEmpty ? 'new_' : constructor.name;
+                final Map<String, cb.Expression> forwardedParameters =
+                    <String, cb.Expression>{
+                  for (final cb.Parameter parameter in parameters)
+                    parameter.name: cb.refer(parameter.name)
+                };
                 builder.statements.addAll(<cb.Code>[
                   cb.Code(
                     'if ($overridesClassName.$overridesConstructorName != null) {',
                   ),
-                  cb.Code(
-                    'return $overridesClassName.$overridesConstructorName!();',
-                  ),
+                  cb.CodeExpression(
+                    cb.Code('$overridesClassName.$overridesConstructorName'),
+                  )
+                      .nullChecked
+                      .call(<cb.Expression>[], forwardedParameters)
+                      .returned
+                      .statement,
                   const cb.Code('}'),
-                  cb.Code(
-                    'return $apiName.$constructorName();',
-                  ),
+                  cb.CodeExpression(cb.Code('$apiName.$constructorName'))
+                      .call(<cb.Expression>[], forwardedParameters)
+                      .returned
+                      .statement,
                 ]);
               },
             );
