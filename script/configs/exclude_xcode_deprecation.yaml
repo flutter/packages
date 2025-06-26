@@ -1,2 +1,4 @@
-# TODO(louisehsu): Remove deprecation check when StoreKit 2 is adopted. https://github.com/flutter/flutter/issues/116383
+# TODO(jmagman): Remove deprecation exclusion when AVCaptureVideoOrientation is migrated. https://github.com/flutter/flutter/issues/170438
+- camera_avfoundation
+# TODO(jmagman): Remove when SKDownload is marked unavailable. https://github.com/flutter/flutter/issues/105490
 - in_app_purchase_storekit
