@@ -48,18 +48,23 @@ enum class GetCredentialFailureType(val raw: Int) {
   UNEXPECTED_CREDENTIAL_TYPE(0),
   /** Indicates that a server client ID was not provided. */
   MISSING_SERVER_CLIENT_ID(1),
+  /**
+   * Indicates that the user needs to be prompted for authorization, but there is no current
+   * activity to prompt in.
+   */
+  NO_ACTIVITY(2),
   /** The request was internally interrupted. */
-  INTERRUPTED(2),
+  INTERRUPTED(3),
   /** The request was canceled by the user. */
-  CANCELED(3),
+  CANCELED(4),
   /** No matching credential was found. */
-  NO_CREDENTIAL(4),
+  NO_CREDENTIAL(5),
   /** The provider was not properly configured. */
-  PROVIDER_CONFIGURATION_ISSUE(5),
+  PROVIDER_CONFIGURATION_ISSUE(6),
   /** The credential manager is not supported on this device. */
-  UNSUPPORTED(6),
+  UNSUPPORTED(7),
   /** The request failed for an unknown reason. */
-  UNKNOWN(7);
+  UNKNOWN(8);
 
   companion object {
     fun ofRaw(raw: Int): GetCredentialFailureType? {

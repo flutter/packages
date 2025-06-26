@@ -191,6 +191,7 @@ public class GoogleSignInTest {
     when(mockGoogleCredential.getIdToken()).thenReturn(idToken);
 
     final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -214,7 +215,7 @@ public class GoogleSignInTest {
         callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
     verify(mockCredentialManager)
         .getCredentialAsync(
-            eq(mockContext),
+            eq(mockActivity),
             any(GetCredentialRequest.class),
             any(),
             any(),
@@ -233,6 +234,7 @@ public class GoogleSignInTest {
             "serverClientId",
             null);
 
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -245,7 +247,7 @@ public class GoogleSignInTest {
     ArgumentCaptor<GetCredentialRequest> captor =
         ArgumentCaptor.forClass(GetCredentialRequest.class);
     verify(mockCredentialManager)
-        .getCredentialAsync(eq(mockContext), captor.capture(), any(), any(), any());
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
 
     assertEquals(1, captor.getValue().getCredentialOptions().size());
     assertTrue(
@@ -261,6 +263,7 @@ public class GoogleSignInTest {
             "serverClientId",
             null);
 
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -274,7 +277,7 @@ public class GoogleSignInTest {
     ArgumentCaptor<GetCredentialRequest> captor =
         ArgumentCaptor.forClass(GetCredentialRequest.class);
     verify(mockCredentialManager)
-        .getCredentialAsync(eq(mockContext), captor.capture(), any(), any(), any());
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
 
     assertEquals(1, captor.getValue().getCredentialOptions().size());
     assertTrue(captor.getValue().getCredentialOptions().get(0) instanceof GetGoogleIdOption);
@@ -290,6 +293,7 @@ public class GoogleSignInTest {
             "serverClientId",
             nonce);
 
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -303,7 +307,7 @@ public class GoogleSignInTest {
     ArgumentCaptor<GetCredentialRequest> captor =
         ArgumentCaptor.forClass(GetCredentialRequest.class);
     verify(mockCredentialManager)
-        .getCredentialAsync(eq(mockContext), captor.capture(), any(), any(), any());
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
 
     assertEquals(1, captor.getValue().getCredentialOptions().size());
     assertEquals(
@@ -321,6 +325,7 @@ public class GoogleSignInTest {
             "serverClientId",
             nonce);
 
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -334,11 +339,38 @@ public class GoogleSignInTest {
     ArgumentCaptor<GetCredentialRequest> captor =
         ArgumentCaptor.forClass(GetCredentialRequest.class);
     verify(mockCredentialManager)
-        .getCredentialAsync(eq(mockContext), captor.capture(), any(), any(), any());
+        .getCredentialAsync(eq(mockActivity), captor.capture(), any(), any(), any());
 
     assertEquals(1, captor.getValue().getCredentialOptions().size());
     assertEquals(
         nonce, ((GetGoogleIdOption) captor.getValue().getCredentialOptions().get(0)).getNonce());
+  }
+
+  @Test
+  public void getCredential_reportsMissingActivity() {
+    GetCredentialRequestParams params =
+        new GetCredentialRequestParams(
+            false,
+            new GetCredentialRequestGoogleIdOptionParams(false, false),
+            "serverClientId",
+            null);
+
+    final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(null);
+    plugin.getCredential(
+        params,
+        ResultCompat.asCompatCallback(
+            reply -> {
+              callbackCalled[0] = true;
+              // This failure is a structured return value, not an exception.
+              assertTrue(reply.isSuccess());
+              GetCredentialResult result = reply.getOrNull();
+              assertTrue(result instanceof GetCredentialFailure);
+              GetCredentialFailure failure = (GetCredentialFailure) result;
+              assertEquals(GetCredentialFailureType.NO_ACTIVITY, failure.getType());
+              return null;
+            }));
+    assertTrue(callbackCalled[0]);
   }
 
   @Test
@@ -348,6 +380,7 @@ public class GoogleSignInTest {
             false, new GetCredentialRequestGoogleIdOptionParams(false, false), null, null);
 
     final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -374,6 +407,7 @@ public class GoogleSignInTest {
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -393,7 +427,7 @@ public class GoogleSignInTest {
         callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
     verify(mockCredentialManager)
         .getCredentialAsync(
-            eq(mockContext),
+            eq(mockActivity),
             any(GetCredentialRequest.class),
             any(),
             any(),
@@ -417,6 +451,7 @@ public class GoogleSignInTest {
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -436,7 +471,7 @@ public class GoogleSignInTest {
         callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
     verify(mockCredentialManager)
         .getCredentialAsync(
-            eq(mockContext),
+            eq(mockActivity),
             any(GetCredentialRequest.class),
             any(),
             any(),
@@ -456,6 +491,7 @@ public class GoogleSignInTest {
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -475,7 +511,7 @@ public class GoogleSignInTest {
         callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
     verify(mockCredentialManager)
         .getCredentialAsync(
-            eq(mockContext),
+            eq(mockActivity),
             any(GetCredentialRequest.class),
             any(),
             any(),
@@ -495,6 +531,7 @@ public class GoogleSignInTest {
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -515,7 +552,7 @@ public class GoogleSignInTest {
         callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
     verify(mockCredentialManager)
         .getCredentialAsync(
-            eq(mockContext),
+            eq(mockActivity),
             any(GetCredentialRequest.class),
             any(),
             any(),
@@ -535,6 +572,7 @@ public class GoogleSignInTest {
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -554,7 +592,7 @@ public class GoogleSignInTest {
         callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
     verify(mockCredentialManager)
         .getCredentialAsync(
-            eq(mockContext),
+            eq(mockActivity),
             any(GetCredentialRequest.class),
             any(),
             any(),
@@ -574,6 +612,7 @@ public class GoogleSignInTest {
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -593,7 +632,7 @@ public class GoogleSignInTest {
         callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
     verify(mockCredentialManager)
         .getCredentialAsync(
-            eq(mockContext),
+            eq(mockActivity),
             any(GetCredentialRequest.class),
             any(),
             any(),
@@ -613,6 +652,7 @@ public class GoogleSignInTest {
             null);
 
     final Boolean[] callbackCalled = new Boolean[1];
+    plugin.setActivity(mockActivity);
     plugin.getCredential(
         params,
         ResultCompat.asCompatCallback(
@@ -632,7 +672,7 @@ public class GoogleSignInTest {
         callbackCaptor = ArgumentCaptor.forClass(CredentialManagerCallback.class);
     verify(mockCredentialManager)
         .getCredentialAsync(
-            eq(mockContext),
+            eq(mockActivity),
             any(GetCredentialRequest.class),
             any(),
             any(),
