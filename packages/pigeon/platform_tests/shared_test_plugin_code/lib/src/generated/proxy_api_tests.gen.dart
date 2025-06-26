@@ -5200,6 +5200,15 @@ class PigeonProxyApiTestClassOverrides {
 
   /// Overrides [ProxyApiTestClass.staticAttachedField].
   static ProxyApiSuperClass? staticAttachedField;
+
+  /// Calls to [ProxyApiTestClass.staticNoop].
+  static Future<void> Function()? staticNoop;
+
+  /// Calls to [ProxyApiTestClass.echoStaticString].
+  static Future<String> Function(String)? echoStaticString;
+
+  /// Calls to [ProxyApiTestClass.staticAsyncNoop].
+  static Future<void> Function()? staticAsyncNoop;
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi class.

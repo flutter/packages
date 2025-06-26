@@ -2331,6 +2331,10 @@ if (${varNamePrefix}replyList == null) {
             api.fields.where((ApiField field) => field.isStatic),
             apiName: api.name,
           ))
+          ..fields.addAll(_proxyApiOverridesClassStaticMethods(
+            api.hostMethods.where((Method method) => method.isStatic),
+            apiName: api.name,
+          ))
         // ..fields.addAll(<cb.Field>[
         //   for (final AstProxyApi api in root.apis.whereType<AstProxyApi>())
         //     for (final Method method
@@ -2413,6 +2417,29 @@ if (${varNamePrefix}replyList == null) {
           ..static = true
           ..docs.add('/// Overrides [$apiName.${field.name}].')
           ..type = cb.refer('${field.type.baseName}?');
+      });
+    }
+  }
+
+  Iterable<cb.Field> _proxyApiOverridesClassStaticMethods(
+    Iterable<Method> staticMethods, {
+    required String apiName,
+  }) sync* {
+    for (final Method method in staticMethods) {
+      yield cb.Field((cb.FieldBuilder builder) {
+        builder
+          ..name = method.name
+          ..static = true
+          ..docs.add('/// Calls to [$apiName.${method.name}].')
+          ..type = cb.FunctionType((cb.FunctionTypeBuilder builder) {
+            builder
+              ..isNullable = true
+              ..returnType = _refer(method.returnType, asFuture: true)
+              ..requiredParameters.addAll(<cb.Reference>[
+                for (final Parameter parameter in method.parameters)
+                  _refer(parameter.type),
+              ]);
+          });
       });
     }
   }
