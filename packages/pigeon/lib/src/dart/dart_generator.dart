@@ -2327,6 +2327,10 @@ if (${varNamePrefix}replyList == null) {
     return cb.Class((cb.ClassBuilder builder) => builder
           ..name = '$proxyApiClassNamePrefix${api.name}Overrides'
           ..fields.addAll(_proxyApiOverridesClassConstructors(api))
+          ..fields.addAll(_proxyApiOverridesClassStaticFields(
+            api.fields.where((ApiField field) => field.isStatic),
+            apiName: api.name,
+          ))
         // ..fields.addAll(<cb.Field>[
         //   for (final AstProxyApi api in root.apis.whereType<AstProxyApi>())
         //     for (final Method method
@@ -2354,22 +2358,6 @@ if (${varNamePrefix}replyList == null) {
         //           });
         //       }),
         // ])
-        // ..fields.addAll(
-        //   <cb.Field>[
-        //     for (final AstProxyApi api in root.apis.whereType<AstProxyApi>())
-        //       for (final ApiField field
-        //           in api.attachedFields.where((ApiField f) => f.isStatic))
-        //         cb.Field((cb.FieldBuilder builder) {
-        //           builder
-        //             ..name = '${field.name}${api.name}'
-        //             ..modifier = cb.FieldModifier.final$
-        //             ..docs.add('/// Calls to [${api.name}.${field.name}].')
-        //             ..type = cb.FunctionType((cb.FunctionTypeBuilder builder) {
-        //               builder.returnType = _refer(field.type);
-        //             });
-        //         }),
-        //   ],
-        // ),
         );
   }
 
@@ -2411,6 +2399,21 @@ if (${varNamePrefix}replyList == null) {
             );
         },
       );
+    }
+  }
+
+  Iterable<cb.Field> _proxyApiOverridesClassStaticFields(
+    Iterable<ApiField> staticFields, {
+    required String apiName,
+  }) sync* {
+    for (final ApiField field in staticFields) {
+      yield cb.Field((cb.FieldBuilder builder) {
+        builder
+          ..name = field.name
+          ..static = true
+          ..docs.add('/// Overrides [$apiName.${field.name}].')
+          ..type = cb.refer('${field.type.baseName}?');
+      });
     }
   }
 }

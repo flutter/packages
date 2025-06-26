@@ -5197,6 +5197,9 @@ class PigeonProxyApiTestClassOverrides {
     )? flutterEchoNullableProxyApi,
     Future<void> Function(ProxyApiTestClass pigeon_instance)? flutterNoopAsync,
   })? namedConstructor;
+
+  /// Overrides [ProxyApiTestClass.staticAttachedField].
+  static ProxyApiSuperClass? staticAttachedField;
 }
 
 /// ProxyApi to serve as a super class to the core ProxyApi class.
