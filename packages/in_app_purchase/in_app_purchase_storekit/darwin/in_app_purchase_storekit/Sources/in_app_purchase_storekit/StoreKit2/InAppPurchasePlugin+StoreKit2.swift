@@ -182,6 +182,13 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  /// Checks if the user is eligible for a introductory offer.
+  ///
+  /// - Parameters:
+  ///   - productId: The product ID associated with the offer.
+  ///   - completion: Returns `Bool` for eligibility or `Error` on failure.
+  ///
+  /// - Availability: iOS 15.0+, macOS 12.0+
   func isIntroductoryOfferEligible(
       productId: String,
       completion: @escaping (Result<Bool, Error>) -> Void
