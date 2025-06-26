@@ -121,7 +121,7 @@ class PreviewProxyApi extends PigeonApiPreview {
       // Provide surface.
       surfaceProducer.setSize(
           request.getResolution().getWidth(), request.getResolution().getHeight());
-      Surface flutterSurface = surfaceProducer.getForcedNewSurface();
+      Surface flutterSurface = surfaceProducer.getSurface();
       request.provideSurface(
           flutterSurface,
           Executors.newSingleThreadExecutor(),
