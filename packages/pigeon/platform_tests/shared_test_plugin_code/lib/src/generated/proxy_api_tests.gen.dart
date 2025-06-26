@@ -4956,6 +4956,63 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 class PigeonProxyApiTestClassOverrides {
   /// Overrides [ProxyApiTestClass.new].
   static ProxyApiTestClass Function({
+    required bool aBool,
+    required int anInt,
+    required double aDouble,
+    required String aString,
+    required Uint8List aUint8List,
+    required List<Object?> aList,
+    required Map<String?, Object?> aMap,
+    required ProxyApiTestEnum anEnum,
+    required ProxyApiSuperClass aProxyApi,
+    required bool Function(
+      ProxyApiTestClass pigeon_instance,
+      bool aBool,
+    ) flutterEchoBool,
+    required int Function(
+      ProxyApiTestClass pigeon_instance,
+      int anInt,
+    ) flutterEchoInt,
+    required double Function(
+      ProxyApiTestClass pigeon_instance,
+      double aDouble,
+    ) flutterEchoDouble,
+    required String Function(
+      ProxyApiTestClass pigeon_instance,
+      String aString,
+    ) flutterEchoString,
+    required Uint8List Function(
+      ProxyApiTestClass pigeon_instance,
+      Uint8List aList,
+    ) flutterEchoUint8List,
+    required List<Object?> Function(
+      ProxyApiTestClass pigeon_instance,
+      List<Object?> aList,
+    ) flutterEchoList,
+    required List<ProxyApiTestClass?> Function(
+      ProxyApiTestClass pigeon_instance,
+      List<ProxyApiTestClass?> aList,
+    ) flutterEchoProxyApiList,
+    required Map<String?, Object?> Function(
+      ProxyApiTestClass pigeon_instance,
+      Map<String?, Object?> aMap,
+    ) flutterEchoMap,
+    required Map<String?, ProxyApiTestClass?> Function(
+      ProxyApiTestClass pigeon_instance,
+      Map<String?, ProxyApiTestClass?> aMap,
+    ) flutterEchoProxyApiMap,
+    required ProxyApiTestEnum Function(
+      ProxyApiTestClass pigeon_instance,
+      ProxyApiTestEnum anEnum,
+    ) flutterEchoEnum,
+    required ProxyApiSuperClass Function(
+      ProxyApiTestClass pigeon_instance,
+      ProxyApiSuperClass aProxyApi,
+    ) flutterEchoProxyApi,
+    required Future<String> Function(
+      ProxyApiTestClass pigeon_instance,
+      String aString,
+    ) flutterEchoAsyncString,
     required bool boolParam,
     required int intParam,
     required double doubleParam,
@@ -4965,63 +5022,58 @@ class PigeonProxyApiTestClassOverrides {
     required Map<String?, Object?> mapParam,
     required ProxyApiTestEnum enumParam,
     required ProxyApiSuperClass proxyApiParam,
-    required bool Function(
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    bool? aNullableBool,
+    int? aNullableInt,
+    double? aNullableDouble,
+    String? aNullableString,
+    Uint8List? aNullableUint8List,
+    List<Object?>? aNullableList,
+    Map<String?, Object?>? aNullableMap,
+    ProxyApiTestEnum? aNullableEnum,
+    ProxyApiSuperClass? aNullableProxyApi,
+    void Function(ProxyApiTestClass pigeon_instance)? anInterfaceMethod,
+    void Function(ProxyApiTestClass pigeon_instance)? flutterNoop,
+    Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError,
+    void Function(ProxyApiTestClass pigeon_instance)? flutterThrowErrorFromVoid,
+    bool? Function(
       ProxyApiTestClass pigeon_instance,
-      bool aBool,
-    ) flutterEchoBool,
-    required int Function(
+      bool? aBool,
+    )? flutterEchoNullableBool,
+    int? Function(
       ProxyApiTestClass pigeon_instance,
-      int anInt,
-    ) flutterEchoInt,
-    required double Function(
+      int? anInt,
+    )? flutterEchoNullableInt,
+    double? Function(
       ProxyApiTestClass pigeon_instance,
-      double aDouble,
-    ) flutterEchoDouble,
-    required String Function(
+      double? aDouble,
+    )? flutterEchoNullableDouble,
+    String? Function(
       ProxyApiTestClass pigeon_instance,
-      String aString,
-    ) flutterEchoString,
-    required Uint8List Function(
+      String? aString,
+    )? flutterEchoNullableString,
+    Uint8List? Function(
       ProxyApiTestClass pigeon_instance,
-      Uint8List aList,
-    ) flutterEchoUint8List,
-    required List<Object?> Function(
+      Uint8List? aList,
+    )? flutterEchoNullableUint8List,
+    List<Object?>? Function(
       ProxyApiTestClass pigeon_instance,
-      List<Object?> aList,
-    ) flutterEchoList,
-    required List<ProxyApiTestClass?> Function(
+      List<Object?>? aList,
+    )? flutterEchoNullableList,
+    Map<String?, Object?>? Function(
       ProxyApiTestClass pigeon_instance,
-      List<ProxyApiTestClass?> aList,
-    ) flutterEchoProxyApiList,
-    required Map<String?, Object?> Function(
+      Map<String?, Object?>? aMap,
+    )? flutterEchoNullableMap,
+    ProxyApiTestEnum? Function(
       ProxyApiTestClass pigeon_instance,
-      Map<String?, Object?> aMap,
-    ) flutterEchoMap,
-    required Map<String?, ProxyApiTestClass?> Function(
+      ProxyApiTestEnum? anEnum,
+    )? flutterEchoNullableEnum,
+    ProxyApiSuperClass? Function(
       ProxyApiTestClass pigeon_instance,
-      Map<String?, ProxyApiTestClass?> aMap,
-    ) flutterEchoProxyApiMap,
-    required ProxyApiTestEnum Function(
-      ProxyApiTestClass pigeon_instance,
-      ProxyApiTestEnum anEnum,
-    ) flutterEchoEnum,
-    required ProxyApiSuperClass Function(
-      ProxyApiTestClass pigeon_instance,
-      ProxyApiSuperClass aProxyApi,
-    ) flutterEchoProxyApi,
-    required Future<String> Function(
-      ProxyApiTestClass pigeon_instance,
-      String aString,
-    ) flutterEchoAsyncString,
-    required bool aBool,
-    required int anInt,
-    required double aDouble,
-    required String aString,
-    required Uint8List aUint8List,
-    required List<Object?> aList,
-    required Map<String?, Object?> aMap,
-    required ProxyApiTestEnum anEnum,
-    required ProxyApiSuperClass aProxyApi,
+      ProxyApiSuperClass? aProxyApi,
+    )? flutterEchoNullableProxyApi,
+    Future<void> Function(ProxyApiTestClass pigeon_instance)? flutterNoopAsync,
     bool? nullableBoolParam,
     int? nullableIntParam,
     double? nullableDoubleParam,
@@ -5031,59 +5083,19 @@ class PigeonProxyApiTestClassOverrides {
     Map<String?, Object?>? nullableMapParam,
     ProxyApiTestEnum? nullableEnumParam,
     ProxyApiSuperClass? nullableProxyApiParam,
-    void Function(ProxyApiTestClass pigeon_instance)? flutterNoop,
-    Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError,
-    void Function(ProxyApiTestClass pigeon_instance)? flutterThrowErrorFromVoid,
-    bool? Function(
-      ProxyApiTestClass pigeon_instance,
-      bool? aBool,
-    )? flutterEchoNullableBool,
-    int? Function(
-      ProxyApiTestClass pigeon_instance,
-      int? anInt,
-    )? flutterEchoNullableInt,
-    double? Function(
-      ProxyApiTestClass pigeon_instance,
-      double? aDouble,
-    )? flutterEchoNullableDouble,
-    String? Function(
-      ProxyApiTestClass pigeon_instance,
-      String? aString,
-    )? flutterEchoNullableString,
-    Uint8List? Function(
-      ProxyApiTestClass pigeon_instance,
-      Uint8List? aList,
-    )? flutterEchoNullableUint8List,
-    List<Object?>? Function(
-      ProxyApiTestClass pigeon_instance,
-      List<Object?>? aList,
-    )? flutterEchoNullableList,
-    Map<String?, Object?>? Function(
-      ProxyApiTestClass pigeon_instance,
-      Map<String?, Object?>? aMap,
-    )? flutterEchoNullableMap,
-    ProxyApiTestEnum? Function(
-      ProxyApiTestClass pigeon_instance,
-      ProxyApiTestEnum? anEnum,
-    )? flutterEchoNullableEnum,
-    ProxyApiSuperClass? Function(
-      ProxyApiTestClass pigeon_instance,
-      ProxyApiSuperClass? aProxyApi,
-    )? flutterEchoNullableProxyApi,
-    Future<void> Function(ProxyApiTestClass pigeon_instance)? flutterNoopAsync,
-    bool? aNullableBool,
-    int? aNullableInt,
-    double? aNullableDouble,
-    String? aNullableString,
-    Uint8List? aNullableUint8List,
-    List<Object?>? aNullableList,
-    Map<String?, Object?>? aNullableMap,
-    ProxyApiTestEnum? aNullableEnum,
-    ProxyApiSuperClass? aNullableProxyApi,
   })? new_;
 
   /// Overrides [ProxyApiTestClass.namedConstructor].
   static ProxyApiTestClass Function({
+    required bool aBool,
+    required int anInt,
+    required double aDouble,
+    required String aString,
+    required Uint8List aUint8List,
+    required List<Object?> aList,
+    required Map<String?, Object?> aMap,
+    required ProxyApiTestEnum anEnum,
+    required ProxyApiSuperClass aProxyApi,
     required bool Function(
       ProxyApiTestClass pigeon_instance,
       bool aBool,
@@ -5132,15 +5144,18 @@ class PigeonProxyApiTestClassOverrides {
       ProxyApiTestClass pigeon_instance,
       String aString,
     ) flutterEchoAsyncString,
-    required bool aBool,
-    required int anInt,
-    required double aDouble,
-    required String aString,
-    required Uint8List aUint8List,
-    required List<Object?> aList,
-    required Map<String?, Object?> aMap,
-    required ProxyApiTestEnum anEnum,
-    required ProxyApiSuperClass aProxyApi,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    bool? aNullableBool,
+    int? aNullableInt,
+    double? aNullableDouble,
+    String? aNullableString,
+    Uint8List? aNullableUint8List,
+    List<Object?>? aNullableList,
+    Map<String?, Object?>? aNullableMap,
+    ProxyApiTestEnum? aNullableEnum,
+    ProxyApiSuperClass? aNullableProxyApi,
+    void Function(ProxyApiTestClass pigeon_instance)? anInterfaceMethod,
     void Function(ProxyApiTestClass pigeon_instance)? flutterNoop,
     Object? Function(ProxyApiTestClass pigeon_instance)? flutterThrowError,
     void Function(ProxyApiTestClass pigeon_instance)? flutterThrowErrorFromVoid,
@@ -5181,15 +5196,6 @@ class PigeonProxyApiTestClassOverrides {
       ProxyApiSuperClass? aProxyApi,
     )? flutterEchoNullableProxyApi,
     Future<void> Function(ProxyApiTestClass pigeon_instance)? flutterNoopAsync,
-    bool? aNullableBool,
-    int? aNullableInt,
-    double? aNullableDouble,
-    String? aNullableString,
-    Uint8List? aNullableUint8List,
-    List<Object?>? aNullableList,
-    Map<String?, Object?>? aNullableMap,
-    ProxyApiTestEnum? aNullableEnum,
-    ProxyApiSuperClass? aNullableProxyApi,
   })? namedConstructor;
 }
 
@@ -5334,7 +5340,10 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
 
 class PigeonProxyApiSuperClassOverrides {
   /// Overrides [ProxyApiSuperClass.new].
-  static ProxyApiSuperClass Function()? new_;
+  static ProxyApiSuperClass Function({
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  })? new_;
 }
 
 /// ProxyApi to serve as an interface to the core ProxyApi class.
@@ -5605,5 +5614,8 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
 
 class PigeonClassWithApiRequirementOverrides {
   /// Overrides [ClassWithApiRequirement.new].
-  static ClassWithApiRequirement Function()? new_;
+  static ClassWithApiRequirement Function({
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+  })? new_;
 }

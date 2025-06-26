@@ -1463,47 +1463,55 @@ if (${varNamePrefix}replyList == null) {
               constructor.documentationComments,
               _docCommentSpec,
             ))
-            ..optionalParameters.addAll(
-              <cb.Parameter>[
-                binaryMessengerParameter,
-                instanceManagerParameter,
-                for (final ApiField field in unattachedFields)
-                  cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = field.name
-                      ..named = true
-                      ..toThis = true
-                      ..required = !field.type.isNullable,
-                  ),
-                for (final Method method in flutterMethodsFromSuperClasses)
-                  cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = method.name
-                      ..named = true
-                      ..toSuper = true
-                      ..required = method.isRequired,
-                  ),
-                for (final Method method in flutterMethodsFromInterfaces
-                    .followedBy(declaredFlutterMethods))
-                  cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = method.name
-                      ..named = true
-                      ..toThis = true
-                      ..required = method.isRequired,
-                  ),
-                ...indexMap(
-                  constructor.parameters,
-                  (int index, NamedType parameter) => cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = _getParameterName(index, parameter)
-                      ..type = _refer(parameter.type)
-                      ..named = true
-                      ..required = !parameter.type.isNullable,
-                  ),
-                )
-              ],
+            ..optionalParameters.addAll(_asConstructorParameters(
+              constructor,
+              apiName: apiName,
+              unattachedFields: unattachedFields,
+              flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+              flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+              declaredFlutterMethods: declaredFlutterMethods,
+              setTypeAndNotThisOrSuper: false,
             )
+                // <cb.Parameter>[
+                //   binaryMessengerParameter,
+                //   instanceManagerParameter,
+                //   for (final ApiField field in unattachedFields)
+                //     cb.Parameter(
+                //       (cb.ParameterBuilder builder) => builder
+                //         ..name = field.name
+                //         ..named = true
+                //         ..toThis = true
+                //         ..required = !field.type.isNullable,
+                //     ),
+                //   for (final Method method in flutterMethodsFromSuperClasses)
+                //     cb.Parameter(
+                //       (cb.ParameterBuilder builder) => builder
+                //         ..name = method.name
+                //         ..named = true
+                //         ..toSuper = true
+                //         ..required = method.isRequired,
+                //     ),
+                //   for (final Method method in flutterMethodsFromInterfaces
+                //       .followedBy(declaredFlutterMethods))
+                //     cb.Parameter(
+                //       (cb.ParameterBuilder builder) => builder
+                //         ..name = method.name
+                //         ..named = true
+                //         ..toThis = true
+                //         ..required = method.isRequired,
+                //     ),
+                //   ...indexMap(
+                //     constructor.parameters,
+                //     (int index, NamedType parameter) => cb.Parameter(
+                //       (cb.ParameterBuilder builder) => builder
+                //         ..name = _getParameterName(index, parameter)
+                //         ..type = _refer(parameter.type)
+                //         ..named = true
+                //         ..required = !parameter.type.isNullable,
+                //     ),
+                //   )
+                // ],
+                )
             ..initializers.addAll(
               <cb.Code>[
                 if (superClassApi != null)
@@ -2209,6 +2217,86 @@ if (${varNamePrefix}replyList == null) {
     );
   }
 
+  Iterable<cb.Parameter> _asConstructorParameters(
+    Constructor constructor, {
+    required String apiName,
+    required Iterable<ApiField> unattachedFields,
+    required Iterable<Method> flutterMethodsFromSuperClasses,
+    required Iterable<Method> flutterMethodsFromInterfaces,
+    required Iterable<Method> declaredFlutterMethods,
+    bool setTypeAndNotThisOrSuper = true,
+  }) sync* {
+    yield cb.Parameter(
+      (cb.ParameterBuilder builder) => builder
+        ..name = '${classMemberNamePrefix}binaryMessenger'
+        ..named = true
+        ..type = setTypeAndNotThisOrSuper ? cb.refer('BinaryMessenger?') : null
+        ..toSuper = !setTypeAndNotThisOrSuper
+        ..required = false,
+    );
+    yield cb.Parameter(
+      (cb.ParameterBuilder builder) => builder
+        ..name = _instanceManagerVarName
+        ..named = true
+        ..type = setTypeAndNotThisOrSuper
+            ? cb.refer('$dartInstanceManagerClassName?')
+            : null
+        ..toSuper = !setTypeAndNotThisOrSuper
+        ..required = false,
+    );
+
+    for (final ApiField field in unattachedFields) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = field.name
+          ..named = true
+          ..type = setTypeAndNotThisOrSuper
+              ? cb.refer(_addGenericTypesNullable(field.type))
+              : null
+          ..toThis = !setTypeAndNotThisOrSuper
+          ..required = !field.type.isNullable,
+      );
+    }
+
+    for (final Method method in flutterMethodsFromSuperClasses) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = method.name
+          ..named = true
+          ..type = setTypeAndNotThisOrSuper
+              ? _methodAsFunctionType(method, apiName: apiName)
+              : null
+          ..toSuper = !setTypeAndNotThisOrSuper
+          ..required = method.isRequired,
+      );
+    }
+
+    for (final Method method
+        in flutterMethodsFromInterfaces.followedBy(declaredFlutterMethods)) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = method.name
+          ..named = true
+          ..type = setTypeAndNotThisOrSuper
+              ? _methodAsFunctionType(method, apiName: apiName)
+              : null
+          ..toThis = !setTypeAndNotThisOrSuper
+          ..required = method.isRequired,
+      );
+    }
+
+    yield* indexMap(
+      constructor.parameters,
+      (int index, NamedType parameter) => cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = _getParameterName(index, parameter)
+          ..type = _refer(parameter.type)
+          ..named = true
+          ..required = !parameter.type.isNullable,
+      ),
+    );
+  }
+
   cb.FunctionType _methodAsFunctionType(
     Method method, {
     required String apiName,
@@ -2293,6 +2381,15 @@ if (${varNamePrefix}replyList == null) {
         (cb.FieldBuilder builder) {
           final String constructorName =
               constructor.name.isEmpty ? 'new' : constructor.name;
+          final Iterable<cb.Parameter> parameters = _asConstructorParameters(
+            constructor,
+            apiName: api.name,
+            unattachedFields: api.unattachedFields,
+            flutterMethodsFromSuperClasses:
+                api.flutterMethodsFromSuperClasses(),
+            flutterMethodsFromInterfaces: api.flutterMethodsFromInterfaces(),
+            declaredFlutterMethods: api.flutterMethods,
+          );
           builder
             ..name = constructor.name.isEmpty ? 'new_' : constructor.name
             ..static = true
@@ -2301,34 +2398,16 @@ if (${varNamePrefix}replyList == null) {
               (cb.FunctionTypeBuilder builder) => builder
                 ..returnType = cb.refer(api.name)
                 ..isNullable = true
-                ..namedRequiredParameters.addAll(
-                  <String, cb.Reference>{
-                    for (final Parameter parameter in constructor.parameters
-                        .where((Parameter p) => !p.type.isNullable))
-                      parameter.name: _refer(parameter.type),
-                    for (final Method method
-                        in api.flutterMethods.where((Method m) => m.isRequired))
-                      method.name:
-                          _methodAsFunctionType(method, apiName: api.name),
-                    for (final ApiField field in api.unattachedFields
-                        .where((ApiField f) => !f.type.isNullable))
-                      field.name: _refer(field.type)
-                  },
-                )
-                ..namedParameters.addAll(
-                  <String, cb.Reference>{
-                    for (final Parameter parameter in constructor.parameters
-                        .where((Parameter p) => p.type.isNullable))
-                      parameter.name: _refer(parameter.type),
-                    for (final Method method in api.flutterMethods
-                        .where((Method m) => !m.isRequired))
-                      method.name:
-                          _methodAsFunctionType(method, apiName: api.name),
-                    for (final ApiField field in api.unattachedFields
-                        .where((ApiField f) => f.type.isNullable))
-                      field.name: _refer(field.type),
-                  },
-                ),
+                ..namedRequiredParameters.addAll(<String, cb.Reference>{
+                  for (final cb.Parameter parameter in parameters
+                      .where((cb.Parameter parameter) => parameter.required))
+                    parameter.name: parameter.type!,
+                })
+                ..namedParameters.addAll(<String, cb.Reference>{
+                  for (final cb.Parameter parameter in parameters
+                      .where((cb.Parameter parameter) => !parameter.required))
+                    parameter.name: parameter.type!,
+                }),
             );
         },
       );
