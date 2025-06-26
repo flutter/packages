@@ -9,7 +9,9 @@
 #import <GLKit/GLKit.h>
 
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
+#import "./include/video_player_avfoundation/AudioTrack.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
+#import "./include/video_player_avfoundation/MediaGroupsProvider.h"
 #import "./include/video_player_avfoundation/messages.g.h"
 
 #if !__has_feature(objc_arc)
@@ -92,6 +94,7 @@
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
 @property(nonatomic, assign) BOOL waitingForFrame;
+@property(nonatomic, strong) NSMutableArray<AVMediaSelectionGroup *> *mediaGroups;
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
@@ -103,6 +106,11 @@
 // Tells the player to run its frame updater until it receives a frame, regardless of the
 // play/pause state.
 - (void)expectFrame;
+
+// Retrieves the audio tracks from the media selection groups.
+- (NSMutableArray<AudioTrack *> *)getAudioTracksFromMediaGroups:
+    (NSArray<AVMediaSelectionGroup *> *)groups;
+
 @end
 
 static void *timeRangeContext = &timeRangeContext;
@@ -111,6 +119,8 @@ static void *presentationSizeContext = &presentationSizeContext;
 static void *durationContext = &durationContext;
 static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *rateContext = &rateContext;
+static NSString *const AVAssetKeyAvailableMediaCharacteristics =
+    @"availableMediaCharacteristicsWithMediaSelectionOptions";
 
 @implementation FVPVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
@@ -446,14 +456,73 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       return;
     }
 
-    _isInitialized = YES;
-    _eventSink(@{
-      @"event" : @"initialized",
-      @"duration" : @(duration),
-      @"width" : @(width),
-      @"height" : @(height)
-    });
+    // initialize media groups, create audio tracks from them, and on completion, send the
+    // initialization event.
+    MediaGroupsProvider *provider = [[MediaGroupsProvider alloc] init];
+    [provider
+        fetchMediaGroupsFromAsset:asset
+                       completion:^(NSArray<AVMediaSelectionGroup *> *groups, NSError *error) {
+                         if (error) {
+                           NSLog(@"Error fetching media groups: %@", error);
+                           return;
+                         }
+
+                         self.mediaGroups = [groups mutableCopy];
+
+                         NSMutableArray<AudioTrack *> *audioTracks =
+                             [self createAudioTracksFromMediaGroups:groups];
+                         NSArray<NSDictionary *> *audioTracksAsMap =
+                             [audioTracks valueForKey:@"asMap"];
+
+                         _isInitialized = YES;
+                         _eventSink(@{
+                           @"event" : @"initialized",
+                           @"duration" : @(duration),
+                           @"width" : @(width),
+                           @"height" : @(height),
+                           @"audioTracks" : audioTracksAsMap,
+                         });
+                       }];
   }
+}
+
+- (NSMutableArray<AudioTrack *> *)createAudioTracksFromMediaGroups:
+    (NSArray<AVMediaSelectionGroup *> *)groups {
+  NSMutableArray<AudioTrack *> *audioTracks = [NSMutableArray array];
+
+  for (NSInteger groupIndex = 0; groupIndex < groups.count; groupIndex++) {
+    AVMediaSelectionGroup *group = groups[groupIndex];
+
+    NSLog(@"Processing media selection group nr: %ld", (long)groupIndex);
+    for (NSInteger optionIndex = 0; optionIndex < group.options.count; optionIndex++) {
+      AVMediaSelectionOption *option = group.options[optionIndex];
+
+      if (option.isPlayable && [option.mediaType isEqualToString:AVMediaTypeAudio]) {
+        NSString *label = [self findTitleFromMetadata:option.commonMetadata];
+        NSString *language = option.locale.localeIdentifier;
+
+        AudioTrack *track = [[AudioTrack alloc] initWithGroupId:(int)groupIndex
+                                                        trackId:(int)optionIndex
+                                                       language:language
+                                                          label:label];
+
+        NSLog(@"AudioTrack added: %@", track);
+        [audioTracks addObject:track];
+      }
+    }
+  }
+
+  return audioTracks;
+}
+
+- (nullable NSString *)findTitleFromMetadata:(NSArray<AVMetadataItem *> *)metadata {
+    for (AVMetadataItem *item in metadata) {
+        if ([item.commonKey isEqualToString:AVMetadataCommonKeyTitle]) {
+            return item.stringValue;
+        }
+    }
+
+    return nil;
 }
 
 - (void)play {
@@ -566,6 +635,34 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 
   return buffer;
+}
+
+- (void)changeAudioTrack:(AudioTrack *)audioTrack {
+  if (audioTrack.groupId < 0) {
+    NSLog(@"GroupId smaller or equal zero: %ld", (long)audioTrack.groupId);
+    return;
+  }
+
+  if (audioTrack.groupId >= self.mediaGroups.count) {
+    NSLog(@"GroupId larger than allowed size - groupId %ld, size: %lu", (long)audioTrack.groupId,
+          (unsigned long)self.mediaGroups.count);
+    return;
+  }
+
+  AVMediaSelectionGroup *group = self.mediaGroups[audioTrack.groupId];
+  if (audioTrack.trackId >= group.options.count) {
+    NSLog(@"The track with id: %ld is not supported", (long)audioTrack.trackId);
+    return;
+  }
+
+  if (![group.options[audioTrack.trackId].mediaType isEqualToString:AVMediaTypeAudio]) {
+    NSLog(@"The track with id: %ld is not an audio track", (long)audioTrack.groupId);
+    return;
+  }
+
+  AVMediaSelectionOption *option = group.options[audioTrack.trackId];
+
+  [_player.currentItem selectMediaOption:option inMediaSelectionGroup:group];
 }
 
 - (void)onTextureUnregistered:(NSObject<FlutterTexture> *)texture {
@@ -826,6 +923,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
   }
 #endif
+}
+
+- (void)changeAudioTrack:(nonnull FVPAudioTrackMessage *)msg error:(FlutterError **)error {
+  FVPVideoPlayer *player = self.playersByTextureId[@(msg.playerId)];
+  [player changeAudioTrack:[[AudioTrack alloc] initWithGroupId:msg.groupId
+                                                       trackId:msg.trackId]];
 }
 
 @end

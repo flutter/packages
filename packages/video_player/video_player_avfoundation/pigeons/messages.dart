@@ -31,6 +31,13 @@ class MixWithOthersMessage {
   bool mixWithOthers;
 }
 
+class AudioTrackMessage {
+  AudioTrackMessage(this.playerId, this.groupId, this.trackId);
+  int playerId;
+  int groupId;
+  int trackId;
+}
+
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
 abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('initialize')
@@ -57,4 +64,6 @@ abstract class AVFoundationVideoPlayerApi {
   void pause(int textureId);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
+  @ObjCSelector('changeAudioTrack:')
+  void changeAudioTrack(AudioTrackMessage msg);
 }

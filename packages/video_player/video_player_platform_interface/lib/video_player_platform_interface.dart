@@ -107,6 +107,11 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   Future<void> setWebOptions(int textureId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
   }
+
+  /// Changes the audio track for the video.
+  Future<void> changeAudioTrack(int textureId, int groupId, int trackId) {
+    throw UnimplementedError('changeAudioTrack() has not been implemented.');
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
@@ -165,6 +170,58 @@ class DataSource {
   final String? package;
 }
 
+/// Entity representing an audio track of a video.
+/// Holds the group id, track id, language and label of the audio track.
+@immutable
+class AudioTrack {
+  /// Creates a new [AudioTrack].
+  const AudioTrack({
+    required this.groupId,
+    required this.trackId,
+    this.language,
+    this.label,
+  });
+
+  /// The group id of the audio track.
+  final int groupId;
+
+  /// The track id of the audio track.
+  final int trackId;
+
+  /// The language of the audio track, if available.
+  final String? language;
+
+  /// The label of the audio track, if available.
+  final String? label;
+
+  @override
+  String toString() {
+    return '${objectRuntimeType(this, 'AudioTrack')}('
+        'groupId: $groupId, '
+        'trackId: $trackId, '
+        'language: $language, '
+        'label: $label)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AudioTrack &&
+          runtimeType == other.runtimeType &&
+          groupId == other.groupId &&
+          trackId == other.trackId &&
+          language == other.language &&
+          label == other.label;
+
+  @override
+  int get hashCode => Object.hash(
+        groupId,
+        trackId,
+        language,
+        label,
+      );
+}
+
 /// The way in which the video was originally loaded.
 ///
 /// This has nothing to do with the video's file type. It's just the place
@@ -218,6 +275,7 @@ class VideoEvent {
     this.rotationCorrection,
     this.buffered,
     this.isPlaying,
+    this.audioTracks,
   });
 
   /// The type of the event.
@@ -247,6 +305,9 @@ class VideoEvent {
   ///
   /// Only used if [eventType] is [VideoEventType.isPlayingStateUpdate].
   final bool? isPlaying;
+
+  /// List of available audio tracks.
+  final List<AudioTrack>? audioTracks;
 
   @override
   bool operator ==(Object other) {

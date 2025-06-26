@@ -100,18 +100,61 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Stream<VideoEvent> videoEventsFor(int textureId) {
-    return _eventChannelFor(textureId)
+  Future<void> changeAudioTrack(int playerId, int groupId, int trackId) {
+    return _api.changeAudioTrack(AudioTrackMessage(
+      playerId: playerId,
+      groupId: groupId,
+      trackId: trackId,
+    ));
+  }
+
+  @override
+  Stream<VideoEvent> videoEventsFor(int playerId) {
+    return _eventChannelFor(playerId)
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
       switch (map['event']) {
         case 'initialized':
+          final List<AudioTrack> audioTracks = <AudioTrack>[];
+          try {
+            for (final Object? track in map['audioTracks'] as List<Object?>) {
+              if (track == null) {
+                continue;
+              }
+
+              if (track is! Map) {
+                continue;
+              }
+
+              final Map<String, Object?> trackAsMap =
+                  track.cast<String, Object?>();
+              final int? groupId = trackAsMap['groupId'] as int?;
+              final int? trackId = trackAsMap['trackId'] as int?;
+              final String? label = trackAsMap['label'] as String?;
+              final String? language = trackAsMap['language'] as String?;
+
+              if (groupId == null || trackId == null) {
+                continue;
+              }
+
+              audioTracks.add(AudioTrack(
+                groupId: groupId,
+                trackId: trackId,
+                label: label,
+                language: language,
+              ));
+            }
+          } catch (e) {
+            // ignore - failing parsing audio tracks should not crash the player
+          }
+
           return VideoEvent(
             eventType: VideoEventType.initialized,
             duration: Duration(milliseconds: map['duration'] as int),
             size: Size((map['width'] as num?)?.toDouble() ?? 0.0,
                 (map['height'] as num?)?.toDouble() ?? 0.0),
+            audioTracks: audioTracks,
           );
         case 'completed':
           return VideoEvent(

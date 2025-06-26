@@ -15,6 +15,7 @@ import 'src/closed_caption_file.dart';
 
 export 'package:video_player_platform_interface/video_player_platform_interface.dart'
     show
+        AudioTrack,
         DataSourceType,
         DurationRange,
         VideoFormat,
@@ -59,6 +60,8 @@ class VideoPlayerValue {
     this.rotationCorrection = 0,
     this.errorDescription,
     this.isCompleted = false,
+    this.currentAudioTrack,
+    this.audioTracks = const <AudioTrack>[],
   });
 
   /// Returns an instance for a video that hasn't been loaded.
@@ -133,6 +136,12 @@ class VideoPlayerValue {
   /// Indicates whether or not the video has been loaded and is ready to play.
   final bool isInitialized;
 
+  /// The currently selected audio track.
+  final AudioTrack? currentAudioTrack;
+
+  /// The list of available audio tracks.
+  final List<AudioTrack> audioTracks;
+
   /// Indicates whether or not the video is in an error state. If this is true
   /// [errorDescription] should have information about the problem.
   bool get hasError => errorDescription != null;
@@ -172,6 +181,8 @@ class VideoPlayerValue {
     int? rotationCorrection,
     String? errorDescription = _defaultErrorDescription,
     bool? isCompleted,
+    AudioTrack? currentAudioTrack,
+    List<AudioTrack>? audioTracks,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -191,6 +202,8 @@ class VideoPlayerValue {
           ? errorDescription
           : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
+      currentAudioTrack: currentAudioTrack ?? this.currentAudioTrack,
+      audioTracks: audioTracks ?? this.audioTracks,
     );
   }
 
@@ -210,7 +223,9 @@ class VideoPlayerValue {
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
         'errorDescription: $errorDescription, '
-        'isCompleted: $isCompleted),';
+        'isCompleted: $isCompleted), '
+        'currentAudioTrack: $currentAudioTrack, '
+        'audioTracks: $audioTracks, ';
   }
 
   @override
@@ -232,7 +247,9 @@ class VideoPlayerValue {
           size == other.size &&
           rotationCorrection == other.rotationCorrection &&
           isInitialized == other.isInitialized &&
-          isCompleted == other.isCompleted;
+          isCompleted == other.isCompleted &&
+          currentAudioTrack == other.currentAudioTrack &&
+          audioTracks == other.audioTracks;
 
   @override
   int get hashCode => Object.hash(
@@ -251,6 +268,8 @@ class VideoPlayerValue {
         rotationCorrection,
         isInitialized,
         isCompleted,
+        currentAudioTrack,
+        audioTracks,
       );
 }
 
@@ -464,6 +483,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             isInitialized: event.duration != null,
             errorDescription: null,
             isCompleted: false,
+            audioTracks: event.audioTracks,
           );
           assert(
             !initializingCompleter.isCompleted,
@@ -669,6 +689,20 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> setVolume(double volume) async {
     value = value.copyWith(volume: volume.clamp(0.0, 1.0));
     await _applyVolume();
+  }
+
+  /// Changes the audio track of [this].
+  ///
+  /// [AudioTrack] must be one of the available audio tracks in the video.
+  /// Available audio tracks can be retrieved from the
+  /// [VideoPlayerValue.audioTracks] property.
+  Future<void> changeAudioTrack(AudioTrack audioTrack) async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+    value = value.copyWith(currentAudioTrack: audioTrack);
+    await _videoPlayerPlatform.changeAudioTrack(
+        _textureId, audioTrack.groupId, audioTrack.trackId);
   }
 
   /// Sets the playback speed of [this].
