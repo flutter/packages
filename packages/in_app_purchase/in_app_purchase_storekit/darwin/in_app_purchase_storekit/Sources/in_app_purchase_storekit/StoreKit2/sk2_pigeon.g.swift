@@ -790,25 +790,25 @@ class InAppPurchase2APISetup {
       isWinBackOfferEligibleChannel.setMessageHandler(nil)
     }
     let isIntroductoryOfferEligibleChannel = FlutterBasicMessageChannel(
-          name:
-            "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isIntroductoryOfferEligible\(channelSuffix)",
-          binaryMessenger: binaryMessenger, codec: codec)
-        if let api = api {
-          isIntroductoryOfferEligibleChannel.setMessageHandler { message, reply in
-            let args = message as! [Any?]
-            let productIdArg = args[0] as! String
-            api.isIntroductoryOfferEligible(productId: productIdArg) { result in
-              switch result {
-              case .success(let res):
-                reply(wrapResult(res))
-              case .failure(let error):
-                reply(wrapError(error))
-              }
-            }
+      name:
+        "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isIntroductoryOfferEligible\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isIntroductoryOfferEligibleChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let productIdArg = args[0] as! String
+        api.isIntroductoryOfferEligible(productId: productIdArg) { result in
+          switch result {
+          case .success(let res):
+            reply(wrapResult(res))
+          case .failure(let error):
+            reply(wrapError(error))
           }
-        } else {
-          isIntroductoryOfferEligibleChannel.setMessageHandler(nil)
         }
+      }
+    } else {
+      isIntroductoryOfferEligibleChannel.setMessageHandler(nil)
+    }
     let transactionsChannel = FlutterBasicMessageChannel(
       name:
         "dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.transactions\(channelSuffix)",
