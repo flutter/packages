@@ -15,7 +15,7 @@ tasks:
   - name: xcode analyze deprecation
     # Ensure we don't accidentally introduce deprecated code.
     script: .ci/scripts/tool_runner.sh
-    args: ["xcode-analyze", "--macos", "--macos-min-version=14.0", "--exclude=script/configs/exclude_xcode_deprecation.yaml,script/configs/xcode_warnings_exceptions.yaml"]
+    args: ["xcode-analyze", "--macos", "--macos-min-version=15.0", "--exclude=script/configs/exclude_xcode_deprecation.yaml,script/configs/xcode_warnings_exceptions.yaml"]
   - name: native test
     script: .ci/scripts/tool_runner.sh
     args: ["native-test", "--macos", "--xcode-warnings-exceptions=script/configs/xcode_warnings_exceptions.yaml"]
