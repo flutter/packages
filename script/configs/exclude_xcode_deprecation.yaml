@@ -1,0 +1,2 @@
+# TODO(jmagman): Remove deprecation exclusion when UIWindowScene.windows is adopted. https://github.com/flutter/flutter/issues/154365
+- integration_test
