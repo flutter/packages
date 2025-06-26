@@ -21,11 +21,13 @@ VideoPlayerInstanceApi _productionApiProvider(int mapId) {
 class AndroidVideoPlayer extends VideoPlayerPlatform {
   /// Creates a new Android maps implementation instance.
   AndroidVideoPlayer({
+    @visibleForTesting AndroidVideoPlayerApi? pluginApi,
     @visibleForTesting
     VideoPlayerInstanceApi Function(int playerId)? apiProvider,
-  }) : _apiProvider = apiProvider ?? _productionApiProvider;
+  }) : _api = pluginApi ?? AndroidVideoPlayerApi(),
+       _apiProvider = apiProvider ?? _productionApiProvider;
 
-  final AndroidVideoPlayerApi _api = AndroidVideoPlayerApi();
+  final AndroidVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
   //overridden for testing.
   final VideoPlayerInstanceApi Function(int mapId) _apiProvider;

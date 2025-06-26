@@ -7,7 +7,6 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    dartTestOut: 'test/test_api.g.dart',
     javaOut:
         'android/src/main/java/io/flutter/plugins/videoplayer/Messages.java',
     javaOptions: JavaOptions(package: 'io.flutter.plugins.videoplayer'),
@@ -34,7 +33,7 @@ class CreateMessage {
   PlatformVideoViewType? viewType;
 }
 
-@HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
+@HostApi()
 abstract class AndroidVideoPlayerApi {
   void initialize();
   int create(CreateMessage msg);
