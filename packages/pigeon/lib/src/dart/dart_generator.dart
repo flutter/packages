@@ -1441,13 +1441,52 @@ if (${varNamePrefix}replyList == null) {
         ..named = true
         ..toSuper = true,
     );
-    final cb.Parameter instanceManagerParameter = cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = _instanceManagerVarName
-        ..named = true
-        ..toSuper = true,
-    );
+
     for (final Constructor constructor in constructors) {
+      final String constructorName =
+          '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : ''}';
+
+      yield cb.Constructor(
+        (cb.ConstructorBuilder builder) {
+          builder
+            ..name = constructor.name.isNotEmpty ? constructor.name : null
+            ..factory = true
+            ..docs.addAll(asDocumentationComments(
+              constructor.documentationComments,
+              _docCommentSpec,
+            ))
+            ..optionalParameters.addAll(_asConstructorParameters(
+              constructor,
+              apiName: apiName,
+              unattachedFields: unattachedFields,
+              flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+              flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+              declaredFlutterMethods: declaredFlutterMethods,
+              setTypeAndNotThisOrSuper: true,
+            ))
+            ..body = cb.Block(
+              (cb.BlockBuilder builder) {
+                final String overridesClassName =
+                    _getProxyApiOverridesClassName(apiName);
+                final String overridesConstructorName =
+                    constructor.name.isEmpty ? 'new_' : constructor.name;
+                builder.statements.addAll(<cb.Code>[
+                  cb.Code(
+                    'if ($overridesClassName.$overridesConstructorName != null) {',
+                  ),
+                  cb.Code(
+                    'return $overridesClassName.$overridesConstructorName!();',
+                  ),
+                  const cb.Code('}'),
+                  cb.Code(
+                    'return $apiName.$constructorName();',
+                  ),
+                ]);
+              },
+            );
+        },
+      );
+
       yield cb.Constructor(
         (cb.ConstructorBuilder builder) {
           final String channelName = makeChannelNameWithStrings(
@@ -1458,7 +1497,8 @@ if (${varNamePrefix}replyList == null) {
             dartPackageName: dartPackageName,
           );
           builder
-            ..name = constructor.name.isNotEmpty ? constructor.name : null
+            ..name = constructorName
+            ..annotations.add(cb.refer('protected'))
             ..docs.addAll(asDocumentationComments(
               constructor.documentationComments,
               _docCommentSpec,
@@ -1471,47 +1511,7 @@ if (${varNamePrefix}replyList == null) {
               flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
               declaredFlutterMethods: declaredFlutterMethods,
               setTypeAndNotThisOrSuper: false,
-            )
-                // <cb.Parameter>[
-                //   binaryMessengerParameter,
-                //   instanceManagerParameter,
-                //   for (final ApiField field in unattachedFields)
-                //     cb.Parameter(
-                //       (cb.ParameterBuilder builder) => builder
-                //         ..name = field.name
-                //         ..named = true
-                //         ..toThis = true
-                //         ..required = !field.type.isNullable,
-                //     ),
-                //   for (final Method method in flutterMethodsFromSuperClasses)
-                //     cb.Parameter(
-                //       (cb.ParameterBuilder builder) => builder
-                //         ..name = method.name
-                //         ..named = true
-                //         ..toSuper = true
-                //         ..required = method.isRequired,
-                //     ),
-                //   for (final Method method in flutterMethodsFromInterfaces
-                //       .followedBy(declaredFlutterMethods))
-                //     cb.Parameter(
-                //       (cb.ParameterBuilder builder) => builder
-                //         ..name = method.name
-                //         ..named = true
-                //         ..toThis = true
-                //         ..required = method.isRequired,
-                //     ),
-                //   ...indexMap(
-                //     constructor.parameters,
-                //     (int index, NamedType parameter) => cb.Parameter(
-                //       (cb.ParameterBuilder builder) => builder
-                //         ..name = _getParameterName(index, parameter)
-                //         ..type = _refer(parameter.type)
-                //         ..named = true
-                //         ..required = !parameter.type.isNullable,
-                //     ),
-                //   )
-                // ],
-                )
+            ))
             ..initializers.addAll(
               <cb.Code>[
                 if (superClassApi != null)
@@ -2324,45 +2324,19 @@ if (${varNamePrefix}replyList == null) {
   }
 
   cb.Class _proxyApiOverridesClass(AstProxyApi api) {
-    return cb.Class((cb.ClassBuilder builder) => builder
-          ..name = '$proxyApiClassNamePrefix${api.name}Overrides'
-          ..fields.addAll(_proxyApiOverridesClassConstructors(api))
-          ..fields.addAll(_proxyApiOverridesClassStaticFields(
-            api.fields.where((ApiField field) => field.isStatic),
-            apiName: api.name,
-          ))
-          ..fields.addAll(_proxyApiOverridesClassStaticMethods(
-            api.hostMethods.where((Method method) => method.isStatic),
-            apiName: api.name,
-          ))
-        // ..fields.addAll(<cb.Field>[
-        //   for (final AstProxyApi api in root.apis.whereType<AstProxyApi>())
-        //     for (final Method method
-        //         in api.methods.where((Method m) => m.isStatic))
-        //       cb.Field((cb.FieldBuilder builder) {
-        //         builder
-        //           ..name = '${method.name}${api.name}'
-        //           ..modifier = cb.FieldModifier.final$
-        //           ..docs.add('/// Calls to [${api.name}.${method.name}].')
-        //           ..type = cb.FunctionType((cb.FunctionTypeBuilder builder) {
-        //             builder
-        //               ..returnType = _refer(method.returnType, asFuture: true)
-        //               ..requiredParameters.addAll(<cb.Reference>[
-        //                 for (final Parameter parameter in method.parameters)
-        //                   _refer(parameter.type),
-        //               ])
-        //               ..namedParameters.addAll(
-        //                 <String, cb.Reference>{
-        //                   binaryMessengerParameter.name:
-        //                       binaryMessengerParameter.type!,
-        //                   instanceManagerParameter.name:
-        //                       instanceManagerParameter.type!,
-        //                 },
-        //               );
-        //           });
-        //       }),
-        // ])
-        );
+    return cb.Class(
+      (cb.ClassBuilder builder) => builder
+        ..name = _getProxyApiOverridesClassName(api.name)
+        ..fields.addAll(_proxyApiOverridesClassConstructors(api))
+        ..fields.addAll(_proxyApiOverridesClassStaticFields(
+          api.fields.where((ApiField field) => field.isStatic),
+          apiName: api.name,
+        ))
+        ..fields.addAll(_proxyApiOverridesClassStaticMethods(
+          api.hostMethods.where((Method method) => method.isStatic),
+          apiName: api.name,
+        )),
+    );
   }
 
   Iterable<cb.Field> _proxyApiOverridesClassConstructors(
@@ -2581,4 +2555,8 @@ String _addGenericTypesNullable(TypeDeclaration type) {
 String _posixify(String inputPath) {
   final path.Context context = path.Context(style: path.Style.posix);
   return context.fromUri(path.toUri(path.absolute(inputPath)));
+}
+
+String _getProxyApiOverridesClassName(String apiName) {
+  return '$proxyApiClassNamePrefix${apiName}Overrides';
 }
