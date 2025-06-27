@@ -196,7 +196,6 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
               }];
   } @catch (NSException *e) {
     completion(nil, [FlutterError errorWithCode:@"google_sign_in" message:e.reason details:e.name]);
-    [e raise];
   }
 }
 
