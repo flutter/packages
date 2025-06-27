@@ -120,6 +120,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   /// Instantiates a Dart Generator.
   const DartGenerator();
 
+  // Formatter used to format code from `code_builder`.
+  DartFormatter get _formatter {
+    return DartFormatter(languageVersion: Version(3, 6, 0));
+  }
+
   @override
   void writeFilePrologue(
     InternalDartOptions generatorOptions,
@@ -983,12 +988,9 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
 
     final cb.Class proxyApiOverrides = _proxyApiOverridesClass(api);
 
-    final DartFormatter formatter = DartFormatter(
-      languageVersion: Version(3, 6, 0),
-    );
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
-    indent.format(formatter.format('${proxyApi.accept(emitter)}'));
-    indent.format(formatter.format('${proxyApiOverrides.accept(emitter)}'));
+    indent.format(_formatter.format('${proxyApi.accept(emitter)}'));
+    indent.format(_formatter.format('${proxyApiOverrides.accept(emitter)}'));
   }
 
   /// Generates Dart source code for test support libraries based on the given AST
@@ -2499,11 +2501,8 @@ if (${varNamePrefix}replyList == null) {
         ]);
     });
 
-    final DartFormatter formatter = DartFormatter(
-      languageVersion: Version(3, 6, 0),
-    );
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
-    indent.format(formatter.format('${method.accept(emitter)}'));
+    indent.format(_formatter.format('${method.accept(emitter)}'));
   }
 }
 
