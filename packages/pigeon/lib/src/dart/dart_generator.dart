@@ -1478,18 +1478,11 @@ if (${varNamePrefix}replyList == null) {
                     parameter.name: cb.refer(parameter.name)
                 };
                 builder.statements.addAll(<cb.Code>[
-                  cb.Code(
-                    'if ($overridesClassName.$overridesConstructorName != null) {',
-                  ),
                   cb.CodeExpression(
-                    cb.Code('$overridesClassName.$overridesConstructorName'),
+                    cb.Code(
+                      '($overridesClassName.$overridesConstructorName ?? $apiName.$constructorName)',
+                    ),
                   )
-                      .nullChecked
-                      .call(<cb.Expression>[], forwardedParameters)
-                      .returned
-                      .statement,
-                  const cb.Code('}'),
-                  cb.CodeExpression(cb.Code('$apiName.$constructorName'))
                       .call(<cb.Expression>[], forwardedParameters)
                       .returned
                       .statement,

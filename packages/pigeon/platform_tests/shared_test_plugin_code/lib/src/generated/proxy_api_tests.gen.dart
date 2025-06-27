@@ -582,75 +582,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     ProxyApiTestEnum? nullableEnumParam,
     ProxyApiSuperClass? nullableProxyApiParam,
   }) {
-    if (PigeonProxyApiTestClassOverrides.new_ != null) {
-      return PigeonProxyApiTestClassOverrides.new_!(
-        pigeon_binaryMessenger: pigeon_binaryMessenger,
-        pigeon_instanceManager: pigeon_instanceManager,
-        aBool: aBool,
-        anInt: anInt,
-        aDouble: aDouble,
-        aString: aString,
-        aUint8List: aUint8List,
-        aList: aList,
-        aMap: aMap,
-        anEnum: anEnum,
-        aProxyApi: aProxyApi,
-        aNullableBool: aNullableBool,
-        aNullableInt: aNullableInt,
-        aNullableDouble: aNullableDouble,
-        aNullableString: aNullableString,
-        aNullableUint8List: aNullableUint8List,
-        aNullableList: aNullableList,
-        aNullableMap: aNullableMap,
-        aNullableEnum: aNullableEnum,
-        aNullableProxyApi: aNullableProxyApi,
-        anInterfaceMethod: anInterfaceMethod,
-        flutterNoop: flutterNoop,
-        flutterThrowError: flutterThrowError,
-        flutterThrowErrorFromVoid: flutterThrowErrorFromVoid,
-        flutterEchoBool: flutterEchoBool,
-        flutterEchoInt: flutterEchoInt,
-        flutterEchoDouble: flutterEchoDouble,
-        flutterEchoString: flutterEchoString,
-        flutterEchoUint8List: flutterEchoUint8List,
-        flutterEchoList: flutterEchoList,
-        flutterEchoProxyApiList: flutterEchoProxyApiList,
-        flutterEchoMap: flutterEchoMap,
-        flutterEchoProxyApiMap: flutterEchoProxyApiMap,
-        flutterEchoEnum: flutterEchoEnum,
-        flutterEchoProxyApi: flutterEchoProxyApi,
-        flutterEchoNullableBool: flutterEchoNullableBool,
-        flutterEchoNullableInt: flutterEchoNullableInt,
-        flutterEchoNullableDouble: flutterEchoNullableDouble,
-        flutterEchoNullableString: flutterEchoNullableString,
-        flutterEchoNullableUint8List: flutterEchoNullableUint8List,
-        flutterEchoNullableList: flutterEchoNullableList,
-        flutterEchoNullableMap: flutterEchoNullableMap,
-        flutterEchoNullableEnum: flutterEchoNullableEnum,
-        flutterEchoNullableProxyApi: flutterEchoNullableProxyApi,
-        flutterNoopAsync: flutterNoopAsync,
-        flutterEchoAsyncString: flutterEchoAsyncString,
-        boolParam: boolParam,
-        intParam: intParam,
-        doubleParam: doubleParam,
-        stringParam: stringParam,
-        aUint8ListParam: aUint8ListParam,
-        listParam: listParam,
-        mapParam: mapParam,
-        enumParam: enumParam,
-        proxyApiParam: proxyApiParam,
-        nullableBoolParam: nullableBoolParam,
-        nullableIntParam: nullableIntParam,
-        nullableDoubleParam: nullableDoubleParam,
-        nullableStringParam: nullableStringParam,
-        nullableUint8ListParam: nullableUint8ListParam,
-        nullableListParam: nullableListParam,
-        nullableMapParam: nullableMapParam,
-        nullableEnumParam: nullableEnumParam,
-        nullableProxyApiParam: nullableProxyApiParam,
-      );
-    }
-    return ProxyApiTestClass.pigeon_(
+    return (PigeonProxyApiTestClassOverrides.new_ ?? ProxyApiTestClass.pigeon_)(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       aBool: aBool,
@@ -966,57 +898,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       String aString,
     ) flutterEchoAsyncString,
   }) {
-    if (PigeonProxyApiTestClassOverrides.namedConstructor != null) {
-      return PigeonProxyApiTestClassOverrides.namedConstructor!(
-        pigeon_binaryMessenger: pigeon_binaryMessenger,
-        pigeon_instanceManager: pigeon_instanceManager,
-        aBool: aBool,
-        anInt: anInt,
-        aDouble: aDouble,
-        aString: aString,
-        aUint8List: aUint8List,
-        aList: aList,
-        aMap: aMap,
-        anEnum: anEnum,
-        aProxyApi: aProxyApi,
-        aNullableBool: aNullableBool,
-        aNullableInt: aNullableInt,
-        aNullableDouble: aNullableDouble,
-        aNullableString: aNullableString,
-        aNullableUint8List: aNullableUint8List,
-        aNullableList: aNullableList,
-        aNullableMap: aNullableMap,
-        aNullableEnum: aNullableEnum,
-        aNullableProxyApi: aNullableProxyApi,
-        anInterfaceMethod: anInterfaceMethod,
-        flutterNoop: flutterNoop,
-        flutterThrowError: flutterThrowError,
-        flutterThrowErrorFromVoid: flutterThrowErrorFromVoid,
-        flutterEchoBool: flutterEchoBool,
-        flutterEchoInt: flutterEchoInt,
-        flutterEchoDouble: flutterEchoDouble,
-        flutterEchoString: flutterEchoString,
-        flutterEchoUint8List: flutterEchoUint8List,
-        flutterEchoList: flutterEchoList,
-        flutterEchoProxyApiList: flutterEchoProxyApiList,
-        flutterEchoMap: flutterEchoMap,
-        flutterEchoProxyApiMap: flutterEchoProxyApiMap,
-        flutterEchoEnum: flutterEchoEnum,
-        flutterEchoProxyApi: flutterEchoProxyApi,
-        flutterEchoNullableBool: flutterEchoNullableBool,
-        flutterEchoNullableInt: flutterEchoNullableInt,
-        flutterEchoNullableDouble: flutterEchoNullableDouble,
-        flutterEchoNullableString: flutterEchoNullableString,
-        flutterEchoNullableUint8List: flutterEchoNullableUint8List,
-        flutterEchoNullableList: flutterEchoNullableList,
-        flutterEchoNullableMap: flutterEchoNullableMap,
-        flutterEchoNullableEnum: flutterEchoNullableEnum,
-        flutterEchoNullableProxyApi: flutterEchoNullableProxyApi,
-        flutterNoopAsync: flutterNoopAsync,
-        flutterEchoAsyncString: flutterEchoAsyncString,
-      );
-    }
-    return ProxyApiTestClass.pigeon_namedConstructor(
+    return (PigeonProxyApiTestClassOverrides.namedConstructor ??
+        ProxyApiTestClass.pigeon_namedConstructor)(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       aBool: aBool,
@@ -5695,13 +5578,8 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) {
-    if (PigeonProxyApiSuperClassOverrides.new_ != null) {
-      return PigeonProxyApiSuperClassOverrides.new_!(
-        pigeon_binaryMessenger: pigeon_binaryMessenger,
-        pigeon_instanceManager: pigeon_instanceManager,
-      );
-    }
-    return ProxyApiSuperClass.pigeon_(
+    return (PigeonProxyApiSuperClassOverrides.new_ ??
+        ProxyApiSuperClass.pigeon_)(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );
@@ -5986,13 +5864,8 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) {
-    if (PigeonClassWithApiRequirementOverrides.new_ != null) {
-      return PigeonClassWithApiRequirementOverrides.new_!(
-        pigeon_binaryMessenger: pigeon_binaryMessenger,
-        pigeon_instanceManager: pigeon_instanceManager,
-      );
-    }
-    return ClassWithApiRequirement.pigeon_(
+    return (PigeonClassWithApiRequirementOverrides.new_ ??
+        ClassWithApiRequirement.pigeon_)(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
     );
