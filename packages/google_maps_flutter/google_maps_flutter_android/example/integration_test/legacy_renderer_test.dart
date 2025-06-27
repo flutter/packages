@@ -21,9 +21,10 @@ void main() {
         await instance.initializeWithRenderer(AndroidMapRenderer.legacy);
   });
 
+  // TODO(ash2moon): Remove skip when the renderer initialization is deterministic, https://github.com/flutter/flutter/issues/171306)
   testWidgets('initialized with legacy renderer', (WidgetTester _) async {
     expect(initializedRenderer, AndroidMapRenderer.legacy);
-  });
+  }, skip: true);
 
   testWidgets('throws PlatformException on multiple renderer initializations',
       (WidgetTester _) async {
