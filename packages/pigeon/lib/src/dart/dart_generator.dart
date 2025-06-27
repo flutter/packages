@@ -1091,6 +1091,12 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     if (root.classes.isNotEmpty) {
       _writeDeepEquals(indent);
     }
+    if (root.containsProxyApi) {
+      _writeProxyApiResetOverridesMethod(
+        indent,
+        proxyApis: root.apis.whereType(),
+      );
+    }
   }
 
   /// Writes [wrapResponse] method.
@@ -2459,6 +2465,45 @@ if (${varNamePrefix}replyList == null) {
           });
       });
     }
+  }
+
+  void _writeProxyApiResetOverridesMethod(
+    Indent indent, {
+    required Iterable<AstProxyApi> proxyApis,
+  }) {
+    if (proxyApis.isEmpty) {
+      return;
+    }
+
+    final cb.Method method = cb.Method.returnsVoid((cb.MethodBuilder builder) {
+      builder
+        ..name = '${classMemberNamePrefix}resetAllOverrides'
+        ..body = cb.Block.of(<cb.Code>[
+          for (final AstProxyApi api in proxyApis)
+            for (final Constructor constructor in api.constructors)
+              cb.Code(
+                '${_getProxyApiOverridesClassName(api.name)}.${constructor.name.isEmpty ? 'new_' : constructor.name} = null;',
+              ),
+          for (final AstProxyApi api in proxyApis)
+            for (final ApiField attachedField
+                in api.fields.where((ApiField field) => field.isStatic))
+              cb.Code(
+                '${_getProxyApiOverridesClassName(api.name)}.${attachedField.name} = null;',
+              ),
+          for (final AstProxyApi api in proxyApis)
+            for (final Method staticMethod
+                in api.methods.where((Method method) => method.isStatic))
+              cb.Code(
+                '${_getProxyApiOverridesClassName(api.name)}.${staticMethod.name} = null;',
+              ),
+        ]);
+    });
+
+    final DartFormatter formatter = DartFormatter(
+      languageVersion: Version(3, 6, 0),
+    );
+    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+    indent.format(formatter.format('${method.accept(emitter)}'));
   }
 }
 

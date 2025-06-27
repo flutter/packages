@@ -33,6 +33,17 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+void pigeon_resetAllOverrides() {
+  PigeonProxyApiTestClassOverrides.new_ = null;
+  PigeonProxyApiTestClassOverrides.namedConstructor = null;
+  PigeonProxyApiSuperClassOverrides.new_ = null;
+  PigeonClassWithApiRequirementOverrides.new_ = null;
+  PigeonProxyApiTestClassOverrides.staticAttachedField = null;
+  PigeonProxyApiTestClassOverrides.staticNoop = null;
+  PigeonProxyApiTestClassOverrides.echoStaticString = null;
+  PigeonProxyApiTestClassOverrides.staticAsyncNoop = null;
+}
+
 /// An immutable object that serves as the base class for all ProxyApis and
 /// can provide functional copies of itself.
 ///
