@@ -11,7 +11,7 @@ import 'dart:io' show Platform;
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
 import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected;
+    show ReadBuffer, WriteBuffer, immutable, protected, visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -33,6 +33,7 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+@visibleForTesting
 void pigeon_resetAllOverrides() {
   PigeonProxyApiTestClassOverrides.new_ = null;
   PigeonProxyApiTestClassOverrides.namedConstructor = null;
@@ -5338,6 +5339,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 }
 
+@visibleForTesting
 class PigeonProxyApiTestClassOverrides {
   /// Overrides [ProxyApiTestClass.new].
   static ProxyApiTestClass Function({
@@ -5747,6 +5749,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
   }
 }
 
+@visibleForTesting
 class PigeonProxyApiSuperClassOverrides {
   /// Overrides [ProxyApiSuperClass.new].
   static ProxyApiSuperClass Function({
@@ -5881,6 +5884,7 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
   }
 }
 
+@visibleForTesting
 class PigeonProxyApiInterfaceOverrides {}
 
 class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
@@ -6033,6 +6037,7 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
   }
 }
 
+@visibleForTesting
 class PigeonClassWithApiRequirementOverrides {
   /// Overrides [ClassWithApiRequirement.new].
   static ClassWithApiRequirement Function({

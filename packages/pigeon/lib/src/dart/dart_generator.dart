@@ -160,7 +160,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.newln();
 
     indent.writeln(
-        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${root.containsProxyApi ? ', immutable, protected' : ''};");
+        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${root.containsProxyApi ? ', immutable, protected, visibleForTesting' : ''};");
     indent.writeln("import 'package:flutter/services.dart';");
     if (root.containsProxyApi) {
       indent.writeln(
@@ -2377,6 +2377,7 @@ if (${varNamePrefix}replyList == null) {
     return cb.Class(
       (cb.ClassBuilder builder) => builder
         ..name = _getProxyApiOverridesClassName(api.name)
+        ..annotations.add(cb.refer('visibleForTesting'))
         ..fields.addAll(_proxyApiOverridesClassConstructors(api))
         ..fields.addAll(_proxyApiOverridesClassStaticFields(
           api.fields.where((ApiField field) => field.isStatic),
@@ -2480,6 +2481,7 @@ if (${varNamePrefix}replyList == null) {
     final cb.Method method = cb.Method.returnsVoid((cb.MethodBuilder builder) {
       builder
         ..name = '${classMemberNamePrefix}resetAllOverrides'
+        ..annotations.add(cb.refer('visibleForTesting'))
         ..body = cb.Block.of(<cb.Code>[
           for (final AstProxyApi api in proxyApis)
             for (final Constructor constructor in api.constructors)
