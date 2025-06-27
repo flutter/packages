@@ -27,7 +27,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^22.4.2
+  pigeon: ^25.5.0
 
 topics:
   - video
