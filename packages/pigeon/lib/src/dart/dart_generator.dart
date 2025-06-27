@@ -906,8 +906,10 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           codecInstanceName: codecInstanceName,
           superClassApi: api.superClass?.associatedProxyApi,
           unattachedFields: api.unattachedFields,
-          flutterMethodsFromSuperClasses: api.flutterMethodsFromSuperClasses(),
-          flutterMethodsFromInterfaces: api.flutterMethodsFromInterfaces(),
+          flutterMethodsFromSuperClasses:
+              api.flutterMethodsFromSuperClassesWithApis(),
+          flutterMethodsFromInterfaces:
+              api.flutterMethodsFromInterfacesWithApis(),
           declaredFlutterMethods: api.flutterMethods,
         ))
         ..constructors.add(
@@ -1431,8 +1433,8 @@ if (${varNamePrefix}replyList == null) {
     required String codecInstanceName,
     required AstProxyApi? superClassApi,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<Method> flutterMethodsFromSuperClasses,
-    required Iterable<Method> flutterMethodsFromInterfaces,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
     required Iterable<Method> declaredFlutterMethods,
   }) sync* {
     final cb.Parameter binaryMessengerParameter = cb.Parameter(
@@ -2231,8 +2233,8 @@ if (${varNamePrefix}replyList == null) {
     Constructor constructor, {
     required String apiName,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<Method> flutterMethodsFromSuperClasses,
-    required Iterable<Method> flutterMethodsFromInterfaces,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
     required Iterable<Method> declaredFlutterMethods,
     bool setTypeAndNotThisOrSuper = true,
   }) sync* {
@@ -2268,21 +2270,33 @@ if (${varNamePrefix}replyList == null) {
       );
     }
 
-    for (final Method method in flutterMethodsFromSuperClasses) {
+    for (final (Method, AstProxyApi) method in flutterMethodsFromSuperClasses) {
       yield cb.Parameter(
         (cb.ParameterBuilder builder) => builder
-          ..name = method.name
+          ..name = method.$1.name
           ..named = true
           ..type = setTypeAndNotThisOrSuper
-              ? _methodAsFunctionType(method, apiName: apiName)
+              ? _methodAsFunctionType(method.$1, apiName: method.$2.name)
               : null
           ..toSuper = !setTypeAndNotThisOrSuper
-          ..required = method.isRequired,
+          ..required = method.$1.isRequired,
       );
     }
 
-    for (final Method method
-        in flutterMethodsFromInterfaces.followedBy(declaredFlutterMethods)) {
+    for (final (Method, AstProxyApi) method in flutterMethodsFromInterfaces) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = method.$1.name
+          ..named = true
+          ..type = setTypeAndNotThisOrSuper
+              ? _methodAsFunctionType(method.$1, apiName: method.$2.name)
+              : null
+          ..toThis = !setTypeAndNotThisOrSuper
+          ..required = method.$1.isRequired,
+      );
+    }
+
+    for (final Method method in declaredFlutterMethods) {
       yield cb.Parameter(
         (cb.ParameterBuilder builder) => builder
           ..name = method.name
@@ -2362,8 +2376,9 @@ if (${varNamePrefix}replyList == null) {
             apiName: api.name,
             unattachedFields: api.unattachedFields,
             flutterMethodsFromSuperClasses:
-                api.flutterMethodsFromSuperClasses(),
-            flutterMethodsFromInterfaces: api.flutterMethodsFromInterfaces(),
+                api.flutterMethodsFromSuperClassesWithApis(),
+            flutterMethodsFromInterfaces:
+                api.flutterMethodsFromInterfacesWithApis(),
             declaredFlutterMethods: api.flutterMethods,
           );
           builder
