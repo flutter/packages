@@ -45,13 +45,16 @@ protocol AuthContextFactory {
   protocol AuthAlert {
     @MainActor
     var messageText: String { get set }
+
     @MainActor
     @discardableResult func addButton(withTitle title: String) -> NSButton
+
     @MainActor
     func beginSheetModal(
       for sheetWindow: NSWindow,
       completionHandler handler: ((NSApplication.ModalResponse) -> Void)?
     )
+
     @MainActor
     @discardableResult func runModal() -> NSApplication.ModalResponse
   }
@@ -68,6 +71,7 @@ protocol AuthContextFactory {
     func addAction(_ action: UIAlertAction)
     // Reversed wrapper of presentViewController:... since the protocol can't be passed to the real
     // method.
+
     @MainActor
     func present(
       on presentingViewController: UIViewController,
@@ -88,6 +92,7 @@ protocol AuthAlertFactory {
       message: String?,
       preferredStyle: UIAlertController.Style
     ) -> AuthAlertController
+
     func createAlertAction(
       title: String?, style: UIAlertAction.Style, handler: ((UIAlertAction) -> Void)?
     ) -> UIAlertAction
