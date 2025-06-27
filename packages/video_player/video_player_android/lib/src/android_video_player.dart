@@ -12,14 +12,14 @@ import 'messages.g.dart';
 import 'platform_view_player.dart';
 
 /// The non-test implementation of `_apiProvider`.
-VideoPlayerInstanceApi _productionApiProvider(int mapId) {
-  return VideoPlayerInstanceApi(messageChannelSuffix: mapId.toString());
+VideoPlayerInstanceApi _productionApiProvider(int playerId) {
+  return VideoPlayerInstanceApi(messageChannelSuffix: playerId.toString());
 }
 
 /// An Android implementation of [VideoPlayerPlatform] that uses the
 /// Pigeon-generated [VideoPlayerApi].
 class AndroidVideoPlayer extends VideoPlayerPlatform {
-  /// Creates a new Android maps implementation instance.
+  /// Creates a new Android video player implementation instance.
   AndroidVideoPlayer({
     @visibleForTesting AndroidVideoPlayerApi? pluginApi,
     @visibleForTesting
@@ -30,7 +30,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   final AndroidVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
   //overridden for testing.
-  final VideoPlayerInstanceApi Function(int mapId) _apiProvider;
+  final VideoPlayerInstanceApi Function(int playerId) _apiProvider;
 
   /// A map that associates player ID with a view state.
   /// This is used to determine which view type to use when building a view.
