@@ -2378,6 +2378,15 @@ if (${varNamePrefix}replyList == null) {
       (cb.ClassBuilder builder) => builder
         ..name = _getProxyApiOverridesClassName(api.name)
         ..annotations.add(cb.refer('visibleForTesting'))
+        ..docs.addAll(<String>[
+          '/// Provides overrides for the constructors, static fields, and static methods',
+          '/// of [${api.name}].',
+          '///',
+          '/// This is only intended to be used with unit tests to prevent errors from',
+          '/// making message calls in a unit test.',
+          '///',
+          '/// See [pigeon_resetAllOverrides] to set all overrides back to null.',
+        ])
         ..fields.addAll(_proxyApiOverridesClassConstructors(api))
         ..fields.addAll(_proxyApiOverridesClassStaticFields(
           api.fields.where((ApiField field) => field.isStatic),
@@ -2482,6 +2491,11 @@ if (${varNamePrefix}replyList == null) {
       builder
         ..name = '${classMemberNamePrefix}resetAllOverrides'
         ..annotations.add(cb.refer('visibleForTesting'))
+        ..docs.addAll(<String>[
+          '/// Sets all overridden ProxyApi class members to null.',
+          '///',
+          '/// Intended to only be used with unit tests.'
+        ])
         ..body = cb.Block.of(<cb.Code>[
           for (final AstProxyApi api in proxyApis)
             for (final Constructor constructor in api.constructors)

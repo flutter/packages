@@ -33,6 +33,9 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
+/// Sets all overridden ProxyApi class members to null.
+///
+/// Intended to only be used with unit tests.
 @visibleForTesting
 void pigeon_resetAllOverrides() {
   PigeonProxyApiTestClassOverrides.new_ = null;
@@ -5339,6 +5342,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 }
 
+/// Provides overrides for the constructors, static fields, and static methods
+/// of [ProxyApiTestClass].
+///
+/// This is only intended to be used with unit tests to prevent errors from
+/// making message calls in a unit test.
+///
+/// See [pigeon_resetAllOverrides] to set all overrides back to null.
 @visibleForTesting
 class PigeonProxyApiTestClassOverrides {
   /// Overrides [ProxyApiTestClass.new].
@@ -5749,6 +5759,13 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
   }
 }
 
+/// Provides overrides for the constructors, static fields, and static methods
+/// of [ProxyApiSuperClass].
+///
+/// This is only intended to be used with unit tests to prevent errors from
+/// making message calls in a unit test.
+///
+/// See [pigeon_resetAllOverrides] to set all overrides back to null.
 @visibleForTesting
 class PigeonProxyApiSuperClassOverrides {
   /// Overrides [ProxyApiSuperClass.new].
@@ -5884,6 +5901,13 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
   }
 }
 
+/// Provides overrides for the constructors, static fields, and static methods
+/// of [ProxyApiInterface].
+///
+/// This is only intended to be used with unit tests to prevent errors from
+/// making message calls in a unit test.
+///
+/// See [pigeon_resetAllOverrides] to set all overrides back to null.
 @visibleForTesting
 class PigeonProxyApiInterfaceOverrides {}
 
@@ -6037,6 +6061,13 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
   }
 }
 
+/// Provides overrides for the constructors, static fields, and static methods
+/// of [ClassWithApiRequirement].
+///
+/// This is only intended to be used with unit tests to prevent errors from
+/// making message calls in a unit test.
+///
+/// See [pigeon_resetAllOverrides] to set all overrides back to null.
 @visibleForTesting
 class PigeonClassWithApiRequirementOverrides {
   /// Overrides [ClassWithApiRequirement.new].
