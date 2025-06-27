@@ -151,4 +151,10 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   {
     return PigeonApiIMAAdPodInfo(pigeonRegistrar: registrar, delegate: AdPodInfoProxyAPIDelegate())
   }
+
+  func pigeonApiIMASettings(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMASettings
+  {
+    return PigeonApiIMASettings(pigeonRegistrar: registrar, delegate: SettingsProxyAPIDelegate())
+  }
 }
