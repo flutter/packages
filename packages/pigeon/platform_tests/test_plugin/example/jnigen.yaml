@@ -22,6 +22,8 @@ classes:
   - 'JniHostTrivialApiRegistrar'
   - 'JniHostSmallApi'
   - 'JniHostSmallApiRegistrar'
+  - 'JniFlutterIntegrationCoreApi'
+  - 'JniFlutterIntegrationCoreApiRegistrar'
   - 'JniUnusedClass'
   - 'JniAllTypes'
   - 'JniAllNullableTypes'
