@@ -2141,6 +2141,16 @@ if (${varNamePrefix}replyList == null) {
   }) sync* {
     for (final Method method in methods) {
       assert(method.location == ApiLocation.host);
+      final Iterable<cb.Parameter> parameters = indexMap(
+        method.parameters,
+        (int index, NamedType parameter) => cb.Parameter(
+          (cb.ParameterBuilder builder) => builder
+            ..name = _getParameterName(index, parameter)
+            ..type = cb.refer(
+              _addGenericTypesNullable(parameter.type),
+            ),
+        ),
+      );
       yield cb.Method(
         (cb.MethodBuilder builder) => builder
           ..name = method.name
@@ -2151,18 +2161,7 @@ if (${varNamePrefix}replyList == null) {
             _docCommentSpec,
           ))
           ..returns = _refer(method.returnType, asFuture: true)
-          ..requiredParameters.addAll(
-            indexMap(
-              method.parameters,
-              (int index, NamedType parameter) => cb.Parameter(
-                (cb.ParameterBuilder builder) => builder
-                  ..name = _getParameterName(index, parameter)
-                  ..type = cb.refer(
-                    _addGenericTypesNullable(parameter.type),
-                  ),
-              ),
-            ),
-          )
+          ..requiredParameters.addAll(parameters)
           ..optionalParameters.addAll(<cb.Parameter>[
             if (method.isStatic) ...<cb.Parameter>[
               cb.Parameter(
@@ -2203,6 +2202,22 @@ if (${varNamePrefix}replyList == null) {
                 returnType: method.returnType,
               );
               builder.statements.addAll(<cb.Code>[
+                if (method.isStatic) ...<cb.Code>[
+                  cb.Code(
+                    'if (${_getProxyApiOverridesClassName(apiName)}.${method.name} != null) {',
+                  ),
+                  cb.CodeExpression(
+                    cb.Code(
+                      '${_getProxyApiOverridesClassName(apiName)}.${method.name}!',
+                    ),
+                  )
+                      .call(parameters.map(
+                        (cb.Parameter parameter) => cb.refer(parameter.name),
+                      ))
+                      .returned
+                      .statement,
+                  const cb.Code('}'),
+                ],
                 if (!method.isStatic)
                   cb.Code('final $codecName $_pigeonChannelCodec =\n'
                       '    $codecInstanceName;')
@@ -2347,32 +2362,6 @@ if (${varNamePrefix}replyList == null) {
           ..named = true
           ..required = !parameter.type.isNullable,
       ),
-    );
-  }
-
-  cb.FunctionType _methodAsFunctionType(
-    Method method, {
-    required String apiName,
-  }) {
-    return cb.FunctionType(
-      (cb.FunctionTypeBuilder builder) => builder
-        ..returnType = _refer(
-          method.returnType,
-          asFuture: method.isAsynchronous,
-        )
-        ..isNullable = !method.isRequired
-        ..requiredParameters.addAll(<cb.Reference>[
-          if (method.location == ApiLocation.flutter)
-            cb.refer('$apiName ${classMemberNamePrefix}instance'),
-          ...indexMap(
-            method.parameters,
-            (int index, NamedType parameter) {
-              return cb.refer(
-                '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
-              );
-            },
-          ),
-        ]),
     );
   }
 
@@ -2613,4 +2602,30 @@ String _posixify(String inputPath) {
 
 String _getProxyApiOverridesClassName(String apiName) {
   return '$proxyApiClassNamePrefix${apiName}Overrides';
+}
+
+cb.FunctionType _methodAsFunctionType(
+  Method method, {
+  required String apiName,
+}) {
+  return cb.FunctionType(
+    (cb.FunctionTypeBuilder builder) => builder
+      ..returnType = _refer(
+        method.returnType,
+        asFuture: method.isAsynchronous,
+      )
+      ..isNullable = !method.isRequired
+      ..requiredParameters.addAll(<cb.Reference>[
+        if (method.location == ApiLocation.flutter)
+          cb.refer('$apiName ${classMemberNamePrefix}instance'),
+        ...indexMap(
+          method.parameters,
+          (int index, NamedType parameter) {
+            return cb.refer(
+              '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
+            );
+          },
+        ),
+      ]),
+  );
 }

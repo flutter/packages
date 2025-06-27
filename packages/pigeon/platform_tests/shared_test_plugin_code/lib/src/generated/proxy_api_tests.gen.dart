@@ -4368,6 +4368,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) async {
+    if (PigeonProxyApiTestClassOverrides.staticNoop != null) {
+      return PigeonProxyApiTestClassOverrides.staticNoop!();
+    }
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
             pigeon_instanceManager ?? PigeonInstanceManager.instance);
@@ -4401,6 +4404,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) async {
+    if (PigeonProxyApiTestClassOverrides.echoStaticString != null) {
+      return PigeonProxyApiTestClassOverrides.echoStaticString!(aString);
+    }
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
             pigeon_instanceManager ?? PigeonInstanceManager.instance);
@@ -4439,6 +4445,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) async {
+    if (PigeonProxyApiTestClassOverrides.staticAsyncNoop != null) {
+      return PigeonProxyApiTestClassOverrides.staticAsyncNoop!();
+    }
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
             pigeon_instanceManager ?? PigeonInstanceManager.instance);
