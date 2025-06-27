@@ -1,3 +1,7 @@
+## 2.8.8
+
+* Restructures the communication between Dart and Java code.
+
 ## 2.8.7
 
 * Adds note about known issue regarding platform views to the README.
