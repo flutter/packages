@@ -81,7 +81,7 @@ enum class AnEnum(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): AnEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return entries.firstOrNull { it.raw == raw }
     }
   }
 }
@@ -91,7 +91,7 @@ enum class AnotherEnum(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): AnotherEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return entries.firstOrNull { it.raw == raw }
     }
   }
 }

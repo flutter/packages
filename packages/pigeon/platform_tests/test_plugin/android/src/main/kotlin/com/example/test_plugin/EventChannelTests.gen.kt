@@ -62,7 +62,7 @@ enum class EventEnum(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): EventEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return entries.firstOrNull { it.raw == raw }
     }
   }
 }
@@ -72,7 +72,7 @@ enum class AnotherEventEnum(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): AnotherEventEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return entries.firstOrNull { it.raw == raw }
     }
   }
 }

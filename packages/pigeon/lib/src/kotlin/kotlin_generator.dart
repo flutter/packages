@@ -273,7 +273,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       indent.addScoped('{', '}', () {
         indent.write('fun ofRaw(raw: Int): ${anEnum.name}? ');
         indent.addScoped('{', '}', () {
-          indent.writeln('return values().firstOrNull { it.raw == raw }');
+          indent.writeln('return entries.firstOrNull { it.raw == raw }');
         });
       });
     });
@@ -649,6 +649,42 @@ if (wrapped == null) {
     });
   }
 
+  void _writeJniFlutterApi(
+    InternalKotlinOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstFlutterApi api, {
+    required String dartPackageName,
+  }) {
+    indent.format('''
+val registered${api.name}: MutableMap<String, ${api.name}> = mutableMapOf()
+class ${api.name}Registrar() {
+  /// Map that stores instances
+
+  fun registerInstance(api: ${api.name}, name: String = defaultInstanceName) {
+    registered${api.name}[name] = api
+  }
+
+  fun getInstance(name: String = defaultInstanceName): ${api.name}? {
+    return registered${api.name}[name]
+  }
+}
+''');
+    indent.writeScoped('interface ${api.name} {', '}', () {
+      for (final Method method in api.methods) {
+        _writeMethodDeclaration(
+          indent,
+          name: method.name,
+          documentationComments: method.documentationComments,
+          returnType: method.returnType,
+          parameters: method.parameters,
+          isAsynchronous: method.isAsynchronous,
+          useJni: true,
+        );
+      }
+    });
+  }
+
   /// Writes the code for a flutter [Api], [api].
   /// Example:
   /// class Foo(private val binaryMessenger: BinaryMessenger) {
@@ -667,7 +703,11 @@ if (wrapped == null) {
     ];
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedMessages);
-
+    if (generatorOptions.useJni) {
+      _writeJniFlutterApi(generatorOptions, root, indent, api,
+          dartPackageName: dartPackageName);
+      return;
+    }
     final String apiName = api.name;
     indent.write(
         'class $apiName(private val binaryMessenger: BinaryMessenger, private val messageChannelSuffix: String = "") ');
@@ -715,7 +755,7 @@ if (wrapped == null) {
     });
   }
 
-  void _writeJniApi(
+  void _writeJniHostApi(
     InternalKotlinOptions generatorOptions,
     Root root,
     Indent indent,
@@ -746,8 +786,7 @@ if (wrapped == null) {
 
       indent.writeScoped('fun register(', '):', () {
         indent.writeln('api: ${api.name},');
-        indent.writeln(
-            'name: String = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"');
+        indent.writeln('name: String = defaultInstanceName');
       }, addTrailingNewline: false);
       indent.writeScoped(' ${api.name}Registrar {', '}', () {
         indent.writeln('this.api = api');
@@ -813,7 +852,7 @@ if (wrapped == null) {
     required String dartPackageName,
   }) {
     if (generatorOptions.useJni) {
-      _writeJniApi(generatorOptions, root, indent, api,
+      _writeJniHostApi(generatorOptions, root, indent, api,
           dartPackageName: dartPackageName);
       return;
     }
@@ -1425,6 +1464,10 @@ private fun deepEquals${generatorOptions.fileSpecificClassNameComponent}(a: Any?
         root.classes.any((Class dataClass) => dataClass.fields
             .any((NamedType field) => isCollectionType(field.type)))) {
       _writeDeepEquals(generatorOptions, indent);
+    }
+    if (generatorOptions.useJni) {
+      indent.writeln(
+          'const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"');
     }
   }
 

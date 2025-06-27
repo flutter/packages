@@ -65,7 +65,7 @@ class JnigenYamlGenerator extends Generator<InternalJnigenYamlOptions> {
       ''');
     indent.writeScoped('classes:', '', () {
       for (final Api api in root.apis) {
-        if (api is AstHostApi) {
+        if (api is AstHostApi || api is AstFlutterApi) {
           indent.writeln("- '${api.name}'");
           indent.writeln("- '${api.name}Registrar'");
         }

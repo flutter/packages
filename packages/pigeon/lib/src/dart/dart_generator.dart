@@ -380,6 +380,22 @@ class _JniType {
   }
 }
 
+String _jniArgumentsToDartArguments(
+  List<Parameter> parameters, {
+  bool isAsynchronous = false,
+}) {
+  final List<String> argumentSignature = <String>[];
+  for (final Parameter parameter in parameters) {
+    final _JniType jniType = _JniType.fromTypeDeclaration(parameter.type);
+    argumentSignature.add(jniType.getToDartCall(
+      parameter.type,
+      varName: parameter.name,
+      forceConversion: isAsynchronous,
+    ));
+  }
+  return argumentSignature.join(', ');
+}
+
 String _getNullableSymbol(bool nullable) => nullable ? '?' : '';
 
 String _getForceNonNullSymbol(bool force) => force ? '!' : '';
@@ -452,6 +468,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     indent.writeln("import 'dart:async';");
+    if (generatorOptions.useJni) {
+      indent.writeln("import 'dart:io' show Platform;");
+    }
     indent.writeln(
       "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
     );
@@ -742,12 +761,6 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
-    if (generatorOptions.useJni &&
-        !root.containsProxyApi &&
-        !root.containsEventChannel &&
-        !root.containsFlutterApi) {
-      return;
-    }
     void writeEncodeLogic(
         EnumeratedType customType, int nonSerializedClassCount) {
       indent.writeScoped('else if (value is ${customType.name}) {', '}', () {
@@ -858,6 +871,79 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     }
   }
 
+  void _writeJniFlutterApi(
+    InternalDartOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstFlutterApi api, {
+    required String dartPackageName,
+  }) {
+    indent.writeScoped(
+        'final class ${api.name}Registrar with bridge.\$${api.name} {', '}',
+        () {
+      indent.writeln('${api.name}? dartApi;');
+      indent.newln();
+      indent.writeScoped('${api.name} register(', ') ', () {
+        indent.writeScoped('${api.name} api, {', '}', () {
+          indent.writeln('String name = defaultInstanceName,');
+        }, nestCount: 0);
+      }, addTrailingNewline: false);
+      indent.addScoped('{', '}', () {
+        indent.format('''
+    dartApi = api;
+    final bridge.${api.name} impl =
+        bridge.${api.name}.implement(this);
+    bridge.${api.name}Registrar()
+        .registerInstance(impl, JString.fromString(name));
+    return api;
+  ''');
+      });
+
+      for (final Method method in api.methods) {
+        final _JniType jniReturnType =
+            _JniType.fromTypeDeclaration(method.returnType);
+        indent.newln();
+        indent.writeln('@override');
+        String signature = method.isAsynchronous
+            ? 'JObject'
+            : jniReturnType.getJniCallReturnType(false);
+        signature += ' ${method.name}(';
+        signature +=
+            _getMethodParameterSignature(method.parameters, useJni: true);
+        signature += method.isAsynchronous
+            ? '${method.parameters.isNotEmpty ? ', ' : ''}JObject continuation'
+            : '';
+        signature += ')';
+        indent.writeScoped('$signature {', '}', () {
+          indent.writeScoped('if (dartApi != null) {', '} ', () {
+            final String methodCall =
+                'dartApi!.${method.name}(${_jniArgumentsToDartArguments(method.parameters, isAsynchronous: method.isAsynchronous)})';
+            if (method.returnType.isVoid) {
+              if (method.isAsynchronous) {
+                indent.writeln('$methodCall;');
+                indent.writeln('return continuation;');
+              } else {
+                indent.writeln('return $methodCall;');
+              }
+            } else {
+              final _JniType returnType =
+                  _JniType.fromTypeDeclaration(method.returnType);
+              indent.writeln(
+                  'final ${jniReturnType.type.getFullName()} response = $methodCall;');
+              indent.writeln(
+                  'return ${returnType.getToJniCall(method.returnType, 'response', returnType)};');
+            }
+          });
+          indent.writeScoped('else {', '}', () {
+            indent.writeln(
+                "throw ArgumentError('${api.name} was not registered.');");
+          });
+        });
+        if (method.isAsynchronous && method.returnType.isVoid) {}
+      }
+    });
+  }
+
   /// Writes the code for host [Api], [api].
   /// Example:
   /// class FooCodec extends StandardMessageCodec {...}
@@ -880,6 +966,15 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.newln();
     addDocumentationComments(
         indent, api.documentationComments, _docCommentSpec);
+    if (generatorOptions.useJni) {
+      _writeJniFlutterApi(
+        generatorOptions,
+        root,
+        indent,
+        api,
+        dartPackageName: dartPackageName,
+      );
+    }
 
     indent.write('abstract class ${api.name} ');
     indent.addScoped('{', '}', () {
@@ -903,9 +998,22 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         indent.writeln('$returnType ${func.name}($argSignature);');
         indent.newln();
       }
-      indent.write(
-          "static void setUp(${api.name}? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) ");
+      indent.format('''
+            static void setUp(${api.name}? api, {
+              BinaryMessenger? binaryMessenger, 
+              String messageChannelSuffix = '',
+            }) ''');
+
       indent.addScoped('{', '}', () {
+        if (generatorOptions.useJni) {
+          indent.format('''
+            if (Platform.isAndroid && api != null) {
+              ${api.name}Registrar().register(api, name: messageChannelSuffix.isEmpty
+                  ? defaultInstanceName
+                  : messageChannelSuffix);
+            }
+            ''');
+        }
         indent.writeln(
             r"messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';");
 
@@ -938,15 +1046,15 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         dartPackageName: dartPackageName);
   }
 
-  void _writeJniApi(
+  void _writeJniHostApi(
     InternalDartOptions generatorOptions,
     Root root,
     Indent indent,
     AstHostApi api, {
     required String dartPackageName,
   }) {
-    final String dartApiName = api.name;
-    final String jniApiRegistrarName = 'bridge.${dartApiName}Registrar';
+    final String dartApiName = '${api.name}ForAndroid';
+    final String jniApiRegistrarName = 'bridge.${api.name}Registrar';
     indent.newln();
     indent.writeScoped('class $dartApiName {', '}', () {
       indent.format('''
@@ -1040,9 +1148,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     if (generatorOptions.useJni) {
-      _writeJniApi(generatorOptions, root, indent, api,
+      _writeJniHostApi(generatorOptions, root, indent, api,
           dartPackageName: dartPackageName);
-      return;
     }
     indent.newln();
     bool first = true;
@@ -1051,20 +1158,61 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.write('class ${api.name} ');
     indent.addScoped('{', '}', () {
       indent.format('''
-/// Constructor for [${api.name}].  The [binaryMessenger] named argument is
-/// available for dependency injection.  If it is left null, the default
+/// Constructor for [${api.name}]. The [binaryMessenger] named argument is
+/// available for dependency injection. If it is left null, the default
 /// BinaryMessenger will be used which routes to the host platform.
-${api.name}({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+${api.name}({
+    BinaryMessenger? binaryMessenger, 
+    String messageChannelSuffix = '', 
+    ${generatorOptions.useJni ? '${api.name}ForAndroid? jniApi,\n' : ''}})
     : ${varNamePrefix}binaryMessenger = binaryMessenger,
-      ${varNamePrefix}messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.\$messageChannelSuffix' : '';
-final BinaryMessenger? ${varNamePrefix}binaryMessenger;
+      ${varNamePrefix}messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.\$messageChannelSuffix' : ''${generatorOptions.useJni ? ',\n_jniApi = jniApi;\n' : ';'}
 ''');
 
+      if (generatorOptions.useJni) {
+        indent.format('''
+  /// Creates an instance of [${api.name}] that requests an instance of
+  /// [${api.name}ForAndroid] from the host platform with a matching instance name
+  /// to [messageChannelSuffix] or the default instance.
+  ///
+  /// Throws [ArgumentError] if no matching instance can be found.
+  factory ${api.name}.createWithJniApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    ${api.name}ForAndroid? jniApi;
+    String jniApiInstanceName = '';
+    if (Platform.isAndroid) {
+      if (messageChannelSuffix.isEmpty) {
+        jniApi = ${api.name}ForAndroid.getInstance();
+      } else {
+        jniApiInstanceName = messageChannelSuffix;
+        jniApi = ${api.name}ForAndroid.getInstance(
+            channelName: messageChannelSuffix);
+      }
+    }
+    if (jniApi == null) {
+      throw ArgumentError(
+          'No ${api.name} instance with \${jniApiInstanceName.isEmpty ? 'no ' : ''} instance name \${jniApiInstanceName.isNotEmpty ? '"\$jniApiInstanceName"' : ''} "\$jniApiInstanceName "}found.');
+    }
+    return ${api.name}(
+      binaryMessenger: binaryMessenger,
+      messageChannelSuffix: messageChannelSuffix,
+      jniApi: jniApi,
+    );
+  }
+  ''');
+      }
+
+      indent.writeln('final BinaryMessenger? ${varNamePrefix}binaryMessenger;');
       indent.writeln(
           'static const MessageCodec<Object?> $_pigeonChannelCodec = $_pigeonMessageCodec();');
       indent.newln();
       indent.writeln('final String $_suffixVarName;');
       indent.newln();
+      if (generatorOptions.useJni) {
+        indent.writeln('final ${api.name}ForAndroid? _jniApi;');
+      }
       for (final Method func in api.methods) {
         if (!first) {
           indent.newln();
@@ -1079,6 +1227,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           documentationComments: func.documentationComments,
           channelName: makeChannelName(api, func, dartPackageName),
           addSuffixVariable: true,
+          useJni: generatorOptions.useJni,
         );
       }
     });
@@ -1539,8 +1688,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    if ((root.containsHostApi && !generatorOptions.useJni) ||
-        root.containsProxyApi) {
+    if (root.containsHostApi || root.containsProxyApi) {
       _writeCreateConnectionError(indent);
     }
     if (root.containsFlutterApi ||
@@ -1890,6 +2038,7 @@ if (wrapped == null) {
     required List<String> documentationComments,
     required String channelName,
     required bool addSuffixVariable,
+    bool useJni = false,
   }) {
     addDocumentationComments(indent, documentationComments, _docCommentSpec);
     final String argSignature = _getMethodParameterSignature(parameters);
@@ -1897,6 +2046,14 @@ if (wrapped == null) {
       'Future<${_addGenericTypesNullable(returnType)}> $name($argSignature) async ',
     );
     indent.addScoped('{', '}', () {
+      if (useJni) {
+        indent.writeScoped('if (Platform.isAndroid && _jniApi != null) {', '}',
+            () {
+          indent.writeln('return _jniApi.$name(${parameters.map(
+                (Parameter e) => '${e.isNamed ? '${e.name}: ' : ''}${e.name}',
+              ).join(', ')});');
+        });
+      }
       _writeHostMethodMessageCall(
         indent,
         channelName: channelName,
@@ -2955,15 +3112,41 @@ String _getSafeArgumentName(int count, NamedType field) =>
 String _getParameterName(int count, NamedType field) =>
     field.name.isEmpty ? 'arg$count' : field.name;
 
+String _getJniMethodParameterSignature(
+  Iterable<Parameter> parameters, {
+  bool addTrailingComma = false,
+  bool isAsynchronous = false,
+}) {
+  String signature = '';
+  if (parameters.isEmpty) {
+    return signature;
+  }
+  for (final Parameter parameter in parameters) {
+    _JniType jniType = _JniType.fromTypeDeclaration(parameter.type);
+    signature +=
+        '${jniType.getJniCallReturnType(isAsynchronous)} ${parameter.name}${addTrailingComma || parameters.length > 1 ? ',' : ''}';
+  }
+  return signature;
+}
+
 /// Generates the parameters code for [func]
 /// Example: (func, _getParameterName) -> 'String? foo, int bar'
 String _getMethodParameterSignature(
   Iterable<Parameter> parameters, {
   bool addTrailingComma = false,
+  bool useJni = false,
+  bool isAsynchronous = false,
 }) {
   String signature = '';
   if (parameters.isEmpty) {
     return signature;
+  }
+  if (useJni) {
+    return _getJniMethodParameterSignature(
+      parameters,
+      addTrailingComma: addTrailingComma,
+      isAsynchronous: isAsynchronous,
+    );
   }
 
   final List<Parameter> requiredPositionalParams = parameters

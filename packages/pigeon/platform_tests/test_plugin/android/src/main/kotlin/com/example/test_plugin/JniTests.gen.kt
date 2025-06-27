@@ -7,6 +7,14 @@
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
 import androidx.annotation.Keep
+import io.flutter.plugin.common.StandardMessageCodec
+import java.io.ByteArrayOutputStream
+import java.nio.ByteBuffer
+
+private fun createConnectionError(channelName: String): JniTestsError {
+  return JniTestsError(
+      "channel-error", "Unable to establish connection on channel: '$channelName'.", "")
+}
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
@@ -44,6 +52,8 @@ private fun deepEqualsJniTests(a: Any?, b: Any?): Boolean {
   return a == b
 }
 
+const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+
 enum class JniAnEnum(val raw: Int) {
   ONE(0),
   TWO(1),
@@ -53,7 +63,7 @@ enum class JniAnEnum(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): JniAnEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return entries.firstOrNull { it.raw == raw }
     }
   }
 }
@@ -63,7 +73,7 @@ enum class JniAnotherEnum(val raw: Int) {
 
   companion object {
     fun ofRaw(raw: Int): JniAnotherEnum? {
-      return values().firstOrNull { it.raw == raw }
+      return entries.firstOrNull { it.raw == raw }
     }
   }
 }
@@ -692,6 +702,71 @@ data class JniAllClassesWrapper(
   override fun hashCode(): Int = toList().hashCode()
 }
 
+private open class JniTestsPigeonCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      129.toByte() -> {
+        return (readValue(buffer) as Long?)?.let { JniAnEnum.ofRaw(it.toInt()) }
+      }
+      130.toByte() -> {
+        return (readValue(buffer) as Long?)?.let { JniAnotherEnum.ofRaw(it.toInt()) }
+      }
+      131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { JniUnusedClass.fromList(it) }
+      }
+      132.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { JniAllTypes.fromList(it) }
+      }
+      133.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { JniAllNullableTypes.fromList(it) }
+      }
+      134.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          JniAllNullableTypesWithoutRecursion.fromList(it)
+        }
+      }
+      135.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let { JniAllClassesWrapper.fromList(it) }
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
+    when (value) {
+      is JniAnEnum -> {
+        stream.write(129)
+        writeValue(stream, value.raw)
+      }
+      is JniAnotherEnum -> {
+        stream.write(130)
+        writeValue(stream, value.raw)
+      }
+      is JniUnusedClass -> {
+        stream.write(131)
+        writeValue(stream, value.toList())
+      }
+      is JniAllTypes -> {
+        stream.write(132)
+        writeValue(stream, value.toList())
+      }
+      is JniAllNullableTypes -> {
+        stream.write(133)
+        writeValue(stream, value.toList())
+      }
+      is JniAllNullableTypesWithoutRecursion -> {
+        stream.write(134)
+        writeValue(stream, value.toList())
+      }
+      is JniAllClassesWrapper -> {
+        stream.write(135)
+        writeValue(stream, value.toList())
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+
 val JniHostIntegrationCoreApiInstances: MutableMap<String, JniHostIntegrationCoreApiRegistrar> =
     mutableMapOf()
 
@@ -972,6 +1047,146 @@ abstract class JniHostIntegrationCoreApi {
   abstract suspend fun echoAsyncNullableEnum(anEnum: JniAnEnum?): JniAnEnum?
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAnotherAsyncNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum?
+
+  abstract fun callFlutterNoop()
+
+  abstract fun callFlutterThrowError(): Any?
+
+  abstract fun callFlutterThrowErrorFromVoid()
+
+  abstract fun callFlutterEchoJniAllTypes(everything: JniAllTypes): JniAllTypes
+
+  abstract fun callFlutterEchoJniAllNullableTypes(
+      everything: JniAllNullableTypes?
+  ): JniAllNullableTypes?
+
+  abstract fun callFlutterSendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypes
+
+  abstract fun callFlutterEchoJniAllNullableTypesWithoutRecursion(
+      everything: JniAllNullableTypesWithoutRecursion?
+  ): JniAllNullableTypesWithoutRecursion?
+
+  abstract fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypesWithoutRecursion
+
+  abstract fun callFlutterEchoBool(aBool: Boolean): Boolean
+
+  abstract fun callFlutterEchoInt(anInt: Long): Long
+
+  abstract fun callFlutterEchoDouble(aDouble: Double): Double
+
+  abstract fun callFlutterEchoString(aString: String): String
+
+  abstract fun callFlutterEchoUint8List(list: ByteArray): ByteArray
+
+  abstract fun callFlutterEchoList(list: List<Any?>): List<Any?>
+
+  abstract fun callFlutterEchoEnumList(enumList: List<JniAnEnum?>): List<JniAnEnum?>
+
+  abstract fun callFlutterEchoClassList(
+      classList: List<JniAllNullableTypes?>
+  ): List<JniAllNullableTypes?>
+
+  abstract fun callFlutterEchoNonNullEnumList(enumList: List<JniAnEnum>): List<JniAnEnum>
+
+  abstract fun callFlutterEchoNonNullClassList(
+      classList: List<JniAllNullableTypes>
+  ): List<JniAllNullableTypes>
+
+  abstract fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+
+  abstract fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+
+  abstract fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+
+  abstract fun callFlutterEchoEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>
+  ): Map<JniAnEnum?, JniAnEnum?>
+
+  abstract fun callFlutterEchoClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>
+  ): Map<Long?, JniAllNullableTypes?>
+
+  abstract fun callFlutterEchoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
+
+  abstract fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
+
+  abstract fun callFlutterEchoNonNullEnumMap(
+      enumMap: Map<JniAnEnum, JniAnEnum>
+  ): Map<JniAnEnum, JniAnEnum>
+
+  abstract fun callFlutterEchoNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>
+  ): Map<Long, JniAllNullableTypes>
+
+  abstract fun callFlutterEchoEnum(anEnum: JniAnEnum): JniAnEnum
+
+  abstract fun callFlutterEchoJniAnotherEnum(anotherEnum: JniAnotherEnum): JniAnotherEnum
+
+  abstract fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean?
+
+  abstract fun callFlutterEchoNullableInt(anInt: Long?): Long?
+
+  abstract fun callFlutterEchoNullableDouble(aDouble: Double?): Double?
+
+  abstract fun callFlutterEchoNullableString(aString: String?): String?
+
+  abstract fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray?
+
+  abstract fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>?
+
+  abstract fun callFlutterEchoNullableEnumList(enumList: List<JniAnEnum?>?): List<JniAnEnum?>?
+
+  abstract fun callFlutterEchoNullableClassList(
+      classList: List<JniAllNullableTypes?>?
+  ): List<JniAllNullableTypes?>?
+
+  abstract fun callFlutterEchoNullableNonNullEnumList(enumList: List<JniAnEnum>?): List<JniAnEnum>?
+
+  abstract fun callFlutterEchoNullableNonNullClassList(
+      classList: List<JniAllNullableTypes>?
+  ): List<JniAllNullableTypes>?
+
+  abstract fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+
+  abstract fun callFlutterEchoNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>?
+
+  abstract fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
+
+  abstract fun callFlutterEchoNullableEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>?
+  ): Map<JniAnEnum?, JniAnEnum?>?
+
+  abstract fun callFlutterEchoNullableClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>?
+  ): Map<Long?, JniAllNullableTypes?>?
+
+  abstract fun callFlutterEchoNullableNonNullStringMap(
+      stringMap: Map<String, String>?
+  ): Map<String, String>?
+
+  abstract fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
+
+  abstract fun callFlutterEchoNullableNonNullEnumMap(
+      enumMap: Map<JniAnEnum, JniAnEnum>?
+  ): Map<JniAnEnum, JniAnEnum>?
+
+  abstract fun callFlutterEchoNullableNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>?
+  ): Map<Long, JniAllNullableTypes>?
+
+  abstract fun callFlutterEchoNullableEnum(anEnum: JniAnEnum?): JniAnEnum?
+
+  abstract fun callFlutterEchoAnotherNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum?
 }
 
 @Keep
@@ -980,7 +1195,7 @@ class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
 
   fun register(
       api: JniHostIntegrationCoreApi,
-      name: String = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+      name: String = defaultInstanceName
   ): JniHostIntegrationCoreApiRegistrar {
     this.api = api
     JniHostIntegrationCoreApiInstances[name] = this
@@ -2277,6 +2492,602 @@ class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
     }
     error("JniHostIntegrationCoreApi has not been set")
   }
+
+  override fun callFlutterNoop() {
+    api?.let {
+      try {
+        return api!!.callFlutterNoop()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterThrowError(): Any? {
+    api?.let {
+      try {
+        return api!!.callFlutterThrowError()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterThrowErrorFromVoid() {
+    api?.let {
+      try {
+        return api!!.callFlutterThrowErrorFromVoid()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoJniAllTypes(everything: JniAllTypes): JniAllTypes {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoJniAllTypes(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoJniAllNullableTypes(
+      everything: JniAllNullableTypes?
+  ): JniAllNullableTypes? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoJniAllNullableTypes(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterSendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypes {
+    api?.let {
+      try {
+        return api!!.callFlutterSendMultipleNullableTypes(
+            aNullableBool, aNullableInt, aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoJniAllNullableTypesWithoutRecursion(
+      everything: JniAllNullableTypesWithoutRecursion?
+  ): JniAllNullableTypesWithoutRecursion? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoJniAllNullableTypesWithoutRecursion(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterSendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypesWithoutRecursion {
+    api?.let {
+      try {
+        return api!!.callFlutterSendMultipleNullableTypesWithoutRecursion(
+            aNullableBool, aNullableInt, aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoBool(aBool: Boolean): Boolean {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoBool(aBool)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoInt(anInt: Long): Long {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoInt(anInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoDouble(aDouble: Double): Double {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoDouble(aDouble)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoString(aString: String): String {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoUint8List(list: ByteArray): ByteArray {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoUint8List(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoList(list: List<Any?>): List<Any?> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoEnumList(enumList: List<JniAnEnum?>): List<JniAnEnum?> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoClassList(
+      classList: List<JniAllNullableTypes?>
+  ): List<JniAllNullableTypes?> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNonNullEnumList(enumList: List<JniAnEnum>): List<JniAnEnum> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNonNullEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNonNullClassList(
+      classList: List<JniAllNullableTypes>
+  ): List<JniAllNullableTypes> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNonNullClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>
+  ): Map<JniAnEnum?, JniAnEnum?> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>
+  ): Map<Long?, JniAllNullableTypes?> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNonNullStringMap(
+      stringMap: Map<String, String>
+  ): Map<String, String> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNonNullStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNonNullIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNonNullEnumMap(
+      enumMap: Map<JniAnEnum, JniAnEnum>
+  ): Map<JniAnEnum, JniAnEnum> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNonNullEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>
+  ): Map<Long, JniAllNullableTypes> {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNonNullClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoEnum(anEnum: JniAnEnum): JniAnEnum {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoJniAnotherEnum(anotherEnum: JniAnotherEnum): JniAnotherEnum {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoJniAnotherEnum(anotherEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableBool(aBool: Boolean?): Boolean? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableBool(aBool)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableInt(anInt: Long?): Long? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableInt(anInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableDouble(aDouble: Double?): Double? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableDouble(aDouble)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableString(aString: String?): String? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableUint8List(list: ByteArray?): ByteArray? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableUint8List(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableList(list: List<Any?>?): List<Any?>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableEnumList(enumList: List<JniAnEnum?>?): List<JniAnEnum?>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableClassList(
+      classList: List<JniAllNullableTypes?>?
+  ): List<JniAllNullableTypes?>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableNonNullEnumList(
+      enumList: List<JniAnEnum>?
+  ): List<JniAnEnum>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableNonNullEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableNonNullClassList(
+      classList: List<JniAllNullableTypes>?
+  ): List<JniAllNullableTypes>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableNonNullClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableEnumMap(
+      enumMap: Map<JniAnEnum?, JniAnEnum?>?
+  ): Map<JniAnEnum?, JniAnEnum?>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>?
+  ): Map<Long?, JniAllNullableTypes?>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableNonNullStringMap(
+      stringMap: Map<String, String>?
+  ): Map<String, String>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableNonNullStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableNonNullIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableNonNullEnumMap(
+      enumMap: Map<JniAnEnum, JniAnEnum>?
+  ): Map<JniAnEnum, JniAnEnum>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableNonNullEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>?
+  ): Map<Long, JniAllNullableTypes>? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableNonNullClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoNullableEnum(anEnum: JniAnEnum?): JniAnEnum? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoNullableEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun callFlutterEchoAnotherNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum? {
+    api?.let {
+      try {
+        return api!!.callFlutterEchoAnotherNullableEnum(anotherEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
 }
 
 val JniHostTrivialApiInstances: MutableMap<String, JniHostTrivialApiRegistrar> = mutableMapOf()
@@ -2292,7 +3103,7 @@ class JniHostTrivialApiRegistrar : JniHostTrivialApi() {
 
   fun register(
       api: JniHostTrivialApi,
-      name: String = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+      name: String = defaultInstanceName
   ): JniHostTrivialApiRegistrar {
     this.api = api
     JniHostTrivialApiInstances[name] = this
@@ -2329,10 +3140,7 @@ abstract class JniHostSmallApi {
 class JniHostSmallApiRegistrar : JniHostSmallApi() {
   var api: JniHostSmallApi? = null
 
-  fun register(
-      api: JniHostSmallApi,
-      name: String = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-  ): JniHostSmallApiRegistrar {
+  fun register(api: JniHostSmallApi, name: String = defaultInstanceName): JniHostSmallApiRegistrar {
     this.api = api
     JniHostSmallApiInstances[name] = this
     return this
@@ -2364,4 +3172,151 @@ class JniHostSmallApiRegistrar : JniHostSmallApi() {
     }
     error("JniHostSmallApi has not been set")
   }
+}
+/**
+ * The core interface that the Dart platform_test code implements for host integration tests to call
+ * into.
+ *
+ * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
+ */
+val registeredJniFlutterIntegrationCoreApi: MutableMap<String, JniFlutterIntegrationCoreApi> =
+    mutableMapOf()
+
+class JniFlutterIntegrationCoreApiRegistrar() {
+  /// Map that stores instances
+
+  fun registerInstance(api: JniFlutterIntegrationCoreApi, name: String = defaultInstanceName) {
+    registeredJniFlutterIntegrationCoreApi[name] = api
+  }
+
+  fun getInstance(name: String = defaultInstanceName): JniFlutterIntegrationCoreApi? {
+    return registeredJniFlutterIntegrationCoreApi[name]
+  }
+}
+
+interface JniFlutterIntegrationCoreApi {
+  /** A no-op function taking no arguments and returning no value, to sanity test basic calling. */
+  fun noop()
+  /** Responds with an error from an async function returning a value. */
+  fun throwError(): Any?
+  /** Responds with an error from an async void function. */
+  fun throwErrorFromVoid()
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoJniAllTypes(everything: JniAllTypes): JniAllTypes
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoJniAllNullableTypes(everything: JniAllNullableTypes?): JniAllNullableTypes?
+  /**
+   * Returns passed in arguments of multiple types.
+   *
+   * Tests multiple-arity FlutterApi handling.
+   */
+  fun sendMultipleNullableTypes(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypes
+  /** Returns the passed object, to test serialization and deserialization. */
+  fun echoJniAllNullableTypesWithoutRecursion(
+      everything: JniAllNullableTypesWithoutRecursion?
+  ): JniAllNullableTypesWithoutRecursion?
+  /**
+   * Returns passed in arguments of multiple types.
+   *
+   * Tests multiple-arity FlutterApi handling.
+   */
+  fun sendMultipleNullableTypesWithoutRecursion(
+      aNullableBool: Boolean?,
+      aNullableInt: Long?,
+      aNullableString: String?
+  ): JniAllNullableTypesWithoutRecursion
+  /** Returns the passed boolean, to test serialization and deserialization. */
+  fun echoBool(aBool: Boolean): Boolean
+  /** Returns the passed int, to test serialization and deserialization. */
+  fun echoInt(anInt: Long): Long
+  /** Returns the passed double, to test serialization and deserialization. */
+  fun echoDouble(aDouble: Double): Double
+  /** Returns the passed string, to test serialization and deserialization. */
+  fun echoString(aString: String): String
+  /** Returns the passed byte list, to test serialization and deserialization. */
+  fun echoUint8List(list: ByteArray): ByteArray
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoList(list: List<Any?>): List<Any?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoEnumList(enumList: List<JniAnEnum?>): List<JniAnEnum?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoClassList(classList: List<JniAllNullableTypes?>): List<JniAllNullableTypes?>
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNonNullEnumList(enumList: List<JniAnEnum>): List<JniAnEnum>
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNonNullClassList(classList: List<JniAllNullableTypes>): List<JniAllNullableTypes>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoEnumMap(enumMap: Map<JniAnEnum?, JniAnEnum?>): Map<JniAnEnum?, JniAnEnum?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoClassMap(classMap: Map<Long?, JniAllNullableTypes?>): Map<Long?, JniAllNullableTypes?>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNonNullStringMap(stringMap: Map<String, String>): Map<String, String>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNonNullIntMap(intMap: Map<Long, Long>): Map<Long, Long>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNonNullEnumMap(enumMap: Map<JniAnEnum, JniAnEnum>): Map<JniAnEnum, JniAnEnum>
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNonNullClassMap(classMap: Map<Long, JniAllNullableTypes>): Map<Long, JniAllNullableTypes>
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoEnum(anEnum: JniAnEnum): JniAnEnum
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoJniAnotherEnum(anotherEnum: JniAnotherEnum): JniAnotherEnum
+  /** Returns the passed boolean, to test serialization and deserialization. */
+  fun echoNullableBool(aBool: Boolean?): Boolean?
+  /** Returns the passed int, to test serialization and deserialization. */
+  fun echoNullableInt(anInt: Long?): Long?
+  /** Returns the passed double, to test serialization and deserialization. */
+  fun echoNullableDouble(aDouble: Double?): Double?
+  /** Returns the passed string, to test serialization and deserialization. */
+  fun echoNullableString(aString: String?): String?
+  /** Returns the passed byte list, to test serialization and deserialization. */
+  fun echoNullableUint8List(list: ByteArray?): ByteArray?
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNullableList(list: List<Any?>?): List<Any?>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNullableEnumList(enumList: List<JniAnEnum?>?): List<JniAnEnum?>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNullableClassList(classList: List<JniAllNullableTypes?>?): List<JniAllNullableTypes?>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNullableNonNullEnumList(enumList: List<JniAnEnum>?): List<JniAnEnum>?
+  /** Returns the passed list, to test serialization and deserialization. */
+  fun echoNullableNonNullClassList(
+      classList: List<JniAllNullableTypes>?
+  ): List<JniAllNullableTypes>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableStringMap(stringMap: Map<String?, String?>?): Map<String?, String?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableEnumMap(enumMap: Map<JniAnEnum?, JniAnEnum?>?): Map<JniAnEnum?, JniAnEnum?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableClassMap(
+      classMap: Map<Long?, JniAllNullableTypes?>?
+  ): Map<Long?, JniAllNullableTypes?>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableNonNullStringMap(stringMap: Map<String, String>?): Map<String, String>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableNonNullIntMap(intMap: Map<Long, Long>?): Map<Long, Long>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableNonNullEnumMap(enumMap: Map<JniAnEnum, JniAnEnum>?): Map<JniAnEnum, JniAnEnum>?
+  /** Returns the passed map, to test serialization and deserialization. */
+  fun echoNullableNonNullClassMap(
+      classMap: Map<Long, JniAllNullableTypes>?
+  ): Map<Long, JniAllNullableTypes>?
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoNullableEnum(anEnum: JniAnEnum?): JniAnEnum?
+  /** Returns the passed enum to test serialization and deserialization. */
+  fun echoAnotherNullableEnum(anotherEnum: JniAnotherEnum?): JniAnotherEnum?
 }
