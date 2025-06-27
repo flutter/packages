@@ -939,6 +939,10 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ))
         ..fields.addAll(_proxyApiInterfaceApiFields(api.apisOfInterfaces()))
         ..fields.addAll(_proxyApiAttachedFields(api.attachedFields))
+        ..methods.addAll(_proxyApiStaticAttachedFieldsGetters(
+          api.attachedFields.where((ApiField field) => field.isStatic),
+          apiName: api.name,
+        ))
         ..methods.add(
           _proxyApiSetUpMessageHandlerMethod(
             flutterMethods: api.flutterMethods,
@@ -1767,6 +1771,38 @@ if (${varNamePrefix}replyList == null) {
     }
   }
 
+  /// Converts static attached Fields from the pigeon AST to `code_builder`
+  /// Method.
+  ///
+  /// Static attached fields return an overrideable test value or returns the
+  /// private static instance.
+  ///
+  /// Example Output:
+  ///
+  /// ```dart
+  /// static MyClass get instance => PigeonMyClassOverrides.instance ?? _instance;
+  /// ```
+  Iterable<cb.Method> _proxyApiStaticAttachedFieldsGetters(
+    Iterable<ApiField> fields, {
+    required String apiName,
+  }) sync* {
+    for (final ApiField field in fields) {
+      yield cb.Method((cb.MethodBuilder builder) => builder
+        ..name = field.name
+        ..type = cb.MethodType.getter
+        ..static = true
+        ..returns = cb.refer(_addGenericTypesNullable(field.type))
+        ..docs.addAll(asDocumentationComments(
+          field.documentationComments,
+          _docCommentSpec,
+        ))
+        ..lambda = true
+        ..body = cb.Code(
+          '${_getProxyApiOverridesClassName(apiName)}.${field.name} ?? _${field.name}',
+        ));
+    }
+  }
+
   /// Converts attached Fields from the pigeon AST to `code_builder` Field.
   ///
   /// Attached fields are set lazily by calling a private method that returns
@@ -1781,7 +1817,7 @@ if (${varNamePrefix}replyList == null) {
     for (final ApiField field in fields) {
       yield cb.Field(
         (cb.FieldBuilder builder) => builder
-          ..name = field.name
+          ..name = '${field.isStatic ? '_' : ''}${field.name}'
           ..type = cb.refer(_addGenericTypesNullable(field.type))
           ..modifier = cb.FieldModifier.final$
           ..static = field.isStatic

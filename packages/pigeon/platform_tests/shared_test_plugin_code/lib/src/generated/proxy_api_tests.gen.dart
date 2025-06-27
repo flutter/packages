@@ -1743,8 +1743,12 @@ class ProxyApiTestClass extends ProxyApiSuperClass
 
   late final ProxyApiSuperClass attachedField = pigeonVar_attachedField();
 
-  static final ProxyApiSuperClass staticAttachedField =
+  static final ProxyApiSuperClass _staticAttachedField =
       pigeonVar_staticAttachedField();
+
+  static ProxyApiSuperClass get staticAttachedField =>
+      PigeonProxyApiTestClassOverrides.staticAttachedField ??
+      _staticAttachedField;
 
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
