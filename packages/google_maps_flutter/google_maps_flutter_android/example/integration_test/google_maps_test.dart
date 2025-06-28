@@ -46,6 +46,7 @@ final ValueVariant<CameraUpdateType> _cameraUpdateTypeVariants =
 void main() {
   late AndroidMapRenderer initializedRenderer;
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
   setUpAll(() async {
     final GoogleMapsFlutterAndroid instance =
@@ -74,7 +75,6 @@ void main() {
         throwsA(isA<PlatformException>().having((PlatformException e) => e.code,
             'code', 'Renderer already initialized')));
   });
-  GoogleMapsFlutterPlatform.instance.enableDebugInspection();
 
   // Repeatedly checks an asynchronous value against a test condition, waiting
   // on frame between each check, returing the value if it passes the predicate
