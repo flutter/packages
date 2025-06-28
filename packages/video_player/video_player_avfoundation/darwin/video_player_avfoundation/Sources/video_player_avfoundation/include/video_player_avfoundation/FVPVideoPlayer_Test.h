@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import "FVPVideoPlayer.h"
+#import "messages.g.h"
 
 #if TARGET_OS_OSX
 #import <FlutterMacOS/FlutterMacOS.h>
@@ -12,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FVPVideoPlayer () <FlutterStreamHandler>
+@interface FVPVideoPlayer () <FlutterStreamHandler, FVPVideoPlayerInstanceApi>
 @end
 
 NS_ASSUME_NONNULL_END

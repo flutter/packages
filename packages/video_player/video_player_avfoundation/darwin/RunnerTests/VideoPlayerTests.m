@@ -311,28 +311,23 @@
   FlutterError *createError;
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
+  // TODO(stuartmorgan): Rework this test to only create the player, not the whole plugin.
+  FVPTextureBasedVideoPlayer *player =
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];
+
   // Ensure that the video playback is paused before seeking.
   FlutterError *pauseError;
-  [videoPlayerPlugin pausePlayer:playerIdentifier.integerValue error:&pauseError];
+  [player pauseWithError:&pauseError];
 
-  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
-  [videoPlayerPlugin seekTo:1234
-                  forPlayer:playerIdentifier.integerValue
-                 completion:^(FlutterError *_Nullable error) {
-                   [initializedExpectation fulfill];
-                 }];
+  XCTestExpectation *seekExpectation = [self expectationWithDescription:@"seekTo completes"];
+  [player seekTo:1234
+      completion:^(FlutterError *_Nullable error) {
+        [seekExpectation fulfill];
+      }];
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
 
   // Seeking to a new position should start the display link temporarily.
   OCMVerify([mockDisplayLink setRunning:YES]);
-  FVPTextureBasedVideoPlayer *player =
-      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];
-  // Wait for the player's position to update, it shouldn't take long.
-  XCTestExpectation *positionExpectation =
-      [self expectationForPredicate:[NSPredicate predicateWithFormat:@"position == 1234"]
-                evaluatedWithObject:player
-                            handler:nil];
-  [self waitForExpectations:@[ positionExpectation ] timeout:3.0];
 
   // Simulate a buffer being available.
   OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
@@ -435,27 +430,21 @@
   FlutterError *createError;
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
-  // Ensure that the video is playing before seeking.
-  FlutterError *playError;
-  [videoPlayerPlugin playPlayer:playerIdentifier.integerValue error:&playError];
-
-  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"seekTo completes"];
-  [videoPlayerPlugin seekTo:1234
-                  forPlayer:playerIdentifier.integerValue
-                 completion:^(FlutterError *_Nullable error) {
-                   [initializedExpectation fulfill];
-                 }];
-  [self waitForExpectationsWithTimeout:30.0 handler:nil];
-  OCMVerify([mockDisplayLink setRunning:YES]);
-
+  // TODO(stuartmorgan): Rework this test to only create the player, not the whole plugin.
   FVPTextureBasedVideoPlayer *player =
       (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];
-  // Wait for the player's position to update, it shouldn't take long.
-  XCTestExpectation *positionExpectation =
-      [self expectationForPredicate:[NSPredicate predicateWithFormat:@"position == 1234"]
-                evaluatedWithObject:player
-                            handler:nil];
-  [self waitForExpectations:@[ positionExpectation ] timeout:3.0];
+
+  // Ensure that the video is playing before seeking.
+  FlutterError *playError;
+  [player playWithError:&playError];
+
+  XCTestExpectation *seekExpectation = [self expectationWithDescription:@"seekTo completes"];
+  [player seekTo:1234
+      completion:^(FlutterError *_Nullable error) {
+        [seekExpectation fulfill];
+      }];
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+  OCMVerify([mockDisplayLink setRunning:YES]);
 
   // Simulate a buffer being available.
   OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
@@ -504,10 +493,14 @@
   FlutterError *createError;
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
+  // TODO(stuartmorgan): Rework this test to only create the player, not the whole plugin.
+  FVPTextureBasedVideoPlayer *player =
+      (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];
+
   // Run a play/pause cycle to force the pause codepath to run completely.
   FlutterError *playPauseError;
-  [videoPlayerPlugin playPlayer:playerIdentifier.integerValue error:&playPauseError];
-  [videoPlayerPlugin pausePlayer:playerIdentifier.integerValue error:&playPauseError];
+  [player playWithError:&playPauseError];
+  [player pauseWithError:&playPauseError];
 
   // Since a buffer hasn't been available yet, the pause should not have stopped the display link.
   OCMVerify(never(), [mockDisplayLink setRunning:NO]);
@@ -687,13 +680,16 @@
   FlutterError *createError;
   NSNumber *playerIdentifier = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
 
+  // TODO(stuartmorgan): Rework this test to only create the player, not the whole plugin.
+  FVPTextureBasedVideoPlayer *player =
+      (FVPTextureBasedVideoPlayer *)pluginWithMockAVPlayer.playersByIdentifier[playerIdentifier];
+
   XCTestExpectation *initializedExpectation =
       [self expectationWithDescription:@"seekTo has zero tolerance when seeking not to end"];
-  [pluginWithMockAVPlayer seekTo:1234
-                       forPlayer:playerIdentifier.integerValue
-                      completion:^(FlutterError *_Nullable error) {
-                        [initializedExpectation fulfill];
-                      }];
+  [player seekTo:1234
+      completion:^(FlutterError *_Nullable error) {
+        [initializedExpectation fulfill];
+      }];
 
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
   XCTAssertEqual([stubAVPlayer.beforeTolerance intValue], 0);
@@ -726,14 +722,17 @@
   FlutterError *createError;
   NSNumber *playerIdentifier = [pluginWithMockAVPlayer createWithOptions:create error:&createError];
 
+  // TODO(stuartmorgan): Rework this test to only create the player, not the whole plugin.
+  FVPTextureBasedVideoPlayer *player =
+      (FVPTextureBasedVideoPlayer *)pluginWithMockAVPlayer.playersByIdentifier[playerIdentifier];
+
   XCTestExpectation *initializedExpectation =
       [self expectationWithDescription:@"seekTo has non-zero tolerance when seeking to end"];
   // The duration of this video is "0" due to the non standard initiliatazion process.
-  [pluginWithMockAVPlayer seekTo:0
-                       forPlayer:playerIdentifier.integerValue
-                      completion:^(FlutterError *_Nullable error) {
-                        [initializedExpectation fulfill];
-                      }];
+  [player seekTo:0
+      completion:^(FlutterError *_Nullable error) {
+        [initializedExpectation fulfill];
+      }];
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
   XCTAssertGreaterThan([stubAVPlayer.beforeTolerance intValue], 0);
   XCTAssertGreaterThan([stubAVPlayer.afterTolerance intValue], 0);
@@ -754,6 +753,7 @@
                                viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
 
+  // TODO(stuartmorgan): Rework this test to only create the player, not the whole plugin.
   FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   XCTAssertNotNil(player);
 
@@ -776,15 +776,15 @@
   XCTAssertEqual(avPlayer.timeControlStatus, AVPlayerTimeControlStatusPaused);
 
   // Change playback speed.
-  [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:playerIdentifier.integerValue error:&error];
+  [player setPlaybackSpeed:2 error:&error];
   XCTAssertNil(error);
-  [videoPlayerPlugin playPlayer:playerIdentifier.integerValue error:&error];
+  [player playWithError:&error];
   XCTAssertNil(error);
   XCTAssertEqual(avPlayer.rate, 2);
   XCTAssertEqual(avPlayer.timeControlStatus, AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate);
 
   // Volume
-  [videoPlayerPlugin setVolume:0.1 forPlayer:playerIdentifier.integerValue error:&error];
+  [player setVolume:0.1 error:&error];
   XCTAssertNil(error);
   XCTAssertEqual(avPlayer.volume, 0.1f);
 
@@ -982,6 +982,7 @@
         httpHeaders:@{}
            viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
+  // TODO(stuartmorgan): Rework this test to only create the player, not the whole plugin.
   FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -993,8 +994,8 @@
                       }];
   [self waitForExpectationsWithTimeout:10 handler:nil];
 
-  [videoPlayerPlugin setPlaybackSpeed:2 forPlayer:playerIdentifier.integerValue error:&error];
-  [videoPlayerPlugin playPlayer:playerIdentifier.integerValue error:&error];
+  [player setPlaybackSpeed:2 error:&error];
+  [player playWithError:&error];
   XCTAssertEqual(player.player.rate, 2);
 }
 

@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL isLooping;
 /// The current playback position of the video, in milliseconds.
 @property(nonatomic, readonly) int64_t position;
+/// A block that will be called when dispose is called.
+@property(nonatomic, nullable, copy) void (^onDisposed)(void);
 
 /// Initializes a new instance of FVPVideoPlayer with the given asset, AV factory, and view
 /// provider.
