@@ -1,6 +1,8 @@
-## NEXT
+## 3.23.0
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Adds support for `PlatformWebViewController.loadFileWithParams`.
+* Introduces `WebKitLoadFileParams`, a platform-specific extension of `LoadFileParams` for iOS and macOS that adds support for `readAccessPath`.
 
 ## 3.22.0
 

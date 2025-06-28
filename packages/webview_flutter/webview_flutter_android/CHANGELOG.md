@@ -1,3 +1,8 @@
+## 4.8.0
+
+* Adds support for `PlatformWebViewController.loadFileWithParams`.
+* Introduces `AndroidLoadFileParams`, a platform-specific extension of `LoadFileParams` for Android that adds support for `headers`.
+
 ## 4.7.0
 
 * Adds support to respond to recoverable SSL certificate errors. See `AndroidNavigationDelegate.setOnSSlAuthError`.
