@@ -46,41 +46,10 @@ This mode is more performant than Hybrid Composition and we recommend that you u
 
 This mode is available for backwards compatability and corresponds to `useAndroidViewSurface = true`.
 We do not recommend its use as it is less performant than Texture Layer Hybrid Composition and
-certain flutter rendering effects are not supported. 
+certain flutter rendering effects are not supported.
 
 If you require this mode for correctness, please file a bug so we can investigate and fix
 the issue in the TLHC mode.
-
-## Map renderer
-
-This plugin supports the option to request a specific [map renderer][5].
-
-The renderer must be requested before creating GoogleMap instances, as the renderer can be initialized only once per application context.
-
-<?code-excerpt "readme_excerpts.dart (MapRenderer)"?>
-```dart
-AndroidMapRenderer mapRenderer = AndroidMapRenderer.platformDefault;
-// ···
-  final GoogleMapsFlutterPlatform mapsImplementation =
-      GoogleMapsFlutterPlatform.instance;
-  if (mapsImplementation is GoogleMapsFlutterAndroid) {
-    WidgetsFlutterBinding.ensureInitialized();
-    mapRenderer = await mapsImplementation
-        .initializeWithRenderer(AndroidMapRenderer.latest);
-  }
-```
-
-`AndroidMapRenderer.platformDefault` corresponds to `AndroidMapRenderer.latest`.
-
-You are not guaranteed to get the requested renderer. For example, on emulators without
-Google Play the latest renderer will not be available and the legacy renderer will always be used.
-
-WARNING: `AndroidMapRenderer.legacy` is known to crash apps and is no longer supported by the Google Maps team
-and therefore cannot be supported by the Flutter team.
-
-### Cloud-based map styling
-
-Cloud-based map styling is not supported with the `AndroidMapRenderer.legacy` renderer.
 
 ## Supported Heatmap Options
 

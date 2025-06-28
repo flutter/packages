@@ -4,14 +4,15 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_example/example_google_map.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:integration_test/integration_test.dart';
 
 import 'resources/icon_image_base64.dart';
 
@@ -42,8 +43,38 @@ final LatLngBounds _testCameraBounds = LatLngBounds(
 final ValueVariant<CameraUpdateType> _cameraUpdateTypeVariants =
     ValueVariant<CameraUpdateType>(CameraUpdateType.values.toSet());
 
-void googleMapsTests() {
+void main() {
+  late AndroidMapRenderer initializedRenderer;
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   GoogleMapsFlutterPlatform.instance.enableDebugInspection();
+
+  setUpAll(() async {
+    final GoogleMapsFlutterAndroid instance =
+        GoogleMapsFlutterPlatform.instance as GoogleMapsFlutterAndroid;
+    initializedRenderer =
+        await instance.initializeWithRenderer(AndroidMapRenderer.latest);
+  });
+
+  testWidgets('initialized with latest renderer', (WidgetTester _) async {
+    // There is no guarantee that the server will return the latest renderer
+    // even when requested, so there's no way to deterministically test that.
+    // Instead, just test that the request succeeded and returned a valid
+    // value.
+    expect(
+        initializedRenderer == AndroidMapRenderer.latest ||
+            initializedRenderer == AndroidMapRenderer.legacy,
+        true);
+  });
+
+  testWidgets('throws PlatformException on multiple renderer initializations',
+      (WidgetTester _) async {
+    final GoogleMapsFlutterAndroid instance =
+        GoogleMapsFlutterPlatform.instance as GoogleMapsFlutterAndroid;
+    expect(
+        () async => instance.initializeWithRenderer(AndroidMapRenderer.latest),
+        throwsA(isA<PlatformException>().having((PlatformException e) => e.code,
+            'code', 'Renderer already initialized')));
+  });
 
   // Repeatedly checks an asynchronous value against a test condition, waiting
   // on frame between each check, returing the value if it passes the predicate
