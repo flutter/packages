@@ -457,6 +457,12 @@ mixin $_mixinName on GoRouteData {
       if (potentialEnumType.isEnum) {
         enumParamTypes.add(potentialEnumType as InterfaceType);
       }
+
+      // Support for enum extension types
+      final DartType representedType = potentialEnumType.extensionTypeErasure;
+      if (potentialEnumType != representedType && representedType.isEnum) {
+        enumParamTypes.add(representedType as InterfaceType);
+      }
     }
     return enumParamTypes.map<String>(_enumMapConst);
   }
