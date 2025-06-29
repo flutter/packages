@@ -7,10 +7,10 @@
 // ignore_for_file: avoid_relative_lib_imports
 import 'dart:async';
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
+
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
 import 'package:in_app_purchase_storekit/src/sk2_pigeon.g.dart';
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -135,6 +135,8 @@ abstract class TestInAppPurchase2Api {
       {SK2ProductPurchaseOptionsMessage? options});
 
   Future<bool> isWinBackOfferEligible(String productId, String offerId);
+
+  Future<bool> isIntroductoryOfferEligible(String productId);
 
   Future<List<SK2TransactionMessage>> transactions();
 
@@ -278,6 +280,39 @@ abstract class TestInAppPurchase2Api {
           try {
             final bool output =
                 await api.isWinBackOfferEligible(arg_productId!, arg_offerId!);
+            return <Object?>[output];
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isIntroductoryOfferEligible$messageChannelSuffix',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel, null);
+      } else {
+        _testBinaryMessengerBinding!.defaultBinaryMessenger
+            .setMockDecodedMessageHandler<Object?>(pigeonVar_channel,
+                (Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isIntroductoryOfferEligible was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_productId = (args[0] as String?);
+          assert(arg_productId != null,
+              'Argument for dev.flutter.pigeon.in_app_purchase_storekit.InAppPurchase2API.isIntroductoryOfferEligible was null, expected non-null String.');
+          try {
+            final bool output =
+                await api.isIntroductoryOfferEligible(arg_productId!);
             return <Object?>[output];
           } on PlatformException catch (e) {
             return wrapResponse(error: e);

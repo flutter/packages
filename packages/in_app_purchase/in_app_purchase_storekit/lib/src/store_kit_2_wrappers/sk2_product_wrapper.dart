@@ -400,6 +400,18 @@ class SK2Product {
     return result.convertFromPigeon();
   }
 
+  /// Checks if the user is eligible for an introductory offer.
+  /// The product must be an auto-renewable subscription.
+  static Future<bool> isIntroductoryOfferEligible(
+    String productId,
+  ) async {
+    final bool result = await _hostApi.isIntroductoryOfferEligible(
+      productId,
+    );
+
+    return result;
+  }
+
   /// Checks if the user is eligible for a specific win back offer.
   static Future<bool> isWinBackOfferEligible(
     String productId,
