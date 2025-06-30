@@ -1,7 +1,8 @@
-## NEXT
+## 2.7.2
 
-* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Restructures the communication between Dart and native code.
 * Refactors native code for improved testing.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.7.1
 
