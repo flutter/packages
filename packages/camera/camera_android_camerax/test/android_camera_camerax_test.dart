@@ -3488,7 +3488,7 @@ void main() {
   );
 
   test(
-    'takePicture sets ImageCapture target rotation to currrent photo rotation when orientation unlocked',
+    'takePicture sets ImageCapture target rotation as expected when orientation locked or unlocked',
     () async {
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final MockImageCapture mockImageCapture = MockImageCapture();
@@ -3531,7 +3531,7 @@ void main() {
       // Orientation is unlocked and plugin does not need to set default target
       // rotation manually.
       await camera.takePicture(cameraId);
-      verifyNever(mockImageCapture.setTargetRotation(any));
+      verify(mockImageCapture.setTargetRotation(defaultTargetRotation));
 
       // Orientation is locked and plugin does not need to set default target
       // rotation manually.
