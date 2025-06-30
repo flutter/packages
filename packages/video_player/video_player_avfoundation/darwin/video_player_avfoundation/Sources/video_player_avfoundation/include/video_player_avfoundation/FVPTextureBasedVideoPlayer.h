@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// display link, HTTP headers, AV factory, and registrar.
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(FVPDisplayLink *)displayLink
+                displayLink:(NSObject<FVPDisplayLink> *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
                viewProvider:(NSObject<FVPViewProvider> *)viewProvider
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// display link, AV factory, and registrar.
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
-                  displayLink:(FVPDisplayLink *)displayLink
+                  displayLink:(NSObject<FVPDisplayLink> *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
                  viewProvider:(NSObject<FVPViewProvider> *)viewProvider
                    onDisposed:(void (^)(int64_t))onDisposed;
