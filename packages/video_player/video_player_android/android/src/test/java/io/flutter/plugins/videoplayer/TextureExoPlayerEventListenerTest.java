@@ -131,17 +131,4 @@ public class TextureExoPlayerEventListenerTest {
     eventListener.onPlaybackStateChanged(Player.STATE_READY);
     verify(mockCallbacks).onInitialized(800, 400, 10L, 270);
   }
-
-  @Test
-  @Config(maxSdk = 21)
-  public void onPlaybackStateChangedReadyFlipped180DegreesInformEventHandler_belowAndroid21() {
-    TextureExoPlayerEventListener eventListener =
-        new TextureExoPlayerEventListener(mockExoPlayer, mockCallbacks, true);
-    VideoSize size = new VideoSize(800, 400, 0);
-    when(mockExoPlayer.getVideoSize()).thenReturn(size);
-    when(mockExoPlayer.getDuration()).thenReturn(10L);
-
-    eventListener.onPlaybackStateChanged(Player.STATE_READY);
-    verify(mockCallbacks).onInitialized(800, 400, 10L, 180);
-  }
 }
