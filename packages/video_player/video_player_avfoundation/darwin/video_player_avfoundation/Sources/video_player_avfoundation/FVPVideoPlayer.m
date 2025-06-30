@@ -12,8 +12,6 @@
 
 static void *timeRangeContext = &timeRangeContext;
 static void *statusContext = &statusContext;
-static void *presentationSizeContext = &presentationSizeContext;
-static void *durationContext = &durationContext;
 static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *rateContext = &rateContext;
 
@@ -127,14 +125,6 @@ static void *rateContext = &rateContext;
             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
             context:statusContext];
   [item addObserver:self
-         forKeyPath:@"presentationSize"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:presentationSizeContext];
-  [item addObserver:self
-         forKeyPath:@"duration"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:durationContext];
-  [item addObserver:self
          forKeyPath:@"playbackLikelyToKeepUp"
             options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
             context:playbackLikelyToKeepUpContext];
@@ -158,6 +148,7 @@ static void *rateContext = &rateContext;
     AVPlayerItem *p = [notification object];
     [p seekToTime:kCMTimeZero completionHandler:nil];
   } else {
+    NSAssert([NSThread isMainThread], @"event sink must only be accessed from the main thread");
     if (_eventSink) {
       _eventSink(@{@"event" : @"completed"});
     }
@@ -227,16 +218,18 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
+  NSAssert([NSThread isMainThread], @"event sink must only be accessed from the main thread");
+  if (!_eventSink) {
+    return;
+  }
   if (context == timeRangeContext) {
-    if (_eventSink != nil) {
-      NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
-      for (NSValue *rangeValue in [object loadedTimeRanges]) {
-        CMTimeRange range = [rangeValue CMTimeRangeValue];
-        int64_t start = FVPCMTimeToMillis(range.start);
-        [values addObject:@[ @(start), @(start + FVPCMTimeToMillis(range.duration)) ]];
-      }
-      _eventSink(@{@"event" : @"bufferingUpdate", @"values" : values});
+    NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
+    for (NSValue *rangeValue in [object loadedTimeRanges]) {
+      CMTimeRange range = [rangeValue CMTimeRangeValue];
+      int64_t start = FVPCMTimeToMillis(range.start);
+      [values addObject:@[ @(start), @(start + FVPCMTimeToMillis(range.duration)) ]];
     }
+    _eventSink(@{@"event" : @"bufferingUpdate", @"values" : values});
   } else if (context == statusContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     switch (item.status) {
@@ -247,36 +240,21 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         break;
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
-        [self setupEventSinkIfReadyToPlay];
+        [self sendVideoInitializedEvent];
         break;
-    }
-  } else if (context == presentationSizeContext || context == durationContext) {
-    AVPlayerItem *item = (AVPlayerItem *)object;
-    if (item.status == AVPlayerItemStatusReadyToPlay) {
-      // Due to an apparent bug, when the player item is ready, it still may not have determined
-      // its presentation size or duration. When these properties are finally set, re-check if
-      // all required properties and instantiate the event sink if it is not already set up.
-      [self setupEventSinkIfReadyToPlay];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
     [self updatePlayingState];
     if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
-      if (_eventSink != nil) {
-        _eventSink(@{@"event" : @"bufferingEnd"});
-      }
+      _eventSink(@{@"event" : @"bufferingEnd"});
     } else {
-      if (_eventSink != nil) {
-        _eventSink(@{@"event" : @"bufferingStart"});
-      }
+      _eventSink(@{@"event" : @"bufferingStart"});
     }
   } else if (context == rateContext) {
     // Important: Make sure to cast the object to AVPlayer when observing the rate property,
     // as it is not available in AVPlayerItem.
     AVPlayer *player = (AVPlayer *)object;
-    if (_eventSink != nil) {
-      _eventSink(
-          @{@"event" : @"isPlayingStateUpdate", @"isPlaying" : player.rate > 0 ? @YES : @NO});
-    }
+    _eventSink(@{@"event" : @"isPlayingStateUpdate", @"isPlaying" : player.rate > 0 ? @YES : @NO});
   }
 }
 
@@ -326,9 +304,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)sendFailedToLoadVideoEvent {
-  if (_eventSink == nil) {
-    return;
-  }
+  NSAssert(_eventSink, @"sendFailedToLoadVideoEvent was called when the event sink was nil.");
   // Prefer more detailed error information from tracks loading.
   NSError *error;
   if ([self.player.currentItem.asset statusOfValueForKey:@"tracks"
@@ -351,58 +327,24 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _eventSink([FlutterError errorWithCode:@"VideoError" message:message details:nil]);
 }
 
-- (void)setupEventSinkIfReadyToPlay {
-  if (_eventSink && !_isInitialized) {
-    AVPlayerItem *currentItem = self.player.currentItem;
-    CGSize size = currentItem.presentationSize;
-    CGFloat width = size.width;
-    CGFloat height = size.height;
+- (void)sendVideoInitializedEvent {
+  AVPlayerItem *currentItem = self.player.currentItem;
+  NSAssert(currentItem.status == AVPlayerItemStatusReadyToPlay,
+           @"sendVideoInitializedEvent was called when the item wasn't ready to play.");
+  NSAssert(_eventSink, @"sendVideoInitializedEvent was called when the event sink was nil.");
+  NSAssert(!_isInitialized, @"sendVideoInitializedEvent should only be called once.");
+  CGSize size = currentItem.presentationSize;
+  CGFloat width = size.width;
+  CGFloat height = size.height;
 
-    // Wait until tracks are loaded to check duration or if there are any videos.
-    AVAsset *asset = currentItem.asset;
-    if ([asset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
-      void (^trackCompletionHandler)(void) = ^{
-        if ([asset statusOfValueForKey:@"tracks" error:nil] != AVKeyValueStatusLoaded) {
-          // Cancelled, or something failed.
-          return;
-        }
-        // This completion block will run on an AVFoundation background queue.
-        // Hop back to the main thread to set up event sink.
-        [self performSelector:_cmd onThread:NSThread.mainThread withObject:self waitUntilDone:NO];
-      };
-      [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ]
-                           completionHandler:trackCompletionHandler];
-      return;
-    }
-
-    BOOL hasVideoTracks = [asset tracksWithMediaType:AVMediaTypeVideo].count != 0;
-    // Audio-only HLS files have no size, so `currentItem.tracks.count` must be used to check for
-    // track presence, as AVAsset does not always provide track information in HLS streams.
-    BOOL hasNoTracks = currentItem.tracks.count == 0 && asset.tracks.count == 0;
-
-    // The player has not yet initialized when it has no size, unless it is an audio-only track.
-    // HLS m3u8 video files never load any tracks, and are also not yet initialized until they have
-    // a size.
-    if ((hasVideoTracks || hasNoTracks) && height == CGSizeZero.height &&
-        width == CGSizeZero.width) {
-      return;
-    }
-    // The player may be initialized but still needs to determine the duration.
-    int64_t duration = [self duration];
-    if (duration == 0) {
-      return;
-    }
-
-    _isInitialized = YES;
-    [self updatePlayingState];
-
-    _eventSink(@{
-      @"event" : @"initialized",
-      @"duration" : @(duration),
-      @"width" : @(width),
-      @"height" : @(height)
-    });
-  }
+  _isInitialized = YES;
+  [self updatePlayingState];
+  _eventSink(@{
+    @"event" : @"initialized",
+    @"duration" : @(self.duration),
+    @"width" : @(width),
+    @"height" : @(height)
+  });
 }
 
 - (void)play {
@@ -457,12 +399,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (FlutterError *_Nullable)onCancelWithArguments:(id _Nullable)arguments {
+  NSAssert([NSThread isMainThread], @"event sink must only be accessed from the main thread");
   _eventSink = nil;
+  _isInitialized = NO;
   return nil;
 }
 
 - (FlutterError *_Nullable)onListenWithArguments:(id _Nullable)arguments
                                        eventSink:(nonnull FlutterEventSink)events {
+  NSAssert([NSThread isMainThread], @"event sink must only be accessed from the main thread");
   _eventSink = events;
   // TODO(@recastrodiaz): remove the line below when the race condition is resolved:
   // https://github.com/flutter/flutter/issues/21483
@@ -472,12 +417,18 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // and also send error in similar case with 'AVPlayerItemStatusFailed'
   // https://github.com/flutter/flutter/issues/151475
   // https://github.com/flutter/flutter/issues/147707
-  if (self.player.currentItem.status == AVPlayerItemStatusFailed) {
-    [self sendFailedToLoadVideoEvent];
-    return nil;
+  switch (self.player.currentItem.status) {
+    case AVPlayerItemStatusUnknown:
+      return nil;
+    case AVPlayerItemStatusReadyToPlay:
+      if (!_isInitialized) {
+        [self sendVideoInitializedEvent];
+      }
+      return nil;
+    case AVPlayerItemStatusFailed:
+      [self sendFailedToLoadVideoEvent];
+      return nil;
   }
-  [self setupEventSinkIfReadyToPlay];
-  return nil;
 }
 
 /// This method allows you to dispose without touching the event channel. This
@@ -503,8 +454,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   AVPlayerItem *currentItem = _player.currentItem;
   [currentItem removeObserver:self forKeyPath:@"status"];
   [currentItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
-  [currentItem removeObserver:self forKeyPath:@"presentationSize"];
-  [currentItem removeObserver:self forKeyPath:@"duration"];
   [currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
   [_player removeObserver:self forKeyPath:@"rate"];
 }
