@@ -233,21 +233,20 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   } else if (context == statusContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     switch (item.status) {
-      case AVPlayerItemStatusFailed:
-        [self sendFailedToLoadVideoEvent];
-        break;
       case AVPlayerItemStatusUnknown:
         break;
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
         [self sendVideoInitializedEvent];
         break;
+      case AVPlayerItemStatusFailed:
+        [self sendFailedToLoadVideoEvent];
+        break;
     }
   } else if (context == playbackLikelyToKeepUpContext) {
     [self updatePlayingState];
-    NSString* event = [[_player currentItem] isPlaybackLikelyToKeepUp]
-      ? @"bufferingEnd"
-      : @"bufferingStart";
+    NSString *event =
+        [[_player currentItem] isPlaybackLikelyToKeepUp] ? @"bufferingEnd" : @"bufferingStart";
     _eventSink(@{@"event" : event});
   } else if (context == rateContext) {
     // Important: Make sure to cast the object to AVPlayer when observing the rate property,
@@ -408,21 +407,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                        eventSink:(nonnull FlutterEventSink)events {
   NSAssert([NSThread isMainThread], @"event sink must only be accessed from the main thread");
   _eventSink = events;
-  // TODO(@recastrodiaz): remove the line below when the race condition is resolved:
-  // https://github.com/flutter/flutter/issues/21483
-  // This line ensures the 'initialized' event is sent when the event
-  // 'AVPlayerItemStatusReadyToPlay' fires before _eventSink is set (this function
-  // onListenWithArguments is called)
-  // and also send error in similar case with 'AVPlayerItemStatusFailed'
-  // https://github.com/flutter/flutter/issues/151475
-  // https://github.com/flutter/flutter/issues/147707
   switch (self.player.currentItem.status) {
     case AVPlayerItemStatusUnknown:
+      // Subscription happens before the AVPlayerItem becomes ready to play.
+      // snedVideoInitializedEvent or sendFailedToLoadVideoEvent will be
+      // called by the KVO method on status updates.
       return nil;
     case AVPlayerItemStatusReadyToPlay:
-      if (!_isInitialized) {
-        [self sendVideoInitializedEvent];
-      }
+      [self sendVideoInitializedEvent];
       return nil;
     case AVPlayerItemStatusFailed:
       [self sendFailedToLoadVideoEvent];

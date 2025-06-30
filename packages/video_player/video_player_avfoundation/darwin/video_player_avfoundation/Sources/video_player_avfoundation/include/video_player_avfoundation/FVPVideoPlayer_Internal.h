@@ -29,7 +29,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) NSNumber *targetPlaybackSpeed;
 /// Indicates whether the video player is currently playing.
 @property(nonatomic, readonly) BOOL isPlaying;
-/// Indicates whether the video player has been initialized.
+/// Indicates whether an "initialized" message has been sent to the current Flutter event sink.
+///
+/// The video player sends an "initialized" message to the event sink when its underlying
+/// AVPlayerItem is ready to play and the event sink is set to a non-nil value, whichever occurs
+/// last.
+///
+/// This flag is set back to NO when event sink is set to nil in onCancelWithArgument.
 @property(nonatomic, readonly) BOOL isInitialized;
 
 /// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, frame updater, display
