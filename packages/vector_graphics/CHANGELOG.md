@@ -1,3 +1,7 @@
+## 1.1.20
+
+* Moved color and colorFilter effects into the raster cache to reduce subsequent rendering overhead.
+
 ## 1.1.19
 
 * Updates minimum supported SDK version to Flutter 3.24/Dart 3.5.

@@ -15,7 +15,7 @@ import 'listener.dart';
 @immutable
 class RasterKey {
   /// Create a new [RasterKey].
-  const RasterKey(this.assetKey, this.width, this.height);
+  const RasterKey(this.assetKey, this.width, this.height, this.paint);
 
   /// An object that is used to identify the raster data this key will store.
   ///
@@ -28,16 +28,22 @@ class RasterKey {
   /// The width of this vector graphic raster, in physical pixels.
   final int height;
 
+  /// The paint of this vector graphic raster.
+  final Paint paint;
+
   @override
   bool operator ==(Object other) {
     return other is RasterKey &&
         other.assetKey == assetKey &&
         other.width == width &&
-        other.height == height;
+        other.height == height &&
+        other.paint.color == paint.color &&
+        other.paint.colorFilter == paint.colorFilter;
   }
 
   @override
-  int get hashCode => Object.hash(assetKey, width, height);
+  int get hashCode =>
+      Object.hash(assetKey, width, height, paint.color, paint.colorFilter);
 }
 
 /// The cache entry for a rasterized vector graphic.
@@ -116,6 +122,7 @@ class RenderVectorGraphic extends RenderBox {
   /// An optional [ColorFilter] to apply to the rasterized vector graphic.
   ColorFilter? get colorFilter => _colorFilter;
   ColorFilter? _colorFilter;
+  final Paint _colorPaint = Paint();
   set colorFilter(ColorFilter? value) {
     if (colorFilter == value) {
       return;
@@ -196,7 +203,7 @@ class RenderVectorGraphic extends RenderBox {
   }
 
   static RasterData _createRaster(
-      RasterKey key, double scaleFactor, PictureInfo info) {
+      RasterKey key, double scaleFactor, PictureInfo info, Paint colorPaint) {
     final int scaledWidth = key.width;
     final int scaledHeight = key.height;
     // In order to scale a picture, it must be placed in a new picture
@@ -206,9 +213,16 @@ class RenderVectorGraphic extends RenderBox {
     // capture in a raster.
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final ui.Canvas canvas = ui.Canvas(recorder);
-
+    final Rect drawSize =
+        ui.Rect.fromLTWH(0, 0, scaledWidth.toDouble(), scaledHeight.toDouble());
+    canvas.clipRect(drawSize);
+    final int saveCount = canvas.getSaveCount();
+    if (colorPaint.color.opacity != 1.0 || colorPaint.colorFilter != null) {
+      canvas.saveLayer(drawSize, colorPaint);
+    }
     canvas.scale(scaleFactor);
     canvas.drawPicture(info.picture);
+    canvas.restoreToCount(saveCount);
     final ui.Picture rasterPicture = recorder.endRecording();
 
     final ui.Image pending =
@@ -235,7 +249,8 @@ class RenderVectorGraphic extends RenderBox {
         (pictureInfo.size.width * devicePixelRatio / scale).round();
     final int scaledHeight =
         (pictureInfo.size.height * devicePixelRatio / scale).round();
-    final RasterKey key = RasterKey(assetKey, scaledWidth, scaledHeight);
+    final RasterKey key =
+        RasterKey(assetKey, scaledWidth, scaledHeight, _colorPaint);
 
     // First check if the raster is available synchronously. This also handles
     // a no-op change that would resolve to an identical picture.
@@ -249,7 +264,7 @@ class RenderVectorGraphic extends RenderBox {
       return;
     }
     final RasterData data =
-        _createRaster(key, devicePixelRatio / scale, pictureInfo);
+        _createRaster(key, devicePixelRatio / scale, pictureInfo, _colorPaint);
     data.count += 1;
 
     assert(!_liveRasterCache.containsKey(key));
@@ -296,18 +311,17 @@ class RenderVectorGraphic extends RenderBox {
       return;
     }
 
+    // _colorPaint is used to create raster cache.
+    if (colorFilter != null) {
+      _colorPaint.colorFilter = colorFilter;
+    }
+    _colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
+
     _maybeUpdateRaster();
     final ui.Image image = _rasterData!.image;
     final int width = _rasterData!.key.width;
     final int height = _rasterData!.key.height;
 
-    // Use `FilterQuality.low` to scale the image, which corresponds to
-    // bilinear interpolation.
-    final Paint colorPaint = Paint()..filterQuality = ui.FilterQuality.low;
-    if (colorFilter != null) {
-      colorPaint.colorFilter = colorFilter;
-    }
-    colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
     final Rect src = ui.Rect.fromLTWH(
       0,
       0,
@@ -321,11 +335,13 @@ class RenderVectorGraphic extends RenderBox {
       pictureInfo.size.height,
     );
 
+    // Use `FilterQuality.low` to scale the image, which corresponds to
+    // bilinear interpolation.
     context.canvas.drawImageRect(
       image,
       src,
       dst,
-      colorPaint,
+      Paint()..filterQuality = ui.FilterQuality.low,
     );
   }
 }
