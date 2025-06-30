@@ -1,3 +1,7 @@
+## 15.3.0
+
+- Adds annotation for go_router_builder that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781). **Requires go_router_builder >= 3.1.0**.
+
 ## 15.2.4
 
 - Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
