@@ -245,11 +245,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     }
   } else if (context == playbackLikelyToKeepUpContext) {
     [self updatePlayingState];
-    if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
-      _eventSink(@{@"event" : @"bufferingEnd"});
-    } else {
-      _eventSink(@{@"event" : @"bufferingStart"});
-    }
+    NSString* event = [[_player currentItem] isPlaybackLikelyToKeepUp]
+      ? @"bufferingEnd"
+      : @"bufferingStart";
+    _eventSink(@{@"event" : event});
   } else if (context == rateContext) {
     // Important: Make sure to cast the object to AVPlayer when observing the rate property,
     // as it is not available in AVPlayerItem.
