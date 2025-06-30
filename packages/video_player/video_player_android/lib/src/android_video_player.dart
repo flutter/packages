@@ -11,15 +11,34 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'messages.g.dart';
 import 'platform_view_player.dart';
 
+/// The non-test implementation of `_apiProvider`.
+VideoPlayerInstanceApi _productionApiProvider(int playerId) {
+  return VideoPlayerInstanceApi(messageChannelSuffix: playerId.toString());
+}
+
 /// An Android implementation of [VideoPlayerPlatform] that uses the
 /// Pigeon-generated [VideoPlayerApi].
 class AndroidVideoPlayer extends VideoPlayerPlatform {
-  final AndroidVideoPlayerApi _api = AndroidVideoPlayerApi();
+  /// Creates a new Android video player implementation instance.
+  AndroidVideoPlayer({
+    @visibleForTesting AndroidVideoPlayerApi? pluginApi,
+    @visibleForTesting
+    VideoPlayerInstanceApi Function(int playerId)? apiProvider,
+  }) : _api = pluginApi ?? AndroidVideoPlayerApi(),
+       _apiProvider = apiProvider ?? _productionApiProvider;
+
+  final AndroidVideoPlayerApi _api;
+  // A method to create VideoPlayerInstanceApi instances, which can be
+  //overridden for testing.
+  final VideoPlayerInstanceApi Function(int playerId) _apiProvider;
 
   /// A map that associates player ID with a view state.
   /// This is used to determine which view type to use when building a view.
   final Map<int, _VideoPlayerViewState> _playerViewStates =
       <int, _VideoPlayerViewState>{};
+
+  final Map<int, VideoPlayerInstanceApi> _playerApis =
+      <int, VideoPlayerInstanceApi>{};
 
   /// Registers this class as the default instance of [PathProviderPlatform].
   static void registerWith() {
@@ -35,6 +54,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   Future<void> dispose(int playerId) async {
     await _api.dispose(playerId);
     _playerViewStates.remove(playerId);
+    _playerApis.remove(playerId);
   }
 
   @override
@@ -89,45 +109,58 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       ),
       VideoViewType.platformView => const _VideoPlayerPlatformViewState(),
     };
+    ensureApiInitialized(playerId);
 
     return playerId;
   }
 
+  /// Returns the API instance for [playerId], creating it if it doesn't already
+  /// exist.
+  @visibleForTesting
+  VideoPlayerInstanceApi ensureApiInitialized(int playerId) {
+    VideoPlayerInstanceApi? api = _playerApis[playerId];
+    if (api == null) {
+      api = _apiProvider(playerId);
+      _playerApis[playerId] ??= api;
+    }
+    return api;
+  }
+
   @override
   Future<void> setLooping(int playerId, bool looping) {
-    return _api.setLooping(playerId, looping);
+    return _apiFor(playerId).setLooping(looping);
   }
 
   @override
   Future<void> play(int playerId) {
-    return _api.play(playerId);
+    return _apiFor(playerId).play();
   }
 
   @override
   Future<void> pause(int playerId) {
-    return _api.pause(playerId);
+    return _apiFor(playerId).pause();
   }
 
   @override
   Future<void> setVolume(int playerId, double volume) {
-    return _api.setVolume(playerId, volume);
+    return _apiFor(playerId).setVolume(volume);
   }
 
   @override
   Future<void> setPlaybackSpeed(int playerId, double speed) {
     assert(speed > 0);
 
-    return _api.setPlaybackSpeed(playerId, speed);
+    return _apiFor(playerId).setPlaybackSpeed(speed);
   }
 
   @override
   Future<void> seekTo(int playerId, Duration position) {
-    return _api.seekTo(playerId, position.inMilliseconds);
+    return _apiFor(playerId).seekTo(position.inMilliseconds);
   }
 
   @override
   Future<Duration> getPosition(int playerId) async {
-    final int position = await _api.position(playerId);
+    final int position = await _apiFor(playerId).getPosition();
     return Duration(milliseconds: position);
   }
 
@@ -201,6 +234,14 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   EventChannel _eventChannelFor(int playerId) {
     return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
+  }
+
+  VideoPlayerInstanceApi _apiFor(int playerId) {
+    final VideoPlayerInstanceApi? api = _playerApis[playerId];
+    if (api == null) {
+      throw StateError('No active player with ID $playerId.');
+    }
+    return api;
   }
 
   static const Map<VideoFormat, String> _videoFormatStringMap =
