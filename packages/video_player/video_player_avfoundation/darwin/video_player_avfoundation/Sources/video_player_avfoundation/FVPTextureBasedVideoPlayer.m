@@ -28,7 +28,6 @@
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
 @property(nonatomic, assign) BOOL waitingForFrame;
-@property(nonatomic, copy) void (^onDisposed)(int64_t);
 @end
 
 @implementation FVPTextureBasedVideoPlayer
@@ -36,15 +35,13 @@
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                   displayLink:(FVPDisplayLink *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
-                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider
-                   onDisposed:(void (^)(int64_t))onDisposed {
+                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   return [self initWithURL:[NSURL fileURLWithPath:[FVPVideoPlayer absolutePathForAssetName:asset]]
               frameUpdater:frameUpdater
                displayLink:displayLink
                httpHeaders:@{}
                  avFactory:avFactory
-              viewProvider:viewProvider
-                onDisposed:onDisposed];
+              viewProvider:viewProvider];
 }
 
 - (instancetype)initWithURL:(NSURL *)url
@@ -52,8 +49,7 @@
                 displayLink:(FVPDisplayLink *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
-               viewProvider:(NSObject<FVPViewProvider> *)viewProvider
-                 onDisposed:(void (^)(int64_t))onDisposed {
+               viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
@@ -64,16 +60,14 @@
                      frameUpdater:frameUpdater
                       displayLink:displayLink
                         avFactory:avFactory
-                     viewProvider:viewProvider
-                       onDisposed:onDisposed];
+                     viewProvider:viewProvider];
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
                        displayLink:(FVPDisplayLink *)displayLink
                          avFactory:(id<FVPAVFactory>)avFactory
-                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider
-                        onDisposed:(void (^)(int64_t))onDisposed {
+                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   self = [super initWithPlayerItem:item avFactory:avFactory viewProvider:viewProvider];
 
   if (self) {
@@ -81,7 +75,6 @@
     _displayLink = displayLink;
     _frameUpdater.displayLink = _displayLink;
     _selfRefresh = true;
-    _onDisposed = [onDisposed copy];
 
     // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
     // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
@@ -151,12 +144,6 @@
   [self.playerLayer removeFromSuperlayer];
 
   _displayLink = nil;
-}
-
-- (void)dispose {
-  [super dispose];
-
-  _onDisposed(self.frameUpdater.textureIdentifier);
 }
 
 #pragma mark - FlutterTexture
