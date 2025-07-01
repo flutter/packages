@@ -24,6 +24,7 @@
 @end
 
 // An implementation of FVPDisplayLink using CADisplayLink.
+API_AVAILABLE(ios(4.0), macos(14.0))
 @interface FVPCADisplayLink : NSObject <FVPDisplayLink>
 
 /// Initializes a display link that calls the given callback when fired.

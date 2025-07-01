@@ -9,6 +9,7 @@
 
 /// A proxy object to act as a CADisplayLink target, to avoid retain loops, since FVPCADisplayLink
 /// owns its CADisplayLink, but CADisplayLink retains its target.
+API_AVAILABLE(ios(4.0), macos(14.0))
 @interface FVPDisplayLinkTarget : NSObject
 @property(nonatomic) void (^callback)(void);
 
