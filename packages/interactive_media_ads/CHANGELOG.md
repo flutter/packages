@@ -1,3 +1,8 @@
+## 0.2.4+1
+
+* Adds internal wrapper for Android native `ImaSdkSettings`.
+* Adds internal wrapper for iOS native `IMASettings`.
+
 ## 0.2.4
 
 * Adds support for companion ads. See `CompanionAdSlot` and `AdDisplayContainer(companionAds)`.
