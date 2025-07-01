@@ -409,9 +409,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   _eventSink = events;
   switch (self.player.currentItem.status) {
     case AVPlayerItemStatusUnknown:
-      // Subscription happens before the AVPlayerItem becomes ready to play.
-      // snedVideoInitializedEvent or sendFailedToLoadVideoEvent will be
-      // called by the KVO method on status updates.
+      // When this method is called when the media is still loading, do nothing:
+      // sendVideoInitializedEvent or sendFailedToLoadVideoEvent will be called
+      // by KVO on status updates.
       return nil;
     case AVPlayerItemStatusReadyToPlay:
       [self sendVideoInitializedEvent];
