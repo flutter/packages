@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_test_plugin_code/src/generated/proxy_api_tests.gen.dart';
 
@@ -11,13 +10,7 @@ void main() {
     pigeon_resetAllOverrides();
 
     final ProxyApiSuperClass instance = ProxyApiSuperClass.pigeon_detached();
-    PigeonProxyApiSuperClassOverrides.new_ = ({
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) =>
-        instance;
+    PigeonProxyApiSuperClassOverrides.new_ = () => instance;
 
     expect(ProxyApiSuperClass(), instance);
   });
@@ -43,13 +36,8 @@ void main() {
   });
 
   test('pigeon_resetAllOverrides set all constructor overrides to null', () {
-    PigeonProxyApiSuperClassOverrides.new_ = ({
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) =>
-        ProxyApiSuperClass.pigeon_detached();
+    PigeonProxyApiSuperClassOverrides.new_ =
+        () => ProxyApiSuperClass.pigeon_detached();
 
     pigeon_resetAllOverrides();
     expect(PigeonProxyApiSuperClassOverrides.new_, isNull);

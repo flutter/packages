@@ -1464,7 +1464,8 @@ if (${varNamePrefix}replyList == null) {
       final String constructorName =
           '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : ''}';
 
-      // Factory constructor.
+      // Factory constructor that forwards the parameters to the overrides class
+      // or to the constructor yielded below this one.
       yield cb.Constructor(
         (cb.ConstructorBuilder builder) {
           final Iterable<cb.Parameter> parameters = _asConstructorParameters(
@@ -1474,6 +1475,16 @@ if (${varNamePrefix}replyList == null) {
             flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
             flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
             declaredFlutterMethods: declaredFlutterMethods,
+          );
+          final Iterable<cb.Parameter> parametersWithoutMessengerAndManager =
+              _asConstructorParameters(
+            constructor,
+            apiName: apiName,
+            unattachedFields: unattachedFields,
+            flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+            flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+            declaredFlutterMethods: declaredFlutterMethods,
+            includeBinaryMessengerAndInstanceManager: false,
           );
           builder
             ..name = constructor.name.isNotEmpty ? constructor.name : null
@@ -1487,20 +1498,38 @@ if (${varNamePrefix}replyList == null) {
               (cb.BlockBuilder builder) {
                 final String overridesClassName =
                     _getProxyApiOverridesClassName(apiName);
+
                 final String overridesConstructorName =
                     constructor.name.isEmpty ? 'new_' : constructor.name;
-                final Map<String, cb.Expression> forwardedParameters =
+
+                final Map<String, cb.Expression> forwardedParams =
                     <String, cb.Expression>{
                   for (final cb.Parameter parameter in parameters)
                     parameter.name: cb.refer(parameter.name)
                 };
+                final Map<String, cb.Expression>
+                    forwardedParamsWithoutMessengerAndManager =
+                    <String, cb.Expression>{
+                  for (final cb.Parameter parameter
+                      in parametersWithoutMessengerAndManager)
+                    parameter.name: cb.refer(parameter.name)
+                };
+
                 builder.statements.addAll(<cb.Code>[
+                  cb.Code(
+                      'if ($overridesClassName.$overridesConstructorName != null) {'),
                   cb.CodeExpression(
-                    cb.Code(
-                      '($overridesClassName.$overridesConstructorName ?? $apiName.$constructorName)',
-                    ),
+                    cb.Code('$overridesClassName.$overridesConstructorName!'),
                   )
-                      .call(<cb.Expression>[], forwardedParameters)
+                      .call(
+                        <cb.Expression>[],
+                        forwardedParamsWithoutMessengerAndManager,
+                      )
+                      .returned
+                      .statement,
+                  const cb.Code('}'),
+                  cb.CodeExpression(cb.Code('$apiName.$constructorName'))
+                      .call(<cb.Expression>[], forwardedParams)
                       .returned
                       .statement,
                 ]);
@@ -2295,25 +2324,29 @@ if (${varNamePrefix}replyList == null) {
     required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
     required Iterable<Method> declaredFlutterMethods,
     bool setTypeAndNotThisOrSuper = true,
+    bool includeBinaryMessengerAndInstanceManager = true,
   }) sync* {
-    yield cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = '${classMemberNamePrefix}binaryMessenger'
-        ..named = true
-        ..type = setTypeAndNotThisOrSuper ? cb.refer('BinaryMessenger?') : null
-        ..toSuper = !setTypeAndNotThisOrSuper
-        ..required = false,
-    );
-    yield cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = _instanceManagerVarName
-        ..named = true
-        ..type = setTypeAndNotThisOrSuper
-            ? cb.refer('$dartInstanceManagerClassName?')
-            : null
-        ..toSuper = !setTypeAndNotThisOrSuper
-        ..required = false,
-    );
+    if (includeBinaryMessengerAndInstanceManager) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = '${classMemberNamePrefix}binaryMessenger'
+          ..named = true
+          ..type =
+              setTypeAndNotThisOrSuper ? cb.refer('BinaryMessenger?') : null
+          ..toSuper = !setTypeAndNotThisOrSuper
+          ..required = false,
+      );
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = _instanceManagerVarName
+          ..named = true
+          ..type = setTypeAndNotThisOrSuper
+              ? cb.refer('$dartInstanceManagerClassName?')
+              : null
+          ..toSuper = !setTypeAndNotThisOrSuper
+          ..required = false,
+      );
+    }
 
     for (final ApiField field in unattachedFields) {
       yield cb.Parameter(
@@ -2379,6 +2412,8 @@ if (${varNamePrefix}replyList == null) {
     );
   }
 
+  // Creates the overrides class that provides overrides for the constructor
+  // and static members of a ProxyApi class.
   cb.Class _proxyApiOverridesClass(AstProxyApi api) {
     return cb.Class(
       (cb.ClassBuilder builder) => builder
@@ -2422,6 +2457,7 @@ if (${varNamePrefix}replyList == null) {
             flutterMethodsFromInterfaces:
                 api.flutterMethodsFromInterfacesWithApis(),
             declaredFlutterMethods: api.flutterMethods,
+            includeBinaryMessengerAndInstanceManager: false,
           );
           builder
             ..name = constructor.name.isEmpty ? 'new_' : constructor.name
