@@ -1,6 +1,6 @@
 ## 26.0.0
 
-* **Breaking Change** [dart] Changes name of constructors used to create subclass of ProxyApis to
+* **Breaking Change** [dart] Changes name of constructors used to create subclasses of ProxyApis to
   `pigeon_**original_name**`.
 * [dart] Adds ProxyApi overrides classes to be used in Flutter unit tests.
 
