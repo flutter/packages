@@ -1,6 +1,7 @@
 ## NEXT
 
 * Fixes overflowed toggles in the camera example.
+* Fixes `CameraLensType` export.
 
 ## 0.11.1
 
