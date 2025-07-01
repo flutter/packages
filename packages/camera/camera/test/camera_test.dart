@@ -92,8 +92,7 @@ void main() {
     });
 
     test('CameraLensType is exported and usable', () {
-      const CameraLensType cameraLensType = CameraLensType.ultraWide;
-      expect(cameraLensType, isA<CameraLensType>());
+      expect(CameraLensType.ultraWide, isA<CameraLensType>());
     });
   });
 
