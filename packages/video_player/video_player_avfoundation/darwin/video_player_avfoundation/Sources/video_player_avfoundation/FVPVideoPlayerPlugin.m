@@ -30,9 +30,16 @@
 @end
 
 @implementation FVPDefaultDisplayLinkFactory
-- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                                    callback:(void (^)(void))callback {
-  return [[FVPDisplayLink alloc] initWithRegistrar:registrar callback:callback];
+- (NSObject<FVPDisplayLink> *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                                              callback:(void (^)(void))callback {
+#if TARGET_OS_IOS
+  return [[FVPCADisplayLink alloc] initWithRegistrar:registrar callback:callback];
+#else
+  if (@available(macOS 14.0, *)) {
+    return [[FVPCADisplayLink alloc] initWithRegistrar:registrar callback:callback];
+  }
+  return [[FVPCoreVideoDisplayLink alloc] initWithRegistrar:registrar callback:callback];
+#endif
 }
 
 @end
@@ -198,7 +205,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 - (nullable FVPTextureBasedVideoPlayer *)texturePlayerWithOptions:
     (nonnull FVPCreationOptions *)options {
   FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
-  FVPDisplayLink *displayLink =
+  NSObject<FVPDisplayLink> *displayLink =
       [self.displayLinkFactory displayLinkWithRegistrar:_registrar
                                                callback:^() {
                                                  [frameUpdater displayLinkFired];
