@@ -7,6 +7,8 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+// TODO(loic-sharma): Remove meta library prefix.
+// https://github.com/flutter/flutter/issues/171410
 import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
@@ -460,6 +462,8 @@ class GoRoute extends RouteBase {
       extractPathParameters(pathParameters, match);
 
   /// The path parameters in this route.
+  // TODO(loic-sharma): Remove meta library prefix.
+  // https://github.com/flutter/flutter/issues/171410
   @meta.internal
   final List<String> pathParameters = <String>[];
 
