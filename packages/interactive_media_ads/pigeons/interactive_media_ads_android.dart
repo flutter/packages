@@ -491,7 +491,55 @@ abstract class ImaSdkFactory {
     fullClassName: 'com.google.ads.interactivemedia.v3.api.ImaSdkSettings',
   ),
 )
-abstract class ImaSdkSettings {}
+abstract class ImaSdkSettings {
+  /// Sets whether to automatically play VMAP and ad rules ad breaks.
+  void setAutoPlayAdBreaks(bool autoPlayAdBreaks);
+
+  /// Enables and disables the debug mode, which is disabled by default.
+  void setDebugMode(bool debugMode);
+
+  /// Sets the feature flags and their states to control experimental features.
+  ///
+  /// This should be set as early as possible, before requesting ads. Settings
+  /// will remain constant until the next ad request. Calling this method again
+  /// will reset any feature flags for the next ad request.
+  void setFeatureFlags(Map<String, String> featureFlags);
+
+  /// Sets the preferred language for the ad UI.
+  ///
+  /// The supported codes can be found in the Localization guide and are closely
+  /// related to the two-letter ISO 639-1 language codes.
+  ///
+  /// Once the AdsLoader object has been created, using this setter will have no
+  /// effect.
+  void setLanguage(String language);
+
+  /// Specifies the maximum number of redirects before the subsequent redirects
+  /// will be denied and the ad load aborted.
+  ///
+  /// The default is 4.
+  void setMaxRedirects(int maxRedirects);
+
+  /// Sets the partner provided player type.
+  ///
+  /// Player type greater than 20 characters will be truncated. The player type
+  /// specified should be short and unique.
+  void setPlayerType(String playerType);
+
+  /// Sets the partner provided player version.
+  ///
+  /// Player versions greater than 20 characters will be truncated.
+  void setPlayerVersion(String playerVersion);
+
+  /// Sets the publisher provided ID used for tracking.
+  void setPpid(String ppid);
+
+  /// Session ID is a temporary random ID.
+  ///
+  /// A session ID must be a UUID, or an empty string if the SDK should not send
+  /// a session ID.
+  void setSessionId(String sessionId);
+}
 
 /// Defines an update to the video's progress.
 ///
