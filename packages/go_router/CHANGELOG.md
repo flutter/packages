@@ -1,3 +1,8 @@
+## 15.3.0
+
+- Adds new top level `onEnter` callback with access to current and next route states.
+- Deprecates top level `redirect` in favor of `onEnter`.
+
 ## 15.2.4
 
 - Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
@@ -11,8 +16,6 @@
 - Fixes calling `PopScope.onPopInvokedWithResult` in branch routes.
 
 ## 15.2.1
-
-* Fixes Popping state and re-rendering scaffold at the same time doesn't update the URL on web.
 
 ## 15.2.0
 
@@ -45,7 +48,7 @@
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
- 
+
 ## 14.8.0
 
 - Adds `preload` parameter to `StatefulShellBranchData.$branch`.
