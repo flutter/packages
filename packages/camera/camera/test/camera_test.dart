@@ -90,6 +90,11 @@ void main() {
 
       expect(camList, equals(mockAvailableCameras));
     });
+
+    test('CameraLensType is exported and usable', () {
+      const CameraLensType cameraLensType = CameraLensType.ultraWide;
+      expect(cameraLensType, isA<CameraLensType>());
+    });
   });
 
   group('$CameraController', () {
