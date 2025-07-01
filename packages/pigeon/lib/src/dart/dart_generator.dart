@@ -1435,8 +1435,12 @@ if (${varNamePrefix}replyList == null) {
     return 'api.$methodName(${safeArgumentNames.join(', ')})';
   }
 
-  /// Converts Constructors from the pigeon AST to a `code_builder` Constructor
+  /// Converts Constructors from the pigeon AST to `code_builder` Constructors
   /// for a ProxyApi.
+  ///
+  /// Creates a factory constructor that can return an overrideable static
+  /// method for testing and a constructor that calls to the native
+  /// API implementation
   Iterable<cb.Constructor> _proxyApiConstructors(
     Iterable<Constructor> constructors, {
     required String apiName,
@@ -1460,6 +1464,7 @@ if (${varNamePrefix}replyList == null) {
       final String constructorName =
           '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : ''}';
 
+      // Factory constructor.
       yield cb.Constructor(
         (cb.ConstructorBuilder builder) {
           final Iterable<cb.Parameter> parameters = _asConstructorParameters(
@@ -2281,6 +2286,7 @@ if (${varNamePrefix}replyList == null) {
     );
   }
 
+  // Converts fields and methods of a ProxyApi to `code_builder` Parameters.
   Iterable<cb.Parameter> _asConstructorParameters(
     Constructor constructor, {
     required String apiName,
@@ -2465,7 +2471,7 @@ if (${varNamePrefix}replyList == null) {
         builder
           ..name = method.name
           ..static = true
-          ..docs.add('/// Calls to [$apiName.${method.name}].')
+          ..docs.add('/// Overrides [$apiName.${method.name}].')
           ..type = cb.FunctionType((cb.FunctionTypeBuilder builder) {
             builder
               ..isNullable = true
@@ -2664,6 +2670,8 @@ String _getProxyApiOverridesClassName(String apiName) {
   return '$proxyApiClassNamePrefix${apiName}Overrides';
 }
 
+// Converts a method to a `code_builder` FunctionType with all parameters as
+// positional arguments.
 cb.FunctionType _methodAsFunctionType(
   Method method, {
   required String apiName,

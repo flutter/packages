@@ -354,7 +354,9 @@ const List<String> disallowedPrefixes = <String>[
   hostProxyApiPrefix,
   proxyApiClassNamePrefix,
   varNamePrefix,
-  'pigeonChannelCodec'
+  'pigeonChannelCodec',
+  // Used by ProxyApi overrides class.
+  'new_',
 ];
 
 /// Collection of keys used in dictionaries across generators.

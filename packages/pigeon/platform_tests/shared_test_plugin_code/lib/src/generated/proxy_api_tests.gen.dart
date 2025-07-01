@@ -5598,13 +5598,13 @@ class PigeonProxyApiTestClassOverrides {
   /// Overrides [ProxyApiTestClass.staticAttachedField].
   static ProxyApiSuperClass? staticAttachedField;
 
-  /// Calls to [ProxyApiTestClass.staticNoop].
+  /// Overrides [ProxyApiTestClass.staticNoop].
   static Future<void> Function()? staticNoop;
 
-  /// Calls to [ProxyApiTestClass.echoStaticString].
+  /// Overrides [ProxyApiTestClass.echoStaticString].
   static Future<String> Function(String)? echoStaticString;
 
-  /// Calls to [ProxyApiTestClass.staticAsyncNoop].
+  /// Overrides [ProxyApiTestClass.staticAsyncNoop].
   static Future<void> Function()? staticAsyncNoop;
 }
 

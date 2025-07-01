@@ -240,15 +240,16 @@ class AstProxyApi extends Api {
   /// `implements`.
   Iterable<AstProxyApi> apisOfInterfaces() => _recursiveFindAllInterfaceApis();
 
-  /// All methods inherited from interfaces and the interfaces of interfaces.
+  /// Returns a record for each method inherited from an interface and its
+  /// corresponding ProxyApi.
   Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfacesWithApis() sync* {
     for (final AstProxyApi proxyApi in apisOfInterfaces()) {
       yield* proxyApi.methods.map((Method method) => (method, proxyApi));
     }
   }
 
-  /// A list of Flutter methods inherited from the ProxyApi that this ProxyApi
-  /// `extends`.
+  /// Returns a record for each method inherited from the ProxyApi that this
+  /// ProxyApi `extends` and its corresponding ProxyApi.
   ///
   /// This also recursively checks the ProxyApi that the super class `extends`
   /// and so on.
