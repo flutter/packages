@@ -39,7 +39,7 @@
 
 #if TARGET_OS_OSX
 // An implementation of FVPDisplayLink using CVDisplayLink.
-@interface FVPCVDisplayLink : NSObject <FVPDisplayLink>
+@interface FVPCoreVideoDisplayLink : NSObject <FVPDisplayLink>
 
 /// Initializes a display link that calls the given callback when fired.
 ///

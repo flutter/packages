@@ -38,7 +38,7 @@
   if (@available(macOS 14.0, *)) {
     return [[FVPCADisplayLink alloc] initWithRegistrar:registrar callback:callback];
   }
-  return [[FVPCVDisplayLink alloc] initWithRegistrar:registrar callback:callback];
+  return [[FVPCoreVideoDisplayLink alloc] initWithRegistrar:registrar callback:callback];
 #endif
 }
 
