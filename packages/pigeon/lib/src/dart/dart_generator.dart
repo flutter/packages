@@ -1499,8 +1499,9 @@ if (${varNamePrefix}replyList == null) {
                 final String overridesClassName =
                     _getProxyApiOverridesClassName(apiName);
 
-                final String overridesConstructorName =
-                    constructor.name.isEmpty ? 'new_' : constructor.name;
+                final String overridesConstructorName = constructor.name.isEmpty
+                    ? '${classMemberNamePrefix}defaultConstructor'
+                    : constructor.name;
 
                 final Map<String, cb.Expression> forwardedParams =
                     <String, cb.Expression>{
@@ -2460,7 +2461,9 @@ if (${varNamePrefix}replyList == null) {
             includeBinaryMessengerAndInstanceManager: false,
           );
           builder
-            ..name = constructor.name.isEmpty ? 'new_' : constructor.name
+            ..name = constructor.name.isEmpty
+                ? '${classMemberNamePrefix}defaultConstructor'
+                : constructor.name
             ..static = true
             ..docs.add('/// Overrides [${api.name}.$constructorName].')
             ..type = cb.FunctionType(
@@ -2542,7 +2545,7 @@ if (${varNamePrefix}replyList == null) {
           for (final AstProxyApi api in proxyApis)
             for (final Constructor constructor in api.constructors)
               cb.Code(
-                '${_getProxyApiOverridesClassName(api.name)}.${constructor.name.isEmpty ? 'new_' : constructor.name} = null;',
+                '${_getProxyApiOverridesClassName(api.name)}.${constructor.name.isEmpty ? '${classMemberNamePrefix}defaultConstructor' : constructor.name} = null;',
               ),
           for (final AstProxyApi api in proxyApis)
             for (final ApiField attachedField

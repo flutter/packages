@@ -38,10 +38,10 @@ List<Object?> wrapResponse(
 /// Intended to only be used with unit tests.
 @visibleForTesting
 void pigeon_resetAllOverrides() {
-  PigeonProxyApiTestClassOverrides.new_ = null;
+  PigeonProxyApiTestClassOverrides.pigeon_defaultConstructor = null;
   PigeonProxyApiTestClassOverrides.namedConstructor = null;
-  PigeonProxyApiSuperClassOverrides.new_ = null;
-  PigeonClassWithApiRequirementOverrides.new_ = null;
+  PigeonProxyApiSuperClassOverrides.pigeon_defaultConstructor = null;
+  PigeonClassWithApiRequirementOverrides.pigeon_defaultConstructor = null;
   PigeonProxyApiTestClassOverrides.staticAttachedField = null;
   PigeonProxyApiTestClassOverrides.staticNoop = null;
   PigeonProxyApiTestClassOverrides.echoStaticString = null;
@@ -597,8 +597,8 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     ProxyApiTestEnum? nullableEnumParam,
     ProxyApiSuperClass? nullableProxyApiParam,
   }) {
-    if (PigeonProxyApiTestClassOverrides.new_ != null) {
-      return PigeonProxyApiTestClassOverrides.new_!(
+    if (PigeonProxyApiTestClassOverrides.pigeon_defaultConstructor != null) {
+      return PigeonProxyApiTestClassOverrides.pigeon_defaultConstructor!(
         aBool: aBool,
         anInt: anInt,
         aDouble: aDouble,
@@ -5591,7 +5591,7 @@ class PigeonProxyApiTestClassOverrides {
     Map<String?, Object?>? nullableMapParam,
     ProxyApiTestEnum? nullableEnumParam,
     ProxyApiSuperClass? nullableProxyApiParam,
-  })? new_;
+  })? pigeon_defaultConstructor;
 
   /// Overrides [ProxyApiTestClass.namedConstructor].
   static ProxyApiTestClass Function({
@@ -5723,8 +5723,8 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) {
-    if (PigeonProxyApiSuperClassOverrides.new_ != null) {
-      return PigeonProxyApiSuperClassOverrides.new_!();
+    if (PigeonProxyApiSuperClassOverrides.pigeon_defaultConstructor != null) {
+      return PigeonProxyApiSuperClassOverrides.pigeon_defaultConstructor!();
     }
     return ProxyApiSuperClass.pigeon_(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -5880,7 +5880,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
 @visibleForTesting
 class PigeonProxyApiSuperClassOverrides {
   /// Overrides [ProxyApiSuperClass.new].
-  static ProxyApiSuperClass Function()? new_;
+  static ProxyApiSuperClass Function()? pigeon_defaultConstructor;
 }
 
 /// ProxyApi to serve as an interface to the core ProxyApi class.
@@ -6024,8 +6024,10 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) {
-    if (PigeonClassWithApiRequirementOverrides.new_ != null) {
-      return PigeonClassWithApiRequirementOverrides.new_!();
+    if (PigeonClassWithApiRequirementOverrides.pigeon_defaultConstructor !=
+        null) {
+      return PigeonClassWithApiRequirementOverrides
+          .pigeon_defaultConstructor!();
     }
     return ClassWithApiRequirement.pigeon_(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
@@ -6181,5 +6183,5 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
 @visibleForTesting
 class PigeonClassWithApiRequirementOverrides {
   /// Overrides [ClassWithApiRequirement.new].
-  static ClassWithApiRequirement Function()? new_;
+  static ClassWithApiRequirement Function()? pigeon_defaultConstructor;
 }
