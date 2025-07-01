@@ -1,5 +1,6 @@
-## NEXT
+## 2.7.2
 
+* Uses `CADisplayLink` on macOS 14.0+.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 * Refactors native code for improved testing.
 
