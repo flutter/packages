@@ -10,8 +10,8 @@
 
 // Protocol for an AVPlayer instance factory. Used for injecting display links in tests.
 @protocol FVPDisplayLinkFactory
-- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                                    callback:(void (^)(void))callback;
+- (NSObject<FVPDisplayLink> *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                                              callback:(void (^)(void))callback;
 @end
 
 #pragma mark -

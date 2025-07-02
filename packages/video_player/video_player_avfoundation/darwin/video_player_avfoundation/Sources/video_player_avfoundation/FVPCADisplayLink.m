@@ -7,8 +7,9 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
-/// A proxy object to act as a CADisplayLink target, to avoid retain loops, since FVPDisplayLink
+/// A proxy object to act as a CADisplayLink target, to avoid retain loops, since FVPCADisplayLink
 /// owns its CADisplayLink, but CADisplayLink retains its target.
+API_AVAILABLE(ios(4.0), macos(14.0))
 @interface FVPDisplayLinkTarget : NSObject
 @property(nonatomic) void (^callback)(void);
 
@@ -35,20 +36,29 @@
 
 #pragma mark -
 
-@interface FVPDisplayLink ()
+@interface FVPCADisplayLink ()
 // The underlying display link implementation.
 @property(nonatomic) CADisplayLink *displayLink;
 @property(nonatomic) FVPDisplayLinkTarget *target;
 @end
 
-@implementation FVPDisplayLink
+@implementation FVPCADisplayLink
 
 - (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar
                          callback:(void (^)(void))callback {
   self = [super init];
   if (self) {
     _target = [[FVPDisplayLinkTarget alloc] initWithCallback:callback];
+#if TARGET_OS_IOS
     _displayLink = [CADisplayLink displayLinkWithTarget:_target selector:@selector(onDisplayLink:)];
+#else
+    // Use the view if one is wired up, otherwise fall back to the main screen.
+    // TODO(stuartmorgan): Consider an API to inform plugins about attached view changes.
+    NSView *view = registrar.view;
+    _displayLink = view ? [view displayLinkWithTarget:_target selector:@selector(onDisplayLink:)]
+                        : [NSScreen.mainScreen displayLinkWithTarget:_target
+                                                            selector:@selector(onDisplayLink:)];
+#endif
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     _displayLink.paused = YES;
   }
