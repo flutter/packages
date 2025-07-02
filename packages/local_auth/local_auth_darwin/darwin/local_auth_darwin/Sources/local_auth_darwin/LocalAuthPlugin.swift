@@ -13,7 +13,7 @@ import LocalAuthentication
 #endif
 
 /// A default context factory that wraps standard LAContext allocation.
-class DefaultAuthContextFactory: AuthContextFactory {
+final class DefaultAuthContextFactory: AuthContextFactory {
   func createAuthContext() -> AuthContext {
     return LAContext()
   }
@@ -23,7 +23,7 @@ class DefaultAuthContextFactory: AuthContextFactory {
 
 #if os(iOS)
   /// A default alert controller that wraps UIAlertController.
-  class DefaultAlertController: AuthAlertController {
+  final class DefaultAlertController: AuthAlertController {
     /// The wrapped alert controller.
     private let controller: UIAlertController
 
@@ -50,7 +50,7 @@ class DefaultAuthContextFactory: AuthContextFactory {
 
 /// A default alert factory that wraps standard UIAlertController and NSAlert allocation for iOS and
 /// macOS respectfully.
-class DefaultAlertFactory: AuthAlertFactory {
+final class DefaultAlertFactory: AuthAlertFactory {
   #if os(macOS)
     func createAlert() -> AuthAlert {
       return NSAlert()
@@ -77,7 +77,7 @@ class DefaultAlertFactory: AuthAlertFactory {
 // MARK: -
 
 /// A default view provider that wraps the FlutterPluginRegistrar.
-class DefaultViewProvider: ViewProvider {
+final class DefaultViewProvider: ViewProvider {
   /// The wrapped registrar.
   let registrar: FlutterPluginRegistrar
 
@@ -164,8 +164,8 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
       context.evaluatePolicy(
         policy,
         localizedReason: strings.reason
-      ) { (success: Bool, error: Error?) in
-        DispatchQueue.main.async { [weak self] in
+      ) { [weak self] (success: Bool, error: Error?) in
+        DispatchQueue.main.async {
           self?.handleAuthReply(
             success: success,
             error: error,
@@ -264,37 +264,37 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     #elseif os(iOS)
       // TODO(stuartmorgan): Get the view controller from the view provider once it's possible.
       // See https://github.com/flutter/flutter/issues/104117.
-      if let controller = UIApplication.shared.delegate?.window??.rootViewController {
-        let alert = alertFactory.createAlertController(
-          title: "",
-          message: message,
-          preferredStyle: .alert)
-
-        let defaultAction = alertFactory.createAlertAction(
-          title: dismissButtonTitle,
-          style: .default
-        ) { [weak self] action in
-          self?.handleResult(succeeded: false, completion: completion)
-        }
-
-        alert.addAction(defaultAction)
-        if let openSettingsButtonTitle = openSettingsButtonTitle,
-          let url = URL(string: UIApplication.openSettingsURLString)
-        {
-          let additionalAction = UIAlertAction(
-            title: openSettingsButtonTitle,
-            style: .default
-          ) { [weak self] action in
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            self?.handleResult(succeeded: false, completion: completion)
-          }
-          alert.addAction(additionalAction)
-        }
-        alert.present(on: controller, animated: true, completion: nil)
-      } else {
+      guard let controller = UIApplication.shared.delegate?.window??.rootViewController else {
         // TODO(stuartmorgan): Create a new error code for failure to show UI, and return it here.
         self.handleResult(succeeded: false, completion: completion)
+        return
       }
+      let alert = alertFactory.createAlertController(
+        title: "",
+        message: message,
+        preferredStyle: .alert)
+
+      let defaultAction = alertFactory.createAlertAction(
+        title: dismissButtonTitle,
+        style: .default
+      ) { [weak self] action in
+        self?.handleResult(succeeded: false, completion: completion)
+      }
+
+      alert.addAction(defaultAction)
+      if let openSettingsButtonTitle = openSettingsButtonTitle,
+        let url = URL(string: UIApplication.openSettingsURLString)
+      {
+        let additionalAction = UIAlertAction(
+          title: openSettingsButtonTitle,
+          style: .default
+        ) { [weak self] action in
+          UIApplication.shared.open(url, options: [:], completionHandler: nil)
+          self?.handleResult(succeeded: false, completion: completion)
+        }
+        alert.addAction(additionalAction)
+      }
+      alert.present(on: controller, animated: true, completion: nil)
     #endif
   }
 
@@ -365,7 +365,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     strings: AuthStrings,
     completion: @escaping (Result<AuthResultDetails, Error>) -> Void
   ) {
-    var result = AuthResult.errorNotAvailable
+    let result: AuthResult
     let errorCode = LAError.Code(rawValue: authError.code)
     switch errorCode {
     case .passcodeNotSet,
