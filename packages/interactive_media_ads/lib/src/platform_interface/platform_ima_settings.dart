@@ -78,7 +78,7 @@ abstract base class PlatformImaSettings {
   final PlatformImaSettingsCreationParams params;
 
   /// Sets the Publisher Provided Identification (PPID) sent with ads request.
-  void setPpid(String? ppid);
+  Future<void> setPpid(String? ppid);
 
   /// Specifies maximum number of redirects after which subsequent redirects
   /// will be denied, and the ad load aborted.
@@ -86,19 +86,19 @@ abstract base class PlatformImaSettings {
   /// In this case, the ad will raise an error with error code 302.
   ///
   /// The default value is 4.
-  void setMaxRedirects(int maxRedirects);
+  Future<void> setMaxRedirects(int maxRedirects);
 
   /// Sets the feature flags and their states to control experimental features.
   ///
   /// This should be set as early as possible, before requesting ads. Settings
   /// will remain constant until the next ad request. Calling this method again
   /// will reset any feature flags for the next ad request.
-  void setFeatureFlags(Map<String, String>? featureFlags);
+  Future<void> setFeatureFlags(Map<String, String>? featureFlags);
 
   /// Specifies whether to automatically play VMAP and ad rules ad breaks.
   ///
   /// The default value is true.
-  void setAutoPlayAdBreaks(bool autoPlayAdBreaks);
+  Future<void> setAutoPlayAdBreaks(bool autoPlayAdBreaks);
 
   /// Sets the partner specified video player that is integrating with the SDK.
   ///
@@ -107,7 +107,7 @@ abstract base class PlatformImaSettings {
   /// truncated. The player type specified should be short and unique. This is
   /// an optional setting used to improve SDK usability by tracking player
   /// types.
-  void setPlayerType(String? playerType);
+  Future<void> setPlayerType(String? playerType);
 
   /// Sets the partner specified player version that is integrating with the
   /// SDK.
@@ -116,14 +116,14 @@ abstract base class PlatformImaSettings {
   /// being integrated with the SDK. Player versions greater than 20 characters
   /// will be truncated. This is an optional setting used to improve SDK
   /// usability by tracking player version.
-  void setPlayerVersion(String? playerVersion);
+  Future<void> setPlayerVersion(String? playerVersion);
 
   /// Sets the session ID to identify a single user session.
   ///
   /// This must be a UUID. It is used exclusively for frequency capping across
   /// the user session.
-  void setSessionID(String? sessionID);
+  Future<void> setSessionID(String? sessionID);
 
   /// Enables and disables the debug mode, which is disabled by default.
-  void setDebugMode(bool enabled);
+  Future<void> setDebugMode(bool enabled);
 }
