@@ -586,7 +586,7 @@ events. For example, here is how the "7" button from the
 [calculator example](https://github.com/flutter/packages/blob/main/packages/rfw/example/wasm/logic/calculator.rfwtxt)
 is represented:
 
-<?code-excerpt "example/wasm/logic/calculator.rfwtxt (button7)"?>
+<?code-excerpt "test/readme_test.dart (button7)"?>
 ```rfwtxt
 CalculatorButton(label: "7", onPressed: event "digit" { arguments: [7] }),
 ```
@@ -600,7 +600,7 @@ In that example, `CalculatorButton` is itself a remote widget that is
 defined in terms of a `Button`, and the `onPressed` argument
 is passed to the `onPressed` of the `Button`, like this:
 
-<?code-excerpt "example/wasm/logic/calculator.rfwtxt (CalculatorButton)"?>
+<?code-excerpt "test/readme_test.dart (CalculatorButton)"?>
 ```rfwtxt
 widget CalculatorButton = Padding(
   padding: [8.0],
