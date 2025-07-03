@@ -362,7 +362,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
   ///
   /// [PlatformException.code] can be one of:
   /// - `storekit2_not_enabled`
-  /// - `storekit2_unsupported_platform_version`
   /// - `storekit2_failed_to_fetch_product`
   /// - `storekit2_not_subscription`
   /// - `storekit2_eligibility_check_failed`
