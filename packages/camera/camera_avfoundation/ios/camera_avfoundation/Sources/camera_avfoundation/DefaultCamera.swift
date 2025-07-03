@@ -289,7 +289,8 @@ final class DefaultCamera: FLTCam, Camera {
     }
 
     if isRecording && !isRecordingPaused && videoCaptureSession.running
-      && audioCaptureSession.running {
+      && audioCaptureSession.running
+    {
       if videoWriter?.status == .failed, let error = videoWriter?.error {
         reportErrorMessage("\(error)")
         return
