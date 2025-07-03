@@ -22,6 +22,7 @@ void main() {
 
 // Auto-consume must be true on iOS.
 // To try without auto-consume on another platform, change `true` to `false` here.
+// ignore: no_literal_bool_comparisons
 final bool _kAutoConsume = Platform.isIOS || true;
 
 const String _kConsumableId = 'consumable';
