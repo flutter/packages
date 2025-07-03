@@ -18,8 +18,8 @@ final class DefaultCamera: FLTCam, Camera {
   /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
   /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
   private var latestPixelBuffer: CVPixelBuffer?
-  private var lastVideoSampleTime = CMTime.zero
-  private var lastAudioSampleTime = CMTime.zero
+  /// Time of the end of the last sample.
+  private var lastSampleEndTime = CMTime.zero
 
   /// Maximum number of frames pending processing.
   /// To limit memory consumption, limit the number of frames pending processing.
@@ -288,75 +288,74 @@ final class DefaultCamera: FLTCam, Camera {
       }
     }
 
-    if isRecording && !isRecordingPaused {
+    if isRecording && !isRecordingPaused && videoCaptureSession.running
+      && audioCaptureSession.running
+    {
       if videoWriter?.status == .failed, let error = videoWriter?.error {
         reportErrorMessage("\(error)")
         return
       }
 
-      // ignore audio samples until the first video sample arrives to avoid black frames
-      // https://github.com/flutter/flutter/issues/57831
-      if isFirstVideoSample && output != captureVideoOutput.avOutput {
-        return
+      // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
+      // https://github.com/flutter/flutter/issues/132073
+      if output == captureVideoOutput.avOutput {
+        if !(videoWriterInput?.readyForMoreMediaData ?? false) {
+          return
+        }
+      } else {
+        // ignore audio samples until the first video sample arrives to avoid black frames
+        // https://github.com/flutter/flutter/issues/57831
+        if isFirstVideoSample || !(audioWriterInput?.readyForMoreMediaData ?? false) {
+          return
+        }
+        outputForOffsetAdjusting = output
       }
 
-      var currentSampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+      let sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
 
       if isFirstVideoSample {
-        videoWriter?.startSession(atSourceTime: currentSampleTime)
+        videoWriter?.startSession(atSourceTime: sampleTime)
         // fix sample times not being numeric when pause/resume happens before first sample buffer
         // arrives
         // https://github.com/flutter/flutter/issues/132014
-        lastVideoSampleTime = currentSampleTime
-        lastAudioSampleTime = currentSampleTime
+        isRecordingDisconnected = false
         isFirstVideoSample = false
       }
 
-      if output == captureVideoOutput.avOutput {
-        if videoIsDisconnected {
-          videoIsDisconnected = false
+      var currentSampleEndTime = sampleTime
+      let dur = CMSampleBufferGetDuration(sampleBuffer)
+      if CMTIME_IS_NUMERIC(dur) {
+        currentSampleEndTime = CMTimeAdd(currentSampleEndTime, dur)
+      }
 
-          videoTimeOffset =
-            videoTimeOffset.value == 0
-            ? CMTimeSubtract(currentSampleTime, lastVideoSampleTime)
-            : CMTimeAdd(videoTimeOffset, CMTimeSubtract(currentSampleTime, lastVideoSampleTime))
-
-          return
+      // Use a single time offset for both video and audio.
+      // https://github.com/flutter/flutter/issues/149978
+      if isRecordingDisconnected {
+        if output == outputForOffsetAdjusting {
+          let offset = CMTimeSubtract(currentSampleEndTime, lastSampleEndTime)
+          recordingTimeOffset = CMTimeAdd(recordingTimeOffset, offset)
+          lastSampleEndTime = currentSampleEndTime
+          isRecordingDisconnected = false
         }
+        return
+      }
 
-        lastVideoSampleTime = currentSampleTime
+      if output == outputForOffsetAdjusting {
+        lastSampleEndTime = currentSampleEndTime
+      }
 
+      if output == captureVideoOutput.avOutput {
         let nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
-        let nextSampleTime = CMTimeSubtract(lastVideoSampleTime, videoTimeOffset)
-        // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
-        // https://github.com/flutter/flutter/issues/132073
-        if videoWriterInput?.readyForMoreMediaData ?? false {
+        let nextSampleTime = CMTimeSubtract(sampleTime, recordingTimeOffset)
+        if nextSampleTime > lastAppendedVideoSampleTime {
           videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
+          lastAppendedVideoSampleTime = nextSampleTime
         }
       } else {
-        let dur = CMSampleBufferGetDuration(sampleBuffer)
-
-        if dur.value > 0 {
-          currentSampleTime = CMTimeAdd(currentSampleTime, dur)
-        }
-
-        if audioIsDisconnected {
-          audioIsDisconnected = false
-
-          audioTimeOffset =
-            audioTimeOffset.value == 0
-            ? CMTimeSubtract(currentSampleTime, lastAudioSampleTime)
-            : CMTimeAdd(audioTimeOffset, CMTimeSubtract(currentSampleTime, lastAudioSampleTime))
-
-          return
-        }
-
-        lastAudioSampleTime = currentSampleTime
-
-        if audioTimeOffset.value != 0 {
+        if recordingTimeOffset.value != 0 {
           if let adjustedSampleBuffer = copySampleBufferWithAdjustedTime(
             sampleBuffer,
-            by: audioTimeOffset)
+            by: recordingTimeOffset)
           {
             newAudioSample(adjustedSampleBuffer)
           }
@@ -405,10 +404,8 @@ final class DefaultCamera: FLTCam, Camera {
       }
       return
     }
-    if audioWriterInput?.readyForMoreMediaData ?? false {
-      if !(audioWriterInput?.append(sampleBuffer) ?? false) {
-        reportErrorMessage("Unable to write to audio input")
-      }
+    if !(audioWriterInput?.append(sampleBuffer) ?? false) {
+      reportErrorMessage("Unable to write to audio input")
     }
   }
 

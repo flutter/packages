@@ -161,7 +161,33 @@ NSString *const errorMethod = @"error";
 
   [self updateOrientation];
 
+  // Handle video and audio interruptions and errors. Interruption can happen for example by
+  // an incoming call during video recording. Error can happen for example when recording starts
+  // during an incoming call.
+  // https://github.com/flutter/flutter/issues/151253
+  for (NSObject<FLTCaptureSession> *session in @[ _videoCaptureSession, _audioCaptureSession ]) {
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(captureSessionWasInterrupted:)
+                                               name:AVCaptureSessionWasInterruptedNotification
+                                             object:session.captureSession];
+
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(captureSessionRuntimeError:)
+                                               name:AVCaptureSessionRuntimeErrorNotification
+                                             object:session.captureSession];
+  }
+
   return self;
+}
+
+- (void)captureSessionWasInterrupted:(NSNotification *)notification {
+  _isRecordingDisconnected = YES;
+}
+
+- (void)captureSessionRuntimeError:(NSNotification *)notification {
+  [self reportErrorMessage:[NSString
+                               stringWithFormat:@"%@",
+                                                notification.userInfo[AVCaptureSessionErrorKey]]];
 }
 
 - (AVCaptureConnection *)createConnection:(NSError **)error {
@@ -444,6 +470,7 @@ NSString *const errorMethod = @"error";
 
 - (void)dealloc {
   [_motionManager stopAccelerometerUpdates];
+  [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 /// Main logic to setup the video recording.
@@ -471,10 +498,10 @@ NSString *const errorMethod = @"error";
   _isFirstVideoSample = YES;
   _isRecording = YES;
   _isRecordingPaused = NO;
-  _videoTimeOffset = CMTimeMake(0, 1);
-  _audioTimeOffset = CMTimeMake(0, 1);
-  _videoIsDisconnected = NO;
-  _audioIsDisconnected = NO;
+  _isRecordingDisconnected = NO;
+  _recordingTimeOffset = kCMTimeZero;
+  _outputForOffsetAdjusting = _captureVideoOutput.avOutput;
+  _lastAppendedVideoSampleTime = kCMTimeNegativeInfinity;
   completion(nil);
 }
 
@@ -528,8 +555,7 @@ NSString *const errorMethod = @"error";
 
 - (void)pauseVideoRecording {
   _isRecordingPaused = YES;
-  _videoIsDisconnected = YES;
-  _audioIsDisconnected = YES;
+  _isRecordingDisconnected = YES;
 }
 
 - (void)resumeVideoRecording {

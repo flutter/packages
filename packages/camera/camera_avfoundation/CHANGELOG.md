@@ -1,3 +1,8 @@
+## 0.9.20+2
+
+* Handles video and audio interruptions and errors.
+* Uses a single time offset for both video and audio.
+
 ## 0.9.20+1
 
 * Migrates lifecycle methods (`start`, `stop`, `close`) to Swift.
