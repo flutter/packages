@@ -289,7 +289,7 @@ final class DefaultCamera: FLTCam, Camera {
     }
 
     if isRecording && !isRecordingPaused && videoCaptureSession.running
-        && audioCaptureSession.running {
+      && audioCaptureSession.running {
       if videoWriter?.status == .failed, let error = videoWriter?.error {
         reportErrorMessage("\(error)")
         return
@@ -321,7 +321,7 @@ final class DefaultCamera: FLTCam, Camera {
         isFirstVideoSample = false
       }
 
-      var currentSampleEndTime = sampleTime;
+      var currentSampleEndTime = sampleTime
       let dur = CMSampleBufferGetDuration(sampleBuffer)
       if CMTIME_IS_NUMERIC(dur) {
         currentSampleEndTime = CMTimeAdd(currentSampleEndTime, dur)
