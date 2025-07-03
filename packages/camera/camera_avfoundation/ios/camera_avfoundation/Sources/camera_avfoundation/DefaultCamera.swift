@@ -288,7 +288,8 @@ final class DefaultCamera: FLTCam, Camera {
       }
     }
 
-    if isRecording && !isRecordingPaused && videoCaptureSession.running && audioCaptureSession.running {
+    if isRecording && !isRecordingPaused && videoCaptureSession.running
+        && audioCaptureSession.running {
       if videoWriter?.status == .failed, let error = videoWriter?.error {
         reportErrorMessage("\(error)")
         return
@@ -297,13 +298,13 @@ final class DefaultCamera: FLTCam, Camera {
       // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
       // https://github.com/flutter/flutter/issues/132073
       if output == captureVideoOutput.avOutput {
-				if !(videoWriterInput?.readyForMoreMediaData ?? false) {
+        if !(videoWriterInput?.readyForMoreMediaData ?? false) {
           return
         }
       } else {
         // ignore audio samples until the first video sample arrives to avoid black frames
         // https://github.com/flutter/flutter/issues/57831
-				if isFirstVideoSample || !(audioWriterInput?.readyForMoreMediaData ?? false) {
+        if isFirstVideoSample || !(audioWriterInput?.readyForMoreMediaData ?? false) {
           return
         }
         outputForOffsetAdjusting = output
@@ -320,7 +321,7 @@ final class DefaultCamera: FLTCam, Camera {
         isFirstVideoSample = false
       }
 
-			var currentSampleEndTime = sampleTime;
+      var currentSampleEndTime = sampleTime;
       let dur = CMSampleBufferGetDuration(sampleBuffer)
       if CMTIME_IS_NUMERIC(dur) {
         currentSampleEndTime = CMTimeAdd(currentSampleEndTime, dur)
@@ -329,7 +330,7 @@ final class DefaultCamera: FLTCam, Camera {
       // Use a single time offset for both video and audio.
       // https://github.com/flutter/flutter/issues/149978
       if isRecordingDisconnected {
-        if (output == outputForOffsetAdjusting) {
+        if output == outputForOffsetAdjusting {
           let offset = CMTimeSubtract(currentSampleEndTime, lastSampleEndTime)
           recordingTimeOffset = CMTimeAdd(recordingTimeOffset, offset)
           lastSampleEndTime = currentSampleEndTime
@@ -345,7 +346,7 @@ final class DefaultCamera: FLTCam, Camera {
       if output == captureVideoOutput.avOutput {
         let nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         let nextSampleTime = CMTimeSubtract(sampleTime, recordingTimeOffset)
-				if nextSampleTime > lastAppendedVideoSampleTime {
+        if nextSampleTime > lastAppendedVideoSampleTime {
           videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
           lastAppendedVideoSampleTime = nextSampleTime
         }

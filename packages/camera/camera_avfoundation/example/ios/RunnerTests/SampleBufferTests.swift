@@ -395,7 +395,7 @@ final class CameraSampleBufferTests: XCTestCase {
     let appendVideoSample = { (time: Int64) in
       camera.captureOutput(
         camera.captureVideoOutput.avOutput,
-				didOutput: CameraTestUtils.createTestSampleBuffer(
+        didOutput: CameraTestUtils.createTestSampleBuffer(
           timestamp: CMTimeMake(value: time, timescale: 1),
           duration: .invalid),
         from: testVideoConnection)
@@ -404,7 +404,7 @@ final class CameraSampleBufferTests: XCTestCase {
     let appendAudioSample = { (time: Int64, duration: Int64) in
       camera.captureOutput(
         testAudioOutput,
-				didOutput: CameraTestUtils.createTestAudioSampleBuffer(
+        didOutput: CameraTestUtils.createTestAudioSampleBuffer(
           timestamp: CMTimeMake(value: time, timescale: 1),
           duration: CMTimeMake(value: duration, timescale: 1)),
         from: testAudioConnection)
