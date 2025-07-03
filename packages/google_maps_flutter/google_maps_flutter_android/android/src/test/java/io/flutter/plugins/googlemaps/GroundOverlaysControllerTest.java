@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.os.Build;
 import android.util.Base64;
 import androidx.annotation.NonNull;
 import androidx.test.core.app.ApplicationProvider;
@@ -31,10 +30,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
 
 @RunWith(RobolectricTestRunner.class)
-@Config(minSdk = Build.VERSION_CODES.LOLLIPOP)
 public class GroundOverlaysControllerTest {
   @Mock private BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
   @Mock private BitmapDescriptor mockBitmapDescriptor;

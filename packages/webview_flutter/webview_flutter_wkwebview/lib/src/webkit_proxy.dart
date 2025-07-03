@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:typed_data';
+
 import 'common/platform_webview.dart';
 import 'common/web_kit.g.dart';
 
@@ -29,7 +31,17 @@ class WebKitProxy {
     this.newPlatformWebView = PlatformWebView.new,
     this.newWKUIDelegate = WKUIDelegate.new,
     this.newUIScrollViewDelegate = UIScrollViewDelegate.new,
+    this.createAsyncAuthenticationChallengeResponse =
+        AuthenticationChallengeResponse.createAsync,
+    this.withUserAsyncURLCredential = URLCredential.withUserAsync,
+    this.serverTrustAsyncURLCredential = URLCredential.serverTrustAsync,
     this.withUserURLCredential = URLCredential.withUser,
+    this.evaluateWithErrorSecTrust = SecTrust.evaluateWithError,
+    this.copyExceptionsSecTrust = SecTrust.copyExceptions,
+    this.setExceptionsSecTrust = SecTrust.setExceptions,
+    this.getTrustResultSecTrust = SecTrust.getTrustResult,
+    this.copyCertificateChainSecTrust = SecTrust.copyCertificateChain,
+    this.copyDataSecCertificate = SecCertificate.copyData,
     this.defaultDataStoreWKWebsiteDataStore =
         _defaultDataStoreWKWebsiteDataStore,
   });
@@ -102,7 +114,7 @@ class WebKitProxy {
       WKNavigationDelegate,
       WKWebView,
     )? webViewWebContentProcessDidTerminate,
-    required Future<List<Object?>> Function(
+    required Future<AuthenticationChallengeResponse> Function(
       WKNavigationDelegate,
       WKWebView,
       URLAuthenticationChallenge,
@@ -175,12 +187,48 @@ class WebKitProxy {
     )? scrollViewDidScroll,
   }) newUIScrollViewDelegate;
 
+  /// Calls to [AuthenticationChallengeResponse.createAsync].
+  final Future<AuthenticationChallengeResponse> Function(
+    UrlSessionAuthChallengeDisposition disposition,
+    URLCredential? credential,
+  ) createAsyncAuthenticationChallengeResponse;
+
+  /// Calls to [URLCredential.withUserAsync].
+  final Future<URLCredential> Function(
+    String,
+    String,
+    UrlCredentialPersistence,
+  ) withUserAsyncURLCredential;
+
+  /// Calls to [URLCredential.serverTrustAsync].
+  final Future<URLCredential> Function(SecTrust) serverTrustAsyncURLCredential;
+
   /// Constructs [URLCredential].
   final URLCredential Function({
     required String user,
     required String password,
     required UrlCredentialPersistence persistence,
   }) withUserURLCredential;
+
+  /// Calls to [SecTrust.evaluateWithError].
+  final Future<bool> Function(SecTrust) evaluateWithErrorSecTrust;
+
+  /// Calls to [SecTrust.copyExceptions].
+  final Future<Uint8List?> Function(SecTrust) copyExceptionsSecTrust;
+
+  /// Calls to [SecTrust.setExceptions].
+  final Future<bool> Function(SecTrust, Uint8List?) setExceptionsSecTrust;
+
+  /// Calls to [SecTrust.getTrustResult].
+  final Future<GetTrustResultResponse> Function(SecTrust)
+      getTrustResultSecTrust;
+
+  /// Calls to [SecTrust.copyCertificateChain].
+  final Future<List<SecCertificate>?> Function(SecTrust)
+      copyCertificateChainSecTrust;
+
+  /// Calls to [SecCertificate.copyData].
+  final Future<Uint8List> Function(SecCertificate) copyDataSecCertificate;
 
   /// Calls to [WKWebsiteDataStore.defaultDataStore].
   final WKWebsiteDataStore Function() defaultDataStoreWKWebsiteDataStore;

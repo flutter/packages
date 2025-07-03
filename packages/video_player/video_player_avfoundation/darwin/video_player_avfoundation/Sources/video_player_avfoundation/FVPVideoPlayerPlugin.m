@@ -45,6 +45,7 @@
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(nonatomic, strong) id<FVPDisplayLinkFactory> displayLinkFactory;
 @property(nonatomic, strong) id<FVPAVFactory> avFactory;
+@property(nonatomic, strong) NSObject<FVPViewProvider> *viewProvider;
 // TODO(stuartmorgan): Decouple identifiers for platform views and texture views.
 @property(nonatomic, assign) int64_t nextNonTexturePlayerIdentifier;
 @end
@@ -68,19 +69,23 @@
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   return [self initWithAVFactory:[[FVPDefaultAVFactory alloc] init]
               displayLinkFactory:[[FVPDefaultDisplayLinkFactory alloc] init]
+                    viewProvider:[[FVPDefaultViewProvider alloc] initWithRegistrar:registrar]
                        registrar:registrar];
 }
 
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
                displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
+                     viewProvider:(NSObject<FVPViewProvider> *)viewProvider
                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registry = [registrar textures];
   _messenger = [registrar messenger];
   _registrar = registrar;
+  _viewProvider = viewProvider;
   _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
   _avFactory = avFactory ?: [[FVPDefaultAVFactory alloc] init];
+  _viewProvider = viewProvider ?: [[FVPDefaultViewProvider alloc] initWithRegistrar:registrar];
   _playersByIdentifier = [NSMutableDictionary dictionaryWithCapacity:1];
   // Initialized to a high number to avoid collisions with texture identifiers (which are generated
   // separately).
@@ -209,16 +214,16 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
     return [[FVPTextureBasedVideoPlayer alloc] initWithAsset:assetPath
                                                 frameUpdater:frameUpdater
                                                  displayLink:displayLink
-                                                   avFactory:_avFactory
-                                                   registrar:self.registrar
+                                                   avFactory:self.avFactory
+                                                viewProvider:self.viewProvider
                                                   onDisposed:onDisposed];
   } else if (options.uri) {
     return [[FVPTextureBasedVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                               frameUpdater:frameUpdater
                                                displayLink:displayLink
                                                httpHeaders:options.httpHeaders
-                                                 avFactory:_avFactory
-                                                 registrar:self.registrar
+                                                 avFactory:self.avFactory
+                                              viewProvider:self.viewProvider
                                                 onDisposed:onDisposed];
   }
 
@@ -230,13 +235,13 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   if (options.asset) {
     NSString *assetPath = [self assetPathFromCreationOptions:options];
     return [[FVPVideoPlayer alloc] initWithAsset:assetPath
-                                       avFactory:_avFactory
-                                       registrar:self.registrar];
+                                       avFactory:self.avFactory
+                                    viewProvider:self.viewProvider];
   } else if (options.uri) {
     return [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                    httpHeaders:options.httpHeaders
-                                     avFactory:_avFactory
-                                     registrar:self.registrar];
+                                     avFactory:self.avFactory
+                                  viewProvider:self.viewProvider];
   }
 
   return nil;

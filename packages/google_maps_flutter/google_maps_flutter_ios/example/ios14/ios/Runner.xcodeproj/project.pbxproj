@@ -11,6 +11,7 @@
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		2A6906C72D263DF4001F8426 /* GoogleMapsGroundOverlayControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A6906C62D263DE7001F8426 /* GoogleMapsGroundOverlayControllerTests.m */; };
 		2BDE99378062AE3E60B40021 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */; };
+		330909FF2D99B7A60077A751 /* GoogleMapsMarkerControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 330909FE2D99B79B0077A751 /* GoogleMapsMarkerControllerTests.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		478116522BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 478116512BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m */; };
 		528F16832C62941000148160 /* FGMClusterManagersControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 528F16822C62941000148160 /* FGMClusterManagersControllerTests.m */; };
@@ -64,6 +65,7 @@
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		2A6906C62D263DE7001F8426 /* GoogleMapsGroundOverlayControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsGroundOverlayControllerTests.m; sourceTree = "<group>"; };
+		330909FE2D99B79B0077A751 /* GoogleMapsMarkerControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsMarkerControllerTests.m; sourceTree = "<group>"; };
 		3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		478116512BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsPolylinesControllerTests.m; sourceTree = "<group>"; };
@@ -212,6 +214,7 @@
 				6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */,
 				0DD7B6C22B744EEF00E857FD /* FLTTileProviderControllerTests.m */,
 				F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */,
+				330909FE2D99B79B0077A751 /* GoogleMapsMarkerControllerTests.m */,
 				478116512BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m */,
 				2A6906C62D263DE7001F8426 /* GoogleMapsGroundOverlayControllerTests.m */,
 				982F2A6A27BADE17003C81F4 /* PartiallyMockedMapView.h */,
@@ -522,6 +525,7 @@
 				F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */,
 				6851F3562835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m in Sources */,
 				982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */,
+				330909FF2D99B7A60077A751 /* GoogleMapsMarkerControllerTests.m in Sources */,
 				478116522BEF8F47002F593E /* GoogleMapsPolylinesControllerTests.m in Sources */,
 				2A6906C72D263DF4001F8426 /* GoogleMapsGroundOverlayControllerTests.m in Sources */,
 				0DD7B6C32B744EEF00E857FD /* FLTTileProviderControllerTests.m in Sources */,

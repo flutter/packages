@@ -555,7 +555,9 @@ void main() {
   });
 
   group('swift-format', () {
-    test('formats Swift if --swift-format flag is provided', () async {
+    test('formats Swift if --swift flag is provided', () async {
+      mockPlatform.isMacOS = false;
+
       const List<String> files = <String>[
         'macos/foo.swift',
       ];
@@ -569,25 +571,24 @@ void main() {
       await runCapturingPrint(runner, <String>[
         'format',
         '--swift',
-        '--swift-format-path=/path/to/swift-format'
       ]);
 
       expect(
           processRunner.recordedCalls,
           orderedEquals(<ProcessCall>[
-            const ProcessCall(
-              '/path/to/swift-format',
-              <String>['--version'],
-              null,
-            ),
             ProcessCall(
-              '/path/to/swift-format',
-              <String>['-i', ...getPackagesDirRelativePaths(plugin, files)],
+              'xcrun',
+              <String>[
+                'swift-format',
+                '-i',
+                ...getPackagesDirRelativePaths(plugin, files)
+              ],
               packagesDir.path,
             ),
             ProcessCall(
-              '/path/to/swift-format',
+              'xcrun',
               <String>[
+                'swift-format',
                 'lint',
                 '--parallel',
                 '--strict',
@@ -599,6 +600,8 @@ void main() {
     });
 
     test('skips Swift if --no-swift flag is provided', () async {
+      mockPlatform.isMacOS = true;
+
       const List<String> files = <String>[
         'macos/foo.swift',
       ];
@@ -614,35 +617,6 @@ void main() {
       expect(processRunner.recordedCalls, orderedEquals(<ProcessCall>[]));
     });
 
-    test('fails with a clear message if swift-format is not in the path',
-        () async {
-      const List<String> files = <String>[
-        'macos/foo.swift',
-      ];
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir, extraFiles: files);
-      fakePubGet(plugin);
-
-      processRunner.mockProcessesForExecutable['swift-format'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>['--version']),
-      ];
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-          runner, <String>['format', '--swift'], errorHandler: (Error e) {
-        commandError = e;
-      });
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-                'Unable to run "swift-format". Make sure that it is in your path, or '
-                'provide a full path with --swift-format-path.'),
-          ]));
-    });
-
     test('fails if swift-format lint finds issues', () async {
       const List<String> files = <String>[
         'macos/foo.swift',
@@ -651,12 +625,10 @@ void main() {
           createFakePlugin('a_plugin', packagesDir, extraFiles: files);
       fakePubGet(plugin);
 
-      processRunner.mockProcessesForExecutable['swift-format'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(),
-            <String>['--version']), // check for working swift-format
-        FakeProcessInfo(MockProcess(), <String>['-i']),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['swift-format', '-i']),
         FakeProcessInfo(MockProcess(exitCode: 1), <String>[
+          'swift-format',
           'lint',
           '--parallel',
           '--strict',
@@ -666,7 +638,6 @@ void main() {
       final List<String> output = await runCapturingPrint(runner, <String>[
         'format',
         '--swift',
-        '--swift-format-path=swift-format'
       ], errorHandler: (Error e) {
         commandError = e;
       });
@@ -687,12 +658,10 @@ void main() {
           createFakePlugin('a_plugin', packagesDir, extraFiles: files);
       fakePubGet(plugin);
 
-      processRunner.mockProcessesForExecutable['swift-format'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(),
-            <String>['--version']), // check for working swift-format
-        FakeProcessInfo(MockProcess(), <String>['-i']),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(), <String>['swift-format', '-i']),
         FakeProcessInfo(MockProcess(exitCode: 99), <String>[
+          'swift-format',
           'lint',
           '--parallel',
           '--strict',
@@ -702,7 +671,6 @@ void main() {
       final List<String> output = await runCapturingPrint(runner, <String>[
         'format',
         '--swift',
-        '--swift-format-path=swift-format'
       ], errorHandler: (Error e) {
         commandError = e;
       });
@@ -723,17 +691,14 @@ void main() {
           createFakePlugin('a_plugin', packagesDir, extraFiles: files);
       fakePubGet(plugin);
 
-      processRunner.mockProcessesForExecutable['swift-format'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(),
-            <String>['--version']), // check for working swift-format
-        FakeProcessInfo(MockProcess(exitCode: 1), <String>['-i']),
+      processRunner.mockProcessesForExecutable['xcrun'] = <FakeProcessInfo>[
+        FakeProcessInfo(
+            MockProcess(exitCode: 1), <String>['swift-format', '-i']),
       ];
       Error? commandError;
       final List<String> output = await runCapturingPrint(runner, <String>[
         'format',
         '--swift',
-        '--swift-format-path=swift-format'
       ], errorHandler: (Error e) {
         commandError = e;
       });
@@ -816,28 +781,24 @@ void main() {
     await runCapturingPrint(runner, <String>[
       'format',
       '--swift',
-      '--swift-format-path=/path/to/swift-format'
     ]);
 
     expect(
         processRunner.recordedCalls,
         orderedEquals(<ProcessCall>[
-          const ProcessCall(
-            '/path/to/swift-format',
-            <String>['--version'],
-            null,
-          ),
           ProcessCall(
-            '/path/to/swift-format',
+            'xcrun',
             <String>[
+              'swift-format',
               '-i',
               ...getPackagesDirRelativePaths(plugin, <String>[sourceFile])
             ],
             packagesDir.path,
           ),
           ProcessCall(
-            '/path/to/swift-format',
+            'xcrun',
             <String>[
+              'swift-format',
               'lint',
               '--parallel',
               '--strict',

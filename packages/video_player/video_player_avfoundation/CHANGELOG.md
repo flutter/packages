@@ -1,3 +1,13 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Refactors native code for improved testing.
+
+## 2.7.1
+
+* Adds possibility to play videos at more than 30 FPS.
+* Fixes playing state not updating in some paths.
+
 ## 2.7.0
 
 * Adds support for platform views as an optional way of displaying a video.

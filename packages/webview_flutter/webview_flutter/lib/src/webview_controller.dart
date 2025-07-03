@@ -405,6 +405,31 @@ class WebViewController {
   ) {
     return platform.setOnScrollPositionChange(onScrollPositionChange);
   }
+
+  /// Whether the vertical scrollbar should be drawn or not.
+  Future<void> setVerticalScrollBarEnabled(bool enabled) {
+    return platform.setVerticalScrollBarEnabled(enabled);
+  }
+
+  /// Whether the horizontal scrollbar should be drawn or not.
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) {
+    return platform.setHorizontalScrollBarEnabled(enabled);
+  }
+
+  /// Returns true if the current platform supports setting whether scrollbars
+  /// should be drawn or not.
+  ///
+  /// See [setVerticalScrollBarEnabled] and [setHorizontalScrollBarEnabled].
+  Future<bool> supportsSetScrollBarsEnabled() async {
+    return platform.supportsSetScrollBarsEnabled();
+  }
+
+  /// Sets the over-scroll mode for the WebView.
+  ///
+  /// Default behavior is platform dependent.
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
+    return platform.setOverScrollMode(mode);
+  }
 }
 
 /// Permissions request when web content requests access to protected resources.

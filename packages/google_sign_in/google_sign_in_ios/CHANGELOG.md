@@ -1,3 +1,13 @@
+## 6.0.0
+
+* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
+  interface package, rather than 2.x, significantly changing the API surface.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 5.9.0
+
+* Updates Google Sign-In SDK to 8.0+.
+
 ## 5.8.1
 
 * Asserts that new `forceAccountName` parameter is null (not used in iOS).

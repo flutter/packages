@@ -24,7 +24,7 @@ if (flutterVersionName == null) {
 
 android {
     namespace 'io.flutter.plugins.imagepickerexample'
-    compileSdk flutter.compileSdkVersion
+    compileSdk = flutter.compileSdkVersion
     testOptions.unitTests.includeAndroidResources = true
 
 

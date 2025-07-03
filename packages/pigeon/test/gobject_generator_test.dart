@@ -831,4 +831,100 @@ void main() {
     }
     expect(code, contains(' * ///'));
   });
+
+  test('generates custom class id constants', () {
+    final Class parameterObjectClass =
+        Class(name: 'ParameterObject', fields: <NamedType>[
+      NamedType(
+          type: const TypeDeclaration(baseName: 'bool', isNullable: false),
+          name: 'aValue'),
+    ]);
+    final Class objectClass = Class(name: 'Object', fields: <NamedType>[]);
+    final Enum anEnum = Enum(
+      name: 'enum',
+      members: <EnumMember>[EnumMember(name: 'one'), EnumMember(name: 'two')],
+    );
+    final Root root = Root(
+      apis: <Api>[
+        AstHostApi(name: 'Api', methods: <Method>[
+          Method(
+            name: 'doSomething',
+            location: ApiLocation.host,
+            parameters: <Parameter>[
+              Parameter(
+                  name: 'anObject',
+                  type: TypeDeclaration(
+                    baseName: 'ParameterObject',
+                    isNullable: false,
+                    associatedClass: parameterObjectClass,
+                  )),
+              Parameter(
+                  name: 'aGenericObject',
+                  type: TypeDeclaration(
+                    baseName: 'Object',
+                    isNullable: false,
+                    associatedClass: objectClass,
+                  )),
+            ],
+            returnType: TypeDeclaration(
+              baseName: 'anObject',
+              isNullable: false,
+              associatedClass: parameterObjectClass,
+            ),
+          ),
+        ])
+      ],
+      classes: <Class>[parameterObjectClass, objectClass],
+      enums: <Enum>[anEnum],
+    );
+    {
+      final StringBuffer sink = StringBuffer();
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<InternalGObjectOptions> generatorOptions =
+          OutputFileOptions<InternalGObjectOptions>(
+        fileType: FileType.header,
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final String code = sink.toString();
+      expect(code, contains('extern const int test_packageenum_type_id;'));
+      expect(code,
+          contains('extern const int test_package_parameter_object_type_id;'));
+      expect(code, contains('extern const int test_package_object_type_id;'));
+    }
+    {
+      final StringBuffer sink = StringBuffer();
+      const GObjectGenerator generator = GObjectGenerator();
+      final OutputFileOptions<InternalGObjectOptions> generatorOptions =
+          OutputFileOptions<InternalGObjectOptions>(
+        fileType: FileType.source,
+        languageOptions: const InternalGObjectOptions(
+          headerIncludePath: '',
+          gobjectHeaderOut: '',
+          gobjectSourceOut: '',
+        ),
+      );
+      generator.generate(
+        generatorOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final String code = sink.toString();
+
+      expect(code, contains('const int test_packageenum_type_id = 129;'));
+      expect(code,
+          contains('const int test_package_parameter_object_type_id = 130;'));
+      expect(code, contains('const int test_package_object_type_id = 131;'));
+    }
+  });
 }

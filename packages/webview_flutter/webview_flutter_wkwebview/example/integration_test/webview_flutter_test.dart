@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:leak_tracker/leak_tracker.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/src/common/platform_webview.dart';
 import 'package:webview_flutter_wkwebview/src/common/weak_reference_utils.dart';
@@ -65,14 +66,11 @@ Future<void> main() async {
     );
 
     ClassWithCallbackClass? instance = ClassWithCallbackClass();
-    instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
+    instanceManager.addDartCreatedInstance(instance.callbackClass);
     instance = null;
 
     // Force garbage collection.
-    await IntegrationTestWidgetsFlutterBinding.instance
-        .watchPerformance(() async {
-      await tester.pumpAndSettle();
-    });
+    await forceGC();
 
     final int gcIdentifier = await gcCompleter.future;
     expect(gcIdentifier, 0);
@@ -236,6 +234,36 @@ Future<void> main() async {
       'document.documentElement.innerText',
     ) as String;
     expect(content.contains('flutter_test_header'), isTrue);
+  });
+
+  testWidgets('loadFlutterAsset successfully loads an HTML asset',
+      (WidgetTester tester) async {
+    final Completer<void> pageFinished = Completer<void>();
+
+    final PlatformWebViewController controller = PlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+    final PlatformNavigationDelegate delegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
+    unawaited(delegate.setOnPageFinished((_) => pageFinished.complete()));
+    unawaited(controller.setPlatformNavigationDelegate(delegate));
+
+    await expectLater(
+      controller.loadFlutterAsset('assets/www/index.html'),
+      completes,
+    );
+
+    await tester.pumpWidget(Builder(
+      builder: (BuildContext context) {
+        return PlatformWebViewWidget(
+          PlatformWebViewWidgetCreationParams(controller: controller),
+        ).build(context);
+      },
+    ));
+
+    // Verify page also loads.
+    await pageFinished.future;
   });
 
   testWidgets('JavascriptChannel', (WidgetTester tester) async {

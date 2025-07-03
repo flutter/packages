@@ -28,11 +28,12 @@ void main() {
     late Directory packagesDir;
     late CommandRunner<void> runner;
     late RecordingProcessRunner processRunner;
+    late RecordingProcessRunner gitProcessRunner;
 
     setUp(() {
       mockPlatform = MockPlatform();
       final GitDir gitDir;
-      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+      (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
       final DriveExamplesCommand command = DriveExamplesCommand(
         packagesDir,
@@ -839,6 +840,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--screenshot=/path/to/logs/plugin_example-drive',
@@ -890,6 +892,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--wasm',
@@ -940,6 +943,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--screenshot=/path/to/logs/plugin_example-drive',
@@ -992,6 +996,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--chrome-binary=/path/to/chrome',
@@ -1443,6 +1448,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--screenshot=/path/to/logs/plugin_example-drive',
@@ -1458,6 +1464,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--screenshot=/path/to/logs/plugin_example-drive',
@@ -1557,6 +1564,7 @@ void main() {
                     'drive',
                     '-d',
                     'web-server',
+                    '--no-web-experimental-hot-reload',
                     '--web-port=7357',
                     '--browser-name=chrome',
                     '--screenshot=/path/to/logs/a_package_example-drive',
@@ -1602,6 +1610,7 @@ void main() {
                     'drive',
                     '-d',
                     'web-server',
+                    '--no-web-experimental-hot-reload',
                     '--web-port=7357',
                     '--browser-name=chrome',
                     '--driver',
@@ -1681,6 +1690,7 @@ void main() {
                     'drive',
                     '-d',
                     'web-server',
+                    '--no-web-experimental-hot-reload',
                     '--web-port=7357',
                     '--browser-name=chrome',
                     '--screenshot=/path/to/logs/a_package_example_with_web-drive',
@@ -1712,6 +1722,74 @@ void main() {
         );
 
         expect(processRunner.recordedCalls.isEmpty, true);
+      });
+    });
+
+    group('file filtering', () {
+      const List<String> files = <String>[
+        'pubspec.yaml',
+        'foo.dart',
+        'foo.java',
+        'foo.kt',
+        'foo.m',
+        'foo.swift',
+        'foo.cc',
+        'foo.cpp',
+        'foo.h',
+      ];
+      for (final String file in files) {
+        test('runs command for changes to $file', () async {
+          createFakePackage('package_a', packagesDir);
+
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(stdout: '''
+packages/package_a/$file
+''')),
+          ];
+
+          // The target platform is irrelevant here; because this repo's
+          // packages are fully federated, there's no need to distinguish
+          // the ignore list by target (e.g., skipping iOS tests if only Java or
+          // Kotlin files change), because package-level filering will already
+          // accomplish the same goal.
+          final List<String> output = await runCapturingPrint(
+              runner, <String>['drive-examples', '--web']);
+
+          expect(
+              output,
+              containsAllInOrder(<Matcher>[
+                contains('Running for package_a'),
+              ]));
+        });
+      }
+
+      test('skips commands if all files should be ignored', () async {
+        createFakePackage('package_a', packagesDir);
+
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+          FakeProcessInfo(MockProcess(stdout: '''
+README.md
+CODEOWNERS
+.gitignore
+packages/package_a/CHANGELOG.md
+''')),
+        ];
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['drive-examples']);
+
+        expect(
+            output,
+            isNot(containsAllInOrder(<Matcher>[
+              contains('Running for package_a'),
+            ])));
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('SKIPPING ALL PACKAGES'),
+            ]));
       });
     });
   });

@@ -424,12 +424,21 @@ for more details.''';
 
   bool _validateCompileSdkUsage(
       RepositoryPackage package, List<String> gradleLines) {
-    final RegExp linePattern = RegExp(r'^\s*compileSdk');
+    final RegExp linePattern = RegExp(r'^\s*compileSdk.*\s+=');
     final RegExp legacySettingPattern = RegExp(r'^\s*compileSdkVersion');
     final String? compileSdkLine = gradleLines
         .firstWhereOrNull((String line) => linePattern.hasMatch(line));
     if (compileSdkLine == null) {
-      printError('${indentation}No compileSdk or compileSdkVersion found.');
+      // Equals regex not found check for method pattern.
+      final RegExp compileSpacePattern = RegExp(r'^\s*compileSdk');
+      final String? methodAssignmentLine = gradleLines.firstWhereOrNull(
+          (String line) => compileSpacePattern.hasMatch(line));
+      if (methodAssignmentLine == null) {
+        printError('${indentation}No compileSdk or compileSdkVersion found.');
+      } else {
+        printError(
+            '${indentation}No "compileSdk =" found. Please use property assignment.');
+      }
       return false;
     }
     if (legacySettingPattern.hasMatch(compileSdkLine)) {

@@ -2,11 +2,11 @@ name: in_app_purchase_storekit
 description: An implementation for the iOS and macOS platforms of the Flutter `in_app_purchase` plugin. This uses the StoreKit Framework.
 repository: https://github.com/flutter/packages/tree/main/packages/in_app_purchase/in_app_purchase_storekit
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+in_app_purchase%22
-version: 0.3.21
+version: 0.4.2
 
 environment:
-  sdk: ^3.4.0
-  flutter: ">=3.22.0"
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
 
 flutter:
   plugin:
@@ -31,7 +31,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   json_serializable: ^6.0.0
-  pigeon: ^22.4.2
+  pigeon: ^25.1.0
   test: ^1.16.0
 
 topics:

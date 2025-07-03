@@ -13,20 +13,20 @@ class AdsRequestProxyAPIDelegate: PigeonApiDelegateIMAAdsRequest {
   /// The current version of the `interactive_media_ads` plugin.
   ///
   /// This must match the version in pubspec.yaml.
-  static let pluginVersion = "0.2.3+10"
+  static let pluginVersion = "0.2.4"
 
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiIMAAdsRequest, adTagUrl: String, adDisplayContainer: IMAAdDisplayContainer,
     contentPlayhead: IMAContentPlayhead?
   ) throws -> IMAAdsRequest {
-    // Ensure adTag can append a custom parameter.
-    assert(adTagUrl.contains("?"))
-    assert(!adTagUrl.contains("#"))
+    // Add a request agent only if the adTagUrl can append a custom parameter.
+    let modifiedURL =
+      !adTagUrl.contains("#") && adTagUrl.contains("?")
+      ? "\(adTagUrl)&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)"
+      : adTagUrl
 
-    let adTagWithRequestAgent =
-      "\(adTagUrl)&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)"
     return IMAAdsRequest(
-      adTagUrl: adTagWithRequestAgent, adDisplayContainer: adDisplayContainer,
+      adTagUrl: modifiedURL, adDisplayContainer: adDisplayContainer,
       contentPlayhead: contentPlayhead as? ContentPlayheadImpl, userContext: nil)
   }
 }

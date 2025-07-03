@@ -13,7 +13,7 @@ Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
 |             | Android | iOS   | Linux | macOS  | Web | Windows     |
 |-------------|---------|-------|-------|--------|-----|-------------|
-| **Support** | SDK 16+ | 12.0+ | Any   | 10.14+ | Any | Any         |
+| **Support** | SDK 21+ | 12.0+ | Any   | 10.14+ | Any | Any         |
 
 ## Usage
 

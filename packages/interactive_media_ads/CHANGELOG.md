@@ -1,3 +1,16 @@
+## 0.2.4
+
+* Adds support for companion ads. See `CompanionAdSlot` and `AdDisplayContainer(companionAds)`.
+
+## 0.2.3+12
+
+* Fixes appending request agent to ad tags that contain a query.
+
+## 0.2.3+11
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
 ## 0.2.3+10
 
 * Fixes `AdEventType`s not triggering on iOS in release mode.

@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
                 displayLink:(FVPDisplayLink *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+               viewProvider:(NSObject<FVPViewProvider> *)viewProvider
                  onDisposed:(void (^)(int64_t))onDisposed;
 
 /// Initializes a new instance of FVPTextureBasedVideoPlayer with the given asset, frame updater,
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                   displayLink:(FVPDisplayLink *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
-                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider
                    onDisposed:(void (^)(int64_t))onDisposed;
 
 /// Sets the texture Identifier for the frame updater. This method should be called once the texture

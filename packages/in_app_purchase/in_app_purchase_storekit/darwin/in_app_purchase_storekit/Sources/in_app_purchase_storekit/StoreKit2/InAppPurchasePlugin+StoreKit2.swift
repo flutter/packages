@@ -6,7 +6,6 @@ import StoreKit
 
 @available(iOS 15.0, macOS 12.0, *)
 extension InAppPurchasePlugin: InAppPurchase2API {
-
   // MARK: - Pigeon Functions
 
   /// Wrapper method around StoreKit2's canMakePayments() method
@@ -54,13 +53,43 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           return completion(.failure(error))
         }
 
-        let result = try await product.purchase(options: [])
+        var purchaseOptions: Set<Product.PurchaseOption> = []
+
+        if let appAccountToken = options?.appAccountToken,
+          let accountTokenUUID = UUID(uuidString: appAccountToken)
+        {
+          purchaseOptions.insert(.appAccountToken(accountTokenUUID))
+        }
+
+        if #available(iOS 17.4, macOS 14.4, *) {
+          if let promotionalOffer = options?.promotionalOffer {
+            purchaseOptions.insert(
+              .promotionalOffer(
+                offerID: promotionalOffer.promotionalOfferId,
+                signature: promotionalOffer.promotionalOfferSignature.convertToSignature
+              )
+            )
+          }
+        }
+
+        if #available(iOS 18.0, macOS 15.0, *) {
+          if let winBackOfferId = options?.winBackOfferId,
+            let winBackOffer = product.subscription?.winBackOffers.first(where: {
+              $0.id == winBackOfferId
+            })
+          {
+            purchaseOptions.insert(.winBackOffer(winBackOffer))
+          }
+        }
+
+        let result = try await product.purchase(options: purchaseOptions)
 
         switch result {
         case .success(let verification):
           switch verification {
           case .verified(let transaction):
-            self.sendTransactionUpdate(transaction: transaction)
+            self.sendTransactionUpdate(
+              transaction: transaction, receipt: verification.jwsRepresentation)
             completion(.success(result.convertToPigeon()))
           case .unverified(_, let error):
             completion(.failure(error))
@@ -86,6 +115,70 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       } catch {
         completion(.failure(error))
       }
+    }
+  }
+
+  /// Checks if the user is eligible for a specific win back offer.
+  ///
+  /// - Parameters:
+  ///   - productId: The product ID associated with the offer.
+  ///   - offerId: The ID of the win back offer.
+  ///   - completion: Returns `Bool` for eligibility or `Error` on failure.
+  ///
+  /// - Availability: iOS 18.0+, macOS 15.0+, Swift 6.0+ (Xcode 16+).
+  func isWinBackOfferEligible(
+    productId: String,
+    offerId: String,
+    completion: @escaping (Result<Bool, Error>) -> Void
+  ) {
+    if #available(iOS 18.0, macOS 15.0, *) {
+      Task {
+        do {
+          guard let product = try await Product.products(for: [productId]).first else {
+            completion(
+              .failure(
+                PigeonError(
+                  code: "storekit2_failed_to_fetch_product",
+                  message: "Storekit has failed to fetch this product.",
+                  details: "Product ID: \(productId)")))
+            return
+          }
+
+          guard let subscription = product.subscription else {
+            completion(
+              .failure(
+                PigeonError(
+                  code: "storekit2_not_subscription",
+                  message: "Product is not a subscription",
+                  details: "Product ID: \(productId)")))
+            return
+          }
+
+          let isEligible = try await subscription.status.contains { status in
+            if case .verified(let renewalInfo) = status.renewalInfo {
+              return renewalInfo.eligibleWinBackOfferIDs.contains(offerId)
+            }
+            return false
+          }
+
+          completion(.success(isEligible))
+
+        } catch {
+          completion(
+            .failure(
+              PigeonError(
+                code: "storekit2_eligibility_check_failed",
+                message: "Failed to check offer eligibility: \(error.localizedDescription)",
+                details: "Product ID: \(productId), Error: \(error)")))
+        }
+      }
+    } else {
+      completion(
+        .failure(
+          PigeonError(
+            code: "storekit2_unsupported_platform_version",
+            message: "Win back offers require iOS 18+ or macOS 15.0+",
+            details: nil)))
     }
   }
 
@@ -146,6 +239,43 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
+  /// Wrapper method around StoreKit2's countryCode() method
+  /// https://developer.apple.com/documentation/storekit/storefront/countrycode
+  func countryCode(completion: @escaping (Result<String, Error>) -> Void) {
+    Task {
+      guard let currentStorefront = await Storefront.current else {
+        let error = PigeonError(
+          code: "storekit2_failed_to_fetch_country_code",
+          message: "Storekit has failed to fetch the country code.",
+          details: "Storefront.current returned nil.")
+        completion(.failure(error))
+        return
+      }
+      completion(.success(currentStorefront.countryCode))
+      return
+    }
+  }
+
+  /// Wrapper method around StoreKit2's sync() method
+  /// https://developer.apple.com/documentation/storekit/appstore/sync()
+  /// When called, a system prompt will ask users to enter their authentication details
+  func sync(completion: @escaping (Result<Void, Error>) -> Void) {
+    Task {
+      do {
+        try await AppStore.sync()
+        completion(.success(()))
+        return
+      } catch {
+        let pigeonError = PigeonError(
+          code: "storekit2_failed_to_sync_to_app_store",
+          message: "Storekit has failed to sync to the app store.",
+          details: "\(error)")
+        completion(.failure(pigeonError))
+        return
+      }
+    }
+  }
+
   /// This Task listens  to Transation.updates as shown here
   /// https://developer.apple.com/documentation/storekit/transaction/3851206-updates
   /// This function should be called as soon as the app starts to avoid missing any Transactions done outside of the app.
@@ -155,7 +285,8 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         for await verificationResult in Transaction.updates {
           switch verificationResult {
           case .verified(let transaction):
-            self?.sendTransactionUpdate(transaction: transaction)
+            self?.sendTransactionUpdate(
+              transaction: transaction, receipt: verificationResult.jwsRepresentation)
           case .unverified:
             break
           }
@@ -171,12 +302,14 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
   private func sendTransactionUpdate(transaction: Transaction, receipt: String? = nil) {
     let transactionMessage = transaction.convertToPigeon(receipt: receipt)
-    self.transactionCallbackAPI?.onTransactionsUpdated(newTransactions: [transactionMessage]) {
-      result in
-      switch result {
-      case .success: break
-      case .failure(let error):
-        print("Failed to send transaction updates: \(error)")
+    Task { @MainActor in
+      self.transactionCallbackAPI?.onTransactionsUpdated(newTransactions: [transactionMessage]) {
+        result in
+        switch result {
+        case .success: break
+        case .failure(let error):
+          print("Failed to send transaction updates: \(error)")
+        }
       }
     }
   }

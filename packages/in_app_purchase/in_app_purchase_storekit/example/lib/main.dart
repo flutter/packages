@@ -7,12 +7,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
 
 import 'consumable_store.dart';
 import 'example_payment_queue_delegate.dart';
 
 void main() {
-  InAppPurchaseStoreKitPlatform.enableStoreKit2();
   WidgetsFlutterBinding.ensureInitialized();
   // When using the Android plugin directly it is mandatory to register
   // the plugin as default instance as part of initializing the app.
@@ -210,7 +210,7 @@ class _MyAppState extends State<_MyApp> {
     return Card(child: Column(children: children));
   }
 
-  Card _buildProductList() {
+  Widget _buildProductList() {
     if (_loading) {
       return const Card(
           child: ListTile(
@@ -220,7 +220,24 @@ class _MyAppState extends State<_MyApp> {
     if (!_isAvailable) {
       return const Card();
     }
-    const ListTile productHeader = ListTile(title: Text('Products for Sale'));
+    const ListTile productHeader = ListTile(
+      title: Text(
+        'Products for Sale',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+    const ListTile promoHeader = ListTile(
+      title: Text(
+        'Products in promo',
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
     final List<ListTile> productList = <ListTile>[];
     if (_notFoundIds.isNotEmpty) {
       productList.add(ListTile(
@@ -279,9 +296,106 @@ class _MyAppState extends State<_MyApp> {
       },
     ));
 
-    return Card(
-        child: Column(
-            children: <Widget>[productHeader, const Divider()] + productList));
+    return Column(
+      children: <Widget>[
+        Card(
+          child: Column(
+            children: <Widget>[
+              productHeader,
+              const Divider(),
+              ...productList,
+            ],
+          ),
+        ),
+        Card(
+          child: Column(
+            children: <Widget>[
+              promoHeader,
+              const Divider(),
+              FutureBuilder<List<ListTile>>(
+                future: _buildPromoList(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<List<ListTile>> snapshot) {
+                  final List<ListTile>? data = snapshot.data;
+
+                  if (data != null) {
+                    return Column(
+                      children: data,
+                    );
+                  }
+
+                  return const SizedBox.shrink();
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<List<ListTile>> _buildPromoList() async {
+    final List<ListTile> promoList = <ListTile>[];
+    for (final ProductDetails detail in _products) {
+      if (detail is AppStoreProduct2Details) {
+        final SK2SubscriptionInfo? subscription =
+            detail.sk2Product.subscription;
+        final List<SK2SubscriptionOffer> offers =
+            subscription?.promotionalOffers ?? <SK2SubscriptionOffer>[];
+
+        for (final SK2SubscriptionOffer offer in offers) {
+          if (offer.type == SK2SubscriptionOfferType.winBack) {
+            final bool eligible =
+                await _iapStoreKitPlatform.isWinBackOfferEligible(
+              detail.id,
+              offer.id ?? '',
+            );
+
+            if (!eligible) {
+              continue;
+            }
+          }
+
+          promoList.add(_buildPromoTile(detail, offer));
+        }
+      }
+    }
+    return promoList;
+  }
+
+  ListTile _buildPromoTile(
+    ProductDetails productDetails,
+    SK2SubscriptionOffer offer,
+  ) {
+    return ListTile(
+      title: Text(
+        '${productDetails.title} [${offer.type.name}]',
+      ),
+      subtitle: Text(
+        productDetails.description,
+      ),
+      trailing: TextButton(
+        style: TextButton.styleFrom(
+          backgroundColor: Colors.green[800],
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () {
+          final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam.fromOffer(
+            productDetails: productDetails,
+            offer: offer,
+            signature: SK2SubscriptionOfferSignature(
+              keyID: 'keyID',
+              nonce: '1ac96421-947d-45e9-a0a0-5bb3a6937284',
+              timestamp: DateTime.now().millisecondsSinceEpoch,
+              signature: 'dmFsaWRzaWduYXR1cmU=',
+            ),
+          );
+
+          _iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+        },
+        child: Text('${productDetails.currencySymbol} ${offer.price}'),
+      ),
+    );
   }
 
   Card _buildConsumableBox() {
