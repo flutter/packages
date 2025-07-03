@@ -182,7 +182,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     }
   }
 
-  /// Checks if the user is eligible for a introductory offer.
+  /// Checks if the user is eligible for an introductory offer.
   ///
   /// - Parameters:
   ///   - productId: The product ID associated with the offer.

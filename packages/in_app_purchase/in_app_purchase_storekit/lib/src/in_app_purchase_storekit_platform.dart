@@ -355,7 +355,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     return _useStoreKit2;
   }
 
-  /// Checks if the user is eligible for a introductory offer (StoreKit2 only).
+  /// Checks if the user is eligible for an introductory offer (StoreKit2 only).
   ///
   /// Throws [PlatformException] if StoreKit2 is not enabled, if the product is not found,
   /// if the product is not a subscription, or if any error occurs during the eligibility check.
