@@ -42,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic) BOOL isRecording;
 @property(assign, nonatomic) BOOL isRecordingPaused;
 @property(strong, nonatomic, nullable) NSObject<FLTAssetWriter> *videoWriter;
+/// Whether the recording is disconnected.
 @property(assign, nonatomic) BOOL isRecordingDisconnected;
 /// Represents sum of all recording pauses/interruptions.
 @property(assign, nonatomic) CMTime recordingTimeOffset;
