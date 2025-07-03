@@ -1,3 +1,7 @@
+## 0.4.3
+
+* Adds **Introductory Offer Eligibility** support for StoreKit2
+
 ## 0.4.2
 
 * Add [jwsRepresentation](https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-21vgo) to `SK2PurchaseDetails` as `serverVerificationData` for secure server-side purchase verification. Use this JSON Web Signature (JWS) value to perform your own JWS verification on your server.
