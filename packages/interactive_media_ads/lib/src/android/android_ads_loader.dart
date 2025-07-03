@@ -10,6 +10,7 @@ import '../platform_interface/platform_interface.dart';
 import 'android_ad_display_container.dart';
 import 'android_ads_manager.dart';
 import 'android_content_progress_provider.dart';
+import 'android_ima_settings.dart';
 import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
@@ -19,6 +20,7 @@ final class AndroidAdsLoaderCreationParams
     extends PlatformAdsLoaderCreationParams {
   /// Constructs a [AndroidAdsLoaderCreationParams].
   const AndroidAdsLoaderCreationParams({
+    required super.settings,
     required super.container,
     required super.onAdsLoaded,
     required super.onAdsLoadError,
@@ -33,6 +35,7 @@ final class AndroidAdsLoaderCreationParams
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   }) {
     return AndroidAdsLoaderCreationParams(
+      settings: params.settings,
       container: params.container,
       onAdsLoaded: params.onAdsLoaded,
       onAdsLoadError: params.onAdsLoadError,
@@ -97,11 +100,13 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
   }
 
   Future<ima.AdsLoader> _createAdsLoader() async {
-    final ima.ImaSdkSettings settings =
-        await _sdkFactory.createImaSdkSettings();
+    final AndroidImaSettings settings = switch (_androidParams.settings) {
+      final AndroidImaSettings androidSettings => androidSettings,
+      _ => AndroidImaSettings(_androidParams.settings.params),
+    };
 
     final ima.AdsLoader adsLoader = await _sdkFactory.createAdsLoader(
-      settings,
+      await settings.sdkSettingsFuture,
       (params.container as AndroidAdDisplayContainer).adDisplayContainer!,
     );
 
