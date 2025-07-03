@@ -1,7 +1,7 @@
 ## 0.9.20+2
 
-* Handle video and audio interruptions and errors.
-* Use a single time offset for both video and audio.
+* Handles video and audio interruptions and errors.
+* Uses a single time offset for both video and audio.
 
 ## 0.9.20+1
 

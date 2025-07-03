@@ -18,7 +18,8 @@ final class DefaultCamera: FLTCam, Camera {
   /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
   /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
   private var latestPixelBuffer: CVPixelBuffer?
-	private var lastSampleEndTime = CMTime.zero
+  /// Time of the end of the last sample.
+  private var lastSampleEndTime = CMTime.zero
 
   /// Maximum number of frames pending processing.
   /// To limit memory consumption, limit the number of frames pending processing.
@@ -308,7 +309,7 @@ final class DefaultCamera: FLTCam, Camera {
         outputForOffsetAdjusting = output
       }
 
-      var sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
+      let sampleTime = CMSampleBufferGetPresentationTimeStamp(sampleBuffer)
 
       if isFirstVideoSample {
         videoWriter?.startSession(atSourceTime: sampleTime)

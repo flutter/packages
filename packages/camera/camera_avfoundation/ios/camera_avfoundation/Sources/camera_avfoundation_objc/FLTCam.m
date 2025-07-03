@@ -161,7 +161,9 @@ NSString *const errorMethod = @"error";
 
   [self updateOrientation];
 
-  // Handle video and audio interruptions and errors.
+  // Handle video and audio interruptions and errors. Interruption can happen for example by
+  // an incoming call during video recording. Error can happen for example when recording starts
+  // during an incoming call.
   // https://github.com/flutter/flutter/issues/151253
   for (NSObject<FLTCaptureSession> *session in @[ _videoCaptureSession, _audioCaptureSession ]) {
     [NSNotificationCenter.defaultCenter addObserver:self
