@@ -19,6 +19,10 @@ dependencies:
     path: ../
   webview_flutter_platform_interface: ^2.13.0
 
+dependency_overrides:
+  webview_flutter_platform_interface:
+    path: ../../webview_flutter_platform_interface
+
 dev_dependencies:
   espresso: ^0.4.0
   flutter_test:
