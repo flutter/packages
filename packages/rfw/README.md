@@ -582,11 +582,9 @@ The last kind of argument that widgets can have is callbacks.
 
 Since remote widget libraries are declarative and not code, they
 cannot represent executable closures. Instead, they are represented as
-events. For example, here is how the "7" button from the
-[calculator example](https://github.com/flutter/packages/blob/main/packages/rfw/example/wasm/logic/calculator.rfwtxt)
-is represented:
+events. For example:
 
-<?code-excerpt "example/wasm/logic/calculator.rfwtxt (button7)"?>
+<?code-excerpt "test/readme_test.dart (button7)"?>
 ```rfwtxt
 CalculatorButton(label: "7", onPressed: event "digit" { arguments: [7] }),
 ```
@@ -600,7 +598,7 @@ In that example, `CalculatorButton` is itself a remote widget that is
 defined in terms of a `Button`, and the `onPressed` argument
 is passed to the `onPressed` of the `Button`, like this:
 
-<?code-excerpt "example/wasm/logic/calculator.rfwtxt (CalculatorButton)"?>
+<?code-excerpt "test/readme_test.dart (CalculatorButton)"?>
 ```rfwtxt
 widget CalculatorButton = Padding(
   padding: [8.0],
@@ -762,9 +760,6 @@ by calling
 [`encodeLibraryBlob`](https://pub.dev/documentation/rfw/latest/formats/encodeLibraryBlob.html)
 on the results of calling `parseLibraryFile`.
 
-The example in `example/wasm` has some [elaborate remote
-widgets](https://github.com/flutter/packages/blob/main/packages/rfw/example/wasm/logic/calculator.rfwtxt),
-including some that manipulate state (`Button`).
 
 #### State
 
