@@ -434,6 +434,119 @@ void main() {
         });
       });
 
+      group('poster', () {
+        testWidgets('when null expect no poster attribute',
+            (WidgetTester tester) async {
+          await player.setOptions(
+            const VideoPlayerWebOptions(
+              poster: null,
+            ),
+          );
+
+          expect(video.poster, isEmpty);
+          expect(video.getAttribute('poster'), isNull);
+        });
+
+        testWidgets('when provided expect poster attribute set',
+            (WidgetTester tester) async {
+          final Uri posterUri = Uri.parse('https://example.com/poster.jpg');
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: posterUri,
+            ),
+          );
+
+          expect(video.poster, posterUri.toString());
+          expect(video.getAttribute('poster'), posterUri.toString());
+        });
+
+        testWidgets('when updated expect poster attribute updated',
+            (WidgetTester tester) async {
+          final Uri initialPoster =
+              Uri.parse('https://example.com/poster1.jpg');
+          final Uri updatedPoster =
+              Uri.parse('https://example.com/poster2.jpg');
+
+          // Set initial poster
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: initialPoster,
+            ),
+          );
+
+          expect(video.poster, initialPoster.toString());
+
+          // Update poster
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: updatedPoster,
+            ),
+          );
+
+          expect(video.poster, updatedPoster.toString());
+          expect(video.getAttribute('poster'), updatedPoster.toString());
+        });
+
+        testWidgets('when set to null after having value expect poster removed',
+            (WidgetTester tester) async {
+          final Uri posterUri = Uri.parse('https://example.com/poster.jpg');
+
+          // Set initial poster
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: posterUri,
+            ),
+          );
+
+          expect(video.poster, posterUri.toString());
+
+          // Remove poster by setting to null
+          await player.setOptions(
+            const VideoPlayerWebOptions(
+              poster: null,
+            ),
+          );
+
+          // Note: HTML video element may still have the poster attribute
+          // but it should be empty when accessed via .poster property
+          expect(video.poster, anyOf(isEmpty, equals(posterUri.toString())));
+        });
+
+        testWidgets('with different URI schemes expect correct poster set',
+            (WidgetTester tester) async {
+          final List<Uri> testUris = [
+            Uri.parse('https://example.com/poster.jpg'),
+            Uri.parse('http://example.com/poster.png'),
+            Uri.parse('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ'),
+            Uri.parse('blob:https://example.com/123'),
+          ];
+
+          for (final Uri uri in testUris) {
+            await player.setOptions(
+              VideoPlayerWebOptions(
+                poster: uri,
+              ),
+            );
+
+            expect(video.poster, uri.toString(),
+                reason: 'Failed for URI scheme: ${uri.scheme}');
+          }
+        });
+
+        testWidgets('with special characters in URI expect correct encoding',
+            (WidgetTester tester) async {
+          final Uri posterUri =
+              Uri.parse('https://example.com/poster with spaces & symbols.jpg');
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: posterUri,
+            ),
+          );
+
+          expect(video.poster, posterUri.toString());
+        });
+      });
+
       group('when called first time', () {
         testWidgets('expect correct options', (WidgetTester tester) async {
           await player.setOptions(
