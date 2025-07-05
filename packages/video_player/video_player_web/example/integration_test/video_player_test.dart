@@ -438,9 +438,7 @@ void main() {
         testWidgets('when null expect no poster attribute',
             (WidgetTester tester) async {
           await player.setOptions(
-            const VideoPlayerWebOptions(
-              poster: null,
-            ),
+            const VideoPlayerWebOptions(),
           );
 
           expect(video.poster, isEmpty);
@@ -502,9 +500,7 @@ void main() {
 
           // Remove poster by setting to null
           await player.setOptions(
-            const VideoPlayerWebOptions(
-              poster: null,
-            ),
+            const VideoPlayerWebOptions(),
           );
 
           // Note: HTML video element may still have the poster attribute
@@ -514,7 +510,7 @@ void main() {
 
         testWidgets('with different URI schemes expect correct poster set',
             (WidgetTester tester) async {
-          final List<Uri> testUris = [
+          final List<Uri> testUris = <Uri>[
             Uri.parse('https://example.com/poster.jpg'),
             Uri.parse('http://example.com/poster.png'),
             Uri.parse('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ'),
