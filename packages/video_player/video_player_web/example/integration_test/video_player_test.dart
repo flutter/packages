@@ -434,6 +434,30 @@ void main() {
         });
       });
 
+      group('poster', () {
+        testWidgets('when null expect no poster attribute',
+            (WidgetTester tester) async {
+          await player.setOptions(
+            const VideoPlayerWebOptions(),
+          );
+
+          expect(video.poster, isEmpty);
+          expect(video.getAttribute('poster'), isNull);
+        });
+
+        testWidgets('when provided expect poster attribute set',
+            (WidgetTester tester) async {
+          final Uri posterUri = Uri.parse('https://example.com/poster.jpg');
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: posterUri,
+            ),
+          );
+
+          expect(video.poster, posterUri.toString());
+        });
+      });
+
       group('when called first time', () {
         testWidgets('expect correct options', (WidgetTester tester) async {
           await player.setOptions(
