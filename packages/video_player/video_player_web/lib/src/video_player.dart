@@ -264,10 +264,8 @@ class VideoPlayer {
 
     if (options.poster != null) {
       _videoElement.poster = options.poster!.toString();
-    } else if (_videoElement.poster != '') {
-      // This is to make sure the poster is removed when the options are reset.
-      // But still keep the poster attribute unset if it was not set for the first time.
-      _videoElement.poster = '';
+    } else if (_videoElement.getAttribute('poster') != null) {
+      _videoElement.removeAttribute('poster');
     }
   }
 

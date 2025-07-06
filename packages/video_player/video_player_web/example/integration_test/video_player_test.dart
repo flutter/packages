@@ -474,13 +474,8 @@ void main() {
             const VideoPlayerWebOptions(),
           );
 
-          // The following test do not pass because when poster is set to null,
-          // video.poster returns the current url of the page in chromedriver it is
-          // something like: `http://localhost:60079/`
-          //
-          // expect(video.poster, isEmpty);
-
-          expect(video.getAttribute('poster'), isEmpty);
+          expect(video.poster, isEmpty);
+          expect(video.getAttribute('poster'), isNull);
         });
 
         testWidgets('when updated expect poster attribute updated',
