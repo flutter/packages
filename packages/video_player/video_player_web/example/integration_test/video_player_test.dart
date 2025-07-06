@@ -455,6 +455,59 @@ void main() {
           );
 
           expect(video.poster, posterUri.toString());
+          expect(video.getAttribute('poster'), posterUri.toString());
+        });
+
+        testWidgets('when set to null after having value expect poster removed',
+            (WidgetTester tester) async {
+          final Uri posterUri = Uri.parse('https://example.com/poster.jpg');
+
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: posterUri,
+            ),
+          );
+
+          expect(video.poster, posterUri.toString());
+
+          await player.setOptions(
+            const VideoPlayerWebOptions(),
+          );
+
+          // The following test do not pass because when poster is set to null,
+          // video.poster returns the current url of the page in chromedriver it is
+          // something like: `http://localhost:60079/`
+          //
+          // expect(video.poster, isEmpty);
+
+          expect(video.getAttribute('poster'), isEmpty);
+        });
+
+        testWidgets('when updated expect poster attribute updated',
+            (WidgetTester tester) async {
+          final Uri initialPoster =
+              Uri.parse('https://example.com/poster1.jpg');
+          final Uri updatedPoster =
+              Uri.parse('https://example.com/poster2.jpg');
+
+          // Set initial poster
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: initialPoster,
+            ),
+          );
+
+          expect(video.poster, initialPoster.toString());
+
+          // Update poster
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: updatedPoster,
+            ),
+          );
+
+          expect(video.poster, updatedPoster.toString());
+          expect(video.getAttribute('poster'), updatedPoster.toString());
         });
       });
 
