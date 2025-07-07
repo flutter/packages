@@ -1,3 +1,7 @@
+## 2.8.0
+
+* Adds platform view support for macOS.
+
 ## 2.7.2
 
 * Uses `CADisplayLink` on macOS 14.0+.
