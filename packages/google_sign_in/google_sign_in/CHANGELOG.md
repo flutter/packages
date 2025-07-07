@@ -1,3 +1,7 @@
+## NEXT
+
+* Adds information about `GoogleSignInException` to the migration guide.
+
 ## 7.1.0
 
 * Adds the missing export of `GoogleSignInExceptionCode`, to allow for
