@@ -9,3 +9,6 @@ class MyRoute extends GoRouteData with _$MyRoute {
   const MyRoute(this.id);
   final int id;
 }
+
+// TODO: avoid error when run analytic
+mixin _$MyRoute {}
