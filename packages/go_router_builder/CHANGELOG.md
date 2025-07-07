@@ -1,4 +1,3 @@
-
 ## NEXT
 
 - Restricts `build` to versions less than 2.5.0.

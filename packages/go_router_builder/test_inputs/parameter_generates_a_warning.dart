@@ -5,7 +5,7 @@
 import 'package:go_router/go_router.dart';
 
 @TypedGoRoute<MyRoute>(path: '/product/:id')
-class MyRoute extends GoRouteData {
+class MyRoute extends GoRouteData with _$MyRoute {
   const MyRoute(this.id);
   final int id;
 }
