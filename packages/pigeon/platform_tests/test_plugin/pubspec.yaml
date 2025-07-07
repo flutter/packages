@@ -29,7 +29,8 @@ dependencies:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jni
-      ref: 735250a19b1a429869bfacccba833ecc93db34b6
+      ref: f6ab5f4bd12565d5b02d792a1817955f06e712a7
+  ffi: ^2.1.3
 
 dev_dependencies:
   flutter_test:

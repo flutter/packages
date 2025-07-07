@@ -7,8 +7,12 @@
 import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
-  dartOptions: DartOptions(useJni: true),
+  dartOptions: DartOptions(
+    useJni: true,
+    useFfi: true,
+  ),
   kotlinOptions: KotlinOptions(useJni: true),
+  swiftOptions: SwiftOptions(useFfi: true),
 ))
 enum JniAnEnum {
   one,

@@ -42,7 +42,7 @@ class KotlinOptions {
     this.package,
     this.copyrightHeader,
     this.useJni = false,
-    this.exampleAppDirectory,
+    this.appDirectory,
     this.errorClassName,
     this.includeErrorClass = true,
     this.fileSpecificClassNameComponent,
@@ -57,8 +57,8 @@ class KotlinOptions {
   /// Whether to use Jni when possible.
   final bool useJni;
 
-  /// The directory that the example app exists in, this is required for Jni APIs.
-  final String? exampleAppDirectory;
+  /// The directory that the app exists in, this is required for Jni APIs.
+  final String? appDirectory;
 
   /// The name of the error class used for passing custom error parameters.
   final String? errorClassName;
@@ -78,7 +78,7 @@ class KotlinOptions {
     return KotlinOptions(
       package: map['package'] as String?,
       useJni: map['useJni'] as bool? ?? false,
-      exampleAppDirectory: map['exampleAppDirectory'] as String?,
+      appDirectory: map['appDirectory'] as String?,
       copyrightHeader: map['copyrightHeader'] as Iterable<String>?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
@@ -93,8 +93,7 @@ class KotlinOptions {
     final Map<String, Object> result = <String, Object>{
       if (package != null) 'package': package!,
       if (useJni) 'useJni': useJni,
-      if (exampleAppDirectory != null)
-        'exampleAppDirectory': exampleAppDirectory!,
+      if (appDirectory != null) 'appDirectory': appDirectory!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
@@ -111,7 +110,7 @@ class KotlinOptions {
   }
 }
 
-///
+/// Options that control how Kotlin code will be generated.
 class InternalKotlinOptions extends InternalOptions {
   /// Creates a [InternalKotlinOptions] object
   const InternalKotlinOptions({
@@ -121,7 +120,7 @@ class InternalKotlinOptions extends InternalOptions {
     this.errorClassName,
     this.includeErrorClass = true,
     this.useJni = false,
-    this.exampleAppDirectory,
+    this.appDirectory,
     this.fileSpecificClassNameComponent,
   });
 
@@ -135,7 +134,7 @@ class InternalKotlinOptions extends InternalOptions {
         errorClassName = options.errorClassName,
         includeErrorClass = options.includeErrorClass,
         useJni = options.useJni,
-        exampleAppDirectory = options.exampleAppDirectory,
+        appDirectory = options.appDirectory,
         fileSpecificClassNameComponent =
             options.fileSpecificClassNameComponent ??
                 kotlinOut.split('/').lastOrNull?.split('.').first;
@@ -161,8 +160,8 @@ class InternalKotlinOptions extends InternalOptions {
   /// Whether to use Jni for generating kotlin interop code.
   final bool useJni;
 
-  /// The directory that the example app exists in, this is required for Jni APIs.
-  final String? exampleAppDirectory;
+  /// The directory that the app exists in, this is required for Jni APIs.
+  final String? appDirectory;
 
   /// A String to augment class names to avoid cross file collisions.
   final String? fileSpecificClassNameComponent;

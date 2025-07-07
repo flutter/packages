@@ -29,6 +29,8 @@ class SwiftOptions {
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
+    this.useFfi = false,
+    this.appDirectory,
   });
 
   /// A copyright header that will get prepended to generated code.
@@ -46,6 +48,12 @@ class SwiftOptions {
   /// Swift file in the same directory.
   final bool includeErrorClass;
 
+  /// Whether to use FFI when possible.
+  final bool useFfi;
+
+  /// The directory that the app exists in, this is required for FFI APIs.
+  final String? appDirectory;
+
   /// Creates a [SwiftOptions] from a Map representation where:
   /// `x = SwiftOptions.fromList(x.toMap())`.
   static SwiftOptions fromList(Map<String, Object> map) {
@@ -55,6 +63,8 @@ class SwiftOptions {
           map['fileSpecificClassNameComponent'] as String?,
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
+      useFfi: map['useFfi'] as bool? ?? false,
+      appDirectory: map['appDirectory'] as String?,
     );
   }
 
@@ -67,6 +77,8 @@ class SwiftOptions {
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
+      'useFfi': useFfi,
+      if (appDirectory != null) 'appDirectory': appDirectory!,
     };
     return result;
   }
@@ -87,6 +99,8 @@ class InternalSwiftOptions extends InternalOptions {
     this.fileSpecificClassNameComponent,
     this.errorClassName,
     this.includeErrorClass = true,
+    this.useFfi = false,
+    this.appDirectory,
   });
 
   /// Creates InternalSwiftOptions from SwiftOptions.
@@ -100,6 +114,8 @@ class InternalSwiftOptions extends InternalOptions {
                 swiftOut.split('/').lastOrNull?.split('.').firstOrNull ??
                 '',
         errorClassName = options.errorClassName,
+        useFfi = options.useFfi,
+        appDirectory = options.appDirectory,
         includeErrorClass = options.includeErrorClass;
 
   /// A copyright header that will get prepended to generated code.
@@ -119,6 +135,12 @@ class InternalSwiftOptions extends InternalOptions {
   /// This should only ever be set to false if you have another generated
   /// Swift file in the same directory.
   final bool includeErrorClass;
+
+  /// Whether to use FFI when possible.
+  final bool useFfi;
+
+  /// The directory that the app exists in, this is required for Jni APIs.
+  final String? appDirectory;
 }
 
 /// Options that control how Swift code will be generated for a specific

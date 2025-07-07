@@ -48,7 +48,6 @@ const Map<String, Set<GeneratorLanguage>> _unsupportedFiles =
     GeneratorLanguage.gobject,
     GeneratorLanguage.java,
     GeneratorLanguage.objc,
-    GeneratorLanguage.swift,
   },
 };
 
@@ -149,7 +148,7 @@ Future<int> generateTestPigeons(
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
       kotlinUseJni: input == 'jni_tests',
-      kotlinExampleAppDirectory: '$outputBase/example',
+      kotlinAppDirectory: '$outputBase/example',
       kotlinIncludeErrorClass: input != 'primitive',
       // iOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
@@ -157,6 +156,8 @@ Future<int> generateTestPigeons(
           : '$outputBase/ios/Classes/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
+      swiftUseFfi: input == 'jni_tests',
+      swiftAppDirectory: '$outputBase/example',
       // Linux
       gobjectHeaderOut: skipLanguages.contains(GeneratorLanguage.gobject)
           ? null
@@ -264,10 +265,12 @@ Future<int> runPigeon({
   String? kotlinErrorClassName,
   bool kotlinUseJni = false,
   bool kotlinIncludeErrorClass = true,
-  String kotlinExampleAppDirectory = '',
+  String kotlinAppDirectory = '',
   bool swiftIncludeErrorClass = true,
   String? swiftOut,
   String? swiftErrorClassName,
+  bool swiftUseFfi = false,
+  String swiftAppDirectory = '',
   String? cppHeaderOut,
   String? cppSourceOut,
   String? cppNamespace,
@@ -315,14 +318,17 @@ Future<int> runPigeon({
     addedEnums.addAll(parseResults.root.enums);
     parseResults.root.enums = addedEnums;
   }
-
+  print(input);
   final int result = await Pigeon.runWithOptions(
     PigeonOptions(
       input: input,
       copyrightHeader: copyrightHeader,
       dartOut: dartOut,
       dartTestOut: dartTestOut,
-      dartOptions: DartOptions(useJni: kotlinUseJni),
+      dartOptions: DartOptions(
+        useJni: kotlinUseJni,
+        useFfi: swiftUseFfi,
+      ),
       cppHeaderOut: cppHeaderOut,
       cppSourceOut: cppSourceOut,
       cppOptions: CppOptions(namespace: cppNamespace),
@@ -338,7 +344,7 @@ Future<int> runPigeon({
         errorClassName: kotlinErrorClassName,
         includeErrorClass: kotlinIncludeErrorClass,
         useJni: kotlinUseJni,
-        exampleAppDirectory: kotlinExampleAppDirectory,
+        appDirectory: kotlinAppDirectory,
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,
@@ -347,6 +353,8 @@ Future<int> runPigeon({
       swiftOptions: SwiftOptions(
         errorClassName: swiftErrorClassName,
         includeErrorClass: swiftIncludeErrorClass,
+        useFfi: swiftUseFfi,
+        appDirectory: swiftAppDirectory,
       ),
       basePath: basePath,
       dartPackageName: dartPackageName,

@@ -47,6 +47,7 @@ class DartOptions {
     this.sourceOutPath,
     this.testOutPath,
     this.useJni = false,
+    this.useFfi = false,
     this.dartOut,
   });
 
@@ -62,6 +63,9 @@ class DartOptions {
   /// Whether to use Jni for generating kotlin interop code.
   final bool useJni;
 
+  /// Whether to use Ffi for generating swift interop code.
+  final bool useFfi;
+
   /// Path to output generated Dart file.
   final String? dartOut;
 
@@ -75,6 +79,7 @@ class DartOptions {
       sourceOutPath: map['sourceOutPath'] as String?,
       testOutPath: map['testOutPath'] as String?,
       useJni: map['useJni'] as bool? ?? false,
+      useFfi: map['useFfi'] as bool? ?? false,
       dartOut: map['dartOut'] as String?,
     );
   }
@@ -87,6 +92,7 @@ class DartOptions {
       if (sourceOutPath != null) 'sourceOutPath': sourceOutPath!,
       if (testOutPath != null) 'testOutPath': testOutPath!,
       if (useJni) 'useJni': useJni,
+      if (useFfi) 'useFfi': useFfi,
       if (dartOut != null) 'dartOut': dartOut!,
     };
     return result;
