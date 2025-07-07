@@ -30,7 +30,7 @@ void main() {
     final MockVideoPlayerInstanceApi instanceApi = MockVideoPlayerInstanceApi();
     final AVFoundationVideoPlayer player = AVFoundationVideoPlayer(
       pluginApi: pluginApi,
-      apiProvider: (_) => instanceApi,
+      playerProvider: (_) => instanceApi,
     );
     player.ensureApiInitialized(playerId);
     return (player, pluginApi, instanceApi);
