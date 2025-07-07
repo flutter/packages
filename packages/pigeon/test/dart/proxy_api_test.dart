@@ -472,7 +472,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'Api.pigeon_({ super.pigeon_binaryMessenger, '
+            r'Api.pigeon_defaultConstructor({ super.pigeon_binaryMessenger, '
             r'super.pigeon_instanceManager, })',
           ),
         );

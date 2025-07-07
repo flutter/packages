@@ -1461,8 +1461,13 @@ if (${varNamePrefix}replyList == null) {
     );
 
     for (final Constructor constructor in constructors) {
+      final String? factoryConstructorName =
+          constructor.name.isNotEmpty ? constructor.name : null;
       final String constructorName =
-          '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : ''}';
+          '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : 'defaultConstructor'}';
+      final String overridesConstructorName = constructor.name.isNotEmpty
+          ? constructor.name
+          : '${classMemberNamePrefix}defaultConstructor';
 
       // Factory constructor that forwards the parameters to the overrides class
       // or to the constructor yielded below this one.
@@ -1487,7 +1492,7 @@ if (${varNamePrefix}replyList == null) {
             includeBinaryMessengerAndInstanceManager: false,
           );
           builder
-            ..name = constructor.name.isNotEmpty ? constructor.name : null
+            ..name = factoryConstructorName
             ..factory = true
             ..docs.addAll(asDocumentationComments(
               constructor.documentationComments,
@@ -1498,10 +1503,6 @@ if (${varNamePrefix}replyList == null) {
               (cb.BlockBuilder builder) {
                 final String overridesClassName =
                     _getProxyApiOverridesClassName(apiName);
-
-                final String overridesConstructorName = constructor.name.isEmpty
-                    ? '${classMemberNamePrefix}defaultConstructor'
-                    : constructor.name;
 
                 final Map<String, cb.Expression> forwardedParams =
                     <String, cb.Expression>{
