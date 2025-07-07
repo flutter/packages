@@ -33,8 +33,7 @@ const Map<int, String> _kErrorValueToErrorDescription = <int, String>{
 
 // The default error message, when the error is an empty string
 // See: https://developer.mozilla.org/en-US/docs/Web/API/MediaError/message
-const String _kDefaultErrorMessage =
-    'No further diagnostic information can be determined or provided.';
+const String _kDefaultErrorMessage = 'No further diagnostic information can be determined or provided.';
 
 /// Wraps a [web.HTMLVideoElement] so its API complies with what is expected by the plugin.
 class VideoPlayer {
@@ -265,8 +264,6 @@ class VideoPlayer {
 
     if (options.poster != null) {
       _videoElement.poster = options.poster!.toString();
-    } else if (_videoElement.getAttribute('poster') != null) {
-      _videoElement.removeAttribute('poster');
     }
   }
 
@@ -279,6 +276,7 @@ class VideoPlayer {
       _onContextMenu = null;
     }
     _videoElement.removeAttribute('disableRemotePlayback');
+    _videoElement.removeAttribute('poster');
   }
 
   /// Disposes of the current [web.HTMLVideoElement].
@@ -307,8 +305,7 @@ class VideoPlayer {
 
   // Sends an [VideoEventType.initialized] [VideoEvent] with info about the wrapped video.
   void _sendInitialized() {
-    final Duration? duration =
-        convertNumVideoDurationToPluginDuration(_videoElement.duration);
+    final Duration? duration = convertNumVideoDurationToPluginDuration(_videoElement.duration);
 
     final Size? size = _videoElement.videoHeight.isFinite
         ? Size(
@@ -335,9 +332,7 @@ class VideoPlayer {
     if (_isBuffering != buffering) {
       _isBuffering = buffering;
       _eventController.add(VideoEvent(
-        eventType: _isBuffering
-            ? VideoEventType.bufferingStart
-            : VideoEventType.bufferingEnd,
+        eventType: _isBuffering ? VideoEventType.bufferingStart : VideoEventType.bufferingEnd,
       ));
     }
   }
