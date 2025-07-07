@@ -346,7 +346,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
-      expect(creationOptions.viewType, PlatformVideoViewType.platformView);
+      expect(creationOptions.viewType, PlatformVideoViewType.textureView);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
           const VideoPlayerTextureViewState(textureId: newPlayerId));
