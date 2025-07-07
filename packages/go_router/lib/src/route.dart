@@ -7,7 +7,9 @@ import 'dart:async';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:meta/meta.dart';
+// TODO(loic-sharma): Remove meta library prefix.
+// https://github.com/flutter/flutter/issues/171410
+import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
 import 'match.dart';
@@ -285,7 +287,8 @@ class GoRoute extends RouteBase {
             'if onExit is provided, one of pageBuilder or builder must be provided'),
         super._() {
     // cache the path regexp and parameters
-    _pathRE = patternToRegExp(path, pathParameters);
+    _pathRE =
+        patternToRegExp(path, pathParameters, caseSensitive: caseSensitive);
   }
 
   /// Whether this [GoRoute] only redirects to another route.
@@ -459,7 +462,9 @@ class GoRoute extends RouteBase {
       extractPathParameters(pathParameters, match);
 
   /// The path parameters in this route.
-  @internal
+  // TODO(loic-sharma): Remove meta library prefix.
+  // https://github.com/flutter/flutter/issues/171410
+  @meta.internal
   final List<String> pathParameters = <String>[];
 
   @override
@@ -1193,7 +1198,8 @@ class StatefulNavigationShell extends StatefulWidget {
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
       final List<String> parameters = <String>[];
-      patternToRegExp(route.path, parameters);
+      patternToRegExp(route.path, parameters,
+          caseSensitive: route.caseSensitive);
       assert(parameters.isEmpty);
       final String fullPath = _router.configuration.locationForRoute(route)!;
       return patternToPath(

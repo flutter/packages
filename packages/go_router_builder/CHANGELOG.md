@@ -1,7 +1,15 @@
 
-## 3.0.1
+## NEXT
+
+- Restricts `build` to versions less than 2.5.0.
+
+## 3.0.2
 
 - Fixes warnings in generated code of iterable parameters.
+
+## 3.0.1
+
+- Updates README.md to use the mixin `with _$RouteName`.
 
 ## 3.0.0
 
@@ -21,7 +29,7 @@
 
 ## 2.8.1
 
-- Fixes an issue when navigate to router with invalid params 
+- Fixes an issue when navigate to router with invalid params
 
 ## 2.8.0
 

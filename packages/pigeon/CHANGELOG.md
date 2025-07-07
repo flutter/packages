@@ -1,5 +1,11 @@
-## NEXT
+## 25.5.0
 
+* [dart] Changes the default InstanceManager and its initialization to no longer make a message call
+  when used in a Flutter unit test.
+
+## 25.4.0
+
+* [gobject] Adds type id constants in header files so that they can be used by the user.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 25.3.2
