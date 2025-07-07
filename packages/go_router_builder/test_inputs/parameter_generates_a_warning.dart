@@ -10,5 +10,5 @@ class MyRoute extends GoRouteData with _$MyRoute {
   final int id;
 }
 
-// TODO: avoid error when run analytic
+// avoid error when run analytic
 mixin _$MyRoute {}
