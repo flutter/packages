@@ -137,39 +137,33 @@
 
 #pragma mark -
 
-/** Test implementation of FVPDisplayLinkFactory that returns a provided display link instance.  */
+@interface StubFVPDisplayLink : NSObject <FVPDisplayLink>
+@property(nonatomic, assign) BOOL running;
+@end
+
+@implementation StubFVPDisplayLink
+- (CFTimeInterval)duration {
+  return 1.0 / 60.0;
+}
+@end
+
+/** Test implementation of FVPDisplayLinkFactory that returns a stub display link instance.  */
 @interface StubFVPDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>
-
 /** This display link to return. */
-@property(nonatomic, strong) FVPDisplayLink *displayLink;
+@property(nonatomic, strong) StubFVPDisplayLink *displayLink;
 @property(nonatomic, copy) void (^fireDisplayLink)(void);
-
-- (instancetype)initWithDisplayLink:(FVPDisplayLink *)displayLink;
-
 @end
 
 @implementation StubFVPDisplayLinkFactory
-- (instancetype)initWithDisplayLink:(FVPDisplayLink *)displayLink {
+- (instancetype)init {
   self = [super init];
-  _displayLink = displayLink;
+  _displayLink = [[StubFVPDisplayLink alloc] init];
   return self;
 }
-- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                                    callback:(void (^)(void))callback {
+- (NSObject<FVPDisplayLink> *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                                              callback:(void (^)(void))callback {
   self.fireDisplayLink = callback;
   return self.displayLink;
-}
-
-@end
-
-/** Non-test implementation of the diplay link factory. */
-@interface FVPDefaultDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>
-@end
-
-@implementation FVPDefaultDisplayLinkFactory
-- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                                    callback:(void (^)(void))callback {
-  return [[FVPDisplayLink alloc] initWithRegistrar:registrar callback:callback];
 }
 
 @end
@@ -251,12 +245,7 @@
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   OCMStub([registrar textures]).andReturn(mockTextureRegistry);
-  FVPDisplayLink *mockDisplayLink =
-      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
-                                                      callback:^(){
-                                                      }]);
-  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
-      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
@@ -285,12 +274,7 @@
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   OCMStub([registrar textures]).andReturn(mockTextureRegistry);
-  FVPDisplayLink *mockDisplayLink =
-      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
-                                                      callback:^(){
-                                                      }]);
-  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
-      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
   // the player via the plugin instead of directly to include that logic in the test.
@@ -327,7 +311,7 @@
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
 
   // Seeking to a new position should start the display link temporarily.
-  OCMVerify([mockDisplayLink setRunning:YES]);
+  XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 
   // Simulate a buffer being available.
   OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
@@ -342,7 +326,7 @@
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
   // Since a frame was found, and the video is paused, the display link should be paused again.
-  OCMVerify([mockDisplayLink setRunning:NO]);
+  XCTAssertFalse(stubDisplayLinkFactory.displayLink.running);
 }
 
 - (void)testInitStartsDisplayLinkTemporarily {
@@ -350,12 +334,7 @@
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   OCMStub([registrar textures]).andReturn(mockTextureRegistry);
-  FVPDisplayLink *mockDisplayLink =
-      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
-                                                      callback:^(){
-                                                      }]);
-  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
-      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
@@ -379,7 +358,7 @@
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
   // Init should start the display link temporarily.
-  OCMVerify([mockDisplayLink setRunning:YES]);
+  XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 
   // Simulate a buffer being available.
   OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
@@ -396,7 +375,7 @@
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
   // Since a frame was found, and the video is paused, the display link should be paused again.
-  OCMVerify([mockDisplayLink setRunning:NO]);
+  XCTAssertFalse(stubDisplayLinkFactory.displayLink.running);
 }
 
 - (void)testSeekToWhilePlayingDoesNotStopDisplayLink {
@@ -404,12 +383,7 @@
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   OCMStub([registrar textures]).andReturn(mockTextureRegistry);
-  FVPDisplayLink *mockDisplayLink =
-      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
-                                                      callback:^(){
-                                                      }]);
-  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
-      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
   // the player via the plugin instead of directly to include that logic in the test.
@@ -444,7 +418,7 @@
         [seekExpectation fulfill];
       }];
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
-  OCMVerify([mockDisplayLink setRunning:YES]);
+  XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 
   // Simulate a buffer being available.
   OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
@@ -459,7 +433,7 @@
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
   // Since the video was playing, the display link should not be paused after getting a buffer.
-  OCMVerify(never(), [mockDisplayLink setRunning:NO]);
+  XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 }
 
 - (void)testPauseWhileWaitingForFrameDoesNotStopDisplayLink {
@@ -467,12 +441,7 @@
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   OCMStub([registrar textures]).andReturn(mockTextureRegistry);
-  FVPDisplayLink *mockDisplayLink =
-      OCMPartialMock([[FVPDisplayLink alloc] initWithRegistrar:registrar
-                                                      callback:^(){
-                                                      }]);
-  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
-      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:mockDisplayLink];
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
   // the player via the plugin instead of directly to include that logic in the test.
@@ -503,7 +472,7 @@
   [player pauseWithError:&playPauseError];
 
   // Since a buffer hasn't been available yet, the pause should not have stopped the display link.
-  OCMVerify(never(), [mockDisplayLink setRunning:NO]);
+  XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 }
 
 - (void)testDeregistersFromPlayer {
@@ -925,11 +894,7 @@
       OCMProtocolMock(@protocol(FlutterTextureRegistry));
   OCMStub([registrar textures]).andReturn(mockTextureRegistry);
 
-  FVPDisplayLink *displayLink = [[FVPDisplayLink alloc] initWithRegistrar:registrar
-                                                                 callback:^(){
-                                                                 }];
-  StubFVPDisplayLinkFactory *stubDisplayLinkFactory =
-      [[StubFVPDisplayLinkFactory alloc] initWithDisplayLink:displayLink];
+  StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]

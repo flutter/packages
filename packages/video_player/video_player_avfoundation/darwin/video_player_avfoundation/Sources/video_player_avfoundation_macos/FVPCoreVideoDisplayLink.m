@@ -7,7 +7,12 @@
 #import <CoreVideo/CoreVideo.h>
 #import <Foundation/Foundation.h>
 
-@interface FVPDisplayLink ()
+// CVDisplayLink is deprecated; this implementation is only used on macOS < 14.0, so deprecation
+// warnings aren't useful in this file.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+
+@interface FVPCoreVideoDisplayLink ()
 // The underlying display link implementation.
 @property(nonatomic, assign) CVDisplayLinkRef displayLink;
 // A dispatch source to move display link callbacks to the main thread.
@@ -25,7 +30,7 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
   return kCVReturnSuccess;
 }
 
-@implementation FVPDisplayLink
+@implementation FVPCoreVideoDisplayLink
 
 - (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar
                          callback:(void (^)(void))callback {
@@ -90,3 +95,5 @@ static CVReturn DisplayLinkCallback(CVDisplayLinkRef displayLink, const CVTimeSt
 }
 
 @end
+
+#pragma clang diagnostic pop

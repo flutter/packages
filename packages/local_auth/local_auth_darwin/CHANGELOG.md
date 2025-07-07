@@ -1,5 +1,6 @@
-## NEXT
+## 1.5.0
 
+* Converts implementation to Swift.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 1.4.3

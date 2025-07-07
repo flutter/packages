@@ -9,7 +9,7 @@
 // The updater that drives callbacks to the engine to indicate that a new frame is ready.
 @property(nonatomic) FVPFrameUpdater *frameUpdater;
 // The display link that drives frameUpdater.
-@property(nonatomic) FVPDisplayLink *displayLink;
+@property(nonatomic) NSObject<FVPDisplayLink> *displayLink;
 // The latest buffer obtained from video output. This is stored so that it can be returned from
 // copyPixelBuffer again if nothing new is available, since the engine has undefined behavior when
 // returning NULL.
@@ -33,7 +33,7 @@
 @implementation FVPTextureBasedVideoPlayer
 - (instancetype)initWithAsset:(NSString *)asset
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
-                  displayLink:(FVPDisplayLink *)displayLink
+                  displayLink:(NSObject<FVPDisplayLink> *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
                  viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   return [self initWithURL:[NSURL fileURLWithPath:[FVPVideoPlayer absolutePathForAssetName:asset]]
@@ -46,7 +46,7 @@
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(FVPDisplayLink *)displayLink
+                displayLink:(NSObject<FVPDisplayLink> *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
                viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
@@ -65,7 +65,7 @@
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
-                       displayLink:(FVPDisplayLink *)displayLink
+                       displayLink:(NSObject<FVPDisplayLink> *)displayLink
                          avFactory:(id<FVPAVFactory>)avFactory
                       viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   self = [super initWithPlayerItem:item avFactory:avFactory viewProvider:viewProvider];
