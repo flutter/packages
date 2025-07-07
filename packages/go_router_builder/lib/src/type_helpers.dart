@@ -265,7 +265,7 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
 }
 
 /// A type helper for extension types.
-/// Suppoted extension types are:
+/// Supported extension types are:
 /// - [String]
 /// - [int]
 /// - [double]

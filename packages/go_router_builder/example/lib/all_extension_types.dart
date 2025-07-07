@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import 'shared/data.dart';
 
-part 'all_extension_typs.g.dart';
+part 'all_extension_types.g.dart';
 
 @TypedGoRoute<AllTypesBaseRoute>(path: '/', routes: <TypedGoRoute<GoRouteData>>[
   TypedGoRoute<BigIntExtensionRoute>(
