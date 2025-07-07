@@ -199,13 +199,6 @@ class Convert {
       float density,
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
     try {
-      final String backgroundColorKey = "backgroundColor";
-      final String borderColorKey = "borderColor";
-      final String glyphTextKey = "glyphText";
-      final String glyphTextColorKey = "glyphTextColor";
-      final String glyphColorKey = "glyphColor";
-      final String glyphBitmapDescriptorKey = "glyphBitmapDescriptor";
-
       final Integer backgroundColor =
           pinConfigBitmap.getBackgroundColor() != null
               ? toInt(pinConfigBitmap.getBackgroundColor())
