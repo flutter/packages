@@ -1,4 +1,4 @@
-## NEXT
+## 2.7.3
 
 * Removes unnecessary workarounds, fixes "initialized" event not firing when the duration of the media is 0.
 
