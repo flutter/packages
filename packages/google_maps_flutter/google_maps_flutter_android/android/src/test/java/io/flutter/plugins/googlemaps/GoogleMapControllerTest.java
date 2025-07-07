@@ -25,6 +25,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapCapabilities;
 import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -60,6 +61,7 @@ public class GoogleMapControllerTest {
   @Mock HeatmapsController mockHeatmapsController;
   @Mock TileOverlaysController mockTileOverlaysController;
   @Mock GroundOverlaysController mockGroundOverlaysController;
+  @Mock MapCapabilities mapCapabilities;
 
   @Before
   public void before() {
@@ -318,5 +320,18 @@ public class GoogleMapControllerTest {
     Assert.assertEquals(cameraPosition.zoom, result.getZoom(), 1e-15);
     Assert.assertEquals(cameraPosition.tilt, result.getTilt(), 1e-15);
     Assert.assertEquals(cameraPosition.bearing, result.getBearing(), 1e-15);
+  }
+
+  @Test
+  public void isAdvancedMarkersAvailableReturnsCorrectData() {
+    GoogleMapController googleMapController = getGoogleMapControllerWithMockedDependencies();
+    googleMapController.onMapReady(mockGoogleMap);
+
+    when(mockGoogleMap.getMapCapabilities()).thenReturn(mapCapabilities);
+    when(mapCapabilities.isAdvancedMarkersAvailable()).thenReturn(true);
+    Assert.assertEquals(true, googleMapController.isAdvancedMarkersAvailable());
+
+    when(mapCapabilities.isAdvancedMarkersAvailable()).thenReturn(false);
+    Assert.assertEquals(false, googleMapController.isAdvancedMarkersAvailable());
   }
 }
