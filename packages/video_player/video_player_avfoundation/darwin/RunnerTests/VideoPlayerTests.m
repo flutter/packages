@@ -10,7 +10,6 @@
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
 #import <video_player_avfoundation/FVPTextureBasedVideoPlayer_Test.h>
 #import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
-#import <video_player_avfoundation/FVPVideoPlayer_Test.h>
 
 #if TARGET_OS_IOS
 #import <video_player_avfoundation/FVPNativeVideoViewFactory.h>

@@ -110,10 +110,10 @@
   _displayLink.running = self.isPlaying || self.waitingForFrame;
 }
 
-- (void)seekTo:(int64_t)location completionHandler:(void (^)(BOOL))completionHandler {
+- (void)seekTo:(NSInteger)position completion:(void (^)(FlutterError *_Nullable))completion {
   CMTime previousCMTime = self.player.currentTime;
-  [super seekTo:location
-      completionHandler:^(BOOL completed) {
+  [super seekTo:position
+      completion:^(FlutterError *error) {
         if (CMTimeCompare(self.player.currentTime, previousCMTime) != 0) {
           // Ensure that a frame is drawn once available, even if currently paused. In theory a
           // race is possible here where the new frame has already drawn by the time this code
@@ -124,8 +124,8 @@
           [self expectFrame];
         }
 
-        if (completionHandler) {
-          completionHandler(completed);
+        if (completion) {
+          completion(error);
         }
       }];
 }

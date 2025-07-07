@@ -4,6 +4,7 @@
 
 #import <AVFoundation/AVFoundation.h>
 
+#import "./messages.g.h"
 #import "FVPAVFactory.h"
 #import "FVPViewProvider.h"
 
@@ -20,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// This class contains all functionalities needed to manage video playback in platform views and is
 /// typically used alongside FVPNativeVideoViewFactory. If you need to display a video using a
 /// texture, use FVPTextureBasedVideoPlayer instead.
-@interface FVPVideoPlayer : NSObject <FlutterStreamHandler>
+@interface FVPVideoPlayer : NSObject <FlutterStreamHandler, FVPVideoPlayerInstanceApi>
 /// The Flutter event channel used to communicate with the Flutter engine.
 @property(nonatomic) FlutterEventChannel *eventChannel;
 /// The AVPlayer instance used for video playback.
@@ -55,21 +56,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// so the channel is going to die or is already dead.
 - (void)disposeSansEventChannel;
 
-/// Sets the volume of the video player.
-- (void)setVolume:(double)volume;
-
-/// Sets the playback speed of the video player.
-- (void)setPlaybackSpeed:(double)speed;
-
-/// Starts playing the video.
-- (void)play;
-
-/// Pauses the video.
-- (void)pause;
-
-/// Seeks to the specified location in the video and calls the completion handler when done, if one
-/// is supplied.
-- (void)seekTo:(int64_t)location completionHandler:(void (^_Nullable)(BOOL))completionHandler;
 @end
 
 NS_ASSUME_NONNULL_END
