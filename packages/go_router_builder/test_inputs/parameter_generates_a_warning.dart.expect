@@ -1,6 +1,6 @@
 RouteBase get $myRoute => GoRouteData.$route(
       path: '/product/:id',
-      factory: _$MyRoute._fromState
+      factory: _$MyRoute._fromState,
     );
 
 mixin _$MyRoute on GoRouteData {
