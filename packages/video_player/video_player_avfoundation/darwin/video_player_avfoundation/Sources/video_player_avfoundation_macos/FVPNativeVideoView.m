@@ -45,10 +45,6 @@
   [self.playerLayer displayIfNeeded];
 }
 
-- (void)dealloc {
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 @end
 
 @interface FVPNativeVideoView ()
@@ -60,7 +56,7 @@
 - (instancetype)initWithPlayer:(AVPlayer *)player {
   self = [super init];
   if (self) {
-    _playerView = [[FVPPlayerView alloc] initWithFrame:NSMakeRect(0, 0, 640, 480)];
+    _playerView = [[FVPPlayerView alloc] initWithFrame:NSMakeRect(0, 0, 1, 1)];
     [_playerView setPlayer:player];
     [self addSubview:_playerView];
 
