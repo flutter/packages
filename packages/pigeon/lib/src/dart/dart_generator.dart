@@ -1493,10 +1493,10 @@ if (${varNamePrefix}replyList == null) {
       final String? factoryConstructorName =
           constructor.name.isNotEmpty ? constructor.name : null;
       final String constructorName =
-          '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : 'defaultConstructor'}';
+          '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : 'new'}';
       final String overridesConstructorName = constructor.name.isNotEmpty
-          ? constructor.name
-          : '${classMemberNamePrefix}defaultConstructor';
+          ? '${toLowerCamelCase(apiName)}_${constructor.name}'
+          : '${toLowerCamelCase(apiName)}_new';
 
       // Factory constructor that forwards the parameters to the overrides class
       // or to the constructor yielded below this one.
@@ -1545,10 +1545,10 @@ if (${varNamePrefix}replyList == null) {
 
                 builder.statements.addAll(<cb.Code>[
                   cb.Code(
-                      'if ($proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_$overridesConstructorName != null) {'),
+                      'if ($proxyApiOverridesClassName.$overridesConstructorName != null) {'),
                   cb.CodeExpression(
                     cb.Code(
-                        '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_$overridesConstructorName!'),
+                        '$proxyApiOverridesClassName.$overridesConstructorName!'),
                   )
                       .call(
                         <cb.Expression>[],
@@ -2464,7 +2464,7 @@ if (${varNamePrefix}replyList == null) {
             );
             builder
               ..name = constructor.name.isEmpty
-                  ? '${lowerCamelCaseApiName}_${classMemberNamePrefix}defaultConstructor'
+                  ? '${lowerCamelCaseApiName}_new'
                   : '${lowerCamelCaseApiName}_${constructor.name}'
               ..static = true
               ..docs.add('/// Overrides [${api.name}.$constructorName].')
@@ -2549,7 +2549,7 @@ if (${varNamePrefix}replyList == null) {
           for (final AstProxyApi api in proxyApis)
             for (final Constructor constructor in api.constructors)
               cb.Code(
-                '${toLowerCamelCase(api.name)}_${constructor.name.isEmpty ? '${classMemberNamePrefix}defaultConstructor' : constructor.name} = null;',
+                '${toLowerCamelCase(api.name)}_${constructor.name.isEmpty ? 'new' : constructor.name} = null;',
               ),
           for (final AstProxyApi api in proxyApis)
             for (final ApiField attachedField
