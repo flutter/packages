@@ -4,7 +4,6 @@
 
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer_Internal.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
 
 #import <GLKit/GLKit.h>
 
@@ -100,6 +99,25 @@ static void *rateContext = &rateContext;
   if (!_disposed) {
     [self removeKeyValueObservers];
   }
+}
+
+/// This method allows you to dispose without touching the event channel. This
+/// is useful for the case where the Engine is in the process of deconstruction
+/// so the channel is going to die or is already dead.
+- (void)disposeSansEventChannel {
+  _disposed = YES;
+  [self removeKeyValueObservers];
+
+  [self.player replaceCurrentItemWithPlayerItem:nil];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)dispose {
+  [self disposeSansEventChannel];
+  if (_onDisposed) {
+    _onDisposed();
+  }
+  [_eventChannel setStreamHandler:nil];
 }
 
 + (NSString *)absolutePathForAssetName:(NSString *)assetName {
@@ -345,56 +363,55 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   });
 }
 
-- (void)play {
+#pragma mark - FVPVideoPlayerInstanceApi
+
+- (void)playWithError:(FlutterError *_Nullable *_Nonnull)error {
   _isPlaying = YES;
   [self updatePlayingState];
 }
 
-- (void)pause {
+- (void)pauseWithError:(FlutterError *_Nullable *_Nonnull)error {
   _isPlaying = NO;
   [self updatePlayingState];
 }
 
-- (int64_t)position {
-  return FVPCMTimeToMillis([_player currentTime]);
+- (nullable NSNumber *)position:(FlutterError *_Nullable *_Nonnull)error {
+  return @(FVPCMTimeToMillis([_player currentTime]));
 }
 
-- (int64_t)duration {
-  // Note: https://openradar.appspot.com/radar?id=4968600712511488
-  // `[AVPlayerItem duration]` can be `kCMTimeIndefinite`,
-  // use `[[AVPlayerItem asset] duration]` instead.
-  return FVPCMTimeToMillis([[[_player currentItem] asset] duration]);
-}
-
-- (void)seekTo:(int64_t)location completionHandler:(void (^)(BOOL))completionHandler {
-  CMTime targetCMTime = CMTimeMake(location, 1000);
+- (void)seekTo:(NSInteger)position completion:(void (^)(FlutterError *_Nullable))completion {
+  CMTime targetCMTime = CMTimeMake(position, 1000);
   CMTimeValue duration = _player.currentItem.asset.duration.value;
   // Without adding tolerance when seeking to duration,
   // seekToTime will never complete, and this call will hang.
   // see issue https://github.com/flutter/flutter/issues/124475.
-  CMTime tolerance = location == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
+  CMTime tolerance = position == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
   [_player seekToTime:targetCMTime
         toleranceBefore:tolerance
          toleranceAfter:tolerance
       completionHandler:^(BOOL completed) {
-        if (completionHandler) {
-          completionHandler(completed);
+        if (completion) {
+          dispatch_async(dispatch_get_main_queue(), ^{
+            completion(nil);
+          });
         }
       }];
 }
 
-- (void)setIsLooping:(BOOL)isLooping {
-  _isLooping = isLooping;
+- (void)setLooping:(BOOL)looping error:(FlutterError *_Nullable *_Nonnull)error {
+  _isLooping = looping;
 }
 
-- (void)setVolume:(double)volume {
+- (void)setVolume:(double)volume error:(FlutterError *_Nullable *_Nonnull)error {
   _player.volume = (float)((volume < 0.0) ? 0.0 : ((volume > 1.0) ? 1.0 : volume));
 }
 
-- (void)setPlaybackSpeed:(double)speed {
+- (void)setPlaybackSpeed:(double)speed error:(FlutterError *_Nullable *_Nonnull)error {
   _targetPlaybackSpeed = @(speed);
   [self updatePlayingState];
 }
+
+#pragma mark - FlutterStreamHandler
 
 - (FlutterError *_Nullable)onCancelWithArguments:(id _Nullable)arguments {
   NSAssert([NSThread isMainThread], @"event sink must only be accessed from the main thread");
@@ -422,20 +439,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
-/// This method allows you to dispose without touching the event channel. This
-/// is useful for the case where the Engine is in the process of deconstruction
-/// so the channel is going to die or is already dead.
-- (void)disposeSansEventChannel {
-  _disposed = YES;
-  [self removeKeyValueObservers];
+#pragma mark - Private
 
-  [self.player replaceCurrentItemWithPlayerItem:nil];
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)dispose {
-  [self disposeSansEventChannel];
-  [_eventChannel setStreamHandler:nil];
+- (int64_t)duration {
+  // Note: https://openradar.appspot.com/radar?id=4968600712511488
+  // `[AVPlayerItem duration]` can be `kCMTimeIndefinite`,
+  // use `[[AVPlayerItem asset] duration]` instead.
+  return FVPCMTimeToMillis([[[_player currentItem] asset] duration]);
 }
 
 /// Removes all key-value observers set up for the player.
