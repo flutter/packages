@@ -472,7 +472,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'Api.pigeon_defaultConstructor({ super.pigeon_binaryMessenger, '
+            r'Api.pigeon_new({ super.pigeon_binaryMessenger, '
             r'super.pigeon_instanceManager, })',
           ),
         );
@@ -847,7 +847,7 @@ void main() {
         expect(
             code,
             contains(
-                r'static Api2 get aField => PigeonApiOverrides.aField ?? _aField;'));
+                r'static Api2 get aField => PigeonOverrides.api_aField ?? _aField;'));
         expect(
             code, contains(r'static final Api2 _aField = pigeonVar_aField();'));
         expect(code, contains(r'static Api2 pigeonVar_aField()'));
