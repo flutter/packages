@@ -33,28 +33,13 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
-/// Sets all overridden ProxyApi class members to null.
-///
-/// Intended to only be used with unit tests.
-@visibleForTesting
-void pigeon_resetAllOverrides() {
-  PigeonOverrides.pigeon_defaultConstructor = null;
-  PigeonOverrides.namedConstructor = null;
-  PigeonOverrides.pigeon_defaultConstructor = null;
-  PigeonOverrides.pigeon_defaultConstructor = null;
-  PigeonOverrides.staticAttachedField = null;
-  PigeonOverrides.staticNoop = null;
-  PigeonOverrides.echoStaticString = null;
-  PigeonOverrides.staticAsyncNoop = null;
-}
-
 /// Provides overrides for the constructors and static members for
 /// each proxy API.
 ///
 /// This is only intended to be used with unit tests to prevent errors from
 /// making message calls in a unit test.
 ///
-/// See [pigeon_reset] to set all overrides back to null.
+/// See [PigeonOverrides.pigeon_reset] to set all overrides back to null.
 @visibleForTesting
 class PigeonOverrides {
   /// Overrides [ProxyApiTestClass.new].
@@ -316,6 +301,20 @@ class PigeonOverrides {
 
   /// Overrides [ProxyApiTestClass.staticAsyncNoop].
   static Future<void> Function()? proxyApiTestClass_staticAsyncNoop;
+
+  /// Sets all overridden ProxyApi class members to null.
+  ///
+  /// Intended to only be used with unit tests.
+  static void pigeon_reset() {
+    proxyApiTestClass_pigeon_defaultConstructor = null;
+    proxyApiTestClass_namedConstructor = null;
+    proxyApiSuperClass_pigeon_defaultConstructor = null;
+    classWithApiRequirement_pigeon_defaultConstructor = null;
+    proxyApiTestClass_staticAttachedField = null;
+    proxyApiTestClass_staticNoop = null;
+    proxyApiTestClass_echoStaticString = null;
+    proxyApiTestClass_staticAsyncNoop = null;
+  }
 }
 
 /// An immutable object that serves as the base class for all ProxyApis and
