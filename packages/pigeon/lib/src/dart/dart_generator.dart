@@ -38,6 +38,10 @@ const String _pigeonMethodChannelCodec = 'pigeonMethodCodec';
 
 const String _overflowClassName = '_PigeonCodecOverflow';
 
+/// Name of the overrides class for overriding constructors and static members
+/// of proxy APIs.
+const String proxyApiOverridesClassName = '${proxyApiClassNamePrefix}Overrides';
+
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
@@ -986,11 +990,8 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ),
     );
 
-    final cb.Class proxyApiOverrides = _proxyApiOverridesClass(api);
-
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.format(_formatter.format('${proxyApi.accept(emitter)}'));
-    indent.format(_formatter.format('${proxyApiOverrides.accept(emitter)}'));
   }
 
   /// Generates Dart source code for test support libraries based on the given AST
@@ -1098,6 +1099,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         indent,
         proxyApis: root.apis.whereType(),
       );
+      _writeProxyApiPigeonOverrides(indent, proxyApis: root.apis.whereType());
     }
   }
 
@@ -1501,9 +1503,6 @@ if (${varNamePrefix}replyList == null) {
             ..optionalParameters.addAll(parameters)
             ..body = cb.Block(
               (cb.BlockBuilder builder) {
-                final String overridesClassName =
-                    _getProxyApiOverridesClassName(apiName);
-
                 final Map<String, cb.Expression> forwardedParams =
                     <String, cb.Expression>{
                   for (final cb.Parameter parameter in parameters)
@@ -1519,9 +1518,10 @@ if (${varNamePrefix}replyList == null) {
 
                 builder.statements.addAll(<cb.Code>[
                   cb.Code(
-                      'if ($overridesClassName.$overridesConstructorName != null) {'),
+                      'if ($proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_$overridesConstructorName != null) {'),
                   cb.CodeExpression(
-                    cb.Code('$overridesClassName.$overridesConstructorName!'),
+                    cb.Code(
+                        '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_$overridesConstructorName!'),
                   )
                       .call(
                         <cb.Expression>[],
@@ -1842,7 +1842,7 @@ if (${varNamePrefix}replyList == null) {
         ))
         ..lambda = true
         ..body = cb.Code(
-          '${_getProxyApiOverridesClassName(apiName)}.${field.name} ?? _${field.name}',
+          '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${field.name} ?? _${field.name}',
         ));
     }
   }
@@ -2248,11 +2248,11 @@ if (${varNamePrefix}replyList == null) {
               builder.statements.addAll(<cb.Code>[
                 if (method.isStatic) ...<cb.Code>[
                   cb.Code(
-                    'if (${_getProxyApiOverridesClassName(apiName)}.${method.name} != null) {',
+                    'if ($proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${method.name} != null) {',
                   ),
                   cb.CodeExpression(
                     cb.Code(
-                      '${_getProxyApiOverridesClassName(apiName)}.${method.name}!',
+                      '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${method.name}!',
                     ),
                   )
                       .call(parameters.map(
@@ -2414,114 +2414,95 @@ if (${varNamePrefix}replyList == null) {
     );
   }
 
-  // Creates the overrides class that provides overrides for the constructor
-  // and static members of a ProxyApi class.
-  cb.Class _proxyApiOverridesClass(AstProxyApi api) {
-    return cb.Class(
-      (cb.ClassBuilder builder) => builder
-        ..name = _getProxyApiOverridesClassName(api.name)
-        ..annotations.add(cb.refer('visibleForTesting'))
-        ..docs.addAll(<String>[
-          '/// Provides overrides for the constructors, static fields, and static methods',
-          '/// of [${api.name}].',
-          '///',
-          '/// This is only intended to be used with unit tests to prevent errors from',
-          '/// making message calls in a unit test.',
-          '///',
-          '/// See [pigeon_resetAllOverrides] to set all overrides back to null.',
-        ])
-        ..fields.addAll(_proxyApiOverridesClassConstructors(api))
-        ..fields.addAll(_proxyApiOverridesClassStaticFields(
-          api.fields.where((ApiField field) => field.isStatic),
-          apiName: api.name,
-        ))
-        ..fields.addAll(_proxyApiOverridesClassStaticMethods(
-          api.hostMethods.where((Method method) => method.isStatic),
-          apiName: api.name,
-        )),
-    );
-  }
-
   Iterable<cb.Field> _proxyApiOverridesClassConstructors(
-    AstProxyApi api,
+    Iterable<AstProxyApi> proxyApis,
   ) sync* {
-    for (final Constructor constructor in api.constructors) {
-      yield cb.Field(
-        (cb.FieldBuilder builder) {
-          final String constructorName =
-              constructor.name.isEmpty ? 'new' : constructor.name;
-          final Iterable<cb.Parameter> parameters = _asConstructorParameters(
-            constructor,
-            apiName: api.name,
-            unattachedFields: api.unattachedFields,
-            flutterMethodsFromSuperClasses:
-                api.flutterMethodsFromSuperClassesWithApis(),
-            flutterMethodsFromInterfaces:
-                api.flutterMethodsFromInterfacesWithApis(),
-            declaredFlutterMethods: api.flutterMethods,
-            includeBinaryMessengerAndInstanceManager: false,
-          );
-          builder
-            ..name = constructor.name.isEmpty
-                ? '${classMemberNamePrefix}defaultConstructor'
-                : constructor.name
-            ..static = true
-            ..docs.add('/// Overrides [${api.name}.$constructorName].')
-            ..type = cb.FunctionType(
-              (cb.FunctionTypeBuilder builder) => builder
-                ..returnType = cb.refer(api.name)
-                ..isNullable = true
-                ..namedRequiredParameters.addAll(<String, cb.Reference>{
-                  for (final cb.Parameter parameter in parameters
-                      .where((cb.Parameter parameter) => parameter.required))
-                    parameter.name: parameter.type!,
-                })
-                ..namedParameters.addAll(<String, cb.Reference>{
-                  for (final cb.Parameter parameter in parameters
-                      .where((cb.Parameter parameter) => !parameter.required))
-                    parameter.name: parameter.type!,
-                }),
+    for (final AstProxyApi api in proxyApis) {
+      final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
+      for (final Constructor constructor in api.constructors) {
+        yield cb.Field(
+          (cb.FieldBuilder builder) {
+            final String constructorName =
+                constructor.name.isEmpty ? 'new' : constructor.name;
+            final Iterable<cb.Parameter> parameters = _asConstructorParameters(
+              constructor,
+              apiName: api.name,
+              unattachedFields: api.unattachedFields,
+              flutterMethodsFromSuperClasses:
+                  api.flutterMethodsFromSuperClassesWithApis(),
+              flutterMethodsFromInterfaces:
+                  api.flutterMethodsFromInterfacesWithApis(),
+              declaredFlutterMethods: api.flutterMethods,
+              includeBinaryMessengerAndInstanceManager: false,
             );
-        },
-      );
+            builder
+              ..name = constructor.name.isEmpty
+                  ? '${lowerCamelCaseApiName}_${classMemberNamePrefix}defaultConstructor'
+                  : '${lowerCamelCaseApiName}_${constructor.name}'
+              ..static = true
+              ..docs.add('/// Overrides [${api.name}.$constructorName].')
+              ..type = cb.FunctionType(
+                (cb.FunctionTypeBuilder builder) => builder
+                  ..returnType = cb.refer(api.name)
+                  ..isNullable = true
+                  ..namedRequiredParameters.addAll(<String, cb.Reference>{
+                    for (final cb.Parameter parameter in parameters
+                        .where((cb.Parameter parameter) => parameter.required))
+                      parameter.name: parameter.type!,
+                  })
+                  ..namedParameters.addAll(<String, cb.Reference>{
+                    for (final cb.Parameter parameter in parameters
+                        .where((cb.Parameter parameter) => !parameter.required))
+                      parameter.name: parameter.type!,
+                  }),
+              );
+          },
+        );
+      }
     }
   }
 
   Iterable<cb.Field> _proxyApiOverridesClassStaticFields(
-    Iterable<ApiField> staticFields, {
-    required String apiName,
-  }) sync* {
-    for (final ApiField field in staticFields) {
-      yield cb.Field((cb.FieldBuilder builder) {
-        builder
-          ..name = field.name
-          ..static = true
-          ..docs.add('/// Overrides [$apiName.${field.name}].')
-          ..type = cb.refer('${field.type.baseName}?');
-      });
+    Iterable<AstProxyApi> proxyApis,
+  ) sync* {
+    for (final AstProxyApi api in proxyApis) {
+      final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
+      for (final ApiField field
+          in api.fields.where((ApiField field) => field.isStatic)) {
+        yield cb.Field((cb.FieldBuilder builder) {
+          builder
+            ..name = '${lowerCamelCaseApiName}_${field.name}'
+            ..static = true
+            ..docs.add('/// Overrides [${api.name}.${field.name}].')
+            ..type = cb.refer('${field.type.baseName}?');
+        });
+      }
     }
   }
 
   Iterable<cb.Field> _proxyApiOverridesClassStaticMethods(
-    Iterable<Method> staticMethods, {
-    required String apiName,
-  }) sync* {
-    for (final Method method in staticMethods) {
-      yield cb.Field((cb.FieldBuilder builder) {
-        builder
-          ..name = method.name
-          ..static = true
-          ..docs.add('/// Overrides [$apiName.${method.name}].')
-          ..type = cb.FunctionType((cb.FunctionTypeBuilder builder) {
-            builder
-              ..isNullable = true
-              ..returnType = _refer(method.returnType, asFuture: true)
-              ..requiredParameters.addAll(<cb.Reference>[
-                for (final Parameter parameter in method.parameters)
-                  _refer(parameter.type),
-              ]);
-          });
-      });
+    Iterable<AstProxyApi> proxyApis,
+  ) sync* {
+    for (final AstProxyApi api in proxyApis) {
+      final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
+      for (final Method method
+          in api.hostMethods.where((Method method) => method.isStatic)) {
+        yield cb.Field((cb.FieldBuilder builder) {
+          builder
+            ..name = '${lowerCamelCaseApiName}_${method.name}'
+            ..static = true
+            ..docs.add('/// Overrides [${api.name}.${method.name}].')
+            ..type = cb.FunctionType((cb.FunctionTypeBuilder builder) {
+              builder
+                ..isNullable = true
+                ..returnType = _refer(method.returnType, asFuture: true)
+                ..requiredParameters.addAll(<cb.Reference>[
+                  for (final Parameter parameter in method.parameters)
+                    _refer(parameter.type),
+                ]);
+            });
+        });
+      }
     }
   }
 
@@ -2546,25 +2527,55 @@ if (${varNamePrefix}replyList == null) {
           for (final AstProxyApi api in proxyApis)
             for (final Constructor constructor in api.constructors)
               cb.Code(
-                '${_getProxyApiOverridesClassName(api.name)}.${constructor.name.isEmpty ? '${classMemberNamePrefix}defaultConstructor' : constructor.name} = null;',
+                '$proxyApiOverridesClassName.${constructor.name.isEmpty ? '${classMemberNamePrefix}defaultConstructor' : constructor.name} = null;',
               ),
           for (final AstProxyApi api in proxyApis)
             for (final ApiField attachedField
                 in api.fields.where((ApiField field) => field.isStatic))
               cb.Code(
-                '${_getProxyApiOverridesClassName(api.name)}.${attachedField.name} = null;',
+                '$proxyApiOverridesClassName.${attachedField.name} = null;',
               ),
           for (final AstProxyApi api in proxyApis)
             for (final Method staticMethod
                 in api.methods.where((Method method) => method.isStatic))
               cb.Code(
-                '${_getProxyApiOverridesClassName(api.name)}.${staticMethod.name} = null;',
+                '$proxyApiOverridesClassName.${staticMethod.name} = null;',
               ),
         ]);
     });
 
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.format(_formatter.format('${method.accept(emitter)}'));
+  }
+
+  void _writeProxyApiPigeonOverrides(
+    Indent indent, {
+    required Iterable<AstProxyApi> proxyApis,
+  }) {
+    if (proxyApis.isEmpty) {
+      return;
+    }
+
+    final cb.Class proxyApiOverrides = cb.Class(
+      (cb.ClassBuilder builder) => builder
+        ..name = proxyApiOverridesClassName
+        ..annotations.add(cb.refer('visibleForTesting'))
+        ..docs.addAll(<String>[
+          '/// Provides overrides for the constructors and static members for',
+          '/// each proxy API.',
+          '///',
+          '/// This is only intended to be used with unit tests to prevent errors from',
+          '/// making message calls in a unit test.',
+          '///',
+          '/// See [pigeon_reset] to set all overrides back to null.',
+        ])
+        ..fields.addAll(_proxyApiOverridesClassConstructors(proxyApis))
+        ..fields.addAll(_proxyApiOverridesClassStaticFields(proxyApis))
+        ..fields.addAll(_proxyApiOverridesClassStaticMethods(proxyApis)),
+    );
+
+    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+    indent.format(_formatter.format('${proxyApiOverrides.accept(emitter)}'));
   }
 }
 
@@ -2704,10 +2715,6 @@ String _addGenericTypesNullable(TypeDeclaration type) {
 String _posixify(String inputPath) {
   final path.Context context = path.Context(style: path.Style.posix);
   return context.fromUri(path.toUri(path.absolute(inputPath)));
-}
-
-String _getProxyApiOverridesClassName(String apiName) {
-  return '$proxyApiClassNamePrefix${apiName}Overrides';
 }
 
 // Converts a method to a `code_builder` FunctionType with all parameters as
