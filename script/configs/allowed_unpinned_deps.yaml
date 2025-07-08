@@ -33,6 +33,8 @@
 - devtools_extensions
 - fake_async
 - ffi
+- file
+- file_testing
 - gcloud
 - graphs
 - html
@@ -41,6 +43,7 @@
 - io
 - js
 - json_serializable
+- leak_tracker
 - leak_tracker_flutter_testing
 - lints
 - logging
@@ -51,6 +54,7 @@
 - path
 - package_config
 - platform
+- process
 - pub_semver
 - shelf
 - shelf_static
@@ -65,8 +69,6 @@
 # Google-owned packages
 - _discoveryapis_commons
 - adaptive_navigation
-- file
-- file_testing
 - googleapis
 - googleapis_auth
 - json_annotation

@@ -13,6 +13,7 @@ final class TestInteractiveMediaAdsPlatform
     required this.onCreatePlatformAdDisplayContainer,
     required this.onCreatePlatformContentProgressProvider,
     this.onCreatePlatformAdsRenderingSettings,
+    this.onCreatePlatformCompanionAdSlot,
   });
 
   PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params)
@@ -33,6 +34,10 @@ final class TestInteractiveMediaAdsPlatform
   PlatformAdsRenderingSettings Function(
     PlatformAdsRenderingSettingsCreationParams params,
   )? onCreatePlatformAdsRenderingSettings;
+
+  PlatformCompanionAdSlot Function(
+    PlatformCompanionAdSlotCreationParams params,
+  )? onCreatePlatformCompanionAdSlot;
 
   @override
   PlatformAdsLoader createPlatformAdsLoader(
@@ -69,6 +74,17 @@ final class TestInteractiveMediaAdsPlatform
     return onCreatePlatformAdsRenderingSettings?.call(params) ??
         TestAdsRenderingSettings(params);
   }
+
+  @override
+  PlatformCompanionAdSlot createPlatformCompanionAdSlot(
+    PlatformCompanionAdSlotCreationParams params,
+  ) {
+    return onCreatePlatformCompanionAdSlot?.call(params) ??
+        TestCompanionAdSlot(
+          params,
+          onBuildWidget: (_) => Container(),
+        );
+  }
 }
 
 final class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
@@ -81,7 +97,7 @@ final class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
 
   @override
   Widget build(BuildContext context) {
-    return onBuild.call(context);
+    return onBuild(context);
   }
 }
 
@@ -205,4 +221,18 @@ class TestContentProgressProvider extends PlatformContentProgressProvider {
 
 final class TestAdsRenderingSettings extends PlatformAdsRenderingSettings {
   TestAdsRenderingSettings(super.params) : super.implementation();
+}
+
+final class TestCompanionAdSlot extends PlatformCompanionAdSlot {
+  TestCompanionAdSlot(
+    super.params, {
+    required this.onBuildWidget,
+  }) : super.implementation();
+
+  Widget Function(BuildWidgetCreationParams params) onBuildWidget;
+
+  @override
+  Widget buildWidget(BuildWidgetCreationParams params) {
+    return onBuildWidget(params);
+  }
 }

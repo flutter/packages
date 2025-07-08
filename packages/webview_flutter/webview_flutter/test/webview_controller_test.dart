@@ -281,6 +281,44 @@ void main() {
     verify(mockPlatformWebViewController.scrollBy(2, 3));
   });
 
+  test('setVerticalScrollBarEnabled', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    await webViewController.setVerticalScrollBarEnabled(true);
+    verify(mockPlatformWebViewController.setVerticalScrollBarEnabled(true));
+  });
+
+  test('setHorizontalScrollBarEnabled', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    await webViewController.setHorizontalScrollBarEnabled(false);
+    verify(mockPlatformWebViewController.setHorizontalScrollBarEnabled(false));
+  });
+
+  test('supportsSetScrollBarsEnabled', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+    when(mockPlatformWebViewController.supportsSetScrollBarsEnabled())
+        .thenReturn(true);
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    expect(await webViewController.supportsSetScrollBarsEnabled(), true);
+    verify(mockPlatformWebViewController.supportsSetScrollBarsEnabled());
+  });
+
   test('getScrollPosition', () async {
     final MockPlatformWebViewController mockPlatformWebViewController =
         MockPlatformWebViewController();
@@ -490,6 +528,22 @@ void main() {
     verify(
       mockPlatformWebViewController
           .setOnScrollPositionChange(onScrollPositionChange),
+    );
+  });
+
+  test('setOverScrollMode', () async {
+    final MockPlatformWebViewController mockPlatformWebViewController =
+        MockPlatformWebViewController();
+
+    final WebViewController webViewController = WebViewController.fromPlatform(
+      mockPlatformWebViewController,
+    );
+
+    await webViewController.setOverScrollMode(WebViewOverScrollMode.never);
+    verify(
+      mockPlatformWebViewController.setOverScrollMode(
+        WebViewOverScrollMode.never,
+      ),
     );
   });
 }

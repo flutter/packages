@@ -4,27 +4,22 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  dartTestOut: 'test/test_api.g.dart',
-  javaOut: 'android/src/main/java/io/flutter/plugins/videoplayer/Messages.java',
-  javaOptions: JavaOptions(
-    package: 'io.flutter.plugins.videoplayer',
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    dartTestOut: 'test/test_api.g.dart',
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/videoplayer/Messages.java',
+    javaOptions: JavaOptions(package: 'io.flutter.plugins.videoplayer'),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+)
 /// Pigeon equivalent of VideoViewType.
-enum PlatformVideoViewType {
-  textureView,
-  platformView,
-}
+enum PlatformVideoViewType { textureView, platformView }
 
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
-  const PlatformVideoViewCreationParams({
-    required this.playerId,
-  });
+  const PlatformVideoViewCreationParams({required this.playerId});
 
   final int playerId;
 }

@@ -60,8 +60,9 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
   @override
   void initState() {
     deviceOrientation = widget.initialDeviceOrientation;
-    deviceOrientationSubscription =
-        widget.deviceOrientation.listen((DeviceOrientation event) {
+    deviceOrientationSubscription = widget.deviceOrientation.listen((
+      DeviceOrientation event,
+    ) {
       // Ensure that we aren't updating the state if the widget is being destroyed.
       if (!mounted) {
         return;
@@ -89,7 +90,7 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
     // https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation.
     double rotationDegrees =
         (sensorOrientationDegrees - deviceOrientationDegrees * sign + 360) %
-            360;
+        360;
 
     // Then, subtract the rotation already applied in the CameraPreview widget
     // (see camera/camera/lib/src/camera_preview.dart).
@@ -111,9 +112,6 @@ final class _RotatedPreviewState extends State<RotatedPreview> {
       sensorOrientationDegrees: widget.sensorOrientationDegrees,
       sign: widget.facingSign,
     );
-    return RotatedBox(
-      quarterTurns: rotationDegrees ~/ 90,
-      child: widget.child,
-    );
+    return RotatedBox(quarterTurns: rotationDegrees ~/ 90, child: widget.child);
   }
 }

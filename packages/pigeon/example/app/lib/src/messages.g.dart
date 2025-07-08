@@ -36,11 +36,10 @@ bool _deepEquals(Object? a, Object? b) {
             .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
   }
   if (a is Map && b is Map) {
-    final Iterable<Object?> keys = (a as Map<Object?, Object?>).keys;
     return a.length == b.length &&
-        keys.every((Object? key) =>
-            (b as Map<Object?, Object?>).containsKey(key) &&
-            _deepEquals(a[key], b[key]));
+        a.entries.every((MapEntry<Object?, Object?> entry) =>
+            (b as Map<Object?, Object?>).containsKey(entry.key) &&
+            _deepEquals(entry.value, b[entry.key]));
   }
   return a == b;
 }
@@ -98,10 +97,7 @@ class MessageData {
     if (identical(this, other)) {
       return true;
     }
-    return name == other.name &&
-        description == other.description &&
-        code == other.code &&
-        _deepEquals(data, other.data);
+    return _deepEquals(encode(), other.encode());
   }
 
   @override

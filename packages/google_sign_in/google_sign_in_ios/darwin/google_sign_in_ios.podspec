@@ -20,7 +20,7 @@ Enables Google Sign-In in Flutter apps.
   # Depend on versions which defines modules.
   s.dependency 'AppAuth', '>= 1.7.4'
   s.dependency 'GTMSessionFetcher', '>= 3.4.0'
-  s.dependency 'GoogleSignIn', '~> 7.1'
+  s.dependency 'GoogleSignIn', '~> 8.0'
   s.static_framework = true
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'

@@ -536,5 +536,20 @@ void main() {
       expect(icon2.anchor!.x, width * anchorOffset.dx);
       expect(icon2.anchor!.y, height * anchorOffset.dy);
     });
+
+    testWidgets('interpret correct zIndex in convertsion',
+        (WidgetTester tester) async {
+      const MarkerId markerId = MarkerId('1');
+
+      final Set<Marker> markers = <Marker>{
+        const Marker(markerId: markerId, zIndexInt: 4),
+      };
+
+      await controller.addMarkers(markers);
+
+      final gmaps.Marker? gmMarker = controller.markers[markerId]?.marker;
+      expect(gmMarker, isNotNull);
+      expect(gmMarker!.zIndex, 4);
+    });
   });
 }

@@ -8,7 +8,7 @@ A Flutter plugin that manages files and interactions with file dialogs.
 
 |             | Android | iOS     | Linux | macOS  | Web | Windows     |
 |-------------|---------|---------|-------|--------|-----|-------------|
-| **Support** | SDK 19+ | iOS 12+ | Any   | 10.14+ | Any | Windows 10+ |
+| **Support** | SDK 21+ | iOS 12+ | Any   | 10.14+ | Any | Windows 10+ |
 
 ## Setup
 
@@ -114,9 +114,7 @@ pass different `XTypeGroup`s based on `Platform`.
 | Choose a single file   | Pick a file/image                  | ✔️       | ✔️       | ✔️        | ✔️       | ✔️          | ✔️          |
 | Choose multiple files  | Pick multiple files/images         | ✔️       | ✔️       | ✔️        | ✔️       | ✔️          | ✔️          |
 | Choose a save location | Pick a directory to save a file in | ❌       | ❌       | ✔️        | ✔️       | ✔️          | ❌          |
-| Choose a directory     | Pick a directory and get its path  | ✔️†       | ❌       | ✔️        | ✔️       | ✔️          | ❌          |
-
-† Choosing a directory is no supported on versions of Android before SDK 21 (Lollipop).
+| Choose a directory     | Pick a directory and get its path  | ✔️       | ❌       | ✔️        | ✔️       | ✔️          | ❌          |
 
 [example]:./example
 [entitlement]: https://docs.flutter.dev/desktop#entitlements-and-the-app-sandbox
