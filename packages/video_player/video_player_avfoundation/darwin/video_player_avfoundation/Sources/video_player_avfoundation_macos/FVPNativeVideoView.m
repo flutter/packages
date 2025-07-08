@@ -19,7 +19,7 @@
 }
 
 - (CALayer *)makeBackingLayer {
-  return [AVPlayerLayer playerLayerWithPlayer:nil];
+  return [[AVPlayerLayer alloc] init];
 }
 
 @end
