@@ -603,13 +603,11 @@
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                                       output:nil];
-  FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
-       initWithURL:
-           [NSURL
-               URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"]
-       httpHeaders:@{}
-         avFactory:stubAVFactory
-      viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithURL:self.mp4TestURL
+                              httpHeaders:@{}
+                                avFactory:stubAVFactory
+                             viewProvider:[[StubViewProvider alloc] initWithView:nil]];
 
   XCTestExpectation *seekExpectation =
       [self expectationWithDescription:@"seekTo has zero tolerance when seeking not to end"];
@@ -627,13 +625,11 @@
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                                       output:nil];
-  FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
-       initWithURL:
-           [NSURL
-               URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"]
-       httpHeaders:@{}
-         avFactory:stubAVFactory
-      viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithURL:self.mp4TestURL
+                              httpHeaders:@{}
+                                avFactory:stubAVFactory
+                             viewProvider:[[StubViewProvider alloc] initWithView:nil]];
 
   XCTestExpectation *seekExpectation =
       [self expectationWithDescription:@"seekTo has non-zero tolerance when seeking to end"];
@@ -649,9 +645,11 @@
 
 /// Sanity checks a video player playing the given URL with the actual AVPlayer. This is essentially
 /// a mini integration test of the player component.
-- (NSDictionary<NSString *, id> *)sanityTestURI:(NSString *)uri {
+- (NSDictionary<NSString *, id> *)sanityTestURI:(NSString *)testURI {
+  NSURL *testURL = [NSURL URLWithString:testURI];
+  XCTAssertNotNil(testURL);
   FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:uri]
+      [[FVPVideoPlayer alloc] initWithURL:testURL
                               httpHeaders:@{}
                                 avFactory:[[FVPDefaultAVFactory alloc] init]
                              viewProvider:[[StubViewProvider alloc] initWithView:nil]];
@@ -864,13 +862,11 @@
 }
 
 - (void)testUpdatePlayingStateShouldNotResetRate {
-  FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
-       initWithURL:
-           [NSURL
-               URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"]
-       httpHeaders:@{}
-         avFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
-      viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithURL:self.mp4TestURL
+                              httpHeaders:@{}
+                                avFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+                             viewProvider:[[StubViewProvider alloc] initWithView:nil]];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
   [player onListenWithArguments:nil
@@ -1037,5 +1033,11 @@
   XCTAssertEqual(t.ty, expectY);
 }
 #endif
+
+/// Returns a test URL for creating a player from a network source.
+- (nonnull NSURL *)mp4TestURL {
+  return (NSURL *_Nonnull)[NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"];
+}
 
 @end
