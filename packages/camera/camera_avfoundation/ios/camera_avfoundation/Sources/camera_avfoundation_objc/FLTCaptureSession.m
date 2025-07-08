@@ -34,6 +34,10 @@
   [_captureSession stopRunning];
 }
 
+- (BOOL)running {
+  return _captureSession.running;
+}
+
 - (BOOL)automaticallyConfiguresApplicationAudioSession {
   return _captureSession.automaticallyConfiguresApplicationAudioSession;
 }

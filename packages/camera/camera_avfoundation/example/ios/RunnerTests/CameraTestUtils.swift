@@ -99,7 +99,10 @@ enum CameraTestUtils {
 
   /// Creates a test sample buffer.
   /// @return a test sample buffer.
-  static func createTestSampleBuffer() -> CMSampleBuffer {
+  static func createTestSampleBuffer(
+    timestamp: CMTime = .zero,
+    duration: CMTime = CMTimeMake(value: 1, timescale: 44100)
+  ) -> CMSampleBuffer {
     var pixelBuffer: CVPixelBuffer?
     CVPixelBufferCreate(kCFAllocatorDefault, 100, 100, kCVPixelFormatType_32BGRA, nil, &pixelBuffer)
 
@@ -110,9 +113,9 @@ enum CameraTestUtils {
       formatDescriptionOut: &formatDescription)
 
     var timingInfo = CMSampleTimingInfo(
-      duration: CMTimeMake(value: 1, timescale: 44100),
-      presentationTimeStamp: CMTime.zero,
-      decodeTimeStamp: CMTime.invalid)
+      duration: duration,
+      presentationTimeStamp: timestamp,
+      decodeTimeStamp: .invalid)
 
     var sampleBuffer: CMSampleBuffer?
     CMSampleBufferCreateReadyWithImageBuffer(
@@ -127,22 +130,25 @@ enum CameraTestUtils {
 
   /// Creates a test audio sample buffer.
   /// @return a test audio sample buffer.
-  static func createTestAudioSampleBuffer() -> CMSampleBuffer {
+  static func createTestAudioSampleBuffer(
+    timestamp: CMTime = .zero,
+    duration: CMTime = CMTimeMake(value: 1, timescale: 44100)
+  ) -> CMSampleBuffer {
     var blockBuffer: CMBlockBuffer?
     CMBlockBufferCreateWithMemoryBlock(
       allocator: kCFAllocatorDefault,
       memoryBlock: nil,
-      blockLength: 100,
+      blockLength: Int(duration.value),
       blockAllocator: kCFAllocatorDefault,
       customBlockSource: nil,
       offsetToData: 0,
-      dataLength: 100,
+      dataLength: Int(duration.value),
       flags: kCMBlockBufferAssureMemoryNowFlag,
       blockBufferOut: &blockBuffer)
 
     var formatDescription: CMFormatDescription?
     var basicDescription = AudioStreamBasicDescription(
-      mSampleRate: 44100,
+      mSampleRate: Float64(duration.timescale),
       mFormatID: kAudioFormatLinearPCM,
       mFormatFlags: 0,
       mBytesPerPacket: 1,
@@ -167,8 +173,8 @@ enum CameraTestUtils {
       allocator: kCFAllocatorDefault,
       dataBuffer: blockBuffer!,
       formatDescription: formatDescription!,
-      sampleCount: 1,
-      presentationTimeStamp: .zero,
+      sampleCount: CMItemCount(duration.value),
+      presentationTimeStamp: timestamp,
       packetDescriptions: nil,
       sampleBufferOut: &sampleBuffer)
 

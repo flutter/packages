@@ -12,10 +12,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// It exists to allow replacing AVCaptureSession in tests.
 @protocol FLTCaptureSession <NSObject>
 
+@property(nonatomic, readonly) AVCaptureSession *captureSession;
 @property(nonatomic, copy) AVCaptureSessionPreset sessionPreset;
 @property(nonatomic, readonly) NSArray<AVCaptureInput *> *inputs;
 @property(nonatomic, readonly) NSArray<AVCaptureOutput *> *outputs;
 @property(nonatomic, assign) BOOL automaticallyConfiguresApplicationAudioSession;
+@property(nonatomic, readonly) BOOL running;
 
 - (void)beginConfiguration;
 - (void)commitConfiguration;
