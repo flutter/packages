@@ -10,8 +10,7 @@ void main() {
     PigeonOverrides.pigeon_reset();
 
     final ProxyApiSuperClass instance = ProxyApiSuperClass.pigeon_detached();
-    PigeonOverrides.proxyApiSuperClass_pigeon_defaultConstructor =
-        () => instance;
+    PigeonOverrides.proxyApiSuperClass_new = () => instance;
 
     expect(ProxyApiSuperClass(), instance);
   });
@@ -37,12 +36,12 @@ void main() {
   });
 
   test('pigeon_resetAllOverrides set all constructor overrides to null', () {
-    PigeonOverrides.proxyApiSuperClass_pigeon_defaultConstructor =
+    PigeonOverrides.proxyApiSuperClass_new =
         () => ProxyApiSuperClass.pigeon_detached();
 
     PigeonOverrides.pigeon_reset();
     expect(
-      PigeonOverrides.proxyApiSuperClass_pigeon_defaultConstructor,
+      PigeonOverrides.proxyApiSuperClass_new,
       isNull,
     );
   });
