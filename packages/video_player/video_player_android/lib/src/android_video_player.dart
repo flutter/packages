@@ -23,21 +23,21 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   AndroidVideoPlayer({
     @visibleForTesting AndroidVideoPlayerApi? pluginApi,
     @visibleForTesting
-    VideoPlayerInstanceApi Function(int playerId)? apiProvider,
+    VideoPlayerInstanceApi Function(int playerId)? playerProvider,
   }) : _api = pluginApi ?? AndroidVideoPlayerApi(),
-       _apiProvider = apiProvider ?? _productionApiProvider;
+       _playerProvider = playerProvider ?? _productionApiProvider;
 
   final AndroidVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
   //overridden for testing.
-  final VideoPlayerInstanceApi Function(int playerId) _apiProvider;
+  final VideoPlayerInstanceApi Function(int playerId) _playerProvider;
 
   /// A map that associates player ID with a view state.
   /// This is used to determine which view type to use when building a view.
   final Map<int, _VideoPlayerViewState> _playerViewStates =
       <int, _VideoPlayerViewState>{};
 
-  final Map<int, VideoPlayerInstanceApi> _playerApis =
+  final Map<int, VideoPlayerInstanceApi> _players =
       <int, VideoPlayerInstanceApi>{};
 
   /// Registers this class as the default instance of [PathProviderPlatform].
@@ -54,7 +54,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   Future<void> dispose(int playerId) async {
     await _api.dispose(playerId);
     _playerViewStates.remove(playerId);
-    _playerApis.remove(playerId);
+    _players.remove(playerId);
   }
 
   @override
@@ -118,49 +118,46 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   /// exist.
   @visibleForTesting
   VideoPlayerInstanceApi ensureApiInitialized(int playerId) {
-    VideoPlayerInstanceApi? api = _playerApis[playerId];
-    if (api == null) {
-      api = _apiProvider(playerId);
-      _playerApis[playerId] ??= api;
-    }
-    return api;
+    return _players.putIfAbsent(playerId, () {
+      return _playerProvider(playerId);
+    });
   }
 
   @override
   Future<void> setLooping(int playerId, bool looping) {
-    return _apiFor(playerId).setLooping(looping);
+    return _playerWith(id: playerId).setLooping(looping);
   }
 
   @override
   Future<void> play(int playerId) {
-    return _apiFor(playerId).play();
+    return _playerWith(id: playerId).play();
   }
 
   @override
   Future<void> pause(int playerId) {
-    return _apiFor(playerId).pause();
+    return _playerWith(id: playerId).pause();
   }
 
   @override
   Future<void> setVolume(int playerId, double volume) {
-    return _apiFor(playerId).setVolume(volume);
+    return _playerWith(id: playerId).setVolume(volume);
   }
 
   @override
   Future<void> setPlaybackSpeed(int playerId, double speed) {
     assert(speed > 0);
 
-    return _apiFor(playerId).setPlaybackSpeed(speed);
+    return _playerWith(id: playerId).setPlaybackSpeed(speed);
   }
 
   @override
   Future<void> seekTo(int playerId, Duration position) {
-    return _apiFor(playerId).seekTo(position.inMilliseconds);
+    return _playerWith(id: playerId).seekTo(position.inMilliseconds);
   }
 
   @override
   Future<Duration> getPosition(int playerId) async {
-    final int position = await _apiFor(playerId).getPosition();
+    final int position = await _playerWith(id: playerId).getPosition();
     return Duration(milliseconds: position);
   }
 
@@ -236,12 +233,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
   }
 
-  VideoPlayerInstanceApi _apiFor(int playerId) {
-    final VideoPlayerInstanceApi? api = _playerApis[playerId];
-    if (api == null) {
-      throw StateError('No active player with ID $playerId.');
-    }
-    return api;
+  VideoPlayerInstanceApi _playerWith({required int id}) {
+    final VideoPlayerInstanceApi? player = _players[id];
+    return player ?? (throw StateError('No active player with ID $id.'));
   }
 
   static const Map<VideoFormat, String> _videoFormatStringMap =

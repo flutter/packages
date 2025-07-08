@@ -27,7 +27,7 @@ void main() {
     final MockVideoPlayerInstanceApi instanceApi = MockVideoPlayerInstanceApi();
     final AndroidVideoPlayer player = AndroidVideoPlayer(
       pluginApi: pluginApi,
-      apiProvider: (_) => instanceApi,
+      playerProvider: (_) => instanceApi,
     );
     player.ensureApiInitialized(playerId);
     return (player, pluginApi, instanceApi);
