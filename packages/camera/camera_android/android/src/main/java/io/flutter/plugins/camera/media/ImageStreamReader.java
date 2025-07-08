@@ -152,7 +152,6 @@ public class ImageStreamReader {
     boolean postResult =
         handler.post(
             new Runnable() {
-              // a public field is required in order to test this code
               @VisibleForTesting public WeakReference<Map<String, Object>> weakImageBuffer;
 
               public Runnable withImageBuffer(Map<String, Object> imageBuffer) {
@@ -164,6 +163,9 @@ public class ImageStreamReader {
               public void run() {
                 final Map<String, Object> imageBuffer = weakImageBuffer.get();
                 if (imageBuffer == null) {
+                  // The memory was freed by the runtime, most likely due to a memory build-up
+                  // while the main thread was lagging. Frames are silently dropped in this
+                  // case.
                   Log.d(TAG, "Image buffer was dropped by garbage collector.");
                   return;
                 }

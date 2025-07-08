@@ -11,6 +11,10 @@ import android.media.Image;
 import java.nio.ByteBuffer;
 
 public class ImageStreamReaderTestUtils {
+  /**
+   * Creates a mock {@link android.media.Image} object for use in tests, simulating the specified
+   * dimensions, padding, and image format.
+   */
   public static Image getImage(int imageWidth, int imageHeight, int padding, int imageFormat) {
     int rowStride = imageWidth + padding;
 
