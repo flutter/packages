@@ -12,37 +12,18 @@
 
 @implementation FVPPlayerView
 
-+ (Class)layerClass {
-  return [AVPlayerLayer class];
+- (CALayer *)makeBackingLayer {
+  return [AVPlayerLayer playerLayerWithPlayer:nil];
 }
 
 - (instancetype)initWithFrame:(NSRect)frameRect {
   self = [super initWithFrame:frameRect];
-  if (self) {
-    self.wantsLayer = YES;
-    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:nil];
-    [self.layer addSublayer:self.playerLayer];
-  }
+  self.wantsLayer = YES;
   return self;
 }
 
 - (void)setPlayer:(AVPlayer *)player {
-  self.playerLayer.player = player;
-  self.playerLayer.frame = self.bounds;
-}
-
-- (void)layout {
-  [super layout];
-
-  // Disable implicit player animations to size the player layer to the view bounds without a delay.
-  [CATransaction begin];
-  [CATransaction setDisableActions:YES];
-
-  self.playerLayer.frame = self.bounds;
-
-  [CATransaction commit];
-
-  [self.playerLayer displayIfNeeded];
+  ((AVPlayerLayer *)self.layer).player = player;
 }
 
 @end
