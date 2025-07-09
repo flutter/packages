@@ -1590,7 +1590,7 @@ if (${varNamePrefix}replyList == null) {
               flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
               flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
               declaredFlutterMethods: declaredFlutterMethods,
-              setTypeAndNotThisOrSuper: false,
+              defineType: false,
             ))
             ..initializers.addAll(
               <cb.Code>[
@@ -2352,7 +2352,7 @@ if (${varNamePrefix}replyList == null) {
     required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
     required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
     required Iterable<Method> declaredFlutterMethods,
-    bool setTypeAndNotThisOrSuper = true,
+    bool defineType = true,
     bool includeBinaryMessengerAndInstanceManager = true,
   }) sync* {
     if (includeBinaryMessengerAndInstanceManager) {
@@ -2360,19 +2360,17 @@ if (${varNamePrefix}replyList == null) {
         (cb.ParameterBuilder builder) => builder
           ..name = '${classMemberNamePrefix}binaryMessenger'
           ..named = true
-          ..type =
-              setTypeAndNotThisOrSuper ? cb.refer('BinaryMessenger?') : null
-          ..toSuper = !setTypeAndNotThisOrSuper
+          ..type = defineType ? cb.refer('BinaryMessenger?') : null
+          ..toSuper = !defineType
           ..required = false,
       );
       yield cb.Parameter(
         (cb.ParameterBuilder builder) => builder
           ..name = _instanceManagerVarName
           ..named = true
-          ..type = setTypeAndNotThisOrSuper
-              ? cb.refer('$dartInstanceManagerClassName?')
-              : null
-          ..toSuper = !setTypeAndNotThisOrSuper
+          ..type =
+              defineType ? cb.refer('$dartInstanceManagerClassName?') : null
+          ..toSuper = !defineType
           ..required = false,
       );
     }
@@ -2382,10 +2380,9 @@ if (${varNamePrefix}replyList == null) {
         (cb.ParameterBuilder builder) => builder
           ..name = field.name
           ..named = true
-          ..type = setTypeAndNotThisOrSuper
-              ? cb.refer(_addGenericTypesNullable(field.type))
-              : null
-          ..toThis = !setTypeAndNotThisOrSuper
+          ..type =
+              defineType ? cb.refer(_addGenericTypesNullable(field.type)) : null
+          ..toThis = !defineType
           ..required = !field.type.isNullable,
       );
     }
@@ -2395,10 +2392,10 @@ if (${varNamePrefix}replyList == null) {
         (cb.ParameterBuilder builder) => builder
           ..name = method.$1.name
           ..named = true
-          ..type = setTypeAndNotThisOrSuper
+          ..type = defineType
               ? _methodAsFunctionType(method.$1, apiName: method.$2.name)
               : null
-          ..toSuper = !setTypeAndNotThisOrSuper
+          ..toSuper = !defineType
           ..required = method.$1.isRequired,
       );
     }
@@ -2408,10 +2405,10 @@ if (${varNamePrefix}replyList == null) {
         (cb.ParameterBuilder builder) => builder
           ..name = method.$1.name
           ..named = true
-          ..type = setTypeAndNotThisOrSuper
+          ..type = defineType
               ? _methodAsFunctionType(method.$1, apiName: method.$2.name)
               : null
-          ..toThis = !setTypeAndNotThisOrSuper
+          ..toThis = !defineType
           ..required = method.$1.isRequired,
       );
     }
@@ -2421,10 +2418,10 @@ if (${varNamePrefix}replyList == null) {
         (cb.ParameterBuilder builder) => builder
           ..name = method.name
           ..named = true
-          ..type = setTypeAndNotThisOrSuper
+          ..type = defineType
               ? _methodAsFunctionType(method, apiName: apiName)
               : null
-          ..toThis = !setTypeAndNotThisOrSuper
+          ..toThis = !defineType
           ..required = method.isRequired,
       );
     }
