@@ -778,7 +778,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// *   [WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE]
   ///
   /// This method is only available on Android API level 21 (Lollipop) and above.
-  Future<void> setMixedContentMode(int mode) {
+  Future<void> setMixedContentMode(MixedContentMode mode) {
     return _webView.settings.setMixedContentMode(mode);
   }
 }
@@ -877,6 +877,35 @@ enum FileSelectorMode {
 
   /// Allows picking a nonexistent file and saving it.
   save,
+}
+
+/// Mode for controlling mixed content handling.
+/// See [AndroidWebViewController.setMixedContentMode].
+enum MixedContentMode {
+  /// The WebView will allow a secure origin to load content from any other
+  /// origin, even if that origin is insecure.
+  ///
+  /// This is the least secure mode of operation, and where possible apps should
+  /// not set this mode.
+  alwaysAllow,
+
+  /// The WebView will attempt to be compatible with the approach of a modern
+  /// web browser with regard to mixed content.
+  ///
+  /// The types of content are allowed or blocked may change release to release
+  /// of the underlying Android WebView, and are not explicitly defined. This
+  /// mode is intended to be used by apps that are not in control of the content
+  /// that they render but desire to operate in a reasonably secure environment.
+  compatibilityMode,
+
+  /// The WebView will not allow a secure origin to load content from an
+  /// insecure origin.
+  ///
+  /// This is the preferred and most secure mode of operation, and apps are
+  /// strongly advised to use this mode.
+  ///
+  /// This is the default mode.
+  neverAllow,
 }
 
 /// Parameters received when the `WebView` should show a file selector.

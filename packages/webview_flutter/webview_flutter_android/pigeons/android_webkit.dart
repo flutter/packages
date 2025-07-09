@@ -125,6 +125,26 @@ enum SslErrorType {
   unknown,
 }
 
+/// Options for mixed content mode support.
+///
+/// See https://developer.android.com/reference/android/webkit/WebSettings#MIXED_CONTENT_ALWAYS_ALLOW
+enum MixedContentMode {
+  /// The WebView will allow a secure origin to load content from any other
+  /// origin, even if that origin is insecure.
+  alwaysAllow,
+
+  /// The WebView will attempt to be compatible with the approach of a modern
+  /// web browser with regard to mixed content.
+  compatibilityMode,
+
+  /// The WebView will not allow a secure origin to load content from an
+  /// insecure origin.
+  neverAllow,
+
+  /// The mode is not recognized by this wrapper.
+  unknown,
+}
+
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
@@ -412,7 +432,7 @@ abstract class WebSettings {
   String getUserAgentString();
 
   /// Configures the WebView's behavior when handling mixed content.
-  void setMixedContentMode(int mode);
+  void setMixedContentMode(MixedContentMode mode);
 }
 
 /// A JavaScript interface for exposing Javascript callbacks to Dart.
