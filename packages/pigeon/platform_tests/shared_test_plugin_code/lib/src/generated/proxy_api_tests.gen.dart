@@ -301,8 +301,6 @@ class PigeonOverrides {
   static Future<void> Function()? proxyApiTestClass_staticAsyncNoop;
 
   /// Sets all overridden ProxyApi class members to null.
-  ///
-  /// Intended to only be used with unit tests.
   static void pigeon_reset() {
     proxyApiTestClass_new = null;
     proxyApiTestClass_namedConstructor = null;

@@ -2516,8 +2516,6 @@ if (${varNamePrefix}replyList == null) {
         ..static = true
         ..docs.addAll(<String>[
           '/// Sets all overridden ProxyApi class members to null.',
-          '///',
-          '/// Intended to only be used with unit tests.'
         ])
         ..body = cb.Block.of(<cb.Code>[
           for (final AstProxyApi api in proxyApis)
