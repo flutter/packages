@@ -983,10 +983,11 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           _proxyApiCopyMethod(
             apiName: api.name,
             unattachedFields: api.unattachedFields,
-            declaredAndInheritedFlutterMethods: api
-                .flutterMethodsFromSuperClasses()
-                .followedBy(api.flutterMethodsFromInterfaces())
-                .followedBy(api.flutterMethods),
+            flutterMethodsFromSuperClasses:
+                api.flutterMethodsFromSuperClassesWithApis(),
+            flutterMethodsFromInterfaces:
+                api.flutterMethodsFromInterfacesWithApis(),
+            declaredFlutterMethods: api.flutterMethods,
           ),
         ),
     );
@@ -2284,8 +2285,18 @@ if (${varNamePrefix}replyList == null) {
   cb.Method _proxyApiCopyMethod({
     required String apiName,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<Method> declaredAndInheritedFlutterMethods,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
+    required Iterable<Method> declaredFlutterMethods,
   }) {
+    final Iterable<cb.Parameter> parameters = _asConstructorParameters(
+      apiName: apiName,
+      parameters: <Parameter>[],
+      unattachedFields: unattachedFields,
+      flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+      flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+      declaredFlutterMethods: declaredFlutterMethods,
+    );
     return cb.Method(
       (cb.MethodBuilder builder) => builder
         ..name = '${classMemberNamePrefix}copy'
@@ -2297,14 +2308,8 @@ if (${varNamePrefix}replyList == null) {
               .call(
                 <cb.Expression>[],
                 <String, cb.Expression>{
-                  '${classMemberNamePrefix}binaryMessenger':
-                      cb.refer('${classMemberNamePrefix}binaryMessenger'),
-                  _instanceManagerVarName: cb.refer(_instanceManagerVarName),
-                  for (final ApiField field in unattachedFields)
-                    field.name: cb.refer(field.name),
-                  for (final Method method
-                      in declaredAndInheritedFlutterMethods)
-                    method.name: cb.refer(method.name),
+                  for (final cb.Parameter parameter in parameters)
+                    parameter.name: cb.refer(parameter.name)
                 },
               )
               .returned
