@@ -106,7 +106,7 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
     };
 
     final ima.AdsLoader adsLoader = await _sdkFactory.createAdsLoader(
-      await settings.sdkSettingsFuture,
+      await settings.nativeSettingsFuture,
       (params.container as AndroidAdDisplayContainer).adDisplayContainer!,
     );
 
