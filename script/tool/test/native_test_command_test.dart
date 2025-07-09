@@ -21,7 +21,7 @@ import 'mocks.dart';
 import 'util.dart';
 
 const String _allAbiFlag =
-    '-Ptarget-platform=android-arm,android-arm64,android-x64,android-x86';
+    '-Ptarget-platform=android-arm,android-arm64,android-x64';
 
 const String _androidIntegrationTestFilter =
     '-Pandroid.testInstrumentationRunnerArguments.'
