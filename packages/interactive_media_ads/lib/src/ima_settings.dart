@@ -2,9 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/cupertino.dart';
+
 import 'platform_interface/platform_interface.dart';
 
 /// Defines general SDK settings that are used when creating an `AdsLoader`.
+@immutable
 class ImaSettings {
   /// Creates an [ImaSettings].
   ImaSettings({String? language})
@@ -14,7 +17,7 @@ class ImaSettings {
 
   /// Constructs an [ImaSettings] from a specific platform
   /// implementation.
-  ImaSettings.fromPlatform(this.platform);
+  const ImaSettings.fromPlatform(this.platform);
 
   /// Implementation of [PlatformImaSettings] for the current platform.
   final PlatformImaSettings platform;
@@ -84,4 +87,11 @@ class ImaSettings {
   Future<void> setSessionID(String? sessionID) {
     return platform.setSessionID(sessionID);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      other is ImaSettings && other.platform == platform;
+
+  @override
+  int get hashCode => platform.hashCode;
 }

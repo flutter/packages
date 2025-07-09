@@ -43,11 +43,11 @@ class AdsLoader {
     required AdDisplayContainer container,
     required void Function(OnAdsLoadedData data) onAdsLoaded,
     required void Function(AdsLoadErrorData data) onAdsLoadError,
-    ImaSettings? imaSettings,
+    ImaSettings? settings,
   }) : this.fromPlatformCreationParams(
           PlatformAdsLoaderCreationParams(
             container: container.platform,
-            settings: imaSettings?.platform ?? ImaSettings().platform,
+            settings: settings?.platform ?? ImaSettings().platform,
             onAdsLoaded: (PlatformOnAdsLoadedData data) {
               onAdsLoaded(OnAdsLoadedData._(platform: data));
             },
@@ -91,6 +91,10 @@ class AdsLoader {
 
   /// Implementation of [PlatformAdsLoader] for the current platform.
   final PlatformAdsLoader platform;
+
+  /// Defines general SDK settings.
+  ImaSettings get settings =>
+      ImaSettings.fromPlatform(platform.params.settings);
 
   /// Signals to the SDK that the content has completed.
   Future<void> contentComplete() {
