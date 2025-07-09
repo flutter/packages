@@ -21,8 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
                 displayLink:(NSObject<FVPDisplayLink> *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
-               viewProvider:(NSObject<FVPViewProvider> *)viewProvider
-                 onDisposed:(void (^)(int64_t))onDisposed;
+               viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
 /// Initializes a new instance of FVPTextureBasedVideoPlayer with the given asset, frame updater,
 /// display link, AV factory, and registrar.
@@ -30,8 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
                  frameUpdater:(FVPFrameUpdater *)frameUpdater
                   displayLink:(NSObject<FVPDisplayLink> *)displayLink
                     avFactory:(id<FVPAVFactory>)avFactory
-                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider
-                   onDisposed:(void (^)(int64_t))onDisposed;
+                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
 /// Sets the texture Identifier for the frame updater. This method should be called once the texture
 /// identifier is obtained from the texture registry.

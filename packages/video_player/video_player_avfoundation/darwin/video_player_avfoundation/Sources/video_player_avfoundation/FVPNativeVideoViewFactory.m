@@ -25,9 +25,16 @@
   return self;
 }
 
+#pragma mark - FlutterPlatformViewFactory
+
+#if TARGET_OS_OSX
+- (NSView *)createWithViewIdentifier:(int64_t)viewIdentifier
+                           arguments:(FVPPlatformVideoViewCreationParams *)args {
+#else
 - (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
                                     viewIdentifier:(int64_t)viewIdentifier
                                          arguments:(FVPPlatformVideoViewCreationParams *)args {
+#endif
   NSNumber *playerIdentifier = @(args.playerId);
   FVPVideoPlayer *player = self.playerByIdProvider(playerIdentifier);
   return [[FVPNativeVideoView alloc] initWithPlayer:player.player];
