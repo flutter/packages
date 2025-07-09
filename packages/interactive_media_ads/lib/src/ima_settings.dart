@@ -1,0 +1,87 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+import 'platform_interface/platform_interface.dart';
+
+/// Defines general SDK settings that are used when creating an `AdsLoader`.
+class ImaSettings {
+  /// Creates an [ImaSettings].
+  ImaSettings({String? language})
+      : this.fromPlatform(PlatformImaSettings(
+          PlatformImaSettingsCreationParams(language: language),
+        ));
+
+  /// Constructs an [ImaSettings] from a specific platform
+  /// implementation.
+  ImaSettings.fromPlatform(this.platform);
+
+  /// Implementation of [PlatformImaSettings] for the current platform.
+  final PlatformImaSettings platform;
+
+  /// Specifies whether to automatically play VMAP and ad rules ad breaks.
+  ///
+  /// The default value is true.
+  Future<void> setAutoPlayAdBreaks(bool autoPlayAdBreaks) {
+    return platform.setAutoPlayAdBreaks(autoPlayAdBreaks);
+  }
+
+  /// Enables and disables the debug mode, which is disabled by default.
+  Future<void> setDebugMode(bool enabled) {
+    return platform.setDebugMode(enabled);
+  }
+
+  /// Sets the feature flags and their states to control experimental features.
+  ///
+  /// This should be set as early as possible, before requesting ads. Settings
+  /// will remain constant until the next ad request. Calling this method again
+  /// will reset any feature flags for the next ad request.
+  Future<void> setFeatureFlags(Map<String, String>? featureFlags) {
+    return platform.setFeatureFlags(featureFlags);
+  }
+
+  /// Specifies maximum number of redirects after which subsequent redirects
+  /// will be denied, and the ad load aborted.
+  ///
+  /// In this case, the ad will raise an error with error code 302.
+  ///
+  /// The default value is 4.
+  Future<void> setMaxRedirects(int maxRedirects) {
+    return platform.setMaxRedirects(maxRedirects);
+  }
+
+  /// Sets the partner specified video player that is integrating with the SDK.
+  ///
+  /// This setting should be used to specify the name of the player being
+  /// integrated with the SDK. Player type greater than 20 characters will be
+  /// truncated. The player type specified should be short and unique. This is
+  /// an optional setting used to improve SDK usability by tracking player
+  /// types.
+  Future<void> setPlayerType(String? playerType) {
+    return platform.setPlayerType(playerType);
+  }
+
+  /// Sets the partner specified player version that is integrating with the
+  /// SDK.
+  ///
+  /// This setting should be usegd to specify the version of the partner player
+  /// being integrated with the SDK. Player versions greater than 20 characters
+  /// will be truncated. This is an optional setting used to improve SDK
+  /// usability by tracking player version.
+  Future<void> setPlayerVersion(String? playerVersion) {
+    return platform.setPlayerVersion(playerVersion);
+  }
+
+  /// Sets the Publisher Provided Identification (PPID) sent with ads request.
+  Future<void> setPpid(String? ppid) {
+    return platform.setPpid(ppid);
+  }
+
+  /// Sets the session ID to identify a single user session.
+  ///
+  /// This must be a UUID. It is used exclusively for frequency capping across
+  /// the user session.
+  Future<void> setSessionID(String? sessionID) {
+    return platform.setSessionID(sessionID);
+  }
+}

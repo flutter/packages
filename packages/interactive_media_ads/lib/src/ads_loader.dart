@@ -8,6 +8,7 @@ import 'ad_display_container.dart';
 import 'ads_manager_delegate.dart';
 import 'ads_rendering_settings.dart';
 import 'ads_request.dart';
+import 'ima_settings.dart';
 import 'platform_interface/platform_interface.dart';
 
 /// Allows publishers to request ads from ad servers or a dynamic ad insertion
@@ -42,9 +43,11 @@ class AdsLoader {
     required AdDisplayContainer container,
     required void Function(OnAdsLoadedData data) onAdsLoaded,
     required void Function(AdsLoadErrorData data) onAdsLoadError,
+    ImaSettings? imaSettings,
   }) : this.fromPlatformCreationParams(
           PlatformAdsLoaderCreationParams(
             container: container.platform,
+            settings: imaSettings?.platform ?? ImaSettings().platform,
             onAdsLoaded: (PlatformOnAdsLoadedData data) {
               onAdsLoaded(OnAdsLoadedData._(platform: data));
             },

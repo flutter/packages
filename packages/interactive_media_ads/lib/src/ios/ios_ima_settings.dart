@@ -16,46 +16,53 @@ final class IOSImaSettings extends PlatformImaSettings {
   ///
   /// Defines general SDK settings that are used when creating an `IMAAdsLoader`.
   @internal
-  late final IMASettings nativeSetting = _initSettings();
+  late final IMASettings nativeSettings = _initSettings();
 
   @override
   Future<void> setAutoPlayAdBreaks(bool autoPlayAdBreaks) {
-    return nativeSetting.setAutoPlayAdBreaks(autoPlayAdBreaks);
+    return nativeSettings.setAutoPlayAdBreaks(autoPlayAdBreaks);
   }
 
   @override
   Future<void> setDebugMode(bool enabled) {
-    return nativeSetting.setEnableDebugMode(enabled);
+    return nativeSettings.setEnableDebugMode(enabled);
   }
 
   @override
   Future<void> setFeatureFlags(Map<String, String>? featureFlags) {
-    return nativeSetting.setFeatureFlags(featureFlags ?? <String, String>{});
+    return nativeSettings.setFeatureFlags(featureFlags ?? <String, String>{});
   }
 
   @override
   Future<void> setMaxRedirects(int maxRedirects) {
-    return nativeSetting.setMaxRedirects(maxRedirects);
+    return nativeSettings.setMaxRedirects(maxRedirects);
   }
 
   @override
   Future<void> setPlayerType(String? playerType) {
-    return nativeSetting.setPlayerType(playerType);
+    return nativeSettings.setPlayerType(playerType);
   }
 
   @override
   Future<void> setPlayerVersion(String? playerVersion) {
-    return nativeSetting.setPlayerVersion(playerVersion);
+    return nativeSettings.setPlayerVersion(playerVersion);
   }
 
   @override
   Future<void> setPpid(String? ppid) {
-    return nativeSetting.setPPID(ppid);
+    return nativeSettings.setPPID(ppid);
   }
 
   @override
   Future<void> setSessionID(String? sessionID) {
-    return nativeSetting.setSessionID(sessionID ?? '');
+    return nativeSettings.setSessionID(sessionID ?? '');
+  }
+
+  /// Enable background audio playback for the SDK.
+  ///
+  /// The default value is false.
+  Future<void> setEnableBackgroundPlayback(bool enabled) {
+    return nativeSettings.setEnableBackgroundPlayback(enabled);
   }
 
   IMASettings _initSettings() {
