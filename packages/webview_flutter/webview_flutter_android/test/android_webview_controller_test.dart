@@ -1662,6 +1662,21 @@ void main() {
     verify(mockSettings.setTextZoom(100)).called(1);
   });
 
+  test('setMixedContentMode', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    await controller.setMixedContentMode(MixedContentMode.compatibilityMode);
+
+    verify(mockSettings.setMixedContentMode(
+      android_webview.MixedContentMode.compatibilityMode,
+    )).called(1);
+  });
+
   test('setOverScrollMode', () async {
     final MockWebView mockWebView = MockWebView();
     final AndroidWebViewController controller = createControllerWithMocks(
@@ -2150,40 +2165,6 @@ void main() {
           onFocus: anyNamed('onFocus'),
         ),
       );
-    });
-  });
-
-  group('AndroidWebViewController', () {
-    test('setMixedContentMode', () async {
-      final PlatformWebViewControllerCreationParams creationParams =
-          PlatformWebViewControllerCreationParams();
-      final AndroidWebViewController controller = AndroidWebViewController(
-        creationParams,
-      );
-
-      final MockAndroidWebViewProxy mockWebViewProxy =
-          MockAndroidWebViewProxy();
-      final android_webview.WebView mockWebView =
-          android_webview.WebView.detached(
-        instanceManager: android_webview.PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        ),
-      );
-      final android_webview.WebSettings mockWebSettings =
-          android_webview.WebSettings.detached(
-        instanceManager: android_webview.PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        ),
-      );
-
-      when(mockWebViewProxy.newWebView(
-              onScrollChanged: anyNamed('onScrollChanged')))
-          .thenReturn(mockWebView);
-      when(mockWebView.settings).thenReturn(mockWebSettings);
-
-      await controller.setMixedContentMode(1);
-
-      verify(mockWebSettings.setMixedContentMode(1));
     });
   });
 }
