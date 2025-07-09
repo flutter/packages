@@ -768,6 +768,19 @@ class AndroidWebViewController extends PlatformWebViewController {
       _ => throw UnsupportedError('Android does not support $mode.'),
     };
   }
+
+  /// Configures the WebView's behavior when handling mixed content.
+  ///
+  /// The [mode] parameter corresponds to Android's mixed content mode constants:
+  ///
+  /// *   [WebSettings.MIXED_CONTENT_ALWAYS_ALLOW]
+  /// *   [WebSettings.MIXED_CONTENT_NEVER_ALLOW]
+  /// *   [WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE]
+  ///
+  /// This method is only available on Android API level 21 (Lollipop) and above.
+  Future<void> setMixedContentMode(int mode) {
+    return _webView.settings.setMixedContentMode(mode);
+  }
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].

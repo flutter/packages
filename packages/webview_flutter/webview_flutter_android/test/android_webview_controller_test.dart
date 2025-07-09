@@ -2152,6 +2152,37 @@ void main() {
       );
     });
   });
+
+  group('AndroidWebViewController', () {
+    test('setMixedContentMode', () async {
+      final PlatformWebViewControllerCreationParams creationParams =
+          PlatformWebViewControllerCreationParams();
+      final AndroidWebViewController controller = AndroidWebViewController(
+        creationParams,
+      );
+
+      final MockAndroidWebViewProxy mockWebViewProxy = MockAndroidWebViewProxy();
+      final android_webview.WebView mockWebView = android_webview.WebView.detached(
+        instanceManager: android_webview.PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        ),
+      );
+      final android_webview.WebSettings mockWebSettings =
+          android_webview.WebSettings.detached(
+        instanceManager: android_webview.PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        ),
+      );
+
+      when(mockWebViewProxy.newWebView(onScrollChanged: anyNamed('onScrollChanged')))
+          .thenReturn(mockWebView);
+      when(mockWebView.settings).thenReturn(mockWebSettings);
+
+      await controller.setMixedContentMode(1);
+
+      verify(mockWebSettings.setMixedContentMode(1));
+    });
+  });
 }
 
 /// Creates a PigeonInstanceManager that doesn't make a call to Java when an

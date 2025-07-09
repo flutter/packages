@@ -101,4 +101,11 @@ public class WebSettingsProxyApi extends PigeonApiWebSettings {
   public String getUserAgentString(@NonNull WebSettings pigeon_instance) {
     return pigeon_instance.getUserAgentString();
   }
+
+  @Override
+  public void setMixedContentMode(@NonNull WebSettings pigeon_instance, long mode) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      pigeon_instance.setMixedContentMode((int) mode);
+    }
+  }
 }

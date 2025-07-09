@@ -923,6 +923,27 @@ Future<void> main() async {
       expect(nullItem, _webViewNull());
     },
   );
+
+  testWidgets('setMixedContentMode', (WidgetTester tester) async {
+    final Completer<AndroidWebViewController> controllerCompleter =
+        Completer<AndroidWebViewController>();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: WebView(
+          initialUrl: 'about:blank',
+          onWebViewCreated: (WebViewController controller) {
+            controllerCompleter.complete(controller as AndroidWebViewController);
+          },
+        ),
+      ),
+    );
+    final AndroidWebViewController controller = await controllerCompleter.future;
+    // 0 is MIXED_CONTENT_ALWAYS_ALLOW
+    await controller.setMixedContentMode(0);
+    // TODO(bparrishMines): Verify that mixed content is allowed.
+    // This might require loading a page with mixed content and checking
+    // that the insecure content is loaded.
+  });
 }
 
 // JavaScript `null` evaluate to different string values per platform.

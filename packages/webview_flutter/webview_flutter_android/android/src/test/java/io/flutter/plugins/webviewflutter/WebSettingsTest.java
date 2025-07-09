@@ -166,4 +166,17 @@ public class WebSettingsTest {
 
     assertEquals(value, api.getUserAgentString(instance));
   }
+
+  @Test
+  public void setMixedContentMode() {
+    final WebSettings mockWebSettings = mock(WebSettings.class);
+    final WebSettingsProxyApi api = rule.getWebSettingsProxyApi();
+
+    api.setMixedContentMode(mockWebSettings, 1L);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      verify(mockWebSettings).setMixedContentMode(1);
+    } else {
+      verify(mockWebSettings, never()).setMixedContentMode(anyInt());
+    }
+  }
 }

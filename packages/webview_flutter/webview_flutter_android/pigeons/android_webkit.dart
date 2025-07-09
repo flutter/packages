@@ -410,6 +410,9 @@ abstract class WebSettings {
 
   /// Gets the WebView's user-agent string.
   String getUserAgentString();
+
+  /// Configures the WebView's behavior when handling mixed content.
+  void setMixedContentMode(int mode);
 }
 
 /// A JavaScript interface for exposing Javascript callbacks to Dart.
