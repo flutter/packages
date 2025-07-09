@@ -2161,8 +2161,10 @@ void main() {
         creationParams,
       );
 
-      final MockAndroidWebViewProxy mockWebViewProxy = MockAndroidWebViewProxy();
-      final android_webview.WebView mockWebView = android_webview.WebView.detached(
+      final MockAndroidWebViewProxy mockWebViewProxy =
+          MockAndroidWebViewProxy();
+      final android_webview.WebView mockWebView =
+          android_webview.WebView.detached(
         instanceManager: android_webview.PigeonInstanceManager(
           onWeakReferenceRemoved: (_) {},
         ),
@@ -2174,7 +2176,8 @@ void main() {
         ),
       );
 
-      when(mockWebViewProxy.newWebView(onScrollChanged: anyNamed('onScrollChanged')))
+      when(mockWebViewProxy.newWebView(
+              onScrollChanged: anyNamed('onScrollChanged')))
           .thenReturn(mockWebView);
       when(mockWebView.settings).thenReturn(mockWebSettings);
 

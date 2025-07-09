@@ -140,9 +140,6 @@ enum MixedContentMode {
   /// The WebView will not allow a secure origin to load content from an
   /// insecure origin.
   neverAllow,
-
-  /// The mode is not recognized by this wrapper.
-  unknown,
 }
 
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.

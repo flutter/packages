@@ -103,9 +103,18 @@ public class WebSettingsProxyApi extends PigeonApiWebSettings {
   }
 
   @Override
-  public void setMixedContentMode(@NonNull WebSettings pigeon_instance, long mode) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      pigeon_instance.setMixedContentMode((int) mode);
+  public void setMixedContentMode(
+      @NonNull WebSettings pigeon_instance, @NonNull MixedContentMode mode) {
+    switch (mode) {
+      case ALWAYS_ALLOW:
+        pigeon_instance.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        break;
+      case COMPATIBILITY_MODE:
+        pigeon_instance.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+        break;
+      case NEVER_ALLOW:
+        pigeon_instance.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+        break;
     }
   }
 }

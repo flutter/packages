@@ -169,14 +169,11 @@ public class WebSettingsTest {
 
   @Test
   public void setMixedContentMode() {
-    final WebSettings mockWebSettings = mock(WebSettings.class);
-    final WebSettingsProxyApi api = rule.getWebSettingsProxyApi();
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
 
-    api.setMixedContentMode(mockWebSettings, 1L);
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      verify(mockWebSettings).setMixedContentMode(1);
-    } else {
-      verify(mockWebSettings, never()).setMixedContentMode(anyInt());
-    }
+    final WebSettings instance = mock(WebSettings.class);
+    api.setMixedContentMode(instance, MixedContentMode.COMPATIBILITY_MODE);
+
+    verify(instance).setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
   }
 }
