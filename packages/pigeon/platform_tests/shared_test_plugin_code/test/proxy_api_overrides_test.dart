@@ -46,7 +46,7 @@ void main() {
     );
   });
 
-  test('pigeon_resetAllOverrides sets attached field overrides to null', () {
+  test('pigeon_reset sets attached field overrides to null', () {
     PigeonOverrides.proxyApiTestClass_staticAttachedField =
         ProxyApiSuperClass.pigeon_detached();
 
@@ -54,7 +54,7 @@ void main() {
     expect(PigeonOverrides.proxyApiTestClass_staticAttachedField, isNull);
   });
 
-  test('pigeon_resetAllOverrides sets static method overrides to null', () {
+  test('pigeon_reset sets static method overrides to null', () {
     PigeonOverrides.proxyApiTestClass_echoStaticString = (String value) async {
       return value;
     };
