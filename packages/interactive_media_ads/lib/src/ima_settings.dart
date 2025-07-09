@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 
+import 'ads_loader.dart';
 import 'platform_interface/platform_interface.dart';
 
-/// Defines general SDK settings that are used when creating an `AdsLoader`.
+/// Defines general SDK settings that are used when creating an [AdsLoader].
 @immutable
 class ImaSettings {
   /// Creates an [ImaSettings].
