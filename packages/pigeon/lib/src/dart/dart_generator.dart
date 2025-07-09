@@ -927,8 +927,9 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
             superClassApi: api.superClass?.associatedProxyApi,
             unattachedFields: api.unattachedFields,
             flutterMethodsFromSuperClasses:
-                api.flutterMethodsFromSuperClasses(),
-            flutterMethodsFromInterfaces: api.flutterMethodsFromInterfaces(),
+                api.flutterMethodsFromSuperClassesWithApis(),
+            flutterMethodsFromInterfaces:
+                api.flutterMethodsFromInterfacesWithApis(),
             declaredFlutterMethods: api.flutterMethods,
           ),
         )
@@ -1503,8 +1504,8 @@ if (${varNamePrefix}replyList == null) {
       yield cb.Constructor(
         (cb.ConstructorBuilder builder) {
           final Iterable<cb.Parameter> parameters = _asConstructorParameters(
-            constructor,
             apiName: apiName,
+            parameters: constructor.parameters,
             unattachedFields: unattachedFields,
             flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
             flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
@@ -1512,8 +1513,8 @@ if (${varNamePrefix}replyList == null) {
           );
           final Iterable<cb.Parameter> parametersWithoutMessengerAndManager =
               _asConstructorParameters(
-            constructor,
             apiName: apiName,
+            parameters: constructor.parameters,
             unattachedFields: unattachedFields,
             flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
             flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
@@ -1584,8 +1585,8 @@ if (${varNamePrefix}replyList == null) {
               _docCommentSpec,
             ))
             ..optionalParameters.addAll(_asConstructorParameters(
-              constructor,
               apiName: apiName,
+              parameters: constructor.parameters,
               unattachedFields: unattachedFields,
               flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
               flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
@@ -1653,22 +1654,10 @@ if (${varNamePrefix}replyList == null) {
     required String apiName,
     required AstProxyApi? superClassApi,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<Method> flutterMethodsFromSuperClasses,
-    required Iterable<Method> flutterMethodsFromInterfaces,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
     required Iterable<Method> declaredFlutterMethods,
   }) {
-    final cb.Parameter binaryMessengerParameter = cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = '${classMemberNamePrefix}binaryMessenger'
-        ..named = true
-        ..toSuper = true,
-    );
-    final cb.Parameter instanceManagerParameter = cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = _instanceManagerVarName
-        ..named = true
-        ..toSuper = true,
-    );
     return cb.Constructor(
       (cb.ConstructorBuilder builder) => builder
         ..name = '${classMemberNamePrefix}detached'
@@ -1679,35 +1668,15 @@ if (${varNamePrefix}replyList == null) {
           '/// create copies for an [$dartInstanceManagerClassName].',
         ])
         ..annotations.add(cb.refer('protected'))
-        ..optionalParameters.addAll(<cb.Parameter>[
-          binaryMessengerParameter,
-          instanceManagerParameter,
-          for (final ApiField field in unattachedFields)
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = field.name
-                ..named = true
-                ..toThis = true
-                ..required = !field.type.isNullable,
-            ),
-          for (final Method method in flutterMethodsFromSuperClasses)
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = method.name
-                ..named = true
-                ..toSuper = true
-                ..required = method.isRequired,
-            ),
-          for (final Method method in flutterMethodsFromInterfaces
-              .followedBy(declaredFlutterMethods))
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = method.name
-                ..named = true
-                ..toThis = true
-                ..required = method.isRequired,
-            ),
-        ])
+        ..optionalParameters.addAll(_asConstructorParameters(
+          apiName: apiName,
+          parameters: <Parameter>[],
+          unattachedFields: unattachedFields,
+          flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+          flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+          declaredFlutterMethods: declaredFlutterMethods,
+          defineType: false,
+        ))
         ..initializers.addAll(<cb.Code>[
           if (superClassApi != null)
             const cb.Code('super.${classMemberNamePrefix}detached()'),
@@ -2345,9 +2314,9 @@ if (${varNamePrefix}replyList == null) {
   }
 
   // Converts fields and methods of a ProxyApi to `code_builder` Parameters.
-  Iterable<cb.Parameter> _asConstructorParameters(
-    Constructor constructor, {
+  Iterable<cb.Parameter> _asConstructorParameters({
     required String apiName,
+    required Iterable<Parameter> parameters,
     required Iterable<ApiField> unattachedFields,
     required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
     required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
@@ -2427,7 +2396,7 @@ if (${varNamePrefix}replyList == null) {
     }
 
     yield* indexMap(
-      constructor.parameters,
+      parameters,
       (int index, NamedType parameter) => cb.Parameter(
         (cb.ParameterBuilder builder) => builder
           ..name = _getParameterName(index, parameter)
@@ -2450,8 +2419,8 @@ if (${varNamePrefix}replyList == null) {
             final String constructorName =
                 constructor.name.isEmpty ? 'new' : constructor.name;
             final Iterable<cb.Parameter> parameters = _asConstructorParameters(
-              constructor,
               apiName: api.name,
+              parameters: constructor.parameters,
               unattachedFields: api.unattachedFields,
               flutterMethodsFromSuperClasses:
                   api.flutterMethodsFromSuperClassesWithApis(),
