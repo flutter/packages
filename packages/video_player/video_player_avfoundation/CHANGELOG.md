@@ -1,6 +1,10 @@
-## 2.7.4
+## 2.8.1
 
 * Removes unnecessary workarounds, fixes "initialized" event not firing when the duration of the media is 0.
+
+## 2.8.0
+
+* Adds platform view support for macOS.
 
 ## 2.7.3
 
