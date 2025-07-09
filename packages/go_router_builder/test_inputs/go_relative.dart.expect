@@ -1,21 +1,34 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'go_relative.dart';
+
+// **************************************************************************
+// GoRouterGenerator
+// **************************************************************************
+
+List<RouteBase> get $appRoutes => [
+      $route1,
+      $route2,
+    ];
+
 RouteBase get $route1 => GoRouteData.$route(
       path: 'route-1',
-      factory: $Route1Extension._fromState,
+      factory: _$Route1._fromState,
       routes: [
         GoRouteData.$route(
           path: 'relative-route',
-          factory: $RelativeRouteExtension._fromState,
+          factory: _$RelativeRoute._fromState,
           routes: [
             GoRouteData.$route(
               path: 'inner-relative-route',
-              factory: $InnerRelativeRouteExtension._fromState,
+              factory: _$InnerRelativeRoute._fromState,
             ),
           ],
         ),
       ],
     );
 
-extension $Route1Extension on Route1 {
+mixin _$Route1 on GoRouteData {
   static Route1 _fromState(GoRouterState state) => const Route1();
 
   String get location => GoRouteData.$location(
@@ -32,12 +45,13 @@ extension $Route1Extension on Route1 {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $RelativeRouteExtension on RelativeRoute {
+mixin _$RelativeRoute on GoRouteData {
   static RelativeRoute _fromState(GoRouterState state) => const RelativeRoute();
 
   String get location => GoRouteData.$location(
         'relative-route',
       );
+
   String get relativeLocation => './$location';
 
   void goRelative(BuildContext context) => context.go(relativeLocation);
@@ -52,13 +66,14 @@ extension $RelativeRouteExtension on RelativeRoute {
       context.replace(relativeLocation);
 }
 
-extension $InnerRelativeRouteExtension on InnerRelativeRoute {
+mixin _$InnerRelativeRoute on GoRouteData {
   static InnerRelativeRoute _fromState(GoRouterState state) =>
       const InnerRelativeRoute();
 
   String get location => GoRouteData.$location(
         'inner-relative-route',
       );
+
   String get relativeLocation => './$location';
 
   void goRelative(BuildContext context) => context.go(relativeLocation);
@@ -75,22 +90,22 @@ extension $InnerRelativeRouteExtension on InnerRelativeRoute {
 
 RouteBase get $route2 => GoRouteData.$route(
       path: 'route-2',
-      factory: $Route2Extension._fromState,
+      factory: _$Route2._fromState,
       routes: [
         GoRouteData.$route(
           path: 'relative-route',
-          factory: $RelativeRouteExtension._fromState,
+          factory: _$RelativeRoute._fromState,
           routes: [
             GoRouteData.$route(
               path: 'inner-relative-route',
-              factory: $InnerRelativeRouteExtension._fromState,
+              factory: _$InnerRelativeRoute._fromState,
             ),
           ],
         ),
       ],
     );
 
-extension $Route2Extension on Route2 {
+mixin _$Route2 on GoRouteData {
   static Route2 _fromState(GoRouterState state) => const Route2();
 
   String get location => GoRouteData.$location(

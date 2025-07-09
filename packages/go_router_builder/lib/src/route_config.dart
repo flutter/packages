@@ -418,22 +418,17 @@ class GoRouteConfig extends RouteBaseConfig {
 mixin $_mixinName on GoRouteData {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
   $_castedSelf
-  @override
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
   
-  @override
   void go(BuildContext context) =>
       context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
   
-  @override
   Future<T?> push<T>(BuildContext context) =>
       context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
   
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
   
-  @override
   void replace(BuildContext context) =>
       context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
 }
@@ -578,6 +573,16 @@ class GoRelativeRouteConfig extends RouteBaseConfig {
     return encodeField(field);
   }
 
+  String get _castedSelf {
+    if (_pathParams.isEmpty &&
+        _ctorQueryParams.isEmpty &&
+        _extraParam == null) {
+      return '';
+    }
+
+    return '\n$_className get $selfFieldName => this as $_className;\n';
+  }
+
   String get _locationQueryParams {
     if (_ctorQueryParams.isEmpty) {
       return '';
@@ -639,30 +644,45 @@ class GoRelativeRouteConfig extends RouteBaseConfig {
 
   @override
   Iterable<String> classDeclarations() => <String>[
-        _extensionDefinition,
+        _mixinDefinition,
         ..._enumDeclarations(),
       ];
 
-  String get _extensionDefinition => '''
-extension $_extensionName on $_className {
+  String get _mixinDefinition {
+    final bool hasMixin = getNodeDeclaration<ClassDeclaration>(routeDataClass)
+            ?.withClause
+            ?.mixinTypes
+            .any((NamedType e) => e.name2.toString() == _mixinName) ??
+        false;
+
+    if (!hasMixin) {
+      throw InvalidGenerationSourceError(
+        'Missing mixin clause `with $_mixinName`',
+        element: routeDataClass,
+      );
+    }
+    return '''
+mixin $_mixinName on GoRouteData {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
-
+  $_castedSelf
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
+
   String get relativeLocation => './\$location';
-
+  
   void goRelative(BuildContext context) =>
-      context.go(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
-
+      context.go(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
   Future<T?> pushRelative<T>(BuildContext context) =>
-      context.push<T>(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
-
+      context.push<T>(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
   void pushReplacementRelative(BuildContext context) =>
-      context.pushReplacement(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
-
+      context.pushReplacement(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
   void replaceRelative(BuildContext context) =>
-      context.replace(relativeLocation${_extraParam != null ? ', extra: $extraFieldName' : ''});
+      context.replace(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
 }
 ''';
+  }
 
   /// Returns code representing the constant maps that contain the `enum` to
   /// [String] mapping for each referenced enum.
@@ -688,8 +708,7 @@ extension $_extensionName on $_className {
   }
 
   @override
-  String get factorConstructorParameters =>
-      'factory: $_extensionName._fromState,';
+  String get factorConstructorParameters => 'factory: $_mixinName._fromState,';
 
   @override
   String get routeConstructorParameters => '''

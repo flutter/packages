@@ -14,19 +14,19 @@ List<RouteBase> get $appRoutes => [
 
 RouteBase get $homeRoute => GoRouteData.$route(
       path: '/',
-      factory: $HomeRouteExtension._fromState,
+      factory: _$HomeRoute._fromState,
       routes: [
         GoRouteData.$route(
           path: '/dashboard',
-          factory: $DashboardRouteExtension._fromState,
+          factory: _$DashboardRoute._fromState,
           routes: [
             GoRouteData.$route(
               path: 'details/:detailId',
-              factory: $DetailsRouteExtension._fromState,
+              factory: _$DetailsRoute._fromState,
               routes: [
                 GoRouteData.$route(
                   path: 'settings/:settingId',
-                  factory: $SettingsRouteExtension._fromState,
+                  factory: _$SettingsRoute._fromState,
                 ),
               ],
             ),
@@ -34,18 +34,18 @@ RouteBase get $homeRoute => GoRouteData.$route(
         ),
         GoRouteData.$route(
           path: 'details/:detailId',
-          factory: $DetailsRouteExtension._fromState,
+          factory: _$DetailsRoute._fromState,
           routes: [
             GoRouteData.$route(
               path: 'settings/:settingId',
-              factory: $SettingsRouteExtension._fromState,
+              factory: _$SettingsRoute._fromState,
             ),
           ],
         ),
       ],
     );
 
-extension $HomeRouteExtension on HomeRoute {
+mixin _$HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => HomeRoute();
 
   String get location => GoRouteData.$location(
@@ -62,7 +62,7 @@ extension $HomeRouteExtension on HomeRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $DashboardRouteExtension on DashboardRoute {
+mixin _$DashboardRoute on GoRouteData {
   static DashboardRoute _fromState(GoRouterState state) => DashboardRoute();
 
   String get location => GoRouteData.$location(
@@ -79,14 +79,17 @@ extension $DashboardRouteExtension on DashboardRoute {
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $DetailsRouteExtension on DetailsRoute {
+mixin _$DetailsRoute on GoRouteData {
   static DetailsRoute _fromState(GoRouterState state) => DetailsRoute(
         detailId: state.pathParameters['detailId']!,
       );
 
+  DetailsRoute get _self => this as DetailsRoute;
+
   String get location => GoRouteData.$location(
-        'details/${Uri.encodeComponent(detailId)}',
+        'details/${Uri.encodeComponent(_self.detailId)}',
       );
+
   String get relativeLocation => './$location';
 
   void goRelative(BuildContext context) => context.go(relativeLocation);
@@ -101,14 +104,17 @@ extension $DetailsRouteExtension on DetailsRoute {
       context.replace(relativeLocation);
 }
 
-extension $SettingsRouteExtension on SettingsRoute {
+mixin _$SettingsRoute on GoRouteData {
   static SettingsRoute _fromState(GoRouterState state) => SettingsRoute(
         settingId: state.pathParameters['settingId']!,
       );
 
+  SettingsRoute get _self => this as SettingsRoute;
+
   String get location => GoRouteData.$location(
-        'settings/${Uri.encodeComponent(settingId)}',
+        'settings/${Uri.encodeComponent(_self.settingId)}',
       );
+
   String get relativeLocation => './$location';
 
   void goRelative(BuildContext context) => context.go(relativeLocation);

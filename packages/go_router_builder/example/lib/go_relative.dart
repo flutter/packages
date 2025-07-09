@@ -46,21 +46,21 @@ const TypedRelativeGoRoute<DetailsRoute> detailRoute =
     detailRoute,
   ],
 )
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteData with _$HomeRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const HomeScreen();
   }
 }
 
-class DashboardRoute extends GoRouteData {
+class DashboardRoute extends GoRouteData with _$DashboardRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return const DashboardScreen();
   }
 }
 
-class DetailsRoute extends GoRouteData {
+class DetailsRoute extends GoRouteData with _$DetailsRoute {
   const DetailsRoute({required this.detailId});
   final String detailId;
 
@@ -70,7 +70,7 @@ class DetailsRoute extends GoRouteData {
   }
 }
 
-class SettingsRoute extends GoRouteData {
+class SettingsRoute extends GoRouteData with _$SettingsRoute {
   const SettingsRoute({
     required this.settingId,
   });
