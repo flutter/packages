@@ -22,11 +22,14 @@ class ImaSdkSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     pigeon_instance.isDebugMode = debugMode
   }
 
-  override fun setFeatureFlags(pigeon_instance: ImaSdkSettings, featureFlags: Map<String, String>) {
+  override fun setFeatureFlags(
+      pigeon_instance: ImaSdkSettings,
+      featureFlags: Map<String, String>?
+  ) {
     pigeon_instance.featureFlags = featureFlags
   }
 
-  override fun setLanguage(pigeon_instance: ImaSdkSettings, language: String) {
+  override fun setLanguage(pigeon_instance: ImaSdkSettings, language: String?) {
     pigeon_instance.language = language
   }
 
@@ -34,19 +37,19 @@ class ImaSdkSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     pigeon_instance.maxRedirects = maxRedirects.toInt()
   }
 
-  override fun setPlayerType(pigeon_instance: ImaSdkSettings, playerType: String) {
+  override fun setPlayerType(pigeon_instance: ImaSdkSettings, playerType: String?) {
     pigeon_instance.playerType = playerType
   }
 
-  override fun setPlayerVersion(pigeon_instance: ImaSdkSettings, playerVersion: String) {
+  override fun setPlayerVersion(pigeon_instance: ImaSdkSettings, playerVersion: String?) {
     pigeon_instance.playerVersion = playerVersion
   }
 
-  override fun setPpid(pigeon_instance: ImaSdkSettings, ppid: String) {
+  override fun setPpid(pigeon_instance: ImaSdkSettings, ppid: String?) {
     pigeon_instance.ppid = ppid
   }
 
-  override fun setSessionId(pigeon_instance: ImaSdkSettings, sessionId: String) {
+  override fun setSessionId(pigeon_instance: ImaSdkSettings, sessionId: String?) {
     pigeon_instance.sessionId = sessionId
   }
 }

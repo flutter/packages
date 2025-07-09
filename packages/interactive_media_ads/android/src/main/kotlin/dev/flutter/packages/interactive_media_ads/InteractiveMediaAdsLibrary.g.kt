@@ -2577,7 +2577,7 @@ abstract class PigeonApiImaSdkSettings(
    */
   abstract fun setFeatureFlags(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      featureFlags: Map<String, String>
+      featureFlags: Map<String, String>?
   )
 
   /**
@@ -2590,7 +2590,7 @@ abstract class PigeonApiImaSdkSettings(
    */
   abstract fun setLanguage(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      language: String
+      language: String?
   )
 
   /**
@@ -2612,7 +2612,7 @@ abstract class PigeonApiImaSdkSettings(
    */
   abstract fun setPlayerType(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      playerType: String
+      playerType: String?
   )
 
   /**
@@ -2622,13 +2622,13 @@ abstract class PigeonApiImaSdkSettings(
    */
   abstract fun setPlayerVersion(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      playerVersion: String
+      playerVersion: String?
   )
 
   /** Sets the publisher provided ID used for tracking. */
   abstract fun setPpid(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      ppid: String
+      ppid: String?
   )
 
   /**
@@ -2638,7 +2638,7 @@ abstract class PigeonApiImaSdkSettings(
    */
   abstract fun setSessionId(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.ImaSdkSettings,
-      sessionId: String
+      sessionId: String?
   )
 
   companion object {
@@ -2706,7 +2706,7 @@ abstract class PigeonApiImaSdkSettings(
             val args = message as List<Any?>
             val pigeon_instanceArg =
                 args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val featureFlagsArg = args[1] as Map<String, String>
+            val featureFlagsArg = args[1] as Map<String, String>?
             val wrapped: List<Any?> =
                 try {
                   api.setFeatureFlags(pigeon_instanceArg, featureFlagsArg)
@@ -2731,7 +2731,7 @@ abstract class PigeonApiImaSdkSettings(
             val args = message as List<Any?>
             val pigeon_instanceArg =
                 args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val languageArg = args[1] as String
+            val languageArg = args[1] as String?
             val wrapped: List<Any?> =
                 try {
                   api.setLanguage(pigeon_instanceArg, languageArg)
@@ -2781,7 +2781,7 @@ abstract class PigeonApiImaSdkSettings(
             val args = message as List<Any?>
             val pigeon_instanceArg =
                 args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val playerTypeArg = args[1] as String
+            val playerTypeArg = args[1] as String?
             val wrapped: List<Any?> =
                 try {
                   api.setPlayerType(pigeon_instanceArg, playerTypeArg)
@@ -2806,7 +2806,7 @@ abstract class PigeonApiImaSdkSettings(
             val args = message as List<Any?>
             val pigeon_instanceArg =
                 args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val playerVersionArg = args[1] as String
+            val playerVersionArg = args[1] as String?
             val wrapped: List<Any?> =
                 try {
                   api.setPlayerVersion(pigeon_instanceArg, playerVersionArg)
@@ -2831,7 +2831,7 @@ abstract class PigeonApiImaSdkSettings(
             val args = message as List<Any?>
             val pigeon_instanceArg =
                 args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val ppidArg = args[1] as String
+            val ppidArg = args[1] as String?
             val wrapped: List<Any?> =
                 try {
                   api.setPpid(pigeon_instanceArg, ppidArg)
@@ -2856,7 +2856,7 @@ abstract class PigeonApiImaSdkSettings(
             val args = message as List<Any?>
             val pigeon_instanceArg =
                 args[0] as com.google.ads.interactivemedia.v3.api.ImaSdkSettings
-            val sessionIdArg = args[1] as String
+            val sessionIdArg = args[1] as String?
             val wrapped: List<Any?> =
                 try {
                   api.setSessionId(pigeon_instanceArg, sessionIdArg)

@@ -503,7 +503,7 @@ abstract class ImaSdkSettings {
   /// This should be set as early as possible, before requesting ads. Settings
   /// will remain constant until the next ad request. Calling this method again
   /// will reset any feature flags for the next ad request.
-  void setFeatureFlags(Map<String, String> featureFlags);
+  void setFeatureFlags(Map<String, String>? featureFlags);
 
   /// Sets the preferred language for the ad UI.
   ///
@@ -512,7 +512,7 @@ abstract class ImaSdkSettings {
   ///
   /// Once the AdsLoader object has been created, using this setter will have no
   /// effect.
-  void setLanguage(String language);
+  void setLanguage(String? language);
 
   /// Specifies the maximum number of redirects before the subsequent redirects
   /// will be denied and the ad load aborted.
@@ -524,21 +524,21 @@ abstract class ImaSdkSettings {
   ///
   /// Player type greater than 20 characters will be truncated. The player type
   /// specified should be short and unique.
-  void setPlayerType(String playerType);
+  void setPlayerType(String? playerType);
 
   /// Sets the partner provided player version.
   ///
   /// Player versions greater than 20 characters will be truncated.
-  void setPlayerVersion(String playerVersion);
+  void setPlayerVersion(String? playerVersion);
 
   /// Sets the publisher provided ID used for tracking.
-  void setPpid(String ppid);
+  void setPpid(String? ppid);
 
   /// Session ID is a temporary random ID.
   ///
   /// A session ID must be a UUID, or an empty string if the SDK should not send
   /// a session ID.
-  void setSessionId(String sessionId);
+  void setSessionId(String? sessionId);
 }
 
 /// Defines an update to the video's progress.
