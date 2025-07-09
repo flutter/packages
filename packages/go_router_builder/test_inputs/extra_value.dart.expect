@@ -13,7 +13,6 @@ mixin _$ExtraValueRoute on GoRouteData {
 
   ExtraValueRoute get _self => this as ExtraValueRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/default-value-route',
         queryParams: {
@@ -21,18 +20,14 @@ mixin _$ExtraValueRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
-  @override
   Future<T?> push<T>(BuildContext context) =>
       context.push<T>(location, extra: _self.$extra);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: _self.$extra);
 
-  @override
   void replace(BuildContext context) =>
       context.replace(location, extra: _self.$extra);
 }

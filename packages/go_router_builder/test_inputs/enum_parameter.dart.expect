@@ -10,22 +10,17 @@ mixin _$EnumParam on GoRouteData {
 
   EnumParam get _self => this as EnumParam;
 
-  @override
   String get location => GoRouteData.$location(
         '/${Uri.encodeComponent(_$EnumTestEnumMap[_self.y]!)}',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 

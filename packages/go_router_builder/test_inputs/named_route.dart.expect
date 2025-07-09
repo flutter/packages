@@ -7,21 +7,16 @@ RouteBase get $namedRoute => GoRouteData.$route(
 mixin _$NamedRoute on GoRouteData {
   static NamedRoute _fromState(GoRouterState state) => NamedRoute();
 
-  @override
   String get location => GoRouteData.$location(
         '/named-route',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }

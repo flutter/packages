@@ -41,22 +41,17 @@ extension $MyShellRouteDataExtension on MyShellRouteData {
 mixin _$HomeRouteData on GoRouteData {
   static HomeRouteData _fromState(GoRouterState state) => const HomeRouteData();
 
-  @override
   String get location => GoRouteData.$location(
         '/home',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -64,22 +59,17 @@ mixin _$UsersRouteData on GoRouteData {
   static UsersRouteData _fromState(GoRouterState state) =>
       const UsersRouteData();
 
-  @override
   String get location => GoRouteData.$location(
         '/users',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -90,21 +80,16 @@ mixin _$UserRouteData on GoRouteData {
 
   UserRouteData get _self => this as UserRouteData;
 
-  @override
   String get location => GoRouteData.$location(
         '/users/${Uri.encodeComponent(_self.id.toString())}',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }

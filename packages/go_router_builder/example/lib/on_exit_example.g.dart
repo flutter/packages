@@ -26,43 +26,33 @@ RouteBase get $homeRoute => GoRouteData.$route(
 mixin _$HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
-  @override
   String get location => GoRouteData.$location(
         '/',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
 mixin _$SubRoute on GoRouteData {
   static SubRoute _fromState(GoRouterState state) => const SubRoute();
 
-  @override
   String get location => GoRouteData.$location(
         '/sub-route',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }

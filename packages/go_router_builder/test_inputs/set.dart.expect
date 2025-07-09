@@ -27,7 +27,6 @@ mixin _$SetRoute on GoRouteData {
 
   SetRoute get _self => this as SetRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/set-route',
         queryParams: {
@@ -41,17 +40,13 @@ mixin _$SetRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 

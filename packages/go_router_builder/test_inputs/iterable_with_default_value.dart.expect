@@ -14,7 +14,6 @@ mixin _$IterableDefaultValueRoute on GoRouteData {
 
   IterableDefaultValueRoute get _self => this as IterableDefaultValueRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/iterable-default-value-route',
         queryParams: {
@@ -23,17 +22,13 @@ mixin _$IterableDefaultValueRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
