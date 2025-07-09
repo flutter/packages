@@ -480,6 +480,7 @@ mixin $_mixinName on GoRouteData {
 class GoRelativeRouteConfig extends RouteBaseConfig {
   GoRelativeRouteConfig._({
     required this.path,
+    required this.caseSensitive,
     required this.parentNavigatorKey,
     required super.routeDataClass,
     required super.parent,
@@ -487,6 +488,9 @@ class GoRelativeRouteConfig extends RouteBaseConfig {
 
   /// The path of the GoRoute to be created by this configuration.
   final String path;
+
+  /// The case sensitivity of the GoRelativeRoute to be created by this configuration.
+  final bool caseSensitive;
 
   /// The parent navigator key.
   final String? parentNavigatorKey;
@@ -501,9 +505,21 @@ class GoRelativeRouteConfig extends RouteBaseConfig {
         // Enum types are encoded using a map, so we need a nullability check
         // here to ensure it matches Uri.encodeComponent nullability
         final DartType? type = _field(pathParameter)?.returnType;
-        final String value =
-            '\${Uri.encodeComponent(${_encodeFor(pathParameter)}${type?.isEnum ?? false ? '!' : ''})}';
-        return MapEntry<String, String>(pathParameter, value);
+
+        final StringBuffer valueBuffer = StringBuffer();
+
+        valueBuffer.write(r'${Uri.encodeComponent(');
+        valueBuffer.write(_encodeFor(pathParameter));
+
+        if (type?.isEnum ?? false) {
+          valueBuffer.write('!');
+        } else if (type?.isNullableType ?? false) {
+          valueBuffer.write("?? ''");
+        }
+
+        valueBuffer.write(')}');
+
+        return MapEntry<String, String>(pathParameter, valueBuffer.toString());
       }),
     );
     final String location = patternToPath(path, pathParameters);
@@ -533,6 +549,16 @@ class GoRelativeRouteConfig extends RouteBaseConfig {
     buffer.writeln(');');
 
     return buffer.toString();
+  }
+
+  String get _castedSelf {
+    if (_pathParams.isEmpty &&
+        _ctorQueryParams.isEmpty &&
+        _extraParam == null) {
+      return '';
+    }
+
+    return '\n$_className get $selfFieldName => this as $_className;\n';
   }
 
   String _decodeFor(ParameterElement element) {
@@ -573,16 +599,6 @@ class GoRelativeRouteConfig extends RouteBaseConfig {
     return encodeField(field);
   }
 
-  String get _castedSelf {
-    if (_pathParams.isEmpty &&
-        _ctorQueryParams.isEmpty &&
-        _extraParam == null) {
-      return '';
-    }
-
-    return '\n$_className get $selfFieldName => this as $_className;\n';
-  }
-
   String get _locationQueryParams {
     if (_ctorQueryParams.isEmpty) {
       return '';
@@ -598,9 +614,11 @@ class GoRelativeRouteConfig extends RouteBaseConfig {
         if (param.type.isNullableType) {
           throw NullableDefaultValueError(param);
         }
-        conditions.add('$parameterName != ${param.defaultValueCode!}');
+        conditions.add(
+          compareField(param, parameterName, param.defaultValueCode!),
+        );
       } else if (param.type.isNullableType) {
-        conditions.add('$parameterName != null');
+        conditions.add('$selfFieldName.$parameterName != null');
       }
       String line = '';
       if (conditions.isNotEmpty) {
@@ -863,8 +881,10 @@ abstract class RouteBaseConfig {
             element: element,
           );
         }
+        final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
         value = GoRelativeRouteConfig._(
           path: pathValue.stringValue,
+          caseSensitive: caseSensitiveValue.boolValue,
           routeDataClass: classElement,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(
