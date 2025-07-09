@@ -6,7 +6,6 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
-  dartTestOut: 'test/test_api.g.dart',
   objcHeaderOut:
       'darwin/video_player_avfoundation/Sources/video_player_avfoundation/include/video_player_avfoundation/messages.g.h',
   objcSourceOut:
@@ -47,7 +46,7 @@ class CreationOptions {
   PlatformVideoViewType viewType;
 }
 
-@HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
+@HostApi()
 abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('initialize')
   void initialize();
@@ -56,21 +55,23 @@ abstract class AVFoundationVideoPlayerApi {
   int create(CreationOptions creationOptions);
   @ObjCSelector('disposePlayer:')
   void dispose(int playerId);
-  @ObjCSelector('setLooping:forPlayer:')
-  void setLooping(bool isLooping, int playerId);
-  @ObjCSelector('setVolume:forPlayer:')
-  void setVolume(double volume, int playerId);
-  @ObjCSelector('setPlaybackSpeed:forPlayer:')
-  void setPlaybackSpeed(double speed, int playerId);
-  @ObjCSelector('playPlayer:')
-  void play(int playerId);
-  @ObjCSelector('positionForPlayer:')
-  int getPosition(int playerId);
-  @async
-  @ObjCSelector('seekTo:forPlayer:')
-  void seekTo(int position, int playerId);
-  @ObjCSelector('pausePlayer:')
-  void pause(int playerId);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
+}
+
+@HostApi()
+abstract class VideoPlayerInstanceApi {
+  @ObjCSelector('setLooping:')
+  void setLooping(bool looping);
+  @ObjCSelector('setVolume:')
+  void setVolume(double volume);
+  @ObjCSelector('setPlaybackSpeed:')
+  void setPlaybackSpeed(double speed);
+  void play();
+  @ObjCSelector('position')
+  int getPosition();
+  @async
+  @ObjCSelector('seekTo:')
+  void seekTo(int position);
+  void pause();
 }
