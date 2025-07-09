@@ -2443,6 +2443,7 @@ if (${varNamePrefix}replyList == null) {
   ) sync* {
     for (final AstProxyApi api in proxyApis) {
       final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
+
       for (final Constructor constructor in api.constructors) {
         yield cb.Field(
           (cb.FieldBuilder builder) {
@@ -2491,6 +2492,7 @@ if (${varNamePrefix}replyList == null) {
   ) sync* {
     for (final AstProxyApi api in proxyApis) {
       final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
+
       for (final ApiField field
           in api.fields.where((ApiField field) => field.isStatic)) {
         yield cb.Field((cb.FieldBuilder builder) {
@@ -2509,6 +2511,7 @@ if (${varNamePrefix}replyList == null) {
   ) sync* {
     for (final AstProxyApi api in proxyApis) {
       final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
+
       for (final Method method
           in api.hostMethods.where((Method method) => method.isStatic)) {
         yield cb.Field((cb.FieldBuilder builder) {
