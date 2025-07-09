@@ -1,3 +1,12 @@
+## 2.16.2
+
+* Removes documentation related to the map renderer selection API, as the
+  legacy renderer is no longer available, so requesting it is a no-op.
+
+## 2.16.1
+
+* Removes obsolete code related to supporting SDK <21.
+
 ## 2.16.0
 
 * Adds support for animating the camera with a duration.

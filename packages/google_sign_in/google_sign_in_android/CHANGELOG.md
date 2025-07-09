@@ -1,3 +1,20 @@
+## 7.0.1
+
+* Passes an activity context when requesting credentials, fixing an issue that
+  prevented signing in on some devices.
+
+## 7.0.0
+
+* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
+  interface package, rather than 2.x, significantly changing the API surface.
+* Switches to Sign in with Google (`CredentialManager`) as the underlying
+  SDK, removing usage of the deprecated Google Sign In for Android SDK.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 6.2.1
+
+* Removes obsolete code related to supporting SDK <21.
+
 ## 6.2.0
 
 * Adds a sign-in field to allow clients to explicitly specify an account name.

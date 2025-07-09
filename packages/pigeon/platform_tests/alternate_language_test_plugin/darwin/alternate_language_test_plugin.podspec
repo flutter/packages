@@ -13,8 +13,8 @@ A plugin to test Pigeon generation for secondary languages (e.g., Java, Objectiv
   s.license          = { :type => 'BSD', :file => '../../../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/pigeon' }
-  s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  s.source_files = 'alternate_language_test_plugin/Sources/alternate_language_test_plugin/**/*.{h,m}'
+  s.public_header_files = 'alternate_language_test_plugin/Sources/alternate_language_test_plugin/include/**/*.h'
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
   s.ios.deployment_target = '12.0'

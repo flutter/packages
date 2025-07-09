@@ -1,3 +1,9 @@
+## 2.10.0
+
+* Adds support for platform views as an optional way of displaying a video on Android and iOS.
+* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 2.9.5
 
 * Fixes layout issue caused by `Transform.rotate` not affecting space calculation.

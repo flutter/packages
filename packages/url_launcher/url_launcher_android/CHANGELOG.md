@@ -1,3 +1,7 @@
+## 6.3.16
+
+* Removes obsolete code related to supporting SDK <21.
+
 ## 6.3.15
 
 * Updates compileSdk 34 to flutter.compileSdkVersion.

@@ -1,3 +1,50 @@
+## 0.6.19
+
+* Changes target rotation of captured images to current default display rotation to fix captured
+  photo orientation to upright.
+
+## 0.6.18+3
+
+* Fixes incorrect camera preview mirroring for front cameras of devices using the Impeller backend.
+
+## 0.6.18+2
+
+* Fixes premature garbage collection of native objects when app is under memory pressure.
+
+## 0.6.18+1
+
+* Makes Java style improvements.
+
+## 0.6.18
+
+* Adds support for the `MediaSettings.enableAudio` setting, which determines whether or not audio is
+  recorded during video recording.
+
+## 0.6.17+1
+
+* Replaces deprecated `onSurfaceDestroyed` with `onSurfaceCleanup`.
+
+## 0.6.17
+
+* Replaces `BroadcastReceiver` usage with an `OrientationEventListener` to detect changes in device
+  orientation to fix issue where some devices do not report changes in device configuration if it
+  is rotated between the same sort of orientation (landscape/portrait).
+
+## 0.6.16
+
+* Fixes incorrect camera preview rotation for landscape-oriented devices.
+* Fixes regression where `onDeviceOrientationChanged` was not triggering with an initial orientation
+  after calling `createCameraWithSettings`.
+
+## 0.6.15+2
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
+## 0.6.15+1
+
+* Ensures DeviceOrientationManager is stopped on dispose.
+
 ## 0.6.15
 
 * Updates internal API wrapper to use ProxyApis.

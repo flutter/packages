@@ -429,6 +429,7 @@ class VideoPlayerWebOptions {
     this.controls = const VideoPlayerWebOptionsControls.disabled(),
     this.allowContextMenu = true,
     this.allowRemotePlayback = true,
+    this.poster,
   });
 
   /// Additional settings for how control options are displayed
@@ -439,6 +440,9 @@ class VideoPlayerWebOptions {
 
   /// Whether remote playback is allowed
   final bool allowRemotePlayback;
+
+  /// The URL of the poster image to be displayed before the video starts
+  final Uri? poster;
 }
 
 /// [VideoPlayerWebOptions] can be used to set how control options are displayed

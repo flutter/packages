@@ -1,3 +1,12 @@
+## 2.2.0
+
+* Exposes `renderingStrategy` in `SvgPicture` constructors.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 2.1.0
+
+* Exposes `colorMapper` in `SvgPicture` constructors.
+
 ## 2.0.17
 
 * Implement errorBuilder callback

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 5.0.0
 
 * Removes `app_shared` and `skeleton`, which are [no longer used](https://github.com/flutter/flutter/issues/160692).

@@ -1,3 +1,7 @@
+plugins {
+    id 'com.google.gms.google-services' version '4.4.2' apply false
+}
+
 allprojects {
     repositories {
         // See https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md#gradle-structure for more info.
@@ -30,7 +34,8 @@ tasks.register("clean", Delete) {
 gradle.projectsEvaluated {
     project(":google_sign_in_android") {
         tasks.withType(JavaCompile) {
-            options.compilerArgs << "-Xlint:all" << "-Werror"
+            // Ignore classfile due to https://issuetracker.google.com/issues/342067844
+            options.compilerArgs << "-Xlint:all" << "-Werror" << "-Xlint:-classfile"
         }
     }
 }

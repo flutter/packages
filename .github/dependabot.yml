@@ -33,9 +33,6 @@ updates:
       - /packages/extension_google_sign_in_as_googleapis_auth/example/android/app
       - /packages/file_selector/file_selector/example/android/app
       - /packages/file_selector/file_selector_android/example/android/app
-      - /packages/flutter_adaptive_scaffold/example/android/app
-      - /packages/flutter_image/example/android/app
-      - /packages/flutter_markdown/example/android/app
       - /packages/flutter_plugin_android_lifecycle/example/android/app
       - /packages/go_router/example/android/app
       - /packages/google_maps_flutter/google_maps_flutter/example/android/app
@@ -49,7 +46,6 @@ updates:
       - /packages/image_picker/image_picker_android/example/android/app
       - /packages/local_auth/local_auth_android/example/android/app
       - /packages/local_auth/local_auth/example/android/app
-      - /packages/palette_generator/example/android/app
       - /packages/path_provider/path_provider/example/android/app
       - /packages/path_provider/path_provider_android/example/android/app
       - /packages/pigeon/example/app/android/app

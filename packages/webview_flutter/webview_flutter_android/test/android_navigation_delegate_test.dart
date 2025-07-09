@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -19,6 +20,10 @@ import 'android_navigation_delegate_test.mocks.dart';
 @GenerateMocks(<Type>[
   android_webview.HttpAuthHandler,
   android_webview.DownloadListener,
+  android_webview.SslCertificate,
+  android_webview.SslError,
+  android_webview.SslErrorHandler,
+  android_webview.X509Certificate,
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -623,6 +628,74 @@ void main() {
       );
 
       verify(mockAuthHandler.cancel());
+    });
+
+    test('setOnSSlAuthError', () async {
+      final AndroidNavigationDelegate androidNavigationDelegate =
+          AndroidNavigationDelegate(_buildCreationParams());
+
+      final Completer<PlatformSslAuthError> errorCompleter =
+          Completer<PlatformSslAuthError>();
+      await androidNavigationDelegate.setOnSSlAuthError(
+        (PlatformSslAuthError error) {
+          errorCompleter.complete(error);
+        },
+      );
+
+      final Uint8List certificateData = Uint8List(0);
+      const String url = 'https://google.com';
+
+      final MockSslError mockSslError = MockSslError();
+      when(mockSslError.url).thenReturn(url);
+      when(mockSslError.getPrimaryError())
+          .thenAnswer((_) async => android_webview.SslErrorType.dateInvalid);
+      final MockSslCertificate mockSslCertificate = MockSslCertificate();
+      final MockX509Certificate mockX509Certificate = MockX509Certificate();
+      when(mockX509Certificate.getEncoded()).thenAnswer(
+        (_) async => certificateData,
+      );
+      when(mockSslCertificate.getX509Certificate()).thenAnswer(
+        (_) async => mockX509Certificate,
+      );
+      when(mockSslError.certificate).thenReturn(mockSslCertificate);
+
+      final MockSslErrorHandler mockSslErrorHandler = MockSslErrorHandler();
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedSslError!(
+        CapturingWebViewClient(),
+        TestWebView(),
+        mockSslErrorHandler,
+        mockSslError,
+      );
+
+      final AndroidSslAuthError error =
+          await errorCompleter.future as AndroidSslAuthError;
+      expect(error.certificate?.data, certificateData);
+      expect(error.description, 'The date of the certificate is invalid.');
+      expect(error.url, url);
+
+      await error.proceed();
+      verify(mockSslErrorHandler.proceed());
+
+      clearInteractions(mockSslErrorHandler);
+
+      await error.cancel();
+      verify(mockSslErrorHandler.cancel());
+    });
+
+    test('setOnSSlAuthError calls cancel by default', () async {
+      AndroidNavigationDelegate(_buildCreationParams());
+
+      final MockSslErrorHandler mockSslErrorHandler = MockSslErrorHandler();
+
+      CapturingWebViewClient.lastCreatedDelegate.onReceivedSslError!(
+        CapturingWebViewClient(),
+        TestWebView(),
+        mockSslErrorHandler,
+        MockSslError(),
+      );
+
+      verify(mockSslErrorHandler.cancel());
     });
   });
 }

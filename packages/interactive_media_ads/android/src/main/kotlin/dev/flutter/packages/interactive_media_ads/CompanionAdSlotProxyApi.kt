@@ -47,4 +47,8 @@ class CompanionAdSlotProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun setSize(pigeon_instance: CompanionAdSlot, width: Long, height: Long) {
     pigeon_instance.setSize(width.toInt(), height.toInt())
   }
+
+  override fun setFluidSize(pigeon_instance: CompanionAdSlot) {
+    pigeon_instance.setSize(CompanionAdSlot.FLUID_SIZE, CompanionAdSlot.FLUID_SIZE)
+  }
 }
