@@ -58,14 +58,17 @@ class FormatCommand extends PackageLoopingCommand {
     argParser.addFlag(_kotlinArg,
         help: 'Format Kotlin files', defaultsTo: true);
     argParser.addFlag(_javaArg, help: 'Format Java files', defaultsTo: true);
+    // Currently swift-format is run via xcrun, so only works on macOS. If that
+    // ever becomes an issue, the ability to find it in the path and/or allow
+    // providing a path could be restored, to allow developers on Linux or
+    // Windows to build swift-format from source and use that. See
+    // https://github.com/flutter/packages/pull/9460.
     argParser.addFlag(_swiftArg,
-        help: 'Format and lint Swift files', defaultsTo: true);
+        help: 'Format and lint Swift files', defaultsTo: platform.isMacOS);
     argParser.addOption(_clangFormatPathArg,
         defaultsTo: 'clang-format', help: 'Path to "clang-format" executable.');
     argParser.addOption(_javaPathArg,
         defaultsTo: 'java', help: 'Path to "java" executable.');
-    argParser.addOption(_swiftFormatPathArg,
-        defaultsTo: 'swift-format', help: 'Path to "swift-format" executable.');
   }
 
   static const String _dartArg = 'dart';
@@ -76,7 +79,6 @@ class FormatCommand extends PackageLoopingCommand {
   static const String _swiftArg = 'swift';
   static const String _clangFormatPathArg = 'clang-format-path';
   static const String _javaPathArg = 'java-path';
-  static const String _swiftFormatPathArg = 'swift-format-path';
 
   @override
   final String name = 'format';
@@ -223,10 +225,10 @@ class FormatCommand extends PackageLoopingCommand {
     final Iterable<String> swiftFiles =
         _getPathsWithExtensions(files, <String>{'.swift'});
     if (swiftFiles.isNotEmpty) {
-      final String swiftFormat = await _findValidSwiftFormat();
       print('Formatting .swift files...');
-      final int formatExitCode =
-          await _runBatched(swiftFormat, <String>['-i'], files: swiftFiles);
+      final int formatExitCode = await _runBatched(
+          'xcrun', <String>['swift-format', '-i'],
+          files: swiftFiles);
       if (formatExitCode != 0) {
         printError('Failed to format Swift files: exit code $formatExitCode.');
         throw ToolExit(_exitSwiftFormatFailed);
@@ -234,8 +236,9 @@ class FormatCommand extends PackageLoopingCommand {
 
       print('Linting .swift files...');
       final int lintExitCode = await _runBatched(
-          swiftFormat,
+          'xcrun',
           <String>[
+            'swift-format',
             'lint',
             '--parallel',
             '--strict',
@@ -268,17 +271,6 @@ class FormatCommand extends PackageLoopingCommand {
     }
     printError('Unable to run "clang-format". Make sure that it is in your '
         'path, or provide a full path with --$_clangFormatPathArg.');
-    throw ToolExit(_exitDependencyMissing);
-  }
-
-  Future<String> _findValidSwiftFormat() async {
-    final String swiftFormat = getStringArg(_swiftFormatPathArg);
-    if (await _hasDependency(swiftFormat)) {
-      return swiftFormat;
-    }
-
-    printError('Unable to run "swift-format". Make sure that it is in your '
-        'path, or provide a full path with --$_swiftFormatPathArg.');
     throw ToolExit(_exitDependencyMissing);
   }
 

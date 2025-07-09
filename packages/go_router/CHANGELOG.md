@@ -1,30 +1,22 @@
-## 15.3.0
+## 16.1.0
 
 - Adds new top level `onEnter` callback with access to current and next route states.
 - Deprecates top level `redirect` in favor of `onEnter`.
 
-## 15.2.4
+## 16.0.0
 
-- Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
-
-## 15.2.3
-
-- Updates Type-safe routes topic documentation to use the mixin from `go_router_builder` 3.0.0.
-
-## 15.2.2
-
-- Fixes calling `PopScope.onPopInvokedWithResult` in branch routes.
-
-## 15.2.1
-
-## 15.2.0
-
-* `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
+- **BREAKING CHANGE**
+  - Bump major version for `GoRouteData` breaking changes.
+  - (Previously 15.2.4) Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
+  - (Previously 15.2.3) Updates Type-safe routes topic documentation to use the mixin from `go_router_builder` 3.0.0.
+  - (Previously 15.2.2) Fixes calling `PopScope.onPopInvokedWithResult` in branch routes.
+  - (Previously 15.2.1) Fixes Popping state and re-rendering scaffold at the same time doesn't update the URL on web.
+  - (Previously 15.2.0) `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
 
 ## 15.1.3
 
-* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
-* Fixes typo in API docs.
+- Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+- Fixes typo in API docs.
 
 ## 15.1.2
 
@@ -48,7 +40,7 @@
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
-
+ 
 ## 14.8.0
 
 - Adds `preload` parameter to `StatefulShellBranchData.$branch`.
@@ -1212,4 +1204,3 @@
 ## 0.1.0
 
 - squatting on the package name (I'm not too proud to admit it)
-
