@@ -14,6 +14,7 @@ export 'src/match.dart' hide RouteMatchListCodec;
 export 'src/misc/errors.dart';
 export 'src/misc/extensions.dart';
 export 'src/misc/inherited_router.dart';
+export 'src/on_enter.dart' show Allow, Block, OnEnter, OnEnterResult;
 export 'src/pages/custom_transition_page.dart';
 export 'src/parser.dart';
 export 'src/route.dart';

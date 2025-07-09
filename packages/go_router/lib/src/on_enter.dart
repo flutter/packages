@@ -17,13 +17,33 @@ import 'parser.dart';
 import 'router.dart';
 import 'state.dart';
 
+/// The result of an [onEnter] callback.
+///
+/// This sealed class represents the possible outcomes of navigation interception.
+sealed class OnEnterResult {
+  /// Creates an [OnEnterResult].
+  const OnEnterResult();
+}
+
+/// Allows the navigation to proceed.
+final class Allow extends OnEnterResult {
+  /// Creates an [Allow] result.
+  const Allow();
+}
+
+/// Blocks the navigation from proceeding.
+final class Block extends OnEnterResult {
+  /// Creates a [Block] result.
+  const Block();
+}
+
 /// The signature for the top-level [onEnter] callback.
 ///
 /// This callback receives the [BuildContext], the current navigation state,
 /// the state being navigated to, and a reference to the [GoRouter] instance.
-/// It returns a [Future<bool>] which should resolve to `true` if navigation
-/// is allowed, or `false` to block navigation.
-typedef OnEnter = Future<bool> Function(
+/// It returns a [Future<OnEnterResult>] which should resolve to [Allow] if navigation
+/// is allowed, or [Block] to block navigation.
+typedef OnEnter = Future<OnEnterResult> Function(
   BuildContext context,
   GoRouterState currentState,
   GoRouterState nextState,
@@ -80,8 +100,8 @@ class OnEnterHandler {
   /// configured limit. If everything is within limits, this method builds the current and
   /// next navigation states, then executes the [onEnter] callback.
   ///
-  /// * If [onEnter] returns `true`, the [onCanEnter] callback is invoked to allow navigation.
-  /// * If [onEnter] returns `false`, the [onCanNotEnter] callback is invoked to block navigation.
+  /// * If [onEnter] returns [Allow], the [onCanEnter] callback is invoked to allow navigation.
+  /// * If [onEnter] returns [Block], the [onCanNotEnter] callback is invoked to block navigation.
   ///
   /// Exceptions thrown synchronously or asynchronously by [onEnter] are caught and processed
   /// via the [_onParserException] handler if available.
@@ -127,9 +147,9 @@ class OnEnterHandler {
         : nextState;
 
     // Execute the onEnter callback in a try-catch to capture synchronous exceptions.
-    Future<bool> canEnterFuture;
+    Future<OnEnterResult> onEnterResultFuture;
     try {
-      canEnterFuture = topOnEnter(
+      onEnterResultFuture = topOnEnter(
         context,
         currentState,
         nextState,
@@ -153,8 +173,18 @@ class OnEnterHandler {
     _resetRedirectionHistory();
 
     // Handle asynchronous completion and catch any errors.
-    return canEnterFuture.then<RouteMatchList>(
-      (bool canEnter) => canEnter ? onCanEnter() : onCanNotEnter(),
+    return onEnterResultFuture.then<RouteMatchList>(
+      (OnEnterResult result) {
+        if (result is Allow) {
+          return onCanEnter();
+        } else if (result is Block) {
+          return onCanNotEnter();
+        } else {
+          // This should never happen with a sealed class, but provide a fallback
+          throw GoException(
+              'Invalid OnEnterResult type: ${result.runtimeType}');
+        }
+      },
       onError: (Object error, StackTrace stackTrace) {
         final RouteMatchList errorMatchList = _errorRouteMatchList(
           routeInformation.uri,

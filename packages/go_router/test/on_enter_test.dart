@@ -36,7 +36,7 @@ void main() {
             onEnterCallCount++;
             capturedCurrentState = current;
             capturedNextState = next;
-            return true;
+            return const Allow();
           },
           routes: <RouteBase>[
             GoRoute(
@@ -83,7 +83,9 @@ void main() {
           ) async {
             navigationAttempts.add(next.uri.path);
             currentPath = current.uri.path;
-            return !next.uri.path.contains('blocked');
+            return next.uri.path.contains('blocked')
+                ? const Block()
+                : const Allow();
           },
           routes: <RouteBase>[
             GoRoute(
@@ -156,7 +158,9 @@ void main() {
           GoRouter goRouter,
         ) async {
           onEnterCallCount++;
-          return !next.uri.path.contains('block');
+          return next.uri.path.contains('block')
+              ? const Block()
+              : const Allow();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -216,9 +220,9 @@ void main() {
             GoRouterState next, GoRouter goRouter) async {
           if (next.uri.path == '/recursive') {
             goRouter.push('/recursive');
-            return false;
+            return const Block();
           }
-          return true;
+          return const Allow();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -277,13 +281,13 @@ void main() {
               (current: current.uri.toString(), next: next.uri.toString()));
 
           if (!isProtected) {
-            return true;
+            return const Allow();
           }
           if (await isAuthenticated()) {
-            return true;
+            return const Allow();
           }
           router.go('/sign-in');
-          return false;
+          return const Block();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -349,9 +353,9 @@ void main() {
           if (next.uri.path == '/requires-auth') {
             goRouter.goNamed('login-page',
                 queryParameters: <String, String>{'from': next.uri.toString()});
-            return false;
+            return const Block();
           }
-          return true;
+          return const Allow();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -423,10 +427,10 @@ void main() {
           paramsSink.add(
               (current: current.uri.toString(), next: next.uri.toString()));
           if (!isProtected) {
-            return true;
+            return const Allow();
           }
           if (await isAuthenticated()) {
-            return true;
+            return const Allow();
           }
           await router.push<bool?>('/sign-in').then((bool? isLoggedIn) {
             if (isLoggedIn ?? false) {
@@ -434,7 +438,7 @@ void main() {
             }
           });
 
-          return false;
+          return const Block();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -500,9 +504,9 @@ void main() {
           if (next.uri.path == '/old-page') {
             navigationHistory.add('Replacing with /new-version');
             await goRouter.replace<void>('/new-version');
-            return false;
+            return const Block();
           }
-          return true;
+          return const Allow();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -561,9 +565,9 @@ void main() {
           if (next.uri.path == '/outdated') {
             navigationLog.add('Push replacing with /updated');
             await goRouter.pushReplacement('/updated');
-            return false;
+            return const Block();
           }
-          return true;
+          return const Allow();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -665,12 +669,12 @@ void main() {
 
           // Allow navigation if not going to the protected route
           if (!isNavigatingToProtected) {
-            return true;
+            return const Allow();
           }
 
           // Allow navigation if authenticated
           if (await isAuthenticated()) {
-            return true;
+            return const Allow();
           }
 
           // If unauthenticated and going to protected route:
@@ -681,7 +685,7 @@ void main() {
                 'redirectTo': next.uri.toString() // Pass the full next URI
               });
           // 2. Block the original navigation to '/protected'
-          return false;
+          return const Block();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -807,7 +811,7 @@ void main() {
             goRouter.go('/step-one');
 
             // We're blocking the original navigation
-            return false;
+            return const Block();
           }
 
           // When we reach step-one, mark test as complete
@@ -815,7 +819,7 @@ void main() {
             navigationComplete.complete();
           }
 
-          return true;
+          return const Allow();
         },
         routes: <RouteBase>[
           GoRoute(
@@ -898,7 +902,7 @@ void main() {
             GoRouterState next, GoRouter goRouter) async {
           // If the navigation target is '/fallback', allow it without throwing.
           if (next.uri.path == '/fallback') {
-            return true;
+            return const Allow();
           }
           // For any other target, throw an exception.
           throw Exception('onEnter error triggered');

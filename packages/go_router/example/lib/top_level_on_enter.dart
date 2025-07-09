@@ -78,8 +78,8 @@ class App extends StatelessWidget {
 
       /// Handles incoming routes before navigation occurs.
       /// This callback can:
-      /// 1. Block navigation and perform actions (return false)
-      /// 2. Allow navigation to proceed (return true)
+      /// 1. Block navigation and perform actions (return Block())
+      /// 2. Allow navigation to proceed (return Allow())
       /// 3. Show loading states during async operations
       /// 4. Demonstrate exception handling
       onEnter: (
@@ -111,15 +111,15 @@ class App extends StatelessWidget {
               // Process code in background - don't block with complex UI
               await _processReferralCodeInBackground(context, code);
             }
-            return false; // Prevent navigation
+            return const Block(); // Prevent navigation
 
           case '/auth':
             if (nextState.uri.queryParameters['token'] != null) {
               _handleAuthToken(
                   context, nextState.uri.queryParameters['token']!);
-              return false; // Prevent navigation
+              return const Block(); // Prevent navigation
             }
-            return true;
+            return const Allow();
 
           case '/crash-test':
             // Deliberately throw an exception to demonstrate error handling
@@ -129,10 +129,10 @@ class App extends StatelessWidget {
             // Runtime type error to test different error types
             // ignore: unnecessary_cast
             nextState.uri as int;
-            return true;
+            return const Allow();
 
           default:
-            return true; // Allow navigation for all other routes
+            return const Allow(); // Allow navigation for all other routes
         }
       },
       routes: <RouteBase>[
