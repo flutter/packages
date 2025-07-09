@@ -33,8 +33,8 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
-/// Provides overrides for the constructors and static members for
-/// each proxy API.
+/// Provides overrides for the constructors and static members of each proxy
+/// API.
 ///
 /// This is only intended to be used with unit tests to prevent errors from
 /// making message calls in a unit test.
