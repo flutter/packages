@@ -44,9 +44,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(strong, nonatomic, nullable) NSObject<FLTAssetWriter> *videoWriter;
 /// Whether the recording is disconnected.
 @property(assign, nonatomic) BOOL isRecordingDisconnected;
-/// Represents sum of all recording pauses/interruptions.
+/// Represents sum of all pauses/interruptions during recording.
 @property(assign, nonatomic) CMTime recordingTimeOffset;
-/// Output to use for adjusting of recording offset.
+/// Output to use for adjusting of recording time offset.
 @property(nonatomic) AVCaptureOutput *outputForOffsetAdjusting;
 /// Time of the last appended video sample.
 @property(assign, nonatomic) CMTime lastAppendedVideoSampleTime;
