@@ -522,16 +522,6 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)pauseVideoRecording {
-  _isRecordingPaused = YES;
-  _videoIsDisconnected = YES;
-  _audioIsDisconnected = YES;
-}
-
-- (void)resumeVideoRecording {
-  _isRecordingPaused = NO;
-}
-
 - (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)pigeonOrientation {
   UIDeviceOrientation orientation =
       FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation);
@@ -589,14 +579,6 @@ NSString *const errorMethod = @"error";
   }
   _flashMode = mode;
   completion(nil);
-}
-
-- (void)pausePreview {
-  _isPreviewPaused = true;
-}
-
-- (void)resumePreview {
-  _isPreviewPaused = false;
 }
 
 - (void)setDescriptionWhileRecording:(NSString *)cameraName

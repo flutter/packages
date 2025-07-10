@@ -69,6 +69,16 @@ final class DefaultCamera: FLTCam, Camera {
     audioCaptureSession.stopRunning()
   }
 
+  func pauseVideoRecording() {
+    isRecordingPaused = true
+    videoIsDisconnected = true
+    audioIsDisconnected = true
+  }
+
+  func resumeVideoRecording() {
+    isRecordingPaused = false
+  }
+
   func setImageFileFormat(_ fileFormat: FCPPlatformImageFileFormat) {
     self.fileFormat = fileFormat
   }
@@ -206,6 +216,14 @@ final class DefaultCamera: FLTCam, Camera {
       break
     }
     return CGPoint(x: x, y: y)
+  }
+
+  func pausePreview() {
+    isPreviewPaused = true
+  }
+
+  func resumePreview() {
+    isPreviewPaused = false
   }
 
   func captureOutput(

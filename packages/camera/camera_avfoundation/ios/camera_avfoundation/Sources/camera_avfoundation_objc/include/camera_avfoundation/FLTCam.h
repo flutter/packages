@@ -65,16 +65,12 @@ NS_ASSUME_NONNULL_BEGIN
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger;
 - (void)stopVideoRecordingWithCompletion:(void (^)(NSString *_Nullable,
                                                    FlutterError *_Nullable))completion;
-- (void)pauseVideoRecording;
-- (void)resumeVideoRecording;
 - (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)orientation
     NS_SWIFT_NAME(lockCaptureOrientation(_:));
 - (void)unlockCaptureOrientation;
 - (void)setFlashMode:(FCPPlatformFlashMode)mode
       withCompletion:(void (^)(FlutterError *_Nullable))completion;
 
-- (void)pausePreview;
-- (void)resumePreview;
 - (void)setDescriptionWhileRecording:(NSString *)cameraName
                       withCompletion:(void (^)(FlutterError *_Nullable))completion;
 
