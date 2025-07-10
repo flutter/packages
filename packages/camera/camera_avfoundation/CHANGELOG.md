@@ -1,6 +1,7 @@
 ## 0.9.20+2
 
 * Migrates exposure offset and zoom factor limit getters to Swift.
+* Migrates `setImageFileFormat` method to Swift.
 
 ## 0.9.20+1
 

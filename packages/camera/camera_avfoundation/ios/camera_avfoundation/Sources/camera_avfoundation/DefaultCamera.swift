@@ -69,6 +69,10 @@ final class DefaultCamera: FLTCam, Camera {
     audioCaptureSession.stopRunning()
   }
 
+  func setImageFileFormat(_ fileFormat: FCPPlatformImageFileFormat) {
+    self.fileFormat = fileFormat
+  }
+
   func setExposureMode(_ mode: FCPPlatformExposureMode) {
     exposureMode = mode
     applyExposureMode()

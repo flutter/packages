@@ -202,10 +202,6 @@ NSString *const errorMethod = @"error";
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
 }
 
-- (void)setImageFileFormat:(FCPPlatformImageFileFormat)fileFormat {
-  _fileFormat = fileFormat;
-}
-
 - (void)setDeviceOrientation:(UIDeviceOrientation)orientation {
   if (_deviceOrientation == orientation) {
     return;
