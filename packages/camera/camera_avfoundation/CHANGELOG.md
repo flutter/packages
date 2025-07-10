@@ -1,3 +1,7 @@
+## 0.9.20+2
+
+* Migrates exposure offset and zoom factor limit getters to Swift.
+
 ## 0.9.20+1
 
 * Migrates lifecycle methods (`start`, `stop`, `close`) to Swift.

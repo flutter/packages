@@ -29,10 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
 @property(assign, nonatomic) FCPPlatformImageFileFormat fileFormat;
-@property(readonly, nonatomic) CGFloat minimumAvailableZoomFactor;
-@property(readonly, nonatomic) CGFloat maximumAvailableZoomFactor;
-@property(readonly, nonatomic) CGFloat minimumExposureOffset;
-@property(readonly, nonatomic) CGFloat maximumExposureOffset;
 
 // Properties exposed for the Swift DefaultCamera subclass
 @property(nonatomic, nullable) FLTImageStreamHandler *imageStreamHandler;

@@ -737,22 +737,6 @@ NSString *const errorMethod = @"error";
   completion(nil);
 }
 
-- (CGFloat)minimumAvailableZoomFactor {
-  return _captureDevice.minAvailableVideoZoomFactor;
-}
-
-- (CGFloat)maximumAvailableZoomFactor {
-  return _captureDevice.maxAvailableVideoZoomFactor;
-}
-
-- (CGFloat)minimumExposureOffset {
-  return _captureDevice.minExposureTargetBias;
-}
-
-- (CGFloat)maximumExposureOffset {
-  return _captureDevice.maxExposureTargetBias;
-}
-
 - (BOOL)setupWriterForPath:(NSString *)path {
   NSError *error = nil;
   NSURL *outputURL;
