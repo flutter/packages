@@ -79,6 +79,28 @@ final class DefaultCamera: FLTCam, Camera {
     isRecordingPaused = false
   }
 
+  func setDeviceOrientation(_ orientation: UIDeviceOrientation) {
+    if deviceOrientation == orientation {
+      return
+    }
+
+    deviceOrientation = orientation
+    updateOrientation()
+  }
+
+  func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
+    let orientation = FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation)
+    if lockedCaptureOrientation != orientation {
+      lockedCaptureOrientation = orientation
+      updateOrientation()
+    }
+  }
+
+  func unlockCaptureOrientation() {
+    lockedCaptureOrientation = .unknown
+    updateOrientation()
+  }
+
   func setImageFileFormat(_ fileFormat: FCPPlatformImageFileFormat) {
     self.fileFormat = fileFormat
   }

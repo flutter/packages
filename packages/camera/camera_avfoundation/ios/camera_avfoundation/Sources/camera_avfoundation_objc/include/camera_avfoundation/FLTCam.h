@@ -48,12 +48,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, nonatomic) NSObject<FLTCaptureSession> *videoCaptureSession;
 @property(readonly, nonatomic) NSObject<FLTCaptureSession> *audioCaptureSession;
 @property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
+@property(assign, nonatomic) UIDeviceOrientation lockedCaptureOrientation;
+@property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration error:(NSError **)error;
 
-- (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
 - (void)captureToFileWithCompletion:(void (^)(NSString *_Nullable,
                                               FlutterError *_Nullable))completion;
 /// Starts recording a video with an optional streaming messenger.
@@ -65,9 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger;
 - (void)stopVideoRecordingWithCompletion:(void (^)(NSString *_Nullable,
                                                    FlutterError *_Nullable))completion;
-- (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)orientation
-    NS_SWIFT_NAME(lockCaptureOrientation(_:));
-- (void)unlockCaptureOrientation;
 - (void)setFlashMode:(FCPPlatformFlashMode)mode
       withCompletion:(void (^)(FlutterError *_Nullable))completion;
 
@@ -79,6 +77,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)stopImageStream;
 - (void)setZoomLevel:(CGFloat)zoom withCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)setUpCaptureSessionForAudioIfNeeded;
+
+// Methods exposed for the Swift DefaultCamera subclass
+- (void)updateOrientation;
 
 @end
 

@@ -42,14 +42,12 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(strong, nonatomic) NSString *videoRecordingPath;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
-@property(assign, nonatomic) UIDeviceOrientation lockedCaptureOrientation;
 @property(nonatomic) CMMotionManager *motionManager;
 /// All FLTCam's state access and capture session related operations should be on run on this queue.
 @property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
 /// The queue on which captured photos (not videos) are written to disk.
 /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
 @property(strong, nonatomic) dispatch_queue_t photoIOQueue;
-@property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
 /// A wrapper for CMVideoFormatDescriptionGetDimensions.
 /// Allows for alternate implementations in tests.
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
@@ -200,15 +198,6 @@ NSString *const errorMethod = @"error";
   _videoFormat = videoFormat;
   _captureVideoOutput.videoSettings =
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
-}
-
-- (void)setDeviceOrientation:(UIDeviceOrientation)orientation {
-  if (_deviceOrientation == orientation) {
-    return;
-  }
-
-  _deviceOrientation = orientation;
-  [self updateOrientation];
 }
 
 - (void)updateOrientation {
@@ -520,20 +509,6 @@ NSString *const errorMethod = @"error";
                         userInfo:@{NSLocalizedDescriptionKey : @"Video is not recording!"}];
     completion(nil, FlutterErrorFromNSError(error));
   }
-}
-
-- (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)pigeonOrientation {
-  UIDeviceOrientation orientation =
-      FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation);
-  if (_lockedCaptureOrientation != orientation) {
-    _lockedCaptureOrientation = orientation;
-    [self updateOrientation];
-  }
-}
-
-- (void)unlockCaptureOrientation {
-  _lockedCaptureOrientation = UIDeviceOrientationUnknown;
-  [self updateOrientation];
 }
 
 - (void)setFlashMode:(FCPPlatformFlashMode)mode
