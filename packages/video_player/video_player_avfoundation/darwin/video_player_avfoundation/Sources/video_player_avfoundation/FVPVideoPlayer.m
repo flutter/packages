@@ -237,10 +237,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                         change:(NSDictionary *)change
                        context:(void *)context {
   NSAssert([NSThread isMainThread], @"event sink must only be accessed from the main thread");
-  if (!_eventSink) {
-    return;
-  }
   if (context == timeRangeContext) {
+    if (!_eventSink) {
+      return;
+    }
     NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
     for (NSValue *rangeValue in [object loadedTimeRanges]) {
       CMTimeRange range = [rangeValue CMTimeRangeValue];
@@ -255,18 +255,28 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         break;
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
-        [self sendVideoInitializedEvent];
+        if (_eventSink) {
+          [self sendVideoInitializedEvent];
+        }
         break;
       case AVPlayerItemStatusFailed:
-        [self sendFailedToLoadVideoEvent];
+        if (_eventSink) {
+          [self sendFailedToLoadVideoEvent];
+        }
         break;
     }
   } else if (context == playbackLikelyToKeepUpContext) {
+    if (!_eventSink) {
+      return;
+    }
     [self updatePlayingState];
     NSString *event =
         [[_player currentItem] isPlaybackLikelyToKeepUp] ? @"bufferingEnd" : @"bufferingStart";
     _eventSink(@{@"event" : event});
   } else if (context == rateContext) {
+    if (!_eventSink) {
+      return;
+    }
     // Important: Make sure to cast the object to AVPlayer when observing the rate property,
     // as it is not available in AVPlayerItem.
     AVPlayer *player = (AVPlayer *)object;
