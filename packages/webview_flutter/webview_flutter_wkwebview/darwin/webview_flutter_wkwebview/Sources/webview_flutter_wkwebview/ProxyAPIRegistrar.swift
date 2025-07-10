@@ -70,7 +70,9 @@ open class ProxyAPIRegistrar: WebKitLibraryPigeonProxyApiRegistrar {
 
   // Log when a Flutter method receives an error from Dart.
   func logFlutterMethodFailure(_ error: PigeonError, methodName: String) {
-    NSLog("\(String(describing: error)): Error returned from calling \(methodName): \(String(describing: error.message))")
+    NSLog(
+      "\(String(describing: error)): Error returned from calling \(methodName): \(String(describing: error.message))"
+    )
     NSLog("%@", Thread.callStackSymbols.joined(separator: "\n"))
   }
 

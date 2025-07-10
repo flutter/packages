@@ -9,9 +9,11 @@ import XCTest
 class ProxyAPIRegistrarTests: XCTestCase {
   func testLogFlutterMethodFailureDoesNotThrowAnError() {
     let registrar = TestProxyApiRegistrar()
-    
+
     XCTExpectFailure("Method should log a message and not throw an error.") {
-      XCTAssertThrowsError(registrar.logFlutterMethodFailure(PigeonError(code: "code", message: "message", details: nil), methodName: "aMethod"))
+      XCTAssertThrowsError(
+        registrar.logFlutterMethodFailure(
+          PigeonError(code: "code", message: "message", details: nil), methodName: "aMethod"))
     }
   }
 }
