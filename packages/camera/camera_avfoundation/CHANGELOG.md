@@ -1,3 +1,7 @@
+## 0.9.20+3
+
+* Migrates `setZoomLevel` and `setFlashMode` methods to Swift.
+
 ## 0.9.20+2
 
 * Migrates exposure offset and zoom factor limit getters to Swift.
