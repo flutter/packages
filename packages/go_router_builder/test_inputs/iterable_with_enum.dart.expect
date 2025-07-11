@@ -14,7 +14,6 @@ mixin _$IterableWithEnumRoute on GoRouteData {
 
   IterableWithEnumRoute get _self => this as IterableWithEnumRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/iterable-with-enum',
         queryParams: {
@@ -25,17 +24,13 @@ mixin _$IterableWithEnumRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 

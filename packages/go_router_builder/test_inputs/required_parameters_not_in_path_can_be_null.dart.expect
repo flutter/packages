@@ -12,7 +12,6 @@ mixin _$NullableRequiredParamNotInPath on GoRouteData {
   NullableRequiredParamNotInPath get _self =>
       this as NullableRequiredParamNotInPath;
 
-  @override
   String get location => GoRouteData.$location(
         'bob',
         queryParams: {
@@ -20,17 +19,13 @@ mixin _$NullableRequiredParamNotInPath on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
