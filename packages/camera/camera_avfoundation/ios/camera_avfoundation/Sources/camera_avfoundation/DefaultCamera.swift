@@ -10,6 +10,21 @@ import CoreMotion
 #endif
 
 final class DefaultCamera: FLTCam, Camera {
+  override var deviceOrientation: UIDeviceOrientation {
+    get { super.deviceOrientation }
+    set {
+      guard newValue != super.deviceOrientation else { return }
+
+      super.deviceOrientation = newValue
+      updateOrientation()
+    }
+  }
+
+  var minimumExposureOffset: CGFloat { CGFloat(captureDevice.minExposureTargetBias) }
+  var maximumExposureOffset: CGFloat { CGFloat(captureDevice.maxExposureTargetBias) }
+  var minimumAvailableZoomFactor: CGFloat { captureDevice.minAvailableVideoZoomFactor }
+  var maximumAvailableZoomFactor: CGFloat { captureDevice.maxAvailableVideoZoomFactor }
+
   /// The queue on which `latestPixelBuffer` property is accessed.
   /// To avoid unnecessary contention, do not access `latestPixelBuffer` on the `captureSessionQueue`.
   private let pixelBufferSynchronizationQueue = DispatchQueue(
@@ -62,6 +77,33 @@ final class DefaultCamera: FLTCam, Camera {
   func stop() {
     videoCaptureSession.stopRunning()
     audioCaptureSession.stopRunning()
+  }
+
+  func pauseVideoRecording() {
+    isRecordingPaused = true
+    videoIsDisconnected = true
+    audioIsDisconnected = true
+  }
+
+  func resumeVideoRecording() {
+    isRecordingPaused = false
+  }
+
+  func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
+    let orientation = FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation)
+    if lockedCaptureOrientation != orientation {
+      lockedCaptureOrientation = orientation
+      updateOrientation()
+    }
+  }
+
+  func unlockCaptureOrientation() {
+    lockedCaptureOrientation = .unknown
+    updateOrientation()
+  }
+
+  func setImageFileFormat(_ fileFormat: FCPPlatformImageFileFormat) {
+    self.fileFormat = fileFormat
   }
 
   func setExposureMode(_ mode: FCPPlatformExposureMode) {
@@ -197,6 +239,14 @@ final class DefaultCamera: FLTCam, Camera {
       break
     }
     return CGPoint(x: x, y: y)
+  }
+
+  func pausePreview() {
+    isPreviewPaused = true
+  }
+
+  func resumePreview() {
+    isPreviewPaused = false
   }
 
   func captureOutput(
