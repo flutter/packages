@@ -1,3 +1,9 @@
+## 26.0.0
+
+* **Breaking Change** [dart] Changes name of constructors used to create subclasses of ProxyApis to
+  `pigeon_**original_name**`.
+* [dart] Adds ProxyApi overrides classes to be used in Flutter unit tests.
+
 ## 25.5.0
 
 * [dart] Changes the default InstanceManager and its initialization to no longer make a message call

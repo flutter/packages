@@ -38,6 +38,10 @@ const String _pigeonMethodChannelCodec = 'pigeonMethodCodec';
 
 const String _overflowClassName = '_PigeonCodecOverflow';
 
+/// Name of the overrides class for overriding constructors and static members
+/// of proxy APIs.
+const String proxyApiOverridesClassName = '${proxyApiClassNamePrefix}Overrides';
+
 /// Options that control how Dart code will be generated.
 class DartOptions {
   /// Constructor for DartOptions.
@@ -120,6 +124,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   /// Instantiates a Dart Generator.
   const DartGenerator();
 
+  // Formatter used to format code from `code_builder`.
+  DartFormatter get _formatter {
+    return DartFormatter(languageVersion: Version(3, 6, 0));
+  }
+
   @override
   void writeFilePrologue(
     InternalDartOptions generatorOptions,
@@ -155,7 +164,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.newln();
 
     indent.writeln(
-        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${root.containsProxyApi ? ', immutable, protected' : ''};");
+        "import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer${root.containsProxyApi ? ', immutable, protected, visibleForTesting' : ''};");
     indent.writeln("import 'package:flutter/services.dart';");
     if (root.containsProxyApi) {
       indent.writeln(
@@ -906,8 +915,10 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           codecInstanceName: codecInstanceName,
           superClassApi: api.superClass?.associatedProxyApi,
           unattachedFields: api.unattachedFields,
-          flutterMethodsFromSuperClasses: api.flutterMethodsFromSuperClasses(),
-          flutterMethodsFromInterfaces: api.flutterMethodsFromInterfaces(),
+          flutterMethodsFromSuperClasses:
+              api.flutterMethodsFromSuperClassesWithApis(),
+          flutterMethodsFromInterfaces:
+              api.flutterMethodsFromInterfacesWithApis(),
           declaredFlutterMethods: api.flutterMethods,
         ))
         ..constructors.add(
@@ -916,8 +927,9 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
             superClassApi: api.superClass?.associatedProxyApi,
             unattachedFields: api.unattachedFields,
             flutterMethodsFromSuperClasses:
-                api.flutterMethodsFromSuperClasses(),
-            flutterMethodsFromInterfaces: api.flutterMethodsFromInterfaces(),
+                api.flutterMethodsFromSuperClassesWithApis(),
+            flutterMethodsFromInterfaces:
+                api.flutterMethodsFromInterfacesWithApis(),
             declaredFlutterMethods: api.flutterMethods,
           ),
         )
@@ -937,6 +949,10 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ))
         ..fields.addAll(_proxyApiInterfaceApiFields(api.apisOfInterfaces()))
         ..fields.addAll(_proxyApiAttachedFields(api.attachedFields))
+        ..methods.addAll(_proxyApiStaticAttachedFieldsGetters(
+          api.attachedFields.where((ApiField field) => field.isStatic),
+          apiName: api.name,
+        ))
         ..methods.add(
           _proxyApiSetUpMessageHandlerMethod(
             flutterMethods: api.flutterMethods,
@@ -967,17 +983,17 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           _proxyApiCopyMethod(
             apiName: api.name,
             unattachedFields: api.unattachedFields,
-            declaredAndInheritedFlutterMethods: api
-                .flutterMethodsFromSuperClasses()
-                .followedBy(api.flutterMethodsFromInterfaces())
-                .followedBy(api.flutterMethods),
+            flutterMethodsFromSuperClasses:
+                api.flutterMethodsFromSuperClassesWithApis(),
+            flutterMethodsFromInterfaces:
+                api.flutterMethodsFromInterfacesWithApis(),
+            declaredFlutterMethods: api.flutterMethods,
           ),
         ),
     );
 
     final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
-    indent.format(DartFormatter(languageVersion: Version(3, 6, 0))
-        .format('${proxyApi.accept(emitter)}'));
+    indent.format(_formatter.format('${proxyApi.accept(emitter)}'));
   }
 
   /// Generates Dart source code for test support libraries based on the given AST
@@ -1079,6 +1095,9 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     }
     if (root.classes.isNotEmpty) {
       _writeDeepEquals(indent);
+    }
+    if (root.containsProxyApi) {
+      _writeProxyApiPigeonOverrides(indent, proxyApis: root.apis.whereType());
     }
   }
 
@@ -1408,6 +1427,37 @@ if (${varNamePrefix}replyList == null) {
     });
   }
 
+  void _writeProxyApiPigeonOverrides(
+    Indent indent, {
+    required Iterable<AstProxyApi> proxyApis,
+  }) {
+    if (proxyApis.isEmpty) {
+      return;
+    }
+
+    final cb.Class proxyApiOverrides = cb.Class(
+      (cb.ClassBuilder builder) => builder
+        ..name = proxyApiOverridesClassName
+        ..annotations.add(cb.refer('visibleForTesting'))
+        ..docs.addAll(<String>[
+          '/// Provides overrides for the constructors and static members of each proxy',
+          '/// API.',
+          '///',
+          '/// This is only intended to be used with unit tests to prevent errors from',
+          '/// making message calls in a unit test.',
+          '///',
+          '/// See [$proxyApiOverridesClassName.${classMemberNamePrefix}reset] to set all overrides back to null.',
+        ])
+        ..fields.addAll(_proxyApiOverridesClassConstructors(proxyApis))
+        ..fields.addAll(_proxyApiOverridesClassStaticFields(proxyApis))
+        ..fields.addAll(_proxyApiOverridesClassStaticMethods(proxyApis))
+        ..methods.add(_proxyApiOverridesClassResetMethod(proxyApis)),
+    );
+
+    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+    indent.format(_formatter.format('${proxyApiOverrides.accept(emitter)}'));
+  }
+
   static String _createFlutterApiMethodCall(
     String methodName,
     Iterable<Parameter> parameters,
@@ -1416,8 +1466,12 @@ if (${varNamePrefix}replyList == null) {
     return 'api.$methodName(${safeArgumentNames.join(', ')})';
   }
 
-  /// Converts Constructors from the pigeon AST to a `code_builder` Constructor
+  /// Converts Constructors from the pigeon AST to `code_builder` Constructors
   /// for a ProxyApi.
+  ///
+  /// Creates a factory constructor that can return an overrideable static
+  /// method for testing and a constructor that calls to the native
+  /// API implementation
   Iterable<cb.Constructor> _proxyApiConstructors(
     Iterable<Constructor> constructors, {
     required String apiName,
@@ -1426,8 +1480,8 @@ if (${varNamePrefix}replyList == null) {
     required String codecInstanceName,
     required AstProxyApi? superClassApi,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<Method> flutterMethodsFromSuperClasses,
-    required Iterable<Method> flutterMethodsFromInterfaces,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
     required Iterable<Method> declaredFlutterMethods,
   }) sync* {
     final cb.Parameter binaryMessengerParameter = cb.Parameter(
@@ -1436,13 +1490,85 @@ if (${varNamePrefix}replyList == null) {
         ..named = true
         ..toSuper = true,
     );
-    final cb.Parameter instanceManagerParameter = cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = _instanceManagerVarName
-        ..named = true
-        ..toSuper = true,
-    );
+
     for (final Constructor constructor in constructors) {
+      final String? factoryConstructorName =
+          constructor.name.isNotEmpty ? constructor.name : null;
+      final String constructorName =
+          '$classMemberNamePrefix${constructor.name.isNotEmpty ? constructor.name : 'new'}';
+      final String overridesConstructorName = constructor.name.isNotEmpty
+          ? '${toLowerCamelCase(apiName)}_${constructor.name}'
+          : '${toLowerCamelCase(apiName)}_new';
+
+      // Factory constructor that forwards the parameters to the overrides class
+      // or to the constructor yielded below this one.
+      yield cb.Constructor(
+        (cb.ConstructorBuilder builder) {
+          final Iterable<cb.Parameter> parameters = _asConstructorParameters(
+            apiName: apiName,
+            parameters: constructor.parameters,
+            unattachedFields: unattachedFields,
+            flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+            flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+            declaredFlutterMethods: declaredFlutterMethods,
+          );
+          final Iterable<cb.Parameter> parametersWithoutMessengerAndManager =
+              _asConstructorParameters(
+            apiName: apiName,
+            parameters: constructor.parameters,
+            unattachedFields: unattachedFields,
+            flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+            flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+            declaredFlutterMethods: declaredFlutterMethods,
+            includeBinaryMessengerAndInstanceManager: false,
+          );
+          builder
+            ..name = factoryConstructorName
+            ..factory = true
+            ..docs.addAll(asDocumentationComments(
+              constructor.documentationComments,
+              _docCommentSpec,
+            ))
+            ..optionalParameters.addAll(parameters)
+            ..body = cb.Block(
+              (cb.BlockBuilder builder) {
+                final Map<String, cb.Expression> forwardedParams =
+                    <String, cb.Expression>{
+                  for (final cb.Parameter parameter in parameters)
+                    parameter.name: cb.refer(parameter.name)
+                };
+                final Map<String, cb.Expression>
+                    forwardedParamsWithoutMessengerAndManager =
+                    <String, cb.Expression>{
+                  for (final cb.Parameter parameter
+                      in parametersWithoutMessengerAndManager)
+                    parameter.name: cb.refer(parameter.name)
+                };
+
+                builder.statements.addAll(<cb.Code>[
+                  cb.Code(
+                      'if ($proxyApiOverridesClassName.$overridesConstructorName != null) {'),
+                  cb.CodeExpression(
+                    cb.Code(
+                        '$proxyApiOverridesClassName.$overridesConstructorName!'),
+                  )
+                      .call(
+                        <cb.Expression>[],
+                        forwardedParamsWithoutMessengerAndManager,
+                      )
+                      .returned
+                      .statement,
+                  const cb.Code('}'),
+                  cb.CodeExpression(cb.Code('$apiName.$constructorName'))
+                      .call(<cb.Expression>[], forwardedParams)
+                      .returned
+                      .statement,
+                ]);
+              },
+            );
+        },
+      );
+
       yield cb.Constructor(
         (cb.ConstructorBuilder builder) {
           final String channelName = makeChannelNameWithStrings(
@@ -1453,52 +1579,21 @@ if (${varNamePrefix}replyList == null) {
             dartPackageName: dartPackageName,
           );
           builder
-            ..name = constructor.name.isNotEmpty ? constructor.name : null
+            ..name = constructorName
+            ..annotations.add(cb.refer('protected'))
             ..docs.addAll(asDocumentationComments(
               constructor.documentationComments,
               _docCommentSpec,
             ))
-            ..optionalParameters.addAll(
-              <cb.Parameter>[
-                binaryMessengerParameter,
-                instanceManagerParameter,
-                for (final ApiField field in unattachedFields)
-                  cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = field.name
-                      ..named = true
-                      ..toThis = true
-                      ..required = !field.type.isNullable,
-                  ),
-                for (final Method method in flutterMethodsFromSuperClasses)
-                  cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = method.name
-                      ..named = true
-                      ..toSuper = true
-                      ..required = method.isRequired,
-                  ),
-                for (final Method method in flutterMethodsFromInterfaces
-                    .followedBy(declaredFlutterMethods))
-                  cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = method.name
-                      ..named = true
-                      ..toThis = true
-                      ..required = method.isRequired,
-                  ),
-                ...indexMap(
-                  constructor.parameters,
-                  (int index, NamedType parameter) => cb.Parameter(
-                    (cb.ParameterBuilder builder) => builder
-                      ..name = _getParameterName(index, parameter)
-                      ..type = _refer(parameter.type)
-                      ..named = true
-                      ..required = !parameter.type.isNullable,
-                  ),
-                )
-              ],
-            )
+            ..optionalParameters.addAll(_asConstructorParameters(
+              apiName: apiName,
+              parameters: constructor.parameters,
+              unattachedFields: unattachedFields,
+              flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+              flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+              declaredFlutterMethods: declaredFlutterMethods,
+              defineType: false,
+            ))
             ..initializers.addAll(
               <cb.Code>[
                 if (superClassApi != null)
@@ -1560,22 +1655,10 @@ if (${varNamePrefix}replyList == null) {
     required String apiName,
     required AstProxyApi? superClassApi,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<Method> flutterMethodsFromSuperClasses,
-    required Iterable<Method> flutterMethodsFromInterfaces,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
     required Iterable<Method> declaredFlutterMethods,
   }) {
-    final cb.Parameter binaryMessengerParameter = cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = '${classMemberNamePrefix}binaryMessenger'
-        ..named = true
-        ..toSuper = true,
-    );
-    final cb.Parameter instanceManagerParameter = cb.Parameter(
-      (cb.ParameterBuilder builder) => builder
-        ..name = _instanceManagerVarName
-        ..named = true
-        ..toSuper = true,
-    );
     return cb.Constructor(
       (cb.ConstructorBuilder builder) => builder
         ..name = '${classMemberNamePrefix}detached'
@@ -1586,35 +1669,15 @@ if (${varNamePrefix}replyList == null) {
           '/// create copies for an [$dartInstanceManagerClassName].',
         ])
         ..annotations.add(cb.refer('protected'))
-        ..optionalParameters.addAll(<cb.Parameter>[
-          binaryMessengerParameter,
-          instanceManagerParameter,
-          for (final ApiField field in unattachedFields)
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = field.name
-                ..named = true
-                ..toThis = true
-                ..required = !field.type.isNullable,
-            ),
-          for (final Method method in flutterMethodsFromSuperClasses)
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = method.name
-                ..named = true
-                ..toSuper = true
-                ..required = method.isRequired,
-            ),
-          for (final Method method in flutterMethodsFromInterfaces
-              .followedBy(declaredFlutterMethods))
-            cb.Parameter(
-              (cb.ParameterBuilder builder) => builder
-                ..name = method.name
-                ..named = true
-                ..toThis = true
-                ..required = method.isRequired,
-            ),
-        ])
+        ..optionalParameters.addAll(_asConstructorParameters(
+          apiName: apiName,
+          parameters: <Parameter>[],
+          unattachedFields: unattachedFields,
+          flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+          flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+          declaredFlutterMethods: declaredFlutterMethods,
+          defineType: false,
+        ))
         ..initializers.addAll(<cb.Code>[
           if (superClassApi != null)
             const cb.Code('super.${classMemberNamePrefix}detached()'),
@@ -1696,25 +1759,7 @@ if (${varNamePrefix}replyList == null) {
             ],
             _docCommentSpec,
           ))
-          ..type = cb.FunctionType(
-            (cb.FunctionTypeBuilder builder) => builder
-              ..returnType = _refer(
-                method.returnType,
-                asFuture: method.isAsynchronous,
-              )
-              ..isNullable = !method.isRequired
-              ..requiredParameters.addAll(<cb.Reference>[
-                cb.refer('$apiName ${classMemberNamePrefix}instance'),
-                ...indexMap(
-                  method.parameters,
-                  (int index, NamedType parameter) {
-                    return cb.refer(
-                      '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
-                    );
-                  },
-                ),
-              ]),
-          ),
+          ..type = _methodAsFunctionType(method, apiName: apiName),
       );
     }
   }
@@ -1767,6 +1812,38 @@ if (${varNamePrefix}replyList == null) {
     }
   }
 
+  /// Converts static attached Fields from the pigeon AST to `code_builder`
+  /// Method.
+  ///
+  /// Static attached fields return an overrideable test value or returns the
+  /// private static instance.
+  ///
+  /// Example Output:
+  ///
+  /// ```dart
+  /// static MyClass get instance => PigeonMyClassOverrides.instance ?? _instance;
+  /// ```
+  Iterable<cb.Method> _proxyApiStaticAttachedFieldsGetters(
+    Iterable<ApiField> fields, {
+    required String apiName,
+  }) sync* {
+    for (final ApiField field in fields) {
+      yield cb.Method((cb.MethodBuilder builder) => builder
+        ..name = field.name
+        ..type = cb.MethodType.getter
+        ..static = true
+        ..returns = cb.refer(_addGenericTypesNullable(field.type))
+        ..docs.addAll(asDocumentationComments(
+          field.documentationComments,
+          _docCommentSpec,
+        ))
+        ..lambda = true
+        ..body = cb.Code(
+          '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${field.name} ?? _${field.name}',
+        ));
+    }
+  }
+
   /// Converts attached Fields from the pigeon AST to `code_builder` Field.
   ///
   /// Attached fields are set lazily by calling a private method that returns
@@ -1781,7 +1858,7 @@ if (${varNamePrefix}replyList == null) {
     for (final ApiField field in fields) {
       yield cb.Field(
         (cb.FieldBuilder builder) => builder
-          ..name = field.name
+          ..name = '${field.isStatic ? '_' : ''}${field.name}'
           ..type = cb.refer(_addGenericTypesNullable(field.type))
           ..modifier = cb.FieldModifier.final$
           ..static = field.isStatic
@@ -2105,6 +2182,16 @@ if (${varNamePrefix}replyList == null) {
   }) sync* {
     for (final Method method in methods) {
       assert(method.location == ApiLocation.host);
+      final Iterable<cb.Parameter> parameters = indexMap(
+        method.parameters,
+        (int index, NamedType parameter) => cb.Parameter(
+          (cb.ParameterBuilder builder) => builder
+            ..name = _getParameterName(index, parameter)
+            ..type = cb.refer(
+              _addGenericTypesNullable(parameter.type),
+            ),
+        ),
+      );
       yield cb.Method(
         (cb.MethodBuilder builder) => builder
           ..name = method.name
@@ -2115,18 +2202,7 @@ if (${varNamePrefix}replyList == null) {
             _docCommentSpec,
           ))
           ..returns = _refer(method.returnType, asFuture: true)
-          ..requiredParameters.addAll(
-            indexMap(
-              method.parameters,
-              (int index, NamedType parameter) => cb.Parameter(
-                (cb.ParameterBuilder builder) => builder
-                  ..name = _getParameterName(index, parameter)
-                  ..type = cb.refer(
-                    _addGenericTypesNullable(parameter.type),
-                  ),
-              ),
-            ),
-          )
+          ..requiredParameters.addAll(parameters)
           ..optionalParameters.addAll(<cb.Parameter>[
             if (method.isStatic) ...<cb.Parameter>[
               cb.Parameter(
@@ -2167,6 +2243,22 @@ if (${varNamePrefix}replyList == null) {
                 returnType: method.returnType,
               );
               builder.statements.addAll(<cb.Code>[
+                if (method.isStatic) ...<cb.Code>[
+                  cb.Code(
+                    'if ($proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${method.name} != null) {',
+                  ),
+                  cb.CodeExpression(
+                    cb.Code(
+                      '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${method.name}!',
+                    ),
+                  )
+                      .call(parameters.map(
+                        (cb.Parameter parameter) => cb.refer(parameter.name),
+                      ))
+                      .returned
+                      .statement,
+                  const cb.Code('}'),
+                ],
                 if (!method.isStatic)
                   cb.Code('final $codecName $_pigeonChannelCodec =\n'
                       '    $codecInstanceName;')
@@ -2193,8 +2285,18 @@ if (${varNamePrefix}replyList == null) {
   cb.Method _proxyApiCopyMethod({
     required String apiName,
     required Iterable<ApiField> unattachedFields,
-    required Iterable<Method> declaredAndInheritedFlutterMethods,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
+    required Iterable<Method> declaredFlutterMethods,
   }) {
+    final Iterable<cb.Parameter> parameters = _asConstructorParameters(
+      apiName: apiName,
+      parameters: <Parameter>[],
+      unattachedFields: unattachedFields,
+      flutterMethodsFromSuperClasses: flutterMethodsFromSuperClasses,
+      flutterMethodsFromInterfaces: flutterMethodsFromInterfaces,
+      declaredFlutterMethods: declaredFlutterMethods,
+    );
     return cb.Method(
       (cb.MethodBuilder builder) => builder
         ..name = '${classMemberNamePrefix}copy'
@@ -2206,20 +2308,237 @@ if (${varNamePrefix}replyList == null) {
               .call(
                 <cb.Expression>[],
                 <String, cb.Expression>{
-                  '${classMemberNamePrefix}binaryMessenger':
-                      cb.refer('${classMemberNamePrefix}binaryMessenger'),
-                  _instanceManagerVarName: cb.refer(_instanceManagerVarName),
-                  for (final ApiField field in unattachedFields)
-                    field.name: cb.refer(field.name),
-                  for (final Method method
-                      in declaredAndInheritedFlutterMethods)
-                    method.name: cb.refer(method.name),
+                  for (final cb.Parameter parameter in parameters)
+                    parameter.name: cb.refer(parameter.name)
                 },
               )
               .returned
               .statement,
         ]),
     );
+  }
+
+  // Converts fields and methods of a ProxyApi to `code_builder` Parameters.
+  Iterable<cb.Parameter> _asConstructorParameters({
+    required String apiName,
+    required Iterable<Parameter> parameters,
+    required Iterable<ApiField> unattachedFields,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,
+    required Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfaces,
+    required Iterable<Method> declaredFlutterMethods,
+    bool defineType = true,
+    bool includeBinaryMessengerAndInstanceManager = true,
+  }) sync* {
+    if (includeBinaryMessengerAndInstanceManager) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = '${classMemberNamePrefix}binaryMessenger'
+          ..named = true
+          ..type = defineType ? cb.refer('BinaryMessenger?') : null
+          ..toSuper = !defineType
+          ..required = false,
+      );
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = _instanceManagerVarName
+          ..named = true
+          ..type =
+              defineType ? cb.refer('$dartInstanceManagerClassName?') : null
+          ..toSuper = !defineType
+          ..required = false,
+      );
+    }
+
+    for (final ApiField field in unattachedFields) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = field.name
+          ..named = true
+          ..type =
+              defineType ? cb.refer(_addGenericTypesNullable(field.type)) : null
+          ..toThis = !defineType
+          ..required = !field.type.isNullable,
+      );
+    }
+
+    for (final (Method, AstProxyApi) method in flutterMethodsFromSuperClasses) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = method.$1.name
+          ..named = true
+          ..type = defineType
+              ? _methodAsFunctionType(method.$1, apiName: method.$2.name)
+              : null
+          ..toSuper = !defineType
+          ..required = method.$1.isRequired,
+      );
+    }
+
+    for (final (Method, AstProxyApi) method in flutterMethodsFromInterfaces) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = method.$1.name
+          ..named = true
+          ..type = defineType
+              ? _methodAsFunctionType(method.$1, apiName: method.$2.name)
+              : null
+          ..toThis = !defineType
+          ..required = method.$1.isRequired,
+      );
+    }
+
+    for (final Method method in declaredFlutterMethods) {
+      yield cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = method.name
+          ..named = true
+          ..type = defineType
+              ? _methodAsFunctionType(method, apiName: apiName)
+              : null
+          ..toThis = !defineType
+          ..required = method.isRequired,
+      );
+    }
+
+    yield* indexMap(
+      parameters,
+      (int index, NamedType parameter) => cb.Parameter(
+        (cb.ParameterBuilder builder) => builder
+          ..name = _getParameterName(index, parameter)
+          ..type = _refer(parameter.type)
+          ..named = true
+          ..required = !parameter.type.isNullable,
+      ),
+    );
+  }
+
+  Iterable<cb.Field> _proxyApiOverridesClassConstructors(
+    Iterable<AstProxyApi> proxyApis,
+  ) sync* {
+    for (final AstProxyApi api in proxyApis) {
+      final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
+
+      for (final Constructor constructor in api.constructors) {
+        yield cb.Field(
+          (cb.FieldBuilder builder) {
+            final String constructorName =
+                constructor.name.isEmpty ? 'new' : constructor.name;
+            final Iterable<cb.Parameter> parameters = _asConstructorParameters(
+              apiName: api.name,
+              parameters: constructor.parameters,
+              unattachedFields: api.unattachedFields,
+              flutterMethodsFromSuperClasses:
+                  api.flutterMethodsFromSuperClassesWithApis(),
+              flutterMethodsFromInterfaces:
+                  api.flutterMethodsFromInterfacesWithApis(),
+              declaredFlutterMethods: api.flutterMethods,
+              includeBinaryMessengerAndInstanceManager: false,
+            );
+            builder
+              ..name = constructor.name.isEmpty
+                  ? '${lowerCamelCaseApiName}_new'
+                  : '${lowerCamelCaseApiName}_${constructor.name}'
+              ..static = true
+              ..docs.add('/// Overrides [${api.name}.$constructorName].')
+              ..type = cb.FunctionType(
+                (cb.FunctionTypeBuilder builder) => builder
+                  ..returnType = cb.refer(api.name)
+                  ..isNullable = true
+                  ..namedRequiredParameters.addAll(<String, cb.Reference>{
+                    for (final cb.Parameter parameter in parameters
+                        .where((cb.Parameter parameter) => parameter.required))
+                      parameter.name: parameter.type!,
+                  })
+                  ..namedParameters.addAll(<String, cb.Reference>{
+                    for (final cb.Parameter parameter in parameters
+                        .where((cb.Parameter parameter) => !parameter.required))
+                      parameter.name: parameter.type!,
+                  }),
+              );
+          },
+        );
+      }
+    }
+  }
+
+  Iterable<cb.Field> _proxyApiOverridesClassStaticFields(
+    Iterable<AstProxyApi> proxyApis,
+  ) sync* {
+    for (final AstProxyApi api in proxyApis) {
+      final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
+
+      for (final ApiField field
+          in api.fields.where((ApiField field) => field.isStatic)) {
+        yield cb.Field((cb.FieldBuilder builder) {
+          builder
+            ..name = '${lowerCamelCaseApiName}_${field.name}'
+            ..static = true
+            ..docs.add('/// Overrides [${api.name}.${field.name}].')
+            ..type = cb.refer('${field.type.baseName}?');
+        });
+      }
+    }
+  }
+
+  Iterable<cb.Field> _proxyApiOverridesClassStaticMethods(
+    Iterable<AstProxyApi> proxyApis,
+  ) sync* {
+    for (final AstProxyApi api in proxyApis) {
+      final String lowerCamelCaseApiName = toLowerCamelCase(api.name);
+
+      for (final Method method
+          in api.hostMethods.where((Method method) => method.isStatic)) {
+        yield cb.Field((cb.FieldBuilder builder) {
+          builder
+            ..name = '${lowerCamelCaseApiName}_${method.name}'
+            ..static = true
+            ..docs.add('/// Overrides [${api.name}.${method.name}].')
+            ..type = cb.FunctionType((cb.FunctionTypeBuilder builder) {
+              builder
+                ..isNullable = true
+                ..returnType = _refer(method.returnType, asFuture: true)
+                ..requiredParameters.addAll(<cb.Reference>[
+                  for (final Parameter parameter in method.parameters)
+                    _refer(parameter.type),
+                ]);
+            });
+        });
+      }
+    }
+  }
+
+  cb.Method _proxyApiOverridesClassResetMethod(
+    Iterable<AstProxyApi> proxyApis,
+  ) {
+    return cb.Method.returnsVoid((cb.MethodBuilder builder) {
+      builder
+        ..name = '${classMemberNamePrefix}reset'
+        ..static = true
+        ..docs.addAll(<String>[
+          '/// Sets all overridden ProxyApi class members to null.',
+          '///',
+          '/// Intended to only be used with unit tests.'
+        ])
+        ..body = cb.Block.of(<cb.Code>[
+          for (final AstProxyApi api in proxyApis)
+            for (final Constructor constructor in api.constructors)
+              cb.Code(
+                '${toLowerCamelCase(api.name)}_${constructor.name.isEmpty ? 'new' : constructor.name} = null;',
+              ),
+          for (final AstProxyApi api in proxyApis)
+            for (final ApiField attachedField
+                in api.fields.where((ApiField field) => field.isStatic))
+              cb.Code(
+                '${toLowerCamelCase(api.name)}_${attachedField.name} = null;',
+              ),
+          for (final AstProxyApi api in proxyApis)
+            for (final Method staticMethod
+                in api.methods.where((Method method) => method.isStatic))
+              cb.Code(
+                '${toLowerCamelCase(api.name)}_${staticMethod.name} = null;',
+              ),
+        ]);
+    });
   }
 }
 
@@ -2359,4 +2678,32 @@ String _addGenericTypesNullable(TypeDeclaration type) {
 String _posixify(String inputPath) {
   final path.Context context = path.Context(style: path.Style.posix);
   return context.fromUri(path.toUri(path.absolute(inputPath)));
+}
+
+// Converts a method to a `code_builder` FunctionType with all parameters as
+// positional arguments.
+cb.FunctionType _methodAsFunctionType(
+  Method method, {
+  required String apiName,
+}) {
+  return cb.FunctionType(
+    (cb.FunctionTypeBuilder builder) => builder
+      ..returnType = _refer(
+        method.returnType,
+        asFuture: method.isAsynchronous,
+      )
+      ..isNullable = !method.isRequired
+      ..requiredParameters.addAll(<cb.Reference>[
+        if (method.location == ApiLocation.flutter)
+          cb.refer('$apiName ${classMemberNamePrefix}instance'),
+        ...indexMap(
+          method.parameters,
+          (int index, NamedType parameter) {
+            return cb.refer(
+              '${_addGenericTypesNullable(parameter.type)} ${_getParameterName(index, parameter)}',
+            );
+          },
+        ),
+      ]),
+  );
 }
