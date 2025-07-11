@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:ffigen/ffigen.dart' as fg;
+import 'package:logging/logging.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:swiftgen/swiftgen.dart';
 
@@ -33,12 +34,7 @@ Future<void> main() async {
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// ignore_for_file: always_specify_types
-// ignore_for_file: camel_case_types
-// ignore_for_file: non_constant_identifier_names
-// ignore_for_file: unnecessary_non_null_assertion
-// ignore_for_file: unused_element
-// ignore_for_file: unused_field
+// ignore_for_file: always_specify_types, camel_case_types, non_constant_identifier_names, unnecessary_non_null_assertion, unused_element, unused_field
 // coverage:ignore-file
 ''',
     ),

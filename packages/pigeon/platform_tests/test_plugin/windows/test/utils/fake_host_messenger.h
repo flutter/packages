@@ -13,7 +13,7 @@
 
 namespace testing {
 
-typedef std::function<void(const flutter::EncodableValue& reply)>
+typedef std::function<void(const flutter::EncodableValue &reply)>
     HostMessageReply;
 
 // A BinaryMessenger that allows tests to act as the engine to call host APIs.
@@ -22,7 +22,7 @@ class FakeHostMessenger : public flutter::BinaryMessenger {
   // Creates an messenger that can send and receive responses with the given
   // codec.
   FakeHostMessenger(
-      const flutter::MessageCodec<flutter::EncodableValue>* codec);
+      const flutter::MessageCodec<flutter::EncodableValue> *codec);
   virtual ~FakeHostMessenger();
 
   // Calls the registered handler for the given channel, and calls reply_handler
@@ -30,19 +30,19 @@ class FakeHostMessenger : public flutter::BinaryMessenger {
   //
   // This allows a test to simulate a message from the Dart side, exercising the
   // encoding and decoding logic generated for a host API.
-  void SendHostMessage(const std::string& channel,
-                       const flutter::EncodableValue& message,
+  void SendHostMessage(const std::string &channel,
+                       const flutter::EncodableValue &message,
                        HostMessageReply reply_handler);
 
   // flutter::BinaryMessenger:
-  void Send(const std::string& channel, const uint8_t* message,
+  void Send(const std::string &channel, const uint8_t *message,
             size_t message_size,
             flutter::BinaryReply reply = nullptr) const override;
-  void SetMessageHandler(const std::string& channel,
+  void SetMessageHandler(const std::string &channel,
                          flutter::BinaryMessageHandler handler) override;
 
  private:
-  const flutter::MessageCodec<flutter::EncodableValue>* codec_;
+  const flutter::MessageCodec<flutter::EncodableValue> *codec_;
   std::map<std::string, flutter::BinaryMessageHandler> handlers_;
 };
 

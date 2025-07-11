@@ -38,8 +38,8 @@ class Win32Window {
   // consistent size to will treat the width height passed in to this function
   // as logical pixels and scale to appropriate for the default monitor. Returns
   // true if the window was created successfully.
-  bool CreateAndShow(const std::wstring& title, const Point& origin,
-                     const Size& size);
+  bool CreateAndShow(const std::wstring &title, const Point &origin,
+                     const Size &size);
 
   // Release OS resources associated with window.
   void Destroy();
@@ -85,7 +85,7 @@ class Win32Window {
                                   LPARAM const lparam) noexcept;
 
   // Retrieves a class instance pointer for |window|
-  static Win32Window* GetThisFromHandle(HWND const window) noexcept;
+  static Win32Window *GetThisFromHandle(HWND const window) noexcept;
 
   bool quit_on_close_ = false;
 

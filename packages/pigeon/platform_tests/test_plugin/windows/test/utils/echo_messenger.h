@@ -16,18 +16,18 @@ class EchoMessenger : public flutter::BinaryMessenger {
  public:
   // Creates an echo messenger that expects MessageCalls encoded with the given
   // codec.
-  EchoMessenger(const flutter::MessageCodec<flutter::EncodableValue>* codec);
+  EchoMessenger(const flutter::MessageCodec<flutter::EncodableValue> *codec);
   virtual ~EchoMessenger();
 
   // flutter::BinaryMessenger:
-  void Send(const std::string& channel, const uint8_t* message,
+  void Send(const std::string &channel, const uint8_t *message,
             size_t message_size,
             flutter::BinaryReply reply = nullptr) const override;
-  void SetMessageHandler(const std::string& channel,
+  void SetMessageHandler(const std::string &channel,
                          flutter::BinaryMessageHandler handler) override;
 
  private:
-  const flutter::MessageCodec<flutter::EncodableValue>* codec_;
+  const flutter::MessageCodec<flutter::EncodableValue> *codec_;
 };
 
 }  // namespace testing

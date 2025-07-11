@@ -38,7 +38,7 @@ class Win32Window {
   // consistent size this function will scale the inputted width and height as
   // as appropriate for the default monitor. The window is invisible until
   // |Show| is called. Returns true if the window was created successfully.
-  bool Create(const std::wstring& title, const Point& origin, const Size& size);
+  bool Create(const std::wstring &title, const Point &origin, const Size &size);
 
   // Show the current window. Returns true if the window was successfully shown.
   bool Show();
@@ -87,7 +87,7 @@ class Win32Window {
                                   LPARAM const lparam) noexcept;
 
   // Retrieves a class instance pointer for |window|
-  static Win32Window* GetThisFromHandle(HWND const window) noexcept;
+  static Win32Window *GetThisFromHandle(HWND const window) noexcept;
 
   // Update the window frame's theme to match the system theme.
   static void UpdateTheme(HWND const window);

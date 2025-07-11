@@ -18,7 +18,7 @@ G_BEGIN_DECLS
 G_DECLARE_FINAL_TYPE(TestPlugin, test_plugin, TEST, PLUGIN, GObject)
 
 FLUTTER_PLUGIN_EXPORT void test_plugin_register_with_registrar(
-    FlPluginRegistrar* registrar);
+    FlPluginRegistrar *registrar);
 
 G_END_DECLS
 

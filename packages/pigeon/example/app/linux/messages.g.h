@@ -42,9 +42,9 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageData,
  *
  * Returns: a new #PigeonExamplePackageMessageData
  */
-PigeonExamplePackageMessageData* pigeon_example_package_message_data_new(
-    const gchar* name, const gchar* description, PigeonExamplePackageCode code,
-    FlValue* data);
+PigeonExamplePackageMessageData *pigeon_example_package_message_data_new(
+    const gchar *name, const gchar *description, PigeonExamplePackageCode code,
+    FlValue *data);
 
 /**
  * pigeon_example_package_message_data_get_name
@@ -54,8 +54,8 @@ PigeonExamplePackageMessageData* pigeon_example_package_message_data_new(
  *
  * Returns: the field value.
  */
-const gchar* pigeon_example_package_message_data_get_name(
-    PigeonExamplePackageMessageData* object);
+const gchar *pigeon_example_package_message_data_get_name(
+    PigeonExamplePackageMessageData *object);
 
 /**
  * pigeon_example_package_message_data_get_description
@@ -65,8 +65,8 @@ const gchar* pigeon_example_package_message_data_get_name(
  *
  * Returns: the field value.
  */
-const gchar* pigeon_example_package_message_data_get_description(
-    PigeonExamplePackageMessageData* object);
+const gchar *pigeon_example_package_message_data_get_description(
+    PigeonExamplePackageMessageData *object);
 
 /**
  * pigeon_example_package_message_data_get_code
@@ -77,7 +77,7 @@ const gchar* pigeon_example_package_message_data_get_description(
  * Returns: the field value.
  */
 PigeonExamplePackageCode pigeon_example_package_message_data_get_code(
-    PigeonExamplePackageMessageData* object);
+    PigeonExamplePackageMessageData *object);
 
 /**
  * pigeon_example_package_message_data_get_data
@@ -87,8 +87,8 @@ PigeonExamplePackageCode pigeon_example_package_message_data_get_code(
  *
  * Returns: the field value.
  */
-FlValue* pigeon_example_package_message_data_get_data(
-    PigeonExamplePackageMessageData* object);
+FlValue *pigeon_example_package_message_data_get_data(
+    PigeonExamplePackageMessageData *object);
 
 G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageCodec,
                      pigeon_example_package_message_codec,
@@ -117,9 +117,9 @@ G_DECLARE_FINAL_TYPE(
  *
  * Returns: a new #PigeonExamplePackageExampleHostApiGetHostLanguageResponse
  */
-PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
+PigeonExamplePackageExampleHostApiGetHostLanguageResponse *
 pigeon_example_package_example_host_api_get_host_language_response_new(
-    const gchar* return_value);
+    const gchar *return_value);
 
 /**
  * pigeon_example_package_example_host_api_get_host_language_response_new_error:
@@ -131,9 +131,9 @@ pigeon_example_package_example_host_api_get_host_language_response_new(
  *
  * Returns: a new #PigeonExamplePackageExampleHostApiGetHostLanguageResponse
  */
-PigeonExamplePackageExampleHostApiGetHostLanguageResponse*
+PigeonExamplePackageExampleHostApiGetHostLanguageResponse *
 pigeon_example_package_example_host_api_get_host_language_response_new_error(
-    const gchar* code, const gchar* message, FlValue* details);
+    const gchar *code, const gchar *message, FlValue *details);
 
 G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApiAddResponse,
                      pigeon_example_package_example_host_api_add_response,
@@ -147,7 +147,7 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApiAddResponse,
  *
  * Returns: a new #PigeonExamplePackageExampleHostApiAddResponse
  */
-PigeonExamplePackageExampleHostApiAddResponse*
+PigeonExamplePackageExampleHostApiAddResponse *
 pigeon_example_package_example_host_api_add_response_new(int64_t return_value);
 
 /**
@@ -160,9 +160,9 @@ pigeon_example_package_example_host_api_add_response_new(int64_t return_value);
  *
  * Returns: a new #PigeonExamplePackageExampleHostApiAddResponse
  */
-PigeonExamplePackageExampleHostApiAddResponse*
+PigeonExamplePackageExampleHostApiAddResponse *
 pigeon_example_package_example_host_api_add_response_new_error(
-    const gchar* code, const gchar* message, FlValue* details);
+    const gchar *code, const gchar *message, FlValue *details);
 
 /**
  * PigeonExamplePackageExampleHostApiVTable:
@@ -171,13 +171,13 @@ pigeon_example_package_example_host_api_add_response_new_error(
  * provider.
  */
 typedef struct {
-  PigeonExamplePackageExampleHostApiGetHostLanguageResponse* (
+  PigeonExamplePackageExampleHostApiGetHostLanguageResponse *(
       *get_host_language)(gpointer user_data);
-  PigeonExamplePackageExampleHostApiAddResponse* (*add)(int64_t a, int64_t b,
+  PigeonExamplePackageExampleHostApiAddResponse *(*add)(int64_t a, int64_t b,
                                                         gpointer user_data);
   void (*send_message)(
-      PigeonExamplePackageMessageData* message,
-      PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+      PigeonExamplePackageMessageData *message,
+      PigeonExamplePackageExampleHostApiResponseHandle *response_handle,
       gpointer user_data);
 } PigeonExamplePackageExampleHostApiVTable;
 
@@ -194,8 +194,8 @@ typedef struct {
  * Connects the method handlers in the ExampleHostApi API.
  */
 void pigeon_example_package_example_host_api_set_method_handlers(
-    FlBinaryMessenger* messenger, const gchar* suffix,
-    const PigeonExamplePackageExampleHostApiVTable* vtable, gpointer user_data,
+    FlBinaryMessenger *messenger, const gchar *suffix,
+    const PigeonExamplePackageExampleHostApiVTable *vtable, gpointer user_data,
     GDestroyNotify user_data_free_func);
 
 /**
@@ -207,7 +207,7 @@ void pigeon_example_package_example_host_api_set_method_handlers(
  * Clears the method handlers in the ExampleHostApi API.
  */
 void pigeon_example_package_example_host_api_clear_method_handlers(
-    FlBinaryMessenger* messenger, const gchar* suffix);
+    FlBinaryMessenger *messenger, const gchar *suffix);
 
 /**
  * pigeon_example_package_example_host_api_respond_send_message:
@@ -217,7 +217,7 @@ void pigeon_example_package_example_host_api_clear_method_handlers(
  * Responds to ExampleHostApi.sendMessage.
  */
 void pigeon_example_package_example_host_api_respond_send_message(
-    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
+    PigeonExamplePackageExampleHostApiResponseHandle *response_handle,
     gboolean return_value);
 
 /**
@@ -230,8 +230,8 @@ void pigeon_example_package_example_host_api_respond_send_message(
  * Responds with an error to ExampleHostApi.sendMessage.
  */
 void pigeon_example_package_example_host_api_respond_error_send_message(
-    PigeonExamplePackageExampleHostApiResponseHandle* response_handle,
-    const gchar* code, const gchar* message, FlValue* details);
+    PigeonExamplePackageExampleHostApiResponseHandle *response_handle,
+    const gchar *code, const gchar *message, FlValue *details);
 
 G_DECLARE_FINAL_TYPE(
     PigeonExamplePackageMessageFlutterApiFlutterMethodResponse,
@@ -249,7 +249,7 @@ G_DECLARE_FINAL_TYPE(
  */
 gboolean
 pigeon_example_package_message_flutter_api_flutter_method_response_is_error(
-    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse *response);
 
 /**
  * pigeon_example_package_message_flutter_api_flutter_method_response_get_error_code:
@@ -259,9 +259,9 @@ pigeon_example_package_message_flutter_api_flutter_method_response_is_error(
  *
  * Returns: an error code or %NULL if not an error.
  */
-const gchar*
+const gchar *
 pigeon_example_package_message_flutter_api_flutter_method_response_get_error_code(
-    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse *response);
 
 /**
  * pigeon_example_package_message_flutter_api_flutter_method_response_get_error_message:
@@ -271,9 +271,9 @@ pigeon_example_package_message_flutter_api_flutter_method_response_get_error_cod
  *
  * Returns: an error message.
  */
-const gchar*
+const gchar *
 pigeon_example_package_message_flutter_api_flutter_method_response_get_error_message(
-    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse *response);
 
 /**
  * pigeon_example_package_message_flutter_api_flutter_method_response_get_error_details:
@@ -283,9 +283,9 @@ pigeon_example_package_message_flutter_api_flutter_method_response_get_error_mes
  *
  * Returns: (allow-none): an error details or %NULL.
  */
-FlValue*
+FlValue *
 pigeon_example_package_message_flutter_api_flutter_method_response_get_error_details(
-    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse *response);
 
 /**
  * pigeon_example_package_message_flutter_api_flutter_method_response_get_return_value:
@@ -295,9 +295,9 @@ pigeon_example_package_message_flutter_api_flutter_method_response_get_error_det
  *
  * Returns: a return value.
  */
-const gchar*
+const gchar *
 pigeon_example_package_message_flutter_api_flutter_method_response_get_return_value(
-    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse* response);
+    PigeonExamplePackageMessageFlutterApiFlutterMethodResponse *response);
 
 /**
  * PigeonExamplePackageMessageFlutterApi:
@@ -317,9 +317,9 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageFlutterApi,
  *
  * Returns: a new #PigeonExamplePackageMessageFlutterApi
  */
-PigeonExamplePackageMessageFlutterApi*
-pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger,
-                                               const gchar* suffix);
+PigeonExamplePackageMessageFlutterApi *
+pigeon_example_package_message_flutter_api_new(FlBinaryMessenger *messenger,
+                                               const gchar *suffix);
 
 /**
  * pigeon_example_package_message_flutter_api_flutter_method:
@@ -332,8 +332,8 @@ pigeon_example_package_message_flutter_api_new(FlBinaryMessenger* messenger,
  *
  */
 void pigeon_example_package_message_flutter_api_flutter_method(
-    PigeonExamplePackageMessageFlutterApi* api, const gchar* a_string,
-    GCancellable* cancellable, GAsyncReadyCallback callback,
+    PigeonExamplePackageMessageFlutterApi *api, const gchar *a_string,
+    GCancellable *cancellable, GAsyncReadyCallback callback,
     gpointer user_data);
 
 /**
@@ -348,10 +348,10 @@ void pigeon_example_package_message_flutter_api_flutter_method(
  * Returns: a #PigeonExamplePackageMessageFlutterApiFlutterMethodResponse or
  * %NULL on error.
  */
-PigeonExamplePackageMessageFlutterApiFlutterMethodResponse*
+PigeonExamplePackageMessageFlutterApiFlutterMethodResponse *
 pigeon_example_package_message_flutter_api_flutter_method_finish(
-    PigeonExamplePackageMessageFlutterApi* api, GAsyncResult* result,
-    GError** error);
+    PigeonExamplePackageMessageFlutterApi *api, GAsyncResult *result,
+    GError **error);
 
 G_END_DECLS
 
