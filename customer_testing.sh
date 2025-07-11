@@ -29,7 +29,6 @@ pushd packages/rfw
 
 # Update the subpackages so that the analysis doesn't get confused.
 pushd example/remote; flutter packages get; popd
-pushd example/wasm; flutter packages get; popd
 pushd test_coverage; dart pub get; popd
 
 flutter analyze --no-fatal-infos

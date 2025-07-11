@@ -66,7 +66,7 @@ void main() {
       final List<String> devices = <String>[
         if (hasIOSDevice) '{"id": "$_fakeIOSDevice", "targetPlatform": "ios"}',
         if (hasAndroidDevice)
-          '{"id": "$_fakeAndroidDevice", "targetPlatform": "android-x86"}',
+          '{"id": "$_fakeAndroidDevice", "targetPlatform": "android-x64"}',
       ];
       final String output =
           '''${includeBanner ? updateBanner : ''}[${devices.join(',')}]''';

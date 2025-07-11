@@ -400,7 +400,6 @@ this command.
             'android-arm',
             'android-arm64',
             'android-x64',
-            'android-x86'
           ];
           final int exitCode = await project.runCommand(
             'app:connectedAndroidTest',

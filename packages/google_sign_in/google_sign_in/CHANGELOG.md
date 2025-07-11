@@ -1,3 +1,8 @@
+## 7.1.0
+
+* Adds the missing export of `GoogleSignInExceptionCode`, to allow for
+  structured error handling as intended by the API.
+
 ## 7.0.0
 
 * **BREAKING CHANGE**: Many APIs have changed or been replaced to reflect the

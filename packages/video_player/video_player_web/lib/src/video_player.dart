@@ -262,6 +262,10 @@ class VideoPlayer {
     if (!options.allowRemotePlayback) {
       _videoElement.disableRemotePlayback = true;
     }
+
+    if (options.poster != null) {
+      _videoElement.poster = options.poster!.toString();
+    }
   }
 
   void _resetOptions() {
@@ -273,6 +277,7 @@ class VideoPlayer {
       _onContextMenu = null;
     }
     _videoElement.removeAttribute('disableRemotePlayback');
+    _videoElement.removeAttribute('poster');
   }
 
   /// Disposes of the current [web.HTMLVideoElement].

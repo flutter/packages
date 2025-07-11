@@ -27,6 +27,8 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   var isPreviewPaused: Bool { get }
   var isStreamingImages: Bool { get }
 
+  var deviceOrientation: UIDeviceOrientation { get set }
+
   var minimumAvailableZoomFactor: CGFloat { get }
   var maximumAvailableZoomFactor: CGFloat { get }
   var minimumExposureOffset: CGFloat { get }
@@ -61,7 +63,6 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
 
   func captureToFile(completion: @escaping (_ path: String?, _ error: FlutterError?) -> Void)
 
-  func setDeviceOrientation(_ orientation: UIDeviceOrientation)
   func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation)
   func unlockCaptureOrientation()
 

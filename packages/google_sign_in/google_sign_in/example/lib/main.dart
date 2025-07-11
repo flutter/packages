@@ -109,7 +109,7 @@ class _SignInDemoState extends State<SignInDemo> {
       _currentUser = null;
       _isAuthorized = false;
       _errorMessage = e is GoogleSignInException
-          ? 'GoogleSignInException ${e.code}: ${e.description}'
+          ? _errorMessageFromSignInException(e)
           : 'Unknown error: $e';
     });
   }
@@ -208,7 +208,7 @@ class _SignInDemoState extends State<SignInDemo> {
       });
       unawaited(_handleGetContact(_currentUser!));
     } on GoogleSignInException catch (e) {
-      _errorMessage = 'GoogleSignInException ${e.code}: ${e.description}';
+      _errorMessage = _errorMessageFromSignInException(e);
     }
   }
 
@@ -228,7 +228,7 @@ class _SignInDemoState extends State<SignInDemo> {
         _serverAuthCode = serverAuth == null ? '' : serverAuth.serverAuthCode;
       });
     } on GoogleSignInException catch (e) {
-      _errorMessage = 'GoogleSignInException ${e.code}: ${e.description}';
+      _errorMessage = _errorMessageFromSignInException(e);
     }
   }
 
@@ -334,5 +334,15 @@ class _SignInDemoState extends State<SignInDemo> {
           constraints: const BoxConstraints.expand(),
           child: _buildBody(),
         ));
+  }
+
+  String _errorMessageFromSignInException(GoogleSignInException e) {
+    // In practice, an application should likely have specific handling for most
+    // or all of the, but for simplicity this just handles cancel, and reports
+    // the rest as generic errors.
+    return switch (e.code) {
+      GoogleSignInExceptionCode.canceled => 'Sign in canceled',
+      _ => 'GoogleSignInException ${e.code}: ${e.description}',
+    };
   }
 }

@@ -1,3 +1,8 @@
+## 0.6.19
+
+* Changes target rotation of captured images to current default display rotation to fix captured
+  photo orientation to upright.
+
 ## 0.6.18+3
 
 * Fixes incorrect camera preview mirroring for front cameras of devices using the Impeller backend.

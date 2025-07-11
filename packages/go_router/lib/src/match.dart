@@ -9,6 +9,8 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logging/logging.dart';
+// TODO(loic-sharma): Remove meta library prefix.
+// https://github.com/flutter/flutter/issues/171410
 import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
@@ -402,6 +404,8 @@ class ShellRouteMatch extends RouteMatchBase {
   ///
   /// This is typically used when pushing or popping [RouteMatchBase] from
   /// [RouteMatchList].
+  // TODO(loic-sharma): Remove meta library prefix.
+  // https://github.com/flutter/flutter/issues/171410
   @meta.internal
   ShellRouteMatch copyWith({
     required List<RouteMatchBase>? matches,
@@ -777,6 +781,8 @@ class RouteMatchList with Diagnosticable {
   /// returns false.
   ///
   /// This method visit recursively into shell route matches.
+  // TODO(loic-sharma): Remove meta library prefix.
+  // https://github.com/flutter/flutter/issues/171410
   @meta.internal
   void visitRouteMatches(RouteMatchVisitor visitor) {
     _visitRouteMatches(matches, visitor);
@@ -797,6 +803,8 @@ class RouteMatchList with Diagnosticable {
   }
 
   /// Create a new [RouteMatchList] with given parameter replaced.
+  // TODO(loic-sharma): Remove meta library prefix.
+  // https://github.com/flutter/flutter/issues/171410
   @meta.internal
   RouteMatchList copyWith({
     List<RouteMatchBase>? matches,
@@ -852,6 +860,8 @@ class RouteMatchList with Diagnosticable {
 /// suitable for using with [StandardMessageCodec].
 ///
 /// The primary use of this class is for state restoration and browser history.
+// TODO(loic-sharma): Remove meta library prefix.
+// https://github.com/flutter/flutter/issues/171410
 @meta.internal
 class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
   /// Creates a new [RouteMatchListCodec] object.

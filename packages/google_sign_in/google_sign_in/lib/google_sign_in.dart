@@ -12,7 +12,7 @@ import 'src/identity_types.dart';
 import 'src/token_types.dart';
 
 export 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart'
-    show GoogleSignInException;
+    show GoogleSignInException, GoogleSignInExceptionCode;
 export 'src/event_types.dart';
 export 'src/identity_types.dart';
 export 'src/token_types.dart';
