@@ -402,6 +402,17 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
       ) as _i4.Future<String>);
 
   @override
+  _i4.Future<void> setMixedContentMode(_i2.MixedContentMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setMixedContentMode,
+          [mode],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
   _i2.WebSettings pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
           #pigeon_copy,

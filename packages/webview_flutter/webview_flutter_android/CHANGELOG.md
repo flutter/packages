@@ -1,3 +1,8 @@
+## 4.8.0
+
+* Adds `AndroidWebViewController.setMixedContentMode` to control how
+  mixed-content pages load.
+
 ## 4.7.0
 
 * Adds support to respond to recoverable SSL certificate errors. See `AndroidNavigationDelegate.setOnSSlAuthError`.
