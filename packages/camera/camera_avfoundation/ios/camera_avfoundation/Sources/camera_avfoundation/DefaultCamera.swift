@@ -10,6 +10,16 @@ import CoreMotion
 #endif
 
 final class DefaultCamera: FLTCam, Camera {
+  override var deviceOrientation: UIDeviceOrientation {
+    get { super.deviceOrientation }
+    set {
+      guard newValue != super.deviceOrientation else { return }
+
+      super.deviceOrientation = newValue
+      updateOrientation()
+    }
+  }
+
   var minimumExposureOffset: CGFloat { CGFloat(captureDevice.minExposureTargetBias) }
   var maximumExposureOffset: CGFloat { CGFloat(captureDevice.maxExposureTargetBias) }
   var minimumAvailableZoomFactor: CGFloat { captureDevice.minAvailableVideoZoomFactor }
@@ -77,15 +87,6 @@ final class DefaultCamera: FLTCam, Camera {
 
   func resumeVideoRecording() {
     isRecordingPaused = false
-  }
-
-  func setDeviceOrientation(_ orientation: UIDeviceOrientation) {
-    if deviceOrientation == orientation {
-      return
-    }
-
-    deviceOrientation = orientation
-    updateOrientation()
   }
 
   func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
