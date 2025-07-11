@@ -512,7 +512,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           // position=value.duration. Instead of setting the values directly,
           // we use pause() and seekTo() to ensure the platform stops playing
           // and seeks to the last frame of the video.
-          pause().then((void pauseResult) => seekTo(value.duration));
+          if(Platform.isWindows){
+            // windows implents seekTo End will loop buffer, so we need to pause and seek to the end
+            pause();
+          }else{
+            pause().then((void pauseResult) => seekTo(value.duration));
+          } 
           value = value.copyWith(isCompleted: true);
         case VideoEventType.bufferingUpdate:
           value = value.copyWith(buffered: event.buffered);
