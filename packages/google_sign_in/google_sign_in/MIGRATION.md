@@ -61,3 +61,10 @@ include:
   publishing, the only platform that does not support `authenticate` is web,
   where `google_sign_in_web`'s `renderButton` is used to create a sign-in
   button.
+* Outcomes other than successful authentication or authorization will throw
+  `GoogleSignInException`s in most cases, allowing a clear way to distinguish
+  different sign in failure outcomes. This includes the user canceling
+  sign-in, which will throw an exception with a `code` of
+  `GoogleSignInExceptionCode.canceled`.
+    * Similarly, the `authenticationEvents` will receive exceptions as
+      stream errors, unlike the event stream from version 6.x.
