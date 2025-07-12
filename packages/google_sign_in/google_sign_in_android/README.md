@@ -20,7 +20,7 @@ To use Google Sign-In, you'll need to register your application, either
 [using Firebase](https://firebase.google.com/docs/android/setup), or
 [directly with Google Cloud Platform](https://developer.android.com/identity/sign-in/credential-manager-siwg#set-google).
 
-* If you are use the `google-services.json` file and Gradle-based registration
+* If you are using the `google-services.json` file and Gradle-based registration
   system, no identifiers need to be provided in Dart when initializing the
   `GoogleSignIn` instance when running on Android.
 * If you are not using `google-services.json`, you need to pass the client
