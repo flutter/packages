@@ -38,6 +38,7 @@ class ShellRouteConfig extends RouteBaseConfig {
     required this.navigatorKey,
     required this.parentNavigatorKey,
     required super.routeDataClass,
+    required super.targetUri,
     required this.observers,
     required super.parent,
     required this.restorationScopeId,
@@ -98,6 +99,7 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
   StatefulShellRouteConfig._({
     required this.parentNavigatorKey,
     required super.routeDataClass,
+    required super.targetUri,
     required super.parent,
     required this.navigatorContainerBuilder,
     required this.restorationScopeId,
@@ -143,6 +145,7 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   StatefulShellBranchConfig._({
     required this.navigatorKey,
     required super.routeDataClass,
+    required super.targetUri,
     required super.parent,
     required this.observers,
     this.restorationScopeId,
@@ -194,6 +197,7 @@ class GoRouteConfig extends RouteBaseConfig {
     required this.caseSensitive,
     required this.parentNavigatorKey,
     required super.routeDataClass,
+    required super.targetUri,
     required super.parent,
   }) : super._();
 
@@ -492,7 +496,11 @@ mixin $_mixinName on GoRouteData {
 
 /// Represents a `TypedGoRoute` annotation to the builder.
 abstract class RouteBaseConfig {
-  RouteBaseConfig._({required this.routeDataClass, required this.parent});
+  RouteBaseConfig._({
+    required this.routeDataClass,
+    required this.targetUri,
+    required this.parent,
+  });
 
   /// Creates a new [RouteBaseConfig] represented the annotation data in [reader].
   factory RouteBaseConfig.fromAnnotation(
@@ -536,11 +544,14 @@ abstract class RouteBaseConfig {
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
     final InterfaceElement2 classElement = typeParamType.element3;
 
+    final Uri targetUri = element.library2.uri;
+
     final RouteBaseConfig value;
     switch (typeName) {
       case 'TypedShellRoute':
         value = ShellRouteConfig._(
           routeDataClass: classElement,
+          targetUri: targetUri,
           parent: parent,
           navigatorKey: _generateParameterGetterCode(
             classElement,
@@ -562,6 +573,7 @@ abstract class RouteBaseConfig {
       case 'TypedStatefulShellRoute':
         value = StatefulShellRouteConfig._(
           routeDataClass: classElement,
+          targetUri: targetUri,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(
             classElement,
@@ -579,6 +591,7 @@ abstract class RouteBaseConfig {
       case 'TypedStatefulShellBranch':
         value = StatefulShellBranchConfig._(
           routeDataClass: classElement,
+          targetUri: targetUri,
           parent: parent,
           navigatorKey: _generateParameterGetterCode(
             classElement,
@@ -616,6 +629,7 @@ abstract class RouteBaseConfig {
           name: nameValue.isNull ? null : nameValue.stringValue,
           caseSensitive: caseSensitiveValue.boolValue,
           routeDataClass: classElement,
+          targetUri: targetUri,
           parent: parent,
           parentNavigatorKey: _generateParameterGetterCode(
             classElement,
@@ -646,6 +660,9 @@ abstract class RouteBaseConfig {
 
   /// The `RouteData` class this class represents.
   final InterfaceElement2 routeDataClass;
+
+  /// The URI of the file where the code will be generated.
+  final Uri targetUri;
 
   /// The parent of this route config.
   final RouteBaseConfig? parent;
@@ -750,7 +767,11 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 
   String get _className => routeDataClass.displayName;
 
-  String get _mixinName => '_\$$_className';
+  String get _mixinName {
+    // If the routeDataClass is in a different file, we need to make the mixin public
+    final Uri routeUri = routeDataClass.library2.uri;
+    return routeUri != targetUri ? '\$$_className' : '_\$$_className';
+  }
 
   String get _extensionName => '\$${_className}Extension';
 
