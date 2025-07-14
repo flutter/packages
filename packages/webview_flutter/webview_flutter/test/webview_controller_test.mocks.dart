@@ -458,4 +458,14 @@ class MockPlatformNavigationDelegate extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setOnSSlAuthError(
+    _i6.SslAuthErrorCallback? onSslAuthError,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(#setOnSSlAuthError, [onSslAuthError]),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }

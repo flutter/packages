@@ -270,15 +270,6 @@ void main() {
     testWidgets(
       'reports buffering status',
       (WidgetTester tester) async {
-        // This test requires network access, and won't pass until a LUCI recipe
-        // change is made.
-        // TODO(camsim99): Remove once https://github.com/flutter/flutter/issues/160797 is fixed.
-        if (!kIsWeb && Platform.isAndroid) {
-          markTestSkipped(
-              'Skipping due to https://github.com/flutter/flutter/issues/160797');
-          return;
-        }
-
         await controller.initialize();
         // Mute to allow playing without DOM interaction on Web.
         // See https://developers.google.com/web/updates/2017/09/autoplay-policy-changes
@@ -308,7 +299,11 @@ void main() {
         await expectLater(started.future, completes);
         await expectLater(ended.future, completes);
       },
-      skip: !(kIsWeb || defaultTargetPlatform == TargetPlatform.android),
+      skip:
+          // MEDIA_ELEMENT_ERROR on web, see https://github.com/flutter/flutter/issues/169219
+          kIsWeb ||
+              // Hanging on Android, see https://github.com/flutter/flutter/issues/160797
+              defaultTargetPlatform == TargetPlatform.android,
     );
   });
 
