@@ -1,3 +1,7 @@
+## 4.7.1
+
+* Bumps gradle from 8.9.0 to 8.11.1.
+
 ## 4.7.0
 
 * Adds support to respond to recoverable SSL certificate errors. See `AndroidNavigationDelegate.setOnSSlAuthError`.
