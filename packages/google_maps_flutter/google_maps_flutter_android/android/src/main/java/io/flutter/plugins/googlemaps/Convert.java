@@ -121,7 +121,7 @@ class Convert {
     }
     if (bitmap instanceof Messages.PlatformBitmapPinConfig) {
       Messages.PlatformBitmapPinConfig pinConfigBitmap = (Messages.PlatformBitmapPinConfig) bitmap;
-      return getBitmapFromPinConfig(pinConfigBitmap, assetManager, density, wrapper);
+      return getBitmapFromPinConfigBuilder(pinConfigBitmap, assetManager, density, wrapper);
     }
     throw new IllegalArgumentException("PlatformBitmap did not contain a supported subtype.");
   }
@@ -193,61 +193,73 @@ class Convert {
     }
   }
 
-  public static BitmapDescriptor getBitmapFromPinConfig(
+  public static BitmapDescriptor getBitmapFromPinConfigBuilder(
       Messages.PlatformBitmapPinConfig pinConfigBitmap,
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
     try {
-      final Integer backgroundColor =
-          pinConfigBitmap.getBackgroundColor() != null
-              ? toInt(pinConfigBitmap.getBackgroundColor())
-              : null;
-      final Integer borderColor =
-          pinConfigBitmap.getBorderColor() != null ? toInt(pinConfigBitmap.getBorderColor()) : null;
-      final String glyphText =
-          pinConfigBitmap.getGlyphText() != null ? pinConfigBitmap.getGlyphText() : null;
-      final Integer glyphTextColor =
-          pinConfigBitmap.getGlyphTextColor() != null
-              ? toInt(pinConfigBitmap.getGlyphTextColor())
-              : null;
-      final Integer glyphColor =
-          pinConfigBitmap.getGlyphColor() != null ? toInt(pinConfigBitmap.getGlyphColor()) : null;
-      final BitmapDescriptor glyphBitmapDescriptor =
-          pinConfigBitmap.getGlyphBitmap() != null
-              ? toBitmapDescriptor(pinConfigBitmap.getGlyphBitmap(), assetManager, density)
-              : null;
-
-      final PinConfig.Builder pinConfigBuilder = PinConfig.builder();
-      if (backgroundColor != null) {
-        pinConfigBuilder.setBackgroundColor(backgroundColor);
-      }
-
-      if (borderColor != null) {
-        pinConfigBuilder.setBorderColor(borderColor);
-      }
-
-      PinConfig.Glyph glyph = null;
-      if (glyphText != null) {
-        glyph =
-            glyphTextColor != null
-                ? new PinConfig.Glyph(glyphText, glyphTextColor)
-                : new PinConfig.Glyph(glyphText);
-      } else if (glyphBitmapDescriptor != null) {
-        glyph = new PinConfig.Glyph(glyphBitmapDescriptor);
-      } else if (glyphColor != null) {
-        glyph = new PinConfig.Glyph(glyphColor);
-      }
-
-      if (glyph != null) {
-        pinConfigBuilder.setGlyph(glyph);
-      }
-
-      final PinConfig pinConfig = pinConfigBuilder.build();
+      final PinConfig pinConfig =
+          getPinConfigFromPlatformPinConfig(
+              pinConfigBitmap, assetManager, density, bitmapDescriptorFactory);
       return bitmapDescriptorFactory.fromPinConfig(pinConfig);
     } catch (Exception e) {
       throw new IllegalArgumentException("Unable to interpret pin config as a valid image.", e);
     }
+  }
+
+  @VisibleForTesting
+  public static PinConfig getPinConfigFromPlatformPinConfig(
+      Messages.PlatformBitmapPinConfig pinConfigBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+    final Integer backgroundColor =
+        pinConfigBitmap.getBackgroundColor() != null
+            ? toInt(pinConfigBitmap.getBackgroundColor())
+            : null;
+    final Integer borderColor =
+        pinConfigBitmap.getBorderColor() != null ? toInt(pinConfigBitmap.getBorderColor()) : null;
+    final String glyphText =
+        pinConfigBitmap.getGlyphText() != null ? pinConfigBitmap.getGlyphText() : null;
+    final Integer glyphTextColor =
+        pinConfigBitmap.getGlyphTextColor() != null
+            ? toInt(pinConfigBitmap.getGlyphTextColor())
+            : null;
+    final Integer glyphColor =
+        pinConfigBitmap.getGlyphColor() != null ? toInt(pinConfigBitmap.getGlyphColor()) : null;
+    final BitmapDescriptor glyphBitmapDescriptor =
+        pinConfigBitmap.getGlyphBitmap() != null
+            ? toBitmapDescriptor(
+                pinConfigBitmap.getGlyphBitmap(), assetManager, density, bitmapDescriptorFactory)
+            : null;
+
+    final PinConfig.Builder pinConfigBuilder = PinConfig.builder();
+    if (backgroundColor != null) {
+      pinConfigBuilder.setBackgroundColor(backgroundColor);
+    }
+
+    if (borderColor != null) {
+      pinConfigBuilder.setBorderColor(borderColor);
+    }
+
+    PinConfig.Glyph glyph = null;
+    if (glyphText != null) {
+      glyph =
+          glyphTextColor != null
+              ? new PinConfig.Glyph(glyphText, glyphTextColor)
+              : new PinConfig.Glyph(glyphText);
+    } else if (glyphBitmapDescriptor != null) {
+      glyph = new PinConfig.Glyph(glyphBitmapDescriptor);
+    } else if (glyphColor != null) {
+      glyph = new PinConfig.Glyph(glyphColor);
+    }
+
+    if (glyph != null) {
+      pinConfigBuilder.setGlyph(glyph);
+    }
+
+    return pinConfigBuilder.build();
   }
 
   /**

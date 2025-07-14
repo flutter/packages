@@ -2053,6 +2053,9 @@ void googleMapsTests() {
       ),
     };
 
+    final Completer<ExampleGoogleMapController> controllerCompleter =
+        Completer<ExampleGoogleMapController>();
+
     await tester.pumpWidget(
       Directionality(
         textDirection: ui.TextDirection.ltr,
@@ -2062,6 +2065,8 @@ void googleMapsTests() {
           ),
           markers: markers,
           markerType: MarkerType.advancedMarker,
+          onMapCreated: (ExampleGoogleMapController controller) =>
+              controllerCompleter.complete(controller),
         ),
       ),
     );

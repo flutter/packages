@@ -17,6 +17,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.AdvancedMarkerOptions;
+import com.google.android.gms.maps.model.AdvancedMarkerOptions.CollisionBehavior;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -29,6 +31,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Collections;
 import java.util.List;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,6 +43,7 @@ import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class MarkersControllerTest {
+
   private Context context;
   private MapsCallbackApi flutterApi;
   private ClusterManagersController clusterManagersController;
@@ -270,5 +274,41 @@ public class MarkersControllerTest {
     Mockito.verify(clusterManagersController, times(0)).removeItem(any());
 
     Mockito.verify(spyMarkerCollection, times(1)).remove(marker);
+  }
+
+  @Test
+  public void markerBuilder_setCollisionBehavior() {
+    Messages.PlatformMarker platformMarker = defaultMarkerBuilder().setMarkerId("1").build();
+    MarkerBuilder markerBuilder = new MarkerBuilder("m_1", "1", PlatformMarkerType.ADVANCED_MARKER);
+
+    // Default collision behavior of an AdvancedMarker
+    Convert.interpretMarkerOptions(
+        platformMarker, markerBuilder, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    MarkerOptions markerOptions = markerBuilder.build();
+    Assert.assertEquals(AdvancedMarkerOptions.class, markerOptions.getClass());
+    Assert.assertEquals(
+        CollisionBehavior.REQUIRED, ((AdvancedMarkerOptions) markerOptions).getCollisionBehavior());
+
+    // Customized collision behavior of and AdvancedMarker
+    platformMarker =
+        defaultMarkerBuilder()
+            .setMarkerId("1")
+            .setCollisionBehavior(PlatformMarkerCollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY)
+            .build();
+    Convert.interpretMarkerOptions(
+        platformMarker, markerBuilder, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    markerOptions = markerBuilder.build();
+    Assert.assertEquals(AdvancedMarkerOptions.class, markerOptions.getClass());
+    Assert.assertEquals(
+        CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY,
+        ((AdvancedMarkerOptions) markerOptions).getCollisionBehavior());
+
+    // Legacy markers don't have collision behavior in the marker options
+    platformMarker = defaultMarkerBuilder().setMarkerId("1").build();
+    markerBuilder = new MarkerBuilder("m_1", "1", PlatformMarkerType.MARKER);
+    Convert.interpretMarkerOptions(
+        platformMarker, markerBuilder, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    markerOptions = markerBuilder.build();
+    Assert.assertEquals(MarkerOptions.class, markerOptions.getClass());
   }
 }

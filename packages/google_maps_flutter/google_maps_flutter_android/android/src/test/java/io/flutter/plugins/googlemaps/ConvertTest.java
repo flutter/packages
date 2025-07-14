@@ -14,6 +14,7 @@ import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_MAX_INTENSITY_KEY;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_OPACITY_KEY;
 import static io.flutter.plugins.googlemaps.Convert.HEATMAP_RADIUS_KEY;
+import static io.flutter.plugins.googlemaps.Convert.getPinConfigFromPlatformPinConfig;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.PinConfig;
 import com.google.maps.android.clustering.algo.StaticCluster;
 import com.google.maps.android.geometry.Point;
 import com.google.maps.android.heatmaps.Gradient;
@@ -52,6 +54,7 @@ import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class ConvertTest {
+
   @Mock private AssetManager assetManager;
 
   @Mock private BitmapDescriptorFactoryWrapper bitmapDescriptorFactoryWrapper;
@@ -329,17 +332,61 @@ public class ConvertTest {
   }
 
   @Test
-  public void GetBitmapFromPinConfig() {
-    Messages.PlatformBitmapPinConfig bitmap =
+  public void GetPinConfigFromPlatformPinConfig_GlyphColor() {
+    Messages.PlatformBitmapPinConfig platformBitmap =
         new Messages.PlatformBitmapPinConfig.Builder()
-            .setBackgroundColor(0xFFFFFFL)
-            .setBorderColor(0xFFFFFFL)
+            .setBackgroundColor(0x00FFFFL)
+            .setBorderColor(0xFF00FFL)
+            .setGlyphColor(0x112233L)
             .build();
 
-    when(bitmapDescriptorFactoryWrapper.fromPinConfig(any())).thenReturn(mockBitmapDescriptor);
-    BitmapDescriptor result =
-        Convert.getBitmapFromPinConfig(bitmap, assetManager, 1f, bitmapDescriptorFactoryWrapper);
-    Assert.assertEquals(mockBitmapDescriptor, result);
+    PinConfig pinConfig =
+        getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    Assert.assertEquals(0x00FFFFL, pinConfig.getBackgroundColor());
+    Assert.assertEquals(0xFF00FFL, pinConfig.getBorderColor());
+    Assert.assertEquals(0x112233L, pinConfig.getGlyph().getGlyphColor());
+  }
+
+  @Test
+  public void GetPinConfigFromPlatformPinConfig_Glyph() {
+    Messages.PlatformBitmapPinConfig platformBitmap =
+        new Messages.PlatformBitmapPinConfig.Builder()
+            .setGlyphText("Hi")
+            .setGlyphTextColor(0xFFFFFFL)
+            .build();
+    PinConfig pinConfig =
+        getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1, bitmapDescriptorFactoryWrapper);
+    Assert.assertEquals("Hi", pinConfig.getGlyph().getText());
+    Assert.assertEquals(0xFFFFFFL, pinConfig.getGlyph().getTextColor());
+  }
+
+  @Test
+  public void GetPinConfigFromPlatformPinConfig_GlyphBitmap() {
+    byte[] bmpData = Base64.decode(base64Image, Base64.DEFAULT);
+    Messages.PlatformBitmapBytesMap bytesBitmap =
+        new Messages.PlatformBitmapBytesMap.Builder()
+            .setBitmapScaling(Messages.PlatformMapBitmapScaling.AUTO)
+            .setImagePixelRatio(2.0)
+            .setByteData(bmpData)
+            .build();
+    Messages.PlatformBitmap icon =
+        new Messages.PlatformBitmap.Builder().setBitmap(bytesBitmap).build();
+    Messages.PlatformBitmapPinConfig platformBitmap =
+        new Messages.PlatformBitmapPinConfig.Builder()
+            .setBackgroundColor(0xFFFFFFL)
+            .setBorderColor(0x000000L)
+            .setGlyphBitmap(icon)
+            .build();
+    when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
+    PinConfig pinConfig =
+        getPinConfigFromPlatformPinConfig(
+            platformBitmap, assetManager, 1, bitmapDescriptorFactoryWrapper);
+
+    Assert.assertEquals(0xFFFFFFL, pinConfig.getBackgroundColor());
+    Assert.assertEquals(0x000000L, pinConfig.getBorderColor());
+    Assert.assertEquals(mockBitmapDescriptor, pinConfig.getGlyph().getBitmapDescriptor());
   }
 
   @Test
@@ -805,6 +852,7 @@ public class ConvertTest {
 }
 
 class MockHeatmapBuilder implements HeatmapOptionsSink {
+
   private List<WeightedLatLng> weightedData;
   private Gradient gradient;
   private double maxIntensity;
