@@ -1,6 +1,7 @@
-## NEXT
+## 3.1.0
 
 - Restricts `build` to versions less than 2.5.0.
+- Make the mixin public if the route class is not in the same file.
 
 ## 3.0.1
 
