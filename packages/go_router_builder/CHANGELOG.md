@@ -1,3 +1,7 @@
+## 4.0.0
+
+- Make Route mixins public.
+
 ## 3.3.0
 
 - Adds support for `TypedRelativeGoRoute`.
