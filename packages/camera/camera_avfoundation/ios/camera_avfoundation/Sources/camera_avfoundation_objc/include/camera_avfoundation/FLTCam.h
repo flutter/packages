@@ -29,10 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 // Format used for video and image streaming.
 @property(assign, nonatomic) FourCharCode videoFormat;
 @property(assign, nonatomic) FCPPlatformImageFileFormat fileFormat;
-@property(readonly, nonatomic) CGFloat minimumAvailableZoomFactor;
-@property(readonly, nonatomic) CGFloat maximumAvailableZoomFactor;
-@property(readonly, nonatomic) CGFloat minimumExposureOffset;
-@property(readonly, nonatomic) CGFloat maximumExposureOffset;
 
 // Properties exposed for the Swift DefaultCamera subclass
 @property(nonatomic, nullable) FLTImageStreamHandler *imageStreamHandler;
@@ -52,15 +48,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, nonatomic) NSObject<FLTCaptureSession> *videoCaptureSession;
 @property(readonly, nonatomic) NSObject<FLTCaptureSession> *audioCaptureSession;
 @property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
+@property(assign, nonatomic) UIDeviceOrientation lockedCaptureOrientation;
+@property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration error:(NSError **)error;
 
-- (void)setDeviceOrientation:(UIDeviceOrientation)orientation;
 - (void)captureToFileWithCompletion:(void (^)(NSString *_Nullable,
                                               FlutterError *_Nullable))completion;
-- (void)setImageFileFormat:(FCPPlatformImageFileFormat)fileFormat;
 /// Starts recording a video with an optional streaming messenger.
 /// If the messenger is non-nil then it will be called for each
 /// captured frame, allowing streaming concurrently with recording.
@@ -70,16 +66,9 @@ NS_ASSUME_NONNULL_BEGIN
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger;
 - (void)stopVideoRecordingWithCompletion:(void (^)(NSString *_Nullable,
                                                    FlutterError *_Nullable))completion;
-- (void)pauseVideoRecording;
-- (void)resumeVideoRecording;
-- (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)orientation
-    NS_SWIFT_NAME(lockCaptureOrientation(_:));
-- (void)unlockCaptureOrientation;
 - (void)setFlashMode:(FCPPlatformFlashMode)mode
       withCompletion:(void (^)(FlutterError *_Nullable))completion;
 
-- (void)pausePreview;
-- (void)resumePreview;
 - (void)setDescriptionWhileRecording:(NSString *)cameraName
                       withCompletion:(void (^)(FlutterError *_Nullable))completion;
 
@@ -88,6 +77,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)stopImageStream;
 - (void)setZoomLevel:(CGFloat)zoom withCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)setUpCaptureSessionForAudioIfNeeded;
+
+// Methods exposed for the Swift DefaultCamera subclass
+- (void)updateOrientation;
 
 @end
 
