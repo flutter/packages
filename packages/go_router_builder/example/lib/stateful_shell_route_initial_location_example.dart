@@ -7,6 +7,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'separate_file_route.dart';
+
 part 'stateful_shell_route_initial_location_example.g.dart';
 
 void main() => runApp(App());
@@ -100,15 +102,6 @@ class NotificationsRouteData extends GoRouteData with _$NotificationsRouteData {
   }
 }
 
-class OrdersRouteData extends GoRouteData with _$OrdersRouteData {
-  const OrdersRouteData();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const OrdersPageView(label: 'Orders page');
-  }
-}
-
 class MainPageView extends StatelessWidget {
   const MainPageView({required this.navigationShell, super.key});
 
@@ -193,17 +186,6 @@ class NotificationsPageView extends StatelessWidget {
 
 class NotificationsSubPageView extends StatelessWidget {
   const NotificationsSubPageView({required this.label, super.key});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(label));
-  }
-}
-
-class OrdersPageView extends StatelessWidget {
-  const OrdersPageView({required this.label, super.key});
 
   final String label;
 

@@ -31,7 +31,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
       routes: [
         GoRouteData.$route(
           path: '/orders',
-          factory: _$OrdersRouteData._fromState,
+          factory: $OrdersRouteData._fromState,
         ),
       ],
     ),
@@ -99,7 +99,7 @@ const _$NotificationsPageSectionEnumMap = {
   NotificationsPageSection.archive: 'archive',
 };
 
-mixin _$OrdersRouteData on GoRouteData {
+mixin $OrdersRouteData on GoRouteData {
   static OrdersRouteData _fromState(GoRouterState state) =>
       const OrdersRouteData();
 
