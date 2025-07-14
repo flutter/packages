@@ -1,3 +1,7 @@
+## 3.3.0
+
+- Make the mixin public if the route class is not in the same file.
+
 ## 3.2.1
 
 - Changes generated whitespace for better compatibility with new Dart formatter.
