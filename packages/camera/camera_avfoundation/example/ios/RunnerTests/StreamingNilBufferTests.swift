@@ -26,7 +26,7 @@ private func createNilImageBufferSampleBuffer() -> CMSampleBuffer {
     dataLength: 100,
     flags: kCMBlockBufferAssureMemoryNowFlag,
     blockBufferOut: &blockBuffer)
-  
+
   var formatDescription: CMFormatDescription?
   var basicDescription = AudioStreamBasicDescription(
     mSampleRate: 44100,
@@ -37,7 +37,7 @@ private func createNilImageBufferSampleBuffer() -> CMSampleBuffer {
     mBitsPerChannel: 16,
     mChannelsPerFrame: 1,
     mReserved: 0)
-  
+
   CMAudioFormatDescriptionCreate(
     allocator: kCFAllocatorDefault,
     asbd: &basicDescription,
@@ -47,12 +47,12 @@ private func createNilImageBufferSampleBuffer() -> CMSampleBuffer {
     magicCookie: nil,
     extensions: nil,
     formatDescriptionOut: &formatDescription)
-  
+
   var timingInfo = CMSampleTimingInfo(
     duration: CMTimeMake(value: 1, timescale: 44100),
     presentationTimeStamp: CMTime.zero,
     decodeTimeStamp: CMTime.invalid)
-  
+
   var sampleBuffer: CMSampleBuffer?
   CMSampleBufferCreate(
     allocator: kCFAllocatorDefault,
@@ -67,7 +67,7 @@ private func createNilImageBufferSampleBuffer() -> CMSampleBuffer {
     sampleSizeEntryCount: 0,
     sampleSizeArray: nil,
     sampleBufferOut: &sampleBuffer)
-  
+
   return sampleBuffer!
 }
 
@@ -76,96 +76,96 @@ final class StreamingNilBufferTests: XCTestCase {
     let captureSessionQueue = DispatchQueue(label: "testing")
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    
+
     let camera = CameraTestUtils.createTestCamera(configuration)
     let testVideoOutput = camera.captureVideoOutput.avOutput
     let testVideoConnection = CameraTestUtils.createTestConnection(testVideoOutput)
-    
+
     let handlerMock = MockImageStreamHandler()
     var eventCallCount = 0
-    
+
     handlerMock.eventSinkStub = { event in
       eventCallCount += 1
     }
-    
+
     let finishStartStreamExpectation = expectation(description: "Finish startStream")
     let messenger = MockFlutterBinaryMessenger()
-    
+
     camera.startImageStream(
       with: messenger, imageStreamHandler: handlerMock,
       completion: { _ in
         finishStartStreamExpectation.fulfill()
       })
-    
+
     waitForExpectations(timeout: 30, handler: nil)
     waitForQueueRoundTrip(with: DispatchQueue.main)
-    
+
     XCTAssertEqual(camera.isStreamingImages, true)
     XCTAssertEqual(camera.streamingPendingFramesCount, 0)
-    
+
     // Send a nil image buffer sample (simulating post-recording condition)
     let nilBufferSample = createNilImageBufferSampleBuffer()
     camera.captureOutput(testVideoOutput, didOutput: nilBufferSample, from: testVideoConnection)
-    
+
     // Verify that the frame count is still 0 (frame was skipped)
     XCTAssertEqual(camera.streamingPendingFramesCount, 0)
     XCTAssertEqual(eventCallCount, 0, "No events should be sent for nil image buffers")
-    
+
     // Send a valid sample buffer to ensure streaming still works
     let validSample = CameraTestUtils.createTestSampleBuffer()
     camera.captureOutput(testVideoOutput, didOutput: validSample, from: testVideoConnection)
-    
+
     // Wait a bit for async processing
     waitForQueueRoundTrip(with: captureSessionQueue)
     waitForQueueRoundTrip(with: DispatchQueue.main)
-    
+
     // Verify that the valid frame was processed
     XCTAssertEqual(camera.streamingPendingFramesCount, 1)
     XCTAssertEqual(eventCallCount, 1, "Valid frame should trigger an event")
   }
-  
+
   func testStreamingWithMixedNilAndValidBuffers() {
     let captureSessionQueue = DispatchQueue(label: "testing")
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    
+
     let camera = CameraTestUtils.createTestCamera(configuration)
     let testVideoOutput = camera.captureVideoOutput.avOutput
     let testVideoConnection = CameraTestUtils.createTestConnection(testVideoOutput)
-    
+
     let handlerMock = MockImageStreamHandler()
     var eventCallCount = 0
-    
+
     handlerMock.eventSinkStub = { event in
       eventCallCount += 1
     }
-    
+
     let finishStartStreamExpectation = expectation(description: "Finish startStream")
     let messenger = MockFlutterBinaryMessenger()
-    
+
     camera.startImageStream(
       with: messenger, imageStreamHandler: handlerMock,
       completion: { _ in
         finishStartStreamExpectation.fulfill()
       })
-    
+
     waitForExpectations(timeout: 30, handler: nil)
     waitForQueueRoundTrip(with: DispatchQueue.main)
-    
+
     // Send alternating nil and valid buffers
     let nilBufferSample = createNilImageBufferSampleBuffer()
     let validSample = CameraTestUtils.createTestSampleBuffer()
-    
+
     camera.captureOutput(testVideoOutput, didOutput: validSample, from: testVideoConnection)
     camera.captureOutput(testVideoOutput, didOutput: nilBufferSample, from: testVideoConnection)
     camera.captureOutput(testVideoOutput, didOutput: validSample, from: testVideoConnection)
     camera.captureOutput(testVideoOutput, didOutput: nilBufferSample, from: testVideoConnection)
     camera.captureOutput(testVideoOutput, didOutput: validSample, from: testVideoConnection)
-    
+
     // Wait for async processing
     waitForQueueRoundTrip(with: captureSessionQueue)
     waitForQueueRoundTrip(with: DispatchQueue.main)
-    
+
     // Only valid buffers should be processed
     XCTAssertEqual(eventCallCount, 3, "Only valid frames should trigger events")
   }
@@ -183,7 +183,7 @@ private func waitForQueueRoundTrip(with queue: DispatchQueue) {
 // Mock class from StreamingTests.swift
 private class MockImageStreamHandler: FLTImageStreamHandler {
   var eventSinkStub: ((Any?) -> Void)?
-  
+
   override var eventSink: FlutterEventSink? {
     get {
       if let stub = eventSinkStub {
