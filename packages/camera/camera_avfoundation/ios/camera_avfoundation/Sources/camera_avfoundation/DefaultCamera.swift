@@ -276,7 +276,11 @@ final class DefaultCamera: FLTCam, Camera {
       {
         streamingPendingFramesCount += 1
 
-        let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)!
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+          // Skip this frame if pixelBuffer is nil (can happen right after recording stops)
+          streamingPendingFramesCount -= 1
+          return
+        }
         // Must lock base address before accessing the pixel data
         CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
 
