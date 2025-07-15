@@ -1,6 +1,5 @@
 ## NEXT
 
-* Use FloatingActionButton.extended in iOS example to add descriptive labels for each action.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 0.8.12+2
