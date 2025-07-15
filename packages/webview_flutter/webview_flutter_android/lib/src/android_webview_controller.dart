@@ -880,6 +880,7 @@ enum FileSelectorMode {
 }
 
 /// Mode for controlling mixed content handling.
+
 /// See [AndroidWebViewController.setMixedContentMode].
 enum MixedContentMode {
   /// The WebView will allow a secure origin to load content from any other
