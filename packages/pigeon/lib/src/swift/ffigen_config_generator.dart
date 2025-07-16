@@ -49,66 +49,73 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
 import 'dart:io';
 
 import 'package:ffigen/ffigen.dart' as fg;
-import 'package:logging/logging.dart';
+import 'package:ffigen/src/config_provider/config_types.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:swiftgen/swiftgen.dart';
 
 Future<void> main() async {
-  // TODO(https://github.com/dart-lang/native/issues/2371): Remove this.
-  Logger.root.onRecord.listen((record) {
-    stderr.writeln('\${record.level.name}: \${record.message}');
-  });
+  final List<String> classes = <String>[
+  ''');
+    indent.inc(2);
+    for (final Api api in root.apis) {
+      if (api is AstHostApi || api is AstFlutterApi) {
+        indent.writeln("'${api.name}',");
+        // indent.writeln("'${api.name}Registrar',");
+      }
+    }
+    for (final Class dataClass in root.classes) {
+      indent.writeln("'${dataClass.name}',");
+    }
+    for (final Enum enumType in root.enums) {
+      indent.writeln("'${enumType.name}',");
+    }
+    indent.dec(2);
 
+    indent.format('''
+  ];
   await SwiftGen(
     target: Target(
-      triple: 'x86_64-apple-macosx14.0',
+      // triple: 'x86_64-apple-macosx14.0',
+      triple: 'arm64-apple-ios',
       sdk: Uri.directory(
-        '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk',
+        '/Applications/Xcode-beta.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk',
+        // '/Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk',
       ),
     ),
     input: ObjCCompatibleSwiftFileInput(
-      module: 'AVFAudio',
-      files: [Uri.file('avf_audio_wrapper.swift')],
+      module: 'JniTests',
+      files: <Uri>[Uri.file('${generatorOptions.swiftOptions.swiftOut}')],
     ),
     tempDirectory: Uri.directory('temp'),
-    outputModule: 'AVFAudioWrapper',
+    outputModule: 'JniTests',
     ffigen: FfiGenConfig(
-      output: Uri.file('avf_audio_bindings.dart'),
-      outputObjC: Uri.file('avf_audio_wrapper.m'),
+      output: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.ffi.dart'),
+      outputObjC: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.m'),
       externalVersions: fg.ExternalVersions(
         ios: fg.Versions(min: Version(12, 0, 0)),
         macos: fg.Versions(min: Version(10, 14, 0)),
       ),
       objcInterfaces: fg.DeclarationFilters(
-        shouldInclude: (decl) => decl.originalName == 'AVAudioPlayerWrapper',
+        shouldInclude: (Declaration decl) => classes.contains(decl.originalName),
       ),
       preamble: \'''
-// Copyright (c) 2025, the Dart project authors. Please see the AUTHORS file
-// for details. All rights reserved. Use of this source code is governed by a
-// BSD-style license that can be found in the LICENSE file.
+// ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
 
-// ignore_for_file: always_specify_types
-// ignore_for_file: camel_case_types
-// ignore_for_file: non_constant_identifier_names
-// ignore_for_file: unnecessary_non_null_assertion
-// ignore_for_file: unused_element
-// ignore_for_file: unused_field
+// ignore_for_file: always_specify_types, camel_case_types, non_constant_identifier_names, unnecessary_non_null_assertion, unused_element, unused_field
 // coverage:ignore-file
 \''',
     ),
   ).generate();
 
-  final result = Process.runSync('swiftc', [
+  final result = Process.runSync('swiftc', <String>[
     '-emit-library',
     '-o',
-    'avf_audio_wrapper.dylib',
+    'jni_tests.gen.dylib',
     '-module-name',
-    'AVFAudioWrapper',
-    'avf_audio_wrapper.swift',
-    '-framework',
-    'AVFAudio',
+    'JniTests',
     '-framework',
     'Foundation',
+    '${generatorOptions.swiftOptions.swiftOut}',
   ]);
   if (result.exitCode != 0) {
     print('Failed to build the swift wrapper library');
@@ -116,46 +123,30 @@ Future<void> main() async {
     print(result.stderr);
   }
 }
-      // name: SwiftLibrary
-      // language: swift
-      // output: '${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.ffi.dart'
-      // exclude-all-by-default: true
-      // headers:
-      //   entry-points:
-      //     - '${generatorOptions.swiftOptions.swiftOut}'
-      // preamble: |
-      //   # Header input
-
-      //   // ignore_for_file: camel_case_types, non_constant_identifier_names
-      //   // ignore_for_file: unused_element, unused_field, return_of_invalid_type
-      //   // ignore_for_file: void_checks, annotate_overrides
-      //   // ignore_for_file: no_leading_underscores_for_local_identifiers
-      //   // ignore_for_file: library_private_types_in_public_api
-
       ''');
-    indent.writeScoped('// objc-interfaces:', '', () {
-      indent.writeScoped('// include:', '', () {
-        for (final Api api in root.apis) {
-          if (api is AstHostApi || api is AstFlutterApi) {
-            indent.writeln("// - '${api.name}'");
-            indent.writeln("// - '${api.name}Registrar'");
-          }
-        }
-        for (final Class dataClass in root.classes) {
-          indent.writeln("// - '${dataClass.name}'");
-        }
-        for (final Enum enumType in root.enums) {
-          indent.writeln("// - '${enumType.name}'");
-        }
-      });
-      indent.writeScoped('// include:', '', () {
-        for (final Class dataClass in root.classes) {
-          indent.writeln("// '${dataClass.name}': '${dataClass.name}'");
-        }
-        for (final Enum enumType in root.enums) {
-          indent.writeln("// '${enumType.name}': '${enumType.name}'");
-        }
-      });
-    });
+    // indent.writeScoped('// objc-interfaces:', '', () {
+    //   indent.writeScoped('// include:', '', () {
+    //     for (final Api api in root.apis) {
+    //       if (api is AstHostApi || api is AstFlutterApi) {
+    //         indent.writeln("// - '${api.name}'");
+    //         indent.writeln("// - '${api.name}Registrar'");
+    //       }
+    //     }
+    //     for (final Class dataClass in root.classes) {
+    //       indent.writeln("// - '${dataClass.name}'");
+    //     }
+    //     for (final Enum enumType in root.enums) {
+    //       indent.writeln("// - '${enumType.name}'");
+    //     }
+    //   });
+    //   indent.writeScoped('// include:', '', () {
+    //     for (final Class dataClass in root.classes) {
+    //       indent.writeln("// '${dataClass.name}': '${dataClass.name}'");
+    //     }
+    //     for (final Enum enumType in root.enums) {
+    //       indent.writeln("// '${enumType.name}': '${enumType.name}'");
+    //     }
+    //   });
+    // });
   }
 }

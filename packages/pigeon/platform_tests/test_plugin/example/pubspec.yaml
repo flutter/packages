@@ -17,18 +17,22 @@ dependencies:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jni
-      ref: f6ab5f4bd12565d5b02d792a1817955f06e712a7
+      ref: df4cc9acb90bc6594c6044d452d51b5f14e6acde
   jnigen:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jnigen
-      ref: f6ab5f4bd12565d5b02d792a1817955f06e712a7
+      ref: df4cc9acb90bc6594c6044d452d51b5f14e6acde
   swiftgen:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/swiftgen
-      ref: f6ab5f4bd12565d5b02d792a1817955f06e712a7
-  ffigen: ^19.0.0
+      ref: df4cc9acb90bc6594c6044d452d51b5f14e6acde
+  ffigen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffigen
+      ref: df4cc9acb90bc6594c6044d452d51b5f14e6acde
   pub_semver: ^2.2.0
 
 dev_dependencies:
@@ -39,3 +43,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+dependency_overrides:
+  ffigen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffigen
+      ref: df4cc9acb90bc6594c6044d452d51b5f14e6acde

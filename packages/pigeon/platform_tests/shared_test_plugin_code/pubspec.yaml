@@ -22,6 +22,7 @@ dependencies:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jni
-      ref: f6ab5f4bd12565d5b02d792a1817955f06e712a7
+      ref: df4cc9acb90bc6594c6044d452d51b5f14e6acde
   ffi: ^2.1.3
   mockito: ^5.4.4
+  objective_c: ^8.0.0

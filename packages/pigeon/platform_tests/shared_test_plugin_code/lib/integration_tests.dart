@@ -47,7 +47,8 @@ const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  if (targetGenerator == TargetGenerator.kotlin) {
+  if (targetGenerator == TargetGenerator.kotlin ||
+      targetGenerator == TargetGenerator.swift) {
     ffi_tests.runPigeonIntegrationTests(
         targetGenerator == TargetGenerator.kotlin
             ? ffi_tests.TargetGenerator.kotlin

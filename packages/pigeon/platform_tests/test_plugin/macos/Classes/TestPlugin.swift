@@ -12,6 +12,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterSmallApiOne: FlutterSmallApi
   var flutterSmallApiTwo: FlutterSmallApi
   var proxyApiRegistrar: ProxyApiTestsPigeonProxyApiRegistrar?
+  var host: Host
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger)
@@ -39,6 +40,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
     StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
     StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
+      host = Host(name: "Host")
+      host = Host.getInstance(name: "Host")
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
