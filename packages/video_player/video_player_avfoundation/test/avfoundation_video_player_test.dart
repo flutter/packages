@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -293,8 +292,7 @@ void main() {
           const VideoPlayerTextureViewState(textureId: newPlayerId));
     });
 
-    test('createWithOptions with platform view on iOS', () async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    test('createWithOptions with platform view', () async {
       final (
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
@@ -320,36 +318,6 @@ void main() {
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
           const VideoPlayerPlatformViewState());
-    });
-
-    test('createWithOptions with platform view uses texture view on MacOS',
-        () async {
-      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
-      final (
-        AVFoundationVideoPlayer player,
-        MockAVFoundationVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1);
-      const int newPlayerId = 2;
-      when(api.create(any)).thenAnswer((_) async => newPlayerId);
-
-      final int? playerId = await player.createWithOptions(
-        VideoCreationOptions(
-          dataSource: DataSource(
-            sourceType: DataSourceType.file,
-            uri: 'file:///foo/bar',
-          ),
-          viewType: VideoViewType.platformView,
-        ),
-      );
-
-      final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
-      expect(creationOptions.viewType, PlatformVideoViewType.textureView);
-      expect(playerId, newPlayerId);
-      expect(player.playerViewStates[newPlayerId],
-          const VideoPlayerTextureViewState(textureId: newPlayerId));
     });
 
     test('setLooping', () async {

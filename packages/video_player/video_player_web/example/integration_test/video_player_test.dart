@@ -434,6 +434,78 @@ void main() {
         });
       });
 
+      group('poster', () {
+        testWidgets('when null expect no poster attribute',
+            (WidgetTester tester) async {
+          await player.setOptions(
+            const VideoPlayerWebOptions(),
+          );
+
+          expect(video.poster, isEmpty);
+          expect(video.getAttribute('poster'), isNull);
+        });
+
+        testWidgets('when provided expect poster attribute set',
+            (WidgetTester tester) async {
+          final Uri posterUri = Uri.parse('https://example.com/poster.jpg');
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: posterUri,
+            ),
+          );
+
+          expect(video.poster, posterUri.toString());
+          expect(video.getAttribute('poster'), posterUri.toString());
+        });
+
+        testWidgets('when set to null after having value expect poster removed',
+            (WidgetTester tester) async {
+          final Uri posterUri = Uri.parse('https://example.com/poster.jpg');
+
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: posterUri,
+            ),
+          );
+
+          expect(video.poster, posterUri.toString());
+
+          await player.setOptions(
+            const VideoPlayerWebOptions(),
+          );
+
+          expect(video.poster, isEmpty);
+          expect(video.getAttribute('poster'), isNull);
+        });
+
+        testWidgets('when updated expect poster attribute updated',
+            (WidgetTester tester) async {
+          final Uri initialPoster =
+              Uri.parse('https://example.com/poster1.jpg');
+          final Uri updatedPoster =
+              Uri.parse('https://example.com/poster2.jpg');
+
+          // Set initial poster
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: initialPoster,
+            ),
+          );
+
+          expect(video.poster, initialPoster.toString());
+
+          // Update poster
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: updatedPoster,
+            ),
+          );
+
+          expect(video.poster, updatedPoster.toString());
+          expect(video.getAttribute('poster'), updatedPoster.toString());
+        });
+      });
+
       group('when called first time', () {
         testWidgets('expect correct options', (WidgetTester tester) async {
           await player.setOptions(
