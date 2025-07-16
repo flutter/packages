@@ -53,29 +53,28 @@ Iterable<cb.Parameter> asConstructorParameters({
     );
   }
 
-  for (final (Method, AstProxyApi) method in flutterMethodsFromSuperClasses) {
+  for (final (Method method, AstProxyApi api)
+      in flutterMethodsFromSuperClasses) {
     yield cb.Parameter(
       (cb.ParameterBuilder builder) => builder
-        ..name = method.$1.name
+        ..name = method.name
         ..named = true
-        ..type = defineType
-            ? methodAsFunctionType(method.$1, apiName: method.$2.name)
-            : null
+        ..type =
+            defineType ? methodAsFunctionType(method, apiName: api.name) : null
         ..toSuper = !defineType
-        ..required = method.$1.isRequired,
+        ..required = method.isRequired,
     );
   }
 
-  for (final (Method, AstProxyApi) method in flutterMethodsFromInterfaces) {
+  for (final (Method method, AstProxyApi api) in flutterMethodsFromInterfaces) {
     yield cb.Parameter(
       (cb.ParameterBuilder builder) => builder
-        ..name = method.$1.name
+        ..name = method.name
         ..named = true
-        ..type = defineType
-            ? methodAsFunctionType(method.$1, apiName: method.$2.name)
-            : null
+        ..type =
+            defineType ? methodAsFunctionType(method, apiName: api.name) : null
         ..toThis = !defineType
-        ..required = method.$1.isRequired,
+        ..required = method.isRequired,
     );
   }
 
@@ -216,23 +215,22 @@ cb.Method overridesClassResetMethod(
         '/// Sets all overridden ProxyApi class members to null.',
       ])
       ..body = cb.Block.of(<cb.Code>[
-        for (final AstProxyApi api in proxyApis)
+        for (final AstProxyApi api in proxyApis) ...<cb.Code>[
           for (final Constructor constructor in api.constructors)
             cb.Code(
               '${toLowerCamelCase(api.name)}_${constructor.name.isEmpty ? 'new' : constructor.name} = null;',
             ),
-        for (final AstProxyApi api in proxyApis)
           for (final ApiField attachedField
               in api.fields.where((ApiField field) => field.isStatic))
             cb.Code(
               '${toLowerCamelCase(api.name)}_${attachedField.name} = null;',
             ),
-        for (final AstProxyApi api in proxyApis)
           for (final Method staticMethod
               in api.methods.where((Method method) => method.isStatic))
             cb.Code(
               '${toLowerCamelCase(api.name)}_${staticMethod.name} = null;',
             ),
+        ],
       ]);
   });
 }

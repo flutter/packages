@@ -304,12 +304,12 @@ class PigeonOverrides {
   static void pigeon_reset() {
     proxyApiTestClass_new = null;
     proxyApiTestClass_namedConstructor = null;
-    proxyApiSuperClass_new = null;
-    classWithApiRequirement_new = null;
     proxyApiTestClass_staticAttachedField = null;
     proxyApiTestClass_staticNoop = null;
     proxyApiTestClass_echoStaticString = null;
     proxyApiTestClass_staticAsyncNoop = null;
+    proxyApiSuperClass_new = null;
+    classWithApiRequirement_new = null;
   }
 }
 
