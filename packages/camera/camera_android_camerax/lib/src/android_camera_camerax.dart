@@ -379,18 +379,18 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
 
     // Configure ImageCapture instance.
-    final int defaultDisplayRotation =
+    _initialDefaultDisplayRotation =
         await deviceOrientationManager.getDefaultDisplayRotation();
     imageCapture = proxy.newImageCapture(
       resolutionSelector: presetResolutionSelector,
-      targetRotation: defaultDisplayRotation,
+      targetRotation: _initialDefaultDisplayRotation,
     );
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
     imageAnalysis = proxy.newImageAnalysis(
       resolutionSelector: presetResolutionSelector,
-      targetRotation: defaultDisplayRotation,
+      targetRotation: _initialDefaultDisplayRotation,
     );
 
     // Configure VideoCapture and Recorder instances.
@@ -427,8 +427,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     _initialDeviceOrientation = _deserializeDeviceOrientation(
       await deviceOrientationManager.getUiOrientation(),
     );
-    _initialDefaultDisplayRotation =
-        await deviceOrientationManager.getDefaultDisplayRotation();
 
     return flutterSurfaceTextureId;
   }
