@@ -60,6 +60,34 @@ final class DefaultCamera: FLTCam, Camera {
       details: error.domain)
   }
 
+  private static func createConnection(
+    captureDevice: FLTCaptureDevice,
+    videoFormat: FourCharCode,
+    captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  ) throws -> (FLTCaptureInput, FLTCaptureVideoDataOutput, AVCaptureConnection) {
+    // Setup video capture input.
+    let captureVideoInput = try captureDeviceInputFactory.deviceInput(with: captureDevice)
+
+    // Setup video capture output.
+    let captureVideoOutput = FLTDefaultCaptureVideoDataOutput(
+      captureVideoOutput: AVCaptureVideoDataOutput())
+    captureVideoOutput.videoSettings = [
+      kCVPixelBufferPixelFormatTypeKey as String: videoFormat as Any
+    ]
+    captureVideoOutput.alwaysDiscardsLateVideoFrames = true
+
+    // Setup video capture connection.
+    let connection = AVCaptureConnection(
+      inputPorts: captureVideoInput.ports,
+      output: captureVideoOutput.avOutput)
+
+    if captureDevice.position == .front {
+      connection.isVideoMirrored = true
+    }
+
+    return (captureVideoInput, captureVideoOutput, connection)
+  }
+
   func reportInitializationState() {
     // Get all the state on the current thread, not the main thread.
     let state = FCPPlatformCameraState.make(
@@ -378,6 +406,85 @@ final class DefaultCamera: FLTCam, Camera {
 
   func resumePreview() {
     isPreviewPaused = false
+  }
+
+  func setDescriptionWhileRecording(
+    _ cameraName: String, withCompletion completion: @escaping (FlutterError?) -> Void
+  ) {
+    guard isRecording else {
+      completion(
+        FlutterError(
+          code: "setDescriptionWhileRecordingFailed",
+          message: "Device was not recording",
+          details: nil))
+      return
+    }
+
+    captureDevice = captureDeviceFactory(cameraName)
+
+    let oldConnection = captureVideoOutput.connection(withMediaType: .video)
+
+    // Stop video capture from the old output.
+    captureVideoOutput.setSampleBufferDelegate(nil, queue: nil)
+
+    // Remove the old video capture connections.
+    videoCaptureSession.beginConfiguration()
+    videoCaptureSession.removeInput(captureVideoInput)
+    videoCaptureSession.removeOutput(captureVideoOutput.avOutput)
+
+    let newConnection: AVCaptureConnection
+
+    do {
+      (captureVideoInput, captureVideoOutput, newConnection) = try DefaultCamera.createConnection(
+        captureDevice: captureDevice,
+        videoFormat: videoFormat,
+        captureDeviceInputFactory: captureDeviceInputFactory)
+
+      captureVideoOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
+    } catch {
+      completion(
+        FlutterError(
+          code: "VideoError",
+          message: "Unable to create video connection",
+          details: nil))
+      return
+    }
+
+    // Keep the same orientation the old connections had.
+    if let oldConnection = oldConnection, newConnection.isVideoOrientationSupported {
+      newConnection.videoOrientation = oldConnection.videoOrientation
+    }
+
+    // Add the new connections to the session.
+    if !videoCaptureSession.canAddInput(captureVideoInput) {
+      completion(
+        FlutterError(
+          code: "VideoError",
+          message: "Unable to switch video input",
+          details: nil))
+    }
+    videoCaptureSession.addInputWithNoConnections(captureVideoInput)
+
+    if !videoCaptureSession.canAddOutput(captureVideoOutput.avOutput) {
+      completion(
+        FlutterError(
+          code: "VideoError",
+          message: "Unable to switch video output",
+          details: nil))
+    }
+    videoCaptureSession.addOutputWithNoConnections(captureVideoOutput.avOutput)
+
+    if !videoCaptureSession.canAddConnection(newConnection) {
+      completion(
+        FlutterError(
+          code: "VideoError",
+          message: "Unable to switch video connection",
+          details: nil))
+    }
+    videoCaptureSession.addConnection(newConnection)
+    videoCaptureSession.commitConfiguration()
+
+    completion(nil)
   }
 
   func stopImageStream() {

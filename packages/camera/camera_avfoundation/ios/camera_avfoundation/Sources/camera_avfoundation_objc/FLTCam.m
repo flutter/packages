@@ -32,7 +32,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 
-@property(readonly, nonatomic) NSObject<FLTCaptureInput> *captureVideoInput;
 @property(readonly, nonatomic) CGSize captureSize;
 @property(strong, nonatomic)
     NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
@@ -40,8 +39,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
-/// All FLTCam's state access and capture session related operations should be on run on this queue.
-@property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
 /// The queue on which captured photos (not videos) are written to disk.
 /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
 @property(strong, nonatomic) dispatch_queue_t photoIOQueue;
@@ -49,9 +46,7 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 /// Allows for alternate implementations in tests.
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
-@property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
-@property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
 /// Reports the given error message to the Dart side of the plugin.
@@ -466,61 +461,6 @@ NSString *const errorMethod = @"error";
                                    message:@"Video is already recording"
                                    details:nil]);
   }
-}
-
-- (void)setDescriptionWhileRecording:(NSString *)cameraName
-                      withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (!_isRecording) {
-    completion([FlutterError errorWithCode:@"setDescriptionWhileRecordingFailed"
-                                   message:@"Device was not recording"
-                                   details:nil]);
-    return;
-  }
-
-  _captureDevice = self.captureDeviceFactory(cameraName);
-
-  NSObject<FLTCaptureConnection> *oldConnection =
-      [_captureVideoOutput connectionWithMediaType:AVMediaTypeVideo];
-
-  // Stop video capture from the old output.
-  [_captureVideoOutput setSampleBufferDelegate:nil queue:nil];
-
-  // Remove the old video capture connections.
-  [_videoCaptureSession beginConfiguration];
-  [_videoCaptureSession removeInput:_captureVideoInput];
-  [_videoCaptureSession removeOutput:_captureVideoOutput.avOutput];
-
-  NSError *error = nil;
-  AVCaptureConnection *newConnection = [self createConnection:&error];
-  if (error) {
-    completion(FlutterErrorFromNSError(error));
-    return;
-  }
-
-  // Keep the same orientation the old connections had.
-  if (oldConnection && newConnection.isVideoOrientationSupported) {
-    newConnection.videoOrientation = oldConnection.videoOrientation;
-  }
-
-  // Add the new connections to the session.
-  if (![_videoCaptureSession canAddInput:_captureVideoInput])
-    completion([FlutterError errorWithCode:@"VideoError"
-                                   message:@"Unable switch video input"
-                                   details:nil]);
-  [_videoCaptureSession addInputWithNoConnections:_captureVideoInput];
-  if (![_videoCaptureSession canAddOutput:_captureVideoOutput.avOutput])
-    completion([FlutterError errorWithCode:@"VideoError"
-                                   message:@"Unable switch video output"
-                                   details:nil]);
-  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput.avOutput];
-  if (![_videoCaptureSession canAddConnection:newConnection])
-    completion([FlutterError errorWithCode:@"VideoError"
-                                   message:@"Unable switch video connection"
-                                   details:nil]);
-  [_videoCaptureSession addConnection:newConnection];
-  [_videoCaptureSession commitConfiguration];
-
-  completion(nil);
 }
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
