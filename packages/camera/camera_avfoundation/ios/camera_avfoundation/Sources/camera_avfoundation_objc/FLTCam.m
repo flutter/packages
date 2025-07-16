@@ -55,7 +55,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
 @property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
-@property(assign, nonatomic) FCPPlatformFlashMode flashMode;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
 /// Reports the given error message to the Dart side of the plugin.
@@ -511,51 +510,6 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)setFlashMode:(FCPPlatformFlashMode)mode
-      withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (mode == FCPPlatformFlashModeTorch) {
-    if (!_captureDevice.hasTorch) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Device does not support torch mode"
-                                     details:nil]);
-      return;
-    }
-    if (!_captureDevice.isTorchAvailable) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Torch mode is currently not available"
-                                     details:nil]);
-      return;
-    }
-    if (_captureDevice.torchMode != AVCaptureTorchModeOn) {
-      [_captureDevice lockForConfiguration:nil];
-      [_captureDevice setTorchMode:AVCaptureTorchModeOn];
-      [_captureDevice unlockForConfiguration];
-    }
-  } else {
-    if (!_captureDevice.hasFlash) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Device does not have flash capabilities"
-                                     details:nil]);
-      return;
-    }
-    AVCaptureFlashMode avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(mode);
-    if (![_capturePhotoOutput.supportedFlashModes
-            containsObject:[NSNumber numberWithInt:((int)avFlashMode)]]) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Device does not support this specific flash mode"
-                                     details:nil]);
-      return;
-    }
-    if (_captureDevice.torchMode != AVCaptureTorchModeOff) {
-      [_captureDevice lockForConfiguration:nil];
-      [_captureDevice setTorchMode:AVCaptureTorchModeOff];
-      [_captureDevice unlockForConfiguration];
-    }
-  }
-  _flashMode = mode;
-  completion(nil);
-}
-
 - (void)setDescriptionWhileRecording:(NSString *)cameraName
                       withCompletion:(void (^)(FlutterError *_Nullable))completion {
   if (!_isRecording) {
@@ -665,29 +619,6 @@ NSString *const errorMethod = @"error";
   } else {
     [self reportErrorMessage:@"Images from camera are not streaming!"];
   }
-}
-
-- (void)setZoomLevel:(CGFloat)zoom withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (_captureDevice.maxAvailableVideoZoomFactor < zoom ||
-      _captureDevice.minAvailableVideoZoomFactor > zoom) {
-    NSString *errorMessage = [NSString
-        stringWithFormat:@"Zoom level out of bounds (zoom level should be between %f and %f).",
-                         _captureDevice.minAvailableVideoZoomFactor,
-                         _captureDevice.maxAvailableVideoZoomFactor];
-
-    completion([FlutterError errorWithCode:@"ZOOM_ERROR" message:errorMessage details:nil]);
-    return;
-  }
-
-  NSError *error = nil;
-  if (![_captureDevice lockForConfiguration:&error]) {
-    completion(FlutterErrorFromNSError(error));
-    return;
-  }
-  _captureDevice.videoZoomFactor = zoom;
-  [_captureDevice unlockForConfiguration];
-
-  completion(nil);
 }
 
 - (BOOL)setupWriterForPath:(NSString *)path {
