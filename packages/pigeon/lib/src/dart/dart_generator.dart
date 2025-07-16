@@ -27,7 +27,7 @@ const String instanceManagerVarName = '${classMemberNamePrefix}instanceManager';
 const String _pigeonChannelCodec = 'pigeonChannelCodec';
 
 /// Documentation comment spec.
-const DocumentCommentSpecification _docCommentSpec =
+const DocumentCommentSpecification docCommentSpec =
     DocumentCommentSpecification(_docCommentPrefix);
 
 /// The custom codec used for all pigeon APIs.
@@ -183,12 +183,12 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }) {
     indent.newln();
     addDocumentationComments(
-        indent, anEnum.documentationComments, _docCommentSpec);
+        indent, anEnum.documentationComments, docCommentSpec);
     indent.write('enum ${anEnum.name} ');
     indent.addScoped('{', '}', () {
       for (final EnumMember member in anEnum.members) {
         addDocumentationComments(
-            indent, member.documentationComments, _docCommentSpec);
+            indent, member.documentationComments, docCommentSpec);
         indent.writeln('${member.name},');
       }
     });
@@ -204,7 +204,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }) {
     indent.newln();
     addDocumentationComments(
-        indent, classDefinition.documentationComments, _docCommentSpec);
+        indent, classDefinition.documentationComments, docCommentSpec);
     final String sealed = classDefinition.isSealed ? 'sealed ' : '';
     final String implements = classDefinition.superClassName != null
         ? 'extends ${classDefinition.superClassName} '
@@ -220,7 +220,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       for (final NamedType field
           in getFieldsInSerializationOrder(classDefinition)) {
         addDocumentationComments(
-            indent, field.documentationComments, _docCommentSpec);
+            indent, field.documentationComments, docCommentSpec);
 
         final String datatype = addGenericTypesNullable(field.type);
         indent.writeln('$datatype ${field.name};');
@@ -509,8 +509,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    addDocumentationComments(
-        indent, api.documentationComments, _docCommentSpec);
+    addDocumentationComments(indent, api.documentationComments, docCommentSpec);
 
     indent.write('abstract class ${api.name} ');
     indent.addScoped('{', '}', () {
@@ -523,7 +522,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.newln();
       for (final Method func in api.methods) {
         addDocumentationComments(
-            indent, func.documentationComments, _docCommentSpec);
+            indent, func.documentationComments, docCommentSpec);
 
         final bool isAsync = func.isAsynchronous;
         final String returnType = isAsync
@@ -585,8 +584,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }) {
     indent.newln();
     bool first = true;
-    addDocumentationComments(
-        indent, api.documentationComments, _docCommentSpec);
+    addDocumentationComments(indent, api.documentationComments, docCommentSpec);
     indent.write('class ${api.name} ');
     indent.addScoped('{', '}', () {
       indent.format('''
@@ -632,8 +630,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     required String dartPackageName,
   }) {
     indent.newln();
-    addDocumentationComments(
-        indent, api.documentationComments, _docCommentSpec);
+    addDocumentationComments(indent, api.documentationComments, docCommentSpec);
     for (final Method func in api.methods) {
       indent.format('''
       Stream<${func.returnType.baseName}> ${func.name}(${_getMethodParameterSignature(func.parameters, addTrailingComma: true)} {String instanceName = ''}) {
@@ -905,7 +902,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           ),
         )
         ..docs.addAll(
-          asDocumentationComments(api.documentationComments, _docCommentSpec),
+          asDocumentationComments(api.documentationComments, docCommentSpec),
         )
         ..constructors.addAll(_proxyApiConstructors(
           api.constructors,
@@ -949,7 +946,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ))
         ..fields.addAll(_proxyApiInterfaceApiFields(api.apisOfInterfaces()))
         ..fields.addAll(_proxyApiAttachedFields(api.attachedFields))
-        ..methods.addAll(_proxyApiStaticAttachedFieldsGetters(
+        ..methods.addAll(proxyApiHelper.staticAttachedFieldsGetters(
           api.attachedFields.where((ApiField field) => field.isStatic),
           apiName: api.name,
         ))
@@ -1208,7 +1205,7 @@ if (wrapped == null) {
     required String channelName,
     required bool addSuffixVariable,
   }) {
-    addDocumentationComments(indent, documentationComments, _docCommentSpec);
+    addDocumentationComments(indent, documentationComments, docCommentSpec);
     final String argSignature = _getMethodParameterSignature(parameters);
     indent.write(
       'Future<${addGenericTypesNullable(returnType)}> $name($argSignature) async ',
@@ -1534,7 +1531,7 @@ if (${varNamePrefix}replyList == null) {
             ..factory = true
             ..docs.addAll(asDocumentationComments(
               constructor.documentationComments,
-              _docCommentSpec,
+              docCommentSpec,
             ))
             ..optionalParameters.addAll(parameters)
             ..body = cb.Block(
@@ -1590,7 +1587,7 @@ if (${varNamePrefix}replyList == null) {
             ..annotations.add(cb.refer('protected'))
             ..docs.addAll(asDocumentationComments(
               constructor.documentationComments,
-              _docCommentSpec,
+              docCommentSpec,
             ))
             ..optionalParameters.addAll(proxyApiHelper.asConstructorParameters(
               apiName: apiName,
@@ -1720,7 +1717,7 @@ if (${varNamePrefix}replyList == null) {
           ..modifier = cb.FieldModifier.final$
           ..docs.addAll(asDocumentationComments(
             field.documentationComments,
-            _docCommentSpec,
+            docCommentSpec,
           )),
       );
     }
@@ -1764,7 +1761,7 @@ if (${varNamePrefix}replyList == null) {
                 'release the associated Native object manually.',
               ],
             ],
-            _docCommentSpec,
+            docCommentSpec,
           ))
           ..type =
               proxyApiHelper.methodAsFunctionType(method, apiName: apiName),
@@ -1792,7 +1789,7 @@ if (${varNamePrefix}replyList == null) {
             ..annotations.add(cb.refer('override'))
             ..docs.addAll(asDocumentationComments(
               method.documentationComments,
-              _docCommentSpec,
+              docCommentSpec,
             ))
             ..type = cb.FunctionType(
               (cb.FunctionTypeBuilder builder) => builder
@@ -1820,38 +1817,6 @@ if (${varNamePrefix}replyList == null) {
     }
   }
 
-  /// Converts static attached Fields from the pigeon AST to `code_builder`
-  /// Method.
-  ///
-  /// Static attached fields return an overrideable test value or returns the
-  /// private static instance.
-  ///
-  /// Example Output:
-  ///
-  /// ```dart
-  /// static MyClass get instance => PigeonMyClassOverrides.instance ?? _instance;
-  /// ```
-  Iterable<cb.Method> _proxyApiStaticAttachedFieldsGetters(
-    Iterable<ApiField> fields, {
-    required String apiName,
-  }) sync* {
-    for (final ApiField field in fields) {
-      yield cb.Method((cb.MethodBuilder builder) => builder
-        ..name = field.name
-        ..type = cb.MethodType.getter
-        ..static = true
-        ..returns = cb.refer(addGenericTypesNullable(field.type))
-        ..docs.addAll(asDocumentationComments(
-          field.documentationComments,
-          _docCommentSpec,
-        ))
-        ..lambda = true
-        ..body = cb.Code(
-          '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${field.name} ?? _${field.name}',
-        ));
-    }
-  }
-
   /// Converts attached Fields from the pigeon AST to `code_builder` Field.
   ///
   /// Attached fields are set lazily by calling a private method that returns
@@ -1873,7 +1838,7 @@ if (${varNamePrefix}replyList == null) {
           ..late = !field.isStatic
           ..docs.addAll(asDocumentationComments(
             field.documentationComments,
-            _docCommentSpec,
+            docCommentSpec,
           ))
           ..assignment = cb.Code('$varNamePrefix${field.name}()'),
       );
@@ -2207,7 +2172,7 @@ if (${varNamePrefix}replyList == null) {
           ..modifier = cb.MethodModifier.async
           ..docs.addAll(asDocumentationComments(
             method.documentationComments,
-            _docCommentSpec,
+            docCommentSpec,
           ))
           ..returns = refer(method.returnType, asFuture: true)
           ..requiredParameters.addAll(parameters)

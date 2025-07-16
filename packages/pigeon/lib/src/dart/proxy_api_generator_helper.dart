@@ -263,3 +263,35 @@ cb.FunctionType methodAsFunctionType(
       ]),
   );
 }
+
+/// Converts static attached Fields from the pigeon AST to `code_builder`
+/// Method.
+///
+/// Static attached fields return an overrideable test value or returns the
+/// private static instance.
+///
+/// Example Output:
+///
+/// ```dart
+/// static MyClass get instance => PigeonMyClassOverrides.instance ?? _instance;
+/// ```
+Iterable<cb.Method> staticAttachedFieldsGetters(
+  Iterable<ApiField> fields, {
+  required String apiName,
+}) sync* {
+  for (final ApiField field in fields) {
+    yield cb.Method((cb.MethodBuilder builder) => builder
+      ..name = field.name
+      ..type = cb.MethodType.getter
+      ..static = true
+      ..returns = cb.refer(addGenericTypesNullable(field.type))
+      ..docs.addAll(asDocumentationComments(
+        field.documentationComments,
+        docCommentSpec,
+      ))
+      ..lambda = true
+      ..body = cb.Code(
+        '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${field.name} ?? _${field.name}',
+      ));
+  }
+}
