@@ -277,7 +277,8 @@ final class DefaultCamera: FLTCam, Camera {
     _ mode: FCPPlatformFlashMode,
     withCompletion completion: @escaping (FlutterError?) -> Void
   ) {
-    if mode == .torch {
+    switch mode {
+    case .torch:
       guard captureDevice.hasTorch else {
         completion(
           FlutterError(
@@ -300,7 +301,7 @@ final class DefaultCamera: FLTCam, Camera {
         captureDevice.torchMode = .on
         captureDevice.unlockForConfiguration()
       }
-    } else {
+    case .off, .auto, .always:
       guard captureDevice.hasFlash else {
         completion(
           FlutterError(
@@ -324,7 +325,10 @@ final class DefaultCamera: FLTCam, Camera {
         captureDevice.torchMode = .off
         captureDevice.unlockForConfiguration()
       }
+    @unknown default:
+      assertionFailure("Unknown flash mode")
     }
+
     flashMode = mode
     completion(nil)
   }
