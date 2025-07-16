@@ -145,7 +145,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     // Set up the instance-specific API handler, and make sure it is removed when the player is
     // disposed.
     BinaryMessenger messenger = flutterState.binaryMessenger;
-    final String channelSuffix = Integer.toString((int) id);
+    final String channelSuffix = Long.toString(id);
     VideoPlayerInstanceApi.setUp(messenger, channelSuffix, videoPlayer);
     videoPlayer.setDisposeHandler(
         () -> VideoPlayerInstanceApi.setUp(messenger, channelSuffix, null));

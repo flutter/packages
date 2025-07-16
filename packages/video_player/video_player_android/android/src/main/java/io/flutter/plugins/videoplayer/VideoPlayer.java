@@ -117,7 +117,7 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
 
   @Override
   public void seekTo(@NonNull Long position) {
-    exoPlayer.seekTo(position.intValue());
+    exoPlayer.seekTo(position);
   }
 
   @NonNull

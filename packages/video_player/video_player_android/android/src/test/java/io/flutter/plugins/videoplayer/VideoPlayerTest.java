@@ -184,7 +184,7 @@ public final class VideoPlayerTest {
     verify(mockExoPlayer).seekTo(10);
 
     when(mockExoPlayer.getCurrentPosition()).thenReturn(20L);
-    assertEquals(20L, videoPlayer.getPosition().doubleValue(), 0.001);
+    assertEquals(20L, videoPlayer.getPosition().longValue());
   }
 
   @Test
