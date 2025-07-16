@@ -5,7 +5,6 @@
 #import "./include/camera_avfoundation/FLTCam.h"
 #import "./include/camera_avfoundation/FLTCam_Test.h"
 
-@import CoreMotion;
 @import Flutter;
 #import <libkern/OSAtomic.h>
 
@@ -39,10 +38,8 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
     NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
 @property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
-@property(strong, nonatomic) NSString *videoRecordingPath;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
-@property(nonatomic) CMMotionManager *motionManager;
 /// All FLTCam's state access and capture session related operations should be on run on this queue.
 @property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
 /// The queue on which captured photos (not videos) are written to disk.
@@ -191,12 +188,6 @@ NSString *const errorMethod = @"error";
   }
 
   return connection;
-}
-
-- (void)setVideoFormat:(OSType)videoFormat {
-  _videoFormat = videoFormat;
-  _captureVideoOutput.videoSettings =
-      @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
 }
 
 - (void)updateOrientation {
@@ -426,10 +417,6 @@ NSString *const errorMethod = @"error";
   return bestFormat;
 }
 
-- (void)dealloc {
-  [_motionManager stopAccelerometerUpdates];
-}
-
 /// Main logic to setup the video recording.
 - (void)setUpVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion {
   NSError *error;
@@ -478,35 +465,6 @@ NSString *const errorMethod = @"error";
     completion([FlutterError errorWithCode:@"Error"
                                    message:@"Video is already recording"
                                    details:nil]);
-  }
-}
-
-- (void)stopVideoRecordingWithCompletion:(void (^)(NSString *_Nullable,
-                                                   FlutterError *_Nullable))completion {
-  if (_isRecording) {
-    _isRecording = NO;
-
-    // when _isRecording is YES startWriting was already called so _videoWriter.status
-    // is always either AVAssetWriterStatusWriting or AVAssetWriterStatusFailed and
-    // finishWritingWithCompletionHandler does not throw exception so there is no need
-    // to check _videoWriter.status
-    [_videoWriter finishWritingWithCompletionHandler:^{
-      if (self->_videoWriter.status == AVAssetWriterStatusCompleted) {
-        [self updateOrientation];
-        completion(self->_videoRecordingPath, nil);
-        self->_videoRecordingPath = nil;
-      } else {
-        completion(nil, [FlutterError errorWithCode:@"IOError"
-                                            message:@"AVAssetWriter could not finish writing!"
-                                            details:nil]);
-      }
-    }];
-  } else {
-    NSError *error =
-        [NSError errorWithDomain:NSCocoaErrorDomain
-                            code:NSURLErrorResourceUnavailable
-                        userInfo:@{NSLocalizedDescriptionKey : @"Video is not recording!"}];
-    completion(nil, FlutterErrorFromNSError(error));
   }
 }
 
@@ -609,15 +567,6 @@ NSString *const errorMethod = @"error";
   } else {
     [self reportErrorMessage:@"Images from camera are already streaming!"];
     completion(nil);
-  }
-}
-
-- (void)stopImageStream {
-  if (_isStreamingImages) {
-    _isStreamingImages = NO;
-    _imageStreamHandler = nil;
-  } else {
-    [self reportErrorMessage:@"Images from camera are not streaming!"];
   }
 }
 

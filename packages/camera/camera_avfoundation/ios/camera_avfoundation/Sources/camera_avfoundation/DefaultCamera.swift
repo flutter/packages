@@ -10,6 +10,14 @@ import CoreMotion
 #endif
 
 final class DefaultCamera: FLTCam, Camera {
+  override var videoFormat: FourCharCode {
+    didSet {
+      captureVideoOutput.videoSettings = [
+        kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: videoFormat)
+      ]
+    }
+  }
+
   override var deviceOrientation: UIDeviceOrientation {
     get { super.deviceOrientation }
     set {
@@ -94,6 +102,37 @@ final class DefaultCamera: FLTCam, Camera {
 
   func resumeVideoRecording() {
     isRecordingPaused = false
+  }
+
+  func stopVideoRecording(completion: @escaping (String?, FlutterError?) -> Void) {
+    if isRecording {
+      isRecording = false
+
+      // When `isRecording` is true `startWriting` was already called so `videoWriter.status`
+      // is always either `.writing` or `.failed` and `finishWriting` does not throw exceptions so
+      // there is no need to check `videoWriter.status`
+      videoWriter?.finishWriting {
+        if self.videoWriter?.status == .completed {
+          self.updateOrientation()
+          completion(self.videoRecordingPath, nil)
+          self.videoRecordingPath = nil
+        } else {
+          completion(
+            nil,
+            FlutterError(
+              code: "IOError",
+              message: "AVAssetWriter could not finish writing!",
+              details: nil))
+        }
+      }
+    } else {
+      let error = NSError(
+        domain: NSCocoaErrorDomain,
+        code: URLError.resourceUnavailable.rawValue,
+        userInfo: [NSLocalizedDescriptionKey: "Video is not recording!"]
+      )
+      completion(nil, DefaultCamera.flutterErrorFromNSError(error))
+    }
   }
 
   func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
@@ -339,6 +378,15 @@ final class DefaultCamera: FLTCam, Camera {
 
   func resumePreview() {
     isPreviewPaused = false
+  }
+
+  func stopImageStream() {
+    if isStreamingImages {
+      isStreamingImages = false
+      imageStreamHandler = nil
+    } else {
+      reportErrorMessage("Images from camera are not streaming!")
+    }
   }
 
   func captureOutput(
@@ -590,5 +638,9 @@ final class DefaultCamera: FLTCam, Camera {
         // Ignore any errors, as this is just an event broadcast.
       }
     }
+  }
+
+  deinit {
+    motionManager.stopAccelerometerUpdates()
   }
 }

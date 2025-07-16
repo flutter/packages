@@ -5,6 +5,7 @@
 @import AVFoundation;
 @import Foundation;
 @import Flutter;
+@import CoreMotion;
 
 #import "CameraProperties.h"
 #import "FLTCamConfiguration.h"
@@ -51,6 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(assign, nonatomic) UIDeviceOrientation lockedCaptureOrientation;
 @property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
 @property(assign, nonatomic) FCPPlatformFlashMode flashMode;
+@property(nonatomic) CMMotionManager *motionManager;
+@property(strong, nonatomic, nullable) NSString *videoRecordingPath;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
@@ -65,15 +68,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param messenger Nullable messenger for capturing each frame.
 - (void)startVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger;
-- (void)stopVideoRecordingWithCompletion:(void (^)(NSString *_Nullable,
-                                                   FlutterError *_Nullable))completion;
 
 - (void)setDescriptionWhileRecording:(NSString *)cameraName
                       withCompletion:(void (^)(FlutterError *_Nullable))completion;
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                            completion:(nonnull void (^)(FlutterError *_Nullable))completion;
-- (void)stopImageStream;
 - (void)setUpCaptureSessionForAudioIfNeeded;
 
 // Methods exposed for the Swift DefaultCamera subclass
