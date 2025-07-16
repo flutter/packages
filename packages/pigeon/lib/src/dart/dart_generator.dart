@@ -11,7 +11,7 @@ import '../ast.dart';
 import '../functional.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
-import 'proxy_api_generator_helper.dart' as proxyApiHelper;
+import 'proxy_api_generator_helper.dart' as proxy_api_helper;
 import 'templates.dart';
 
 /// Documentation comment open symbol.
@@ -946,7 +946,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ))
         ..fields.addAll(_proxyApiInterfaceApiFields(api.apisOfInterfaces()))
         ..fields.addAll(_proxyApiAttachedFields(api.attachedFields))
-        ..methods.addAll(proxyApiHelper.staticAttachedFieldsGetters(
+        ..methods.addAll(proxy_api_helper.staticAttachedFieldsGetters(
           api.attachedFields.where((ApiField field) => field.isStatic),
           apiName: api.name,
         ))
@@ -1446,14 +1446,14 @@ if (${varNamePrefix}replyList == null) {
           '/// See [$proxyApiOverridesClassName.${classMemberNamePrefix}reset] to set all overrides back to null.',
         ])
         ..fields.addAll(
-          proxyApiHelper.overridesClassConstructors(proxyApis),
+          proxy_api_helper.overridesClassConstructors(proxyApis),
         )
         ..fields.addAll(
-          proxyApiHelper.overridesClassStaticFields(proxyApis),
+          proxy_api_helper.overridesClassStaticFields(proxyApis),
         )
-        ..fields.addAll(proxyApiHelper.overridesClassStaticMethods(proxyApis))
+        ..fields.addAll(proxy_api_helper.overridesClassStaticMethods(proxyApis))
         ..methods.add(
-          proxyApiHelper.overridesClassResetMethod(proxyApis),
+          proxy_api_helper.overridesClassResetMethod(proxyApis),
         ),
     );
 
@@ -1508,7 +1508,7 @@ if (${varNamePrefix}replyList == null) {
       yield cb.Constructor(
         (cb.ConstructorBuilder builder) {
           final Iterable<cb.Parameter> parameters =
-              proxyApiHelper.asConstructorParameters(
+              proxy_api_helper.asConstructorParameters(
             apiName: apiName,
             parameters: constructor.parameters,
             unattachedFields: unattachedFields,
@@ -1517,7 +1517,7 @@ if (${varNamePrefix}replyList == null) {
             declaredFlutterMethods: declaredFlutterMethods,
           );
           final Iterable<cb.Parameter> parametersWithoutMessengerAndManager =
-              proxyApiHelper.asConstructorParameters(
+              proxy_api_helper.asConstructorParameters(
             apiName: apiName,
             parameters: constructor.parameters,
             unattachedFields: unattachedFields,
@@ -1589,7 +1589,8 @@ if (${varNamePrefix}replyList == null) {
               constructor.documentationComments,
               docCommentSpec,
             ))
-            ..optionalParameters.addAll(proxyApiHelper.asConstructorParameters(
+            ..optionalParameters
+                .addAll(proxy_api_helper.asConstructorParameters(
               apiName: apiName,
               parameters: constructor.parameters,
               unattachedFields: unattachedFields,
@@ -1673,7 +1674,7 @@ if (${varNamePrefix}replyList == null) {
           '/// create copies for an [$dartInstanceManagerClassName].',
         ])
         ..annotations.add(cb.refer('protected'))
-        ..optionalParameters.addAll(proxyApiHelper.asConstructorParameters(
+        ..optionalParameters.addAll(proxy_api_helper.asConstructorParameters(
           apiName: apiName,
           parameters: <Parameter>[],
           unattachedFields: unattachedFields,
@@ -1764,7 +1765,7 @@ if (${varNamePrefix}replyList == null) {
             docCommentSpec,
           ))
           ..type =
-              proxyApiHelper.methodAsFunctionType(method, apiName: apiName),
+              proxy_api_helper.methodAsFunctionType(method, apiName: apiName),
       );
     }
   }
@@ -2263,7 +2264,7 @@ if (${varNamePrefix}replyList == null) {
     required Iterable<Method> declaredFlutterMethods,
   }) {
     final Iterable<cb.Parameter> parameters =
-        proxyApiHelper.asConstructorParameters(
+        proxy_api_helper.asConstructorParameters(
       apiName: apiName,
       parameters: <Parameter>[],
       unattachedFields: unattachedFields,
