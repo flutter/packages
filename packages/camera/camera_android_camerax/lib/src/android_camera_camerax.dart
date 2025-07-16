@@ -195,17 +195,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   bool captureOrientationLocked = false;
 
-  /// Whether or not the default rotation for [UseCase]s needs to be set
-  /// manually because the capture orientation was previously locked.
-  ///
-  /// Currently, CameraX provides no way to unset target rotations for
-  /// [UseCase]s, so once they are set and unset, this plugin must start setting
-  /// the default orientation manually.
-  ///
-  /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture#setTargetRotation(int)
-  /// for an example on how setting target rotations for [UseCase]s works.
-  bool shouldSetDefaultRotation = false;
-
   /// Error code indicating that an exposure offset value failed to be set.
   static const String setExposureOffsetFailedErrorCode =
       'setExposureOffsetFailed';
@@ -390,17 +379,18 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
 
     // Configure ImageCapture instance.
+    final int defaultDisplayRotation =
+        await deviceOrientationManager.getDefaultDisplayRotation();
     imageCapture = proxy.newImageCapture(
       resolutionSelector: presetResolutionSelector,
-      /* use CameraX default target rotation */ targetRotation:
-          await deviceOrientationManager.getDefaultDisplayRotation(),
+      targetRotation: defaultDisplayRotation,
     );
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
     imageAnalysis = proxy.newImageAnalysis(
       resolutionSelector: presetResolutionSelector,
-      /* use CameraX default target rotation */ targetRotation: null,
+      targetRotation: defaultDisplayRotation,
     );
 
     // Configure VideoCapture and Recorder instances.
@@ -552,10 +542,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     int cameraId,
     DeviceOrientation orientation,
   ) async {
-    // Flag that (1) default rotation for UseCases will need to be set manually
-    // if orientation is ever unlocked and (2) the capture orientation is locked
-    // and should not be changed until unlocked.
-    shouldSetDefaultRotation = true;
+    // Flag that the capture orientation is locked and should not be changed until unlocked.
     captureOrientationLocked = true;
 
     // Get target rotation based on locked orientation.
@@ -1104,7 +1091,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+    if (!captureOrientationLocked) {
       await videoCapture!.setTargetRotation(
         await deviceOrientationManager.getDefaultDisplayRotation(),
       );
@@ -1253,7 +1240,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+    if (!captureOrientationLocked) {
       await imageAnalysis!.setTargetRotation(
         await deviceOrientationManager.getDefaultDisplayRotation(),
       );
