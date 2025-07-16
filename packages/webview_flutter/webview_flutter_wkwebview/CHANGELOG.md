@@ -1,3 +1,20 @@
+## 3.22.1
+
+* Changes the handling of a Flutter method failure from throwing an assertion error to logging the
+  error.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 3.22.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `WebKitNavigationDelegate.setOnSSlAuthError`.
+
+## 3.21.0
+
+* Adds support to set whether to draw the scrollbar. See
+  `WebKitWebViewController.setVerticalScrollBarEnabled`,
+  `WebKitWebViewController.setHorizontalScrollBarEnabled`,
+  `WebKitWebViewController.supportsSetScrollBarsEnabled`.
+
 ## 3.20.0
 
 * Adds support to disable a preview of the destination for a link. See

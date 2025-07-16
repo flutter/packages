@@ -66,7 +66,7 @@ void main() {
       final List<String> devices = <String>[
         if (hasIOSDevice) '{"id": "$_fakeIOSDevice", "targetPlatform": "ios"}',
         if (hasAndroidDevice)
-          '{"id": "$_fakeAndroidDevice", "targetPlatform": "android-x86"}',
+          '{"id": "$_fakeAndroidDevice", "targetPlatform": "android-x64"}',
       ];
       final String output =
           '''${includeBanner ? updateBanner : ''}[${devices.join(',')}]''';
@@ -840,6 +840,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--screenshot=/path/to/logs/plugin_example-drive',
@@ -891,6 +892,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--wasm',
@@ -941,6 +943,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--screenshot=/path/to/logs/plugin_example-drive',
@@ -993,6 +996,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--chrome-binary=/path/to/chrome',
@@ -1444,6 +1448,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--screenshot=/path/to/logs/plugin_example-drive',
@@ -1459,6 +1464,7 @@ void main() {
                   'drive',
                   '-d',
                   'web-server',
+                  '--no-web-experimental-hot-reload',
                   '--web-port=7357',
                   '--browser-name=chrome',
                   '--screenshot=/path/to/logs/plugin_example-drive',
@@ -1558,6 +1564,7 @@ void main() {
                     'drive',
                     '-d',
                     'web-server',
+                    '--no-web-experimental-hot-reload',
                     '--web-port=7357',
                     '--browser-name=chrome',
                     '--screenshot=/path/to/logs/a_package_example-drive',
@@ -1603,6 +1610,7 @@ void main() {
                     'drive',
                     '-d',
                     'web-server',
+                    '--no-web-experimental-hot-reload',
                     '--web-port=7357',
                     '--browser-name=chrome',
                     '--driver',
@@ -1682,6 +1690,7 @@ void main() {
                     'drive',
                     '-d',
                     'web-server',
+                    '--no-web-experimental-hot-reload',
                     '--web-port=7357',
                     '--browser-name=chrome',
                     '--screenshot=/path/to/logs/a_package_example_with_web-drive',
@@ -1763,6 +1772,7 @@ packages/package_a/$file
           FakeProcessInfo(MockProcess(stdout: '''
 README.md
 CODEOWNERS
+.gitignore
 packages/package_a/CHANGELOG.md
 ''')),
         ];

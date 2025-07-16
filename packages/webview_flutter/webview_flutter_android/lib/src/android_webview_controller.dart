@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_proxy.dart';
+import 'android_ssl_auth_error.dart';
 import 'android_webkit.g.dart' as android_webview;
 import 'android_webkit_constants.dart';
 import 'platform_views_service_proxy.dart';
@@ -86,7 +87,7 @@ class AndroidWebViewController extends PlatformWebViewController {
     _webView.settings.setJavaScriptCanOpenWindowsAutomatically(true);
     _webView.settings.setSupportMultipleWindows(true);
     _webView.settings.setLoadWithOverviewMode(true);
-    _webView.settings.setUseWideViewPort(true);
+    _webView.settings.setUseWideViewPort(false);
     _webView.settings.setDisplayZoomControls(false);
     _webView.settings.setBuiltInZoomControls(true);
 
@@ -599,6 +600,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
 
+  /// Sets whether the WebView should enable support for the "viewport" HTML
+  /// meta tag or should use a wide viewport.
+  ///
+  /// The default is false.
+  Future<void> setUseWideViewPort(bool use) =>
+      _webView.settings.setUseWideViewPort(use);
+
   /// Enables or disables content URL access.
   ///
   /// The default is true.
@@ -733,6 +741,17 @@ class AndroidWebViewController extends PlatformWebViewController {
   }
 
   @override
+  Future<void> setVerticalScrollBarEnabled(bool enabled) =>
+      _webView.setVerticalScrollBarEnabled(enabled);
+
+  @override
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) =>
+      _webView.setHorizontalScrollBarEnabled(enabled);
+
+  @override
+  bool supportsSetScrollBarsEnabled() => true;
+
+  @override
   Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
     return switch (mode) {
       WebViewOverScrollMode.always => _webView.setOverScrollMode(
@@ -748,6 +767,19 @@ class AndroidWebViewController extends PlatformWebViewController {
       // ignore: unreachable_switch_case
       _ => throw UnsupportedError('Android does not support $mode.'),
     };
+  }
+
+  /// Configures the WebView's behavior when handling mixed content.
+  Future<void> setMixedContentMode(MixedContentMode mode) {
+    final android_webview.MixedContentMode androidMode = switch (mode) {
+      MixedContentMode.alwaysAllow =>
+        android_webview.MixedContentMode.alwaysAllow,
+      MixedContentMode.compatibilityMode =>
+        android_webview.MixedContentMode.compatibilityMode,
+      MixedContentMode.neverAllow =>
+        android_webview.MixedContentMode.neverAllow,
+    };
+    return _webView.settings.setMixedContentMode(androidMode);
   }
 }
 
@@ -845,6 +877,36 @@ enum FileSelectorMode {
 
   /// Allows picking a nonexistent file and saving it.
   save,
+}
+
+/// Mode for controlling mixed content handling.
+
+/// See [AndroidWebViewController.setMixedContentMode].
+enum MixedContentMode {
+  /// The WebView will allow a secure origin to load content from any other
+  /// origin, even if that origin is insecure.
+  ///
+  /// This is the least secure mode of operation, and where possible apps should
+  /// not set this mode.
+  alwaysAllow,
+
+  /// The WebView will attempt to be compatible with the approach of a modern
+  /// web browser with regard to mixed content.
+  ///
+  /// The types of content are allowed or blocked may change release to release
+  /// of the underlying Android WebView, and are not explicitly defined. This
+  /// mode is intended to be used by apps that are not in control of the content
+  /// that they render but desire to operate in a reasonably secure environment.
+  compatibilityMode,
+
+  /// The WebView will not allow a secure origin to load content from an
+  /// insecure origin.
+  ///
+  /// This is the preferred and most secure mode of operation, and apps are
+  /// strongly advised to use this mode.
+  ///
+  /// This is the default mode.
+  neverAllow,
 }
 
 /// Parameters received when the `WebView` should show a file selector.
@@ -1483,9 +1545,22 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         _,
         __,
         android_webview.SslErrorHandler handler,
-        ___,
-      ) {
-        handler.cancel();
+        android_webview.SslError error,
+      ) async {
+        final void Function(PlatformSslAuthError)? callback =
+            weakThis.target?._onSslAuthError;
+
+        if (callback != null) {
+          final AndroidSslAuthError authError =
+              await AndroidSslAuthError.fromNativeCallback(
+            error: error,
+            handler: handler,
+          );
+
+          callback(authError);
+        } else {
+          await handler.cancel();
+        }
       },
     );
 
@@ -1549,6 +1624,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
+  SslAuthErrorCallback? _onSslAuthError;
 
   void _handleNavigation(
     String url, {
@@ -1652,5 +1728,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;
+  }
+
+  @override
+  Future<void> setOnSSlAuthError(SslAuthErrorCallback onSslAuthError) async {
+    _onSslAuthError = onSslAuthError;
   }
 }

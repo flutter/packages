@@ -22,9 +22,6 @@ import io.flutter.view.TextureRegistry.SurfaceProducer;
  * <p>It provides methods to control playback, adjust volume, and handle seeking.
  */
 public abstract class VideoPlayer {
-  @NonNull private final ExoPlayerProvider exoPlayerProvider;
-  @NonNull private final MediaItem mediaItem;
-  @NonNull private final VideoPlayerOptions options;
   @NonNull protected final VideoPlayerCallbacks videoPlayerEvents;
   @Nullable protected final SurfaceProducer surfaceProducer;
   @NonNull protected ExoPlayer exoPlayer;
@@ -47,22 +44,12 @@ public abstract class VideoPlayer {
       @Nullable SurfaceProducer surfaceProducer,
       @NonNull ExoPlayerProvider exoPlayerProvider) {
     this.videoPlayerEvents = events;
-    this.mediaItem = mediaItem;
-    this.options = options;
-    this.exoPlayerProvider = exoPlayerProvider;
     this.surfaceProducer = surfaceProducer;
-    this.exoPlayer = createVideoPlayer();
-  }
-
-  @NonNull
-  protected ExoPlayer createVideoPlayer() {
-    ExoPlayer exoPlayer = exoPlayerProvider.get();
+    exoPlayer = exoPlayerProvider.get();
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
-
-    return exoPlayer;
   }
 
   @NonNull

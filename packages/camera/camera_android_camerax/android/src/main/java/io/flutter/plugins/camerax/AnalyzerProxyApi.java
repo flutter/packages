@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.ImageAnalysis.Analyzer;
+import androidx.camera.core.ImageProxy;
 import java.util.Objects;
 
 /**
@@ -33,7 +34,7 @@ class AnalyzerProxyApi extends PigeonApiAnalyzer {
     }
 
     @Override
-    public void analyze(@NonNull androidx.camera.core.ImageProxy image) {
+    public void analyze(@NonNull ImageProxy image) {
       api.getPigeonRegistrar()
           .runOnMainThread(
               new ProxyApiRegistrar.FlutterMethodRunnable() {

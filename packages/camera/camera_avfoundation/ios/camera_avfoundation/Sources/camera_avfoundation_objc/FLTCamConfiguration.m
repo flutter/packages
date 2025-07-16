@@ -9,6 +9,7 @@
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                  mediaSettingsWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsWrapper
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+            audioCaptureDeviceFactory:(AudioCaptureDeviceFactory)audioCaptureDeviceFactory
                 captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
             captureDeviceInputFactory:
@@ -22,6 +23,7 @@
     _videoCaptureSession = captureSessionFactory();
     _audioCaptureSession = captureSessionFactory();
     _captureDeviceFactory = captureDeviceFactory;
+    _audioCaptureDeviceFactory = audioCaptureDeviceFactory;
     _orientation = [[UIDevice currentDevice] orientation];
     _deviceOrientationProvider = [[FLTDefaultDeviceOrientationProvider alloc] init];
     _videoDimensionsForFormat = ^CMVideoDimensions(NSObject<FLTCaptureDeviceFormat> *format) {

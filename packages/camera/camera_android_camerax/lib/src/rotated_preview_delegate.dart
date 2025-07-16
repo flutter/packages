@@ -21,16 +21,17 @@ final class RotatedPreviewDelegate extends StatelessWidget {
   /// Creates [RotatedPreviewDelegate] that will build the correctly
   /// rotated preview widget depending on whether or not the Impeller
   /// backend handles crop and rotation automatically.
-  const RotatedPreviewDelegate(
-      {super.key,
-      required this.handlesCropAndRotation,
-      required this.initialDeviceOrientation,
-      required this.initialDefaultDisplayRotation,
-      required this.deviceOrientationStream,
-      required this.sensorOrientationDegrees,
-      required this.cameraIsFrontFacing,
-      required this.deviceOrientationManager,
-      required this.child});
+  const RotatedPreviewDelegate({
+    super.key,
+    required this.handlesCropAndRotation,
+    required this.initialDeviceOrientation,
+    required this.initialDefaultDisplayRotation,
+    required this.deviceOrientationStream,
+    required this.sensorOrientationDegrees,
+    required this.cameraIsFrontFacing,
+    required this.deviceOrientationManager,
+    required this.child,
+  });
 
   /// Whether or not the Android surface producer automatically handles
   /// correcting the rotation of camera previews for the device this plugin
@@ -65,11 +66,12 @@ final class RotatedPreviewDelegate extends StatelessWidget {
   Widget build(BuildContext context) {
     if (handlesCropAndRotation) {
       return SurfaceTextureRotatedPreview(
-          initialDeviceOrientation,
-          initialDefaultDisplayRotation,
-          deviceOrientationStream,
-          deviceOrientationManager,
-          child: child);
+        initialDeviceOrientation,
+        initialDefaultDisplayRotation,
+        deviceOrientationStream,
+        deviceOrientationManager,
+        child: child,
+      );
     }
 
     if (cameraIsFrontFacing) {

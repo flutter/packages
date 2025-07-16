@@ -125,6 +125,23 @@ enum SslErrorType {
   unknown,
 }
 
+/// Options for mixed content mode support.
+///
+/// See https://developer.android.com/reference/android/webkit/WebSettings#MIXED_CONTENT_ALWAYS_ALLOW
+enum MixedContentMode {
+  /// The WebView will allow a secure origin to load content from any other
+  /// origin, even if that origin is insecure.
+  alwaysAllow,
+
+  /// The WebView will attempt to be compatible with the approach of a modern
+  /// web browser with regard to mixed content.
+  compatibilityMode,
+
+  /// The WebView will not allow a secure origin to load content from an
+  /// insecure origin.
+  neverAllow,
+}
+
 /// Encompasses parameters to the `WebViewClient.shouldInterceptRequest` method.
 ///
 /// See https://developer.android.com/reference/android/webkit/WebResourceRequest.
@@ -410,6 +427,9 @@ abstract class WebSettings {
 
   /// Gets the WebView's user-agent string.
   String getUserAgentString();
+
+  /// Configures the WebView's behavior when handling mixed content.
+  void setMixedContentMode(MixedContentMode mode);
 }
 
 /// A JavaScript interface for exposing Javascript callbacks to Dart.
@@ -852,6 +872,16 @@ abstract class View {
   /// Return the scrolled position of this view.
   WebViewPoint getScrollPosition();
 
+  /// Define whether the vertical scrollbar should be drawn or not.
+  ///
+  /// The scrollbar is not drawn by default.
+  void setVerticalScrollBarEnabled(bool enabled);
+
+  /// Define whether the horizontal scrollbar should be drawn or not.
+  ///
+  /// The scrollbar is not drawn by default.
+  void setHorizontalScrollBarEnabled(bool enabled);
+
   /// Set the over-scroll mode for this view.
   void setOverScrollMode(OverScrollMode mode);
 }
@@ -951,7 +981,7 @@ abstract class PrivateKey {}
     fullClassName: 'java.security.cert.X509Certificate',
   ),
 )
-abstract class X509Certificate {}
+abstract class X509Certificate extends Certificate {}
 
 /// Represents a request for handling an SSL error.
 ///
@@ -1047,4 +1077,17 @@ abstract class SslCertificate {
   ///
   /// Always returns null on Android versions below Q.
   X509Certificate? getX509Certificate();
+}
+
+/// Abstract class for managing a variety of identity certificates.
+///
+/// See https://developer.android.com/reference/java/security/cert/Certificate.
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'java.security.cert.Certificate',
+  ),
+)
+abstract class Certificate {
+  /// The encoded form of this certificate.
+  Uint8List getEncoded();
 }

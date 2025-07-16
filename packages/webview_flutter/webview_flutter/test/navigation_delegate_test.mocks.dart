@@ -6,8 +6,11 @@
 import 'dart:async' as _i8;
 
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i10;
 import 'package:webview_flutter_platform_interface/src/platform_navigation_delegate.dart'
     as _i3;
+import 'package:webview_flutter_platform_interface/src/platform_ssl_auth_error.dart'
+    as _i9;
 import 'package:webview_flutter_platform_interface/src/platform_webview_controller.dart'
     as _i4;
 import 'package:webview_flutter_platform_interface/src/platform_webview_cookie_manager.dart'
@@ -208,6 +211,49 @@ class MockPlatformNavigationDelegate extends _i1.Mock
   ) =>
       (super.noSuchMethod(
         Invocation.method(#setOnHttpAuthRequest, [onHttpAuthRequest]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setOnSSlAuthError(
+    _i3.SslAuthErrorCallback? onSslAuthError,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(#setOnSSlAuthError, [onSslAuthError]),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+}
+
+/// A class which mocks [PlatformSslAuthError].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockPlatformSslAuthError extends _i1.Mock
+    implements _i9.PlatformSslAuthError {
+  MockPlatformSslAuthError() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  String get description => (super.noSuchMethod(
+        Invocation.getter(#description),
+        returnValue: _i10.dummyValue<String>(
+          this,
+          Invocation.getter(#description),
+        ),
+      ) as String);
+
+  @override
+  _i8.Future<void> proceed() => (super.noSuchMethod(
+        Invocation.method(#proceed, []),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> cancel() => (super.noSuchMethod(
+        Invocation.method(#cancel, []),
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);

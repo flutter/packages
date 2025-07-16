@@ -28,7 +28,7 @@ class CaseSensitivityApp extends StatelessWidget {
 @TypedGoRoute<CaseSensitiveRoute>(
   path: '/case-sensitive',
 )
-class CaseSensitiveRoute extends GoRouteData {
+class CaseSensitiveRoute extends GoRouteData with _$CaseSensitiveRoute {
   const CaseSensitiveRoute();
 
   @override
@@ -41,7 +41,7 @@ class CaseSensitiveRoute extends GoRouteData {
   path: '/not-case-sensitive',
   caseSensitive: false,
 )
-class NotCaseSensitiveRoute extends GoRouteData {
+class NotCaseSensitiveRoute extends GoRouteData with _$NotCaseSensitiveRoute {
   const NotCaseSensitiveRoute();
 
   @override

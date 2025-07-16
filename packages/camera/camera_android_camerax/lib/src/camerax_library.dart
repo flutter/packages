@@ -168,12 +168,12 @@ class Observer<T> extends camerax.Observer {
     super.pigeon_binaryMessenger,
     // ignore: non_constant_identifier_names
     super.pigeon_instanceManager,
-  })  : _genericOnChanged = onChanged,
-        super(
-          onChanged: (camerax.Observer instance, Object value) {
-            onChanged(instance as Observer<T>, value as T);
-          },
-        );
+  }) : _genericOnChanged = onChanged,
+       super(
+         onChanged: (camerax.Observer instance, Object value) {
+           onChanged(instance as Observer<T>, value as T);
+         },
+       );
 
   /// Constructs [Observer] without creating the associated native object.
   ///
@@ -185,12 +185,12 @@ class Observer<T> extends camerax.Observer {
     super.pigeon_binaryMessenger,
     // ignore: non_constant_identifier_names
     super.pigeon_instanceManager,
-  })  : _genericOnChanged = onChanged,
-        super.pigeon_detached(
-          onChanged: (camerax.Observer instance, Object value) {
-            onChanged(instance as Observer<T>, value as T);
-          },
-        );
+  }) : _genericOnChanged = onChanged,
+       super.pigeon_detached(
+         onChanged: (camerax.Observer instance, Object value) {
+           onChanged(instance as Observer<T>, value as T);
+         },
+       );
 
   final void Function(Observer<T> instance, T value) _genericOnChanged;
 

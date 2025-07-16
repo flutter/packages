@@ -146,6 +146,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     indent.writeln("import 'dart:async';");
+    if (root.containsProxyApi) {
+      indent.writeln("import 'dart:io' show Platform;");
+    }
     indent.writeln(
       "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
     );

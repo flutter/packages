@@ -5,6 +5,7 @@
 package io.flutter.plugins.videoplayer.texture;
 
 import android.content.Context;
+import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
@@ -12,7 +13,6 @@ import androidx.annotation.VisibleForTesting;
 import androidx.media3.common.MediaItem;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
-import io.flutter.plugins.videoplayer.ExoPlayerState;
 import io.flutter.plugins.videoplayer.VideoAsset;
 import io.flutter.plugins.videoplayer.VideoPlayer;
 import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
@@ -27,8 +27,8 @@ import io.flutter.view.TextureRegistry.SurfaceProducer;
  * the texture.
  */
 public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProducer.Callback {
-  @Nullable private ExoPlayerState savedStateDuring;
-
+  // True when the ExoPlayer instance has a null surface.
+  private boolean needsSurface = true;
   /**
    * Creates a texture video player.
    *
@@ -70,7 +70,9 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
 
     surfaceProducer.setCallback(this);
 
-    this.exoPlayer.setVideoSurface(surfaceProducer.getSurface());
+    Surface surface = surfaceProducer.getSurface();
+    this.exoPlayer.setVideoSurface(surface);
+    needsSurface = surface == null;
   }
 
   @NonNull
@@ -83,44 +85,31 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
     }
     boolean surfaceProducerHandlesCropAndRotation = surfaceProducer.handlesCropAndRotation();
     return new TextureExoPlayerEventListener(
-        exoPlayer,
-        videoPlayerEvents,
-        surfaceProducerHandlesCropAndRotation,
-        playerHasBeenSuspended());
+        exoPlayer, videoPlayerEvents, surfaceProducerHandlesCropAndRotation);
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
   public void onSurfaceAvailable() {
-    if (savedStateDuring != null) {
-      exoPlayer = createVideoPlayer();
+    if (needsSurface) {
+      // TextureVideoPlayer must always set a surfaceProducer.
+      assert surfaceProducer != null;
       exoPlayer.setVideoSurface(surfaceProducer.getSurface());
-      savedStateDuring.restore(exoPlayer);
-      savedStateDuring = null;
+      needsSurface = false;
     }
   }
 
   @RestrictTo(RestrictTo.Scope.LIBRARY)
-  // TODO(bparrishMines): Replace with onSurfaceCleanup once available on stable. See
-  // https://github.com/flutter/flutter/issues/161256.
-  @SuppressWarnings({"deprecation", "removal"})
-  public void onSurfaceDestroyed() {
-    // Intentionally do not call pause/stop here, because the surface has already been released
-    // at this point (see https://github.com/flutter/flutter/issues/156451).
-    savedStateDuring = ExoPlayerState.save(exoPlayer);
-    exoPlayer.release();
-  }
-
-  private boolean playerHasBeenSuspended() {
-    return savedStateDuring != null;
+  public void onSurfaceCleanup() {
+    exoPlayer.setVideoSurface(null);
+    needsSurface = true;
   }
 
   public void dispose() {
     // Super must be called first to ensure the player is released before the surface.
     super.dispose();
 
+    // TextureVideoPlayer must always set a surfaceProducer.
+    assert surfaceProducer != null;
     surfaceProducer.release();
-    // TODO(matanlurey): Remove when embedder no longer calls-back once released.
-    // https://github.com/flutter/flutter/issues/156434.
-    surfaceProducer.setCallback(null);
   }
 }
