@@ -63,5 +63,5 @@ provided on Android" error message, check that:
     automatically when enabling Google Sign In using the Firebase console, but
     if not (or if it was later removed), add a web app to the project and then
     re-download `google-services.json`.
-  * You correctly added followed all of the Gradle configuration steps in the
-    Firebase integration documentation.
+  * You correctly followed all of the Gradle configuration steps in the Firebase
+    integration documentation.
