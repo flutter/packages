@@ -42,14 +42,12 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(strong, nonatomic) NSString *videoRecordingPath;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
-@property(assign, nonatomic) UIDeviceOrientation lockedCaptureOrientation;
 @property(nonatomic) CMMotionManager *motionManager;
 /// All FLTCam's state access and capture session related operations should be on run on this queue.
 @property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
 /// The queue on which captured photos (not videos) are written to disk.
 /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
 @property(strong, nonatomic) dispatch_queue_t photoIOQueue;
-@property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
 /// A wrapper for CMVideoFormatDescriptionGetDimensions.
 /// Allows for alternate implementations in tests.
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
@@ -57,7 +55,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
 @property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
-@property(assign, nonatomic) FCPPlatformFlashMode flashMode;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
 /// Reports the given error message to the Dart side of the plugin.
@@ -200,19 +197,6 @@ NSString *const errorMethod = @"error";
   _videoFormat = videoFormat;
   _captureVideoOutput.videoSettings =
       @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
-}
-
-- (void)setImageFileFormat:(FCPPlatformImageFileFormat)fileFormat {
-  _fileFormat = fileFormat;
-}
-
-- (void)setDeviceOrientation:(UIDeviceOrientation)orientation {
-  if (_deviceOrientation == orientation) {
-    return;
-  }
-
-  _deviceOrientation = orientation;
-  [self updateOrientation];
 }
 
 - (void)updateOrientation {
@@ -526,83 +510,6 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)pauseVideoRecording {
-  _isRecordingPaused = YES;
-  _videoIsDisconnected = YES;
-  _audioIsDisconnected = YES;
-}
-
-- (void)resumeVideoRecording {
-  _isRecordingPaused = NO;
-}
-
-- (void)lockCaptureOrientation:(FCPPlatformDeviceOrientation)pigeonOrientation {
-  UIDeviceOrientation orientation =
-      FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation);
-  if (_lockedCaptureOrientation != orientation) {
-    _lockedCaptureOrientation = orientation;
-    [self updateOrientation];
-  }
-}
-
-- (void)unlockCaptureOrientation {
-  _lockedCaptureOrientation = UIDeviceOrientationUnknown;
-  [self updateOrientation];
-}
-
-- (void)setFlashMode:(FCPPlatformFlashMode)mode
-      withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (mode == FCPPlatformFlashModeTorch) {
-    if (!_captureDevice.hasTorch) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Device does not support torch mode"
-                                     details:nil]);
-      return;
-    }
-    if (!_captureDevice.isTorchAvailable) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Torch mode is currently not available"
-                                     details:nil]);
-      return;
-    }
-    if (_captureDevice.torchMode != AVCaptureTorchModeOn) {
-      [_captureDevice lockForConfiguration:nil];
-      [_captureDevice setTorchMode:AVCaptureTorchModeOn];
-      [_captureDevice unlockForConfiguration];
-    }
-  } else {
-    if (!_captureDevice.hasFlash) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Device does not have flash capabilities"
-                                     details:nil]);
-      return;
-    }
-    AVCaptureFlashMode avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(mode);
-    if (![_capturePhotoOutput.supportedFlashModes
-            containsObject:[NSNumber numberWithInt:((int)avFlashMode)]]) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Device does not support this specific flash mode"
-                                     details:nil]);
-      return;
-    }
-    if (_captureDevice.torchMode != AVCaptureTorchModeOff) {
-      [_captureDevice lockForConfiguration:nil];
-      [_captureDevice setTorchMode:AVCaptureTorchModeOff];
-      [_captureDevice unlockForConfiguration];
-    }
-  }
-  _flashMode = mode;
-  completion(nil);
-}
-
-- (void)pausePreview {
-  _isPreviewPaused = true;
-}
-
-- (void)resumePreview {
-  _isPreviewPaused = false;
-}
-
 - (void)setDescriptionWhileRecording:(NSString *)cameraName
                       withCompletion:(void (^)(FlutterError *_Nullable))completion {
   if (!_isRecording) {
@@ -712,45 +619,6 @@ NSString *const errorMethod = @"error";
   } else {
     [self reportErrorMessage:@"Images from camera are not streaming!"];
   }
-}
-
-- (void)setZoomLevel:(CGFloat)zoom withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (_captureDevice.maxAvailableVideoZoomFactor < zoom ||
-      _captureDevice.minAvailableVideoZoomFactor > zoom) {
-    NSString *errorMessage = [NSString
-        stringWithFormat:@"Zoom level out of bounds (zoom level should be between %f and %f).",
-                         _captureDevice.minAvailableVideoZoomFactor,
-                         _captureDevice.maxAvailableVideoZoomFactor];
-
-    completion([FlutterError errorWithCode:@"ZOOM_ERROR" message:errorMessage details:nil]);
-    return;
-  }
-
-  NSError *error = nil;
-  if (![_captureDevice lockForConfiguration:&error]) {
-    completion(FlutterErrorFromNSError(error));
-    return;
-  }
-  _captureDevice.videoZoomFactor = zoom;
-  [_captureDevice unlockForConfiguration];
-
-  completion(nil);
-}
-
-- (CGFloat)minimumAvailableZoomFactor {
-  return _captureDevice.minAvailableVideoZoomFactor;
-}
-
-- (CGFloat)maximumAvailableZoomFactor {
-  return _captureDevice.maxAvailableVideoZoomFactor;
-}
-
-- (CGFloat)minimumExposureOffset {
-  return _captureDevice.minExposureTargetBias;
-}
-
-- (CGFloat)maximumExposureOffset {
-  return _captureDevice.maxExposureTargetBias;
 }
 
 - (BOOL)setupWriterForPath:(NSString *)path {
