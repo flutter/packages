@@ -136,11 +136,15 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     for (final FileSystemEntity entity in source.listSync()) {
       final String basename = entity.basename;
       print('Replacing $basename with legacy version...');
-      if (target.childDirectory(basename).existsSync()) {
-        if (entity is Directory) {
-          target.childDirectory(basename).deleteSync(recursive: true);
-        } else {
-          target.childFile(basename).deleteSync();
+      if (entity is Directory) {
+        final Directory dirToDelete = target.childDirectory(basename);
+        if (dirToDelete.existsSync()) {
+          dirToDelete.deleteSync(recursive: true);
+        }
+      } else {
+        final File fileToDelete = target.childFile(basename);
+        if (fileToDelete.existsSync()) {
+          fileToDelete.deleteSync();
         }
       }
     }
