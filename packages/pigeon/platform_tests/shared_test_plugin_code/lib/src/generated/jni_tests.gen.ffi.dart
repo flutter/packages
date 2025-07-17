@@ -15,12 +15,12 @@ import 'package:objective_c/objective_c.dart' as objc;
 @ffi.Native<
     ffi.Pointer<objc.ObjCObject> Function(
         ffi.Pointer<objc.ObjCObject>, ffi.Pointer<ffi.Void>)>()
-external ffi.Pointer<objc.ObjCObject> _Host_protocolTrampoline_1mbt9g9(
+external ffi.Pointer<objc.ObjCObject> _JniTests_protocolTrampoline_1mbt9g9(
   ffi.Pointer<objc.ObjCObject> target,
   ffi.Pointer<ffi.Void> arg0,
 );
 
-late final _class_Host = objc.getClass("Host.Host");
+late final _class_Host = objc.getClass("JniTests.Host");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
     .cast<
