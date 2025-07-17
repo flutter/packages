@@ -39,7 +39,7 @@ final class MockCamera: NSObject, Camera {
   var pausePreviewStub: (() -> Void)?
   var resumePreviewStub: (() -> Void)?
   var setDescriptionWhileRecordingStub: ((String, ((FlutterError?) -> Void)?) -> Void)?
-  var startImageStreamStub: ((FlutterBinaryMessenger) -> Void)?
+  var startImageStreamStub: ((FlutterBinaryMessenger, (FlutterError?) -> Void) -> Void)?
   var stopImageStreamStub: (() -> Void)?
 
   var dartAPI: FCPCameraEventApi? {
@@ -63,6 +63,16 @@ final class MockCamera: NSObject, Camera {
   var videoFormat: FourCharCode = kCVPixelFormatType_32BGRA
 
   var isPreviewPaused: Bool = false
+  var isStreamingImages: Bool = false
+
+  var deviceOrientation: UIDeviceOrientation {
+    get {
+      preconditionFailure("Attempted to access unimplemented property: deviceOrientation")
+    }
+    set {
+      setDeviceOrientationStub?(newValue)
+    }
+  }
 
   var minimumExposureOffset: CGFloat {
     return getMinimumExposureOffsetStub?() ?? 0
@@ -117,10 +127,6 @@ final class MockCamera: NSObject, Camera {
 
   func captureToFile(completion: @escaping (String?, FlutterError?) -> Void) {
     captureToFileStub?(completion)
-  }
-
-  func setDeviceOrientation(_ orientation: UIDeviceOrientation) {
-    setDeviceOrientationStub?(orientation)
   }
 
   func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation) {
@@ -186,8 +192,11 @@ final class MockCamera: NSObject, Camera {
     setDescriptionWhileRecordingStub?(cameraName, completion)
   }
 
-  func startImageStream(with messenger: FlutterBinaryMessenger) {
-    startImageStreamStub?(messenger)
+  func startImageStream(
+    with messenger: FlutterBinaryMessenger,
+    completion: @escaping (FlutterError?) -> Void
+  ) {
+    startImageStreamStub?(messenger, completion)
   }
 
   func stopImageStream() {

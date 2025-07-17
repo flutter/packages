@@ -7,6 +7,7 @@
 // ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers
 
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
 import 'package:flutter/foundation.dart'
@@ -126,6 +127,9 @@ class PigeonInstanceManager {
   late final void Function(int) onWeakReferenceRemoved;
 
   static PigeonInstanceManager _initInstance() {
+    if (Platform.environment['FLUTTER_TEST'] == 'true') {
+      return PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+    }
     WidgetsFlutterBinding.ensureInitialized();
     final _PigeonInternalInstanceManagerApi api =
         _PigeonInternalInstanceManagerApi();

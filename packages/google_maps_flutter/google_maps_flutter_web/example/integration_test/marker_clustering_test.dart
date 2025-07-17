@@ -133,6 +133,7 @@ Marker _copyMarkerWithClusterManagerId(
     position: marker.position,
     rotation: marker.rotation,
     visible: marker.visible,
+    // ignore: deprecated_member_use
     zIndex: marker.zIndex,
     onTap: marker.onTap,
     onDragStart: marker.onDragStart,

@@ -340,7 +340,9 @@ abstract class IMAAdDisplayContainer extends NSObject {
 ///
 /// See https://developer.apple.com/documentation/uikit/uiview.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'UIKit'))
-abstract class UIView extends NSObject {}
+abstract class UIView extends NSObject {
+  UIView();
+}
 
 /// An object that manages a view hierarchy for your UIKit app.
 ///
@@ -397,7 +399,80 @@ abstract class IMAAdsLoader extends NSObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMASettings.html.
 @ProxyApi()
-abstract class IMASettings extends NSObject {}
+abstract class IMASettings extends NSObject {
+  IMASettings();
+
+  /// Publisher Provided Identification (PPID) sent with ads request.
+  void setPPID(String? ppid);
+
+  /// Language specification used for localization.
+  ///
+  /// `language` must be formatted as a canonicalized IETF BCP 47 language
+  /// identifier such as would be returned by `[NSLocale preferredLanguages]`.
+  ///
+  /// Setting this property after it has been sent to the IMAAdsLoader will be
+  /// ignored and a warning will be logged.
+  void setLanguage(String language);
+
+  /// Specifies maximum number of redirects after which subsequent redirects
+  /// will be denied, and the ad load aborted.
+  ///
+  /// If the number of redirects exceeds `max`, the ad request will fail with
+  /// error code 302.
+  ///
+  /// The default value is 4.
+  void setMaxRedirects(int max);
+
+  /// Feature flags and their states.
+  void setFeatureFlags(Map<String, String> flags);
+
+  /// Enable background audio playback for the SDK.
+  ///
+  /// The default value is false.
+  void setEnableBackgroundPlayback(bool enabled);
+
+  /// Specifies whether to automatically play VMAP and ad rules ad breaks.
+  ///
+  /// The default value is true.
+  void setAutoPlayAdBreaks(bool autoPlay);
+
+  /// Specifies whether to update the MPNowPlayingInfoCenter content with the
+  /// title “Advertisement”.
+  ///
+  /// If disabled, MPNowPlayingInfoCenter is untouched.
+  ///
+  /// The default value is false.
+  void setDisableNowPlayingInfo(bool disable);
+
+  /// The partner specified video player that is integrating with the SDK.
+  void setPlayerType(String? type);
+
+  /// The partner specified player version that is integrating with the SDK.
+  void setPlayerVersion(String? version);
+
+  /// The session ID to identify a single user session.
+  ///
+  /// This should be a UUID.
+  ///
+  /// It is used exclusively for frequency capping across the user session.
+  void setSessionID(String? sessionID);
+
+  /// Controls whether Same App Key is enabled.
+  ///
+  /// The value set persists across app sessions.
+  ///
+  /// The key is enabled by default.
+  void setSameAppKeyEnabled(bool enabled);
+
+  /// Toggles debug mode which will output detailed log information to the
+  /// console.
+  ///
+  /// Debug mode should be disabled in Release and will display a watermark when
+  /// enabled.
+  ///
+  /// The default value is false.
+  void setEnableDebugMode(bool enable);
+}
 
 /// Data class describing the ad request.
 ///
@@ -654,6 +729,12 @@ abstract class IMACompanionAdSlot {
   /// This instance only creates a weak reference to the delegate, so the Dart
   /// instance should create an explicit reference to receive callbacks.
   void setDelegate(IMACompanionDelegate? delegate);
+
+  /// Width of the slot, in pixels.
+  int width();
+
+  /// Height of the slot, in pixels.
+  int height();
 }
 
 /// Delegate to receive events from the companion ad slot.

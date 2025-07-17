@@ -792,6 +792,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       position: _platformLatLngFromLatLng(marker.position),
       rotation: marker.rotation,
       visible: marker.visible,
+      // The deprecated paramater is used to avoid losing precision, since the
+      // Android SDK uses doubles.
+      // ignore: deprecated_member_use
       zIndex: marker.zIndex,
       markerId: marker.markerId.value,
       clusterManagerId: marker.clusterManagerId?.value,
