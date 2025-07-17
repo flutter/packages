@@ -18,29 +18,34 @@ import 'package:objective_c/objective_c.dart';
 import './jni_tests.gen.ffi.dart' as ffi;
 import './jni_tests.gen.jni.dart' as bridge;
 
-/// A class containing all supported types.
-class JniAllTypes {
-  JniAllTypes({
-    this.aBool = false,
-    this.anInt = 0,
-    this.anInt64 = 0,
-    this.aDouble = 0,
-  });
+// /// A class containing all supported types.
+// class JniAllTypes {
+//   JniAllTypes({
+//     this.aBool = false,
+//     this.anInt = 0,
+//     this.anInt64 = 0,
+//     this.aDouble = 0,
+//   });
 
-  bool aBool;
+//   bool aBool;
 
-  int anInt;
+//   int anInt;
 
-  int anInt64;
+//   int anInt64;
 
-  double aDouble;
+//   double aDouble;
 
-  ffi.JniAllTypes makeBridge() {
-    return ffi.JniAllTypes()
-        .initWithABool(aBool, anInt: anInt, anInt64: anInt64, aDouble: aDouble);
-  }
+//   ffi.JniAllTypes makeBridge() {
+//     return ffi.JniAllTypes()
+//         .initWithABool(aBool, anInt: anInt, anInt64: anInt64, aDouble: aDouble);
+//   }
+// }
 
-  static int echoInt(int numbah) {
-    return ffi.Host.getInstanceWithName(NSString('Host')).echo(numbah);
+class Host {
+  Host(this.name);
+  String name;
+
+  int echoInt(int numbah) {
+    return ffi.Host.getInstanceWithName(NSString(name))!.echo(4);
   }
 }

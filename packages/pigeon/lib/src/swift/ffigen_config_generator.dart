@@ -46,8 +46,6 @@ class FfigenConfigGenerator extends Generator<InternalFfigenConfigOptions> {
     final Indent indent = Indent(sink);
 
     indent.format('''
-import 'dart:io';
-
 import 'package:ffigen/ffigen.dart' as fg;
 import 'package:ffigen/src/config_provider/config_types.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -106,8 +104,6 @@ Future<void> main() async {
 }
 
 ''');
-// import 'dart:io';
-
 // import 'package:ffigen/ffigen.dart' as fg;
 // import 'package:ffigen/src/config_provider/config_types.dart';
 // import 'package:pub_semver/pub_semver.dart';

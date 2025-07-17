@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:ffigen/ffigen.dart' as fg;
 import 'package:ffigen/src/config_provider/config_types.dart';
 import 'package:pub_semver/pub_semver.dart';
@@ -7,8 +5,8 @@ import 'package:swiftgen/swiftgen.dart';
 
 Future<void> main() async {
   final List<String> classes = <String>[
-    'JniAllTypes',
-    'HostIntegrationCoreApi',
+    // 'JniAllTypes',
+    // 'HostIntegrationCoreApi',
     'Host',
   ];
   await SwiftGen(
@@ -28,7 +26,8 @@ Future<void> main() async {
         // '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/macos/Classes/JniTests.gen.swift')
       ],
     ),
-    tempDirectory: Uri.directory('temp'),
+    tempDirectory: Uri.directory(
+        '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/ios/Classes/'),
     outputModule: 'JniTests',
     ffigen: FfiGenConfig(
       output: Uri.file(

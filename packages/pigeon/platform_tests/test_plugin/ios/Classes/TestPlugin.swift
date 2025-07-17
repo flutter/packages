@@ -42,7 +42,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
       host = Host(name: "Host")
-      host = Host.getInstance(name: "Host")
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -82,10 +81,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func echo(_ anInt: Int64) -> Int64 {
-      if (host == Host(name: "Host")) {
-          return host.echo(1)
-      }
-    return anInt
+    return host.echo(anInt)
+//    return anInt
   }
 
   func echo(_ aDouble: Double) -> Double {

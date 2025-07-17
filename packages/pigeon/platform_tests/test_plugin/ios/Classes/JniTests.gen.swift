@@ -7,21 +7,21 @@
 
 import Foundation
 
-/// A class containing all supported types.
-///
-/// Generated class from Pigeon that represents data sent in messages.
-@objc class JniAllTypes: NSObject {
-    @objc init(aBool: Bool, anInt: Int64, anInt64: Int64, aDouble: Double) {
-        self.aBool = aBool
-        self.anInt = anInt
-        self.anInt64 = anInt64
-        self.aDouble = aDouble
-    }
-  var aBool: Bool
-  var anInt: Int64
-  var anInt64: Int64
-  var aDouble: Double
-}
+// /// A class containing all supported types.
+// ///
+// /// Generated class from Pigeon that represents data sent in messages.
+// @objc class JniAllTypes: NSObject {
+//     @objc init(aBool: Bool, anInt: Int64, anInt64: Int64, aDouble: Double) {
+//         self.aBool = aBool
+//         self.anInt = anInt
+//         self.anInt64 = anInt64
+//         self.aDouble = aDouble
+//     }
+//   var aBool: Bool
+//   var anInt: Int64
+//   var anInt64: Int64
+//   var aDouble: Double
+// }
 
 
 var list = Dictionary<String, Host>()
@@ -31,15 +31,15 @@ var list = Dictionary<String, Host>()
   func echo(_ anInt: Int64) -> Int64
 }
 
-@objc class Host: NSObject, HostIntegrationCoreApiFfi {
+@objc class Host: NSObject {
   var key: String
   @objc init (name: String) {
     self.key = name
     super.init()
     list[name] = self
   }
-  @objc static  func getInstance(name: String) -> Host {
-    return list[name]!
+  @objc static func getInstance(name: String) -> Host? {
+    return list[name]
   }
   @objc func echo(_ anInt: Int64) -> Int64 {
     return anInt

@@ -13,42 +13,14 @@ import 'dart:ffi' as ffi;
 import 'package:objective_c/objective_c.dart' as objc;
 
 @ffi.Native<
-    ffi.Int64 Function(
-        ffi.Pointer<objc.ObjCObject>, ffi.Pointer<ffi.Void>, ffi.Int64)>()
-external int _JniTests_protocolTrampoline_1citzfb(
-  ffi.Pointer<objc.ObjCObject> target,
-  ffi.Pointer<ffi.Void> arg0,
-  int arg1,
-);
-
-@ffi.Native<
     ffi.Pointer<objc.ObjCObject> Function(
         ffi.Pointer<objc.ObjCObject>, ffi.Pointer<ffi.Void>)>()
-external ffi.Pointer<objc.ObjCObject> _JniTests_protocolTrampoline_1mbt9g9(
+external ffi.Pointer<objc.ObjCObject> _Host_protocolTrampoline_1mbt9g9(
   ffi.Pointer<objc.ObjCObject> target,
   ffi.Pointer<ffi.Void> arg0,
 );
 
-/// WARNING: HostIntegrationCoreApiFfi is a stub. To generate bindings for this class, include
-/// HostIntegrationCoreApiFfi in your config's objc-protocols list.
-///
-/// HostIntegrationCoreApiFfi
-interface class HostIntegrationCoreApiFfi extends objc.ObjCProtocolBase {
-  HostIntegrationCoreApiFfi._(ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false, bool release = false})
-      : super(pointer, retain: retain, release: release);
-
-  /// Constructs a [HostIntegrationCoreApiFfi] that points to the same underlying object as [other].
-  HostIntegrationCoreApiFfi.castFrom(objc.ObjCObjectBase other)
-      : this._(other.ref.pointer, retain: true, release: true);
-
-  /// Constructs a [HostIntegrationCoreApiFfi] that wraps the given raw object pointer.
-  HostIntegrationCoreApiFfi.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
-      {bool retain = false, bool release = false})
-      : this._(other, retain: retain, release: release);
-}
-
-late final _class_Host = objc.getClass("JniTests.Host");
+late final _class_Host = objc.getClass("Host.Host");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
     .cast<
@@ -84,98 +56,6 @@ final _objc_msgSend_1i5q66n = objc.msgSendPointer
     .asFunction<
         int Function(ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>, int)>();
-int _ObjCBlock_Int64_ffiVoid_Int64_fnPtrTrampoline(
-        ffi.Pointer<objc.ObjCBlockImpl> block,
-        ffi.Pointer<ffi.Void> arg0,
-        int arg1) =>
-    block.ref.target
-        .cast<
-            ffi.NativeFunction<
-                ffi.Int64 Function(
-                    ffi.Pointer<ffi.Void> arg0, ffi.Int64 arg1)>>()
-        .asFunction<int Function(ffi.Pointer<ffi.Void>, int)>()(arg0, arg1);
-ffi.Pointer<ffi.Void> _ObjCBlock_Int64_ffiVoid_Int64_fnPtrCallable =
-    ffi.Pointer.fromFunction<
-            ffi.Int64 Function(
-                ffi.Pointer<objc.ObjCBlockImpl>,
-                ffi.Pointer<ffi.Void>,
-                ffi.Int64)>(_ObjCBlock_Int64_ffiVoid_Int64_fnPtrTrampoline, 0)
-        .cast();
-int _ObjCBlock_Int64_ffiVoid_Int64_closureTrampoline(
-        ffi.Pointer<objc.ObjCBlockImpl> block,
-        ffi.Pointer<ffi.Void> arg0,
-        int arg1) =>
-    (objc.getBlockClosure(block) as int Function(ffi.Pointer<ffi.Void>, int))(
-        arg0, arg1);
-ffi.Pointer<ffi.Void> _ObjCBlock_Int64_ffiVoid_Int64_closureCallable =
-    ffi.Pointer.fromFunction<
-            ffi.Int64 Function(
-                ffi.Pointer<objc.ObjCBlockImpl>,
-                ffi.Pointer<ffi.Void>,
-                ffi.Int64)>(_ObjCBlock_Int64_ffiVoid_Int64_closureTrampoline, 0)
-        .cast();
-
-/// Construction methods for `objc.ObjCBlock<ffi.Int64 Function(ffi.Pointer<ffi.Void>, ffi.Int64)>`.
-abstract final class ObjCBlock_Int64_ffiVoid_Int64 {
-  /// Returns a block that wraps the given raw block pointer.
-  static objc.ObjCBlock<ffi.Int64 Function(ffi.Pointer<ffi.Void>, ffi.Int64)>
-      castFromPointer(ffi.Pointer<objc.ObjCBlockImpl> pointer,
-              {bool retain = false, bool release = false}) =>
-          objc.ObjCBlock<ffi.Int64 Function(ffi.Pointer<ffi.Void>, ffi.Int64)>(
-              pointer,
-              retain: retain,
-              release: release);
-
-  /// Creates a block from a C function pointer.
-  ///
-  /// This block must be invoked by native code running on the same thread as
-  /// the isolate that registered it. Invoking the block on the wrong thread
-  /// will result in a crash.
-  static objc.ObjCBlock<ffi.Int64 Function(ffi.Pointer<ffi.Void>, ffi.Int64)>
-      fromFunctionPointer(
-              ffi.Pointer<
-                      ffi.NativeFunction<
-                          ffi.Int64 Function(
-                              ffi.Pointer<ffi.Void> arg0, ffi.Int64 arg1)>>
-                  ptr) =>
-          objc.ObjCBlock<ffi.Int64 Function(ffi.Pointer<ffi.Void>, ffi.Int64)>(
-              objc.newPointerBlock(_ObjCBlock_Int64_ffiVoid_Int64_fnPtrCallable, ptr.cast()),
-              retain: false,
-              release: true);
-
-  /// Creates a block from a Dart function.
-  ///
-  /// This block must be invoked by native code running on the same thread as
-  /// the isolate that registered it. Invoking the block on the wrong thread
-  /// will result in a crash.
-  ///
-  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
-  /// until it is garbage collected by both Dart and ObjC.
-  static objc.ObjCBlock<ffi.Int64 Function(ffi.Pointer<ffi.Void>, ffi.Int64)>
-      fromFunction(int Function(ffi.Pointer<ffi.Void>, int) fn,
-              {bool keepIsolateAlive = true}) =>
-          objc.ObjCBlock<ffi.Int64 Function(ffi.Pointer<ffi.Void>, ffi.Int64)>(
-              objc.newClosureBlock(
-                  _ObjCBlock_Int64_ffiVoid_Int64_closureCallable,
-                  (ffi.Pointer<ffi.Void> arg0, int arg1) => fn(arg0, arg1),
-                  keepIsolateAlive),
-              retain: false,
-              release: true);
-}
-
-/// Call operator for `objc.ObjCBlock<ffi.Int64 Function(ffi.Pointer<ffi.Void>, ffi.Int64)>`.
-extension ObjCBlock_Int64_ffiVoid_Int64_CallExtension
-    on objc.ObjCBlock<ffi.Int64 Function(ffi.Pointer<ffi.Void>, ffi.Int64)> {
-  int call(ffi.Pointer<ffi.Void> arg0, int arg1) => ref.pointer.ref.invoke
-      .cast<
-          ffi.NativeFunction<
-              ffi.Int64 Function(ffi.Pointer<objc.ObjCBlockImpl> block,
-                  ffi.Pointer<ffi.Void> arg0, ffi.Int64 arg1)>>()
-      .asFunction<
-          int Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<ffi.Void>,
-              int)>()(ref.pointer, arg0, arg1);
-}
-
 late final _sel_init = objc.registerName("init");
 final _objc_msgSend_151sglz = objc.msgSendPointer
     .cast<
@@ -301,7 +181,7 @@ late final _sel_retain = objc.registerName("retain");
 late final _sel_autorelease = objc.registerName("autorelease");
 
 /// Host
-class Host extends objc.NSObject implements HostIntegrationCoreApiFfi {
+class Host extends objc.NSObject {
   Host._(ffi.Pointer<objc.ObjCObject> pointer,
       {bool retain = false, bool release = false})
       : super.castFromPointer(pointer, retain: retain, release: release);
@@ -329,13 +209,15 @@ class Host extends objc.NSObject implements HostIntegrationCoreApiFfi {
   }
 
   /// getInstanceWithName:
-  static Host getInstanceWithName(objc.NSString name) {
+  static Host? getInstanceWithName(objc.NSString name) {
     final _ret = _objc_msgSend_1sotr3r(
         _class_Host, _sel_getInstanceWithName_, name.ref.pointer);
-    return Host.castFromPointer(_ret, retain: true, release: true);
+    return _ret.address == 0
+        ? null
+        : Host.castFromPointer(_ret, retain: true, release: true);
   }
 
-  /// Returns passed in int.
+  /// echo:
   int echo(int anInt) {
     return _objc_msgSend_1i5q66n(this.ref.pointer, _sel_echo_, anInt);
   }
@@ -387,106 +269,4 @@ class Host extends objc.NSObject implements HostIntegrationCoreApiFfi {
 
   /// Returns a new instance of Host constructed with the default `new` method.
   factory Host() => new$();
-}
-
-late final _class_JniAllTypes = objc.getClass("JniTests.JniAllTypes");
-late final _sel_initWithABool_anInt_anInt64_aDouble_ =
-    objc.registerName("initWithABool:anInt:anInt64:aDouble:");
-final _objc_msgSend_dlpdnu = objc.msgSendPointer
-    .cast<
-        ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
-                ffi.Pointer<objc.ObjCObject>,
-                ffi.Pointer<objc.ObjCSelector>,
-                ffi.Bool,
-                ffi.Int64,
-                ffi.Int64,
-                ffi.Double)>>()
-    .asFunction<
-        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
-            ffi.Pointer<objc.ObjCSelector>, bool, int, int, double)>();
-
-/// A class containing all supported types.
-/// Generated class from Pigeon that represents data sent in messages.
-class JniAllTypes extends objc.NSObject {
-  JniAllTypes._(ffi.Pointer<objc.ObjCObject> pointer,
-      {bool retain = false, bool release = false})
-      : super.castFromPointer(pointer, retain: retain, release: release);
-
-  /// Constructs a [JniAllTypes] that points to the same underlying object as [other].
-  JniAllTypes.castFrom(objc.ObjCObjectBase other)
-      : this._(other.ref.pointer, retain: true, release: true);
-
-  /// Constructs a [JniAllTypes] that wraps the given raw object pointer.
-  JniAllTypes.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
-      {bool retain = false, bool release = false})
-      : this._(other, retain: retain, release: release);
-
-  /// Returns whether [obj] is an instance of [JniAllTypes].
-  static bool isInstance(objc.ObjCObjectBase obj) {
-    return _objc_msgSend_19nvye5(
-        obj.ref.pointer, _sel_isKindOfClass_, _class_JniAllTypes);
-  }
-
-  /// initWithABool:anInt:anInt64:aDouble:
-  JniAllTypes initWithABool(bool aBool,
-      {required int anInt, required int anInt64, required double aDouble}) {
-    final _ret = _objc_msgSend_dlpdnu(
-        this.ref.retainAndReturnPointer(),
-        _sel_initWithABool_anInt_anInt64_aDouble_,
-        aBool,
-        anInt,
-        anInt64,
-        aDouble);
-    return JniAllTypes.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// init
-  JniAllTypes init() {
-    objc.checkOsVersionInternal('JniAllTypes.init',
-        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
-    final _ret =
-        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
-    return JniAllTypes.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// new
-  static JniAllTypes new$() {
-    final _ret = _objc_msgSend_151sglz(_class_JniAllTypes, _sel_new);
-    return JniAllTypes.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// allocWithZone:
-  static JniAllTypes allocWithZone(ffi.Pointer<objc.NSZone> zone) {
-    final _ret =
-        _objc_msgSend_1cwp428(_class_JniAllTypes, _sel_allocWithZone_, zone);
-    return JniAllTypes.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// alloc
-  static JniAllTypes alloc() {
-    final _ret = _objc_msgSend_151sglz(_class_JniAllTypes, _sel_alloc);
-    return JniAllTypes.castFromPointer(_ret, retain: false, release: true);
-  }
-
-  /// self
-  JniAllTypes self$1() {
-    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
-    return JniAllTypes.castFromPointer(_ret, retain: true, release: true);
-  }
-
-  /// retain
-  JniAllTypes retain() {
-    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
-    return JniAllTypes.castFromPointer(_ret, retain: true, release: true);
-  }
-
-  /// autorelease
-  JniAllTypes autorelease() {
-    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
-    return JniAllTypes.castFromPointer(_ret, retain: true, release: true);
-  }
-
-  /// Returns a new instance of JniAllTypes constructed with the default `new` method.
-  factory JniAllTypes() => new$();
 }

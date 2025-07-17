@@ -7,7 +7,6 @@
 // import 'package:flutter/foundation.dart';
 // import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:objective_c/objective_c.dart';
 
 // import 'ffi_test_types.dart';
 import 'src/generated/jni_tests.gen.dart';
@@ -43,9 +42,11 @@ const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   group('Host sync API tests', () {
     testWidgets('echo int', (WidgetTester _) async {
-      final int api = JniAllTypes.echoInt(4);
-      expect(api, 4);
+      final Host api = Host('Host');
+      final int echoed = api.echoInt(4);
+      expect(echoed, 4);
     });
+
     // testWidgets('basic void->void call works', (WidgetTester _) async {
     //   final JniHostIntegrationCoreApiForAndroid? api =
     //       JniHostIntegrationCoreApiForAndroid.getInstance();
