@@ -18,13 +18,7 @@
 
 If you need help, consider asking for advice on the #hackers-new channel on [Discord].
 
-**Note**: The Flutter team is currently trialing the use of
-[Gemini Code Assist for GitHub](https://developers.google.com/gemini-code-assist/docs/review-github-code).
-Comments from the `gemini-code-assist` bot should not be taken as authoritative
-feedback from the Flutter team. If you find its comments useful you can
-update your code accordingly, but if you are unsure or disagree with the
-feedback, please feel free to wait for a Flutter team member's review for
-guidance on which automated comments should be addressed.
+**Note**: The Flutter team is currently trialing the use of [Gemini Code Assist for GitHub](https://developers.google.com/gemini-code-assist/docs/review-github-code). Comments from the `gemini-code-assist` bot should not be taken as authoritative feedback from the Flutter team. If you find its comments useful you can update your code accordingly, but if you are unsure or disagree with the feedback, please feel free to wait for a Flutter team member's review for guidance on which automated comments should be addressed.
 
 [^1]: Regular contributors who have demonstrated familiarity with the repository guidelines only need to comment if the PR is not auto-exempted by repo tooling.
 

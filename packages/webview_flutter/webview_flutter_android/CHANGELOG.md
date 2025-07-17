@@ -1,6 +1,10 @@
-## 4.8.1
+## 4.8.2
 
 * Bumps gradle from 8.9.0 to 8.11.1.
+
+## 4.8.1
+
+* Updates `androidx.webkit` to 1.14.0.
 
 ## 4.8.0
 
