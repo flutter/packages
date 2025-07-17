@@ -7,6 +7,7 @@ import 'dart:math' show Point;
 
 import 'package:async/async.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart'
     show DeviceOrientation, PlatformException;
 import 'package:flutter/widgets.dart' show Texture, Widget, visibleForTesting;
@@ -266,6 +267,8 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   late bool enableRecordingAudio;
 
+  late ImageFormatGroup _imageFormatForImageStreaming;
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -458,6 +461,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) async {
+    // Save imageFormatGroup to configure image streaming.
+    _imageFormatForImageStreaming = imageFormatGroup;
+
     // Configure CameraInitializedEvent to send as representation of a
     // configured camera:
     // Retrieve preview resolution.
@@ -1265,14 +1271,38 @@ class AndroidCameraCameraX extends CameraPlatform {
     Future<void> analyze(ImageProxy imageProxy) async {
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
-      for (final PlaneProxy plane in planes) {
+
+      // CameraX records videos with the YUV420 format by default, but we convert
+      // to NV21 if requested when initializeCamera is called. JPEG requires no
+      // further processing.
+      final bool convertToNv21 =
+          _imageFormatForImageStreaming == ImageFormatGroup.nv21;
+      final int imageWidth = imageProxy.width;
+      final int imageHeight = imageProxy.height;
+
+      if (convertToNv21) {
+        final Uint8List nv21PlaneBytes = await PlaneProxyUtils.getNv21Plane(
+          planes,
+          imageWidth,
+          imageHeight,
+        );
         cameraImagePlanes.add(
           CameraImagePlane(
-            bytes: plane.buffer,
-            bytesPerRow: plane.rowStride,
-            bytesPerPixel: plane.pixelStride,
+            bytes: nv21PlaneBytes,
+            bytesPerRow: imageWidth,
+            bytesPerPixel: 1,
           ),
         );
+      } else {
+        for (final PlaneProxy plane in planes) {
+          cameraImagePlanes.add(
+            CameraImagePlane(
+              bytes: plane.buffer,
+              bytesPerRow: plane.rowStride,
+              bytesPerPixel: plane.pixelStride,
+            ),
+          );
+        }
       }
 
       final int format = imageProxy.format;
@@ -1284,8 +1314,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       final CameraImageData cameraImageData = CameraImageData(
         format: cameraImageFormat,
         planes: cameraImagePlanes,
-        height: imageProxy.height,
-        width: imageProxy.width,
+        height: imageHeight,
+        width: imageWidth,
       );
 
       weakThis.target!.cameraImageDataStreamController!.add(cameraImageData);
