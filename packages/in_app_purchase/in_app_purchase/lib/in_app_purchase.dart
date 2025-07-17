@@ -16,7 +16,9 @@ export 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
         PurchaseDetails,
         PurchaseParam,
         PurchaseStatus,
-        PurchaseVerificationData;
+        PurchaseVerificationData,
+        InAppPurchasePlatform,
+        InAppPurchasePlatformAddition;
 
 /// Basic API for making in app purchases across multiple platforms.
 class InAppPurchase implements InAppPurchasePlatformAdditionProvider {
