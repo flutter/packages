@@ -169,6 +169,7 @@ void main() {
       },
       newCameraSelector: ({
         LensFacing? requireLensFacing,
+        CameraInfo? cameraInfo,
         // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
         // ignore: non_constant_identifier_names
@@ -675,6 +676,7 @@ void main() {
                 Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
         newCameraSelector: ({
           LensFacing? requireLensFacing,
+          CameraInfo? cameraInfo,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -787,6 +789,7 @@ void main() {
         },
         newCameraSelector: ({
           LensFacing? requireLensFacing,
+          CameraInfo? cameraInfo,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -1101,6 +1104,7 @@ void main() {
         },
         newCameraSelector: ({
           LensFacing? requireLensFacing,
+          CameraInfo? cameraInfo,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -1987,6 +1991,7 @@ void main() {
           }) => Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
       newCameraSelector: ({
         LensFacing? requireLensFacing,
+        CameraInfo? cameraInfo,
         // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
         // ignore: non_constant_identifier_names

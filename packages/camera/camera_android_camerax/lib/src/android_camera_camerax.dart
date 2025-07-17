@@ -266,6 +266,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   late bool enableRecordingAudio;
 
+  /// A map to associate a [CameraInfo] with its camera name.
+  Map<String, CameraInfo> savedCameras = <String,CameraInfo>{};
+
   /// Returns list of all available cameras and their descriptions.
   @override
   Future<List<CameraDescription>> availableCameras() async {
@@ -301,6 +304,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       cameraSensorOrientation = cameraInfo.sensorRotationDegrees;
       cameraName = 'Camera $cameraCount';
       cameraCount++;
+
+      savedCameras[cameraName] = cameraInfo;
 
       // TODO(camsim99): Use camera ID retrieved from Camera2CameraInfo as
       // camera name: https://github.com/flutter/flutter/issues/147545.
@@ -357,13 +362,15 @@ class AndroidCameraCameraX extends CameraPlatform {
     if (error != null) {
       throw CameraException(error.errorCode, error.description);
     }
+    // Choose CameraInfo by its associated camera name.
+    final CameraInfo? chosenCameraInfo = savedCameras[cameraDescription.name];
 
     // Save CameraSelector that matches cameraDescription.
     final LensFacing cameraSelectorLensDirection =
         _getCameraSelectorLensDirection(cameraDescription.lensDirection);
     cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
     cameraSelector = proxy.newCameraSelector(
-      requireLensFacing: cameraSelectorLensDirection,
+      cameraInfo: chosenCameraInfo,
     );
     // Start listening for device orientation changes preceding camera creation.
     unawaited(

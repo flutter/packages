@@ -8,8 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.CameraFilter;
 import androidx.camera.core.ExperimentalLensFacing;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * ProxyApi implementation for {@link CameraSelector}. This class may handle instantiating native
@@ -24,7 +26,7 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
   @ExperimentalLensFacing
   @NonNull
   @Override
-  public CameraSelector pigeon_defaultConstructor(@Nullable LensFacing requireLensFacing) {
+  public CameraSelector pigeon_defaultConstructor(@Nullable LensFacing requireLensFacing, @Nullable CameraInfo cameraInfo) {
     final CameraSelector.Builder builder = new CameraSelector.Builder();
     if (requireLensFacing != null) {
       switch (requireLensFacing) {
@@ -41,6 +43,16 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
           builder.requireLensFacing(CameraSelector.LENS_FACING_UNKNOWN);
           break;
       }
+    }
+
+    if (cameraInfo != null){
+      builder.addCameraFilter(new CameraFilter(){
+        @NonNull
+        @Override
+        public List<CameraInfo> filter(@NonNull List<CameraInfo> cameraInfos){
+          return Arrays.asList(cameraInfo);
+        }
+      });
     }
     return builder.build();
   }
