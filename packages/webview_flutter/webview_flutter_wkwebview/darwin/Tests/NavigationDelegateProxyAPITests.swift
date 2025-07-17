@@ -221,17 +221,17 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
     challenge challengeArg: URLAuthenticationChallenge,
     completion: @escaping (
       Result<
-        [Any?],
+        webview_flutter_wkwebview.AuthenticationChallengeResponse,
         webview_flutter_wkwebview.PigeonError
       >
     ) -> Void
   ) {
     didReceiveAuthenticationChallengeArgs = [webViewArg, challengeArg]
     completion(
-      .success([
-        UrlSessionAuthChallengeDisposition.useCredential,
-        ["user": "user1", "password": "password1", "persistence": UrlCredentialPersistence.none],
-      ]))
+      .success(
+        AuthenticationChallengeResponse(
+          disposition: .useCredential,
+          credential: URLCredential(user: "user1", password: "password1", persistence: .none))))
   }
 }
 

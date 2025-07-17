@@ -9,12 +9,12 @@ import XCTest
 
 // Import Objectice-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
+  import camera_avfoundation_objc
 #endif
 
 final class CameraPreviewPauseTests: XCTestCase {
   func testPausePreviewWithResult_shouldPausePreview() {
-    let camera = FLTCam()
+    let camera = CameraTestUtils.createTestCamera()
 
     camera.pausePreview()
 
@@ -22,7 +22,7 @@ final class CameraPreviewPauseTests: XCTestCase {
   }
 
   func testResumePreviewWithResult_shouldResumePreview() {
-    let camera = FLTCam()
+    let camera = CameraTestUtils.createTestCamera()
 
     camera.resumePreview()
 

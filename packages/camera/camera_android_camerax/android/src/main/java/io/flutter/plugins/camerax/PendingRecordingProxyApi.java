@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.camerax;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.Recording;
@@ -23,6 +25,19 @@ class PendingRecordingProxyApi extends PigeonApiPendingRecording {
   @Override
   public ProxyApiRegistrar getPigeonRegistrar() {
     return (ProxyApiRegistrar) super.getPigeonRegistrar();
+  }
+
+  @NonNull
+  @Override
+  public PendingRecording withAudioEnabled(PendingRecording pigeonInstance, boolean initialMuted) {
+    if (!initialMuted
+        && ContextCompat.checkSelfPermission(
+                getPigeonRegistrar().getContext(), Manifest.permission.RECORD_AUDIO)
+            == PackageManager.PERMISSION_GRANTED) {
+      return pigeonInstance.withAudioEnabled(false);
+    }
+
+    return pigeonInstance.withAudioEnabled(true);
   }
 
   @NonNull

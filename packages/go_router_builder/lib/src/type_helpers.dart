@@ -2,6 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:analyzer/dart/analysis/results.dart';
+import 'package:analyzer/dart/analysis/session.dart';
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:source_gen/source_gen.dart';
@@ -24,6 +27,9 @@ const String enumExtensionHelperName = r'_$fromName';
 /// The property/parameter name used to represent the `extra` data that may
 /// be passed to a route.
 const String extraFieldName = r'$extra';
+
+/// The name of the generated, private getter for casting `this` (the mixin) to the class type.
+const String selfFieldName = '_self';
 
 /// Shared start of error message related to a likely code issue.
 const String likelyIssueMessage = 'Should never get here! File an issue!';
@@ -68,7 +74,7 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 
   throw InvalidGenerationSourceError(
     'The parameter type '
-    '`${paramType.getDisplayString(withNullability: false)}` is not supported.',
+    '`${withoutNullability(paramType.getDisplayString())}` is not supported.',
     element: element,
   );
 }
@@ -79,7 +85,8 @@ String decodeParameter(ParameterElement element, Set<String> pathParameters) {
 String encodeField(PropertyAccessorElement element) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(element.returnType)) {
-      return helper._encode(element.name, element.returnType);
+      return helper._encode(
+          '$selfFieldName.${element.name}', element.returnType);
     }
   }
 
@@ -89,13 +96,30 @@ String encodeField(PropertyAccessorElement element) {
   );
 }
 
+/// Returns an AstNode type from a InterfaceElement.
+T? getNodeDeclaration<T extends AstNode>(InterfaceElement element) {
+  final AnalysisSession? session = element.session;
+  if (session == null) {
+    return null;
+  }
+
+  final ParsedLibraryResult parsedLibrary =
+      session.getParsedLibraryByElement(element.library) as ParsedLibraryResult;
+  final ElementDeclarationResult? declaration =
+      parsedLibrary.getElementDeclaration(element);
+  final AstNode? node = declaration?.node;
+
+  return node is T ? node : null;
+}
+
 /// Returns the comparison of a parameter with its default value.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
 String compareField(ParameterElement param, String value1, String value2) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(param.type)) {
-      return helper._compare(param.name, param.defaultValueCode!);
+      return helper._compare(
+          '$selfFieldName.${param.name}', param.defaultValueCode!);
     }
   }
 
@@ -111,7 +135,7 @@ String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   if (element.isExtraField) {
     // ignore: avoid_redundant_argument_values
-    return 'extra as ${element.type.getDisplayString(withNullability: true)}';
+    return 'extra as ${element.type.getDisplayString()}';
   }
 
   late String access;
@@ -125,6 +149,16 @@ String _stateValueAccess(ParameterElement element, Set<String> pathParameters) {
   }
 
   return access;
+}
+
+/// Returns `true` if the type string ends with a nullability marker (`?` or `*`)
+bool _isNullableType(String type) {
+  return type.endsWith('?') || type.endsWith('*');
+}
+
+/// Returns the type string without a trailing nullability marker
+String withoutNullability(String type) {
+  return _isNullableType(type) ? type.substring(0, type.length - 1) : type;
 }
 
 abstract class _TypeHelper {

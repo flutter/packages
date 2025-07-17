@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:leak_tracker/leak_tracker.dart';
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 import 'package:webview_flutter_wkwebview/src/common/weak_reference_utils.dart';
 import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart';
@@ -84,14 +85,11 @@ Future<void> main() async {
     );
 
     ClassWithCallbackClass? instance = ClassWithCallbackClass();
-    instanceManager.addHostCreatedInstance(instance.callbackClass, 0);
+    instanceManager.addDartCreatedInstance(instance.callbackClass);
     instance = null;
 
     // Force garbage collection.
-    await IntegrationTestWidgetsFlutterBinding.instance
-        .watchPerformance(() async {
-      await tester.pumpAndSettle();
-    });
+    await forceGC();
 
     final int gcIdentifier = await gcCompleter.future;
     expect(gcIdentifier, 0);

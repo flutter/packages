@@ -60,7 +60,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   }
 
   // PreviewProxyApi maintains a state to track SurfaceProducers provided by the Flutter engine.
-  @NonNull private final PreviewProxyApi previewProxyApi = new PreviewProxyApi(this);
+  @Nullable private PreviewProxyApi previewProxyApi;
 
   public ProxyApiRegistrar(
       @NonNull BinaryMessenger binaryMessenger,
@@ -140,7 +140,8 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
     return 3000;
   }
 
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings(
+      "deprecation") // getSystemService was the way of getting the default display prior to API 30
   @Nullable
   Display getDisplay() {
     if (sdkIsAtLeast(Build.VERSION_CODES.R)) {
@@ -220,6 +221,9 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiPreview getPigeonApiPreview() {
+    if (previewProxyApi == null) {
+      previewProxyApi = new PreviewProxyApi(this);
+    }
     return previewProxyApi;
   }
 

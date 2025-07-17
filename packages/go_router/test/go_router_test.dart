@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:go_router/src/match.dart';
+import 'package:go_router/src/pages/material.dart';
 import 'package:logging/logging.dart';
 
 import 'test_helpers.dart';
@@ -782,12 +783,6 @@ void main() {
     });
 
     testWidgets('match path case sensitively', (WidgetTester tester) async {
-      final FlutterExceptionHandler? oldFlutterError = FlutterError.onError;
-      addTearDown(() => FlutterError.onError = oldFlutterError);
-      final List<FlutterErrorDetails> errors = <FlutterErrorDetails>[];
-      FlutterError.onError = (FlutterErrorDetails details) {
-        errors.add(details);
-      };
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
@@ -804,16 +799,11 @@ void main() {
       final GoRouter router = await createRouter(routes, tester);
       const String wrongLoc = '/FaMiLy/f2';
 
-      expect(errors, isEmpty);
       router.go(wrongLoc);
       await tester.pumpAndSettle();
 
-      expect(errors, hasLength(1));
-      expect(
-        errors.single.exception,
-        isAssertionError,
-        reason: 'The path is case sensitive',
-      );
+      expect(find.byType(MaterialErrorScreen), findsOne);
+      expect(find.text('Page Not Found'), findsOne);
 
       const String loc = '/family/f2';
       router.go(loc);
@@ -827,8 +817,42 @@ void main() {
       );
 
       expect(matches, hasLength(1));
-      expect(find.byType(FamilyScreen), findsOneWidget);
-      expect(errors, hasLength(1), reason: 'No new errors should be thrown');
+      expect(find.byType(FamilyScreen), findsOne);
+    });
+
+    testWidgets('supports routes with a different case',
+        (WidgetTester tester) async {
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/abc',
+          builder: (BuildContext context, GoRouterState state) =>
+              const SizedBox(key: Key('abc')),
+        ),
+        GoRoute(
+          path: '/ABC',
+          builder: (BuildContext context, GoRouterState state) =>
+              const SizedBox(key: Key('ABC')),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester);
+      const String loc1 = '/abc';
+
+      router.go(loc1);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('abc')), findsOne);
+
+      const String loc = '/ABC';
+      router.go(loc);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('ABC')), findsOne);
     });
 
     testWidgets(

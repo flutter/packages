@@ -10,6 +10,7 @@ import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
 
 import 'route_config.dart';
+import 'type_helpers.dart';
 
 const String _routeDataUrl = 'package:go_router/src/route_data.dart';
 
@@ -79,7 +80,7 @@ ${getters.map((String e) => "$e,").join('\n')}
     ConstantReader annotation,
   ) {
     final String typedAnnotation =
-        annotation.objectValue.type!.getDisplayString(withNullability: false);
+        withoutNullability(annotation.objectValue.type!.getDisplayString());
     final String type =
         typedAnnotation.substring(0, typedAnnotation.indexOf('<'));
     final String routeData = _annotations[type]!;

@@ -17,7 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Factory block returning an AVCaptureDevice.
 /// Used in tests to inject a device into FLTCam.
-typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureDeviceFactory)(void);
+typedef NSObject<FLTCaptureDevice> *_Nonnull (^CaptureDeviceFactory)(NSString *);
+
+typedef NSObject<FLTCaptureDevice> *_Nonnull (^AudioCaptureDeviceFactory)(void);
 
 typedef NSObject<FLTCaptureSession> *_Nonnull (^CaptureSessionFactory)(void);
 
@@ -38,17 +40,19 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(NSObject<FLTCaptureDeviceF
 - (instancetype)initWithMediaSettings:(FCPPlatformMediaSettings *)mediaSettings
                  mediaSettingsWrapper:(FLTCamMediaSettingsAVWrapper *)mediaSettingsWrapper
                  captureDeviceFactory:(CaptureDeviceFactory)captureDeviceFactory
+            audioCaptureDeviceFactory:(AudioCaptureDeviceFactory)audioCaptureDeviceFactory
                 captureSessionFactory:(CaptureSessionFactory)captureSessionFactory
                   captureSessionQueue:(dispatch_queue_t)captureSessionQueue
             captureDeviceInputFactory:
-                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory;
+                (NSObject<FLTCaptureDeviceInputFactory> *)captureDeviceInputFactory
+                    initialCameraName:(NSString *)initialCameraName;
 
 @property(nonatomic, strong) id<FLTDeviceOrientationProviding> deviceOrientationProvider;
 @property(nonatomic, strong) dispatch_queue_t captureSessionQueue;
 @property(nonatomic, strong) FCPPlatformMediaSettings *mediaSettings;
 @property(nonatomic, strong) FLTCamMediaSettingsAVWrapper *mediaSettingsWrapper;
 @property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
-@property(nonatomic, copy) CaptureDeviceFactory audioCaptureDeviceFactory;
+@property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 @property(nonatomic, assign) UIDeviceOrientation orientation;
 @property(nonatomic, strong) NSObject<FLTCaptureSession> *videoCaptureSession;
@@ -56,6 +60,7 @@ typedef CMVideoDimensions (^VideoDimensionsForFormat)(NSObject<FLTCaptureDeviceF
 @property(nonatomic, strong) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
 @property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
+@property(nonatomic, copy) NSString *initialCameraName;
 
 @end
 

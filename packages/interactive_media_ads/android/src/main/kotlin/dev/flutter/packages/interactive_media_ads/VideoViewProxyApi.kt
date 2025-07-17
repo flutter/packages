@@ -5,8 +5,8 @@
 package dev.flutter.packages.interactive_media_ads
 
 import android.media.MediaPlayer
-import android.net.Uri
 import android.widget.VideoView
+import androidx.core.net.toUri
 
 /**
  * ProxyApi implementation for [VideoView].
@@ -29,7 +29,7 @@ class VideoViewProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   }
 
   override fun setVideoUri(pigeon_instance: VideoView, uri: String?) {
-    pigeon_instance.setVideoURI(if (uri != null) Uri.parse(uri) else null)
+    pigeon_instance.setVideoURI(uri?.toUri())
   }
 
   override fun getCurrentPosition(pigeon_instance: VideoView): Long {

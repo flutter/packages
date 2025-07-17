@@ -45,7 +45,7 @@ class SavePanelOptions {
 /// Options for open panels.
 ///
 /// These correspond to NSOpenPanel properties.
-class OpenPanelOptions extends SavePanelOptions {
+class OpenPanelOptions {
   const OpenPanelOptions({
     required this.allowsMultipleSelection,
     required this.canChooseDirectories,
