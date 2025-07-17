@@ -10,6 +10,21 @@ import CoreMotion
 #endif
 
 final class DefaultCamera: FLTCam, Camera {
+  override var deviceOrientation: UIDeviceOrientation {
+    get { super.deviceOrientation }
+    set {
+      guard newValue != super.deviceOrientation else { return }
+
+      super.deviceOrientation = newValue
+      updateOrientation()
+    }
+  }
+
+  var minimumExposureOffset: CGFloat { CGFloat(captureDevice.minExposureTargetBias) }
+  var maximumExposureOffset: CGFloat { CGFloat(captureDevice.maxExposureTargetBias) }
+  var minimumAvailableZoomFactor: CGFloat { captureDevice.minAvailableVideoZoomFactor }
+  var maximumAvailableZoomFactor: CGFloat { captureDevice.maxAvailableVideoZoomFactor }
+
   /// The queue on which `latestPixelBuffer` property is accessed.
   /// To avoid unnecessary contention, do not access `latestPixelBuffer` on the `captureSessionQueue`.
   private let pixelBufferSynchronizationQueue = DispatchQueue(
@@ -29,6 +44,13 @@ final class DefaultCamera: FLTCam, Camera {
 
   private var exposureMode = FCPPlatformExposureMode.auto
   private var focusMode = FCPPlatformFocusMode.auto
+
+  private static func flutterErrorFromNSError(_ error: NSError) -> FlutterError {
+    return FlutterError(
+      code: "Error \(error.code)",
+      message: error.localizedDescription,
+      details: error.domain)
+  }
 
   func reportInitializationState() {
     // Get all the state on the current thread, not the main thread.
@@ -62,6 +84,33 @@ final class DefaultCamera: FLTCam, Camera {
   func stop() {
     videoCaptureSession.stopRunning()
     audioCaptureSession.stopRunning()
+  }
+
+  func pauseVideoRecording() {
+    isRecordingPaused = true
+    videoIsDisconnected = true
+    audioIsDisconnected = true
+  }
+
+  func resumeVideoRecording() {
+    isRecordingPaused = false
+  }
+
+  func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
+    let orientation = FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation)
+    if lockedCaptureOrientation != orientation {
+      lockedCaptureOrientation = orientation
+      updateOrientation()
+    }
+  }
+
+  func unlockCaptureOrientation() {
+    lockedCaptureOrientation = .unknown
+    updateOrientation()
+  }
+
+  func setImageFileFormat(_ fileFormat: FCPPlatformImageFileFormat) {
+    self.fileFormat = fileFormat
   }
 
   func setExposureMode(_ mode: FCPPlatformExposureMode) {
@@ -197,6 +246,99 @@ final class DefaultCamera: FLTCam, Camera {
       break
     }
     return CGPoint(x: x, y: y)
+  }
+
+  func setZoomLevel(_ zoom: CGFloat, withCompletion completion: @escaping (FlutterError?) -> Void) {
+    if zoom < captureDevice.minAvailableVideoZoomFactor
+      || zoom > captureDevice.maxAvailableVideoZoomFactor
+    {
+      completion(
+        FlutterError(
+          code: "ZOOM_ERROR",
+          message:
+            "Zoom level out of bounds (zoom level should be between \(captureDevice.minAvailableVideoZoomFactor) and \(captureDevice.maxAvailableVideoZoomFactor).",
+          details: nil))
+      return
+    }
+
+    do {
+      try captureDevice.lockForConfiguration()
+    } catch let error as NSError {
+      completion(DefaultCamera.flutterErrorFromNSError(error))
+      return
+    }
+
+    captureDevice.videoZoomFactor = zoom
+    captureDevice.unlockForConfiguration()
+    completion(nil)
+  }
+
+  func setFlashMode(
+    _ mode: FCPPlatformFlashMode,
+    withCompletion completion: @escaping (FlutterError?) -> Void
+  ) {
+    switch mode {
+    case .torch:
+      guard captureDevice.hasTorch else {
+        completion(
+          FlutterError(
+            code: "setFlashModeFailed",
+            message: "Device does not support torch mode",
+            details: nil)
+        )
+        return
+      }
+      guard captureDevice.isTorchAvailable else {
+        completion(
+          FlutterError(
+            code: "setFlashModeFailed",
+            message: "Torch mode is currently not available",
+            details: nil))
+        return
+      }
+      if captureDevice.torchMode != .on {
+        try? captureDevice.lockForConfiguration()
+        captureDevice.torchMode = .on
+        captureDevice.unlockForConfiguration()
+      }
+    case .off, .auto, .always:
+      guard captureDevice.hasFlash else {
+        completion(
+          FlutterError(
+            code: "setFlashModeFailed",
+            message: "Device does not have flash capabilities",
+            details: nil))
+        return
+      }
+      let avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(mode)
+      guard capturePhotoOutput.supportedFlashModes.contains(NSNumber(value: avFlashMode.rawValue))
+      else {
+        completion(
+          FlutterError(
+            code: "setFlashModeFailed",
+            message: "Device does not support this specific flash mode",
+            details: nil))
+        return
+      }
+      if captureDevice.torchMode != .off {
+        try? captureDevice.lockForConfiguration()
+        captureDevice.torchMode = .off
+        captureDevice.unlockForConfiguration()
+      }
+    @unknown default:
+      assertionFailure("Unknown flash mode")
+    }
+
+    flashMode = mode
+    completion(nil)
+  }
+
+  func pausePreview() {
+    isPreviewPaused = true
+  }
+
+  func resumePreview() {
+    isPreviewPaused = false
   }
 
   func captureOutput(
