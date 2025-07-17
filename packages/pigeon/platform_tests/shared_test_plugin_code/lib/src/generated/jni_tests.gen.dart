@@ -41,8 +41,6 @@ class JniAllTypes {
   }
 
   static int echoInt(int numbah) {
-    DynamicLibrary.open(
-        '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/example/jni_tests.gen.dylib');
     return ffi.Host.getInstanceWithName(NSString('Host')).echo(numbah);
   }
 }

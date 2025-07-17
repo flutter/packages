@@ -103,22 +103,6 @@ Future<void> main() async {
     ),
   ).generate();
 
-  final result = Process.runSync('swiftc', <String>[
-    '-emit-library',
-    '-o',
-    'jni_tests.gen.dylib',
-    '-module-name',
-    'JniTests',
-    '-framework',
-    'Foundation',
-    '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/ios/Classes/JniTests.gen.swift',
-    // '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/macos/Classes/JniTests.gen.swift',
-  ]);
-  if (result.exitCode != 0) {
-    print('Failed to build the swift wrapper library');
-    print(result.stdout);
-    print(result.stderr);
-  }
 }
 
 ''');
