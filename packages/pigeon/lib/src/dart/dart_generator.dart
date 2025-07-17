@@ -1094,7 +1094,11 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
       _writeDeepEquals(indent);
     }
     if (root.containsProxyApi) {
-      _writeProxyApiPigeonOverrides(indent, proxyApis: root.apis.whereType());
+      proxy_api_helper.writeProxyApiPigeonOverrides(
+        indent,
+        formatter: _formatter,
+        proxyApis: root.apis.whereType(),
+      );
     }
   }
 
@@ -1422,43 +1426,6 @@ if (${varNamePrefix}replyList == null) {
         });
       });
     });
-  }
-
-  void _writeProxyApiPigeonOverrides(
-    Indent indent, {
-    required Iterable<AstProxyApi> proxyApis,
-  }) {
-    if (proxyApis.isEmpty) {
-      return;
-    }
-
-    final cb.Class proxyApiOverrides = cb.Class(
-      (cb.ClassBuilder builder) => builder
-        ..name = proxyApiOverridesClassName
-        ..annotations.add(cb.refer('visibleForTesting'))
-        ..docs.addAll(<String>[
-          '/// Provides overrides for the constructors and static members of each proxy',
-          '/// API.',
-          '///',
-          '/// This is only intended to be used with unit tests to prevent errors from',
-          '/// making message calls in a unit test.',
-          '///',
-          '/// See [$proxyApiOverridesClassName.${classMemberNamePrefix}reset] to set all overrides back to null.',
-        ])
-        ..fields.addAll(
-          proxy_api_helper.overridesClassConstructors(proxyApis),
-        )
-        ..fields.addAll(
-          proxy_api_helper.overridesClassStaticFields(proxyApis),
-        )
-        ..fields.addAll(proxy_api_helper.overridesClassStaticMethods(proxyApis))
-        ..methods.add(
-          proxy_api_helper.overridesClassResetMethod(proxyApis),
-        ),
-    );
-
-    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
-    indent.format(_formatter.format('${proxyApiOverrides.accept(emitter)}'));
   }
 
   static String _createFlutterApiMethodCall(

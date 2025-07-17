@@ -4,6 +4,7 @@
 
 import 'package:code_builder/code_builder.dart' as cb;
 import 'package:collection/collection.dart';
+import 'package:dart_style/dart_style.dart';
 
 import '../ast.dart';
 import '../generator_tools.dart';
@@ -292,4 +293,44 @@ Iterable<cb.Method> staticAttachedFieldsGetters(
         '$proxyApiOverridesClassName.${toLowerCamelCase(apiName)}_${field.name} ?? _${field.name}',
       ));
   }
+}
+
+/// Write the `PigeonOverrides` class that provides overrides for constructors
+/// and static members of each generated Dart class of a ProxyApi.
+void writeProxyApiPigeonOverrides(
+  Indent indent, {
+  required DartFormatter formatter,
+  required Iterable<AstProxyApi> proxyApis,
+}) {
+  if (proxyApis.isEmpty) {
+    return;
+  }
+
+  final cb.Class proxyApiOverrides = cb.Class(
+    (cb.ClassBuilder builder) => builder
+      ..name = proxyApiOverridesClassName
+      ..annotations.add(cb.refer('visibleForTesting'))
+      ..docs.addAll(<String>[
+        '/// Provides overrides for the constructors and static members of each proxy',
+        '/// API.',
+        '///',
+        '/// This is only intended to be used with unit tests to prevent errors from',
+        '/// making message calls in a unit test.',
+        '///',
+        '/// See [$proxyApiOverridesClassName.${classMemberNamePrefix}reset] to set all overrides back to null.',
+      ])
+      ..fields.addAll(
+        overridesClassConstructors(proxyApis),
+      )
+      ..fields.addAll(
+        overridesClassStaticFields(proxyApis),
+      )
+      ..fields.addAll(overridesClassStaticMethods(proxyApis))
+      ..methods.add(
+        overridesClassResetMethod(proxyApis),
+      ),
+  );
+
+  final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+  indent.format(formatter.format('${proxyApiOverrides.accept(emitter)}'));
 }

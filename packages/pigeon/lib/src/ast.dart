@@ -248,11 +248,7 @@ class AstProxyApi extends Api {
     }
   }
 
-  /// Returns a record for each method inherited from the ProxyApi that this
-  /// ProxyApi `extends` and its corresponding ProxyApi.
-  ///
-  /// This also recursively checks the ProxyApi that the super class `extends`
-  /// and so on.
+  /// Returns a record for each Flutter method inherited from [superClass].
   ///
   /// This also includes methods that super classes inherited from interfaces
   /// with `implements`.
