@@ -659,7 +659,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             _firstNonPinnedRow == null) {
           _firstNonPinnedRow = row;
         }
-        if (span.trailingOffset > _targetTrailingRowPixel &&
+        if (span.trailingOffset >= _targetTrailingRowPixel &&
             _lastNonPinnedRow == null) {
           _lastNonPinnedRow = row;
         }
