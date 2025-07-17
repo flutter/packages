@@ -10,7 +10,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_ad_display_container.dart';
 import 'package:interactive_media_ads/src/android/android_ads_loader.dart';
 import 'package:interactive_media_ads/src/android/android_content_progress_provider.dart';
-import 'package:interactive_media_ads/src/android/android_ima_settings.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
 import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';
@@ -42,10 +41,6 @@ import 'ads_loader_test.mocks.dart';
 ])
 void main() {
   group('AndroidAdsLoader', () {
-    setUp(() {
-      ima.PigeonOverrides.pigeon_reset();
-    });
-
     testWidgets('instantiate AndroidAdsLoader', (WidgetTester tester) async {
       final AndroidAdDisplayContainer container =
           await _pumpAdDisplayContainer(tester);
@@ -53,9 +48,6 @@ void main() {
       AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(
-            const PlatformImaSettingsCreationParams(),
-          ),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
         ),
@@ -73,9 +65,6 @@ void main() {
       final AndroidAdsLoader loader = AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(
-            const PlatformImaSettingsCreationParams(),
-          ),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
         ),
@@ -113,9 +102,6 @@ void main() {
       final AndroidAdsLoader adsLoader = AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(
-            const PlatformImaSettingsCreationParams(),
-          ),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
           proxy: proxy,
@@ -185,9 +171,6 @@ void main() {
       AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(
-            const PlatformImaSettingsCreationParams(),
-          ),
           onAdsLoaded: expectAsync1((_) {}),
           onAdsLoadError: (_) {},
           proxy: proxy,
@@ -246,9 +229,6 @@ void main() {
       AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
           container: container,
-          settings: AndroidImaSettings(
-            const PlatformImaSettingsCreationParams(),
-          ),
           onAdsLoaded: (_) {},
           onAdsLoadError: expectAsync1((_) {}),
           proxy: proxy,
@@ -282,6 +262,12 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
       dynamic onCompletion,
     }) =>
         MockVideoView(),
+    createAdDisplayContainerImaSdkFactory: (
+      _,
+      __,
+    ) async {
+      return MockAdDisplayContainer();
+    },
     newVideoAdPlayer: ({
       required void Function(
         ima.VideoAdPlayer,
@@ -300,22 +286,6 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
       return MockVideoAdPlayer();
     },
   );
-  final MockImaSdkFactory mockImaSdkFactory = MockImaSdkFactory();
-  final MockImaSdkSettings mockImaSdkSettings = MockImaSdkSettings();
-  final MockAdDisplayContainer mockAdDisplayContainer =
-      MockAdDisplayContainer();
-  when(mockImaSdkFactory.createImaSdkSettings()).thenAnswer(
-    (_) async => mockImaSdkSettings,
-  );
-  when(mockImaSdkFactory.createAdsLoader(
-          mockImaSdkSettings, mockAdDisplayContainer))
-      .thenAnswer(
-    (_) async => MockAdsLoader(),
-  );
-  ima.PigeonOverrides.imaSdkFactory_instance = mockImaSdkFactory;
-  ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
-    return mockAdDisplayContainer;
-  };
 
   final MockPlatformViewsServiceProxy mockPlatformViewsProxy =
       MockPlatformViewsServiceProxy();
