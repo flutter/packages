@@ -13,11 +13,11 @@ Future<void> main() async {
   ];
   await SwiftGen(
     target: Target(
-      triple: 'x86_64-apple-macosx14.0',
-      // triple: 'arm64-apple-ios',
+      // triple: 'x86_64-apple-macosx14.0',
+      triple: 'arm64-apple-ios',
       sdk: Uri.directory(
-        // '/Applications/Xcode-beta.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk',
-        '/Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk',
+        '/Applications/Xcode-beta.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk',
+        // '/Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk',
       ),
     ),
     input: ObjCCompatibleSwiftFileInput(
@@ -25,7 +25,7 @@ Future<void> main() async {
       files: <Uri>[
         Uri.file(
             '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/ios/Classes/JniTests.gen.swift')
-            // '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/macos/Classes/JniTests.gen.swift')
+        // '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/macos/Classes/JniTests.gen.swift')
       ],
     ),
     tempDirectory: Uri.directory('temp'),
@@ -35,7 +35,7 @@ Future<void> main() async {
           '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/jni_tests.gen.ffi.dart'),
       outputObjC: Uri.file(
           '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/ios/Classes/jni_tests.gen.m'),
-          // '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/macos/Classes/jni_tests.gen.m'),
+      // '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/macos/Classes/jni_tests.gen.m'),
       externalVersions: fg.ExternalVersions(
         ios: fg.Versions(min: Version(12, 0, 0)),
         macos: fg.Versions(min: Version(10, 14, 0)),
