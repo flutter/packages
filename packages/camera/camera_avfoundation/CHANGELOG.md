@@ -1,3 +1,35 @@
+## 0.9.20+3
+
+* Migrates `setZoomLevel` and `setFlashMode` methods to Swift.
+
+## 0.9.20+2
+
+* Migrates exposure offset and zoom factor limit getters to Swift.
+* Migrates `setImageFileFormat` method to Swift.
+* Migrates pause and resume methods to Swift.
+* Migrates capture orientation locking methods to Swift.
+* Converts `setDeviceOrientation` method to property setter and migrated to Swift.
+
+## 0.9.20+1
+
+* Migrates lifecycle methods (`start`, `stop`, `close`) to Swift.
+* Migrates exposure and focus related methods to Swift.
+* Migrates `receivedImageStreamData` and `reportInitializationState` methods to Swift.
+
+## 0.9.20
+
+* Fixes incorrect types in image stream events.
+
+## 0.9.19+3
+
+* Fixes race condition when starting image stream.
+
+## 0.9.19+2
+
+* Adds the `Camera` Swift protocol.
+* Adds `DefaultCamera`, a `FLTCam`-based implementation of the `Camera` protocol.
+* Migrates sample buffer delegates and `FlutterTexture` protocol implementations to `DefaultCamera`.
+
 ## 0.9.19+1
 
 * Adds `audioCaptureDeviceFactory` to `FLTCamConfiguration`.

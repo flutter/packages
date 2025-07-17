@@ -13,7 +13,7 @@ import XCTest
 #endif
 
 final class FLTCamZoomTests: XCTestCase {
-  private func createCamera() -> (FLTCam, MockCaptureDevice) {
+  private func createCamera() -> (Camera, MockCaptureDevice) {
     let mockDevice = MockCaptureDevice()
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()

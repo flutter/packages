@@ -29,14 +29,14 @@ class App extends StatelessWidget {
     TypedGoRoute<SubRoute>(path: 'sub-route')
   ],
 )
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteData with _$HomeRoute {
   const HomeRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
-class SubRoute extends GoRouteData {
+class SubRoute extends GoRouteData with _$SubRoute {
   const SubRoute();
 
   @override

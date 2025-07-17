@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import camera_avfoundation
+@testable import camera_avfoundation
 
 // Import Objectice-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
 
-final class MockCamera: FLTCam {
+final class MockCamera: NSObject, Camera {
   var setDartApiStub: ((FCPCameraEventApi?) -> Void)?
   var setOnFrameAvailableStub: (((() -> Void)?) -> Void)?
   var getMinimumExposureOffsetStub: (() -> CGFloat)?
@@ -39,10 +39,10 @@ final class MockCamera: FLTCam {
   var pausePreviewStub: (() -> Void)?
   var resumePreviewStub: (() -> Void)?
   var setDescriptionWhileRecordingStub: ((String, ((FlutterError?) -> Void)?) -> Void)?
-  var startImageStreamStub: ((FlutterBinaryMessenger) -> Void)?
+  var startImageStreamStub: ((FlutterBinaryMessenger, (FlutterError?) -> Void) -> Void)?
   var stopImageStreamStub: (() -> Void)?
 
-  override var dartAPI: FCPCameraEventApi {
+  var dartAPI: FCPCameraEventApi? {
     get {
       preconditionFailure("Attempted to access unimplemented property: dartAPI")
     }
@@ -51,7 +51,7 @@ final class MockCamera: FLTCam {
     }
   }
 
-  override var onFrameAvailable: (() -> Void) {
+  var onFrameAvailable: (() -> Void)? {
     get {
       preconditionFailure("Attempted to access unimplemented property: onFrameAvailable")
     }
@@ -60,147 +60,158 @@ final class MockCamera: FLTCam {
     }
   }
 
-  override var minimumExposureOffset: CGFloat {
+  var videoFormat: FourCharCode = kCVPixelFormatType_32BGRA
+
+  var isPreviewPaused: Bool = false
+  var isStreamingImages: Bool = false
+
+  var deviceOrientation: UIDeviceOrientation {
+    get {
+      preconditionFailure("Attempted to access unimplemented property: deviceOrientation")
+    }
+    set {
+      setDeviceOrientationStub?(newValue)
+    }
+  }
+
+  var minimumExposureOffset: CGFloat {
     return getMinimumExposureOffsetStub?() ?? 0
   }
 
-  override var maximumExposureOffset: CGFloat {
+  var maximumExposureOffset: CGFloat {
     return getMaximumExposureOffsetStub?() ?? 0
   }
 
-  override var minimumAvailableZoomFactor: CGFloat {
+  var minimumAvailableZoomFactor: CGFloat {
     return getMinimumAvailableZoomFactorStub?() ?? 0
   }
 
-  override var maximumAvailableZoomFactor: CGFloat {
+  var maximumAvailableZoomFactor: CGFloat {
     return getMaximumAvailableZoomFactorStub?() ?? 0
   }
 
-  override func setUpCaptureSessionForAudioIfNeeded() {
+  func setUpCaptureSessionForAudioIfNeeded() {
     setUpCaptureSessionForAudioIfNeededStub?()
   }
 
-  override func reportInitializationState() {}
+  func reportInitializationState() {}
 
-  override func receivedImageStreamData() {
+  func receivedImageStreamData() {
     receivedImageStreamDataStub?()
   }
 
-  override func start() {
+  func start() {
     startStub?()
   }
 
-  override func stop() {}
+  func stop() {}
 
-  override func startVideoRecording(
+  func startVideoRecording(
     completion: @escaping (FlutterError?) -> Void,
     messengerForStreaming messenger: FlutterBinaryMessenger?
   ) {
     startVideoRecordingStub?(completion, messenger)
   }
 
-  override func pauseVideoRecording() {
+  func pauseVideoRecording() {
     pauseVideoRecordingStub?()
   }
 
-  override func resumeVideoRecording() {
+  func resumeVideoRecording() {
     resumeVideoRecordingStub?()
   }
 
-  override func stopVideoRecording(completion: @escaping (String?, FlutterError?) -> Void) {
+  func stopVideoRecording(completion: @escaping (String?, FlutterError?) -> Void) {
     stopVideoRecordingStub?(completion)
   }
 
-  override func captureToFile(completion: @escaping (String?, FlutterError?) -> Void) {
+  func captureToFile(completion: @escaping (String?, FlutterError?) -> Void) {
     captureToFileStub?(completion)
   }
 
-  override func setDeviceOrientation(_ orientation: UIDeviceOrientation) {
-    setDeviceOrientationStub?(orientation)
-  }
-
-  override func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation) {
+  func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation) {
     lockCaptureOrientationStub?(orientation)
   }
 
-  override func unlockCaptureOrientation() {
+  func unlockCaptureOrientation() {
     unlockCaptureOrientationStub?()
   }
 
-  override func setImageFileFormat(_ fileFormat: FCPPlatformImageFileFormat) {
+  func setImageFileFormat(_ fileFormat: FCPPlatformImageFileFormat) {
     setImageFileFormatStub?(fileFormat)
   }
 
-  override func setExposureMode(_ mode: FCPPlatformExposureMode) {
+  func setExposureMode(_ mode: FCPPlatformExposureMode) {
     setExposureModeStub?(mode)
   }
 
-  override func setExposureOffset(_ offset: Double) {
+  func setExposureOffset(_ offset: Double) {
     setExposureOffsetStub?(offset)
   }
 
-  override func setExposurePoint(
+  func setExposurePoint(
     _ point: FCPPlatformPoint?, withCompletion: @escaping (FlutterError?) -> Void
   ) {
     setExposurePointStub?(point, withCompletion)
   }
 
-  override func setFocusMode(_ mode: FCPPlatformFocusMode) {
+  func setFocusMode(_ mode: FCPPlatformFocusMode) {
     setFocusModeStub?(mode)
   }
 
-  override func setFocusPoint(
-    _ point: FCPPlatformPoint?, completion: @escaping (FlutterError?) -> Void
-  ) {
+  func setFocusPoint(_ point: FCPPlatformPoint?, completion: @escaping (FlutterError?) -> Void) {
     setFocusPointStub?(point, completion)
   }
 
-  override func setZoomLevel(
+  func setZoomLevel(
     _ zoom: CGFloat,
     withCompletion completion: @escaping (FlutterError?) -> Void
   ) {
     setZoomLevelStub?(zoom, completion)
   }
 
-  override func setFlashMode(
+  func setFlashMode(
     _ mode: FCPPlatformFlashMode,
     withCompletion completion: @escaping (FlutterError?) -> Void
   ) {
     setFlashModeStub?(mode, completion)
   }
 
-  override func pausePreview() {
+  func pausePreview() {
     pausePreviewStub?()
   }
 
-  override func resumePreview() {
+  func resumePreview() {
     resumePreviewStub?()
   }
 
-  override func setDescriptionWhileRecording(
+  func setDescriptionWhileRecording(
     _ cameraName: String,
     withCompletion completion: @escaping (FlutterError?) -> Void
   ) {
     setDescriptionWhileRecordingStub?(cameraName, completion)
   }
 
-  override func startImageStream(with messenger: FlutterBinaryMessenger) {
-    startImageStreamStub?(messenger)
+  func startImageStream(
+    with messenger: FlutterBinaryMessenger,
+    completion: @escaping (FlutterError?) -> Void
+  ) {
+    startImageStreamStub?(messenger, completion)
   }
 
-  override func stopImageStream() {
+  func stopImageStream() {
     stopImageStreamStub?()
   }
 
-  override func captureOutput(
+  func captureOutput(
     _ output: AVCaptureOutput,
     didOutput sampleBuffer: CMSampleBuffer,
     from connection: AVCaptureConnection
   ) {}
 
-  override func close() {}
+  func close() {}
 
-  override func copyPixelBuffer() -> Unmanaged<CVPixelBuffer>? {
+  func copyPixelBuffer() -> Unmanaged<CVPixelBuffer>? {
     return nil
   }
 }

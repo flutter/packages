@@ -53,7 +53,7 @@ class MyShellRouteData extends ShellRouteData {
   }
 }
 
-class FooRouteData extends GoRouteData {
+class FooRouteData extends GoRouteData with _$FooRouteData {
   const FooRouteData();
 
   @override
@@ -62,7 +62,7 @@ class FooRouteData extends GoRouteData {
   }
 }
 
-class BarRouteData extends GoRouteData {
+class BarRouteData extends GoRouteData with _$BarRouteData {
   const BarRouteData();
 
   @override
@@ -133,7 +133,7 @@ class BarScreen extends StatelessWidget {
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData {
+class LoginRoute extends GoRouteData with _$LoginRoute {
   const LoginRoute();
 
   @override

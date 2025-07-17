@@ -230,7 +230,12 @@ enum UiElement {
         'com.google.ads.interactivemedia.v3.api.BaseDisplayContainer',
   ),
 )
-abstract class BaseDisplayContainer {}
+abstract class BaseDisplayContainer {
+  /// Sets slots for displaying companions.
+  ///
+  /// Passing null will reset the container to having no companion slots.
+  void setCompanionSlots(List<CompanionAdSlot>? companionSlots);
+}
 
 /// A container in which to display the ads.
 ///
@@ -240,7 +245,7 @@ abstract class BaseDisplayContainer {}
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdDisplayContainer',
   ),
 )
-abstract class AdDisplayContainer implements BaseDisplayContainer {}
+abstract class AdDisplayContainer extends BaseDisplayContainer {}
 
 /// An object which allows publishers to request ads from ad servers or a
 /// dynamic ad insertion stream.
@@ -457,6 +462,9 @@ abstract class ImaSdkFactory {
     VideoAdPlayer player,
   );
 
+  /// Creates a CompanionAdSlot for the SDK to fill with companion ads.
+  CompanionAdSlot createCompanionAdSlot();
+
   /// Creates an `ImaSdkSettings` object for configuring the IMA SDK.
   ImaSdkSettings createImaSdkSettings();
 
@@ -483,7 +491,55 @@ abstract class ImaSdkFactory {
     fullClassName: 'com.google.ads.interactivemedia.v3.api.ImaSdkSettings',
   ),
 )
-abstract class ImaSdkSettings {}
+abstract class ImaSdkSettings {
+  /// Sets whether to automatically play VMAP and ad rules ad breaks.
+  void setAutoPlayAdBreaks(bool autoPlayAdBreaks);
+
+  /// Enables and disables the debug mode, which is disabled by default.
+  void setDebugMode(bool debugMode);
+
+  /// Sets the feature flags and their states to control experimental features.
+  ///
+  /// This should be set as early as possible, before requesting ads. Settings
+  /// will remain constant until the next ad request. Calling this method again
+  /// will reset any feature flags for the next ad request.
+  void setFeatureFlags(Map<String, String> featureFlags);
+
+  /// Sets the preferred language for the ad UI.
+  ///
+  /// The supported codes can be found in the Localization guide and are closely
+  /// related to the two-letter ISO 639-1 language codes.
+  ///
+  /// Once the AdsLoader object has been created, using this setter will have no
+  /// effect.
+  void setLanguage(String language);
+
+  /// Specifies the maximum number of redirects before the subsequent redirects
+  /// will be denied and the ad load aborted.
+  ///
+  /// The default is 4.
+  void setMaxRedirects(int maxRedirects);
+
+  /// Sets the partner provided player type.
+  ///
+  /// Player type greater than 20 characters will be truncated. The player type
+  /// specified should be short and unique.
+  void setPlayerType(String playerType);
+
+  /// Sets the partner provided player version.
+  ///
+  /// Player versions greater than 20 characters will be truncated.
+  void setPlayerVersion(String playerVersion);
+
+  /// Sets the publisher provided ID used for tracking.
+  void setPpid(String ppid);
+
+  /// Session ID is a temporary random ID.
+  ///
+  /// A session ID must be a UUID, or an empty string if the SDK should not send
+  /// a session ID.
+  void setSessionId(String sessionId);
+}
 
 /// Defines an update to the video's progress.
 ///
@@ -1083,4 +1139,10 @@ abstract class CompanionAdSlot {
   ///
   /// Only companions matching the slot size will be displayed in the slot.
   void setSize(int width, int height);
+
+  /// Sets the size of the slot as fluid.
+  ///
+  /// This is a convenience method that sets both parameters of [setSize] to
+  /// [CompanionAdSlot.FLUID_SIZE](https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/CompanionAdSlot#FLUID_SIZE()).
+  void setFluidSize();
 }
