@@ -1,6 +1,11 @@
-## 4.7.1
+## 4.8.1
 
 * Updates `androidx.webkit` to 1.14.0.
+
+## 4.8.0
+
+* Adds `AndroidWebViewController.setMixedContentMode` to control how
+  mixed-content pages load.
 
 ## 4.7.0
 
