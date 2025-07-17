@@ -38,7 +38,7 @@ Future<void> main() async {
       // '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/macos/Classes/jni_tests.gen.m'),
       externalVersions: fg.ExternalVersions(
         ios: fg.Versions(min: Version(12, 0, 0)),
-        macos: fg.Versions(min: Version(10, 14, 0)),
+        // macos: fg.Versions(min: Version(10, 14, 0)),
       ),
       objcInterfaces: fg.DeclarationFilters(
         shouldInclude: (Declaration decl) =>
