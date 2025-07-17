@@ -302,10 +302,6 @@ void writeProxyApiPigeonOverrides(
   required DartFormatter formatter,
   required Iterable<AstProxyApi> proxyApis,
 }) {
-  if (proxyApis.isEmpty) {
-    return;
-  }
-
   final cb.Class proxyApiOverrides = cb.Class(
     (cb.ClassBuilder builder) => builder
       ..name = proxyApiOverridesClassName
