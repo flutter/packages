@@ -48,6 +48,7 @@ public class GoogleMapInitializerTest {
     verify(result, never()).error(any());
   }
 
+  @SuppressWarnings("deprecation")
   @Test
   public void initializer_OnMapsSdkInitializedWithLegacyRenderer() {
     doNothing().when(googleMapInitializer).initializeWithRendererRequest(Renderer.LEGACY);
