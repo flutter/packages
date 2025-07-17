@@ -1,3 +1,7 @@
+## 4.7.1
+
+* Updates `androidx.webkit` to 1.14.0.
+
 ## 4.7.0
 
 * Adds support to respond to recoverable SSL certificate errors. See `AndroidNavigationDelegate.setOnSSlAuthError`.
