@@ -45,7 +45,7 @@ void main() {
     setUp(() {
       ima.PigeonOverrides.pigeon_reset();
     });
-    
+
     testWidgets('instantiate AndroidAdsLoader', (WidgetTester tester) async {
       final AndroidAdDisplayContainer container =
           await _pumpAdDisplayContainer(tester);

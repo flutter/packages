@@ -119,7 +119,7 @@ base class IOSAdsLoader extends PlatformAdsLoader {
       _ => IOSImaSettings(_iosParams.settings.params),
     };
 
-    return IMAAdsLoader(settings: settings.nativeSettings)
+    return _iosParams._proxy.newIMAAdsLoader(settings: settings.nativeSettings)
       ..setDelegate(_delegate);
   }
 }
