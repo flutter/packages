@@ -34,7 +34,7 @@ void main() {
       verify(mockImaSdkSettings.setLanguage(language));
     });
 
-    test('autoPlayAdBreaks', () async {
+    test('setAutoPlayAdBreaks', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const bool autoPlayAdBreaks = true;
@@ -46,7 +46,7 @@ void main() {
       verify(mockImaSdkSettings.setAutoPlayAdBreaks(autoPlayAdBreaks));
     });
 
-    test('debugMode', () async {
+    test('setDebugMode', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const bool debugMode = false;
@@ -58,7 +58,7 @@ void main() {
       verify(mockImaSdkSettings.setDebugMode(debugMode));
     });
 
-    test('featureFlags', () async {
+    test('setFeatureFlags', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const Map<String, String> featureFlags = <String, String>{'a': 'flag'};
@@ -70,7 +70,7 @@ void main() {
       verify(mockImaSdkSettings.setFeatureFlags(featureFlags));
     });
 
-    test('maxRedirects', () async {
+    test('setMaxRedirects', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const int maxRedirects = 12;
@@ -82,7 +82,7 @@ void main() {
       verify(mockImaSdkSettings.setMaxRedirects(maxRedirects));
     });
 
-    test('playerType', () async {
+    test('setPlayerType', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const String playerType = 'playerType';
@@ -94,7 +94,7 @@ void main() {
       verify(mockImaSdkSettings.setPlayerType(playerType));
     });
 
-    test('playerVersion', () async {
+    test('setPlayerVersion', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const String playerVersion = 'playerVersion';
@@ -106,7 +106,7 @@ void main() {
       verify(mockImaSdkSettings.setPlayerVersion(playerVersion));
     });
 
-    test('ppid', () async {
+    test('setPpid', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const String ppid = 'ppid';
@@ -118,7 +118,7 @@ void main() {
       verify(mockImaSdkSettings.setPpid(ppid));
     });
 
-    test('sessionID', () async {
+    test('setSessionID', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
       const String sessionID = 'sessionID';
