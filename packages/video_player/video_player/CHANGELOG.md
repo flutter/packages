@@ -1,3 +1,7 @@
+## 2.10.1
+
+* Fixes video_player Windows platform loop seekTo issue on complete.
+
 ## 2.10.0
 
 * Adds support for platform views as an optional way of displaying a video on Android and iOS.
