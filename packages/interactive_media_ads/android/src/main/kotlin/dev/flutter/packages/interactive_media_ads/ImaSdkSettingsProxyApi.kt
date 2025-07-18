@@ -22,10 +22,7 @@ class ImaSdkSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     pigeon_instance.isDebugMode = debugMode
   }
 
-  override fun setFeatureFlags(
-      pigeon_instance: ImaSdkSettings,
-      featureFlags: Map<String, String>
-  ) {
+  override fun setFeatureFlags(pigeon_instance: ImaSdkSettings, featureFlags: Map<String, String>) {
     pigeon_instance.featureFlags = featureFlags
   }
 
