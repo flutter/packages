@@ -39,7 +39,7 @@ void main() {
     const Map<String, String> featureFlags = <String, String>{};
     final TestImaSettings platformSettings = TestImaSettings(
       const PlatformImaSettingsCreationParams(),
-      onSetFeatureFlags: expectAsync1((Map<String, String>? value) {
+      onSetFeatureFlags: expectAsync1((Map<String, String> value) {
         expect(featureFlags, value);
       }),
     );
@@ -65,7 +65,7 @@ void main() {
     const String playerType = 'playerType';
     final TestImaSettings platformSettings = TestImaSettings(
       const PlatformImaSettingsCreationParams(),
-      onSetPlayerType: expectAsync1((String? value) {
+      onSetPlayerType: expectAsync1((String value) {
         expect(playerType, value);
       }),
     );
@@ -78,7 +78,7 @@ void main() {
     const String playerVersion = 'playerVersion';
     final TestImaSettings platformSettings = TestImaSettings(
       const PlatformImaSettingsCreationParams(),
-      onSetPlayerVersion: expectAsync1((String? value) {
+      onSetPlayerVersion: expectAsync1((String value) {
         expect(playerVersion, value);
       }),
     );
@@ -91,7 +91,7 @@ void main() {
     const String ppid = 'ppid';
     final TestImaSettings platformSettings = TestImaSettings(
       const PlatformImaSettingsCreationParams(),
-      onSetPpid: expectAsync1((String? value) {
+      onSetPpid: expectAsync1((String value) {
         expect(ppid, value);
       }),
     );
@@ -104,7 +104,7 @@ void main() {
     const String sessionID = 'session';
     final TestImaSettings platformSettings = TestImaSettings(
       const PlatformImaSettingsCreationParams(),
-      onSetSessionID: expectAsync1((String? value) {
+      onSetSessionID: expectAsync1((String value) {
         expect(sessionID, value);
       }),
     );

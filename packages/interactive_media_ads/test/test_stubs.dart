@@ -261,24 +261,24 @@ final class TestImaSettings extends PlatformImaSettings {
     this.onSetDebugMode,
   }) : super.implementation();
 
-  void Function(String? ppid)? onSetPpid;
+  void Function(String ppid)? onSetPpid;
 
   void Function(int maxRedirects)? onSetMaxRedirects;
 
-  void Function(Map<String, String>? featureFlags)? onSetFeatureFlags;
+  void Function(Map<String, String> featureFlags)? onSetFeatureFlags;
 
   void Function(bool autoPlayAdBreaks)? onSetAutoPlayAdBreaks;
 
-  void Function(String? playerType)? onSetPlayerType;
+  void Function(String playerType)? onSetPlayerType;
 
-  void Function(String? playerVersion)? onSetPlayerVersion;
+  void Function(String playerVersion)? onSetPlayerVersion;
 
-  void Function(String? sessionID)? onSetSessionID;
+  void Function(String sessionID)? onSetSessionID;
 
   void Function(bool enableDebugMode)? onSetDebugMode;
 
   @override
-  Future<void> setPpid(String? ppid) async => onSetPpid?.call(ppid);
+  Future<void> setPpid(String ppid) async => onSetPpid?.call(ppid);
 
   @override
   Future<void> setMaxRedirects(int maxRedirects) async {
@@ -286,7 +286,7 @@ final class TestImaSettings extends PlatformImaSettings {
   }
 
   @override
-  Future<void> setFeatureFlags(Map<String, String>? featureFlags) async {
+  Future<void> setFeatureFlags(Map<String, String> featureFlags) async {
     onSetFeatureFlags?.call(featureFlags);
   }
 
@@ -296,17 +296,17 @@ final class TestImaSettings extends PlatformImaSettings {
   }
 
   @override
-  Future<void> setPlayerType(String? playerType) async {
+  Future<void> setPlayerType(String playerType) async {
     onSetPlayerType?.call(playerType);
   }
 
   @override
-  Future<void> setPlayerVersion(String? playerVersion) async {
+  Future<void> setPlayerVersion(String playerVersion) async {
     onSetPlayerVersion?.call(playerVersion);
   }
 
   @override
-  Future<void> setSessionID(String? sessionID) async {
+  Future<void> setSessionID(String sessionID) async {
     onSetSessionID?.call(sessionID);
   }
 
