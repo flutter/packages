@@ -95,7 +95,7 @@ public final class VideoPlayerTest {
     verify(mockExoPlayer).prepare();
 
     verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(true));
-    assertEquals(attributesCaptor.getValue().contentType, C.AUDIO_CONTENT_TYPE_MOVIE);
+    assertEquals(C.AUDIO_CONTENT_TYPE_MOVIE, attributesCaptor.getValue().contentType);
 
     videoPlayer.dispose();
   }
@@ -108,7 +108,7 @@ public final class VideoPlayerTest {
     VideoPlayer videoPlayer = createVideoPlayer(options);
 
     verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(false));
-    assertEquals(attributesCaptor.getValue().contentType, C.AUDIO_CONTENT_TYPE_MOVIE);
+    assertEquals(C.AUDIO_CONTENT_TYPE_MOVIE, attributesCaptor.getValue().contentType);
 
     videoPlayer.dispose();
   }
@@ -180,11 +180,11 @@ public final class VideoPlayerTest {
   public void seekAndGetPosition() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    videoPlayer.seekTo(10);
+    videoPlayer.seekTo(10L);
     verify(mockExoPlayer).seekTo(10);
 
     when(mockExoPlayer.getCurrentPosition()).thenReturn(20L);
-    assertEquals(20L, videoPlayer.getPosition());
+    assertEquals(20L, videoPlayer.getPosition().longValue());
   }
 
   @Test

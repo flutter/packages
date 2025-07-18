@@ -14,6 +14,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
+import io.flutter.plugins.videoplayer.Messages.VideoPlayerInstanceApi;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
@@ -141,6 +142,14 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
               options);
     }
 
+    // Set up the instance-specific API handler, and make sure it is removed when the player is
+    // disposed.
+    BinaryMessenger messenger = flutterState.binaryMessenger;
+    final String channelSuffix = Long.toString(id);
+    VideoPlayerInstanceApi.setUp(messenger, channelSuffix, videoPlayer);
+    videoPlayer.setDisposeHandler(
+        () -> VideoPlayerInstanceApi.setUp(messenger, channelSuffix, null));
+
     videoPlayers.put(id, videoPlayer);
     return id;
   }
@@ -172,50 +181,6 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     VideoPlayer player = getPlayer(playerId);
     player.dispose();
     videoPlayers.remove(playerId);
-  }
-
-  @Override
-  public void setLooping(@NonNull Long playerId, @NonNull Boolean looping) {
-    VideoPlayer player = getPlayer(playerId);
-    player.setLooping(looping);
-  }
-
-  @Override
-  public void setVolume(@NonNull Long playerId, @NonNull Double volume) {
-    VideoPlayer player = getPlayer(playerId);
-    player.setVolume(volume);
-  }
-
-  @Override
-  public void setPlaybackSpeed(@NonNull Long playerId, @NonNull Double speed) {
-    VideoPlayer player = getPlayer(playerId);
-    player.setPlaybackSpeed(speed);
-  }
-
-  @Override
-  public void play(@NonNull Long playerId) {
-    VideoPlayer player = getPlayer(playerId);
-    player.play();
-  }
-
-  @Override
-  public @NonNull Long position(@NonNull Long playerId) {
-    VideoPlayer player = getPlayer(playerId);
-    long position = player.getPosition();
-    player.sendBufferingUpdate();
-    return position;
-  }
-
-  @Override
-  public void seekTo(@NonNull Long playerId, @NonNull Long position) {
-    VideoPlayer player = getPlayer(playerId);
-    player.seekTo(position.intValue());
-  }
-
-  @Override
-  public void pause(@NonNull Long playerId) {
-    VideoPlayer player = getPlayer(playerId);
-    player.pause();
   }
 
   @Override

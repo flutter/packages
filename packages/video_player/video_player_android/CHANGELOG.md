@@ -1,3 +1,7 @@
+## 2.8.9
+
+* Restructures the communication between Dart and Java code.
+
 ## 2.8.8
 
 * * Updates Media3-ExoPlayer to 1.5.1.
