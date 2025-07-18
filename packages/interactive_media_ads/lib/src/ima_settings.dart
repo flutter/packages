@@ -16,8 +16,7 @@ class ImaSettings {
           PlatformImaSettingsCreationParams(language: language),
         ));
 
-  /// Constructs an [ImaSettings] from a specific platform
-  /// implementation.
+  /// Constructs an [ImaSettings] from a specific platform implementation.
   const ImaSettings.fromPlatform(this.platform);
 
   /// Implementation of [PlatformImaSettings] for the current platform.
