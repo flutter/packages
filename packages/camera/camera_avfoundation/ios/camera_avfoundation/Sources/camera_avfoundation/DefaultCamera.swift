@@ -13,7 +13,7 @@ final class DefaultCamera: FLTCam, Camera {
   override var videoFormat: FourCharCode {
     didSet {
       captureVideoOutput.videoSettings = [
-        kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: videoFormat)
+        kCVPixelBufferPixelFormatTypeKey as String: videoFormat
       ]
     }
   }
@@ -72,7 +72,7 @@ final class DefaultCamera: FLTCam, Camera {
     let captureVideoOutput = FLTDefaultCaptureVideoDataOutput(
       captureVideoOutput: AVCaptureVideoDataOutput())
     captureVideoOutput.videoSettings = [
-      kCVPixelBufferPixelFormatTypeKey as String: videoFormat as Any
+      kCVPixelBufferPixelFormatTypeKey as String: videoFormat
     ]
     captureVideoOutput.alwaysDiscardsLateVideoFrames = true
 
