@@ -55,7 +55,7 @@ final class IOSImaSettings extends PlatformImaSettings {
 
   @override
   Future<void> setSessionID(String? sessionID) {
-    return nativeSettings.setSessionID(sessionID ?? '');
+    return nativeSettings.setSessionID(sessionID);
   }
 
   /// Enable background audio playback for the SDK.

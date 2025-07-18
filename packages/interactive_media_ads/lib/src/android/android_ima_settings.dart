@@ -52,7 +52,6 @@ final class AndroidImaSettings extends PlatformImaSettings {
 
   @override
   Future<void> setPlayerVersion(String? playerVersion) async {
-    assert(playerVersion != null);
     final ImaSdkSettings settings = await nativeSettingsFuture;
     await settings.setPlayerVersion(playerVersion);
   }
