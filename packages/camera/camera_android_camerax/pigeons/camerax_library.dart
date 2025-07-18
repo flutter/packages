@@ -1265,3 +1265,19 @@ abstract class DisplayOrientedMeteringPointFactory
     double height,
   );
 }
+
+/// TODO(camsim99)
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.camera.core.PlaneProxyUtils',
+  ),
+)
+abstract class PlaneProxyUtils {
+  /// TODO(camsim99)
+  @static
+  Uint8List getNv21Plane(
+    List<PlaneProxy> planeProxyList,
+    int imageWidth,
+    int imageHeight,
+  );
+}
