@@ -1,3 +1,9 @@
+## 0.4.4
+
+* Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`
+* Fixes the StoreKit2 implementation throwing `PlatformException`s instead of returning the corresponding 
+`SK2ProductPurchaseResult` when a purchase is cancelled / unverified / pending.
+
 ## 0.4.3
 
 * Adds **Introductory Offer Eligibility** support for StoreKit2
