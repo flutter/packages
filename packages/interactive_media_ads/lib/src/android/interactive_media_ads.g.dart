@@ -2941,7 +2941,7 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   /// This should be set as early as possible, before requesting ads. Settings
   /// will remain constant until the next ad request. Calling this method again
   /// will reset any feature flags for the next ad request.
-  Future<void> setFeatureFlags(Map<String, String>? featureFlags) async {
+  Future<void> setFeatureFlags(Map<String, String> featureFlags) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -2977,7 +2977,7 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   ///
   /// Once the AdsLoader object has been created, using this setter will have no
   /// effect.
-  Future<void> setLanguage(String? language) async {
+  Future<void> setLanguage(String language) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3043,7 +3043,7 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   ///
   /// Player type greater than 20 characters will be truncated. The player type
   /// specified should be short and unique.
-  Future<void> setPlayerType(String? playerType) async {
+  Future<void> setPlayerType(String playerType) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3075,7 +3075,7 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   /// Sets the partner provided player version.
   ///
   /// Player versions greater than 20 characters will be truncated.
-  Future<void> setPlayerVersion(String? playerVersion) async {
+  Future<void> setPlayerVersion(String playerVersion) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3105,7 +3105,7 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   }
 
   /// Sets the publisher provided ID used for tracking.
-  Future<void> setPpid(String? ppid) async {
+  Future<void> setPpid(String ppid) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -3138,7 +3138,7 @@ class ImaSdkSettings extends PigeonInternalProxyApiBaseClass {
   ///
   /// A session ID must be a UUID, or an empty string if the SDK should not send
   /// a session ID.
-  Future<void> setSessionId(String? sessionId) async {
+  Future<void> setSessionId(String sessionId) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecImaSdkSettings;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
