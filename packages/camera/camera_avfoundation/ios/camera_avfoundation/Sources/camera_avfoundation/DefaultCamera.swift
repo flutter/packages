@@ -148,11 +148,13 @@ final class DefaultCamera: FLTCam, Camera {
     // When `isRecording` is true `startWriting` was already called so `videoWriter.status`
     // is always either `.writing` or `.failed` and `finishWriting` does not throw exceptions so
     // there is no need to check `videoWriter.status`
-    videoWriter?.finishWriting {
-      if self.videoWriter?.status == .completed {
-        self.updateOrientation()
-        completion(self.videoRecordingPath, nil)
-        self.videoRecordingPath = nil
+    videoWriter?.finishWriting { [weak self] in
+      guard let strongSelf = self else { return }
+
+      if strongSelf.videoWriter?.status == .completed {
+        strongSelf.updateOrientation()
+        completion(strongSelf.videoRecordingPath, nil)
+        strongSelf.videoRecordingPath = nil
       } else {
         completion(
           nil,
