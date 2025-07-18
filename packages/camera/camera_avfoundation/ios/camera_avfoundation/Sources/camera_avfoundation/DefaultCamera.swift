@@ -122,6 +122,156 @@ final class DefaultCamera: FLTCam, Camera {
     audioCaptureSession.stopRunning()
   }
 
+  func startVideoRecording(
+    completion: @escaping (FlutterError?) -> Void,
+    messengerForStreaming messenger: FlutterBinaryMessenger?
+  ) {
+    guard !isRecording else {
+      completion(
+        FlutterError(
+          code: "Error",
+          message: "Video is already recording",
+          details: nil))
+      return
+    }
+
+    if let messenger = messenger {
+      startImageStream(with: messenger) { [weak self] error in
+        self?.setUpVideoRecording(completion: completion)
+      }
+      return
+    }
+
+    setUpVideoRecording(completion: completion)
+  }
+
+  /// Main logic to setup the video recording.
+  private func setUpVideoRecording(completion: @escaping (FlutterError?) -> Void) {
+    let videoRecordingPath: String
+    var error: NSError?
+
+    videoRecordingPath = getTemporaryFilePath(
+      withExtension: "mp4",
+      subfolder: "videos",
+      prefix: "REC_",
+      error: &error)
+    self.videoRecordingPath = videoRecordingPath
+
+    if let error = error {
+      completion(DefaultCamera.flutterErrorFromNSError(error))
+      return
+    }
+
+    guard setupWriter(forPath: videoRecordingPath) else {
+      completion(
+        FlutterError(
+          code: "IOError",
+          message: "Setup Writer Failed",
+          details: nil))
+      return
+    }
+
+    // startWriting should not be called in didOutputSampleBuffer where it can cause state
+    // in which isRecording is true but videoWriter.status is .unknown
+    // in stopVideoRecording if it is called after startVideoRecording but before
+    // didOutputSampleBuffer had chance to call startWriting and lag at start of video
+    // https://github.com/flutter/flutter/issues/132016
+    // https://github.com/flutter/flutter/issues/151319
+    videoWriter?.startWriting()
+    isFirstVideoSample = true
+    isRecording = true
+    isRecordingPaused = false
+    videoTimeOffset = CMTime.zero
+    audioTimeOffset = CMTime.zero
+    videoIsDisconnected = false
+    audioIsDisconnected = false
+    completion(nil)
+  }
+
+  private func setupWriter(forPath path: String) -> Bool {
+    setUpCaptureSessionForAudioIfNeeded()
+
+    var error: NSError?
+    videoWriter = assetWriterFactory(URL(fileURLWithPath: path), AVFileType.mp4, &error)
+
+    guard let videoWriter = videoWriter else {
+      if let error = error {
+        reportErrorMessage(error.description)
+      }
+      return false
+    }
+
+    var videoSettings = mediaSettingsAVWrapper.recommendedVideoSettingsForAssetWriter(
+      withFileType:
+        AVFileType.mp4,
+      for: captureVideoOutput
+    )
+
+    if mediaSettings.videoBitrate != nil || mediaSettings.framesPerSecond != nil {
+      var compressionProperties: [String: Any] = [:]
+
+      if let videoBitrate = mediaSettings.videoBitrate {
+        compressionProperties[AVVideoAverageBitRateKey] = videoBitrate
+      }
+
+      if let framesPerSecond = mediaSettings.framesPerSecond {
+        compressionProperties[AVVideoExpectedSourceFrameRateKey] = framesPerSecond
+      }
+
+      videoSettings?[AVVideoCompressionPropertiesKey] = compressionProperties
+    }
+
+    let videoWriterInput = mediaSettingsAVWrapper.assetWriterVideoInput(
+      withOutputSettings: videoSettings)
+    self.videoWriterInput = videoWriterInput
+
+    let sourcePixelBufferAttributes: [String: Any] = [
+      kCVPixelBufferPixelFormatTypeKey as String: videoFormat
+    ]
+
+    videoAdaptor = inputPixelBufferAdaptorFactory(videoWriterInput, sourcePixelBufferAttributes)
+
+    videoWriterInput.expectsMediaDataInRealTime = true
+
+    // Add the audio input
+    if mediaSettings.enableAudio {
+      var acl = AudioChannelLayout()
+      acl.mChannelLayoutTag = kAudioChannelLayoutTag_Mono
+
+      let aclSize = MemoryLayout.size(ofValue: acl)
+      let aclData = Data(bytes: &acl, count: aclSize)
+
+      var audioSettings: [String: Any] = [
+        AVFormatIDKey: kAudioFormatMPEG4AAC,
+        AVSampleRateKey: 44100.0,
+        AVNumberOfChannelsKey: 1,
+        AVChannelLayoutKey: aclData,
+      ]
+
+      if let audioBitrate = mediaSettings.audioBitrate {
+        audioSettings[AVEncoderBitRateKey] = audioBitrate
+      }
+
+      let newAudioWriterInput = mediaSettingsAVWrapper.assetWriterAudioInput(
+        withOutputSettings: audioSettings)
+      newAudioWriterInput.expectsMediaDataInRealTime = true
+      mediaSettingsAVWrapper.addInput(newAudioWriterInput, to: videoWriter)
+      self.audioWriterInput = newAudioWriterInput
+    }
+
+    if flashMode == .torch {
+      try? captureDevice.lockForConfiguration()
+      captureDevice.torchMode = .on
+      captureDevice.unlockForConfiguration()
+    }
+
+    mediaSettingsAVWrapper.addInput(videoWriterInput, to: videoWriter)
+
+    captureVideoOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
+
+    return true
+  }
+
   func pauseVideoRecording() {
     isRecordingPaused = true
     videoIsDisconnected = true

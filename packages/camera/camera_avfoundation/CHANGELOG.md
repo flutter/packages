@@ -1,3 +1,7 @@
+## 0.9.20+5
+
+* Migrates `startVideoRecording`, `setUpVideoRecording`, and `setupWriter` methods to Swift.
+
 ## 0.9.20+4
 
 * Migrates `setVideoFormat`,`stopVideoRecording`, and `stopImageStream` methods to Swift.
