@@ -133,33 +133,34 @@ final class DefaultCamera: FLTCam, Camera {
   }
 
   func stopVideoRecording(completion: @escaping (String?, FlutterError?) -> Void) {
-    if isRecording {
-      isRecording = false
-
-      // When `isRecording` is true `startWriting` was already called so `videoWriter.status`
-      // is always either `.writing` or `.failed` and `finishWriting` does not throw exceptions so
-      // there is no need to check `videoWriter.status`
-      videoWriter?.finishWriting {
-        if self.videoWriter?.status == .completed {
-          self.updateOrientation()
-          completion(self.videoRecordingPath, nil)
-          self.videoRecordingPath = nil
-        } else {
-          completion(
-            nil,
-            FlutterError(
-              code: "IOError",
-              message: "AVAssetWriter could not finish writing!",
-              details: nil))
-        }
-      }
-    } else {
+    guard isRecording else {
       let error = NSError(
         domain: NSCocoaErrorDomain,
         code: URLError.resourceUnavailable.rawValue,
         userInfo: [NSLocalizedDescriptionKey: "Video is not recording!"]
       )
       completion(nil, DefaultCamera.flutterErrorFromNSError(error))
+      return
+    }
+
+    isRecording = false
+
+    // When `isRecording` is true `startWriting` was already called so `videoWriter.status`
+    // is always either `.writing` or `.failed` and `finishWriting` does not throw exceptions so
+    // there is no need to check `videoWriter.status`
+    videoWriter?.finishWriting {
+      if self.videoWriter?.status == .completed {
+        self.updateOrientation()
+        completion(self.videoRecordingPath, nil)
+        self.videoRecordingPath = nil
+      } else {
+        completion(
+          nil,
+          FlutterError(
+            code: "IOError",
+            message: "AVAssetWriter could not finish writing!",
+            details: nil))
+      }
     }
   }
 
