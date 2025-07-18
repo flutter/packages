@@ -1,3 +1,7 @@
+## 0.3.7
+
+* Fixes missing leading cache extent in TableView.
+
 ## 0.3.6
 
 * Fixes typo in API docs.

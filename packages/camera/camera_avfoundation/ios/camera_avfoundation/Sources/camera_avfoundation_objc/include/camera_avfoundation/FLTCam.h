@@ -5,6 +5,7 @@
 @import AVFoundation;
 @import Foundation;
 @import Flutter;
+@import CoreMotion;
 
 #import "CameraProperties.h"
 #import "FLTCamConfiguration.h"
@@ -19,7 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// A class that manages camera's state and performs camera operations.
 @interface FLTCam : NSObject
 
-@property(readonly, nonatomic) NSObject<FLTCaptureDevice> *captureDevice;
+// captureDevice is assignable for the Swift DefaultCamera subclass
+@property(strong, nonatomic) NSObject<FLTCaptureDevice> *captureDevice;
 @property(readonly, nonatomic) CGSize previewSize;
 @property(assign, nonatomic) BOOL isPreviewPaused;
 @property(nonatomic, copy, nullable) void (^onFrameAvailable)(void);
@@ -50,6 +52,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
 @property(assign, nonatomic) UIDeviceOrientation lockedCaptureOrientation;
 @property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
+@property(assign, nonatomic) FCPPlatformFlashMode flashMode;
+@property(nonatomic) CMMotionManager *motionManager;
+@property(strong, nonatomic, nullable) NSString *videoRecordingPath;
+@property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
+@property(strong, nonatomic) NSObject<FLTCaptureInput> *captureVideoInput;
+@property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
+/// All FLTCam's state access and capture session related operations should be on run on this queue.
+@property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
@@ -64,18 +74,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param messenger Nullable messenger for capturing each frame.
 - (void)startVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion
                     messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger;
-- (void)stopVideoRecordingWithCompletion:(void (^)(NSString *_Nullable,
-                                                   FlutterError *_Nullable))completion;
-- (void)setFlashMode:(FCPPlatformFlashMode)mode
-      withCompletion:(void (^)(FlutterError *_Nullable))completion;
-
-- (void)setDescriptionWhileRecording:(NSString *)cameraName
-                      withCompletion:(void (^)(FlutterError *_Nullable))completion;
 
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                            completion:(nonnull void (^)(FlutterError *_Nullable))completion;
-- (void)stopImageStream;
-- (void)setZoomLevel:(CGFloat)zoom withCompletion:(void (^)(FlutterError *_Nullable))completion;
 - (void)setUpCaptureSessionForAudioIfNeeded;
 
 // Methods exposed for the Swift DefaultCamera subclass
