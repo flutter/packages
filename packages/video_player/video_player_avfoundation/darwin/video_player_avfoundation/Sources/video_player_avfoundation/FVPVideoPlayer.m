@@ -254,7 +254,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       case AVPlayerItemStatusUnknown:
         break;
       case AVPlayerItemStatusReadyToPlay:
-        [item addOutput:_videoOutput];
+        if (![item.outputs containsObject:_videoOutput]) {
+          [item addOutput:_videoOutput];
+        }
         if (_eventSink) {
           [self sendVideoInitializedEvent];
         }
@@ -445,6 +447,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       return nil;
     case AVPlayerItemStatusFailed:
       [self sendFailedToLoadVideoEvent];
+      return nil;
+    default:
+      NSAssert(NO, @"Unknown AVPlayerItemStatus: %ld", (long)self.player.currentItem.status);
       return nil;
   }
 }
