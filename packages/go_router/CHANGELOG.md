@@ -1,3 +1,7 @@
+## 16.0.1
+
+- Adds `TypedRelativeGoRoute`
+
 ## 16.0.0
 
 - **BREAKING CHANGE**

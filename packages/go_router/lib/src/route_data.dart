@@ -133,30 +133,6 @@ abstract class GoRouteData extends RouteData {
   static final Expando<GoRouteData> _stateObjectExpando = Expando<GoRouteData>(
     'GoRouteState to GoRouteData expando',
   );
-
-  /// The location of this route.
-  String get location => throw _shouldBeGeneratedError;
-
-  /// Navigate to the route.
-  void go(BuildContext context) => throw _shouldBeGeneratedError;
-
-  /// Push the route onto the page stack.
-  Future<T?> push<T>(BuildContext context) => throw _shouldBeGeneratedError;
-
-  /// Replaces the top-most page of the page stack with the route.
-  void pushReplacement(BuildContext context) => throw _shouldBeGeneratedError;
-
-  /// Replaces the top-most page of the page stack with the route but treats
-  /// it as the same page.
-  ///
-  /// The page key will be reused. This will preserve the state and not run any
-  /// page animation.
-  ///
-  void replace(BuildContext context) => throw _shouldBeGeneratedError;
-
-  static UnimplementedError get _shouldBeGeneratedError => UnimplementedError(
-        'Should be generated using [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).',
-      );
 }
 
 /// A class to represent a [ShellRoute] in
@@ -412,6 +388,40 @@ class TypedGoRoute<T extends GoRouteData> extends TypedRoute<T> {
   /// See [GoRoute.name].
   ///
   final String? name;
+
+  /// Child route definitions.
+  ///
+  /// See [RouteBase.routes].
+  final List<TypedRoute<RouteData>> routes;
+
+  /// Determines whether the route matching is case sensitive.
+  ///
+  /// When `true`, the path must match the specified case. For example,
+  /// a route with `path: '/family/:fid'` will not match `/FaMiLy/f2`.
+  ///
+  /// When `false`, the path matching is case insensitive.  The route
+  /// with `path: '/family/:fid'` will match `/FaMiLy/f2`.
+  ///
+  /// Defaults to `true`.
+  final bool caseSensitive;
+}
+
+/// A superclass for each typed go route descendant
+@Target(<TargetKind>{TargetKind.library, TargetKind.classType})
+class TypedRelativeGoRoute<T extends GoRouteData> extends TypedRoute<T> {
+  /// Default const constructor
+  const TypedRelativeGoRoute({
+    required this.path,
+    this.routes = const <TypedRoute<RouteData>>[],
+    this.caseSensitive = true,
+  });
+
+  /// The relative path that corresponds to this route.
+  ///
+  /// See [GoRoute.path].
+  ///
+  ///
+  final String path;
 
   /// Child route definitions.
   ///
