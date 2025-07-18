@@ -78,7 +78,7 @@ abstract base class PlatformImaSettings {
   final PlatformImaSettingsCreationParams params;
 
   /// Sets the Publisher Provided Identification (PPID) sent with ads request.
-  Future<void> setPpid(String? ppid);
+  Future<void> setPpid(String ppid);
 
   /// Specifies maximum number of redirects after which subsequent redirects
   /// will be denied, and the ad load aborted.
@@ -93,7 +93,7 @@ abstract base class PlatformImaSettings {
   /// This should be set as early as possible, before requesting ads. Settings
   /// will remain constant until the next ad request. Calling this method again
   /// will reset any feature flags for the next ad request.
-  Future<void> setFeatureFlags(Map<String, String>? featureFlags);
+  Future<void> setFeatureFlags(Map<String, String> featureFlags);
 
   /// Specifies whether to automatically play VMAP and ad rules ad breaks.
   ///
@@ -107,7 +107,7 @@ abstract base class PlatformImaSettings {
   /// truncated. The player type specified should be short and unique. This is
   /// an optional setting used to improve SDK usability by tracking player
   /// types.
-  Future<void> setPlayerType(String? playerType);
+  Future<void> setPlayerType(String playerType);
 
   /// Sets the partner specified player version that is integrating with the
   /// SDK.
@@ -116,13 +116,13 @@ abstract base class PlatformImaSettings {
   /// being integrated with the SDK. Player versions greater than 20 characters
   /// will be truncated. This is an optional setting used to improve SDK
   /// usability by tracking player version.
-  Future<void> setPlayerVersion(String? playerVersion);
+  Future<void> setPlayerVersion(String playerVersion);
 
   /// Sets the session ID to identify a single user session.
   ///
   /// This must be a UUID. It is used exclusively for frequency capping across
   /// the user session.
-  Future<void> setSessionID(String? sessionID);
+  Future<void> setSessionID(String sessionID);
 
   /// Enables and disables the debug mode, which is disabled by default.
   Future<void> setDebugMode(bool enabled);

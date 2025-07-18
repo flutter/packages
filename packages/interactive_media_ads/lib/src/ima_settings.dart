@@ -40,7 +40,7 @@ class ImaSettings {
   /// This should be set as early as possible, before requesting ads. Settings
   /// will remain constant until the next ad request. Calling this method again
   /// will reset any feature flags for the next ad request.
-  Future<void> setFeatureFlags(Map<String, String>? featureFlags) {
+  Future<void> setFeatureFlags(Map<String, String> featureFlags) {
     return platform.setFeatureFlags(featureFlags);
   }
 
@@ -61,7 +61,7 @@ class ImaSettings {
   /// truncated. The player type specified should be short and unique. This is
   /// an optional setting used to improve SDK usability by tracking player
   /// types.
-  Future<void> setPlayerType(String? playerType) {
+  Future<void> setPlayerType(String playerType) {
     return platform.setPlayerType(playerType);
   }
 
@@ -72,12 +72,12 @@ class ImaSettings {
   /// being integrated with the SDK. Player versions greater than 20 characters
   /// will be truncated. This is an optional setting used to improve SDK
   /// usability by tracking player version.
-  Future<void> setPlayerVersion(String? playerVersion) {
+  Future<void> setPlayerVersion(String playerVersion) {
     return platform.setPlayerVersion(playerVersion);
   }
 
   /// Sets the Publisher Provided Identification (PPID) sent with ads request.
-  Future<void> setPpid(String? ppid) {
+  Future<void> setPpid(String ppid) {
     return platform.setPpid(ppid);
   }
 
@@ -85,7 +85,7 @@ class ImaSettings {
   ///
   /// This must be a UUID. It is used exclusively for frequency capping across
   /// the user session.
-  Future<void> setSessionID(String? sessionID) {
+  Future<void> setSessionID(String sessionID) {
     return platform.setSessionID(sessionID);
   }
 

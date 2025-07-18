@@ -33,7 +33,7 @@ final class AndroidImaSettings extends PlatformImaSettings {
   }
 
   @override
-  Future<void> setFeatureFlags(Map<String, String>? featureFlags) async {
+  Future<void> setFeatureFlags(Map<String, String> featureFlags) async {
     final ImaSdkSettings settings = await nativeSettingsFuture;
     await settings.setFeatureFlags(featureFlags);
   }
@@ -45,25 +45,25 @@ final class AndroidImaSettings extends PlatformImaSettings {
   }
 
   @override
-  Future<void> setPlayerType(String? playerType) async {
+  Future<void> setPlayerType(String playerType) async {
     final ImaSdkSettings settings = await nativeSettingsFuture;
     await settings.setPlayerType(playerType);
   }
 
   @override
-  Future<void> setPlayerVersion(String? playerVersion) async {
+  Future<void> setPlayerVersion(String playerVersion) async {
     final ImaSdkSettings settings = await nativeSettingsFuture;
     await settings.setPlayerVersion(playerVersion);
   }
 
   @override
-  Future<void> setPpid(String? ppid) async {
+  Future<void> setPpid(String ppid) async {
     final ImaSdkSettings settings = await nativeSettingsFuture;
     await settings.setPpid(ppid);
   }
 
   @override
-  Future<void> setSessionID(String? sessionID) async {
+  Future<void> setSessionID(String sessionID) async {
     final ImaSdkSettings settings = await nativeSettingsFuture;
     await settings.setSessionId(sessionID);
   }
