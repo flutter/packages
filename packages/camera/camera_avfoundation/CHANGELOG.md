@@ -1,3 +1,10 @@
+## 0.9.20+4
+
+* Migrates `setVideoFormat`,`stopVideoRecording`, and `stopImageStream` methods to Swift.
+* Migrates stopping accelerometer updates to Swift.
+* Migrates `setDescriptionWhileRecording` method to Swift.
+* Adds `createConnection` method implementation to Swift.
+
 ## 0.9.20+3
 
 * Migrates `setZoomLevel` and `setFlashMode` methods to Swift.
