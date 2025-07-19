@@ -5,7 +5,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:dart_style/dart_style.dart' as dart_style;
@@ -37,7 +37,7 @@ Future<void> main() async {
     final String expectResult = expectFile.readAsStringSync().trim();
     test('verify $fileName', () async {
       final String targetLibraryAssetId = '__test__|${file.path}';
-      final LibraryElement element = await resolveSources<LibraryElement>(
+      final LibraryElement2 element = await resolveSources<LibraryElement2>(
         <String, String>{
           targetLibraryAssetId: file.readAsStringSync(),
         },

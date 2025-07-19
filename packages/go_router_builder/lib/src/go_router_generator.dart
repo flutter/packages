@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/element2.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
@@ -76,7 +76,7 @@ ${getters.map((String e) => "$e,").join('\n')}
   }
 
   InfoIterable _generateForAnnotatedElement(
-    Element element,
+    Element2 element,
     ConstantReader annotation,
   ) {
     final String typedAnnotation =
@@ -84,7 +84,7 @@ ${getters.map((String e) => "$e,").join('\n')}
     final String type =
         typedAnnotation.substring(0, typedAnnotation.indexOf('<'));
     final String routeData = _annotations[type]!;
-    if (element is! ClassElement) {
+    if (element is! ClassElement2) {
       throw InvalidGenerationSourceError(
         'The @$type annotation can only be applied to classes.',
         element: element,
