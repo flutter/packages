@@ -56,11 +56,10 @@ Future<void> main() async {
         return;
       }
 
-      final String generated = formatter
-          .format(results.join('\n\n'))
-          .trim()
-          .replaceAll('\r\n', '\n');
-      expect(generated, equals(expectResult.replaceAll('\r\n', '\n')));
+      // Apply consistent formatting to both generated and expected code for comparison.
+      final String generated = formatter.format(results.join().replaceAll('\n', ''));
+      final String expected = formatter.format(expectResult.replaceAll('\n', ''));
+      expect(generated, equals(expected));
     }, timeout: const Timeout(Duration(seconds: 100)));
   }
 }

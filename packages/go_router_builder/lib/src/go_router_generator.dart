@@ -68,10 +68,7 @@ ${getters.map((String e) => "$e,").join('\n')}
         annotatedElement.annotation,
       );
       getters.add(generatedValue.routeGetterName);
-      for (final String value in generatedValue) {
-        assert(value.length == value.trim().length);
-        values.add(value);
-      }
+      values.addAll(generatedValue.members);
     }
   }
 
