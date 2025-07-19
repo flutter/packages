@@ -21,7 +21,5 @@ import 'src/go_router_generator.dart';
 /// `go_router`.
 ///
 /// Not meant to be invoked by hand-authored code.
-Builder goRouterBuilder(BuilderOptions options) => SharedPartBuilder(
-      const <Generator>[GoRouterGenerator()],
-      'go_router',
-    );
+Builder goRouterBuilder(BuilderOptions options) =>
+    SharedPartBuilder(const <Generator>[GoRouterGenerator()], 'go_router');

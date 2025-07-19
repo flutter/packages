@@ -53,7 +53,10 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
 /// Returns the decoded [String] value for [element], if its type is supported.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String decodeParameter(FormalParameterElement element, Set<String> pathParameters) {
+String decodeParameter(
+  FormalParameterElement element,
+  Set<String> pathParameters,
+) {
   if (element.isExtraField) {
     return 'state.${_stateValueAccess(element, pathParameters)}';
   }
@@ -86,7 +89,9 @@ String encodeField(PropertyAccessorElement2 element) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(element.returnType)) {
       return helper._encode(
-          '$selfFieldName.${element.displayName}', element.returnType);
+        '$selfFieldName.${element.displayName}',
+        element.returnType,
+      );
     }
   }
 
@@ -104,9 +109,10 @@ T? getNodeDeclaration<T extends AstNode>(InterfaceElement2 element) {
   }
 
   final ParsedLibraryResult parsedLibrary =
-      session.getParsedLibraryByElement2(element.library2) as ParsedLibraryResult;
-  final FragmentDeclarationResult? declaration =
-      parsedLibrary.getFragmentDeclaration(element.firstFragment);
+      session.getParsedLibraryByElement2(element.library2)
+          as ParsedLibraryResult;
+  final FragmentDeclarationResult? declaration = parsedLibrary
+      .getFragmentDeclaration(element.firstFragment);
   final AstNode? node = declaration?.node;
 
   return node is T ? node : null;
@@ -115,11 +121,17 @@ T? getNodeDeclaration<T extends AstNode>(InterfaceElement2 element) {
 /// Returns the comparison of a parameter with its default value.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String compareField(FormalParameterElement param, String value1, String value2) {
+String compareField(
+  FormalParameterElement param,
+  String value1,
+  String value2,
+) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(param.type)) {
       return helper._compare(
-          '$selfFieldName.${param.displayName}', param.defaultValueCode!);
+        '$selfFieldName.${param.displayName}',
+        param.defaultValueCode!,
+      );
     }
   }
 
@@ -132,7 +144,10 @@ String compareField(FormalParameterElement param, String value1, String value2) 
 /// Gets the name of the `const` map generated to help encode [Enum] types.
 String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
 
-String _stateValueAccess(FormalParameterElement element, Set<String> pathParameters) {
+String _stateValueAccess(
+  FormalParameterElement element,
+  Set<String> pathParameters,
+) {
   if (element.isExtraField) {
     // ignore: avoid_redundant_argument_values
     return 'extra as ${element.type.getDisplayString()}';
@@ -165,7 +180,10 @@ abstract class _TypeHelper {
   const _TypeHelper();
 
   /// Decodes the value from its string representation in the URL.
-  String _decode(FormalParameterElement parameterElement, Set<String> pathParameters);
+  String _decode(
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  );
 
   /// Encodes the value from its string representation in the URL.
   String _encode(String fieldName, DartType type);
@@ -306,8 +324,9 @@ class _TypeHelperString extends _TypeHelper {
 
   @override
   String _decode(
-          FormalParameterElement parameterElement, Set<String> pathParameters) =>
-      'state.${_stateValueAccess(parameterElement, pathParameters)}';
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  ) => 'state.${_stateValueAccess(parameterElement, pathParameters)}';
 
   @override
   String _encode(String fieldName, DartType type) => fieldName;
@@ -344,7 +363,9 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
 
   @override
   String _decode(
-      FormalParameterElement parameterElement, Set<String> pathParameters) {
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  ) {
     if (parameterElement.type is ParameterizedType) {
       final DartType iterableType =
           (parameterElement.type as ParameterizedType).typeArguments.first;
@@ -378,15 +399,17 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
       // get correct type for iterable
       String iterableCaster = '';
       String fallBack = '';
-      if (const TypeChecker.fromRuntime(List)
-          .isAssignableFromType(parameterElement.type)) {
+      if (const TypeChecker.fromRuntime(
+        List,
+      ).isAssignableFromType(parameterElement.type)) {
         iterableCaster += '?.toList()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
           fallBack = '?? const []';
         }
-      } else if (const TypeChecker.fromRuntime(Set)
-          .isAssignableFromType(parameterElement.type)) {
+      } else if (const TypeChecker.fromRuntime(
+        Set,
+      ).isAssignableFromType(parameterElement.type)) {
         iterableCaster += '?.toSet()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
@@ -441,7 +464,9 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
 
   @override
   String _decode(
-      FormalParameterElement parameterElement, Set<String> pathParameters) {
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  ) {
     final DartType paramType = parameterElement.type;
     final String parameterName = parameterElement.displayName;
 
@@ -475,11 +500,10 @@ extension FormalParameterElementExtension on FormalParameterElement {
 /// An error thrown when a default value is used with a nullable type.
 class NullableDefaultValueError extends InvalidGenerationSourceError {
   /// An error thrown when a default value is used with a nullable type.
-  NullableDefaultValueError(
-    Element2 element,
-  ) : super(
-          'Default value used with a nullable type. Only non-nullable type can have a default value.',
-          todo: 'Remove the default value or make the type non-nullable.',
-          element: element,
-        );
+  NullableDefaultValueError(Element2 element)
+    : super(
+        'Default value used with a nullable type. Only non-nullable type can have a default value.',
+        todo: 'Remove the default value or make the type non-nullable.',
+        element: element,
+      );
 }

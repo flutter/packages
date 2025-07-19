@@ -19,28 +19,30 @@ import 'package:test/test.dart';
 const GoRouterGenerator generator = GoRouterGenerator();
 
 Future<void> main() async {
-  final dart_style.DartFormatter formatter =
-      dart_style.DartFormatter(languageVersion: await _packageVersion());
+  final dart_style.DartFormatter formatter = dart_style.DartFormatter(
+    languageVersion: await _packageVersion(),
+  );
   final Directory dir = Directory('test_inputs');
-  final List<File> testFiles = dir
-      .listSync()
-      .whereType<File>()
-      .where((File f) => f.path.endsWith('.dart'))
-      .toList();
+  final List<File> testFiles =
+      dir
+          .listSync()
+          .whereType<File>()
+          .where((File f) => f.path.endsWith('.dart'))
+          .toList();
   for (final File file in testFiles) {
     final String fileName = file.path.split('/').last;
     final File expectFile = File(p.join('${file.path}.expect'));
     if (!expectFile.existsSync()) {
-      throw Exception('A text input must have a .expect file. '
-          'Found test input $fileName with out an expect file.');
+      throw Exception(
+        'A text input must have a .expect file. '
+        'Found test input $fileName with out an expect file.',
+      );
     }
     final String expectResult = expectFile.readAsStringSync().trim();
     test('verify $fileName', () async {
       final String targetLibraryAssetId = '__test__|${file.path}';
       final LibraryElement2 element = await resolveSources<LibraryElement2>(
-        <String, String>{
-          targetLibraryAssetId: file.readAsStringSync(),
-        },
+        <String, String>{targetLibraryAssetId: file.readAsStringSync()},
         (Resolver resolver) async {
           final AssetId assetId = AssetId.parse(targetLibraryAssetId);
           return resolver.libraryFor(assetId);
@@ -57,16 +59,21 @@ Future<void> main() async {
       }
 
       // Apply consistent formatting to both generated and expected code for comparison.
-      final String generated = formatter.format(results.join().replaceAll('\n', ''));
-      final String expected = formatter.format(expectResult.replaceAll('\n', ''));
+      final String generated = formatter.format(
+        results.join().replaceAll('\n', ''),
+      );
+      final String expected = formatter.format(
+        expectResult.replaceAll('\n', ''),
+      );
       expect(generated, equals(expected));
     }, timeout: const Timeout(Duration(seconds: 100)));
   }
 }
 
 Future<Version> _packageVersion() async {
-  final PackageConfig packageConfig =
-      await loadPackageConfigUri(Isolate.packageConfigSync!);
+  final PackageConfig packageConfig = await loadPackageConfigUri(
+    Isolate.packageConfigSync!,
+  );
   final Uri pkgUri = Platform.script.resolve('../pubspec.yaml');
   final Package? package = packageConfig.packageOf(pkgUri);
   if (package == null) {
