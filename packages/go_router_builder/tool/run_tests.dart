@@ -45,6 +45,7 @@ Future<void> main() async {
           final AssetId assetId = AssetId.parse(targetLibraryAssetId);
           return resolver.libraryFor(assetId);
         },
+        readAllSourcesFromFilesystem: true,
       );
       final LibraryReader reader = LibraryReader(element);
       final Set<String> results = <String>{};
