@@ -291,6 +291,7 @@
                                                                          serverClientId:nil
                                                                            hostedDomain:nil]
                                  error:&initializationError];
+  XCTAssertNil(initializationError);
 
   id mockUser = OCMClassMock([GIDGoogleUser class]);
   OCMStub([mockUser userID]).andReturn(@"mockID");
@@ -326,6 +327,7 @@
                                                                          serverClientId:nil
                                                                            hostedDomain:nil]
                                  error:&initializationError];
+  XCTAssertNil(initializationError);
 
   id mockUser = OCMClassMock([GIDGoogleUser class]);
   OCMStub([mockUser userID]).andReturn(@"mockID");
