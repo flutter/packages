@@ -8,13 +8,65 @@ import 'ads_loader.dart';
 import 'platform_interface/platform_interface.dart';
 
 /// Defines general SDK settings that are used when creating an [AdsLoader].
+///
+/// ## Platform-Specific Features
+/// This class contains an underlying implementation provided by the current
+/// platform. Once a platform implementation is imported, the examples below
+/// can be followed to use features provided by a platform's implementation.
+///
+/// {@macro interactive_media_ads.ImaSettings.fromPlatformCreationParams}
+///
+/// Below is an example of accessing the platform-specific implementation for
+/// iOS and Android:
+///
+/// ```dart
+/// final ImaSettings settings = ImaSettings();
+///
+/// switch (settings.platform) {
+///   case final IOSImaSettings iosSettings:
+///     // ...
+///   case final AndroidImaSettings androidSettings:
+///     // ...
+/// }
+/// ```
 @immutable
 class ImaSettings {
   /// Creates an [ImaSettings].
   ImaSettings({String? language})
-      : this.fromPlatform(PlatformImaSettings(
+      : this.fromPlatformCreationParams(
           PlatformImaSettingsCreationParams(language: language),
-        ));
+        );
+
+  /// Constructs an [ImaSettings] from creation params for a specific platform.
+  ///
+  /// {@template interactive_media_ads.ImaSettings.fromPlatformCreationParams}
+  /// Below is an example of setting platform-specific creation parameters for
+  /// iOS and Android:
+  ///
+  /// ```dart
+  /// PlatformImaSettingsCreationParams params =
+  ///     const PlatformImaSettingsCreationParams();
+  ///
+  /// if (InteractiveMediaAdsPlatform.instance is IOSInteractiveMediaAdsPlatform) {
+  ///   params = IOSImaSettingsCreationParams
+  ///       .fromPlatformImaSettingsCreationParams(
+  ///     params,
+  ///   );
+  /// } else if (InteractiveMediaAdsPlatform.instance is AndroidInteractiveMediaAdsPlatform) {
+  ///   params = AndroidImaSettingsCreationParams
+  ///       .fromPlatformImaSettingsCreationParams(
+  ///     params,
+  ///   );
+  /// }
+  ///
+  /// final ImaSettings settings = ImaSettings.fromPlatformCreationParams(
+  ///   params,
+  /// );
+  /// ```
+  /// {@endtemplate}
+  ImaSettings.fromPlatformCreationParams(
+    PlatformImaSettingsCreationParams params,
+  ) : this.fromPlatform(PlatformImaSettings(params));
 
   /// Constructs an [ImaSettings] from a specific platform implementation.
   const ImaSettings.fromPlatform(this.platform);
