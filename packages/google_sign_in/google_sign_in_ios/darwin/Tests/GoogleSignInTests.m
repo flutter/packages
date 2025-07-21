@@ -263,6 +263,7 @@
   [self configureMock:[self.mockSignIn expect]
       forSignInWithHint:nil
        additionalScopes:@[]
+                  nonce:nil
              completion:[OCMArg invokeBlockWithArgs:mockSignInResult, [NSNull null], nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
@@ -302,11 +303,45 @@
        additionalScopes:[OCMArg checkWithBlock:^BOOL(NSArray<NSString *> *scopes) {
          return [[NSSet setWithArray:scopes] isEqualToSet:[NSSet setWithArray:requestedScopes]];
        }]
+                  nonce:nil
              completion:[OCMArg invokeBlockWithArgs:mockSignInResult, [NSNull null], nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInWithScopeHint:requestedScopes
                              nonce:nil
+                        completion:^(FSISignInResult *result, FlutterError *error) {
+                          XCTAssertNil(error);
+                          XCTAssertNil(result.error);
+                          XCTAssertEqualObjects(result.success.user.userId, @"mockID");
+                          [expectation fulfill];
+                        }];
+  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+
+  OCMVerifyAll(self.mockSignIn);
+}
+
+- (void)testSignInWithNonce {
+  FlutterError *initializationError;
+  [self.plugin configureWithParameters:[FSIPlatformConfigurationParams makeWithClientId:nil
+                                                                         serverClientId:nil
+                                                                           hostedDomain:nil]
+                                 error:&initializationError];
+
+  id mockUser = OCMClassMock([GIDGoogleUser class]);
+  OCMStub([mockUser userID]).andReturn(@"mockID");
+  id mockSignInResult = OCMClassMock([GIDSignInResult class]);
+  OCMStub([mockSignInResult user]).andReturn(mockUser);
+
+  NSString *nonce = @"A nonce";
+  [self configureMock:[self.mockSignIn expect]
+      forSignInWithHint:nil
+       additionalScopes:OCMOCK_ANY
+                  nonce:nonce
+             completion:[OCMArg invokeBlockWithArgs:mockSignInResult, [NSNull null], nil]];
+
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin signInWithScopeHint:@[]
+                             nonce:nonce
                         completion:^(FSISignInResult *result, FlutterError *error) {
                           XCTAssertNil(error);
                           XCTAssertNil(result.error);
@@ -327,6 +362,7 @@
   [self configureMock:[self.mockSignIn stub]
       forSignInWithHint:nil
        additionalScopes:OCMOCK_ANY
+                  nonce:nil
              completion:[OCMArg invokeBlockWithArgs:mockSignInResult, [NSNull null], nil]];
 
   NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
@@ -355,6 +391,7 @@
   [self configureMock:[self.mockSignIn stub]
       forSignInWithHint:nil
        additionalScopes:OCMOCK_ANY
+                  nonce:nil
              completion:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
@@ -375,6 +412,7 @@
   OCMExpect([self configureMock:self.mockSignIn
                 forSignInWithHint:OCMOCK_ANY
                  additionalScopes:OCMOCK_ANY
+                            nonce:nil
                        completion:OCMOCK_ANY])
       .andThrow([NSException exceptionWithName:@"MockName" reason:@"MockReason" userInfo:nil]);
 
@@ -642,17 +680,20 @@
 - (void)configureMock:(id)mock
     forSignInWithHint:(NSString *)hint
      additionalScopes:(NSArray<NSString *> *)additionalScopes
+                nonce:(nullable NSString *)nonce
            completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
                                          NSError *_Nullable error))completion {
 #if TARGET_OS_OSX
   [mock signInWithPresentingWindow:OCMOCK_ANY
                               hint:hint
                   additionalScopes:additionalScopes
+                             nonce:nonce
                         completion:completion];
 #else
   [mock signInWithPresentingViewController:[OCMArg isKindOfClass:[FlutterViewController class]]
                                       hint:hint
                           additionalScopes:additionalScopes
+                                     nonce:nonce
                                 completion:completion];
 #endif
 }
