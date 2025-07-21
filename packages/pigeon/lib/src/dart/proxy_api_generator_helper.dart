@@ -338,7 +338,7 @@ void writeProxyApiPigeonOverrides(
 /// Creates a factory constructor that can return an overrideable static
 /// method for testing and a constructor that calls to the native
 /// API implementation
-Iterable<cb.Constructor> proxyApiConstructors(
+Iterable<cb.Constructor> constructors(
   Iterable<Constructor> constructors, {
   required String apiName,
   required String dartPackageName,
@@ -517,7 +517,7 @@ Iterable<cb.Constructor> proxyApiConstructors(
 /// class instance. It is mainly used when the native side wants to create a
 /// Dart instance or when the `InstanceManager` wants to create a copy for
 /// automatic garbage collection.
-cb.Constructor proxyApiDetachedConstructor({
+cb.Constructor detachedConstructor({
   required String apiName,
   required AstProxyApi? superClassApi,
   required Iterable<ApiField> unattachedFields,
@@ -552,7 +552,7 @@ cb.Constructor proxyApiDetachedConstructor({
 }
 
 /// A private Field of the base codec.
-cb.Field proxyApiCodecInstanceField({
+cb.Field codecInstanceField({
   required String codecInstanceName,
   required String codecName,
 }) {
@@ -568,7 +568,7 @@ cb.Field proxyApiCodecInstanceField({
 
 /// Converts unattached fields from the pigeon AST to `code_builder`
 /// Fields.
-Iterable<cb.Field> proxyApiUnattachedFields(
+Iterable<cb.Field> unattachedFields(
   Iterable<ApiField> fields,
 ) sync* {
   for (final ApiField field in fields) {
@@ -589,7 +589,7 @@ Iterable<cb.Field> proxyApiUnattachedFields(
 ///
 /// Flutter methods of a ProxyApi are set as an anonymous function of a class
 /// instance, so this converts methods to a `Function` type field instance.
-Iterable<cb.Field> proxyApiFlutterMethodFields(
+Iterable<cb.Field> flutterMethodFields(
   Iterable<Method> methods, {
   required String apiName,
 }) sync* {
@@ -638,7 +638,7 @@ Iterable<cb.Field> proxyApiFlutterMethodFields(
 /// This is similar to [_proxyApiFlutterMethodFields] except all the methods are
 /// inherited from apis that are being implemented (following the `implements`
 /// keyword).
-Iterable<cb.Field> proxyApiInterfaceApiFields(
+Iterable<cb.Field> interfaceApiFields(
   Iterable<AstProxyApi> apisOfInterfaces,
 ) sync* {
   for (final AstProxyApi proxyApi in apisOfInterfaces) {
@@ -687,7 +687,7 @@ Iterable<cb.Field> proxyApiInterfaceApiFields(
 /// ```dart
 /// final MyOtherProxyApiClass value = _pigeon_value();
 /// ```
-Iterable<cb.Field> proxyApiAttachedFields(Iterable<ApiField> fields) sync* {
+Iterable<cb.Field> attachedFields(Iterable<ApiField> fields) sync* {
   for (final ApiField field in fields) {
     yield cb.Field(
       (cb.FieldBuilder builder) => builder
@@ -713,7 +713,7 @@ Iterable<cb.Field> proxyApiAttachedFields(Iterable<ApiField> fields) sync* {
 /// This also adds a handler to receive a call from the platform to
 /// instantiate a new Dart instance if [hasCallbackConstructor] is set to
 /// true.
-cb.Method proxyApiSetUpMessageHandlerMethod({
+cb.Method setUpMessageHandlerMethod({
   required Iterable<Method> flutterMethods,
   required String apiName,
   required String dartPackageName,
@@ -910,7 +910,7 @@ cb.Method proxyApiSetUpMessageHandlerMethod({
 /// These private methods are used to lazily instantiate attached fields. The
 /// instance is created and returned synchronously while the native instance
 /// is created asynchronously. This is similar to how constructors work.
-Iterable<cb.Method> proxyApiAttachedFieldMethods(
+Iterable<cb.Method> attachedFieldMethods(
   Iterable<ApiField> fields, {
   required String apiName,
   required String dartPackageName,
@@ -1004,7 +1004,7 @@ Iterable<cb.Method> proxyApiAttachedFieldMethods(
 ///
 /// This creates methods like a HostApi except that it includes the calling
 /// instance if the method is not static.
-Iterable<cb.Method> proxyApiHostMethods(
+Iterable<cb.Method> hostMethods(
   Iterable<Method> methods, {
   required String apiName,
   required String dartPackageName,
@@ -1112,7 +1112,7 @@ Iterable<cb.Method> proxyApiHostMethods(
 /// This method returns a copy of the instance with all the Flutter methods
 /// and unattached fields passed to the new instance. This method is inherited
 /// from the base ProxyApi class.
-cb.Method proxyApiCopyMethod({
+cb.Method copyMethod({
   required String apiName,
   required Iterable<ApiField> unattachedFields,
   required Iterable<(Method, AstProxyApi)> flutterMethodsFromSuperClasses,

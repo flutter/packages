@@ -904,7 +904,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ..docs.addAll(
           asDocumentationComments(api.documentationComments, docCommentSpec),
         )
-        ..constructors.addAll(proxy_api_helper.proxyApiConstructors(
+        ..constructors.addAll(proxy_api_helper.constructors(
           api.constructors,
           apiName: api.name,
           dartPackageName: dartPackageName,
@@ -919,7 +919,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           declaredFlutterMethods: api.flutterMethods,
         ))
         ..constructors.add(
-          proxy_api_helper.proxyApiDetachedConstructor(
+          proxy_api_helper.detachedConstructor(
             apiName: api.name,
             superClassApi: api.superClass?.associatedProxyApi,
             unattachedFields: api.unattachedFields,
@@ -934,32 +934,32 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           if (api.constructors.isNotEmpty ||
               api.attachedFields.any((ApiField field) => !field.isStatic) ||
               api.hostMethods.isNotEmpty)
-            proxy_api_helper.proxyApiCodecInstanceField(
+            proxy_api_helper.codecInstanceField(
               codecInstanceName: codecInstanceName,
               codecName: codecName,
             ),
         ])
         ..fields.addAll(
-          proxy_api_helper.proxyApiUnattachedFields(api.unattachedFields),
+          proxy_api_helper.unattachedFields(api.unattachedFields),
         )
-        ..fields.addAll(proxy_api_helper.proxyApiFlutterMethodFields(
+        ..fields.addAll(proxy_api_helper.flutterMethodFields(
           api.flutterMethods,
           apiName: api.name,
         ))
         ..fields.addAll(
-          proxy_api_helper.proxyApiInterfaceApiFields(
+          proxy_api_helper.interfaceApiFields(
             api.apisOfInterfaces(),
           ),
         )
         ..fields.addAll(
-          proxy_api_helper.proxyApiAttachedFields(api.attachedFields),
+          proxy_api_helper.attachedFields(api.attachedFields),
         )
         ..methods.addAll(proxy_api_helper.staticAttachedFieldsGetters(
           api.attachedFields.where((ApiField field) => field.isStatic),
           apiName: api.name,
         ))
         ..methods.add(
-          proxy_api_helper.proxyApiSetUpMessageHandlerMethod(
+          proxy_api_helper.setUpMessageHandlerMethod(
             flutterMethods: api.flutterMethods,
             apiName: api.name,
             dartPackageName: dartPackageName,
@@ -969,7 +969,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           ),
         )
         ..methods.addAll(
-          proxy_api_helper.proxyApiAttachedFieldMethods(
+          proxy_api_helper.attachedFieldMethods(
             api.attachedFields,
             apiName: api.name,
             dartPackageName: dartPackageName,
@@ -977,7 +977,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
             codecName: codecName,
           ),
         )
-        ..methods.addAll(proxy_api_helper.proxyApiHostMethods(
+        ..methods.addAll(proxy_api_helper.hostMethods(
           api.hostMethods,
           apiName: api.name,
           dartPackageName: dartPackageName,
@@ -985,7 +985,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
           codecName: codecName,
         ))
         ..methods.add(
-          proxy_api_helper.proxyApiCopyMethod(
+          proxy_api_helper.copyMethod(
             apiName: api.name,
             unattachedFields: api.unattachedFields,
             flutterMethodsFromSuperClasses:
