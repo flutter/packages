@@ -19,6 +19,7 @@ import androidx.annotation.VisibleForTesting;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
 import java.util.Objects;
+import androidx.camera.core.UseCase;
 
 /**
  * Support class to help to determine the media orientation based on the orientation of the device.
@@ -71,6 +72,8 @@ public class DeviceOrientationManager {
     return new OrientationEventListener(getContext()) {
       @Override
       public void onOrientationChanged(int orientation) {
+        System.out.println("CAMILLE: ORIENTAITON ---------------" + Integer.toString(orientation));
+        System.out.println("CAMILLE: SNAP TO --------------" + Integer.toString(UseCase.snapToSurfaceRotation(orientation)));
         handleUiOrientationChange();
       }
     };

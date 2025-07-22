@@ -381,6 +381,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Configure ImageCapture instance.
     _initialDefaultDisplayRotation =
         await deviceOrientationManager.getDefaultDisplayRotation();
+    print(
+      'CAMILLE222222222222222222222222222222222222222222222222: $_initialDefaultDisplayRotation',
+    );
     imageCapture = proxy.newImageCapture(
       resolutionSelector: presetResolutionSelector,
       targetRotation: _initialDefaultDisplayRotation,
@@ -1090,9 +1093,11 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
     if (!captureOrientationLocked) {
-      await videoCapture!.setTargetRotation(
-        await deviceOrientationManager.getDefaultDisplayRotation(),
-      );
+      int targetRotation =
+          await deviceOrientationManager.getDefaultDisplayRotation();
+      print('CAMILLE:::::::::::::::::::::::::::::::::::::::::::::::::::');
+      print('target rotation: $targetRotation');
+      await videoCapture!.setTargetRotation(targetRotation);
     }
 
     videoOutputPath = await systemServicesManager.getTempFilePath(

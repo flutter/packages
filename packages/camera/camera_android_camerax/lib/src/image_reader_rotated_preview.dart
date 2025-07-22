@@ -150,6 +150,10 @@ final class _ImageReaderRotatedPreviewState
       builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           final int currentDefaultDisplayRotation = snapshot.data!;
+          print(
+            'currentDefaultDisplayRotation: $currentDefaultDisplayRotation',
+          );
+          print('deviceOrientation: $deviceOrientation');
           final double rotationDegrees = _computeRotationDegrees(
             deviceOrientation,
             currentDefaultDisplayRotation,
