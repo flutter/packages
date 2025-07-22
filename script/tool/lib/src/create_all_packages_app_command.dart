@@ -137,18 +137,12 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       final String basename = entity.basename;
       print('Replacing $basename with legacy version...');
       if (entity is Directory) {
-        final Directory dirToDelete = target.childDirectory(basename);
-        if (dirToDelete.existsSync()) {
-          dirToDelete.deleteSync(recursive: true);
-        }
+        target.childDirectory(basename).deleteSync(recursive: true);
       } else {
-        final File fileToDelete = target.childFile(basename);
-        if (fileToDelete.existsSync()) {
-          fileToDelete.deleteSync();
-        }
+        target.childFile(basename).deleteSync();
       }
+      _copyDirectory(source: source, target: target);
     }
-    _copyDirectory(source: source, target: target);
   }
 
   void _copyDirectory({required Directory target, required Directory source}) {
