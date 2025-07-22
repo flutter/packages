@@ -34,7 +34,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(strong, nonatomic)
     NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
-@property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
 /// The queue on which captured photos (not videos) are written to disk.

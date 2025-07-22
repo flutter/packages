@@ -64,6 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
+@property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.

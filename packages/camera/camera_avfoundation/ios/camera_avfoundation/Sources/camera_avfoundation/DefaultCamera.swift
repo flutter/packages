@@ -254,6 +254,7 @@ final class DefaultCamera: FLTCam, Camera {
       newAudioWriterInput.expectsMediaDataInRealTime = true
       mediaSettingsAVWrapper.addInput(newAudioWriterInput, to: videoWriter)
       self.audioWriterInput = newAudioWriterInput
+      audioOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
     }
 
     if flashMode == .torch {
