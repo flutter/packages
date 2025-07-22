@@ -349,7 +349,7 @@ abstract class AdsRequest {
 
   /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
   /// a request through an ad tag URL.
-  void setAdsResponse(String? cannedAdResponse);
+  void setAdsResponse(String cannedAdResponse);
 
   /// Specifies the duration of the content in seconds to be shown.
   ///
@@ -361,13 +361,13 @@ abstract class AdsRequest {
   ///
   /// This optional parameter is used by AdX requests and is recommended for AdX
   /// users.
-  void setContentKeywords(List<String>? keywords);
+  void setContentKeywords(List<String> keywords);
 
   /// Specifies the title of the content to be shown.
   ///
   /// Used in AdX requests. This optional parameter is used by AdX requests and
   /// is recommended for AdX users.
-  void setContentTitle(String? title);
+  void setContentTitle(String title);
 
   /// Notifies the SDK whether the player intends to continuously play the
   /// content videos one after another similar to TV broadcast.

@@ -1664,7 +1664,7 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
 
   /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
   /// a request through an ad tag URL.
-  Future<void> setAdsResponse(String? cannedAdResponse) async {
+  Future<void> setAdsResponse(String cannedAdResponse) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1730,7 +1730,7 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   ///
   /// This optional parameter is used by AdX requests and is recommended for AdX
   /// users.
-  Future<void> setContentKeywords(List<String>? keywords) async {
+  Future<void> setContentKeywords(List<String> keywords) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1763,7 +1763,7 @@ class AdsRequest extends PigeonInternalProxyApiBaseClass {
   ///
   /// Used in AdX requests. This optional parameter is used by AdX requests and
   /// is recommended for AdX users.
-  Future<void> setContentTitle(String? title) async {
+  Future<void> setContentTitle(String title) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecAdsRequest;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;

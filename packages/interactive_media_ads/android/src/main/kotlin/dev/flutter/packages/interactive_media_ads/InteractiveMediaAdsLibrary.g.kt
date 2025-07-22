@@ -1523,7 +1523,7 @@ abstract class PigeonApiAdsRequest(
    */
   abstract fun setAdsResponse(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      cannedAdResponse: String?
+      cannedAdResponse: String
   )
 
   /**
@@ -1543,7 +1543,7 @@ abstract class PigeonApiAdsRequest(
    */
   abstract fun setContentKeywords(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      keywords: List<String>?
+      keywords: List<String>
   )
 
   /**
@@ -1554,7 +1554,7 @@ abstract class PigeonApiAdsRequest(
    */
   abstract fun setContentTitle(
       pigeon_instance: com.google.ads.interactivemedia.v3.api.AdsRequest,
-      title: String?
+      title: String
   )
 
   /**
@@ -1702,7 +1702,7 @@ abstract class PigeonApiAdsRequest(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
-            val cannedAdResponseArg = args[1] as String?
+            val cannedAdResponseArg = args[1] as String
             val wrapped: List<Any?> =
                 try {
                   api.setAdsResponse(pigeon_instanceArg, cannedAdResponseArg)
@@ -1750,7 +1750,7 @@ abstract class PigeonApiAdsRequest(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
-            val keywordsArg = args[1] as List<String>?
+            val keywordsArg = args[1] as List<String>
             val wrapped: List<Any?> =
                 try {
                   api.setContentKeywords(pigeon_instanceArg, keywordsArg)
@@ -1774,7 +1774,7 @@ abstract class PigeonApiAdsRequest(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as com.google.ads.interactivemedia.v3.api.AdsRequest
-            val titleArg = args[1] as String?
+            val titleArg = args[1] as String
             val wrapped: List<Any?> =
                 try {
                   api.setContentTitle(pigeon_instanceArg, titleArg)

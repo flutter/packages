@@ -39,4 +39,40 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   ) {
     pigeon_instance.contentProgressProvider = provider
   }
+
+  override fun setAdWillAutoPlay(pigeon_instance: AdsRequest, willAutoPlay: Boolean) {
+    pigeon_instance.setAdWillAutoPlay(willAutoPlay)
+  }
+
+  override fun setAdWillPlayMuted(pigeon_instance: AdsRequest, willPlayMuted: Boolean) {
+    TODO("Not yet implemented")
+  }
+
+  override fun setAdsResponse(pigeon_instance: AdsRequest, cannedAdResponse: String?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun setContentDuration(pigeon_instance: AdsRequest, duration: Double) {
+    TODO("Not yet implemented")
+  }
+
+  override fun setContentKeywords(pigeon_instance: AdsRequest, keywords: List<String>?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun setContentTitle(pigeon_instance: AdsRequest, title: String?) {
+    TODO("Not yet implemented")
+  }
+
+  override fun setContinuousPlayback(pigeon_instance: AdsRequest, continuousPlayback: Boolean) {
+    TODO("Not yet implemented")
+  }
+
+  override fun setLiveStreamPrefetchSeconds(pigeon_instance: AdsRequest, prefetchTime: Double) {
+    TODO("Not yet implemented")
+  }
+
+  override fun setVastLoadTimeout(pigeon_instance: AdsRequest, timeout: Double) {
+    TODO("Not yet implemented")
+  }
 }
