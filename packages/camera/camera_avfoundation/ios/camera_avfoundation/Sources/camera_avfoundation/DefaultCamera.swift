@@ -148,16 +148,13 @@ final class DefaultCamera: FLTCam, Camera {
   /// Main logic to setup the video recording.
   private func setUpVideoRecording(completion: @escaping (FlutterError?) -> Void) {
     let videoRecordingPath: String
-    var error: NSError?
-
-    videoRecordingPath = getTemporaryFilePath(
-      withExtension: "mp4",
-      subfolder: "videos",
-      prefix: "REC_",
-      error: &error)
-    self.videoRecordingPath = videoRecordingPath
-
-    if let error = error {
+    do {
+      videoRecordingPath = try getTemporaryFilePath(
+        withExtension: "mp4",
+        subfolder: "videos",
+        prefix: "REC_")
+      self.videoRecordingPath = videoRecordingPath
+    } catch let error as NSError {
       completion(DefaultCamera.flutterErrorFromNSError(error))
       return
     }

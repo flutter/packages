@@ -78,10 +78,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Methods exposed for the Swift DefaultCamera subclass
 - (void)updateOrientation;
-- (NSString *)getTemporaryFilePathWithExtension:(NSString *)extension
-                                      subfolder:(NSString *)subfolder
-                                         prefix:(NSString *)prefix
-                                          error:(NSError **)error;
+- (nullable NSString *)getTemporaryFilePathWithExtension:(NSString *)extension
+                                               subfolder:(NSString *)subfolder
+                                                  prefix:(NSString *)prefix
+                                                   error:(NSError **)error;
 
 @end
 
