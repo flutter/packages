@@ -44,7 +44,7 @@ class AdsRequestProxyAPIDelegate: PigeonApiDelegateIMAAdsRequest {
   {
     return pigeonInstance.adTagUrl
   }
-  
+
   func getAdDisplayContainer(pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest)
     throws -> IMAAdDisplayContainer
   {
