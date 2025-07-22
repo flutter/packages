@@ -13,6 +13,15 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
       code: "UnknownEnumError", message: "\(enumValue) doesn't represent a native value.",
       details: nil)
   }
+  
+  /// Creates an error when the constructor of a class returns null.
+    func createConstructorNullError(type: Any.Type, parameters: [String: Any?]) -> PigeonError {
+
+      return PigeonError(
+        code: "ConstructorReturnedNullError",
+        message: "Failed to instantiate `\(String(describing: type))` with parameters: \(parameters)",
+        details: nil)
+    }
 
   func pigeonApiUIView(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
     -> PigeonApiUIView
