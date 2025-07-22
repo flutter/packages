@@ -10,6 +10,14 @@ import CoreMotion
 #endif
 
 final class DefaultCamera: FLTCam, Camera {
+  override var videoFormat: FourCharCode {
+    didSet {
+      captureVideoOutput.videoSettings = [
+        kCVPixelBufferPixelFormatTypeKey as String: videoFormat
+      ]
+    }
+  }
+
   override var deviceOrientation: UIDeviceOrientation {
     get { super.deviceOrientation }
     set {
@@ -44,6 +52,41 @@ final class DefaultCamera: FLTCam, Camera {
 
   private var exposureMode = FCPPlatformExposureMode.auto
   private var focusMode = FCPPlatformFocusMode.auto
+
+  private static func flutterErrorFromNSError(_ error: NSError) -> FlutterError {
+    return FlutterError(
+      code: "Error \(error.code)",
+      message: error.localizedDescription,
+      details: error.domain)
+  }
+
+  private static func createConnection(
+    captureDevice: FLTCaptureDevice,
+    videoFormat: FourCharCode,
+    captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  ) throws -> (FLTCaptureInput, FLTCaptureVideoDataOutput, AVCaptureConnection) {
+    // Setup video capture input.
+    let captureVideoInput = try captureDeviceInputFactory.deviceInput(with: captureDevice)
+
+    // Setup video capture output.
+    let captureVideoOutput = FLTDefaultCaptureVideoDataOutput(
+      captureVideoOutput: AVCaptureVideoDataOutput())
+    captureVideoOutput.videoSettings = [
+      kCVPixelBufferPixelFormatTypeKey as String: videoFormat
+    ]
+    captureVideoOutput.alwaysDiscardsLateVideoFrames = true
+
+    // Setup video capture connection.
+    let connection = AVCaptureConnection(
+      inputPorts: captureVideoInput.ports,
+      output: captureVideoOutput.avOutput)
+
+    if captureDevice.position == .front {
+      connection.isVideoMirrored = true
+    }
+
+    return (captureVideoInput, captureVideoOutput, connection)
+  }
 
   func reportInitializationState() {
     // Get all the state on the current thread, not the main thread.
@@ -87,6 +130,40 @@ final class DefaultCamera: FLTCam, Camera {
 
   func resumeVideoRecording() {
     isRecordingPaused = false
+  }
+
+  func stopVideoRecording(completion: @escaping (String?, FlutterError?) -> Void) {
+    guard isRecording else {
+      let error = NSError(
+        domain: NSCocoaErrorDomain,
+        code: URLError.resourceUnavailable.rawValue,
+        userInfo: [NSLocalizedDescriptionKey: "Video is not recording!"]
+      )
+      completion(nil, DefaultCamera.flutterErrorFromNSError(error))
+      return
+    }
+
+    isRecording = false
+
+    // When `isRecording` is true `startWriting` was already called so `videoWriter.status`
+    // is always either `.writing` or `.failed` and `finishWriting` does not throw exceptions so
+    // there is no need to check `videoWriter.status`
+    videoWriter?.finishWriting { [weak self] in
+      guard let strongSelf = self else { return }
+
+      if strongSelf.videoWriter?.status == .completed {
+        strongSelf.updateOrientation()
+        completion(strongSelf.videoRecordingPath, nil)
+        strongSelf.videoRecordingPath = nil
+      } else {
+        completion(
+          nil,
+          FlutterError(
+            code: "IOError",
+            message: "AVAssetWriter could not finish writing!",
+            details: nil))
+      }
+    }
   }
 
   func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
@@ -241,12 +318,185 @@ final class DefaultCamera: FLTCam, Camera {
     return CGPoint(x: x, y: y)
   }
 
+  func setZoomLevel(_ zoom: CGFloat, withCompletion completion: @escaping (FlutterError?) -> Void) {
+    if zoom < captureDevice.minAvailableVideoZoomFactor
+      || zoom > captureDevice.maxAvailableVideoZoomFactor
+    {
+      completion(
+        FlutterError(
+          code: "ZOOM_ERROR",
+          message:
+            "Zoom level out of bounds (zoom level should be between \(captureDevice.minAvailableVideoZoomFactor) and \(captureDevice.maxAvailableVideoZoomFactor).",
+          details: nil))
+      return
+    }
+
+    do {
+      try captureDevice.lockForConfiguration()
+    } catch let error as NSError {
+      completion(DefaultCamera.flutterErrorFromNSError(error))
+      return
+    }
+
+    captureDevice.videoZoomFactor = zoom
+    captureDevice.unlockForConfiguration()
+    completion(nil)
+  }
+
+  func setFlashMode(
+    _ mode: FCPPlatformFlashMode,
+    withCompletion completion: @escaping (FlutterError?) -> Void
+  ) {
+    switch mode {
+    case .torch:
+      guard captureDevice.hasTorch else {
+        completion(
+          FlutterError(
+            code: "setFlashModeFailed",
+            message: "Device does not support torch mode",
+            details: nil)
+        )
+        return
+      }
+      guard captureDevice.isTorchAvailable else {
+        completion(
+          FlutterError(
+            code: "setFlashModeFailed",
+            message: "Torch mode is currently not available",
+            details: nil))
+        return
+      }
+      if captureDevice.torchMode != .on {
+        try? captureDevice.lockForConfiguration()
+        captureDevice.torchMode = .on
+        captureDevice.unlockForConfiguration()
+      }
+    case .off, .auto, .always:
+      guard captureDevice.hasFlash else {
+        completion(
+          FlutterError(
+            code: "setFlashModeFailed",
+            message: "Device does not have flash capabilities",
+            details: nil))
+        return
+      }
+      let avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(mode)
+      guard capturePhotoOutput.supportedFlashModes.contains(NSNumber(value: avFlashMode.rawValue))
+      else {
+        completion(
+          FlutterError(
+            code: "setFlashModeFailed",
+            message: "Device does not support this specific flash mode",
+            details: nil))
+        return
+      }
+      if captureDevice.torchMode != .off {
+        try? captureDevice.lockForConfiguration()
+        captureDevice.torchMode = .off
+        captureDevice.unlockForConfiguration()
+      }
+    @unknown default:
+      assertionFailure("Unknown flash mode")
+    }
+
+    flashMode = mode
+    completion(nil)
+  }
+
   func pausePreview() {
     isPreviewPaused = true
   }
 
   func resumePreview() {
     isPreviewPaused = false
+  }
+
+  func setDescriptionWhileRecording(
+    _ cameraName: String, withCompletion completion: @escaping (FlutterError?) -> Void
+  ) {
+    guard isRecording else {
+      completion(
+        FlutterError(
+          code: "setDescriptionWhileRecordingFailed",
+          message: "Device was not recording",
+          details: nil))
+      return
+    }
+
+    captureDevice = captureDeviceFactory(cameraName)
+
+    let oldConnection = captureVideoOutput.connection(withMediaType: .video)
+
+    // Stop video capture from the old output.
+    captureVideoOutput.setSampleBufferDelegate(nil, queue: nil)
+
+    // Remove the old video capture connections.
+    videoCaptureSession.beginConfiguration()
+    videoCaptureSession.removeInput(captureVideoInput)
+    videoCaptureSession.removeOutput(captureVideoOutput.avOutput)
+
+    let newConnection: AVCaptureConnection
+
+    do {
+      (captureVideoInput, captureVideoOutput, newConnection) = try DefaultCamera.createConnection(
+        captureDevice: captureDevice,
+        videoFormat: videoFormat,
+        captureDeviceInputFactory: captureDeviceInputFactory)
+
+      captureVideoOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
+    } catch {
+      completion(
+        FlutterError(
+          code: "VideoError",
+          message: "Unable to create video connection",
+          details: nil))
+      return
+    }
+
+    // Keep the same orientation the old connections had.
+    if let oldConnection = oldConnection, newConnection.isVideoOrientationSupported {
+      newConnection.videoOrientation = oldConnection.videoOrientation
+    }
+
+    // Add the new connections to the session.
+    if !videoCaptureSession.canAddInput(captureVideoInput) {
+      completion(
+        FlutterError(
+          code: "VideoError",
+          message: "Unable to switch video input",
+          details: nil))
+    }
+    videoCaptureSession.addInputWithNoConnections(captureVideoInput)
+
+    if !videoCaptureSession.canAddOutput(captureVideoOutput.avOutput) {
+      completion(
+        FlutterError(
+          code: "VideoError",
+          message: "Unable to switch video output",
+          details: nil))
+    }
+    videoCaptureSession.addOutputWithNoConnections(captureVideoOutput.avOutput)
+
+    if !videoCaptureSession.canAddConnection(newConnection) {
+      completion(
+        FlutterError(
+          code: "VideoError",
+          message: "Unable to switch video connection",
+          details: nil))
+    }
+    videoCaptureSession.addConnection(newConnection)
+    videoCaptureSession.commitConfiguration()
+
+    completion(nil)
+  }
+
+  func stopImageStream() {
+    if isStreamingImages {
+      isStreamingImages = false
+      imageStreamHandler = nil
+    } else {
+      reportErrorMessage("Images from camera are not streaming!")
+    }
   }
 
   func captureOutput(
@@ -498,5 +748,9 @@ final class DefaultCamera: FLTCam, Camera {
         // Ignore any errors, as this is just an event broadcast.
       }
     }
+  }
+
+  deinit {
+    motionManager.stopAccelerometerUpdates()
   }
 }
