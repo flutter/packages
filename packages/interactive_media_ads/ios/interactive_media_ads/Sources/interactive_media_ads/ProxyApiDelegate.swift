@@ -16,7 +16,6 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
 
   /// Creates an error when the constructor of a class returns null.
   func createConstructorNullError(type: Any.Type, parameters: [String: Any?]) -> PigeonError {
-
     return PigeonError(
       code: "ConstructorReturnedNullError",
       message: "Failed to instantiate `\(String(describing: type))` with parameters: \(parameters)",

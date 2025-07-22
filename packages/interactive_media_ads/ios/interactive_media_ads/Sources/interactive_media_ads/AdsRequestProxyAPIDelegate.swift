@@ -44,17 +44,17 @@ class AdsRequestProxyAPIDelegate: PigeonApiDelegateIMAAdsRequest {
   {
     return pigeonInstance.adTagUrl
   }
+  
+  func getAdDisplayContainer(pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest)
+    throws -> IMAAdDisplayContainer
+  {
+    return pigeonInstance.adDisplayContainer
+  }
 
   func getAdsResponse(pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest) throws
     -> String?
   {
     return pigeonInstance.adsResponse
-  }
-
-  func getAdDisplayContainer(pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest)
-    throws -> IMAAdDisplayContainer
-  {
-    return pigeonInstance.adDisplayContainer
   }
 
   func setAdWillAutoPlay(

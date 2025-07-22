@@ -49,4 +49,35 @@ final class AdsRequestTests: XCTestCase {
       instance?.adTagUrl,
       "adTag#?")
   }
+  
+  func testWithAdsResponse() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
+
+    let container = IMAAdDisplayContainer(adContainer: UIView(), viewController: nil)
+    let contentPlayhead = ContentPlayheadImpl()
+    let instance = try? api.pigeonDelegate.withAdsResponse(
+      pigeonApi: api, adsResponse: "response", adDisplayContainer: container,
+      contentPlayhead: contentPlayhead)
+
+    XCTAssertNotNil(instance)
+    XCTAssertEqual(
+      instance?.adsResponse,
+      "response")
+    XCTAssertIdentical(instance?.adDisplayContainer, container)
+  }
+  
+  func testGetAdTagUrl() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
+
+    let container = IMAAdDisplayContainer(adContainer: UIView(), viewController: nil)
+    let contentPlayhead = ContentPlayheadImpl()
+    let adTagUrl = "url"
+    let instance = IMAAdsRequest(adTagUrl: adTagUrl, adDisplayContainer: container, contentPlayhead: contentPlayhead, userContext: nil)
+    
+    let value = try? api.pigeonDelegate.getAdTagUrl(pigeonApi: api, pigeonInstance: instance)
+    
+    XCTAssertEqual(value, adTagUrl)
+  }
 }
