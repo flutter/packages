@@ -232,17 +232,16 @@ final class DefaultCamera: FLTCam, Camera {
 
     // Add the audio input
     if mediaSettings.enableAudio {
-      var acl = AudioChannelLayout()
-      acl.mChannelLayoutTag = kAudioChannelLayoutTag_Mono
+      var audioChannelLayout = AudioChannelLayout()
+      audioChannelLayout.mChannelLayoutTag = kAudioChannelLayoutTag_Mono
 
-      let aclSize = MemoryLayout.size(ofValue: acl)
-      let aclData = Data(bytes: &acl, count: aclSize)
+      let audioChannelLayoutData = withUnsafeBytes(of: &audioChannelLayout) { Data($0) }
 
       var audioSettings: [String: Any] = [
         AVFormatIDKey: kAudioFormatMPEG4AAC,
         AVSampleRateKey: 44100.0,
         AVNumberOfChannelsKey: 1,
-        AVChannelLayoutKey: aclData,
+        AVChannelLayoutKey: audioChannelLayoutData,
       ]
 
       if let audioBitrate = mediaSettings.audioBitrate {
