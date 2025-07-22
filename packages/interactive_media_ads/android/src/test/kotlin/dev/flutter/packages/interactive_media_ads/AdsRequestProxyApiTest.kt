@@ -5,7 +5,6 @@
 package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdsRequest
-import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 import kotlin.test.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
