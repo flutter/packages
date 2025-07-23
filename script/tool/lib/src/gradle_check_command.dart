@@ -428,6 +428,15 @@ for more details.''';
     final RegExp legacySettingPattern = RegExp(r'^\s*compileSdkVersion');
     final String? compileSdkLine = gradleLines
         .firstWhereOrNull((String line) => linePattern.hasMatch(line));
+
+    final Pubspec pubspec = package.parsePubspec();
+    final VersionConstraint? flutterConstraint =
+    pubspec.environment['flutter'];
+    final Version? minFlutterVersion =
+    flutterConstraint != null && flutterConstraint is VersionRange
+        ? flutterConstraint.min
+        : null;
+
     if (compileSdkLine == null) {
       // Equals regex not found check for method pattern.
       final RegExp compileSpacePattern = RegExp(r'^\s*compileSdk');
@@ -447,13 +456,6 @@ for more details.''';
       return false;
     }
     if (compileSdkLine.contains('flutter.compileSdkVersion')) {
-      final Pubspec pubspec = package.parsePubspec();
-      final VersionConstraint? flutterConstraint =
-          pubspec.environment['flutter'];
-      final Version? minFlutterVersion =
-          flutterConstraint != null && flutterConstraint is VersionRange
-              ? flutterConstraint.min
-              : null;
       if (minFlutterVersion == null) {
         printError('${indentation}Unable to find a Flutter SDK version '
             'constraint. Use of flutter.compileSdkVersion requires a minimum '
@@ -468,6 +470,11 @@ for more details.''';
             'version to at least 3.27.');
         return false;
       }
+    }
+    if (!compileSdkLine.contains('flutter.compileSdkVersion') && minFlutterVersion! >= Version(3, 27, 0)) {
+      printError('${indentation}Please use flutter.compileSdkVersion instead '
+          'of a hardcoded compileSdk version number');
+      return false;
     }
     return true;
   }
