@@ -18,20 +18,6 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({
-  Object? result,
-  PlatformException? error,
-  bool empty = false,
-}) {
-  if (empty) {
-    return <Object?>[];
-  }
-  if (error == null) {
-    return <Object?>[result];
-  }
-  return <Object?>[error.code, error.message, error.details];
-}
-
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
@@ -52,6 +38,9 @@ bool _deepEquals(Object? a, Object? b) {
 
 /// Pigeon equivalent of VideoViewType.
 enum PlatformVideoViewType { textureView, platformView }
+
+/// Pigeon equivalent of video_platform_interface's VideoFormat.
+enum PlatformVideoFormat { dash, hls, ss }
 
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
@@ -106,7 +95,7 @@ class CreateMessage {
 
   String? packageName;
 
-  String? formatHint;
+  PlatformVideoFormat? formatHint;
 
   Map<String, String> httpHeaders;
 
@@ -133,7 +122,7 @@ class CreateMessage {
       asset: result[0] as String?,
       uri: result[1] as String?,
       packageName: result[2] as String?,
-      formatHint: result[3] as String?,
+      formatHint: result[3] as PlatformVideoFormat?,
       httpHeaders:
           (result[4] as Map<Object?, Object?>?)!.cast<String, String>(),
       viewType: result[5] as PlatformVideoViewType?,
@@ -167,11 +156,14 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformVideoViewType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    } else if (value is PlatformVideoViewCreationParams) {
+    } else if (value is PlatformVideoFormat) {
       buffer.putUint8(130);
+      writeValue(buffer, value.index);
+    } else if (value is PlatformVideoViewCreationParams) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else if (value is CreateMessage) {
-      buffer.putUint8(131);
+      buffer.putUint8(132);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -185,8 +177,11 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : PlatformVideoViewType.values[value];
       case 130:
-        return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : PlatformVideoFormat.values[value];
       case 131:
+        return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
+      case 132:
         return CreateMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

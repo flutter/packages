@@ -76,7 +76,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     String? asset;
     String? packageName;
     String? uri;
-    String? formatHint;
+    PlatformVideoFormat? formatHint;
     Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
@@ -84,7 +84,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         packageName = dataSource.package;
       case DataSourceType.network:
         uri = dataSource.uri;
-        formatHint = _videoFormatStringMap[dataSource.formatHint];
+        formatHint = _platformVideoFormatFromVideoFormat(dataSource.formatHint);
         httpHeaders = dataSource.httpHeaders;
       case DataSourceType.file:
         uri = dataSource.uri;
@@ -238,13 +238,19 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return player ?? (throw StateError('No active player with ID $id.'));
   }
 
-  static const Map<VideoFormat, String> _videoFormatStringMap =
-      <VideoFormat, String>{
-        VideoFormat.ss: 'ss',
-        VideoFormat.hls: 'hls',
-        VideoFormat.dash: 'dash',
-        VideoFormat.other: 'other',
-      };
+  PlatformVideoFormat? _platformVideoFormatFromVideoFormat(
+    VideoFormat? format,
+  ) {
+    return switch (format) {
+      VideoFormat.dash => PlatformVideoFormat.dash,
+      VideoFormat.hls => PlatformVideoFormat.hls,
+      VideoFormat.ss => PlatformVideoFormat.ss,
+      VideoFormat.other => null,
+      // Include a catch-all, since the enum comes from another package, so
+      // this code must handle the possibility of a new enum value.
+      _ => null,
+    };
+  }
 
   DurationRange _toDurationRange(dynamic value) {
     final List<dynamic> pair = value as List<dynamic>;

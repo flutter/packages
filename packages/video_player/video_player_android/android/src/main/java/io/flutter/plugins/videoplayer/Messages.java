@@ -77,6 +77,19 @@ public class Messages {
     }
   }
 
+  /** Pigeon equivalent of video_platform_interface's VideoFormat. */
+  public enum PlatformVideoFormat {
+    DASH(0),
+    HLS(1),
+    SS(2);
+
+    final int index;
+
+    PlatformVideoFormat(final int index) {
+      this.index = index;
+    }
+  }
+
   /**
    * Information passed to the platform view creation.
    *
@@ -181,13 +194,13 @@ public class Messages {
       this.packageName = setterArg;
     }
 
-    private @Nullable String formatHint;
+    private @Nullable PlatformVideoFormat formatHint;
 
-    public @Nullable String getFormatHint() {
+    public @Nullable PlatformVideoFormat getFormatHint() {
       return formatHint;
     }
 
-    public void setFormatHint(@Nullable String setterArg) {
+    public void setFormatHint(@Nullable PlatformVideoFormat setterArg) {
       this.formatHint = setterArg;
     }
 
@@ -265,10 +278,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable String formatHint;
+      private @Nullable PlatformVideoFormat formatHint;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setFormatHint(@Nullable String setterArg) {
+      public @NonNull Builder setFormatHint(@Nullable PlatformVideoFormat setterArg) {
         this.formatHint = setterArg;
         return this;
       }
@@ -322,7 +335,7 @@ public class Messages {
       Object packageName = pigeonVar_list.get(2);
       pigeonResult.setPackageName((String) packageName);
       Object formatHint = pigeonVar_list.get(3);
-      pigeonResult.setFormatHint((String) formatHint);
+      pigeonResult.setFormatHint((PlatformVideoFormat) formatHint);
       Object httpHeaders = pigeonVar_list.get(4);
       pigeonResult.setHttpHeaders((Map<String, String>) httpHeaders);
       Object viewType = pigeonVar_list.get(5);
@@ -345,8 +358,13 @@ public class Messages {
             return value == null ? null : PlatformVideoViewType.values()[((Long) value).intValue()];
           }
         case (byte) 130:
-          return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformVideoFormat.values()[((Long) value).intValue()];
+          }
         case (byte) 131:
+          return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
           return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -358,11 +376,14 @@ public class Messages {
       if (value instanceof PlatformVideoViewType) {
         stream.write(129);
         writeValue(stream, value == null ? null : ((PlatformVideoViewType) value).index);
-      } else if (value instanceof PlatformVideoViewCreationParams) {
+      } else if (value instanceof PlatformVideoFormat) {
         stream.write(130);
+        writeValue(stream, value == null ? null : ((PlatformVideoFormat) value).index);
+      } else if (value instanceof PlatformVideoViewCreationParams) {
+        stream.write(131);
         writeValue(stream, ((PlatformVideoViewCreationParams) value).toList());
       } else if (value instanceof CreateMessage) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((CreateMessage) value).toList());
       } else {
         super.writeValue(stream, value);

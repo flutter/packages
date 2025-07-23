@@ -14,6 +14,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
+import io.flutter.plugins.videoplayer.Messages.PlatformVideoFormat;
 import io.flutter.plugins.videoplayer.Messages.VideoPlayerInstanceApi;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
@@ -103,16 +104,16 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
       videoAsset = VideoAsset.fromRtspUrl(arg.getUri());
     } else {
       VideoAsset.StreamingFormat streamingFormat = VideoAsset.StreamingFormat.UNKNOWN;
-      String formatHint = arg.getFormatHint();
+      PlatformVideoFormat formatHint = arg.getFormatHint();
       if (formatHint != null) {
         switch (formatHint) {
-          case "ss":
+          case SS:
             streamingFormat = VideoAsset.StreamingFormat.SMOOTH;
             break;
-          case "dash":
+          case DASH:
             streamingFormat = VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE;
             break;
-          case "hls":
+          case HLS:
             streamingFormat = VideoAsset.StreamingFormat.HTTP_LIVE;
             break;
         }
