@@ -53,6 +53,7 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
           return Arrays.asList(cameraInfo);
         }
       });
+      return builder.build();
     }
     return builder.build();
   }
