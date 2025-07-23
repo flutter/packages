@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:quick_actions_ios/messages.g.dart';
 import 'package:quick_actions_ios/quick_actions_ios.dart';
@@ -91,6 +92,14 @@ class _FakeQuickActionsApi implements IOSQuickActionsApi {
       items.add(shortcutItemMessageToShortcutItem(element!));
     }
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }
 
 /// Conversion tool to change [ShortcutItemMessage] back to [ShortcutItem]

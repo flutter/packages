@@ -52,6 +52,8 @@ enum AndroidMapRenderer {
   latest,
 
   /// Legacy renderer type.
+  @Deprecated('The legacy renderer is no longer supported by the Google Maps, '
+      'SDK, so requesting it will have no effect.')
   legacy,
 
   /// Requests the default map renderer type.
@@ -792,6 +794,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       position: _platformLatLngFromLatLng(marker.position),
       rotation: marker.rotation,
       visible: marker.visible,
+      // The deprecated paramater is used to avoid losing precision, since the
+      // Android SDK uses doubles.
+      // ignore: deprecated_member_use
       zIndex: marker.zIndex,
       markerId: marker.markerId.value,
       clusterManagerId: marker.clusterManagerId?.value,

@@ -570,6 +570,23 @@ enum SslErrorType {
   unknown,
 }
 
+/// Options for mixed content mode support.
+///
+/// See https://developer.android.com/reference/android/webkit/WebSettings#MIXED_CONTENT_ALWAYS_ALLOW
+enum MixedContentMode {
+  /// The WebView will allow a secure origin to load content from any other
+  /// origin, even if that origin is insecure.
+  alwaysAllow,
+
+  /// The WebView will attempt to be compatible with the approach of a modern
+  /// web browser with regard to mixed content.
+  compatibilityMode,
+
+  /// The WebView will not allow a secure origin to load content from an
+  /// insecure origin.
+  neverAllow,
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -588,6 +605,9 @@ class _PigeonCodec extends StandardMessageCodec {
       writeValue(buffer, value.index);
     } else if (value is SslErrorType) {
       buffer.putUint8(132);
+      writeValue(buffer, value.index);
+    } else if (value is MixedContentMode) {
+      buffer.putUint8(133);
       writeValue(buffer, value.index);
     } else {
       super.writeValue(buffer, value);
@@ -609,6 +629,9 @@ class _PigeonCodec extends StandardMessageCodec {
       case 132:
         final int? value = readValue(buffer) as int?;
         return value == null ? null : SslErrorType.values[value];
+      case 133:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : MixedContentMode.values[value];
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -2892,6 +2915,36 @@ class WebSettings extends PigeonInternalProxyApiBaseClass {
       );
     } else {
       return (pigeonVar_replyList[0] as String?)!;
+    }
+  }
+
+  /// Configures the WebView's behavior when handling mixed content.
+  Future<void> setMixedContentMode(MixedContentMode mode) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecWebSettings;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_android.WebSettings.setMixedContentMode';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, mode]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 
