@@ -75,7 +75,6 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final VideoViewType viewType = options.viewType;
 
     String? uri;
-    String? formatHint;
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
@@ -90,7 +89,6 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         );
       case DataSourceType.network:
         uri = dataSource.uri;
-        formatHint = _videoFormatStringMap[dataSource.formatHint];
       case DataSourceType.file:
         uri = dataSource.uri;
       case DataSourceType.contentUri:
@@ -102,7 +100,6 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final CreationOptions pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: dataSource.httpHeaders,
-      formatHint: formatHint,
       viewType: _platformVideoViewTypeFromVideoViewType(viewType),
     );
 
@@ -254,14 +251,6 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerInstanceApi? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
   }
-
-  static const Map<VideoFormat, String> _videoFormatStringMap =
-      <VideoFormat, String>{
-    VideoFormat.ss: 'ss',
-    VideoFormat.hls: 'hls',
-    VideoFormat.dash: 'dash',
-    VideoFormat.other: 'other',
-  };
 
   DurationRange _toDurationRange(dynamic value) {
     final List<dynamic> pair = value as List<dynamic>;

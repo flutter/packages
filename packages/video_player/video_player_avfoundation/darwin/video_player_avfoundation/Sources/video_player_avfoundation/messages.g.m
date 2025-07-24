@@ -78,12 +78,10 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 
 @implementation FVPCreationOptions
 + (instancetype)makeWithUri:(NSString *)uri
-                 formatHint:(nullable NSString *)formatHint
                 httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
                    viewType:(FVPPlatformVideoViewType)viewType {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
   pigeonResult.uri = uri;
-  pigeonResult.formatHint = formatHint;
   pigeonResult.httpHeaders = httpHeaders;
   pigeonResult.viewType = viewType;
   return pigeonResult;
@@ -91,9 +89,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 + (FVPCreationOptions *)fromList:(NSArray<id> *)list {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
   pigeonResult.uri = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.formatHint = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 2);
-  FVPPlatformVideoViewTypeBox *boxedFVPPlatformVideoViewType = GetNullableObjectAtIndex(list, 3);
+  pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 1);
+  FVPPlatformVideoViewTypeBox *boxedFVPPlatformVideoViewType = GetNullableObjectAtIndex(list, 2);
   pigeonResult.viewType = boxedFVPPlatformVideoViewType.value;
   return pigeonResult;
 }
@@ -103,7 +100,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     self.uri ?: [NSNull null],
-    self.formatHint ?: [NSNull null],
     self.httpHeaders ?: [NSNull null],
     [[FVPPlatformVideoViewTypeBox alloc] initWithValue:self.viewType],
   ];

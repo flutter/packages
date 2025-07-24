@@ -40,11 +40,9 @@ typedef NS_ENUM(NSUInteger, FVPPlatformVideoViewType) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithUri:(NSString *)uri
-                 formatHint:(nullable NSString *)formatHint
                 httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
                    viewType:(FVPPlatformVideoViewType)viewType;
 @property(nonatomic, copy) NSString *uri;
-@property(nonatomic, copy, nullable) NSString *formatHint;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
 @property(nonatomic, assign) FVPPlatformVideoViewType viewType;
 @end

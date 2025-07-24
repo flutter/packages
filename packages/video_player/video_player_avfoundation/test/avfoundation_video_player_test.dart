@@ -119,7 +119,6 @@ void main() {
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, uri);
-      expect(creationOptions.formatHint, 'dash');
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
@@ -232,7 +231,6 @@ void main() {
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, uri);
-      expect(creationOptions.formatHint, 'dash');
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],

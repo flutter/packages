@@ -40,7 +40,6 @@ class CreationOptions {
   });
 
   String uri;
-  String? formatHint;
   Map<String, String> httpHeaders;
   PlatformVideoViewType viewType;
 }
