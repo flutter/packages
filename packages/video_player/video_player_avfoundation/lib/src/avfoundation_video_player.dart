@@ -88,9 +88,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
           dataSource.package,
         );
       case DataSourceType.network:
-        uri = dataSource.uri;
       case DataSourceType.file:
-        uri = dataSource.uri;
       case DataSourceType.contentUri:
         uri = dataSource.uri;
     }
@@ -168,37 +166,33 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
-      switch (map['event']) {
-        case 'initialized':
-          return VideoEvent(
+      return switch (map['event']) {
+        'initialized' => VideoEvent(
             eventType: VideoEventType.initialized,
             duration: Duration(milliseconds: map['duration'] as int),
-            size: Size((map['width'] as num?)?.toDouble() ?? 0.0,
-                (map['height'] as num?)?.toDouble() ?? 0.0),
-          );
-        case 'completed':
-          return VideoEvent(
+            size: Size(
+              (map['width'] as num?)?.toDouble() ?? 0.0,
+              (map['height'] as num?)?.toDouble() ?? 0.0,
+            ),
+          ),
+        'completed' => VideoEvent(
             eventType: VideoEventType.completed,
-          );
-        case 'bufferingUpdate':
-          final List<dynamic> values = map['values'] as List<dynamic>;
-
-          return VideoEvent(
-            buffered: values.map<DurationRange>(_toDurationRange).toList(),
+          ),
+        'bufferingUpdate' => VideoEvent(
+            buffered: (map['values'] as List<dynamic>)
+                .map<DurationRange>(_toDurationRange)
+                .toList(),
             eventType: VideoEventType.bufferingUpdate,
-          );
-        case 'bufferingStart':
-          return VideoEvent(eventType: VideoEventType.bufferingStart);
-        case 'bufferingEnd':
-          return VideoEvent(eventType: VideoEventType.bufferingEnd);
-        case 'isPlayingStateUpdate':
-          return VideoEvent(
+          ),
+        'bufferingStart' =>
+          VideoEvent(eventType: VideoEventType.bufferingStart),
+        'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
+        'isPlayingStateUpdate' => VideoEvent(
             eventType: VideoEventType.isPlayingStateUpdate,
             isPlaying: map['isPlaying'] as bool,
-          );
-        default:
-          return VideoEvent(eventType: VideoEventType.unknown);
-      }
+          ),
+        _ => VideoEvent(eventType: VideoEventType.unknown),
+      };
     });
   }
 
