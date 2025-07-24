@@ -13,6 +13,7 @@ import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,10 +23,8 @@ public class CameraSelectorTest {
   @Test
   public void pigeon_defaultConstructor_createsCameraSelectorInstanceWithLensFacing() {
     final PigeonApiCameraSelector api = new TestProxyApiRegistrar().getPigeonApiCameraSelector();
-    final androidx.camera.core.CameraInfo cameraInfo = mock(CameraInfo.class);
-
     final CameraSelector selector =
-        api.pigeon_defaultConstructor(io.flutter.plugins.camerax.LensFacing.FRONT, cameraInfo);
+        api.pigeon_defaultConstructor(io.flutter.plugins.camerax.LensFacing.FRONT, null);
 
     assertEquals(selector.getLensFacing(), (Integer) CameraSelector.LENS_FACING_FRONT);
   }
@@ -34,17 +33,19 @@ public class CameraSelectorTest {
   public void pigeon_defaultConstructor_createsCameraSelectorInstanceWithCameraInfo() {
     final PigeonApiCameraSelector api = new TestProxyApiRegistrar().getPigeonApiCameraSelector();
     final androidx.camera.core.CameraInfo cameraInfo = mock(CameraInfo.class);
-    final List<androidx.camera.core.CameraInfo> cameraInfos =
-            Collections.singletonList(cameraInfo);
-    final List<androidx.camera.core.CameraInfo> value =
-            Collections.singletonList(cameraInfo);
+    final androidx.camera.core.CameraInfo cameraInfoToSelect = mock(CameraInfo.class);
 
-    final CameraSelector instance = mock(CameraSelector.class);
-    when(instance.filter(cameraInfos)).thenReturn(value);
+    final CameraSelector selector =
+            api.pigeon_defaultConstructor(null, cameraInfoToSelect);
 
-    List<androidx.camera.core.CameraInfo> filteredList = api.filter(instance, cameraInfos);
-    assertEquals(1, filteredList.size());
-    assertEquals(filteredList.get(0), cameraInfo);
+    final List<androidx.camera.core.CameraInfo> cameraInfosList =
+            new ArrayList<>();
+    cameraInfosList.add(cameraInfo);
+    cameraInfosList.add(cameraInfoToSelect);
+
+    final List<androidx.camera.core.CameraInfo> filteredCameraInfosList = selector.filter(new ArrayList<>(cameraInfosList));
+    assertEquals(1, filteredCameraInfosList.size());
+    assertEquals(cameraInfoToSelect, filteredCameraInfosList.get(0));
   }
 
   @Test

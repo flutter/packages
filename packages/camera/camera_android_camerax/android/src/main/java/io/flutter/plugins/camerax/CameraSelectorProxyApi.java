@@ -46,13 +46,7 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
     }
 
     if (cameraInfo != null){
-      builder.addCameraFilter(new CameraFilter(){
-        @NonNull
-        @Override
-        public List<CameraInfo> filter(@NonNull List<CameraInfo> cameraInfos){
-          return Arrays.asList(cameraInfo);
-        }
-      });
+      builder.addCameraFilter(cameraInfos -> java.util.Collections.singletonList(cameraInfo));
       return builder.build();
     }
     return builder.build();
