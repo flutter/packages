@@ -84,6 +84,7 @@ class CreateMessage {
     required this.uri,
     this.formatHint,
     required this.httpHeaders,
+    this.userAgent,
     this.viewType,
   });
 
@@ -93,10 +94,12 @@ class CreateMessage {
 
   Map<String, String> httpHeaders;
 
+  String? userAgent;
+
   PlatformVideoViewType? viewType;
 
   List<Object?> _toList() {
-    return <Object?>[uri, formatHint, httpHeaders, viewType];
+    return <Object?>[uri, formatHint, httpHeaders, userAgent, viewType];
   }
 
   Object encode() {
@@ -110,7 +113,8 @@ class CreateMessage {
       formatHint: result[1] as PlatformVideoFormat?,
       httpHeaders:
           (result[2] as Map<Object?, Object?>?)!.cast<String, String>(),
-      viewType: result[3] as PlatformVideoViewType?,
+      userAgent: result[3] as String?,
+      viewType: result[4] as PlatformVideoViewType?,
     );
   }
 

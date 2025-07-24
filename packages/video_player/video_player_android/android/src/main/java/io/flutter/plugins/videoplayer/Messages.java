@@ -200,6 +200,16 @@ public class Messages {
       this.httpHeaders = setterArg;
     }
 
+    private @Nullable String userAgent;
+
+    public @Nullable String getUserAgent() {
+      return userAgent;
+    }
+
+    public void setUserAgent(@Nullable String setterArg) {
+      this.userAgent = setterArg;
+    }
+
     private @Nullable PlatformVideoViewType viewType;
 
     public @Nullable PlatformVideoViewType getViewType() {
@@ -225,12 +235,13 @@ public class Messages {
       return uri.equals(that.uri)
           && Objects.equals(formatHint, that.formatHint)
           && httpHeaders.equals(that.httpHeaders)
+          && Objects.equals(userAgent, that.userAgent)
           && Objects.equals(viewType, that.viewType);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(uri, formatHint, httpHeaders, viewType);
+      return Objects.hash(uri, formatHint, httpHeaders, userAgent, viewType);
     }
 
     public static final class Builder {
@@ -259,6 +270,14 @@ public class Messages {
         return this;
       }
 
+      private @Nullable String userAgent;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setUserAgent(@Nullable String setterArg) {
+        this.userAgent = setterArg;
+        return this;
+      }
+
       private @Nullable PlatformVideoViewType viewType;
 
       @CanIgnoreReturnValue
@@ -272,6 +291,7 @@ public class Messages {
         pigeonReturn.setUri(uri);
         pigeonReturn.setFormatHint(formatHint);
         pigeonReturn.setHttpHeaders(httpHeaders);
+        pigeonReturn.setUserAgent(userAgent);
         pigeonReturn.setViewType(viewType);
         return pigeonReturn;
       }
@@ -279,10 +299,11 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(4);
+      ArrayList<Object> toListResult = new ArrayList<>(5);
       toListResult.add(uri);
       toListResult.add(formatHint);
       toListResult.add(httpHeaders);
+      toListResult.add(userAgent);
       toListResult.add(viewType);
       return toListResult;
     }
@@ -295,7 +316,9 @@ public class Messages {
       pigeonResult.setFormatHint((PlatformVideoFormat) formatHint);
       Object httpHeaders = pigeonVar_list.get(2);
       pigeonResult.setHttpHeaders((Map<String, String>) httpHeaders);
-      Object viewType = pigeonVar_list.get(3);
+      Object userAgent = pigeonVar_list.get(3);
+      pigeonResult.setUserAgent((String) userAgent);
+      Object viewType = pigeonVar_list.get(4);
       pigeonResult.setViewType((PlatformVideoViewType) viewType);
       return pigeonResult;
     }

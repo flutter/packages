@@ -151,6 +151,52 @@ void main() {
       expect(createMessage.httpHeaders, headers);
     });
 
+    test('create with network sets a default user agent', () async {
+      final (
+        AndroidVideoPlayer player,
+        MockAndroidVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(playerId: 1);
+      when(api.create(any)).thenAnswer((_) async => 2);
+
+      await player.create(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com',
+          httpHeaders: <String, String>{},
+        ),
+      );
+      final VerificationResult verification = verify(api.create(captureAny));
+      final CreateMessage createMessage =
+          verification.captured[0] as CreateMessage;
+      expect(createMessage.userAgent, 'ExoPlayer');
+    });
+
+    test('create with network uses user agent from headers', () async {
+      final (
+        AndroidVideoPlayer player,
+        MockAndroidVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(playerId: 1);
+      when(api.create(any)).thenAnswer((_) async => 2);
+
+      const String userAgent = 'Test User Agent';
+      const Map<String, String> headers = <String, String>{
+        'User-Agent': userAgent,
+      };
+      await player.create(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com',
+          httpHeaders: headers,
+        ),
+      );
+      final VerificationResult verification = verify(api.create(captureAny));
+      final CreateMessage createMessage =
+          verification.captured[0] as CreateMessage;
+      expect(createMessage.userAgent, userAgent);
+    });
+
     test('create with file', () async {
       final (
         AndroidVideoPlayer player,

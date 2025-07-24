@@ -31,6 +31,7 @@ class CreateMessage {
   String uri;
   PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
+  String? userAgent;
   PlatformVideoViewType? viewType;
 }
 
