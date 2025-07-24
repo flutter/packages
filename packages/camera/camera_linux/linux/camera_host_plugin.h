@@ -4,7 +4,6 @@
 
 #include <map>
 
-#include "camera_texture_image_event_handler.h"
 #include "flutter_linux/flutter_linux.h"
 #include "messages.g.h"
 

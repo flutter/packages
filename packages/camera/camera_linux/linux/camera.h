@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "camera_video_recorder_image_event_handler.h"
+#include "capture_pipeline.h"
 #include "flutter_linux/flutter_linux.h"
 #include "messages.g.h"
 
@@ -21,8 +22,7 @@ class Camera {
  public:
   int64_t camera_id;
   std::unique_ptr<Pylon::CInstantCamera> camera;
-  std::unique_ptr<class CameraTextureImageEventHandler>
-      cameraTextureImageEventHandler;
+  std::unique_ptr<CapturePipeline> capturePipeline;
   CameraLinuxCameraEventApi* cameraLinuxCameraEventApi;
   std::unique_ptr<CameraVideoRecorderImageEventHandler>
       cameraVideoRecorderImageEventHandler;
@@ -49,6 +49,13 @@ class Camera {
   void setExposureMode(CameraLinuxPlatformExposureMode mode);
   void setFocusMode(CameraLinuxPlatformFocusMode mode);
 
+  struct HDRFrame {
+    std::vector<uint8_t> buffer;
+    int width = 0;
+    int height = 0;
+    int exposure = 0;  // in microseconds
+  };
+
   // State
  public:
   CameraLinuxPlatformExposureMode exposure_mode;
@@ -67,30 +74,22 @@ class Camera {
   FlPluginRegistrar* registrar;
 };
 
-#define CAMERA_CONFIG_LOCK(code)                                              \
-  do {                                                                        \
-    bool wasGrabbing = camera->IsGrabbing();                                  \
-    if (!camera) {                                                            \
-      std::cerr << "Camera is not initialized." << std::endl;                 \
-      return;                                                                 \
-    }                                                                         \
-    if (wasGrabbing) {                                                        \
-      camera->StopGrabbing();                                                 \
-      camera->DeregisterImageEventHandler(                                    \
-          cameraTextureImageEventHandler.get());                              \
-      cameraTextureImageEventHandler.reset();                                 \
-    }                                                                         \
-    {code};                                                                   \
-    if (wasGrabbing) {                                                        \
-      cameraTextureImageEventHandler =                                        \
-          std::make_unique<CameraTextureImageEventHandler>(*this, registrar); \
-      camera->RegisterImageEventHandler(cameraTextureImageEventHandler.get(), \
-                                        Pylon::RegistrationMode_Append,       \
-                                        Pylon::Cleanup_None);                 \
-      camera->StartGrabbing(                                                  \
-          Pylon::GrabStrategy_LatestImages,                                   \
-          Pylon::EGrabLoop::GrabLoop_ProvidedByInstantCamera);                \
-    }                                                                         \
+#define CAMERA_CONFIG_LOCK(code)                                             \
+  do {                                                                       \
+    bool wasGrabbing = camera->IsGrabbing();                                 \
+    if (!camera) {                                                           \
+      std::cerr << "Camera is not initialized." << std::endl;                \
+      return;                                                                \
+    }                                                                        \
+    if (wasGrabbing) {                                                       \
+      capturePipeline->StopGrabbing();                                       \
+      capturePipeline.reset();                                               \
+    }                                                                        \
+    {code};                                                                  \
+    if (wasGrabbing) {                                                       \
+      capturePipeline = std::make_unique<CapturePipeline>(*this, registrar); \
+      capturePipeline->StartGrabbing();                                      \
+    }                                                                        \
   } while (0)
 
 #endif  // CAMERA_H_

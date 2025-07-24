@@ -70,9 +70,11 @@ set(PLUGIN_NAME "camera_linux_plugin")
 list(APPEND PLUGIN_SOURCES
   "camera_plugin.cpp"
   "camera_host_plugin.cpp"
-  "camera_texture_image_event_handler.cpp"
+ 
   "camera_video_recorder_image_event_handler.cpp"
   "camera.cpp"
+  "capture_pipeline.cpp"
+  "fl_lightx_texture_gl.cpp"
  
   "messages.g.cc"
 )

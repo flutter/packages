@@ -1,8 +1,9 @@
 #include "camera.h"
 
 #include <opencv2/opencv.hpp>
+#include <thread>
 
-#include "camera_texture_image_event_handler.h"
+#include "capture_pipeline.h"
 
 Camera::Camera(Pylon::IPylonDevice* device, int64_t camera_id,
                FlPluginRegistrar* registrar,
@@ -27,8 +28,7 @@ Camera::Camera(Pylon::IPylonDevice* device, int64_t camera_id,
 }
 
 Camera::~Camera() {
-  if (cameraTextureImageEventHandler && camera)
-    camera->DeregisterImageEventHandler(cameraTextureImageEventHandler.get());
+  if (capturePipeline && camera) camera->StopGrabbing();
   if (camera) {
     if (camera->IsGrabbing()) camera->StopGrabbing();
     if (camera->IsOpen()) camera->Close();
@@ -39,8 +39,11 @@ Camera::~Camera() {
 
 void Camera::initialize(CameraLinuxPlatformImageFormatGroup imageFormat) {
   imageFormatGroup = imageFormat;
-  cameraTextureImageEventHandler =
-      std::make_unique<CameraTextureImageEventHandler>(*this, registrar);
+  capturePipeline = std::make_unique<CapturePipeline>(*this, registrar);
+  if (camera->IsOpen()) {
+    camera->Close();
+  }
+
   camera->Open();
   GenApi::INodeMap& nodemap = camera->GetNodeMap();
   Pylon::CEnumParameter(nodemap, "DeviceLinkThroughputLimitMode")
@@ -50,26 +53,20 @@ void Camera::initialize(CameraLinuxPlatformImageFormatGroup imageFormat) {
   Pylon::CFloatParameter(nodemap, "AcquisitionFrameRate").TrySetValue(60.0);
   Pylon::CFloatParameter(nodemap, "ResultingFrameRate").TrySetValue(60.0);
   setImageFormatGroup(imageFormat);
-  Pylon::CEnumParameter(nodemap, "TriggerMode").SetValue("Off");
   Pylon::CIntegerParameter(nodemap, "Width").TrySetValue(width);
   Pylon::CIntegerParameter(nodemap, "Height").TrySetValue(height);
   Pylon::CIntegerParameter(nodemap, "OffsetX").TrySetValue(0);
   Pylon::CIntegerParameter(nodemap, "OffsetY").TrySetValue(0);
-  Pylon::CStringParameter(nodemap, "ExposureAuto").TrySetValue("Continuous");
+  Pylon::CStringParameter(nodemap, "ExposureAuto").TrySetValue("Off");
   Pylon::CBooleanParameter(nodemap, "ReverseY").TrySetValue(true);
   Pylon::CBooleanParameter(nodemap, "AutoFunctionROIUseBrightness")
-      .TrySetValue(true);
+      .TrySetValue(false);
   Pylon::CBooleanParameter(nodemap, "AutoFunctionROIUseWhiteBalance")
-      .TrySetValue(true);
+      .TrySetValue(false);
   Pylon::CEnumParameter(nodemap, "BslDefectPixelCorrectionMode")
       .TrySetValue("On");
 
-  camera->RegisterImageEventHandler(cameraTextureImageEventHandler.get(),
-                                    Pylon::RegistrationMode_Append,
-                                    Pylon::Cleanup_None);
-  camera->StartGrabbing(Pylon::GrabStrategy_LatestImages,
-                        Pylon::EGrabLoop::GrabLoop_ProvidedByInstantCamera);
-
+  capturePipeline->StartGrabbing();
   emitState();
 }
 
@@ -92,8 +89,8 @@ void Camera::setImageFormatGroup(
 }
 
 int64_t Camera::getTextureId() {
-  if (!cameraTextureImageEventHandler) return -1;
-  return cameraTextureImageEventHandler->get_texture_id();
+  if (!capturePipeline) return -1;
+  return capturePipeline->get_texture_id();
 }
 
 void Camera::takePicture(std::string filePath) {
@@ -150,6 +147,154 @@ void Camera::emitTextureId(int64_t textureId) const {
       cameraLinuxCameraEventApi, textureId, nullptr,
       camera_linux_camera_event_api_initialized_callback, nullptr);
 }
+
+// void Camera::startGrabbing() {
+//   GenApi::INodeMap& nodemap = camera->GetNodeMap();
+//   Pylon::CEnumParameter(nodemap, "TriggerSelector").SetValue("FrameStart");
+//   Pylon::CEnumParameter(nodemap, "TriggerMode").SetValue("On");
+//   Pylon::CEnumParameter(nodemap, "TriggerSource").SetValue("Software");
+
+//   // Manual grab loop with exposure bracketing
+//   cameraTextureImageEventHandler->OnImageEventHandlerRegistered(*camera);
+
+//   camera->StartGrabbing(Pylon::GrabStrategy_OneByOne,
+//                         Pylon::EGrabLoop::GrabLoop_ProvidedByUser);
+
+//   std::thread([this]() {
+//     double shortExposure = 1000.0;  // µs - initial value
+//     // double longExposure = 128000.0;  // µs
+//     // const double gain = 0.6;
+//     // const double targetBrightness = 120.0;  // target average
+//     // brightness
+
+//     // const double overblownTargetRatio = 0.01;  // 3%
+//     // const double overblownThreshold = 240.0;
+
+//     auto& nodemap = camera->GetNodeMap();
+//     // const double minExposure =
+//     //     Pylon::CFloatParameter(nodemap, "ExposureTime").GetMin();
+//     // const double maxExposure =
+//     //     Pylon::CFloatParameter(nodemap, "ExposureTime").GetMax();
+
+//     while (camera->IsGrabbing()) {
+//       // --- Short exposure ---
+//       Pylon::CFloatParameter(nodemap, "ExposureTime")
+//           .TrySetValue(shortExposure);
+//       camera->WaitForFrameTriggerReady(5000,
+//                                        Pylon::TimeoutHandling_ThrowException);
+//       camera->ExecuteSoftwareTrigger();
+
+//       Pylon::CGrabResultPtr shortResult;
+//       camera->RetrieveResult(5000, shortResult,
+//                              Pylon::TimeoutHandling_ThrowException);
+
+//       // if (shortResult && shortResult->GrabSucceeded()) {
+//       //   cameraTextureImageEventHandler->OnImageGrabbed(*camera,
+//       //   shortResult);
+
+//       //   // === Adjust short exposure for overblown % ===
+//       //   const int width = shortResult->GetWidth();
+//       //   const int height = shortResult->GetHeight();
+//       //   const uint8_t* buffer =
+//       //       static_cast<const uint8_t*>(shortResult->GetBuffer());
+
+//       //   const int cx = width / 2;
+//       //   const int cy = height / 2;
+//       //   const int radius = std::min(width, height) / 4;
+
+//       //   size_t overblown = 0;
+//       //   size_t total = 0;
+
+//       //   for (int y = 0; y < height; ++y) {
+//       //     for (int x = 0; x < width; ++x) {
+//       //       int dx = x - cx;
+//       //       int dy = y - cy;
+//       //       if (dx * dx + dy * dy <= radius * radius) {
+//       //         int index = (y * width + x) * 3;
+//       //         uint8_t r = buffer[index];
+//       //         uint8_t g = buffer[index + 1];
+//       //         uint8_t b = buffer[index + 2];
+//       //         double luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+//       //         if (luminance >= overblownThreshold) {
+//       //           overblown++;
+//       //         }
+//       //         total++;
+//       //       }
+//       //     }
+//       //   }
+
+//       //   if (total > 0) {
+//       //     double ratio = static_cast<double>(overblown) / total;
+//       //     double error = overblownTargetRatio - ratio;
+
+//       //     // Adjust short exposure proportionally
+//       //     double proposed =
+//       //         shortExposure * (1.0 + gain * error /
+//       //         overblownTargetRatio);
+//       //     shortExposure =
+//       //         std::max(minExposure, std::min(maxExposure, proposed));
+//       //   }
+//       // }
+
+//       // // --- Long exposure ---
+//       // Pylon::CFloatParameter(nodemap,
+//       // "ExposureTime").TrySetValue(longExposure);
+//       // camera->WaitForFrameTriggerReady(5000,
+//       // Pylon::TimeoutHandling_ThrowException);
+//       // camera->ExecuteSoftwareTrigger();
+
+//       // Pylon::CGrabResultPtr longResult;
+//       // camera->RetrieveResult(5000, longResult,
+//       //                        Pylon::TimeoutHandling_ThrowException);
+//       // if (longResult && longResult->GrabSucceeded()) {
+//       //   cameraTextureImageEventHandler->OnImageGrabbed(*camera,
+//       //   longResult);
+
+//       //   // === Adjust long exposure brightness as before ===
+//       //   const int width = longResult->GetWidth();
+//       //   const int height = longResult->GetHeight();
+//       //   const uint8_t* buffer =
+//       //       static_cast<const uint8_t*>(longResult->GetBuffer());
+
+//       //   const int cx = width / 2;
+//       //   const int cy = height / 2;
+//       //   const int radius = std::min(width, height) / 4;
+
+//       //   uint64_t sum = 0;
+//       //   size_t count = 0;
+
+//       //   for (int y = 0; y < height; ++y) {
+//       //     for (int x = 0; x < width; ++x) {
+//       //       int dx = x - cx;
+//       //       int dy = y - cy;
+//       //       if (dx * dx + dy * dy <= radius * radius) {
+//       //         int index = (y * width + x) * 3;
+//       //         uint8_t r = buffer[index];
+//       //         uint8_t g = buffer[index + 1];
+//       //         uint8_t b = buffer[index + 2];
+//       //         double luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+
+//       //         if (luminance > 10 && luminance < 240) {
+//       //           sum += luminance;
+//       //           count++;
+//       //         }
+//       //       }
+//       //     }
+//       //   }
+
+//       //   if (count > 0) {
+//       //     double avgBrightness = static_cast<double>(sum) / count;
+//       //     double error = targetBrightness - avgBrightness;
+//       //     double proposed =
+//       //         longExposure * (1.0 + gain * error / targetBrightness);
+//       //     longExposure = std::max(minExposure, std::min(maxExposure,
+//       //     proposed));
+//       //   }
+//       // }
+//     }
+//   }).detach();
+// }
 
 Camera& Camera::setResolutionPreset(
     CameraLinuxPlatformResolutionPreset preset) {
