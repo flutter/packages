@@ -67,7 +67,7 @@ final class AndroidImaSettings extends PlatformImaSettings {
     final ImaSdkSettings settings = await nativeSettingsFuture;
     await settings.setSessionId(sessionID);
   }
-g
+
   Future<ImaSdkSettings> _createSettings() async {
     final ImaSdkSettings settings =
         await ImaSdkFactory.instance.createImaSdkSettings();
