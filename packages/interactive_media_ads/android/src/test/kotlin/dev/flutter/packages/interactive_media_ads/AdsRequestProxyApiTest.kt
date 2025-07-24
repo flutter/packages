@@ -5,6 +5,7 @@
 package dev.flutter.packages.interactive_media_ads
 
 import com.google.ads.interactivemedia.v3.api.AdsRequest
+import com.google.ads.interactivemedia.v3.api.player.ContentProgressProvider
 import kotlin.test.Test
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -32,6 +33,17 @@ class AdsRequestProxyApiTest {
 
     api.setAdTagUrl(instance, "adTag?#")
     verify(instance).adTagUrl = "adTag?#"
+  }
+
+  @Test
+  fun setContentProgressProvider() {
+    val api = TestProxyApiRegistrar().getPigeonApiAdsRequest()
+
+    val instance = mock<AdsRequest>()
+    val mockProvider = mock<ContentProgressProvider>()
+    api.setContentProgressProvider(instance, mockProvider)
+
+    verify(instance).contentProgressProvider = mockProvider
   }
 
   @Test
