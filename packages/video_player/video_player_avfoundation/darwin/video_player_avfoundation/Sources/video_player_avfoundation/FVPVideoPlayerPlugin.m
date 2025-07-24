@@ -43,8 +43,6 @@
 #pragma mark -
 
 @interface FVPVideoPlayerPlugin ()
-@property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry> *registry;
-@property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger> *messenger;
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(nonatomic, strong) id<FVPDisplayLinkFactory> displayLinkFactory;
 @property(nonatomic, strong) id<FVPAVFactory> avFactory;
@@ -79,8 +77,6 @@
                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
-  _registry = [registrar textures];
-  _messenger = [registrar messenger];
   _registrar = registrar;
   _viewProvider = viewProvider;
   _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
@@ -108,13 +104,13 @@
 
   int64_t playerIdentifier;
   if (textureBasedPlayer) {
-    playerIdentifier = [self.registry registerTexture:textureBasedPlayer];
+    playerIdentifier = [self.registrar.textures registerTexture:textureBasedPlayer];
     [textureBasedPlayer setTextureIdentifier:playerIdentifier];
   } else {
     playerIdentifier = self.nextNonTexturePlayerIdentifier--;
   }
 
-  NSObject<FlutterBinaryMessenger> *messenger = self.messenger;
+  NSObject<FlutterBinaryMessenger> *messenger = self.registrar.messenger;
   NSString *channelSuffix = [NSString stringWithFormat:@"%lld", playerIdentifier];
   // Set up the player-specific API handler, and its onDispose unregistration.
   SetUpFVPVideoPlayerInstanceApiWithSuffix(messenger, player, channelSuffix);
@@ -123,7 +119,7 @@
   player.onDisposed = ^() {
     SetUpFVPVideoPlayerInstanceApiWithSuffix(messenger, nil, channelSuffix);
     if (isTextureBased) {
-      [weakSelf.registry unregisterTexture:playerIdentifier];
+      [weakSelf.registrar.textures unregisterTexture:playerIdentifier];
     }
   };
   // Set up the event channel.
@@ -211,7 +207,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 
 - (nullable FVPTextureBasedVideoPlayer *)texturePlayerWithOptions:
     (nonnull FVPCreationOptions *)options {
-  FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:_registry];
+  FVPFrameUpdater *frameUpdater =
+      [[FVPFrameUpdater alloc] initWithRegistry:self.registrar.textures];
   NSObject<FVPDisplayLink> *displayLink =
       [self.displayLinkFactory displayLinkWithRegistrar:_registrar
                                                callback:^() {
