@@ -29,14 +29,11 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
                       AVCaptureAudioDataOutputSampleBufferDelegate>
 
 @property(readonly, nonatomic) int64_t textureId;
-@property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
-@property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 
 @property(readonly, nonatomic) CGSize captureSize;
 @property(strong, nonatomic)
     NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
-@property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
 /// The queue on which captured photos (not videos) are written to disk.
@@ -47,8 +44,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
-@property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
-@property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
 /// Reports the given error message to the Dart side of the plugin.
 ///
 /// Can be called from any thread.
@@ -412,57 +407,6 @@ NSString *const errorMethod = @"error";
   return bestFormat;
 }
 
-/// Main logic to setup the video recording.
-- (void)setUpVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion {
-  NSError *error;
-  _videoRecordingPath = [self getTemporaryFilePathWithExtension:@"mp4"
-                                                      subfolder:@"videos"
-                                                         prefix:@"REC_"
-                                                          error:&error];
-  if (error) {
-    completion(FlutterErrorFromNSError(error));
-    return;
-  }
-  if (![self setupWriterForPath:_videoRecordingPath]) {
-    completion([FlutterError errorWithCode:@"IOError" message:@"Setup Writer Failed" details:nil]);
-    return;
-  }
-  // startWriting should not be called in didOutputSampleBuffer where it can cause state
-  // in which _isRecording is YES but _videoWriter.status is AVAssetWriterStatusUnknown
-  // in stopVideoRecording if it is called after startVideoRecording but before
-  // didOutputSampleBuffer had chance to call startWriting and lag at start of video
-  // https://github.com/flutter/flutter/issues/132016
-  // https://github.com/flutter/flutter/issues/151319
-  [_videoWriter startWriting];
-  _isFirstVideoSample = YES;
-  _isRecording = YES;
-  _isRecordingPaused = NO;
-  _videoTimeOffset = CMTimeMake(0, 1);
-  _audioTimeOffset = CMTimeMake(0, 1);
-  _videoIsDisconnected = NO;
-  _audioIsDisconnected = NO;
-  completion(nil);
-}
-
-- (void)startVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion
-                    messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
-  if (!_isRecording) {
-    if (messenger != nil) {
-      [self startImageStreamWithMessenger:messenger
-                               completion:^(FlutterError *_Nullable error) {
-                                 [self setUpVideoRecordingWithCompletion:completion];
-                               }];
-      return;
-    }
-
-    [self setUpVideoRecordingWithCompletion:completion];
-  } else {
-    completion([FlutterError errorWithCode:@"Error"
-                                   message:@"Video is already recording"
-                                   details:nil]);
-  }
-}
-
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                            completion:(void (^)(FlutterError *))completion {
   [self startImageStreamWithMessenger:messenger
@@ -508,91 +452,6 @@ NSString *const errorMethod = @"error";
     [self reportErrorMessage:@"Images from camera are already streaming!"];
     completion(nil);
   }
-}
-
-- (BOOL)setupWriterForPath:(NSString *)path {
-  NSError *error = nil;
-  NSURL *outputURL;
-  if (path != nil) {
-    outputURL = [NSURL fileURLWithPath:path];
-  } else {
-    return NO;
-  }
-
-  [self setUpCaptureSessionForAudioIfNeeded];
-
-  _videoWriter = _assetWriterFactory(outputURL, AVFileTypeMPEG4, &error);
-
-  NSParameterAssert(_videoWriter);
-  if (error) {
-    [self reportErrorMessage:error.description];
-    return NO;
-  }
-
-  NSMutableDictionary<NSString *, id> *videoSettings = [[_mediaSettingsAVWrapper
-      recommendedVideoSettingsForAssetWriterWithFileType:AVFileTypeMPEG4
-                                               forOutput:_captureVideoOutput] mutableCopy];
-
-  if (_mediaSettings.videoBitrate || _mediaSettings.framesPerSecond) {
-    NSMutableDictionary *compressionProperties = [[NSMutableDictionary alloc] init];
-
-    if (_mediaSettings.videoBitrate) {
-      compressionProperties[AVVideoAverageBitRateKey] = _mediaSettings.videoBitrate;
-    }
-
-    if (_mediaSettings.framesPerSecond) {
-      compressionProperties[AVVideoExpectedSourceFrameRateKey] = _mediaSettings.framesPerSecond;
-    }
-
-    videoSettings[AVVideoCompressionPropertiesKey] = compressionProperties;
-  }
-
-  _videoWriterInput =
-      [_mediaSettingsAVWrapper assetWriterVideoInputWithOutputSettings:videoSettings];
-
-  _videoAdaptor = _inputPixelBufferAdaptorFactory(
-      _videoWriterInput, @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)});
-
-  NSParameterAssert(_videoWriterInput);
-
-  _videoWriterInput.expectsMediaDataInRealTime = YES;
-
-  // Add the audio input
-  if (_mediaSettings.enableAudio) {
-    AudioChannelLayout acl;
-    bzero(&acl, sizeof(acl));
-    acl.mChannelLayoutTag = kAudioChannelLayoutTag_Mono;
-    NSMutableDictionary *audioOutputSettings = [@{
-      AVFormatIDKey : [NSNumber numberWithInt:kAudioFormatMPEG4AAC],
-      AVSampleRateKey : [NSNumber numberWithFloat:44100.0],
-      AVNumberOfChannelsKey : [NSNumber numberWithInt:1],
-      AVChannelLayoutKey : [NSData dataWithBytes:&acl length:sizeof(acl)],
-    } mutableCopy];
-
-    if (_mediaSettings.audioBitrate) {
-      audioOutputSettings[AVEncoderBitRateKey] = _mediaSettings.audioBitrate;
-    }
-
-    _audioWriterInput =
-        [_mediaSettingsAVWrapper assetWriterAudioInputWithOutputSettings:audioOutputSettings];
-
-    _audioWriterInput.expectsMediaDataInRealTime = YES;
-
-    [_mediaSettingsAVWrapper addInput:_audioWriterInput toAssetWriter:_videoWriter];
-    [_audioOutput setSampleBufferDelegate:self queue:_captureSessionQueue];
-  }
-
-  if (self.flashMode == FCPPlatformFlashModeTorch) {
-    [self.captureDevice lockForConfiguration:nil];
-    [self.captureDevice setTorchMode:AVCaptureTorchModeOn];
-    [self.captureDevice unlockForConfiguration];
-  }
-
-  [_mediaSettingsAVWrapper addInput:_videoWriterInput toAssetWriter:_videoWriter];
-
-  [_captureVideoOutput setSampleBufferDelegate:self queue:_captureSessionQueue];
-
-  return YES;
 }
 
 // This function, although slightly modified, is also in video_player_avfoundation.
