@@ -63,6 +63,10 @@ NSObject<FlutterMessageCodec> *FVPGetMessagesCodec(void);
                                    error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)disposePlayer:(NSInteger)playerId error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setMixWithOthers:(BOOL)mixWithOthers error:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable NSString *)fileURLForAssetWithName:(NSString *)asset
+                                       package:(nullable NSString *)package
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPAVFoundationVideoPlayerApi(

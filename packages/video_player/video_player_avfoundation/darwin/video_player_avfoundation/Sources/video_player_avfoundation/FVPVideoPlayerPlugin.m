@@ -218,50 +218,30 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                                  [frameUpdater displayLinkFired];
                                                }];
 
-  if (options.asset) {
-    NSString *assetPath = [self assetPathFromCreationOptions:options];
-    return [[FVPTextureBasedVideoPlayer alloc] initWithAsset:assetPath
-                                                frameUpdater:frameUpdater
-                                                 displayLink:displayLink
-                                                   avFactory:self.avFactory
-                                                viewProvider:self.viewProvider];
-  } else if (options.uri) {
-    return [[FVPTextureBasedVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
-                                              frameUpdater:frameUpdater
-                                               displayLink:displayLink
-                                               httpHeaders:options.httpHeaders
-                                                 avFactory:self.avFactory
-                                              viewProvider:self.viewProvider];
+  NSString *stringURI =
+      options.asset != nil ? [self assetURLFromCreationOptions:options] : options.uri;
+  if (!stringURI) {
+    return nil;
   }
-
-  return nil;
+  return [[FVPTextureBasedVideoPlayer alloc] initWithURL:[NSURL URLWithString:stringURI]
+                                            frameUpdater:frameUpdater
+                                             displayLink:displayLink
+                                             httpHeaders:options.httpHeaders
+                                               avFactory:self.avFactory
+                                            viewProvider:self.viewProvider];
 }
 
 - (nullable FVPVideoPlayer *)platformViewPlayerWithOptions:(nonnull FVPCreationOptions *)options {
   // FVPVideoPlayer contains all required logic for platform views.
-  if (options.asset) {
-    NSString *assetPath = [self assetPathFromCreationOptions:options];
-    return [[FVPVideoPlayer alloc] initWithAsset:assetPath
-                                       avFactory:self.avFactory
-                                    viewProvider:self.viewProvider];
-  } else if (options.uri) {
-    return [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
-                                   httpHeaders:options.httpHeaders
-                                     avFactory:self.avFactory
-                                  viewProvider:self.viewProvider];
+  NSString *stringURI =
+      options.asset != nil ? [self assetURLFromCreationOptions:options] : options.uri;
+  if (!stringURI) {
+    return nil;
   }
-
-  return nil;
-}
-
-- (NSString *)assetPathFromCreationOptions:(nonnull FVPCreationOptions *)options {
-  NSString *assetPath;
-  if (options.packageName) {
-    assetPath = [self.registrar lookupKeyForAsset:options.asset fromPackage:options.packageName];
-  } else {
-    assetPath = [self.registrar lookupKeyForAsset:options.asset];
-  }
-  return assetPath;
+  return [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
+                                 httpHeaders:options.httpHeaders
+                                   avFactory:self.avFactory
+                                viewProvider:self.viewProvider];
 }
 
 - (void)disposePlayer:(NSInteger)playerIdentifier error:(FlutterError **)error {
@@ -284,6 +264,30 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                 AVAudioSessionCategoryOptionMixWithOthers);
   }
 #endif
+}
+
+- (nullable NSString *)fileURLForAssetWithName:(NSString *)asset
+                                       package:(nullable NSString *)package
+                                         error:(FlutterError *_Nullable *_Nonnull)error {
+  NSString *resource = package == nil
+                           ? [self.registrar lookupKeyForAsset:asset]
+                           : [self.registrar lookupKeyForAsset:asset fromPackage:package];
+
+  NSString *path = [[NSBundle mainBundle] pathForResource:resource ofType:nil];
+#if TARGET_OS_OSX
+  // See https://github.com/flutter/flutter/issues/135302
+  // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
+  if (!path) {
+    path = [NSURL URLWithString:assetName relativeToURL:NSBundle.mainBundle.bundleURL].path;
+  }
+#endif
+
+  return [NSURL fileURLWithPath:path].absoluteString;
+}
+
+- (NSString *)assetURLFromCreationOptions:(nonnull FVPCreationOptions *)options {
+  FlutterError *error;
+  return [self fileURLForAssetWithName:options.asset package:options.packageName error:&error];
 }
 
 @end
