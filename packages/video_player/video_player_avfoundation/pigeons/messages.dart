@@ -34,13 +34,12 @@ class PlatformVideoViewCreationParams {
 
 class CreationOptions {
   CreationOptions({
+    required this.uri,
     required this.httpHeaders,
     required this.viewType,
   });
 
-  String? asset;
-  String? uri;
-  String? packageName;
+  String uri;
   String? formatHint;
   Map<String, String> httpHeaders;
   PlatformVideoViewType viewType;

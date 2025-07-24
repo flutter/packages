@@ -218,12 +218,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                                  [frameUpdater displayLinkFired];
                                                }];
 
-  NSString *stringURI =
-      options.asset != nil ? [self assetURLFromCreationOptions:options] : options.uri;
-  if (!stringURI) {
-    return nil;
-  }
-  return [[FVPTextureBasedVideoPlayer alloc] initWithURL:[NSURL URLWithString:stringURI]
+  return [[FVPTextureBasedVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                             frameUpdater:frameUpdater
                                              displayLink:displayLink
                                              httpHeaders:options.httpHeaders
@@ -233,11 +228,6 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 
 - (nullable FVPVideoPlayer *)platformViewPlayerWithOptions:(nonnull FVPCreationOptions *)options {
   // FVPVideoPlayer contains all required logic for platform views.
-  NSString *stringURI =
-      options.asset != nil ? [self assetURLFromCreationOptions:options] : options.uri;
-  if (!stringURI) {
-    return nil;
-  }
   return [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                  httpHeaders:options.httpHeaders
                                    avFactory:self.avFactory
@@ -283,11 +273,6 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 #endif
 
   return [NSURL fileURLWithPath:path].absoluteString;
-}
-
-- (NSString *)assetURLFromCreationOptions:(nonnull FVPCreationOptions *)options {
-  FlutterError *error;
-  return [self fileURLForAssetWithName:options.asset package:options.packageName error:&error];
 }
 
 @end

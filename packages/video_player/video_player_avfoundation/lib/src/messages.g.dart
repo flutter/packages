@@ -84,19 +84,13 @@ class PlatformVideoViewCreationParams {
 
 class CreationOptions {
   CreationOptions({
-    this.asset,
-    this.uri,
-    this.packageName,
+    required this.uri,
     this.formatHint,
     required this.httpHeaders,
     required this.viewType,
   });
 
-  String? asset;
-
-  String? uri;
-
-  String? packageName;
+  String uri;
 
   String? formatHint;
 
@@ -106,9 +100,7 @@ class CreationOptions {
 
   List<Object?> _toList() {
     return <Object?>[
-      asset,
       uri,
-      packageName,
       formatHint,
       httpHeaders,
       viewType,
@@ -122,13 +114,11 @@ class CreationOptions {
   static CreationOptions decode(Object result) {
     result as List<Object?>;
     return CreationOptions(
-      asset: result[0] as String?,
-      uri: result[1] as String?,
-      packageName: result[2] as String?,
-      formatHint: result[3] as String?,
+      uri: result[0]! as String,
+      formatHint: result[1] as String?,
       httpHeaders:
-          (result[4] as Map<Object?, Object?>?)!.cast<String, String>(),
-      viewType: result[5]! as PlatformVideoViewType,
+          (result[2] as Map<Object?, Object?>?)!.cast<String, String>(),
+      viewType: result[3]! as PlatformVideoViewType,
     );
   }
 

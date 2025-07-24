@@ -75,6 +75,11 @@ void main() {
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
+      const String assetUrl = 'file:///some/asset/path';
+      when(
+        api.getAssetUrl(asset, package),
+      ).thenAnswer((_) async => assetUrl);
+
       final int? playerId = await player.create(
         DataSource(
           sourceType: DataSourceType.asset,
@@ -86,8 +91,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
-      expect(creationOptions.asset, asset);
-      expect(creationOptions.packageName, package);
+      expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
           const VideoPlayerTextureViewState(textureId: newPlayerId));
@@ -114,9 +118,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
-      expect(creationOptions.asset, null);
       expect(creationOptions.uri, uri);
-      expect(creationOptions.packageName, null);
       expect(creationOptions.formatHint, 'dash');
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
@@ -181,6 +183,10 @@ void main() {
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
+      const String assetUrl = 'file:///some/asset/path';
+      when(
+        api.getAssetUrl(asset, package),
+      ).thenAnswer((_) async => assetUrl);
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -195,8 +201,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
-      expect(creationOptions.asset, asset);
-      expect(creationOptions.packageName, package);
+      expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
           const VideoPlayerTextureViewState(textureId: newPlayerId));
@@ -226,9 +231,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
-      expect(creationOptions.asset, null);
       expect(creationOptions.uri, uri);
-      expect(creationOptions.packageName, null);
       expect(creationOptions.formatHint, 'dash');
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);

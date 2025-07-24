@@ -39,15 +39,11 @@ typedef NS_ENUM(NSUInteger, FVPPlatformVideoViewType) {
 @interface FVPCreationOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithAsset:(nullable NSString *)asset
-                          uri:(nullable NSString *)uri
-                  packageName:(nullable NSString *)packageName
-                   formatHint:(nullable NSString *)formatHint
-                  httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
-                     viewType:(FVPPlatformVideoViewType)viewType;
-@property(nonatomic, copy, nullable) NSString *asset;
-@property(nonatomic, copy, nullable) NSString *uri;
-@property(nonatomic, copy, nullable) NSString *packageName;
++ (instancetype)makeWithUri:(NSString *)uri
+                 formatHint:(nullable NSString *)formatHint
+                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
+                   viewType:(FVPPlatformVideoViewType)viewType;
+@property(nonatomic, copy) NSString *uri;
 @property(nonatomic, copy, nullable) NSString *formatHint;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
 @property(nonatomic, assign) FVPPlatformVideoViewType viewType;

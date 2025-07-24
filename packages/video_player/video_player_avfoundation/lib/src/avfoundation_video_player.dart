@@ -74,29 +74,34 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final DataSource dataSource = options.dataSource;
     final VideoViewType viewType = options.viewType;
 
-    String? asset;
-    String? packageName;
     String? uri;
     String? formatHint;
-    Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
-        asset = dataSource.asset;
-        packageName = dataSource.package;
+        final String? asset = dataSource.asset;
+        if (asset == null) {
+          throw ArgumentError(
+            '"asset" must be non-null for an asset data source',
+          );
+        }
+        uri = await _api.getAssetUrl(
+          asset,
+          dataSource.package,
+        );
       case DataSourceType.network:
         uri = dataSource.uri;
         formatHint = _videoFormatStringMap[dataSource.formatHint];
-        httpHeaders = dataSource.httpHeaders;
       case DataSourceType.file:
         uri = dataSource.uri;
       case DataSourceType.contentUri:
         uri = dataSource.uri;
     }
+    if (uri == null) {
+      throw ArgumentError('Unable to construct a video asset from $options');
+    }
     final CreationOptions pigeonCreationOptions = CreationOptions(
-      asset: asset,
-      packageName: packageName,
       uri: uri,
-      httpHeaders: httpHeaders,
+      httpHeaders: dataSource.httpHeaders,
       formatHint: formatHint,
       viewType: _platformVideoViewTypeFromVideoViewType(viewType),
     );
