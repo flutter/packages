@@ -175,39 +175,36 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       dynamic event,
     ) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
-      switch (map['event']) {
-        case 'initialized':
-          return VideoEvent(
-            eventType: VideoEventType.initialized,
-            duration: Duration(milliseconds: map['duration'] as int),
-            size: Size(
-              (map['width'] as num?)?.toDouble() ?? 0.0,
-              (map['height'] as num?)?.toDouble() ?? 0.0,
+      return switch (map['event']) {
+        'initialized' => VideoEvent(
+          eventType: VideoEventType.initialized,
+          duration: Duration(milliseconds: map['duration'] as int),
+          size: Size(
+            (map['width'] as num?)?.toDouble() ?? 0.0,
+            (map['height'] as num?)?.toDouble() ?? 0.0,
+          ),
+          rotationCorrection: map['rotationCorrection'] as int? ?? 0,
+        ),
+        'completed' => VideoEvent(eventType: VideoEventType.completed),
+        'bufferingUpdate' => VideoEvent(
+          eventType: VideoEventType.bufferingUpdate,
+          buffered: <DurationRange>[
+            DurationRange(
+              Duration.zero,
+              Duration(milliseconds: map['position'] as int),
             ),
-            rotationCorrection: map['rotationCorrection'] as int? ?? 0,
-          );
-        case 'completed':
-          return VideoEvent(eventType: VideoEventType.completed);
-        case 'bufferingUpdate':
-          final int position = map['position']! as int;
-          return VideoEvent(
-            eventType: VideoEventType.bufferingUpdate,
-            buffered: <DurationRange>[
-              DurationRange(Duration.zero, Duration(milliseconds: position)),
-            ],
-          );
-        case 'bufferingStart':
-          return VideoEvent(eventType: VideoEventType.bufferingStart);
-        case 'bufferingEnd':
-          return VideoEvent(eventType: VideoEventType.bufferingEnd);
-        case 'isPlayingStateUpdate':
-          return VideoEvent(
-            eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: map['isPlaying'] as bool,
-          );
-        default:
-          return VideoEvent(eventType: VideoEventType.unknown);
-      }
+          ],
+        ),
+        'bufferingStart' => VideoEvent(
+          eventType: VideoEventType.bufferingStart,
+        ),
+        'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
+        'isPlayingStateUpdate' => VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: map['isPlaying'] as bool,
+        ),
+        _ => VideoEvent(eventType: VideoEventType.unknown),
+      };
     });
   }
 
