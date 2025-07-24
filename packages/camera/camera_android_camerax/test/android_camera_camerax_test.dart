@@ -1934,8 +1934,8 @@ void main() {
   );
 
   test(
-    'createCamera properly selects specific camera by specifying a CameraInfo',
-        () async {
+    'createCamera properly selects specific back camera by specifying a CameraInfo',
+    () async {
       // Arrange
       final AndroidCameraCameraX camera = AndroidCameraCameraX();
       final List<dynamic> returnData = <dynamic>[
@@ -1946,24 +1946,33 @@ void main() {
         },
         <String, dynamic>{
           'name': 'Camera 1',
+          'lensFacing': 'back',
+          'sensorOrientation': 0,
+        },
+        <String, dynamic>{
+          'name': 'Camera 2',
           'lensFacing': 'front',
-          'sensorOrientation': 90,
+          'sensorOrientation': 0,
         },
       ];
 
-      final List<dynamic> cameraInfoList = <dynamic>[];
+      List<MockCameraInfo> mockCameraInfosList = <MockCameraInfo>[];
+      final Map<String, MockCameraInfo?> cameraNameToInfos =
+          <String, MockCameraInfo?>{};
 
-      const int testSensorOrientation = 90;
+      const int testSensorOrientation = 0;
 
       // Mocks for objects created by availableCameras.
       final MockProcessCameraProvider mockProcessCameraProvider =
-      MockProcessCameraProvider();
+          MockProcessCameraProvider();
       final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
       final MockCameraSelector mockBackCameraSelector = MockCameraSelector();
-      final MockCameraSelector mockChosenCameraInfoCameraSelector = MockCameraSelector();
-      final MockCameraInfo mockFrontCameraInfo = MockCameraInfo();
-      final MockCameraInfo mockBackCameraInfo = MockCameraInfo();
+      final MockCameraSelector mockChosenCameraInfoCameraSelector =
+          MockCameraSelector();
 
+      final MockCameraInfo mockFrontCameraInfo = MockCameraInfo();
+      final MockCameraInfo mockBackCameraInfoOne = MockCameraInfo();
+      final MockCameraInfo mockBackCameraInfoTwo = MockCameraInfo();
 
       // Mock/Detached objects for (typically attached) objects created by
       // createCamera.
@@ -1976,28 +1985,26 @@ void main() {
       final MockCameraInfo mockCameraInfo = MockCameraInfo();
       final MockCameraControl mockCameraControl = MockCameraControl();
       final MockCamera2CameraInfo mockCamera2CameraInfo =
-      MockCamera2CameraInfo();
+          MockCamera2CameraInfo();
       final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
-      MockCameraCharacteristicsKey();
+          MockCameraCharacteristicsKey();
 
       // Tell plugin to create mock/detached objects and stub method calls for the
       // testing of availableCameras and createCamera.
       camera.proxy = CameraXProxy(
         setUpGenericsProxy:
             ({
-          BinaryMessenger? pigeonBinaryMessenger,
-          PigeonInstanceManager? pigeonInstanceManager,
-        }) {},
-        getInstanceProcessCameraProvider:
-            ({
+              BinaryMessenger? pigeonBinaryMessenger,
+              PigeonInstanceManager? pigeonInstanceManager,
+            }) {},
+        getInstanceProcessCameraProvider: ({
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
-
-              return Future<ProcessCameraProvider>.value(mockProcessCameraProvider);
-          },
+          return Future<ProcessCameraProvider>.value(mockProcessCameraProvider);
+        },
         newCameraSelector: ({
           LensFacing? requireLensFacing,
           CameraInfo? cameraInfo,
@@ -2135,7 +2142,7 @@ void main() {
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
           final MockDeviceOrientationManager manager =
-          MockDeviceOrientationManager();
+              MockDeviceOrientationManager();
           when(manager.getUiOrientation()).thenAnswer((_) async {
             return 'PORTRAIT_UP';
           });
@@ -2199,44 +2206,59 @@ void main() {
       );
 
       // Mock calls to native platform
-      when(mockProcessCameraProvider.getAvailableCameraInfos()).thenAnswer(
-            (_) async => <MockCameraInfo>[mockBackCameraInfo, mockFrontCameraInfo],
-      );
+      when(mockProcessCameraProvider.getAvailableCameraInfos()).thenAnswer((
+        _,
+      ) async {
+        mockCameraInfosList = <MockCameraInfo>[
+          mockBackCameraInfoOne,
+          mockBackCameraInfoTwo,
+          mockFrontCameraInfo,
+        ];
+        return <MockCameraInfo>[
+          mockBackCameraInfoOne,
+          mockBackCameraInfoTwo,
+          mockFrontCameraInfo,
+        ];
+      });
+      when(
+        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfoOne]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfoOne]);
+      when(
+        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfoTwo]),
+      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfoTwo]);
       when(
         mockBackCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
       ).thenAnswer((_) async => <MockCameraInfo>[]);
       when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
+        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfoOne]),
+      ).thenAnswer((_) async => <MockCameraInfo>[]);
       when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
+        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfoTwo]),
       ).thenAnswer((_) async => <MockCameraInfo>[]);
       when(
         mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
       ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
-      when(mockBackCameraInfo.sensorRotationDegrees).thenReturn(0);
-      when(mockFrontCameraInfo.sensorRotationDegrees).thenReturn(90);
-
 
       final List<CameraDescription> cameraDescriptions =
-      await camera.availableCameras();
-
+          await camera.availableCameras();
       expect(cameraDescriptions.length, returnData.length);
+
       for (int i = 0; i < returnData.length; i++) {
-
-        // Lists
         final Map<String, Object?> savedData =
-        (returnData[i] as Map<dynamic, dynamic>).cast<String, Object?>();
+            (returnData[i] as Map<dynamic, dynamic>).cast<String, Object?>();
 
+        cameraNameToInfos[savedData['name']! as String] =
+            mockCameraInfosList[i];
         final CameraDescription cameraDescription = CameraDescription(
           name: savedData['name']! as String,
           lensDirection:
-          (savedData['lensFacing']! as String) == 'front'
-              ? CameraLensDirection.front
-              : CameraLensDirection.back,
+              (savedData['lensFacing']! as String) == 'front'
+                  ? CameraLensDirection.front
+                  : CameraLensDirection.back,
           sensorOrientation: savedData['sensorOrientation']! as int,
         );
         expect(cameraDescriptions[i], cameraDescription);
+        expect(cameraNameToInfos.containsKey(cameraDescription.name), isTrue);
       }
 
       when(
@@ -2266,7 +2288,7 @@ void main() {
         ),
       );
 
-      // Verify CameraSelector is set with chosen camera based on camerainfo.
+      // Verify CameraSelector is chosen based on specified cameraInfo.
       expect(camera.cameraSelector, equals(mockChosenCameraInfoCameraSelector));
     },
   );
