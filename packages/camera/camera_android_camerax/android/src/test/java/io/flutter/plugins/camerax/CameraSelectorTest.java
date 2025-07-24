@@ -8,14 +8,10 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import androidx.camera.core.CameraFilter;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
-
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import org.junit.Test;
 
@@ -35,15 +31,14 @@ public class CameraSelectorTest {
     final androidx.camera.core.CameraInfo cameraInfo = mock(CameraInfo.class);
     final androidx.camera.core.CameraInfo cameraInfoToSelect = mock(CameraInfo.class);
 
-    final CameraSelector selector =
-            api.pigeon_defaultConstructor(null, cameraInfoToSelect);
+    final CameraSelector selector = api.pigeon_defaultConstructor(null, cameraInfoToSelect);
 
-    final List<androidx.camera.core.CameraInfo> cameraInfosList =
-            new ArrayList<>();
+    final List<androidx.camera.core.CameraInfo> cameraInfosList = new ArrayList<>();
     cameraInfosList.add(cameraInfo);
     cameraInfosList.add(cameraInfoToSelect);
 
-    final List<androidx.camera.core.CameraInfo> filteredCameraInfosList = selector.filter(new ArrayList<>(cameraInfosList));
+    final List<androidx.camera.core.CameraInfo> filteredCameraInfosList =
+        selector.filter(new ArrayList<>(cameraInfosList));
     assertEquals(1, filteredCameraInfosList.size());
     assertEquals(cameraInfoToSelect, filteredCameraInfosList.get(0));
   }

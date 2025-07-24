@@ -267,7 +267,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   late bool enableRecordingAudio;
 
   /// A map to associate a [CameraInfo] with its camera name.
-  Map<String, CameraInfo> savedCameras = <String,CameraInfo>{};
+  Map<String, CameraInfo> savedCameras = <String, CameraInfo>{};
 
   /// Returns list of all available cameras and their descriptions.
   @override
@@ -369,9 +369,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final LensFacing cameraSelectorLensDirection =
         _getCameraSelectorLensDirection(cameraDescription.lensDirection);
     cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
-    cameraSelector = proxy.newCameraSelector(
-      cameraInfo: chosenCameraInfo,
-    );
+    cameraSelector = proxy.newCameraSelector(cameraInfo: chosenCameraInfo);
     // Start listening for device orientation changes preceding camera creation.
     unawaited(
       deviceOrientationManager.startListeningForDeviceOrientationChange(),
