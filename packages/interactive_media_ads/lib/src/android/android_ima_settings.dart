@@ -18,7 +18,7 @@ final class AndroidImaSettings extends PlatformImaSettings {
   ///
   /// Defines general SDK settings that are used when creating an `AdsLoader`.
   @internal
-  late final Future<ImaSdkSettings> nativeSettingsFuture = _initSettings();
+  late final Future<ImaSdkSettings> nativeSettingsFuture = _createSettings();
 
   @override
   Future<void> setAutoPlayAdBreaks(bool autoPlayAdBreaks) async {
@@ -67,8 +67,8 @@ final class AndroidImaSettings extends PlatformImaSettings {
     final ImaSdkSettings settings = await nativeSettingsFuture;
     await settings.setSessionId(sessionID);
   }
-
-  Future<ImaSdkSettings> _initSettings() async {
+g
+  Future<ImaSdkSettings> _createSettings() async {
     final ImaSdkSettings settings =
         await ImaSdkFactory.instance.createImaSdkSettings();
     if (params.language case final String language) {

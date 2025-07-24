@@ -16,7 +16,7 @@ final class IOSImaSettings extends PlatformImaSettings {
   ///
   /// Defines general SDK settings that are used when creating an `IMAAdsLoader`.
   @internal
-  late final IMASettings nativeSettings = _initSettings();
+  late final IMASettings nativeSettings = _createSettings();
 
   @override
   Future<void> setAutoPlayAdBreaks(bool autoPlayAdBreaks) {
@@ -65,7 +65,7 @@ final class IOSImaSettings extends PlatformImaSettings {
     return nativeSettings.setEnableBackgroundPlayback(enabled);
   }
 
-  IMASettings _initSettings() {
+  IMASettings _createSettings() {
     final IMASettings settings = IMASettings();
     if (params.language case final String language) {
       settings.setLanguage(language);
