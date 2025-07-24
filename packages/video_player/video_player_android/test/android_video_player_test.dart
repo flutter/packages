@@ -560,10 +560,7 @@ void main() {
                     const StandardMethodCodec().encodeSuccessEnvelope(
                       <String, dynamic>{
                         'event': 'bufferingUpdate',
-                        'values': <List<dynamic>>[
-                          <int>[0, 1234],
-                          <int>[1235, 4000],
-                        ],
+                        'position': 1234,
                       },
                     ),
                     (ByteData? data) {},
@@ -646,10 +643,6 @@ void main() {
             eventType: VideoEventType.bufferingUpdate,
             buffered: <DurationRange>[
               DurationRange(Duration.zero, const Duration(milliseconds: 1234)),
-              DurationRange(
-                const Duration(milliseconds: 1235),
-                const Duration(milliseconds: 4000),
-              ),
             ],
           ),
           VideoEvent(eventType: VideoEventType.bufferingStart),

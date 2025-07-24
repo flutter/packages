@@ -189,11 +189,12 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         case 'completed':
           return VideoEvent(eventType: VideoEventType.completed);
         case 'bufferingUpdate':
-          final List<dynamic> values = map['values'] as List<dynamic>;
-
+          final int position = map['position']! as int;
           return VideoEvent(
-            buffered: values.map<DurationRange>(_toDurationRange).toList(),
             eventType: VideoEventType.bufferingUpdate,
+            buffered: <DurationRange>[
+              DurationRange(Duration.zero, Duration(milliseconds: position)),
+            ],
           );
         case 'bufferingStart':
           return VideoEvent(eventType: VideoEventType.bufferingStart);
@@ -258,14 +259,6 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       // this code must handle the possibility of a new enum value.
       _ => null,
     };
-  }
-
-  DurationRange _toDurationRange(dynamic value) {
-    final List<dynamic> pair = value as List<dynamic>;
-    return DurationRange(
-      Duration(milliseconds: pair[0] as int),
-      Duration(milliseconds: pair[1] as int),
-    );
   }
 }
 
