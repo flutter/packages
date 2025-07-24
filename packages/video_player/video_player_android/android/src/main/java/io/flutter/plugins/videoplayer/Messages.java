@@ -164,34 +164,17 @@ public class Messages {
 
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class CreateMessage {
-    private @Nullable String asset;
+    private @NonNull String uri;
 
-    public @Nullable String getAsset() {
-      return asset;
-    }
-
-    public void setAsset(@Nullable String setterArg) {
-      this.asset = setterArg;
-    }
-
-    private @Nullable String uri;
-
-    public @Nullable String getUri() {
+    public @NonNull String getUri() {
       return uri;
     }
 
-    public void setUri(@Nullable String setterArg) {
+    public void setUri(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"uri\" is null.");
+      }
       this.uri = setterArg;
-    }
-
-    private @Nullable String packageName;
-
-    public @Nullable String getPackageName() {
-      return packageName;
-    }
-
-    public void setPackageName(@Nullable String setterArg) {
-      this.packageName = setterArg;
     }
 
     private @Nullable PlatformVideoFormat formatHint;
@@ -239,9 +222,7 @@ public class Messages {
         return false;
       }
       CreateMessage that = (CreateMessage) o;
-      return Objects.equals(asset, that.asset)
-          && Objects.equals(uri, that.uri)
-          && Objects.equals(packageName, that.packageName)
+      return uri.equals(that.uri)
           && Objects.equals(formatHint, that.formatHint)
           && httpHeaders.equals(that.httpHeaders)
           && Objects.equals(viewType, that.viewType);
@@ -249,32 +230,16 @@ public class Messages {
 
     @Override
     public int hashCode() {
-      return Objects.hash(asset, uri, packageName, formatHint, httpHeaders, viewType);
+      return Objects.hash(uri, formatHint, httpHeaders, viewType);
     }
 
     public static final class Builder {
 
-      private @Nullable String asset;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setAsset(@Nullable String setterArg) {
-        this.asset = setterArg;
-        return this;
-      }
-
       private @Nullable String uri;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setUri(@Nullable String setterArg) {
+      public @NonNull Builder setUri(@NonNull String setterArg) {
         this.uri = setterArg;
-        return this;
-      }
-
-      private @Nullable String packageName;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setPackageName(@Nullable String setterArg) {
-        this.packageName = setterArg;
         return this;
       }
 
@@ -304,9 +269,7 @@ public class Messages {
 
       public @NonNull CreateMessage build() {
         CreateMessage pigeonReturn = new CreateMessage();
-        pigeonReturn.setAsset(asset);
         pigeonReturn.setUri(uri);
-        pigeonReturn.setPackageName(packageName);
         pigeonReturn.setFormatHint(formatHint);
         pigeonReturn.setHttpHeaders(httpHeaders);
         pigeonReturn.setViewType(viewType);
@@ -316,10 +279,8 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(6);
-      toListResult.add(asset);
+      ArrayList<Object> toListResult = new ArrayList<>(4);
       toListResult.add(uri);
-      toListResult.add(packageName);
       toListResult.add(formatHint);
       toListResult.add(httpHeaders);
       toListResult.add(viewType);
@@ -328,17 +289,13 @@ public class Messages {
 
     static @NonNull CreateMessage fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       CreateMessage pigeonResult = new CreateMessage();
-      Object asset = pigeonVar_list.get(0);
-      pigeonResult.setAsset((String) asset);
-      Object uri = pigeonVar_list.get(1);
+      Object uri = pigeonVar_list.get(0);
       pigeonResult.setUri((String) uri);
-      Object packageName = pigeonVar_list.get(2);
-      pigeonResult.setPackageName((String) packageName);
-      Object formatHint = pigeonVar_list.get(3);
+      Object formatHint = pigeonVar_list.get(1);
       pigeonResult.setFormatHint((PlatformVideoFormat) formatHint);
-      Object httpHeaders = pigeonVar_list.get(4);
+      Object httpHeaders = pigeonVar_list.get(2);
       pigeonResult.setHttpHeaders((Map<String, String>) httpHeaders);
-      Object viewType = pigeonVar_list.get(5);
+      Object viewType = pigeonVar_list.get(3);
       pigeonResult.setViewType((PlatformVideoViewType) viewType);
       return pigeonResult;
     }
@@ -402,6 +359,9 @@ public class Messages {
     void dispose(@NonNull Long playerId);
 
     void setMixWithOthers(@NonNull Boolean mixWithOthers);
+
+    @NonNull
+    String getLookupKeyForAsset(@NonNull String asset, @Nullable String packageName);
 
     /** The codec used by AndroidVideoPlayerApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -510,6 +470,32 @@ public class Messages {
                 try {
                   api.setMixWithOthers(mixWithOthersArg);
                   wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String assetArg = (String) args.get(0);
+                String packageNameArg = (String) args.get(1);
+                try {
+                  String output = api.getLookupKeyForAsset(assetArg, packageNameArg);
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }

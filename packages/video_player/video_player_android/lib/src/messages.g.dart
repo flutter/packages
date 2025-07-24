@@ -81,19 +81,13 @@ class PlatformVideoViewCreationParams {
 
 class CreateMessage {
   CreateMessage({
-    this.asset,
-    this.uri,
-    this.packageName,
+    required this.uri,
     this.formatHint,
     required this.httpHeaders,
     this.viewType,
   });
 
-  String? asset;
-
-  String? uri;
-
-  String? packageName;
+  String uri;
 
   PlatformVideoFormat? formatHint;
 
@@ -102,14 +96,7 @@ class CreateMessage {
   PlatformVideoViewType? viewType;
 
   List<Object?> _toList() {
-    return <Object?>[
-      asset,
-      uri,
-      packageName,
-      formatHint,
-      httpHeaders,
-      viewType,
-    ];
+    return <Object?>[uri, formatHint, httpHeaders, viewType];
   }
 
   Object encode() {
@@ -119,13 +106,11 @@ class CreateMessage {
   static CreateMessage decode(Object result) {
     result as List<Object?>;
     return CreateMessage(
-      asset: result[0] as String?,
-      uri: result[1] as String?,
-      packageName: result[2] as String?,
-      formatHint: result[3] as PlatformVideoFormat?,
+      uri: result[0]! as String,
+      formatHint: result[1] as PlatformVideoFormat?,
       httpHeaders:
-          (result[4] as Map<Object?, Object?>?)!.cast<String, String>(),
-      viewType: result[5] as PlatformVideoViewType?,
+          (result[2] as Map<Object?, Object?>?)!.cast<String, String>(),
+      viewType: result[3] as PlatformVideoViewType?,
     );
   }
 
@@ -313,6 +298,38 @@ class AndroidVideoPlayerApi {
       );
     } else {
       return;
+    }
+  }
+
+  Future<String> getLookupKeyForAsset(String asset, String? packageName) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[asset, packageName],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?)!;
     }
   }
 }

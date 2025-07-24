@@ -27,10 +27,8 @@ class PlatformVideoViewCreationParams {
 }
 
 class CreateMessage {
-  CreateMessage({required this.httpHeaders});
-  String? asset;
-  String? uri;
-  String? packageName;
+  CreateMessage({required this.uri, required this.httpHeaders});
+  String uri;
   PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
   PlatformVideoViewType? viewType;
@@ -42,6 +40,7 @@ abstract class AndroidVideoPlayerApi {
   int create(CreateMessage msg);
   void dispose(int playerId);
   void setMixWithOthers(bool mixWithOthers);
+  String getLookupKeyForAsset(String asset, String? packageName);
 }
 
 @HostApi()

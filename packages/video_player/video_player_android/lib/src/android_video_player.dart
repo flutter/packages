@@ -73,15 +73,22 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   Future<int?> createWithOptions(VideoCreationOptions options) async {
     final DataSource dataSource = options.dataSource;
 
-    String? asset;
-    String? packageName;
     String? uri;
     PlatformVideoFormat? formatHint;
     Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
-        asset = dataSource.asset;
-        packageName = dataSource.package;
+        final String? asset = dataSource.asset;
+        if (asset == null) {
+          throw ArgumentError(
+            '"asset" must be non-null for an asset data source',
+          );
+        }
+        final String key = await _api.getLookupKeyForAsset(
+          asset,
+          dataSource.package,
+        );
+        uri = 'asset:///$key';
       case DataSourceType.network:
         uri = dataSource.uri;
         formatHint = _platformVideoFormatFromVideoFormat(dataSource.formatHint);
@@ -92,9 +99,10 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.contentUri:
         uri = dataSource.uri;
     }
+    if (uri == null) {
+      throw ArgumentError('Unable to construct a video asset from $options');
+    }
     final CreateMessage message = CreateMessage(
-      asset: asset,
-      packageName: packageName,
       uri: uri,
       httpHeaders: httpHeaders,
       formatHint: formatHint,

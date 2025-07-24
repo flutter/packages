@@ -72,6 +72,11 @@ void main() {
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
+      const String assetKey = 'resultingAssetKey';
+      when(
+        api.getLookupKeyForAsset(asset, package),
+      ).thenAnswer((_) async => assetKey);
+
       final int? playerId = await player.create(
         DataSource(
           sourceType: DataSourceType.asset,
@@ -83,8 +88,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreateMessage createMessage =
           verification.captured[0] as CreateMessage;
-      expect(createMessage.asset, asset);
-      expect(createMessage.packageName, package);
+      expect(createMessage.uri, 'asset:///$assetKey');
       expect(playerId, newPlayerId);
       expect(
         player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
@@ -113,10 +117,8 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreateMessage createMessage =
           verification.captured[0] as CreateMessage;
-      expect(createMessage.asset, null);
       expect(createMessage.uri, uri);
-      expect(createMessage.packageName, null);
-      expect(createMessage.formatHint, 'dash');
+      expect(createMessage.formatHint, PlatformVideoFormat.dash);
       expect(createMessage.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(
@@ -207,6 +209,11 @@ void main() {
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
+      const String assetKey = 'resultingAssetKey';
+      when(
+        api.getLookupKeyForAsset(asset, package),
+      ).thenAnswer((_) async => assetKey);
+
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -221,8 +228,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreateMessage createMessage =
           verification.captured[0] as CreateMessage;
-      expect(createMessage.asset, asset);
-      expect(createMessage.packageName, package);
+      expect(createMessage.uri, 'asset:///$assetKey');
       expect(playerId, newPlayerId);
       expect(
         player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
@@ -254,10 +260,8 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreateMessage createMessage =
           verification.captured[0] as CreateMessage;
-      expect(createMessage.asset, null);
       expect(createMessage.uri, uri);
-      expect(createMessage.packageName, null);
-      expect(createMessage.formatHint, 'dash');
+      expect(createMessage.formatHint, PlatformVideoFormat.dash);
       expect(createMessage.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(
