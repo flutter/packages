@@ -108,6 +108,7 @@ class CameraXProxy {
   /// Constructs [CameraSelector].
   final CameraSelector Function({
     LensFacing? requireLensFacing,
+    CameraInfo? cameraInfo,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   })

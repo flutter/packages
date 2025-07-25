@@ -24,7 +24,8 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
   @ExperimentalLensFacing
   @NonNull
   @Override
-  public CameraSelector pigeon_defaultConstructor(@Nullable LensFacing requireLensFacing) {
+  public CameraSelector pigeon_defaultConstructor(
+      @Nullable LensFacing requireLensFacing, @Nullable CameraInfo cameraInfo) {
     final CameraSelector.Builder builder = new CameraSelector.Builder();
     if (requireLensFacing != null) {
       switch (requireLensFacing) {
@@ -41,6 +42,11 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
           builder.requireLensFacing(CameraSelector.LENS_FACING_UNKNOWN);
           break;
       }
+    }
+
+    if (cameraInfo != null) {
+      builder.addCameraFilter(cameraInfos -> java.util.Collections.singletonList(cameraInfo));
+      return builder.build();
     }
     return builder.build();
   }

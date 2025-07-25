@@ -290,7 +290,7 @@ enum LensFacing {
   ),
 )
 abstract class CameraSelector {
-  CameraSelector(LensFacing? requireLensFacing);
+  CameraSelector(LensFacing? requireLensFacing, CameraInfo? cameraInfo);
 
   /// A static `CameraSelector` that selects the default back facing camera.
   @static
