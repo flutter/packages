@@ -2,29 +2,31 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:meta/meta_meta.dart';
+import 'package:meta/meta_meta.dart' show Target, TargetKind;
 
 /// annotation to define a custom parameter decoder/encoder
-/// this is useful when the is encoded/decoded in a non-standard way like base64
+/// this is useful when the is encoded/decoded in a non-standard way like base64Url
 /// this must be used as an annotation on a field
 /// ```dart
 /// String fromBase64(String value) {
-///   return const Utf8Decoder().convert(base64.decode(value));
+///   return const Utf8Decoder()
+///     .convert(base64Url.decode(base64Url.normalize(value)));
 /// }
 /// String toBase64(String value) {
-///   return base64.encode(const Utf8Encoder().convert(value));
+///   return base64Url.encode(const Utf8Encoder().convert(value));
 /// }
-/// class MyRoute {
+/// @TypedGoRoute<JsonRoute>(path: 'json')
+/// class JsonRoute extends GoRouteData with _$EncodedRoute {
 ///   @CustomParameterCodec(
 ///     encode: toBase64,
 ///     decode: fromBase64,
 ///   )
 ///   final String data;
-///   MyRoute(this.data);
+///   JsonRoute(this.data);
 /// }
 /// ```
 @Target(<TargetKind>{TargetKind.field})
-class CustomParameterCodec {
+final class CustomParameterCodec {
   /// create a custom parameter codec
   ///
   const CustomParameterCodec({
@@ -33,8 +35,8 @@ class CustomParameterCodec {
   });
 
   /// custom function to encode the field
-  final String Function(String json) encode;
+  final String Function(String field) encode;
 
   /// custom function to decode the field
-  final String Function(String json) decode;
+  final String Function(String field) decode;
 }
