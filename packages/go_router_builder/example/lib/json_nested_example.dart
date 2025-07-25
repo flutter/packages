@@ -11,7 +11,7 @@ import 'package:go_router/go_router.dart';
 
 import 'shared/json_example.dart';
 
-part 'json_example.g.dart';
+part 'json_nested_example.g.dart';
 
 void main() => runApp(App());
 
@@ -44,11 +44,11 @@ class HomeRoute extends GoRouteData with _$HomeRoute {
 class JsonRoute extends GoRouteData with _$JsonRoute {
   const JsonRoute(this.json);
 
-  final JsonExample json;
+  final JsonExampleNested<JsonExample> json;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      JsonScreen(json: json);
+      JsonScreen(json: json.child);
 }
 
 class HomeScreen extends StatelessWidget {
@@ -62,7 +62,9 @@ class HomeScreen extends StatelessWidget {
             for (final JsonExample json in jsonData)
               ListTile(
                 title: Text(json.name),
-                onTap: () => JsonRoute(json).go(context),
+                onTap: () =>
+                    JsonRoute(JsonExampleNested<JsonExample>(child: json))
+                        .go(context),
               )
           ],
         ),

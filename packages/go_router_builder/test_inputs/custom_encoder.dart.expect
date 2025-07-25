@@ -42,7 +42,7 @@ mixin _$CustomParameterComplexRoute on GoRouteData {
   static CustomParameterComplexRoute _fromState(GoRouterState state) =>
       CustomParameterComplexRoute(
         id: int.parse(fromBase64(state.pathParameters['id']!))!,
-        dir: state.uri.queryParameters['dir'] ?? '',
+        dir: fromBase64(state.uri.queryParameters['dir'] ?? ''),
         list: (state.uri.queryParametersAll['list']
                     ?.map((e) => Uri.parse(fromBase64(e)))
                     .cast<Uri>()

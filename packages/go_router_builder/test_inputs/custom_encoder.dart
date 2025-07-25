@@ -7,11 +7,12 @@ import 'dart:convert';
 import 'package:go_router/go_router.dart';
 
 String fromBase64(String value) {
-  return const Utf8Decoder().convert(base64.decode(value));
+  return const Utf8Decoder()
+      .convert(base64Url.decode(base64Url.normalize(value)));
 }
 
 String toBase64(String value) {
-  return base64.encode(const Utf8Encoder().convert(value));
+  return base64Url.encode(const Utf8Encoder().convert(value));
 }
 
 @TypedGoRoute<CustomParameterRoute>(path: '/default-value-route')

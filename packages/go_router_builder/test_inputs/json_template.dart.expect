@@ -8,7 +8,7 @@ mixin _$JsonTemplateRoute on GoRouteData {
         nested: (String json0) {
           return JsonExampleNested.fromJson(
             jsonDecode(json0) as Map<String, dynamic>,
-            (dynamic json1) {
+            (Object? json1) {
               return JsonExample.fromJson(json1 as Map<String, dynamic>);
             },
           );
@@ -17,10 +17,10 @@ mixin _$JsonTemplateRoute on GoRouteData {
             (String json0) {
           return JsonExampleNested.fromJson(
             jsonDecode(json0) as Map<String, dynamic>,
-            (dynamic json1) {
+            (Object? json1) {
               return JsonExampleNested.fromJson(
                 json1 as Map<String, dynamic>,
-                (dynamic json2) {
+                (Object? json2) {
                   return JsonExample.fromJson(json2 as Map<String, dynamic>);
                 },
               );

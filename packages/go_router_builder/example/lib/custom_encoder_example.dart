@@ -9,9 +9,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'shared/json_example.dart';
-
-part 'json_example.g.dart';
+part 'custom_encoder_example.g.dart';
 
 void main() => runApp(App());
 
@@ -31,7 +29,7 @@ class App extends StatelessWidget {
   path: '/',
   name: 'Home',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<JsonRoute>(path: 'json'),
+    TypedGoRoute<EncodedRoute>(path: 'encoded'),
   ],
 )
 class HomeRoute extends GoRouteData with _$HomeRoute {
@@ -41,14 +39,15 @@ class HomeRoute extends GoRouteData with _$HomeRoute {
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
-class JsonRoute extends GoRouteData with _$JsonRoute {
-  const JsonRoute(this.json);
+class EncodedRoute extends GoRouteData with _$EncodedRoute {
+  const EncodedRoute(this.token);
 
-  final JsonExample json;
+  @CustomParameterCodec(encode: toBase64, decode: fromBase64)
+  final String token;
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      JsonScreen(json: json);
+      EncodedScreen(token: token);
 }
 
 class HomeScreen extends StatelessWidget {
@@ -59,31 +58,40 @@ class HomeScreen extends StatelessWidget {
         appBar: AppBar(title: const Text(_appTitle)),
         body: ListView(
           children: <Widget>[
-            for (final JsonExample json in jsonData)
-              ListTile(
-                title: Text(json.name),
-                onTap: () => JsonRoute(json).go(context),
-              )
+            ListTile(
+              title: const Text('Base64Token'),
+              onTap: () => const EncodedRoute('Base64Token').go(context),
+            ),
+            ListTile(
+              title: const Text('from url only'),
+              // like in deep links
+              onTap: () => context.go('/encoded?token=ZW5jb2RlZCBpbmZvIQ'),
+            ),
           ],
         ),
       );
 }
 
-class JsonScreen extends StatelessWidget {
-  const JsonScreen({required this.json, super.key});
-  final JsonExample json;
+class EncodedScreen extends StatelessWidget {
+  const EncodedScreen({super.key, required this.token});
+  final String token;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(json.name)),
-        body: ListView(
-          key: ValueKey<String>(json.id),
-          children: <Widget>[
-            Text(json.id),
-            Text(json.name),
-          ],
+        appBar: AppBar(title: const Text('Base64Token')),
+        body: Center(
+          child: Text(token),
         ),
       );
 }
 
-const String _appTitle = 'GoRouter Example: builder';
+String fromBase64(String value) {
+  return const Utf8Decoder()
+      .convert(base64Url.decode(base64Url.normalize(value)));
+}
+
+String toBase64(String value) {
+  return base64Url.encode(const Utf8Encoder().convert(value));
+}
+
+const String _appTitle = 'GoRouter Example: custom encoder';

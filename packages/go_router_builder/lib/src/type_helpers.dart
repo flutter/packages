@@ -117,6 +117,9 @@ String decodeParameter(
         }
         decoded += ' ?? ${element.defaultValueCode!}';
       }
+      if (helper is _TypeHelperString && decoder != null) {
+        return _fieldWithEncoder(decoded, decoder);
+      }
       return decoded;
     }
   }
@@ -586,7 +589,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
   }
 
   String _helperNameN(DartType paramType, int index) {
-    final String mainType = index == 0 ? 'String' : 'dynamic';
+    final String mainType = index == 0 ? 'String' : 'Object?';
     final String mainDecoder = index == 0
         ? 'jsonDecode(json$index) as Map<String, dynamic>'
         : 'json$index as Map<String, dynamic>';
