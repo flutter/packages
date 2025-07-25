@@ -319,7 +319,7 @@ abstract class AdError {
 
 /// An object containing the data used to request ads from the server.
 ///
-/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/com/google/ads/interactivemedia/v3/api/AdsRequest.
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/android/client-side/api/reference/kotlin/com/google/ads/interactivemedia/v3/api/AdsRequest.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'com.google.ads.interactivemedia.v3.api.AdsRequest',
@@ -332,6 +332,62 @@ abstract class AdsRequest {
   /// Attaches a ContentProgressProvider instance to allow scheduling ad breaks
   /// based on content progress (cue points).
   void setContentProgressProvider(ContentProgressProvider provider);
+
+  /// Notifies the SDK whether the player intends to start the content and ad in
+  /// response to a user action or whether it will be automatically played.
+  ///
+  /// Not calling this function leaves the setting as unknown. Note: Changing
+  /// this setting will have no impact on ad playback.
+  void setAdWillAutoPlay(bool willAutoPlay);
+
+  /// Notifies the SDK whether the player intends to start the content and ad
+  /// while muted.
+  ///
+  /// Not calling this function leaves the setting as unknown. Note: Changing
+  /// this setting will have no impact on ad playback.
+  void setAdWillPlayMuted(bool willPlayMuted);
+
+  /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
+  /// a request through an ad tag URL.
+  void setAdsResponse(String cannedAdResponse);
+
+  /// Specifies the duration of the content in seconds to be shown.
+  ///
+  /// This optional parameter is used by AdX requests. It is recommended for AdX
+  /// users.
+  void setContentDuration(double duration);
+
+  /// Specifies the keywords used to describe the content to be shown.
+  ///
+  /// This optional parameter is used by AdX requests and is recommended for AdX
+  /// users.
+  void setContentKeywords(List<String> keywords);
+
+  /// Specifies the title of the content to be shown.
+  ///
+  /// Used in AdX requests. This optional parameter is used by AdX requests and
+  /// is recommended for AdX users.
+  void setContentTitle(String title);
+
+  /// Notifies the SDK whether the player intends to continuously play the
+  /// content videos one after another similar to TV broadcast.
+  ///
+  /// Not calling this function leaves the setting as unknown. Note: Changing
+  /// this setting will have no impact on ad playback.
+  void setContinuousPlayback(bool continuousPlayback);
+
+  /// Specifies the maximum amount of time to wait in seconds, after calling
+  /// requestAds, before requesting the ad tag URL.
+  ///
+  /// This can be used to stagger requests during a live-stream event, in order
+  /// to mitigate spikes in the number of requests.
+  void setLiveStreamPrefetchSeconds(double prefetchTime);
+
+  /// Specifies the VAST load timeout in milliseconds for a single wrapper.
+  ///
+  /// This parameter is optional and will override the default timeout,
+  /// currently set to 5000ms.
+  void setVastLoadTimeout(double timeout);
 }
 
 /// Defines an interface to allow SDK to track progress of the content video.
