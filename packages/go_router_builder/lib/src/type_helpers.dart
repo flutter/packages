@@ -39,6 +39,10 @@ const String likelyIssueMessage = 'Should never get here! File an issue!';
 /// The name of the generated, private helper for comparing iterables.
 const String iterablesEqualHelperName = r'_$iterablesEqual';
 
+/// type checker for CustomParameterCodec
+const TypeChecker _customParameterChecker = TypeChecker.fromUrl(
+    'package:go_router/src/misc/custom_parameter.dart#CustomParameterCodec');
+
 const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperBigInt(),
   _TypeHelperBool(),
@@ -53,26 +57,41 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperJson(),
 ];
 
-/// Checks if has a function that converts string to string, like in encode and decode.
-bool _isStringToStringFunction(
-    ExecutableElement? executableElement, String name) {
-  if (executableElement == null) {
-    return false;
+extension on TypeChecker {
+// get annotated function name only if is annotated on the Element list
+  String? _getAnnotatedFunctionName(
+      String functionName, DartType type, List<Element?> fieldElements) {
+    final Iterable<DartObject> annotations = fieldElements.nonNulls.expand(
+      (Element element) => annotationsOf(element, throwOnUnresolved: false),
+    );
+    return annotations._getFunctionName(functionName, type);
   }
-  final List<ParameterElement> parameters = executableElement.parameters;
-  return parameters.length == 1 &&
-      parameters.first.type.isDartCoreString &&
-      executableElement.returnType.isDartCoreString;
 }
 
-/// Returns the custom codec for the annotation.
-String? _getCustomCodec(ElementAnnotation annotation, String name) {
-  final ExecutableElement? executableElement =
-      annotation.computeConstantValue()?.getField(name)?.toFunctionValue();
-  if (_isStringToStringFunction(executableElement, name)) {
-    return executableElement!.displayName;
+extension on Iterable<DartObject> {
+  // get annotated info only if have a compatible annotation
+  DartObject? _getAnnotatedInfo(DartType type) {
+    return firstWhereOrNull(
+      (DartObject annotation) {
+        final DartType? annotationType = annotation.type;
+        if (annotationType is! ParameterizedType ||
+            annotationType.typeArguments.isEmpty) {
+          return true;
+        }
+        return annotationType.typeArguments.first
+                .getDisplayString(withNullability: false) ==
+            type.getDisplayString(withNullability: false);
+      },
+    );
   }
-  return null;
+
+  // get annotated function name only if have a compatible annotation
+  String? _getFunctionName(String functionName, DartType type) {
+    return _getAnnotatedInfo(type)
+        ?.getField(functionName)
+        ?.toFunctionValue()
+        ?.displayName;
+  }
 }
 
 /// Returns the decoded [String] value for [element], if its type is supported.
@@ -81,7 +100,7 @@ String? _getCustomCodec(ElementAnnotation annotation, String name) {
 String decodeParameter(
   ParameterElement element,
   Set<String> pathParameters,
-  List<ElementAnnotation>? metadata,
+  FieldElement? fieldElement,
 ) {
   if (element.isExtraField) {
     return 'state.${_stateValueAccess(element, pathParameters)}';
@@ -90,35 +109,18 @@ String decodeParameter(
   final DartType paramType = element.type;
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(paramType)) {
-      String? decoder;
-
-      final ElementAnnotation? annotation =
-          metadata?.firstWhereOrNull((ElementAnnotation annotation) {
-        return annotation.computeConstantValue()?.type?.getDisplayString() ==
-            'CustomParameterCodec';
-      });
-      if (annotation != null) {
-        final String? decode = _getCustomCodec(annotation, 'decode');
-        final String? encode = _getCustomCodec(annotation, 'encode');
-        if (decode != null && encode != null) {
-          decoder = decode;
-        } else {
-          throw InvalidGenerationSourceError(
-            'The parameter type '
-            '`${paramType.getDisplayString(withNullability: false)}` not have a well defined CustomParameterCodec decorator.',
-            element: element,
-          );
-        }
-      }
-      String decoded = helper._decode(element, pathParameters, decoder);
+      final String? customDecoder = _customParameterChecker
+          ._getAnnotatedFunctionName(
+              'decode', paramType, <Element?>[fieldElement]);
+      String decoded = helper._decode(element, pathParameters, customDecoder);
       if (element.isOptional && element.hasDefaultValue) {
-        if (element.type.isNullableType) {
+        if (paramType.isNullableType) {
           throw NullableDefaultValueError(element);
         }
         decoded += ' ?? ${element.defaultValueCode!}';
       }
-      if (helper is _TypeHelperString && decoder != null) {
-        return _fieldWithEncoder(decoded, decoder);
+      if (helper is _TypeHelperString) {
+        return _fieldWithEncoder(decoded, customDecoder);
       }
       return decoded;
     }
@@ -135,28 +137,11 @@ String decodeParameter(
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
 String encodeField(
-    PropertyAccessorElement element, List<ElementAnnotation>? metadata) {
+    PropertyAccessorElement element, FieldElement? fieldElement) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(element.returnType)) {
-      String? encoder;
-      final ElementAnnotation? annotation =
-          metadata?.firstWhereOrNull((ElementAnnotation annotation) {
-        final DartObject? constant = annotation.computeConstantValue();
-        return constant?.type?.getDisplayString() == 'CustomParameterCodec';
-      });
-      if (annotation != null) {
-        final String? decode = _getCustomCodec(annotation, 'decode');
-        final String? encode = _getCustomCodec(annotation, 'encode');
-        if (decode != null && encode != null) {
-          encoder = encode;
-        } else {
-          throw InvalidGenerationSourceError(
-            'The parameter type '
-            '`${element.getDisplayString(withNullability: false)}` not have a well defined CustomParameterCodec decorator.',
-            element: element,
-          );
-        }
-      }
+      final String? encoder = _customParameterChecker._getAnnotatedFunctionName(
+          'encode', element.returnType, <Element?>[fieldElement]);
       final String encoded = helper._encode(
         '$selfFieldName.${element.name}',
         element.returnType,
@@ -682,8 +667,8 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
     final String decode = _fieldWithEncoder(
         'state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''}',
         customDecoder);
-    final bool resultIsNonNull = this is _TypeHelperJson;
-    return '${helperName(paramType)}($decode)${!resultIsNonNull ? '!' : ''}';
+    final bool resultIsNonNull = this is! _TypeHelperJson;
+    return '${helperName(paramType)}($decode)${resultIsNonNull ? '!' : ''}';
   }
 }
 

@@ -15,14 +15,14 @@ import 'package:meta/meta_meta.dart' show Target, TargetKind;
 /// String toBase64(String value) {
 ///   return base64Url.encode(const Utf8Encoder().convert(value));
 /// }
-/// @TypedGoRoute<JsonRoute>(path: 'json')
-/// class JsonRoute extends GoRouteData with _$EncodedRoute {
+/// @TypedGoRoute<EncodedRoute>(path: 'encoded')
+/// class EncodedRoute extends GoRouteData with _$EncodedRoute {
 ///   @CustomParameterCodec(
 ///     encode: toBase64,
 ///     decode: fromBase64,
 ///   )
 ///   final String data;
-///   JsonRoute(this.data);
+///   EncodedRoute(this.data);
 /// }
 /// ```
 @Target(<TargetKind>{TargetKind.field})
