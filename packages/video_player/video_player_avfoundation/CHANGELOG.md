@@ -1,3 +1,7 @@
+## 2.8.1
+
+* Restructures internal logic to move more code to Dart.
+
 ## 2.8.0
 
 * Adds platform view support for macOS.
