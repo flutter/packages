@@ -13,6 +13,7 @@ import 'package:meta/meta.dart' as meta;
 
 import 'configuration.dart';
 import 'match.dart';
+import 'misc/merged_observer.dart';
 import 'path_utils.dart';
 import 'router.dart';
 import 'state.dart';
@@ -487,7 +488,19 @@ abstract class ShellRouteBase extends RouteBase {
     super.redirect,
     required super.routes,
     required super.parentNavigatorKey,
+    this.mergeObservers = true,
   }) : super._();
+
+  /// Whether to merge the observers of the shell route's parent with the
+  /// observers of the shell route.
+  ///
+  /// When `true`, the observers of the shell route's parent will be merged with
+  /// the observers of the shell route.
+  ///
+  /// Only effective for `observers` passed into `GoRouter`.
+  ///
+  /// Defaults to `false`.
+  final bool mergeObservers;
 
   static void _debugCheckSubRouteParentNavigatorKeys(
       List<RouteBase> subRoutes, GlobalKey<NavigatorState> navigatorKey) {
@@ -557,9 +570,26 @@ class ShellRouteContext {
   final NavigatorBuilder navigatorBuilder;
 
   Widget _buildNavigatorForCurrentRoute(
-      List<NavigatorObserver>? observers, String? restorationScopeId) {
-    return navigatorBuilder(
-        navigatorKey, match, routeMatchList, observers, restorationScopeId);
+      BuildContext context,
+      List<NavigatorObserver>? observers,
+      bool mergeObservers,
+      String? restorationScopeId) {
+    final List<NavigatorObserver> effectiveObservers = <NavigatorObserver>[
+      ...?observers
+    ];
+
+    if (mergeObservers) {
+      final List<NavigatorObserver>? rootObservers =
+          GoRouter.maybeOf(context)?.observers;
+      if (rootObservers != null) {
+        effectiveObservers.add(MergedNavigatorObserver(
+          rootObservers,
+        ));
+      }
+    }
+
+    return navigatorBuilder(navigatorKey, match, routeMatchList,
+        effectiveObservers, restorationScopeId);
   }
 }
 
@@ -664,6 +694,7 @@ class ShellRoute extends ShellRouteBase {
     super.redirect,
     this.builder,
     this.pageBuilder,
+    super.mergeObservers,
     this.observers,
     required super.routes,
     super.parentNavigatorKey,
@@ -700,7 +731,7 @@ class ShellRoute extends ShellRouteBase {
       ShellRouteContext shellRouteContext) {
     if (builder != null) {
       final Widget navigator = shellRouteContext._buildNavigatorForCurrentRoute(
-          observers, restorationScopeId);
+          context, observers, mergeObservers, restorationScopeId);
       return builder!(context, state, navigator);
     }
     return null;
@@ -711,7 +742,7 @@ class ShellRoute extends ShellRouteBase {
       ShellRouteContext shellRouteContext) {
     if (pageBuilder != null) {
       final Widget navigator = shellRouteContext._buildNavigatorForCurrentRoute(
-          observers, restorationScopeId);
+          context, observers, mergeObservers, restorationScopeId);
       return pageBuilder!(context, state, navigator);
     }
     return null;
@@ -827,6 +858,7 @@ class StatefulShellRoute extends ShellRouteBase {
     super.redirect,
     this.builder,
     this.pageBuilder,
+    super.mergeObservers,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
     this.restorationScopeId,
@@ -853,6 +885,7 @@ class StatefulShellRoute extends ShellRouteBase {
   /// for a complete runnable example using StatefulShellRoute.indexedStack.
   StatefulShellRoute.indexedStack({
     required List<StatefulShellBranch> branches,
+    bool mergeObservers = true,
     GoRouterRedirect? redirect,
     StatefulShellRouteBuilder? builder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
@@ -864,6 +897,7 @@ class StatefulShellRoute extends ShellRouteBase {
           redirect: redirect,
           builder: builder,
           pageBuilder: pageBuilder,
+          mergeObservers: mergeObservers,
           parentNavigatorKey: parentNavigatorKey,
           restorationScopeId: restorationScopeId,
           navigatorContainerBuilder: _indexedStackContainerBuilder,
@@ -960,6 +994,7 @@ class StatefulShellRoute extends ShellRouteBase {
       StatefulNavigationShell(
           shellRouteContext: shellRouteContext,
           router: GoRouter.of(context),
+          mergeObservers: mergeObservers,
           containerBuilder: navigatorContainerBuilder);
 
   static Widget _indexedStackContainerBuilder(BuildContext context,
@@ -1126,6 +1161,7 @@ class StatefulNavigationShell extends StatefulWidget {
     required this.shellRouteContext,
     required GoRouter router,
     required this.containerBuilder,
+    this.mergeObservers = true,
   })  : assert(shellRouteContext.route is StatefulShellRoute),
         _router = router,
         currentIndex = _indexOfBranchNavigatorKey(
@@ -1148,6 +1184,9 @@ class StatefulNavigationShell extends StatefulWidget {
   ///
   /// Corresponds to the index in the branches field of [StatefulShellRoute].
   final int currentIndex;
+
+  /// Same to [ShellRoute.mergeObservers].
+  final bool mergeObservers;
 
   /// The associated [StatefulShellRoute].
   StatefulShellRoute get route => shellRouteContext.route as StatefulShellRoute;
@@ -1324,7 +1363,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
         previousBranchLocation != currentBranchLocation;
     if (locationChanged || !hasExistingNavigator) {
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
-          branch.observers, branch.restorationScopeId);
+          context, branch.observers, false, branch.restorationScopeId);
     }
 
     _cleanUpObsoleteBranches();
