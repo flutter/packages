@@ -2,6 +2,10 @@
 
 - Restricts `build` to versions less than 2.5.0.
 
+## 3.1.0
+
+- Adds support for`extension type`.
+
 ## 3.0.1
 
 - Updates README.md to use the mixin `with _$RouteName`.
