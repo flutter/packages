@@ -14,6 +14,7 @@ void main() {
     final TestPlatformAdsLoader adsLoader = TestPlatformAdsLoader(
       PlatformAdsLoaderCreationParams(
         container: createTestAdDisplayContainer(),
+        settings: TestImaSettings(const PlatformImaSettingsCreationParams()),
         onAdsLoaded: (PlatformOnAdsLoadedData data) {},
         onAdsLoadError: (AdsLoadErrorData data) {},
       ),
@@ -36,6 +37,7 @@ void main() {
     final TestPlatformAdsLoader adsLoader = TestPlatformAdsLoader(
       PlatformAdsLoaderCreationParams(
         container: createTestAdDisplayContainer(),
+        settings: TestImaSettings(const PlatformImaSettingsCreationParams()),
         onAdsLoaded: (PlatformOnAdsLoadedData data) {},
         onAdsLoadError: (AdsLoadErrorData data) {},
       ),
