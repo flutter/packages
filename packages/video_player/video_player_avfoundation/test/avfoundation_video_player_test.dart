@@ -97,6 +97,31 @@ void main() {
           const VideoPlayerTextureViewState(textureId: newPlayerId));
     });
 
+    test('create with asset throws PlatformException for missing asset',
+        () async {
+      final (
+        AVFoundationVideoPlayer player,
+        MockAVFoundationVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(playerId: 1);
+
+      const String asset = 'someAsset';
+      const String package = 'somePackage';
+      when(
+        api.getAssetUrl(asset, package),
+      ).thenAnswer((_) async => null);
+
+      expect(
+          player.create(
+            DataSource(
+              sourceType: DataSourceType.asset,
+              asset: asset,
+              package: package,
+            ),
+          ),
+          throwsA(isA<PlatformException>()));
+    });
+
     test('create with network', () async {
       final (
         AVFoundationVideoPlayer player,

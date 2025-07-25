@@ -83,7 +83,7 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<String> getAssetUrl(
+  _i4.Future<String?> getAssetUrl(
     String? asset,
     String? package,
   ) =>
@@ -95,28 +95,9 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
             package,
           ],
         ),
-        returnValue: _i4.Future<String>.value(_i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getAssetUrl,
-            [
-              asset,
-              package,
-            ],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i4.Future<String>.value(_i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #getAssetUrl,
-            [
-              asset,
-              package,
-            ],
-          ),
-        )),
-      ) as _i4.Future<String>);
+        returnValue: _i4.Future<String?>.value(),
+        returnValueForMissingStub: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
 }
 
 /// A class which mocks [VideoPlayerInstanceApi].

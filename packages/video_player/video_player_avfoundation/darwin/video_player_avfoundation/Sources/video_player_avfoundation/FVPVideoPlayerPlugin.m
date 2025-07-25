@@ -269,6 +269,9 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   }
 #endif
 
+  if (!path) {
+    return nil;
+  }
   return [NSURL fileURLWithPath:path].absoluteString;
 }
 

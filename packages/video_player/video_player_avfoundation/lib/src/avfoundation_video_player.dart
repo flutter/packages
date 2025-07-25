@@ -87,6 +87,14 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
           asset,
           dataSource.package,
         );
+        if (uri == null) {
+          // Throw a platform exception for compatibility with the previous
+          // implementation, which threw on the native side.
+          throw PlatformException(
+              code: 'video_player',
+              message:
+                  'Asset $asset not found in package ${dataSource.package}.');
+        }
       case DataSourceType.network:
       case DataSourceType.file:
       case DataSourceType.contentUri:

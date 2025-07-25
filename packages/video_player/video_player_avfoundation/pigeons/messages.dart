@@ -56,7 +56,7 @@ abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
   @ObjCSelector('fileURLForAssetWithName:package:')
-  String getAssetUrl(String asset, String? package);
+  String? getAssetUrl(String asset, String? package);
 }
 
 @HostApi()

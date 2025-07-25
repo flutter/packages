@@ -294,7 +294,7 @@ class AVFoundationVideoPlayerApi {
     }
   }
 
-  Future<String> getAssetUrl(String asset, String? package) async {
+  Future<String?> getAssetUrl(String asset, String? package) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.getAssetUrl$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
@@ -315,13 +315,8 @@ class AVFoundationVideoPlayerApi {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as String?)!;
+      return (pigeonVar_replyList[0] as String?);
     }
   }
 }
