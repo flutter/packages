@@ -77,6 +77,19 @@ public class Messages {
     }
   }
 
+  /** Pigeon equivalent of video_platform_interface's VideoFormat. */
+  public enum PlatformVideoFormat {
+    DASH(0),
+    HLS(1),
+    SS(2);
+
+    final int index;
+
+    PlatformVideoFormat(final int index) {
+      this.index = index;
+    }
+  }
+
   /**
    * Information passed to the platform view creation.
    *
@@ -151,43 +164,26 @@ public class Messages {
 
   /** Generated class from Pigeon that represents data sent in messages. */
   public static final class CreateMessage {
-    private @Nullable String asset;
+    private @NonNull String uri;
 
-    public @Nullable String getAsset() {
-      return asset;
-    }
-
-    public void setAsset(@Nullable String setterArg) {
-      this.asset = setterArg;
-    }
-
-    private @Nullable String uri;
-
-    public @Nullable String getUri() {
+    public @NonNull String getUri() {
       return uri;
     }
 
-    public void setUri(@Nullable String setterArg) {
+    public void setUri(@NonNull String setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"uri\" is null.");
+      }
       this.uri = setterArg;
     }
 
-    private @Nullable String packageName;
+    private @Nullable PlatformVideoFormat formatHint;
 
-    public @Nullable String getPackageName() {
-      return packageName;
-    }
-
-    public void setPackageName(@Nullable String setterArg) {
-      this.packageName = setterArg;
-    }
-
-    private @Nullable String formatHint;
-
-    public @Nullable String getFormatHint() {
+    public @Nullable PlatformVideoFormat getFormatHint() {
       return formatHint;
     }
 
-    public void setFormatHint(@Nullable String setterArg) {
+    public void setFormatHint(@Nullable PlatformVideoFormat setterArg) {
       this.formatHint = setterArg;
     }
 
@@ -202,6 +198,16 @@ public class Messages {
         throw new IllegalStateException("Nonnull field \"httpHeaders\" is null.");
       }
       this.httpHeaders = setterArg;
+    }
+
+    private @Nullable String userAgent;
+
+    public @Nullable String getUserAgent() {
+      return userAgent;
+    }
+
+    public void setUserAgent(@Nullable String setterArg) {
+      this.userAgent = setterArg;
     }
 
     private @Nullable PlatformVideoViewType viewType;
@@ -226,49 +232,32 @@ public class Messages {
         return false;
       }
       CreateMessage that = (CreateMessage) o;
-      return Objects.equals(asset, that.asset)
-          && Objects.equals(uri, that.uri)
-          && Objects.equals(packageName, that.packageName)
+      return uri.equals(that.uri)
           && Objects.equals(formatHint, that.formatHint)
           && httpHeaders.equals(that.httpHeaders)
+          && Objects.equals(userAgent, that.userAgent)
           && Objects.equals(viewType, that.viewType);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(asset, uri, packageName, formatHint, httpHeaders, viewType);
+      return Objects.hash(uri, formatHint, httpHeaders, userAgent, viewType);
     }
 
     public static final class Builder {
 
-      private @Nullable String asset;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setAsset(@Nullable String setterArg) {
-        this.asset = setterArg;
-        return this;
-      }
-
       private @Nullable String uri;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setUri(@Nullable String setterArg) {
+      public @NonNull Builder setUri(@NonNull String setterArg) {
         this.uri = setterArg;
         return this;
       }
 
-      private @Nullable String packageName;
+      private @Nullable PlatformVideoFormat formatHint;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setPackageName(@Nullable String setterArg) {
-        this.packageName = setterArg;
-        return this;
-      }
-
-      private @Nullable String formatHint;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setFormatHint(@Nullable String setterArg) {
+      public @NonNull Builder setFormatHint(@Nullable PlatformVideoFormat setterArg) {
         this.formatHint = setterArg;
         return this;
       }
@@ -278,6 +267,14 @@ public class Messages {
       @CanIgnoreReturnValue
       public @NonNull Builder setHttpHeaders(@NonNull Map<String, String> setterArg) {
         this.httpHeaders = setterArg;
+        return this;
+      }
+
+      private @Nullable String userAgent;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setUserAgent(@Nullable String setterArg) {
+        this.userAgent = setterArg;
         return this;
       }
 
@@ -291,11 +288,10 @@ public class Messages {
 
       public @NonNull CreateMessage build() {
         CreateMessage pigeonReturn = new CreateMessage();
-        pigeonReturn.setAsset(asset);
         pigeonReturn.setUri(uri);
-        pigeonReturn.setPackageName(packageName);
         pigeonReturn.setFormatHint(formatHint);
         pigeonReturn.setHttpHeaders(httpHeaders);
+        pigeonReturn.setUserAgent(userAgent);
         pigeonReturn.setViewType(viewType);
         return pigeonReturn;
       }
@@ -303,29 +299,26 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(6);
-      toListResult.add(asset);
+      ArrayList<Object> toListResult = new ArrayList<>(5);
       toListResult.add(uri);
-      toListResult.add(packageName);
       toListResult.add(formatHint);
       toListResult.add(httpHeaders);
+      toListResult.add(userAgent);
       toListResult.add(viewType);
       return toListResult;
     }
 
     static @NonNull CreateMessage fromList(@NonNull ArrayList<Object> pigeonVar_list) {
       CreateMessage pigeonResult = new CreateMessage();
-      Object asset = pigeonVar_list.get(0);
-      pigeonResult.setAsset((String) asset);
-      Object uri = pigeonVar_list.get(1);
+      Object uri = pigeonVar_list.get(0);
       pigeonResult.setUri((String) uri);
-      Object packageName = pigeonVar_list.get(2);
-      pigeonResult.setPackageName((String) packageName);
-      Object formatHint = pigeonVar_list.get(3);
-      pigeonResult.setFormatHint((String) formatHint);
-      Object httpHeaders = pigeonVar_list.get(4);
+      Object formatHint = pigeonVar_list.get(1);
+      pigeonResult.setFormatHint((PlatformVideoFormat) formatHint);
+      Object httpHeaders = pigeonVar_list.get(2);
       pigeonResult.setHttpHeaders((Map<String, String>) httpHeaders);
-      Object viewType = pigeonVar_list.get(5);
+      Object userAgent = pigeonVar_list.get(3);
+      pigeonResult.setUserAgent((String) userAgent);
+      Object viewType = pigeonVar_list.get(4);
       pigeonResult.setViewType((PlatformVideoViewType) viewType);
       return pigeonResult;
     }
@@ -345,8 +338,13 @@ public class Messages {
             return value == null ? null : PlatformVideoViewType.values()[((Long) value).intValue()];
           }
         case (byte) 130:
-          return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+          {
+            Object value = readValue(buffer);
+            return value == null ? null : PlatformVideoFormat.values()[((Long) value).intValue()];
+          }
         case (byte) 131:
+          return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 132:
           return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -358,11 +356,14 @@ public class Messages {
       if (value instanceof PlatformVideoViewType) {
         stream.write(129);
         writeValue(stream, value == null ? null : ((PlatformVideoViewType) value).index);
-      } else if (value instanceof PlatformVideoViewCreationParams) {
+      } else if (value instanceof PlatformVideoFormat) {
         stream.write(130);
+        writeValue(stream, value == null ? null : ((PlatformVideoFormat) value).index);
+      } else if (value instanceof PlatformVideoViewCreationParams) {
+        stream.write(131);
         writeValue(stream, ((PlatformVideoViewCreationParams) value).toList());
       } else if (value instanceof CreateMessage) {
-        stream.write(131);
+        stream.write(132);
         writeValue(stream, ((CreateMessage) value).toList());
       } else {
         super.writeValue(stream, value);
@@ -381,6 +382,9 @@ public class Messages {
     void dispose(@NonNull Long playerId);
 
     void setMixWithOthers(@NonNull Boolean mixWithOthers);
+
+    @NonNull
+    String getLookupKeyForAsset(@NonNull String asset, @Nullable String packageName);
 
     /** The codec used by AndroidVideoPlayerApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -489,6 +493,32 @@ public class Messages {
                 try {
                   api.setMixWithOthers(mixWithOthersArg);
                   wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                String assetArg = (String) args.get(0);
+                String packageNameArg = (String) args.get(1);
+                try {
+                  String output = api.getLookupKeyForAsset(assetArg, packageNameArg);
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }

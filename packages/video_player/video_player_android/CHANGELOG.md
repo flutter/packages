@@ -1,3 +1,7 @@
+## 2.8.10
+
+* Restructures internal logic to move more code to Dart.
+
 ## 2.8.9
 
 * Restructures the communication between Dart and Java code.

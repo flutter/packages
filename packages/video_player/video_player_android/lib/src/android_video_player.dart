@@ -73,30 +73,37 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   Future<int?> createWithOptions(VideoCreationOptions options) async {
     final DataSource dataSource = options.dataSource;
 
-    String? asset;
-    String? packageName;
     String? uri;
-    String? formatHint;
-    Map<String, String> httpHeaders = <String, String>{};
+    PlatformVideoFormat? formatHint;
+    final Map<String, String> httpHeaders = dataSource.httpHeaders;
+    final String? userAgent = _userAgentFromHeaders(httpHeaders);
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
-        asset = dataSource.asset;
-        packageName = dataSource.package;
+        final String? asset = dataSource.asset;
+        if (asset == null) {
+          throw ArgumentError(
+            '"asset" must be non-null for an asset data source',
+          );
+        }
+        final String key = await _api.getLookupKeyForAsset(
+          asset,
+          dataSource.package,
+        );
+        uri = 'asset:///$key';
       case DataSourceType.network:
         uri = dataSource.uri;
-        formatHint = _videoFormatStringMap[dataSource.formatHint];
-        httpHeaders = dataSource.httpHeaders;
+        formatHint = _platformVideoFormatFromVideoFormat(dataSource.formatHint);
       case DataSourceType.file:
-        uri = dataSource.uri;
-        httpHeaders = dataSource.httpHeaders;
       case DataSourceType.contentUri:
         uri = dataSource.uri;
     }
+    if (uri == null) {
+      throw ArgumentError('Unable to construct a video asset from $options');
+    }
     final CreateMessage message = CreateMessage(
-      asset: asset,
-      packageName: packageName,
       uri: uri,
       httpHeaders: httpHeaders,
+      userAgent: userAgent,
       formatHint: formatHint,
       viewType: _platformVideoViewTypeFromVideoViewType(options.viewType),
     );
@@ -112,6 +119,19 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     ensureApiInitialized(playerId);
 
     return playerId;
+  }
+
+  // Returns the user agent to use with ExoPlayer for the given headers.
+  String? _userAgentFromHeaders(Map<String, String> httpHeaders) {
+    // TODO(stuartmorgan): HTTP headers are case-insensitive, so this should be
+    //  adjusted to find any entry where the key has a case-insensitive match.
+    const String userAgentKey = 'User-Agent';
+    // TODO(stuartmorgan): Investigate removing this. The use of a hard-coded
+    //  default agent dates back to the original ExoPlayer implementation of the
+    //  plugin, but it's not clear why the default isn't null, which would let
+    //  ExoPlayer use its own default value.
+    const String defaultUserAgent = 'ExoPlayer';
+    return httpHeaders[userAgentKey] ?? defaultUserAgent;
   }
 
   /// Returns the API instance for [playerId], creating it if it doesn't already
@@ -167,38 +187,36 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       dynamic event,
     ) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
-      switch (map['event']) {
-        case 'initialized':
-          return VideoEvent(
-            eventType: VideoEventType.initialized,
-            duration: Duration(milliseconds: map['duration'] as int),
-            size: Size(
-              (map['width'] as num?)?.toDouble() ?? 0.0,
-              (map['height'] as num?)?.toDouble() ?? 0.0,
+      return switch (map['event']) {
+        'initialized' => VideoEvent(
+          eventType: VideoEventType.initialized,
+          duration: Duration(milliseconds: map['duration'] as int),
+          size: Size(
+            (map['width'] as num?)?.toDouble() ?? 0.0,
+            (map['height'] as num?)?.toDouble() ?? 0.0,
+          ),
+          rotationCorrection: map['rotationCorrection'] as int? ?? 0,
+        ),
+        'completed' => VideoEvent(eventType: VideoEventType.completed),
+        'bufferingUpdate' => VideoEvent(
+          eventType: VideoEventType.bufferingUpdate,
+          buffered: <DurationRange>[
+            DurationRange(
+              Duration.zero,
+              Duration(milliseconds: map['position'] as int),
             ),
-            rotationCorrection: map['rotationCorrection'] as int? ?? 0,
-          );
-        case 'completed':
-          return VideoEvent(eventType: VideoEventType.completed);
-        case 'bufferingUpdate':
-          final List<dynamic> values = map['values'] as List<dynamic>;
-
-          return VideoEvent(
-            buffered: values.map<DurationRange>(_toDurationRange).toList(),
-            eventType: VideoEventType.bufferingUpdate,
-          );
-        case 'bufferingStart':
-          return VideoEvent(eventType: VideoEventType.bufferingStart);
-        case 'bufferingEnd':
-          return VideoEvent(eventType: VideoEventType.bufferingEnd);
-        case 'isPlayingStateUpdate':
-          return VideoEvent(
-            eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: map['isPlaying'] as bool,
-          );
-        default:
-          return VideoEvent(eventType: VideoEventType.unknown);
-      }
+          ],
+        ),
+        'bufferingStart' => VideoEvent(
+          eventType: VideoEventType.bufferingStart,
+        ),
+        'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
+        'isPlayingStateUpdate' => VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: map['isPlaying'] as bool,
+        ),
+        _ => VideoEvent(eventType: VideoEventType.unknown),
+      };
     });
   }
 
@@ -238,20 +256,18 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return player ?? (throw StateError('No active player with ID $id.'));
   }
 
-  static const Map<VideoFormat, String> _videoFormatStringMap =
-      <VideoFormat, String>{
-        VideoFormat.ss: 'ss',
-        VideoFormat.hls: 'hls',
-        VideoFormat.dash: 'dash',
-        VideoFormat.other: 'other',
-      };
-
-  DurationRange _toDurationRange(dynamic value) {
-    final List<dynamic> pair = value as List<dynamic>;
-    return DurationRange(
-      Duration(milliseconds: pair[0] as int),
-      Duration(milliseconds: pair[1] as int),
-    );
+  PlatformVideoFormat? _platformVideoFormatFromVideoFormat(
+    VideoFormat? format,
+  ) {
+    return switch (format) {
+      VideoFormat.dash => PlatformVideoFormat.dash,
+      VideoFormat.hls => PlatformVideoFormat.hls,
+      VideoFormat.ss => PlatformVideoFormat.ss,
+      VideoFormat.other => null,
+      // Include a catch-all, since the enum comes from another package, so
+      // this code must handle the possibility of a new enum value.
+      _ => null,
+    };
   }
 }
 
