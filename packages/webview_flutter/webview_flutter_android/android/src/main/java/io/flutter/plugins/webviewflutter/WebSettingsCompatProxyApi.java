@@ -7,6 +7,7 @@ package io.flutter.plugins.webviewflutter;
 import android.webkit.WebSettings;
 import androidx.annotation.NonNull;
 import androidx.webkit.WebSettingsCompat;
+import androidx.webkit.WebViewFeature;
 
 /**
  * Host api implementation for {@link WebSettingsCompat}.
@@ -20,6 +21,8 @@ public class WebSettingsCompatProxyApi extends PigeonApiWebSettingsCompat {
 
   @Override
   public void setPaymentRequestEnabled(@NonNull WebSettings webSettings, boolean enabled) {
-    WebSettingsCompat.setPaymentRequestEnabled(webSettings, enabled);
+    if (WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST)) {
+      WebSettingsCompat.setPaymentRequestEnabled(webSettings, enabled);
+    }
   }
 }
