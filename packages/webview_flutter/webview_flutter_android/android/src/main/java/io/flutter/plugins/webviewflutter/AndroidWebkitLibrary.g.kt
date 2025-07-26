@@ -567,6 +567,12 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
    */
   abstract fun getPigeonApiCertificate(): PigeonApiCertificate
 
+  /**
+   * An implementation of [PigeonApiWebSettingsCompat] used to add a new Dart instance of
+   * `WebSettingsCompat` to the Dart `InstanceManager`.
+   */
+  abstract fun getPigeonApiWebSettingsCompat(): PigeonApiWebSettingsCompat
+
   fun setUp() {
     AndroidWebkitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
         binaryMessenger, instanceManager)
@@ -598,6 +604,8 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
         binaryMessenger, getPigeonApiSslCertificateDName())
     PigeonApiSslCertificate.setUpMessageHandlers(binaryMessenger, getPigeonApiSslCertificate())
     PigeonApiCertificate.setUpMessageHandlers(binaryMessenger, getPigeonApiCertificate())
+    PigeonApiWebSettingsCompat.setUpMessageHandlers(
+        binaryMessenger, getPigeonApiWebSettingsCompat())
   }
 
   fun tearDown() {
@@ -623,6 +631,7 @@ abstract class AndroidWebkitLibraryPigeonProxyApiRegistrar(val binaryMessenger: 
     PigeonApiSslCertificateDName.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiSslCertificate.setUpMessageHandlers(binaryMessenger, null)
     PigeonApiCertificate.setUpMessageHandlers(binaryMessenger, null)
+    PigeonApiWebSettingsCompat.setUpMessageHandlers(binaryMessenger, null)
   }
 }
 
@@ -727,6 +736,8 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
       registrar.getPigeonApiSslCertificate().pigeon_newInstance(value) {}
     } else if (value is java.security.cert.Certificate) {
       registrar.getPigeonApiCertificate().pigeon_newInstance(value) {}
+    } else if (value is androidx.webkit.WebSettingsCompat) {
+      registrar.getPigeonApiWebSettingsCompat().pigeon_newInstance(value) {}
     }
 
     when {
@@ -6310,3 +6321,79 @@ abstract class PigeonApiCertificate(
     }
   }
 }
+
+@Suppress("UNCHECKED_CAST")
+abstract class PigeonApiWebSettingsCompat(
+    open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
+) {
+  abstract fun setPaymentRequestEnabled(webSettings: android.webkit.WebSettings, enabled: Boolean)
+
+  companion object {
+    @Suppress("LocalVariableName")
+    fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiWebSettingsCompat?) {
+      val codec = api?.pigeonRegistrar?.codec ?: AndroidWebkitLibraryPigeonCodec()
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebSettingsCompat.setPaymentRequestEnabled",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val webSettingsArg = args[0] as android.webkit.WebSettings
+            val enabledArg = args[1] as Boolean
+            val wrapped: List<Any?> =
+                try {
+                  api.setPaymentRequestEnabled(webSettingsArg, enabledArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+
+  @Suppress("LocalVariableName", "FunctionName")
+  /** Creates a Dart instance of WebSettingsCompat and attaches it to [pigeon_instanceArg]. */
+  fun pigeon_newInstance(
+      pigeon_instanceArg: androidx.webkit.WebSettingsCompat,
+      callback: (Result<Unit>) -> Unit
+  ) {
+    if (pigeonRegistrar.ignoreCallsToDart) {
+      callback(
+          Result.failure(
+              AndroidWebKitError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
+    } else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
+      callback(Result.success(Unit))
+    } else {
+      val pigeon_identifierArg =
+          pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
+      val binaryMessenger = pigeonRegistrar.binaryMessenger
+      val codec = pigeonRegistrar.codec
+      val channelName =
+          "dev.flutter.pigeon.webview_flutter_android.WebSettingsCompat.pigeon_newInstance"
+      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
+      channel.send(listOf(pigeon_identifierArg)) {
+        if (it is List<*>) {
+          if (it.size > 1) {
+            callback(
+                Result.failure(
+                    AndroidWebKitError(it[0] as String, it[1] as String, it[2] as String?)))
+          } else {
+            callback(Result.success(Unit))
+          }
+        } else {
+          callback(
+              Result.failure(AndroidWebkitLibraryPigeonUtils.createConnectionError(channelName)))
+        }
+      }
+    }
+  }
+}
+

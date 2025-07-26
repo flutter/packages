@@ -1091,3 +1091,16 @@ abstract class Certificate {
   /// The encoded form of this certificate.
   Uint8List getEncoded();
 }
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.webkit.WebSettingsCompat',
+  ),
+)
+abstract class WebSettingsCompat {
+  @static
+  void setPaymentRequestEnabled(
+    WebSettings webSettings,
+    bool enabled,
+  );
+}

@@ -251,4 +251,10 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   public FlutterAssetManager getFlutterAssetManager() {
     return flutterAssetManager;
   }
+
+  @NonNull
+  @Override
+  public PigeonApiWebSettingsCompat getPigeonApiWebSettingsCompat() {
+    return new WebSettingsCompatProxyApi(this);
+  }
 }
