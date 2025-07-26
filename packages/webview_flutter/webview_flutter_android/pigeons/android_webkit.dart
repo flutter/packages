@@ -1104,3 +1104,13 @@ abstract class WebSettingsCompat {
     bool enabled,
   );
 }
+
+@ProxyApi(
+  kotlinOptions: KotlinProxyApiOptions(
+    fullClassName: 'androidx.webkit.WebViewFeature',
+  ),
+)
+abstract class WebViewFeature {
+  @static
+  bool isFeatureSupported(String feature);
+}
