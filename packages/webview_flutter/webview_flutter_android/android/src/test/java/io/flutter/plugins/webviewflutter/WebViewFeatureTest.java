@@ -10,7 +10,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mockStatic;
 
 import androidx.webkit.WebViewFeature;
-
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
@@ -20,10 +19,12 @@ public class WebViewFeatureTest {
     final PigeonApiWebViewFeature api = new TestProxyApiRegistrar().getPigeonApiWebViewFeature();
 
     try (MockedStatic<WebViewFeature> mockedStatic = mockStatic(WebViewFeature.class)) {
-      mockedStatic.when(() -> WebViewFeature.isFeatureSupported("PAYMENT_REQUEST")).thenReturn(true);
-      
+      mockedStatic
+          .when(() -> WebViewFeature.isFeatureSupported("PAYMENT_REQUEST"))
+          .thenReturn(true);
+
       boolean result = api.isFeatureSupported("PAYMENT_REQUEST");
-      
+
       assertTrue(result);
 
       mockedStatic.verify(() -> WebViewFeature.isFeatureSupported("PAYMENT_REQUEST"));
@@ -37,12 +38,14 @@ public class WebViewFeatureTest {
     final PigeonApiWebViewFeature api = new TestProxyApiRegistrar().getPigeonApiWebViewFeature();
 
     try (MockedStatic<WebViewFeature> mockedStatic = mockStatic(WebViewFeature.class)) {
-      mockedStatic.when(() -> WebViewFeature.isFeatureSupported("UNSUPPORTED_FEATURE")).thenReturn(false);
-      
+      mockedStatic
+          .when(() -> WebViewFeature.isFeatureSupported("UNSUPPORTED_FEATURE"))
+          .thenReturn(false);
+
       boolean result = api.isFeatureSupported("UNSUPPORTED_FEATURE");
-      
+
       assertFalse(result);
-      
+
       mockedStatic.verify(() -> WebViewFeature.isFeatureSupported("UNSUPPORTED_FEATURE"));
     } catch (Exception e) {
       fail(e.toString());

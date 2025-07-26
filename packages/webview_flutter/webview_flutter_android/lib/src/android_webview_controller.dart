@@ -793,7 +793,8 @@ class AndroidWebViewController extends PlatformWebViewController {
       WebViewFeatureType.paymentRequest =>
         WebViewFeatureConstants.paymentRequest,
     };
-    return _androidWebViewParams.androidWebViewProxy.isWebViewFeatureSupported(feature);
+    return _androidWebViewParams.androidWebViewProxy
+        .isWebViewFeatureSupported(feature);
   }
 
   /// Sets whether the WebView should enable the Payment Request API.

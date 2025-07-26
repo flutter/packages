@@ -9,16 +9,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 
 import android.webkit.WebSettings;
-
 import androidx.webkit.WebSettingsCompat;
-
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
 public class WebSettingsCompatTest {
   @Test
   public void setPaymentRequestEnabled() {
-    final PigeonApiWebSettingsCompat api = new TestProxyApiRegistrar().getPigeonApiWebSettingsCompat();
+    final PigeonApiWebSettingsCompat api =
+        new TestProxyApiRegistrar().getPigeonApiWebSettingsCompat();
 
     final WebSettings webSettings = mock(WebSettings.class);
     try (MockedStatic<WebSettingsCompat> mockedStatic = mockStatic(WebSettingsCompat.class)) {
