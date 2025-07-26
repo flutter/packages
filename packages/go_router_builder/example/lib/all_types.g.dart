@@ -75,22 +75,17 @@ mixin _$AllTypesBaseRoute on GoRouteData {
   static AllTypesBaseRoute _fromState(GoRouterState state) =>
       const AllTypesBaseRoute();
 
-  @override
   String get location => GoRouteData.$location(
         '/',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -104,7 +99,6 @@ mixin _$BigIntRoute on GoRouteData {
 
   BigIntRoute get _self => this as BigIntRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/big-int-route/${Uri.encodeComponent(_self.requiredBigIntField.toString())}',
         queryParams: {
@@ -113,17 +107,13 @@ mixin _$BigIntRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -142,7 +132,6 @@ mixin _$BoolRoute on GoRouteData {
 
   BoolRoute get _self => this as BoolRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/bool-route/${Uri.encodeComponent(_self.requiredBoolField.toString())}',
         queryParams: {
@@ -154,17 +143,13 @@ mixin _$BoolRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -178,7 +163,6 @@ mixin _$DateTimeRoute on GoRouteData {
 
   DateTimeRoute get _self => this as DateTimeRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/date-time-route/${Uri.encodeComponent(_self.requiredDateTimeField.toString())}',
         queryParams: {
@@ -187,17 +171,13 @@ mixin _$DateTimeRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -216,7 +196,6 @@ mixin _$DoubleRoute on GoRouteData {
 
   DoubleRoute get _self => this as DoubleRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/double-route/${Uri.encodeComponent(_self.requiredDoubleField.toString())}',
         queryParams: {
@@ -228,17 +207,13 @@ mixin _$DoubleRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -256,7 +231,6 @@ mixin _$IntRoute on GoRouteData {
 
   IntRoute get _self => this as IntRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/int-route/${Uri.encodeComponent(_self.requiredIntField.toString())}',
         queryParams: {
@@ -267,17 +241,13 @@ mixin _$IntRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -295,7 +265,6 @@ mixin _$NumRoute on GoRouteData {
 
   NumRoute get _self => this as NumRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/num-route/${Uri.encodeComponent(_self.requiredNumField.toString())}',
         queryParams: {
@@ -306,17 +275,13 @@ mixin _$NumRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -335,7 +300,6 @@ mixin _$EnumRoute on GoRouteData {
 
   EnumRoute get _self => this as EnumRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/enum-route/${Uri.encodeComponent(_$PersonDetailsEnumMap[_self.requiredEnumField]!)}',
         queryParams: {
@@ -347,17 +311,13 @@ mixin _$EnumRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -382,7 +342,6 @@ mixin _$EnhancedEnumRoute on GoRouteData {
 
   EnhancedEnumRoute get _self => this as EnhancedEnumRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/enhanced-enum-route/${Uri.encodeComponent(_$SportDetailsEnumMap[_self.requiredEnumField]!)}',
         queryParams: {
@@ -394,17 +353,13 @@ mixin _$EnhancedEnumRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -426,7 +381,6 @@ mixin _$StringRoute on GoRouteData {
 
   StringRoute get _self => this as StringRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/string-route/${Uri.encodeComponent(_self.requiredStringField)}',
         queryParams: {
@@ -437,17 +391,13 @@ mixin _$StringRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -460,7 +410,6 @@ mixin _$UriRoute on GoRouteData {
 
   UriRoute get _self => this as UriRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/uri-route/${Uri.encodeComponent(_self.requiredUriField.toString())}',
         queryParams: {
@@ -468,17 +417,13 @@ mixin _$UriRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -564,7 +509,6 @@ mixin _$IterableRoute on GoRouteData {
 
   IterableRoute get _self => this as IterableRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/iterable-route',
         queryParams: {
@@ -629,17 +573,13 @@ mixin _$IterableRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -732,7 +672,6 @@ mixin _$IterableRouteWithDefaultValues on GoRouteData {
   IterableRouteWithDefaultValues get _self =>
       this as IterableRouteWithDefaultValues;
 
-  @override
   String get location => GoRouteData.$location(
         '/iterable-route-with-default-values',
         queryParams: {
@@ -792,17 +731,13 @@ mixin _$IterableRouteWithDefaultValues on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 

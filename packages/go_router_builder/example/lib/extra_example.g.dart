@@ -27,23 +27,18 @@ mixin _$RequiredExtraRoute on GoRouteData {
 
   RequiredExtraRoute get _self => this as RequiredExtraRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/requiredExtra',
       );
 
-  @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
-  @override
   Future<T?> push<T>(BuildContext context) =>
       context.push<T>(location, extra: _self.$extra);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: _self.$extra);
 
-  @override
   void replace(BuildContext context) =>
       context.replace(location, extra: _self.$extra);
 }
@@ -61,23 +56,18 @@ mixin _$OptionalExtraRoute on GoRouteData {
 
   OptionalExtraRoute get _self => this as OptionalExtraRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/optionalExtra',
       );
 
-  @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
-  @override
   Future<T?> push<T>(BuildContext context) =>
       context.push<T>(location, extra: _self.$extra);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: _self.$extra);
 
-  @override
   void replace(BuildContext context) =>
       context.replace(location, extra: _self.$extra);
 }
@@ -90,21 +80,16 @@ RouteBase get $splashRoute => GoRouteData.$route(
 mixin _$SplashRoute on GoRouteData {
   static SplashRoute _fromState(GoRouterState state) => const SplashRoute();
 
-  @override
   String get location => GoRouteData.$location(
         '/splash',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }

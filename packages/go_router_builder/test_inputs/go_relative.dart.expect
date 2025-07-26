@@ -1,0 +1,110 @@
+RouteBase get $route1 => GoRouteData.$route(
+      path: 'route-1',
+      factory: _$Route1._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'relative-route',
+          factory: _$RelativeRoute._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: 'inner-relative-route',
+              factory: _$InnerRelativeRoute._fromState,
+            ),
+          ],
+        ),
+      ],
+    );
+
+mixin _$Route1 on GoRouteData {
+  static Route1 _fromState(GoRouterState state) => const Route1();
+
+  String get location => GoRouteData.$location(
+        'route-1',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin _$RelativeRoute on GoRouteData {
+  static RelativeRoute _fromState(GoRouterState state) => const RelativeRoute();
+
+  String get location => GoRouteData.$location(
+        'relative-route',
+      );
+
+  String get relativeLocation => './$location';
+
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
+
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
+}
+
+mixin _$InnerRelativeRoute on GoRouteData {
+  static InnerRelativeRoute _fromState(GoRouterState state) =>
+      const InnerRelativeRoute();
+
+  String get location => GoRouteData.$location(
+        'inner-relative-route',
+      );
+
+  String get relativeLocation => './$location';
+
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
+
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
+}
+
+RouteBase get $route2 => GoRouteData.$route(
+      path: 'route-2',
+      factory: _$Route2._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'relative-route',
+          factory: _$RelativeRoute._fromState,
+          routes: [
+            GoRouteData.$route(
+              path: 'inner-relative-route',
+              factory: _$InnerRelativeRoute._fromState,
+            ),
+          ],
+        ),
+      ],
+    );
+
+mixin _$Route2 on GoRouteData {
+  static Route2 _fromState(GoRouterState state) => const Route2();
+
+  String get location => GoRouteData.$location(
+        'route-2',
+      );
+
+  void go(BuildContext context) => context.go(location);
+
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  void replace(BuildContext context) => context.replace(location);
+}

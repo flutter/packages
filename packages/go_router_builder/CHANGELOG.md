@@ -2,6 +2,10 @@
 
 - Restricts `build` to versions less than 2.5.0.
 
+## 3.0.2
+
+- Adds `TypedRelativeGoRoute` annotation which supports relative routes.
+
 ## 3.0.1
 
 - Updates README.md to use the mixin `with _$RouteName`.
