@@ -1,6 +1,6 @@
 ## 4.9.0
 
-* Adds support to check payment request is supported.
+* Adds support for the Payment Request API with `AndroidWebViewController.isWebViewFeatureSupported` and `AndroidWebViewController.setPaymentRequestEnabled`.
 
 ## 4.8.2
 
