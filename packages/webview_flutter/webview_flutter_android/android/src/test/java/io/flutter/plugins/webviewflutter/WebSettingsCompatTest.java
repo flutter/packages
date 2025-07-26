@@ -12,7 +12,6 @@ import static org.mockito.Mockito.never;
 import android.webkit.WebSettings;
 import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
-
 import org.junit.Test;
 import org.mockito.MockedStatic;
 
@@ -25,8 +24,10 @@ public class WebSettingsCompatTest {
     final WebSettings webSettings = mock(WebSettings.class);
 
     try (MockedStatic<WebSettingsCompat> mockedStatic = mockStatic(WebSettingsCompat.class)) {
-      try(MockedStatic<WebViewFeature> mockedWebViewFeature = mockStatic(WebViewFeature.class)) {
-        mockedWebViewFeature.when(() -> WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST)).thenReturn(true);
+      try (MockedStatic<WebViewFeature> mockedWebViewFeature = mockStatic(WebViewFeature.class)) {
+        mockedWebViewFeature
+            .when(() -> WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST))
+            .thenReturn(true);
         api.setPaymentRequestEnabled(webSettings, true);
         mockedStatic.verify(() -> WebSettingsCompat.setPaymentRequestEnabled(webSettings, true));
       } catch (Exception e) {
@@ -40,15 +41,18 @@ public class WebSettingsCompatTest {
   @Test
   public void setPaymentRequestEnabled_PAYMENT_REQUEST_is_NOT_supported() {
     final PigeonApiWebSettingsCompat api =
-            new TestProxyApiRegistrar().getPigeonApiWebSettingsCompat();
+        new TestProxyApiRegistrar().getPigeonApiWebSettingsCompat();
 
     final WebSettings webSettings = mock(WebSettings.class);
 
     try (MockedStatic<WebSettingsCompat> mockedStatic = mockStatic(WebSettingsCompat.class)) {
-      try(MockedStatic<WebViewFeature> mockedWebViewFeature = mockStatic(WebViewFeature.class)) {
-        mockedWebViewFeature.when(() -> WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST)).thenReturn(false);
+      try (MockedStatic<WebViewFeature> mockedWebViewFeature = mockStatic(WebViewFeature.class)) {
+        mockedWebViewFeature
+            .when(() -> WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST))
+            .thenReturn(false);
         api.setPaymentRequestEnabled(webSettings, true);
-        mockedStatic.verify(() -> WebSettingsCompat.setPaymentRequestEnabled(webSettings, true), never());
+        mockedStatic.verify(
+            () -> WebSettingsCompat.setPaymentRequestEnabled(webSettings, true), never());
       } catch (Exception e) {
         fail(e.toString());
       }
