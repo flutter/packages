@@ -1,3 +1,7 @@
+## 4.9.0
+
+* Adds support to check payment request is supported.
+
 ## 4.8.2
 
 * Bumps gradle from 8.9.0 to 8.11.1.
