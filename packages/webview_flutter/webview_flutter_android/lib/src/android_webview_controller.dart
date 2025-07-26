@@ -940,7 +940,7 @@ enum MixedContentMode {
 
 /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#constants_1.
 enum WebViewFeatureType {
-  /// Feature for isFeatureSupported. This feature covers setPaymentRequestEnabled, getPaymentRequestEnabled, setHasEnrolledInstrumentEnabled, and getHasEnrolledInstrumentEnabled,
+  /// Feature for isFeatureSupported. This feature covers [WebSettingsCompat.setPaymentRequestEnabled].
   paymentRequest,
 }
 

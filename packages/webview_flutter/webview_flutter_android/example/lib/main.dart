@@ -804,7 +804,7 @@ class SampleMenu extends StatelessWidget {
 
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Payment Request API enabled: $paymentRequestEnabled'),
+        content: Text('Payment Request API supported: $paymentRequestEnabled'),
       ));
     }
   }
