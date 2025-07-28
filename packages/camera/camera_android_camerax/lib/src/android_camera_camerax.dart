@@ -459,6 +459,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   @override
   Future<void> initializeCamera(
     int cameraId, {
+    // TODO(camsim99): look into nvv21 for images as well
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) async {
     // Save imageFormatGroup to configure image streaming.

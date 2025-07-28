@@ -6,6 +6,8 @@ package io.flutter.plugins.camerax;
 
 import androidx.camera.core.ImageProxy.PlaneProxy;
 import androidx.annotation.NonNull;
+import java.nio.ByteBuffer;
+import java.util.List;
 
 /**
  * ProxyApi implementation for {@link PlaneProxyUtils}. This class may handle instantiating native object
@@ -17,10 +19,12 @@ class PlaneProxyUtilsProxyApi extends PigeonApiPlaneProxyUtils {
     super(pigeonRegistrar);
   }
 
+  // List<? extends PlaneProxy> can be considered the same as List<PlaneProxy>.
+  @SuppressWarnings("unchecked")
   @NonNull
   @Override
-  public bytes[] getNv21Plane(@NonNull List<PlaneProxy> planeProxyList, long imageWidth, long imageHeight) {
-    ByteBuffer nv21Bytes = PlaneProxyUtils.yuv420ThreePlanesToNV21(planeProxyList, (int) imageWidth, (int) imageHeight);
+  public byte[] getNv21Plane(@NonNull List<? extends PlaneProxy> planeProxyList, long imageWidth, long imageHeight) {
+    ByteBuffer nv21Bytes = PlaneProxyUtils.yuv420ThreePlanesToNV21((List<PlaneProxy>) planeProxyList, (int) imageWidth, (int) imageHeight);
     return nv21Bytes.array();
   }
 }

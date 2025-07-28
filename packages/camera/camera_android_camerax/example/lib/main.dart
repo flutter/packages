@@ -12,6 +12,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:video_player/video_player.dart';
 
 import 'camera_controller.dart';
+import 'camera_image.dart';
 import 'camera_preview.dart';
 
 /// Camera example home widget.
@@ -495,9 +496,12 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   TextButton(
                     style: styleAuto,
                     onPressed:
-                        controller != null
-                            ? () => onSetFocusModeButtonPressed(FocusMode.auto)
-                            : null,
+                        // controller != null
+                        //     ? () => onSetFocusModeButtonPressed(FocusMode.auto)
+                        //     : null,
+                        () => controller!.startImageStream((CameraImage image) {
+                          print('image available!');
+                        }),
                     onLongPress: () {
                       if (controller != null) {
                         CameraPlatform.instance.setFocusPoint(
@@ -668,7 +672,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         audioBitrate: 32000,
         enableAudio: enableAudio,
       ),
-      imageFormatGroup: ImageFormatGroup.jpeg,
+      imageFormatGroup: ImageFormatGroup.nv21,
     );
 
     controller = cameraController;

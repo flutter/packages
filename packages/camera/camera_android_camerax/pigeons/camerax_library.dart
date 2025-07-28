@@ -1269,7 +1269,7 @@ abstract class DisplayOrientedMeteringPointFactory
 /// TODO(camsim99)
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
-    fullClassName: 'androidx.camera.core.PlaneProxyUtils',
+    fullClassName: 'androidx.camera.core.ImageProxy.PlaneProxy',
   ),
 )
 abstract class PlaneProxyUtils {

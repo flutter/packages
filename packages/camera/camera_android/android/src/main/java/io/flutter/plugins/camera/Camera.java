@@ -831,6 +831,7 @@ class Camera
             dartMessenger.error(flutterResult, errorCode, errorMessage, null));
   }
 
+  // TODO(camsim99): double check that this nv21 just for video recording
   public void startVideoRecording(@Nullable EventChannel imageStreamChannel) {
     prepareRecording();
 

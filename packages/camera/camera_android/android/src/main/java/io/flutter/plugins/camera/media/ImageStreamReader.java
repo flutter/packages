@@ -211,7 +211,7 @@ public class ImageStreamReader {
    * @return parsed map describing the image planes to be sent to dart.
    */
   @NonNull
-  public List<Map<String, Object>> parsePlanesForNv21(@NonNull Image image) {
+  public List<Map<String, Object>> yuv420ThreePlanesToNV21(@NonNull Image image) {
     List<Map<String, Object>> planes = new ArrayList<>();
 
     // We will convert the YUV data to NV21 which is a single-plane image

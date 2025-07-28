@@ -5,11 +5,13 @@
 // Note: the code in this file is taken directly from the official Google MLKit example:
 // https://github.com/googlesamples/mlkit
 
-package io.flutter.plugins.camera.media;
+package io.flutter.plugins.camerax;
 
 import android.media.Image;
 import androidx.annotation.NonNull;
+import androidx.camera.core.ImageProxy.PlaneProxy;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 // TODO(camsim99): make sure license stuff is handled
 public class PlaneProxyUtils {

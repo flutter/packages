@@ -425,4 +425,10 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   public CameraPermissionsErrorProxyApi getPigeonApiCameraPermissionsError() {
     return new CameraPermissionsErrorProxyApi(this);
   }
+
+  @NonNull
+  @Override
+  public PlaneProxyUtilsProxyApi getPigeonApiPlaneProxyUtils() {
+    return new PlaneProxyUtilsProxyApi(this);
+  }
 }

@@ -968,7 +968,7 @@ private class CameraXLibraryPigeonProxyApiBaseCodec(val registrar: CameraXLibrar
      else if (value is androidx.camera.core.MeteringPointFactory) {
       registrar.getPigeonApiMeteringPointFactory().pigeon_newInstance(value) { }
     }
-     else if (value is androidx.camera.core.PlaneProxyUtils) {
+     else if (value is androidx.camera.core.ImageProxy.PlaneProxy) {
       registrar.getPigeonApiPlaneProxyUtils().pigeon_newInstance(value) { }
     }
 
@@ -6260,7 +6260,7 @@ abstract class PigeonApiPlaneProxyUtils(open val pigeonRegistrar: CameraXLibrary
 
   @Suppress("LocalVariableName", "FunctionName")
   /** Creates a Dart instance of PlaneProxyUtils and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(pigeon_instanceArg: androidx.camera.core.PlaneProxyUtils, callback: (Result<Unit>) -> Unit)
+  fun pigeon_newInstance(pigeon_instanceArg: androidx.camera.core.ImageProxy.PlaneProxy, callback: (Result<Unit>) -> Unit)
 {
     if (pigeonRegistrar.ignoreCallsToDart) {
       callback(
