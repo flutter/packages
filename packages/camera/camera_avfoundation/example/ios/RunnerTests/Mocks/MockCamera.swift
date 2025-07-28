@@ -65,6 +65,15 @@ final class MockCamera: NSObject, Camera {
   var isPreviewPaused: Bool = false
   var isStreamingImages: Bool = false
 
+  var deviceOrientation: UIDeviceOrientation {
+    get {
+      preconditionFailure("Attempted to access unimplemented property: deviceOrientation")
+    }
+    set {
+      setDeviceOrientationStub?(newValue)
+    }
+  }
+
   var minimumExposureOffset: CGFloat {
     return getMinimumExposureOffsetStub?() ?? 0
   }
@@ -118,10 +127,6 @@ final class MockCamera: NSObject, Camera {
 
   func captureToFile(completion: @escaping (String?, FlutterError?) -> Void) {
     captureToFileStub?(completion)
-  }
-
-  func setDeviceOrientation(_ orientation: UIDeviceOrientation) {
-    setDeviceOrientationStub?(orientation)
   }
 
   func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation) {

@@ -1,3 +1,26 @@
+## 0.9.20+5
+
+* Migrates `startVideoRecording`, `setUpVideoRecording`, and `setupWriter` methods to Swift.
+
+## 0.9.20+4
+
+* Migrates `setVideoFormat`,`stopVideoRecording`, and `stopImageStream` methods to Swift.
+* Migrates stopping accelerometer updates to Swift.
+* Migrates `setDescriptionWhileRecording` method to Swift.
+* Adds `createConnection` method implementation to Swift.
+
+## 0.9.20+3
+
+* Migrates `setZoomLevel` and `setFlashMode` methods to Swift.
+
+## 0.9.20+2
+
+* Migrates exposure offset and zoom factor limit getters to Swift.
+* Migrates `setImageFileFormat` method to Swift.
+* Migrates pause and resume methods to Swift.
+* Migrates capture orientation locking methods to Swift.
+* Converts `setDeviceOrientation` method to property setter and migrated to Swift.
+
 ## 0.9.20+1
 
 * Migrates lifecycle methods (`start`, `stop`, `close`) to Swift.

@@ -1,3 +1,7 @@
+## 1.0.50
+
+* Updates `androidx.fragment:fragment` to 1.8.8.
+
 ## 1.0.49
 
 * Removes obsolete code related to supporting SDK <21.

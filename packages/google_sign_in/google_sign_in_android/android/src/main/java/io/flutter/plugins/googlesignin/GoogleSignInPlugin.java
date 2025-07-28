@@ -219,6 +219,17 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
           return;
         }
 
+        // getCredentialAsync requires an acitivity context, not an application context, per
+        // the API docs.
+        Activity activity = getActivity();
+        if (activity == null) {
+          ResultUtilsKt.completeWithGetCredentialFailure(
+              callback,
+              new GetCredentialFailure(
+                  GetCredentialFailureType.NO_ACTIVITY, "No activity available", null));
+          return;
+        }
+
         String nonce = params.getNonce();
         GetCredentialRequest.Builder requestBuilder = new GetCredentialRequest.Builder();
         if (params.getUseButtonFlow()) {
@@ -243,7 +254,7 @@ public class GoogleSignInPlugin implements FlutterPlugin, ActivityAware {
 
         CredentialManager credentialManager = credentialManagerFactory.create(context);
         credentialManager.getCredentialAsync(
-            context,
+            activity,
             requestBuilder.build(),
             null,
             Executors.newSingleThreadExecutor(),
