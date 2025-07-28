@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 ## 0.2.4+3
 
 * Adds remaining methods for internal wrapper of the Android native `AdsRequest`.
 * Adds remaining methods for internal wrapper of the iOS native `IMAAdsRequest`.
+=======
+## 0.2.5
+
+* Adds support to set general SDK settings. See `ImaSettings` and `AdsLoader.settings`.
+>>>>>>> 6b2e34edba3cc4b6d7198822094afc5720d9271c
 
 ## 0.2.4+2
 
