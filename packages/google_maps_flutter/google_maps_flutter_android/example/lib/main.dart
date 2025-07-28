@@ -100,11 +100,13 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  final GoogleMapsFlutterPlatform platform = GoogleMapsFlutterPlatform.instance;
-  unawaited((platform as GoogleMapsFlutterAndroid)
+  final GoogleMapsFlutterAndroid platform =
+      GoogleMapsFlutterPlatform.instance as GoogleMapsFlutterAndroid;
+  unawaited(platform
       .initializeWithRenderer(AndroidMapRenderer.latest)
       .then((AndroidMapRenderer initializedRenderer) =>
-          completer.complete(initializedRenderer)));
+          completer.complete(initializedRenderer))
+      .then((_) => platform.warmup()));
 
   return completer.future;
 }
