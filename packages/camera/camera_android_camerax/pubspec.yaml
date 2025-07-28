@@ -5,7 +5,11 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 0.6.20
 
 environment:
+<<<<<<< HEAD
   sdk: ^3.8.1
+=======
+  sdk: ^3.7.0
+>>>>>>> b77d72747 (Update min flutter version)
   flutter: ">=3.32.8"
 
 flutter:
