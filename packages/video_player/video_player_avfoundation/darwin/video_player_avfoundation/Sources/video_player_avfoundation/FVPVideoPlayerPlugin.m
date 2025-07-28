@@ -192,12 +192,6 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   @try {
     FVPVideoPlayer *player = textureBased ? [self texturePlayerWithOptions:options]
                                           : [self platformViewPlayerWithOptions:options];
-
-    if (player == nil) {
-      *error = [FlutterError errorWithCode:@"video_player" message:@"not implemented" details:nil];
-      return nil;
-    }
-
     return @([self onPlayerSetup:player]);
   } @catch (NSException *exception) {
     *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
@@ -205,7 +199,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   }
 }
 
-- (nullable FVPTextureBasedVideoPlayer *)texturePlayerWithOptions:
+- (nonnull FVPTextureBasedVideoPlayer *)texturePlayerWithOptions:
     (nonnull FVPCreationOptions *)options {
   FVPFrameUpdater *frameUpdater =
       [[FVPFrameUpdater alloc] initWithRegistry:self.registrar.textures];
@@ -223,7 +217,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                             viewProvider:self.viewProvider];
 }
 
-- (nullable FVPVideoPlayer *)platformViewPlayerWithOptions:(nonnull FVPCreationOptions *)options {
+- (nonnull FVPVideoPlayer *)platformViewPlayerWithOptions:(nonnull FVPCreationOptions *)options {
   // FVPVideoPlayer contains all required logic for platform views.
   return [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
                                  httpHeaders:options.httpHeaders
