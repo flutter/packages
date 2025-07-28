@@ -61,6 +61,22 @@ the issue in the TLHC mode.
 | Heatmap.maximumZoomIntensity |     x     |
 | HeatmapGradient.colorMapSize |     ✓     |
 
+## Warmup
+
+The first time a map is shown, the Google Maps SDK will run thread-blocking
+initialization that can easily freeze the app for hundreds of milliseconds.
+This is a limitation of the SDK on Android and has nothing to do with Flutter.
+
+In order to avoid paying this initialization price at the worst possible time
+(e.g., during a page transition), Android developers have devised a workaround
+where a "fake" map is shown first, during a time at which a thread freeze is less
+conspicuous. (Typically, this is during app startup.) The initialization of
+an actual map will then be significantly faster.
+
+This plugin surfaces this workaround to Flutter developers via
+`GoogleMapsFlutterAndroid.warmup()`. See this plugin's example code for
+one way of using this API.
+
 [1]: https://pub.dev/packages/google_maps_flutter
 [2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://docs.flutter.dev/development/platform-integration/android/platform-views
