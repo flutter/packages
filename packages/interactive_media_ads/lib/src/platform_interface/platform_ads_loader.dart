@@ -9,6 +9,7 @@ import 'interactive_media_ads_platform.dart';
 import 'platform_ad_display_container.dart';
 import 'platform_ads_manager.dart';
 import 'platform_ads_request.dart';
+import 'platform_ima_settings.dart';
 
 /// Object specifying creation parameters for creating a [PlatformAdsLoader].
 ///
@@ -45,10 +46,17 @@ import 'platform_ads_request.dart';
 base class PlatformAdsLoaderCreationParams {
   /// Used by the platform implementation to create a new [PlatformAdsLoader].
   const PlatformAdsLoaderCreationParams({
+    required this.settings,
     required this.container,
     required this.onAdsLoaded,
     required this.onAdsLoadError,
   });
+
+  /// Defines general SDK settings.
+  ///
+  /// Note that certain settings will only be evaluated during initialization of
+  /// the adsLoader.
+  final PlatformImaSettings settings;
 
   /// A container object where ads are rendered.
   final PlatformAdDisplayContainer container;
