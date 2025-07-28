@@ -2022,7 +2022,7 @@ void main() {
             case null:
           }
 
-          if (cameraInfo != null) {
+          if (cameraInfo == null) {
             return mockChosenCameraInfoCameraSelector;
           }
 
