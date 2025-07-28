@@ -2,6 +2,7 @@
 
 * Ensures that a new surface is provided every time that one is requested to render the camera preview
   to fix pausing and resuming the preview.
+* Updates minimum supported SDK version to Flutter 3.32.8.
 
 
 ## 0.6.19
