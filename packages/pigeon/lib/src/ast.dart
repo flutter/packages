@@ -240,11 +240,37 @@ class AstProxyApi extends Api {
   /// `implements`.
   Iterable<AstProxyApi> apisOfInterfaces() => _recursiveFindAllInterfaceApis();
 
+  /// Returns a record for each method inherited from an interface and its
+  /// corresponding ProxyApi.
+  Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfacesWithApis() sync* {
+    for (final AstProxyApi proxyApi in apisOfInterfaces()) {
+      yield* proxyApi.methods.map((Method method) => (method, proxyApi));
+    }
+  }
+
+  /// Returns a record for each Flutter method inherited from [superClass].
+  ///
+  /// This also includes methods that super classes inherited from interfaces
+  /// with `implements`.
+  Iterable<(Method, AstProxyApi)>
+      flutterMethodsFromSuperClassesWithApis() sync* {
+    for (final AstProxyApi proxyApi in allSuperClasses().toList().reversed) {
+      yield* proxyApi.flutterMethods.map((Method method) => (method, proxyApi));
+    }
+    if (superClass != null) {
+      final Set<AstProxyApi> interfaceApisFromSuperClasses =
+          superClass!.associatedProxyApi!._recursiveFindAllInterfaceApis();
+      for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
+        yield* proxyApi.methods.map((Method method) => (method, proxyApi));
+      }
+    }
+  }
+
   /// All methods inherited from interfaces and the interfaces of interfaces.
   Iterable<Method> flutterMethodsFromInterfaces() sync* {
-    for (final AstProxyApi proxyApi in apisOfInterfaces()) {
-      yield* proxyApi.methods;
-    }
+    yield* flutterMethodsFromInterfacesWithApis().map(
+      ((Method, AstProxyApi) method) => method.$1,
+    );
   }
 
   /// A list of Flutter methods inherited from the ProxyApi that this ProxyApi
@@ -256,16 +282,9 @@ class AstProxyApi extends Api {
   /// This also includes methods that super classes inherited from interfaces
   /// with `implements`.
   Iterable<Method> flutterMethodsFromSuperClasses() sync* {
-    for (final AstProxyApi proxyApi in allSuperClasses().toList().reversed) {
-      yield* proxyApi.flutterMethods;
-    }
-    if (superClass != null) {
-      final Set<AstProxyApi> interfaceApisFromSuperClasses =
-          superClass!.associatedProxyApi!._recursiveFindAllInterfaceApis();
-      for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
-        yield* proxyApi.methods;
-      }
-    }
+    yield* flutterMethodsFromSuperClassesWithApis().map(
+      ((Method, AstProxyApi) method) => method.$1,
+    );
   }
 
   /// Whether the API has a method that callbacks to Dart to add a new instance
