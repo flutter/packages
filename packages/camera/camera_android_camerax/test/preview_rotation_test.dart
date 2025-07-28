@@ -90,7 +90,7 @@ void main() {
     required MockProcessCameraProvider mockProcessCameraProvider,
     required CameraSelector Function({
       LensFacing? requireLensFacing,
-      CameraInfo? cameraInfo,
+      CameraInfo? cameraInfoForFilter,
       // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
       // ignore: non_constant_identifier_names
@@ -293,7 +293,7 @@ void main() {
     required MockProcessCameraProvider mockProcessCameraProvider,
     required CameraSelector Function({
       LensFacing? requireLensFacing,
-      CameraInfo? cameraInfo,
+      CameraInfo? cameraInfoForFilter,
       // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
       // ignore: non_constant_identifier_names
@@ -323,7 +323,7 @@ void main() {
   /// Returns function that a CameraXProxy can use to select the front camera.
   MockCameraSelector Function({
     LensFacing? requireLensFacing,
-    CameraInfo? cameraInfo,
+    CameraInfo? cameraInfoForFilter,
     // ignore: non_constant_identifier_names
     BinaryMessenger? pigeon_binaryMessenger,
     // ignore: non_constant_identifier_names
@@ -332,7 +332,7 @@ void main() {
   createCameraSelectorForFrontCamera(MockCameraSelector mockCameraSelector) {
     return ({
       LensFacing? requireLensFacing,
-      CameraInfo? cameraInfo,
+      CameraInfo? cameraInfoForFilter,
       // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
       // ignore: non_constant_identifier_names
@@ -353,7 +353,7 @@ void main() {
   /// Returns function that a CameraXProxy can use to select the back camera.
   MockCameraSelector Function({
     LensFacing? requireLensFacing,
-    CameraInfo? cameraInfo,
+    CameraInfo? cameraInfoForFilter,
     // ignore: non_constant_identifier_names
     BinaryMessenger? pigeon_binaryMessenger,
     // ignore: non_constant_identifier_names
@@ -362,7 +362,7 @@ void main() {
   createCameraSelectorForBackCamera(MockCameraSelector mockCameraSelector) {
     return ({
       LensFacing? requireLensFacing,
-      CameraInfo? cameraInfo,
+      CameraInfo? cameraInfoForFilter,
       // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
       // ignore: non_constant_identifier_names
@@ -465,7 +465,7 @@ void main() {
         // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
         LensFacing? requireLensFacing,
-        CameraInfo? cameraInfo,
+        CameraInfo? cameraInfoForFilter,
       })
       fakeCreateCameraSelector;
       late MediaSettings testMediaSettings;
@@ -716,7 +716,7 @@ void main() {
         // ignore: non_constant_identifier_names
         PigeonInstanceManager? pigeon_instanceManager,
         LensFacing? requireLensFacing,
-        CameraInfo? cameraInfo,
+        CameraInfo? cameraInfoForFilter,
       })
       fakeCreateCameraSelector;
       late MediaSettings testMediaSettings;
@@ -972,7 +972,7 @@ void main() {
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForFrontCamera(mockFrontCameraSelector);
@@ -1082,7 +1082,7 @@ void main() {
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForFrontCamera(mockFrontCameraSelector);
@@ -1174,7 +1174,7 @@ void main() {
         late MockCameraSelector mockFrontCameraSelector;
         late MockCameraSelector Function({
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -1466,7 +1466,7 @@ void main() {
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera;
         late Future<String> Function() proxyGetUiOrientation;
@@ -1761,7 +1761,7 @@ void main() {
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForFrontCamera(mockFrontCameraSelector);
@@ -1877,7 +1877,7 @@ void main() {
         final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
         final MockCameraSelector Function({
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -1996,7 +1996,7 @@ void main() {
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForBackCamera;
         late Future<int> Function() proxyGetDefaultDisplayRotation;
@@ -2186,7 +2186,7 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
               LensFacing? requireLensFacing,
-              CameraInfo? cameraInfo,
+              CameraInfo? cameraInfoForFilter,
             })
             proxyCreateCameraSelectorForFrontCamera =
                 createCameraSelectorForFrontCamera(mockFrontCameraSelector);
@@ -2265,7 +2265,7 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
               LensFacing? requireLensFacing,
-              CameraInfo? cameraInfo,
+              CameraInfo? cameraInfoForFilter,
             })
             proxyCreateCameraSelectorForFrontCamera =
                 createCameraSelectorForBackCamera(mockBackCameraSelector);

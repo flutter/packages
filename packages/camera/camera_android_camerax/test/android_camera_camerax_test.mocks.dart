@@ -1052,7 +1052,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
 
   @override
   _i2.CameraSelector Function({
-    _i3.CameraInfo? cameraInfo,
+    _i3.CameraInfo? cameraInfoForFilter,
     _i8.BinaryMessenger? pigeon_binaryMessenger,
     _i2.PigeonInstanceManager? pigeon_instanceManager,
     _i2.LensFacing? requireLensFacing,
@@ -1062,7 +1062,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
             Invocation.getter(#newCameraSelector),
             returnValue:
                 ({
-                  _i3.CameraInfo? cameraInfo,
+                  _i3.CameraInfo? cameraInfoForFilter,
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
                   _i2.LensFacing? requireLensFacing,
@@ -1072,7 +1072,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                 ),
             returnValueForMissingStub:
                 ({
-                  _i3.CameraInfo? cameraInfo,
+                  _i3.CameraInfo? cameraInfoForFilter,
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
                   _i2.LensFacing? requireLensFacing,
@@ -1082,7 +1082,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                 ),
           )
           as _i2.CameraSelector Function({
-            _i3.CameraInfo? cameraInfo,
+            _i3.CameraInfo? cameraInfoForFilter,
             _i8.BinaryMessenger? pigeon_binaryMessenger,
             _i2.PigeonInstanceManager? pigeon_instanceManager,
             _i2.LensFacing? requireLensFacing,

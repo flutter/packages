@@ -369,7 +369,9 @@ class AndroidCameraCameraX extends CameraPlatform {
     final LensFacing cameraSelectorLensDirection =
         _getCameraSelectorLensDirection(cameraDescription.lensDirection);
     cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
-    cameraSelector = proxy.newCameraSelector(cameraInfo: chosenCameraInfo);
+    cameraSelector = proxy.newCameraSelector(
+      cameraInfoForFilter: chosenCameraInfo,
+    );
     // Start listening for device orientation changes preceding camera creation.
     unawaited(
       deviceOrientationManager.startListeningForDeviceOrientationChange(),

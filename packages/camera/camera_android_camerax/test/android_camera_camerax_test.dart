@@ -169,7 +169,7 @@ void main() {
       },
       newCameraSelector: ({
         LensFacing? requireLensFacing,
-        CameraInfo? cameraInfo,
+        CameraInfo? cameraInfoForFilter,
         // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
         // ignore: non_constant_identifier_names
@@ -676,7 +676,7 @@ void main() {
                 Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
         newCameraSelector: ({
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -789,7 +789,7 @@ void main() {
         },
         newCameraSelector: ({
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -1104,7 +1104,7 @@ void main() {
         },
         newCameraSelector: ({
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -1989,6 +1989,8 @@ void main() {
       final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
           MockCameraCharacteristicsKey();
 
+      MockCameraInfo? mockCameraInfoToSelect;
+
       // Tell plugin to create mock/detached objects and stub method calls for the
       // testing of availableCameras and createCamera.
       camera.proxy = CameraXProxy(
@@ -2007,7 +2009,7 @@ void main() {
         },
         newCameraSelector: ({
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfo,
+          CameraInfo? cameraInfoForFilter,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -2021,8 +2023,7 @@ void main() {
             case LensFacing.unknown:
             case null:
           }
-
-          if (cameraInfo == null) {
+          if (cameraInfoForFilter == mockBackCameraInfoOne) {
             return mockChosenCameraInfoCameraSelector;
           }
 
@@ -2275,6 +2276,12 @@ void main() {
 
       camera.processCameraProvider = mockProcessCameraProvider;
 
+      // Verify the camera name used to create camera is associated with mockBackCameraInfoOne.
+      expect(
+        cameraNameToInfos[cameraDescriptions[0].name],
+        mockBackCameraInfoOne,
+      );
+
       // Creating a camera with settings using a specific camera from
       // available cameras.
       await camera.createCameraWithSettings(
@@ -2351,7 +2358,7 @@ void main() {
           }) => Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
       newCameraSelector: ({
         LensFacing? requireLensFacing,
-        CameraInfo? cameraInfo,
+        CameraInfo? cameraInfoForFilter,
         // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
         // ignore: non_constant_identifier_names

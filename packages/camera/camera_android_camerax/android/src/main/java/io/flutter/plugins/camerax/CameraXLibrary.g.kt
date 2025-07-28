@@ -2028,7 +2028,7 @@ abstract class PigeonApiCameraSelector(
 ) {
   abstract fun pigeon_defaultConstructor(
       requireLensFacing: LensFacing?,
-      cameraInfo: androidx.camera.core.CameraInfo?
+      cameraInfoForFilter: androidx.camera.core.CameraInfo?
   ): androidx.camera.core.CameraSelector
 
   /** A static `CameraSelector` that selects the default back facing camera. */
@@ -2058,11 +2058,11 @@ abstract class PigeonApiCameraSelector(
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val requireLensFacingArg = args[1] as LensFacing?
-            val cameraInfoArg = args[2] as androidx.camera.core.CameraInfo?
+            val cameraInfoForFilterArg = args[2] as androidx.camera.core.CameraInfo?
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(requireLensFacingArg, cameraInfoArg),
+                      api.pigeon_defaultConstructor(requireLensFacingArg, cameraInfoForFilterArg),
                       pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
