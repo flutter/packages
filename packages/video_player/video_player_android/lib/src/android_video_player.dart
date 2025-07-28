@@ -113,8 +113,22 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<Duration> getPosition(int textureId) async {
     final PositionMessage response =
-        await _api.position(TextureMessage(textureId: textureId));
+    await _api.position(TextureMessage(textureId: textureId));
     return Duration(milliseconds: response.position);
+  }
+
+  @override
+  Future<Duration> getDuration(int textureId) async {
+    final DurationMessage response =
+    await _api.duration(TextureMessage(textureId: textureId));
+    return Duration(milliseconds: response.duration);
+  }
+
+  @override
+  Future<bool> getIsPlaying(int textureId) async {
+    final IsPlayingMessage response =
+    await _api.isPlaying(TextureMessage(textureId: textureId));
+    return response.isPlaying;
   }
 
   @override
@@ -164,12 +178,25 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         .setMixWithOthers(MixWithOthersMessage(mixWithOthers: mixWithOthers));
   }
 
+  @override
+  Future<void> setBuffer(int textureId, Buffer buffer) {
+    return _api.setBuffer(
+      BufferMessage(
+        minBufferMs: buffer.minBufferMs,
+        maxBufferMs: buffer.maxBufferMs,
+        bufferForPlaybackMs: buffer.bufferForPlaybackMs,
+        bufferForPlaybackAfterRebufferMs:
+        buffer.bufferForPlaybackAfterRebufferMs,
+      ),
+    );
+  }
+
   EventChannel _eventChannelFor(int textureId) {
     return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
   }
 
   static const Map<VideoFormat, String> _videoFormatStringMap =
-      <VideoFormat, String>{
+  <VideoFormat, String>{
     VideoFormat.ss: 'ss',
     VideoFormat.hls: 'hls',
     VideoFormat.dash: 'dash',

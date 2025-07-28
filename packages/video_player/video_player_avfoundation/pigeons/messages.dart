@@ -43,6 +43,18 @@ class PositionMessage {
   int position;
 }
 
+class DurationMessage {
+  DurationMessage(this.textureId, this.duration);
+  int textureId;
+  int duration;
+}
+
+class StartMessage {
+  StartMessage(this.textureId, this.start);
+  int textureId;
+  int start;
+}
+
 class CreateMessage {
   CreateMessage({required this.httpHeaders});
   String? asset;
@@ -55,6 +67,18 @@ class CreateMessage {
 class MixWithOthersMessage {
   MixWithOthersMessage(this.mixWithOthers);
   bool mixWithOthers;
+}
+
+class BufferMessage {
+  BufferMessage(this.textureId, this.second);
+  int textureId;
+  int second;
+}
+
+class IsPlayingMessage {
+  IsPlayingMessage(this.textureId, this.isPlaying);
+  int textureId;
+  bool isPlaying;
 }
 
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
@@ -75,10 +99,19 @@ abstract class AVFoundationVideoPlayerApi {
   void play(TextureMessage msg);
   @ObjCSelector('position:')
   PositionMessage position(TextureMessage msg);
+  @ObjCSelector('duration:')
+  DurationMessage duration(TextureMessage msg);
+  @ObjCSelector('start:')
+  StartMessage start(TextureMessage msg);
   @ObjCSelector('seekTo:')
+  @async
   void seekTo(PositionMessage msg);
   @ObjCSelector('pause:')
   void pause(TextureMessage msg);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(MixWithOthersMessage msg);
+  @ObjCSelector('setBuffer:')
+  void setBuffer(BufferMessage msg);
+  @ObjCSelector('isPlaying:')
+  IsPlayingMessage isPlaying(TextureMessage msg);
 }

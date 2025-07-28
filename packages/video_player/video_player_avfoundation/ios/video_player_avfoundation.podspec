@@ -20,4 +20,5 @@ Downloaded by pub (not CocoaPods).
 
   s.platform = :ios, '9.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.resource_bundles = {'video_player_avfoundation_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end

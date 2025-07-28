@@ -90,6 +90,13 @@ class _ApiLogger implements TestHostVideoPlayerApi {
     log.add('setPlaybackSpeed');
     playbackSpeedMessage = arg;
   }
+
+  @override
+  DurationMessage duration(TextureMessage arg) {
+    log.add('duration');
+    textureMessage = arg;
+    return DurationMessage(textureId: arg.textureId, duration: 300);
+  }
 }
 
 void main() {

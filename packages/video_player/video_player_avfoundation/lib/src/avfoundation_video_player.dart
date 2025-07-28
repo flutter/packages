@@ -103,18 +103,30 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> seekTo(int textureId, Duration position) {
+  Future<void> seekTo(int textureId, Duration position) async {
+    final StartMessage startResponse =
+    await _api.start(TextureMessage(textureId: textureId));
+    final startDuration = Duration(milliseconds: startResponse.start);
     return _api.seekTo(PositionMessage(
       textureId: textureId,
-      position: position.inMilliseconds,
+      position: position.inMilliseconds + startDuration.inMilliseconds,
     ));
   }
 
   @override
   Future<Duration> getPosition(int textureId) async {
     final PositionMessage response =
-        await _api.position(TextureMessage(textureId: textureId));
-    return Duration(milliseconds: response.position);
+    await _api.position(TextureMessage(textureId: textureId));
+    final StartMessage startResponse =
+    await _api.start(TextureMessage(textureId: textureId));
+    return Duration(milliseconds: response.position - startResponse.start);
+  }
+
+  @override
+  Future<Duration> getDuration(int textureId) async {
+    final DurationMessage durationResponse =
+    await _api.duration(TextureMessage(textureId: textureId));
+    return Duration(milliseconds: durationResponse.duration);
   }
 
   @override
@@ -163,12 +175,27 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         .setMixWithOthers(MixWithOthersMessage(mixWithOthers: mixWithOthers));
   }
 
+  @override
+  Future<void> setBuffer(int textureId, Buffer buffer) {
+    if (buffer.maxBufferMs == null) return Future.value();
+    // maxBufferMsはミリ秒なので秒に変換する
+    final second = (buffer.maxBufferMs! / 1000).toInt();
+    return _api.setBuffer(BufferMessage(textureId: textureId, second: second));
+  }
+
+  @override
+  Future<bool> getIsPlaying(int textureId) async {
+    final IsPlayingMessage isPlayingResponse =
+    await _api.isPlaying(TextureMessage(textureId: textureId));
+    return isPlayingResponse.isPlaying;
+  }
+
   EventChannel _eventChannelFor(int textureId) {
     return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
   }
 
   static const Map<VideoFormat, String> _videoFormatStringMap =
-      <VideoFormat, String>{
+  <VideoFormat, String>{
     VideoFormat.ss: 'ss',
     VideoFormat.hls: 'hls',
     VideoFormat.dash: 'dash',
