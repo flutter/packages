@@ -259,7 +259,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   // See https://github.com/flutter/flutter/issues/135302
   // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
   if (!path) {
-    path = [NSURL URLWithString:assetName relativeToURL:NSBundle.mainBundle.bundleURL].path;
+    path = [NSURL URLWithString:resource relativeToURL:NSBundle.mainBundle.bundleURL].path;
   }
 #endif
 
