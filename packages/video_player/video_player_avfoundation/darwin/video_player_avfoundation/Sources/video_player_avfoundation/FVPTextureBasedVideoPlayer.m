@@ -31,18 +31,6 @@
 @end
 
 @implementation FVPTextureBasedVideoPlayer
-- (instancetype)initWithAsset:(NSString *)asset
-                 frameUpdater:(FVPFrameUpdater *)frameUpdater
-                  displayLink:(NSObject<FVPDisplayLink> *)displayLink
-                    avFactory:(id<FVPAVFactory>)avFactory
-                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
-  return [self initWithURL:[NSURL fileURLWithPath:[FVPVideoPlayer absolutePathForAssetName:asset]]
-              frameUpdater:frameUpdater
-               displayLink:displayLink
-               httpHeaders:@{}
-                 avFactory:avFactory
-              viewProvider:viewProvider];
-}
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
