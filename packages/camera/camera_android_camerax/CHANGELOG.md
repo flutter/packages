@@ -4,8 +4,8 @@
   to fix pausing and resuming the preview.
 * Updates minimum supported SDK version to Flutter 3.32.8/Dart 3.8.1.
 
-  
 ## 0.6.19+1
+
 * Fixes incorrect camera switching by selecting a camera via its CameraInfo.
 
 ## 0.6.19
