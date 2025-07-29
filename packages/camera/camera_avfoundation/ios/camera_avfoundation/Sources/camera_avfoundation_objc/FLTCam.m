@@ -215,32 +215,6 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (NSString *)getTemporaryFilePathWithExtension:(NSString *)extension
-                                      subfolder:(NSString *)subfolder
-                                         prefix:(NSString *)prefix
-                                          error:(NSError **)error {
-  NSString *docDir =
-      NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-  NSString *fileDir =
-      [[docDir stringByAppendingPathComponent:@"camera"] stringByAppendingPathComponent:subfolder];
-  NSString *fileName = [prefix stringByAppendingString:[[NSUUID UUID] UUIDString]];
-  NSString *file =
-      [[fileDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:extension];
-
-  NSFileManager *fm = [NSFileManager defaultManager];
-  if (![fm fileExistsAtPath:fileDir]) {
-    BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:fileDir
-                                             withIntermediateDirectories:true
-                                                              attributes:nil
-                                                                   error:error];
-    if (!success) {
-      return nil;
-    }
-  }
-
-  return file;
-}
-
 - (BOOL)setCaptureSessionPreset:(FCPPlatformResolutionPreset)resolutionPreset
                       withError:(NSError **)error {
   switch (resolutionPreset) {
