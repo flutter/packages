@@ -44,7 +44,7 @@ var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSet
 }
 
 /// Generated setup class from Pigeon to register implemented JniHostIntegrationCoreApi classes.
-@objc class JniHostIntegrationCoreApiSetup: NSObject, JniHostIntegrationCoreApi {
+@objc class JniHostIntegrationCoreApiSetup: NSObject {
   private var api: JniHostIntegrationCoreApi?
   override init() {}
   static func register(name: String, api: JniHostIntegrationCoreApi?) {

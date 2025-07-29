@@ -35,16 +35,16 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }
 var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSetup?]()
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-@objc protocol JniHostIntegrationCoreApi {
+protocol JniHostIntegrationCoreApi {
   func noop()
-  @objc func echoInt(anInt: Int64) -> NSNumber?
-  func echoDouble(aDouble: Double) -> NSNumber?
-  func echoBool(aBool: Bool) -> NSNumber?
-  func echoString(aString: String) -> String?
+  func echoInt(anInt: Int64) -> Int64
+  func echoDouble(aDouble: Double) -> Double
+  func echoBool(aBool: Bool) -> Bool
+  func echoString(aString: String) -> String
 }
 
 /// Generated setup class from Pigeon to register implemented JniHostIntegrationCoreApi classes.
-@objc class JniHostIntegrationCoreApiSetup: NSObject, JniHostIntegrationCoreApi {
+@objc class JniHostIntegrationCoreApiSetup: NSObject {
   private var api: JniHostIntegrationCoreApi?
   override init() {}
   static func register(name: String, api: JniHostIntegrationCoreApi?) {
@@ -58,14 +58,14 @@ var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSet
   func noop() {
     return api!.noop()
   }
-  func echoInt(anInt: Int64) -> NSNumber? {
-    return api!.echoInt(anInt: anInt)
+  func echoInt(anInt: NSNumber) -> NSNumber? {
+    return NSNumber(nonretainedObject: api!.echoInt(anInt: anInt.int64Value))
   }
-  func echoDouble(aDouble: Double) -> NSNumber? {
-    return api!.echoDouble(aDouble: aDouble)
+  func echoDouble(aDouble: NSNumber) -> NSNumber? {
+    return NSNumber(nonretainedObject: api!.echoDouble(aDouble: aDouble.doubleValue))
   }
-  func echoBool(aBool: Bool) -> Bool? {
-    return api!.echoBool(aBool: aBool)
+  func echoBool(aBool: NSNumber) -> NSNumber? {
+    return NSNumber(nonretainedObject: api!.echoBool(aBool: aBool.boolValue))
   }
   func echoString(aString: String) -> String? {
     return api!.echoString(aString: aString)

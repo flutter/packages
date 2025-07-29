@@ -12,7 +12,7 @@ import '../generator_tools.dart';
 import '../types/task_queue.dart';
 import 'templates.dart';
 
-/// Documentation comment open symbol. test commit
+/// Documentation comment open symbol.
 const String _docCommentPrefix = '///';
 
 /// Documentation comment spec.
@@ -778,8 +778,7 @@ if (wrapped == nil) {
     indent.newln();
     indent.writeln(
         '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.');
-    indent.writeScoped(
-        '@objc class ${api.name}Setup: NSObject, ${api.name} {', '}', () {
+    indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
         indent.writeln('private var api: ${api.name}?');
         indent.writeln('override init() {}');
