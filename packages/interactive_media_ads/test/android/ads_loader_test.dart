@@ -135,12 +135,32 @@ void main() {
       await adsLoader.requestAds(
         PlatformAdsRequest(
           adTagUrl: 'url',
+          adsResponse: 'adsResponse',
+          adWillAutoPlay: true,
+          adWillPlayMuted: false,
+          continuousPlayback: true,
+          contentDuration: 2.0,
+          contentKeywords: <String>['keyword1', 'keyword2'],
+          contentTitle: 'contentTitle',
+          liveStreamPrefetchSeconds: 3.0,
+          vastLoadTimeout: 4.0,
+          contentUrl: 'contentUrl',
           contentProgressProvider: progressProvider,
         ),
       );
 
       verifyInOrder(<Future<void>>[
         mockAdsRequest.setAdTagUrl('url'),
+        mockAdsRequest.setAdsResponse('adsResponse'),
+        mockAdsRequest.setAdWillAutoPlay(true),
+        mockAdsRequest.setAdWillPlayMuted(false),
+        mockAdsRequest.setContinuousPlayback(true),
+        mockAdsRequest.setContentDuration(2.0),
+        mockAdsRequest.setContentKeywords(<String>['keyword1', 'keyword2']),
+        mockAdsRequest.setContentTitle('contentTitle'),
+        mockAdsRequest.setLiveStreamPrefetchSeconds(3.0),
+        mockAdsRequest.setVastLoadTimeout(4.0),
+        mockAdsRequest.setContentUrl('contentUrl'),
         mockAdsRequest.setContentProgressProvider(
           progressProvider.progressProvider,
         ),

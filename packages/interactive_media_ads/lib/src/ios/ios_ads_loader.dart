@@ -74,7 +74,7 @@ base class IOSAdsLoader extends PlatformAdsLoader {
 
   @override
   Future<void> requestAds(PlatformAdsRequest request) async {
-    return _adsLoader.requestAds(_iosParams._proxy.newIMAAdsRequest(
+    final IMAAdsRequest adsRequest = _iosParams._proxy.newIMAAdsRequest(
       adTagUrl: request.adTagUrl,
       adDisplayContainer:
           (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!,
@@ -82,7 +82,41 @@ base class IOSAdsLoader extends PlatformAdsLoader {
           ? (request.contentProgressProvider! as IOSContentProgressProvider)
               .contentPlayhead
           : null,
-    ));
+    );
+
+    if (request.adsResponse != null) {
+      await adsRequest.setAdsResponse(request.adsResponse!);
+    }
+    if (request.adWillAutoPlay != null) {
+      await adsRequest.setAdWillAutoPlay(request.adWillAutoPlay!);
+    }
+    if (request.adWillPlayMuted != null) {
+      await adsRequest.setAdWillPlayMuted(request.adWillPlayMuted!);
+    }
+    if (request.continuousPlayback != null) {
+      await adsRequest.setContinuousPlayback(request.continuousPlayback!);
+    }
+    if (request.contentDuration != null) {
+      await adsRequest.setContentDuration(request.contentDuration!);
+    }
+    if (request.contentKeywords != null) {
+      await adsRequest.setContentKeywords(request.contentKeywords!);
+    }
+    if (request.contentTitle != null) {
+      await adsRequest.setContentTitle(request.contentTitle!);
+    }
+    if (request.liveStreamPrefetchSeconds != null) {
+      await adsRequest
+          .setLiveStreamPrefetchSeconds(request.liveStreamPrefetchSeconds!);
+    }
+    if (request.vastLoadTimeout != null) {
+      await adsRequest.setVastLoadTimeout(request.vastLoadTimeout!);
+    }
+    if (request.contentUrl != null) {
+      await adsRequest.setContentURL(request.contentUrl!);
+    }
+
+    return _adsLoader.requestAds(adsRequest);
   }
 
   // This value is created in a static method because the callback methods for

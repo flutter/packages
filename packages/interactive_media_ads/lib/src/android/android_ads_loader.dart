@@ -90,6 +90,27 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
 
     await Future.wait(<Future<void>>[
       androidRequest.setAdTagUrl(request.adTagUrl),
+      if (request.adsResponse != null)
+        androidRequest.setAdsResponse(request.adsResponse!),
+      if (request.adWillAutoPlay != null)
+        androidRequest.setAdWillAutoPlay(request.adWillAutoPlay!),
+      if (request.adWillPlayMuted != null)
+        androidRequest.setAdWillPlayMuted(request.adWillPlayMuted!),
+      if (request.continuousPlayback != null)
+        androidRequest.setContinuousPlayback(request.continuousPlayback!),
+      if (request.contentDuration != null)
+        androidRequest.setContentDuration(request.contentDuration!),
+      if (request.contentKeywords != null)
+        androidRequest.setContentKeywords(request.contentKeywords!),
+      if (request.contentTitle != null)
+        androidRequest.setContentTitle(request.contentTitle!),
+      if (request.liveStreamPrefetchSeconds != null)
+        androidRequest
+            .setLiveStreamPrefetchSeconds(request.liveStreamPrefetchSeconds!),
+      if (request.vastLoadTimeout != null)
+        androidRequest.setVastLoadTimeout(request.vastLoadTimeout!),
+      if (request.contentUrl != null)
+        androidRequest.setContentUrl(request.contentUrl!),
       if (request.contentProgressProvider != null)
         androidRequest.setContentProgressProvider(
           (request.contentProgressProvider! as AndroidContentProgressProvider)

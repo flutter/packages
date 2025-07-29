@@ -85,6 +85,7 @@ void main() {
       final MockIMAAdsLoader mockLoader = MockIMAAdsLoader();
       final ima.IMAContentPlayhead contentPlayheadInstance =
           ima.IMAContentPlayhead();
+      final MockIMAAdsRequest mockRequest = MockIMAAdsRequest();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
         newIMAAdsRequest: ({
@@ -95,7 +96,7 @@ void main() {
           expect(adTagUrl, adTag);
           expect(adDisplayContainer, container.adDisplayContainer);
           expect(contentPlayhead, contentPlayheadInstance);
-          return MockIMAAdsRequest();
+          return mockRequest;
         },
         newIMAContentPlayhead: () => contentPlayheadInstance,
       );
@@ -116,8 +117,29 @@ void main() {
 
       await loader.requestAds(PlatformAdsRequest(
         adTagUrl: adTag,
+        adsResponse: 'adsResponse',
+        adWillAutoPlay: true,
+        adWillPlayMuted: false,
+        continuousPlayback: true,
+        contentDuration: 2.0,
+        contentKeywords: <String>['keyword1', 'keyword2'],
+        contentTitle: 'contentTitle',
+        liveStreamPrefetchSeconds: 3.0,
+        vastLoadTimeout: 4.0,
+        contentUrl: 'contentUrl',
         contentProgressProvider: provider,
       ));
+
+      verify(mockRequest.setAdsResponse('adsResponse'));
+      verify(mockRequest.setAdWillAutoPlay(true));
+      verify(mockRequest.setAdWillPlayMuted(false));
+      verify(mockRequest.setContinuousPlayback(true));
+      verify(mockRequest.setContentDuration(2.0));
+      verify(mockRequest.setContentKeywords(<String>['keyword1', 'keyword2']));
+      verify(mockRequest.setContentTitle('contentTitle'));
+      verify(mockRequest.setLiveStreamPrefetchSeconds(3.0));
+      verify(mockRequest.setVastLoadTimeout(4.0));
+      verify(mockRequest.setContentURL('contentUrl'));
 
       verify(mockLoader.requestAds(any));
     });

@@ -29,6 +29,16 @@ void main() {
   test('requestAds', () async {
     final PlatformAdsRequest platformRequest = PlatformAdsRequest(
       adTagUrl: 'adTagUrl',
+      adsResponse: 'adsResponse',
+      adWillAutoPlay: true,
+      adWillPlayMuted: false,
+      continuousPlayback: true,
+      contentDuration: 2.0,
+      contentKeywords: <String>['keyword1', 'keyword2'],
+      contentTitle: 'contentTitle',
+      liveStreamPrefetchSeconds: 3.0,
+      vastLoadTimeout: 4.0,
+      contentUrl: 'contentUrl',
       contentProgressProvider: TestContentProgressProvider(
         const PlatformContentProgressProviderCreationParams(),
       ),
@@ -42,7 +52,20 @@ void main() {
         onAdsLoadError: (AdsLoadErrorData data) {},
       ),
       onRequestAds: expectAsync1((PlatformAdsRequest request) async {
-        expect(request, platformRequest);
+        expect(request.adTagUrl, platformRequest.adTagUrl);
+        expect(request.adsResponse, platformRequest.adsResponse);
+        expect(request.adWillAutoPlay, platformRequest.adWillAutoPlay);
+        expect(request.adWillPlayMuted, platformRequest.adWillPlayMuted);
+        expect(request.continuousPlayback, platformRequest.continuousPlayback);
+        expect(request.contentDuration, platformRequest.contentDuration);
+        expect(request.contentKeywords, platformRequest.contentKeywords);
+        expect(request.contentTitle, platformRequest.contentTitle);
+        expect(request.liveStreamPrefetchSeconds,
+            platformRequest.liveStreamPrefetchSeconds);
+        expect(request.vastLoadTimeout, platformRequest.vastLoadTimeout);
+        expect(request.contentUrl, platformRequest.contentUrl);
+        expect(request.contentProgressProvider,
+            platformRequest.contentProgressProvider);
       }),
       onContentComplete: () async {},
     );
