@@ -481,11 +481,95 @@ abstract class IMASettings extends NSObject {
 abstract class IMAAdsRequest extends NSObject {
   /// Initializes an ads request instance with the given ad tag URL and ad
   /// display container.
+  ///
+  /// Serial ad requests may reuse the same `IMAAdDisplayContainer` by first
+  /// calling `IMAAdsManager.destroy` on its current adsManager. Concurrent
+  /// requests must use different ad containers. Does not support
+  /// Picture-in-Picture.
   IMAAdsRequest(
     String adTagUrl,
     IMAAdDisplayContainer adDisplayContainer,
     IMAContentPlayhead? contentPlayhead,
   );
+
+  /// Initializes an ads request instance with the given canned ads response and
+  /// ad display container.
+  ///
+  /// Serial ad requests may reuse the same `IMAAdDisplayContainer`` by first
+  /// calling `IMAAdsManager.destroy` on its current adsManager. Concurrent
+  /// requests must use different ad containers. Does not support
+  /// Picture-in-Picture.
+  IMAAdsRequest.withAdsResponse(
+    String adsResponse,
+    IMAAdDisplayContainer adDisplayContainer,
+    IMAContentPlayhead? contentPlayhead,
+  );
+
+  /// Specifies the full URL to use for ads loading from an ad server.
+  ///
+  /// Required for any adsRequest.
+  String? getAdTagUrl();
+
+  /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
+  /// a request through an ad tag URL.
+  String? getAdsResponse();
+
+  /// The ad display container.
+  IMAAdDisplayContainer getAdDisplayContainer();
+
+  /// Specifies whether the player intends to start the content and ad in
+  /// response to a user action or whether they will be automatically played.
+  ///
+  /// Changing this setting will have no impact on ad playback.
+  void setAdWillAutoPlay(bool adWillAutoPlay);
+
+  /// Specifies whether the player intends to start the content and ad with no
+  /// volume.
+  ///
+  /// Changing this setting will have no impact on ad playback.
+  void setAdWillPlayMuted(bool adWillPlayMuted);
+
+  /// Specifies whether the player intends to continuously play the content
+  /// videos one after another similar to TV broadcast.
+  ///
+  /// Not calling this function leaves the setting as unknown. Note: Changing
+  /// this setting will have no impact on ad playback.
+  void setContinuousPlayback(bool continuousPlayback);
+
+  /// Specifies the duration of the content in seconds to be shown.
+  ///
+  /// Used in AdX requests. This parameter is optional.
+  void setContentDuration(double duration);
+
+  /// Specifies the keywords used to describe the content to be shown.
+  ///
+  /// Used in AdX requests. This parameter is optional.
+  void setContentKeywords(List<String>? keywords);
+
+  /// Specifies the title of the content to be shown.
+  ///
+  /// Used in AdX requests. This parameter is optional.
+  void setContentTitle(String? title);
+
+  /// Specifies the universal link to the content’s screen.
+  ///
+  /// If provided, this parameter is passed to the OM SDK. See
+  /// [Apple documentation](https://developer.apple.com/documentation/xcode/allowing-apps-and-websites-to-link-to-your-content)
+  /// for more information.
+  void setContentURL(String? contentURL);
+
+  /// Specifies the VAST load timeout in milliseconds for the initial request
+  /// and any subsequent wrappers.
+  ///
+  /// This parameter is optional and will override the default timeout.
+  void setVastLoadTimeout(double timeout);
+
+  /// Specifies the maximum amount of time to wait in seconds, after calling
+  /// requestAds, before requesting the ad tag URL.
+  ///
+  /// This can be used to stagger requests during a live-stream event, in order
+  /// to mitigate spikes in the number of requests.
+  void setLiveStreamPrefetchSeconds(double seconds);
 }
 
 /// Delegate object that receives state change callbacks from `IMAAdsLoader`.
