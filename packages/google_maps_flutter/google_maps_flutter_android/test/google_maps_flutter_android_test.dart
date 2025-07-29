@@ -56,7 +56,7 @@ void main() {
         .initializeWithPreferredRenderer(PlatformRendererType.latest));
   });
 
-  test('warmup forwards the call', () async {
+  test('warmup forwards the initialization call', () async {
     final MockMapsApi api = MockMapsApi();
     final MockMapsInitializerApi initializerApi = MockMapsInitializerApi();
     final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid(
