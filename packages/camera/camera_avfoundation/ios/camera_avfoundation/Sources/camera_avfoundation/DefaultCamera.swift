@@ -762,66 +762,67 @@ final class DefaultCamera: FLTCam, Camera {
       if let eventSink = imageStreamHandler?.eventSink,
         streamingPendingFramesCount < maxStreamingPendingFramesCount
       {
-        streamingPendingFramesCount += 1
+        if let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
+          streamingPendingFramesCount += 1
 
-        let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)!
-        // Must lock base address before accessing the pixel data
-        CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+          // Must lock base address before accessing the pixel data
+          CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
 
-        let imageWidth = CVPixelBufferGetWidth(pixelBuffer)
-        let imageHeight = CVPixelBufferGetHeight(pixelBuffer)
+          let imageWidth = CVPixelBufferGetWidth(pixelBuffer)
+          let imageHeight = CVPixelBufferGetHeight(pixelBuffer)
 
-        var planes: [[String: Any]] = []
+          var planes: [[String: Any]] = []
 
-        let isPlanar = CVPixelBufferIsPlanar(pixelBuffer)
-        let planeCount = isPlanar ? CVPixelBufferGetPlaneCount(pixelBuffer) : 1
+          let isPlanar = CVPixelBufferIsPlanar(pixelBuffer)
+          let planeCount = isPlanar ? CVPixelBufferGetPlaneCount(pixelBuffer) : 1
 
-        for i in 0..<planeCount {
-          let planeAddress: UnsafeMutableRawPointer?
-          let bytesPerRow: Int
-          let height: Int
-          let width: Int
+          for i in 0..<planeCount {
+            let planeAddress: UnsafeMutableRawPointer?
+            let bytesPerRow: Int
+            let height: Int
+            let width: Int
 
-          if isPlanar {
-            planeAddress = CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, i)
-            bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, i)
-            height = CVPixelBufferGetHeightOfPlane(pixelBuffer, i)
-            width = CVPixelBufferGetWidthOfPlane(pixelBuffer, i)
-          } else {
-            planeAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
-            bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
-            height = CVPixelBufferGetHeight(pixelBuffer)
-            width = CVPixelBufferGetWidth(pixelBuffer)
+            if isPlanar {
+              planeAddress = CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, i)
+              bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, i)
+              height = CVPixelBufferGetHeightOfPlane(pixelBuffer, i)
+              width = CVPixelBufferGetWidthOfPlane(pixelBuffer, i)
+            } else {
+              planeAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
+              bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+              height = CVPixelBufferGetHeight(pixelBuffer)
+              width = CVPixelBufferGetWidth(pixelBuffer)
+            }
+
+            let length = bytesPerRow * height
+            let bytes = Data(bytes: planeAddress!, count: length)
+
+            let planeBuffer: [String: Any] = [
+              "bytesPerRow": bytesPerRow,
+              "width": width,
+              "height": height,
+              "bytes": FlutterStandardTypedData(bytes: bytes),
+            ]
+            planes.append(planeBuffer)
           }
 
-          let length = bytesPerRow * height
-          let bytes = Data(bytes: planeAddress!, count: length)
+          // Lock the base address before accessing pixel data, and unlock it afterwards.
+          // Done accessing the `pixelBuffer` at this point.
+          CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
 
-          let planeBuffer: [String: Any] = [
-            "bytesPerRow": bytesPerRow,
-            "width": width,
-            "height": height,
-            "bytes": FlutterStandardTypedData(bytes: bytes),
+          let imageBuffer: [String: Any] = [
+            "width": imageWidth,
+            "height": imageHeight,
+            "format": videoFormat,
+            "planes": planes,
+            "lensAperture": Double(captureDevice.lensAperture()),
+            "sensorExposureTime": Int(captureDevice.exposureDuration().seconds * 1_000_000_000),
+            "sensorSensitivity": Double(captureDevice.iso()),
           ]
-          planes.append(planeBuffer)
-        }
 
-        // Lock the base address before accessing pixel data, and unlock it afterwards.
-        // Done accessing the `pixelBuffer` at this point.
-        CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
-
-        let imageBuffer: [String: Any] = [
-          "width": imageWidth,
-          "height": imageHeight,
-          "format": videoFormat,
-          "planes": planes,
-          "lensAperture": Double(captureDevice.lensAperture()),
-          "sensorExposureTime": Int(captureDevice.exposureDuration().seconds * 1_000_000_000),
-          "sensorSensitivity": Double(captureDevice.iso()),
-        ]
-
-        DispatchQueue.main.async {
-          eventSink(imageBuffer)
+          DispatchQueue.main.async {
+            eventSink(imageBuffer)
+          }
         }
       }
     }
