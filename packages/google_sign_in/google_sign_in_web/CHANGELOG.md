@@ -1,6 +1,6 @@
 ## 1.0.0+1
 
-* Fixes Bad state: Future already completed on the web
+* Fixes Bad state: Future already completed on the web.
 
 ## 1.0.0
 

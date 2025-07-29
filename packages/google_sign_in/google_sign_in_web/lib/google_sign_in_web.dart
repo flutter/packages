@@ -92,8 +92,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   /// has finished running.
   @visibleForTesting
   Future<void> get initialized {
-    return Future.wait<void>(
-        <Future<void>>[_jsSdkLoadedFuture]);
+    return Future.wait<void>(<Future<void>>[_jsSdkLoadedFuture]);
   }
 
   /// Stores the client ID if it was set in a meta-tag of the page.
