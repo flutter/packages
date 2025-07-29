@@ -8,7 +8,7 @@
 // import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// import 'ffi_test_types.dart';
+import 'ffi_test_types.dart';
 import 'src/generated/jni_tests.gen.dart';
 
 /// Possible host languages that test can target.
@@ -41,26 +41,20 @@ const Set<TargetGenerator> proxyApiSupportedLanguages = <TargetGenerator>{
 /// Sets up and runs the integration tests.
 void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
   group('Host sync API tests', () {
-    testWidgets('echo int', (WidgetTester _) async {
-      final Host api = Host('Host');
-      final int echoed = api.echoInt(4);
-      expect(echoed, 4);
+    testWidgets('basic void->void call works', (WidgetTester _) async {
+      final JniHostIntegrationCoreApiForNativeInterop? api =
+          JniHostIntegrationCoreApiForNativeInterop.getInstance();
+      try {
+        api!.noop();
+      } catch (e) {
+        fail(e.toString());
+      }
     });
-
-    // testWidgets('basic void->void call works', (WidgetTester _) async {
-    //   final JniHostIntegrationCoreApiForAndroid? api =
-    //       JniHostIntegrationCoreApiForAndroid.getInstance();
-    //   try {
-    //     api!.noop();
-    //   } catch (e) {
-    //     fail(e.toString());
-    //   }
-    // });
 
 //     testWidgets('all datatypes serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllTypes echoObject = api!.echoAllTypes(genericJniAllTypes);
 //       expect(echoObject, genericJniAllTypes);
@@ -68,8 +62,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('all nullable datatypes serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypes? echoObject =
 //           api!.echoAllNullableTypes(recursiveJniAllNullableTypes);
@@ -79,8 +73,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('all null datatypes serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypes allTypesNull = JniAllNullableTypes();
 
@@ -91,8 +85,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Classes with list of null serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypes listTypes =
 //           JniAllNullableTypes(list: <String?>['String', null]);
@@ -105,8 +99,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Classes with map of null serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypes listTypes = JniAllNullableTypes(
 //           map: <String?, String?>{'String': 'string', 'null': null});
@@ -120,8 +114,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'all nullable datatypes without recursion serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypesWithoutRecursion? echoObject = api!
 //           .echoAllNullableTypesWithoutRecursion(
@@ -133,8 +127,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'all null datatypes without recursion serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypesWithoutRecursion allTypesNull =
 //           JniAllNullableTypesWithoutRecursion();
@@ -147,8 +141,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'Classes without recursion with list of null serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypesWithoutRecursion listTypes =
 //           JniAllNullableTypesWithoutRecursion(
@@ -164,8 +158,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'Classes without recursion with map of null serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypesWithoutRecursion listTypes =
 //           JniAllNullableTypesWithoutRecursion(
@@ -179,8 +173,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 
 //     testWidgets('errors are returned correctly', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       expect(() async {
 //         api!.throwError();
@@ -189,8 +183,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('errors are returned from void methods correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       expect(() async {
 //         api!.throwErrorFromVoid();
@@ -199,8 +193,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     // testWidgets('flutter errors are returned correctly',
 //     //     (WidgetTester _) async {
-//     //   final JniHostIntegrationCoreApiForAndroid? api =
-//     //       JniHostIntegrationCoreApiForAndroid.getInstance();
+//     //   final JniHostIntegrationCoreApiForNativeInterop? api =
+//     //       JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //     //   expect(
 //     //       () => api!.throwFlutterError(),
 //     //       throwsA((dynamic e) =>
@@ -211,8 +205,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     // });
 
 //     testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final JniAllClassesWrapper classWrapper = classWrapperMaker();
 //       final String? receivedString =
 //           api!.extractNestedNullableString(classWrapper);
@@ -221,8 +215,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nested objects can be received correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const String sentString = 'Some string';
 //       final JniAllClassesWrapper receivedObject =
@@ -232,8 +226,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nested classes can serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final JniAllClassesWrapper classWrapper = classWrapperMaker();
 
 //       final JniAllClassesWrapper receivedClassWrapper =
@@ -243,8 +237,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nested null classes can serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final JniAllClassesWrapper classWrapper = classWrapperMaker();
 
 //       classWrapper.allTypes = null;
@@ -257,8 +251,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'Arguments of multiple types serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       const String aNullableString = 'this is a String';
 //       const bool aNullableBool = false;
 //       const int aNullableInt = regularInt;
@@ -273,8 +267,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'Arguments of multiple null types serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypes echoNullFilledClass =
 //           api!.sendMultipleNullableTypes(null, null, null);
@@ -286,8 +280,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'Arguments of multiple types serialize and deserialize correctly (WithoutRecursion)',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       const String aNullableString = 'this is a String';
 //       const bool aNullableBool = false;
 //       const int aNullableInt = regularInt;
@@ -303,8 +297,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'Arguments of multiple null types serialize and deserialize correctly (WithoutRecursion)',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypesWithoutRecursion echoNullFilledClass =
 //           api!.sendMultipleNullableTypesWithoutRecursion(null, null, null);
@@ -313,50 +307,50 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //       expect(echoNullFilledClass.aNullableString, null);
 //     });
 
-//     testWidgets('Int serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
-//       const int sentInt = regularInt;
-//       final int receivedInt = api!.echoInt(sentInt);
-//       expect(receivedInt, sentInt);
-//     });
+    testWidgets('Int serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final JniHostIntegrationCoreApiForNativeInterop? api =
+          JniHostIntegrationCoreApiForNativeInterop.getInstance();
+      const int sentInt = regularInt;
+      final int receivedInt = api!.echoInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
 
-//     testWidgets('Int64 serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+    testWidgets('Int64 serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final JniHostIntegrationCoreApiForNativeInterop? api =
+          JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
-//       const int sentInt = biggerThanBigInt;
-//       final int receivedInt = api!.echoInt(sentInt);
-//       expect(receivedInt, sentInt);
-//     });
+      const int sentInt = biggerThanBigInt;
+      final int receivedInt = api!.echoInt(sentInt);
+      expect(receivedInt, sentInt);
+    });
 
-//     testWidgets('Doubles serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+    testWidgets('Doubles serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final JniHostIntegrationCoreApiForNativeInterop? api =
+          JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
-//       const double sentDouble = 2.0694;
-//       final double receivedDouble = api!.echoDouble(sentDouble);
-//       expect(receivedDouble, sentDouble);
-//     });
+      const double sentDouble = 2.0694;
+      final double receivedDouble = api!.echoDouble(sentDouble);
+      expect(receivedDouble, sentDouble);
+    });
 
-//     testWidgets('booleans serialize and deserialize correctly',
-//         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+    testWidgets('booleans serialize and deserialize correctly',
+        (WidgetTester _) async {
+      final JniHostIntegrationCoreApiForNativeInterop? api =
+          JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
-//       for (final bool sentBool in <bool>[true, false]) {
-//         final bool receivedBool = api!.echoBool(sentBool);
-//         expect(receivedBool, sentBool);
-//       }
-//     });
+      for (final bool sentBool in <bool>[true, false]) {
+        final bool receivedBool = api!.echoBool(sentBool);
+        expect(receivedBool, sentBool);
+      }
+    });
 
 //     testWidgets('strings serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       const String sentString = 'default';
 //       final String receivedString = api!.echoString(sentString);
 //       expect(receivedString, sentString);
@@ -364,8 +358,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Uint8List serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final List<int> data = <int>[
 //         102,
 //         111,
@@ -385,8 +379,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('generic Objects serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       const Object sentString = "I'm a computer";
 //       final Object receivedString = api!.echoObject(sentString);
 //       expect(receivedString, sentString);
@@ -399,8 +393,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<Object?> echoObject = api!.echoList(list);
 //       expect(listEquals(echoObject, list), true);
@@ -408,8 +402,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('enum lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAnEnum?> echoObject = api!.echoEnumList(enumList);
 //       expect(listEquals(echoObject, enumList), true);
@@ -417,8 +411,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('class lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAllNullableTypes?> echoObject =
 //           api!.echoClassList(allNullableTypesList);
@@ -430,8 +424,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('NonNull enum lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAnEnum> echoObject =
 //           api!.echoNonNullEnumList(nonNullEnumList);
@@ -440,8 +434,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('NonNull class lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAllNullableTypes> echoObject =
 //           api!.echoNonNullClassList(nonNullJniAllNullableTypesList);
@@ -452,40 +446,40 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<Object?, Object?> echoObject = api!.echoMap(map);
 //       expect(mapEquals(echoObject, map), true);
 //     });
 
 //     testWidgets('string maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<String?, String?> echoObject = api!.echoStringMap(stringMap);
 //       expect(mapEquals(echoObject, stringMap), true);
 //     });
 
 //     testWidgets('int maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, int?> echoObject = api!.echoIntMap(intMap);
 //       expect(mapEquals(echoObject, intMap), true);
 //     });
 
 //     testWidgets('enum maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<JniAnEnum?, JniAnEnum?> echoObject = api!.echoEnumMap(enumMap);
 //       expect(mapEquals(echoObject, enumMap), true);
 //     });
 
 //     testWidgets('class maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, JniAllNullableTypes?> echoObject =
 //           api!.echoClassMap(allNullableTypesMap);
 //       for (final MapEntry<int?, JniAllNullableTypes?> entry
@@ -496,8 +490,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('NonNull string maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<String, String> echoObject =
 //           api!.echoNonNullStringMap(nonNullStringMap);
 //       expect(mapEquals(echoObject, nonNullStringMap), true);
@@ -505,16 +499,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('NonNull int maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int, int> echoObject = api!.echoNonNullIntMap(nonNullIntMap);
 //       expect(mapEquals(echoObject, nonNullIntMap), true);
 //     });
 
 //     testWidgets('NonNull enum maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<JniAnEnum, JniAnEnum> echoObject =
 //           api!.echoNonNullEnumMap(nonNullEnumMap);
 //       expect(mapEquals(echoObject, nonNullEnumMap), true);
@@ -522,8 +516,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('NonNull class maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int, JniAllNullableTypes> echoObject =
 //           api!.echoNonNullClassMap(nonNullJniAllNullableTypesMap);
 //       for (final MapEntry<int, JniAllNullableTypes> entry
@@ -534,8 +528,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum sentEnum = JniAnEnum.two;
 //       final JniAnEnum receivedEnum = api!.echoEnum(sentEnum);
@@ -544,8 +538,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('enums serialize and deserialize correctly (again)',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnotherEnum sentEnum = JniAnotherEnum.justInCase;
 //       final JniAnotherEnum receivedEnum = api!.echoAnotherEnum(sentEnum);
@@ -554,8 +548,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('multi word enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum sentEnum = JniAnEnum.fortyTwo;
 //       final JniAnEnum receivedEnum = api!.echoEnum(sentEnum);
@@ -563,8 +557,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 
 //     testWidgets('required named parameter', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       // This number corresponds with the default value of this method.
 //       const int sentInt = regularInt;
 //       final int receivedInt = api!.echoRequiredInt(anInt: sentInt);
@@ -572,8 +566,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 
 //     testWidgets('optional default parameter no arg', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       // This number corresponds with the default value of this method.
 //       const double sentDouble = 3.14;
@@ -582,8 +576,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 
 //     testWidgets('optional default parameter with arg', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const double sentDouble = 3.15;
 //       final double receivedDouble = api!.echoOptionalDefaultDouble(sentDouble);
@@ -591,8 +585,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 
 //     testWidgets('named default parameter no arg', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       // This string corresponds with the default value of this method.
 //       const String sentString = 'default';
 //       final String receivedString = api!.echoNamedDefaultString();
@@ -600,8 +594,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 
 //     testWidgets('named default parameter with arg', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       // This string corresponds with the default value of this method.
 //       const String sentString = 'notDefault';
 //       final String receivedString =
@@ -611,8 +605,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Nullable Int serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const int sentInt = regularInt;
 //       final int? receivedInt = api!.echoNullableInt(sentInt);
@@ -621,8 +615,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Nullable Int64 serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const int sentInt = biggerThanBigInt;
 //       final int? receivedInt = api!.echoNullableInt(sentInt);
@@ -631,8 +625,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Null Ints serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final int? receivedNullInt = api!.echoNullableInt(null);
 //       expect(receivedNullInt, null);
@@ -640,8 +634,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Nullable Doubles serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const double sentDouble = 2.0694;
 //       final double? receivedDouble = api!.echoNullableDouble(sentDouble);
@@ -650,8 +644,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Null Doubles serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final double? receivedNullDouble = api!.echoNullableDouble(null);
 //       expect(receivedNullDouble, null);
@@ -659,8 +653,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Nullable booleans serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       for (final bool? sentBool in <bool?>[true, false]) {
 //         final bool? receivedBool = api!.echoNullableBool(sentBool);
@@ -670,8 +664,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Null booleans serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const bool? sentBool = null;
 //       final bool? receivedBool = api!.echoNullableBool(sentBool);
@@ -680,8 +674,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Nullable strings serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       const String sentString = "I'm a computer";
 //       final String? receivedString = api!.echoNullableString(sentString);
 //       expect(receivedString, sentString);
@@ -689,8 +683,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Null strings serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final String? receivedNullString = api!.echoNullableString(null);
 //       expect(receivedNullString, null);
@@ -698,8 +692,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Nullable Uint8List serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final List<int> data = <int>[
 //         102,
 //         111,
@@ -720,8 +714,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Null Uint8List serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final Uint8List? receivedNullUint8List = api!.echoNullableUint8List(null);
 //       expect(receivedNullUint8List, null);
@@ -729,8 +723,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('generic nullable Objects serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       const Object sentString = "I'm a computer";
 //       final Object? receivedString = api!.echoNullableObject(sentString);
 //       expect(receivedString, sentString);
@@ -743,8 +737,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Null generic Objects serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final Object? receivedNullObject = api!.echoNullableObject(null);
 //       expect(receivedNullObject, null);
@@ -752,8 +746,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<Object?>? echoObject = api!.echoNullableList(list);
 //       expect(listEquals(echoObject, list), true);
@@ -761,8 +755,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable enum lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAnEnum?>? echoObject = api!.echoNullableEnumList(enumList);
 //       expect(listEquals(echoObject, enumList), true);
@@ -770,8 +764,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAllNullableTypes?>? echoObject =
 //           api!.echoNullableClassList(allNullableTypesList);
@@ -784,8 +778,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'nullable NonNull enum lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAnEnum?>? echoObject =
 //           api!.echoNullableNonNullEnumList(nonNullEnumList);
@@ -794,8 +788,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable NonNull lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAllNullableTypes?>? echoObject =
 //           api!.echoNullableClassList(nonNullJniAllNullableTypesList);
@@ -807,16 +801,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<Object?, Object?>? echoObject = api!.echoNullableMap(map);
 //       expect(mapEquals(echoObject, map), true);
 //     });
 
 //     testWidgets('nullable string maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<String?, String?>? echoObject =
 //           api!.echoNullableStringMap(stringMap);
 //       expect(mapEquals(echoObject, stringMap), true);
@@ -824,16 +818,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable int maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, int?>? echoObject = api!.echoNullableIntMap(intMap);
 //       expect(mapEquals(echoObject, intMap), true);
 //     });
 
 //     testWidgets('nullable enum maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<JniAnEnum?, JniAnEnum?>? echoObject =
 //           api!.echoNullableEnumMap(enumMap);
 //       expect(mapEquals(echoObject, enumMap), true);
@@ -841,8 +835,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable class maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, JniAllNullableTypes?>? echoObject =
 //           api!.echoNullableClassMap(allNullableTypesMap);
 //       for (final MapEntry<int?, JniAllNullableTypes?> entry
@@ -854,8 +848,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'nullable NonNull string maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<String?, String?>? echoObject =
 //           api!.echoNullableNonNullStringMap(nonNullStringMap);
 //       expect(mapEquals(echoObject, nonNullStringMap), true);
@@ -863,8 +857,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable NonNull int maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, int?>? echoObject =
 //           api!.echoNullableNonNullIntMap(nonNullIntMap);
 //       expect(mapEquals(echoObject, nonNullIntMap), true);
@@ -873,8 +867,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'nullable NonNull enum maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<JniAnEnum?, JniAnEnum?>? echoObject =
 //           api!.echoNullableNonNullEnumMap(nonNullEnumMap);
 //       expect(mapEquals(echoObject, nonNullEnumMap), true);
@@ -883,8 +877,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'nullable NonNull class maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, JniAllNullableTypes?>? echoObject =
 //           api!.echoNullableNonNullClassMap(nonNullJniAllNullableTypesMap);
 //       for (final MapEntry<int?, JniAllNullableTypes?> entry
@@ -895,8 +889,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum sentEnum = JniAnEnum.three;
 //       final JniAnEnum? echoEnum = api!.echoNullableEnum(sentEnum);
@@ -905,8 +899,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable enums serialize and deserialize correctly (again)',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnotherEnum sentEnum = JniAnotherEnum.justInCase;
 //       final JniAnotherEnum? echoEnum = api!.echoAnotherNullableEnum(sentEnum);
@@ -915,8 +909,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('multi word nullable enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum sentEnum = JniAnEnum.fourHundredTwentyTwo;
 //       final JniAnEnum? echoEnum = api!.echoNullableEnum(sentEnum);
@@ -925,8 +919,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<Object?>? echoObject = api!.echoNullableList(null);
 //       expect(listEquals(echoObject, null), true);
@@ -934,8 +928,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final Map<Object?, Object?>? echoObject = api!.echoNullableMap(null);
 //       expect(mapEquals(echoObject, null), true);
@@ -943,8 +937,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null string maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final Map<String?, String?>? echoObject =
 //           api!.echoNullableStringMap(null);
@@ -953,8 +947,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null int maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final Map<int?, int?>? echoObject = api!.echoNullableIntMap(null);
 //       expect(mapEquals(echoObject, null), true);
@@ -962,8 +956,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum? sentEnum = null;
 //       final JniAnEnum? echoEnum = api!.echoNullableEnum(sentEnum);
@@ -972,8 +966,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null enums serialize and deserialize correctly (again)',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnotherEnum? sentEnum = null;
 //       final JniAnotherEnum? echoEnum = api!.echoAnotherNullableEnum(sentEnum);
@@ -982,8 +976,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null classes serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypes? echoObject = api!.echoAllNullableTypes(null);
 
@@ -991,8 +985,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 
 //     testWidgets('optional nullable parameter', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const int sentInt = regularInt;
 //       final int? receivedInt = api!.echoOptionalNullableInt(sentInt);
@@ -1000,16 +994,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 
 //     testWidgets('Null optional nullable parameter', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final int? receivedNullInt = api!.echoOptionalNullableInt();
 //       expect(receivedNullInt, null);
 //     });
 
 //     testWidgets('named nullable parameter', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       const String sentString = "I'm a computer";
 //       final String? receivedString =
 //           api!.echoNamedNullableString(aNullableString: sentString);
@@ -1017,8 +1011,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 
 //     testWidgets('Null named nullable parameter', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final String? receivedNullString = api!.echoNamedNullableString();
 //       expect(receivedNullString, null);
@@ -1027,16 +1021,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //   group('Host async API tests', () {
 //     testWidgets('basic void->void call works', (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       expect(api!.noopAsync(), completes);
 //     });
 
 //     testWidgets('async errors are returned from non void methods correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       expect(() async {
 //         await api!.throwAsyncError();
@@ -1045,8 +1039,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('async errors are returned from void methods correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       expect(() async {
 //         await api!.throwAsyncErrorFromVoid();
@@ -1056,8 +1050,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     // testWidgets(
 //     // 'async flutter errors are returned from non void methods correctly',
 //     //     (WidgetTester _) async {
-//     //   final JniHostIntegrationCoreApiForAndroid? api =
-//     //       JniHostIntegrationCoreApiForAndroid.getInstance();
+//     //   final JniHostIntegrationCoreApiForNativeInterop? api =
+//     //       JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //     //   expect(
 //     //       () => api!.throwAsyncFlutterError(),
@@ -1070,8 +1064,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('all datatypes async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllTypes echoObject =
 //           await api!.echoAsyncJniAllTypes(genericJniAllTypes);
@@ -1082,8 +1076,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'all nullable async datatypes serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypes? echoObject = await api!
 //           .echoAsyncNullableJniAllNullableTypes(recursiveJniAllNullableTypes);
@@ -1093,8 +1087,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('all null datatypes async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypes allTypesNull = JniAllNullableTypes();
 
@@ -1106,8 +1100,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'all nullable async datatypes without recursion serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypesWithoutRecursion? echoObject = await api!
 //           .echoAsyncNullableJniAllNullableTypesWithoutRecursion(
@@ -1119,8 +1113,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'all null datatypes without recursion async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final JniAllNullableTypesWithoutRecursion allTypesNull =
 //           JniAllNullableTypesWithoutRecursion();
@@ -1133,8 +1127,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Int async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const int sentInt = regularInt;
 //       final int receivedInt = await api!.echoAsyncInt(sentInt);
@@ -1143,8 +1137,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Int64 async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const int sentInt = biggerThanBigInt;
 //       final int receivedInt = await api!.echoAsyncInt(sentInt);
@@ -1153,8 +1147,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Doubles async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const double sentDouble = 2.0694;
 //       final double receivedDouble = await api!.echoAsyncDouble(sentDouble);
@@ -1163,8 +1157,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('booleans async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       for (final bool sentBool in <bool>[true, false]) {
 //         final bool receivedBool = await api!.echoAsyncBool(sentBool);
@@ -1174,8 +1168,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('strings async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const String sentObject = 'Hello, asynchronously!';
 
@@ -1185,8 +1179,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('Uint8List async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final List<int> data = <int>[
 //         102,
 //         111,
@@ -1207,8 +1201,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('generic Objects async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       const Object sentString = "I'm a computer";
 //       final Object receivedString = await api!.echoAsyncObject(sentString);
 //       expect(receivedString, sentString);
@@ -1221,8 +1215,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<Object?> echoObject = await api!.echoAsyncList(list);
 //       expect(listEquals(echoObject, list), true);
@@ -1230,8 +1224,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('enum lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAnEnum?> echoObject =
 //           await api!.echoAsyncEnumList(enumList);
@@ -1240,8 +1234,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('class lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAllNullableTypes?> echoObject =
 //           await api!.echoAsyncClassList(allNullableTypesList);
@@ -1253,16 +1247,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<Object?, Object?> echoObject = await api!.echoAsyncMap(map);
 //       expect(mapEquals(echoObject, map), true);
 //     });
 
 //     testWidgets('string maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<String?, String?> echoObject =
 //           await api!.echoAsyncStringMap(stringMap);
 //       expect(mapEquals(echoObject, stringMap), true);
@@ -1270,16 +1264,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('int maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, int?> echoObject = await api!.echoAsyncIntMap(intMap);
 //       expect(mapEquals(echoObject, intMap), true);
 //     });
 
 //     testWidgets('enum maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<JniAnEnum?, JniAnEnum?> echoObject =
 //           await api!.echoAsyncEnumMap(enumMap);
 //       expect(mapEquals(echoObject, enumMap), true);
@@ -1287,8 +1281,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('class maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, JniAllNullableTypes?> echoObject =
 //           await api!.echoAsyncClassMap(allNullableTypesMap);
 //       for (final MapEntry<int?, JniAllNullableTypes?> entry
@@ -1299,8 +1293,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum sentEnum = JniAnEnum.three;
 //       final JniAnEnum echoEnum = await api!.echoAsyncEnum(sentEnum);
@@ -1309,8 +1303,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('enums serialize and deserialize correctly (again)',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnotherEnum sentEnum = JniAnotherEnum.justInCase;
 //       final JniAnotherEnum echoEnum = await api!.echoAnotherAsyncEnum(sentEnum);
@@ -1319,8 +1313,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('multi word enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum sentEnum = JniAnEnum.fourHundredTwentyTwo;
 //       final JniAnEnum echoEnum = await api!.echoAsyncEnum(sentEnum);
@@ -1329,8 +1323,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable Int async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const int sentInt = regularInt;
 //       final int? receivedInt = await api!.echoAsyncNullableInt(sentInt);
@@ -1339,8 +1333,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable Int64 async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const int sentInt = biggerThanBigInt;
 //       final int? receivedInt = await api!.echoAsyncNullableInt(sentInt);
@@ -1349,8 +1343,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable Doubles async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const double sentDouble = 2.0694;
 //       final double? receivedDouble =
@@ -1360,8 +1354,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable booleans async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       for (final bool sentBool in <bool>[true, false]) {
 //         final bool? receivedBool = await api!.echoAsyncNullableBool(sentBool);
@@ -1371,8 +1365,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable strings async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const String sentObject = 'Hello, asynchronously!';
 
@@ -1382,8 +1376,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable Uint8List async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final List<int> data = <int>[
 //         102,
 //         111,
@@ -1405,8 +1399,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'nullable generic Objects async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       const Object sentString = "I'm a computer";
 //       final Object? receivedString =
 //           await api!.echoAsyncNullableObject(sentString);
@@ -1420,8 +1414,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<Object?>? echoObject = await api!.echoAsyncNullableList(list);
 //       expect(listEquals(echoObject, list), true);
@@ -1429,8 +1423,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable enum lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAnEnum?>? echoObject =
 //           await api!.echoAsyncNullableEnumList(enumList);
@@ -1439,8 +1433,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable class lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<JniAllNullableTypes?>? echoObject =
 //           await api!.echoAsyncNullableClassList(allNullableTypesList);
@@ -1452,8 +1446,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<Object?, Object?>? echoObject =
 //           await api!.echoAsyncNullableMap(map);
 //       expect(mapEquals(echoObject, map), true);
@@ -1461,8 +1455,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable string maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<String?, String?>? echoObject =
 //           await api!.echoAsyncNullableStringMap(stringMap);
 //       expect(mapEquals(echoObject, stringMap), true);
@@ -1470,8 +1464,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable int maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, int?>? echoObject =
 //           await api!.echoAsyncNullableIntMap(intMap);
 //       expect(mapEquals(echoObject, intMap), true);
@@ -1479,8 +1473,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable enum maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<JniAnEnum?, JniAnEnum?>? echoObject =
 //           await api!.echoAsyncNullableEnumMap(enumMap);
 //       expect(mapEquals(echoObject, enumMap), true);
@@ -1488,8 +1482,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable class maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Map<int?, JniAllNullableTypes?>? echoObject =
 //           await api!.echoAsyncNullableClassMap(allNullableTypesMap);
 //       for (final MapEntry<int?, JniAllNullableTypes?> entry
@@ -1500,8 +1494,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum sentEnum = JniAnEnum.three;
 //       final JniAnEnum? echoEnum = await api!.echoAsyncNullableEnum(sentEnum);
@@ -1510,8 +1504,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable enums serialize and deserialize correctly (again)',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnotherEnum sentEnum = JniAnotherEnum.justInCase;
 //       final JniAnotherEnum? echoEnum =
@@ -1521,8 +1515,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('nullable enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum sentEnum = JniAnEnum.fortyTwo;
 //       final JniAnEnum? echoEnum = await api!.echoAsyncNullableEnum(sentEnum);
@@ -1531,8 +1525,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null Ints async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final int? receivedInt = await api!.echoAsyncNullableInt(null);
 //       expect(receivedInt, null);
@@ -1540,8 +1534,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null Doubles async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final double? receivedDouble = await api!.echoAsyncNullableDouble(null);
 //       expect(receivedDouble, null);
@@ -1549,8 +1543,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null booleans async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final bool? receivedBool = await api!.echoAsyncNullableBool(null);
 //       expect(receivedBool, null);
@@ -1558,8 +1552,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null strings async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final String? echoObject = await api!.echoAsyncNullableString(null);
 //       expect(echoObject, null);
@@ -1567,8 +1561,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null Uint8List async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final Uint8List? receivedUint8List =
 //           await api!.echoAsyncNullableUint8List(null);
@@ -1578,16 +1572,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     testWidgets(
 //         'null generic Objects async serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //       final Object? receivedString = await api!.echoAsyncNullableObject(null);
 //       expect(receivedString, null);
 //     });
 
 //     testWidgets('null lists serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final List<Object?>? echoObject = await api!.echoAsyncNullableList(null);
 //       expect(listEquals(echoObject, null), true);
@@ -1595,8 +1589,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final Map<Object?, Object?>? echoObject =
 //           await api!.echoAsyncNullableMap(null);
@@ -1605,8 +1599,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null string maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final Map<String?, String?>? echoObject =
 //           await api!.echoAsyncNullableStringMap(null);
@@ -1615,8 +1609,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null int maps serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       final Map<int?, int?>? echoObject =
 //           await api!.echoAsyncNullableIntMap(null);
@@ -1625,8 +1619,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnEnum? sentEnum = null;
 //       final JniAnEnum? echoEnum = await api!.echoAsyncNullableEnum(null);
@@ -1635,8 +1629,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 
 //     testWidgets('null enums serialize and deserialize correctly',
 //         (WidgetTester _) async {
-//       final JniHostIntegrationCoreApiForAndroid? api =
-//           JniHostIntegrationCoreApiForAndroid.getInstance();
+//       final JniHostIntegrationCoreApiForNativeInterop? api =
+//           JniHostIntegrationCoreApiForNativeInterop.getInstance();
 
 //       const JniAnotherEnum? sentEnum = null;
 //       final JniAnotherEnum? echoEnum =
@@ -1648,10 +1642,10 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //   group('Host API with suffix', () {
 //     testWidgets('echo string succeeds with suffix with multiple instances',
 //         (_) async {
-//       final JniHostSmallApiForAndroid? apiWithSuffixOne =
-//           JniHostSmallApiForAndroid.getInstance(channelName: 'suffixOne');
-//       final JniHostSmallApiForAndroid? apiWithSuffixTwo =
-//           JniHostSmallApiForAndroid.getInstance(channelName: 'suffixTwo');
+//       final JniHostSmallApiForNativeInterop? apiWithSuffixOne =
+//           JniHostSmallApiForNativeInterop.getInstance(channelName: 'suffixOne');
+//       final JniHostSmallApiForNativeInterop? apiWithSuffixTwo =
+//           JniHostSmallApiForNativeInterop.getInstance(channelName: 'suffixTwo');
 //       const String sentString = "I'm a computer";
 //       final String echoStringOne = await apiWithSuffixOne!.echo(sentString);
 //       final String echoStringTwo = await apiWithSuffixTwo!.echo(sentString);
@@ -1665,16 +1659,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //       // These APIs have no corresponding APIs on the host platforms.
 //       const String sentString = "I'm a computer";
 //       try {
-//         final JniHostSmallApiForAndroid? apiWithSuffixOne =
-//             JniHostSmallApiForAndroid.getInstance(
+//         final JniHostSmallApiForNativeInterop? apiWithSuffixOne =
+//             JniHostSmallApiForNativeInterop.getInstance(
 //                 channelName: 'suffixWithNoHost');
 //         await apiWithSuffixOne!.echo(sentString);
 //       } on ArgumentError catch (e) {
 //         expect(e.message, contains('suffixWithNoHost'));
 //       }
 //       try {
-//         final JniHostSmallApiForAndroid? apiWithSuffixTwo =
-//             JniHostSmallApiForAndroid.getInstance(
+//         final JniHostSmallApiForNativeInterop? apiWithSuffixTwo =
+//             JniHostSmallApiForNativeInterop.getInstance(
 //                 channelName: 'suffixWithoutHost');
 //         await apiWithSuffixTwo!.echo(sentString);
 //       } on ArgumentError catch (e) {
@@ -1683,14 +1677,14 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
 //     });
 //   });
 
-//   group('Flutter Api "ForAndroid"', () {
+//   group('Flutter Api "ForNativeInterop"', () {
 //     final JniFlutterIntegrationCoreApiRegistrar registrar =
 //         JniFlutterIntegrationCoreApiRegistrar();
 
 //     final JniFlutterIntegrationCoreApi flutterApi =
 //         registrar.register(_JniFlutterIntegrationCoreApiImpl());
-//     final JniHostIntegrationCoreApiForAndroid? api =
-//         JniHostIntegrationCoreApiForAndroid.getInstance();
+//     final JniHostIntegrationCoreApiForNativeInterop? api =
+//         JniHostIntegrationCoreApiForNativeInterop.getInstance();
 //     api!;
 
 //     testWidgets('basic void->void call works', (WidgetTester _) async {

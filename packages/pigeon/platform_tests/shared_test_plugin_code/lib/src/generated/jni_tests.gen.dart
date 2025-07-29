@@ -7,45 +7,669 @@
 // ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers
 
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:io' show Platform;
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
+import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 import 'package:jni/jni.dart';
 import 'package:objective_c/objective_c.dart';
-import './jni_tests.gen.ffi.dart' as ffi;
-import './jni_tests.gen.jni.dart' as bridge;
+import './jni_tests.gen.ffi.dart' as ffi_bridge;
+import './jni_tests.gen.jni.dart' as jni_bridge;
 
-// /// A class containing all supported types.
-// class JniAllTypes {
-//   JniAllTypes({
-//     this.aBool = false,
-//     this.anInt = 0,
-//     this.anInt64 = 0,
-//     this.aDouble = 0,
-//   });
+PlatformException _createConnectionError(String channelName) {
+  return PlatformException(
+    code: 'channel-error',
+    message: 'Unable to establish connection on channel: "$channelName".',
+  );
+}
 
-//   bool aBool;
+class _PigeonJniCodec {
+  static Object? readValue(JObject? value) {
+    if (value == null) {
+      return null;
+    } else if (value.isA<JLong>(JLong.type)) {
+      return (value.as(JLong.type)).longValue();
+    } else if (value.isA<JDouble>(JDouble.type)) {
+      return (value.as(JDouble.type)).doubleValue();
+    } else if (value.isA<JString>(JString.type)) {
+      return (value.as(JString.type)).toDartString();
+    } else if (value.isA<JBoolean>(JBoolean.type)) {
+      return (value.as(JBoolean.type)).booleanValue();
+    } else if (value.isA<JByteArray>(JByteArray.type)) {
+      final Uint8List list = Uint8List(value.as(JByteArray.type).length);
+      for (int i = 0; i < value.as(JByteArray.type).length; i++) {
+        list[i] = value.as(JByteArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JIntArray>(JIntArray.type)) {
+      final Int32List list = Int32List(value.as(JIntArray.type).length);
+      for (int i = 0; i < value.as(JIntArray.type).length; i++) {
+        list[i] = value.as(JIntArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JLongArray>(JLongArray.type)) {
+      final Int64List list = Int64List(value.as(JLongArray.type).length);
+      for (int i = 0; i < value.as(JLongArray.type).length; i++) {
+        list[i] = value.as(JLongArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JDoubleArray>(JDoubleArray.type)) {
+      final Float64List list = Float64List(value.as(JDoubleArray.type).length);
+      for (int i = 0; i < value.as(JDoubleArray.type).length; i++) {
+        list[i] = value.as(JDoubleArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
+      final JList<JObject?> list =
+          (value.as(JList.type<JObject?>(JObject.nullableType)));
+      final List<Object?> res = <Object?>[];
+      for (int i = 0; i < list.length; i++) {
+        res.add(readValue(list[i]));
+      }
+      return res;
+    } else if (value.isA<JMap<JObject, JObject>>(
+        JMap.type<JObject, JObject>(JObject.type, JObject.type))) {
+      final JMap<JObject?, JObject?> map = (value.as(
+          JMap.type<JObject?, JObject?>(
+              JObject.nullableType, JObject.nullableType)));
+      final Map<Object?, Object?> res = <Object?, Object?>{};
+      for (final MapEntry<JObject?, JObject?> entry in map.entries) {
+        res[readValue(entry.key)] = readValue(entry.value);
+      }
+      return res;
+    } else {
+      throw ArgumentError.value(value);
+    }
+  }
 
-//   int anInt;
+  static T writeValue<T extends JObject?>(Object? value) {
+    if (value == null) {
+      return null as T;
+    } else if (value is bool) {
+      return JBoolean(value) as T;
+    } else if (value is double) {
+      return JDouble(value) as T;
+      // ignore: avoid_double_and_int_checks
+    } else if (value is int) {
+      return JLong(value) as T;
+    } else if (value is String) {
+      return JString.fromString(value) as T;
+    } else if (isTypeOrNullableType<JByteArray>(T)) {
+      value as List<int>;
+      final JByteArray array = JByteArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (isTypeOrNullableType<JIntArray>(T)) {
+      value as List<int>;
+      final JIntArray array = JIntArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (isTypeOrNullableType<JLongArray>(T)) {
+      value as List<int>;
+      final JLongArray array = JLongArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (isTypeOrNullableType<JDoubleArray>(T)) {
+      value as List<double>;
+      final JDoubleArray array = JDoubleArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (value is List<Object>) {
+      final JList<JObject> res = JList<JObject>.array(JObject.type);
+      for (int i = 0; i < value.length; i++) {
+        res.add(writeValue(value[i]));
+      }
+      return res as T;
+    } else if (value is List) {
+      final JList<JObject?> res = JList<JObject?>.array(JObject.nullableType);
+      for (int i = 0; i < value.length; i++) {
+        res.add(writeValue(value[i]));
+      }
+      return res as T;
+    } else if (value is Map<Object, Object>) {
+      final JMap<JObject, JObject> res =
+          JMap<JObject, JObject>.hash(JObject.type, JObject.type);
+      for (final MapEntry<Object, Object> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<Object, Object?>) {
+      final JMap<JObject, JObject?> res =
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
+      for (final MapEntry<Object, Object?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map) {
+      final JMap<JObject, JObject?> res =
+          JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
+      for (final MapEntry<Object?, Object?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else {
+      throw ArgumentError.value(value);
+    }
+  }
+}
 
-//   int anInt64;
+class _PigeonFfiCodec {
+  static Object? readValue(NSObject? value) {
+    if (value == null) {
+      return null;
+    } else if (value.isA<NSLong>(NSLong.type)) {
+      return (value.as(NSLong.type)).longValue();
+    } else if (value.isA<NSDouble>(NSDouble.type)) {
+      return (value.as(NSDouble.type)).doubleValue();
+    } else if (value.isA<NSString>(NSString.type)) {
+      return (value.as(NSString.type)).toDartString();
+    } else if (value.isA<NSBoolean>(NSBoolean.type)) {
+      return (value.as(NSBoolean.type)).booleanValue();
+    } else if (value.isA<NSByteArray>(NSByteArray.type)) {
+      final Uint8List list = Uint8List(value.as(NSByteArray.type).length);
+      for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
+        list[i] = value.as(NSByteArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<NSIntArray>(NSIntArray.type)) {
+      final Int32List list = Int32List(value.as(NSIntArray.type).length);
+      for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
+        list[i] = value.as(NSIntArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<NSLongArray>(NSLongArray.type)) {
+      final Int64List list = Int64List(value.as(NSLongArray.type).length);
+      for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
+        list[i] = value.as(NSLongArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
+      final Float64List list = Float64List(value.as(NSDoubleArray.type).length);
+      for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
+        list[i] = value.as(NSDoubleArray.type)[i];
+      }
+      return list;
+    } else if (value.isA<NSMutableArray<NSObject>>(
+        NSMutableArray.type<NSObject>(NSObject.type))) {
+      final NSMutableArray list = NSMutableArray();
+      final List<Object?> res = <Object?>[];
+      for (int i = 0; i < list.length; i++) {
+        res.add(readValue(list[i]));
+      }
+      return res;
+    } else if (value.isA<NSDictionary<NSObject, NSObject>>(
+        NSDictionary.type<NSObject, NSObject>(NSObject.type, NSObject.type))) {
+      final NSDictionary map = NSDictionary();
+      final Map<Object?, Object?> res = <Object?, Object?>{};
+      for (final MapEntry<NSObject?, NSObject?> entry in map.entries) {
+        res[readValue(entry.key)] = readValue(entry.value);
+      }
+      return res;
+    } else {
+      throw ArgumentError.value(value);
+    }
+  }
 
-//   double aDouble;
+  static T writeValue<T extends NSObject?>(Object? value) {
+    if (value == null) {
+      return null as T;
+    } else if (value is bool) {
+      return NSBoolean(value) as T;
+    } else if (value is double) {
+      return NSDouble(value) as T;
+      // ignore: avoid_double_and_int_checks
+    } else if (value is int) {
+      return NSLong(value) as T;
+    } else if (value is String) {
+      return NSString.fromString(value) as T;
+    } else if (isTypeOrNullableType<NSByteArray>(T)) {
+      value as List<int>;
+      final NSByteArray array = NSByteArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (isTypeOrNullableType<NSIntArray>(T)) {
+      value as List<int>;
+      final NSIntArray array = NSIntArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (isTypeOrNullableType<NSLongArray>(T)) {
+      value as List<int>;
+      final NSLongArray array = NSLongArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
+      value as List<double>;
+      final NSDoubleArray array = NSDoubleArray(value.length);
+      for (int i = 0; i < value.length; i++) {
+        array[i] = value[i];
+      }
+      return array as T;
+    } else if (value is List) {
+      final NSMutableArray res = NSMutableArray();
+      for (int i = 0; i < value.length; i++) {
+        res.add(writeValue(value[i]));
+      }
+      return res as T;
+    } else if (value is Map) {
+      final NSDictionary res = NSDictionary();
+      for (final MapEntry<Object?, Object?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else {
+      throw ArgumentError.value(value);
+    }
+  }
+}
 
-//   ffi.JniAllTypes makeBridge() {
-//     return ffi.JniAllTypes()
-//         .initWithABool(aBool, anInt: anInt, anInt64: anInt64, aDouble: aDouble);
-//   }
-// }
+bool isType<T>(Type t) => T == t;
+bool isTypeOrNullableType<T>(Type t) => isType<T>(t) || isType<T?>(t);
+void _throwNoInstanceError(String channelName) {
+  String nameString = 'named $channelName';
+  if (channelName == defaultInstanceName) {
+    nameString = 'with no name';
+  }
+  final String error = 'No instance $nameString has been registered.';
+  throw ArgumentError(error);
+}
 
-class Host {
-  Host(this.name);
-  String name;
+class _PigeonCodec extends StandardMessageCodec {
+  const _PigeonCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is int) {
+      buffer.putUint8(4);
+      buffer.putInt64(value);
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
 
-  int echoInt(int numbah) {
-    return ffi.Host.getInstanceWithName(NSString(name))!.echo(4);
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+const String defaultInstanceName =
+    'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+
+class JniHostIntegrationCoreApiForNativeInterop {
+  JniHostIntegrationCoreApiForNativeInterop._withRegistrar(
+      {jni_bridge.JniHostIntegrationCoreApiRegistrar? jniApi,
+      ffi_bridge.JniHostIntegrationCoreApiSetup? ffiApi})
+      : _jniApi = jniApi,
+        _ffiApi = ffiApi;
+
+  /// Returns instance of JniHostIntegrationCoreApiForNativeInterop with specified [channelName] if one has been registered.
+  static JniHostIntegrationCoreApiForNativeInterop? getInstance(
+      {String channelName = defaultInstanceName}) {
+    late JniHostIntegrationCoreApiForNativeInterop res;
+    if (Platform.isAndroid) {
+      final jni_bridge.JniHostIntegrationCoreApiRegistrar? link =
+          jni_bridge.JniHostIntegrationCoreApiRegistrar()
+              .getInstance(JString.fromString(channelName));
+      if (link == null) {
+        _throwNoInstanceError(channelName);
+      }
+      res = JniHostIntegrationCoreApiForNativeInterop._withRegistrar(
+          jniApi: link!);
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      final ffi_bridge.JniHostIntegrationCoreApiSetup? link =
+          ffi_bridge.JniHostIntegrationCoreApiSetup.getInstanceWithName(
+              NSString(channelName));
+      if (link == null) {
+        _throwNoInstanceError(channelName);
+      }
+      res = JniHostIntegrationCoreApiForNativeInterop._withRegistrar(
+          ffiApi: link!);
+    }
+    return res;
+  }
+
+  late final jni_bridge.JniHostIntegrationCoreApiRegistrar? _jniApi;
+  late final ffi_bridge.JniHostIntegrationCoreApiSetup? _ffiApi;
+
+  void noop() {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.noop();
+      } else if (_ffiApi != null) {
+        return _ffiApi.noop();
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  int echoInt(int anInt) {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.echoInt(anInt);
+      } else if (_ffiApi != null) {
+        return _ffiApi.echoIntWithAnInt(anInt);
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  double echoDouble(double aDouble) {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.echoDouble(aDouble);
+      } else if (_ffiApi != null) {
+        return _ffiApi.echoDoubleWithADouble(aDouble);
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  bool echoBool(bool aBool) {
+    try {
+      if (_jniApi != null) {
+        return _jniApi.echoBool(aBool);
+      } else if (_ffiApi != null) {
+        return _ffiApi.echoBoolWithABool(aBool);
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  String echoString(String aString) {
+    try {
+      if (_jniApi != null) {
+        final JString res =
+            _jniApi.echoString(_PigeonJniCodec.writeValue<JString>(aString));
+        final String dartTypeRes = res.toDartString(releaseOriginal: true);
+        return dartTypeRes;
+      } else if (_ffiApi != null) {
+        final NSString res = _ffiApi.echoStringWithAString(
+            _PigeonFfiCodec.writeValue<NSString>(aString));
+        final String dartTypeRes = res.toDartString();
+        return dartTypeRes;
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+}
+
+class JniHostIntegrationCoreApi {
+  /// Constructor for [JniHostIntegrationCoreApi]. The [binaryMessenger] named argument is
+  /// available for dependency injection. If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  JniHostIntegrationCoreApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+    JniHostIntegrationCoreApiForNativeInterop? nativeInteropApi,
+  })  : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '',
+        _nativeInteropApi = nativeInteropApi;
+
+  /// Creates an instance of [JniHostIntegrationCoreApi] that requests an instance of
+  /// [JniHostIntegrationCoreApiForNativeInterop] from the host platform with a matching instance name
+  /// to [messageChannelSuffix] or the default instance.
+  ///
+  /// Throws [ArgumentError] if no matching instance can be found.
+  factory JniHostIntegrationCoreApi.createWithNativeInteropApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    JniHostIntegrationCoreApiForNativeInterop? nativeInteropApi;
+    String nativeInteropApiInstanceName = '';
+    if (Platform.isAndroid) {
+      if (messageChannelSuffix.isEmpty) {
+        nativeInteropApi =
+            JniHostIntegrationCoreApiForNativeInterop.getInstance();
+      } else {
+        nativeInteropApiInstanceName = messageChannelSuffix;
+        nativeInteropApi =
+            JniHostIntegrationCoreApiForNativeInterop.getInstance(
+                channelName: messageChannelSuffix);
+      }
+    }
+    if (nativeInteropApi == null) {
+      throw ArgumentError(
+          'No JniHostIntegrationCoreApi instance with ${nativeInteropApiInstanceName.isEmpty ? 'no ' : ''} instance name ${nativeInteropApiInstanceName.isNotEmpty ? '"$nativeInteropApiInstanceName"' : ''} "$nativeInteropApiInstanceName "}found.');
+    }
+    return JniHostIntegrationCoreApi(
+      binaryMessenger: binaryMessenger,
+      messageChannelSuffix: messageChannelSuffix,
+      nativeInteropApi: nativeInteropApi,
+    );
+  }
+
+  final BinaryMessenger? pigeonVar_binaryMessenger;
+  static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
+
+  final String pigeonVar_messageChannelSuffix;
+
+  final JniHostIntegrationCoreApiForNativeInterop? _nativeInteropApi;
+
+  Future<void> noop() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.noop();
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.noop$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<int> echoInt(int anInt) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoInt(anInt);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoInt$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[anInt]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as int?)!;
+    }
+  }
+
+  Future<double> echoDouble(double aDouble) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoDouble(aDouble);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoDouble$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[aDouble]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as double?)!;
+    }
+  }
+
+  Future<bool> echoBool(bool aBool) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoBool(aBool);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoBool$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[aBool]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as bool?)!;
+    }
+  }
+
+  Future<String> echoString(String aString) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoString(aString);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoString$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[aString]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?)!;
+    }
   }
 }

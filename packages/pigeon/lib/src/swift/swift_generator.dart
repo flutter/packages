@@ -30,6 +30,7 @@ class SwiftOptions {
     this.errorClassName,
     this.includeErrorClass = true,
     this.useFfi = false,
+    this.ffiModuleName,
     this.appDirectory,
   });
 
@@ -51,6 +52,9 @@ class SwiftOptions {
   /// Whether to use FFI when possible.
   final bool useFfi;
 
+  /// The module name that the FFi classes will use. Required if useFfi is true.
+  final String? ffiModuleName;
+
   /// The directory that the app exists in, this is required for FFI APIs.
   final String? appDirectory;
 
@@ -64,6 +68,7 @@ class SwiftOptions {
       errorClassName: map['errorClassName'] as String?,
       includeErrorClass: map['includeErrorClass'] as bool? ?? true,
       useFfi: map['useFfi'] as bool? ?? false,
+      ffiModuleName: map['ffiModuleName'] as String?,
       appDirectory: map['appDirectory'] as String?,
     );
   }
@@ -78,6 +83,7 @@ class SwiftOptions {
       if (errorClassName != null) 'errorClassName': errorClassName!,
       'includeErrorClass': includeErrorClass,
       'useFfi': useFfi,
+      if (ffiModuleName != null) 'ffiModuleName': ffiModuleName!,
       if (appDirectory != null) 'appDirectory': appDirectory!,
     };
     return result;
@@ -100,6 +106,7 @@ class InternalSwiftOptions extends InternalOptions {
     this.errorClassName,
     this.includeErrorClass = true,
     this.useFfi = false,
+    this.ffiModuleName,
     this.appDirectory,
   });
 
@@ -115,6 +122,7 @@ class InternalSwiftOptions extends InternalOptions {
                 '',
         errorClassName = options.errorClassName,
         useFfi = options.useFfi,
+        ffiModuleName = options.ffiModuleName,
         appDirectory = options.appDirectory,
         includeErrorClass = options.includeErrorClass;
 
@@ -138,6 +146,9 @@ class InternalSwiftOptions extends InternalOptions {
 
   /// Whether to use FFI when possible.
   final bool useFfi;
+
+  /// Module to use for FFI.
+  final String? ffiModuleName;
 
   /// The directory that the app exists in, this is required for Jni APIs.
   final String? appDirectory;
@@ -234,8 +245,8 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 
     _writeProxyApiImports(indent, root.apis.whereType<AstProxyApi>());
     indent.newln();
-
-    indent.format('''
+    if (!generatorOptions.useFfi) {
+      indent.format('''
 #if os(iOS)
   import Flutter
 #elseif os(macOS)
@@ -243,6 +254,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
 #else
   #error("Unsupported platform.")
 #endif''');
+    }
   }
 
   @override
@@ -274,6 +286,11 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     Indent indent, {
     required String dartPackageName,
   }) {
+    if (generatorOptions.useFfi &&
+        !root.containsEventChannel &&
+        !root.containsProxyApi) {
+      return;
+    }
     final String codecName = _getMessageCodecName(generatorOptions);
     final String readerWriterName = '${codecName}ReaderWriter';
     final String readerName = '${codecName}Reader';
@@ -751,6 +768,53 @@ if (wrapped == nil) {
     });
   }
 
+  void _writeFfiHostApi(
+    InternalSwiftOptions generatorOptions,
+    Root root,
+    Indent indent,
+    AstHostApi api, {
+    required String dartPackageName,
+  }) {
+    indent.newln();
+    indent.writeln(
+        '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.');
+    indent.writeScoped(
+        '@objc class ${api.name}Setup: NSObject, ${api.name} {', '}', () {
+      if (generatorOptions.useFfi) {
+        indent.writeln('private var api: ${api.name}?');
+        indent.writeln('override init() {}');
+        indent.writeScoped(
+            'static func register(name: String, api: ${api.name}?) {', '}', () {
+          indent.writeln('let wrapper = ${api.name}Setup()');
+          indent.writeln('wrapper.api = api');
+          indent.writeln('instancesOf${api.name}[name] = wrapper');
+        });
+        indent.writeScoped(
+            '@objc static func getInstance(name: String) -> ${api.name}Setup? {',
+            '}', () {
+          indent.writeln('return instancesOf${api.name}[name] ?? nil');
+        });
+      }
+      for (final Method method in api.methods) {
+        addDocumentationComments(
+            indent, method.documentationComments, _docCommentSpec);
+        indent.write(_getMethodSignature(
+          name: method.name,
+          parameters: method.parameters,
+          returnType: method.returnType,
+          errorTypeName: 'Error',
+          useFfi: generatorOptions.useFfi,
+          isAsynchronous: method.isAsynchronous,
+          swiftFunction: method.swiftFunction,
+        ));
+        indent.addScoped(' {', '}', () {
+          indent.writeln(
+              'return api!.${method.name}(${method.parameters.map((NamedType param) => '${param.name}: ${param.name}').join(', ')})');
+        });
+      }
+    });
+  }
+
   /// Write the swift code that represents a host [Api], [api].
   /// Example:
   /// protocol Foo {
@@ -765,6 +829,10 @@ if (wrapped == nil) {
     required String dartPackageName,
   }) {
     final String apiName = api.name;
+    if (generatorOptions.useFfi) {
+      indent.writeln(
+          'var instancesOf$apiName = Dictionary<String, ${apiName}Setup?>()');
+    }
 
     const List<String> generatedComments = <String>[
       ' Generated protocol from Pigeon that represents a handler of messages from Flutter.'
@@ -772,7 +840,9 @@ if (wrapped == nil) {
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
-    indent.write('protocol $apiName ');
+    final String objc = generatorOptions.useFfi ? '@objc ' : '';
+
+    indent.write('${objc}protocol $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         addDocumentationComments(
@@ -783,16 +853,20 @@ if (wrapped == nil) {
           returnType: method.returnType,
           errorTypeName: 'Error',
           isAsynchronous: method.isAsynchronous,
+          useFfi: generatorOptions.useFfi,
           swiftFunction: method.swiftFunction,
         ));
       }
     });
-
+    if (generatorOptions.useFfi) {
+      _writeFfiHostApi(generatorOptions, root, indent, api,
+          dartPackageName: dartPackageName);
+      return;
+    }
     indent.newln();
     indent.writeln(
         '$_docCommentPrefix Generated setup class from Pigeon to handle messages through the `binaryMessenger`.');
-    indent.write('class ${apiName}Setup ');
-    indent.addScoped('{', '}', () {
+    indent.writeScoped('class ${apiName}Setup {', '}', () {
       indent.writeln(
           'static var codec: FlutterStandardMessageCodec { ${_getMessageCodecName(generatorOptions)}.shared }');
       indent.writeln(
@@ -1419,7 +1493,8 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       _writePigeonError(generatorOptions, indent);
     }
 
-    if (root.containsHostApi || root.containsProxyApi) {
+    if ((root.containsHostApi && !generatorOptions.useFfi) ||
+        root.containsProxyApi) {
       _writeWrapResult(indent);
       _writeWrapError(generatorOptions, indent);
     }
@@ -2859,6 +2934,7 @@ String _getMethodSignature({
   required TypeDeclaration returnType,
   required String errorTypeName,
   bool isAsynchronous = false,
+  bool useFfi = false,
   String? swiftFunction,
   String Function(int index, NamedType argument) getParameterName =
       _getArgumentName,
@@ -2891,10 +2967,11 @@ String _getMethodSignature({
       return 'func ${components.name}($parameterSignature, completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
     }
   } else {
+    final String throws = useFfi ? '' : ' throws';
     if (returnType.isVoid) {
-      return 'func ${components.name}($parameterSignature) throws';
+      return 'func ${components.name}($parameterSignature)$throws';
     } else {
-      return 'func ${components.name}($parameterSignature) throws -> $returnTypeString';
+      return 'func ${components.name}($parameterSignature)$throws -> $returnTypeString';
     }
   }
 }

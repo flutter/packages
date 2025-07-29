@@ -13,7 +13,6 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   var flutterSmallApiOne: FlutterSmallApi
   var flutterSmallApiTwo: FlutterSmallApi
   var proxyApiRegistrar: ProxyApiTestsPigeonProxyApiRegistrar?
-  var host: Host
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let plugin = TestPlugin(binaryMessenger: registrar.messenger())
@@ -41,7 +40,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
-      host = Host(name: "Host")
+    JniHostIntegrationCoreApiSetup.register(name: "Host", api: JniTestsClass())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -81,8 +80,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   }
 
   func echo(_ anInt: Int64) -> Int64 {
-    return host.echo(anInt)
-//    return anInt
+    return anInt
   }
 
   func echo(_ aDouble: Double) -> Double {
@@ -1215,6 +1213,29 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
   func testUnusedClassesGenerate() -> UnusedClass {
     return UnusedClass()
   }
+}
+
+class JniTestsClass: NSObject, JniHostIntegrationCoreApi {
+  func noop() {
+    return
+  }
+
+  func echoInt(anInt: Int64) -> Int64 {
+    return anInt
+  }
+
+  func echoDouble(aDouble: Double) -> Double {
+    return aDouble
+  }
+
+  func echoBool(aBool: Bool) -> Bool {
+    return aBool
+  }
+
+  func echoString(aString: String) -> String {
+    return aString
+  }
+
 }
 
 public class TestPluginWithSuffix: HostSmallApi {

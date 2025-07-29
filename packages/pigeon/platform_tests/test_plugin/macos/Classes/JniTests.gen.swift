@@ -7,41 +7,67 @@
 
 import Foundation
 
-/// A class containing all supported types.
-///
-/// Generated class from Pigeon that represents data sent in messages.
-@objc class JniAllTypes: NSObject {
-    @objc init(aBool: Bool, anInt: Int64, anInt64: Int64, aDouble: Double) {
-        self.aBool = aBool
-        self.anInt = anInt
-        self.anInt64 = anInt64
-        self.aDouble = aDouble
-    }
-  var aBool: Bool
-  var anInt: Int64
-  var anInt64: Int64
-  var aDouble: Double
+/// Error class for passing custom error details to Dart side.
+final class JniTestsError: Error {
+  let code: String
+  let message: String?
+  let details: Sendable?
+
+  init(code: String, message: String?, details: Sendable?) {
+    self.code = code
+    self.message = message
+    self.details = details
+  }
+
+  var localizedDescription: String {
+    return
+      "JniTestsError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+  }
 }
 
-
-var list = Dictionary<String, Host>()
-
-@objc protocol HostIntegrationCoreApiFfi {
-  /// Returns passed in int.
-  func echo(_ anInt: Int64) -> Int64
+private func isNullish(_ value: Any?) -> Bool {
+  return value is NSNull || value == nil
 }
 
-@objc class Host: NSObject, HostIntegrationCoreApiFfi {
-  var key: String
-  @objc init (name: String) {
-    self.key = name
-    super.init()
-    list[name] = self
+private func nilOrValue<T>(_ value: Any?) -> T? {
+  if value is NSNull { return nil }
+  return value as! T?
+}
+var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSetup?]()
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+@objc protocol JniHostIntegrationCoreApi {
+  func noop()
+  func echoInt(anInt: Int64) -> Int64
+  func echoDouble(aDouble: Double) -> Double
+  func echoBool(aBool: Bool) -> Bool
+  func echoString(aString: String) -> String
+}
+
+/// Generated setup class from Pigeon to register implemented JniHostIntegrationCoreApi classes.
+@objc class JniHostIntegrationCoreApiSetup: NSObject, JniHostIntegrationCoreApi {
+  private var api: JniHostIntegrationCoreApi?
+  override init() {}
+  static func register(name: String, api: JniHostIntegrationCoreApi?) {
+    let wrapper = JniHostIntegrationCoreApiSetup()
+    wrapper.api = api
+    instancesOfJniHostIntegrationCoreApi[name] = wrapper
   }
-  @objc static  func getInstance(name: String) -> Host {
-    return list[name]!
+  @objc static func getInstance(name: String) -> JniHostIntegrationCoreApiSetup? {
+    return instancesOfJniHostIntegrationCoreApi[name] ?? nil
   }
-  @objc func echo(_ anInt: Int64) -> Int64 {
-    return anInt
+  func noop() {
+    return api!.noop()
+  }
+  func echoInt(anInt: Int64) -> Int64 {
+    return api!.echoInt(anInt: anInt)
+  }
+  func echoDouble(aDouble: Double) -> Double {
+    return api!.echoDouble(aDouble: aDouble)
+  }
+  func echoBool(aBool: Bool) -> Bool {
+    return api!.echoBool(aBool: aBool)
+  }
+  func echoString(aString: String) -> String {
+    return api!.echoString(aString: aString)
   }
 }
