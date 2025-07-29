@@ -38,6 +38,10 @@ final class DefaultCamera: FLTCam, Camera {
   private let pixelBufferSynchronizationQueue = DispatchQueue(
     label: "io.flutter.camera.pixelBufferSynchronizationQueue")
 
+  /// The queue on which captured photos (not videos) are written to disk.
+  /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
+  private let photoIOQueue = DispatchQueue(label: "io.flutter.camera.photoIOQueue")
+
   /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
   /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
   private var latestPixelBuffer: CVPixelBuffer?
@@ -311,6 +315,93 @@ final class DefaultCamera: FLTCam, Camera {
             details: nil))
       }
     }
+  }
+
+  func captureToFile(completion: @escaping (String?, FlutterError?) -> Void) {
+    var settings = AVCapturePhotoSettings()
+
+    if mediaSettings.resolutionPreset == .max {
+      settings.isHighResolutionPhotoEnabled = true
+    }
+
+    let fileExtension: String
+
+    let isHEVCCodecAvailable = capturePhotoOutput.availablePhotoCodecTypes.contains(
+      .hevc)
+
+    if fileFormat == .heif, isHEVCCodecAvailable {
+      settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+      fileExtension = "heif"
+    } else {
+      fileExtension = "jpg"
+    }
+
+    if flashMode != .torch {
+      settings.flashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(flashMode)
+    }
+
+    let path: String
+    do {
+      path = try getTemporaryFilePath(
+        withExtension: fileExtension,
+        subfolder: "pictures",
+        prefix: "CAP_")
+    } catch let error as NSError {
+      completion(nil, DefaultCamera.flutterErrorFromNSError(error))
+      return
+    }
+
+    let savePhotoDelegate = FLTSavePhotoDelegate(
+      path: path,
+      ioQueue: photoIOQueue,
+      completionHandler: { [weak self] path, error in
+        guard let strongSelf = self else { return }
+
+        strongSelf.captureSessionQueue.async { [weak self] in
+          self?.inProgressSavePhotoDelegates.removeObject(
+            forKey: settings.uniqueID)
+        }
+
+        if let error = error {
+          completion(nil, DefaultCamera.flutterErrorFromNSError(error as NSError))
+        } else {
+          assert(path != nil, "Path must not be nil if no error.")
+          completion(path, nil)
+        }
+      }
+    )
+
+    assert(
+      DispatchQueue.getSpecific(key: captureSessionQueueSpecificKey)
+        == captureSessionQueueSpecificValue,
+      "save photo delegate references must be updated on the capture session queue")
+    inProgressSavePhotoDelegates[settings.uniqueID] = savePhotoDelegate
+    capturePhotoOutput.capturePhoto(with: settings, delegate: savePhotoDelegate)
+  }
+
+  private func getTemporaryFilePath(
+    withExtension ext: String,
+    subfolder: String,
+    prefix: String
+  ) throws -> String {
+    let documentDirectory = FileManager.default.urls(
+      for: .documentDirectory,
+      in: .userDomainMask)[0]
+
+    let fileDirectory = documentDirectory.appendingPathComponent("camera").appendingPathComponent(
+      subfolder)
+    let fileName = prefix + UUID().uuidString
+    let file = fileDirectory.appendingPathComponent(fileName).appendingPathExtension(ext).path
+
+    let fileManager = FileManager.default
+    if !fileManager.fileExists(atPath: fileDirectory.path) {
+      try fileManager.createDirectory(
+        at: fileDirectory,
+        withIntermediateDirectories: true,
+        attributes: nil)
+    }
+
+    return file
   }
 
   func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
