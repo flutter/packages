@@ -9,11 +9,19 @@ import '../platform_interface/platform_ads_manager_delegate.dart';
 import '../platform_interface/platform_ads_rendering_settings.dart';
 import '../platform_interface/platform_companion_ad_slot.dart';
 import '../platform_interface/platform_content_progress_provider.dart';
+import '../platform_interface/platform_ad_display_container.dart';
+import '../platform_interface/platform_ads_loader.dart';
+import '../platform_interface/platform_ads_manager_delegate.dart';
+import '../platform_interface/platform_ads_rendering_settings.dart';
+import '../platform_interface/platform_ads_request.dart';
+import '../platform_interface/platform_companion_ad_slot.dart';
+import '../platform_interface/platform_content_progress_provider.dart';
 import '../platform_interface/platform_ima_settings.dart';
 import 'ios_ad_display_container.dart';
 import 'ios_ads_loader.dart';
 import 'ios_ads_manager_delegate.dart';
 import 'ios_ads_rendering_settings.dart';
+import 'ios_ads_request.dart';
 import 'ios_companion_ad_slot.dart';
 import 'ios_content_progress_provider.dart';
 import 'ios_ima_settings.dart';
@@ -70,5 +78,12 @@ final class IOSInteractiveMediaAds extends InteractiveMediaAdsPlatform {
     PlatformImaSettingsCreationParams params,
   ) {
     return IOSImaSettings(params);
+  }
+
+  @override
+  IOSAdsRequest createPlatformAdsRequest(
+    PlatformAdsRequestCreationParams params,
+  ) {
+    return IOSAdsRequest(params);
   }
 }

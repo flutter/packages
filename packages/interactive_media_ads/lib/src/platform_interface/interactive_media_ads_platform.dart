@@ -6,6 +6,7 @@ import 'platform_ad_display_container.dart';
 import 'platform_ads_loader.dart';
 import 'platform_ads_manager_delegate.dart';
 import 'platform_ads_rendering_settings.dart';
+import 'platform_ads_request.dart';
 import 'platform_companion_ad_slot.dart';
 import 'platform_content_progress_provider.dart';
 import 'platform_ima_settings.dart';
@@ -39,7 +40,7 @@ abstract base class InteractiveMediaAdsPlatform {
     PlatformContentProgressProviderCreationParams params,
   );
 
-  /// Creates a new [PlatformContentProgressProvider].
+  /// Creates a new [PlatformAdsRenderingSettings].
   PlatformAdsRenderingSettings createPlatformAdsRenderingSettings(
     PlatformAdsRenderingSettingsCreationParams params,
   );
@@ -52,5 +53,10 @@ abstract base class InteractiveMediaAdsPlatform {
   /// Creates a new [PlatformImaSettings].
   PlatformImaSettings createPlatformImaSettings(
     PlatformImaSettingsCreationParams params,
+  );
+
+  /// Creates a new [PlatformAdsRequest].
+  PlatformAdsRequest createPlatformAdsRequest(
+    PlatformAdsRequestCreationParams params,
   );
 }
