@@ -4,7 +4,6 @@
   to fix pausing and resuming the preview.
 * Updates minimum supported SDK version to Flutter 3.32.8/Dart 3.8.1.
 
-
 ## 0.6.19
 
 * Changes target rotation of captured images to current default display rotation to fix captured
