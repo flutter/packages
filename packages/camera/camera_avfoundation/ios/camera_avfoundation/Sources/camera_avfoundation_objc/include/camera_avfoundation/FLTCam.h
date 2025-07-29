@@ -65,12 +65,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
 @property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
+@property(assign, nonatomic) BOOL isAudioSetup;
+/// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
+@property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration error:(NSError **)error;
-
-- (void)setUpCaptureSessionForAudioIfNeeded;
 
 // Methods exposed for the Swift DefaultCamera subclass
 - (void)updateOrientation;

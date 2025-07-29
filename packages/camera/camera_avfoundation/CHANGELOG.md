@@ -1,6 +1,7 @@
 ## 0.9.21+1
 
-* Migrates `startImageStream` method to Swift.
+* Migrates `startImageStream` and `setUpCaptureSessionForAudioIfNeeded` methods to Swift.
+* Removes Objective-C implementation of `reportErrorMessage` method.
 
 ## 0.9.21
 
