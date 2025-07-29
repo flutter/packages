@@ -1989,8 +1989,6 @@ void main() {
       final MockCameraCharacteristicsKey mockCameraCharacteristicsKey =
           MockCameraCharacteristicsKey();
 
-      MockCameraInfo? mockCameraInfoToSelect;
-
       // Tell plugin to create mock/detached objects and stub method calls for the
       // testing of availableCameras and createCamera.
       camera.proxy = CameraXProxy(
