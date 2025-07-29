@@ -40,10 +40,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
-
-/// Returns the absolute file path for a given asset name.
-/// This method attempts to locate the specified asset within the app bundle.
-+ (NSString *)absolutePathForAssetName:(NSString *)assetName;
 @end
 
 NS_ASSUME_NONNULL_END

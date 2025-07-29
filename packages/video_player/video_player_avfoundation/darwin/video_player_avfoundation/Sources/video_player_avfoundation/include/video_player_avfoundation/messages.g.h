@@ -39,16 +39,10 @@ typedef NS_ENUM(NSUInteger, FVPPlatformVideoViewType) {
 @interface FVPCreationOptions : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithAsset:(nullable NSString *)asset
-                          uri:(nullable NSString *)uri
-                  packageName:(nullable NSString *)packageName
-                   formatHint:(nullable NSString *)formatHint
-                  httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
-                     viewType:(FVPPlatformVideoViewType)viewType;
-@property(nonatomic, copy, nullable) NSString *asset;
-@property(nonatomic, copy, nullable) NSString *uri;
-@property(nonatomic, copy, nullable) NSString *packageName;
-@property(nonatomic, copy, nullable) NSString *formatHint;
++ (instancetype)makeWithUri:(NSString *)uri
+                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
+                   viewType:(FVPPlatformVideoViewType)viewType;
+@property(nonatomic, copy) NSString *uri;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
 @property(nonatomic, assign) FVPPlatformVideoViewType viewType;
 @end
@@ -63,6 +57,9 @@ NSObject<FlutterMessageCodec> *FVPGetMessagesCodec(void);
                                    error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)disposePlayer:(NSInteger)playerId error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setMixWithOthers:(BOOL)mixWithOthers error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSString *)fileURLForAssetWithName:(NSString *)asset
+                                       package:(nullable NSString *)package
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPAVFoundationVideoPlayerApi(
