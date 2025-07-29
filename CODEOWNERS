@@ -22,7 +22,7 @@ packages/image_picker/**                                 @tarrinneal
 packages/interactive_media_ads/**                        @bparrishMines
 packages/in_app_purchase/**                              @bparrishMines
 packages/local_auth/**                                   @stuartmorgan-g
-packages/metrics_center/**                               @christopherfujino
+packages/metrics_center/**                               @bkonyi
 packages/multicast_dns/**                                @vashworth
 packages/path_provider/**                                @stuartmorgan-g
 packages/pigeon/**                                       @tarrinneal
@@ -32,12 +32,12 @@ packages/pointer_interceptor/**                          @ditman
 packages/quick_actions/**                                @bparrishMines
 packages/rfw/**                                          @Hixie
 packages/shared_preferences/**                           @tarrinneal
-packages/standard_message_codec/**                       @jonahwilliams
+packages/standard_message_codec/**                       @stuartmorgan-g
 packages/two_dimensional_scrollables/**                  @Piinks
 packages/url_launcher/**                                 @stuartmorgan-g
-packages/vector_graphics/**                              @jonahwilliams
-packages/vector_graphics_codec/**                        @jonahwilliams
-packages/vector_graphics_compiler/**                     @jonahwilliams
+packages/vector_graphics/**                              @chinmaygarde
+packages/vector_graphics_codec/**                        @chinmaygarde
+packages/vector_graphics_compiler/**                     @chinmaygarde
 packages/video_player/**                                 @tarrinneal
 packages/web_benchmarks/**                               @yjbanov
 packages/webview_flutter/**                              @bparrishMines
