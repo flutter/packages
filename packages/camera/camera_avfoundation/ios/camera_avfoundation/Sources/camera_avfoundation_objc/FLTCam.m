@@ -308,53 +308,6 @@ NSString *const errorMethod = @"error";
   return bestFormat;
 }
 
-- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                           completion:(void (^)(FlutterError *))completion {
-  [self startImageStreamWithMessenger:messenger
-                   imageStreamHandler:[[FLTImageStreamHandler alloc]
-                                          initWithCaptureSessionQueue:_captureSessionQueue]
-                           completion:completion];
-}
-
-- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
-                           completion:(void (^)(FlutterError *))completion {
-  if (!_isStreamingImages) {
-    id<FLTEventChannel> eventChannel = [FlutterEventChannel
-        eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
-             binaryMessenger:messenger];
-    FLTThreadSafeEventChannel *threadSafeEventChannel =
-        [[FLTThreadSafeEventChannel alloc] initWithEventChannel:eventChannel];
-
-    _imageStreamHandler = imageStreamHandler;
-    __weak typeof(self) weakSelf = self;
-    [threadSafeEventChannel setStreamHandler:_imageStreamHandler
-                                  completion:^{
-                                    typeof(self) strongSelf = weakSelf;
-                                    if (!strongSelf) {
-                                      completion(nil);
-                                      return;
-                                    }
-
-                                    dispatch_async(strongSelf.captureSessionQueue, ^{
-                                      // cannot use the outter strongSelf
-                                      typeof(self) strongSelf = weakSelf;
-                                      if (!strongSelf) {
-                                        completion(nil);
-                                        return;
-                                      }
-
-                                      strongSelf.isStreamingImages = YES;
-                                      strongSelf.streamingPendingFramesCount = 0;
-                                      completion(nil);
-                                    });
-                                  }];
-  } else {
-    [self reportErrorMessage:@"Images from camera are already streaming!"];
-    completion(nil);
-  }
-}
-
 // This function, although slightly modified, is also in video_player_avfoundation.
 // Both need to do the same thing and run on the same thread (for example main thread).
 // Configure application wide audio session manually to prevent overwriting flag

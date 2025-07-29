@@ -1,3 +1,7 @@
+## 0.9.21+1
+
+* Migrates `startImageStream` method to Swift.
+
 ## 0.9.21
 
 * Fixes crash when streaming is enabled during recording.

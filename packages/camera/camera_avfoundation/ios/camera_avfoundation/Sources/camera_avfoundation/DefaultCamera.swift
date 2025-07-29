@@ -728,6 +728,53 @@ final class DefaultCamera: FLTCam, Camera {
     completion(nil)
   }
 
+  func startImageStream(
+    with messenger: any FlutterBinaryMessenger, completion: @escaping (FlutterError?) -> Void
+  ) {
+    startImageStream(
+      with: messenger,
+      imageStreamHandler: FLTImageStreamHandler(captureSessionQueue: captureSessionQueue),
+      completion: completion
+    )
+  }
+
+  func startImageStream(
+    with messenger: FlutterBinaryMessenger,
+    imageStreamHandler: FLTImageStreamHandler,
+    completion: @escaping (FlutterError?) -> Void
+  ) {
+    if isStreamingImages {
+      reportErrorMessage("Images from camera are already streaming!")
+      completion(nil)
+      return
+    }
+
+    let eventChannel = FlutterEventChannel(
+      name: "plugins.flutter.io/camera_avfoundation/imageStream",
+      binaryMessenger: messenger
+    )
+    let threadSafeEventChannel = FLTThreadSafeEventChannel(eventChannel: eventChannel)
+
+    self.imageStreamHandler = imageStreamHandler
+    threadSafeEventChannel.setStreamHandler(imageStreamHandler) { [weak self] in
+      guard let strongSelf = self else {
+        completion(nil)
+        return
+      }
+
+      strongSelf.captureSessionQueue.async { [weak self] in
+        guard let strongSelf = self else {
+          completion(nil)
+          return
+        }
+
+        strongSelf.isStreamingImages = true
+        strongSelf.streamingPendingFramesCount = 0
+        completion(nil)
+      }
+    }
+  }
+
   func stopImageStream() {
     if isStreamingImages {
       isStreamingImages = false
