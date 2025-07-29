@@ -250,9 +250,6 @@ targets:
 
   # Wasm unit tests in master
   - name: Linux_web web_dart_unit_test_wasm_shard_1 master
-    # Broken on master. See flutter/flutter#170433 and
-    # flutter/flutter#170434
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -268,9 +265,6 @@ targets:
         }
 
   - name: Linux_web web_dart_unit_test_wasm_shard_2 master
-    # Broken on master. See flutter/flutter#170433 and
-    # flutter/flutter#170434
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -1437,7 +1431,6 @@ targets:
     recipe: packages/packages
     presubmit: false
     timeout: 30
-    bringup: true # https://github.com/flutter/flutter/issues/134083
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
@@ -1472,7 +1465,6 @@ targets:
     recipe: packages/packages
     presubmit: false
     timeout: 30
-    bringup: true
     properties:
       target_file: windows_build_all_packages.yaml
       channel: stable

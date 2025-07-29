@@ -1,3 +1,11 @@
+## 0.2.5
+
+* Adds support to set general SDK settings. See `ImaSettings` and `AdsLoader.settings`.
+
+## 0.2.4+2
+
+* Bumps gradle from 8.9.0 to 8.11.1.
+
 ## 0.2.4+1
 
 * Adds internal wrapper for Android native `ImaSdkSettings`.
