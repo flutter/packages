@@ -12,7 +12,7 @@ import '../generator_tools.dart';
 import '../types/task_queue.dart';
 import 'templates.dart';
 
-/// Documentation comment open symbol.
+/// Documentation comment open symbol. test commit
 const String _docCommentPrefix = '///';
 
 /// Documentation comment spec.
