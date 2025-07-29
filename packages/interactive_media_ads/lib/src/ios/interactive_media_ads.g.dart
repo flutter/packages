@@ -74,6 +74,13 @@ class PigeonOverrides {
     IMAContentPlayhead? contentPlayhead,
   })? iMAAdsRequest_new;
 
+  /// Overrides [IMAAdsRequest.withAdsResponse].
+  static IMAAdsRequest Function({
+    required String adsResponse,
+    required IMAAdDisplayContainer adDisplayContainer,
+    IMAContentPlayhead? contentPlayhead,
+  })? iMAAdsRequest_withAdsResponse;
+
   /// Overrides [IMAAdsLoaderDelegate.new].
   static IMAAdsLoaderDelegate Function({
     required void Function(
@@ -153,6 +160,7 @@ class PigeonOverrides {
     iMAAdsLoader_new = null;
     iMASettings_new = null;
     iMAAdsRequest_new = null;
+    iMAAdsRequest_withAdsResponse = null;
     iMAAdsLoaderDelegate_new = null;
     iMAAdsManagerDelegate_new = null;
     iMAAdsRenderingSettings_new = null;
@@ -2497,6 +2505,11 @@ class IMASettings extends NSObject {
 class IMAAdsRequest extends NSObject {
   /// Initializes an ads request instance with the given ad tag URL and ad
   /// display container.
+  ///
+  /// Serial ad requests may reuse the same `IMAAdDisplayContainer` by first
+  /// calling `IMAAdsManager.destroy` on its current adsManager. Concurrent
+  /// requests must use different ad containers. Does not support
+  /// Picture-in-Picture.
   factory IMAAdsRequest({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
@@ -2522,6 +2535,11 @@ class IMAAdsRequest extends NSObject {
 
   /// Initializes an ads request instance with the given ad tag URL and ad
   /// display container.
+  ///
+  /// Serial ad requests may reuse the same `IMAAdDisplayContainer` by first
+  /// calling `IMAAdsManager.destroy` on its current adsManager. Concurrent
+  /// requests must use different ad containers. Does not support
+  /// Picture-in-Picture.
   @protected
   IMAAdsRequest.pigeon_new({
     super.pigeon_binaryMessenger,
@@ -2547,6 +2565,88 @@ class IMAAdsRequest extends NSObject {
         .send(<Object?>[
       pigeonVar_instanceIdentifier,
       adTagUrl,
+      adDisplayContainer,
+      contentPlayhead
+    ]);
+    () async {
+      final List<Object?>? pigeonVar_replyList =
+          await pigeonVar_sendFuture as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Initializes an ads request instance with the given canned ads response and
+  /// ad display container.
+  ///
+  /// Serial ad requests may reuse the same `IMAAdDisplayContainer`` by first
+  /// calling `IMAAdsManager.destroy` on its current adsManager. Concurrent
+  /// requests must use different ad containers. Does not support
+  /// Picture-in-Picture.
+  factory IMAAdsRequest.withAdsResponse({
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    required String adsResponse,
+    required IMAAdDisplayContainer adDisplayContainer,
+    IMAContentPlayhead? contentPlayhead,
+  }) {
+    if (PigeonOverrides.iMAAdsRequest_withAdsResponse != null) {
+      return PigeonOverrides.iMAAdsRequest_withAdsResponse!(
+        adsResponse: adsResponse,
+        adDisplayContainer: adDisplayContainer,
+        contentPlayhead: contentPlayhead,
+      );
+    }
+    return IMAAdsRequest.pigeon_withAdsResponse(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      adsResponse: adsResponse,
+      adDisplayContainer: adDisplayContainer,
+      contentPlayhead: contentPlayhead,
+    );
+  }
+
+  /// Initializes an ads request instance with the given canned ads response and
+  /// ad display container.
+  ///
+  /// Serial ad requests may reuse the same `IMAAdDisplayContainer`` by first
+  /// calling `IMAAdsManager.destroy` on its current adsManager. Concurrent
+  /// requests must use different ad containers. Does not support
+  /// Picture-in-Picture.
+  @protected
+  IMAAdsRequest.pigeon_withAdsResponse({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required String adsResponse,
+    required IMAAdDisplayContainer adDisplayContainer,
+    IMAContentPlayhead? contentPlayhead,
+  }) : super.pigeon_detached() {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.withAdsResponse';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+      pigeonVar_instanceIdentifier,
+      adsResponse,
       adDisplayContainer,
       contentPlayhead
     ]);
@@ -2626,6 +2726,401 @@ class IMAAdsRequest extends NSObject {
           }
         });
       }
+    }
+  }
+
+  /// Specifies the full URL to use for ads loading from an ad server.
+  ///
+  /// Required for any adsRequest.
+  Future<String?> getAdTagUrl() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.getAdTagUrl';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
+  /// a request through an ad tag URL.
+  Future<String?> getAdsResponse() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.getAdsResponse';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  /// The ad display container.
+  Future<IMAAdDisplayContainer> getAdDisplayContainer() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.getAdDisplayContainer';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as IMAAdDisplayContainer?)!;
+    }
+  }
+
+  /// Specifies whether the player intends to start the content and ad in
+  /// response to a user action or whether they will be automatically played.
+  ///
+  /// Changing this setting will have no impact on ad playback.
+  Future<void> setAdWillAutoPlay(bool adWillAutoPlay) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.setAdWillAutoPlay';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adWillAutoPlay]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Specifies whether the player intends to start the content and ad with no
+  /// volume.
+  ///
+  /// Changing this setting will have no impact on ad playback.
+  Future<void> setAdWillPlayMuted(bool adWillPlayMuted) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.setAdWillPlayMuted';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, adWillPlayMuted]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Specifies whether the player intends to continuously play the content
+  /// videos one after another similar to TV broadcast.
+  ///
+  /// Not calling this function leaves the setting as unknown. Note: Changing
+  /// this setting will have no impact on ad playback.
+  Future<void> setContinuousPlayback(bool continuousPlayback) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.setContinuousPlayback';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, continuousPlayback]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Specifies the duration of the content in seconds to be shown.
+  ///
+  /// Used in AdX requests. This parameter is optional.
+  Future<void> setContentDuration(double duration) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.setContentDuration';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, duration]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Specifies the keywords used to describe the content to be shown.
+  ///
+  /// Used in AdX requests. This parameter is optional.
+  Future<void> setContentKeywords(List<String>? keywords) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.setContentKeywords';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, keywords]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Specifies the title of the content to be shown.
+  ///
+  /// Used in AdX requests. This parameter is optional.
+  Future<void> setContentTitle(String? title) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.setContentTitle';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, title]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Specifies the universal link to the content’s screen.
+  ///
+  /// If provided, this parameter is passed to the OM SDK. See
+  /// [Apple documentation](https://developer.apple.com/documentation/xcode/allowing-apps-and-websites-to-link-to-your-content)
+  /// for more information.
+  Future<void> setContentURL(String? contentURL) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.setContentURL';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, contentURL]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Specifies the VAST load timeout in milliseconds for the initial request
+  /// and any subsequent wrappers.
+  ///
+  /// This parameter is optional and will override the default timeout.
+  Future<void> setVastLoadTimeout(double timeout) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.setVastLoadTimeout';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, timeout]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Specifies the maximum amount of time to wait in seconds, after calling
+  /// requestAds, before requesting the ad tag URL.
+  ///
+  /// This can be used to stagger requests during a live-stream event, in order
+  /// to mitigate spikes in the number of requests.
+  Future<void> setLiveStreamPrefetchSeconds(double seconds) async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecIMAAdsRequest;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const String pigeonVar_channelName =
+        'dev.flutter.pigeon.interactive_media_ads.IMAAdsRequest.setLiveStreamPrefetchSeconds';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, seconds]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
     }
   }
 
