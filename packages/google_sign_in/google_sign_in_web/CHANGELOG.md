@@ -1,3 +1,7 @@
+## 1.0.0+1
+
+* Fixes Bad state: Future already completed on the web
+
 ## 1.0.0
 
 * **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform

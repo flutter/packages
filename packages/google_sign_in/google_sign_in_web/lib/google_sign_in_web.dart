@@ -67,8 +67,6 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   // A future that completes when the JS loader is done.
   late Future<void> _jsSdkLoadedFuture;
-  // A future that completes when the `init` call is done.
-  Completer<void>? _initCalled;
 
   // A StreamController to communicate status changes from the GisSdkClient.
   final StreamController<AuthenticationEvent> _authenticationController;
@@ -88,27 +86,14 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     return _gisSdkClient!;
   }
 
-  // This method throws if init or initWithParams hasn't been called at some
-  // point in the past. It is used by the [initialized] getter to ensure that
-  // users can't await on a Future that will never resolve.
-  void _assertIsInitCalled() {
-    if (_initCalled == null) {
-      throw StateError(
-        'GoogleSignInPlugin::init() or GoogleSignInPlugin::initWithParams() '
-        'must be called before any other method in this plugin.',
-      );
-    }
-  }
-
   /// A future that resolves when the plugin is fully initialized.
   ///
   /// This ensures that the SDK has been loaded, and that the `init` method
   /// has finished running.
   @visibleForTesting
   Future<void> get initialized {
-    _assertIsInitCalled();
     return Future.wait<void>(
-        <Future<void>>[_jsSdkLoadedFuture, _initCalled!.future]);
+        <Future<void>>[_jsSdkLoadedFuture]);
   }
 
   /// Stores the client ID if it was set in a meta-tag of the page.
@@ -132,8 +117,6 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     assert(params.serverClientId == null,
         'serverClientId is not supported on Web.');
 
-    _initCalled = Completer<void>();
-
     await _jsSdkLoadedFuture;
 
     _gisSdkClient ??= GisSdkClient(
@@ -143,8 +126,6 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       authenticationController: _authenticationController,
       loggingEnabled: kDebugMode,
     );
-
-    _initCalled!.complete(); // Signal that `init` is fully done.
   }
 
   @override
