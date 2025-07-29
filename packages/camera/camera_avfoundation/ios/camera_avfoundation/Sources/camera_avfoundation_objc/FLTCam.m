@@ -19,12 +19,6 @@
 #import "./include/camera_avfoundation/QueueUtils.h"
 #import "./include/camera_avfoundation/messages.g.h"
 
-static FlutterError *FlutterErrorFromNSError(NSError *error) {
-  return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
-                             message:error.localizedDescription
-                             details:error.domain];
-}
-
 @interface FLTCam () <AVCaptureVideoDataOutputSampleBufferDelegate,
                       AVCaptureAudioDataOutputSampleBufferDelegate>
 
@@ -36,9 +30,6 @@ static FlutterError *FlutterErrorFromNSError(NSError *error) {
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
-/// The queue on which captured photos (not videos) are written to disk.
-/// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
-@property(strong, nonatomic) dispatch_queue_t photoIOQueue;
 /// A wrapper for CMVideoFormatDescriptionGetDimensions.
 /// Allows for alternate implementations in tests.
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
@@ -62,7 +53,6 @@ NSString *const errorMethod = @"error";
   _mediaSettingsAVWrapper = configuration.mediaSettingsWrapper;
 
   _captureSessionQueue = configuration.captureSessionQueue;
-  _photoIOQueue = dispatch_queue_create("io.flutter.camera.photoIOQueue", NULL);
   _videoCaptureSession = configuration.videoCaptureSession;
   _audioCaptureSession = configuration.audioCaptureSession;
   _captureDeviceFactory = configuration.captureDeviceFactory;
@@ -206,69 +196,6 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)captureToFileWithCompletion:(void (^)(NSString *_Nullable,
-                                              FlutterError *_Nullable))completion {
-  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-
-  if (self.mediaSettings.resolutionPreset == FCPPlatformResolutionPresetMax) {
-    [settings setHighResolutionPhotoEnabled:YES];
-  }
-
-  NSString *extension;
-
-  BOOL isHEVCCodecAvailable =
-      [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
-
-  if (_fileFormat == FCPPlatformImageFileFormatHeif && isHEVCCodecAvailable) {
-    settings =
-        [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
-    extension = @"heif";
-  } else {
-    extension = @"jpg";
-  }
-
-  // If the flash is in torch mode, no capture-level flash setting is needed.
-  if (self.flashMode != FCPPlatformFlashModeTorch) {
-    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(self.flashMode)];
-  }
-  NSError *error;
-  NSString *path = [self getTemporaryFilePathWithExtension:extension
-                                                 subfolder:@"pictures"
-                                                    prefix:@"CAP_"
-                                                     error:&error];
-  if (error) {
-    completion(nil, FlutterErrorFromNSError(error));
-    return;
-  }
-
-  __weak typeof(self) weakSelf = self;
-  FLTSavePhotoDelegate *savePhotoDelegate = [[FLTSavePhotoDelegate alloc]
-           initWithPath:path
-                ioQueue:self.photoIOQueue
-      completionHandler:^(NSString *_Nullable path, NSError *_Nullable error) {
-        typeof(self) strongSelf = weakSelf;
-        if (!strongSelf) return;
-        dispatch_async(strongSelf.captureSessionQueue, ^{
-          // cannot use the outter `strongSelf`
-          typeof(self) strongSelf = weakSelf;
-          if (!strongSelf) return;
-          [strongSelf.inProgressSavePhotoDelegates removeObjectForKey:@(settings.uniqueID)];
-        });
-
-        if (error) {
-          completion(nil, FlutterErrorFromNSError(error));
-        } else {
-          NSAssert(path, @"Path must not be nil if no error.");
-          completion(path, nil);
-        }
-      }];
-
-  NSAssert(dispatch_get_specific(FLTCaptureSessionQueueSpecific),
-           @"save photo delegate references must be updated on the capture session queue");
-  self.inProgressSavePhotoDelegates[@(settings.uniqueID)] = savePhotoDelegate;
-  [self.capturePhotoOutput capturePhotoWithSettings:settings delegate:savePhotoDelegate];
-}
-
 - (AVCaptureVideoOrientation)getVideoOrientationForDeviceOrientation:
     (UIDeviceOrientation)deviceOrientation {
   if (deviceOrientation == UIDeviceOrientationPortrait) {
@@ -286,32 +213,6 @@ NSString *const errorMethod = @"error";
   } else {
     return AVCaptureVideoOrientationPortrait;
   }
-}
-
-- (NSString *)getTemporaryFilePathWithExtension:(NSString *)extension
-                                      subfolder:(NSString *)subfolder
-                                         prefix:(NSString *)prefix
-                                          error:(NSError **)error {
-  NSString *docDir =
-      NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-  NSString *fileDir =
-      [[docDir stringByAppendingPathComponent:@"camera"] stringByAppendingPathComponent:subfolder];
-  NSString *fileName = [prefix stringByAppendingString:[[NSUUID UUID] UUIDString]];
-  NSString *file =
-      [[fileDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:extension];
-
-  NSFileManager *fm = [NSFileManager defaultManager];
-  if (![fm fileExistsAtPath:fileDir]) {
-    BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:fileDir
-                                             withIntermediateDirectories:true
-                                                              attributes:nil
-                                                                   error:error];
-    if (!success) {
-      return nil;
-    }
-  }
-
-  return file;
 }
 
 - (BOOL)setCaptureSessionPreset:(FCPPlatformResolutionPreset)resolutionPreset
