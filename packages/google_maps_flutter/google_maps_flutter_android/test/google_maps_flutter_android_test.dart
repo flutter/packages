@@ -45,7 +45,8 @@ void main() {
     verifyZeroInteractions(initializerApi);
   });
 
-  test('initializeWithPreferredRenderer forwards the initialization call', () async {
+  test('initializeWithPreferredRenderer forwards the initialization call',
+      () async {
     final MockMapsApi api = MockMapsApi();
     final MockMapsInitializerApi initializerApi = MockMapsInitializerApi();
     final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid(
