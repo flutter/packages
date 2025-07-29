@@ -102,20 +102,20 @@ packages/video_player/video_player_avfoundation/**            @LongCatIsLooong @
 packages/webview_flutter/webview_flutter_wkwebview/**         @cbracken @louisehsu
 
 # - Linux
-packages/file_selector/file_selector_linux/**                 @stuartmorgan
-packages/image_picker/image_picker_linux/**                   @stuartmorgan
-packages/path_provider/path_provider_linux/**                 @stuartmorgan
-packages/shared_preferences/shared_preferences_linux/**       @stuartmorgan
-packages/url_launcher/url_launcher_linux/**                   @stuartmorgan
+packages/file_selector/file_selector_linux/**                 @stuartmorgan-g
+packages/image_picker/image_picker_linux/**                   @stuartmorgan-g
+packages/path_provider/path_provider_linux/**                 @stuartmorgan-g
+packages/shared_preferences/shared_preferences_linux/**       @stuartmorgan-g
+packages/url_launcher/url_launcher_linux/**                   @stuartmorgan-g
 
 # - Windows
-packages/camera/camera_windows/**                             @stuartmorgan
-packages/file_selector/file_selector_windows/**               @stuartmorgan
-packages/image_picker/image_picker_windows/**                 @stuartmorgan
-packages/local_auth/local_auth_windows/**                     @stuartmorgan
-packages/path_provider/path_provider_windows/**               @stuartmorgan
-packages/shared_preferences/shared_preferences_windows/**     @stuartmorgan
-packages/url_launcher/url_launcher_windows/**                 @stuartmorgan
+packages/camera/camera_windows/**                             @stuartmorgan-g
+packages/file_selector/file_selector_windows/**               @stuartmorgan-g
+packages/image_picker/image_picker_windows/**                 @stuartmorgan-g
+packages/local_auth/local_auth_windows/**                     @stuartmorgan-g
+packages/path_provider/path_provider_windows/**               @stuartmorgan-g
+packages/shared_preferences/shared_preferences_windows/**     @stuartmorgan-g
+packages/url_launcher/url_launcher_windows/**                 @stuartmorgan-g
 
 # - DevTools extensions
 # @adsonpleal is the actual maintainer of shared_preferences_tool but is not yet a committer, so can't be listed as the owner.
