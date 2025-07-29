@@ -16,6 +16,9 @@ import 'package:pigeon/pigeon.dart';
 /// Pigeon equivalent of VideoViewType.
 enum PlatformVideoViewType { textureView, platformView }
 
+/// Pigeon equivalent of video_platform_interface's VideoFormat.
+enum PlatformVideoFormat { dash, hls, ss }
+
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   const PlatformVideoViewCreationParams({required this.playerId});
@@ -24,12 +27,11 @@ class PlatformVideoViewCreationParams {
 }
 
 class CreateMessage {
-  CreateMessage({required this.httpHeaders});
-  String? asset;
-  String? uri;
-  String? packageName;
-  String? formatHint;
+  CreateMessage({required this.uri, required this.httpHeaders});
+  String uri;
+  PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
+  String? userAgent;
   PlatformVideoViewType? viewType;
 }
 
@@ -39,6 +41,7 @@ abstract class AndroidVideoPlayerApi {
   int create(CreateMessage msg);
   void dispose(int playerId);
   void setMixWithOthers(bool mixWithOthers);
+  String getLookupKeyForAsset(String asset, String? packageName);
 }
 
 @HostApi()
