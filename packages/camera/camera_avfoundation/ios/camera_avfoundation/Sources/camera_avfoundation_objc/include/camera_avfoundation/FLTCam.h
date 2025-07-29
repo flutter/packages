@@ -70,8 +70,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration error:(NSError **)error;
 
-- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                           completion:(nonnull void (^)(FlutterError *_Nullable))completion;
 - (void)setUpCaptureSessionForAudioIfNeeded;
 
 // Methods exposed for the Swift DefaultCamera subclass

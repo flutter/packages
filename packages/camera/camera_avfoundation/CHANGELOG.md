@@ -1,3 +1,7 @@
+## 0.9.20+7
+
+* Migrates `startImageStream` method to Swift.
+
 ## 0.9.20+6
 
 * Migrates `captureToFile` and `getTemporaryFilePath` methods to Swift.
