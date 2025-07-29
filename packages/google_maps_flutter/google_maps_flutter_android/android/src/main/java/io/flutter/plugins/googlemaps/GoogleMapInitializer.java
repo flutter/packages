@@ -53,6 +53,7 @@ final class GoogleMapInitializer
       // https://github.com/flutter/flutter/issues/28493#issuecomment-2919150669.
       MapView mv = new MapView(context);
       mv.onCreate(null);
+      mv.onResume();
       mv.onPause();
       mv.onDestroy();
       Log.i(TAG, "Maps warmup complete.");
