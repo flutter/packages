@@ -576,7 +576,7 @@ void main() {
                   ),
                   DurationRange(
                     const Duration(milliseconds: 1235),
-                    const Duration(milliseconds: 4000),
+                    const Duration(milliseconds: 1235 + 4000),
                   ),
                 ]),
             VideoEvent(eventType: VideoEventType.bufferingStart),

@@ -229,8 +229,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
       for (NSValue *rangeValue in [object loadedTimeRanges]) {
         CMTimeRange range = [rangeValue CMTimeRangeValue];
-        int64_t start = FVPCMTimeToMillis(range.start);
-        [values addObject:@[ @(start), @(start + FVPCMTimeToMillis(range.duration)) ]];
+        [values addObject:@[
+          @(FVPCMTimeToMillis(range.start)),
+          @(FVPCMTimeToMillis(range.duration)),
+        ]];
       }
       _eventSink(@{@"event" : @"bufferingUpdate", @"values" : values});
     }

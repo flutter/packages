@@ -256,9 +256,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   DurationRange _toDurationRange(dynamic value) {
     final List<dynamic> pair = value as List<dynamic>;
+    final int startMilliseconds = pair[0] as int;
+    final int durationMilliseconds = pair[1] as int;
     return DurationRange(
-      Duration(milliseconds: pair[0] as int),
-      Duration(milliseconds: pair[1] as int),
+      Duration(milliseconds: startMilliseconds),
+      Duration(milliseconds: startMilliseconds + durationMilliseconds),
     );
   }
 }
