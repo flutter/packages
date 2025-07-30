@@ -80,8 +80,8 @@ import 'package:swiftgen/swiftgen.dart';
       // triple: 'x86_64-apple-macosx14.0',
       triple: 'arm64-apple-ios',
       sdk: Uri.directory(
-        '/Applications/Xcode-beta.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk',
-        // '/Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk',
+        '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk',
+        // '/Applications/Xcode/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk',
       ),
     ),
     input: ObjCCompatibleSwiftFileInput(

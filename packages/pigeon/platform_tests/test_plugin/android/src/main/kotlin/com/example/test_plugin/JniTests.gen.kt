@@ -6,56 +6,57 @@
 // See also: https://pub.dev/packages/pigeon
 @file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")
 
-
-import android.util.Log
 import androidx.annotation.Keep
-import io.flutter.plugin.common.BasicMessageChannel
-import io.flutter.plugin.common.BinaryMessenger
-import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
-import io.flutter.plugin.common.StandardMessageCodec
-import java.io.ByteArrayOutputStream
-import java.nio.ByteBuffer
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class JniTestsError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class JniTestsError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : Throwable()
+
 const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
-val JniHostIntegrationCoreApiInstances: MutableMap<String, JniHostIntegrationCoreApiRegistrar> = mutableMapOf()
+val JniHostIntegrationCoreApiInstances: MutableMap<String, JniHostIntegrationCoreApiRegistrar> =
+    mutableMapOf()
+
 @Keep
 abstract class JniHostIntegrationCoreApi {
   abstract fun noop()
+
   abstract fun echoInt(anInt: Long): Long
+
   abstract fun echoDouble(aDouble: Double): Double
+
   abstract fun echoBool(aBool: Boolean): Boolean
+
   abstract fun echoString(aString: String): String
 }
+
 @Keep
 class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
   var api: JniHostIntegrationCoreApi? = null
+
   fun register(
-    api: JniHostIntegrationCoreApi,
-    name: String = defaultInstanceName
-  ):   JniHostIntegrationCoreApiRegistrar {
+      api: JniHostIntegrationCoreApi,
+      name: String = defaultInstanceName
+  ): JniHostIntegrationCoreApiRegistrar {
     this.api = api
     JniHostIntegrationCoreApiInstances[name] = this
     return this
   }
+
   @Keep
   fun getInstance(name: String): JniHostIntegrationCoreApiRegistrar? {
     return JniHostIntegrationCoreApiInstances[name]
   }
-  override fun noop()
- {
+
+  override fun noop() {
     api?.let {
       try {
         return api!!.noop()
@@ -65,8 +66,8 @@ class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
     }
     error("JniHostIntegrationCoreApi has not been set")
   }
-  override fun echoInt(anInt: Long): Long
- {
+
+  override fun echoInt(anInt: Long): Long {
     api?.let {
       try {
         return api!!.echoInt(anInt)
@@ -76,8 +77,8 @@ class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
     }
     error("JniHostIntegrationCoreApi has not been set")
   }
-  override fun echoDouble(aDouble: Double): Double
- {
+
+  override fun echoDouble(aDouble: Double): Double {
     api?.let {
       try {
         return api!!.echoDouble(aDouble)
@@ -87,8 +88,8 @@ class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
     }
     error("JniHostIntegrationCoreApi has not been set")
   }
-  override fun echoBool(aBool: Boolean): Boolean
- {
+
+  override fun echoBool(aBool: Boolean): Boolean {
     api?.let {
       try {
         return api!!.echoBool(aBool)
@@ -98,8 +99,8 @@ class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
     }
     error("JniHostIntegrationCoreApi has not been set")
   }
-  override fun echoString(aString: String): String
- {
+
+  override fun echoString(aString: String): String {
     api?.let {
       try {
         return api!!.echoString(aString)
