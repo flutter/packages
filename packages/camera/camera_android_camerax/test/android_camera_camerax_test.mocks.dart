@@ -2074,16 +2074,14 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
   _i2.CameraSelector Function() get defaultBackCameraCameraSelector =>
       (super.noSuchMethod(
             Invocation.getter(#defaultBackCameraCameraSelector),
-            returnValue:
-                () => _FakeCameraSelector_14(
-                  this,
-                  Invocation.getter(#defaultBackCameraCameraSelector),
-                ),
-            returnValueForMissingStub:
-                () => _FakeCameraSelector_14(
-                  this,
-                  Invocation.getter(#defaultBackCameraCameraSelector),
-                ),
+            returnValue: () => _FakeCameraSelector_14(
+              this,
+              Invocation.getter(#defaultBackCameraCameraSelector),
+            ),
+            returnValueForMissingStub: () => _FakeCameraSelector_14(
+              this,
+              Invocation.getter(#defaultBackCameraCameraSelector),
+            ),
           )
           as _i2.CameraSelector Function());
 
@@ -2091,16 +2089,14 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
   _i2.CameraSelector Function() get defaultFrontCameraCameraSelector =>
       (super.noSuchMethod(
             Invocation.getter(#defaultFrontCameraCameraSelector),
-            returnValue:
-                () => _FakeCameraSelector_14(
-                  this,
-                  Invocation.getter(#defaultFrontCameraCameraSelector),
-                ),
-            returnValueForMissingStub:
-                () => _FakeCameraSelector_14(
-                  this,
-                  Invocation.getter(#defaultFrontCameraCameraSelector),
-                ),
+            returnValue: () => _FakeCameraSelector_14(
+              this,
+              Invocation.getter(#defaultFrontCameraCameraSelector),
+            ),
+            returnValueForMissingStub: () => _FakeCameraSelector_14(
+              this,
+              Invocation.getter(#defaultFrontCameraCameraSelector),
+            ),
           )
           as _i2.CameraSelector Function());
 
@@ -2109,20 +2105,14 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
   get highestAvailableStrategyResolutionStrategy =>
       (super.noSuchMethod(
             Invocation.getter(#highestAvailableStrategyResolutionStrategy),
-            returnValue:
-                () => _FakeResolutionStrategy_24(
-                  this,
-                  Invocation.getter(
-                    #highestAvailableStrategyResolutionStrategy,
-                  ),
-                ),
-            returnValueForMissingStub:
-                () => _FakeResolutionStrategy_24(
-                  this,
-                  Invocation.getter(
-                    #highestAvailableStrategyResolutionStrategy,
-                  ),
-                ),
+            returnValue: () => _FakeResolutionStrategy_24(
+              this,
+              Invocation.getter(#highestAvailableStrategyResolutionStrategy),
+            ),
+            returnValueForMissingStub: () => _FakeResolutionStrategy_24(
+              this,
+              Invocation.getter(#highestAvailableStrategyResolutionStrategy),
+            ),
           )
           as _i2.ResolutionStrategy Function());
 
@@ -2133,20 +2123,18 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
             Invocation.getter(
               #ratio_16_9FallbackAutoStrategyAspectRatioStrategy,
             ),
-            returnValue:
-                () => _FakeAspectRatioStrategy_2(
-                  this,
-                  Invocation.getter(
-                    #ratio_16_9FallbackAutoStrategyAspectRatioStrategy,
-                  ),
-                ),
-            returnValueForMissingStub:
-                () => _FakeAspectRatioStrategy_2(
-                  this,
-                  Invocation.getter(
-                    #ratio_16_9FallbackAutoStrategyAspectRatioStrategy,
-                  ),
-                ),
+            returnValue: () => _FakeAspectRatioStrategy_2(
+              this,
+              Invocation.getter(
+                #ratio_16_9FallbackAutoStrategyAspectRatioStrategy,
+              ),
+            ),
+            returnValueForMissingStub: () => _FakeAspectRatioStrategy_2(
+              this,
+              Invocation.getter(
+                #ratio_16_9FallbackAutoStrategyAspectRatioStrategy,
+              ),
+            ),
           )
           as _i2.AspectRatioStrategy Function());
 
@@ -2157,20 +2145,18 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
             Invocation.getter(
               #ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
             ),
-            returnValue:
-                () => _FakeAspectRatioStrategy_2(
-                  this,
-                  Invocation.getter(
-                    #ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
-                  ),
-                ),
-            returnValueForMissingStub:
-                () => _FakeAspectRatioStrategy_2(
-                  this,
-                  Invocation.getter(
-                    #ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
-                  ),
-                ),
+            returnValue: () => _FakeAspectRatioStrategy_2(
+              this,
+              Invocation.getter(
+                #ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
+              ),
+            ),
+            returnValueForMissingStub: () => _FakeAspectRatioStrategy_2(
+              this,
+              Invocation.getter(
+                #ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
+              ),
+            ),
           )
           as _i2.AspectRatioStrategy Function());
 
@@ -2178,16 +2164,14 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
   _i2.CaptureRequestKey Function() get controlAELockCaptureRequest =>
       (super.noSuchMethod(
             Invocation.getter(#controlAELockCaptureRequest),
-            returnValue:
-                () => _FakeCaptureRequestKey_34(
-                  this,
-                  Invocation.getter(#controlAELockCaptureRequest),
-                ),
-            returnValueForMissingStub:
-                () => _FakeCaptureRequestKey_34(
-                  this,
-                  Invocation.getter(#controlAELockCaptureRequest),
-                ),
+            returnValue: () => _FakeCaptureRequestKey_34(
+              this,
+              Invocation.getter(#controlAELockCaptureRequest),
+            ),
+            returnValueForMissingStub: () => _FakeCaptureRequestKey_34(
+              this,
+              Invocation.getter(#controlAELockCaptureRequest),
+            ),
           )
           as _i2.CaptureRequestKey Function());
 
@@ -2196,20 +2180,18 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
   get infoSupportedHardwareLevelCameraCharacteristics =>
       (super.noSuchMethod(
             Invocation.getter(#infoSupportedHardwareLevelCameraCharacteristics),
-            returnValue:
-                () => _FakeCameraCharacteristicsKey_9(
-                  this,
-                  Invocation.getter(
-                    #infoSupportedHardwareLevelCameraCharacteristics,
-                  ),
-                ),
-            returnValueForMissingStub:
-                () => _FakeCameraCharacteristicsKey_9(
-                  this,
-                  Invocation.getter(
-                    #infoSupportedHardwareLevelCameraCharacteristics,
-                  ),
-                ),
+            returnValue: () => _FakeCameraCharacteristicsKey_9(
+              this,
+              Invocation.getter(
+                #infoSupportedHardwareLevelCameraCharacteristics,
+              ),
+            ),
+            returnValueForMissingStub: () => _FakeCameraCharacteristicsKey_9(
+              this,
+              Invocation.getter(
+                #infoSupportedHardwareLevelCameraCharacteristics,
+              ),
+            ),
           )
           as _i2.CameraCharacteristicsKey Function());
 
@@ -2218,16 +2200,14 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
   get sensorOrientationCameraCharacteristics =>
       (super.noSuchMethod(
             Invocation.getter(#sensorOrientationCameraCharacteristics),
-            returnValue:
-                () => _FakeCameraCharacteristicsKey_9(
-                  this,
-                  Invocation.getter(#sensorOrientationCameraCharacteristics),
-                ),
-            returnValueForMissingStub:
-                () => _FakeCameraCharacteristicsKey_9(
-                  this,
-                  Invocation.getter(#sensorOrientationCameraCharacteristics),
-                ),
+            returnValue: () => _FakeCameraCharacteristicsKey_9(
+              this,
+              Invocation.getter(#sensorOrientationCameraCharacteristics),
+            ),
+            returnValueForMissingStub: () => _FakeCameraCharacteristicsKey_9(
+              this,
+              Invocation.getter(#sensorOrientationCameraCharacteristics),
+            ),
           )
           as _i2.CameraCharacteristicsKey Function());
 
