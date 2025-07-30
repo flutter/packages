@@ -171,15 +171,15 @@
 
 @property(nonatomic) XCTestExpectation *initializationExpectation;
 @property(nonatomic) int64_t initializationDuration;
-@property(nonatomic) CGSize initialiaztionSize;
+@property(nonatomic) CGSize initializationSize;
 
-- (instancetype)initWithInitalizationExpectation:(XCTestExpectation *)expectation;
+- (instancetype)initWithInitializationExpectation:(XCTestExpectation *)expectation;
 
 @end
 
 @implementation StubEventListener
 
-- (instancetype)initWithInitalizationExpectation:(XCTestExpectation *)expectation {
+- (instancetype)initWithInitializationExpectation:(XCTestExpectation *)expectation {
   self = [super init];
   _initializationExpectation = expectation;
   return self;
@@ -197,7 +197,7 @@
 - (void)videoPlayerDidInitializeWithDuration:(int64_t)duration size:(CGSize)size {
   [self.initializationExpectation fulfill];
   self.initializationDuration = duration;
-  self.initialiaztionSize = size;
+  self.initializationSize = size;
 }
 
 - (void)videoPlayerDidSetPlaying:(BOOL)playing {
@@ -270,9 +270,9 @@
             viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
-  FlutterError *initalizationError;
-  [videoPlayerPlugin initialize:&initalizationError];
-  XCTAssertNil(initalizationError);
+  FlutterError *initializationError;
+  [videoPlayerPlugin initialize:&initializationError];
+  XCTAssertNil(initializationError);
   FVPCreationOptions *create = [FVPCreationOptions
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
       httpHeaders:@{}
@@ -298,9 +298,9 @@
             viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
-  FlutterError *initalizationError;
-  [videoPlayerPlugin initialize:&initalizationError];
-  XCTAssertNil(initalizationError);
+  FlutterError *initializationError;
+  [videoPlayerPlugin initialize:&initializationError];
+  XCTAssertNil(initializationError);
   FVPCreationOptions *create = [FVPCreationOptions
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
       httpHeaders:@{}
@@ -355,9 +355,9 @@
             viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
-  FlutterError *initalizationError;
-  [videoPlayerPlugin initialize:&initalizationError];
-  XCTAssertNil(initalizationError);
+  FlutterError *initializationError;
+  [videoPlayerPlugin initialize:&initializationError];
+  XCTAssertNil(initializationError);
   FVPCreationOptions *create = [FVPCreationOptions
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
       httpHeaders:@{}
@@ -401,9 +401,9 @@
             viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
-  FlutterError *initalizationError;
-  [videoPlayerPlugin initialize:&initalizationError];
-  XCTAssertNil(initalizationError);
+  FlutterError *initializationError;
+  [videoPlayerPlugin initialize:&initializationError];
+  XCTAssertNil(initializationError);
   FVPCreationOptions *create = [FVPCreationOptions
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
       httpHeaders:@{}
@@ -456,9 +456,9 @@
             viewProvider:[[StubViewProvider alloc] initWithView:nil]
                registrar:registrar];
 
-  FlutterError *initalizationError;
-  [videoPlayerPlugin initialize:&initalizationError];
-  XCTAssertNil(initalizationError);
+  FlutterError *initializationError;
+  [videoPlayerPlugin initialize:&initializationError];
+  XCTAssertNil(initializationError);
   FVPCreationOptions *create = [FVPCreationOptions
       makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
       httpHeaders:@{}
@@ -553,16 +553,16 @@
 - (void)testVideoControls {
   StubEventListener *eventListener =
       [self sanityTestURI:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"];
-  XCTAssertEqual(eventListener.initialiaztionSize.height, 720);
-  XCTAssertEqual(eventListener.initialiaztionSize.width, 1280);
+  XCTAssertEqual(eventListener.initializationSize.height, 720);
+  XCTAssertEqual(eventListener.initializationSize.width, 1280);
   XCTAssertEqualWithAccuracy(eventListener.initializationDuration, 4000, 200);
 }
 
 - (void)testAudioControls {
   StubEventListener *eventListener = [self
       sanityTestURI:@"https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"];
-  XCTAssertEqual(eventListener.initialiaztionSize.height, 0);
-  XCTAssertEqual(eventListener.initialiaztionSize.width, 0);
+  XCTAssertEqual(eventListener.initializationSize.height, 0);
+  XCTAssertEqual(eventListener.initializationSize.width, 0);
   // Perfect precision not guaranteed.
   XCTAssertEqualWithAccuracy(eventListener.initializationDuration, 5400, 200);
 }
@@ -570,8 +570,8 @@
 - (void)testHLSControls {
   StubEventListener *eventListener = [self
       sanityTestURI:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
-  XCTAssertEqual(eventListener.initialiaztionSize.height, 720);
-  XCTAssertEqual(eventListener.initialiaztionSize.width, 1280);
+  XCTAssertEqual(eventListener.initializationSize.height, 720);
+  XCTAssertEqual(eventListener.initializationSize.width, 1280);
   XCTAssertEqualWithAccuracy(eventListener.initializationDuration, 4000, 200);
 }
 
@@ -581,8 +581,8 @@
   StubEventListener *eventListener =
       [self sanityTestURI:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/"
                           @"bee_audio_only.m3u8"];
-  XCTAssertEqual(eventListener.initialiaztionSize.height, 0);
-  XCTAssertEqual(eventListener.initialiaztionSize.width, 0);
+  XCTAssertEqual(eventListener.initializationSize.height, 0);
+  XCTAssertEqual(eventListener.initializationSize.width, 0);
   XCTAssertEqualWithAccuracy(eventListener.initializationDuration, 4000, 200);
 }
 
@@ -663,7 +663,7 @@
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
   StubEventListener *listener =
-      [[StubEventListener alloc] initWithInitalizationExpectation:initializedExpectation];
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
   player.eventListener = listener;
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
 
@@ -859,7 +859,7 @@
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
   StubEventListener *listener =
-      [[StubEventListener alloc] initWithInitalizationExpectation:initializedExpectation];
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
   player.eventListener = listener;
   [self waitForExpectationsWithTimeout:10 handler:nil];
 

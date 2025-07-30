@@ -27,7 +27,7 @@
 
 /// A queue of events received before eventSink is ready, to dispatch once the channel is fully
 /// set up.
-@property(nonatomic, copy) NSMutableArray<NSObject *> *queuedEvents;
+@property(nonatomic) NSMutableArray<NSObject *> *queuedEvents;
 
 @end
 

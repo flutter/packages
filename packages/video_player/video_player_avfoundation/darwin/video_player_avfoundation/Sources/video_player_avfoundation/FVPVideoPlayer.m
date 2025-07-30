@@ -224,8 +224,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         @(FVPCMTimeToMillis(range.start)),
         @(FVPCMTimeToMillis(range.duration)),
       ]];
-      [self.eventListener videoPlayerDidUpdateBufferRegions:values];
     }
+    [self.eventListener videoPlayerDidUpdateBufferRegions:values];
   } else if (context == statusContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     switch (item.status) {
