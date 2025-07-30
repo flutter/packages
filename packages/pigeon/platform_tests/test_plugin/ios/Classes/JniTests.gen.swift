@@ -35,7 +35,11 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 }
 var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSetup?]()
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+<<<<<<< HEAD
 @objc protocol JniHostIntegrationCoreApi {
+=======
+protocol JniHostIntegrationCoreApi {
+>>>>>>> 373652861ebbe628d2e64c5ed3da89cbe139b7dc
   func noop()
   func echoInt(anInt: Int64) -> Int64
   func echoDouble(aDouble: Double) -> Double
@@ -58,6 +62,7 @@ var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSet
   func noop() {
     return api!.noop()
   }
+<<<<<<< HEAD
   func echoInt(anInt: Int64) -> Int64 {
     return api!.echoInt(anInt: anInt)
   }
@@ -68,6 +73,18 @@ var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSet
     return api!.echoBool(aBool: aBool)
   }
   func echoString(aString: String) -> String {
+=======
+  func echoInt(anInt: NSNumber) -> NSNumber? {
+    return NSNumber(nonretainedObject: api!.echoInt(anInt: anInt.int64Value))
+  }
+  func echoDouble(aDouble: NSNumber) -> NSNumber? {
+    return NSNumber(nonretainedObject: api!.echoDouble(aDouble: aDouble.doubleValue))
+  }
+  func echoBool(aBool: NSNumber) -> NSNumber? {
+    return NSNumber(nonretainedObject: api!.echoBool(aBool: aBool.boolValue))
+  }
+  func echoString(aString: String) -> String? {
+>>>>>>> 373652861ebbe628d2e64c5ed3da89cbe139b7dc
     return api!.echoString(aString: aString)
   }
 }
