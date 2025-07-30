@@ -206,7 +206,7 @@
 - (void)videoPlayerDidStartBuffering {
 }
 
-- (void)videoPlayerDidUpdateBufferRegions:(NSArray<NSArray<NSValue *> *> *)regions {
+- (void)videoPlayerDidUpdateBufferRegions:(NSArray<NSArray<NSNumber *> *> *)regions {
 }
 
 - (void)videoPlayerWasDisposed {

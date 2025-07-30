@@ -68,7 +68,7 @@
   return nil;
 }
 
-#pragma mark FVPVideoPlayerDelegate
+#pragma mark FVPVideoEventListener
 
 - (void)videoPlayerDidInitializeWithDuration:(int64_t)duration size:(CGSize)size {
   [self sendOrQueue:@{
@@ -95,7 +95,7 @@
   [self sendOrQueue:@{@"event" : @"bufferingEnd"}];
 }
 
-- (void)videoPlayerDidUpdateBufferRegions:(NSArray<NSArray<NSValue *> *> *)regions {
+- (void)videoPlayerDidUpdateBufferRegions:(NSArray<NSArray<NSNumber *> *> *)regions {
   [self sendOrQueue:@{@"event" : @"bufferingUpdate", @"values" : regions}];
 }
 

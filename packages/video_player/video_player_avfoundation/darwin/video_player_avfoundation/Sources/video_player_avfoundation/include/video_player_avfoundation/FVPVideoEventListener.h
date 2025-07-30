@@ -24,7 +24,7 @@
 ///
 /// The array elements are two-element arrays, each containing the start and duration, in
 /// milliseconds, of a buffered region.
-- (void)videoPlayerDidUpdateBufferRegions:(NSArray<NSArray<NSValue *> *> *)regions;
+- (void)videoPlayerDidUpdateBufferRegions:(NSArray<NSArray<NSNumber *> *> *)regions;
 /// Called when the player starts or stops playing.
 - (void)videoPlayerDidSetPlaying:(BOOL)playing;
 /// Called when the video player has been disposed on the Dart side.
