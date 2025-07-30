@@ -13,13 +13,11 @@ import 'delegate.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
+import 'misc/constants.dart';
 import 'misc/inherited_router.dart';
 import 'parser.dart';
 import 'route.dart';
 import 'state.dart';
-
-/// Symbol used as a Zone key to track the current GoRouter during redirects.
-const Symbol _currentRouterKey = #goRouterRedirectContext;
 
 /// The function signature of [GoRouter.onException].
 ///
@@ -525,19 +523,11 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   ///
   /// This method can now be called during redirects.
   static GoRouter of(BuildContext context) {
-    final GoRouter? inherited = maybeOf(context);
-    if (inherited != null) {
-      return inherited;
+    final GoRouter? router = maybeOf(context);
+    if (router == null) {
+      throw FlutterError('No GoRouter found in context');
     }
-
-    // Check if we're in a redirect context
-    final GoRouter? redirectRouter =
-        Zone.current[_currentRouterKey] as GoRouter?;
-    if (redirectRouter != null) {
-      return redirectRouter;
-    }
-
-    throw FlutterError('No GoRouter found in context');
+    return router;
   }
 
   /// The current GoRouter in the widget tree, if any.
@@ -553,7 +543,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     }
 
     // Check if we're in a redirect context
-    return Zone.current[_currentRouterKey] as GoRouter?;
+    return Zone.current[currentRouterKey] as GoRouter?;
   }
 
   /// Disposes resource created by this object.

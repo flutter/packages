@@ -10,14 +10,12 @@ import 'package:flutter/widgets.dart';
 
 import 'logging.dart';
 import 'match.dart';
+import 'misc/constants.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'route.dart';
 import 'router.dart';
 import 'state.dart';
-
-/// Symbol used as a Zone key to track the current GoRouter during redirects.
-const Symbol _currentRouterKey = #goRouterRedirectContext;
 
 /// The signature of the redirect callback.
 typedef GoRouterRedirect = FutureOr<String?> Function(
@@ -529,7 +527,7 @@ class RouteConfiguration {
     return runZoned<T>(
       callback,
       zoneValues: <Object?, Object?>{
-        _currentRouterKey: router,
+        currentRouterKey: router,
       },
     );
   }
