@@ -1964,6 +1964,7 @@ class CameraSelector extends PigeonInternalProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     LensFacing? requireLensFacing,
+    CameraInfo? cameraInfoForFilter,
   }) {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
         .addDartCreatedInstance(this);
@@ -1979,7 +1980,11 @@ class CameraSelector extends PigeonInternalProxyApiBaseClass {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[pigeonVar_instanceIdentifier, requireLensFacing],
+      <Object?>[
+        pigeonVar_instanceIdentifier,
+        requireLensFacing,
+        cameraInfoForFilter,
+      ],
     );
     () async {
       final List<Object?>? pigeonVar_replyList =

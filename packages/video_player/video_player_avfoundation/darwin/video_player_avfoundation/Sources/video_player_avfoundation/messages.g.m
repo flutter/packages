@@ -77,29 +77,20 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 
 @implementation FVPCreationOptions
-+ (instancetype)makeWithAsset:(nullable NSString *)asset
-                          uri:(nullable NSString *)uri
-                  packageName:(nullable NSString *)packageName
-                   formatHint:(nullable NSString *)formatHint
-                  httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
-                     viewType:(FVPPlatformVideoViewType)viewType {
++ (instancetype)makeWithUri:(NSString *)uri
+                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
+                   viewType:(FVPPlatformVideoViewType)viewType {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
-  pigeonResult.asset = asset;
   pigeonResult.uri = uri;
-  pigeonResult.packageName = packageName;
-  pigeonResult.formatHint = formatHint;
   pigeonResult.httpHeaders = httpHeaders;
   pigeonResult.viewType = viewType;
   return pigeonResult;
 }
 + (FVPCreationOptions *)fromList:(NSArray<id> *)list {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
-  pigeonResult.asset = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.uri = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.packageName = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.formatHint = GetNullableObjectAtIndex(list, 3);
-  pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 4);
-  FVPPlatformVideoViewTypeBox *boxedFVPPlatformVideoViewType = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.uri = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 1);
+  FVPPlatformVideoViewTypeBox *boxedFVPPlatformVideoViewType = GetNullableObjectAtIndex(list, 2);
   pigeonResult.viewType = boxedFVPPlatformVideoViewType.value;
   return pigeonResult;
 }
@@ -108,10 +99,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 - (NSArray<id> *)toList {
   return @[
-    self.asset ?: [NSNull null],
     self.uri ?: [NSNull null],
-    self.packageName ?: [NSNull null],
-    self.formatHint ?: [NSNull null],
     self.httpHeaders ?: [NSNull null],
     [[FVPPlatformVideoViewTypeBox alloc] initWithValue:self.viewType],
   ];
@@ -279,6 +267,31 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
         FlutterError *error;
         [api setMixWithOthers:arg_mixWithOthers error:&error];
         callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.video_player_avfoundation."
+                                                   @"AVFoundationVideoPlayerApi.getAssetUrl",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FVPGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(fileURLForAssetWithName:package:error:)],
+                @"FVPAVFoundationVideoPlayerApi api (%@) doesn't respond to "
+                @"@selector(fileURLForAssetWithName:package:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        NSString *arg_asset = GetNullableObjectAtIndex(args, 0);
+        NSString *arg_package = GetNullableObjectAtIndex(args, 1);
+        FlutterError *error;
+        NSString *output = [api fileURLForAssetWithName:arg_asset package:arg_package error:&error];
+        callback(wrapResult(output, error));
       }];
     } else {
       [channel setMessageHandler:nil];
