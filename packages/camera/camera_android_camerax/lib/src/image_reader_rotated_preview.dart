@@ -78,9 +78,8 @@ final class _ImageReaderRotatedPreviewState
   late StreamSubscription<DeviceOrientation> deviceOrientationSubscription;
 
   Future<int> _getCurrentDefaultDisplayRotationDegrees() async {
-    final int currentDefaultDisplayRotationQuarterTurns = await widget
-        .deviceOrientationManager
-        .getDefaultDisplayRotation();
+    final int currentDefaultDisplayRotationQuarterTurns =
+        await widget.deviceOrientationManager.getDefaultDisplayRotation();
     return getQuarterTurnsFromSurfaceRotationConstant(
           currentDefaultDisplayRotationQuarterTurns,
         ) *
