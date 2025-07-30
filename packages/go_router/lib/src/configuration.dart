@@ -236,11 +236,20 @@ class RouteConfiguration {
   /// The limit for the number of consecutive redirects.
   int get redirectLimit => _routingConfig.value.redirectLimit;
 
-  /// The global key for the root navigator.
+  /// The global key for top level navigator.
   final GlobalKey<NavigatorState> navigatorKey;
 
-  /// The codec used to encode and decode the extra parameter. See
-  /// [GoRoute.builder] and [GoRoute.pageBuilder] for more info.
+  /// The codec used to encode and decode extra into a serializable format.
+  ///
+  /// When navigating using [GoRouter.go] or [GoRouter.push], one can provide
+  /// an `extra` parameter along with it. If the extra contains complex data,
+  /// consider provide a codec for serializing and deserializing the extra data.
+  ///
+  /// See also:
+  ///  * [Navigation](https://pub.dev/documentation/go_router/latest/topics/Navigation-topic.html)
+  ///    topic.
+  ///  * [extra_codec](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart)
+  ///    example.
   final Codec<Object?, Object?>? extraCodec;
 
   /// The GoRouter instance that owns this configuration.
