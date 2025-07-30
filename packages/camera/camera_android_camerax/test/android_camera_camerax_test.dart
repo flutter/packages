@@ -159,7 +159,6 @@ void main() {
     final ResolutionStrategy highestAvailableStrategyResolutionStrategy =
         MockResolutionStrategy();
     proxy = CameraXProxy(
-<<<<<<< HEAD
       getInstanceProcessCameraProvider: ({
         // ignore: non_constant_identifier_names
         BinaryMessenger? pigeon_binaryMessenger,
@@ -184,33 +183,6 @@ void main() {
           case LensFacing.unknown:
           case null:
         }
-=======
-      getInstanceProcessCameraProvider:
-          ({
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) async {
-            return mockProcessCameraProvider;
-          },
-      newCameraSelector:
-          ({
-            LensFacing? requireLensFacing,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            switch (requireLensFacing) {
-              case LensFacing.front:
-                return MockCameraSelector();
-              case LensFacing.back:
-              case LensFacing.external:
-              case LensFacing.unknown:
-              case null:
-            }
->>>>>>> e03328e14 (format for real)
 
             return MockCameraSelector();
           },
@@ -716,7 +688,6 @@ void main() {
               PigeonInstanceManager? pigeon_instanceManager,
             }) =>
                 Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-<<<<<<< HEAD
         newCameraSelector: ({
           LensFacing? requireLensFacing,
           CameraInfo? cameraInfoForFilter,
@@ -733,24 +704,6 @@ void main() {
             case LensFacing.unknown:
             case null:
           }
-=======
-        newCameraSelector:
-            ({
-              LensFacing? requireLensFacing,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              switch (requireLensFacing) {
-                case LensFacing.front:
-                  return mockFrontCameraSelector;
-                case LensFacing.back:
-                case LensFacing.external:
-                case LensFacing.unknown:
-                case null:
-              }
->>>>>>> e03328e14 (format for real)
 
               return mockBackCameraSelector;
             },
@@ -841,7 +794,6 @@ void main() {
       bool startedListeningForDeviceOrientationChanges = false;
 
       camera.proxy = CameraXProxy(
-<<<<<<< HEAD
         getInstanceProcessCameraProvider: ({
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
@@ -866,33 +818,6 @@ void main() {
             case LensFacing.unknown:
             case null:
           }
-=======
-        getInstanceProcessCameraProvider:
-            ({
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) async {
-              return mockProcessCameraProvider;
-            },
-        newCameraSelector:
-            ({
-              LensFacing? requireLensFacing,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              switch (requireLensFacing) {
-                case LensFacing.front:
-                  return MockCameraSelector();
-                case LensFacing.back:
-                case LensFacing.external:
-                case LensFacing.unknown:
-                case null:
-              }
->>>>>>> e03328e14 (format for real)
 
               return mockBackCameraSelector;
             },
@@ -1201,7 +1126,6 @@ void main() {
       // Tell plugin to create mock/detached objects and stub method calls for the
       // testing of createCamera.
       camera.proxy = CameraXProxy(
-<<<<<<< HEAD
         getInstanceProcessCameraProvider: ({
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
@@ -1226,33 +1150,6 @@ void main() {
             case LensFacing.unknown:
             case null:
           }
-=======
-        getInstanceProcessCameraProvider:
-            ({
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) async {
-              return mockProcessCameraProvider;
-            },
-        newCameraSelector:
-            ({
-              LensFacing? requireLensFacing,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              switch (requireLensFacing) {
-                case LensFacing.front:
-                  return MockCameraSelector();
-                case LensFacing.back:
-                case LensFacing.external:
-                case LensFacing.unknown:
-                case null:
-              }
->>>>>>> e03328e14 (format for real)
 
               return mockBackCameraSelector;
             },
@@ -2526,7 +2423,6 @@ void main() {
             // ignore: non_constant_identifier_names
             PigeonInstanceManager? pigeon_instanceManager,
           }) => Future<ProcessCameraProvider>.value(mockProcessCameraProvider),
-<<<<<<< HEAD
       newCameraSelector: ({
         LensFacing? requireLensFacing,
         CameraInfo? cameraInfoForFilter,
@@ -2542,23 +2438,6 @@ void main() {
             return mockBackCameraSelector;
         }
       },
-=======
-      newCameraSelector:
-          ({
-            LensFacing? requireLensFacing,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) {
-            switch (requireLensFacing) {
-              case LensFacing.front:
-                return mockFrontCameraSelector;
-              case _:
-                return mockBackCameraSelector;
-            }
-          },
->>>>>>> e03328e14 (format for real)
       newPreview:
           ({
             int? targetRotation,
@@ -2570,23 +2449,6 @@ void main() {
           }) => mockPreview,
       newImageCapture:
           ({
-            int? targetRotation,
-            CameraXFlashMode? flashMode,
-            ResolutionSelector? resolutionSelector,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
-          }) => mockImageCapture,
-      newRecorder:
-          ({
-            int? aspectRatio,
-            int? targetVideoEncodingBitRate,
-            QualitySelector? qualitySelector,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
           }) => MockRecorder(),
       withOutputVideoCapture:
           ({
