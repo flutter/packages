@@ -16,6 +16,9 @@ import 'route.dart';
 import 'router.dart';
 import 'state.dart';
 
+/// Symbol used as a Zone key to track the current GoRouter during redirects.
+const Symbol _currentRouterKey = #goRouterRedirectContext;
+
 /// The signature of the redirect callback.
 typedef GoRouterRedirect = FutureOr<String?> Function(
     BuildContext context, GoRouterState state);
@@ -29,6 +32,7 @@ class RouteConfiguration {
     this._routingConfig, {
     required this.navigatorKey,
     this.extraCodec,
+    this.router,
   }) {
     _onRoutingTableChanged();
     _routingConfig.addListener(_onRoutingTableChanged);
@@ -232,21 +236,16 @@ class RouteConfiguration {
   /// The limit for the number of consecutive redirects.
   int get redirectLimit => _routingConfig.value.redirectLimit;
 
-  /// The global key for top level navigator.
+  /// The global key for the root navigator.
   final GlobalKey<NavigatorState> navigatorKey;
 
-  /// The codec used to encode and decode extra into a serializable format.
-  ///
-  /// When navigating using [GoRouter.go] or [GoRouter.push], one can provide
-  /// an `extra` parameter along with it. If the extra contains complex data,
-  /// consider provide a codec for serializing and deserializing the extra data.
-  ///
-  /// See also:
-  ///  * [Navigation](https://pub.dev/documentation/go_router/latest/topics/Navigation-topic.html)
-  ///    topic.
-  ///  * [extra_codec](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart)
-  ///    example.
+  /// The codec used to encode and decode the extra parameter. See
+  /// [GoRoute.builder] and [GoRoute.pageBuilder] for more info.
   final Codec<Object?, Object?>? extraCodec;
+
+  /// The GoRouter instance that owns this configuration.
+  /// This is used to provide access to the router during redirects.
+  final GoRouter? router;
 
   final Map<String, _NamedPath> _nameToPath = <String, _NamedPath>{};
 
@@ -416,10 +415,12 @@ class RouteConfiguration {
 
       redirectHistory.add(prevMatchList);
       // Check for top-level redirect
-      final FutureOr<String?> topRedirectResult = _routingConfig.value.redirect(
-        context,
-        buildTopLevelGoRouterState(prevMatchList),
-      );
+      final FutureOr<String?> topRedirectResult = _runInRouterZone(() {
+        return _routingConfig.value.redirect(
+          context,
+          buildTopLevelGoRouterState(prevMatchList),
+        );
+      });
 
       if (topRedirectResult is String?) {
         return processTopLevelRedirect(topRedirectResult);
@@ -448,10 +449,12 @@ class RouteConfiguration {
         _getRouteLevelRedirect(
             context, matchList, routeMatches, currentCheckIndex + 1);
     final RouteBase route = match.route;
-    final FutureOr<String?> routeRedirectResult = route.redirect!.call(
-      context,
-      match.buildState(this, matchList),
-    );
+    final FutureOr<String?> routeRedirectResult = _runInRouterZone(() {
+      return route.redirect!.call(
+        context,
+        match.buildState(this, matchList),
+      );
+    });
     if (routeRedirectResult is String?) {
       return processRouteRedirect(routeRedirectResult);
     }
@@ -506,6 +509,20 @@ class RouteConfiguration {
         .map<String>(
             (RouteMatchList routeMatches) => routeMatches.uri.toString())
         .join(' => ');
+  }
+
+  /// Runs the given function in a Zone with the router context for redirects.
+  T _runInRouterZone<T>(T Function() callback) {
+    if (router == null) {
+      return callback();
+    }
+
+    return runZoned<T>(
+      callback,
+      zoneValues: <Object?, Object?>{
+        _currentRouterKey: router,
+      },
+    );
   }
 
   /// Get the location for the provided route.

@@ -2238,6 +2238,61 @@ void main() {
       expect(redirected, isTrue);
     });
 
+    testWidgets('GoRouter.of(context) should work in redirects',
+        (WidgetTester tester) async {
+      GoRouter? capturedRouter;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
+        ),
+      ];
+
+      final GoRouter router = await createRouter(routes, tester,
+          redirect: (BuildContext context, GoRouterState state) {
+        // This should not throw an exception
+        capturedRouter = GoRouter.of(context);
+        return state.matchedLocation == '/login' ? null : '/login';
+      });
+
+      expect(capturedRouter, isNotNull);
+      expect(capturedRouter, equals(router));
+    });
+
+    testWidgets('Context extension methods should work in redirects',
+        (WidgetTester tester) async {
+      String? capturedNamedLocation;
+      final List<GoRoute> routes = <GoRoute>[
+        GoRoute(
+          path: '/',
+          name: 'home',
+          builder: (BuildContext context, GoRouterState state) =>
+              const HomeScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          name: 'login',
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginScreen(),
+        ),
+      ];
+
+      await createRouter(routes, tester,
+          redirect: (BuildContext context, GoRouterState state) {
+        // This should not throw an exception
+        capturedNamedLocation = context.namedLocation('login');
+        return state.matchedLocation == '/login' ? null : '/login';
+      });
+
+      expect(capturedNamedLocation, '/login');
+    });
+
     testWidgets('redirect can redirect to same path',
         (WidgetTester tester) async {
       final List<GoRoute> routes = <GoRoute>[

@@ -18,6 +18,9 @@ import 'parser.dart';
 import 'route.dart';
 import 'state.dart';
 
+/// Symbol used as a Zone key to track the current GoRouter during redirects.
+const Symbol _currentRouterKey = #goRouterRedirectContext;
+
 /// The function signature of [GoRouter.onException].
 ///
 /// Use `state.error` to access the exception.
@@ -206,6 +209,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
       _routingConfig,
       navigatorKey: navigatorKey,
       extraCodec: extraCodec,
+      router: this,
     );
 
     final ParserExceptionHandler? parserExceptionHandler;
@@ -519,21 +523,37 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   /// Find the current GoRouter in the widget tree.
   ///
-  /// This method throws when it is called during redirects.
+  /// This method can now be called during redirects.
   static GoRouter of(BuildContext context) {
     final GoRouter? inherited = maybeOf(context);
-    assert(inherited != null, 'No GoRouter found in context');
-    return inherited!;
+    if (inherited != null) {
+      return inherited;
+    }
+
+    // Check if we're in a redirect context
+    final GoRouter? redirectRouter =
+        Zone.current[_currentRouterKey] as GoRouter?;
+    if (redirectRouter != null) {
+      return redirectRouter;
+    }
+
+    throw FlutterError('No GoRouter found in context');
   }
 
   /// The current GoRouter in the widget tree, if any.
   ///
-  /// This method returns null when it is called during redirects.
+  /// This method can now return a router even during redirects.
   static GoRouter? maybeOf(BuildContext context) {
     final InheritedGoRouter? inherited = context
         .getElementForInheritedWidgetOfExactType<InheritedGoRouter>()
         ?.widget as InheritedGoRouter?;
-    return inherited?.goRouter;
+
+    if (inherited != null) {
+      return inherited.goRouter;
+    }
+
+    // Check if we're in a redirect context
+    return Zone.current[_currentRouterKey] as GoRouter?;
   }
 
   /// Disposes resource created by this object.
