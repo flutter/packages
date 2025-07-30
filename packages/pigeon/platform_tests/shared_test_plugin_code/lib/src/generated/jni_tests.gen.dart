@@ -62,8 +62,7 @@ class _PigeonJniCodec {
       }
       return list;
     } else if (value.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
-      final JList<JObject?> list =
-          (value.as(JList.type<JObject?>(JObject.nullableType)));
+      final JList<JObject?> list = (value.as(JList.type<JObject?>(JObject.nullableType)));
       final List<Object?> res = <Object?>[];
       for (int i = 0; i < list.length; i++) {
         res.add(readValue(list[i]));
@@ -71,14 +70,15 @@ class _PigeonJniCodec {
       return res;
     } else if (value.isA<JMap<JObject, JObject>>(
         JMap.type<JObject, JObject>(JObject.type, JObject.type))) {
-      final JMap<JObject?, JObject?> map = (value.as(
-          JMap.type<JObject?, JObject?>(
-              JObject.nullableType, JObject.nullableType)));
+      final JMap<JObject?, JObject?> map =
+          (value.as(JMap.type<JObject?, JObject?>(JObject.nullableType, JObject.nullableType)));
       final Map<Object?, Object?> res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
+    
+    
     } else {
       throw ArgumentError.value(value);
     }
@@ -124,6 +124,7 @@ class _PigeonJniCodec {
         array[i] = value[i];
       }
       return array as T;
+    
     } else if (value is List<Object>) {
       final JList<JObject> res = JList<JObject>.array(JObject.type);
       for (int i = 0; i < value.length; i++) {
@@ -136,85 +137,95 @@ class _PigeonJniCodec {
         res.add(writeValue(value[i]));
       }
       return res as T;
+    
     } else if (value is Map<Object, Object>) {
       final JMap<JObject, JObject> res =
           JMap<JObject, JObject>.hash(JObject.type, JObject.type);
       for (final MapEntry<Object, Object> entry in value.entries) {
-        res[writeValue(entry.key)] = writeValue(entry.value);
+        res[writeValue(entry.key)] = 
+            writeValue(entry.value);
       }
       return res as T;
     } else if (value is Map<Object, Object?>) {
       final JMap<JObject, JObject?> res =
           JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
       for (final MapEntry<Object, Object?> entry in value.entries) {
-        res[writeValue(entry.key)] = writeValue(entry.value);
+        res[writeValue(entry.key)] = 
+            writeValue(entry.value);
       }
       return res as T;
     } else if (value is Map) {
       final JMap<JObject, JObject?> res =
           JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
       for (final MapEntry<Object?, Object?> entry in value.entries) {
-        res[writeValue(entry.key)] = writeValue(entry.value);
+        res[writeValue(entry.key)] = 
+            writeValue(entry.value);
       }
       return res as T;
+    
+    
     } else {
       throw ArgumentError.value(value);
     }
   }
 }
+    
 
 class _PigeonFfiCodec {
-  static Object? readValue(NSObject? value) {
+  static Object? readValue(NSObject? value, [Type? outType]) {
     if (value == null) {
       return null;
-    } else if (value.isA<NSLong>(NSLong.type)) {
-      return (value.as(NSLong.type)).longValue();
-    } else if (value.isA<NSDouble>(NSDouble.type)) {
-      return (value.as(NSDouble.type)).doubleValue();
-    } else if (value.isA<NSString>(NSString.type)) {
-      return (value.as(NSString.type)).toDartString();
-    } else if (value.isA<NSBoolean>(NSBoolean.type)) {
-      return (value.as(NSBoolean.type)).booleanValue();
-    } else if (value.isA<NSByteArray>(NSByteArray.type)) {
-      final Uint8List list = Uint8List(value.as(NSByteArray.type).length);
-      for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
-        list[i] = value.as(NSByteArray.type)[i];
+    } else if (value is NSNumber) {
+      switch (outType) {
+        case const (int):
+          return value.intValue;
+        case const (double):
+          return value.doubleValue;
+        case const (bool):
+          return value.boolValue;
+        default:
+          throw ArgumentError.value(value);
       }
-      return list;
-    } else if (value.isA<NSIntArray>(NSIntArray.type)) {
-      final Int32List list = Int32List(value.as(NSIntArray.type).length);
-      for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
-        list[i] = value.as(NSIntArray.type)[i];
-      }
-      return list;
-    } else if (value.isA<NSLongArray>(NSLongArray.type)) {
-      final Int64List list = Int64List(value.as(NSLongArray.type).length);
-      for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
-        list[i] = value.as(NSLongArray.type)[i];
-      }
-      return list;
-    } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
-      final Float64List list = Float64List(value.as(NSDoubleArray.type).length);
-      for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
-        list[i] = value.as(NSDoubleArray.type)[i];
-      }
-      return list;
-    } else if (value.isA<NSMutableArray<NSObject>>(
-        NSMutableArray.type<NSObject>(NSObject.type))) {
-      final NSMutableArray list = NSMutableArray();
+    } else if (value is NSString) {
+      return value.toDartString();
+      // } else if (value.isA<NSByteArray>(NSByteArray.type)) {
+      //   final Uint8List list = Uint8List(value.as(NSByteArray.type).length);
+      //   for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
+      //     list[i] = value.as(NSByteArray.type)[i];
+      //   }
+      //   return list;
+      // } else if (value.isA<NSIntArray>(NSIntArray.type)) {
+      //   final Int32List list = Int32List(value.as(NSIntArray.type).length);
+      //   for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
+      //     list[i] = value.as(NSIntArray.type)[i];
+      //   }
+      //   return list;
+      // } else if (value.isA<NSLongArray>(NSLongArray.type)) {
+      //   final Int64List list = Int64List(value.as(NSLongArray.type).length);
+      //   for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
+      //     list[i] = value.as(NSLongArray.type)[i];
+      //   }
+      //   return list;
+      // } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
+      //   final Float64List list = Float64List(value.as(NSDoubleArray.type).length);
+      //   for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
+      //     list[i] = value.as(NSDoubleArray.type)[i];
+      //   }
+      //   return list;
+    } else if (value is NSMutableArray) {
       final List<Object?> res = <Object?>[];
-      for (int i = 0; i < list.length; i++) {
-        res.add(readValue(list[i]));
+      for (int i = 0; i < value.length; i++) {
+        res.add(readValue(value[i]  as NSObject?));
       }
       return res;
-    } else if (value.isA<NSDictionary<NSObject, NSObject>>(
-        NSDictionary.type<NSObject, NSObject>(NSObject.type, NSObject.type))) {
-      final NSDictionary map = NSDictionary();
+    } else if (value is NSDictionary) {
       final Map<Object?, Object?> res = <Object?, Object?>{};
-      for (final MapEntry<NSObject?, NSObject?> entry in map.entries) {
-        res[readValue(entry.key)] = readValue(entry.value);
+      for (final MapEntry<NSCopying?, ObjCObjectBase?> entry in value.entries) {
+        res[readValue(entry.key as NSObject?)] = readValue(entry.value as NSObject?);
       }
       return res;
+    
+    
     } else {
       throw ArgumentError.value(value);
     }
@@ -224,42 +235,42 @@ class _PigeonFfiCodec {
     if (value == null) {
       return null as T;
     } else if (value is bool) {
-      return NSBoolean(value) as T;
+      return NSNumber().initWithBool(value) as T;
     } else if (value is double) {
-      return NSDouble(value) as T;
+      return NSNumber().initWithDouble(value) as T;
       // ignore: avoid_double_and_int_checks
     } else if (value is int) {
-      return NSLong(value) as T;
+      return NSNumber().initWithInt(value) as T;
     } else if (value is String) {
-      return NSString.fromString(value) as T;
-    } else if (isTypeOrNullableType<NSByteArray>(T)) {
-      value as List<int>;
-      final NSByteArray array = NSByteArray(value.length);
-      for (int i = 0; i < value.length; i++) {
-        array[i] = value[i];
-      }
-      return array as T;
-    } else if (isTypeOrNullableType<NSIntArray>(T)) {
-      value as List<int>;
-      final NSIntArray array = NSIntArray(value.length);
-      for (int i = 0; i < value.length; i++) {
-        array[i] = value[i];
-      }
-      return array as T;
-    } else if (isTypeOrNullableType<NSLongArray>(T)) {
-      value as List<int>;
-      final NSLongArray array = NSLongArray(value.length);
-      for (int i = 0; i < value.length; i++) {
-        array[i] = value[i];
-      }
-      return array as T;
-    } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
-      value as List<double>;
-      final NSDoubleArray array = NSDoubleArray(value.length);
-      for (int i = 0; i < value.length; i++) {
-        array[i] = value[i];
-      }
-      return array as T;
+      return NSString(value) as T;
+    // } else if (isTypeOrNullableType<NSByteArray>(T)) {
+    //   value as List<int>;
+    //   final NSByteArray array = NSByteArray(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i];
+    //   }
+    //   return array as T;
+    // } else if (isTypeOrNullableType<NSIntArray>(T)) {
+    //   value as List<int>;
+    //   final NSIntArray array = NSIntArray(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i];
+    //   }
+    //   return array as T;
+    // } else if (isTypeOrNullableType<NSLongArray>(T)) {
+    //   value as List<int>;
+    //   final NSLongArray array = NSLongArray(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i];
+    //   }
+    //   return array as T;
+    // } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
+    //   value as List<double>;
+    //   final NSDoubleArray array = NSDoubleArray(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i];
+    //   }
+    //   return array as T;
     } else if (value is List) {
       final NSMutableArray res = NSMutableArray();
       for (int i = 0; i < value.length; i++) {
@@ -267,17 +278,19 @@ class _PigeonFfiCodec {
       }
       return res as T;
     } else if (value is Map) {
-      final NSDictionary res = NSDictionary();
+      final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<Object?, Object?> entry in value.entries) {
-        res[writeValue(entry.key)] = writeValue(entry.value);
+        res.setObject(writeValue(entry.value), forKey: writeValue(entry.key));
       }
       return res as T;
+    
+    
     } else {
       throw ArgumentError.value(value);
     }
   }
 }
-
+    
 bool isType<T>(Type t) => T == t;
 bool isTypeOrNullableType<T>(Type t) => isType<T>(t) || isType<T?>(t);
 void _throwNoInstanceError(String channelName) {
@@ -288,6 +301,8 @@ void _throwNoInstanceError(String channelName) {
   final String error = 'No instance $nameString has been registered.';
   throw ArgumentError(error);
 }
+
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -309,39 +324,28 @@ class _PigeonCodec extends StandardMessageCodec {
     }
   }
 }
-
-const String defaultInstanceName =
-    'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
+const String defaultInstanceName = 'PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u';
 
 class JniHostIntegrationCoreApiForNativeInterop {
-  JniHostIntegrationCoreApiForNativeInterop._withRegistrar(
-      {jni_bridge.JniHostIntegrationCoreApiRegistrar? jniApi,
-      ffi_bridge.JniHostIntegrationCoreApiSetup? ffiApi})
-      : _jniApi = jniApi,
-        _ffiApi = ffiApi;
+  JniHostIntegrationCoreApiForNativeInterop._withRegistrar({jni_bridge.JniHostIntegrationCoreApiRegistrar? jniApi, ffi_bridge.JniHostIntegrationCoreApiSetup? ffiApi}) : _jniApi = jniApi, _ffiApi = ffiApi;
 
   /// Returns instance of JniHostIntegrationCoreApiForNativeInterop with specified [channelName] if one has been registered.
-  static JniHostIntegrationCoreApiForNativeInterop? getInstance(
-      {String channelName = defaultInstanceName}) {
-    late JniHostIntegrationCoreApiForNativeInterop res;
+  static JniHostIntegrationCoreApiForNativeInterop? getInstance({String channelName = defaultInstanceName}) {
+  late JniHostIntegrationCoreApiForNativeInterop res;
     if (Platform.isAndroid) {
       final jni_bridge.JniHostIntegrationCoreApiRegistrar? link =
-          jni_bridge.JniHostIntegrationCoreApiRegistrar()
-              .getInstance(JString.fromString(channelName));
+          jni_bridge.JniHostIntegrationCoreApiRegistrar().getInstance(JString.fromString(channelName));
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      res = JniHostIntegrationCoreApiForNativeInterop._withRegistrar(
-          jniApi: link!);
+      res = JniHostIntegrationCoreApiForNativeInterop._withRegistrar(jniApi: link!);
     } else if (Platform.isIOS || Platform.isMacOS) {
       final ffi_bridge.JniHostIntegrationCoreApiSetup? link =
-          ffi_bridge.JniHostIntegrationCoreApiSetup.getInstanceWithName(
-              NSString(channelName));
+          ffi_bridge.JniHostIntegrationCoreApiSetup.getInstanceWithName(NSString(channelName));
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      res = JniHostIntegrationCoreApiForNativeInterop._withRegistrar(
-          ffiApi: link!);
+      res = JniHostIntegrationCoreApiForNativeInterop._withRegistrar(ffiApi: link!);
     }
     return res;
   }
@@ -357,11 +361,7 @@ class JniHostIntegrationCoreApiForNativeInterop {
         return _ffiApi.noop();
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
+      throw PlatformException(code: 'PlatformException', message: e.message, stacktrace: e.stackTrace,);
     } catch (e) {
       rethrow;
     }
@@ -376,11 +376,7 @@ class JniHostIntegrationCoreApiForNativeInterop {
         return _ffiApi.echoIntWithAnInt(anInt);
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
+      throw PlatformException(code: 'PlatformException', message: e.message, stacktrace: e.stackTrace,);
     } catch (e) {
       rethrow;
     }
@@ -395,11 +391,7 @@ class JniHostIntegrationCoreApiForNativeInterop {
         return _ffiApi.echoDoubleWithADouble(aDouble);
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
+      throw PlatformException(code: 'PlatformException', message: e.message, stacktrace: e.stackTrace,);
     } catch (e) {
       rethrow;
     }
@@ -414,11 +406,7 @@ class JniHostIntegrationCoreApiForNativeInterop {
         return _ffiApi.echoBoolWithABool(aBool);
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
+      throw PlatformException(code: 'PlatformException', message: e.message, stacktrace: e.stackTrace,);
     } catch (e) {
       rethrow;
     }
@@ -428,27 +416,22 @@ class JniHostIntegrationCoreApiForNativeInterop {
   String echoString(String aString) {
     try {
       if (_jniApi != null) {
-        final JString res =
-            _jniApi.echoString(_PigeonJniCodec.writeValue<JString>(aString));
+        final JString res = _jniApi.echoString(_PigeonJniCodec.writeValue<JString>(aString));
         final String dartTypeRes = res.toDartString(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final NSString res = _ffiApi.echoStringWithAString(
-            _PigeonFfiCodec.writeValue<NSString>(aString));
+        final NSString res = _ffiApi.echoStringWithAString(_PigeonFfiCodec.writeValue<NSString>(aString));
         final String dartTypeRes = res.toDartString();
         return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
+      throw PlatformException(code: 'PlatformException', message: e.message, stacktrace: e.stackTrace,);
     } catch (e) {
       rethrow;
     }
     throw Exception("this shouldn't be possible");
   }
+
 }
 
 class JniHostIntegrationCoreApi {
@@ -456,13 +439,14 @@ class JniHostIntegrationCoreApi {
   /// available for dependency injection. If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   JniHostIntegrationCoreApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-    JniHostIntegrationCoreApiForNativeInterop? nativeInteropApi,
-  })  : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix =
-            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '',
-        _nativeInteropApi = nativeInteropApi;
+      BinaryMessenger? binaryMessenger, 
+      String messageChannelSuffix = '', 
+      JniHostIntegrationCoreApiForNativeInterop? nativeInteropApi,
+  })
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '',
+  _nativeInteropApi = nativeInteropApi;
+
 
   /// Creates an instance of [JniHostIntegrationCoreApi] that requests an instance of
   /// [JniHostIntegrationCoreApiForNativeInterop] from the host platform with a matching instance name
@@ -477,13 +461,11 @@ class JniHostIntegrationCoreApi {
     String nativeInteropApiInstanceName = '';
     if (Platform.isAndroid) {
       if (messageChannelSuffix.isEmpty) {
-        nativeInteropApi =
-            JniHostIntegrationCoreApiForNativeInterop.getInstance();
+        nativeInteropApi = JniHostIntegrationCoreApiForNativeInterop.getInstance();
       } else {
         nativeInteropApiInstanceName = messageChannelSuffix;
-        nativeInteropApi =
-            JniHostIntegrationCoreApiForNativeInterop.getInstance(
-                channelName: messageChannelSuffix);
+        nativeInteropApi = JniHostIntegrationCoreApiForNativeInterop.getInstance(
+            channelName: messageChannelSuffix);
       }
     }
     if (nativeInteropApi == null) {
@@ -505,14 +487,11 @@ class JniHostIntegrationCoreApi {
   final JniHostIntegrationCoreApiForNativeInterop? _nativeInteropApi;
 
   Future<void> noop() async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
-        _nativeInteropApi != null) {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
       return _nativeInteropApi.noop();
     }
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.noop$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.noop$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
@@ -534,20 +513,16 @@ class JniHostIntegrationCoreApi {
   }
 
   Future<int> echoInt(int anInt) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
-        _nativeInteropApi != null) {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
       return _nativeInteropApi.echoInt(anInt);
     }
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoInt$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoInt$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[anInt]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[anInt]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -569,20 +544,16 @@ class JniHostIntegrationCoreApi {
   }
 
   Future<double> echoDouble(double aDouble) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
-        _nativeInteropApi != null) {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
       return _nativeInteropApi.echoDouble(aDouble);
     }
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoDouble$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoDouble$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[aDouble]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aDouble]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -604,20 +575,16 @@ class JniHostIntegrationCoreApi {
   }
 
   Future<bool> echoBool(bool aBool) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
-        _nativeInteropApi != null) {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
       return _nativeInteropApi.echoBool(aBool);
     }
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoBool$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoBool$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[aBool]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aBool]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -639,20 +606,16 @@ class JniHostIntegrationCoreApi {
   }
 
   Future<String> echoString(String aString) async {
-    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
-        _nativeInteropApi != null) {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) && _nativeInteropApi != null) {
       return _nativeInteropApi.echoString(aString);
     }
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoString$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
+    final String pigeonVar_channelName = 'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoString$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[aString]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[aString]);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

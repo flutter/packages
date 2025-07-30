@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 /// Error class for passing custom error details to Dart side.
 final class JniTestsError: Error {
   let code: String
@@ -33,7 +34,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
   return value as! T?
 }
-var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSetup?]()
+var instancesOfJniHostIntegrationCoreApi = Dictionary<String, JniHostIntegrationCoreApiSetup?>()
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 @objc protocol JniHostIntegrationCoreApi {
   func noop()

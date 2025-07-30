@@ -24,16 +24,16 @@ class CoreTestsTest;
 
 class FlutterError {
  public:
-  explicit FlutterError(const std::string &code) : code_(code) {}
-  explicit FlutterError(const std::string &code, const std::string &message)
-      : code_(code), message_(message) {}
-  explicit FlutterError(const std::string &code, const std::string &message,
-                        const flutter::EncodableValue &details)
-      : code_(code), message_(message), details_(details) {}
+  explicit FlutterError(const std::string& code)
+    : code_(code) {}
+  explicit FlutterError(const std::string& code, const std::string& message)
+    : code_(code), message_(message) {}
+  explicit FlutterError(const std::string& code, const std::string& message, const flutter::EncodableValue& details)
+    : code_(code), message_(message), details_(details) {}
 
-  const std::string &code() const { return code_; }
-  const std::string &message() const { return message_; }
-  const flutter::EncodableValue &details() const { return details_; }
+  const std::string& code() const { return code_; }
+  const std::string& message() const { return message_; }
+  const flutter::EncodableValue& details() const { return details_; }
 
  private:
   std::string code_;
@@ -41,17 +41,16 @@ class FlutterError {
   flutter::EncodableValue details_;
 };
 
-template <class T>
-class ErrorOr {
+template<class T> class ErrorOr {
  public:
-  ErrorOr(const T &rhs) : v_(rhs) {}
-  ErrorOr(const T &&rhs) : v_(std::move(rhs)) {}
-  ErrorOr(const FlutterError &rhs) : v_(rhs) {}
-  ErrorOr(const FlutterError &&rhs) : v_(std::move(rhs)) {}
+  ErrorOr(const T& rhs) : v_(rhs) {}
+  ErrorOr(const T&& rhs) : v_(std::move(rhs)) {}
+  ErrorOr(const FlutterError& rhs) : v_(rhs) {}
+  ErrorOr(const FlutterError&& rhs) : v_(std::move(rhs)) {}
 
   bool has_error() const { return std::holds_alternative<FlutterError>(v_); }
-  const T &value() const { return std::get<T>(v_); };
-  const FlutterError &error() const { return std::get<FlutterError>(v_); };
+  const T& value() const { return std::get<T>(v_); };
+  const FlutterError& error() const { return std::get<FlutterError>(v_); };
 
  private:
   friend class HostIntegrationCoreApi;
@@ -65,6 +64,7 @@ class ErrorOr {
   std::variant<T, FlutterError> v_;
 };
 
+
 enum class AnEnum {
   kOne = 0,
   kTwo = 1,
@@ -73,7 +73,10 @@ enum class AnEnum {
   kFourHundredTwentyTwo = 4
 };
 
-enum class AnotherEnum { kJustInCase = 0 };
+enum class AnotherEnum {
+  kJustInCase = 0
+};
+
 
 // Generated class from Pigeon that represents data sent in messages.
 class UnusedClass {
@@ -82,14 +85,14 @@ class UnusedClass {
   UnusedClass();
 
   // Constructs an object setting all fields.
-  explicit UnusedClass(const flutter::EncodableValue *a_field);
+  explicit UnusedClass(const flutter::EncodableValue* a_field);
 
-  const flutter::EncodableValue *a_field() const;
-  void set_a_field(const flutter::EncodableValue *value_arg);
-  void set_a_field(const flutter::EncodableValue &value_arg);
+  const flutter::EncodableValue* a_field() const;
+  void set_a_field(const flutter::EncodableValue* value_arg);
+  void set_a_field(const flutter::EncodableValue& value_arg);
 
  private:
-  static UnusedClass FromEncodableList(const flutter::EncodableList &list);
+  static UnusedClass FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
@@ -101,36 +104,42 @@ class UnusedClass {
   std::optional<flutter::EncodableValue> a_field_;
 };
 
+
 // A class containing all supported types.
 //
 // Generated class from Pigeon that represents data sent in messages.
 class AllTypes {
  public:
   // Constructs an object setting all fields.
-  explicit AllTypes(bool a_bool, int64_t an_int, int64_t an_int64,
-                    double a_double, const std::vector<uint8_t> &a_byte_array,
-                    const std::vector<int32_t> &a4_byte_array,
-                    const std::vector<int64_t> &a8_byte_array,
-                    const std::vector<double> &a_float_array,
-                    const AnEnum &an_enum, const AnotherEnum &another_enum,
-                    const std::string &a_string,
-                    const flutter::EncodableValue &an_object,
-                    const flutter::EncodableList &list,
-                    const flutter::EncodableList &string_list,
-                    const flutter::EncodableList &int_list,
-                    const flutter::EncodableList &double_list,
-                    const flutter::EncodableList &bool_list,
-                    const flutter::EncodableList &enum_list,
-                    const flutter::EncodableList &object_list,
-                    const flutter::EncodableList &list_list,
-                    const flutter::EncodableList &map_list,
-                    const flutter::EncodableMap &map,
-                    const flutter::EncodableMap &string_map,
-                    const flutter::EncodableMap &int_map,
-                    const flutter::EncodableMap &enum_map,
-                    const flutter::EncodableMap &object_map,
-                    const flutter::EncodableMap &list_map,
-                    const flutter::EncodableMap &map_map);
+  explicit AllTypes(
+    bool a_bool,
+    int64_t an_int,
+    int64_t an_int64,
+    double a_double,
+    const std::vector<uint8_t>& a_byte_array,
+    const std::vector<int32_t>& a4_byte_array,
+    const std::vector<int64_t>& a8_byte_array,
+    const std::vector<double>& a_float_array,
+    const AnEnum& an_enum,
+    const AnotherEnum& another_enum,
+    const std::string& a_string,
+    const flutter::EncodableValue& an_object,
+    const flutter::EncodableList& list,
+    const flutter::EncodableList& string_list,
+    const flutter::EncodableList& int_list,
+    const flutter::EncodableList& double_list,
+    const flutter::EncodableList& bool_list,
+    const flutter::EncodableList& enum_list,
+    const flutter::EncodableList& object_list,
+    const flutter::EncodableList& list_list,
+    const flutter::EncodableList& map_list,
+    const flutter::EncodableMap& map,
+    const flutter::EncodableMap& string_map,
+    const flutter::EncodableMap& int_map,
+    const flutter::EncodableMap& enum_map,
+    const flutter::EncodableMap& object_map,
+    const flutter::EncodableMap& list_map,
+    const flutter::EncodableMap& map_map);
 
   bool a_bool() const;
   void set_a_bool(bool value_arg);
@@ -144,80 +153,80 @@ class AllTypes {
   double a_double() const;
   void set_a_double(double value_arg);
 
-  const std::vector<uint8_t> &a_byte_array() const;
-  void set_a_byte_array(const std::vector<uint8_t> &value_arg);
+  const std::vector<uint8_t>& a_byte_array() const;
+  void set_a_byte_array(const std::vector<uint8_t>& value_arg);
 
-  const std::vector<int32_t> &a4_byte_array() const;
-  void set_a4_byte_array(const std::vector<int32_t> &value_arg);
+  const std::vector<int32_t>& a4_byte_array() const;
+  void set_a4_byte_array(const std::vector<int32_t>& value_arg);
 
-  const std::vector<int64_t> &a8_byte_array() const;
-  void set_a8_byte_array(const std::vector<int64_t> &value_arg);
+  const std::vector<int64_t>& a8_byte_array() const;
+  void set_a8_byte_array(const std::vector<int64_t>& value_arg);
 
-  const std::vector<double> &a_float_array() const;
-  void set_a_float_array(const std::vector<double> &value_arg);
+  const std::vector<double>& a_float_array() const;
+  void set_a_float_array(const std::vector<double>& value_arg);
 
-  const AnEnum &an_enum() const;
-  void set_an_enum(const AnEnum &value_arg);
+  const AnEnum& an_enum() const;
+  void set_an_enum(const AnEnum& value_arg);
 
-  const AnotherEnum &another_enum() const;
-  void set_another_enum(const AnotherEnum &value_arg);
+  const AnotherEnum& another_enum() const;
+  void set_another_enum(const AnotherEnum& value_arg);
 
-  const std::string &a_string() const;
+  const std::string& a_string() const;
   void set_a_string(std::string_view value_arg);
 
-  const flutter::EncodableValue &an_object() const;
-  void set_an_object(const flutter::EncodableValue &value_arg);
+  const flutter::EncodableValue& an_object() const;
+  void set_an_object(const flutter::EncodableValue& value_arg);
 
-  const flutter::EncodableList &list() const;
-  void set_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& list() const;
+  void set_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList &string_list() const;
-  void set_string_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& string_list() const;
+  void set_string_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList &int_list() const;
-  void set_int_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& int_list() const;
+  void set_int_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList &double_list() const;
-  void set_double_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& double_list() const;
+  void set_double_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList &bool_list() const;
-  void set_bool_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& bool_list() const;
+  void set_bool_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList &enum_list() const;
-  void set_enum_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& enum_list() const;
+  void set_enum_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList &object_list() const;
-  void set_object_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& object_list() const;
+  void set_object_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList &list_list() const;
-  void set_list_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& list_list() const;
+  void set_list_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList &map_list() const;
-  void set_map_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& map_list() const;
+  void set_map_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableMap &map() const;
-  void set_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap& map() const;
+  void set_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap &string_map() const;
-  void set_string_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap& string_map() const;
+  void set_string_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap &int_map() const;
-  void set_int_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap& int_map() const;
+  void set_int_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap &enum_map() const;
-  void set_enum_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap& enum_map() const;
+  void set_enum_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap &object_map() const;
-  void set_object_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap& object_map() const;
+  void set_object_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap &list_map() const;
-  void set_list_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap& list_map() const;
+  void set_list_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap &map_map() const;
-  void set_map_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap& map_map() const;
+  void set_map_map(const flutter::EncodableMap& value_arg);
 
  private:
-  static AllTypes FromEncodableList(const flutter::EncodableList &list);
+  static AllTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
@@ -257,6 +266,7 @@ class AllTypes {
   flutter::EncodableMap map_map_;
 };
 
+
 // A class containing all supported nullable types.
 //
 // Generated class from Pigeon that represents data sent in messages.
@@ -267,165 +277,169 @@ class AllNullableTypes {
 
   // Constructs an object setting all fields.
   explicit AllNullableTypes(
-      const bool *a_nullable_bool, const int64_t *a_nullable_int,
-      const int64_t *a_nullable_int64, const double *a_nullable_double,
-      const std::vector<uint8_t> *a_nullable_byte_array,
-      const std::vector<int32_t> *a_nullable4_byte_array,
-      const std::vector<int64_t> *a_nullable8_byte_array,
-      const std::vector<double> *a_nullable_float_array,
-      const AnEnum *a_nullable_enum, const AnotherEnum *another_nullable_enum,
-      const std::string *a_nullable_string,
-      const flutter::EncodableValue *a_nullable_object,
-      const AllNullableTypes *all_nullable_types,
-      const flutter::EncodableList *list,
-      const flutter::EncodableList *string_list,
-      const flutter::EncodableList *int_list,
-      const flutter::EncodableList *double_list,
-      const flutter::EncodableList *bool_list,
-      const flutter::EncodableList *enum_list,
-      const flutter::EncodableList *object_list,
-      const flutter::EncodableList *list_list,
-      const flutter::EncodableList *map_list,
-      const flutter::EncodableList *recursive_class_list,
-      const flutter::EncodableMap *map, const flutter::EncodableMap *string_map,
-      const flutter::EncodableMap *int_map,
-      const flutter::EncodableMap *enum_map,
-      const flutter::EncodableMap *object_map,
-      const flutter::EncodableMap *list_map,
-      const flutter::EncodableMap *map_map,
-      const flutter::EncodableMap *recursive_class_map);
+    const bool* a_nullable_bool,
+    const int64_t* a_nullable_int,
+    const int64_t* a_nullable_int64,
+    const double* a_nullable_double,
+    const std::vector<uint8_t>* a_nullable_byte_array,
+    const std::vector<int32_t>* a_nullable4_byte_array,
+    const std::vector<int64_t>* a_nullable8_byte_array,
+    const std::vector<double>* a_nullable_float_array,
+    const AnEnum* a_nullable_enum,
+    const AnotherEnum* another_nullable_enum,
+    const std::string* a_nullable_string,
+    const flutter::EncodableValue* a_nullable_object,
+    const AllNullableTypes* all_nullable_types,
+    const flutter::EncodableList* list,
+    const flutter::EncodableList* string_list,
+    const flutter::EncodableList* int_list,
+    const flutter::EncodableList* double_list,
+    const flutter::EncodableList* bool_list,
+    const flutter::EncodableList* enum_list,
+    const flutter::EncodableList* object_list,
+    const flutter::EncodableList* list_list,
+    const flutter::EncodableList* map_list,
+    const flutter::EncodableList* recursive_class_list,
+    const flutter::EncodableMap* map,
+    const flutter::EncodableMap* string_map,
+    const flutter::EncodableMap* int_map,
+    const flutter::EncodableMap* enum_map,
+    const flutter::EncodableMap* object_map,
+    const flutter::EncodableMap* list_map,
+    const flutter::EncodableMap* map_map,
+    const flutter::EncodableMap* recursive_class_map);
 
   ~AllNullableTypes() = default;
-  AllNullableTypes(const AllNullableTypes &other);
-  AllNullableTypes &operator=(const AllNullableTypes &other);
-  AllNullableTypes(AllNullableTypes &&other) = default;
-  AllNullableTypes &operator=(AllNullableTypes &&other) noexcept = default;
-  const bool *a_nullable_bool() const;
-  void set_a_nullable_bool(const bool *value_arg);
+  AllNullableTypes(const AllNullableTypes& other);
+  AllNullableTypes& operator=(const AllNullableTypes& other);
+  AllNullableTypes(AllNullableTypes&& other) = default;
+  AllNullableTypes& operator=(AllNullableTypes&& other) noexcept = default;
+  const bool* a_nullable_bool() const;
+  void set_a_nullable_bool(const bool* value_arg);
   void set_a_nullable_bool(bool value_arg);
 
-  const int64_t *a_nullable_int() const;
-  void set_a_nullable_int(const int64_t *value_arg);
+  const int64_t* a_nullable_int() const;
+  void set_a_nullable_int(const int64_t* value_arg);
   void set_a_nullable_int(int64_t value_arg);
 
-  const int64_t *a_nullable_int64() const;
-  void set_a_nullable_int64(const int64_t *value_arg);
+  const int64_t* a_nullable_int64() const;
+  void set_a_nullable_int64(const int64_t* value_arg);
   void set_a_nullable_int64(int64_t value_arg);
 
-  const double *a_nullable_double() const;
-  void set_a_nullable_double(const double *value_arg);
+  const double* a_nullable_double() const;
+  void set_a_nullable_double(const double* value_arg);
   void set_a_nullable_double(double value_arg);
 
-  const std::vector<uint8_t> *a_nullable_byte_array() const;
-  void set_a_nullable_byte_array(const std::vector<uint8_t> *value_arg);
-  void set_a_nullable_byte_array(const std::vector<uint8_t> &value_arg);
+  const std::vector<uint8_t>* a_nullable_byte_array() const;
+  void set_a_nullable_byte_array(const std::vector<uint8_t>* value_arg);
+  void set_a_nullable_byte_array(const std::vector<uint8_t>& value_arg);
 
-  const std::vector<int32_t> *a_nullable4_byte_array() const;
-  void set_a_nullable4_byte_array(const std::vector<int32_t> *value_arg);
-  void set_a_nullable4_byte_array(const std::vector<int32_t> &value_arg);
+  const std::vector<int32_t>* a_nullable4_byte_array() const;
+  void set_a_nullable4_byte_array(const std::vector<int32_t>* value_arg);
+  void set_a_nullable4_byte_array(const std::vector<int32_t>& value_arg);
 
-  const std::vector<int64_t> *a_nullable8_byte_array() const;
-  void set_a_nullable8_byte_array(const std::vector<int64_t> *value_arg);
-  void set_a_nullable8_byte_array(const std::vector<int64_t> &value_arg);
+  const std::vector<int64_t>* a_nullable8_byte_array() const;
+  void set_a_nullable8_byte_array(const std::vector<int64_t>* value_arg);
+  void set_a_nullable8_byte_array(const std::vector<int64_t>& value_arg);
 
-  const std::vector<double> *a_nullable_float_array() const;
-  void set_a_nullable_float_array(const std::vector<double> *value_arg);
-  void set_a_nullable_float_array(const std::vector<double> &value_arg);
+  const std::vector<double>* a_nullable_float_array() const;
+  void set_a_nullable_float_array(const std::vector<double>* value_arg);
+  void set_a_nullable_float_array(const std::vector<double>& value_arg);
 
-  const AnEnum *a_nullable_enum() const;
-  void set_a_nullable_enum(const AnEnum *value_arg);
-  void set_a_nullable_enum(const AnEnum &value_arg);
+  const AnEnum* a_nullable_enum() const;
+  void set_a_nullable_enum(const AnEnum* value_arg);
+  void set_a_nullable_enum(const AnEnum& value_arg);
 
-  const AnotherEnum *another_nullable_enum() const;
-  void set_another_nullable_enum(const AnotherEnum *value_arg);
-  void set_another_nullable_enum(const AnotherEnum &value_arg);
+  const AnotherEnum* another_nullable_enum() const;
+  void set_another_nullable_enum(const AnotherEnum* value_arg);
+  void set_another_nullable_enum(const AnotherEnum& value_arg);
 
-  const std::string *a_nullable_string() const;
-  void set_a_nullable_string(const std::string_view *value_arg);
+  const std::string* a_nullable_string() const;
+  void set_a_nullable_string(const std::string_view* value_arg);
   void set_a_nullable_string(std::string_view value_arg);
 
-  const flutter::EncodableValue *a_nullable_object() const;
-  void set_a_nullable_object(const flutter::EncodableValue *value_arg);
-  void set_a_nullable_object(const flutter::EncodableValue &value_arg);
+  const flutter::EncodableValue* a_nullable_object() const;
+  void set_a_nullable_object(const flutter::EncodableValue* value_arg);
+  void set_a_nullable_object(const flutter::EncodableValue& value_arg);
 
-  const AllNullableTypes *all_nullable_types() const;
-  void set_all_nullable_types(const AllNullableTypes *value_arg);
-  void set_all_nullable_types(const AllNullableTypes &value_arg);
+  const AllNullableTypes* all_nullable_types() const;
+  void set_all_nullable_types(const AllNullableTypes* value_arg);
+  void set_all_nullable_types(const AllNullableTypes& value_arg);
 
-  const flutter::EncodableList *list() const;
-  void set_list(const flutter::EncodableList *value_arg);
-  void set_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* list() const;
+  void set_list(const flutter::EncodableList* value_arg);
+  void set_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *string_list() const;
-  void set_string_list(const flutter::EncodableList *value_arg);
-  void set_string_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* string_list() const;
+  void set_string_list(const flutter::EncodableList* value_arg);
+  void set_string_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *int_list() const;
-  void set_int_list(const flutter::EncodableList *value_arg);
-  void set_int_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* int_list() const;
+  void set_int_list(const flutter::EncodableList* value_arg);
+  void set_int_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *double_list() const;
-  void set_double_list(const flutter::EncodableList *value_arg);
-  void set_double_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* double_list() const;
+  void set_double_list(const flutter::EncodableList* value_arg);
+  void set_double_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *bool_list() const;
-  void set_bool_list(const flutter::EncodableList *value_arg);
-  void set_bool_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* bool_list() const;
+  void set_bool_list(const flutter::EncodableList* value_arg);
+  void set_bool_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *enum_list() const;
-  void set_enum_list(const flutter::EncodableList *value_arg);
-  void set_enum_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* enum_list() const;
+  void set_enum_list(const flutter::EncodableList* value_arg);
+  void set_enum_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *object_list() const;
-  void set_object_list(const flutter::EncodableList *value_arg);
-  void set_object_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* object_list() const;
+  void set_object_list(const flutter::EncodableList* value_arg);
+  void set_object_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *list_list() const;
-  void set_list_list(const flutter::EncodableList *value_arg);
-  void set_list_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* list_list() const;
+  void set_list_list(const flutter::EncodableList* value_arg);
+  void set_list_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *map_list() const;
-  void set_map_list(const flutter::EncodableList *value_arg);
-  void set_map_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* map_list() const;
+  void set_map_list(const flutter::EncodableList* value_arg);
+  void set_map_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *recursive_class_list() const;
-  void set_recursive_class_list(const flutter::EncodableList *value_arg);
-  void set_recursive_class_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* recursive_class_list() const;
+  void set_recursive_class_list(const flutter::EncodableList* value_arg);
+  void set_recursive_class_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableMap *map() const;
-  void set_map(const flutter::EncodableMap *value_arg);
-  void set_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* map() const;
+  void set_map(const flutter::EncodableMap* value_arg);
+  void set_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *string_map() const;
-  void set_string_map(const flutter::EncodableMap *value_arg);
-  void set_string_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* string_map() const;
+  void set_string_map(const flutter::EncodableMap* value_arg);
+  void set_string_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *int_map() const;
-  void set_int_map(const flutter::EncodableMap *value_arg);
-  void set_int_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* int_map() const;
+  void set_int_map(const flutter::EncodableMap* value_arg);
+  void set_int_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *enum_map() const;
-  void set_enum_map(const flutter::EncodableMap *value_arg);
-  void set_enum_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* enum_map() const;
+  void set_enum_map(const flutter::EncodableMap* value_arg);
+  void set_enum_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *object_map() const;
-  void set_object_map(const flutter::EncodableMap *value_arg);
-  void set_object_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* object_map() const;
+  void set_object_map(const flutter::EncodableMap* value_arg);
+  void set_object_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *list_map() const;
-  void set_list_map(const flutter::EncodableMap *value_arg);
-  void set_list_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* list_map() const;
+  void set_list_map(const flutter::EncodableMap* value_arg);
+  void set_list_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *map_map() const;
-  void set_map_map(const flutter::EncodableMap *value_arg);
-  void set_map_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* map_map() const;
+  void set_map_map(const flutter::EncodableMap* value_arg);
+  void set_map_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *recursive_class_map() const;
-  void set_recursive_class_map(const flutter::EncodableMap *value_arg);
-  void set_recursive_class_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* recursive_class_map() const;
+  void set_recursive_class_map(const flutter::EncodableMap* value_arg);
+  void set_recursive_class_map(const flutter::EncodableMap& value_arg);
 
  private:
-  static AllNullableTypes FromEncodableList(const flutter::EncodableList &list);
+  static AllNullableTypes FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
@@ -468,6 +482,7 @@ class AllNullableTypes {
   std::optional<flutter::EncodableMap> recursive_class_map_;
 };
 
+
 // The primary purpose for this class is to ensure coverage of Swift structs
 // with nullable items, as the primary [AllNullableTypes] class is being used to
 // test Swift classes.
@@ -480,146 +495,149 @@ class AllNullableTypesWithoutRecursion {
 
   // Constructs an object setting all fields.
   explicit AllNullableTypesWithoutRecursion(
-      const bool *a_nullable_bool, const int64_t *a_nullable_int,
-      const int64_t *a_nullable_int64, const double *a_nullable_double,
-      const std::vector<uint8_t> *a_nullable_byte_array,
-      const std::vector<int32_t> *a_nullable4_byte_array,
-      const std::vector<int64_t> *a_nullable8_byte_array,
-      const std::vector<double> *a_nullable_float_array,
-      const AnEnum *a_nullable_enum, const AnotherEnum *another_nullable_enum,
-      const std::string *a_nullable_string,
-      const flutter::EncodableValue *a_nullable_object,
-      const flutter::EncodableList *list,
-      const flutter::EncodableList *string_list,
-      const flutter::EncodableList *int_list,
-      const flutter::EncodableList *double_list,
-      const flutter::EncodableList *bool_list,
-      const flutter::EncodableList *enum_list,
-      const flutter::EncodableList *object_list,
-      const flutter::EncodableList *list_list,
-      const flutter::EncodableList *map_list, const flutter::EncodableMap *map,
-      const flutter::EncodableMap *string_map,
-      const flutter::EncodableMap *int_map,
-      const flutter::EncodableMap *enum_map,
-      const flutter::EncodableMap *object_map,
-      const flutter::EncodableMap *list_map,
-      const flutter::EncodableMap *map_map);
+    const bool* a_nullable_bool,
+    const int64_t* a_nullable_int,
+    const int64_t* a_nullable_int64,
+    const double* a_nullable_double,
+    const std::vector<uint8_t>* a_nullable_byte_array,
+    const std::vector<int32_t>* a_nullable4_byte_array,
+    const std::vector<int64_t>* a_nullable8_byte_array,
+    const std::vector<double>* a_nullable_float_array,
+    const AnEnum* a_nullable_enum,
+    const AnotherEnum* another_nullable_enum,
+    const std::string* a_nullable_string,
+    const flutter::EncodableValue* a_nullable_object,
+    const flutter::EncodableList* list,
+    const flutter::EncodableList* string_list,
+    const flutter::EncodableList* int_list,
+    const flutter::EncodableList* double_list,
+    const flutter::EncodableList* bool_list,
+    const flutter::EncodableList* enum_list,
+    const flutter::EncodableList* object_list,
+    const flutter::EncodableList* list_list,
+    const flutter::EncodableList* map_list,
+    const flutter::EncodableMap* map,
+    const flutter::EncodableMap* string_map,
+    const flutter::EncodableMap* int_map,
+    const flutter::EncodableMap* enum_map,
+    const flutter::EncodableMap* object_map,
+    const flutter::EncodableMap* list_map,
+    const flutter::EncodableMap* map_map);
 
-  const bool *a_nullable_bool() const;
-  void set_a_nullable_bool(const bool *value_arg);
+  const bool* a_nullable_bool() const;
+  void set_a_nullable_bool(const bool* value_arg);
   void set_a_nullable_bool(bool value_arg);
 
-  const int64_t *a_nullable_int() const;
-  void set_a_nullable_int(const int64_t *value_arg);
+  const int64_t* a_nullable_int() const;
+  void set_a_nullable_int(const int64_t* value_arg);
   void set_a_nullable_int(int64_t value_arg);
 
-  const int64_t *a_nullable_int64() const;
-  void set_a_nullable_int64(const int64_t *value_arg);
+  const int64_t* a_nullable_int64() const;
+  void set_a_nullable_int64(const int64_t* value_arg);
   void set_a_nullable_int64(int64_t value_arg);
 
-  const double *a_nullable_double() const;
-  void set_a_nullable_double(const double *value_arg);
+  const double* a_nullable_double() const;
+  void set_a_nullable_double(const double* value_arg);
   void set_a_nullable_double(double value_arg);
 
-  const std::vector<uint8_t> *a_nullable_byte_array() const;
-  void set_a_nullable_byte_array(const std::vector<uint8_t> *value_arg);
-  void set_a_nullable_byte_array(const std::vector<uint8_t> &value_arg);
+  const std::vector<uint8_t>* a_nullable_byte_array() const;
+  void set_a_nullable_byte_array(const std::vector<uint8_t>* value_arg);
+  void set_a_nullable_byte_array(const std::vector<uint8_t>& value_arg);
 
-  const std::vector<int32_t> *a_nullable4_byte_array() const;
-  void set_a_nullable4_byte_array(const std::vector<int32_t> *value_arg);
-  void set_a_nullable4_byte_array(const std::vector<int32_t> &value_arg);
+  const std::vector<int32_t>* a_nullable4_byte_array() const;
+  void set_a_nullable4_byte_array(const std::vector<int32_t>* value_arg);
+  void set_a_nullable4_byte_array(const std::vector<int32_t>& value_arg);
 
-  const std::vector<int64_t> *a_nullable8_byte_array() const;
-  void set_a_nullable8_byte_array(const std::vector<int64_t> *value_arg);
-  void set_a_nullable8_byte_array(const std::vector<int64_t> &value_arg);
+  const std::vector<int64_t>* a_nullable8_byte_array() const;
+  void set_a_nullable8_byte_array(const std::vector<int64_t>* value_arg);
+  void set_a_nullable8_byte_array(const std::vector<int64_t>& value_arg);
 
-  const std::vector<double> *a_nullable_float_array() const;
-  void set_a_nullable_float_array(const std::vector<double> *value_arg);
-  void set_a_nullable_float_array(const std::vector<double> &value_arg);
+  const std::vector<double>* a_nullable_float_array() const;
+  void set_a_nullable_float_array(const std::vector<double>* value_arg);
+  void set_a_nullable_float_array(const std::vector<double>& value_arg);
 
-  const AnEnum *a_nullable_enum() const;
-  void set_a_nullable_enum(const AnEnum *value_arg);
-  void set_a_nullable_enum(const AnEnum &value_arg);
+  const AnEnum* a_nullable_enum() const;
+  void set_a_nullable_enum(const AnEnum* value_arg);
+  void set_a_nullable_enum(const AnEnum& value_arg);
 
-  const AnotherEnum *another_nullable_enum() const;
-  void set_another_nullable_enum(const AnotherEnum *value_arg);
-  void set_another_nullable_enum(const AnotherEnum &value_arg);
+  const AnotherEnum* another_nullable_enum() const;
+  void set_another_nullable_enum(const AnotherEnum* value_arg);
+  void set_another_nullable_enum(const AnotherEnum& value_arg);
 
-  const std::string *a_nullable_string() const;
-  void set_a_nullable_string(const std::string_view *value_arg);
+  const std::string* a_nullable_string() const;
+  void set_a_nullable_string(const std::string_view* value_arg);
   void set_a_nullable_string(std::string_view value_arg);
 
-  const flutter::EncodableValue *a_nullable_object() const;
-  void set_a_nullable_object(const flutter::EncodableValue *value_arg);
-  void set_a_nullable_object(const flutter::EncodableValue &value_arg);
+  const flutter::EncodableValue* a_nullable_object() const;
+  void set_a_nullable_object(const flutter::EncodableValue* value_arg);
+  void set_a_nullable_object(const flutter::EncodableValue& value_arg);
 
-  const flutter::EncodableList *list() const;
-  void set_list(const flutter::EncodableList *value_arg);
-  void set_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* list() const;
+  void set_list(const flutter::EncodableList* value_arg);
+  void set_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *string_list() const;
-  void set_string_list(const flutter::EncodableList *value_arg);
-  void set_string_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* string_list() const;
+  void set_string_list(const flutter::EncodableList* value_arg);
+  void set_string_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *int_list() const;
-  void set_int_list(const flutter::EncodableList *value_arg);
-  void set_int_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* int_list() const;
+  void set_int_list(const flutter::EncodableList* value_arg);
+  void set_int_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *double_list() const;
-  void set_double_list(const flutter::EncodableList *value_arg);
-  void set_double_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* double_list() const;
+  void set_double_list(const flutter::EncodableList* value_arg);
+  void set_double_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *bool_list() const;
-  void set_bool_list(const flutter::EncodableList *value_arg);
-  void set_bool_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* bool_list() const;
+  void set_bool_list(const flutter::EncodableList* value_arg);
+  void set_bool_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *enum_list() const;
-  void set_enum_list(const flutter::EncodableList *value_arg);
-  void set_enum_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* enum_list() const;
+  void set_enum_list(const flutter::EncodableList* value_arg);
+  void set_enum_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *object_list() const;
-  void set_object_list(const flutter::EncodableList *value_arg);
-  void set_object_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* object_list() const;
+  void set_object_list(const flutter::EncodableList* value_arg);
+  void set_object_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *list_list() const;
-  void set_list_list(const flutter::EncodableList *value_arg);
-  void set_list_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* list_list() const;
+  void set_list_list(const flutter::EncodableList* value_arg);
+  void set_list_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *map_list() const;
-  void set_map_list(const flutter::EncodableList *value_arg);
-  void set_map_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* map_list() const;
+  void set_map_list(const flutter::EncodableList* value_arg);
+  void set_map_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableMap *map() const;
-  void set_map(const flutter::EncodableMap *value_arg);
-  void set_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* map() const;
+  void set_map(const flutter::EncodableMap* value_arg);
+  void set_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *string_map() const;
-  void set_string_map(const flutter::EncodableMap *value_arg);
-  void set_string_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* string_map() const;
+  void set_string_map(const flutter::EncodableMap* value_arg);
+  void set_string_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *int_map() const;
-  void set_int_map(const flutter::EncodableMap *value_arg);
-  void set_int_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* int_map() const;
+  void set_int_map(const flutter::EncodableMap* value_arg);
+  void set_int_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *enum_map() const;
-  void set_enum_map(const flutter::EncodableMap *value_arg);
-  void set_enum_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* enum_map() const;
+  void set_enum_map(const flutter::EncodableMap* value_arg);
+  void set_enum_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *object_map() const;
-  void set_object_map(const flutter::EncodableMap *value_arg);
-  void set_object_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* object_map() const;
+  void set_object_map(const flutter::EncodableMap* value_arg);
+  void set_object_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *list_map() const;
-  void set_list_map(const flutter::EncodableMap *value_arg);
-  void set_list_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* list_map() const;
+  void set_list_map(const flutter::EncodableMap* value_arg);
+  void set_list_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *map_map() const;
-  void set_map_map(const flutter::EncodableMap *value_arg);
-  void set_map_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* map_map() const;
+  void set_map_map(const flutter::EncodableMap* value_arg);
+  void set_map_map(const flutter::EncodableMap& value_arg);
 
  private:
-  static AllNullableTypesWithoutRecursion FromEncodableList(
-      const flutter::EncodableList &list);
+  static AllNullableTypesWithoutRecursion FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class AllClassesWrapper;
   friend class HostIntegrationCoreApi;
@@ -659,6 +677,7 @@ class AllNullableTypesWithoutRecursion {
   std::optional<flutter::EncodableMap> map_map_;
 };
 
+
 // A class for testing nested class handling.
 //
 // This is needed to test nested nullable and non-nullable classes,
@@ -669,56 +688,53 @@ class AllNullableTypesWithoutRecursion {
 class AllClassesWrapper {
  public:
   // Constructs an object setting all non-nullable fields.
-  explicit AllClassesWrapper(const AllNullableTypes &all_nullable_types,
-                             const flutter::EncodableList &class_list,
-                             const flutter::EncodableMap &class_map);
+  explicit AllClassesWrapper(
+    const AllNullableTypes& all_nullable_types,
+    const flutter::EncodableList& class_list,
+    const flutter::EncodableMap& class_map);
 
   // Constructs an object setting all fields.
-  explicit AllClassesWrapper(const AllNullableTypes &all_nullable_types,
-                             const AllNullableTypesWithoutRecursion
-                                 *all_nullable_types_without_recursion,
-                             const AllTypes *all_types,
-                             const flutter::EncodableList &class_list,
-                             const flutter::EncodableList *nullable_class_list,
-                             const flutter::EncodableMap &class_map,
-                             const flutter::EncodableMap *nullable_class_map);
+  explicit AllClassesWrapper(
+    const AllNullableTypes& all_nullable_types,
+    const AllNullableTypesWithoutRecursion* all_nullable_types_without_recursion,
+    const AllTypes* all_types,
+    const flutter::EncodableList& class_list,
+    const flutter::EncodableList* nullable_class_list,
+    const flutter::EncodableMap& class_map,
+    const flutter::EncodableMap* nullable_class_map);
 
   ~AllClassesWrapper() = default;
-  AllClassesWrapper(const AllClassesWrapper &other);
-  AllClassesWrapper &operator=(const AllClassesWrapper &other);
-  AllClassesWrapper(AllClassesWrapper &&other) = default;
-  AllClassesWrapper &operator=(AllClassesWrapper &&other) noexcept = default;
-  const AllNullableTypes &all_nullable_types() const;
-  void set_all_nullable_types(const AllNullableTypes &value_arg);
+  AllClassesWrapper(const AllClassesWrapper& other);
+  AllClassesWrapper& operator=(const AllClassesWrapper& other);
+  AllClassesWrapper(AllClassesWrapper&& other) = default;
+  AllClassesWrapper& operator=(AllClassesWrapper&& other) noexcept = default;
+  const AllNullableTypes& all_nullable_types() const;
+  void set_all_nullable_types(const AllNullableTypes& value_arg);
 
-  const AllNullableTypesWithoutRecursion *all_nullable_types_without_recursion()
-      const;
-  void set_all_nullable_types_without_recursion(
-      const AllNullableTypesWithoutRecursion *value_arg);
-  void set_all_nullable_types_without_recursion(
-      const AllNullableTypesWithoutRecursion &value_arg);
+  const AllNullableTypesWithoutRecursion* all_nullable_types_without_recursion() const;
+  void set_all_nullable_types_without_recursion(const AllNullableTypesWithoutRecursion* value_arg);
+  void set_all_nullable_types_without_recursion(const AllNullableTypesWithoutRecursion& value_arg);
 
-  const AllTypes *all_types() const;
-  void set_all_types(const AllTypes *value_arg);
-  void set_all_types(const AllTypes &value_arg);
+  const AllTypes* all_types() const;
+  void set_all_types(const AllTypes* value_arg);
+  void set_all_types(const AllTypes& value_arg);
 
-  const flutter::EncodableList &class_list() const;
-  void set_class_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList& class_list() const;
+  void set_class_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableList *nullable_class_list() const;
-  void set_nullable_class_list(const flutter::EncodableList *value_arg);
-  void set_nullable_class_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* nullable_class_list() const;
+  void set_nullable_class_list(const flutter::EncodableList* value_arg);
+  void set_nullable_class_list(const flutter::EncodableList& value_arg);
 
-  const flutter::EncodableMap &class_map() const;
-  void set_class_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap& class_map() const;
+  void set_class_map(const flutter::EncodableMap& value_arg);
 
-  const flutter::EncodableMap *nullable_class_map() const;
-  void set_nullable_class_map(const flutter::EncodableMap *value_arg);
-  void set_nullable_class_map(const flutter::EncodableMap &value_arg);
+  const flutter::EncodableMap* nullable_class_map() const;
+  void set_nullable_class_map(const flutter::EncodableMap* value_arg);
+  void set_nullable_class_map(const flutter::EncodableMap& value_arg);
 
  private:
-  static AllClassesWrapper FromEncodableList(
-      const flutter::EncodableList &list);
+  static AllClassesWrapper FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
@@ -728,14 +744,14 @@ class AllClassesWrapper {
   friend class PigeonInternalCodecSerializer;
   friend class CoreTestsTest;
   std::unique_ptr<AllNullableTypes> all_nullable_types_;
-  std::unique_ptr<AllNullableTypesWithoutRecursion>
-      all_nullable_types_without_recursion_;
+  std::unique_ptr<AllNullableTypesWithoutRecursion> all_nullable_types_without_recursion_;
   std::unique_ptr<AllTypes> all_types_;
   flutter::EncodableList class_list_;
   std::optional<flutter::EncodableList> nullable_class_list_;
   flutter::EncodableMap class_map_;
   std::optional<flutter::EncodableMap> nullable_class_map_;
 };
+
 
 // A data class containing a List, used in unit tests.
 //
@@ -746,14 +762,14 @@ class TestMessage {
   TestMessage();
 
   // Constructs an object setting all fields.
-  explicit TestMessage(const flutter::EncodableList *test_list);
+  explicit TestMessage(const flutter::EncodableList* test_list);
 
-  const flutter::EncodableList *test_list() const;
-  void set_test_list(const flutter::EncodableList *value_arg);
-  void set_test_list(const flutter::EncodableList &value_arg);
+  const flutter::EncodableList* test_list() const;
+  void set_test_list(const flutter::EncodableList* value_arg);
+  void set_test_list(const flutter::EncodableList& value_arg);
 
  private:
-  static TestMessage FromEncodableList(const flutter::EncodableList &list);
+  static TestMessage FromEncodableList(const flutter::EncodableList& list);
   flutter::EncodableList ToEncodableList() const;
   friend class HostIntegrationCoreApi;
   friend class FlutterIntegrationCoreApi;
@@ -765,44 +781,44 @@ class TestMessage {
   std::optional<flutter::EncodableList> test_list_;
 };
 
+
 class PigeonInternalCodecSerializer : public flutter::StandardCodecSerializer {
  public:
   PigeonInternalCodecSerializer();
-  inline static PigeonInternalCodecSerializer &GetInstance() {
+  inline static PigeonInternalCodecSerializer& GetInstance() {
     static PigeonInternalCodecSerializer sInstance;
     return sInstance;
   }
 
-  void WriteValue(const flutter::EncodableValue &value,
-                  flutter::ByteStreamWriter *stream) const override;
-
+  void WriteValue(
+    const flutter::EncodableValue& value,
+    flutter::ByteStreamWriter* stream) const override;
  protected:
   flutter::EncodableValue ReadValueOfType(
-      uint8_t type, flutter::ByteStreamReader *stream) const override;
+    uint8_t type,
+    flutter::ByteStreamReader* stream) const override;
 };
 
 // The core interface that each host language plugin must implement in
 // platform_test integration tests.
 //
-// Generated interface from Pigeon that represents a handler of messages from
-// Flutter.
+// Generated interface from Pigeon that represents a handler of messages from Flutter.
 class HostIntegrationCoreApi {
  public:
-  HostIntegrationCoreApi(const HostIntegrationCoreApi &) = delete;
-  HostIntegrationCoreApi &operator=(const HostIntegrationCoreApi &) = delete;
+  HostIntegrationCoreApi(const HostIntegrationCoreApi&) = delete;
+  HostIntegrationCoreApi& operator=(const HostIntegrationCoreApi&) = delete;
   virtual ~HostIntegrationCoreApi() {}
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic calling.
   virtual std::optional<FlutterError> Noop() = 0;
   // Returns the passed object, to test serialization and deserialization.
-  virtual ErrorOr<AllTypes> EchoAllTypes(const AllTypes &everything) = 0;
+  virtual ErrorOr<AllTypes> EchoAllTypes(const AllTypes& everything) = 0;
   // Returns an error, to test error handling.
   virtual ErrorOr<std::optional<flutter::EncodableValue>> ThrowError() = 0;
   // Returns an error from a void function, to test error handling.
   virtual std::optional<FlutterError> ThrowErrorFromVoid() = 0;
   // Returns a Flutter error, to test error handling.
-  virtual ErrorOr<std::optional<flutter::EncodableValue>>
-  ThrowFlutterError() = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableValue>> ThrowFlutterError() = 0;
   // Returns passed in int.
   virtual ErrorOr<int64_t> EchoInt(int64_t an_int) = 0;
   // Returns passed in double.
@@ -810,882 +826,794 @@ class HostIntegrationCoreApi {
   // Returns the passed in boolean.
   virtual ErrorOr<bool> EchoBool(bool a_bool) = 0;
   // Returns the passed in string.
-  virtual ErrorOr<std::string> EchoString(const std::string &a_string) = 0;
+  virtual ErrorOr<std::string> EchoString(const std::string& a_string) = 0;
   // Returns the passed in Uint8List.
-  virtual ErrorOr<std::vector<uint8_t>> EchoUint8List(
-      const std::vector<uint8_t> &a_uint8_list) = 0;
+  virtual ErrorOr<std::vector<uint8_t>> EchoUint8List(const std::vector<uint8_t>& a_uint8_list) = 0;
   // Returns the passed in generic Object.
-  virtual ErrorOr<flutter::EncodableValue> EchoObject(
-      const flutter::EncodableValue &an_object) = 0;
+  virtual ErrorOr<flutter::EncodableValue> EchoObject(const flutter::EncodableValue& an_object) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableList> EchoList(
-      const flutter::EncodableList &list) = 0;
+  virtual ErrorOr<flutter::EncodableList> EchoList(const flutter::EncodableList& list) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableList> EchoEnumList(
-      const flutter::EncodableList &enum_list) = 0;
+  virtual ErrorOr<flutter::EncodableList> EchoEnumList(const flutter::EncodableList& enum_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableList> EchoClassList(
-      const flutter::EncodableList &class_list) = 0;
+  virtual ErrorOr<flutter::EncodableList> EchoClassList(const flutter::EncodableList& class_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableList> EchoNonNullEnumList(
-      const flutter::EncodableList &enum_list) = 0;
+  virtual ErrorOr<flutter::EncodableList> EchoNonNullEnumList(const flutter::EncodableList& enum_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableList> EchoNonNullClassList(
-      const flutter::EncodableList &class_list) = 0;
+  virtual ErrorOr<flutter::EncodableList> EchoNonNullClassList(const flutter::EncodableList& class_list) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableMap> EchoMap(
-      const flutter::EncodableMap &map) = 0;
+  virtual ErrorOr<flutter::EncodableMap> EchoMap(const flutter::EncodableMap& map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableMap> EchoStringMap(
-      const flutter::EncodableMap &string_map) = 0;
+  virtual ErrorOr<flutter::EncodableMap> EchoStringMap(const flutter::EncodableMap& string_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableMap> EchoIntMap(
-      const flutter::EncodableMap &int_map) = 0;
+  virtual ErrorOr<flutter::EncodableMap> EchoIntMap(const flutter::EncodableMap& int_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableMap> EchoEnumMap(
-      const flutter::EncodableMap &enum_map) = 0;
+  virtual ErrorOr<flutter::EncodableMap> EchoEnumMap(const flutter::EncodableMap& enum_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableMap> EchoClassMap(
-      const flutter::EncodableMap &class_map) = 0;
+  virtual ErrorOr<flutter::EncodableMap> EchoClassMap(const flutter::EncodableMap& class_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableMap> EchoNonNullStringMap(
-      const flutter::EncodableMap &string_map) = 0;
+  virtual ErrorOr<flutter::EncodableMap> EchoNonNullStringMap(const flutter::EncodableMap& string_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableMap> EchoNonNullIntMap(
-      const flutter::EncodableMap &int_map) = 0;
+  virtual ErrorOr<flutter::EncodableMap> EchoNonNullIntMap(const flutter::EncodableMap& int_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableMap> EchoNonNullEnumMap(
-      const flutter::EncodableMap &enum_map) = 0;
+  virtual ErrorOr<flutter::EncodableMap> EchoNonNullEnumMap(const flutter::EncodableMap& enum_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<flutter::EncodableMap> EchoNonNullClassMap(
-      const flutter::EncodableMap &class_map) = 0;
-  // Returns the passed class to test nested class serialization and
-  // deserialization.
-  virtual ErrorOr<AllClassesWrapper> EchoClassWrapper(
-      const AllClassesWrapper &wrapper) = 0;
+  virtual ErrorOr<flutter::EncodableMap> EchoNonNullClassMap(const flutter::EncodableMap& class_map) = 0;
+  // Returns the passed class to test nested class serialization and deserialization.
+  virtual ErrorOr<AllClassesWrapper> EchoClassWrapper(const AllClassesWrapper& wrapper) = 0;
   // Returns the passed enum to test serialization and deserialization.
-  virtual ErrorOr<AnEnum> EchoEnum(const AnEnum &an_enum) = 0;
+  virtual ErrorOr<AnEnum> EchoEnum(const AnEnum& an_enum) = 0;
   // Returns the passed enum to test serialization and deserialization.
-  virtual ErrorOr<AnotherEnum> EchoAnotherEnum(
-      const AnotherEnum &another_enum) = 0;
+  virtual ErrorOr<AnotherEnum> EchoAnotherEnum(const AnotherEnum& another_enum) = 0;
   // Returns the default string.
-  virtual ErrorOr<std::string> EchoNamedDefaultString(
-      const std::string &a_string) = 0;
+  virtual ErrorOr<std::string> EchoNamedDefaultString(const std::string& a_string) = 0;
   // Returns passed in double.
   virtual ErrorOr<double> EchoOptionalDefaultDouble(double a_double) = 0;
   // Returns passed in int.
   virtual ErrorOr<int64_t> EchoRequiredInt(int64_t an_int) = 0;
   // Returns the passed object, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(
-      const AllNullableTypes *everything) = 0;
+  virtual ErrorOr<std::optional<AllNullableTypes>> EchoAllNullableTypes(const AllNullableTypes* everything) = 0;
   // Returns the passed object, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<AllNullableTypesWithoutRecursion>>
-  EchoAllNullableTypesWithoutRecursion(
-      const AllNullableTypesWithoutRecursion *everything) = 0;
+  virtual ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> EchoAllNullableTypesWithoutRecursion(const AllNullableTypesWithoutRecursion* everything) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
-  virtual ErrorOr<std::optional<std::string>> ExtractNestedNullableString(
-      const AllClassesWrapper &wrapper) = 0;
+  virtual ErrorOr<std::optional<std::string>> ExtractNestedNullableString(const AllClassesWrapper& wrapper) = 0;
   // Returns the inner `aString` value from the wrapped object, to test
   // sending of nested objects.
-  virtual ErrorOr<AllClassesWrapper> CreateNestedNullableString(
-      const std::string *nullable_string) = 0;
+  virtual ErrorOr<AllClassesWrapper> CreateNestedNullableString(const std::string* nullable_string) = 0;
   // Returns passed in arguments of multiple types.
   virtual ErrorOr<AllNullableTypes> SendMultipleNullableTypes(
-      const bool *a_nullable_bool, const int64_t *a_nullable_int,
-      const std::string *a_nullable_string) = 0;
+    const bool* a_nullable_bool,
+    const int64_t* a_nullable_int,
+    const std::string* a_nullable_string) = 0;
   // Returns passed in arguments of multiple types.
-  virtual ErrorOr<AllNullableTypesWithoutRecursion>
-  SendMultipleNullableTypesWithoutRecursion(
-      const bool *a_nullable_bool, const int64_t *a_nullable_int,
-      const std::string *a_nullable_string) = 0;
+  virtual ErrorOr<AllNullableTypesWithoutRecursion> SendMultipleNullableTypesWithoutRecursion(
+    const bool* a_nullable_bool,
+    const int64_t* a_nullable_int,
+    const std::string* a_nullable_string) = 0;
   // Returns passed in int.
-  virtual ErrorOr<std::optional<int64_t>> EchoNullableInt(
-      const int64_t *a_nullable_int) = 0;
+  virtual ErrorOr<std::optional<int64_t>> EchoNullableInt(const int64_t* a_nullable_int) = 0;
   // Returns passed in double.
-  virtual ErrorOr<std::optional<double>> EchoNullableDouble(
-      const double *a_nullable_double) = 0;
+  virtual ErrorOr<std::optional<double>> EchoNullableDouble(const double* a_nullable_double) = 0;
   // Returns the passed in boolean.
-  virtual ErrorOr<std::optional<bool>> EchoNullableBool(
-      const bool *a_nullable_bool) = 0;
+  virtual ErrorOr<std::optional<bool>> EchoNullableBool(const bool* a_nullable_bool) = 0;
   // Returns the passed in string.
-  virtual ErrorOr<std::optional<std::string>> EchoNullableString(
-      const std::string *a_nullable_string) = 0;
+  virtual ErrorOr<std::optional<std::string>> EchoNullableString(const std::string* a_nullable_string) = 0;
   // Returns the passed in Uint8List.
-  virtual ErrorOr<std::optional<std::vector<uint8_t>>> EchoNullableUint8List(
-      const std::vector<uint8_t> *a_nullable_uint8_list) = 0;
+  virtual ErrorOr<std::optional<std::vector<uint8_t>>> EchoNullableUint8List(const std::vector<uint8_t>* a_nullable_uint8_list) = 0;
   // Returns the passed in generic Object.
-  virtual ErrorOr<std::optional<flutter::EncodableValue>> EchoNullableObject(
-      const flutter::EncodableValue *a_nullable_object) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableValue>> EchoNullableObject(const flutter::EncodableValue* a_nullable_object) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableList>> EchoNullableList(
-      const flutter::EncodableList *a_nullable_list) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableList>> EchoNullableList(const flutter::EncodableList* a_nullable_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableList>> EchoNullableEnumList(
-      const flutter::EncodableList *enum_list) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableList>> EchoNullableEnumList(const flutter::EncodableList* enum_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableList>> EchoNullableClassList(
-      const flutter::EncodableList *class_list) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableList>> EchoNullableClassList(const flutter::EncodableList* class_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableList>>
-  EchoNullableNonNullEnumList(const flutter::EncodableList *enum_list) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableList>> EchoNullableNonNullEnumList(const flutter::EncodableList* enum_list) = 0;
   // Returns the passed list, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableList>>
-  EchoNullableNonNullClassList(const flutter::EncodableList *class_list) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableList>> EchoNullableNonNullClassList(const flutter::EncodableList* class_list) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableMap(
-      const flutter::EncodableMap *map) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableMap(const flutter::EncodableMap* map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableStringMap(
-      const flutter::EncodableMap *string_map) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableStringMap(const flutter::EncodableMap* string_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableIntMap(
-      const flutter::EncodableMap *int_map) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableIntMap(const flutter::EncodableMap* int_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableEnumMap(
-      const flutter::EncodableMap *enum_map) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableEnumMap(const flutter::EncodableMap* enum_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableClassMap(
-      const flutter::EncodableMap *class_map) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableClassMap(const flutter::EncodableMap* class_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableMap>>
-  EchoNullableNonNullStringMap(const flutter::EncodableMap *string_map) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableNonNullStringMap(const flutter::EncodableMap* string_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableMap>>
-  EchoNullableNonNullIntMap(const flutter::EncodableMap *int_map) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableNonNullIntMap(const flutter::EncodableMap* int_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableMap>>
-  EchoNullableNonNullEnumMap(const flutter::EncodableMap *enum_map) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableNonNullEnumMap(const flutter::EncodableMap* enum_map) = 0;
   // Returns the passed map, to test serialization and deserialization.
-  virtual ErrorOr<std::optional<flutter::EncodableMap>>
-  EchoNullableNonNullClassMap(const flutter::EncodableMap *class_map) = 0;
-  virtual ErrorOr<std::optional<AnEnum>> EchoNullableEnum(
-      const AnEnum *an_enum) = 0;
-  virtual ErrorOr<std::optional<AnotherEnum>> EchoAnotherNullableEnum(
-      const AnotherEnum *another_enum) = 0;
+  virtual ErrorOr<std::optional<flutter::EncodableMap>> EchoNullableNonNullClassMap(const flutter::EncodableMap* class_map) = 0;
+  virtual ErrorOr<std::optional<AnEnum>> EchoNullableEnum(const AnEnum* an_enum) = 0;
+  virtual ErrorOr<std::optional<AnotherEnum>> EchoAnotherNullableEnum(const AnotherEnum* another_enum) = 0;
   // Returns passed in int.
-  virtual ErrorOr<std::optional<int64_t>> EchoOptionalNullableInt(
-      const int64_t *a_nullable_int) = 0;
+  virtual ErrorOr<std::optional<int64_t>> EchoOptionalNullableInt(const int64_t* a_nullable_int) = 0;
   // Returns the passed in string.
-  virtual ErrorOr<std::optional<std::string>> EchoNamedNullableString(
-      const std::string *a_nullable_string) = 0;
+  virtual ErrorOr<std::optional<std::string>> EchoNamedNullableString(const std::string* a_nullable_string) = 0;
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic asynchronous calling.
-  virtual void NoopAsync(
-      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void NoopAsync(std::function<void(std::optional<FlutterError> reply)> result) = 0;
   // Returns passed in int asynchronously.
   virtual void EchoAsyncInt(
-      int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) = 0;
+    int64_t an_int,
+    std::function<void(ErrorOr<int64_t> reply)> result) = 0;
   // Returns passed in double asynchronously.
   virtual void EchoAsyncDouble(
-      double a_double, std::function<void(ErrorOr<double> reply)> result) = 0;
+    double a_double,
+    std::function<void(ErrorOr<double> reply)> result) = 0;
   // Returns the passed in boolean asynchronously.
   virtual void EchoAsyncBool(
-      bool a_bool, std::function<void(ErrorOr<bool> reply)> result) = 0;
+    bool a_bool,
+    std::function<void(ErrorOr<bool> reply)> result) = 0;
   // Returns the passed string asynchronously.
   virtual void EchoAsyncString(
-      const std::string &a_string,
-      std::function<void(ErrorOr<std::string> reply)> result) = 0;
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) = 0;
   // Returns the passed in Uint8List asynchronously.
   virtual void EchoAsyncUint8List(
-      const std::vector<uint8_t> &a_uint8_list,
-      std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
+    const std::vector<uint8_t>& a_uint8_list,
+    std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
   // Returns the passed in generic Object asynchronously.
   virtual void EchoAsyncObject(
-      const flutter::EncodableValue &an_object,
-      std::function<void(ErrorOr<flutter::EncodableValue> reply)> result) = 0;
-  // Returns the passed list, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableValue& an_object,
+    std::function<void(ErrorOr<flutter::EncodableValue> reply)> result) = 0;
+  // Returns the passed list, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncList(
-      const flutter::EncodableList &list,
-      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
-  // Returns the passed list, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableList& list,
+    std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+  // Returns the passed list, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncEnumList(
-      const flutter::EncodableList &enum_list,
-      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
-  // Returns the passed list, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableList& enum_list,
+    std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+  // Returns the passed list, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncClassList(
-      const flutter::EncodableList &class_list,
-      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableList& class_list,
+    std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncMap(
-      const flutter::EncodableMap &map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap& map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncStringMap(
-      const flutter::EncodableMap &string_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap& string_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncIntMap(
-      const flutter::EncodableMap &int_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap& int_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncEnumMap(
-      const flutter::EncodableMap &enum_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap& enum_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncClassMap(
-      const flutter::EncodableMap &class_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
-  // Returns the passed enum, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap& class_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+  // Returns the passed enum, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncEnum(
-      const AnEnum &an_enum,
-      std::function<void(ErrorOr<AnEnum> reply)> result) = 0;
-  // Returns the passed enum, to test asynchronous serialization and
-  // deserialization.
+    const AnEnum& an_enum,
+    std::function<void(ErrorOr<AnEnum> reply)> result) = 0;
+  // Returns the passed enum, to test asynchronous serialization and deserialization.
   virtual void EchoAnotherAsyncEnum(
-      const AnotherEnum &another_enum,
-      std::function<void(ErrorOr<AnotherEnum> reply)> result) = 0;
+    const AnotherEnum& another_enum,
+    std::function<void(ErrorOr<AnotherEnum> reply)> result) = 0;
   // Responds with an error from an async function returning a value.
-  virtual void ThrowAsyncError(
-      std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
-          result) = 0;
+  virtual void ThrowAsyncError(std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)> result) = 0;
   // Responds with an error from an async void function.
-  virtual void ThrowAsyncErrorFromVoid(
-      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void ThrowAsyncErrorFromVoid(std::function<void(std::optional<FlutterError> reply)> result) = 0;
   // Responds with a Flutter error from an async function returning a value.
-  virtual void ThrowAsyncFlutterError(
-      std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
-          result) = 0;
+  virtual void ThrowAsyncFlutterError(std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)> result) = 0;
   // Returns the passed object, to test async serialization and deserialization.
   virtual void EchoAsyncAllTypes(
-      const AllTypes &everything,
-      std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
+    const AllTypes& everything,
+    std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual void EchoAsyncNullableAllNullableTypes(
-      const AllNullableTypes *everything,
-      std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
-          result) = 0;
+    const AllNullableTypes* everything,
+    std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)> result) = 0;
   // Returns the passed object, to test serialization and deserialization.
   virtual void EchoAsyncNullableAllNullableTypesWithoutRecursion(
-      const AllNullableTypesWithoutRecursion *everything,
-      std::function<
-          void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
-          result) = 0;
+    const AllNullableTypesWithoutRecursion* everything,
+    std::function<void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)> result) = 0;
   // Returns passed in int asynchronously.
   virtual void EchoAsyncNullableInt(
-      const int64_t *an_int,
-      std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) = 0;
+    const int64_t* an_int,
+    std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) = 0;
   // Returns passed in double asynchronously.
   virtual void EchoAsyncNullableDouble(
-      const double *a_double,
-      std::function<void(ErrorOr<std::optional<double>> reply)> result) = 0;
+    const double* a_double,
+    std::function<void(ErrorOr<std::optional<double>> reply)> result) = 0;
   // Returns the passed in boolean asynchronously.
   virtual void EchoAsyncNullableBool(
-      const bool *a_bool,
-      std::function<void(ErrorOr<std::optional<bool>> reply)> result) = 0;
+    const bool* a_bool,
+    std::function<void(ErrorOr<std::optional<bool>> reply)> result) = 0;
   // Returns the passed string asynchronously.
   virtual void EchoAsyncNullableString(
-      const std::string *a_string,
-      std::function<void(ErrorOr<std::optional<std::string>> reply)>
-          result) = 0;
+    const std::string* a_string,
+    std::function<void(ErrorOr<std::optional<std::string>> reply)> result) = 0;
   // Returns the passed in Uint8List asynchronously.
   virtual void EchoAsyncNullableUint8List(
-      const std::vector<uint8_t> *a_uint8_list,
-      std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)>
-          result) = 0;
+    const std::vector<uint8_t>* a_uint8_list,
+    std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)> result) = 0;
   // Returns the passed in generic Object asynchronously.
   virtual void EchoAsyncNullableObject(
-      const flutter::EncodableValue *an_object,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
-          result) = 0;
-  // Returns the passed list, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableValue* an_object,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)> result) = 0;
+  // Returns the passed list, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncNullableList(
-      const flutter::EncodableList *list,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
-          result) = 0;
-  // Returns the passed list, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableList* list,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)> result) = 0;
+  // Returns the passed list, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncNullableEnumList(
-      const flutter::EncodableList *enum_list,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
-          result) = 0;
-  // Returns the passed list, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableList* enum_list,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)> result) = 0;
+  // Returns the passed list, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncNullableClassList(
-      const flutter::EncodableList *class_list,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
-          result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableList* class_list,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncNullableMap(
-      const flutter::EncodableMap *map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap* map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncNullableStringMap(
-      const flutter::EncodableMap *string_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap* string_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncNullableIntMap(
-      const flutter::EncodableMap *int_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap* int_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncNullableEnumMap(
-      const flutter::EncodableMap *enum_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
-  // Returns the passed map, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap* enum_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
+  // Returns the passed map, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncNullableClassMap(
-      const flutter::EncodableMap *class_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
-  // Returns the passed enum, to test asynchronous serialization and
-  // deserialization.
+    const flutter::EncodableMap* class_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
+  // Returns the passed enum, to test asynchronous serialization and deserialization.
   virtual void EchoAsyncNullableEnum(
-      const AnEnum *an_enum,
-      std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
-  // Returns the passed enum, to test asynchronous serialization and
-  // deserialization.
+    const AnEnum* an_enum,
+    std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
+  // Returns the passed enum, to test asynchronous serialization and deserialization.
   virtual void EchoAnotherAsyncNullableEnum(
-      const AnotherEnum *another_enum,
-      std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)>
-          result) = 0;
+    const AnotherEnum* another_enum,
+    std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)> result) = 0;
   // Returns true if the handler is run on a main thread, which should be
   // true since there is no TaskQueue annotation.
   virtual ErrorOr<bool> DefaultIsMainThread() = 0;
   // Returns true if the handler is run on a non-main thread, which should be
   // true for any platform with TaskQueue support.
   virtual ErrorOr<bool> TaskQueueIsBackgroundThread() = 0;
-  virtual void CallFlutterNoop(
-      std::function<void(std::optional<FlutterError> reply)> result) = 0;
-  virtual void CallFlutterThrowError(
-      std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)>
-          result) = 0;
-  virtual void CallFlutterThrowErrorFromVoid(
-      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void CallFlutterNoop(std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void CallFlutterThrowError(std::function<void(ErrorOr<std::optional<flutter::EncodableValue>> reply)> result) = 0;
+  virtual void CallFlutterThrowErrorFromVoid(std::function<void(std::optional<FlutterError> reply)> result) = 0;
   virtual void CallFlutterEchoAllTypes(
-      const AllTypes &everything,
-      std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
+    const AllTypes& everything,
+    std::function<void(ErrorOr<AllTypes> reply)> result) = 0;
   virtual void CallFlutterEchoAllNullableTypes(
-      const AllNullableTypes *everything,
-      std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)>
-          result) = 0;
+    const AllNullableTypes* everything,
+    std::function<void(ErrorOr<std::optional<AllNullableTypes>> reply)> result) = 0;
   virtual void CallFlutterSendMultipleNullableTypes(
-      const bool *a_nullable_bool, const int64_t *a_nullable_int,
-      const std::string *a_nullable_string,
-      std::function<void(ErrorOr<AllNullableTypes> reply)> result) = 0;
+    const bool* a_nullable_bool,
+    const int64_t* a_nullable_int,
+    const std::string* a_nullable_string,
+    std::function<void(ErrorOr<AllNullableTypes> reply)> result) = 0;
   virtual void CallFlutterEchoAllNullableTypesWithoutRecursion(
-      const AllNullableTypesWithoutRecursion *everything,
-      std::function<
-          void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)>
-          result) = 0;
+    const AllNullableTypesWithoutRecursion* everything,
+    std::function<void(ErrorOr<std::optional<AllNullableTypesWithoutRecursion>> reply)> result) = 0;
   virtual void CallFlutterSendMultipleNullableTypesWithoutRecursion(
-      const bool *a_nullable_bool, const int64_t *a_nullable_int,
-      const std::string *a_nullable_string,
-      std::function<void(ErrorOr<AllNullableTypesWithoutRecursion> reply)>
-          result) = 0;
+    const bool* a_nullable_bool,
+    const int64_t* a_nullable_int,
+    const std::string* a_nullable_string,
+    std::function<void(ErrorOr<AllNullableTypesWithoutRecursion> reply)> result) = 0;
   virtual void CallFlutterEchoBool(
-      bool a_bool, std::function<void(ErrorOr<bool> reply)> result) = 0;
+    bool a_bool,
+    std::function<void(ErrorOr<bool> reply)> result) = 0;
   virtual void CallFlutterEchoInt(
-      int64_t an_int, std::function<void(ErrorOr<int64_t> reply)> result) = 0;
+    int64_t an_int,
+    std::function<void(ErrorOr<int64_t> reply)> result) = 0;
   virtual void CallFlutterEchoDouble(
-      double a_double, std::function<void(ErrorOr<double> reply)> result) = 0;
+    double a_double,
+    std::function<void(ErrorOr<double> reply)> result) = 0;
   virtual void CallFlutterEchoString(
-      const std::string &a_string,
-      std::function<void(ErrorOr<std::string> reply)> result) = 0;
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) = 0;
   virtual void CallFlutterEchoUint8List(
-      const std::vector<uint8_t> &list,
-      std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
+    const std::vector<uint8_t>& list,
+    std::function<void(ErrorOr<std::vector<uint8_t>> reply)> result) = 0;
   virtual void CallFlutterEchoList(
-      const flutter::EncodableList &list,
-      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+    const flutter::EncodableList& list,
+    std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   virtual void CallFlutterEchoEnumList(
-      const flutter::EncodableList &enum_list,
-      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+    const flutter::EncodableList& enum_list,
+    std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   virtual void CallFlutterEchoClassList(
-      const flutter::EncodableList &class_list,
-      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+    const flutter::EncodableList& class_list,
+    std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   virtual void CallFlutterEchoNonNullEnumList(
-      const flutter::EncodableList &enum_list,
-      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+    const flutter::EncodableList& enum_list,
+    std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   virtual void CallFlutterEchoNonNullClassList(
-      const flutter::EncodableList &class_list,
-      std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
+    const flutter::EncodableList& class_list,
+    std::function<void(ErrorOr<flutter::EncodableList> reply)> result) = 0;
   virtual void CallFlutterEchoMap(
-      const flutter::EncodableMap &map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+    const flutter::EncodableMap& map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoStringMap(
-      const flutter::EncodableMap &string_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+    const flutter::EncodableMap& string_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoIntMap(
-      const flutter::EncodableMap &int_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+    const flutter::EncodableMap& int_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoEnumMap(
-      const flutter::EncodableMap &enum_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+    const flutter::EncodableMap& enum_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoClassMap(
-      const flutter::EncodableMap &class_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+    const flutter::EncodableMap& class_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoNonNullStringMap(
-      const flutter::EncodableMap &string_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+    const flutter::EncodableMap& string_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoNonNullIntMap(
-      const flutter::EncodableMap &int_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+    const flutter::EncodableMap& int_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoNonNullEnumMap(
-      const flutter::EncodableMap &enum_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+    const flutter::EncodableMap& enum_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoNonNullClassMap(
-      const flutter::EncodableMap &class_map,
-      std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
+    const flutter::EncodableMap& class_map,
+    std::function<void(ErrorOr<flutter::EncodableMap> reply)> result) = 0;
   virtual void CallFlutterEchoEnum(
-      const AnEnum &an_enum,
-      std::function<void(ErrorOr<AnEnum> reply)> result) = 0;
+    const AnEnum& an_enum,
+    std::function<void(ErrorOr<AnEnum> reply)> result) = 0;
   virtual void CallFlutterEchoAnotherEnum(
-      const AnotherEnum &another_enum,
-      std::function<void(ErrorOr<AnotherEnum> reply)> result) = 0;
+    const AnotherEnum& another_enum,
+    std::function<void(ErrorOr<AnotherEnum> reply)> result) = 0;
   virtual void CallFlutterEchoNullableBool(
-      const bool *a_bool,
-      std::function<void(ErrorOr<std::optional<bool>> reply)> result) = 0;
+    const bool* a_bool,
+    std::function<void(ErrorOr<std::optional<bool>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableInt(
-      const int64_t *an_int,
-      std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) = 0;
+    const int64_t* an_int,
+    std::function<void(ErrorOr<std::optional<int64_t>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableDouble(
-      const double *a_double,
-      std::function<void(ErrorOr<std::optional<double>> reply)> result) = 0;
+    const double* a_double,
+    std::function<void(ErrorOr<std::optional<double>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableString(
-      const std::string *a_string,
-      std::function<void(ErrorOr<std::optional<std::string>> reply)>
-          result) = 0;
+    const std::string* a_string,
+    std::function<void(ErrorOr<std::optional<std::string>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableUint8List(
-      const std::vector<uint8_t> *list,
-      std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)>
-          result) = 0;
+    const std::vector<uint8_t>* list,
+    std::function<void(ErrorOr<std::optional<std::vector<uint8_t>>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableList(
-      const flutter::EncodableList *list,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
-          result) = 0;
+    const flutter::EncodableList* list,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableEnumList(
-      const flutter::EncodableList *enum_list,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
-          result) = 0;
+    const flutter::EncodableList* enum_list,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableClassList(
-      const flutter::EncodableList *class_list,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
-          result) = 0;
+    const flutter::EncodableList* class_list,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableNonNullEnumList(
-      const flutter::EncodableList *enum_list,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
-          result) = 0;
+    const flutter::EncodableList* enum_list,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableNonNullClassList(
-      const flutter::EncodableList *class_list,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)>
-          result) = 0;
+    const flutter::EncodableList* class_list,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableList>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableMap(
-      const flutter::EncodableMap *map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
+    const flutter::EncodableMap* map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableStringMap(
-      const flutter::EncodableMap *string_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
+    const flutter::EncodableMap* string_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableIntMap(
-      const flutter::EncodableMap *int_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
+    const flutter::EncodableMap* int_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableEnumMap(
-      const flutter::EncodableMap *enum_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
+    const flutter::EncodableMap* enum_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableClassMap(
-      const flutter::EncodableMap *class_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
+    const flutter::EncodableMap* class_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableNonNullStringMap(
-      const flutter::EncodableMap *string_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
+    const flutter::EncodableMap* string_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableNonNullIntMap(
-      const flutter::EncodableMap *int_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
+    const flutter::EncodableMap* int_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableNonNullEnumMap(
-      const flutter::EncodableMap *enum_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
+    const flutter::EncodableMap* enum_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableNonNullClassMap(
-      const flutter::EncodableMap *class_map,
-      std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)>
-          result) = 0;
+    const flutter::EncodableMap* class_map,
+    std::function<void(ErrorOr<std::optional<flutter::EncodableMap>> reply)> result) = 0;
   virtual void CallFlutterEchoNullableEnum(
-      const AnEnum *an_enum,
-      std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
+    const AnEnum* an_enum,
+    std::function<void(ErrorOr<std::optional<AnEnum>> reply)> result) = 0;
   virtual void CallFlutterEchoAnotherNullableEnum(
-      const AnotherEnum *another_enum,
-      std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)>
-          result) = 0;
+    const AnotherEnum* another_enum,
+    std::function<void(ErrorOr<std::optional<AnotherEnum>> reply)> result) = 0;
   virtual void CallFlutterSmallApiEchoString(
-      const std::string &a_string,
-      std::function<void(ErrorOr<std::string> reply)> result) = 0;
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) = 0;
 
   // The codec used by HostIntegrationCoreApi.
-  static const flutter::StandardMessageCodec &GetCodec();
-  // Sets up an instance of `HostIntegrationCoreApi` to handle messages through
-  // the `binary_messenger`.
-  static void SetUp(flutter::BinaryMessenger *binary_messenger,
-                    HostIntegrationCoreApi *api);
-  static void SetUp(flutter::BinaryMessenger *binary_messenger,
-                    HostIntegrationCoreApi *api,
-                    const std::string &message_channel_suffix);
+  static const flutter::StandardMessageCodec& GetCodec();
+  // Sets up an instance of `HostIntegrationCoreApi` to handle messages through the `binary_messenger`.
+  static void SetUp(
+    flutter::BinaryMessenger* binary_messenger,
+    HostIntegrationCoreApi* api);
+  static void SetUp(
+    flutter::BinaryMessenger* binary_messenger,
+    HostIntegrationCoreApi* api,
+    const std::string& message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
-  static flutter::EncodableValue WrapError(const FlutterError &error);
-
+  static flutter::EncodableValue WrapError(const FlutterError& error);
  protected:
   HostIntegrationCoreApi() = default;
 };
 // The core interface that the Dart platform_test code implements for host
 // integration tests to call into.
 //
-// Generated class from Pigeon that represents Flutter messages that can be
-// called from C++.
+// Generated class from Pigeon that represents Flutter messages that can be called from C++.
 class FlutterIntegrationCoreApi {
  public:
-  FlutterIntegrationCoreApi(flutter::BinaryMessenger *binary_messenger);
-  FlutterIntegrationCoreApi(flutter::BinaryMessenger *binary_messenger,
-                            const std::string &message_channel_suffix);
-  static const flutter::StandardMessageCodec &GetCodec();
+  FlutterIntegrationCoreApi(flutter::BinaryMessenger* binary_messenger);
+  FlutterIntegrationCoreApi(
+    flutter::BinaryMessenger* binary_messenger,
+    const std::string& message_channel_suffix);
+  static const flutter::StandardMessageCodec& GetCodec();
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic calling.
-  void Noop(std::function<void(void)> &&on_success,
-            std::function<void(const FlutterError &)> &&on_error);
+  void Noop(
+    std::function<void(void)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Responds with an error from an async function returning a value.
   void ThrowError(
-      std::function<void(const flutter::EncodableValue *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    std::function<void(const flutter::EncodableValue*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Responds with an error from an async void function.
-  void ThrowErrorFromVoid(std::function<void(void)> &&on_success,
-                          std::function<void(const FlutterError &)> &&on_error);
+  void ThrowErrorFromVoid(
+    std::function<void(void)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed object, to test serialization and deserialization.
-  void EchoAllTypes(const AllTypes &everything,
-                    std::function<void(const AllTypes &)> &&on_success,
-                    std::function<void(const FlutterError &)> &&on_error);
+  void EchoAllTypes(
+    const AllTypes& everything,
+    std::function<void(const AllTypes&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed object, to test serialization and deserialization.
   void EchoAllNullableTypes(
-      const AllNullableTypes *everything,
-      std::function<void(const AllNullableTypes *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const AllNullableTypes* everything,
+    std::function<void(const AllNullableTypes*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns passed in arguments of multiple types.
   //
   // Tests multiple-arity FlutterApi handling.
   void SendMultipleNullableTypes(
-      const bool *a_nullable_bool, const int64_t *a_nullable_int,
-      const std::string *a_nullable_string,
-      std::function<void(const AllNullableTypes &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const bool* a_nullable_bool,
+    const int64_t* a_nullable_int,
+    const std::string* a_nullable_string,
+    std::function<void(const AllNullableTypes&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed object, to test serialization and deserialization.
   void EchoAllNullableTypesWithoutRecursion(
-      const AllNullableTypesWithoutRecursion *everything,
-      std::function<void(const AllNullableTypesWithoutRecursion *)>
-          &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const AllNullableTypesWithoutRecursion* everything,
+    std::function<void(const AllNullableTypesWithoutRecursion*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns passed in arguments of multiple types.
   //
   // Tests multiple-arity FlutterApi handling.
   void SendMultipleNullableTypesWithoutRecursion(
-      const bool *a_nullable_bool, const int64_t *a_nullable_int,
-      const std::string *a_nullable_string,
-      std::function<void(const AllNullableTypesWithoutRecursion &)>
-          &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const bool* a_nullable_bool,
+    const int64_t* a_nullable_int,
+    const std::string* a_nullable_string,
+    std::function<void(const AllNullableTypesWithoutRecursion&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed boolean, to test serialization and deserialization.
-  void EchoBool(bool a_bool, std::function<void(bool)> &&on_success,
-                std::function<void(const FlutterError &)> &&on_error);
+  void EchoBool(
+    bool a_bool,
+    std::function<void(bool)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed int, to test serialization and deserialization.
-  void EchoInt(int64_t an_int, std::function<void(int64_t)> &&on_success,
-               std::function<void(const FlutterError &)> &&on_error);
+  void EchoInt(
+    int64_t an_int,
+    std::function<void(int64_t)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed double, to test serialization and deserialization.
-  void EchoDouble(double a_double, std::function<void(double)> &&on_success,
-                  std::function<void(const FlutterError &)> &&on_error);
+  void EchoDouble(
+    double a_double,
+    std::function<void(double)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed string, to test serialization and deserialization.
-  void EchoString(const std::string &a_string,
-                  std::function<void(const std::string &)> &&on_success,
-                  std::function<void(const FlutterError &)> &&on_error);
+  void EchoString(
+    const std::string& a_string,
+    std::function<void(const std::string&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed byte list, to test serialization and deserialization.
   void EchoUint8List(
-      const std::vector<uint8_t> &list,
-      std::function<void(const std::vector<uint8_t> &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const std::vector<uint8_t>& list,
+    std::function<void(const std::vector<uint8_t>&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoList(
-      const flutter::EncodableList &list,
-      std::function<void(const flutter::EncodableList &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList& list,
+    std::function<void(const flutter::EncodableList&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoEnumList(
-      const flutter::EncodableList &enum_list,
-      std::function<void(const flutter::EncodableList &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList& enum_list,
+    std::function<void(const flutter::EncodableList&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoClassList(
-      const flutter::EncodableList &class_list,
-      std::function<void(const flutter::EncodableList &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList& class_list,
+    std::function<void(const flutter::EncodableList&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoNonNullEnumList(
-      const flutter::EncodableList &enum_list,
-      std::function<void(const flutter::EncodableList &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList& enum_list,
+    std::function<void(const flutter::EncodableList&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoNonNullClassList(
-      const flutter::EncodableList &class_list,
-      std::function<void(const flutter::EncodableList &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList& class_list,
+    std::function<void(const flutter::EncodableList&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
-  void EchoMap(const flutter::EncodableMap &map,
-               std::function<void(const flutter::EncodableMap &)> &&on_success,
-               std::function<void(const FlutterError &)> &&on_error);
+  void EchoMap(
+    const flutter::EncodableMap& map,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoStringMap(
-      const flutter::EncodableMap &string_map,
-      std::function<void(const flutter::EncodableMap &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap& string_map,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoIntMap(
-      const flutter::EncodableMap &int_map,
-      std::function<void(const flutter::EncodableMap &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap& int_map,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoEnumMap(
-      const flutter::EncodableMap &enum_map,
-      std::function<void(const flutter::EncodableMap &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap& enum_map,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoClassMap(
-      const flutter::EncodableMap &class_map,
-      std::function<void(const flutter::EncodableMap &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap& class_map,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNonNullStringMap(
-      const flutter::EncodableMap &string_map,
-      std::function<void(const flutter::EncodableMap &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap& string_map,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNonNullIntMap(
-      const flutter::EncodableMap &int_map,
-      std::function<void(const flutter::EncodableMap &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap& int_map,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNonNullEnumMap(
-      const flutter::EncodableMap &enum_map,
-      std::function<void(const flutter::EncodableMap &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap& enum_map,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNonNullClassMap(
-      const flutter::EncodableMap &class_map,
-      std::function<void(const flutter::EncodableMap &)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap& class_map,
+    std::function<void(const flutter::EncodableMap&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed enum to test serialization and deserialization.
-  void EchoEnum(const AnEnum &an_enum,
-                std::function<void(const AnEnum &)> &&on_success,
-                std::function<void(const FlutterError &)> &&on_error);
+  void EchoEnum(
+    const AnEnum& an_enum,
+    std::function<void(const AnEnum&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed enum to test serialization and deserialization.
-  void EchoAnotherEnum(const AnotherEnum &another_enum,
-                       std::function<void(const AnotherEnum &)> &&on_success,
-                       std::function<void(const FlutterError &)> &&on_error);
+  void EchoAnotherEnum(
+    const AnotherEnum& another_enum,
+    std::function<void(const AnotherEnum&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed boolean, to test serialization and deserialization.
-  void EchoNullableBool(const bool *a_bool,
-                        std::function<void(const bool *)> &&on_success,
-                        std::function<void(const FlutterError &)> &&on_error);
+  void EchoNullableBool(
+    const bool* a_bool,
+    std::function<void(const bool*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed int, to test serialization and deserialization.
-  void EchoNullableInt(const int64_t *an_int,
-                       std::function<void(const int64_t *)> &&on_success,
-                       std::function<void(const FlutterError &)> &&on_error);
+  void EchoNullableInt(
+    const int64_t* an_int,
+    std::function<void(const int64_t*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed double, to test serialization and deserialization.
-  void EchoNullableDouble(const double *a_double,
-                          std::function<void(const double *)> &&on_success,
-                          std::function<void(const FlutterError &)> &&on_error);
+  void EchoNullableDouble(
+    const double* a_double,
+    std::function<void(const double*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed string, to test serialization and deserialization.
-  void EchoNullableString(const std::string *a_string,
-                          std::function<void(const std::string *)> &&on_success,
-                          std::function<void(const FlutterError &)> &&on_error);
+  void EchoNullableString(
+    const std::string* a_string,
+    std::function<void(const std::string*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed byte list, to test serialization and deserialization.
   void EchoNullableUint8List(
-      const std::vector<uint8_t> *list,
-      std::function<void(const std::vector<uint8_t> *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const std::vector<uint8_t>* list,
+    std::function<void(const std::vector<uint8_t>*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoNullableList(
-      const flutter::EncodableList *list,
-      std::function<void(const flutter::EncodableList *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList* list,
+    std::function<void(const flutter::EncodableList*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoNullableEnumList(
-      const flutter::EncodableList *enum_list,
-      std::function<void(const flutter::EncodableList *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList* enum_list,
+    std::function<void(const flutter::EncodableList*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoNullableClassList(
-      const flutter::EncodableList *class_list,
-      std::function<void(const flutter::EncodableList *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList* class_list,
+    std::function<void(const flutter::EncodableList*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoNullableNonNullEnumList(
-      const flutter::EncodableList *enum_list,
-      std::function<void(const flutter::EncodableList *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList* enum_list,
+    std::function<void(const flutter::EncodableList*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed list, to test serialization and deserialization.
   void EchoNullableNonNullClassList(
-      const flutter::EncodableList *class_list,
-      std::function<void(const flutter::EncodableList *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableList* class_list,
+    std::function<void(const flutter::EncodableList*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableMap(
-      const flutter::EncodableMap *map,
-      std::function<void(const flutter::EncodableMap *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap* map,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableStringMap(
-      const flutter::EncodableMap *string_map,
-      std::function<void(const flutter::EncodableMap *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap* string_map,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableIntMap(
-      const flutter::EncodableMap *int_map,
-      std::function<void(const flutter::EncodableMap *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap* int_map,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableEnumMap(
-      const flutter::EncodableMap *enum_map,
-      std::function<void(const flutter::EncodableMap *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap* enum_map,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableClassMap(
-      const flutter::EncodableMap *class_map,
-      std::function<void(const flutter::EncodableMap *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap* class_map,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableNonNullStringMap(
-      const flutter::EncodableMap *string_map,
-      std::function<void(const flutter::EncodableMap *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap* string_map,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableNonNullIntMap(
-      const flutter::EncodableMap *int_map,
-      std::function<void(const flutter::EncodableMap *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap* int_map,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableNonNullEnumMap(
-      const flutter::EncodableMap *enum_map,
-      std::function<void(const flutter::EncodableMap *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap* enum_map,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed map, to test serialization and deserialization.
   void EchoNullableNonNullClassMap(
-      const flutter::EncodableMap *class_map,
-      std::function<void(const flutter::EncodableMap *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const flutter::EncodableMap* class_map,
+    std::function<void(const flutter::EncodableMap*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed enum to test serialization and deserialization.
-  void EchoNullableEnum(const AnEnum *an_enum,
-                        std::function<void(const AnEnum *)> &&on_success,
-                        std::function<void(const FlutterError &)> &&on_error);
+  void EchoNullableEnum(
+    const AnEnum* an_enum,
+    std::function<void(const AnEnum*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed enum to test serialization and deserialization.
   void EchoAnotherNullableEnum(
-      const AnotherEnum *another_enum,
-      std::function<void(const AnotherEnum *)> &&on_success,
-      std::function<void(const FlutterError &)> &&on_error);
+    const AnotherEnum* another_enum,
+    std::function<void(const AnotherEnum*)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // A no-op function taking no arguments and returning no value, to sanity
   // test basic asynchronous calling.
-  void NoopAsync(std::function<void(void)> &&on_success,
-                 std::function<void(const FlutterError &)> &&on_error);
+  void NoopAsync(
+    std::function<void(void)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
   // Returns the passed in generic Object asynchronously.
-  void EchoAsyncString(const std::string &a_string,
-                       std::function<void(const std::string &)> &&on_success,
-                       std::function<void(const FlutterError &)> &&on_error);
-
+  void EchoAsyncString(
+    const std::string& a_string,
+    std::function<void(const std::string&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
  private:
-  flutter::BinaryMessenger *binary_messenger_;
+  flutter::BinaryMessenger* binary_messenger_;
   std::string message_channel_suffix_;
 };
 
 // An API that can be implemented for minimal, compile-only tests.
 //
-// Generated interface from Pigeon that represents a handler of messages from
-// Flutter.
+// Generated interface from Pigeon that represents a handler of messages from Flutter.
 class HostTrivialApi {
  public:
-  HostTrivialApi(const HostTrivialApi &) = delete;
-  HostTrivialApi &operator=(const HostTrivialApi &) = delete;
+  HostTrivialApi(const HostTrivialApi&) = delete;
+  HostTrivialApi& operator=(const HostTrivialApi&) = delete;
   virtual ~HostTrivialApi() {}
   virtual std::optional<FlutterError> Noop() = 0;
 
   // The codec used by HostTrivialApi.
-  static const flutter::StandardMessageCodec &GetCodec();
-  // Sets up an instance of `HostTrivialApi` to handle messages through the
-  // `binary_messenger`.
-  static void SetUp(flutter::BinaryMessenger *binary_messenger,
-                    HostTrivialApi *api);
-  static void SetUp(flutter::BinaryMessenger *binary_messenger,
-                    HostTrivialApi *api,
-                    const std::string &message_channel_suffix);
+  static const flutter::StandardMessageCodec& GetCodec();
+  // Sets up an instance of `HostTrivialApi` to handle messages through the `binary_messenger`.
+  static void SetUp(
+    flutter::BinaryMessenger* binary_messenger,
+    HostTrivialApi* api);
+  static void SetUp(
+    flutter::BinaryMessenger* binary_messenger,
+    HostTrivialApi* api,
+    const std::string& message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
-  static flutter::EncodableValue WrapError(const FlutterError &error);
-
+  static flutter::EncodableValue WrapError(const FlutterError& error);
  protected:
   HostTrivialApi() = default;
 };
 // A simple API implemented in some unit tests.
 //
-// Generated interface from Pigeon that represents a handler of messages from
-// Flutter.
+// Generated interface from Pigeon that represents a handler of messages from Flutter.
 class HostSmallApi {
  public:
-  HostSmallApi(const HostSmallApi &) = delete;
-  HostSmallApi &operator=(const HostSmallApi &) = delete;
+  HostSmallApi(const HostSmallApi&) = delete;
+  HostSmallApi& operator=(const HostSmallApi&) = delete;
   virtual ~HostSmallApi() {}
-  virtual void Echo(const std::string &a_string,
-                    std::function<void(ErrorOr<std::string> reply)> result) = 0;
-  virtual void VoidVoid(
-      std::function<void(std::optional<FlutterError> reply)> result) = 0;
+  virtual void Echo(
+    const std::string& a_string,
+    std::function<void(ErrorOr<std::string> reply)> result) = 0;
+  virtual void VoidVoid(std::function<void(std::optional<FlutterError> reply)> result) = 0;
 
   // The codec used by HostSmallApi.
-  static const flutter::StandardMessageCodec &GetCodec();
-  // Sets up an instance of `HostSmallApi` to handle messages through the
-  // `binary_messenger`.
-  static void SetUp(flutter::BinaryMessenger *binary_messenger,
-                    HostSmallApi *api);
-  static void SetUp(flutter::BinaryMessenger *binary_messenger,
-                    HostSmallApi *api,
-                    const std::string &message_channel_suffix);
+  static const flutter::StandardMessageCodec& GetCodec();
+  // Sets up an instance of `HostSmallApi` to handle messages through the `binary_messenger`.
+  static void SetUp(
+    flutter::BinaryMessenger* binary_messenger,
+    HostSmallApi* api);
+  static void SetUp(
+    flutter::BinaryMessenger* binary_messenger,
+    HostSmallApi* api,
+    const std::string& message_channel_suffix);
   static flutter::EncodableValue WrapError(std::string_view error_message);
-  static flutter::EncodableValue WrapError(const FlutterError &error);
-
+  static flutter::EncodableValue WrapError(const FlutterError& error);
  protected:
   HostSmallApi() = default;
 };
 // A simple API called in some unit tests.
 //
-// Generated class from Pigeon that represents Flutter messages that can be
-// called from C++.
+// Generated class from Pigeon that represents Flutter messages that can be called from C++.
 class FlutterSmallApi {
  public:
-  FlutterSmallApi(flutter::BinaryMessenger *binary_messenger);
-  FlutterSmallApi(flutter::BinaryMessenger *binary_messenger,
-                  const std::string &message_channel_suffix);
-  static const flutter::StandardMessageCodec &GetCodec();
-  void EchoWrappedList(const TestMessage &msg,
-                       std::function<void(const TestMessage &)> &&on_success,
-                       std::function<void(const FlutterError &)> &&on_error);
-  void EchoString(const std::string &a_string,
-                  std::function<void(const std::string &)> &&on_success,
-                  std::function<void(const FlutterError &)> &&on_error);
-
+  FlutterSmallApi(flutter::BinaryMessenger* binary_messenger);
+  FlutterSmallApi(
+    flutter::BinaryMessenger* binary_messenger,
+    const std::string& message_channel_suffix);
+  static const flutter::StandardMessageCodec& GetCodec();
+  void EchoWrappedList(
+    const TestMessage& msg,
+    std::function<void(const TestMessage&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
+  void EchoString(
+    const std::string& a_string,
+    std::function<void(const std::string&)>&& on_success,
+    std::function<void(const FlutterError&)>&& on_error);
  private:
-  flutter::BinaryMessenger *binary_messenger_;
+  flutter::BinaryMessenger* binary_messenger_;
   std::string message_channel_suffix_;
 };
 

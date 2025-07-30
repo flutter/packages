@@ -158,19 +158,17 @@ class _FfiType {
       case 'void':
         return 'NSVoid';
       case 'bool':
-        return 'NSBoolean';
       case 'int':
-        return 'NSLong';
       case 'double':
-        return 'NSDouble';
-      case 'Uint8List':
-        return 'NSByteArray';
-      case 'Int32List':
-        return 'NSIntArray';
-      case 'Int64List':
-        return 'NSLongArray';
-      case 'Float64List':
-        return 'NSDoubleArray';
+        return 'NSNumber';
+      // case 'Uint8List':
+      //   return 'NSByteArray';
+      // case 'Int32List':
+      //   return 'NSIntArray';
+      // case 'Int64List':
+      //   return 'NSLongArray';
+      // case 'Float64List':
+      //   return 'NSDoubleArray';
       case 'Object':
         return 'NSObject';
       case 'List':
@@ -2560,55 +2558,56 @@ class _PigeonJniCodec {
     indent.newln();
     indent.format('''
 class _PigeonFfiCodec {
-  static Object? readValue(NSObject? value) {
+  static Object? readValue(NSObject? value, [Type? outType]) {
     if (value == null) {
       return null;
-    } else if (value.isA<NSLong>(NSLong.type)) {
-      return (value.as(NSLong.type)).longValue();
-    } else if (value.isA<NSDouble>(NSDouble.type)) {
-      return (value.as(NSDouble.type)).doubleValue();
-    } else if (value.isA<NSString>(NSString.type)) {
-      return (value.as(NSString.type)).toDartString();
-    } else if (value.isA<NSBoolean>(NSBoolean.type)) {
-      return (value.as(NSBoolean.type)).booleanValue();
-    } else if (value.isA<NSByteArray>(NSByteArray.type)) {
-      final Uint8List list = Uint8List(value.as(NSByteArray.type).length);
-      for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
-        list[i] = value.as(NSByteArray.type)[i];
+    } else if (value is NSNumber) {
+      switch (outType) {
+        case const (int):
+          return value.intValue;
+        case const (double):
+          return value.doubleValue;
+        case const (bool):
+          return value.boolValue;
+        default:
+          throw ArgumentError.value(value);
       }
-      return list;
-    } else if (value.isA<NSIntArray>(NSIntArray.type)) {
-      final Int32List list = Int32List(value.as(NSIntArray.type).length);
-      for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
-        list[i] = value.as(NSIntArray.type)[i];
-      }
-      return list;
-    } else if (value.isA<NSLongArray>(NSLongArray.type)) {
-      final Int64List list = Int64List(value.as(NSLongArray.type).length);
-      for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
-        list[i] = value.as(NSLongArray.type)[i];
-      }
-      return list;
-    } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
-      final Float64List list = Float64List(value.as(NSDoubleArray.type).length);
-      for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
-        list[i] = value.as(NSDoubleArray.type)[i];
-      }
-      return list;
-    } else if (value.isA<NSMutableArray<NSObject>>(NSMutableArray.type<NSObject>(NSObject.type))) {
-      final NSMutableArray list = NSMutableArray();
+    } else if (value is NSString) {
+      return value.toDartString();
+      // } else if (value.isA<NSByteArray>(NSByteArray.type)) {
+      //   final Uint8List list = Uint8List(value.as(NSByteArray.type).length);
+      //   for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
+      //     list[i] = value.as(NSByteArray.type)[i];
+      //   }
+      //   return list;
+      // } else if (value.isA<NSIntArray>(NSIntArray.type)) {
+      //   final Int32List list = Int32List(value.as(NSIntArray.type).length);
+      //   for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
+      //     list[i] = value.as(NSIntArray.type)[i];
+      //   }
+      //   return list;
+      // } else if (value.isA<NSLongArray>(NSLongArray.type)) {
+      //   final Int64List list = Int64List(value.as(NSLongArray.type).length);
+      //   for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
+      //     list[i] = value.as(NSLongArray.type)[i];
+      //   }
+      //   return list;
+      // } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
+      //   final Float64List list = Float64List(value.as(NSDoubleArray.type).length);
+      //   for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
+      //     list[i] = value.as(NSDoubleArray.type)[i];
+      //   }
+      //   return list;
+    } else if (value is NSMutableArray) {
       final List<Object?> res = <Object?>[];
-      for (int i = 0; i < list.length; i++) {
-        res.add(readValue(list[i]));
+      for (int i = 0; i < value.length; i++) {
+        res.add(readValue(value[i]  as NSObject?));
       }
       return res;
-    } else if (value.isA<NSDictionary<NSObject, NSObject>>(
-        NSDictionary.type<NSObject, NSObject>(NSObject.type, NSObject.type))) {
-      final NSDictionary map =
-          NSDictionary();
+    } else if (value is NSDictionary) {
       final Map<Object?, Object?> res = <Object?, Object?>{};
-      for (final MapEntry<NSObject?, NSObject?> entry in map.entries) {
-        res[readValue(entry.key)] = readValue(entry.value);
+      for (final MapEntry<NSCopying?, ObjCObjectBase?> entry in value.entries) {
+        res[readValue(entry.key as NSObject?)] = readValue(entry.value as NSObject?);
       }
       return res;
     ${root.classes.map((Class dataClass) {
@@ -2636,42 +2635,42 @@ class _PigeonFfiCodec {
     if (value == null) {
       return null as T;
     } else if (value is bool) {
-      return NSBoolean(value) as T;
+      return NSNumber().initWithBool(value) as T;
     } else if (value is double) {
-      return NSDouble(value) as T;
+      return NSNumber().initWithDouble(value) as T;
       // ignore: avoid_double_and_int_checks
     } else if (value is int) {
-      return NSLong(value) as T;
+      return NSNumber().initWithInt(value) as T;
     } else if (value is String) {
-      return NSString.fromString(value) as T;
-    } else if (isTypeOrNullableType<NSByteArray>(T)) {
-      value as List<int>;
-      final NSByteArray array = NSByteArray(value.length);
-      for (int i = 0; i < value.length; i++) {
-        array[i] = value[i];
-      }
-      return array as T;
-    } else if (isTypeOrNullableType<NSIntArray>(T)) {
-      value as List<int>;
-      final NSIntArray array = NSIntArray(value.length);
-      for (int i = 0; i < value.length; i++) {
-        array[i] = value[i];
-      }
-      return array as T;
-    } else if (isTypeOrNullableType<NSLongArray>(T)) {
-      value as List<int>;
-      final NSLongArray array = NSLongArray(value.length);
-      for (int i = 0; i < value.length; i++) {
-        array[i] = value[i];
-      }
-      return array as T;
-    } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
-      value as List<double>;
-      final NSDoubleArray array = NSDoubleArray(value.length);
-      for (int i = 0; i < value.length; i++) {
-        array[i] = value[i];
-      }
-      return array as T;
+      return NSString(value) as T;
+    // } else if (isTypeOrNullableType<NSByteArray>(T)) {
+    //   value as List<int>;
+    //   final NSByteArray array = NSByteArray(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i];
+    //   }
+    //   return array as T;
+    // } else if (isTypeOrNullableType<NSIntArray>(T)) {
+    //   value as List<int>;
+    //   final NSIntArray array = NSIntArray(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i];
+    //   }
+    //   return array as T;
+    // } else if (isTypeOrNullableType<NSLongArray>(T)) {
+    //   value as List<int>;
+    //   final NSLongArray array = NSLongArray(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i];
+    //   }
+    //   return array as T;
+    // } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
+    //   value as List<double>;
+    //   final NSDoubleArray array = NSDoubleArray(value.length);
+    //   for (int i = 0; i < value.length; i++) {
+    //     array[i] = value[i];
+    //   }
+    //   return array as T;
     } else if (value is List) {
       final NSMutableArray res = NSMutableArray();
       for (int i = 0; i < value.length; i++) {
@@ -2679,10 +2678,9 @@ class _PigeonFfiCodec {
       }
       return res as T;
     } else if (value is Map) {
-      final NSDictionary res = NSDictionary();
+      final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<Object?, Object?> entry in value.entries) {
-        res[writeValue(entry.key)] = 
-            writeValue(entry.value);
+        res.setObject(writeValue(entry.value), forKey: writeValue(entry.key));
       }
       return res as T;
     ${root.classes.map((Class dataClass) {
