@@ -78,8 +78,9 @@ final class _ImageReaderRotatedPreviewState
   late StreamSubscription<DeviceOrientation> deviceOrientationSubscription;
 
   Future<int> _getCurrentDefaultDisplayRotationDegrees() async {
-    final int currentDefaultDisplayRotationQuarterTurns =
-        await widget.deviceOrientationManager.getDefaultDisplayRotation();
+    final int currentDefaultDisplayRotationQuarterTurns = await widget
+        .deviceOrientationManager
+        .getDefaultDisplayRotation();
     return getQuarterTurnsFromSurfaceRotationConstant(
           currentDefaultDisplayRotationQuarterTurns,
         ) *
@@ -151,9 +152,11 @@ final class _ImageReaderRotatedPreviewState
         if (snapshot.connectionState == ConnectionState.done) {
           final int currentDefaultDisplayRotation = snapshot.data!;
           print(
-            'currentDefaultDisplayRotation: $currentDefaultDisplayRotation',
+            'CAMILLE:::::::::::::::::::::::: currentDefaultDisplayRotation detected for preview: $currentDefaultDisplayRotation',
           );
-          print('deviceOrientation: $deviceOrientation');
+          print(
+            'CAMILLE:::::::::::::::::::::::: deviceOrientation detected for preview: $deviceOrientation',
+          );
           final double rotationDegrees = _computeRotationDegrees(
             deviceOrientation,
             currentDefaultDisplayRotation,

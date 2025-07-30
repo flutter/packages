@@ -72,8 +72,8 @@ public class DeviceOrientationManager {
     return new OrientationEventListener(getContext()) {
       @Override
       public void onOrientationChanged(int orientation) {
-        System.out.println("CAMILLE: ORIENTAITON ---------------" + Integer.toString(orientation));
-        System.out.println("CAMILLE: SNAP TO --------------" + Integer.toString(UseCase.snapToSurfaceRotation(orientation)));
+        System.out.println("CAMILLE:::::::::::::::::::::::::::::::: NEW ORIENTAITON ---------------" + Integer.toString(orientation));
+        // System.out.println("CAMILLE:::::::::::::::::::::::::::::::: CAMERAX SNAP TO SUGGESTION --------------" + Integer.toString(UseCase.snapToSurfaceRotation(orientation)));
         handleUiOrientationChange();
       }
     };
