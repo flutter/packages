@@ -35,12 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// A block that will be called when dispose is called.
 @property(nonatomic, nullable, copy) void (^onDisposed)(void);
 
-/// Initializes a new instance of FVPVideoPlayer with the given asset, AV factory, and view
-/// provider.
-- (instancetype)initWithAsset:(NSString *)asset
-                    avFactory:(id<FVPAVFactory>)avFactory
-                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
-
 /// Initializes a new instance of FVPVideoPlayer with the given URL, HTTP headers, AV factory, and
 /// view provider.
 - (instancetype)initWithURL:(NSURL *)url
