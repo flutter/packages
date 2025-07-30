@@ -40,8 +40,8 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 
     StreamIntsStreamHandler.register(with: binaryMessenger, streamHandler: SendInts())
     StreamEventsStreamHandler.register(with: binaryMessenger, streamHandler: SendEvents())
-      host = Host(name: "Host")
-      host = Host.getInstance(name: "Host")
+    host = Host(name: "Host")
+    host = Host.getInstance(name: "Host")
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {

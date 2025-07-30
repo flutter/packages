@@ -51,12 +51,30 @@ import 'package:ffigen/src/config_provider/config_types.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:swiftgen/swiftgen.dart';
 
-Future<void> main() async {
-  final List<String> classes = <String>[
-    'JniAllTypes',
-    'HostIntegrationCoreApi',
-    'Host',
-  ];
+  ''');
+    indent.writeScoped('Future<void> main() async {', '}', () {
+      indent.writeScoped('final List<String> classes = <String>[', '];', () {
+        indent.inc(1);
+        for (final Api api in root.apis) {
+          if (api is AstHostApi || api is AstFlutterApi) {
+            indent.writeln("'${api.name}',");
+            indent.writeln("'${api.name}Setup',");
+          }
+        }
+        for (final Class dataClass in root.classes) {
+          indent.writeln("'${dataClass.name}',");
+        }
+        indent.dec(1);
+      });
+      indent.writeScoped('final List<String> enums = <String>[', '];', () {
+        indent.inc(1);
+        for (final Enum enumType in root.enums) {
+          indent.writeln("'${enumType.name}',");
+        }
+        indent.dec(1);
+      });
+
+      indent.format('''
   await SwiftGen(
     target: Target(
       // triple: 'x86_64-apple-macosx14.0',
@@ -67,142 +85,34 @@ Future<void> main() async {
       ),
     ),
     input: ObjCCompatibleSwiftFileInput(
-      module: 'JniTests',
-      files: <Uri>[
-        Uri.file(
-            '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/ios/Classes/JniTests.gen.swift')
-        // '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/macos/Classes/JniTests.gen.swift')
-      ],
+      module: '${generatorOptions.swiftOptions.ffiModuleName ?? ''}',
+      files: <Uri>[Uri.file('${generatorOptions.swiftOptions.swiftOut}')],
     ),
     tempDirectory: Uri.directory('temp'),
-    outputModule: 'JniTests',
+    outputModule: '${generatorOptions.swiftOptions.ffiModuleName ?? ''}',
     ffigen: FfiGenConfig(
-      output: Uri.file(
-          '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/jni_tests.gen.ffi.dart'),
-      outputObjC: Uri.file(
-          '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/ios/Classes/jni_tests.gen.m'),
-      // '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/macos/Classes/jni_tests.gen.m'),
+      output: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.ffi.dart'),
+      outputObjC: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.m'),
       externalVersions: fg.ExternalVersions(
         ios: fg.Versions(min: Version(12, 0, 0)),
-        // macos: fg.Versions(min: Version(10, 14, 0)),
+        macos: fg.Versions(min: Version(10, 14, 0)),
       ),
       objcInterfaces: fg.DeclarationFilters(
-        shouldInclude: (Declaration decl) =>
-            classes.contains(decl.originalName),
+        shouldInclude: (Declaration decl) => classes.contains(decl.originalName),
+      ),
+      enumClassDecl: fg.DeclarationFilters(
+        shouldInclude: (Declaration decl) => enums.contains(decl.originalName),
       ),
       preamble: \'''
-// Copyright 2013 The Flutter Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
 
 // ignore_for_file: always_specify_types, camel_case_types, non_constant_identifier_names, unnecessary_non_null_assertion, unused_element, unused_field
 // coverage:ignore-file
-        \''',
+\''',
     ),
   ).generate();
 
-}
-
-''');
-// import 'package:ffigen/ffigen.dart' as fg;
-// import 'package:ffigen/src/config_provider/config_types.dart';
-// import 'package:pub_semver/pub_semver.dart';
-// import 'package:swiftgen/swiftgen.dart';
-
-// Future<void> main() async {
-//   final List<String> classes = <String>[
-//   ''');
-//     indent.inc(2);
-//     for (final Api api in root.apis) {
-//       if (api is AstHostApi || api is AstFlutterApi) {
-//         indent.writeln("'${api.name}',");
-//         // indent.writeln("'${api.name}Registrar',");
-//       }
-//     }
-//     for (final Class dataClass in root.classes) {
-//       indent.writeln("'${dataClass.name}',");
-//     }
-//     for (final Enum enumType in root.enums) {
-//       indent.writeln("'${enumType.name}',");
-//     }
-//     indent.dec(2);
-
-//     indent.format('''
-//   ];
-//   await SwiftGen(
-//     target: Target(
-//       // triple: 'x86_64-apple-macosx14.0',
-//       triple: 'arm64-apple-ios',
-//       sdk: Uri.directory(
-//         '/Applications/Xcode-beta.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk',
-//         // '/Applications/Xcode-beta.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk',
-//       ),
-//     ),
-//     input: ObjCCompatibleSwiftFileInput(
-//       module: 'JniTests',
-//       files: <Uri>[Uri.file('${generatorOptions.swiftOptions.swiftOut}')],
-//     ),
-//     tempDirectory: Uri.directory('temp'),
-//     outputModule: 'JniTests',
-//     ffigen: FfiGenConfig(
-//       output: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.ffi.dart'),
-//       outputObjC: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.m'),
-//       externalVersions: fg.ExternalVersions(
-//         ios: fg.Versions(min: Version(12, 0, 0)),
-//         macos: fg.Versions(min: Version(10, 14, 0)),
-//       ),
-//       objcInterfaces: fg.DeclarationFilters(
-//         shouldInclude: (Declaration decl) => classes.contains(decl.originalName),
-//       ),
-//       preamble: \'''
-// // ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
-
-// // ignore_for_file: always_specify_types, camel_case_types, non_constant_identifier_names, unnecessary_non_null_assertion, unused_element, unused_field
-// // coverage:ignore-file
-// \''',
-//     ),
-//   ).generate();
-
-//   final result = Process.runSync('swiftc', <String>[
-//     '-emit-library',
-//     '-o',
-//     'jni_tests.gen.dylib',
-//     '-module-name',
-//     'JniTests',
-//     '-framework',
-//     'Foundation',
-//     '${generatorOptions.swiftOptions.swiftOut}',
-//   ]);
-//   if (result.exitCode != 0) {
-//     print('Failed to build the swift wrapper library');
-//     print(result.stdout);
-//     print(result.stderr);
-//   }
-// }
-//       ''');
-//     // indent.writeScoped('// objc-interfaces:', '', () {
-//     //   indent.writeScoped('// include:', '', () {
-//     //     for (final Api api in root.apis) {
-//     //       if (api is AstHostApi || api is AstFlutterApi) {
-//     //         indent.writeln("// - '${api.name}'");
-//     //         indent.writeln("// - '${api.name}Registrar'");
-//     //       }
-//     //     }
-//     //     for (final Class dataClass in root.classes) {
-//     //       indent.writeln("// - '${dataClass.name}'");
-//     //     }
-//     //     for (final Enum enumType in root.enums) {
-//     //       indent.writeln("// - '${enumType.name}'");
-//     //     }
-//     //   });
-//     //   indent.writeScoped('// include:', '', () {
-//     //     for (final Class dataClass in root.classes) {
-//     //       indent.writeln("// '${dataClass.name}': '${dataClass.name}'");
-//     //     }
-//     //     for (final Enum enumType in root.enums) {
-//     //       indent.writeln("// '${enumType.name}': '${enumType.name}'");
-//     //     }
-//     //   });
-//     // });
+      ''');
+    });
   }
 }

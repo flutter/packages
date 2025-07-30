@@ -325,10 +325,7 @@ Future<int> runPigeon({
       copyrightHeader: copyrightHeader,
       dartOut: dartOut,
       dartTestOut: dartTestOut,
-      dartOptions: DartOptions(
-        useJni: kotlinUseJni,
-        useFfi: swiftUseFfi,
-      ),
+      dartOptions: const DartOptions(),
       cppHeaderOut: cppHeaderOut,
       cppSourceOut: cppSourceOut,
       cppOptions: CppOptions(namespace: cppNamespace),

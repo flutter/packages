@@ -1,16 +1,16 @@
-// // Copyright 2013 The Flutter Authors. All rights reserved.
-// // Use of this source code is governed by a BSD-style license that can be
-// // found in the LICENSE file.
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-// // ignore_for_file: public_member_api_docs
+// ignore_for_file: public_member_api_docs
 
-// import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart';
 
-// import 'src/generated/jni_tests.gen.dart';
+import 'src/generated/jni_tests.gen.dart';
 
-// const int biggerThanBigInt = 3000000000;
-// const int regularInt = 42;
-// const double doublePi = 3.14159;
+const int biggerThanBigInt = 3000000000;
+const int regularInt = 42;
+const double doublePi = 3.14159;
 
 // final List<Object> nonNullList = <Object>[
 //   'Thing 1',

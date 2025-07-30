@@ -112,6 +112,8 @@ class InternalPigeonOptions {
                 dartOut: options.dartOut,
                 testOut: options.dartTestOut,
                 copyrightHeader: copyrightHeader,
+                useJni: options.kotlinOptions?.useJni ?? false,
+                useFfi: options.swiftOptions?.useFfi ?? false,
               ),
         copyrightHeader = options.copyrightHeader != null
             ? _lineReader(path.posix
