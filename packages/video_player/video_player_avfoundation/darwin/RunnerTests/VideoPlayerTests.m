@@ -8,6 +8,7 @@
 
 #import <OCMock/OCMock.h>
 #import <video_player_avfoundation/AVAssetTrackUtils.h>
+#import <video_player_avfoundation/FVPEventBridge.h>
 #import <video_player_avfoundation/FVPNativeVideoViewFactory.h>
 #import <video_player_avfoundation/FVPTextureBasedVideoPlayer_Test.h>
 #import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
@@ -160,6 +161,55 @@
                                               callback:(void (^)(void))callback {
   self.fireDisplayLink = callback;
   return self.displayLink;
+}
+
+@end
+
+#pragma mark -
+
+@interface StubEventListener : NSObject <FVPVideoEventListener>
+
+@property(nonatomic) XCTestExpectation *initializationExpectation;
+@property(nonatomic) int64_t initializationDuration;
+@property(nonatomic) CGSize initialiaztionSize;
+
+- (instancetype)initWithInitalizationExpectation:(XCTestExpectation *)expectation;
+
+@end
+
+@implementation StubEventListener
+
+- (instancetype)initWithInitalizationExpectation:(XCTestExpectation *)expectation {
+  self = [super init];
+  _initializationExpectation = expectation;
+  return self;
+}
+
+- (void)videoPlayerDidComplete {
+}
+
+- (void)videoPlayerDidEndBuffering {
+}
+
+- (void)videoPlayerDidErrorWithMessage:(NSString *)errorMessage {
+}
+
+- (void)videoPlayerDidInitializeWithDuration:(int64_t)duration size:(CGSize)size {
+  [self.initializationExpectation fulfill];
+  self.initializationDuration = duration;
+  self.initialiaztionSize = size;
+}
+
+- (void)videoPlayerDidSetPlaying:(BOOL)playing {
+}
+
+- (void)videoPlayerDidStartBuffering {
+}
+
+- (void)videoPlayerDidUpdateBufferRegions:(NSArray<NSArray<NSValue *> *> *)regions {
+}
+
+- (void)videoPlayerWasDisposed {
 }
 
 @end
@@ -477,16 +527,19 @@
   AVPlayer *avPlayer = player.player;
   [avPlayer play];
 
-  [player onListenWithArguments:nil
-                      eventSink:^(NSDictionary<NSString *, id> *event) {
-                        if ([event[@"event"] isEqualToString:@"bufferingEnd"]) {
-                          XCTAssertTrue(avPlayer.currentItem.isPlaybackLikelyToKeepUp);
-                        }
+  // TODO(stuartmorgan): Update this test to instead use a mock listener, and add separate unit
+  // tests of FVPEventBridge.
+  [(NSObject<FlutterStreamHandler> *)player.eventListener
+      onListenWithArguments:nil
+                  eventSink:^(NSDictionary<NSString *, id> *event) {
+                    if ([event[@"event"] isEqualToString:@"bufferingEnd"]) {
+                      XCTAssertTrue(avPlayer.currentItem.isPlaybackLikelyToKeepUp);
+                    }
 
-                        if ([event[@"event"] isEqualToString:@"bufferingStart"]) {
-                          XCTAssertFalse(avPlayer.currentItem.isPlaybackLikelyToKeepUp);
-                        }
-                      }];
+                    if ([event[@"event"] isEqualToString:@"bufferingStart"]) {
+                      XCTAssertFalse(avPlayer.currentItem.isPlaybackLikelyToKeepUp);
+                    }
+                  }];
   XCTestExpectation *bufferingStateExpectation =
       [self expectationWithDescription:@"bufferingState"];
   NSTimeInterval timeout = 10;
@@ -498,39 +551,39 @@
 }
 
 - (void)testVideoControls {
-  NSDictionary<NSString *, id> *videoInitialization =
+  StubEventListener *eventListener =
       [self sanityTestURI:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"];
-  XCTAssertEqualObjects(videoInitialization[@"height"], @720);
-  XCTAssertEqualObjects(videoInitialization[@"width"], @1280);
-  XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
+  XCTAssertEqual(eventListener.initialiaztionSize.height, 720);
+  XCTAssertEqual(eventListener.initialiaztionSize.width, 1280);
+  XCTAssertEqualWithAccuracy(eventListener.initializationDuration, 4000, 200);
 }
 
 - (void)testAudioControls {
-  NSDictionary<NSString *, id> *audioInitialization = [self
+  StubEventListener *eventListener = [self
       sanityTestURI:@"https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"];
-  XCTAssertEqualObjects(audioInitialization[@"height"], @0);
-  XCTAssertEqualObjects(audioInitialization[@"width"], @0);
+  XCTAssertEqual(eventListener.initialiaztionSize.height, 0);
+  XCTAssertEqual(eventListener.initialiaztionSize.width, 0);
   // Perfect precision not guaranteed.
-  XCTAssertEqualWithAccuracy([audioInitialization[@"duration"] intValue], 5400, 200);
+  XCTAssertEqualWithAccuracy(eventListener.initializationDuration, 5400, 200);
 }
 
 - (void)testHLSControls {
-  NSDictionary<NSString *, id> *videoInitialization = [self
+  StubEventListener *eventListener = [self
       sanityTestURI:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
-  XCTAssertEqualObjects(videoInitialization[@"height"], @720);
-  XCTAssertEqualObjects(videoInitialization[@"width"], @1280);
-  XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
+  XCTAssertEqual(eventListener.initialiaztionSize.height, 720);
+  XCTAssertEqual(eventListener.initialiaztionSize.width, 1280);
+  XCTAssertEqualWithAccuracy(eventListener.initializationDuration, 4000, 200);
 }
 
 - (void)testAudioOnlyHLSControls {
   XCTSkip(@"Flaky; see https://github.com/flutter/flutter/issues/164381");
 
-  NSDictionary<NSString *, id> *videoInitialization =
+  StubEventListener *eventListener =
       [self sanityTestURI:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/"
                           @"bee_audio_only.m3u8"];
-  XCTAssertEqualObjects(videoInitialization[@"height"], @0);
-  XCTAssertEqualObjects(videoInitialization[@"width"], @0);
-  XCTAssertEqualWithAccuracy([videoInitialization[@"duration"] intValue], 4000, 200);
+  XCTAssertEqual(eventListener.initialiaztionSize.height, 0);
+  XCTAssertEqual(eventListener.initialiaztionSize.width, 0);
+  XCTAssertEqualWithAccuracy(eventListener.initializationDuration, 4000, 200);
 }
 
 #if TARGET_OS_IOS
@@ -555,6 +608,8 @@
                               httpHeaders:@{}
                                 avFactory:stubAVFactory
                              viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
+  player.eventListener = listener;
 
   XCTestExpectation *seekExpectation =
       [self expectationWithDescription:@"seekTo has zero tolerance when seeking not to end"];
@@ -577,6 +632,8 @@
                               httpHeaders:@{}
                                 avFactory:stubAVFactory
                              viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
+  player.eventListener = listener;
 
   XCTestExpectation *seekExpectation =
       [self expectationWithDescription:@"seekTo has non-zero tolerance when seeking to end"];
@@ -592,7 +649,9 @@
 
 /// Sanity checks a video player playing the given URL with the actual AVPlayer. This is essentially
 /// a mini integration test of the player component.
-- (NSDictionary<NSString *, id> *)sanityTestURI:(NSString *)testURI {
+///
+/// Returns the stub event listener to allow tests to inspect the call state.
+- (StubEventListener *)sanityTestURI:(NSString *)testURI {
   NSURL *testURL = [NSURL URLWithString:testURI];
   XCTAssertNotNil(testURL);
   FVPVideoPlayer *player =
@@ -603,15 +662,9 @@
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
-  __block NSDictionary<NSString *, id> *initializationEvent;
-  [player onListenWithArguments:nil
-                      eventSink:^(NSDictionary<NSString *, id> *event) {
-                        if ([event[@"event"] isEqualToString:@"initialized"]) {
-                          initializationEvent = event;
-                          XCTAssertEqual(event.count, 4);
-                          [initializedExpectation fulfill];
-                        }
-                      }];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitalizationExpectation:initializedExpectation];
+  player.eventListener = listener;
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
 
   // Starts paused.
@@ -634,9 +687,7 @@
   XCTAssertNil(error);
   XCTAssertEqual(avPlayer.volume, 0.1f);
 
-  [player onCancelWithArguments:nil];
-
-  return initializationEvent;
+  return listener;
 }
 
 // Checks whether [AVPlayer rate] KVO observations are correctly detached.
@@ -787,12 +838,15 @@
   [self waitForExpectationsWithTimeout:10.0 handler:nil];
 
   XCTestExpectation *failedExpectation = [self expectationWithDescription:@"failed"];
-  [player onListenWithArguments:nil
-                      eventSink:^(FlutterError *event) {
-                        if ([event isKindOfClass:FlutterError.class]) {
-                          [failedExpectation fulfill];
-                        }
-                      }];
+  // TODO(stuartmorgan): Update this test to instead use a mock listener, and add separate unit
+  // tests of FVPEventBridge.
+  [(NSObject<FlutterStreamHandler> *)player.eventListener
+      onListenWithArguments:nil
+                  eventSink:^(FlutterError *event) {
+                    if ([event isKindOfClass:FlutterError.class]) {
+                      [failedExpectation fulfill];
+                    }
+                  }];
   [self waitForExpectationsWithTimeout:10.0 handler:nil];
 }
 
@@ -804,12 +858,9 @@
                              viewProvider:[[StubViewProvider alloc] initWithView:nil]];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
-  [player onListenWithArguments:nil
-                      eventSink:^(NSDictionary<NSString *, id> *event) {
-                        if ([event[@"event"] isEqualToString:@"initialized"]) {
-                          [initializedExpectation fulfill];
-                        }
-                      }];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitalizationExpectation:initializedExpectation];
+  player.eventListener = listener;
   [self waitForExpectationsWithTimeout:10 handler:nil];
 
   FlutterError *error;
