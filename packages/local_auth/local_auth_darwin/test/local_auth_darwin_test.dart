@@ -372,6 +372,71 @@ void main() {
                     errorDetails)));
       });
 
+      test('converts errorUserCancelled to PlatformException', () async {
+        const String errorMessage = 'The user cancelled authentication.';
+        const String errorDetails = 'com.apple.LocalAuthentication';
+        when(api.authenticate(any, any)).thenAnswer((_) async =>
+            AuthResultDetails(
+                result: AuthResult.errorUserCancelled,
+                errorMessage: errorMessage,
+                errorDetails: errorDetails));
+
+        expect(
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                .having(
+                    (PlatformException e) => e.code, 'code', 'UserCancelled')
+                .having(
+                    (PlatformException e) => e.message, 'message', errorMessage)
+                .having((PlatformException e) => e.details, 'details',
+                    errorDetails)));
+      });
+
+      test('converts errorUserFallback to PlatformException', () async {
+        const String errorMessage = 'The user chose to use the fallback.';
+        const String errorDetails = 'com.apple.LocalAuthentication';
+        when(api.authenticate(any, any)).thenAnswer((_) async =>
+            AuthResultDetails(
+                result: AuthResult.errorUserFallback,
+                errorMessage: errorMessage,
+                errorDetails: errorDetails));
+
+        expect(
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'UserFallback')
+                .having(
+                    (PlatformException e) => e.message, 'message', errorMessage)
+                .having((PlatformException e) => e.details, 'details',
+                    errorDetails)));
+      });
+
+      test('converts errorBiometricNotAvailable to PlatformException',
+          () async {
+        const String errorMessage =
+            'Biometrics are not available on this device.';
+        const String errorDetails = 'com.apple.LocalAuthentication';
+        when(api.authenticate(any, any)).thenAnswer((_) async =>
+            AuthResultDetails(
+                result: AuthResult.errorBiometricNotAvailable,
+                errorMessage: errorMessage,
+                errorDetails: errorDetails));
+
+        expect(
+            () async => plugin.authenticate(
+                localizedReason: 'reason', authMessages: <AuthMessages>[]),
+            throwsA(isA<PlatformException>()
+                // The code here should match what you defined in your Dart switch statement.
+                .having((PlatformException e) => e.code, 'code',
+                    'BiometricNotAvailable')
+                .having(
+                    (PlatformException e) => e.message, 'message', errorMessage)
+                .having((PlatformException e) => e.details, 'details',
+                    errorDetails)));
+      });
+
       test('converts errorPasscodeNotSet to legacy PlatformException',
           () async {
         const String errorMessage = 'a message';
