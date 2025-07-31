@@ -520,8 +520,6 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   }
 
   /// Find the current GoRouter in the widget tree.
-  ///
-  /// This method can now be called during redirects.
   static GoRouter of(BuildContext context) {
     final GoRouter? router = maybeOf(context);
     if (router == null) {
@@ -531,8 +529,6 @@ class GoRouter implements RouterConfig<RouteMatchList> {
   }
 
   /// The current GoRouter in the widget tree, if any.
-  ///
-  /// This method can now return a router even during redirects.
   static GoRouter? maybeOf(BuildContext context) {
     final InheritedGoRouter? inherited = context
         .getElementForInheritedWidgetOfExactType<InheritedGoRouter>()
