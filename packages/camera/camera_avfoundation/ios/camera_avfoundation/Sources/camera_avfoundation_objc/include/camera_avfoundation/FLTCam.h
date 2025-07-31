@@ -64,7 +64,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 @property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
 @property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
-@property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
 @property(assign, nonatomic) BOOL isAudioSetup;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
 @property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
