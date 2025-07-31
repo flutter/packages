@@ -104,7 +104,7 @@ sealed class PlatformAdsRequest {
 
 /// An object containing the data used to request ads from the server with an
 /// ad tag URL.
-class PlatformAdsRequestWithAdTagUrl extends PlatformAdsRequest {
+base class PlatformAdsRequestWithAdTagUrl extends PlatformAdsRequest {
   /// Constructs a [PlatformAdsRequestWithAdTagUrl].
   PlatformAdsRequestWithAdTagUrl._({
     required this.adTagUrl,
@@ -125,7 +125,7 @@ class PlatformAdsRequestWithAdTagUrl extends PlatformAdsRequest {
 
 /// An object containing the data used to request ads from the server with an
 /// ad rules response.
-class PlatformAdsRequestWithAdsResponse extends PlatformAdsRequest {
+base class PlatformAdsRequestWithAdsResponse extends PlatformAdsRequest {
   /// Constructs a [PlatformAdsRequestWithAdsResponse].
   PlatformAdsRequestWithAdsResponse._({
     required this.adsResponse,
