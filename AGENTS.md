@@ -50,10 +50,10 @@ dart pub get
 
 Most tool commands take a `--packages` argument. You must correctly identify all packages affected by your changes. You can derive this from git diff.
 
-For example, to find changed files against the main branch of the upstream remote:
+For example, to find changed files against the main branch of the upstream remote (assuming the upstream remote is named `origin`):
 
 ```bash
-git diff --name-only upstream/main...HEAD
+git diff --name-only origin/main...HEAD
 ```
 
 Then, for each file path, find its enclosing package. A package is a directory containing a `pubspec.yaml` file. The directory name is usually the package name. Ignore `pubspec.yaml` files within `example/` directories when determining the package for a file.
