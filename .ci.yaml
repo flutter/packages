@@ -407,7 +407,7 @@ targets:
 
   - name: Linux_android android_build_all_packages stable
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
