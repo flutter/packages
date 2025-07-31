@@ -15,10 +15,9 @@ int getQuarterTurnsFromSurfaceRotationConstant(int surfaceRotationConstant) {
     Surface.rotation90 => 3,
     Surface.rotation180 => 2,
     Surface.rotation270 => 1,
-    int() =>
-      throw ArgumentError(
-        '$surfaceRotationConstant is an unknown Surface rotation constant, so counter-clockwise quarter turns cannot be determined.',
-      ),
+    int() => throw ArgumentError(
+      '$surfaceRotationConstant is an unknown Surface rotation constant, so counter-clockwise quarter turns cannot be determined.',
+    ),
   };
 }
 
