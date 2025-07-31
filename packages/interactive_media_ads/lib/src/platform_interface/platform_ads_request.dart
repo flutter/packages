@@ -5,11 +5,10 @@
 import 'platform_content_progress_provider.dart';
 
 /// An object containing the data used to request ads from the server.
-class PlatformAdsRequest {
+sealed class PlatformAdsRequest {
   /// Creates an [PlatformAdsRequest].
-  PlatformAdsRequest({
-    required this.adTagUrl,
-    this.adsResponse,
+  PlatformAdsRequest._({
+    this.contentProgressProvider,
     this.adWillAutoPlay,
     this.adWillPlayMuted,
     this.continuousPlayback,
@@ -18,16 +17,61 @@ class PlatformAdsRequest {
     this.contentTitle,
     this.liveStreamPrefetchSeconds,
     this.vastLoadTimeout,
-    this.contentUrl,
-    this.contentProgressProvider,
   });
 
-  /// The URL from which ads will be requested.
-  final String adTagUrl;
+  factory PlatformAdsRequest.withAdTagUrl({
+    required String adTagUrl,
+    PlatformContentProgressProvider? contentProgressProvider,
+    bool? adWillAutoPlay,
+    bool? adWillPlayMuted,
+    bool? continuousPlayback,
+    double? contentDuration,
+    List<String>? contentKeywords,
+    String? contentTitle,
+    double? liveStreamPrefetchSeconds,
+    double? vastLoadTimeout,
+  }) =>
+      PlatformAdsRequestWithAdTagUrl._(
+        adTagUrl: adTagUrl,
+        contentProgressProvider: contentProgressProvider,
+        adWillAutoPlay: adWillAutoPlay,
+        adWillPlayMuted: adWillPlayMuted,
+        continuousPlayback: continuousPlayback,
+        contentDuration: contentDuration,
+        contentKeywords: contentKeywords,
+        contentTitle: contentTitle,
+        liveStreamPrefetchSeconds: liveStreamPrefetchSeconds,
+        vastLoadTimeout: vastLoadTimeout,
+      );
 
-  /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
-  /// a request through an ad tag URL.
-  final String? adsResponse;
+  factory PlatformAdsRequest.withAdsResponse({
+    required String adsResponse,
+    PlatformContentProgressProvider? contentProgressProvider,
+    bool? adWillAutoPlay,
+    bool? adWillPlayMuted,
+    bool? continuousPlayback,
+    double? contentDuration,
+    List<String>? contentKeywords,
+    String? contentTitle,
+    double? liveStreamPrefetchSeconds,
+    double? vastLoadTimeout,
+  }) =>
+      PlatformAdsRequestWithAdsResponse._(
+        adsResponse: adsResponse,
+        contentProgressProvider: contentProgressProvider,
+        adWillAutoPlay: adWillAutoPlay,
+        adWillPlayMuted: adWillPlayMuted,
+        continuousPlayback: continuousPlayback,
+        contentDuration: contentDuration,
+        contentKeywords: contentKeywords,
+        contentTitle: contentTitle,
+        liveStreamPrefetchSeconds: liveStreamPrefetchSeconds,
+        vastLoadTimeout: vastLoadTimeout,
+      );
+
+  /// A [PlatformContentProgressProvider] instance to allow scheduling of ad
+  /// breaks based on content progress (cue points).
+  final PlatformContentProgressProvider? contentProgressProvider;
 
   /// Notifies the SDK whether the player intends to start the content and ad in
   /// response to a user action or whether it will be automatically played.
@@ -56,11 +100,47 @@ class PlatformAdsRequest {
 
   /// Specifies the VAST load timeout in milliseconds for a single wrapper.
   final double? vastLoadTimeout;
+}
 
-  /// Specifies the universal link to the content’s screen.
-  final String? contentUrl;
+/// An object containing the data used to request ads from the server with an
+/// ad tag URL.
+class PlatformAdsRequestWithAdTagUrl extends PlatformAdsRequest {
+  /// Constructs a [PlatformAdsRequestWithAdTagUrl].
+  PlatformAdsRequestWithAdTagUrl._({
+    required this.adTagUrl,
+    super.contentProgressProvider,
+    super.adWillAutoPlay,
+    super.adWillPlayMuted,
+    super.continuousPlayback,
+    super.contentDuration,
+    super.contentKeywords,
+    super.contentTitle,
+    super.liveStreamPrefetchSeconds,
+    super.vastLoadTimeout,
+  }) : super._();
 
-  /// A [PlatformContentProgressProvider] instance to allow scheduling of ad
-  /// breaks based on content progress (cue points).
-  final PlatformContentProgressProvider? contentProgressProvider;
+  /// The URL from which ads will be requested.
+  final String adTagUrl;
+}
+
+/// An object containing the data used to request ads from the server with an
+/// ad rules response.
+class PlatformAdsRequestWithAdsResponse extends PlatformAdsRequest {
+  /// Constructs a [PlatformAdsRequestWithAdsResponse].
+  PlatformAdsRequestWithAdsResponse._({
+    required this.adsResponse,
+    super.contentProgressProvider,
+    super.adWillAutoPlay,
+    super.adWillPlayMuted,
+    super.continuousPlayback,
+    super.contentDuration,
+    super.contentKeywords,
+    super.contentTitle,
+    super.liveStreamPrefetchSeconds,
+    super.vastLoadTimeout,
+  }) : super._();
+
+  /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
+  /// a request through an ad tag URL.
+  final String adsResponse;
 }

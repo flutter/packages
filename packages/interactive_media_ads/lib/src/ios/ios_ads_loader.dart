@@ -73,50 +73,50 @@ base class IOSAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> requestAds(PlatformAdsRequest request) async {
-    final IMAAdsRequest adsRequest = _iosParams._proxy.newIMAAdsRequest(
-      adTagUrl: request.adTagUrl,
-      adDisplayContainer:
-          (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!,
-      contentPlayhead: request.contentProgressProvider != null
-          ? (request.contentProgressProvider! as IOSContentProgressProvider)
-              .contentPlayhead
-          : null,
-    );
+  Future<void> requestAds(PlatformAdsRequest request) {
+    final IMAAdDisplayContainer adDisplayContainer =
+        (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!;
+    final IMAContentPlayhead? contentProgressProvider =
+        request.contentProgressProvider != null
+            ? (request.contentProgressProvider! as IOSContentProgressProvider)
+                .contentPlayhead
+            : null;
 
-    if (request.adsResponse != null) {
-      await adsRequest.setAdsResponse(request.adsResponse!);
-    }
-    if (request.adWillAutoPlay != null) {
-      await adsRequest.setAdWillAutoPlay(request.adWillAutoPlay!);
-    }
-    if (request.adWillPlayMuted != null) {
-      await adsRequest.setAdWillPlayMuted(request.adWillPlayMuted!);
-    }
-    if (request.continuousPlayback != null) {
-      await adsRequest.setContinuousPlayback(request.continuousPlayback!);
-    }
-    if (request.contentDuration != null) {
-      await adsRequest.setContentDuration(request.contentDuration!);
-    }
-    if (request.contentKeywords != null) {
-      await adsRequest.setContentKeywords(request.contentKeywords!);
-    }
-    if (request.contentTitle != null) {
-      await adsRequest.setContentTitle(request.contentTitle!);
-    }
-    if (request.liveStreamPrefetchSeconds != null) {
-      await adsRequest
-          .setLiveStreamPrefetchSeconds(request.liveStreamPrefetchSeconds!);
-    }
-    if (request.vastLoadTimeout != null) {
-      await adsRequest.setVastLoadTimeout(request.vastLoadTimeout!);
-    }
-    if (request.contentUrl != null) {
-      await adsRequest.setContentURL(request.contentUrl!);
-    }
+    final IMAAdsRequest adsRequest = switch (request) {
+      final PlatformAdsRequestWithAdTagUrl request => IMAAdsRequest(
+          adTagUrl: request.adTagUrl,
+          adDisplayContainer: adDisplayContainer,
+          contentPlayhead: contentProgressProvider,
+        ),
+      PlatformAdsRequestWithAdsResponse() => IMAAdsRequest.withAdsResponse(
+          adsResponse: request.adsResponse,
+          adDisplayContainer: adDisplayContainer,
+          contentPlayhead: contentProgressProvider,
+        ),
+    };
 
-    return _adsLoader.requestAds(adsRequest);
+    return Future.wait(<Future<void>>[
+      if (request.adWillAutoPlay case final bool adWillAutoPlay)
+        adsRequest.setAdWillAutoPlay(adWillAutoPlay),
+      if (request.adWillPlayMuted case final bool adWillPlayMuted)
+        adsRequest.setAdWillPlayMuted(adWillPlayMuted),
+      if (request.continuousPlayback case final bool continuousPlayback)
+        adsRequest.setContinuousPlayback(continuousPlayback),
+      if (request.contentDuration case final double contentDuration)
+        adsRequest.setContentDuration(contentDuration),
+      if (request.contentKeywords case final List<String> contentKeywords)
+        adsRequest.setContentKeywords(contentKeywords),
+      if (request.contentTitle case final String contentTitle)
+        adsRequest.setContentTitle(contentTitle),
+      if (request.liveStreamPrefetchSeconds
+          case final double liveStreamPrefetchSeconds)
+        adsRequest.setLiveStreamPrefetchSeconds(
+          liveStreamPrefetchSeconds,
+        ),
+      if (request.vastLoadTimeout case final double vastLoadTimeout)
+        adsRequest.setVastLoadTimeout(vastLoadTimeout),
+      _adsLoader.requestAds(adsRequest),
+    ]);
   }
 
   // This value is created in a static method because the callback methods for

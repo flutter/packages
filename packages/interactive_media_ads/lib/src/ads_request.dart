@@ -9,22 +9,20 @@ import 'platform_interface/platform_interface.dart';
 class AdsRequest {
   /// Creates an [AdsRequest].
   AdsRequest({
-    required this.adTagUrl,
-    this.adsResponse,
-    this.adWillAutoPlay,
-    this.adWillPlayMuted,
-    this.continuousPlayback,
-    this.contentDuration,
-    this.contentKeywords,
-    this.contentTitle,
-    this.liveStreamPrefetchSeconds,
-    this.vastLoadTimeout,
-    this.contentUrl,
-    this.contentProgressProvider,
+    required String adTagUrl,
+    ContentProgressProvider? contentProgressProvider,
+    bool? adWillAutoPlay,
+    bool? adWillPlayMuted,
+    bool? continuousPlayback,
+    double? contentDuration,
+    List<String>? contentKeywords,
+    String? contentTitle,
+    double? liveStreamPrefetchSeconds,
+    double? vastLoadTimeout,
   }) : this.fromPlatform(
-          PlatformAdsRequest(
+          PlatformAdsRequest.withAdTagUrl(
             adTagUrl: adTagUrl,
-            adsResponse: adsResponse,
+            contentProgressProvider: contentProgressProvider?.platform,
             adWillAutoPlay: adWillAutoPlay,
             adWillPlayMuted: adWillPlayMuted,
             continuousPlayback: continuousPlayback,
@@ -33,8 +31,33 @@ class AdsRequest {
             contentTitle: contentTitle,
             liveStreamPrefetchSeconds: liveStreamPrefetchSeconds,
             vastLoadTimeout: vastLoadTimeout,
-            contentUrl: contentUrl,
+          ),
+        );
+
+  /// Creates an [AdsRequest].
+  AdsRequest.withAdsResponse({
+    required String adsResponse,
+    ContentProgressProvider? contentProgressProvider,
+    bool? adWillAutoPlay,
+    bool? adWillPlayMuted,
+    bool? continuousPlayback,
+    double? contentDuration,
+    List<String>? contentKeywords,
+    String? contentTitle,
+    double? liveStreamPrefetchSeconds,
+    double? vastLoadTimeout,
+  }) : this.fromPlatform(
+          PlatformAdsRequest.withAdsResponse(
+            adsResponse: adsResponse,
             contentProgressProvider: contentProgressProvider?.platform,
+            adWillAutoPlay: adWillAutoPlay,
+            adWillPlayMuted: adWillPlayMuted,
+            continuousPlayback: continuousPlayback,
+            contentDuration: contentDuration,
+            contentKeywords: contentKeywords,
+            contentTitle: contentTitle,
+            liveStreamPrefetchSeconds: liveStreamPrefetchSeconds,
+            vastLoadTimeout: vastLoadTimeout,
           ),
         );
 
@@ -45,44 +68,51 @@ class AdsRequest {
   final PlatformAdsRequest platform;
 
   /// The URL from which ads will be requested.
-  final String adTagUrl;
+  String get adTagUrl => switch (platform) {
+        final PlatformAdsRequestWithAdTagUrl request => request.adTagUrl,
+        PlatformAdsRequestWithAdsResponse() => '',
+      };
 
   /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
   /// a request through an ad tag URL.
-  final String? adsResponse;
-
-  /// Notifies the SDK whether the player intends to start the content and ad in
-  /// response to a user action or whether it will be automatically played.
-  final bool? adWillAutoPlay;
-
-  /// Notifies the SDK whether the player intends to start the content and ad
-  /// while muted.
-  final bool? adWillPlayMuted;
-
-  /// Notifies the SDK whether the player intends to continuously play the
-  /// content videos one after another similar to TV broadcast.
-  final bool? continuousPlayback;
-
-  /// Specifies the duration of the content in seconds to be shown.
-  final double? contentDuration;
-
-  /// Specifies the keywords used to describe the content to be shown.
-  final List<String>? contentKeywords;
-
-  /// Specifies the title of the content to be shown.
-  final String? contentTitle;
-
-  /// Specifies the maximum amount of time to wait in seconds, after calling
-  /// requestAds, before requesting the ad tag URL.
-  final double? liveStreamPrefetchSeconds;
-
-  /// Specifies the VAST load timeout in milliseconds for a single wrapper.
-  final double? vastLoadTimeout;
-
-  /// Specifies the universal link to the content’s screen.
-  final String? contentUrl;
+  String? get adsResponse => switch (platform) {
+        final PlatformAdsRequestWithAdsResponse request => request.adsResponse,
+        PlatformAdsRequestWithAdTagUrl() => null,
+      };
 
   /// A [ContentProgressProvider] instance to allow scheduling of ad breaks
   /// based on content progress (cue points).
-  final ContentProgressProvider? contentProgressProvider;
+  ContentProgressProvider? get contentProgressProvider => platform
+              .contentProgressProvider !=
+          null
+      ? ContentProgressProvider.fromPlatform(platform.contentProgressProvider!)
+      : null;
+
+  /// Notifies the SDK whether the player intends to start the content and ad in
+  /// response to a user action or whether it will be automatically played.
+  bool? get adWillAutoPlay => platform.adWillAutoPlay;
+
+  /// Notifies the SDK whether the player intends to start the content and ad
+  /// while muted.
+  bool? get adWillPlayMuted => platform.adWillPlayMuted;
+
+  /// Notifies the SDK whether the player intends to continuously play the
+  /// content videos one after another similar to TV broadcast.
+  bool? get continuousPlayback => platform.continuousPlayback;
+
+  /// Specifies the duration of the content in seconds to be shown.
+  double? get contentDuration => platform.contentDuration;
+
+  /// Specifies the keywords used to describe the content to be shown.
+  List<String>? get contentKeywords => platform.contentKeywords;
+
+  /// Specifies the title of the content to be shown.
+  String? get contentTitle => platform.contentTitle;
+
+  /// Specifies the maximum amount of time to wait in seconds, after calling
+  /// requestAds, before requesting the ad tag URL.
+  double? get liveStreamPrefetchSeconds => platform.liveStreamPrefetchSeconds;
+
+  /// Specifies the VAST load timeout in milliseconds for a single wrapper.
+  double? get vastLoadTimeout => platform.vastLoadTimeout;
 }
