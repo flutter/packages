@@ -168,32 +168,6 @@
 
 @implementation VideoPlayerTests
 
-- (void)testCreateWithOptionsReturnsErrorForInvalidAssetPath {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  OCMStub([registrar lookupKeyForAsset:[OCMArg any]]).andReturn(nil);
-  FVPVideoPlayerPlugin *videoPlayerPlugin =
-      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
-
-  FlutterError *initializationError;
-  [videoPlayerPlugin initialize:&initializationError];
-  XCTAssertNil(initializationError);
-
-  FVPCreationOptions *create =
-      [FVPCreationOptions makeWithAsset:@"invalid/path/to/asset"
-                                    uri:nil
-                            packageName:nil
-                             formatHint:nil
-                            httpHeaders:@{}
-                               viewType:FVPPlatformVideoViewTypeTextureView];
-
-  FlutterError *createError;
-  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
-
-  XCTAssertNil(playerIdentifier);
-  XCTAssertNotNil(createError);
-  XCTAssertEqualObjects(createError.code, @"video_player");
-}
-
 - (void)testBlankVideoBugWithEncryptedVideoStreamAndInvertedAspectRatioBugForSomeVideoStream {
   // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
   // (https://github.com/flutter/flutter/issues/111457) and 2. swapped width and height for some
@@ -218,12 +192,9 @@
   XCTAssertNil(error);
 
   FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}
-           viewType:FVPPlatformVideoViewTypeTextureView];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(playerIdentifier);
@@ -253,12 +224,9 @@
   [videoPlayerPlugin initialize:&initalizationError];
   XCTAssertNil(initalizationError);
   FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}
-           viewType:FVPPlatformVideoViewTypePlatformView];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypePlatformView];
   FlutterError *createError;
   [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -284,12 +252,9 @@
   [videoPlayerPlugin initialize:&initalizationError];
   XCTAssertNil(initalizationError);
   FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}
-           viewType:FVPPlatformVideoViewTypeTextureView];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
   FVPTextureBasedVideoPlayer *player =
@@ -344,12 +309,9 @@
   [videoPlayerPlugin initialize:&initalizationError];
   XCTAssertNil(initalizationError);
   FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}
-           viewType:FVPPlatformVideoViewTypeTextureView];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
 
@@ -393,12 +355,9 @@
   [videoPlayerPlugin initialize:&initalizationError];
   XCTAssertNil(initalizationError);
   FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}
-           viewType:FVPPlatformVideoViewTypeTextureView];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
   FVPTextureBasedVideoPlayer *player =
@@ -451,12 +410,9 @@
   [videoPlayerPlugin initialize:&initalizationError];
   XCTAssertNil(initalizationError);
   FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}
-           viewType:FVPPlatformVideoViewTypeTextureView];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypeTextureView];
   FlutterError *createError;
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&createError];
   FVPTextureBasedVideoPlayer *player =
@@ -481,12 +437,9 @@
   XCTAssertNil(error);
 
   FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}
-           viewType:FVPPlatformVideoViewTypeTextureView];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(playerIdentifier);
@@ -513,12 +466,9 @@
   XCTAssertNil(error);
 
   FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}
-           viewType:FVPPlatformVideoViewTypeTextureView];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
   XCTAssertNil(error);
   XCTAssertNotNil(playerIdentifier);
@@ -709,12 +659,9 @@
     XCTAssertNil(error);
 
     FVPCreationOptions *create = [FVPCreationOptions
-        makeWithAsset:nil
-                  uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-          packageName:nil
-           formatHint:nil
-          httpHeaders:@{}
-             viewType:FVPPlatformVideoViewTypeTextureView];
+        makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+        httpHeaders:@{}
+           viewType:FVPPlatformVideoViewTypeTextureView];
     NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
     XCTAssertNil(error);
     XCTAssertNotNil(playerIdentifier);
@@ -763,12 +710,9 @@
     XCTAssertNil(error);
 
     FVPCreationOptions *create = [FVPCreationOptions
-        makeWithAsset:nil
-                  uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-          packageName:nil
-           formatHint:nil
-          httpHeaders:@{}
-             viewType:FVPPlatformVideoViewTypeTextureView];
+        makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+        httpHeaders:@{}
+           viewType:FVPPlatformVideoViewTypeTextureView];
     NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
     XCTAssertNil(error);
     XCTAssertNotNil(playerIdentifier);
@@ -830,13 +774,9 @@
 
   [videoPlayerPlugin initialize:&error];
 
-  FVPCreationOptions *create =
-      [FVPCreationOptions makeWithAsset:nil
-                                    uri:@""
-                            packageName:nil
-                             formatHint:nil
-                            httpHeaders:@{}
-                               viewType:FVPPlatformVideoViewTypeTextureView];
+  FVPCreationOptions *create = [FVPCreationOptions makeWithUri:@""
+                                                   httpHeaders:@{}
+                                                      viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
   FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
   XCTAssertNotNil(player);
@@ -896,12 +836,9 @@
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
   FVPCreationOptions *create = [FVPCreationOptions
-      makeWithAsset:nil
-                uri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-        packageName:nil
-         formatHint:nil
-        httpHeaders:@{}
-           viewType:FVPPlatformVideoViewTypeTextureView];
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypeTextureView];
   NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
   FVPTextureBasedVideoPlayer *player =
       (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[playerIdentifier];

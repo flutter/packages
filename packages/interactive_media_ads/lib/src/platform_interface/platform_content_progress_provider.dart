@@ -49,7 +49,7 @@ base class PlatformContentProgressProviderCreationParams {
 ///
 /// Provides updates required to enable triggering ads at configured cue points.
 abstract class PlatformContentProgressProvider {
-  /// Creates a new [PlatformAdsManagerDelegate]
+  /// Creates a new [PlatformContentProgressProvider].
   factory PlatformContentProgressProvider(
     PlatformContentProgressProviderCreationParams params,
   ) {

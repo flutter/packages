@@ -72,6 +72,11 @@ void main() {
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
+      const String assetKey = 'resultingAssetKey';
+      when(
+        api.getLookupKeyForAsset(asset, package),
+      ).thenAnswer((_) async => assetKey);
+
       final int? playerId = await player.create(
         DataSource(
           sourceType: DataSourceType.asset,
@@ -83,8 +88,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreateMessage createMessage =
           verification.captured[0] as CreateMessage;
-      expect(createMessage.asset, asset);
-      expect(createMessage.packageName, package);
+      expect(createMessage.uri, 'asset:///$assetKey');
       expect(playerId, newPlayerId);
       expect(
         player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
@@ -113,10 +117,8 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreateMessage createMessage =
           verification.captured[0] as CreateMessage;
-      expect(createMessage.asset, null);
       expect(createMessage.uri, uri);
-      expect(createMessage.packageName, null);
-      expect(createMessage.formatHint, 'dash');
+      expect(createMessage.formatHint, PlatformVideoFormat.dash);
       expect(createMessage.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(
@@ -147,6 +149,52 @@ void main() {
       final CreateMessage createMessage =
           verification.captured[0] as CreateMessage;
       expect(createMessage.httpHeaders, headers);
+    });
+
+    test('create with network sets a default user agent', () async {
+      final (
+        AndroidVideoPlayer player,
+        MockAndroidVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(playerId: 1);
+      when(api.create(any)).thenAnswer((_) async => 2);
+
+      await player.create(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com',
+          httpHeaders: <String, String>{},
+        ),
+      );
+      final VerificationResult verification = verify(api.create(captureAny));
+      final CreateMessage createMessage =
+          verification.captured[0] as CreateMessage;
+      expect(createMessage.userAgent, 'ExoPlayer');
+    });
+
+    test('create with network uses user agent from headers', () async {
+      final (
+        AndroidVideoPlayer player,
+        MockAndroidVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(playerId: 1);
+      when(api.create(any)).thenAnswer((_) async => 2);
+
+      const String userAgent = 'Test User Agent';
+      const Map<String, String> headers = <String, String>{
+        'User-Agent': userAgent,
+      };
+      await player.create(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com',
+          httpHeaders: headers,
+        ),
+      );
+      final VerificationResult verification = verify(api.create(captureAny));
+      final CreateMessage createMessage =
+          verification.captured[0] as CreateMessage;
+      expect(createMessage.userAgent, userAgent);
     });
 
     test('create with file', () async {
@@ -207,6 +255,11 @@ void main() {
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
+      const String assetKey = 'resultingAssetKey';
+      when(
+        api.getLookupKeyForAsset(asset, package),
+      ).thenAnswer((_) async => assetKey);
+
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -221,8 +274,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreateMessage createMessage =
           verification.captured[0] as CreateMessage;
-      expect(createMessage.asset, asset);
-      expect(createMessage.packageName, package);
+      expect(createMessage.uri, 'asset:///$assetKey');
       expect(playerId, newPlayerId);
       expect(
         player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
@@ -254,10 +306,8 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreateMessage createMessage =
           verification.captured[0] as CreateMessage;
-      expect(createMessage.asset, null);
       expect(createMessage.uri, uri);
-      expect(createMessage.packageName, null);
-      expect(createMessage.formatHint, 'dash');
+      expect(createMessage.formatHint, PlatformVideoFormat.dash);
       expect(createMessage.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(
@@ -556,10 +606,7 @@ void main() {
                     const StandardMethodCodec().encodeSuccessEnvelope(
                       <String, dynamic>{
                         'event': 'bufferingUpdate',
-                        'values': <List<dynamic>>[
-                          <int>[0, 1234],
-                          <int>[1235, 4000],
-                        ],
+                        'position': 1234,
                       },
                     ),
                     (ByteData? data) {},
@@ -642,10 +689,6 @@ void main() {
             eventType: VideoEventType.bufferingUpdate,
             buffered: <DurationRange>[
               DurationRange(Duration.zero, const Duration(milliseconds: 1234)),
-              DurationRange(
-                const Duration(milliseconds: 1235),
-                const Duration(milliseconds: 4000),
-              ),
             ],
           ),
           VideoEvent(eventType: VideoEventType.bufferingStart),
