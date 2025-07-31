@@ -18,21 +18,19 @@ static void *rateContext = &rateContext;
 
 /// Registers KVO observers on 'object' for each entry in 'observations', which must be a
 /// dictionary mapping KVO keys to NSValue-wrapped context pointers.
+///
+/// This does not call any methods on 'observer', so is safe to call from 'observer's init.
 static void FVPRegisterKeyValueObservers(NSObject *observer,
                                          NSDictionary<NSString *, NSValue *> *observations,
                                          NSObject *target) {
-  // TODO(stuartmorgan): Investigate why NSKeyValueObservingOptionInitial is being used here. This
-  // code is called from the player's init method, whith self as the observer, and
-  // NSKeyValueObservingOptionInitial is documented to synchronously call the observer during
-  // the registration, so this is causing invocations to self during init, which is dangerous.
-  // Most of the change handlers are just calling a listener that's not even set up yet, so many
-  // of the calls will not do anything useful anyway. Ideally NSKeyValueObservingOptionInitial
-  // should be removed, and if the initialization code potentially needs to be triggered that should
-  // be done explicitly.
+  // It is important not to use NSKeyValueObservingOptionInitial here, because that will cause
+  // synchronous calls to 'observer', violating the requirement that this method does not call its
+  // methods. If there are use cases for specific pieces of initial state, those should be handled
+  // explicitly by the caller, rather than by adding initial-state KVO notifications here.
   for (NSString *key in observations) {
     [target addObserver:observer
              forKeyPath:key
-                options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
+                options:NSKeyValueObservingOptionNew
                 context:observations[key].pointerValue];
   }
 }
