@@ -119,14 +119,6 @@
 }
 
 - (void)dispose {
-  // This check prevents the crash caused by removing the KVO observers twice.
-  // When performing a Hot Restart, the leftover players are disposed once directly
-  // by [FVPVideoPlayerPlugin initialize:] method and then disposed again by
-  // [FVPVideoPlayer onTextureUnregistered:] call leading to possible over-release.
-  if (self.disposed) {
-    return;
-  }
-
   [super dispose];
 
   [self.playerLayer removeFromSuperlayer];
