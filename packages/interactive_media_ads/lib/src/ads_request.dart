@@ -70,6 +70,9 @@ class AdsRequest {
   /// The URL from which ads will be requested.
   String get adTagUrl => switch (platform) {
         final PlatformAdsRequestWithAdTagUrl request => request.adTagUrl,
+        // TODO(bparrishMines): This returns an empty string rather than null
+        // to prevent a breaking change. This should be updated to return null
+        // on the next major release.
         PlatformAdsRequestWithAdsResponse() => '',
       };
 
