@@ -88,18 +88,19 @@ void main() {
       final MockIMAAdsRequest mockRequest = MockIMAAdsRequest();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
-        newIMAAdsRequest: ({
-          required String adTagUrl,
-          required ima.IMAAdDisplayContainer adDisplayContainer,
-          ima.IMAContentPlayhead? contentPlayhead,
-        }) {
-          expect(adTagUrl, adTag);
-          expect(adDisplayContainer, container.adDisplayContainer);
-          expect(contentPlayhead, contentPlayheadInstance);
-          return mockRequest;
-        },
         newIMAContentPlayhead: () => contentPlayheadInstance,
       );
+
+      ima.PigeonOverrides.iMAAdsRequest_new = ({
+        required String adTagUrl,
+        required ima.IMAAdDisplayContainer adDisplayContainer,
+        ima.IMAContentPlayhead? contentPlayhead,
+      }) {
+        expect(adTagUrl, adTag);
+        expect(adDisplayContainer, container.adDisplayContainer);
+        expect(contentPlayhead, contentPlayheadInstance);
+        return mockRequest;
+      };
 
       final IOSAdsLoader loader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
@@ -115,9 +116,8 @@ void main() {
         IOSContentProgressProviderCreationParams(proxy: imaProxy),
       );
 
-      await loader.requestAds(PlatformAdsRequest(
+      await loader.requestAds(PlatformAdsRequest.withAdTagUrl(
         adTagUrl: adTag,
-        adsResponse: 'adsResponse',
         adWillAutoPlay: true,
         adWillPlayMuted: false,
         continuousPlayback: true,
@@ -126,11 +126,9 @@ void main() {
         contentTitle: 'contentTitle',
         liveStreamPrefetchSeconds: 3.0,
         vastLoadTimeout: 4.0,
-        contentUrl: 'contentUrl',
         contentProgressProvider: provider,
       ));
 
-      verify(mockRequest.setAdsResponse('adsResponse'));
       verify(mockRequest.setAdWillAutoPlay(true));
       verify(mockRequest.setAdWillPlayMuted(false));
       verify(mockRequest.setContinuousPlayback(true));
@@ -139,7 +137,6 @@ void main() {
       verify(mockRequest.setContentTitle('contentTitle'));
       verify(mockRequest.setLiveStreamPrefetchSeconds(3.0));
       verify(mockRequest.setVastLoadTimeout(4.0));
-      verify(mockRequest.setContentURL('contentUrl'));
 
       verify(mockLoader.requestAds(any));
     });

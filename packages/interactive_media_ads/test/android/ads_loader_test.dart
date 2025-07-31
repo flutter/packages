@@ -133,9 +133,8 @@ void main() {
         AndroidContentProgressProviderCreationParams(proxy: proxy),
       );
       await adsLoader.requestAds(
-        PlatformAdsRequest(
+        PlatformAdsRequest.withAdTagUrl(
           adTagUrl: 'url',
-          adsResponse: 'adsResponse',
           adWillAutoPlay: true,
           adWillPlayMuted: false,
           continuousPlayback: true,
@@ -144,14 +143,12 @@ void main() {
           contentTitle: 'contentTitle',
           liveStreamPrefetchSeconds: 3.0,
           vastLoadTimeout: 4.0,
-          contentUrl: 'contentUrl',
           contentProgressProvider: progressProvider,
         ),
       );
 
       verifyInOrder(<Future<void>>[
         mockAdsRequest.setAdTagUrl('url'),
-        mockAdsRequest.setAdsResponse('adsResponse'),
         mockAdsRequest.setAdWillAutoPlay(true),
         mockAdsRequest.setAdWillPlayMuted(false),
         mockAdsRequest.setContinuousPlayback(true),
@@ -160,7 +157,6 @@ void main() {
         mockAdsRequest.setContentTitle('contentTitle'),
         mockAdsRequest.setLiveStreamPrefetchSeconds(3.0),
         mockAdsRequest.setVastLoadTimeout(4.0),
-        mockAdsRequest.setContentUrl('contentUrl'),
         mockAdsRequest.setContentProgressProvider(
           progressProvider.progressProvider,
         ),
