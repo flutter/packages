@@ -142,12 +142,12 @@ Any PR that changes non-test code in a package should update its version in pubs
 ```bash
 dart run $REPO_ROOT/script/tool/bin/flutter_plugin_tools.dart update-release-info \
   --version=minimal \
-  --base-branch=upstream/main \
+  --base-branch=origin/main \
   --changelog="A description of the changes."
 ```
 
 - `--version=minimal`: Bumps patch for bug fixes, and skips unchanged packages. This is usually the best option unless a new feature is being added.
   - When making public API changes, use `--version=minor` instead.
-- `--base-branch=upstream/main`: Diffs against the `main` branch to find changed packages.
+- `--base-branch=origin/main`: Diffs against the `main` branch to find changed packages.
 
 If you update manually, follow semantic versioning and the repository's CHANGELOG format.
