@@ -75,6 +75,11 @@ void main() {
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
+      const String assetUrl = 'file:///some/asset/path';
+      when(
+        api.getAssetUrl(asset, package),
+      ).thenAnswer((_) async => assetUrl);
+
       final int? playerId = await player.create(
         DataSource(
           sourceType: DataSourceType.asset,
@@ -86,11 +91,35 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
-      expect(creationOptions.asset, asset);
-      expect(creationOptions.packageName, package);
+      expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
           const VideoPlayerTextureViewState(textureId: newPlayerId));
+    });
+
+    test('create with asset throws PlatformException for missing asset',
+        () async {
+      final (
+        AVFoundationVideoPlayer player,
+        MockAVFoundationVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(playerId: 1);
+
+      const String asset = 'someAsset';
+      const String package = 'somePackage';
+      when(
+        api.getAssetUrl(asset, package),
+      ).thenAnswer((_) async => null);
+
+      expect(
+          player.create(
+            DataSource(
+              sourceType: DataSourceType.asset,
+              asset: asset,
+              package: package,
+            ),
+          ),
+          throwsA(isA<PlatformException>()));
     });
 
     test('create with network', () async {
@@ -114,10 +143,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
-      expect(creationOptions.asset, null);
       expect(creationOptions.uri, uri);
-      expect(creationOptions.packageName, null);
-      expect(creationOptions.formatHint, 'dash');
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
@@ -181,6 +207,10 @@ void main() {
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
+      const String assetUrl = 'file:///some/asset/path';
+      when(
+        api.getAssetUrl(asset, package),
+      ).thenAnswer((_) async => assetUrl);
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -195,8 +225,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
-      expect(creationOptions.asset, asset);
-      expect(creationOptions.packageName, package);
+      expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
           const VideoPlayerTextureViewState(textureId: newPlayerId));
@@ -226,10 +255,7 @@ void main() {
       final VerificationResult verification = verify(api.create(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
-      expect(creationOptions.asset, null);
       expect(creationOptions.uri, uri);
-      expect(creationOptions.packageName, null);
-      expect(creationOptions.formatHint, 'dash');
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
@@ -550,7 +576,7 @@ void main() {
                   ),
                   DurationRange(
                     const Duration(milliseconds: 1235),
-                    const Duration(milliseconds: 4000),
+                    const Duration(milliseconds: 1235 + 4000),
                   ),
                 ]),
             VideoEvent(eventType: VideoEventType.bufferingStart),
