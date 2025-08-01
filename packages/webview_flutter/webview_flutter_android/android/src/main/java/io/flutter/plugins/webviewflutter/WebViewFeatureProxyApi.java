@@ -8,9 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.webkit.WebViewFeature;
 
 /**
- * Host api implementation for {@link WebViewFeature}.
+ * Proxy API implementation for {@link WebViewFeature}.
  *
- * <p>Handles creating {@link WebViewFeature}s that intercommunicate with a paired Dart object.
+ * <p>This class may handle instantiating and adding native object instances that are attached to a
+ * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
 public class WebViewFeatureProxyApi extends PigeonApiWebViewFeature {
   public WebViewFeatureProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

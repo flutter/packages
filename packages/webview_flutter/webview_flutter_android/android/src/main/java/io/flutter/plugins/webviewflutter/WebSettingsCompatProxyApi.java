@@ -10,9 +10,10 @@ import androidx.webkit.WebSettingsCompat;
 import androidx.webkit.WebViewFeature;
 
 /**
- * Host api implementation for {@link WebSettingsCompat}.
+ * Proxy API implementation for {@link WebSettingsCompat}.
  *
- * <p>Handles static methods for {@link WebSettingsCompat}.
+ * <p>This class may handle instantiating and adding native object instances that are attached to a
+ * Dart instance or handle method calls on the associated native class or an instance of the class.
  */
 public class WebSettingsCompatProxyApi extends PigeonApiWebSettingsCompat {
   public WebSettingsCompatProxyApi(@NonNull ProxyApiRegistrar pigeonRegistrar) {

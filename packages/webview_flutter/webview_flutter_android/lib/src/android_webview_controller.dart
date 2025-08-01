@@ -804,6 +804,9 @@ class AndroidWebViewController extends PlatformWebViewController {
   ///
   /// Before calling this method, you should check if the feature is supported using
   /// [isWebViewFeatureSupported] with [WebViewFeatureConstants.paymentRequest].
+  ///
+  /// This feature requires adding queries to the AndroidManifest.xml to allow WebView to query the device for the user's payment applications:
+  /// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setPaymentRequestEnabled(android.webkit.WebSettings,boolean).
   Future<void> setPaymentRequestEnabled(bool enabled) {
     return _androidWebViewParams.androidWebViewProxy.setPaymentRequestEnabled(
       _webView.settings,
@@ -938,9 +941,13 @@ enum MixedContentMode {
   neverAllow,
 }
 
+/// WebView support library feature types used to query for support on the device.
+///
 /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#constants_1.
 enum WebViewFeatureType {
-  /// Feature for isFeatureSupported. This feature covers [WebSettingsCompat.setPaymentRequestEnabled].
+  /// Feature for isFeatureSupported.
+  ///
+  /// This feature covers [WebSettingsCompat.setPaymentRequestEnabled].
   paymentRequest,
 }
 

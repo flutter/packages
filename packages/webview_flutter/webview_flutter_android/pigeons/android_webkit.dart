@@ -1092,6 +1092,9 @@ abstract class Certificate {
   Uint8List getEncoded();
 }
 
+/// Compatibility version of `WebSettings`.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/webkit/WebSettingsCompat.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'androidx.webkit.WebSettingsCompat',
@@ -1105,6 +1108,9 @@ abstract class WebSettingsCompat {
   );
 }
 
+/// Utility class for checking which WebView Support Library features are supported on the device.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/webkit/WebViewFeature.
 @ProxyApi(
   kotlinOptions: KotlinProxyApiOptions(
     fullClassName: 'androidx.webkit.WebViewFeature',
