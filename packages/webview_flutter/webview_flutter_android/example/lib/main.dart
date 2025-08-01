@@ -350,7 +350,6 @@ enum MenuOptions {
   basicAuthentication,
   javaScriptAlert,
   viewportMeta,
-  checkWebViewPaymentRequestFeatureEnabled,
 }
 
 class SampleMenu extends StatelessWidget {
@@ -408,8 +407,6 @@ class SampleMenu extends StatelessWidget {
             _onJavaScriptAlertExample(context);
           case MenuOptions.viewportMeta:
             _onViewportMetaExample();
-          case MenuOptions.checkWebViewPaymentRequestFeatureEnabled:
-            _onWebViewFeatureExample(context);
         }
       },
       itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
@@ -485,10 +482,6 @@ class SampleMenu extends StatelessWidget {
         const PopupMenuItem<MenuOptions>(
           value: MenuOptions.viewportMeta,
           child: Text('Viewport meta example'),
-        ),
-        const PopupMenuItem<MenuOptions>(
-          value: MenuOptions.checkWebViewPaymentRequestFeatureEnabled,
-          child: Text('WebView Feature Example'),
         ),
       ],
     );
@@ -789,24 +782,6 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _onViewportMetaExample() {
     return webViewController.loadHtmlString(kViewportMetaPage);
-  }
-
-  Future<void> _onWebViewFeatureExample(BuildContext context) async {
-    final AndroidWebViewController androidController =
-        webViewController as AndroidWebViewController;
-    final bool paymentRequestEnabled = await androidController
-        .isWebViewFeatureSupported(WebViewFeatureType.paymentRequest);
-
-    // Call this method to enable the Payment Request API.
-    // if (paymentRequestEnabled) {
-    //   await androidController.setPaymentRequestEnabled(true);
-    // }
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Payment Request API supported: $paymentRequestEnabled'),
-      ));
-    }
   }
 }
 
