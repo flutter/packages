@@ -6,10 +6,9 @@ RouteBase get $iterableWithEnumRoute => GoRouteData.$route(
 mixin _$IterableWithEnumRoute on GoRouteData {
   static IterableWithEnumRoute _fromState(GoRouterState state) =>
       IterableWithEnumRoute(
-        param: (state.uri.queryParametersAll['param']
-                ?.map(_$EnumOnlyUsedInIterableEnumMap._$fromName)
-                .cast<EnumOnlyUsedInIterable>()
-            as Iterable<EnumOnlyUsedInIterable>?),
+        param: state.uri.queryParametersAll['param']
+            ?.map(_$EnumOnlyUsedInIterableEnumMap._$fromName)
+            .cast<EnumOnlyUsedInIterable>(),
       );
 
   IterableWithEnumRoute get _self => this as IterableWithEnumRoute;
