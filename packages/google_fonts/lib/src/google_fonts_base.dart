@@ -4,20 +4,10 @@
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
-// TODO(andrewkolos): The flutter framework wishes to add a new class named
-// `AssetManifest` to its API (see https://github.com/flutter/flutter/pull/119277).
-// However, doing so would break integration tests that utilize google_fonts due
-// to name collision with the `AssetManifest` class that this package already
-// defines (see https://github.com/flutter/flutter/pull/119273).
-// Once the AssetManifest API is added to flutter, update this package to use it
-// instead of the AssetManifest class this package defines and remove this `hide`
-// and the ignore annotation.
-// ignore: undefined_hidden_name
-import 'package:flutter/services.dart' hide AssetManifest;
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import '../google_fonts.dart';
-import 'asset_manifest.dart';
 import 'file_io.dart' // Stubbed implementation by default.
     // Concrete implementation if File IO is available.
     if (dart.library.io) 'file_io_desktop_and_mobile.dart' as file_io;
@@ -43,7 +33,7 @@ final Set<Future<void>> pendingFontFutures = {};
 http.Client httpClient = http.Client();
 
 @visibleForTesting
-AssetManifest assetManifest = AssetManifest();
+AssetManifest? assetManifest;
 
 /// Creates a [TextStyle] that either uses the [fontFamily] for the requested
 /// GoogleFont, or falls back to the pre-bundled [fontFamily].
@@ -147,11 +137,9 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
     Future<ByteData?>? byteData;
 
     // Check if this font can be loaded by the pre-bundled assets.
-    final assetManifestJson = await assetManifest.json();
+    assetManifest ??= await AssetManifest.loadFromAssetBundle(rootBundle);
     final assetPath = _findFamilyWithVariantAssetPath(
-      descriptor.familyWithVariant,
-      assetManifestJson,
-    );
+        descriptor.familyWithVariant, assetManifest?.listAssets());
     if (assetPath != null) {
       byteData = rootBundle.load(assetPath);
     }
@@ -298,20 +286,18 @@ int _computeMatch(GoogleFontsVariant a, GoogleFontsVariant b) {
 /// Returns the path of the font asset if found, otherwise an empty string.
 String? _findFamilyWithVariantAssetPath(
   GoogleFontsFamilyWithVariant familyWithVariant,
-  Map<String, List<String>>? manifestJson,
+  List<String>? manifestValues,
 ) {
-  if (manifestJson == null) return null;
+  if (manifestValues == null) return null;
 
   final apiFilenamePrefix = familyWithVariant.toApiFilenamePrefix();
 
-  for (final assetList in manifestJson.values) {
-    for (final String asset in assetList) {
-      for (final matchingSuffix in ['.ttf', '.otf'].where(asset.endsWith)) {
-        final assetWithoutExtension =
-            asset.substring(0, asset.length - matchingSuffix.length);
-        if (assetWithoutExtension.endsWith(apiFilenamePrefix)) {
-          return asset;
-        }
+  for (final asset in manifestValues) {
+    for (final matchingSuffix in ['.ttf', '.otf'].where(asset.endsWith)) {
+      final assetWithoutExtension =
+          asset.substring(0, asset.length - matchingSuffix.length);
+      if (assetWithoutExtension.endsWith(apiFilenamePrefix)) {
+        return asset;
       }
     }
   }

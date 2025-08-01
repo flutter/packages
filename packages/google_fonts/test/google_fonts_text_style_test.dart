@@ -4,9 +4,9 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_fonts/src/asset_manifest.dart';
 import 'package:google_fonts/src/google_fonts_base.dart';
 import 'package:google_fonts/src/google_fonts_descriptor.dart';
 import 'package:google_fonts/src/google_fonts_variant.dart';
@@ -20,7 +20,10 @@ class MockHttpClient extends Mock implements http.Client {
   }
 }
 
-class MockAssetManifest extends Mock implements AssetManifest {}
+class MockAssetManifest extends Mock implements AssetManifest {
+  @override
+  List<String> listAssets() => [];
+}
 
 const _fakeResponse = 'fake response body - success';
 // The number of bytes in _fakeResponse.
