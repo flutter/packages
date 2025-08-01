@@ -8354,6 +8354,9 @@ class Certificate extends PigeonInternalProxyApiBaseClass {
   }
 }
 
+/// Compatibility version of `WebSettings`.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/webkit/WebSettingsCompat.
 class WebSettingsCompat extends PigeonInternalProxyApiBaseClass {
   /// Constructs [WebSettingsCompat] without creating the associated native object.
   ///
@@ -8462,6 +8465,9 @@ class WebSettingsCompat extends PigeonInternalProxyApiBaseClass {
   }
 }
 
+/// Utility class for checking which WebView Support Library features are supported on the device.
+///
+/// See https://developer.android.com/reference/kotlin/androidx/webkit/WebViewFeature.
 class WebViewFeature extends PigeonInternalProxyApiBaseClass {
   /// Constructs [WebViewFeature] without creating the associated native object.
   ///

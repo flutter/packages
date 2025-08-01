@@ -6331,7 +6331,11 @@ abstract class PigeonApiCertificate(
     }
   }
 }
-
+/**
+ * Compatibility version of `WebSettings`.
+ *
+ * See https://developer.android.com/reference/kotlin/androidx/webkit/WebSettingsCompat.
+ */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebSettingsCompat(
     open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
@@ -6406,7 +6410,11 @@ abstract class PigeonApiWebSettingsCompat(
     }
   }
 }
-
+/**
+ * Utility class for checking which WebView Support Library features are supported on the device.
+ *
+ * See https://developer.android.com/reference/kotlin/androidx/webkit/WebViewFeature.
+ */
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiWebViewFeature(
     open val pigeonRegistrar: AndroidWebkitLibraryPigeonProxyApiRegistrar
