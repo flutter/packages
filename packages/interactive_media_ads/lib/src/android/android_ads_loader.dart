@@ -116,9 +116,10 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
         androidRequest
             .setVastLoadTimeout(vastLoadTimeout.inMilliseconds.toDouble()),
       if (request.contentProgressProvider
-          case final AndroidContentProgressProvider contentProgressProvider)
+          case final PlatformContentProgressProvider contentProgressProvider)
         androidRequest.setContentProgressProvider(
-          contentProgressProvider.progressProvider,
+          (contentProgressProvider as AndroidContentProgressProvider)
+              .progressProvider,
         ),
       adsLoader.requestAds(androidRequest),
     ]);
