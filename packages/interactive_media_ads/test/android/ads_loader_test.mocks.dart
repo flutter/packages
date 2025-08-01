@@ -919,6 +919,101 @@ class MockAdsRequest extends _i1.Mock implements _i2.AdsRequest {
       ) as _i5.Future<void>);
 
   @override
+  _i5.Future<void> setAdWillAutoPlay(bool? willAutoPlay) => (super.noSuchMethod(
+        Invocation.method(
+          #setAdWillAutoPlay,
+          [willAutoPlay],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setAdWillPlayMuted(bool? willPlayMuted) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAdWillPlayMuted,
+          [willPlayMuted],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setAdsResponse(String? cannedAdResponse) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAdsResponse,
+          [cannedAdResponse],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setContentDuration(double? duration) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentDuration,
+          [duration],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setContentKeywords(List<String>? keywords) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setContentKeywords,
+          [keywords],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setContentTitle(String? title) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentTitle,
+          [title],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setContinuousPlayback(bool? continuousPlayback) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setContinuousPlayback,
+          [continuousPlayback],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setLiveStreamPrefetchSeconds(double? prefetchTime) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLiveStreamPrefetchSeconds,
+          [prefetchTime],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setVastLoadTimeout(double? timeout) => (super.noSuchMethod(
+        Invocation.method(
+          #setVastLoadTimeout,
+          [timeout],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i2.AdsRequest pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
           #pigeon_copy,

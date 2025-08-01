@@ -516,6 +516,146 @@ class MockIMAAdsRequest extends _i1.Mock implements _i2.IMAAdsRequest {
       ) as _i2.PigeonInstanceManager);
 
   @override
+  _i3.Future<String?> getAdTagUrl() => (super.noSuchMethod(
+        Invocation.method(
+          #getAdTagUrl,
+          [],
+        ),
+        returnValue: _i3.Future<String?>.value(),
+        returnValueForMissingStub: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
+
+  @override
+  _i3.Future<String?> getAdsResponse() => (super.noSuchMethod(
+        Invocation.method(
+          #getAdsResponse,
+          [],
+        ),
+        returnValue: _i3.Future<String?>.value(),
+        returnValueForMissingStub: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
+
+  @override
+  _i3.Future<_i2.IMAAdDisplayContainer> getAdDisplayContainer() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAdDisplayContainer,
+          [],
+        ),
+        returnValue: _i3.Future<_i2.IMAAdDisplayContainer>.value(
+            _FakeIMAAdDisplayContainer_2(
+          this,
+          Invocation.method(
+            #getAdDisplayContainer,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i3.Future<_i2.IMAAdDisplayContainer>.value(
+            _FakeIMAAdDisplayContainer_2(
+          this,
+          Invocation.method(
+            #getAdDisplayContainer,
+            [],
+          ),
+        )),
+      ) as _i3.Future<_i2.IMAAdDisplayContainer>);
+
+  @override
+  _i3.Future<void> setAdWillAutoPlay(bool? adWillAutoPlay) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAdWillAutoPlay,
+          [adWillAutoPlay],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setAdWillPlayMuted(bool? adWillPlayMuted) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAdWillPlayMuted,
+          [adWillPlayMuted],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContinuousPlayback(bool? continuousPlayback) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setContinuousPlayback,
+          [continuousPlayback],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContentDuration(double? duration) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentDuration,
+          [duration],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContentKeywords(List<String>? keywords) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setContentKeywords,
+          [keywords],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContentTitle(String? title) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentTitle,
+          [title],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContentURL(String? contentURL) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentURL,
+          [contentURL],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setVastLoadTimeout(double? timeout) => (super.noSuchMethod(
+        Invocation.method(
+          #setVastLoadTimeout,
+          [timeout],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setLiveStreamPrefetchSeconds(double? seconds) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLiveStreamPrefetchSeconds,
+          [seconds],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i2.IMAAdsRequest pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
           #pigeon_copy,
