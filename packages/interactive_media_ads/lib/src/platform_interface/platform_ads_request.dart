@@ -15,7 +15,7 @@ sealed class PlatformAdsRequest {
     this.contentDuration,
     this.contentKeywords,
     this.contentTitle,
-    this.liveStreamPrefetchSeconds,
+    this.liveStreamPrefetchMaxWaitTime,
     this.vastLoadTimeout,
   });
 
@@ -25,11 +25,11 @@ sealed class PlatformAdsRequest {
     bool? adWillAutoPlay,
     bool? adWillPlayMuted,
     bool? continuousPlayback,
-    double? contentDuration,
+    Duration? contentDuration,
     List<String>? contentKeywords,
     String? contentTitle,
-    double? liveStreamPrefetchSeconds,
-    double? vastLoadTimeout,
+    Duration? liveStreamPrefetchMaxWaitTime,
+    Duration? vastLoadTimeout,
   }) =>
       PlatformAdsRequestWithAdTagUrl._(
         adTagUrl: adTagUrl,
@@ -40,7 +40,7 @@ sealed class PlatformAdsRequest {
         contentDuration: contentDuration,
         contentKeywords: contentKeywords,
         contentTitle: contentTitle,
-        liveStreamPrefetchSeconds: liveStreamPrefetchSeconds,
+        liveStreamPrefetchMaxWaitTime: liveStreamPrefetchMaxWaitTime,
         vastLoadTimeout: vastLoadTimeout,
       );
 
@@ -50,11 +50,11 @@ sealed class PlatformAdsRequest {
     bool? adWillAutoPlay,
     bool? adWillPlayMuted,
     bool? continuousPlayback,
-    double? contentDuration,
+    Duration? contentDuration,
     List<String>? contentKeywords,
     String? contentTitle,
-    double? liveStreamPrefetchSeconds,
-    double? vastLoadTimeout,
+    Duration? liveStreamPrefetchMaxWaitTime,
+    Duration? vastLoadTimeout,
   }) =>
       PlatformAdsRequestWithAdsResponse._(
         adsResponse: adsResponse,
@@ -65,7 +65,7 @@ sealed class PlatformAdsRequest {
         contentDuration: contentDuration,
         contentKeywords: contentKeywords,
         contentTitle: contentTitle,
-        liveStreamPrefetchSeconds: liveStreamPrefetchSeconds,
+        liveStreamPrefetchMaxWaitTime: liveStreamPrefetchMaxWaitTime,
         vastLoadTimeout: vastLoadTimeout,
       );
 
@@ -85,8 +85,8 @@ sealed class PlatformAdsRequest {
   /// content videos one after another similar to TV broadcast.
   final bool? continuousPlayback;
 
-  /// Specifies the duration of the content in seconds to be shown.
-  final double? contentDuration;
+  /// Specifies the duration of the content to be shown.
+  final Duration? contentDuration;
 
   /// Specifies the keywords used to describe the content to be shown.
   final List<String>? contentKeywords;
@@ -94,12 +94,12 @@ sealed class PlatformAdsRequest {
   /// Specifies the title of the content to be shown.
   final String? contentTitle;
 
-  /// Specifies the maximum amount of time to wait in seconds, after calling
-  /// requestAds, before requesting the ad tag URL.
-  final double? liveStreamPrefetchSeconds;
+  /// Specifies the maximum amount of time to wait, after calling requestAds,
+  /// before requesting the ad tag URL.
+  final Duration? liveStreamPrefetchMaxWaitTime;
 
-  /// Specifies the VAST load timeout in milliseconds for a single wrapper.
-  final double? vastLoadTimeout;
+  /// Specifies the VAST load timeout for a single wrapper.
+  final Duration? vastLoadTimeout;
 }
 
 /// An object containing the data used to request ads from the server with an
@@ -115,7 +115,7 @@ base class PlatformAdsRequestWithAdTagUrl extends PlatformAdsRequest {
     super.contentDuration,
     super.contentKeywords,
     super.contentTitle,
-    super.liveStreamPrefetchSeconds,
+    super.liveStreamPrefetchMaxWaitTime,
     super.vastLoadTimeout,
   }) : super._();
 
@@ -136,7 +136,7 @@ base class PlatformAdsRequestWithAdsResponse extends PlatformAdsRequest {
     super.contentDuration,
     super.contentKeywords,
     super.contentTitle,
-    super.liveStreamPrefetchSeconds,
+    super.liveStreamPrefetchMaxWaitTime,
     super.vastLoadTimeout,
   }) : super._();
 

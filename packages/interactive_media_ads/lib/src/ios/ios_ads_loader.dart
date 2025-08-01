@@ -102,19 +102,24 @@ base class IOSAdsLoader extends PlatformAdsLoader {
         adsRequest.setAdWillPlayMuted(adWillPlayMuted),
       if (request.continuousPlayback case final bool continuousPlayback)
         adsRequest.setContinuousPlayback(continuousPlayback),
-      if (request.contentDuration case final double contentDuration)
-        adsRequest.setContentDuration(contentDuration),
+      if (request.contentDuration case final Duration contentDuration)
+        adsRequest.setContentDuration(
+          contentDuration.inMilliseconds / Duration.millisecondsPerSecond,
+        ),
       if (request.contentKeywords case final List<String> contentKeywords)
         adsRequest.setContentKeywords(contentKeywords),
       if (request.contentTitle case final String contentTitle)
         adsRequest.setContentTitle(contentTitle),
-      if (request.liveStreamPrefetchSeconds
-          case final double liveStreamPrefetchSeconds)
+      if (request.liveStreamPrefetchMaxWaitTime
+          case final Duration liveStreamPrefetchMaxWaitTime)
         adsRequest.setLiveStreamPrefetchSeconds(
-          liveStreamPrefetchSeconds,
+          liveStreamPrefetchMaxWaitTime.inMilliseconds /
+              Duration.millisecondsPerSecond,
         ),
-      if (request.vastLoadTimeout case final double vastLoadTimeout)
-        adsRequest.setVastLoadTimeout(vastLoadTimeout),
+      if (request.vastLoadTimeout case final Duration vastLoadTimeout)
+        adsRequest.setVastLoadTimeout(
+          vastLoadTimeout.inMilliseconds.toDouble(),
+        ),
       _adsLoader.requestAds(adsRequest),
     ]);
   }

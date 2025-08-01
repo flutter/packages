@@ -121,11 +121,11 @@ void main() {
         adWillAutoPlay: true,
         adWillPlayMuted: false,
         continuousPlayback: true,
-        contentDuration: 2.0,
+        contentDuration: const Duration(seconds: 2),
         contentKeywords: <String>['keyword1', 'keyword2'],
         contentTitle: 'contentTitle',
-        liveStreamPrefetchSeconds: 3.0,
-        vastLoadTimeout: 4.0,
+        liveStreamPrefetchMaxWaitTime: const Duration(seconds: 3),
+        vastLoadTimeout: const Duration(milliseconds: 5000),
         contentProgressProvider: provider,
       ));
 
@@ -136,7 +136,7 @@ void main() {
       verify(mockRequest.setContentKeywords(<String>['keyword1', 'keyword2']));
       verify(mockRequest.setContentTitle('contentTitle'));
       verify(mockRequest.setLiveStreamPrefetchSeconds(3.0));
-      verify(mockRequest.setVastLoadTimeout(4.0));
+      verify(mockRequest.setVastLoadTimeout(5000.0));
 
       verify(mockLoader.requestAds(any));
     });

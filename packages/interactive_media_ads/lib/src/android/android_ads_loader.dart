@@ -99,19 +99,22 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
         androidRequest.setAdWillPlayMuted(adWillPlayMuted),
       if (request.continuousPlayback case final bool continuousPlayback)
         androidRequest.setContinuousPlayback(continuousPlayback),
-      if (request.contentDuration case final double contentDuration)
-        androidRequest.setContentDuration(contentDuration),
+      if (request.contentDuration case final Duration contentDuration)
+        androidRequest.setContentDuration(
+            contentDuration.inMilliseconds / Duration.millisecondsPerSecond),
       if (request.contentKeywords case final List<String> contentKeywords)
         androidRequest.setContentKeywords(contentKeywords),
       if (request.contentTitle case final String contentTitle)
         androidRequest.setContentTitle(contentTitle),
-      if (request.liveStreamPrefetchSeconds
-          case final double liveStreamPrefetchSeconds)
+      if (request.liveStreamPrefetchMaxWaitTime
+          case final Duration liveStreamPrefetchMaxWaitTime)
         androidRequest.setLiveStreamPrefetchSeconds(
-          liveStreamPrefetchSeconds,
+          liveStreamPrefetchMaxWaitTime.inMilliseconds /
+              Duration.millisecondsPerSecond,
         ),
-      if (request.vastLoadTimeout case final double vastLoadTimeout)
-        androidRequest.setVastLoadTimeout(vastLoadTimeout),
+      if (request.vastLoadTimeout case final Duration vastLoadTimeout)
+        androidRequest
+            .setVastLoadTimeout(vastLoadTimeout.inMilliseconds.toDouble()),
       if (request.contentProgressProvider
           case final AndroidContentProgressProvider contentProgressProvider)
         androidRequest.setContentProgressProvider(

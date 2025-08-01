@@ -14,11 +14,11 @@ class AdsRequest {
     bool? adWillAutoPlay,
     bool? adWillPlayMuted,
     bool? continuousPlayback,
-    double? contentDuration,
+    Duration? contentDuration,
     List<String>? contentKeywords,
     String? contentTitle,
-    double? liveStreamPrefetchSeconds,
-    double? vastLoadTimeout,
+    Duration? liveStreamPrefetchMaxWaitTime,
+    Duration? vastLoadTimeout,
   }) : this.fromPlatform(
           PlatformAdsRequest.withAdTagUrl(
             adTagUrl: adTagUrl,
@@ -29,7 +29,7 @@ class AdsRequest {
             contentDuration: contentDuration,
             contentKeywords: contentKeywords,
             contentTitle: contentTitle,
-            liveStreamPrefetchSeconds: liveStreamPrefetchSeconds,
+            liveStreamPrefetchMaxWaitTime: liveStreamPrefetchMaxWaitTime,
             vastLoadTimeout: vastLoadTimeout,
           ),
         );
@@ -41,11 +41,11 @@ class AdsRequest {
     bool? adWillAutoPlay,
     bool? adWillPlayMuted,
     bool? continuousPlayback,
-    double? contentDuration,
+    Duration? contentDuration,
     List<String>? contentKeywords,
     String? contentTitle,
-    double? liveStreamPrefetchSeconds,
-    double? vastLoadTimeout,
+    Duration? liveStreamPrefetchMaxWaitTime,
+    Duration? vastLoadTimeout,
   }) : this.fromPlatform(
           PlatformAdsRequest.withAdsResponse(
             adsResponse: adsResponse,
@@ -56,7 +56,7 @@ class AdsRequest {
             contentDuration: contentDuration,
             contentKeywords: contentKeywords,
             contentTitle: contentTitle,
-            liveStreamPrefetchSeconds: liveStreamPrefetchSeconds,
+            liveStreamPrefetchMaxWaitTime: liveStreamPrefetchMaxWaitTime,
             vastLoadTimeout: vastLoadTimeout,
           ),
         );
@@ -103,8 +103,8 @@ class AdsRequest {
   /// content videos one after another similar to TV broadcast.
   bool? get continuousPlayback => platform.continuousPlayback;
 
-  /// Specifies the duration of the content in seconds to be shown.
-  double? get contentDuration => platform.contentDuration;
+  /// Specifies the duration of the content to be shown.
+  Duration? get contentDuration => platform.contentDuration;
 
   /// Specifies the keywords used to describe the content to be shown.
   List<String>? get contentKeywords => platform.contentKeywords;
@@ -112,10 +112,11 @@ class AdsRequest {
   /// Specifies the title of the content to be shown.
   String? get contentTitle => platform.contentTitle;
 
-  /// Specifies the maximum amount of time to wait in seconds, after calling
-  /// requestAds, before requesting the ad tag URL.
-  double? get liveStreamPrefetchSeconds => platform.liveStreamPrefetchSeconds;
+  /// Specifies the maximum amount of time to wait, after calling requestAds,
+  /// before requesting the ad tag URL.
+  Duration? get liveStreamPrefetchMaxWaitTime =>
+      platform.liveStreamPrefetchMaxWaitTime;
 
   /// Specifies the VAST load timeout in milliseconds for a single wrapper.
-  double? get vastLoadTimeout => platform.vastLoadTimeout;
+  Duration? get vastLoadTimeout => platform.vastLoadTimeout;
 }

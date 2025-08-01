@@ -32,11 +32,11 @@ void main() {
       adWillAutoPlay: true,
       adWillPlayMuted: false,
       continuousPlayback: true,
-      contentDuration: 2.0,
+      contentDuration: const Duration(seconds: 2),
       contentKeywords: <String>['keyword1', 'keyword2'],
       contentTitle: 'contentTitle',
-      liveStreamPrefetchSeconds: 3.0,
-      vastLoadTimeout: 4.0,
+      liveStreamPrefetchMaxWaitTime: const Duration(seconds: 3),
+      vastLoadTimeout: const Duration(milliseconds: 5000),
       contentProgressProvider: TestContentProgressProvider(
         const PlatformContentProgressProviderCreationParams(),
       ),
@@ -61,8 +61,8 @@ void main() {
         expect(request.contentKeywords, platformRequest.contentKeywords);
         expect(request.contentTitle, platformRequest.contentTitle);
         expect(
-          request.liveStreamPrefetchSeconds,
-          platformRequest.liveStreamPrefetchSeconds,
+          request.liveStreamPrefetchMaxWaitTime,
+          platformRequest.liveStreamPrefetchMaxWaitTime,
         );
         expect(request.vastLoadTimeout, platformRequest.vastLoadTimeout);
         expect(
@@ -82,7 +82,8 @@ void main() {
       contentDuration: platformRequest.contentDuration,
       contentKeywords: platformRequest.contentKeywords,
       contentTitle: platformRequest.contentTitle,
-      liveStreamPrefetchSeconds: platformRequest.liveStreamPrefetchSeconds,
+      liveStreamPrefetchMaxWaitTime:
+          platformRequest.liveStreamPrefetchMaxWaitTime,
       vastLoadTimeout: platformRequest.vastLoadTimeout,
       contentProgressProvider: ContentProgressProvider.fromPlatform(
         platformRequest.contentProgressProvider!,
