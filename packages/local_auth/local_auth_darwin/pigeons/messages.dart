@@ -49,6 +49,15 @@ enum AuthResult {
 
   /// No passcode is set.
   errorPasscodeNotSet,
+
+  /// The user cancelled the authentication.
+  errorUserCancelled,
+
+  /// The user tapped the "Enter Password" fallback.
+  errorUserFallback,
+
+  /// The user biometrics is disabled.
+  errorBiometricNotAvailable,
 }
 
 class AuthOptions {
