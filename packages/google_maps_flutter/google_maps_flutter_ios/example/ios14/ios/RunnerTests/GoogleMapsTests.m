@@ -84,7 +84,8 @@
   size_t bitsPerComponent = CGImageGetBitsPerComponent(imageRef);
 
   // non wide gamut images use 8 bit format
-  XCTAssert(bitsPerComponent == 8);
+  XCTAssertEqual(bitsPerComponent, 8);
+  XCTAssertEqual(CGImageGetAlphaInfo(imageRef), kCGImageAlphaPremultipliedLast);
 }
 
 - (void)testAnimateCameraWithUpdate {
