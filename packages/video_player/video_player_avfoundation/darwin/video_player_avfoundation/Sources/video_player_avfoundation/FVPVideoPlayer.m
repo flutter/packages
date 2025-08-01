@@ -41,7 +41,7 @@ static void FVPRegisterKeyValueObservers(NSObject *observer,
 /// This should only be called to balance calls to FVPRegisterKeyValueObservers, as it is an
 /// error to try to remove observers that are not currently set.
 ///
-/// This does not call any methods on 'observer', so is safe to call from 'obsever's dealloc.
+/// This does not call any methods on 'observer', so is safe to call from 'observer's dealloc.
 static void FVPRemoveKeyValueObservers(NSObject *observer,
                                        NSDictionary<NSString *, NSValue *> *observations,
                                        NSObject *target) {
