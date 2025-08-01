@@ -251,6 +251,7 @@ class RouteConfiguration {
   final Codec<Object?, Object?>? extraCodec;
 
   /// The GoRouter instance that owns this configuration.
+  ///
   /// This is used to provide access to the router during redirects.
   final GoRouter? router;
 
@@ -529,6 +530,28 @@ class RouteConfiguration {
       zoneValues: <Object?, Object?>{
         currentRouterKey: router,
       },
+      zoneSpecification: ZoneSpecification(
+        handleUncaughtError: (
+          Zone zone,
+          ZoneDelegate zoneDelegate,
+          Zone zone2,
+          Object error,
+          StackTrace stackTrace,
+        ) {
+          // Handle errors by routing them to GoRouter's error handling mechanisms
+          if (error is GoException) {
+            // For GoException, we can let it propagate as it's already handled
+            // by the existing error handling in redirect methods
+            throw error;
+          } else {
+            // For other errors, we should route them to the router's error handling
+            // This will be handled by GoRouter.onException or error builders
+            log('Error in router zone: $error');
+            // Convert the error to a GoException for proper error handling
+            throw GoException('error in router zone: $error');
+          }
+        },
+      ),
     );
   }
 
