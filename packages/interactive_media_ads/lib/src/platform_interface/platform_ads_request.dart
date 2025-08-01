@@ -6,7 +6,6 @@ import 'platform_content_progress_provider.dart';
 
 /// An object containing the data used to request ads from the server.
 sealed class PlatformAdsRequest {
-  /// Creates an [PlatformAdsRequest].
   PlatformAdsRequest._({
     this.contentProgressProvider,
     this.adWillAutoPlay,
@@ -19,6 +18,7 @@ sealed class PlatformAdsRequest {
     this.vastLoadTimeout,
   });
 
+  /// Creates a [PlatformAdsRequest] with the given ad tag URL.
   factory PlatformAdsRequest.withAdTagUrl({
     required String adTagUrl,
     PlatformContentProgressProvider? contentProgressProvider,
@@ -44,6 +44,7 @@ sealed class PlatformAdsRequest {
         vastLoadTimeout: vastLoadTimeout,
       );
 
+  /// Creates a [PlatformAdsRequest] with the given canned ads response.
   factory PlatformAdsRequest.withAdsResponse({
     required String adsResponse,
     PlatformContentProgressProvider? contentProgressProvider,

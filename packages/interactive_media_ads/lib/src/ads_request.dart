@@ -7,7 +7,7 @@ import 'platform_interface/platform_interface.dart';
 
 /// An object containing the data used to request ads from the server.
 class AdsRequest {
-  /// Creates an [AdsRequest].
+  /// Creates an [AdsRequest] with the given ad tag URL.
   AdsRequest({
     required String adTagUrl,
     ContentProgressProvider? contentProgressProvider,
@@ -34,7 +34,7 @@ class AdsRequest {
           ),
         );
 
-  /// Creates an [AdsRequest].
+  /// Creates an [AdsRequest] with the given canned ads response.
   AdsRequest.withAdsResponse({
     required String adsResponse,
     ContentProgressProvider? contentProgressProvider,
