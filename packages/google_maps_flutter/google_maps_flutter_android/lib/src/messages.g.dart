@@ -3107,10 +3107,6 @@ class MapsInitializerApi {
 
   /// Asks the Google Maps SDK to do the thread-blocking work it normally does
   /// when a map is shown for the first time.
-  ///
-  /// This gives the developer the option to move that jank to a different
-  /// part of the map (typically, the app startup, where missed frames
-  /// aren't going to be noticed).
   Future<void> warmup() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.warmup$pigeonVar_messageChannelSuffix';
