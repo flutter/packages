@@ -14,7 +14,7 @@ import 'example_payment_queue_delegate.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // When using the Android plugin directly it is mandatory to register
+  // When using the StoreKit plugin directly it is mandatory to register
   // the plugin as default instance as part of initializing the app.
   InAppPurchaseStoreKitPlatform.registerPlatform();
 

@@ -7,6 +7,7 @@ package io.flutter.plugins.videoplayer;
 import android.content.Context;
 import android.util.LongSparseArray;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -14,6 +15,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.videoplayer.Messages.AndroidVideoPlayerApi;
 import io.flutter.plugins.videoplayer.Messages.CreateMessage;
+import io.flutter.plugins.videoplayer.Messages.PlatformVideoFormat;
 import io.flutter.plugins.videoplayer.Messages.VideoPlayerInstanceApi;
 import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
@@ -89,35 +91,30 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
 
   @Override
   public @NonNull Long create(@NonNull CreateMessage arg) {
+    final @NonNull String uri = arg.getUri();
     final VideoAsset videoAsset;
-    if (arg.getAsset() != null) {
-      String assetLookupKey;
-      if (arg.getPackageName() != null) {
-        assetLookupKey =
-            flutterState.keyForAssetAndPackageName.get(arg.getAsset(), arg.getPackageName());
-      } else {
-        assetLookupKey = flutterState.keyForAsset.get(arg.getAsset());
-      }
-      videoAsset = VideoAsset.fromAssetUrl("asset:///" + assetLookupKey);
-    } else if (arg.getUri().startsWith("rtsp://")) {
-      videoAsset = VideoAsset.fromRtspUrl(arg.getUri());
+    if (uri.startsWith("asset:")) {
+      videoAsset = VideoAsset.fromAssetUrl(uri);
+    } else if (uri.startsWith("rtsp:")) {
+      videoAsset = VideoAsset.fromRtspUrl(uri);
     } else {
       VideoAsset.StreamingFormat streamingFormat = VideoAsset.StreamingFormat.UNKNOWN;
-      String formatHint = arg.getFormatHint();
+      PlatformVideoFormat formatHint = arg.getFormatHint();
       if (formatHint != null) {
         switch (formatHint) {
-          case "ss":
+          case SS:
             streamingFormat = VideoAsset.StreamingFormat.SMOOTH;
             break;
-          case "dash":
+          case DASH:
             streamingFormat = VideoAsset.StreamingFormat.DYNAMIC_ADAPTIVE;
             break;
-          case "hls":
+          case HLS:
             streamingFormat = VideoAsset.StreamingFormat.HTTP_LIVE;
             break;
         }
       }
-      videoAsset = VideoAsset.fromRemoteUrl(arg.getUri(), streamingFormat, arg.getHttpHeaders());
+      videoAsset =
+          VideoAsset.fromRemoteUrl(uri, streamingFormat, arg.getHttpHeaders(), arg.getUserAgent());
     }
 
     long id;
@@ -186,6 +183,13 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   @Override
   public void setMixWithOthers(@NonNull Boolean mixWithOthers) {
     options.mixWithOthers = mixWithOthers;
+  }
+
+  @Override
+  public @NonNull String getLookupKeyForAsset(@NonNull String asset, @Nullable String packageName) {
+    return packageName == null
+        ? flutterState.keyForAsset.get(asset)
+        : flutterState.keyForAssetAndPackageName.get(asset, packageName);
   }
 
   private interface KeyForAssetFn {
