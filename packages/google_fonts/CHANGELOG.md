@@ -1,8 +1,7 @@
-## 6.3.1 - 2025-07-30
+## 6.3.0 - 2025-08-01
 ### Changed
 - Update AssetManifest to use the builtin Flutter API.
 
-## 6.3.0 - 2024-11-01
 ### Added
 - `Anton SC`
 - `Arsenal SC`
