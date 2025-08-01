@@ -1,3 +1,8 @@
+## 0.9.20+7
+
+* Migrates `startImageStream` and `setUpCaptureSessionForAudioIfNeeded` methods to Swift.
+* Removes Objective-C implementation of `reportErrorMessage` method.
+
 ## 0.9.20+6
 
 * Migrates `captureToFile` and `getTemporaryFilePath` methods to Swift.
