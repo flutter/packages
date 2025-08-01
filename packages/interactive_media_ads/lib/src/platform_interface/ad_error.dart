@@ -74,7 +74,7 @@ enum AdErrorCode {
   /// No assets were found in the VAST ad response.
   vastAssetNotFound,
 
-  /// A VAST response containing a single <VAST> tag with no child tags.
+  /// A VAST response containing a single VAST tag with no child tags.
   vastEmptyResponse,
 
   /// Assets were found in the VAST ad response for a linear ad, but none of
