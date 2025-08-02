@@ -255,6 +255,8 @@ class RouteConfiguration {
   ///    topic.
   ///  * [extra_codec](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/extra_codec.dart)
   ///    example.
+  ///  * [topOnEnter] for navigation interception.
+  ///  * [topRedirect] (deprecated) for legacy redirections.
   final Codec<Object?, Object?>? extraCodec;
 
   final Map<String, _NamedPath> _nameToPath = <String, _NamedPath>{};

@@ -73,8 +73,8 @@ class RoutingConfig {
   ///
   /// See [GoRouter].
   @Deprecated(
-    'Use onEnter instead. '
-    'This feature will be removed in a future release.',
+    'Use onEnter for redirection. In the onEnter callback, call a navigation '
+    'method like router.go() and return const Block(). ',
   )
   final GoRouterRedirect redirect;
 
@@ -122,6 +122,10 @@ class RoutingConfig {
 /// started](https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart)
 /// example, which shows an app with a simple route configuration.
 ///
+/// The [onEnter] callback allows intercepting navigation before routes are
+/// processed. Return [Allow] to proceed or [Block] to prevent navigation.
+/// This runs before the deprecated [redirect] callback.
+///
 /// The [redirect] callback allows the app to redirect to a new location.
 /// Alternatively, you can specify a redirect for an individual route using
 /// [GoRoute.redirect]. If [BuildContext.dependOnInheritedWidgetOfExactType] is
@@ -167,9 +171,8 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     GoRouterPageBuilder? errorPageBuilder,
     GoRouterWidgetBuilder? errorBuilder,
     @Deprecated(
-      'Use onEnter instead. '
-      'This feature will be removed in a future release.',
-    )
+        'Use onEnter for redirection. In the onEnter callback, call a navigation '
+        'method like router.go() and return const Block(). ')
     GoRouterRedirect? redirect,
     int redirectLimit = 5,
     Listenable? refreshListenable,

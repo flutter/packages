@@ -936,5 +936,129 @@ void main() {
       // Verify that the fallback route was navigated to.
       expect(find.text('Fallback Page'), findsOneWidget);
     });
+
+    testWidgets('onEnter has priority over deprecated redirect',
+        (WidgetTester tester) async {
+      int redirectCallCount = 0;
+      int onEnterCallCount = 0;
+      bool lastOnEnterBlocked = false;
+
+      router = GoRouter(
+        initialLocation: '/start',
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/start',
+            builder: (_, __) => const Text('Start'),
+          ),
+          GoRoute(
+            path: '/blocked',
+            builder: (_, __) => const Text('Blocked'),
+          ),
+          GoRoute(
+            path: '/allowed',
+            builder: (_, __) => const Text('Allowed'),
+          ),
+        ],
+        onEnter: (_, __, GoRouterState next, ___) async {
+          onEnterCallCount++;
+          lastOnEnterBlocked = next.uri.path == '/blocked';
+          if (lastOnEnterBlocked) {
+            return const Block();
+          }
+          return const Allow();
+        },
+        // ignore: deprecated_member_use_from_same_package
+        redirect: (_, GoRouterState state) {
+          redirectCallCount++;
+          // This should never be called for /blocked
+          return null;
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      // Record initial counts
+      final int initialRedirectCount = redirectCallCount;
+      final int initialOnEnterCount = onEnterCallCount;
+
+      // Test blocked route
+      router.go('/blocked');
+      await tester.pumpAndSettle();
+
+      expect(onEnterCallCount, greaterThan(initialOnEnterCount));
+      expect(
+          redirectCallCount,
+          equals(
+              initialRedirectCount)); // redirect should not be called for blocked routes
+      expect(find.text('Start'), findsOneWidget); // Should stay on start
+      expect(lastOnEnterBlocked, isTrue);
+
+      // Test allowed route
+      final int beforeAllowedRedirectCount = redirectCallCount;
+      router.go('/allowed');
+      await tester.pumpAndSettle();
+
+      expect(onEnterCallCount, greaterThan(initialOnEnterCount + 1));
+      expect(
+          redirectCallCount,
+          greaterThan(
+              beforeAllowedRedirectCount)); // redirect should be called this time
+      expect(find.text('Allowed'), findsOneWidget);
+    });
+
+    testWidgets('onEnter blocks navigation and preserves current route',
+        (WidgetTester tester) async {
+      String? capturedCurrentPath;
+      String? capturedNextPath;
+
+      router = GoRouter(
+        initialLocation: '/page1',
+        routes: <GoRoute>[
+          GoRoute(
+            path: '/page1',
+            builder: (_, __) => const Text('Page 1'),
+          ),
+          GoRoute(
+            path: '/page2',
+            builder: (_, __) => const Text('Page 2'),
+          ),
+          GoRoute(
+            path: '/protected',
+            builder: (_, __) => const Text('Protected'),
+          ),
+        ],
+        onEnter: (_, GoRouterState current, GoRouterState next, ___) async {
+          capturedCurrentPath = current.uri.path;
+          capturedNextPath = next.uri.path;
+
+          if (next.uri.path == '/protected') {
+            return const Block();
+          }
+          return const Allow();
+        },
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+      expect(find.text('Page 1'), findsOneWidget);
+
+      // Navigate to page2 (allowed)
+      router.go('/page2');
+      await tester.pumpAndSettle();
+      expect(find.text('Page 2'), findsOneWidget);
+      expect(capturedCurrentPath, equals('/page1'));
+      expect(capturedNextPath, equals('/page2'));
+
+      // Try to navigate to protected (blocked)
+      router.go('/protected');
+      await tester.pumpAndSettle();
+
+      // Should stay on page2
+      expect(find.text('Page 2'), findsOneWidget);
+      expect(find.text('Protected'), findsNothing);
+      expect(capturedCurrentPath, equals('/page2'));
+      expect(capturedNextPath, equals('/protected'));
+    });
   });
 }
