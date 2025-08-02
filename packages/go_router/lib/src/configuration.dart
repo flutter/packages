@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 
 import 'logging.dart';
 import 'match.dart';
+import 'misc/constants.dart';
 import 'misc/errors.dart';
 import 'path_utils.dart';
 import 'route.dart';
@@ -29,6 +30,7 @@ class RouteConfiguration {
     this._routingConfig, {
     required this.navigatorKey,
     this.extraCodec,
+    this.router,
   }) {
     _onRoutingTableChanged();
     _routingConfig.addListener(_onRoutingTableChanged);
@@ -248,6 +250,11 @@ class RouteConfiguration {
   ///    example.
   final Codec<Object?, Object?>? extraCodec;
 
+  /// The GoRouter instance that owns this configuration.
+  ///
+  /// This is used to provide access to the router during redirects.
+  final GoRouter? router;
+
   final Map<String, _NamedPath> _nameToPath = <String, _NamedPath>{};
 
   /// Looks up the url location by a [GoRoute]'s name.
@@ -416,10 +423,12 @@ class RouteConfiguration {
 
       redirectHistory.add(prevMatchList);
       // Check for top-level redirect
-      final FutureOr<String?> topRedirectResult = _routingConfig.value.redirect(
-        context,
-        buildTopLevelGoRouterState(prevMatchList),
-      );
+      final FutureOr<String?> topRedirectResult = _runInRouterZone(() {
+        return _routingConfig.value.redirect(
+          context,
+          buildTopLevelGoRouterState(prevMatchList),
+        );
+      });
 
       if (topRedirectResult is String?) {
         return processTopLevelRedirect(topRedirectResult);
@@ -448,10 +457,12 @@ class RouteConfiguration {
         _getRouteLevelRedirect(
             context, matchList, routeMatches, currentCheckIndex + 1);
     final RouteBase route = match.route;
-    final FutureOr<String?> routeRedirectResult = route.redirect!.call(
-      context,
-      match.buildState(this, matchList),
-    );
+    final FutureOr<String?> routeRedirectResult = _runInRouterZone(() {
+      return route.redirect!.call(
+        context,
+        match.buildState(this, matchList),
+      );
+    });
     if (routeRedirectResult is String?) {
       return processRouteRedirect(routeRedirectResult);
     }
@@ -506,6 +517,34 @@ class RouteConfiguration {
         .map<String>(
             (RouteMatchList routeMatches) => routeMatches.uri.toString())
         .join(' => ');
+  }
+
+  /// Runs the given function in a Zone with the router context for redirects.
+  T _runInRouterZone<T>(T Function() callback) {
+    if (router == null) {
+      return callback();
+    }
+
+    return runZonedGuarded<T>(
+      callback,
+      (Object error, StackTrace stackTrace) {
+        // Handle errors by routing them to GoRouter's error handling mechanisms
+        if (error is GoException) {
+          // For GoException, we can let it propagate as it's already handled
+          // by the existing error handling in redirect methods
+          throw error;
+        } else {
+          // For other errors, we should route them to the router's error handling
+          // This will be handled by GoRouter.onException or error builders
+          log('Error in router zone: $error');
+          // Convert the error to a GoException for proper error handling
+          throw GoException('error in router zone: $error');
+        }
+      },
+      zoneValues: <Object?, Object?>{
+        currentRouterKey: router,
+      },
+    )!;
   }
 
   /// Get the location for the provided route.

@@ -1,3 +1,8 @@
+## 16.0.1
+
+- Fixes `GoRouter.of(context)` access inside redirect callbacks by providing router access through Zone-based context tracking.
+- Adds support for using context extension methods (e.g., `context.namedLocation()`, `context.go()`) within redirect callbacks.
+
 ## 16.0.0
 
 - **BREAKING CHANGE**
