@@ -194,7 +194,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success:
+      case .success(let message):
+        XCTAssert(message == .success)
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
