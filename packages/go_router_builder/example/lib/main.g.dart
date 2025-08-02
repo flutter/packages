@@ -43,22 +43,17 @@ RouteBase get $homeRoute => GoRouteData.$route(
 mixin _$HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
-  @override
   String get location => GoRouteData.$location(
         '/',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -69,22 +64,17 @@ mixin _$FamilyRoute on GoRouteData {
 
   FamilyRoute get _self => this as FamilyRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/family/${Uri.encodeComponent(_self.fid)}',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -96,22 +86,17 @@ mixin _$PersonRoute on GoRouteData {
 
   PersonRoute get _self => this as PersonRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/family/${Uri.encodeComponent(_self.fid)}/person/${Uri.encodeComponent(_self.pid.toString())}',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -126,23 +111,18 @@ mixin _$PersonDetailsRoute on GoRouteData {
 
   PersonDetailsRoute get _self => this as PersonDetailsRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/family/${Uri.encodeComponent(_self.fid)}/person/${Uri.encodeComponent(_self.pid.toString())}/details/${Uri.encodeComponent(_$PersonDetailsEnumMap[_self.details]!)}',
       );
 
-  @override
   void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
-  @override
   Future<T?> push<T>(BuildContext context) =>
       context.push<T>(location, extra: _self.$extra);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location, extra: _self.$extra);
 
-  @override
   void replace(BuildContext context) =>
       context.replace(location, extra: _self.$extra);
 }
@@ -160,22 +140,17 @@ mixin _$FamilyCountRoute on GoRouteData {
 
   FamilyCountRoute get _self => this as FamilyCountRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/family-count/${Uri.encodeComponent(_self.count.toString())}',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -196,7 +171,6 @@ mixin _$LoginRoute on GoRouteData {
 
   LoginRoute get _self => this as LoginRoute;
 
-  @override
   String get location => GoRouteData.$location(
         '/login',
         queryParams: {
@@ -204,16 +178,12 @@ mixin _$LoginRoute on GoRouteData {
         },
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }

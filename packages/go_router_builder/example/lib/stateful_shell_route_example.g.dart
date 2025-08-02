@@ -47,22 +47,17 @@ mixin _$DetailsARouteData on GoRouteData {
   static DetailsARouteData _fromState(GoRouterState state) =>
       const DetailsARouteData();
 
-  @override
   String get location => GoRouteData.$location(
         '/detailsA',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -70,21 +65,16 @@ mixin _$DetailsBRouteData on GoRouteData {
   static DetailsBRouteData _fromState(GoRouterState state) =>
       const DetailsBRouteData();
 
-  @override
   String get location => GoRouteData.$location(
         '/detailsB',
       );
 
-  @override
   void go(BuildContext context) => context.go(location);
 
-  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
-  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
-  @override
   void replace(BuildContext context) => context.replace(location);
 }
