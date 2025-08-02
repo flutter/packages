@@ -7657,6 +7657,14 @@ public class Messages {
      */
     void initializeWithPreferredRenderer(
         @Nullable PlatformRendererType type, @NonNull Result<PlatformRendererType> result);
+    /**
+     * Asks the Google Maps SDK to do the thread-blocking work it normally does when a map is shown
+     * for the first time.
+     *
+     * <p>This gives the developer the option to move that jank to a different part of the map
+     * (typically, the app startup, where missed frames aren't going to be noticed).
+     */
+    void warmup(@NonNull VoidResult result);
 
     /** The codec used by MapsInitializerApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -7701,6 +7709,36 @@ public class Messages {
                     };
 
                 api.initializeWithPreferredRenderer(typeArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.warmup"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                VoidResult resultCallback =
+                    new VoidResult() {
+                      public void success() {
+                        wrapped.add(0, null);
+                        reply.reply(wrapped);
+                      }
+
+                      public void error(Throwable error) {
+                        ArrayList<Object> wrappedError = wrapError(error);
+                        reply.reply(wrappedError);
+                      }
+                    };
+
+                api.warmup(resultCallback);
               });
         } else {
           channel.setMessageHandler(null);

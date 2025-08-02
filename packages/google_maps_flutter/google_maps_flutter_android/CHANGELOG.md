@@ -1,3 +1,7 @@
+## 2.18.0
+
+* Adds GoogleMapsFlutterAndroid.warmup().
+
 ## 2.17.0
 
 * Updates `com.google.android.gms:play-services-maps` to 19.2.0.
