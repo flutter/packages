@@ -11,6 +11,7 @@ export 'src/android/android_interactive_media_ads.dart'
     show AndroidInteractiveMediaAds;
 export 'src/companion_ad_slot.dart';
 export 'src/content_progress_provider.dart';
+export 'src/ima_settings.dart';
 export 'src/ios/ios_interactive_media_ads.dart' show IOSInteractiveMediaAds;
 export 'src/platform_interface/platform_interface.dart'
     show

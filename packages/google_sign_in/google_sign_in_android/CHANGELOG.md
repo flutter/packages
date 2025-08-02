@@ -1,3 +1,13 @@
+## 7.0.3
+
+* Add more details and troubleshooting for `serverClientId` configuration
+  via Firebase.
+
+## 7.0.2
+
+* Adds a README note about potentially confusing error returns from
+  `CredentialManager`.
+
 ## 7.0.1
 
 * Passes an activity context when requesting credentials, fixing an issue that
