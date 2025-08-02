@@ -787,7 +787,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// This method uses [android_webview.WebViewFeature.isFeatureSupported] to check
   /// if the specified WebView feature is available on the current device and WebView version.
   ///
-  /// See [WebViewFeatureConstants] for available feature constants.
+  /// See [WebViewFeatureType] for available feature constants.
   Future<bool> isWebViewFeatureSupported(WebViewFeatureType featureType) {
     final String feature = switch (featureType) {
       WebViewFeatureType.paymentRequest =>
@@ -803,7 +803,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// to enable or disable the Payment Request API for the WebView.
   ///
   /// Before calling this method, you should check if the feature is supported using
-  /// [isWebViewFeatureSupported] with [WebViewFeatureConstants.paymentRequest].
+  /// [isWebViewFeatureSupported] with [WebViewFeatureType.paymentRequest].
   ///
   /// This feature requires adding queries to the AndroidManifest.xml to allow WebView to query the device for the user's payment applications:
   /// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setPaymentRequestEnabled(android.webkit.WebSettings,boolean).
