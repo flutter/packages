@@ -1,3 +1,7 @@
+## 0.4.4
+
+* Added support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).
+
 ## 0.4.3
 
 * Adds **Introductory Offer Eligibility** support for StoreKit2
