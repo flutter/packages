@@ -81,6 +81,23 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<String?> getAssetUrl(
+    String? asset,
+    String? package,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAssetUrl,
+          [
+            asset,
+            package,
+          ],
+        ),
+        returnValue: _i4.Future<String?>.value(),
+        returnValueForMissingStub: _i4.Future<String?>.value(),
+      ) as _i4.Future<String?>);
 }
 
 /// A class which mocks [VideoPlayerInstanceApi].

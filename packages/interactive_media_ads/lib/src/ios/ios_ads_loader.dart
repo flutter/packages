@@ -13,12 +13,14 @@ import 'interactive_media_ads_proxy.dart';
 import 'ios_ad_display_container.dart';
 import 'ios_ads_manager.dart';
 import 'ios_content_progress_provider.dart';
+import 'ios_ima_settings.dart';
 
 /// Implementation of [PlatformAdsLoaderCreationParams] for iOS.
 final class IOSAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
   /// Constructs a [IOSAdsLoaderCreationParams].
   const IOSAdsLoaderCreationParams({
     required super.container,
+    required super.settings,
     required super.onAdsLoaded,
     required super.onAdsLoadError,
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
@@ -33,6 +35,7 @@ final class IOSAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
   }) {
     return IOSAdsLoaderCreationParams(
       container: params.container,
+      settings: params.settings,
       onAdsLoaded: params.onAdsLoaded,
       onAdsLoadError: params.onAdsLoadError,
       proxy: proxy,
@@ -52,12 +55,9 @@ base class IOSAdsLoader extends PlatformAdsLoader {
               null,
           'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
         ),
-        super.implementation() {
-    _adsLoader = _iosParams._proxy.newIMAAdsLoader();
-    _adsLoader.setDelegate(_delegate);
-  }
+        super.implementation();
 
-  late final IMAAdsLoader _adsLoader;
+  late final IMAAdsLoader _adsLoader = _initAdsLoader();
   late final IMAAdsLoaderDelegate _delegate = _createAdsLoaderDelegate(
     WeakReference<IOSAdsLoader>(this),
   );
@@ -111,5 +111,15 @@ base class IOSAdsLoader extends PlatformAdsLoader {
         );
       },
     );
+  }
+
+  IMAAdsLoader _initAdsLoader() {
+    final IOSImaSettings settings = switch (_iosParams.settings) {
+      final IOSImaSettings iosSettings => iosSettings,
+      _ => IOSImaSettings(_iosParams.settings.params),
+    };
+
+    return _iosParams._proxy.newIMAAdsLoader(settings: settings.nativeSettings)
+      ..setDelegate(_delegate);
   }
 }
