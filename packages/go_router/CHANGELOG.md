@@ -1,4 +1,9 @@
+## 16.1.1
+
+- Adds `RelativeGoRouteData` and `TypedRelativeGoRoute`.
+
 ## 16.1.0
+
 - Adds annotation for go_router_builder that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781). **Requires go_router_builder >= 3.1.0**.
 
 ## 16.0.0
