@@ -1,3 +1,7 @@
+## 0.5.1+15
+
+* Removes enableJetifier from gradle.properties.
+
 ## 0.5.1+14
 
 * Removes obsolete code related to supporting SDK <21.

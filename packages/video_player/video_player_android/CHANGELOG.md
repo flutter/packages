@@ -1,3 +1,7 @@
+## 2.8.11
+
+* Removes enableJetifier from gradle.properties.
+
 ## 2.8.10
 
 * Restructures internal logic to move more code to Dart.

@@ -1,3 +1,7 @@
+## 0.4.0+3
+
+* Removes enableJetifier from gradle.properties.
+
 ## 0.4.0+2
 
 * Adds support for setting the `offerToken` on `GooglePlayPurchaseParam`.

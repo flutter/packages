@@ -1,3 +1,7 @@
+## 0.10.10+5
+
+* Removes enableJetifier from gradle.properties.
+
 ## 0.10.10+4
 
 * Fix flutter#166533 - prevent startImageStream OOM error when main thread paused.

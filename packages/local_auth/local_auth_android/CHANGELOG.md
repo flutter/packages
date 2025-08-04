@@ -1,3 +1,7 @@
+## 1.0.51
+
+* Removes enableJetifier from gradle.properties.
+
 ## 1.0.50
 
 * Updates `androidx.fragment:fragment` to 1.8.8.

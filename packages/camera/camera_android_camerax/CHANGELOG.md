@@ -1,3 +1,7 @@
+## 0.6.19+2
+
+* Removes enableJetifier from gradle.properties.
+
 ## 0.6.19+1
 
 * Fixes incorrect camera switching by selecting a camera via its CameraInfo.

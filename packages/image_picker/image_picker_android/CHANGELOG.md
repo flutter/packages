@@ -1,3 +1,7 @@
+## 0.8.12+25
+
+* Removes enableJetifier from gradle.properties.
+
 ## 0.8.12+24
 
 * Updates `androidx.activity:activity` to 1.10.1.

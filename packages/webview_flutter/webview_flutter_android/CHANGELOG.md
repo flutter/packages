@@ -1,3 +1,7 @@
+## 4.8.3
+
+* Removes enableJetifier from gradle.properties.
+
 ## 4.8.2
 
 * Bumps gradle from 8.9.0 to 8.11.1.
