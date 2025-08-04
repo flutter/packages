@@ -50,15 +50,27 @@ static void FVPRemoveKeyValueObservers(NSObject *observer,
   }
 }
 
-@implementation FVPVideoPlayer {
-  // A mapping of KVO keys to NSValue-wrapped observer context pointers for observations that should
-  // be set for the AVPlayer instance.
-  NSDictionary<NSString *, NSValue *> *_playerObservations;
-
-  // A mapping of KVO keys to NSValue-wrapped observer context pointers for observations that
-  // should be set for the AVPlayer instance's current AVPlayerItem.
-  NSDictionary<NSString *, NSValue *> *_playerItemObservations;
+/// Returns a mapping of KVO keys to NSValue-wrapped observer context pointers for observations that
+/// should be set for AVPlayer instances.
+static NSDictionary<NSString *, NSValue *> *FVPGetPlayerObservations() {
+  return @{
+    @"rate" : [NSValue valueWithPointer:rateContext],
+  };
 }
+
+/// Returns a mapping of KVO keys to NSValue-wrapped observer context pointers for observations that
+/// should be set for AVPlayerItem instances.
+static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations() {
+  return @{
+    @"loadedTimeRanges" : [NSValue valueWithPointer:timeRangeContext],
+    @"status" : [NSValue valueWithPointer:statusContext],
+    @"presentationSize" : [NSValue valueWithPointer:presentationSizeContext],
+    @"duration" : [NSValue valueWithPointer:durationContext],
+    @"playbackLikelyToKeepUp" : [NSValue valueWithPointer:playbackLikelyToKeepUpContext],
+  };
+}
+
+@implementation FVPVideoPlayer
 
 - (instancetype)initWithURL:(NSURL *)url
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
@@ -125,18 +137,8 @@ static void FVPRemoveKeyValueObservers(NSObject *observer,
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
 
   // Set up all necessary observers to report video events.
-  _playerItemObservations = @{
-    @"loadedTimeRanges" : [NSValue valueWithPointer:timeRangeContext],
-    @"status" : [NSValue valueWithPointer:statusContext],
-    @"presentationSize" : [NSValue valueWithPointer:presentationSizeContext],
-    @"duration" : [NSValue valueWithPointer:durationContext],
-    @"playbackLikelyToKeepUp" : [NSValue valueWithPointer:playbackLikelyToKeepUpContext],
-  };
-  _playerObservations = @{
-    @"rate" : [NSValue valueWithPointer:rateContext],
-  };
-  FVPRegisterKeyValueObservers(self, _playerItemObservations, item);
-  FVPRegisterKeyValueObservers(self, _playerObservations, _player);
+  FVPRegisterKeyValueObservers(self, FVPGetPlayerItemObservations(), item);
+  FVPRegisterKeyValueObservers(self, FVPGetPlayerObservations(), _player);
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(itemDidPlayToEndTime:)
                                                name:AVPlayerItemDidPlayToEndTimeNotification
@@ -148,22 +150,23 @@ static void FVPRemoveKeyValueObservers(NSObject *observer,
 }
 
 - (void)dealloc {
-  // In case dispose was never called for some reason, remove any remaining observers to prevent
-  // crashes.
-  FVPRemoveKeyValueObservers(self, _playerItemObservations, _player.currentItem);
-  FVPRemoveKeyValueObservers(self, _playerObservations, _player);
+  if (!_disposed) {
+    // If dispose was never called for some reason, remove observers to prevent crashes.
+    FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), _player.currentItem);
+    FVPRemoveKeyValueObservers(self, FVPGetPlayerObservations(), _player);
+  }
 }
 
 - (void)dispose {
+  // In some hot restart scenarios, dispose can be called twice, so no-op after the first time.
+  if (_disposed) {
+    return;
+  }
   _disposed = YES;
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
-  FVPRemoveKeyValueObservers(self, _playerItemObservations, self.player.currentItem);
-  FVPRemoveKeyValueObservers(self, _playerObservations, self.player);
-  // Clear the list of observations, so that dealloc (or potential duplicate dispose calls, in the
-  // case of hot restart) don't try to re-remove them, which would be an error.
-  _playerItemObservations = @{};
-  _playerObservations = @{};
+  FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), self.player.currentItem);
+  FVPRemoveKeyValueObservers(self, FVPGetPlayerObservations(), self.player);
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
 
