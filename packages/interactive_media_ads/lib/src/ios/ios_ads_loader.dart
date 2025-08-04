@@ -73,16 +73,55 @@ base class IOSAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> requestAds(PlatformAdsRequest request) async {
-    return _adsLoader.requestAds(_iosParams._proxy.newIMAAdsRequest(
-      adTagUrl: request.adTagUrl,
-      adDisplayContainer:
-          (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!,
-      contentPlayhead: request.contentProgressProvider != null
-          ? (request.contentProgressProvider! as IOSContentProgressProvider)
-              .contentPlayhead
-          : null,
-    ));
+  Future<void> requestAds(PlatformAdsRequest request) {
+    final IMAAdDisplayContainer adDisplayContainer =
+        (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!;
+    final IMAContentPlayhead? contentProgressProvider =
+        request.contentProgressProvider != null
+            ? (request.contentProgressProvider! as IOSContentProgressProvider)
+                .contentPlayhead
+            : null;
+
+    final IMAAdsRequest adsRequest = switch (request) {
+      final PlatformAdsRequestWithAdTagUrl request => IMAAdsRequest(
+          adTagUrl: request.adTagUrl,
+          adDisplayContainer: adDisplayContainer,
+          contentPlayhead: contentProgressProvider,
+        ),
+      PlatformAdsRequestWithAdsResponse() => IMAAdsRequest.withAdsResponse(
+          adsResponse: request.adsResponse,
+          adDisplayContainer: adDisplayContainer,
+          contentPlayhead: contentProgressProvider,
+        ),
+    };
+
+    return Future.wait(<Future<void>>[
+      if (request.adWillAutoPlay case final bool adWillAutoPlay)
+        adsRequest.setAdWillAutoPlay(adWillAutoPlay),
+      if (request.adWillPlayMuted case final bool adWillPlayMuted)
+        adsRequest.setAdWillPlayMuted(adWillPlayMuted),
+      if (request.continuousPlayback case final bool continuousPlayback)
+        adsRequest.setContinuousPlayback(continuousPlayback),
+      if (request.contentDuration case final Duration contentDuration)
+        adsRequest.setContentDuration(
+          contentDuration.inMilliseconds / Duration.millisecondsPerSecond,
+        ),
+      if (request.contentKeywords case final List<String> contentKeywords)
+        adsRequest.setContentKeywords(contentKeywords),
+      if (request.contentTitle case final String contentTitle)
+        adsRequest.setContentTitle(contentTitle),
+      if (request.liveStreamPrefetchMaxWaitTime
+          case final Duration liveStreamPrefetchMaxWaitTime)
+        adsRequest.setLiveStreamPrefetchSeconds(
+          liveStreamPrefetchMaxWaitTime.inMilliseconds /
+              Duration.millisecondsPerSecond,
+        ),
+      if (request.vastLoadTimeout case final Duration vastLoadTimeout)
+        adsRequest.setVastLoadTimeout(
+          vastLoadTimeout.inMilliseconds.toDouble(),
+        ),
+      _adsLoader.requestAds(adsRequest),
+    ]);
   }
 
   // This value is created in a static method because the callback methods for

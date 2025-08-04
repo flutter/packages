@@ -27,8 +27,16 @@ void main() {
   });
 
   test('requestAds', () async {
-    final PlatformAdsRequest platformRequest = PlatformAdsRequest(
+    final PlatformAdsRequest platformRequest = PlatformAdsRequest.withAdTagUrl(
       adTagUrl: 'adTagUrl',
+      adWillAutoPlay: true,
+      adWillPlayMuted: false,
+      continuousPlayback: true,
+      contentDuration: const Duration(seconds: 2),
+      contentKeywords: <String>['keyword1', 'keyword2'],
+      contentTitle: 'contentTitle',
+      liveStreamPrefetchMaxWaitTime: const Duration(seconds: 3),
+      vastLoadTimeout: const Duration(milliseconds: 5000),
       contentProgressProvider: TestContentProgressProvider(
         const PlatformContentProgressProviderCreationParams(),
       ),
@@ -42,13 +50,45 @@ void main() {
         onAdsLoadError: (AdsLoadErrorData data) {},
       ),
       onRequestAds: expectAsync1((PlatformAdsRequest request) async {
-        expect(request, platformRequest);
+        expect(
+          (request as PlatformAdsRequestWithAdTagUrl).adTagUrl,
+          (platformRequest as PlatformAdsRequestWithAdTagUrl).adTagUrl,
+        );
+        expect(request.adWillAutoPlay, platformRequest.adWillAutoPlay);
+        expect(request.adWillPlayMuted, platformRequest.adWillPlayMuted);
+        expect(request.continuousPlayback, platformRequest.continuousPlayback);
+        expect(request.contentDuration, platformRequest.contentDuration);
+        expect(request.contentKeywords, platformRequest.contentKeywords);
+        expect(request.contentTitle, platformRequest.contentTitle);
+        expect(
+          request.liveStreamPrefetchMaxWaitTime,
+          platformRequest.liveStreamPrefetchMaxWaitTime,
+        );
+        expect(request.vastLoadTimeout, platformRequest.vastLoadTimeout);
+        expect(
+          request.contentProgressProvider,
+          platformRequest.contentProgressProvider,
+        );
       }),
       onContentComplete: () async {},
     );
 
     final AdsLoader loader = AdsLoader.fromPlatform(adsLoader);
-    await loader.requestAds(AdsRequest.fromPlatform(platformRequest));
+    await loader.requestAds(AdsRequest(
+      adTagUrl: (platformRequest as PlatformAdsRequestWithAdTagUrl).adTagUrl,
+      adWillAutoPlay: platformRequest.adWillAutoPlay,
+      adWillPlayMuted: platformRequest.adWillPlayMuted,
+      continuousPlayback: platformRequest.continuousPlayback,
+      contentDuration: platformRequest.contentDuration,
+      contentKeywords: platformRequest.contentKeywords,
+      contentTitle: platformRequest.contentTitle,
+      liveStreamPrefetchMaxWaitTime:
+          platformRequest.liveStreamPrefetchMaxWaitTime,
+      vastLoadTimeout: platformRequest.vastLoadTimeout,
+      contentProgressProvider: ContentProgressProvider.fromPlatform(
+        platformRequest.contentProgressProvider!,
+      ),
+    ));
   });
 }
 
