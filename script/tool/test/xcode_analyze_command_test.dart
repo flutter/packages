@@ -599,6 +599,8 @@ packages/package_a/$file
         gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
+.gemini/config.yaml
+AGENTS.md
 README.md
 CODEOWNERS
 packages/package_a/CHANGELOG.md

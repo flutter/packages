@@ -5,7 +5,6 @@
 #import "./include/camera_avfoundation/FLTCam.h"
 #import "./include/camera_avfoundation/FLTCam_Test.h"
 
-@import CoreMotion;
 @import Flutter;
 #import <libkern/OSAtomic.h>
 
@@ -20,44 +19,22 @@
 #import "./include/camera_avfoundation/QueueUtils.h"
 #import "./include/camera_avfoundation/messages.g.h"
 
-static FlutterError *FlutterErrorFromNSError(NSError *error) {
-  return [FlutterError errorWithCode:[NSString stringWithFormat:@"Error %d", (int)error.code]
-                             message:error.localizedDescription
-                             details:error.domain];
-}
-
 @interface FLTCam () <AVCaptureVideoDataOutputSampleBufferDelegate,
                       AVCaptureAudioDataOutputSampleBufferDelegate>
 
 @property(readonly, nonatomic) int64_t textureId;
-@property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
-@property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
 
-@property(readonly, nonatomic) NSObject<FLTCaptureInput> *captureVideoInput;
 @property(readonly, nonatomic) CGSize captureSize;
 @property(strong, nonatomic)
     NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
-@property(strong, nonatomic) AVCaptureAudioDataOutput *audioOutput;
-@property(strong, nonatomic) NSString *videoRecordingPath;
 @property(assign, nonatomic) BOOL isAudioSetup;
 
-@property(nonatomic) CMMotionManager *motionManager;
-/// All FLTCam's state access and capture session related operations should be on run on this queue.
-@property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
-/// The queue on which captured photos (not videos) are written to disk.
-/// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
-@property(strong, nonatomic) dispatch_queue_t photoIOQueue;
 /// A wrapper for CMVideoFormatDescriptionGetDimensions.
 /// Allows for alternate implementations in tests.
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
-@property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
-@property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
-@property(assign, nonatomic) FCPPlatformFlashMode flashMode;
-@property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
-@property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
 /// Reports the given error message to the Dart side of the plugin.
 ///
 /// Can be called from any thread.
@@ -76,7 +53,6 @@ NSString *const errorMethod = @"error";
   _mediaSettingsAVWrapper = configuration.mediaSettingsWrapper;
 
   _captureSessionQueue = configuration.captureSessionQueue;
-  _photoIOQueue = dispatch_queue_create("io.flutter.camera.photoIOQueue", NULL);
   _videoCaptureSession = configuration.videoCaptureSession;
   _audioCaptureSession = configuration.audioCaptureSession;
   _captureDeviceFactory = configuration.captureDeviceFactory;
@@ -194,12 +170,6 @@ NSString *const errorMethod = @"error";
   return connection;
 }
 
-- (void)setVideoFormat:(OSType)videoFormat {
-  _videoFormat = videoFormat;
-  _captureVideoOutput.videoSettings =
-      @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(videoFormat)};
-}
-
 - (void)updateOrientation {
   if (_isRecording) {
     return;
@@ -226,69 +196,6 @@ NSString *const errorMethod = @"error";
   }
 }
 
-- (void)captureToFileWithCompletion:(void (^)(NSString *_Nullable,
-                                              FlutterError *_Nullable))completion {
-  AVCapturePhotoSettings *settings = [AVCapturePhotoSettings photoSettings];
-
-  if (self.mediaSettings.resolutionPreset == FCPPlatformResolutionPresetMax) {
-    [settings setHighResolutionPhotoEnabled:YES];
-  }
-
-  NSString *extension;
-
-  BOOL isHEVCCodecAvailable =
-      [self.capturePhotoOutput.availablePhotoCodecTypes containsObject:AVVideoCodecTypeHEVC];
-
-  if (_fileFormat == FCPPlatformImageFileFormatHeif && isHEVCCodecAvailable) {
-    settings =
-        [AVCapturePhotoSettings photoSettingsWithFormat:@{AVVideoCodecKey : AVVideoCodecTypeHEVC}];
-    extension = @"heif";
-  } else {
-    extension = @"jpg";
-  }
-
-  // If the flash is in torch mode, no capture-level flash setting is needed.
-  if (self.flashMode != FCPPlatformFlashModeTorch) {
-    [settings setFlashMode:FCPGetAVCaptureFlashModeForPigeonFlashMode(self.flashMode)];
-  }
-  NSError *error;
-  NSString *path = [self getTemporaryFilePathWithExtension:extension
-                                                 subfolder:@"pictures"
-                                                    prefix:@"CAP_"
-                                                     error:&error];
-  if (error) {
-    completion(nil, FlutterErrorFromNSError(error));
-    return;
-  }
-
-  __weak typeof(self) weakSelf = self;
-  FLTSavePhotoDelegate *savePhotoDelegate = [[FLTSavePhotoDelegate alloc]
-           initWithPath:path
-                ioQueue:self.photoIOQueue
-      completionHandler:^(NSString *_Nullable path, NSError *_Nullable error) {
-        typeof(self) strongSelf = weakSelf;
-        if (!strongSelf) return;
-        dispatch_async(strongSelf.captureSessionQueue, ^{
-          // cannot use the outter `strongSelf`
-          typeof(self) strongSelf = weakSelf;
-          if (!strongSelf) return;
-          [strongSelf.inProgressSavePhotoDelegates removeObjectForKey:@(settings.uniqueID)];
-        });
-
-        if (error) {
-          completion(nil, FlutterErrorFromNSError(error));
-        } else {
-          NSAssert(path, @"Path must not be nil if no error.");
-          completion(path, nil);
-        }
-      }];
-
-  NSAssert(dispatch_get_specific(FLTCaptureSessionQueueSpecific),
-           @"save photo delegate references must be updated on the capture session queue");
-  self.inProgressSavePhotoDelegates[@(settings.uniqueID)] = savePhotoDelegate;
-  [self.capturePhotoOutput capturePhotoWithSettings:settings delegate:savePhotoDelegate];
-}
-
 - (AVCaptureVideoOrientation)getVideoOrientationForDeviceOrientation:
     (UIDeviceOrientation)deviceOrientation {
   if (deviceOrientation == UIDeviceOrientationPortrait) {
@@ -306,32 +213,6 @@ NSString *const errorMethod = @"error";
   } else {
     return AVCaptureVideoOrientationPortrait;
   }
-}
-
-- (NSString *)getTemporaryFilePathWithExtension:(NSString *)extension
-                                      subfolder:(NSString *)subfolder
-                                         prefix:(NSString *)prefix
-                                          error:(NSError **)error {
-  NSString *docDir =
-      NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
-  NSString *fileDir =
-      [[docDir stringByAppendingPathComponent:@"camera"] stringByAppendingPathComponent:subfolder];
-  NSString *fileName = [prefix stringByAppendingString:[[NSUUID UUID] UUIDString]];
-  NSString *file =
-      [[fileDir stringByAppendingPathComponent:fileName] stringByAppendingPathExtension:extension];
-
-  NSFileManager *fm = [NSFileManager defaultManager];
-  if (![fm fileExistsAtPath:fileDir]) {
-    BOOL success = [[NSFileManager defaultManager] createDirectoryAtPath:fileDir
-                                             withIntermediateDirectories:true
-                                                              attributes:nil
-                                                                   error:error];
-    if (!success) {
-      return nil;
-    }
-  }
-
-  return file;
 }
 
 - (BOOL)setCaptureSessionPreset:(FCPPlatformResolutionPreset)resolutionPreset
@@ -427,190 +308,6 @@ NSString *const errorMethod = @"error";
   return bestFormat;
 }
 
-- (void)dealloc {
-  [_motionManager stopAccelerometerUpdates];
-}
-
-/// Main logic to setup the video recording.
-- (void)setUpVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion {
-  NSError *error;
-  _videoRecordingPath = [self getTemporaryFilePathWithExtension:@"mp4"
-                                                      subfolder:@"videos"
-                                                         prefix:@"REC_"
-                                                          error:&error];
-  if (error) {
-    completion(FlutterErrorFromNSError(error));
-    return;
-  }
-  if (![self setupWriterForPath:_videoRecordingPath]) {
-    completion([FlutterError errorWithCode:@"IOError" message:@"Setup Writer Failed" details:nil]);
-    return;
-  }
-  // startWriting should not be called in didOutputSampleBuffer where it can cause state
-  // in which _isRecording is YES but _videoWriter.status is AVAssetWriterStatusUnknown
-  // in stopVideoRecording if it is called after startVideoRecording but before
-  // didOutputSampleBuffer had chance to call startWriting and lag at start of video
-  // https://github.com/flutter/flutter/issues/132016
-  // https://github.com/flutter/flutter/issues/151319
-  [_videoWriter startWriting];
-  _isFirstVideoSample = YES;
-  _isRecording = YES;
-  _isRecordingPaused = NO;
-  _videoTimeOffset = CMTimeMake(0, 1);
-  _audioTimeOffset = CMTimeMake(0, 1);
-  _videoIsDisconnected = NO;
-  _audioIsDisconnected = NO;
-  completion(nil);
-}
-
-- (void)startVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion
-                    messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger {
-  if (!_isRecording) {
-    if (messenger != nil) {
-      [self startImageStreamWithMessenger:messenger
-                               completion:^(FlutterError *_Nullable error) {
-                                 [self setUpVideoRecordingWithCompletion:completion];
-                               }];
-      return;
-    }
-
-    [self setUpVideoRecordingWithCompletion:completion];
-  } else {
-    completion([FlutterError errorWithCode:@"Error"
-                                   message:@"Video is already recording"
-                                   details:nil]);
-  }
-}
-
-- (void)stopVideoRecordingWithCompletion:(void (^)(NSString *_Nullable,
-                                                   FlutterError *_Nullable))completion {
-  if (_isRecording) {
-    _isRecording = NO;
-
-    // when _isRecording is YES startWriting was already called so _videoWriter.status
-    // is always either AVAssetWriterStatusWriting or AVAssetWriterStatusFailed and
-    // finishWritingWithCompletionHandler does not throw exception so there is no need
-    // to check _videoWriter.status
-    [_videoWriter finishWritingWithCompletionHandler:^{
-      if (self->_videoWriter.status == AVAssetWriterStatusCompleted) {
-        [self updateOrientation];
-        completion(self->_videoRecordingPath, nil);
-        self->_videoRecordingPath = nil;
-      } else {
-        completion(nil, [FlutterError errorWithCode:@"IOError"
-                                            message:@"AVAssetWriter could not finish writing!"
-                                            details:nil]);
-      }
-    }];
-  } else {
-    NSError *error =
-        [NSError errorWithDomain:NSCocoaErrorDomain
-                            code:NSURLErrorResourceUnavailable
-                        userInfo:@{NSLocalizedDescriptionKey : @"Video is not recording!"}];
-    completion(nil, FlutterErrorFromNSError(error));
-  }
-}
-
-- (void)setFlashMode:(FCPPlatformFlashMode)mode
-      withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (mode == FCPPlatformFlashModeTorch) {
-    if (!_captureDevice.hasTorch) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Device does not support torch mode"
-                                     details:nil]);
-      return;
-    }
-    if (!_captureDevice.isTorchAvailable) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Torch mode is currently not available"
-                                     details:nil]);
-      return;
-    }
-    if (_captureDevice.torchMode != AVCaptureTorchModeOn) {
-      [_captureDevice lockForConfiguration:nil];
-      [_captureDevice setTorchMode:AVCaptureTorchModeOn];
-      [_captureDevice unlockForConfiguration];
-    }
-  } else {
-    if (!_captureDevice.hasFlash) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Device does not have flash capabilities"
-                                     details:nil]);
-      return;
-    }
-    AVCaptureFlashMode avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(mode);
-    if (![_capturePhotoOutput.supportedFlashModes
-            containsObject:[NSNumber numberWithInt:((int)avFlashMode)]]) {
-      completion([FlutterError errorWithCode:@"setFlashModeFailed"
-                                     message:@"Device does not support this specific flash mode"
-                                     details:nil]);
-      return;
-    }
-    if (_captureDevice.torchMode != AVCaptureTorchModeOff) {
-      [_captureDevice lockForConfiguration:nil];
-      [_captureDevice setTorchMode:AVCaptureTorchModeOff];
-      [_captureDevice unlockForConfiguration];
-    }
-  }
-  _flashMode = mode;
-  completion(nil);
-}
-
-- (void)setDescriptionWhileRecording:(NSString *)cameraName
-                      withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (!_isRecording) {
-    completion([FlutterError errorWithCode:@"setDescriptionWhileRecordingFailed"
-                                   message:@"Device was not recording"
-                                   details:nil]);
-    return;
-  }
-
-  _captureDevice = self.captureDeviceFactory(cameraName);
-
-  NSObject<FLTCaptureConnection> *oldConnection =
-      [_captureVideoOutput connectionWithMediaType:AVMediaTypeVideo];
-
-  // Stop video capture from the old output.
-  [_captureVideoOutput setSampleBufferDelegate:nil queue:nil];
-
-  // Remove the old video capture connections.
-  [_videoCaptureSession beginConfiguration];
-  [_videoCaptureSession removeInput:_captureVideoInput];
-  [_videoCaptureSession removeOutput:_captureVideoOutput.avOutput];
-
-  NSError *error = nil;
-  AVCaptureConnection *newConnection = [self createConnection:&error];
-  if (error) {
-    completion(FlutterErrorFromNSError(error));
-    return;
-  }
-
-  // Keep the same orientation the old connections had.
-  if (oldConnection && newConnection.isVideoOrientationSupported) {
-    newConnection.videoOrientation = oldConnection.videoOrientation;
-  }
-
-  // Add the new connections to the session.
-  if (![_videoCaptureSession canAddInput:_captureVideoInput])
-    completion([FlutterError errorWithCode:@"VideoError"
-                                   message:@"Unable switch video input"
-                                   details:nil]);
-  [_videoCaptureSession addInputWithNoConnections:_captureVideoInput];
-  if (![_videoCaptureSession canAddOutput:_captureVideoOutput.avOutput])
-    completion([FlutterError errorWithCode:@"VideoError"
-                                   message:@"Unable switch video output"
-                                   details:nil]);
-  [_videoCaptureSession addOutputWithNoConnections:_captureVideoOutput.avOutput];
-  if (![_videoCaptureSession canAddConnection:newConnection])
-    completion([FlutterError errorWithCode:@"VideoError"
-                                   message:@"Unable switch video connection"
-                                   details:nil]);
-  [_videoCaptureSession addConnection:newConnection];
-  [_videoCaptureSession commitConfiguration];
-
-  completion(nil);
-}
-
 - (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
                            completion:(void (^)(FlutterError *))completion {
   [self startImageStreamWithMessenger:messenger
@@ -656,123 +353,6 @@ NSString *const errorMethod = @"error";
     [self reportErrorMessage:@"Images from camera are already streaming!"];
     completion(nil);
   }
-}
-
-- (void)stopImageStream {
-  if (_isStreamingImages) {
-    _isStreamingImages = NO;
-    _imageStreamHandler = nil;
-  } else {
-    [self reportErrorMessage:@"Images from camera are not streaming!"];
-  }
-}
-
-- (void)setZoomLevel:(CGFloat)zoom withCompletion:(void (^)(FlutterError *_Nullable))completion {
-  if (_captureDevice.maxAvailableVideoZoomFactor < zoom ||
-      _captureDevice.minAvailableVideoZoomFactor > zoom) {
-    NSString *errorMessage = [NSString
-        stringWithFormat:@"Zoom level out of bounds (zoom level should be between %f and %f).",
-                         _captureDevice.minAvailableVideoZoomFactor,
-                         _captureDevice.maxAvailableVideoZoomFactor];
-
-    completion([FlutterError errorWithCode:@"ZOOM_ERROR" message:errorMessage details:nil]);
-    return;
-  }
-
-  NSError *error = nil;
-  if (![_captureDevice lockForConfiguration:&error]) {
-    completion(FlutterErrorFromNSError(error));
-    return;
-  }
-  _captureDevice.videoZoomFactor = zoom;
-  [_captureDevice unlockForConfiguration];
-
-  completion(nil);
-}
-
-- (BOOL)setupWriterForPath:(NSString *)path {
-  NSError *error = nil;
-  NSURL *outputURL;
-  if (path != nil) {
-    outputURL = [NSURL fileURLWithPath:path];
-  } else {
-    return NO;
-  }
-
-  [self setUpCaptureSessionForAudioIfNeeded];
-
-  _videoWriter = _assetWriterFactory(outputURL, AVFileTypeMPEG4, &error);
-
-  NSParameterAssert(_videoWriter);
-  if (error) {
-    [self reportErrorMessage:error.description];
-    return NO;
-  }
-
-  NSMutableDictionary<NSString *, id> *videoSettings = [[_mediaSettingsAVWrapper
-      recommendedVideoSettingsForAssetWriterWithFileType:AVFileTypeMPEG4
-                                               forOutput:_captureVideoOutput] mutableCopy];
-
-  if (_mediaSettings.videoBitrate || _mediaSettings.framesPerSecond) {
-    NSMutableDictionary *compressionProperties = [[NSMutableDictionary alloc] init];
-
-    if (_mediaSettings.videoBitrate) {
-      compressionProperties[AVVideoAverageBitRateKey] = _mediaSettings.videoBitrate;
-    }
-
-    if (_mediaSettings.framesPerSecond) {
-      compressionProperties[AVVideoExpectedSourceFrameRateKey] = _mediaSettings.framesPerSecond;
-    }
-
-    videoSettings[AVVideoCompressionPropertiesKey] = compressionProperties;
-  }
-
-  _videoWriterInput =
-      [_mediaSettingsAVWrapper assetWriterVideoInputWithOutputSettings:videoSettings];
-
-  _videoAdaptor = _inputPixelBufferAdaptorFactory(
-      _videoWriterInput, @{(NSString *)kCVPixelBufferPixelFormatTypeKey : @(_videoFormat)});
-
-  NSParameterAssert(_videoWriterInput);
-
-  _videoWriterInput.expectsMediaDataInRealTime = YES;
-
-  // Add the audio input
-  if (_mediaSettings.enableAudio) {
-    AudioChannelLayout acl;
-    bzero(&acl, sizeof(acl));
-    acl.mChannelLayoutTag = kAudioChannelLayoutTag_Mono;
-    NSMutableDictionary *audioOutputSettings = [@{
-      AVFormatIDKey : [NSNumber numberWithInt:kAudioFormatMPEG4AAC],
-      AVSampleRateKey : [NSNumber numberWithFloat:44100.0],
-      AVNumberOfChannelsKey : [NSNumber numberWithInt:1],
-      AVChannelLayoutKey : [NSData dataWithBytes:&acl length:sizeof(acl)],
-    } mutableCopy];
-
-    if (_mediaSettings.audioBitrate) {
-      audioOutputSettings[AVEncoderBitRateKey] = _mediaSettings.audioBitrate;
-    }
-
-    _audioWriterInput =
-        [_mediaSettingsAVWrapper assetWriterAudioInputWithOutputSettings:audioOutputSettings];
-
-    _audioWriterInput.expectsMediaDataInRealTime = YES;
-
-    [_mediaSettingsAVWrapper addInput:_audioWriterInput toAssetWriter:_videoWriter];
-    [_audioOutput setSampleBufferDelegate:self queue:_captureSessionQueue];
-  }
-
-  if (self.flashMode == FCPPlatformFlashModeTorch) {
-    [self.captureDevice lockForConfiguration:nil];
-    [self.captureDevice setTorchMode:AVCaptureTorchModeOn];
-    [self.captureDevice unlockForConfiguration];
-  }
-
-  [_mediaSettingsAVWrapper addInput:_videoWriterInput toAssetWriter:_videoWriter];
-
-  [_captureVideoOutput setSampleBufferDelegate:self queue:_captureSessionQueue];
-
-  return YES;
 }
 
 // This function, although slightly modified, is also in video_player_avfoundation.
