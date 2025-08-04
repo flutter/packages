@@ -92,7 +92,7 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
       if (request case final PlatformAdsRequestWithAdTagUrl request)
         androidRequest.setAdTagUrl(request.adTagUrl),
       if (request case final PlatformAdsRequestWithAdsResponse request)
-        androidRequest.setAdTagUrl(request.adsResponse),
+        androidRequest.setAdsResponse(request.adsResponse),
       if (request.adWillAutoPlay case final bool adWillAutoPlay)
         androidRequest.setAdWillAutoPlay(adWillAutoPlay),
       if (request.adWillPlayMuted case final bool adWillPlayMuted)
