@@ -180,5 +180,35 @@ void main() {
       copy.onDragEnd!(const LatLng(0, 1));
       expect(log, contains('onDragEndParam'));
     });
+
+    test('zIndex param', () {
+      final AdvancedMarker marker = AdvancedMarker(
+        markerId: const MarkerId('ABC123'),
+        zIndex: 5,
+      );
+
+      expect(marker.zIndexInt, 5);
+      expect(marker.zIndex, 5.00);
+    });
+
+    test('zIndexInt param copyWith', () {
+      final AdvancedMarker marker = AdvancedMarker(
+        markerId: const MarkerId('ABC123'),
+        zIndex: 5,
+      );
+      final AdvancedMarker copy = marker.copyWith(zIndexIntParam: 10);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
+    });
+
+    test('zIndex param copyWith', () {
+      final AdvancedMarker marker = AdvancedMarker(
+        markerId: const MarkerId('ABC123'),
+        zIndex: 5,
+      );
+      final AdvancedMarker copy = marker.copyWith(zIndexParam: 10.0);
+      expect(copy.zIndexInt, 10);
+      expect(copy.zIndex, 10.0);
+    });
   });
 }
