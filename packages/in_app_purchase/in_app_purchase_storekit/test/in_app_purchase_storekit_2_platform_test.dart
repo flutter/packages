@@ -280,7 +280,7 @@ void main() {
       expect(lastPurchaseOptions.winBackOfferId, isNull);
       expect(lastPurchaseOptions.promotionalOffer, isNull);
     });
-    
+
     test('should default to quantity = 1 when not provided in Sk2PurchaseParam',
         () async {
       final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam(
