@@ -682,6 +682,91 @@ void main() {
     });
   });
 
+  group('PinConfig', () {
+    test('construct with empty values, throws assertion error', () {
+      expect(() => PinConfig(), throwsAssertionError);
+    });
+
+    test('construct', () {
+      const PinConfig pinConfig = PinConfig(
+        backgroundColor: Colors.green,
+        borderColor: Colors.blue,
+      );
+      expect(pinConfig, isA<BitmapDescriptor>());
+      expect(pinConfig.backgroundColor, Colors.green);
+      expect(pinConfig.borderColor, Colors.blue);
+      expect(
+        pinConfig.toJson(),
+        <Object>[
+          PinConfig.type,
+          <String, Object>{
+            'backgroundColor': Colors.green.value,
+            'borderColor': Colors.blue.value,
+          },
+        ],
+      );
+    });
+
+    test('construct with glyph text', () {
+      const PinConfig pinConfig = PinConfig(
+        backgroundColor: Colors.green,
+        borderColor: Colors.blue,
+        glyph: TextGlyph(text: 'Hello', textColor: Colors.red),
+      );
+      expect(pinConfig.glyph, isA<TextGlyph>());
+      expect((pinConfig.glyph! as TextGlyph).text, 'Hello');
+      expect((pinConfig.glyph! as TextGlyph).textColor, Colors.red);
+      expect(
+        pinConfig.toJson(),
+        <Object>[
+          PinConfig.type,
+          <String, Object>{
+            'backgroundColor': Colors.green.value,
+            'borderColor': Colors.blue.value,
+            'glyph': <Object>[
+              'textGlyph',
+              <Object, Object>{
+                'text': 'Hello',
+                'textColor': Colors.red.value,
+              }
+            ],
+          },
+        ],
+      );
+    });
+
+    test('construct with glyph bitmap', () async {
+      const BitmapDescriptor bitmap = AssetBitmap(name: 'red_square.png');
+      const PinConfig pinConfig = PinConfig(
+        backgroundColor: Colors.black,
+        borderColor: Colors.red,
+        glyph: BitmapGlyph(bitmap: bitmap),
+      );
+
+      expect(pinConfig.backgroundColor, Colors.black);
+      expect(pinConfig.borderColor, Colors.red);
+      expect(
+        pinConfig.toJson(),
+        <Object>[
+          PinConfig.type,
+          <String, Object>{
+            'glyph': <Object>[
+              'bitmapGlyph',
+              <Object, Object>{
+                'bitmap': <Object>[
+                  'fromAsset',
+                  'red_square.png',
+                ],
+              },
+            ],
+            'backgroundColor': Colors.black.value,
+            'borderColor': Colors.red.value,
+          },
+        ],
+      );
+    });
+  });
+
   test('mapBitmapScaling from String', () {
     expect(mapBitmapScalingFromString('auto'), MapBitmapScaling.auto);
     expect(mapBitmapScalingFromString('none'), MapBitmapScaling.none);

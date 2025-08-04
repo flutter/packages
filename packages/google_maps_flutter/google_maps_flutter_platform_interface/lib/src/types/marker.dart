@@ -64,7 +64,8 @@ class InfoWindow {
     );
   }
 
-  Object _toJson() {
+  /// Converts this object to something serializable in JSON.
+  Object toJson() {
     final Map<String, Object> json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
@@ -117,6 +118,8 @@ class MarkerId extends MapsObjectId<Marker> {
 /// A marker icon is drawn oriented against the device's screen rather than
 /// the map's surface; that is, it will not necessarily change orientation
 /// due to map rotations, tilting, or zooming.
+///
+/// Deprecated on the web in favor of [AdvancedMarker].
 @immutable
 class Marker implements MapsObject<Marker> {
   /// Creates a set of marker configuration options.
@@ -325,7 +328,7 @@ class Marker implements MapsObject<Marker> {
     addIfPresent('draggable', draggable);
     addIfPresent('flat', flat);
     addIfPresent('icon', icon.toJson());
-    addIfPresent('infoWindow', infoWindow._toJson());
+    addIfPresent('infoWindow', infoWindow.toJson());
     addIfPresent('position', position.toJson());
     addIfPresent('rotation', rotation);
     addIfPresent('visible', visible);
