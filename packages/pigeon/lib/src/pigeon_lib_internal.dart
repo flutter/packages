@@ -868,7 +868,8 @@ List<Error> _validateProxyApi(
     if (directSuperClass == null) {
       result.add(
         Error(
-          message: 'Super class of ${api.name} is not annotated with @ProxyApi: '
+          message:
+              'Super class of ${api.name} is not annotated with @ProxyApi: '
               '${api.superClass?.baseName}',
         ),
       );

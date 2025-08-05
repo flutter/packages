@@ -141,9 +141,9 @@ class FlutterApi {
 /// and the native type. (e.g. When an instance method of a Dart proxy class is
 /// called, the implementation of the native type API handles calling that
 /// method on the native type.)
-/// 3. Global collection that handles serializable references to the Dart proxy
-/// classes and the native type instances. This provides automatic garbage
-/// collection of the native type instances.
+/// 3. An InstanceManager which is a global collection that handles serializable
+/// references to the Dart proxy classes and the native type instances. This
+/// provides automatic garbage collection of the native type instances.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
   const ProxyApi({this.superClass, this.kotlinOptions, this.swiftOptions});

@@ -1,3 +1,8 @@
+## 26.0.1
+
+* Moves helper classes for generating Dart portion of ProxyAPIs.
+* Improves documentation of `ProxyApi` annotation and internal Dart ProxyAPI helper classes.
+
 ## 26.0.0
 
 * **Breaking Change** [dart] Changes name of constructors used to create subclasses of ProxyApis to
