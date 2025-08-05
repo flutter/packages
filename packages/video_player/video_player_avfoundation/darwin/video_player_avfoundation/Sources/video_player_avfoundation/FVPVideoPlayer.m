@@ -52,7 +52,7 @@ static void FVPRemoveKeyValueObservers(NSObject *observer,
 
 /// Returns a mapping of KVO keys to NSValue-wrapped observer context pointers for observations that
 /// should be set for AVPlayer instances.
-static NSDictionary<NSString *, NSValue *> *FVPGetPlayerObservations() {
+static NSDictionary<NSString *, NSValue *> *FVPGetPlayerObservations(void) {
   return @{
     @"rate" : [NSValue valueWithPointer:rateContext],
   };
@@ -60,7 +60,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerObservations() {
 
 /// Returns a mapping of KVO keys to NSValue-wrapped observer context pointers for observations that
 /// should be set for AVPlayerItem instances.
-static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations() {
+static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   return @{
     @"loadedTimeRanges" : [NSValue valueWithPointer:timeRangeContext],
     @"status" : [NSValue valueWithPointer:statusContext],
