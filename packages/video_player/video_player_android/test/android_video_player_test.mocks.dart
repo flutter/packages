@@ -78,6 +78,25 @@ class MockAndroidVideoPlayerApi extends _i1.Mock
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
+
+  @override
+  _i4.Future<String> getLookupKeyForAsset(String? asset, String? packageName) =>
+      (super.noSuchMethod(
+            Invocation.method(#getLookupKeyForAsset, [asset, packageName]),
+            returnValue: _i4.Future<String>.value(
+              _i3.dummyValue<String>(
+                this,
+                Invocation.method(#getLookupKeyForAsset, [asset, packageName]),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<String>.value(
+              _i3.dummyValue<String>(
+                this,
+                Invocation.method(#getLookupKeyForAsset, [asset, packageName]),
+              ),
+            ),
+          )
+          as _i4.Future<String>);
 }
 
 /// A class which mocks [VideoPlayerInstanceApi].

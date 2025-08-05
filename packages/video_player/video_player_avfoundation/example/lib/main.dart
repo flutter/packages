@@ -269,9 +269,9 @@ class _BumbleBeeEncryptedLiveStreamState
     _controller.addListener(() {
       setState(() {});
     });
-    _controller.initialize();
-
-    _controller.play();
+    _controller.initialize().then((_) {
+      _controller.play();
+    });
   }
 
   @override

@@ -17,14 +17,6 @@ static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *rateContext = &rateContext;
 
 @implementation FVPVideoPlayer
-- (instancetype)initWithAsset:(NSString *)asset
-                    avFactory:(id<FVPAVFactory>)avFactory
-                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
-  return [self initWithURL:[NSURL fileURLWithPath:[FVPVideoPlayer absolutePathForAssetName:asset]]
-               httpHeaders:@{}
-                 avFactory:avFactory
-              viewProvider:viewProvider];
-}
 
 - (instancetype)initWithURL:(NSURL *)url
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
@@ -103,36 +95,17 @@ static void *rateContext = &rateContext;
   }
 }
 
-/// This method allows you to dispose without touching the event channel. This
-/// is useful for the case where the Engine is in the process of deconstruction
-/// so the channel is going to die or is already dead.
-- (void)disposeSansEventChannel {
+- (void)dispose {
   _disposed = YES;
   [self removeKeyValueObservers];
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
 
-- (void)dispose {
-  [self disposeSansEventChannel];
   if (_onDisposed) {
     _onDisposed();
   }
-  [_eventChannel setStreamHandler:nil];
-}
-
-+ (NSString *)absolutePathForAssetName:(NSString *)assetName {
-  NSString *path = [[NSBundle mainBundle] pathForResource:assetName ofType:nil];
-#if TARGET_OS_OSX
-  // See https://github.com/flutter/flutter/issues/135302
-  // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
-  if (!path) {
-    path = [NSURL URLWithString:assetName relativeToURL:NSBundle.mainBundle.bundleURL].path;
-  }
-#endif
-
-  return path;
+  [self.eventListener videoPlayerWasDisposed];
 }
 
 - (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
@@ -176,9 +149,7 @@ static void *rateContext = &rateContext;
     AVPlayerItem *p = [notification object];
     [p seekToTime:kCMTimeZero completionHandler:nil];
   } else {
-    if (_eventSink) {
-      _eventSink(@{@"event" : @"completed"});
-    }
+    [self.eventListener videoPlayerDidComplete];
   }
 }
 
@@ -246,15 +217,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                         change:(NSDictionary *)change
                        context:(void *)context {
   if (context == timeRangeContext) {
-    if (_eventSink != nil) {
-      NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
-      for (NSValue *rangeValue in [object loadedTimeRanges]) {
-        CMTimeRange range = [rangeValue CMTimeRangeValue];
-        int64_t start = FVPCMTimeToMillis(range.start);
-        [values addObject:@[ @(start), @(start + FVPCMTimeToMillis(range.duration)) ]];
-      }
-      _eventSink(@{@"event" : @"bufferingUpdate", @"values" : values});
+    NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
+    for (NSValue *rangeValue in [object loadedTimeRanges]) {
+      CMTimeRange range = [rangeValue CMTimeRangeValue];
+      [values addObject:@[
+        @(FVPCMTimeToMillis(range.start)),
+        @(FVPCMTimeToMillis(range.duration)),
+      ]];
     }
+    [self.eventListener videoPlayerDidUpdateBufferRegions:values];
   } else if (context == statusContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     switch (item.status) {
@@ -265,7 +236,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         break;
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
-        [self setupEventSinkIfReadyToPlay];
+        [self reportInitializedIfReadyToPlay];
         break;
     }
   } else if (context == presentationSizeContext || context == durationContext) {
@@ -274,27 +245,20 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       // Due to an apparent bug, when the player item is ready, it still may not have determined
       // its presentation size or duration. When these properties are finally set, re-check if
       // all required properties and instantiate the event sink if it is not already set up.
-      [self setupEventSinkIfReadyToPlay];
+      [self reportInitializedIfReadyToPlay];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
     [self updatePlayingState];
     if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
-      if (_eventSink != nil) {
-        _eventSink(@{@"event" : @"bufferingEnd"});
-      }
+      [self.eventListener videoPlayerDidEndBuffering];
     } else {
-      if (_eventSink != nil) {
-        _eventSink(@{@"event" : @"bufferingStart"});
-      }
+      [self.eventListener videoPlayerDidStartBuffering];
     }
   } else if (context == rateContext) {
     // Important: Make sure to cast the object to AVPlayer when observing the rate property,
     // as it is not available in AVPlayerItem.
     AVPlayer *player = (AVPlayer *)object;
-    if (_eventSink != nil) {
-      _eventSink(
-          @{@"event" : @"isPlayingStateUpdate", @"isPlaying" : player.rate > 0 ? @YES : @NO});
-    }
+    [self.eventListener videoPlayerDidSetPlaying:(player.rate > 0)];
   }
 }
 
@@ -344,9 +308,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)sendFailedToLoadVideoEvent {
-  if (_eventSink == nil) {
-    return;
-  }
   // Prefer more detailed error information from tracks loading.
   NSError *error;
   if ([self.player.currentItem.asset statusOfValueForKey:@"tracks"
@@ -366,11 +327,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   add(underlyingError.localizedDescription);
   add(underlyingError.localizedFailureReason);
   NSString *message = [details.array componentsJoinedByString:@": "];
-  _eventSink([FlutterError errorWithCode:@"VideoError" message:message details:nil]);
+  [self.eventListener videoPlayerDidErrorWithMessage:message];
 }
 
-- (void)setupEventSinkIfReadyToPlay {
-  if (_eventSink && !_isInitialized) {
+- (void)reportInitializedIfReadyToPlay {
+  if (!_isInitialized) {
     AVPlayerItem *currentItem = self.player.currentItem;
     CGSize size = currentItem.presentationSize;
     CGFloat width = size.width;
@@ -414,12 +375,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     _isInitialized = YES;
     [self updatePlayingState];
 
-    _eventSink(@{
-      @"event" : @"initialized",
-      @"duration" : @(duration),
-      @"width" : @(width),
-      @"height" : @(height)
-    });
+    [self.eventListener videoPlayerDidInitializeWithDuration:duration size:size];
   }
 }
 
@@ -469,32 +425,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)setPlaybackSpeed:(double)speed error:(FlutterError *_Nullable *_Nonnull)error {
   _targetPlaybackSpeed = @(speed);
   [self updatePlayingState];
-}
-
-#pragma mark - FlutterStreamHandler
-
-- (FlutterError *_Nullable)onCancelWithArguments:(id _Nullable)arguments {
-  _eventSink = nil;
-  return nil;
-}
-
-- (FlutterError *_Nullable)onListenWithArguments:(id _Nullable)arguments
-                                       eventSink:(nonnull FlutterEventSink)events {
-  _eventSink = events;
-  // TODO(@recastrodiaz): remove the line below when the race condition is resolved:
-  // https://github.com/flutter/flutter/issues/21483
-  // This line ensures the 'initialized' event is sent when the event
-  // 'AVPlayerItemStatusReadyToPlay' fires before _eventSink is set (this function
-  // onListenWithArguments is called)
-  // and also send error in similar case with 'AVPlayerItemStatusFailed'
-  // https://github.com/flutter/flutter/issues/151475
-  // https://github.com/flutter/flutter/issues/147707
-  if (self.player.currentItem.status == AVPlayerItemStatusFailed) {
-    [self sendFailedToLoadVideoEvent];
-    return nil;
-  }
-  [self setupEventSinkIfReadyToPlay];
-  return nil;
 }
 
 #pragma mark - Private
