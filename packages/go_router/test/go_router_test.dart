@@ -2238,9 +2238,9 @@ void main() {
       expect(redirected, isTrue);
     });
 
-    testWidgets('GoRouter.of(context) should work in redirects',
+    testWidgets('error thrown during redirect can be caught by onException',
         (WidgetTester tester) async {
-      GoRouter? capturedRouter;
+      bool exceptionCaught = false;
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/',
@@ -2252,19 +2252,41 @@ void main() {
           builder: (BuildContext context, GoRouterState state) =>
               const LoginScreen(),
         ),
+        GoRoute(
+          path: '/trigger-error',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Text('should not reach here'),
+        ),
       ];
 
-      final GoRouter router = await createRouter(routes, tester,
-          redirect: (BuildContext context, GoRouterState state) {
-        // This should not throw an exception
-        capturedRouter = GoRouter.of(context);
-        return state.matchedLocation == '/login' ? null : '/login';
-      });
+      final GoRouter router = await createRouter(
+        routes,
+        tester,
+        redirect: (BuildContext context, GoRouterState state) {
+          if (state.matchedLocation == '/trigger-error') {
+            throw Exception('Redirect error');
+          }
+          return null;
+        },
+        onException:
+            (BuildContext context, GoRouterState state, GoRouter router) {
+          exceptionCaught = true;
+        },
+      );
 
-      expect(capturedRouter, isNotNull);
-      expect(capturedRouter, equals(router));
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(exceptionCaught, isFalse);
+
+      // Navigate to a route that will trigger an error in the redirect callback
+      router.go('/trigger-error');
+      await tester.pumpAndSettle();
+
+      // Verify the exception was caught
+      expect(exceptionCaught, isTrue);
+      // Should stay on the home screen since onException didn't navigate anywhere
+      expect(find.byType(HomeScreen), findsOneWidget);
+      expect(find.text('should not reach here'), findsNothing);
     });
-
     testWidgets('Context extension methods should work in redirects',
         (WidgetTester tester) async {
       String? capturedNamedLocation;
