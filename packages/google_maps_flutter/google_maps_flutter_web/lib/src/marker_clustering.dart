@@ -82,6 +82,17 @@ class ClusterManagersController extends GeometryController {
     }
   }
 
+  /// Adds given list of [gmaps.Marker] to the [MarkerClusterer] with given
+  /// [ClusterManagerId].
+  void addItems(ClusterManagerId clusterManagerId, List<gmaps.Marker> markers) {
+    final MarkerClusterer? markerClusterer =
+        _clusterManagerIdToMarkerClusterer[clusterManagerId];
+    if (markerClusterer != null) {
+      markerClusterer.addMarkers(markers, true);
+      markerClusterer.render();
+    }
+  }
+
   /// Removes given [gmaps.Marker] from the [MarkerClusterer] with given
   /// [ClusterManagerId].
   void removeItem(ClusterManagerId clusterManagerId, gmaps.Marker? marker) {
@@ -90,6 +101,22 @@ class ClusterManagersController extends GeometryController {
           _clusterManagerIdToMarkerClusterer[clusterManagerId];
       if (markerClusterer != null) {
         markerClusterer.removeMarker(marker, true);
+        markerClusterer.render();
+      }
+    }
+  }
+
+  /// Removes given [gmaps.Marker] from the [MarkerClusterer] with given
+  /// [ClusterManagerId].
+  void removeItems(
+    ClusterManagerId clusterManagerId,
+    List<gmaps.Marker>? markers,
+  ) {
+    if (markers != null) {
+      final MarkerClusterer? markerClusterer =
+          _clusterManagerIdToMarkerClusterer[clusterManagerId];
+      if (markerClusterer != null) {
+        markerClusterer.removeMarkers(markers, true);
         markerClusterer.render();
       }
     }
