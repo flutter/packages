@@ -306,123 +306,67 @@ void main() {
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     final DynamicContent data = DynamicContent();
-
-    // Test Flexible with default values
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
-      import core;
-      widget root = Directionality(
-        textDirection: "ltr",
-        child: Column(
-          children: [
-            Flexible(
-              child: Text(text: "Default flexible"),
-            ),
-          ],
+    
+    // Helper function to create test widget with Flexible content
+    String createFlexibleTestWidget(String flexibleContent) {
+      return '''
+        import core;
+        widget root = Directionality(
+          textDirection: "ltr",
+          child: Column(
+            children: [
+              $flexibleContent
+            ],
+          ),
+        );
+      ''';
+    }
+    
+    // Helper function to pump widget and verify
+    Future<void> pumpTestWidget(String flexibleContent) async {
+      runtime.update(const LibraryName(<String>['test']), 
+                     parseLibraryFile(createFlexibleTestWidget(flexibleContent)));
+      await tester.pumpWidget(
+        RemoteWidget(
+          runtime: runtime,
+          data: data,
+          widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
         ),
       );
-    '''));
-    
-    await tester.pumpWidget(
-      RemoteWidget(
-        runtime: runtime,
-        data: data,
-        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
-      ),
-    );
-    await tester.pump();
+      await tester.pumpAndSettle();
+    }
+
+    // Test Flexible with default values
+    await pumpTestWidget('Flexible(child: Text(text: "Default flexible"))');
     expect(find.byType(Flexible), findsOneWidget);
     final Flexible defaultFlexible = tester.widget<Flexible>(find.byType(Flexible));
     expect(defaultFlexible.flex, equals(1));
     expect(defaultFlexible.fit, equals(FlexFit.loose));
 
     // Test Flexible with custom flex value
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
-      import core;
-      widget root = Directionality(
-        textDirection: "ltr",
-        child: Column(
-          children: [
-            Flexible(
-              flex: 3,
-              child: Text(text: "Custom flex"),
-            ),
-          ],
-        ),
-      );
-    '''));
-    await tester.pumpAndSettle();
+    await pumpTestWidget('Flexible(flex: 3, child: Text(text: "Custom flex"))');
     final Flexible customFlexFlexible = tester.widget<Flexible>(find.byType(Flexible));
     expect(customFlexFlexible.flex, equals(3));
     expect(customFlexFlexible.fit, equals(FlexFit.loose));
 
     // Test Flexible with fit: "tight"
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
-      import core;
-      widget root = Directionality(
-        textDirection: "ltr",
-        child: Column(
-          children: [
-            Flexible(
-              flex: 2,
-              fit: "tight",
-              child: Text(text: "Tight fit"),
-            ),
-          ],
-        ),
-      );
-    '''));
-    await tester.pumpAndSettle();
+    await pumpTestWidget('Flexible(flex: 2, fit: "tight", child: Text(text: "Tight fit"))');
     final Flexible tightFlexible = tester.widget<Flexible>(find.byType(Flexible));
     expect(tightFlexible.flex, equals(2));
     expect(tightFlexible.fit, equals(FlexFit.tight));
 
     // Test Flexible with fit: "loose"
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
-      import core;
-      widget root = Directionality(
-        textDirection: "ltr",
-        child: Column(
-          children: [
-            Flexible(
-              flex: 4,
-              fit: "loose",
-              child: Text(text: "Loose fit"),
-            ),
-          ],
-        ),
-      );
-    '''));
-    await tester.pumpAndSettle();
+    await pumpTestWidget('Flexible(flex: 4, fit: "loose", child: Text(text: "Loose fit"))');
     final Flexible looseFlexible = tester.widget<Flexible>(find.byType(Flexible));
     expect(looseFlexible.flex, equals(4));
     expect(looseFlexible.fit, equals(FlexFit.loose));
 
     // Test multiple Flexible widgets in a Column
-    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
-      import core;
-      widget root = Directionality(
-        textDirection: "ltr",
-        child: Column(
-          children: [
-            Flexible(
-              flex: 1,
-              fit: "loose",
-              child: Text(text: "First"),
-            ),
-            Flexible(
-              flex: 2,
-              fit: "tight",
-              child: Text(text: "Second"),
-            ),
-            Flexible(
-              flex: 1,
-              child: Text(text: "Third"),
-            ),
-          ],
-        ),
-      );
-    '''));
-    await tester.pumpAndSettle();
+    await pumpTestWidget('''
+      Flexible(flex: 1, fit: "loose", child: Text(text: "First")),
+      Flexible(flex: 2, fit: "tight", child: Text(text: "Second")),
+      Flexible(flex: 1, child: Text(text: "Third"))
+    ''');
     expect(find.byType(Flexible), findsNWidgets(3));
     
     final List<Flexible> flexibleWidgets = tester.widgetList<Flexible>(find.byType(Flexible)).toList();
