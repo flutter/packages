@@ -394,7 +394,7 @@ targets:
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       version_file: flutter_master.version
       # This builds the all_packages app only in a current JDK.
@@ -407,7 +407,7 @@ targets:
 
   - name: Linux_android android_build_all_packages stable
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version

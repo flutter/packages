@@ -1,3 +1,7 @@
+## 2.8.2
+
+* Restructure internals of Dart notification of video player events.
+
 ## 2.8.1
 
 * Restructures internal logic to move more code to Dart.

@@ -6,6 +6,7 @@
 
 #import "./messages.g.h"
 #import "FVPAVFactory.h"
+#import "FVPVideoEventListener.h"
 #import "FVPViewProvider.h"
 
 #if TARGET_OS_OSX
@@ -21,9 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// This class contains all functionalities needed to manage video playback in platform views and is
 /// typically used alongside FVPNativeVideoViewFactory. If you need to display a video using a
 /// texture, use FVPTextureBasedVideoPlayer instead.
-@interface FVPVideoPlayer : NSObject <FlutterStreamHandler, FVPVideoPlayerInstanceApi>
-/// The Flutter event channel used to communicate with the Flutter engine.
-@property(nonatomic) FlutterEventChannel *eventChannel;
+@interface FVPVideoPlayer : NSObject <FVPVideoPlayerInstanceApi>
 /// The AVPlayer instance used for video playback.
 @property(nonatomic, readonly) AVPlayer *player;
 /// Indicates whether the video player has been disposed.
@@ -32,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL isLooping;
 /// The current playback position of the video, in milliseconds.
 @property(nonatomic, readonly) int64_t position;
+/// The event listener to report video events to.
+@property(nonatomic, nullable) NSObject<FVPVideoEventListener> *eventListener;
 /// A block that will be called when dispose is called.
 @property(nonatomic, nullable, copy) void (^onDisposed)(void);
 
@@ -44,11 +45,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Disposes the video player and releases any resources it holds.
 - (void)dispose;
-
-/// Disposes the video player without touching the event channel. This
-/// is useful for the case where the Engine is in the process of deconstruction
-/// so the channel is going to die or is already dead.
-- (void)disposeSansEventChannel;
 
 @end
 

@@ -9,6 +9,7 @@
 
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
+#import "./include/video_player_avfoundation/FVPEventBridge.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
 #import "./include/video_player_avfoundation/FVPNativeVideoViewFactory.h"
 #import "./include/video_player_avfoundation/FVPTextureBasedVideoPlayer.h"
@@ -90,8 +91,13 @@
 }
 
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [self.playersByIdentifier.allValues
-      makeObjectsPerformSelector:@selector(disposeSansEventChannel)];
+  for (FVPVideoPlayer *player in self.playersByIdentifier.allValues) {
+    // Remove the channel and texture cleanup, and the event listener, to ensure that the player
+    // doesn't message the engine that is no longer connected.
+    player.onDisposed = nil;
+    player.eventListener = nil;
+    [player dispose];
+  }
   [self.playersByIdentifier removeAllObjects];
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, nil);
 }
@@ -123,12 +129,11 @@
     }
   };
   // Set up the event channel.
-  FlutterEventChannel *eventChannel = [FlutterEventChannel
-      eventChannelWithName:[NSString stringWithFormat:@"flutter.io/videoPlayer/videoEvents%@",
-                                                      channelSuffix]
-           binaryMessenger:messenger];
-  [eventChannel setStreamHandler:player];
-  player.eventChannel = eventChannel;
+  FVPEventBridge *eventBridge = [[FVPEventBridge alloc]
+      initWithMessenger:messenger
+            channelName:[NSString stringWithFormat:@"flutter.io/videoPlayer/videoEvents%@",
+                                                   channelSuffix]];
+  player.eventListener = eventBridge;
 
   self.playersByIdentifier[@(playerIdentifier)] = player;
 
