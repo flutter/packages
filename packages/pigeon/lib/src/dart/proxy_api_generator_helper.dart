@@ -12,7 +12,7 @@ import '../generator_tools.dart';
 import 'dart_generator.dart';
 import 'templates.dart';
 
-/// Converts fields and methods of a [AstProxyApi] constructor to the
+/// Converts fields and methods of an [AstProxyApi] constructor to the
 /// `code_builder` Parameters.
 Iterable<cb.Parameter> asConstructorParameters({
   required String apiName,
@@ -103,8 +103,9 @@ Iterable<cb.Parameter> asConstructorParameters({
   );
 }
 
-/// Converts all the constructors of a ProxyApi into fields that are used to
-/// override the corresponding factory constructor of the generated Dart class.
+/// Converts all the constructors of each AstProxyApi into `code_builder` fields
+/// that are used to override the corresponding factory constructor of the
+/// generated Dart proxy class.
 Iterable<cb.Field> overridesClassConstructors(
   Iterable<AstProxyApi> proxyApis,
 ) sync* {
@@ -154,8 +155,9 @@ Iterable<cb.Field> overridesClassConstructors(
   }
 }
 
-/// Converts all the static fields of a ProxyApi into fields that are used to
-/// override the corresponding static field of the generated Dart class.
+/// Converts all the static fields of an AstProxyApi into `code_builder` fields
+/// that are used to override the corresponding static field of the generated
+/// Dart proxy class.
 Iterable<cb.Field> overridesClassStaticFields(
   Iterable<AstProxyApi> proxyApis,
 ) sync* {
@@ -175,8 +177,9 @@ Iterable<cb.Field> overridesClassStaticFields(
   }
 }
 
-/// Converts all the static methods of a ProxyApi into fields that are used to
-/// override the corresponding static method of the generated Dart class.
+/// Converts all the static methods of an AstProxyApi into `code_builder` fields
+/// that are used to override the corresponding static method of the generated
+/// Dart proxy class.
 Iterable<cb.Field> overridesClassStaticMethods(
   Iterable<AstProxyApi> proxyApis,
 ) sync* {
@@ -297,7 +300,7 @@ Iterable<cb.Method> staticAttachedFieldsGetters(
 }
 
 /// Write the `PigeonOverrides` class that provides overrides for constructors
-/// and static members of each generated Dart class of a ProxyApi.
+/// and static members of each generated Dart proxy class.
 void writeProxyApiPigeonOverrides(
   Indent indent, {
   required DartFormatter formatter,
@@ -308,8 +311,8 @@ void writeProxyApiPigeonOverrides(
       ..name = proxyApiOverridesClassName
       ..annotations.add(cb.refer('visibleForTesting'))
       ..docs.addAll(<String>[
-        '/// Provides overrides for the constructors and static members of each proxy',
-        '/// API.',
+        '/// Provides overrides for the constructors and static members of each',
+        '/// Dart proxy class.',
         '///',
         '/// This is only intended to be used with unit tests to prevent errors from',
         '/// making message calls in a unit test.',
@@ -332,12 +335,10 @@ void writeProxyApiPigeonOverrides(
   indent.format(formatter.format('${proxyApiOverrides.accept(emitter)}'));
 }
 
-/// Converts Constructors from the pigeon AST to `code_builder` Constructors
-/// for a ProxyApi.
+/// Converts constructors from an [AstProxyApi] to `code_builder` constructors.
 ///
 /// Creates a factory constructor that can return an overrideable static
-/// method for testing and a constructor that calls to the native
-/// API implementation
+/// method for testing and a constructor that calls to the native type API.
 Iterable<cb.Constructor> constructors(
   Iterable<Constructor> constructors, {
   required String apiName,
@@ -511,12 +512,12 @@ Iterable<cb.Constructor> constructors(
   }
 }
 
-/// The detached constructor present for every ProxyApi.
+/// The detached constructor present for every Dart proxy class.
 ///
 /// This constructor doesn't include a host method call to create a new native
-/// class instance. It is mainly used when the native side wants to create a
-/// Dart instance or when the `InstanceManager` wants to create a copy for
-/// automatic garbage collection.
+/// type instance. It is mainly used when the native side makes a Flutter method
+/// call to create a Dart instance or when the `InstanceManager` wants to create
+/// a copy to be used for automatic garbage collection.
 cb.Constructor detachedConstructor({
   required String apiName,
   required AstProxyApi? superClassApi,
@@ -585,10 +586,11 @@ Iterable<cb.Field> unattachedFields(
   }
 }
 
-/// Converts Flutter methods from the pigeon AST to `code_builder` Fields.
+/// Converts Flutter methods from [AstProxyApi] to `code_builder` fields.
 ///
-/// Flutter methods of a ProxyApi are set as an anonymous function of a class
-/// instance, so this converts methods to a `Function` type field instance.
+/// Flutter methods of a ProxyApi are represented as an anonymous function for
+/// an instance of a Dart proxy class, so this converts methods to a `Function`
+/// type field.
 Iterable<cb.Field> flutterMethodFields(
   Iterable<Method> methods, {
   required String apiName,
@@ -630,14 +632,16 @@ Iterable<cb.Field> flutterMethodFields(
   }
 }
 
-/// Converts the Flutter methods from the pigeon AST to `code_builder` Fields.
+/// Converts the Flutter methods from the [AstPRoxyApi] to `code_builder`
+/// fields.
 ///
-/// Flutter methods of a ProxyApi are set as an anonymous function of a class
-/// instance, so this converts methods to a `Function` type field instance.
+/// Flutter methods of a ProxyApi are represented as an anonymous function for
+/// an instance of a Dart proxy class, so this converts methods to a `Function`
+/// type field.
 ///
 /// This is similar to [_proxyApiFlutterMethodFields] except all the methods are
-/// inherited from apis that are being implemented (following the `implements`
-/// keyword).
+/// inherited from [AstProxyApi]s that are being implemented (following the
+/// `implements` keyword).
 Iterable<cb.Field> interfaceApiFields(
   Iterable<AstProxyApi> apisOfInterfaces,
 ) sync* {
@@ -705,7 +709,7 @@ Iterable<cb.Field> attachedFields(Iterable<ApiField> fields) sync* {
   }
 }
 
-/// Creates the static `setUpMessageHandlers` method for a ProxyApi.
+/// Creates the static `setUpMessageHandlers` method for a Dart proxy class.
 ///
 /// This method handles setting the message handler for every un-inherited
 /// Flutter method.
@@ -1000,10 +1004,10 @@ Iterable<cb.Method> attachedFieldMethods(
   }
 }
 
-/// Converts host methods from pigeon AST to `code_builder` Methods.
+/// Converts host methods from [AstProxyApi] to `code_builder` Methods.
 ///
-/// This creates methods like a HostApi except that it includes the calling
-/// instance if the method is not static.
+/// This creates methods like a HostApi except that the message call includes
+/// Dart proxy class instance if the method is not static.
 Iterable<cb.Method> hostMethods(
   Iterable<Method> methods, {
   required String apiName,
@@ -1107,11 +1111,11 @@ Iterable<cb.Method> hostMethods(
   }
 }
 
-/// Creates the copy method for a ProxyApi.
+/// Creates the copy method for a Dart proxy class.
 ///
 /// This method returns a copy of the instance with all the Flutter methods
 /// and unattached fields passed to the new instance. This method is inherited
-/// from the base ProxyApi class.
+/// from the base class of all Dart proxy classes.
 cb.Method copyMethod({
   required String apiName,
   required Iterable<ApiField> unattachedFields,

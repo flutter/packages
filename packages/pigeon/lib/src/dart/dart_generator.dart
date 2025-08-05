@@ -20,7 +20,7 @@ const String _docCommentPrefix = '///';
 /// Name of the variable that contains the message channel suffix for APIs.
 const String _suffixVarName = '${varNamePrefix}messageChannelSuffix';
 
-/// Name of the `InstanceManager` variable for a ProxyApi class;
+/// Name of the `InstanceManager` variable for the Dart proxy class of a ProxyAPI.
 const String instanceManagerVarName = '${classMemberNamePrefix}instanceManager';
 
 /// Name of field used for host API codec.
@@ -39,7 +39,7 @@ const String _pigeonMethodChannelCodec = 'pigeonMethodCodec';
 const String _overflowClassName = '_PigeonCodecOverflow';
 
 /// Name of the overrides class for overriding constructors and static members
-/// of proxy APIs.
+/// of Dart proxy classes.
 const String proxyApiOverridesClassName = '${proxyApiClassNamePrefix}Overrides';
 
 /// Options that control how Dart code will be generated.
