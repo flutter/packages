@@ -125,21 +125,32 @@ class FlutterApi {
   const FlutterApi();
 }
 
-/// Metadata to annotate a Pigeon API that wraps a native class.
+/// Metadata to annotate a ProxyAPI.
+///
+/// A ProxyAPI is a generated API for interacting with a native type from Dart.
+/// This includes the generated Dart proxy class and the native type API.
 ///
 /// The abstract class with this annotation groups a collection of Dart↔host
-/// constructors, fields, methods and host↔Dart methods used to wrap a native
-/// class.
+/// constructors, fields, methods and host↔Dart methods used to interact with a
+/// native type.
 ///
-/// The generated Dart class acts as a proxy to a native type and maintains
-/// instances automatically with an `InstanceManager`. The generated host
-/// language class implements methods to interact with class instances or static
-/// methods.
+/// This generates:
+/// 1. A Dart proxy class that handles communication with native type api.
+/// Instances of this proxy class represent instances of the native type.
+/// 2. A native type API which handles communication with the Dart proxy class
+/// and the native type. (e.g. When an instance method of a Dart proxy class is
+/// called, the implementation of the native type API handles calling that
+/// method on the native type.)
+/// 3. Global collection that handles serializable references to the Dart proxy
+/// classes and the native type instances. This provides automatic garbage
+/// collection of the native type instances.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
   const ProxyApi({this.superClass, this.kotlinOptions, this.swiftOptions});
 
-  /// The proxy api that is a super class to this one.
+  /// The class that is a super class to this one.
+  ///
+  /// Must be a type that is also annotated with [ProxyApi].
   ///
   /// This provides an alternative to calling `extends` on a class since this
   /// requires calling the super class constructor.
@@ -149,11 +160,11 @@ class ProxyApi {
   final Type? superClass;
 
   /// Options that control how Swift code will be generated for a specific
-  /// ProxyApi.
+  /// native type API of a ProxyApi.
   final SwiftProxyApiOptions? swiftOptions;
 
   /// Options that control how Kotlin code will be generated for a specific
-  /// ProxyApi.
+  /// native type API of a ProxyApi.
   final KotlinProxyApiOptions? kotlinOptions;
 }
 
