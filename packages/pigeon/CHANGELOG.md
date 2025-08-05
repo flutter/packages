@@ -1,7 +1,7 @@
 ## 26.0.1
 
-* Moves helper classes for generating Dart portion of ProxyAPIs.
-* Improves documentation of `ProxyApi` annotation and internal Dart ProxyAPI helper classes.
+* Improves documentation of `ProxyApi` annotation and internal Dart ProxyAPI helper functions.
+* Moves helper functions for generating Dart portion of ProxyAPIs.
 
 ## 26.0.0
 
