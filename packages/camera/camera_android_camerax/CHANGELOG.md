@@ -1,3 +1,7 @@
+## 0.6.19+2
+
+* Updates AGP version to 8.11.1.
+
 ## 0.6.19+1
 
 * Fixes incorrect camera switching by selecting a camera via its CameraInfo.
