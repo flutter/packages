@@ -4,19 +4,32 @@ description: Bindings for NSFileManager.
 language: objc
 output:
   bindings: 'lib/src/ffi_bindings.dart'
-  objc-bindings: 'darwin/path_provider_foundation/Sources/path_provider_foundation/ffi_bindings.dart.m'
 headers:
   entry-points:
-    - '/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h'
+    - '$MACOS_SDK/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h'
 exclude-all-by-default: true
-include-transitive-objc-categories: true
+include-transitive-objc-categories: false
 objc-interfaces:
   include:
     - 'NSBundle'
     - 'NSFileManager'
     - 'NSURL'
+  member-filter:
+    NSBundle:
+      include:
+        - "bundleIdentifier"
+        - "mainBundle"
+    NSFileManager:
+      include:
+        - "containerURLForSecurityApplicationGroupIdentifier:"
+        - "defaultManager"
+    NSURL:
+      include:
+        - "fileURLWithPath:"
+        - "URLByAppendingPathComponent:"
 objc-categories:
   include:
+    # For URLByAppendingPathComponent:
     - 'NSURLPathUtilities'
 functions:
   include:
