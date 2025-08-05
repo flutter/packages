@@ -32,7 +32,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^25.3.2
+  pigeon: ^26.0.0
 
 topics:
   - authentication

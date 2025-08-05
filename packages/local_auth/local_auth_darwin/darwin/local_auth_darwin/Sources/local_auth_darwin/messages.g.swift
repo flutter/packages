@@ -110,12 +110,12 @@ func deepEqualsmessages(_ lhs: Any?, _ rhs: Any?) -> Bool {
 
 func deepHashmessages(value: Any?, hasher: inout Hasher) {
   if let valueList = value as? [AnyHashable] {
-     for item in valueList { deepHashmessages(value: item, hasher: &hasher) }
-     return
+    for item in valueList { deepHashmessages(value: item, hasher: &hasher) }
+    return
   }
 
   if let valueDict = value as? [AnyHashable: AnyHashable] {
-    for key in valueDict.keys { 
+    for key in valueDict.keys {
       hasher.combine(key)
       deepHashmessages(value: valueDict[key]!, hasher: &hasher)
     }
@@ -128,8 +128,6 @@ func deepHashmessages(value: Any?, hasher: inout Hasher) {
 
   return hasher.combine(String(describing: value))
 }
-
-    
 
 /// Possible outcomes of an authentication attempt.
 enum AuthResult: Int {
@@ -170,7 +168,6 @@ struct AuthStrings: Hashable {
   var cancelButton: String
   var localizedFallbackTitle: String? = nil
 
-
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AuthStrings? {
     let reason = pigeonVar_list[0] as! String
@@ -200,7 +197,8 @@ struct AuthStrings: Hashable {
     ]
   }
   static func == (lhs: AuthStrings, rhs: AuthStrings) -> Bool {
-    return deepEqualsmessages(lhs.toList(), rhs.toList())  }
+    return deepEqualsmessages(lhs.toList(), rhs.toList())
+  }
   func hash(into hasher: inout Hasher) {
     deepHashmessages(value: toList(), hasher: &hasher)
   }
@@ -211,7 +209,6 @@ struct AuthOptions: Hashable {
   var biometricOnly: Bool
   var sticky: Bool
   var useErrorDialogs: Bool
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AuthOptions? {
@@ -233,7 +230,8 @@ struct AuthOptions: Hashable {
     ]
   }
   static func == (lhs: AuthOptions, rhs: AuthOptions) -> Bool {
-    return deepEqualsmessages(lhs.toList(), rhs.toList())  }
+    return deepEqualsmessages(lhs.toList(), rhs.toList())
+  }
   func hash(into hasher: inout Hasher) {
     deepHashmessages(value: toList(), hasher: &hasher)
   }
@@ -247,7 +245,6 @@ struct AuthResultDetails: Hashable {
   var errorMessage: String? = nil
   /// System-provided error details, if any.
   var errorDetails: String? = nil
-
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
   static func fromList(_ pigeonVar_list: [Any?]) -> AuthResultDetails? {
@@ -269,7 +266,8 @@ struct AuthResultDetails: Hashable {
     ]
   }
   static func == (lhs: AuthResultDetails, rhs: AuthResultDetails) -> Bool {
-    return deepEqualsmessages(lhs.toList(), rhs.toList())  }
+    return deepEqualsmessages(lhs.toList(), rhs.toList())
+  }
   func hash(into hasher: inout Hasher) {
     deepHashmessages(value: toList(), hasher: &hasher)
   }
@@ -339,7 +337,6 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
   static let shared = MessagesPigeonCodec(readerWriter: MessagesPigeonCodecReaderWriter())
 }
 
-
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol LocalAuthApi {
   /// Returns true if this device supports authentication.
@@ -352,17 +349,23 @@ protocol LocalAuthApi {
   func getEnrolledBiometrics() throws -> [AuthBiometric]
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
-  func authenticate(options: AuthOptions, strings: AuthStrings, completion: @escaping (Result<AuthResultDetails, Error>) -> Void)
+  func authenticate(
+    options: AuthOptions, strings: AuthStrings,
+    completion: @escaping (Result<AuthResultDetails, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class LocalAuthApiSetup {
   static var codec: FlutterStandardMessageCodec { MessagesPigeonCodec.shared }
   /// Sets up an instance of `LocalAuthApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: LocalAuthApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: LocalAuthApi?, messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// Returns true if this device supports authentication.
-    let isDeviceSupportedChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let isDeviceSupportedChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.isDeviceSupported\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       isDeviceSupportedChannel.setMessageHandler { _, reply in
         do {
@@ -377,7 +380,10 @@ class LocalAuthApiSetup {
     }
     /// Returns true if this device can support biometric authentication, whether
     /// any biometrics are enrolled or not.
-    let deviceCanSupportBiometricsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let deviceCanSupportBiometricsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.deviceCanSupportBiometrics\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       deviceCanSupportBiometricsChannel.setMessageHandler { _, reply in
         do {
@@ -392,7 +398,10 @@ class LocalAuthApiSetup {
     }
     /// Returns the biometric types that are enrolled, and can thus be used
     /// without additional setup.
-    let getEnrolledBiometricsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let getEnrolledBiometricsChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.getEnrolledBiometrics\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getEnrolledBiometricsChannel.setMessageHandler { _, reply in
         do {
@@ -407,7 +416,9 @@ class LocalAuthApiSetup {
     }
     /// Attempts to authenticate the user with the provided [options], and using
     /// [strings] for any UI.
-    let authenticateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let authenticateChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.local_auth_darwin.LocalAuthApi.authenticate\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       authenticateChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
