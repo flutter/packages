@@ -70,7 +70,10 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations() {
   };
 }
 
-@implementation FVPVideoPlayer
+@implementation FVPVideoPlayer {
+  // Whether or not player and player item listeners have ever been registered.
+  BOOL _listenersRegistered;
+}
 
 - (instancetype)initWithURL:(NSURL *)url
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
@@ -136,21 +139,13 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations() {
   };
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
 
-  // Set up all necessary observers to report video events.
-  FVPRegisterKeyValueObservers(self, FVPGetPlayerItemObservations(), item);
-  FVPRegisterKeyValueObservers(self, FVPGetPlayerObservations(), _player);
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(itemDidPlayToEndTime:)
-                                               name:AVPlayerItemDidPlayToEndTimeNotification
-                                             object:item];
-
   [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
 
   return self;
 }
 
 - (void)dealloc {
-  if (!_disposed) {
+  if (_listenersRegistered && !_disposed) {
     // If dispose was never called for some reason, remove observers to prevent crashes.
     FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), _player.currentItem);
     FVPRemoveKeyValueObservers(self, FVPGetPlayerObservations(), _player);
@@ -164,9 +159,11 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations() {
   }
   _disposed = YES;
 
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-  FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), self.player.currentItem);
-  FVPRemoveKeyValueObservers(self, FVPGetPlayerObservations(), self.player);
+  if (_listenersRegistered) {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), self.player.currentItem);
+    FVPRemoveKeyValueObservers(self, FVPGetPlayerObservations(), self.player);
+  }
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
 
@@ -174,6 +171,25 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations() {
     _onDisposed();
   }
   [self.eventListener videoPlayerWasDisposed];
+}
+
+- (void)setEventListener:(NSObject<FVPVideoEventListener> *)eventListener {
+  _eventListener = eventListener;
+  // The first time an event listener is set, set up video event listeners to relay status changes
+  // changes to the event listener.
+  if (eventListener && !_listenersRegistered) {
+    AVPlayerItem *item = self.player.currentItem;
+    // If the item is already ready to play, ensure that the intialized event is sent first.
+    [self reportStatusForPlayerItem:item];
+    // Set up all necessary observers to report video events.
+    FVPRegisterKeyValueObservers(self, FVPGetPlayerItemObservations(), item);
+    FVPRegisterKeyValueObservers(self, FVPGetPlayerObservations(), _player);
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(itemDidPlayToEndTime:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:item];
+    _listenersRegistered = YES;
+  }
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification *)notification {
@@ -260,17 +276,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     [self.eventListener videoPlayerDidUpdateBufferRegions:values];
   } else if (context == statusContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
-    switch (item.status) {
-      case AVPlayerItemStatusFailed:
-        [self sendFailedToLoadVideoEvent];
-        break;
-      case AVPlayerItemStatusUnknown:
-        break;
-      case AVPlayerItemStatusReadyToPlay:
-        [item addOutput:_videoOutput];
-        [self reportInitializedIfReadyToPlay];
-        break;
-    }
+    [self reportStatusForPlayerItem:item];
   } else if (context == presentationSizeContext || context == durationContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     if (item.status == AVPlayerItemStatusReadyToPlay) {
@@ -291,6 +297,20 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     // as it is not available in AVPlayerItem.
     AVPlayer *player = (AVPlayer *)object;
     [self.eventListener videoPlayerDidSetPlaying:(player.rate > 0)];
+  }
+}
+
+- (void)reportStatusForPlayerItem:(AVPlayerItem *)item {
+  switch (item.status) {
+    case AVPlayerItemStatusFailed:
+      [self sendFailedToLoadVideoEvent];
+      break;
+    case AVPlayerItemStatusUnknown:
+      break;
+    case AVPlayerItemStatusReadyToPlay:
+      [item addOutput:_videoOutput];
+      [self reportInitializedIfReadyToPlay];
+      break;
   }
 }
 
