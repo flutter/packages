@@ -1,6 +1,6 @@
 ## 2.13.0
 
-* Add Advanced marker support
+* Adds Advanced marker support.
 
 ## 2.12.1
 
