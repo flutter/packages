@@ -333,8 +333,17 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   int? _columnNullTerminatedIndex;
   bool get _columnsAreInfinite => delegate.columnCount == null;
+  // Where column layout begins, potentially outside of the visible area.
+  double get _targetLeadingColumnPixel {
+    return clampDouble(
+      horizontalOffset.pixels - cacheExtent,
+      0,
+      double.infinity,
+    );
+  }
+
   // How far columns should be laid out in a given frame.
-  double get _targetColumnPixel {
+  double get _targetTrailingColumnPixel {
     return cacheExtent +
         horizontalOffset.pixels +
         viewportDimension.width -
@@ -343,8 +352,17 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
   int? _rowNullTerminatedIndex;
   bool get _rowsAreInfinite => delegate.rowCount == null;
+  // Where row layout begins, potentially outside of the visible area.
+  double get _targetLeadingRowPixel {
+    return clampDouble(
+      verticalOffset.pixels - cacheExtent,
+      0,
+      double.infinity,
+    );
+  }
+
   // How far rows should be laid out in a given frame.
-  double get _targetRowPixel {
+  double get _targetTrailingRowPixel {
     return cacheExtent +
         verticalOffset.pixels +
         viewportDimension.height -
@@ -535,11 +553,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       );
       _columnMetrics[column] = span;
       if (!isPinned) {
-        if (span.trailingOffset >= horizontalOffset.pixels &&
+        if (span.trailingOffset >= _targetLeadingColumnPixel &&
             _firstNonPinnedColumn == null) {
           _firstNonPinnedColumn = column;
         }
-        if (span.trailingOffset >= _targetColumnPixel &&
+        if (span.trailingOffset >= _targetTrailingColumnPixel &&
             _lastNonPinnedColumn == null) {
           _lastNonPinnedColumn = column;
         }
@@ -637,11 +655,11 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       );
       _rowMetrics[row] = span;
       if (!isPinned) {
-        if (span.trailingOffset >= verticalOffset.pixels &&
+        if (span.trailingOffset >= _targetLeadingRowPixel &&
             _firstNonPinnedRow == null) {
           _firstNonPinnedRow = row;
         }
-        if (span.trailingOffset > _targetRowPixel &&
+        if (span.trailingOffset >= _targetTrailingRowPixel &&
             _lastNonPinnedRow == null) {
           _lastNonPinnedRow = row;
         }
@@ -723,13 +741,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     if (_columnMetrics.isNotEmpty) {
       _Span lastKnownColumn = _columnMetrics[_columnMetrics.length - 1]!;
       if (_columnsAreInfinite &&
-          lastKnownColumn.trailingOffset < _targetColumnPixel) {
+          lastKnownColumn.trailingOffset < _targetTrailingColumnPixel) {
         // This will add the column metrics we do not know about up to the
         // _targetColumnPixel, while keeping the ones we already know about.
         _updateColumnMetrics(appendColumns: true);
         lastKnownColumn = _columnMetrics[_columnMetrics.length - 1]!;
         assert(_columnMetrics.length == delegate.columnCount ||
-            lastKnownColumn.trailingOffset >= _targetColumnPixel ||
+            lastKnownColumn.trailingOffset >= _targetTrailingColumnPixel ||
             _columnNullTerminatedIndex != null);
       }
     }
@@ -740,11 +758,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         continue;
       }
       final double endOfColumn = _columnMetrics[column]!.trailingOffset;
-      if (endOfColumn >= horizontalOffset.pixels &&
+      if (endOfColumn >= _targetLeadingColumnPixel &&
           _firstNonPinnedColumn == null) {
         _firstNonPinnedColumn = column;
       }
-      if (endOfColumn >= _targetColumnPixel && _lastNonPinnedColumn == null) {
+      if (endOfColumn >= _targetTrailingColumnPixel &&
+          _lastNonPinnedColumn == null) {
         _lastNonPinnedColumn = column;
         break;
       }
@@ -755,13 +774,14 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     if (_rowMetrics.isNotEmpty) {
       _Span lastKnownRow = _rowMetrics[_rowMetrics.length - 1]!;
-      if (_rowsAreInfinite && lastKnownRow.trailingOffset < _targetRowPixel) {
+      if (_rowsAreInfinite &&
+          lastKnownRow.trailingOffset < _targetTrailingRowPixel) {
         // This will add the row metrics we do not know about up to the
         // _targetRowPixel, while keeping the ones we already know about.
         _updateRowMetrics(appendRows: true);
         lastKnownRow = _rowMetrics[_rowMetrics.length - 1]!;
         assert(_rowMetrics.length == delegate.rowCount ||
-            lastKnownRow.trailingOffset >= _targetRowPixel ||
+            lastKnownRow.trailingOffset >= _targetTrailingRowPixel ||
             _rowNullTerminatedIndex != null);
       }
     }
@@ -772,10 +792,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
         continue;
       }
       final double endOfRow = _rowMetrics[row]!.trailingOffset;
-      if (endOfRow >= verticalOffset.pixels && _firstNonPinnedRow == null) {
+      if (endOfRow >= _targetLeadingRowPixel && _firstNonPinnedRow == null) {
         _firstNonPinnedRow = row;
       }
-      if (endOfRow >= _targetRowPixel && _lastNonPinnedRow == null) {
+      if (endOfRow >= _targetTrailingRowPixel && _lastNonPinnedRow == null) {
         _lastNonPinnedRow = row;
         break;
       }
@@ -831,7 +851,6 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
             _rowMetrics[_firstNonPinnedRow]!.leadingOffset -
             _pinnedRowsExtent
         : null;
-
     if (_lastPinnedRow != null && _lastPinnedColumn != null) {
       // Layout cells that are contained in both pinned rows and columns
       _layoutCells(

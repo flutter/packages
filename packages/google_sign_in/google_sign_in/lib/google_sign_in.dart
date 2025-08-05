@@ -233,14 +233,16 @@ class GoogleSignIn {
 
   /// Returns the single [GoogleSignIn] instance.
   ///
-  /// [initialize] must be called on this instance, and its future allowed to
-  /// complete, before any other methods on the object are called.
+  /// [initialize] must be called on this instance exactly once, and its future
+  /// allowed to complete, before any other methods on the object are called.
   static final GoogleSignIn instance = GoogleSignIn._();
 
   /// Initializes the sign in manager with the given configuration.
   ///
   /// Clients must call this method exactly once, and wait for its future to
-  /// complete, before calling any other methods on this object.
+  /// complete, before calling any other methods on this object. Calling other
+  /// methods without waiting for this method to return, or calling this method
+  /// more than once, will result in undefined behavior.
   ///
   /// [clientId] is the identifier for your client application, as provided by
   /// the Google Sign In server configuration, if any. This does not need to be

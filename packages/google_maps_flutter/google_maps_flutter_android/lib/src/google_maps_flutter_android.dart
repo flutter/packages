@@ -52,6 +52,8 @@ enum AndroidMapRenderer {
   latest,
 
   /// Legacy renderer type.
+  @Deprecated('The legacy renderer is no longer supported by the Google Maps, '
+      'SDK, so requesting it will have no effect.')
   legacy,
 
   /// Requests the default map renderer type.

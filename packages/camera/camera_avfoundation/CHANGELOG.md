@@ -1,3 +1,23 @@
+## 0.9.20+6
+
+* Migrates `captureToFile` and `getTemporaryFilePath` methods to Swift.
+* Switches to Swift dispatch queue specific interface.
+
+## 0.9.20+5
+
+* Migrates `startVideoRecording`, `setUpVideoRecording`, and `setupWriter` methods to Swift.
+
+## 0.9.20+4
+
+* Migrates `setVideoFormat`,`stopVideoRecording`, and `stopImageStream` methods to Swift.
+* Migrates stopping accelerometer updates to Swift.
+* Migrates `setDescriptionWhileRecording` method to Swift.
+* Adds `createConnection` method implementation to Swift.
+
+## 0.9.20+3
+
+* Migrates `setZoomLevel` and `setFlashMode` methods to Swift.
+
 ## 0.9.20+2
 
 * Migrates exposure offset and zoom factor limit getters to Swift.

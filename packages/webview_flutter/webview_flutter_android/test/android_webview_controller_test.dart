@@ -1662,6 +1662,21 @@ void main() {
     verify(mockSettings.setTextZoom(100)).called(1);
   });
 
+  test('setMixedContentMode', () async {
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+    );
+
+    await controller.setMixedContentMode(MixedContentMode.compatibilityMode);
+
+    verify(mockSettings.setMixedContentMode(
+      android_webview.MixedContentMode.compatibilityMode,
+    )).called(1);
+  });
+
   test('setOverScrollMode', () async {
     final MockWebView mockWebView = MockWebView();
     final AndroidWebViewController controller = createControllerWithMocks(

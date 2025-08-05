@@ -660,6 +660,7 @@ private class AndroidWebkitLibraryPigeonProxyApiBaseCodec(
         value is ConsoleMessageLevel ||
         value is OverScrollMode ||
         value is SslErrorType ||
+        value is MixedContentMode ||
         value == null) {
       super.writeValue(stream, value)
       return
@@ -886,6 +887,32 @@ enum class SslErrorType(val raw: Int) {
   }
 }
 
+/**
+ * Options for mixed content mode support.
+ *
+ * See https://developer.android.com/reference/android/webkit/WebSettings#MIXED_CONTENT_ALWAYS_ALLOW
+ */
+enum class MixedContentMode(val raw: Int) {
+  /**
+   * The WebView will allow a secure origin to load content from any other origin, even if that
+   * origin is insecure.
+   */
+  ALWAYS_ALLOW(0),
+  /**
+   * The WebView will attempt to be compatible with the approach of a modern web browser with regard
+   * to mixed content.
+   */
+  COMPATIBILITY_MODE(1),
+  /** The WebView will not allow a secure origin to load content from an insecure origin. */
+  NEVER_ALLOW(2);
+
+  companion object {
+    fun ofRaw(raw: Int): MixedContentMode? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
@@ -900,6 +927,9 @@ private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
       }
       132.toByte() -> {
         return (readValue(buffer) as Long?)?.let { SslErrorType.ofRaw(it.toInt()) }
+      }
+      133.toByte() -> {
+        return (readValue(buffer) as Long?)?.let { MixedContentMode.ofRaw(it.toInt()) }
       }
       else -> super.readValueOfType(type, buffer)
     }
@@ -921,6 +951,10 @@ private open class AndroidWebkitLibraryPigeonCodec : StandardMessageCodec() {
       }
       is SslErrorType -> {
         stream.write(132)
+        writeValue(stream, value.raw)
+      }
+      is MixedContentMode -> {
+        stream.write(133)
         writeValue(stream, value.raw)
       }
       else -> super.writeValue(stream, value)
@@ -2285,6 +2319,12 @@ abstract class PigeonApiWebSettings(
   /** Gets the WebView's user-agent string. */
   abstract fun getUserAgentString(pigeon_instance: android.webkit.WebSettings): String
 
+  /** Configures the WebView's behavior when handling mixed content. */
+  abstract fun setMixedContentMode(
+      pigeon_instance: android.webkit.WebSettings,
+      mode: MixedContentMode
+  )
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiWebSettings?) {
@@ -2662,6 +2702,30 @@ abstract class PigeonApiWebSettings(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getUserAgentString(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  AndroidWebkitLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.webview_flutter_android.WebSettings.setMixedContentMode",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as android.webkit.WebSettings
+            val modeArg = args[1] as MixedContentMode
+            val wrapped: List<Any?> =
+                try {
+                  api.setMixedContentMode(pigeon_instanceArg, modeArg)
+                  listOf(null)
                 } catch (exception: Throwable) {
                   AndroidWebkitLibraryPigeonUtils.wrapError(exception)
                 }
