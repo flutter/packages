@@ -1,3 +1,12 @@
+## 1.5.1
+
+*  Provides more specific error codes on iOS for authentication failures.
+*  Previously, several distinct errors (like user cancellation or biometric lockout) would return a generic `NotAvailable` exception.
+*  These failures now return specific codes. You may need to update your error handling logic to check for these new codes:
+    * `LockedOut` is now returned for biometric lockout.
+    * `UserCancelled` is now returned when the user cancels the prompt.
+    * `UserFallback` is now returned when the user selects the fallback option.
+
 ## 1.5.0
 
 * Converts implementation to Swift.
