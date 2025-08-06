@@ -15,4 +15,4 @@ dart run ffigen --config ffigen_config.yaml
 This package intentionally uses very strict filtering rules to include only the
 necessary methods and functions. This is partially to keep the package small,
 but mostly to avoid unnecessarily generating anything that requires native code
-helpers, which would require setting up a native compliation step.
+helpers, which would require setting up a native compilation step.
