@@ -4,15 +4,12 @@
 
 package io.flutter.plugins.camerax;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.video.FileOutputOptions;
 import androidx.camera.video.PendingRecording;
 import androidx.camera.video.QualitySelector;
 import androidx.camera.video.Recorder;
-import androidx.core.content.ContextCompat;
 import java.io.File;
 
 /**
@@ -36,7 +33,7 @@ class RecorderProxyApi extends PigeonApiRecorder {
   public Recorder pigeon_defaultConstructor(
       @Nullable Long aspectRatio,
       @Nullable Long targetVideoEncodingBitRate,
-      @Nullable androidx.camera.video.QualitySelector qualitySelector) {
+      @Nullable QualitySelector qualitySelector) {
     final Recorder.Builder builder = new Recorder.Builder();
     if (aspectRatio != null) {
       builder.setAspectRatio(aspectRatio.intValue());
@@ -69,17 +66,12 @@ class RecorderProxyApi extends PigeonApiRecorder {
 
     final PendingRecording pendingRecording =
         pigeonInstance.prepareRecording(getPigeonRegistrar().getContext(), fileOutputOptions);
-    if (ContextCompat.checkSelfPermission(
-            getPigeonRegistrar().getContext(), Manifest.permission.RECORD_AUDIO)
-        == PackageManager.PERMISSION_GRANTED) {
-      pendingRecording.withAudioEnabled();
-    }
 
     return pendingRecording;
   }
 
   @NonNull
-  File openTempFile(@NonNull String path) throws RuntimeException {
+  File openTempFile(@NonNull String path) {
     try {
       return new File(path);
     } catch (NullPointerException | SecurityException e) {

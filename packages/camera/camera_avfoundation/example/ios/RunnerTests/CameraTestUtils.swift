@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Foundation
+import XCTest
+
+@testable import camera_avfoundation
 
 // Import Objectice-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
-#else
-  import camera_avfoundation
 #endif
 
 /// Utils for creating default class instances used in tests
@@ -60,10 +60,12 @@ enum CameraTestUtils {
       mediaSettings: createDefaultMediaSettings(
         resolutionPreset: FCPPlatformResolutionPreset.medium),
       mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
-      captureDeviceFactory: { captureDeviceMock },
+      captureDeviceFactory: { _ in captureDeviceMock },
+      audioCaptureDeviceFactory: { MockCaptureDevice() },
       captureSessionFactory: { videoSessionMock },
       captureSessionQueue: captureSessionQueue,
-      captureDeviceInputFactory: MockCaptureDeviceInputFactory()
+      captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
+      initialCameraName: "camera_name"
     )
 
     configuration.videoCaptureSession = videoSessionMock
@@ -79,10 +81,20 @@ enum CameraTestUtils {
     return configuration
   }
 
-  static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue) -> FLTCam {
+  static func createTestCamera(_ configuration: FLTCamConfiguration) -> DefaultCamera {
+    return DefaultCamera(configuration: configuration, error: nil)
+  }
+
+  static func createTestCamera() -> DefaultCamera {
+    return createTestCamera(createTestCameraConfiguration())
+  }
+
+  static func createCameraWithCaptureSessionQueue(_ captureSessionQueue: DispatchQueue)
+    -> DefaultCamera
+  {
     let configuration = createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    return FLTCam(configuration: configuration, error: nil)
+    return createTestCamera(configuration)
   }
 
   /// Creates a test sample buffer.
@@ -115,7 +127,7 @@ enum CameraTestUtils {
 
   /// Creates a test audio sample buffer.
   /// @return a test audio sample buffer.
-  static func createTestAudioSampleBuffer() -> CMSampleBuffer? {
+  static func createTestAudioSampleBuffer() -> CMSampleBuffer {
     var blockBuffer: CMBlockBuffer?
     CMBlockBufferCreateWithMemoryBlock(
       allocator: kCFAllocatorDefault,
@@ -127,8 +139,6 @@ enum CameraTestUtils {
       dataLength: 100,
       flags: kCMBlockBufferAssureMemoryNowFlag,
       blockBufferOut: &blockBuffer)
-
-    guard let blockBuffer = blockBuffer else { return nil }
 
     var formatDescription: CMFormatDescription?
     var basicDescription = AudioStreamBasicDescription(
@@ -155,13 +165,41 @@ enum CameraTestUtils {
     var sampleBuffer: CMSampleBuffer?
     CMAudioSampleBufferCreateReadyWithPacketDescriptions(
       allocator: kCFAllocatorDefault,
-      dataBuffer: blockBuffer,
+      dataBuffer: blockBuffer!,
       formatDescription: formatDescription!,
       sampleCount: 1,
       presentationTimeStamp: .zero,
       packetDescriptions: nil,
       sampleBufferOut: &sampleBuffer)
 
-    return sampleBuffer
+    return sampleBuffer!
+  }
+
+  static func createTestAudioOutput() -> AVCaptureOutput {
+    return AVCaptureAudioDataOutput()
+  }
+
+  static func createTestConnection(_ output: AVCaptureOutput) -> AVCaptureConnection {
+    return AVCaptureConnection(inputPorts: [], output: output)
+  }
+}
+
+extension XCTestCase {
+  /// Wait until a round trip of a given `DispatchQueue` is complete. This allows for testing
+  /// side-effects of async functions that do not provide any notification of completion.
+  func waitForQueueRoundTrip(with queue: DispatchQueue) {
+    let expectation = expectation(description: "Queue flush")
+
+    queue.async {
+      if queue == DispatchQueue.main {
+        expectation.fulfill()
+      } else {
+        DispatchQueue.main.async {
+          expectation.fulfill()
+        }
+      }
+    }
+
+    wait(for: [expectation], timeout: 1)
   }
 }

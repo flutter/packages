@@ -27,7 +27,8 @@ class SK2Transaction {
       required this.appAccountToken,
       this.subscriptionGroupID,
       this.price,
-      this.error});
+      this.error,
+      this.jsonRepresentation});
 
   /// The unique identifier for the transaction.
   final String id;
@@ -61,6 +62,9 @@ class SK2Transaction {
 
   /// Any error returned from StoreKit
   final SKError? error;
+
+  /// The json representation of a transaction
+  final String? jsonRepresentation;
 
   /// Wrapper around [Transaction.finish]
   /// https://developer.apple.com/documentation/storekit/transaction/3749694-finish
@@ -105,7 +109,8 @@ extension on SK2TransactionMessage {
         productId: productId,
         purchaseDate: purchaseDate,
         expirationDate: expirationDate,
-        appAccountToken: appAccountToken);
+        appAccountToken: appAccountToken,
+        jsonRepresentation: jsonRepresentation);
   }
 
   PurchaseDetails convertToDetails() {
@@ -116,7 +121,10 @@ extension on SK2TransactionMessage {
       // receipt isn’t necessary with SK2 as a Transaction can only be returned
       // from validated purchases.
       verificationData: PurchaseVerificationData(
-          localVerificationData: '', serverVerificationData: '', source: ''),
+          localVerificationData: jsonRepresentation ?? '',
+          // receiptData is the JWS representation of the transaction
+          serverVerificationData: receiptData ?? '',
+          source: kIAPSource),
       transactionDate: purchaseDate,
       // Note that with SK2, any transactions that *can* be returned will
       // require to be finished, and are already purchased.

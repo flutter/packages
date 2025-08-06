@@ -18,20 +18,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// display link, HTTP headers, AV factory, and registrar.
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(FVPDisplayLink *)displayLink
+                displayLink:(NSObject<FVPDisplayLink> *)displayLink
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                 onDisposed:(void (^)(int64_t))onDisposed;
-
-/// Initializes a new instance of FVPTextureBasedVideoPlayer with the given asset, frame updater,
-/// display link, AV factory, and registrar.
-- (instancetype)initWithAsset:(NSString *)asset
-                 frameUpdater:(FVPFrameUpdater *)frameUpdater
-                  displayLink:(FVPDisplayLink *)displayLink
-                    avFactory:(id<FVPAVFactory>)avFactory
-                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
-                   onDisposed:(void (^)(int64_t))onDisposed;
+               viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
 /// Sets the texture Identifier for the frame updater. This method should be called once the texture
 /// identifier is obtained from the texture registry.

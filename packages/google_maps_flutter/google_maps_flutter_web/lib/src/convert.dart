@@ -69,9 +69,12 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
       ..maxZoom = zoomPreference.maxZoom;
   }
 
-  if (configuration.cameraTargetBounds != null) {
-    // Needs gmaps.MapOptions.restriction and gmaps.MapRestriction
-    // see: https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions.restriction
+  final LatLngBounds? cameraTargetLatLngBounds =
+      configuration.cameraTargetBounds?.bounds;
+  if (cameraTargetLatLngBounds != null) {
+    options.restriction = gmaps.MapRestriction(
+      latLngBounds: latLngBoundsToGmlatLngBounds(cameraTargetLatLngBounds),
+    );
   }
 
   if (configuration.zoomControlsEnabled != null) {
@@ -235,7 +238,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   // If both the title and snippet of an infowindow are empty, we don't really
   // want an infowindow...
-  if ((markerTitle.isEmpty) && (markerSnippet.isEmpty)) {
+  if (markerTitle.isEmpty && markerSnippet.isEmpty) {
     return null;
   }
 
@@ -282,6 +285,8 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   return gmaps.InfoWindowOptions()
     ..content = container
+    // The deprecated parameter is used here to avoid losing precision.
+    // ignore: deprecated_member_use
     ..zIndex = marker.zIndex;
   // TODO(ditman): Compute the pixelOffset of the infoWindow, from the size of the Marker,
   // and the marker.infoWindow.anchor property.
@@ -463,8 +468,8 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   return icon;
 }
 
-// Computes the options for a new [gmaps.Marker] from an incoming set of options
-// [marker], and the existing marker registered with the map: [currentMarker].
+/// Computes the options for a new [gmaps.Marker] from an incoming set of options
+/// [marker], and the existing marker registered with the map: [currentMarker].
 Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
   Marker marker,
   gmaps.Marker? currentMarker,
@@ -475,6 +480,8 @@ Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
       marker.position.longitude,
     )
     ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+    // The deprecated parameter is used here to avoid losing precision.
+    // ignore: deprecated_member_use
     ..zIndex = marker.zIndex
     ..visible = marker.visible
     ..opacity = marker.alpha

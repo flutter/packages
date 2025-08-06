@@ -42,6 +42,16 @@ public class ViewProxyApi extends PigeonApiView {
   }
 
   @Override
+  public void setVerticalScrollBarEnabled(@NonNull View pigeon_instance, boolean enabled) {
+    pigeon_instance.setVerticalScrollBarEnabled(enabled);
+  }
+
+  @Override
+  public void setHorizontalScrollBarEnabled(@NonNull View pigeon_instance, boolean enabled) {
+    pigeon_instance.setHorizontalScrollBarEnabled(enabled);
+  }
+
+  @Override
   public void setOverScrollMode(@NonNull View pigeon_instance, @NonNull OverScrollMode mode) {
     switch (mode) {
       case ALWAYS:

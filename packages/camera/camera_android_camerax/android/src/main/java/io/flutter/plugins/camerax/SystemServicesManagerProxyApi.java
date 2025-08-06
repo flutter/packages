@@ -104,7 +104,7 @@ public class SystemServicesManagerProxyApi extends PigeonApiSystemServicesManage
       throw new RuntimeException(
           "getTempFilePath_failure",
           new Throwable(
-              "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e));
+              "SystemServicesHostApiImpl.getTempFilePath encountered an exception: " + e, e));
     }
   }
 }

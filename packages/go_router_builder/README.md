@@ -86,7 +86,7 @@ method.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (HomeRoute)"?>
 ```dart
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteData with _$HomeRoute {
   const HomeRoute();
 
   @override
@@ -108,7 +108,7 @@ The tree of routes is defined as an attribute on each of the top-level routes:
     ),
   ],
 )
-class HomeRoute extends GoRouteData {
+class HomeRoute extends GoRouteData with _$HomeRoute {
   const HomeRoute();
 
   @override
@@ -124,7 +124,7 @@ class RedirectRoute extends GoRouteData {
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData {
+class LoginRoute extends GoRouteData with _$LoginRoute {
   LoginRoute({this.from});
   final String? from;
 
@@ -211,7 +211,7 @@ Parameters (named or positional) not listed in the path of `TypedGoRoute` indica
 <?code-excerpt "example/lib/readme_excerpts.dart (login)"?>
 ```dart
 @TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData {
+class LoginRoute extends GoRouteData with _$LoginRoute {
   LoginRoute({this.from});
   final String? from;
 
@@ -229,7 +229,7 @@ For query parameters with a **non-nullable** type, you can define a default valu
 <?code-excerpt "example/lib/readme_excerpts.dart (MyRoute)"?>
 ```dart
 @TypedGoRoute<MyRoute>(path: '/my-route')
-class MyRoute extends GoRouteData {
+class MyRoute extends GoRouteData with _$MyRoute {
   MyRoute({this.queryParameter = 'defaultValue'});
   final String queryParameter;
 
@@ -250,7 +250,7 @@ parameter with the special name `$extra`:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (PersonRouteWithExtra)"?>
 ```dart
-class PersonRouteWithExtra extends GoRouteData {
+class PersonRouteWithExtra extends GoRouteData with _$PersonRouteWithExtra {
   PersonRouteWithExtra(this.$extra);
   final Person? $extra;
 
@@ -281,7 +281,8 @@ You can, of course, combine the use of path, query and $extra parameters:
 <?code-excerpt "example/lib/readme_excerpts.dart (HotdogRouteWithEverything)"?>
 ```dart
 @TypedGoRoute<HotdogRouteWithEverything>(path: '/:ketchup')
-class HotdogRouteWithEverything extends GoRouteData {
+class HotdogRouteWithEverything extends GoRouteData
+    with _$HotdogRouteWithEverything {
   HotdogRouteWithEverything(this.ketchup, this.mustard, this.$extra);
   final bool ketchup; // A required path parameter.
   final String? mustard; // An optional query parameter.
@@ -340,7 +341,8 @@ The code generator can convert simple types like `int` and `enum` to/from the
 ```dart
 enum BookKind { all, popular, recent }
 
-class BooksRoute extends GoRouteData {
+@TypedGoRoute<BooksRoute>(path: '/books')
+class BooksRoute extends GoRouteData with _$BooksRoute {
   BooksRoute({this.kind = BookKind.popular});
   final BookKind kind;
 
@@ -369,7 +371,8 @@ method of the base class instead of the `build` method:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (MyMaterialRouteWithKey)"?>
 ```dart
-class MyMaterialRouteWithKey extends GoRouteData {
+class MyMaterialRouteWithKey extends GoRouteData with _$MyMaterialRouteWithKey {
+  const MyMaterialRouteWithKey();
   static const LocalKey _key = ValueKey<String>('my-route-with-key');
   @override
   MaterialPage<void> buildPage(BuildContext context, GoRouterState state) {
@@ -387,7 +390,8 @@ Overriding the `buildPage` method is also useful for custom transitions:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (FancyRoute)"?>
 ```dart
-class FancyRoute extends GoRouteData {
+class FancyRoute extends GoRouteData with _$FancyRoute {
+  const FancyRoute();
   @override
   CustomTransitionPage<void> buildPage(
     BuildContext context,
@@ -420,6 +424,11 @@ Example:
 final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
+@TypedShellRoute<MyShellRouteData>(
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<MyGoRouteData>(path: 'my-go-route'),
+  ],
+)
 class MyShellRouteData extends ShellRouteData {
   const MyShellRouteData();
 
@@ -432,7 +441,7 @@ class MyShellRouteData extends ShellRouteData {
 }
 
 // For GoRoutes:
-class MyGoRouteData extends GoRouteData {
+class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
   const MyGoRouteData();
 
   static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;

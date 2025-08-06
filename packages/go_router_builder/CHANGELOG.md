@@ -1,10 +1,30 @@
+## NEXT
+
+- Restricts `build` to versions less than 2.5.0.
+
+## 3.0.1
+
+- Updates README.md to use the mixin `with _$RouteName`.
+
+## 3.0.0
+
+- Route classes now required to use a mixin `with _$RouteName`.
+
+## 2.9.1
+
+- Fixes an deprecated warning for using withNullability
+
+## 2.9.0
+
+- Adds support for `caseSensitive` for go routes.
+
 ## 2.8.2
 
 - Fixes an issue when enum params are not required
 
 ## 2.8.1
 
-- Fixes an issue when navigate to router with invalid params 
+- Fixes an issue when navigate to router with invalid params
 
 ## 2.8.0
 

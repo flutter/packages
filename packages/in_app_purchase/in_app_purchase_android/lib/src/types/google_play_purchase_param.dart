@@ -13,9 +13,16 @@ class GooglePlayPurchaseParam extends PurchaseParam {
     required super.productDetails,
     super.applicationUserName,
     this.changeSubscriptionParam,
+    this.offerToken,
   });
 
   /// The 'changeSubscriptionParam' containing information for upgrading or
   /// downgrading an existing subscription.
   final ChangeSubscriptionParam? changeSubscriptionParam;
+
+  /// For One-time product, "offerToken" shouldn't be filled.
+  ///
+  /// For subscriptions, to get the offer token corresponding to the selected
+  /// offer call productDetails.subscriptionOfferDetails?.get(selectedOfferIndex)?.offerToken
+  final String? offerToken;
 }

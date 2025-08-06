@@ -1,9 +1,9 @@
 RouteBase get $extraValueRoute => GoRouteData.$route(
       path: '/default-value-route',
-      factory: $ExtraValueRouteExtension._fromState,
+      factory: _$ExtraValueRoute._fromState,
     );
 
-extension $ExtraValueRouteExtension on ExtraValueRoute {
+mixin _$ExtraValueRoute on GoRouteData {
   static ExtraValueRoute _fromState(GoRouterState state) => ExtraValueRoute(
         param:
             _$convertMapValue('param', state.uri.queryParameters, int.parse) ??
@@ -11,23 +11,30 @@ extension $ExtraValueRouteExtension on ExtraValueRoute {
         $extra: state.extra as int?,
       );
 
+  ExtraValueRoute get _self => this as ExtraValueRoute;
+
+  @override
   String get location => GoRouteData.$location(
         '/default-value-route',
         queryParams: {
-          if (param != 0) 'param': param.toString(),
+          if (_self.param != 0) 'param': _self.param.toString(),
         },
       );
 
-  void go(BuildContext context) => context.go(location, extra: $extra);
+  @override
+  void go(BuildContext context) => context.go(location, extra: _self.$extra);
 
+  @override
   Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location, extra: $extra);
+      context.push<T>(location, extra: _self.$extra);
 
+  @override
   void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location, extra: $extra);
+      context.pushReplacement(location, extra: _self.$extra);
 
+  @override
   void replace(BuildContext context) =>
-      context.replace(location, extra: $extra);
+      context.replace(location, extra: _self.$extra);
 }
 
 T? _$convertMapValue<T>(

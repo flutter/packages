@@ -9,7 +9,6 @@ import 'package:flutter/material.dart';
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [PlatformNavigationDelegateCreationParams] to
 /// provide additional platform specific parameters.
 ///
@@ -36,7 +35,6 @@ import 'package:flutter/material.dart';
 ///   final String? filter;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class PlatformNavigationDelegateCreationParams {
   /// Used by the platform implementation to create a new [PlatformNavigationkDelegate].

@@ -461,9 +461,11 @@ void main() {
           tester.getRect(find.text('R4:C11')),
           const Rect.fromLTRB(1000.0, 800.0, 1200.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 12.
-        expect(find.text('R0:C4'), findsNothing);
-        expect(find.text('R0:C12'), findsNothing);
+        // No columns laid out before column 4, or after column 11.
+        expect(find.text('R0:C3'), findsNothing); // Not laid out
+        expect(find.text('R0:C4'), findsOneWidget); // leading cache extent
+        expect(find.text('R0:C11'), findsOneWidget); // trailing cache extent
+        expect(find.text('R0:C12'), findsNothing); // Not laid out
 
         await tester.pumpWidget(Container());
 
@@ -553,9 +555,11 @@ void main() {
           tester.getRect(find.text('R4:C11')),
           const Rect.fromLTRB(1000.0, 800.0, 1200.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 12.
-        expect(find.text('R0:C4'), findsNothing);
-        expect(find.text('R0:C12'), findsNothing);
+        // No columns laid out before column 4, or after column 11.
+        expect(find.text('R0:C3'), findsNothing); // Not laid out
+        expect(find.text('R0:C4'), findsOneWidget); // leading cache extent
+        expect(find.text('R0:C11'), findsOneWidget); // trailing cache extent
+        expect(find.text('R0:C12'), findsNothing); // Not laid out
 
         await tester.pumpWidget(Container());
 
@@ -651,12 +655,18 @@ void main() {
           tester.getRect(find.text('R9:C11')),
           const Rect.fromLTRB(1000.0, 800.0, 1200.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 12.
-        expect(find.text('R5:C4'), findsNothing);
-        expect(find.text('R5:C12'), findsNothing);
-        // No rows laid out before row 4, or after row 9.
-        expect(find.text('R3:C6'), findsNothing);
-        expect(find.text('R10:C6'), findsNothing);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R3:C3'), findsNothing);
+        expect(find.text('R3:C12'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R4:C4'), findsOneWidget); // leading
+        expect(find.text('R4:C11'), findsOneWidget); // trailing
+        // No rows laid out before/after cache extent.
+        expect(find.text('R2:C4'), findsNothing);
+        expect(find.text('R10:C9'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R3:C6'), findsOneWidget); // leading
+        expect(find.text('R9:C6'), findsOneWidget); // trailing
 
         await tester.pumpWidget(Container());
 
@@ -701,14 +711,20 @@ void main() {
           tester.getRect(find.text('R9:C11')),
           const Rect.fromLTRB(1000.0, 800.0, 1200.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 12, except for
-        // pinned first column.
-        expect(find.text('R5:C0'), findsOneWidget);
-        expect(find.text('R5:C4'), findsNothing);
-        expect(find.text('R5:C12'), findsNothing);
-        // No rows laid out before row 4, or after row 9.
-        expect(find.text('R3:C6'), findsNothing);
-        expect(find.text('R10:C6'), findsNothing);
+        // Pinned column
+        expect(find.text('R4:C0'), findsOneWidget);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R3:C4'), findsNothing);
+        expect(find.text('R3:C12'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R4:C5'), findsOneWidget); // leading
+        expect(find.text('R4:C11'), findsOneWidget); // trailing
+        // No rows laid out before/after cache extent.
+        expect(find.text('R2:C4'), findsNothing);
+        expect(find.text('R10:C9'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R3:C6'), findsOneWidget); // leading
+        expect(find.text('R9:C6'), findsOneWidget); // trailing
 
         await tester.pumpWidget(Container());
 
@@ -753,14 +769,20 @@ void main() {
           tester.getRect(find.text('R9:C11')),
           const Rect.fromLTRB(1000.0, 800.0, 1200.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 12.
-        expect(find.text('R5:C4'), findsNothing);
-        expect(find.text('R5:C12'), findsNothing);
-        // No rows laid out before row 4, or after row 9, except for pinned
-        // first row.
-        expect(find.text('R0:C6'), findsOneWidget);
-        expect(find.text('R3:C6'), findsNothing);
-        expect(find.text('R10:C6'), findsNothing);
+        // Pinned row
+        expect(find.text('R0:C4'), findsOneWidget);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R4:C3'), findsNothing);
+        expect(find.text('R4:C12'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R4:C4'), findsOneWidget); // leading
+        expect(find.text('R4:C11'), findsOneWidget); // trailing
+        // No rows laid out before/after cache extent.
+        expect(find.text('R3:C4'), findsNothing);
+        expect(find.text('R10:C9'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R4:C6'), findsOneWidget); // leading
+        expect(find.text('R9:C6'), findsOneWidget); // trailing
 
         await tester.pumpWidget(Container());
 
@@ -1229,9 +1251,16 @@ void main() {
           tester.getRect(find.text('R4:C7')),
           const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
         );
-        // No columns laid out before column 3, or after column 7.
-        expect(find.text('R0:C2'), findsNothing);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R0:C1'), findsNothing);
         expect(find.text('R0:C8'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R3:C2'), findsOneWidget); // leading
+        expect(find.text('R3:C7'), findsOneWidget); // trailing
+        // No rows laid out after cache extent.
+        expect(find.text('R5:C5'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R4:C5'), findsOneWidget); // trailing
 
         // Increase the number of rows
         await tester.pumpWidget(MaterialApp(
@@ -1266,10 +1295,16 @@ void main() {
           tester.getRect(find.text('R4:C7')),
           const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
         );
-        // No columns laid out before column 3, but after column 7 we have added
-        // new columns.
-        expect(find.text('R0:C2'), findsNothing);
-        expect(find.text('R0:C8'), findsOneWidget);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R0:C1'), findsNothing);
+        expect(find.text('R0:C10'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R3:C2'), findsOneWidget); // leading
+        expect(find.text('R3:C9'), findsOneWidget); // trailing
+        // No rows laid out after cache extent.
+        expect(find.text('R5:C5'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R4:C5'), findsOneWidget); // trailing
         // This exceeds the new bounds.
         horizontalController.jumpTo(3200.0);
         await tester.pumpAndSettle();
@@ -1377,9 +1412,16 @@ void main() {
           tester.getRect(find.text('R4:C9')),
           const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 9.
-        expect(find.text('R0:C4'), findsNothing);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R0:C3'), findsNothing);
         expect(find.text('R0:C10'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R3:C4'), findsOneWidget); // leading
+        expect(find.text('R3:C9'), findsOneWidget); // trailing
+        // No rows laid out after cache extent.
+        expect(find.text('R5:C5'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R4:C5'), findsOneWidget); // trailing
 
         await tester.pumpWidget(Container());
 
@@ -1497,9 +1539,16 @@ void main() {
           tester.getRect(find.text('R4:C9')),
           const Rect.fromLTRB(600.0, 800.0, 800.0, 1000.0),
         );
-        // No columns laid out before column 5, or after column 9.
-        expect(find.text('R0:C4'), findsNothing);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R0:C3'), findsNothing);
         expect(find.text('R0:C10'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R3:C4'), findsOneWidget); // leading
+        expect(find.text('R3:C9'), findsOneWidget); // trailing
+        // No rows laid out after cache extent.
+        expect(find.text('R5:C5'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R4:C5'), findsOneWidget); // trailing
 
         await tester.pumpWidget(Container());
 
@@ -1638,12 +1687,18 @@ void main() {
           tester.getRect(find.text('R7:C9')),
           const Rect.fromLTRB(600.0, 400.0, 800.0, 600.0),
         );
-        // No columns laid out before column 5, or after column 9.
-        expect(find.text('R5:C4'), findsNothing);
-        expect(find.text('R5:C10'), findsNothing);
-        // No rows laid out before row 4, or after row 7.
-        expect(find.text('R3:C6'), findsNothing);
-        expect(find.text('R8:C6'), findsNothing);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R3:C0'), findsNothing);
+        expect(find.text('R7:C3'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R4:C4'), findsOneWidget); // leading
+        expect(find.text('R4:C9'), findsOneWidget); // trailing
+        // No rows laid out before/after cache extent.
+        expect(find.text('R0:C4'), findsNothing);
+        expect(find.text('R2:C9'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R3:C6'), findsOneWidget); // leading
+        expect(find.text('R7:C6'), findsOneWidget); // trailing
 
         await tester.pumpWidget(Container());
 
@@ -1710,14 +1765,18 @@ void main() {
           tester.getRect(find.text('R7:C9')),
           const Rect.fromLTRB(600.0, 400.0, 800.0, 600.0),
         );
-        // No columns laid out before column 5, or after column 9, except for
-        // the pinned first column.
-        expect(find.text('R5:C0'), findsOneWidget);
-        expect(find.text('R5:C4'), findsNothing);
-        expect(find.text('R5:C10'), findsNothing);
-        // No rows laid out before row 4, or after row 7.
-        expect(find.text('R3:C6'), findsNothing);
-        expect(find.text('R8:C6'), findsNothing);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R3:C1'), findsNothing);
+        expect(find.text('R3:C2'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R3:C5'), findsOneWidget); // leading
+        expect(find.text('R3:C9'), findsOneWidget); // trailing
+        // No rows laid out before/after cache extent.
+        expect(find.text('R0:C5'), findsNothing);
+        expect(find.text('R2:C5'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R3:C6'), findsOneWidget); // leading
+        expect(find.text('R7:C6'), findsOneWidget); // trailing
 
         await tester.pumpWidget(Container());
 
@@ -1784,14 +1843,20 @@ void main() {
           tester.getRect(find.text('R7:C9')),
           const Rect.fromLTRB(600.0, 400.0, 800.0, 600.0),
         );
-        // No columns laid out before column 5, or after column 9.
-        expect(find.text('R5:C4'), findsNothing);
-        expect(find.text('R5:C10'), findsNothing);
-        // No rows laid out before row 4, or after row 7, except for first
-        // pinned row.
+        // First pinned row.
         expect(find.text('R0:C6'), findsOneWidget);
-        expect(find.text('R3:C6'), findsNothing);
-        expect(find.text('R8:C6'), findsNothing);
+        // No Columns laid out before/after cache extent.
+        expect(find.text('R5:C0'), findsNothing);
+        expect(find.text('R5:C1'), findsNothing);
+        // Columns in the cache extent.
+        expect(find.text('R5:C4'), findsOneWidget); // leading
+        expect(find.text('R5:C9'), findsOneWidget); // trailing
+        // No rows laid out before/after cache extent.
+        expect(find.text('R1:C5'), findsNothing);
+        expect(find.text('R2:C5'), findsNothing);
+        // Rows in the cache extent.
+        expect(find.text('R4:C6'), findsOneWidget); // leading
+        expect(find.text('R7:C6'), findsOneWidget); // trailing
 
         await tester.pumpWidget(Container());
 

@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 1.1.17
 
 * Fixes a bug where stroke opacity not applied by color mapper.

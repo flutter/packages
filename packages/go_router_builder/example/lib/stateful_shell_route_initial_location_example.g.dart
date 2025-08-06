@@ -19,7 +19,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: '/home',
-              factory: $HomeRouteDataExtension._fromState,
+              factory: _$HomeRouteData._fromState,
             ),
           ],
         ),
@@ -28,7 +28,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: '/notifications/:section',
-              factory: $NotificationsRouteDataExtension._fromState,
+              factory: _$NotificationsRouteData._fromState,
             ),
           ],
         ),
@@ -36,7 +36,7 @@ RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
           routes: [
             GoRouteData.$route(
               path: '/orders',
-              factory: $OrdersRouteDataExtension._fromState,
+              factory: _$OrdersRouteData._fromState,
             ),
           ],
         ),
@@ -48,41 +48,53 @@ extension $MainShellRouteDataExtension on MainShellRouteData {
       const MainShellRouteData();
 }
 
-extension $HomeRouteDataExtension on HomeRouteData {
+mixin _$HomeRouteData on GoRouteData {
   static HomeRouteData _fromState(GoRouterState state) => const HomeRouteData();
 
+  @override
   String get location => GoRouteData.$location(
         '/home',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $NotificationsRouteDataExtension on NotificationsRouteData {
+mixin _$NotificationsRouteData on GoRouteData {
   static NotificationsRouteData _fromState(GoRouterState state) =>
       NotificationsRouteData(
         section: _$NotificationsPageSectionEnumMap
             ._$fromName(state.pathParameters['section']!)!,
       );
 
+  NotificationsRouteData get _self => this as NotificationsRouteData;
+
+  @override
   String get location => GoRouteData.$location(
-        '/notifications/${Uri.encodeComponent(_$NotificationsPageSectionEnumMap[section]!)}',
+        '/notifications/${Uri.encodeComponent(_$NotificationsPageSectionEnumMap[_self.section]!)}',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
@@ -92,21 +104,26 @@ const _$NotificationsPageSectionEnumMap = {
   NotificationsPageSection.archive: 'archive',
 };
 
-extension $OrdersRouteDataExtension on OrdersRouteData {
+mixin _$OrdersRouteData on GoRouteData {
   static OrdersRouteData _fromState(GoRouterState state) =>
       const OrdersRouteData();
 
+  @override
   String get location => GoRouteData.$location(
         '/orders',
       );
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 

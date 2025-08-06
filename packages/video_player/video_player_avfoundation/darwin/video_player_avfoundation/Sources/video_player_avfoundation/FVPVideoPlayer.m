@@ -4,7 +4,6 @@
 
 #import "./include/video_player_avfoundation/FVPVideoPlayer.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayer_Internal.h"
-#import "./include/video_player_avfoundation/FVPVideoPlayer_Test.h"
 
 #import <GLKit/GLKit.h>
 
@@ -18,35 +17,27 @@ static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *rateContext = &rateContext;
 
 @implementation FVPVideoPlayer
-- (instancetype)initWithAsset:(NSString *)asset
-                    avFactory:(id<FVPAVFactory>)avFactory
-                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  return [self initWithURL:[NSURL fileURLWithPath:[FVPVideoPlayer absolutePathForAssetName:asset]]
-               httpHeaders:@{}
-                 avFactory:avFactory
-                 registrar:registrar];
-}
 
 - (instancetype)initWithURL:(NSURL *)url
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
                   avFactory:(id<FVPAVFactory>)avFactory
-                  registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+               viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   NSDictionary<NSString *, id> *options = nil;
   if ([headers count] != 0) {
     options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
   }
   AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
   AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
-  return [self initWithPlayerItem:item avFactory:avFactory registrar:registrar];
+  return [self initWithPlayerItem:item avFactory:avFactory viewProvider:viewProvider];
 }
 
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                          avFactory:(id<FVPAVFactory>)avFactory
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
 
-  _registrar = registrar;
+  _viewProvider = viewProvider;
 
   AVAsset *asset = [item asset];
   void (^assetCompletionHandler)(void) = ^{
@@ -104,17 +95,17 @@ static void *rateContext = &rateContext;
   }
 }
 
-+ (NSString *)absolutePathForAssetName:(NSString *)assetName {
-  NSString *path = [[NSBundle mainBundle] pathForResource:assetName ofType:nil];
-#if TARGET_OS_OSX
-  // See https://github.com/flutter/flutter/issues/135302
-  // TODO(stuartmorgan): Remove this if the asset APIs are adjusted to work better for macOS.
-  if (!path) {
-    path = [NSURL URLWithString:assetName relativeToURL:NSBundle.mainBundle.bundleURL].path;
-  }
-#endif
+- (void)dispose {
+  _disposed = YES;
+  [self removeKeyValueObservers];
 
-  return path;
+  [self.player replaceCurrentItemWithPlayerItem:nil];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+  if (_onDisposed) {
+    _onDisposed();
+  }
+  [self.eventListener videoPlayerWasDisposed];
 }
 
 - (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
@@ -158,9 +149,7 @@ static void *rateContext = &rateContext;
     AVPlayerItem *p = [notification object];
     [p seekToTime:kCMTimeZero completionHandler:nil];
   } else {
-    if (_eventSink) {
-      _eventSink(@{@"event" : @"completed"});
-    }
+    [self.eventListener videoPlayerDidComplete];
   }
 }
 
@@ -228,15 +217,15 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                         change:(NSDictionary *)change
                        context:(void *)context {
   if (context == timeRangeContext) {
-    if (_eventSink != nil) {
-      NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
-      for (NSValue *rangeValue in [object loadedTimeRanges]) {
-        CMTimeRange range = [rangeValue CMTimeRangeValue];
-        int64_t start = FVPCMTimeToMillis(range.start);
-        [values addObject:@[ @(start), @(start + FVPCMTimeToMillis(range.duration)) ]];
-      }
-      _eventSink(@{@"event" : @"bufferingUpdate", @"values" : values});
+    NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
+    for (NSValue *rangeValue in [object loadedTimeRanges]) {
+      CMTimeRange range = [rangeValue CMTimeRangeValue];
+      [values addObject:@[
+        @(FVPCMTimeToMillis(range.start)),
+        @(FVPCMTimeToMillis(range.duration)),
+      ]];
     }
+    [self.eventListener videoPlayerDidUpdateBufferRegions:values];
   } else if (context == statusContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     switch (item.status) {
@@ -247,7 +236,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         break;
       case AVPlayerItemStatusReadyToPlay:
         [item addOutput:_videoOutput];
-        [self setupEventSinkIfReadyToPlay];
+        [self reportInitializedIfReadyToPlay];
         break;
     }
   } else if (context == presentationSizeContext || context == durationContext) {
@@ -256,27 +245,20 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       // Due to an apparent bug, when the player item is ready, it still may not have determined
       // its presentation size or duration. When these properties are finally set, re-check if
       // all required properties and instantiate the event sink if it is not already set up.
-      [self setupEventSinkIfReadyToPlay];
+      [self reportInitializedIfReadyToPlay];
     }
   } else if (context == playbackLikelyToKeepUpContext) {
     [self updatePlayingState];
     if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
-      if (_eventSink != nil) {
-        _eventSink(@{@"event" : @"bufferingEnd"});
-      }
+      [self.eventListener videoPlayerDidEndBuffering];
     } else {
-      if (_eventSink != nil) {
-        _eventSink(@{@"event" : @"bufferingStart"});
-      }
+      [self.eventListener videoPlayerDidStartBuffering];
     }
   } else if (context == rateContext) {
     // Important: Make sure to cast the object to AVPlayer when observing the rate property,
     // as it is not available in AVPlayerItem.
     AVPlayer *player = (AVPlayer *)object;
-    if (_eventSink != nil) {
-      _eventSink(
-          @{@"event" : @"isPlayingStateUpdate", @"isPlaying" : player.rate > 0 ? @YES : @NO});
-    }
+    [self.eventListener videoPlayerDidSetPlaying:(player.rate > 0)];
   }
 }
 
@@ -326,9 +308,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)sendFailedToLoadVideoEvent {
-  if (_eventSink == nil) {
-    return;
-  }
   // Prefer more detailed error information from tracks loading.
   NSError *error;
   if ([self.player.currentItem.asset statusOfValueForKey:@"tracks"
@@ -348,11 +327,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   add(underlyingError.localizedDescription);
   add(underlyingError.localizedFailureReason);
   NSString *message = [details.array componentsJoinedByString:@": "];
-  _eventSink([FlutterError errorWithCode:@"VideoError" message:message details:nil]);
+  [self.eventListener videoPlayerDidErrorWithMessage:message];
 }
 
-- (void)setupEventSinkIfReadyToPlay {
-  if (_eventSink && !_isInitialized) {
+- (void)reportInitializedIfReadyToPlay {
+  if (!_isInitialized) {
     AVPlayerItem *currentItem = self.player.currentItem;
     CGSize size = currentItem.presentationSize;
     CGFloat width = size.width;
@@ -396,104 +375,65 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     _isInitialized = YES;
     [self updatePlayingState];
 
-    _eventSink(@{
-      @"event" : @"initialized",
-      @"duration" : @(duration),
-      @"width" : @(width),
-      @"height" : @(height)
-    });
+    [self.eventListener videoPlayerDidInitializeWithDuration:duration size:size];
   }
 }
 
-- (void)play {
+#pragma mark - FVPVideoPlayerInstanceApi
+
+- (void)playWithError:(FlutterError *_Nullable *_Nonnull)error {
   _isPlaying = YES;
   [self updatePlayingState];
 }
 
-- (void)pause {
+- (void)pauseWithError:(FlutterError *_Nullable *_Nonnull)error {
   _isPlaying = NO;
   [self updatePlayingState];
 }
 
-- (int64_t)position {
-  return FVPCMTimeToMillis([_player currentTime]);
+- (nullable NSNumber *)position:(FlutterError *_Nullable *_Nonnull)error {
+  return @(FVPCMTimeToMillis([_player currentTime]));
 }
+
+- (void)seekTo:(NSInteger)position completion:(void (^)(FlutterError *_Nullable))completion {
+  CMTime targetCMTime = CMTimeMake(position, 1000);
+  CMTimeValue duration = _player.currentItem.asset.duration.value;
+  // Without adding tolerance when seeking to duration,
+  // seekToTime will never complete, and this call will hang.
+  // see issue https://github.com/flutter/flutter/issues/124475.
+  CMTime tolerance = position == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
+  [_player seekToTime:targetCMTime
+        toleranceBefore:tolerance
+         toleranceAfter:tolerance
+      completionHandler:^(BOOL completed) {
+        if (completion) {
+          dispatch_async(dispatch_get_main_queue(), ^{
+            completion(nil);
+          });
+        }
+      }];
+}
+
+- (void)setLooping:(BOOL)looping error:(FlutterError *_Nullable *_Nonnull)error {
+  _isLooping = looping;
+}
+
+- (void)setVolume:(double)volume error:(FlutterError *_Nullable *_Nonnull)error {
+  _player.volume = (float)((volume < 0.0) ? 0.0 : ((volume > 1.0) ? 1.0 : volume));
+}
+
+- (void)setPlaybackSpeed:(double)speed error:(FlutterError *_Nullable *_Nonnull)error {
+  _targetPlaybackSpeed = @(speed);
+  [self updatePlayingState];
+}
+
+#pragma mark - Private
 
 - (int64_t)duration {
   // Note: https://openradar.appspot.com/radar?id=4968600712511488
   // `[AVPlayerItem duration]` can be `kCMTimeIndefinite`,
   // use `[[AVPlayerItem asset] duration]` instead.
   return FVPCMTimeToMillis([[[_player currentItem] asset] duration]);
-}
-
-- (void)seekTo:(int64_t)location completionHandler:(void (^)(BOOL))completionHandler {
-  CMTime targetCMTime = CMTimeMake(location, 1000);
-  CMTimeValue duration = _player.currentItem.asset.duration.value;
-  // Without adding tolerance when seeking to duration,
-  // seekToTime will never complete, and this call will hang.
-  // see issue https://github.com/flutter/flutter/issues/124475.
-  CMTime tolerance = location == duration ? CMTimeMake(1, 1000) : kCMTimeZero;
-  [_player seekToTime:targetCMTime
-        toleranceBefore:tolerance
-         toleranceAfter:tolerance
-      completionHandler:^(BOOL completed) {
-        if (completionHandler) {
-          completionHandler(completed);
-        }
-      }];
-}
-
-- (void)setIsLooping:(BOOL)isLooping {
-  _isLooping = isLooping;
-}
-
-- (void)setVolume:(double)volume {
-  _player.volume = (float)((volume < 0.0) ? 0.0 : ((volume > 1.0) ? 1.0 : volume));
-}
-
-- (void)setPlaybackSpeed:(double)speed {
-  _targetPlaybackSpeed = @(speed);
-  [self updatePlayingState];
-}
-
-- (FlutterError *_Nullable)onCancelWithArguments:(id _Nullable)arguments {
-  _eventSink = nil;
-  return nil;
-}
-
-- (FlutterError *_Nullable)onListenWithArguments:(id _Nullable)arguments
-                                       eventSink:(nonnull FlutterEventSink)events {
-  _eventSink = events;
-  // TODO(@recastrodiaz): remove the line below when the race condition is resolved:
-  // https://github.com/flutter/flutter/issues/21483
-  // This line ensures the 'initialized' event is sent when the event
-  // 'AVPlayerItemStatusReadyToPlay' fires before _eventSink is set (this function
-  // onListenWithArguments is called)
-  // and also send error in similar case with 'AVPlayerItemStatusFailed'
-  // https://github.com/flutter/flutter/issues/151475
-  // https://github.com/flutter/flutter/issues/147707
-  if (self.player.currentItem.status == AVPlayerItemStatusFailed) {
-    [self sendFailedToLoadVideoEvent];
-    return nil;
-  }
-  [self setupEventSinkIfReadyToPlay];
-  return nil;
-}
-
-/// This method allows you to dispose without touching the event channel. This
-/// is useful for the case where the Engine is in the process of deconstruction
-/// so the channel is going to die or is already dead.
-- (void)disposeSansEventChannel {
-  _disposed = YES;
-  [self removeKeyValueObservers];
-
-  [self.player replaceCurrentItemWithPlayerItem:nil];
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)dispose {
-  [self disposeSansEventChannel];
-  [_eventChannel setStreamHandler:nil];
 }
 
 /// Removes all key-value observers set up for the player.

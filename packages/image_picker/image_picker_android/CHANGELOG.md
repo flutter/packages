@@ -1,3 +1,7 @@
+## 0.8.12+24
+
+* Updates `androidx.activity:activity` to 1.10.1.
+
 ## 0.8.12+23
 
 * Removes obsolete code related to supporting SDK <21.

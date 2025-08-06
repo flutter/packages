@@ -63,6 +63,29 @@ void main() {
 
       expect(element.id, 'background-html-view');
     }, semanticsEnabled: false);
+
+    // Regression test for https://github.com/flutter/flutter/issues/157920
+    testWidgets(
+      'prevents default action of mousedown events',
+      (WidgetTester tester) async {
+        await _fullyRenderApp(tester);
+
+        final web.Element element =
+            _getHtmlElementAtCenter(clickableButtonFinder, tester);
+        expect(element.tagName.toLowerCase(), 'div');
+
+        for (int i = 0; i <= 4; i++) {
+          final web.MouseEvent event = web.MouseEvent(
+            'mousedown',
+            web.MouseEventInit(button: i, cancelable: true),
+          );
+          element.dispatchEvent(event);
+          expect(event.target, element);
+          expect(event.defaultPrevented, isTrue);
+        }
+      },
+      semanticsEnabled: false,
+    );
   });
 }
 

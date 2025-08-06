@@ -6,6 +6,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'platform_ssl_auth_error.dart';
 import 'types/types.dart';
 
 import 'webview_platform.dart' show WebViewPlatform;
@@ -33,6 +34,13 @@ typedef UrlChangeCallback = void Function(UrlChange change);
 /// Signature for callbacks that notify the host application of an
 /// authentication request.
 typedef HttpAuthRequestCallback = void Function(HttpAuthRequest request);
+
+/// Signature for callbacks that notify the host application of an SSL
+/// authentication error.
+///
+/// The host application must call either [PlatformSslAuthError.cancel] or
+/// [PlatformSslAuthError.proceed].
+typedef SslAuthErrorCallback = void Function(PlatformSslAuthError error);
 
 /// An interface defining navigation events that occur on the native platform.
 ///
@@ -141,6 +149,17 @@ abstract class PlatformNavigationDelegate extends PlatformInterface {
   Future<void> setOnHttpAuthRequest(HttpAuthRequestCallback onHttpAuthRequest) {
     throw UnimplementedError(
       'setOnHttpAuthRequest is not implemented on the current platform.',
+    );
+  }
+
+  /// Invoked when the web view receives a recoverable SSL error for a
+  /// certificate.
+  ///
+  /// The host application must call either [PlatformSslAuthError.cancel] or
+  /// [PlatformSslAuthError.proceed].
+  Future<void> setOnSSlAuthError(SslAuthErrorCallback onSslAuthError) {
+    throw UnimplementedError(
+      'setOnSSlAuthError is not implemented on the current platform.',
     );
   }
 }

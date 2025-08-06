@@ -1,6 +1,14 @@
-## 2.11.2
+## 2.13.0
 
 * Adds support to camera control button on web.
+## 2.12.1
+
+* Fixes the `zIndex` issue in the `copyWith` method.
+
+## 2.12.0
+
+* Deprecates `zIndex` parameter in `Marker` in favor of `zIndexInt`.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.11.1
 

@@ -12,10 +12,46 @@ import 'package:flutter/services.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'android_proxy.dart';
+import 'android_ssl_auth_error.dart';
 import 'android_webkit.g.dart' as android_webview;
 import 'android_webkit_constants.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
+
+/// Object specifying parameters for loading a local file in a
+/// [AndroidWebViewController].
+@immutable
+base class AndroidLoadFileParams extends LoadFileParams {
+  /// Constructs a [AndroidLoadFileParams], the subclass of a [LoadFileParams].
+  AndroidLoadFileParams({
+    required String absoluteFilePath,
+    this.headers = const <String, String>{},
+  }) : super(
+          absoluteFilePath: absoluteFilePath.startsWith('file://')
+              ? absoluteFilePath
+              : Uri.file(absoluteFilePath).toString(),
+        );
+
+  /// Constructs a [AndroidLoadFileParams] using a [LoadFileParams].
+  factory AndroidLoadFileParams.fromLoadFileParams(
+    LoadFileParams params, {
+    Map<String, String> headers = const <String, String>{},
+  }) {
+    return AndroidLoadFileParams(
+      absoluteFilePath: params.absoluteFilePath,
+      headers: headers,
+    );
+  }
+
+  /// Additional HTTP headers to be included when loading the local file.
+  ///
+  /// If not provided at initialization time, doesn't add any additional headers.
+  ///
+  /// On Android, WebView supports adding headers when loading local or remote
+  /// content. This can be useful for scenarios like authentication,
+  /// content-type overrides, or custom request context.
+  final Map<String, String> headers;
+}
 
 /// Object specifying creation parameters for creating a [AndroidWebViewController].
 ///
@@ -86,7 +122,7 @@ class AndroidWebViewController extends PlatformWebViewController {
     _webView.settings.setJavaScriptCanOpenWindowsAutomatically(true);
     _webView.settings.setSupportMultipleWindows(true);
     _webView.settings.setLoadWithOverviewMode(true);
-    _webView.settings.setUseWideViewPort(true);
+    _webView.settings.setUseWideViewPort(false);
     _webView.settings.setDisplayZoomControls(false);
     _webView.settings.setBuiltInZoomControls(true);
 
@@ -385,12 +421,29 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> loadFile(
     String absoluteFilePath,
   ) {
-    final String url = absoluteFilePath.startsWith('file://')
-        ? absoluteFilePath
-        : Uri.file(absoluteFilePath).toString();
+    return loadFileWithParams(
+      AndroidLoadFileParams(
+        absoluteFilePath: absoluteFilePath,
+      ),
+    );
+  }
 
-    _webView.settings.setAllowFileAccess(true);
-    return _webView.loadUrl(url, <String, String>{});
+  @override
+  Future<void> loadFileWithParams(
+    LoadFileParams params,
+  ) async {
+    switch (params) {
+      case final AndroidLoadFileParams params:
+        await Future.wait(<Future<void>>[
+          _webView.settings.setAllowFileAccess(true),
+          _webView.loadUrl(params.absoluteFilePath, params.headers),
+        ]);
+
+      default:
+        await loadFileWithParams(
+          AndroidLoadFileParams.fromLoadFileParams(params),
+        );
+    }
   }
 
   @override
@@ -599,6 +652,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setTextZoom(int textZoom) =>
       _webView.settings.setTextZoom(textZoom);
 
+  /// Sets whether the WebView should enable support for the "viewport" HTML
+  /// meta tag or should use a wide viewport.
+  ///
+  /// The default is false.
+  Future<void> setUseWideViewPort(bool use) =>
+      _webView.settings.setUseWideViewPort(use);
+
   /// Enables or disables content URL access.
   ///
   /// The default is true.
@@ -733,6 +793,17 @@ class AndroidWebViewController extends PlatformWebViewController {
   }
 
   @override
+  Future<void> setVerticalScrollBarEnabled(bool enabled) =>
+      _webView.setVerticalScrollBarEnabled(enabled);
+
+  @override
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) =>
+      _webView.setHorizontalScrollBarEnabled(enabled);
+
+  @override
+  bool supportsSetScrollBarsEnabled() => true;
+
+  @override
   Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
     return switch (mode) {
       WebViewOverScrollMode.always => _webView.setOverScrollMode(
@@ -748,6 +819,19 @@ class AndroidWebViewController extends PlatformWebViewController {
       // ignore: unreachable_switch_case
       _ => throw UnsupportedError('Android does not support $mode.'),
     };
+  }
+
+  /// Configures the WebView's behavior when handling mixed content.
+  Future<void> setMixedContentMode(MixedContentMode mode) {
+    final android_webview.MixedContentMode androidMode = switch (mode) {
+      MixedContentMode.alwaysAllow =>
+        android_webview.MixedContentMode.alwaysAllow,
+      MixedContentMode.compatibilityMode =>
+        android_webview.MixedContentMode.compatibilityMode,
+      MixedContentMode.neverAllow =>
+        android_webview.MixedContentMode.neverAllow,
+    };
+    return _webView.settings.setMixedContentMode(androidMode);
   }
 }
 
@@ -845,6 +929,36 @@ enum FileSelectorMode {
 
   /// Allows picking a nonexistent file and saving it.
   save,
+}
+
+/// Mode for controlling mixed content handling.
+
+/// See [AndroidWebViewController.setMixedContentMode].
+enum MixedContentMode {
+  /// The WebView will allow a secure origin to load content from any other
+  /// origin, even if that origin is insecure.
+  ///
+  /// This is the least secure mode of operation, and where possible apps should
+  /// not set this mode.
+  alwaysAllow,
+
+  /// The WebView will attempt to be compatible with the approach of a modern
+  /// web browser with regard to mixed content.
+  ///
+  /// The types of content are allowed or blocked may change release to release
+  /// of the underlying Android WebView, and are not explicitly defined. This
+  /// mode is intended to be used by apps that are not in control of the content
+  /// that they render but desire to operate in a reasonably secure environment.
+  compatibilityMode,
+
+  /// The WebView will not allow a secure origin to load content from an
+  /// insecure origin.
+  ///
+  /// This is the preferred and most secure mode of operation, and apps are
+  /// strongly advised to use this mode.
+  ///
+  /// This is the default mode.
+  neverAllow,
 }
 
 /// Parameters received when the `WebView` should show a file selector.
@@ -1483,9 +1597,22 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
         _,
         __,
         android_webview.SslErrorHandler handler,
-        ___,
-      ) {
-        handler.cancel();
+        android_webview.SslError error,
+      ) async {
+        final void Function(PlatformSslAuthError)? callback =
+            weakThis.target?._onSslAuthError;
+
+        if (callback != null) {
+          final AndroidSslAuthError authError =
+              await AndroidSslAuthError.fromNativeCallback(
+            error: error,
+            handler: handler,
+          );
+
+          callback(authError);
+        } else {
+          await handler.cancel();
+        }
       },
     );
 
@@ -1549,6 +1676,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   LoadRequestCallback? _onLoadRequest;
   UrlChangeCallback? _onUrlChange;
   HttpAuthRequestCallback? _onHttpAuthRequest;
+  SslAuthErrorCallback? _onSslAuthError;
 
   void _handleNavigation(
     String url, {
@@ -1652,5 +1780,10 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     HttpAuthRequestCallback onHttpAuthRequest,
   ) async {
     _onHttpAuthRequest = onHttpAuthRequest;
+  }
+
+  @override
+  Future<void> setOnSSlAuthError(SslAuthErrorCallback onSslAuthError) async {
+    _onSslAuthError = onSslAuthError;
   }
 }

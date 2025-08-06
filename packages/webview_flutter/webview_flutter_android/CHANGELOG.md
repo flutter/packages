@@ -1,3 +1,42 @@
+## 4.9.0
+
+* Adds support for `PlatformWebViewController.loadFileWithParams`.
+* Introduces `AndroidLoadFileParams`, a platform-specific extension of `LoadFileParams` for Android that adds support for `headers`.
+
+## 4.8.2
+
+* Bumps gradle from 8.9.0 to 8.11.1.
+
+## 4.8.1
+
+* Updates `androidx.webkit` to 1.14.0.
+
+## 4.8.0
+
+* Adds `AndroidWebViewController.setMixedContentMode` to control how
+  mixed-content pages load.
+
+## 4.7.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `AndroidNavigationDelegate.setOnSSlAuthError`.
+
+## 4.6.0
+
+* Adds support to set using wide view port. See `AndroidWebViewController.setUseWideViewPort`.
+* Changes default of `WebSettings.setUseWideViewPort` to `false` to align with native WebViews.
+
+## 4.5.0
+
+* Adds support to set whether to draw the scrollbar. See
+  `AndroidWebViewController.setVerticalScrollBarEnabled`,
+  `AndroidWebViewController.setHorizontalScrollBarEnabled`,
+  `AndroidWebViewController.supportsSetScrollBarsEnabled`.
+
+## 4.4.2
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
 ## 4.4.1
 
 * Removes obsolete code related to supporting SDK <21.

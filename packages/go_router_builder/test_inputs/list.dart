@@ -4,8 +4,10 @@
 
 import 'package:go_router/go_router.dart';
 
+mixin _$ListRoute {}
+
 @TypedGoRoute<ListRoute>(path: '/list-route')
-class ListRoute extends GoRouteData {
+class ListRoute extends GoRouteData with _$ListRoute {
   ListRoute({
     required this.ids,
     this.nullableIds,

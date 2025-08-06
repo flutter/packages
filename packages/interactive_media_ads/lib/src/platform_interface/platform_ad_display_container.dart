@@ -5,6 +5,7 @@
 import 'package:flutter/cupertino.dart';
 
 import 'interactive_media_ads_platform.dart';
+import 'platform_companion_ad_slot.dart';
 
 /// Object specifying creation parameters for creating a
 /// [PlatformAdDisplayContainer].
@@ -46,6 +47,7 @@ base class PlatformAdDisplayContainerCreationParams {
     this.key,
     required this.onContainerAdded,
     this.layoutDirection = TextDirection.ltr,
+    this.companionSlots = const <PlatformCompanionAdSlot>[],
   });
 
   /// Controls how one widget replaces another widget in the tree.
@@ -60,6 +62,9 @@ base class PlatformAdDisplayContainerCreationParams {
 
   /// The layout direction to use for the embedded AdDisplayContainer.
   final TextDirection layoutDirection;
+
+  /// List of companion ad slots.
+  final Iterable<PlatformCompanionAdSlot> companionSlots;
 }
 
 /// The interface for a platform implementation for a container in which to

@@ -678,7 +678,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       position: _platformLatLngFromLatLng(marker.position),
       rotation: marker.rotation,
       visible: marker.visible,
-      zIndex: marker.zIndex,
+      zIndex: marker.zIndexInt,
       markerId: marker.markerId.value,
       clusterManagerId: marker.clusterManagerId?.value,
     );

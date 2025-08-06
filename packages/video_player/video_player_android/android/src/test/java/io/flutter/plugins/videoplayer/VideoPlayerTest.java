@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.Format;
@@ -16,6 +17,7 @@ import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventListener;
+import io.flutter.view.TextureRegistry.SurfaceProducer;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,13 +59,15 @@ public final class VideoPlayerTest {
         @NonNull VideoPlayerCallbacks events,
         @NonNull MediaItem mediaItem,
         @NonNull VideoPlayerOptions options,
+        @Nullable SurfaceProducer surfaceProducer,
         @NonNull ExoPlayerProvider exoPlayerProvider) {
-      super(events, mediaItem, options, exoPlayerProvider);
+      super(events, mediaItem, options, surfaceProducer, exoPlayerProvider);
     }
 
     @NonNull
     @Override
-    protected ExoPlayerEventListener createExoPlayerEventListener(@NonNull ExoPlayer exoPlayer) {
+    protected ExoPlayerEventListener createExoPlayerEventListener(
+        @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer) {
       // Use platform view implementation for testing.
       return new PlatformViewExoPlayerEventListener(exoPlayer, mockEvents);
     }
@@ -80,7 +84,7 @@ public final class VideoPlayerTest {
 
   private VideoPlayer createVideoPlayer(VideoPlayerOptions options) {
     return new TestVideoPlayer(
-        mockEvents, fakeVideoAsset.getMediaItem(), options, () -> mockExoPlayer);
+        mockEvents, fakeVideoAsset.getMediaItem(), options, null, () -> mockExoPlayer);
   }
 
   @Test
@@ -91,7 +95,7 @@ public final class VideoPlayerTest {
     verify(mockExoPlayer).prepare();
 
     verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(true));
-    assertEquals(attributesCaptor.getValue().contentType, C.AUDIO_CONTENT_TYPE_MOVIE);
+    assertEquals(C.AUDIO_CONTENT_TYPE_MOVIE, attributesCaptor.getValue().contentType);
 
     videoPlayer.dispose();
   }
@@ -104,7 +108,7 @@ public final class VideoPlayerTest {
     VideoPlayer videoPlayer = createVideoPlayer(options);
 
     verify(mockExoPlayer).setAudioAttributes(attributesCaptor.capture(), eq(false));
-    assertEquals(attributesCaptor.getValue().contentType, C.AUDIO_CONTENT_TYPE_MOVIE);
+    assertEquals(C.AUDIO_CONTENT_TYPE_MOVIE, attributesCaptor.getValue().contentType);
 
     videoPlayer.dispose();
   }
@@ -176,11 +180,11 @@ public final class VideoPlayerTest {
   public void seekAndGetPosition() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    videoPlayer.seekTo(10);
+    videoPlayer.seekTo(10L);
     verify(mockExoPlayer).seekTo(10);
 
     when(mockExoPlayer.getCurrentPosition()).thenReturn(20L);
-    assertEquals(20L, videoPlayer.getPosition());
+    assertEquals(20L, videoPlayer.getPosition().longValue());
   }
 
   @Test

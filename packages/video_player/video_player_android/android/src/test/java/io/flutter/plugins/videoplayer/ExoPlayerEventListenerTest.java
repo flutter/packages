@@ -44,7 +44,7 @@ public final class ExoPlayerEventListenerTest {
    */
   private static final class TestExoPlayerEventListener extends ExoPlayerEventListener {
     public TestExoPlayerEventListener(ExoPlayer exoPlayer, VideoPlayerCallbacks callbacks) {
-      super(exoPlayer, callbacks, false);
+      super(exoPlayer, callbacks);
     }
 
     @Override
@@ -89,6 +89,19 @@ public final class ExoPlayerEventListenerTest {
 
     eventListener.onPlaybackStateChanged(Player.STATE_ENDED);
     verify(mockCallbacks).onCompleted();
+    verify(mockCallbacks).onBufferingEnd();
+
+    verifyNoMoreInteractions(mockCallbacks);
+  }
+
+  @Test
+  public void onPlaybackStateChangedReadyAfterBufferingSendsBufferingEnd() {
+    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
+    eventListener.onPlaybackStateChanged(Player.STATE_BUFFERING);
+    verify(mockCallbacks).onBufferingStart();
+    verify(mockCallbacks).onBufferingUpdate(10L);
+
+    eventListener.onPlaybackStateChanged(Player.STATE_READY);
     verify(mockCallbacks).onBufferingEnd();
 
     verifyNoMoreInteractions(mockCallbacks);

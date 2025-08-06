@@ -16,7 +16,7 @@ import 'package:flutter_migrate/src/base/file_system.dart';
 ///
 /// The only safe delegate types are those that do not call out to `dart:io`,
 /// like the [MemoryFileSystem].
-class FlutterIOOverrides extends io.IOOverrides {
+final class FlutterIOOverrides extends io.IOOverrides {
   FlutterIOOverrides({FileSystem? fileSystem})
       : _fileSystemDelegate = fileSystem;
 

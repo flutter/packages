@@ -144,6 +144,18 @@ void main() {
     expect(drawParagraph1.memberName, #drawParagraph);
     expect((drawParagraph1.positionalArguments[1] as Offset).dx, 58);
   });
+
+  test('should assert when imageId is invalid', () async {
+    final TestPictureFactory factory = TestPictureFactory();
+    final FlutterVectorGraphicsListener listener =
+        FlutterVectorGraphicsListener(
+      pictureFactory: factory,
+    );
+    listener.onImage(0, 0, base64.decode(bluePngPixel));
+    await listener.waitForImageDecode();
+    expect(() => listener.onDrawImage(2, 10, 10, 100, 100, null),
+        throwsAssertionError);
+  });
 }
 
 class TestPictureFactory implements PictureFactory {

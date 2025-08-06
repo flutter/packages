@@ -52,6 +52,8 @@ enum AndroidMapRenderer {
   latest,
 
   /// Legacy renderer type.
+  @Deprecated('The legacy renderer is no longer supported by the Google Maps, '
+      'SDK, so requesting it will have no effect.')
   legacy,
 
   /// Requests the default map renderer type.
@@ -63,7 +65,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   /// Creates a new Android maps implementation instance.
   GoogleMapsFlutterAndroid({
     @visibleForTesting MapsApi Function(int mapId)? apiProvider,
-  }) : _apiProvider = apiProvider ?? _productionApiProvider;
+    @visibleForTesting MapsInitializerApi? initializerApi,
+  })  : _apiProvider = apiProvider ?? _productionApiProvider,
+        _initializerApi = initializerApi ?? MapsInitializerApi();
 
   /// Registers the Android implementation of GoogleMapsFlutterPlatform.
   static void registerWith() {
@@ -74,6 +78,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
 
   // A method to create MapsApi instances, which can be overridden for testing.
   final MapsApi Function(int mapId) _apiProvider;
+
+  final MapsInitializerApi _initializerApi;
 
   /// The per-map handlers for callbacks from the host side.
   @visibleForTesting
@@ -530,14 +536,19 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         preferredRenderer = null;
     }
 
-    final MapsInitializerApi hostApi = MapsInitializerApi();
-    final PlatformRendererType initializedRenderer =
-        await hostApi.initializeWithPreferredRenderer(preferredRenderer);
+    final PlatformRendererType initializedRenderer = await _initializerApi
+        .initializeWithPreferredRenderer(preferredRenderer);
 
     return switch (initializedRenderer) {
       PlatformRendererType.latest => AndroidMapRenderer.latest,
       PlatformRendererType.legacy => AndroidMapRenderer.legacy,
     };
+  }
+
+  /// Attempts to trigger any thread-blocking work
+  /// the Google Maps SDK normally does when a map is shown for the first time.
+  Future<void> warmup() async {
+    await _initializerApi.warmup();
   }
 
   Widget _buildView(
@@ -792,6 +803,9 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       position: _platformLatLngFromLatLng(marker.position),
       rotation: marker.rotation,
       visible: marker.visible,
+      // The deprecated paramater is used to avoid losing precision, since the
+      // Android SDK uses doubles.
+      // ignore: deprecated_member_use
       zIndex: marker.zIndex,
       markerId: marker.markerId.value,
       clusterManagerId: marker.clusterManagerId?.value,

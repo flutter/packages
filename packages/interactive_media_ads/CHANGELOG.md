@@ -1,3 +1,42 @@
+## 0.2.6+1
+
+* Fixes passing ads response to Android native `AdsRequest`.
+
+## 0.2.6
+
+* Adds support to configure ad requests. See `AdsRequest`.
+
+## 0.2.5+1
+
+* Adds remaining methods for internal wrapper of the Android native `AdsRequest`.
+* Adds remaining methods for internal wrapper of the iOS native `IMAAdsRequest`.
+
+## 0.2.5
+
+* Adds support to set general SDK settings. See `ImaSettings` and `AdsLoader.settings`.
+
+## 0.2.4+2
+
+* Bumps gradle from 8.9.0 to 8.11.1.
+
+## 0.2.4+1
+
+* Adds internal wrapper for Android native `ImaSdkSettings`.
+* Adds internal wrapper for iOS native `IMASettings`.
+
+## 0.2.4
+
+* Adds support for companion ads. See `CompanionAdSlot` and `AdDisplayContainer(companionAds)`.
+
+## 0.2.3+12
+
+* Fixes appending request agent to ad tags that contain a query.
+
+## 0.2.3+11
+
+* Updates pigeon generated code to fix `ImplicitSamInstance` and `SyntheticAccessor` Kotlin lint
+  warnings.
+
 ## 0.2.3+10
 
 * Fixes `AdEventType`s not triggering on iOS in release mode.

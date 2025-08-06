@@ -133,6 +133,30 @@ abstract class GoRouteData extends RouteData {
   static final Expando<GoRouteData> _stateObjectExpando = Expando<GoRouteData>(
     'GoRouteState to GoRouteData expando',
   );
+
+  /// The location of this route.
+  String get location => throw _shouldBeGeneratedError;
+
+  /// Navigate to the route.
+  void go(BuildContext context) => throw _shouldBeGeneratedError;
+
+  /// Push the route onto the page stack.
+  Future<T?> push<T>(BuildContext context) => throw _shouldBeGeneratedError;
+
+  /// Replaces the top-most page of the page stack with the route.
+  void pushReplacement(BuildContext context) => throw _shouldBeGeneratedError;
+
+  /// Replaces the top-most page of the page stack with the route but treats
+  /// it as the same page.
+  ///
+  /// The page key will be reused. This will preserve the state and not run any
+  /// page animation.
+  ///
+  void replace(BuildContext context) => throw _shouldBeGeneratedError;
+
+  static UnimplementedError get _shouldBeGeneratedError => UnimplementedError(
+        'Should be generated using [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).',
+      );
 }
 
 /// A class to represent a [ShellRoute] in
