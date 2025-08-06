@@ -93,12 +93,12 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14|Mac-15.5
+      os: Mac-15
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "16c5032a"
+          "sdk_version": "17a5285i"
         }
   mac_x64:
     properties:
@@ -106,12 +106,12 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14|Mac-15.5
+      os: Mac-15
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
         {
-          "sdk_version": "16c5032a"
+          "sdk_version": "17a5285i"
         }
 
 targets:
@@ -394,7 +394,7 @@ targets:
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
     recipe: packages/packages
-    timeout: 60
+    timeout: 30
     properties:
       version_file: flutter_master.version
       # This builds the all_packages app only in a current JDK.
@@ -407,7 +407,7 @@ targets:
 
   - name: Linux_android android_build_all_packages stable
     recipe: packages/packages
-    timeout: 60
+    timeout: 30
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
@@ -1084,7 +1084,6 @@ targets:
 
   - name: Mac_arm64 macos_platform_tests stable - packages
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -1220,7 +1219,6 @@ targets:
   # Don't run full platform tests on both channels in pre-submit.
   - name: Mac_arm64 ios_platform_tests_shard_1 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -1235,7 +1233,6 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_2 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -1250,7 +1247,6 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_3 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -1265,7 +1261,6 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_4 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
@@ -1280,7 +1275,6 @@ targets:
 
   - name: Mac_arm64 ios_platform_tests_shard_5 stable
     recipe: packages/packages
-    presubmit: false
     timeout: 60
     properties:
       channel: stable
