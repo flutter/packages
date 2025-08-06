@@ -2,7 +2,7 @@
 
 ## `ffigen`
 
-This packages uses [ffigen](https://pub.dev/packages/ffigen) to call Fonudation
+This package uses [ffigen](https://pub.dev/packages/ffigen) to call Foundation
 methods, rather than using the standard Flutter plugin structure. To add new
 functionality to the FFI interface, update `ffigen_config.yaml`, then run:
 
