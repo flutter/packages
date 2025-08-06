@@ -220,14 +220,14 @@ const int kElementWaitingTime = 30;
     os_log_error(OS_LOG_DEFAULT, "%@", self.app.debugDescription);
     XCTFail(@"Failed due to not able to find an image with %@ seconds", @(kElementWaitingTime));
   }
-    if (aImage.isHittable) {
-        [aImage tap];
-    } else {
-        // Known issue where tappable elements are not hittable. Tap it anyway.
-        // See https://github.com/flutter/plugins/pull/6783 for a similar case.
-        XCUICoordinate *coordinate = [aImage coordinateWithNormalizedOffset:CGVectorMake(0, 0)];
-        [coordinate tap];
-    }
+  if (aImage.isHittable) {
+    [aImage tap];
+  } else {
+    // Known issue where tappable elements are not hittable. Tap it anyway.
+    // See https://github.com/flutter/plugins/pull/6783 for a similar case.
+    XCUICoordinate *coordinate = [aImage coordinateWithNormalizedOffset:CGVectorMake(0, 0)];
+    [coordinate tap];
+  }
 
   // Find the picked image.
   XCUIElement *pickedImage = self.app.images[@"image_picker_example_picked_image"].firstMatch;
