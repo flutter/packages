@@ -7658,11 +7658,8 @@ public class Messages {
     void initializeWithPreferredRenderer(
         @Nullable PlatformRendererType type, @NonNull Result<PlatformRendererType> result);
     /**
-     * Asks the Google Maps SDK to do the thread-blocking work it normally does when a map is shown
-     * for the first time.
-     *
-     * <p>This gives the developer the option to move that jank to a different part of the map
-     * (typically, the app startup, where missed frames aren't going to be noticed).
+     * Attempts to trigger any thread-blocking work the Google Maps SDK normally does when a map is
+     * shown for the first time.
      */
     void warmup(@NonNull VoidResult result);
 

@@ -3105,8 +3105,8 @@ class MapsInitializerApi {
     }
   }
 
-  /// Asks the Google Maps SDK to do the thread-blocking work it normally does
-  /// when a map is shown for the first time.
+  /// Attempts to trigger any thread-blocking work
+  /// the Google Maps SDK normally does when a map is shown for the first time.
   Future<void> warmup() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.warmup$pigeonVar_messageChannelSuffix';
