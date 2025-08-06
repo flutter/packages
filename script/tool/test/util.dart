@@ -350,7 +350,7 @@ Future<List<String>> runCapturingPrint(
 /// Information about a process to return from [RecordingProcessRunner].
 class FakeProcessInfo {
   const FakeProcessInfo(this.process,
-      [this.expectedInitialArgs = const <String>[], this.runCallback]);
+      [this.expectedInitialArgs = const <String>[]]);
 
   /// The process to return.
   final io.Process process;
@@ -360,12 +360,6 @@ class FakeProcessInfo {
   /// This does not have to be a full list of arguments, only enough of the
   /// start to ensure that the call is as expected.
   final List<String> expectedInitialArgs;
-
-  /// If present, a function to call when the process would be run.
-  ///
-  /// This can be used to validate state at specific points in a command run,
-  /// such as temporary file modifications.
-  final void Function()? runCallback;
 }
 
 /// A mock [ProcessRunner] which records process calls.
@@ -394,7 +388,7 @@ class RecordingProcessRunner extends ProcessRunner {
     bool exitOnError = false,
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
-    final io.Process? processToReturn = _runFakeProcess(executable, args);
+    final io.Process? processToReturn = _getProcessToReturn(executable, args);
     final int exitCode =
         processToReturn == null ? 0 : await processToReturn.exitCode;
     if (exitOnError && (exitCode != 0)) {
@@ -417,7 +411,7 @@ class RecordingProcessRunner extends ProcessRunner {
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
 
-    final io.Process? process = _runFakeProcess(executable, args);
+    final io.Process? process = _getProcessToReturn(executable, args);
     final List<String>? processStdout =
         await process?.stdout.transform(stdoutEncoding.decoder).toList();
     final String stdout = processStdout?.join() ?? '';
@@ -441,12 +435,10 @@ class RecordingProcessRunner extends ProcessRunner {
       {Directory? workingDirectory}) async {
     recordedCalls.add(ProcessCall(executable, args, workingDirectory?.path));
     return Future<io.Process>.value(
-        _runFakeProcess(executable, args) ?? MockProcess());
+        _getProcessToReturn(executable, args) ?? MockProcess());
   }
 
-  /// Returns the fake process for the given executable and args after running
-  /// any callback it provides.
-  io.Process? _runFakeProcess(String executable, List<String> args) {
+  io.Process? _getProcessToReturn(String executable, List<String> args) {
     final List<FakeProcessInfo> fakes =
         mockProcessesForExecutable[executable] ?? <FakeProcessInfo>[];
     if (fakes.isNotEmpty) {
@@ -458,7 +450,6 @@ class RecordingProcessRunner extends ProcessRunner {
             '[${fake.expectedInitialArgs.join(', ')}] but was called with '
             'arguments [${args.join(', ')}]');
       }
-      fake.runCallback?.call();
       return fake.process;
     }
     return null;

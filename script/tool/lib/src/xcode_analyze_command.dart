@@ -121,14 +121,8 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
         targetPlatform == FlutterPlatform.ios ? 'iOS' : 'macOS';
     bool passing = true;
     for (final RepositoryPackage example in plugin.getExamples()) {
-      // See https://github.com/flutter/flutter/issues/172427 for discussion of
-      // why this is currently necessary.
-      print('Disabling Swift Package Manager...');
-      setSwiftPackageManagerState(example, enabled: false);
-
       // Unconditionally re-run build with --debug --config-only, to ensure that
-      // the project is in a debug state even if it was previously configured,
-      // and that SwiftPM is disabled.
+      // the project is in a debug state even if it was previously configured.
       print('Running flutter build --config-only...');
       final bool buildSuccess = await runConfigOnlyBuild(
         example,
@@ -168,9 +162,6 @@ class XcodeAnalyzeCommand extends PackageLoopingCommand {
         printError('$examplePath ($platformString) failed analysis.');
         passing = false;
       }
-
-      print('Removing Swift Package Manager override...');
-      setSwiftPackageManagerState(example, enabled: null);
     }
     return passing;
   }
