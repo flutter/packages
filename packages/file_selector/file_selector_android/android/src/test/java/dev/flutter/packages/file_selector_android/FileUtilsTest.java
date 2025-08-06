@@ -50,8 +50,8 @@ public class FileUtilsTest {
   ShadowContentResolver shadowContentResolver;
   ContentResolver contentResolver;
 
-  @SuppressWarnings("deprecation") // shadowOf(MimeTypeMap)
   @Before
+  @SuppressWarnings("deprecation") // shadowOf(MimeTypeMap)
   public void before() {
     context = ApplicationProvider.getApplicationContext();
     contentResolver = spy(context.getContentResolver());
@@ -59,6 +59,7 @@ public class FileUtilsTest {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
       // On S and higher robolectric does not need this setup because all the mappings are
       // present already.
+      //noinspection deprecation
       var mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
       mimeTypeMap.addExtensionMimeTypeMapping("txt", "document/txt");
       mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
