@@ -61,6 +61,14 @@ the issue in the TLHC mode.
 | Heatmap.maximumZoomIntensity |     x     |
 | HeatmapGradient.colorMapSize |     ✓     |
 
+## Warmup
+
+The first time a map is shown, the Google Maps SDK may briefly block 
+the main thread, which could cause UI jank. 
+If you prefer to control when this happens, you can call
+`GoogleMapsFlutterAndroid.warmup()` at some point before showing any maps to
+pre-warm the SDK. See this plugin's example code for one way of using this API.
+
 [1]: https://pub.dev/packages/google_maps_flutter
 [2]: https://flutter.dev/to/endorsed-federated-plugin
 [3]: https://docs.flutter.dev/development/platform-integration/android/platform-views
