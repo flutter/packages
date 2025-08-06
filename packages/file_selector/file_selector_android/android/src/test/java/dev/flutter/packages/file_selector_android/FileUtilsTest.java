@@ -42,7 +42,6 @@ import org.mockito.stubbing.Answer;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.shadows.ShadowContentResolver;
-import org.robolectric.shadows.ShadowMimeTypeMap;
 
 @RunWith(RobolectricTestRunner.class)
 public class FileUtilsTest {
