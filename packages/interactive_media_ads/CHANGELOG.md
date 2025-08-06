@@ -1,3 +1,11 @@
+## 0.2.6+1
+
+* Fixes passing ads response to Android native `AdsRequest`.
+
+## 0.2.6
+
+* Adds support to configure ad requests. See `AdsRequest`.
+
 ## 0.2.5+1
 
 * Adds remaining methods for internal wrapper of the Android native `AdsRequest`.
