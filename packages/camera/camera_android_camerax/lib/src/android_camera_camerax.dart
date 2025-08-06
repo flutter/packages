@@ -195,17 +195,6 @@ class AndroidCameraCameraX extends CameraPlatform {
   @visibleForTesting
   bool captureOrientationLocked = false;
 
-  /// Whether or not the default rotation for [UseCase]s needs to be set
-  /// manually because the capture orientation was previously locked.
-  ///
-  /// Currently, CameraX provides no way to unset target rotations for
-  /// [UseCase]s, so once they are set and unset, this plugin must start setting
-  /// the default orientation manually.
-  ///
-  /// See https://developer.android.com/reference/androidx/camera/core/ImageCapture#setTargetRotation(int)
-  /// for an example on how setting target rotations for [UseCase]s works.
-  bool shouldSetDefaultRotation = false;
-
   /// Error code indicating that an exposure offset value failed to be set.
   static const String setExposureOffsetFailedErrorCode =
       'setExposureOffsetFailed';
@@ -289,12 +278,14 @@ class AndroidCameraCameraX extends CameraPlatform {
       // Determine the lens direction by filtering the CameraInfo
       // TODO(gmackall): replace this with call to CameraInfo.getLensFacing when changes containing that method are available
       if ((await proxy
-          .newCameraSelector(requireLensFacing: LensFacing.back)
-          .filter(<CameraInfo>[cameraInfo])).isNotEmpty) {
+              .newCameraSelector(requireLensFacing: LensFacing.back)
+              .filter(<CameraInfo>[cameraInfo]))
+          .isNotEmpty) {
         cameraLensDirection = CameraLensDirection.back;
       } else if ((await proxy
-          .newCameraSelector(requireLensFacing: LensFacing.front)
-          .filter(<CameraInfo>[cameraInfo])).isNotEmpty) {
+              .newCameraSelector(requireLensFacing: LensFacing.front)
+              .filter(<CameraInfo>[cameraInfo]))
+          .isNotEmpty) {
         cameraLensDirection = CameraLensDirection.front;
       } else {
         //Skip this CameraInfo as its lens direction is unknown
@@ -397,17 +388,21 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
 
     // Configure ImageCapture instance.
+    _initialDefaultDisplayRotation = await deviceOrientationManager
+        .getDefaultDisplayRotation();
+    print(
+      'CAMILLE::::::::::::::::::::::::::::::::::::::::initial default display rotation: $_initialDefaultDisplayRotation',
+    );
     imageCapture = proxy.newImageCapture(
       resolutionSelector: presetResolutionSelector,
-      /* use CameraX default target rotation */ targetRotation:
-          await deviceOrientationManager.getDefaultDisplayRotation(),
+      targetRotation: _initialDefaultDisplayRotation,
     );
 
     // Configure ImageAnalysis instance.
     // Defaults to YUV_420_888 image format.
     imageAnalysis = proxy.newImageAnalysis(
       resolutionSelector: presetResolutionSelector,
-      /* use CameraX default target rotation */ targetRotation: null,
+      targetRotation: _initialDefaultDisplayRotation,
     );
 
     // Configure VideoCapture and Recorder instances.
@@ -439,13 +434,11 @@ class AndroidCameraCameraX extends CameraPlatform {
             .toDouble();
 
     sensorOrientationDegrees = cameraDescription.sensorOrientation.toDouble();
-    _handlesCropAndRotation =
-        await preview!.surfaceProducerHandlesCropAndRotation();
+    _handlesCropAndRotation = await preview!
+        .surfaceProducerHandlesCropAndRotation();
     _initialDeviceOrientation = _deserializeDeviceOrientation(
       await deviceOrientationManager.getUiOrientation(),
     );
-    _initialDefaultDisplayRotation =
-        await deviceOrientationManager.getDefaultDisplayRotation();
 
     return flutterSurfaceTextureId;
   }
@@ -476,8 +469,8 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    final ResolutionInfo previewResolutionInfo =
-        (await preview!.getResolutionInfo())!;
+    final ResolutionInfo previewResolutionInfo = (await preview!
+        .getResolutionInfo())!;
 
     // Mark auto-focus, auto-exposure and setting points for focus & exposure
     // as available operations as CameraX does its best across devices to
@@ -559,10 +552,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     int cameraId,
     DeviceOrientation orientation,
   ) async {
-    // Flag that (1) default rotation for UseCases will need to be set manually
-    // if orientation is ever unlocked and (2) the capture orientation is locked
-    // and should not be changed until unlocked.
-    shouldSetDefaultRotation = true;
+    // Flag that the capture orientation is locked and should not be changed until unlocked.
     captureOrientationLocked = true;
 
     // Get target rotation based on locked orientation.
@@ -647,10 +637,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       case FocusMode.auto:
         // Determine auto-focus point to restore, if any. We do not restore
         // default auto-focus point if set previously to lock focus.
-        final MeteringPoint? unLockedFocusPoint =
-            _defaultFocusPointLocked
-                ? null
-                : currentFocusMeteringAction!.meteringPointsAf.first;
+        final MeteringPoint? unLockedFocusPoint = _defaultFocusPointLocked
+            ? null
+            : currentFocusMeteringAction!.meteringPointsAf.first;
         _defaultFocusPointLocked = false;
         autoFocusPoint = unLockedFocusPoint;
         disableAutoCancel = false;
@@ -661,10 +650,9 @@ class AndroidCameraCameraX extends CameraPlatform {
         if (currentFocusMeteringAction != null) {
           final List<MeteringPoint> possibleCurrentAfPoints =
               currentFocusMeteringAction!.meteringPointsAf;
-          lockedFocusPoint =
-              possibleCurrentAfPoints.isEmpty
-                  ? null
-                  : possibleCurrentAfPoints.first;
+          lockedFocusPoint = possibleCurrentAfPoints.isEmpty
+              ? null
+              : possibleCurrentAfPoints.first;
         }
 
         // If there isn't, lock center of entire sensor area by default.
@@ -1111,10 +1099,13 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked && shouldSetDefaultRotation) {
-      await videoCapture!.setTargetRotation(
-        await deviceOrientationManager.getDefaultDisplayRotation(),
+    if (!captureOrientationLocked) {
+      int targetRotation = await deviceOrientationManager
+          .getDefaultDisplayRotation();
+      print(
+        'CAMILLE::::::::::::::::::::::::::::::::::::::::::::::::::: target rotation: $targetRotation',
       );
+      // await videoCapture!.setTargetRotation(targetRotation);
     }
 
     videoOutputPath = await systemServicesManager.getTempFilePath(
@@ -1260,7 +1251,7 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Set target rotation to default CameraX rotation only if capture
     // orientation not locked.
-    if (!captureOrientationLocked && shouldSetDefaultRotation) {
+    if (!captureOrientationLocked) {
       await imageAnalysis!.setTargetRotation(
         await deviceOrientationManager.getDefaultDisplayRotation(),
       );
@@ -1494,13 +1485,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
     final ResolutionFilter resolutionFilter = proxy
         .createWithOnePreferredSizeResolutionFilter(preferredSize: boundSize);
-    final AspectRatioStrategy? aspectRatioStrategy =
-        aspectRatio == null
-            ? null
-            : proxy.newAspectRatioStrategy(
-              preferredAspectRatio: aspectRatio,
-              fallbackRule: AspectRatioStrategyFallbackRule.auto,
-            );
+    final AspectRatioStrategy? aspectRatioStrategy = aspectRatio == null
+        ? null
+        : proxy.newAspectRatioStrategy(
+            preferredAspectRatio: aspectRatio,
+            fallbackRule: AspectRatioStrategyFallbackRule.auto,
+          );
     return proxy.newResolutionSelector(
       resolutionStrategy: resolutionStrategy,
       resolutionFilter: resolutionFilter,
@@ -1617,17 +1607,17 @@ class AndroidCameraCameraX extends CameraPlatform {
       // Remove metering point with specified meteringMode from current focus
       // and metering action, as only one focus or exposure point may be set
       // at once in this plugin.
-      final List<(MeteringPoint, MeteringMode)> newMeteringPointInfos =
-          originalMeteringPoints
-              .where(
-                ((MeteringPoint, MeteringMode) meteringPointInfo) =>
-                    // meteringPointInfo may technically include points without a
-                    // mode specified, but this logic is safe because this plugin
-                    // only uses points that explicitly have mode
-                    // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
-                    meteringPointInfo.$2 != meteringMode,
-              )
-              .toList();
+      final List<(MeteringPoint, MeteringMode)>
+      newMeteringPointInfos = originalMeteringPoints
+          .where(
+            ((MeteringPoint, MeteringMode) meteringPointInfo) =>
+                // meteringPointInfo may technically include points without a
+                // mode specified, but this logic is safe because this plugin
+                // only uses points that explicitly have mode
+                // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
+                meteringPointInfo.$2 != meteringMode,
+          )
+          .toList();
 
       if (newMeteringPointInfos.isEmpty) {
         // If no other metering points were specified, cancel any previously
@@ -1664,17 +1654,16 @@ class AndroidCameraCameraX extends CameraPlatform {
         final Iterable<(MeteringPoint, MeteringMode)> originalMeteringPoints =
             _combineMeteringPoints(currentFocusMeteringAction!);
 
-        newMeteringPointInfos =
-            originalMeteringPoints
-                .where(
-                  ((MeteringPoint, MeteringMode) meteringPointInfo) =>
-                      // meteringPointInfo may technically include points without a
-                      // mode specified, but this logic is safe because this plugin
-                      // only uses points that explicitly have mode
-                      // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
-                      meteringPointInfo.$2 != meteringMode,
-                )
-                .toList();
+        newMeteringPointInfos = originalMeteringPoints
+            .where(
+              ((MeteringPoint, MeteringMode) meteringPointInfo) =>
+                  // meteringPointInfo may technically include points without a
+                  // mode specified, but this logic is safe because this plugin
+                  // only uses points that explicitly have mode
+                  // FocusMeteringAction.flagAe or FocusMeteringAction.flagAf.
+                  meteringPointInfo.$2 != meteringMode,
+            )
+            .toList();
       }
 
       newMeteringPointInfos.add((meteringPoint, meteringMode));
