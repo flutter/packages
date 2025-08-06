@@ -37,8 +37,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   final Map<int, _VideoPlayerViewState> _playerViewStates =
       <int, _VideoPlayerViewState>{};
 
-  final Map<int, VideoPlayerInstanceApi> _players =
-      <int, VideoPlayerInstanceApi>{};
+  final Map<int, _PlayerInstance> _players = <int, _PlayerInstance>{};
 
   /// Registers this class as the default instance of [PathProviderPlatform].
   static void registerWith() {
@@ -134,12 +133,12 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return httpHeaders[userAgentKey] ?? defaultUserAgent;
   }
 
-  /// Returns the API instance for [playerId], creating it if it doesn't already
-  /// exist.
+  /// Returns the player instance for [playerId], creating it if it doesn't
+  /// already exist.
   @visibleForTesting
-  VideoPlayerInstanceApi ensureApiInitialized(int playerId) {
-    return _players.putIfAbsent(playerId, () {
-      return _playerProvider(playerId);
+  void ensureApiInitialized(int playerId) {
+    _players.putIfAbsent(playerId, () {
+      return _PlayerInstance(_playerProvider(playerId));
     });
   }
 
@@ -251,8 +250,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
   }
 
-  VideoPlayerInstanceApi _playerWith({required int id}) {
-    final VideoPlayerInstanceApi? player = _players[id];
+  _PlayerInstance _playerWith({required int id}) {
+    final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
   }
 
@@ -278,6 +277,44 @@ PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
     VideoViewType.textureView => PlatformVideoViewType.textureView,
     VideoViewType.platformView => PlatformVideoViewType.platformView,
   };
+}
+
+/// An instance of a video player, corresponding to a single player ID in
+/// [AndroidVideoPlayer].
+class _PlayerInstance {
+  /// Creates a new instance of [_PlayerInstance] corresponding to the given
+  /// API instance.
+  _PlayerInstance(this._api);
+
+  final VideoPlayerInstanceApi _api;
+
+  Future<void> setLooping(bool looping) {
+    return _api.setLooping(looping);
+  }
+
+  Future<void> play() {
+    return _api.play();
+  }
+
+  Future<void> pause() {
+    return _api.pause();
+  }
+
+  Future<void> setVolume(double volume) {
+    return _api.setVolume(volume);
+  }
+
+  Future<void> setPlaybackSpeed(double speed) {
+    return _api.setPlaybackSpeed(speed);
+  }
+
+  Future<void> seekTo(int position) {
+    return _api.seekTo(position);
+  }
+
+  Future<int> getPosition() {
+    return _api.getPosition();
+  }
 }
 
 /// Base class representing the state of a video player view.
