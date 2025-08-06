@@ -1,6 +1,7 @@
 ## 2.13.0
 
-* Adds support to camera control button on web.
+* Adds support for disabling or moving the camera control button on web.
+
 ## 2.12.1
 
 * Fixes the `zIndex` issue in the `copyWith` method.

@@ -48,6 +48,8 @@ class MapConfiguration {
 
   /// This setting controls how the API handles cameraControl button position on the map. Web only.
   ///
+  /// If null, the Google Maps API will use its default camera control position.
+  ///
   /// See [WebCameraControlPosition] for more details.
   final WebCameraControlPosition? webCameraControlPosition;
 
