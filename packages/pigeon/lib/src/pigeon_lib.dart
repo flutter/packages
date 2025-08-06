@@ -135,15 +135,16 @@ class FlutterApi {
 /// native type.
 ///
 /// This generates:
-/// 1. A Dart proxy class that handles communication with native type api.
+/// 1. A Dart proxy class that handles communication with native type API.
 /// Instances of this proxy class represent instances of the native type.
 /// 2. A native type API which handles communication with the Dart proxy class
 /// and the native type. (e.g. When an instance method of a Dart proxy class is
 /// called, the implementation of the native type API handles calling that
 /// method on the native type.)
-/// 3. An InstanceManager which is a global collection that handles serializable
+/// 3. An InstanceManager that is a global collection that handles serializable
 /// references to the Dart proxy classes and the native type instances. This
-/// provides automatic garbage collection of the native type instances.
+/// also provides automatic garbage collection of native type instances when its
+/// associated Dart proxy class instance is garbage collected.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
   const ProxyApi({this.superClass, this.kotlinOptions, this.swiftOptions});
