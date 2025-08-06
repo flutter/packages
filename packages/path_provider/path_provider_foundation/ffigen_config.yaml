@@ -3,7 +3,7 @@ name: FoundationFFI
 description: Bindings for NSFileManager.
 language: objc
 output:
-  bindings: 'lib/src/ffi_bindings.dart'
+  bindings: 'lib/src/ffi_bindings.g.dart'
 headers:
   entry-points:
     - '$MACOS_SDK/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h'

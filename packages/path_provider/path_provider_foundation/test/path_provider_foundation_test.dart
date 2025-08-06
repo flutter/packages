@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:objective_c/src/objective_c_bindings_generated.dart';
-import 'package:path_provider_foundation/src/ffi_bindings.dart';
+import 'package:path_provider_foundation/src/ffi_bindings.g.dart';
 import 'package:path_provider_foundation/src/path_provider_foundation_real.dart';
 
 // Most tests are in integration_test rather than here, because anything that
@@ -73,6 +73,7 @@ class FakePlatformProvider implements PathProviderPlatformProvider {
 
 class FakeFoundationFFI implements FoundationFFI {
   @override
+  // ignore: non_constant_identifier_names
   NSArray NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory,
       NSSearchPathDomainMask domainMask, bool expandTilde) {
     throw UnimplementedError();

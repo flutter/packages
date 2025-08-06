@@ -9,7 +9,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:objective_c/objective_c.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_provider_foundation/src/ffi_bindings.dart';
+import 'package:path_provider_foundation/src/ffi_bindings.g.dart';
 import 'package:path_provider_foundation/src/path_provider_foundation_real.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 

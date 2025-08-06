@@ -8,8 +8,9 @@ import 'dart:ffi' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i4;
 import 'package:objective_c/objective_c.dart' as _i2;
-import 'package:path_provider_foundation/path_provider_foundation.dart' as _i6;
-import 'package:path_provider_foundation/src/ffi_bindings.dart' as _i3;
+import 'package:path_provider_foundation/src/ffi_bindings.g.dart' as _i3;
+import 'package:path_provider_foundation/src/path_provider_foundation_real.dart'
+    as _i6;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
