@@ -1,3 +1,7 @@
+## 0.9.20+5
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support. Removes enableJetifier from gradle.properties.
+
 ## 0.9.20+4
 
 * Migrates `setVideoFormat`,`stopVideoRecording`, and `stopImageStream` methods to Swift.
