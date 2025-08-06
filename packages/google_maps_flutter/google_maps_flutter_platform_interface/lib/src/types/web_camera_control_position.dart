@@ -10,44 +10,6 @@
 // is recommended in order to be able to automatically support both
 // left-to-right (LTR) and right-to-left (RTL) layout contexts.
 
-/*
-Logical values in LTR:
-
-+----------------+ 
-| BSIS BSIC BSIE | 
-| ISBS      IEBS | 
-|                | 
-| ISBC      IEBC | 
-|                | 
-| ISBE      IEBE | 
-| BEIS BEIC BEIE | 
-+----------------+
-
-Logical values in RTL:
-
-+----------------+ 
-| BSIE BSIC BSIS | 
-| IEBS      ISBS | 
-|                | 
-| IEBC      ISBC | 
-|                | 
-| IEBE      ISBE | 
-| BEIE BEIC BEIS | 
-+----------------+
-
-Legacy values:
-
-+----------------+ 
-| TL    TC    TR | 
-| LT          RT | 
-|                | 
-| LC          RC | 
-|                | 
-| LB          RB | 
-| BL    BC    BR | 
-+----------------+
-*/
-
 // Elements in the top or bottom row flow towards the middle of the row.
 // Elements in the left or right column flow towards the middle of the column.
 
