@@ -356,7 +356,7 @@ class GoogleMap extends StatefulWidget {
   /// See [WebCameraControlPosition] for more details.
   final WebCameraControlPosition? webCameraControlPosition;
 
-  /// This setting controls how the API handles cameraControl button on the map. Web only.
+  /// Enables or disables the Camera controls. Web only.
   ///
   /// See https://developers.google.com/maps/documentation/javascript/controls for more details.
   final bool webCameraControlEnabled;
