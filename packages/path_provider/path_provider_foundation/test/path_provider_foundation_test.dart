@@ -5,6 +5,8 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:objective_c/src/objective_c_bindings_generated.dart';
+import 'package:path_provider_foundation/src/ffi_bindings.dart';
 import 'package:path_provider_foundation/src/path_provider_foundation_real.dart';
 
 // Most tests are in integration_test rather than here, because anything that
@@ -28,25 +30,29 @@ void main() {
     });
 
     test('getExternalCachePaths throws', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation();
+      final PathProviderFoundation pathProvider =
+          PathProviderFoundation(ffiLib: FakeFoundationFFI());
       expect(pathProvider.getExternalCachePaths(), throwsA(isUnsupportedError));
     });
 
     test('getExternalStoragePath throws', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation();
+      final PathProviderFoundation pathProvider =
+          PathProviderFoundation(ffiLib: FakeFoundationFFI());
       expect(
           pathProvider.getExternalStoragePath(), throwsA(isUnsupportedError));
     });
 
     test('getExternalStoragePaths throws', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation();
+      final PathProviderFoundation pathProvider =
+          PathProviderFoundation(ffiLib: FakeFoundationFFI());
       expect(
           pathProvider.getExternalStoragePaths(), throwsA(isUnsupportedError));
     });
 
     test('getContainerPath throws on macOS', () async {
-      final PathProviderFoundation pathProvider =
-          PathProviderFoundation(platform: FakePlatformProvider(isMacOS: true));
+      final PathProviderFoundation pathProvider = PathProviderFoundation(
+          platform: FakePlatformProvider(isMacOS: true),
+          ffiLib: FakeFoundationFFI());
       expect(
           pathProvider.getContainerPath(
               appGroupIdentifier: 'group.example.test'),
@@ -63,4 +69,12 @@ class FakePlatformProvider implements PathProviderPlatformProvider {
 
   @override
   bool isMacOS;
+}
+
+class FakeFoundationFFI implements FoundationFFI {
+  @override
+  NSArray NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory directory,
+      NSSearchPathDomainMask domainMask, bool expandTilde) {
+    throw UnimplementedError();
+  }
 }
