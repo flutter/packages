@@ -9,7 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:objective_c/objective_c.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'ffi_bindings.dart';
+import 'ffi_bindings.g.dart';
 
 /// The iOS and macOS implementation of [PathProviderPlatform].
 class PathProviderFoundation extends PathProviderPlatform {
