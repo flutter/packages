@@ -223,7 +223,7 @@ const int kElementWaitingTime = 30;
     if (aImage.isHittable) {
         [aImage tap];
     } else {
-        // Know issue where tappable things are not hittable. Tap it anyway.
+        // Known issue where tappable elements are not hittable. Tap it anyway.
         // See https://github.com/flutter/plugins/pull/6783 for a similar case.
         XCUICoordinate *coordinate = [aImage coordinateWithNormalizedOffset:CGVectorMake(0, 0)];
         [coordinate tap];
