@@ -1,12 +1,3 @@
-## 0.2.5+1
-
-* Adds remaining methods for internal wrapper of the Android native `AdsRequest`.
-* Adds remaining methods for internal wrapper of the iOS native `IMAAdsRequest`.
-
-## 0.2.5
-
-* Adds support to set general SDK settings. See `ImaSettings` and `AdsLoader.settings`.
-
 ## 0.2.4+2
 
 * Bumps gradle from 8.9.0 to 8.11.1.

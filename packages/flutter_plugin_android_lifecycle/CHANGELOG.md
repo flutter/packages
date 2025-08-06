@@ -1,10 +1,6 @@
-## 2.0.30
-
-* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
-
 ## 2.0.29
 
-* Removes enableJetifier from gradle.properties.
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support. Removes enableJetifier from gradle.properties.
 
 ## 2.0.28
 

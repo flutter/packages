@@ -1,18 +1,6 @@
-## 2.8.12
-
-* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
-
-## 2.8.11
-
-* Removes enableJetifier from gradle.properties.
-
-## 2.8.10
-
-* Restructures internal logic to move more code to Dart.
-
 ## 2.8.9
 
-* Restructures the communication between Dart and Java code.
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support. Removes enableJetifier from gradle.properties.
 
 ## 2.8.8
 
