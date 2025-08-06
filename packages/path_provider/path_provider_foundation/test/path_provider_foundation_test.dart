@@ -5,7 +5,7 @@
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:path_provider_foundation/path_provider_foundation.dart';
+import 'package:path_provider_foundation/src/path_provider_foundation_real.dart';
 
 // Most tests are in integration_test rather than here, because anything that
 // needs to create Objective-C objects has to run in the real runtime.
