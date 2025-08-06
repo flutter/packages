@@ -21,6 +21,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
@@ -50,16 +51,21 @@ public class FileUtilsTest {
   ShadowContentResolver shadowContentResolver;
   ContentResolver contentResolver;
 
+  @SuppressWarnings("deprecation") // shadowOf(MimeTypeMap)
   @Before
   public void before() {
     context = ApplicationProvider.getApplicationContext();
     contentResolver = spy(context.getContentResolver());
     shadowContentResolver = shadowOf(context.getContentResolver());
-    ShadowMimeTypeMap mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
-    mimeTypeMap.addExtensionMimeTypeMapping("txt", "document/txt");
-    mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
-    mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png");
-    mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp");
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+      // On S and higher robolectric does not need this setup because all the mappings are
+      // present already.
+      var mimeTypeMap = shadowOf(MimeTypeMap.getSingleton());
+      mimeTypeMap.addExtensionMimeTypeMapping("txt", "document/txt");
+      mimeTypeMap.addExtensionMimeTypeMapping("jpg", "image/jpeg");
+      mimeTypeMap.addExtensionMimeTypeMapping("png", "image/png");
+      mimeTypeMap.addExtensionMimeTypeMapping("webp", "image/webp");
+    }
   }
 
   @Test
