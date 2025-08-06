@@ -160,11 +160,11 @@ class ProxyApi {
   final Type? superClass;
 
   /// Options that control how Swift code will be generated for a specific
-  /// native type API of a ProxyApi.
+  /// native type API of a ProxyAPI.
   final SwiftProxyApiOptions? swiftOptions;
 
   /// Options that control how Kotlin code will be generated for a specific
-  /// native type API of a ProxyApi.
+  /// native type API of a ProxyAPI.
   final KotlinProxyApiOptions? kotlinOptions;
 }
 

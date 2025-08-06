@@ -346,7 +346,7 @@ abstract class StructuredGenerator<T extends InternalOptions>
   }) {}
 
   /// Writes the base codec to be used by the Dart proxy class or the native
-  /// type api.
+  /// type API.
   ///
   /// This codec should use `128` as the identifier for objects that exist in
   /// an `InstanceManager`. The write implementation should convert an instance

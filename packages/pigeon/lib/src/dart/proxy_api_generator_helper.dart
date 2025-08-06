@@ -155,9 +155,9 @@ Iterable<cb.Field> overridesClassConstructors(
   }
 }
 
-/// Converts all the static fields of an AstProxyApi into `code_builder` fields
-/// that are used to override the corresponding static field of the generated
-/// Dart proxy class.
+/// Converts all the static fields of each AstProxyApi into `code_builder`
+/// fields that are used to override the corresponding static field of the
+/// generated Dart proxy class.
 Iterable<cb.Field> overridesClassStaticFields(
   Iterable<AstProxyApi> proxyApis,
 ) sync* {
@@ -177,9 +177,9 @@ Iterable<cb.Field> overridesClassStaticFields(
   }
 }
 
-/// Converts all the static methods of an AstProxyApi into `code_builder` fields
-/// that are used to override the corresponding static method of the generated
-/// Dart proxy class.
+/// Converts all the static methods of each AstProxyApi into `code_builder`
+/// fields that are used to override the corresponding static method of the
+/// generated Dart proxy class.
 Iterable<cb.Field> overridesClassStaticMethods(
   Iterable<AstProxyApi> proxyApis,
 ) sync* {
@@ -515,9 +515,10 @@ Iterable<cb.Constructor> constructors(
 /// The detached constructor present for every Dart proxy class.
 ///
 /// This constructor doesn't include a host method call to create a new native
-/// type instance. It is mainly used when the native side makes a Flutter method
-/// call to create a Dart instance or when the `InstanceManager` wants to create
-/// a copy to be used for automatic garbage collection.
+/// type instance. It is mainly used when the native type API makes a Flutter
+/// method call to instantiate a Dart proxy class instance or when the
+/// `InstanceManager` wants to create a copy to be used for automatic garbage
+/// collection.
 cb.Constructor detachedConstructor({
   required String apiName,
   required AstProxyApi? superClassApi,
@@ -632,7 +633,7 @@ Iterable<cb.Field> flutterMethodFields(
   }
 }
 
-/// Converts the Flutter methods from the [AstPRoxyApi] to `code_builder`
+/// Converts the Flutter methods from the [AstProxyApi] to `code_builder`
 /// fields.
 ///
 /// Flutter methods of a ProxyApi are represented as an anonymous function for
@@ -715,8 +716,8 @@ Iterable<cb.Field> attachedFields(Iterable<ApiField> fields) sync* {
 /// Flutter method.
 ///
 /// This also adds a handler to receive a call from the platform to
-/// instantiate a new Dart instance if [hasCallbackConstructor] is set to
-/// true.
+/// instantiate a new Dart instance if [AstProxyApi.hasCallbackConstructor] is
+/// set to true.
 cb.Method setUpMessageHandlerMethod({
   required Iterable<Method> flutterMethods,
   required String apiName,
@@ -1007,7 +1008,7 @@ Iterable<cb.Method> attachedFieldMethods(
 /// Converts host methods from [AstProxyApi] to `code_builder` Methods.
 ///
 /// This creates methods like a HostApi except that the message call includes
-/// Dart proxy class instance if the method is not static.
+/// the calling Dart proxy class instance if the method is not static.
 Iterable<cb.Method> hostMethods(
   Iterable<Method> methods, {
   required String apiName,

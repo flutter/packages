@@ -134,7 +134,7 @@ class AstFlutterApi extends Api {
   }
 }
 
-/// Represents the AST for the class denoted with the ProxyApi annotation.
+/// Represents the AST for the class denoted with the ProxyAPI annotation.
 class AstProxyApi extends Api {
   /// Parametric constructor for [AstProxyApi].
   AstProxyApi({
@@ -193,7 +193,7 @@ class AstProxyApi extends Api {
         (ApiField field) => !field.isAttached,
       );
 
-  /// A list of AstProxyApis where each is the [superClass] of the one
+  /// A list of [AstProxyApi]s where each is the [superClass] of the one
   /// proceeding it.
   ///
   /// Returns an empty list if this class did not provide a [superClass].
@@ -201,7 +201,7 @@ class AstProxyApi extends Api {
   /// This method assumes the [superClass] of each class doesn't lead to a loop
   /// Throws a [ArgumentError] if a loop is found.
   ///
-  /// This method also assumes that each [superClass] is annotated with
+  /// This method also assumes that the type of [superClass] is annotated with
   /// `@ProxyApi`. Otherwise, throws an [ArgumentError].
   Iterable<AstProxyApi> allSuperClasses() {
     final List<AstProxyApi> superClassChain = <AstProxyApi>[];
@@ -297,13 +297,15 @@ class AstProxyApi extends Api {
         .every((Method method) => !method.isRequired);
   }
 
-  /// Whether the ProxyAPI has any message calls from Dart to host.
+  /// Whether the Dart proxy class makes any message calls to the native type
+  /// API.
   bool hasAnyHostMessageCalls() =>
       constructors.isNotEmpty ||
       attachedFields.isNotEmpty ||
       hostMethods.isNotEmpty;
 
-  /// Whether the ProxyAPI has any message calls from host to Dart.
+  /// Whether the native type API makes any message calls to the Dart proxy
+  /// class or calls to instantiate a Dart proxy class instance.
   bool hasAnyFlutterMessageCalls() =>
       hasCallbackConstructor() || flutterMethods.isNotEmpty;
 
@@ -416,7 +418,7 @@ class ApiField extends NamedType {
     this.isStatic = false,
   }) : assert(!isStatic || isAttached);
 
-  /// Whether this represents an attached field for an [AstProxyApi].
+  /// Whether this represents an attached field of an [AstProxyApi].
   ///
   /// See [attached].
   final bool isAttached;
@@ -426,7 +428,7 @@ class ApiField extends NamedType {
   /// A static field must also be attached. See [static].
   final bool isStatic;
 
-  /// Returns a copy of [ApiField] instance with new attached [TypeDeclaration].
+  /// Returns a copy of an [ApiField] with the new [TypeDeclaration].
   @override
   ApiField copyWithType(TypeDeclaration type) {
     return ApiField(
