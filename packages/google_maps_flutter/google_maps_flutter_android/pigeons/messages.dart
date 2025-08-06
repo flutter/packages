@@ -789,7 +789,6 @@ abstract class MapsInitializerApi {
 
   /// Attempts to trigger any thread-blocking work
   /// the Google Maps SDK normally does when a map is shown for the first time.
-  @async
   void warmup();
 }
 

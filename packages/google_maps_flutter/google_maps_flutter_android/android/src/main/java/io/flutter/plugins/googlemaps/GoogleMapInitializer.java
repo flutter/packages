@@ -45,7 +45,7 @@ final class GoogleMapInitializer
   }
 
   @Override
-  public void warmup(@NonNull Messages.VoidResult result) {
+  public void warmup() {
     Log.i(TAG, "Google Maps warmup started.");
     try {
       // This creates a fake map view in order to trigger the SDK's
@@ -57,9 +57,8 @@ final class GoogleMapInitializer
       mv.onPause();
       mv.onDestroy();
       Log.i(TAG, "Maps warmup complete.");
-      result.success();
     } catch (Exception e) {
-      result.error(new Messages.FlutterError("Could not warm up", e.toString(), null));
+      throw new Messages.FlutterError("Could not warm up", e.toString(), null);
     }
   }
 

@@ -7661,7 +7661,7 @@ public class Messages {
      * Attempts to trigger any thread-blocking work the Google Maps SDK normally does when a map is
      * shown for the first time.
      */
-    void warmup(@NonNull VoidResult result);
+    void warmup();
 
     /** The codec used by MapsInitializerApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -7722,20 +7722,13 @@ public class Messages {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
-                VoidResult resultCallback =
-                    new VoidResult() {
-                      public void success() {
-                        wrapped.add(0, null);
-                        reply.reply(wrapped);
-                      }
-
-                      public void error(Throwable error) {
-                        ArrayList<Object> wrappedError = wrapError(error);
-                        reply.reply(wrappedError);
-                      }
-                    };
-
-                api.warmup(resultCallback);
+                try {
+                  api.warmup();
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);
