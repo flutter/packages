@@ -5,12 +5,28 @@
 #include "AppDelegate.h"
 #include "GeneratedPluginRegistrant.h"
 
+@import Photos;
+@import os.log;
+
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
-    didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  [GeneratedPluginRegistrant registerWithRegistry:self];
-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    [GeneratedPluginRegistrant registerWithRegistry:self];
+    
+    if (@available(iOS 14, *)) {
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        __block NSError *saveError = nil;
+        [PHPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelAddOnly handler:^(PHAuthorizationStatus status) {
+            if (![PHPhotoLibrary.sharedPhotoLibrary performChangesAndWait:^{
+                NSURL *jpgImageTall = [bundle URLForResource:@"jpgImageTall" withExtension:@"jpg"];
+                [PHAssetChangeRequest creationRequestForAssetFromImageAtFileURL:jpgImageTall];
+            } error:&saveError]) {
+                os_log_error(OS_LOG_DEFAULT, "%@", saveError);
+            }
+        }];
+    }
+    return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
 @end
