@@ -1,6 +1,10 @@
-## 0.6.19+1
+## 0.6.19+2
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support. Removes enableJetifier from gradle.properties.
+
+## 0.6.19+1
+
+* Fixes incorrect camera switching by selecting a camera via its CameraInfo.
 
 ## 0.6.19
 
