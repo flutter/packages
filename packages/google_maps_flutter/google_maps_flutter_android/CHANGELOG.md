@@ -1,6 +1,7 @@
 ## 2.18.0
 
-* Adds GoogleMapsFlutterAndroid.warmup().
+* Adds support for warming up the Google Maps SDK 
+  via `GoogleMapsFlutterAndroid.warmup()`.
 
 ## 2.17.0
 
