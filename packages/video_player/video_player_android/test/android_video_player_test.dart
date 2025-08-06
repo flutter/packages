@@ -29,7 +29,7 @@ void main() {
       pluginApi: pluginApi,
       playerProvider: (_) => instanceApi,
     );
-    player.ensureApiInitialized(playerId);
+    player.ensureApiInitialized(playerId, VideoViewType.platformView);
     return (player, pluginApi, instanceApi);
   }
 

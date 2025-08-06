@@ -32,11 +32,6 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   //overridden for testing.
   final VideoPlayerInstanceApi Function(int playerId) _playerProvider;
 
-  /// A map that associates player ID with a view state.
-  /// This is used to determine which view type to use when building a view.
-  final Map<int, _VideoPlayerViewState> _playerViewStates =
-      <int, _VideoPlayerViewState>{};
-
   final Map<int, _PlayerInstance> _players = <int, _PlayerInstance>{};
 
   /// Registers this class as the default instance of [PathProviderPlatform].
@@ -52,7 +47,6 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> dispose(int playerId) async {
     await _api.dispose(playerId);
-    _playerViewStates.remove(playerId);
     _players.remove(playerId);
   }
 
@@ -108,14 +102,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     );
 
     final int playerId = await _api.create(message);
-    _playerViewStates[playerId] = switch (options.viewType) {
-      // playerId is also the textureId when using texture view.
-      VideoViewType.textureView => _VideoPlayerTextureViewState(
-        textureId: playerId,
-      ),
-      VideoViewType.platformView => const _VideoPlayerPlatformViewState(),
-    };
-    ensureApiInitialized(playerId);
+    ensureApiInitialized(playerId, options.viewType);
 
     return playerId;
   }
@@ -136,9 +123,16 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   /// Returns the player instance for [playerId], creating it if it doesn't
   /// already exist.
   @visibleForTesting
-  void ensureApiInitialized(int playerId) {
+  void ensureApiInitialized(int playerId, VideoViewType viewType) {
     _players.putIfAbsent(playerId, () {
-      return _PlayerInstance(_playerProvider(playerId));
+      final _VideoPlayerViewState viewState = switch (viewType) {
+        // playerId is also the textureId when using texture view.
+        VideoViewType.textureView => _VideoPlayerTextureViewState(
+          textureId: playerId,
+        ),
+        VideoViewType.platformView => const _VideoPlayerPlatformViewState(),
+      };
+      return _PlayerInstance(_playerProvider(playerId), viewState);
     });
   }
 
@@ -227,17 +221,13 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
-    final _VideoPlayerViewState? viewState = _playerViewStates[playerId];
+    final _VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
 
     return switch (viewState) {
       _VideoPlayerTextureViewState(:final int textureId) => Texture(
         textureId: textureId,
       ),
       _VideoPlayerPlatformViewState() => PlatformViewPlayer(playerId: playerId),
-      null =>
-        throw Exception(
-          'Could not find corresponding view type for playerId: $playerId',
-        ),
     };
   }
 
@@ -284,9 +274,11 @@ PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
 class _PlayerInstance {
   /// Creates a new instance of [_PlayerInstance] corresponding to the given
   /// API instance.
-  _PlayerInstance(this._api);
+  _PlayerInstance(this._api, this.viewState);
 
   final VideoPlayerInstanceApi _api;
+
+  final _VideoPlayerViewState viewState;
 
   Future<void> setLooping(bool looping) {
     return _api.setLooping(looping);
