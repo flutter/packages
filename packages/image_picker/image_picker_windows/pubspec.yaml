@@ -2,7 +2,7 @@ name: image_picker_windows
 description: Windows platform implementation of image_picker
 repository: https://github.com/flutter/packages/tree/main/packages/image_picker/image_picker_windows
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+image_picker%22
-version: 0.2.1+1
+version: 0.2.3
 
 environment:
   sdk: ^3.6.0
@@ -32,3 +32,7 @@ topics:
   - image-picker
   - files
   - file-selection
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  image_picker_platform_interface: {path: ../../../packages/image_picker/image_picker_platform_interface}

@@ -114,6 +114,17 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     return files.isEmpty ? null : files.first;
   }
 
+  @override
+  Future<List<XFile>> getMultiVideoWithOptions({
+    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
+  }) async {
+    final List<XFile> files = await getFiles(
+      accept: _kAcceptVideoMimeType,
+      multiple: true,
+    );
+    return files;
+  }
+
   /// Injects a file input, and returns a list of XFile media that the user selected locally.
   @override
   Future<List<XFile>> getMedia({

@@ -282,6 +282,26 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
 }
 
+- (void)pickMultiVideoWithMaxDuration:(nullable NSNumber *)maxDurationSeconds
+                                limit:(nullable NSNumber *)limit
+                           completion:(nonnull void (^)(NSArray<NSString *> *_Nullable,
+                                                        FlutterError *_Nullable))completion {
+  [self cancelInProgressCall];
+  FLTImagePickerMethodCallContext *context =
+      [[FLTImagePickerMethodCallContext alloc] initWithResult:completion];
+  context.maxImageCount = limit.intValue;
+  context.includeVideo = YES;
+
+  if (@available(iOS 14, *)) {
+    [self launchPHPickerWithContext:context];
+  } else {
+    // Camera is ignored for gallery mode, so the value here is arbitrary.
+    [self launchUIImagePickerWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                                      camera:FLTSourceCameraRear]
+                                context:context];
+  }
+}
+
 #pragma mark -
 
 /// If a call is still in progress, cancels it by returning an error and then clearing state.

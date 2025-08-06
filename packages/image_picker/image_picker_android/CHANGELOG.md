@@ -1,3 +1,11 @@
+## 0.8.14
+
+* feat: Add pickMultiVideo.
+
+## 0.8.13
+
+* feat: Add pickMultiVideo.
+
 ## 0.8.12+24
 
 * Updates `androidx.activity:activity` to 1.10.1.

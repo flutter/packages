@@ -322,4 +322,21 @@ class ImagePickerIOS extends ImagePickerPlatform {
     );
     return path != null ? XFile(path) : null;
   }
+
+  @override
+  Future<List<XFile>> getMultiVideoWithOptions({
+    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
+  }) async {
+    final List<String> paths = await _pickMultiVideoAsPath(
+      options: options,
+    );
+    return paths.map((String path) => XFile(path)).toList();
+  }
+
+  Future<List<String>> _pickMultiVideoAsPath({
+    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
+  }) {
+    return _hostApi.pickMultiVideo(
+        options.maxDuration?.inSeconds, options.limit);
+  }
 }

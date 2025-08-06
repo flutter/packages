@@ -602,6 +602,33 @@ void main() {
     });
   });
 
+  group('#getMultiVideoWithOptions', () {
+    test('calls the method correctly', () async {
+      const List<String> fakePaths = <String>['/foo.mp4', 'bar.mp4'];
+      api.returnValue = fakePaths;
+      final List<XFile> result =
+          await picker.getMultiVideoWithOptions(options: const MultiVideoPickerOptions());
+
+      expect(result.length, 2);
+      expect(result[0].path, fakePaths[0]);
+      expect(api.lastCall, _LastPickType.video);
+      expect(api.passedAllowMultiple, true);
+    });
+
+    test('passes the arguments correctly', () async {
+      api.returnValue = <String>[];
+      await picker.getMultiVideoWithOptions(
+          options: const MultiVideoPickerOptions(
+        maxDuration: Duration(seconds: 10),
+        limit: 5,
+      ));
+
+      expect(api.passedSource?.type, SourceType.gallery);
+      expect(api.passedVideoOptions?.maxDurationSeconds, 10);
+      expect(api.limit, 5);
+    });
+  });
+
   group('#getLostData', () {
     test('getLostData get success response', () async {
       api.returnValue = CacheRetrievalResult(

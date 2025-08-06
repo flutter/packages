@@ -63,6 +63,9 @@ abstract class ImagePickerApi {
   @async
   @ObjCSelector('pickVideoWithSource:maxDuration:')
   String? pickVideo(SourceSpecification source, int? maxDurationSeconds);
+  @async
+  @ObjCSelector('pickMultiVideoWithMaxDuration:limit:')
+  List<String> pickMultiVideo(int? maxDurationSeconds, int? limit);
 
   /// Selects images and videos and returns their paths.
   @async

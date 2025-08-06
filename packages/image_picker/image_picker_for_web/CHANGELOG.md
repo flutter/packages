@@ -1,5 +1,10 @@
-## NEXT
+## 3.2.0
 
+* feat: Add pickMultiVideo.
+
+## 3.1.0
+
+* feat: Add pickMultiVideo.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 3.0.6
