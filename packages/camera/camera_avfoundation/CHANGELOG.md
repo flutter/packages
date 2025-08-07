@@ -1,6 +1,15 @@
+## 0.9.20+7
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 0.9.20+6
+
+* Migrates `captureToFile` and `getTemporaryFilePath` methods to Swift.
+* Switches to Swift dispatch queue specific interface.
+
 ## 0.9.20+5
 
-* Updates kotlin version to 2.2.0 to enable gradle 8.11 support. Removes enableJetifier from gradle.properties.
+* Migrates `startVideoRecording`, `setUpVideoRecording`, and `setupWriter` methods to Swift.
 
 ## 0.9.20+4
 
