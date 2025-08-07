@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _playVideo(XFile? file) async {
     if (file != null && mounted) {
       await _disposeVideoController();
-      late VideoPlayerController controller;
+      final VideoPlayerController controller;
       if (kIsWeb) {
         controller = VideoPlayerController.networkUrl(Uri.parse(file.path));
       } else {
@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _onImageButtonPressed(
     ImageSource source, {
     required BuildContext context,
-    bool isMultiImage = false,
+    bool allowMultiple = false,
     bool isMedia = false,
   }) async {
     if (_controller != null) {
@@ -93,10 +93,17 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     if (context.mounted) {
       if (isVideo) {
-        final XFile? file = await _picker.pickVideo(
-            source: source, maxDuration: const Duration(seconds: 10));
-        await _playVideo(file);
-      } else if (isMultiImage) {
+        final List<XFile> files;
+        if (allowMultiple) {
+          files = await _picker.pickMultiVideo();
+        } else {
+          final XFile? file = await _picker.pickVideo(
+              source: source, maxDuration: const Duration(seconds: 10));
+          files = <XFile>[if (file != null) file];
+        }
+        // Just play the first file, to keep the example simple.
+        await _playVideo(files.first);
+      } else if (allowMultiple) {
         await _displayPickImageDialog(context, true, (double? maxWidth,
             double? maxHeight, int? quality, int? limit) async {
           try {
@@ -349,7 +356,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 _onImageButtonPressed(ImageSource.gallery, context: context);
               },
               heroTag: 'image0',
-              tooltip: 'Pick Image from gallery',
+              tooltip: 'Pick image from gallery',
               child: const Icon(Icons.photo),
             ),
           ),
@@ -361,12 +368,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 _onImageButtonPressed(
                   ImageSource.gallery,
                   context: context,
-                  isMultiImage: true,
-                  isMedia: true,
+                  allowMultiple: true,
                 );
               },
-              heroTag: 'multipleMedia',
-              tooltip: 'Pick Multiple Media from gallery',
+              heroTag: 'image1',
+              tooltip: 'Pick multiple images',
               child: const Icon(Icons.photo_library),
             ),
           ),
@@ -382,8 +388,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               heroTag: 'media',
-              tooltip: 'Pick Single Media from gallery',
-              child: const Icon(Icons.photo_library),
+              tooltip: 'Pick item from gallery',
+              child: const Icon(Icons.photo_outlined),
             ),
           ),
           Padding(
@@ -394,12 +400,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 _onImageButtonPressed(
                   ImageSource.gallery,
                   context: context,
-                  isMultiImage: true,
+                  allowMultiple: true,
+                  isMedia: true,
                 );
               },
-              heroTag: 'image1',
-              tooltip: 'Pick Multiple Image from gallery',
-              child: const Icon(Icons.photo_library),
+              heroTag: 'multipleMedia',
+              tooltip: 'Pick multiple items',
+              child: const Icon(Icons.photo_library_outlined),
             ),
           ),
           if (_picker.supportsImageSource(ImageSource.camera))
@@ -411,7 +418,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   _onImageButtonPressed(ImageSource.camera, context: context);
                 },
                 heroTag: 'image2',
-                tooltip: 'Take a Photo',
+                tooltip: 'Take a photo',
                 child: const Icon(Icons.camera_alt),
               ),
             ),
@@ -424,7 +431,21 @@ class _MyHomePageState extends State<MyHomePage> {
                 _onImageButtonPressed(ImageSource.gallery, context: context);
               },
               heroTag: 'video0',
-              tooltip: 'Pick Video from gallery',
+              tooltip: 'Pick video from gallery',
+              child: const Icon(Icons.video_file),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: FloatingActionButton(
+              backgroundColor: Colors.red,
+              onPressed: () {
+                isVideo = true;
+                _onImageButtonPressed(ImageSource.gallery,
+                    context: context, allowMultiple: true);
+              },
+              heroTag: 'video1',
+              tooltip: 'Pick multiple videos',
               child: const Icon(Icons.video_library),
             ),
           ),
@@ -437,8 +458,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   isVideo = true;
                   _onImageButtonPressed(ImageSource.camera, context: context);
                 },
-                heroTag: 'video1',
-                tooltip: 'Take a Video',
+                heroTag: 'video2',
+                tooltip: 'Take a video',
                 child: const Icon(Icons.videocam),
               ),
             ),
