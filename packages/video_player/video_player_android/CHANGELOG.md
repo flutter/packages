@@ -1,3 +1,7 @@
+## 2.8.11
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
 ## 2.8.10
 
 * Restructures internal logic to move more code to Dart.
