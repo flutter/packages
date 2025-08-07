@@ -1,0 +1,39 @@
+android_sdk_config:
+  add_gradle_deps: true
+  android_example: 'example/'
+
+## String to be pasted verbatim into generated bindings
+preamble: |
+  // Copyright 2013 The Flutter Authors. All rights reserved.
+  // Use of this source code is governed by a BSD-style license that can be
+  // found in the LICENSE file.
+
+## Output configuration
+output:
+  dart:
+    ## Generated dart bindings will be written to this path. They will follow
+    ## the same folder hierarchy as the original Java code.
+    path: 'lib/src/third_party/path_provider.g.dart'
+    structure: 'single_file'
+
+## Classes / packages for which bindings need to be generated.
+source_path:
+  - 'android/src/main/java'
+classes:
+  - 'android.app.Application'
+
+## Dependencies to be downloaded using Maven (Invokes `mvn` command). These
+## dependencies are always downloaded along with their transitive dependencies.
+##
+## Dependencies should be specified using groupID:artifactID:version format
+## The downloaded dependencies are automatically added to classpath of the
+## Java API scanning process. There's no need to specify these again in
+## sourcepath and classpath.
+##
+## Note that when maven based tooling is used, the first run often has to fetch
+## all the dependencies and might take some time. However, maven caches the
+## artifacts in local repository, thus subsequent runs will be faster.
+#maven_downloads:
+## For these dependencies, both source and JARs are downloaded.
+#source_deps:
+#jar_only_deps:
