@@ -28,17 +28,11 @@
 @property(strong, nonatomic)
     NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
 @property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
-@property(assign, nonatomic) BOOL isAudioSetup;
 
 /// A wrapper for CMVideoFormatDescriptionGetDimensions.
 /// Allows for alternate implementations in tests.
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
-/// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
-@property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
-/// Reports the given error message to the Dart side of the plugin.
-///
-/// Can be called from any thread.
-- (void)reportErrorMessage:(NSString *)errorMessage;
+
 @end
 
 @implementation FLTCam
@@ -306,141 +300,6 @@ NSString *const errorMethod = @"error";
     }
   }
   return bestFormat;
-}
-
-- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                           completion:(void (^)(FlutterError *))completion {
-  [self startImageStreamWithMessenger:messenger
-                   imageStreamHandler:[[FLTImageStreamHandler alloc]
-                                          initWithCaptureSessionQueue:_captureSessionQueue]
-                           completion:completion];
-}
-
-- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                   imageStreamHandler:(FLTImageStreamHandler *)imageStreamHandler
-                           completion:(void (^)(FlutterError *))completion {
-  if (!_isStreamingImages) {
-    id<FLTEventChannel> eventChannel = [FlutterEventChannel
-        eventChannelWithName:@"plugins.flutter.io/camera_avfoundation/imageStream"
-             binaryMessenger:messenger];
-    FLTThreadSafeEventChannel *threadSafeEventChannel =
-        [[FLTThreadSafeEventChannel alloc] initWithEventChannel:eventChannel];
-
-    _imageStreamHandler = imageStreamHandler;
-    __weak typeof(self) weakSelf = self;
-    [threadSafeEventChannel setStreamHandler:_imageStreamHandler
-                                  completion:^{
-                                    typeof(self) strongSelf = weakSelf;
-                                    if (!strongSelf) {
-                                      completion(nil);
-                                      return;
-                                    }
-
-                                    dispatch_async(strongSelf.captureSessionQueue, ^{
-                                      // cannot use the outter strongSelf
-                                      typeof(self) strongSelf = weakSelf;
-                                      if (!strongSelf) {
-                                        completion(nil);
-                                        return;
-                                      }
-
-                                      strongSelf.isStreamingImages = YES;
-                                      strongSelf.streamingPendingFramesCount = 0;
-                                      completion(nil);
-                                    });
-                                  }];
-  } else {
-    [self reportErrorMessage:@"Images from camera are already streaming!"];
-    completion(nil);
-  }
-}
-
-// This function, although slightly modified, is also in video_player_avfoundation.
-// Both need to do the same thing and run on the same thread (for example main thread).
-// Configure application wide audio session manually to prevent overwriting flag
-// MixWithOthers by capture session.
-// Only change category if it is considered an upgrade which means it can only enable
-// ability to play in silent mode or ability to record audio but never disables it,
-// that could affect other plugins which depend on this global state. Only change
-// category or options if there is change to prevent unnecessary lags and silence.
-static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
-                                        AVAudioSessionCategoryOptions options) {
-  NSSet *playCategories = [NSSet
-      setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
-  NSSet *recordCategories =
-      [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
-  NSSet *requiredCategories =
-      [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
-  BOOL requiresPlay = [requiredCategories intersectsSet:playCategories];
-  BOOL requiresRecord = [requiredCategories intersectsSet:recordCategories];
-  if (requiresPlay && requiresRecord) {
-    requestedCategory = AVAudioSessionCategoryPlayAndRecord;
-  } else if (requiresPlay) {
-    requestedCategory = AVAudioSessionCategoryPlayback;
-  } else if (requiresRecord) {
-    requestedCategory = AVAudioSessionCategoryRecord;
-  }
-  options = AVAudioSession.sharedInstance.categoryOptions | options;
-  if ([requestedCategory isEqualToString:AVAudioSession.sharedInstance.category] &&
-      options == AVAudioSession.sharedInstance.categoryOptions) {
-    return;
-  }
-  [AVAudioSession.sharedInstance setCategory:requestedCategory withOptions:options error:nil];
-}
-
-- (void)setUpCaptureSessionForAudioIfNeeded {
-  // Don't setup audio twice or we will lose the audio.
-  if (!_mediaSettings.enableAudio || _isAudioSetup) {
-    return;
-  }
-
-  NSError *error = nil;
-  // Create a device input with the device and add it to the session.
-  // Setup the audio input.
-  NSObject<FLTCaptureDevice> *audioDevice = self.audioCaptureDeviceFactory();
-  NSObject<FLTCaptureInput> *audioInput =
-      [_captureDeviceInputFactory deviceInputWithDevice:audioDevice error:&error];
-  if (error) {
-    [self reportErrorMessage:error.description];
-  }
-  // Setup the audio output.
-  _audioOutput = [[AVCaptureAudioDataOutput alloc] init];
-
-  dispatch_block_t block = ^{
-    // Set up options implicit to AVAudioSessionCategoryPlayback to avoid conflicts with other
-    // plugins like video_player.
-    upgradeAudioSessionCategory(AVAudioSessionCategoryPlayAndRecord,
-                                AVAudioSessionCategoryOptionDefaultToSpeaker |
-                                    AVAudioSessionCategoryOptionAllowBluetoothA2DP |
-                                    AVAudioSessionCategoryOptionAllowAirPlay);
-  };
-  if (!NSThread.isMainThread) {
-    dispatch_sync(dispatch_get_main_queue(), block);
-  } else {
-    block();
-  }
-
-  if ([_audioCaptureSession canAddInput:audioInput]) {
-    [_audioCaptureSession addInput:audioInput];
-
-    if ([_audioCaptureSession canAddOutput:_audioOutput]) {
-      [_audioCaptureSession addOutput:_audioOutput];
-      _isAudioSetup = YES;
-    } else {
-      [self reportErrorMessage:@"Unable to add Audio input/output to session capture"];
-      _isAudioSetup = NO;
-    }
-  }
-}
-
-- (void)reportErrorMessage:(NSString *)errorMessage {
-  __weak typeof(self) weakSelf = self;
-  FLTEnsureToRunOnMainQueue(^{
-    [weakSelf.dartAPI reportError:errorMessage
-                       completion:^(FlutterError *error){
-                           // Ignore any errors, as this is just an event broadcast.
-                       }];
-  });
 }
 
 @end
