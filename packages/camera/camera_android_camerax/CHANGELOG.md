@@ -1,6 +1,11 @@
-## 0.6.19+2
+## 0.6.20+1
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support. Removes enableJetifier from gradle.properties.
+
+## 0.6.20
+
+* Fixes pausing and resuming the camera preview.
+* Updates minimum supported SDK version to Flutter 3.32.8/Dart 3.8.1.
 
 ## 0.6.19+1
 
