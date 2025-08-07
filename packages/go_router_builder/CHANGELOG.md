@@ -1,4 +1,4 @@
-## 3.0.2
+## 3.1.0
 
 - Adds support for `TypedRelativeGoRoute`.
 - Restricts `build` to versions less than 2.5.0.

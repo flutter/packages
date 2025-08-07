@@ -456,7 +456,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
     }
 
     return '''
-mixin $_mixinName on GoRouteData {
+mixin $_mixinName on $routeDataClassName {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
   $_castedSelf
   @override
@@ -531,14 +531,14 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
     }
 
     return '''
-mixin $_mixinName on RelativeGoRouteData {
+mixin $_mixinName on $routeDataClassName {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
   $_castedSelf
   @override
-  String get location => RelativeGoRouteData.\$location($_locationArgs,$_locationQueryParams);
+  String get subpath => RelativeGoRouteData.\$location($_locationArgs,$_locationQueryParams);
   
   @override
-  String get relativeLocation => './\$location';
+  String get relativeLocation => './\$subpath';
 
   @override
   void goRelative(BuildContext context) =>
