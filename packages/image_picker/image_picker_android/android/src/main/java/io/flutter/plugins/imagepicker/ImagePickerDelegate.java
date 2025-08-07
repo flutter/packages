@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
 
 /**
  * A delegate class doing the heavy lifting for the plugin.
@@ -743,8 +742,7 @@ public class ImagePickerDelegate
         return;
       }
 
-      finishWithListSuccess(
-          paths.stream().map(p -> p.getPath()).collect(Collectors.toCollection(ArrayList::new)));
+      handleMediaResult(paths);
       return;
     }
 
