@@ -463,7 +463,7 @@ void main() {
         }
 
         await expectUnimplementedError((BuildContext context) {
-          const _RelativeGoRouteDataBuild().location;
+          const _RelativeGoRouteDataBuild().subpath;
         });
 
         await expectUnimplementedError((BuildContext context) {
