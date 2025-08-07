@@ -48,12 +48,11 @@ class PathProviderAndroid extends PathProviderPlatform {
   @override
   Future<String?> getTemporaryPath() {
     return _jniPlatform.getTemporaryPath();
-    //return _api.getTemporaryPath();
   }
 
   @override
   Future<String?> getApplicationSupportPath() {
-    return _api.getApplicationSupportPath();
+    return _jniPlatform.getApplicationSupportPath();
   }
 
   @override
@@ -63,36 +62,34 @@ class PathProviderAndroid extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationDocumentsPath() {
-    return _api.getApplicationDocumentsPath();
+    return _jniPlatform.getApplicationDocumentsPath();
   }
 
   @override
   Future<String?> getApplicationCachePath() {
-    return _api.getApplicationCachePath();
+    return _jniPlatform.getApplicationCachePath();
   }
 
   @override
   Future<String?> getExternalStoragePath() {
-    return _api.getExternalStoragePath();
+    return _jniPlatform.getExternalStoragePath();
   }
 
   @override
   Future<List<String>?> getExternalCachePaths() async {
-    return _api.getExternalCachePaths();
+    return _jniPlatform.getExternalCachePaths();
   }
 
   @override
   Future<List<String>?> getExternalStoragePaths({
     StorageDirectory? type,
   }) async {
-    return _getExternalStoragePaths(type: type);
+    return _jniPlatform.getExternalStoragePaths(type: type);
   }
 
   @override
   Future<String?> getDownloadsPath() async {
-    final List<String> paths =
-        await _getExternalStoragePaths(type: StorageDirectory.downloads);
-    return paths.isEmpty ? null : paths.first;
+    return _jniPlatform.getDownloadsPath();
   }
 
   Future<List<String>> _getExternalStoragePaths({
