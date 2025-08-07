@@ -176,7 +176,7 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void GetPlaybackState() {
+  public void getPlaybackState() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     final long playbackPosition = 20L;
