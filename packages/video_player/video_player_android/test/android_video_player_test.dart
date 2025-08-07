@@ -529,16 +529,19 @@ void main() {
       verify(playerApi.seekTo(positionMilliseconds));
     });
 
-    test('getPosition', () async {
+    test('getPlaybackState', () async {
       final (
         AndroidVideoPlayer player,
         _,
         MockVideoPlayerInstanceApi playerApi,
       ) = setUpMockPlayer(playerId: 1);
       const int positionMilliseconds = 12345;
-      when(
-        playerApi.getPosition(),
-      ).thenAnswer((_) async => positionMilliseconds);
+      when(playerApi.getPlaybackState()).thenAnswer(
+        (_) async => PlaybackState(
+          playPosition: positionMilliseconds,
+          bufferPosition: 0,
+        ),
+      );
 
       final Duration position = await player.getPosition(1);
       expect(position, const Duration(milliseconds: positionMilliseconds));

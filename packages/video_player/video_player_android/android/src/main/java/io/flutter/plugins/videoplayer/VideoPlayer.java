@@ -107,12 +107,11 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   }
 
   @Override
-  public @NonNull Long getPosition() {
-    long position = exoPlayer.getCurrentPosition();
-    // TODO(stuartmorgan): Move this; this is relying on the fact that getPosition is called
-    //  frequently to drive buffering updates, which is a fragile hack.
-    sendBufferingUpdate();
-    return position;
+  public @NonNull Messages.PlaybackState getPlaybackState() {
+    return new Messages.PlaybackState.Builder()
+        .setPlayPosition(exoPlayer.getCurrentPosition())
+        .setBufferPosition(exoPlayer.getBufferedPosition())
+        .build();
   }
 
   @Override

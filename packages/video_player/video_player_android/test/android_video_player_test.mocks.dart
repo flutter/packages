@@ -23,6 +23,11 @@ import 'package:video_player_android/src/messages.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakePlaybackState_0 extends _i1.SmartFake implements _i2.PlaybackState {
+  _FakePlaybackState_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AndroidVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -156,15 +161,6 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
           as _i4.Future<void>);
 
   @override
-  _i4.Future<int> getPosition() =>
-      (super.noSuchMethod(
-            Invocation.method(#getPosition, []),
-            returnValue: _i4.Future<int>.value(0),
-            returnValueForMissingStub: _i4.Future<int>.value(0),
-          )
-          as _i4.Future<int>);
-
-  @override
   _i4.Future<void> seekTo(int? position) =>
       (super.noSuchMethod(
             Invocation.method(#seekTo, [position]),
@@ -181,4 +177,23 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
+
+  @override
+  _i4.Future<_i2.PlaybackState> getPlaybackState() =>
+      (super.noSuchMethod(
+            Invocation.method(#getPlaybackState, []),
+            returnValue: _i4.Future<_i2.PlaybackState>.value(
+              _FakePlaybackState_0(
+                this,
+                Invocation.method(#getPlaybackState, []),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<_i2.PlaybackState>.value(
+              _FakePlaybackState_0(
+                this,
+                Invocation.method(#getPlaybackState, []),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.PlaybackState>);
 }

@@ -127,17 +127,6 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void sendsBufferingUpdatesOnDemand() {
-    VideoPlayer videoPlayer = createVideoPlayer();
-
-    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
-    videoPlayer.sendBufferingUpdate();
-    verify(mockEvents).onBufferingUpdate(10L);
-
-    videoPlayer.dispose();
-  }
-
-  @Test
   public void togglesLoopingEnablesAndDisablesRepeatMode() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
@@ -177,14 +166,29 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void seekAndGetPosition() {
+  public void seekTo() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     videoPlayer.seekTo(10L);
     verify(mockExoPlayer).seekTo(10);
 
-    when(mockExoPlayer.getCurrentPosition()).thenReturn(20L);
-    assertEquals(20L, videoPlayer.getPosition().longValue());
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void GetPlaybackState() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    final long playbackPosition = 20L;
+    final long bufferedPosition = 10L;
+    when(mockExoPlayer.getCurrentPosition()).thenReturn(playbackPosition);
+    when(mockExoPlayer.getBufferedPosition()).thenReturn(bufferedPosition);
+
+    final Messages.PlaybackState state = videoPlayer.getPlaybackState();
+    assertEquals(playbackPosition, state.getPlayPosition().longValue());
+    assertEquals(bufferedPosition, state.getBufferPosition().longValue());
+
+    videoPlayer.dispose();
   }
 
   @Test

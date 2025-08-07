@@ -172,13 +172,12 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> seekTo(int playerId, Duration position) {
-    return _playerWith(id: playerId).seekTo(position.inMilliseconds);
+    return _playerWith(id: playerId).seekTo(position);
   }
 
   @override
   Future<Duration> getPosition(int playerId) async {
-    final int position = await _playerWith(id: playerId).getPosition();
-    return Duration(milliseconds: position);
+    return _playerWith(id: playerId).getPosition();
   }
 
   @override
@@ -262,6 +261,7 @@ class _PlayerInstance {
   final StreamController<VideoEvent> _eventStreamController =
       StreamController<VideoEvent>.broadcast();
   late final StreamSubscription<dynamic> _eventSubscription;
+  int _lastBufferPosition = -1;
 
   final _VideoPlayerViewState viewState;
 
@@ -285,12 +285,22 @@ class _PlayerInstance {
     return _api.setPlaybackSpeed(speed);
   }
 
-  Future<void> seekTo(int position) {
-    return _api.seekTo(position);
+  Future<void> seekTo(Duration position) {
+    return _api.seekTo(position.inMilliseconds);
   }
 
-  Future<int> getPosition() {
-    return _api.getPosition();
+  Future<Duration> getPosition() async {
+    final PlaybackState state = await _api.getPlaybackState();
+    // TODO(stuartmorgan): Move this logic. This is a workaround for the fact
+    //  that ExoPlayer doesn't have any way to observe buffer position
+    //  changes, so polling is required. To minimize platform channel overhead,
+    //  that's combined with getting the position, but this relies on the fact
+    //  that the app-facing package polls getPosition frequently, which makes
+    //  this fragile (for instance, as of writing, this won't be called while
+    //  the video is paused). It should instead be called on its own timer,
+    //  independent of higher-level package logic.
+    _updateBufferingState(state.bufferPosition);
+    return Duration(milliseconds: state.playPosition);
   }
 
   Stream<VideoEvent> videoEvents() {
@@ -299,6 +309,20 @@ class _PlayerInstance {
 
   Future<void> dispose() async {
     await _eventSubscription.cancel();
+  }
+
+  /// Sends a buffering update if the buffer position has changed since the
+  /// last check.
+  void _updateBufferingState(int bufferPosition) {
+    if (bufferPosition != _lastBufferPosition) {
+      _lastBufferPosition = bufferPosition;
+      _eventStreamController.add(
+        VideoEvent(
+          eventType: VideoEventType.bufferingUpdate,
+          buffered: _bufferRangeForPosition(bufferPosition),
+        ),
+      );
+    }
   }
 
   void _onStreamEvent(dynamic event) {

@@ -324,6 +324,100 @@ public class Messages {
     }
   }
 
+  /** Generated class from Pigeon that represents data sent in messages. */
+  public static final class PlaybackState {
+    /** The current playback position, in milliseconds. */
+    private @NonNull Long playPosition;
+
+    public @NonNull Long getPlayPosition() {
+      return playPosition;
+    }
+
+    public void setPlayPosition(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"playPosition\" is null.");
+      }
+      this.playPosition = setterArg;
+    }
+
+    /** The current buffer position, in milliseconds. */
+    private @NonNull Long bufferPosition;
+
+    public @NonNull Long getBufferPosition() {
+      return bufferPosition;
+    }
+
+    public void setBufferPosition(@NonNull Long setterArg) {
+      if (setterArg == null) {
+        throw new IllegalStateException("Nonnull field \"bufferPosition\" is null.");
+      }
+      this.bufferPosition = setterArg;
+    }
+
+    /** Constructor is non-public to enforce null safety; use Builder. */
+    PlaybackState() {}
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      PlaybackState that = (PlaybackState) o;
+      return playPosition.equals(that.playPosition) && bufferPosition.equals(that.bufferPosition);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(playPosition, bufferPosition);
+    }
+
+    public static final class Builder {
+
+      private @Nullable Long playPosition;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setPlayPosition(@NonNull Long setterArg) {
+        this.playPosition = setterArg;
+        return this;
+      }
+
+      private @Nullable Long bufferPosition;
+
+      @CanIgnoreReturnValue
+      public @NonNull Builder setBufferPosition(@NonNull Long setterArg) {
+        this.bufferPosition = setterArg;
+        return this;
+      }
+
+      public @NonNull PlaybackState build() {
+        PlaybackState pigeonReturn = new PlaybackState();
+        pigeonReturn.setPlayPosition(playPosition);
+        pigeonReturn.setBufferPosition(bufferPosition);
+        return pigeonReturn;
+      }
+    }
+
+    @NonNull
+    ArrayList<Object> toList() {
+      ArrayList<Object> toListResult = new ArrayList<>(2);
+      toListResult.add(playPosition);
+      toListResult.add(bufferPosition);
+      return toListResult;
+    }
+
+    static @NonNull PlaybackState fromList(@NonNull ArrayList<Object> pigeonVar_list) {
+      PlaybackState pigeonResult = new PlaybackState();
+      Object playPosition = pigeonVar_list.get(0);
+      pigeonResult.setPlayPosition((Long) playPosition);
+      Object bufferPosition = pigeonVar_list.get(1);
+      pigeonResult.setBufferPosition((Long) bufferPosition);
+      return pigeonResult;
+    }
+  }
+
   private static class PigeonCodec extends StandardMessageCodec {
     public static final PigeonCodec INSTANCE = new PigeonCodec();
 
@@ -346,6 +440,8 @@ public class Messages {
           return PlatformVideoViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 132:
           return CreateMessage.fromList((ArrayList<Object>) readValue(buffer));
+        case (byte) 133:
+          return PlaybackState.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
       }
@@ -365,6 +461,9 @@ public class Messages {
       } else if (value instanceof CreateMessage) {
         stream.write(132);
         writeValue(stream, ((CreateMessage) value).toList());
+      } else if (value instanceof PlaybackState) {
+        stream.write(133);
+        writeValue(stream, ((PlaybackState) value).toList());
       } else {
         super.writeValue(stream, value);
       }
@@ -541,12 +640,17 @@ public class Messages {
 
     void play();
 
-    @NonNull
-    Long getPosition();
-
     void seekTo(@NonNull Long position);
 
     void pause();
+    /**
+     * Returns the current playback state.
+     *
+     * <p>This is combined into a single call to minimize platform channel calls for state that
+     * needs to be polled frequently.
+     */
+    @NonNull
+    PlaybackState getPlaybackState();
 
     /** The codec used by VideoPlayerInstanceApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -668,29 +772,6 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getPosition"
-                    + messageChannelSuffix,
-                getCodec());
-        if (api != null) {
-          channel.setMessageHandler(
-              (message, reply) -> {
-                ArrayList<Object> wrapped = new ArrayList<>();
-                try {
-                  Long output = api.getPosition();
-                  wrapped.add(0, output);
-                } catch (Throwable exception) {
-                  wrapped = wrapError(exception);
-                }
-                reply.reply(wrapped);
-              });
-        } else {
-          channel.setMessageHandler(null);
-        }
-      }
-      {
-        BasicMessageChannel<Object> channel =
-            new BasicMessageChannel<>(
-                binaryMessenger,
                 "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo"
                     + messageChannelSuffix,
                 getCodec());
@@ -726,6 +807,29 @@ public class Messages {
                 try {
                   api.pause();
                   wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getPlaybackState"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  PlaybackState output = api.getPlaybackState();
+                  wrapped.add(0, output);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
                 }
