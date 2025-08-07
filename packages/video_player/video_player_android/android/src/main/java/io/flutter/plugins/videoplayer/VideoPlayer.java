@@ -66,10 +66,6 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   protected abstract ExoPlayerEventListener createExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer, @Nullable SurfaceProducer surfaceProducer);
 
-  void sendBufferingUpdate() {
-    videoPlayerEvents.onBufferingUpdate(exoPlayer.getBufferedPosition());
-  }
-
   private static void setAudioAttributes(ExoPlayer exoPlayer, boolean isMixMode) {
     exoPlayer.setAudioAttributes(
         new AudioAttributes.Builder().setContentType(C.AUDIO_CONTENT_TYPE_MOVIE).build(),
