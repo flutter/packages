@@ -1,3 +1,7 @@
+## 0.9.21
+
+* Fixes crash when streaming is enabled during recording.
+
 ## 0.9.20+6
 
 * Migrates `captureToFile` and `getTemporaryFilePath` methods to Swift.
