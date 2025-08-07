@@ -1,3 +1,7 @@
+## 2.8.11
+
+* Moves buffer position update event generation to Dart.
+
 ## 2.8.10
 
 * Restructures internal logic to move more code to Dart.
