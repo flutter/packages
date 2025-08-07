@@ -46,8 +46,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> dispose(int playerId) async {
+    final _PlayerInstance? player = _players.remove(playerId);
     await _api.dispose(playerId);
-    _players.remove(playerId);
+    await player?.dispose();
   }
 
   @override
@@ -132,7 +133,13 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         ),
         VideoViewType.platformView => const _VideoPlayerPlatformViewState(),
       };
-      return _PlayerInstance(_playerProvider(playerId), viewState);
+      final String eventChannelName =
+          'flutter.io/videoPlayer/videoEvents$playerId';
+      return _PlayerInstance(
+        _playerProvider(playerId),
+        viewState,
+        eventChannelName: eventChannelName,
+      );
     });
   }
 
@@ -176,41 +183,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Stream<VideoEvent> videoEventsFor(int playerId) {
-    return _eventChannelFor(playerId).receiveBroadcastStream().map((
-      dynamic event,
-    ) {
-      final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
-      return switch (map['event']) {
-        'initialized' => VideoEvent(
-          eventType: VideoEventType.initialized,
-          duration: Duration(milliseconds: map['duration'] as int),
-          size: Size(
-            (map['width'] as num?)?.toDouble() ?? 0.0,
-            (map['height'] as num?)?.toDouble() ?? 0.0,
-          ),
-          rotationCorrection: map['rotationCorrection'] as int? ?? 0,
-        ),
-        'completed' => VideoEvent(eventType: VideoEventType.completed),
-        'bufferingUpdate' => VideoEvent(
-          eventType: VideoEventType.bufferingUpdate,
-          buffered: <DurationRange>[
-            DurationRange(
-              Duration.zero,
-              Duration(milliseconds: map['position'] as int),
-            ),
-          ],
-        ),
-        'bufferingStart' => VideoEvent(
-          eventType: VideoEventType.bufferingStart,
-        ),
-        'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
-        'isPlayingStateUpdate' => VideoEvent(
-          eventType: VideoEventType.isPlayingStateUpdate,
-          isPlaying: map['isPlaying'] as bool,
-        ),
-        _ => VideoEvent(eventType: VideoEventType.unknown),
-      };
-    });
+    return _playerWith(id: playerId).videoEvents();
   }
 
   @override
@@ -234,10 +207,6 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) {
     return _api.setMixWithOthers(mixWithOthers);
-  }
-
-  EventChannel _eventChannelFor(int playerId) {
-    return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
   }
 
   _PlayerInstance _playerWith({required int id}) {
@@ -274,9 +243,25 @@ PlatformVideoViewType _platformVideoViewTypeFromVideoViewType(
 class _PlayerInstance {
   /// Creates a new instance of [_PlayerInstance] corresponding to the given
   /// API instance.
-  _PlayerInstance(this._api, this.viewState);
+  _PlayerInstance(
+    this._api,
+    this.viewState, {
+    required String eventChannelName,
+  }) {
+    _eventChannel = EventChannel(eventChannelName);
+    _eventSubscription = _eventChannel.receiveBroadcastStream().listen(
+      _onStreamEvent,
+      onError: (Object e) {
+        _eventStreamController.addError(e);
+      },
+    );
+  }
 
   final VideoPlayerInstanceApi _api;
+  late final EventChannel _eventChannel;
+  final StreamController<VideoEvent> _eventStreamController =
+      StreamController<VideoEvent>.broadcast();
+  late final StreamSubscription<dynamic> _eventSubscription;
 
   final _VideoPlayerViewState viewState;
 
@@ -306,6 +291,49 @@ class _PlayerInstance {
 
   Future<int> getPosition() {
     return _api.getPosition();
+  }
+
+  Stream<VideoEvent> videoEvents() {
+    return _eventStreamController.stream;
+  }
+
+  Future<void> dispose() async {
+    await _eventSubscription.cancel();
+  }
+
+  void _onStreamEvent(dynamic event) {
+    final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
+    _eventStreamController.add(switch (map['event']) {
+      'initialized' => VideoEvent(
+        eventType: VideoEventType.initialized,
+        duration: Duration(milliseconds: map['duration'] as int),
+        size: Size(
+          (map['width'] as num?)?.toDouble() ?? 0.0,
+          (map['height'] as num?)?.toDouble() ?? 0.0,
+        ),
+        rotationCorrection: map['rotationCorrection'] as int? ?? 0,
+      ),
+      'completed' => VideoEvent(eventType: VideoEventType.completed),
+      'bufferingUpdate' => VideoEvent(
+        eventType: VideoEventType.bufferingUpdate,
+        buffered: _bufferRangeForPosition(map['position'] as int),
+      ),
+      'bufferingStart' => VideoEvent(eventType: VideoEventType.bufferingStart),
+      'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
+      'isPlayingStateUpdate' => VideoEvent(
+        eventType: VideoEventType.isPlayingStateUpdate,
+        isPlaying: map['isPlaying'] as bool,
+      ),
+      _ => VideoEvent(eventType: VideoEventType.unknown),
+    });
+  }
+
+  // Turns a single buffer position, which is what ExoPlayer reports, into the
+  // DurationRange array expected by [VideoEventType.bufferingUpdate].
+  List<DurationRange> _bufferRangeForPosition(int milliseconds) {
+    return <DurationRange>[
+      DurationRange(Duration.zero, Duration(milliseconds: milliseconds)),
+    ];
   }
 }
 

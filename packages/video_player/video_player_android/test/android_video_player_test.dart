@@ -545,12 +545,8 @@ void main() {
     });
 
     test('videoEventsFor', () async {
-      final (
-        AndroidVideoPlayer player,
-        MockAndroidVideoPlayerApi api,
-        _,
-      ) = setUpMockPlayer(playerId: 1);
-      const String mockChannel = 'flutter.io/videoPlayer/videoEvents123';
+      const int playerId = 1;
+      const String mockChannel = 'flutter.io/videoPlayer/videoEvents$playerId';
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler(mockChannel, (ByteData? message) async {
             final MethodCall methodCall = const StandardMethodCodec()
@@ -669,8 +665,17 @@ void main() {
               fail('Expected listen or cancel');
             }
           });
+
+      // Creating the player triggers the stream listener, so that must be done
+      // after setting up the mock native handler above.
+      final (
+        AndroidVideoPlayer player,
+        MockAndroidVideoPlayerApi api,
+        _,
+      ) = setUpMockPlayer(playerId: playerId);
+
       expect(
-        player.videoEventsFor(123),
+        player.videoEventsFor(playerId),
         emitsInOrder(<dynamic>[
           VideoEvent(
             eventType: VideoEventType.initialized,
