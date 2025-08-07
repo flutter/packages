@@ -60,7 +60,9 @@ class PathProviderAndroid extends PathProviderPlatform {
   Future<List<String>?> getExternalCachePaths() async {
     final JArray<File?>? files = _applicationContext.getExternalCacheDirs();
     if (files != null) {
-      return _toStringList(files);
+      final List<String> paths = _toStringList(files);
+      files.release();
+      return paths;
     }
 
     return null;
@@ -74,7 +76,9 @@ class PathProviderAndroid extends PathProviderPlatform {
       type != null ? _toNativeStorageDirectory(type) : null,
     );
     if (files != null) {
-      return _toStringList(files);
+      final List<String> paths = _toStringList(files);
+      files.release();
+      return paths;
     }
 
     return null;
@@ -118,7 +122,7 @@ JString _toNativeStorageDirectory(StorageDirectory directory) {
 }
 
 List<String> _toStringList(JArray<File?> files) {
-  final List<String> paths = [];
+  final List<String> paths = <String>[];
   final Iterator<File?> filesIterator = files.iterator;
   while (filesIterator.moveNext()) {
     final File? file = filesIterator.current;
