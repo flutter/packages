@@ -21,6 +21,7 @@ source_path:
   - 'android/src/main/java'
 classes:
   - 'android.app.Application'
+  - 'android.content.Context'
 
 ## Dependencies to be downloaded using Maven (Invokes `mvn` command). These
 ## dependencies are always downloaded along with their transitive dependencies.

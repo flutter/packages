@@ -4,6 +4,7 @@
 
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'messages.g.dart' as messages;
+import 'path_provider_android_jni.dart';
 
 messages.StorageDirectory _convertStorageDirectory(
     StorageDirectory? directory) {
@@ -37,6 +38,8 @@ messages.StorageDirectory _convertStorageDirectory(
 class PathProviderAndroid extends PathProviderPlatform {
   final messages.PathProviderApi _api = messages.PathProviderApi();
 
+  final PathProviderAndroidJni _jniPlatform = PathProviderAndroidJni();
+
   /// Registers this class as the default instance of [PathProviderPlatform].
   static void registerWith() {
     PathProviderPlatform.instance = PathProviderAndroid();
@@ -44,7 +47,8 @@ class PathProviderAndroid extends PathProviderPlatform {
 
   @override
   Future<String?> getTemporaryPath() {
-    return _api.getTemporaryPath();
+    return _jniPlatform.getTemporaryPath();
+    //return _api.getTemporaryPath();
   }
 
   @override
