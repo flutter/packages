@@ -324,8 +324,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
 
   /// Returns a [List<XFile>] with the videos that were picked.
   ///
-  /// The `source` argument controls where the video comes from. This can
-  /// be either [ImageSource.camera] or [ImageSource.gallery].
+  /// The videos come from the [ImageSource.gallery].
   ///
   /// The `options` argument controls additional settings that can be used when
   /// picking a video. See [VideoPickerOptions] for more details.
@@ -334,7 +333,8 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   Future<List<XFile>> getMultiVideoWithOptions({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
   }) {
-    throw UnimplementedError('getMultiVideoWithOptions() has not been implemented.');
+    throw UnimplementedError(
+        'getMultiVideoWithOptions() has not been implemented.');
   }
 
   /// Returns true if the implementation supports [source].

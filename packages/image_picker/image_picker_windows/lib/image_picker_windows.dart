@@ -186,11 +186,12 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
 
   @override
   Future<List<XFile>> getMultiVideoWithOptions(
-      {MultiVideoPickerOptions options = const MultiVideoPickerOptions()}) async {
+      {MultiVideoPickerOptions options =
+          const MultiVideoPickerOptions()}) async {
     const XTypeGroup typeGroup =
         XTypeGroup(label: 'Videos', extensions: videoFormats);
-    final List<XFile> files =
-        await fileSelector.openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    final List<XFile> files = await fileSelector
+        .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     return files;
   }
 

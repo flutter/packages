@@ -157,8 +157,7 @@ void main() {
   group('#getMultiVideoWithOptions', () {
     test('calls the method correctly', () async {
       log.returnValue = <String>['/foo.mp4', 'bar.mp4'];
-      await picker.getMultiVideoWithOptions(
-          options: const MultiVideoPickerOptions());
+      await picker.getMultiVideoWithOptions();
 
       expect(
         log.calls,

@@ -606,8 +606,7 @@ void main() {
     test('calls the method correctly', () async {
       const List<String> fakePaths = <String>['/foo.mp4', 'bar.mp4'];
       api.returnValue = fakePaths;
-      final List<XFile> result =
-          await picker.getMultiVideoWithOptions(options: const MultiVideoPickerOptions());
+      final List<XFile> result = await picker.getMultiVideoWithOptions();
 
       expect(result.length, 2);
       expect(result[0].path, fakePaths[0]);

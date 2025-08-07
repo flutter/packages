@@ -157,11 +157,12 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
 
   @override
   Future<List<XFile>> getMultiVideoWithOptions(
-      {MultiVideoPickerOptions options = const MultiVideoPickerOptions()}) async {
+      {MultiVideoPickerOptions options =
+          const MultiVideoPickerOptions()}) async {
     const XTypeGroup typeGroup =
         XTypeGroup(label: 'Videos', mimeTypes: <String>['video/*']);
-    final List<XFile> files =
-        await fileSelector.openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+    final List<XFile> files = await fileSelector
+        .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
     return files;
   }
 

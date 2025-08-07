@@ -128,16 +128,16 @@ void main() {
             plugin.getVideo(source: ImageSource.camera), throwsStateError);
       });
 
-    test('getMultiVideoWithOptions passes the accepted type groups correctly',
-        () async {
-      await plugin.getMultiVideoWithOptions();
+      test('getMultiVideoWithOptions passes the accepted type groups correctly',
+          () async {
+        await plugin.getMultiVideoWithOptions();
 
-      final VerificationResult result = verify(
-          mockFileSelectorPlatform.openFiles(
-              acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups')));
-      expect(capturedTypeGroups(result)[0].extensions,
-          ImagePickerWindows.videoFormats);
-    });
+        final VerificationResult result = verify(
+            mockFileSelectorPlatform.openFiles(
+                acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups')));
+        expect(capturedTypeGroups(result)[0].extensions,
+            ImagePickerWindows.videoFormats);
+      });
     });
 
     group('media', () {

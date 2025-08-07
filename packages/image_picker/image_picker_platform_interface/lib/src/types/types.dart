@@ -10,9 +10,9 @@ export 'lost_data_response.dart';
 export 'media_options.dart';
 export 'media_selection_type.dart';
 export 'multi_image_picker_options.dart';
+export 'multi_video_picker_options.dart';
 export 'picked_file/picked_file.dart';
 export 'retrieve_type.dart';
-export 'multi_video_picker_options.dart';
 
 /// Denotes that an image is being picked.
 const String kTypeImage = 'image';

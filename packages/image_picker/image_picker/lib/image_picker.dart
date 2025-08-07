@@ -300,31 +300,20 @@ class ImagePicker {
 
   /// Returns a [List<XFile>] of the videos that were picked.
   ///
-  /// The returned [List<XFile>] is intended to be used within a single app session.
-  /// Do not save the file path and use it across sessions.
+  /// The returned [List<XFile>] is intended to be used within a single app
+  /// session. Do not save the file path and use it across sessions.
   ///
-  /// The `source` argument controls where the videos come from. This can
-  /// be either [ImageSource.camera] or [ImageSource.gallery].
+  /// The videos come from the gallery.
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured videos.
-  /// If no [maxDuration] is specified, the maximum duration will be infinite.
+  /// The [maxDuration] argument specifies the maximum duration of the captured
+  /// videos. If no [maxDuration] is specified, the maximum duration will be
+  /// infinite. This value may be ignored by platforms that cannot support it.
   ///
-  /// Use `preferredCameraDevice` to specify the camera to use when the `source` is
-  /// [ImageSource.camera]. The `preferredCameraDevice` is ignored when `source` is
-  /// [ImageSource.gallery]. It is also ignored if the chosen camera is not supported
-  /// on the device. Defaults to [CameraDevice.rear].
+  /// The `limit` parameter modifies the maximum number of videos that can be
+  /// selected. This value may be ignored by platforms that cannot support it.
   ///
-  /// The `limit` parameter modifies the maximum number of videos that can be selected.
-  /// This value may be ignored by platforms that cannot support it.
-  ///
-  /// In Android, the MainActivity can be destroyed for various reasons. If that happens,
-  /// the result will be lost in this call. You can then call [retrieveLostData] when your
-  /// app relaunches to retrieve the lost data.
-  ///
-  /// The method could throw [PlatformException] if the app does not have permission to access
-  /// the camera or photos gallery, no camera is available, plugin is already in use,
-  /// temporary file could not be created and video could not be cached (iOS only),
-  /// plugin activity could not be allocated (Android only) or due to an unknown error.
+  /// The method can throw a [PlatformException] if the video selection process
+  /// fails.
   Future<List<XFile>> pickMultiVideo({
     Duration? maxDuration,
     int? limit,

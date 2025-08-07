@@ -1,10 +1,7 @@
-## 2.12.0
-
-* feat: Add pickMultiVideo.
 
 ## 2.11.0
 
-* feat: Add pickMultiVideo.
+* Adds `getMultiVideo` method.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.10.1

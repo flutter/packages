@@ -1,10 +1,6 @@
-## 0.8.14
-
-* feat: Add pickMultiVideo.
-
 ## 0.8.13
 
-* feat: Add pickMultiVideo.
+* Adds support for `getMultiVideo`.
 
 ## 0.8.12+24
 
