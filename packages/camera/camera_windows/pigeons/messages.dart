@@ -40,6 +40,21 @@ class PlatformSize {
   final double height;
 }
 
+/// A representation of frame data from the camera preview stream.
+class PlatformFrameData {
+  PlatformFrameData({
+    required this.data,
+    required this.width,
+    required this.height,
+    required this.length,
+  });
+
+  final List<int> data;
+  final int width;
+  final int height;
+  final int length;
+}
+
 @HostApi()
 abstract class CameraApi {
   /// Returns the names of all of the available capture devices.
