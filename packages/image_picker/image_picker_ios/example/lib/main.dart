@@ -391,7 +391,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 _isVideo = true;
                 _onImageButtonPressed(ImageSource.gallery, context: context);
               },
-              heroTag: 'video0',
+              heroTag: 'video',
               tooltip: 'Pick video from gallery',
               label: const Text('Pick video from gallery'),
               icon: const Icon(Icons.video_file),
@@ -406,7 +406,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 _onImageButtonPressed(ImageSource.gallery,
                     context: context, allowMultiple: true);
               },
-              heroTag: 'video0',
+              heroTag: 'multiVideo',
               tooltip: 'Pick multiple videos',
               label: const Text('Pick multiple videos'),
               icon: const Icon(Icons.video_library),
@@ -420,7 +420,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 _isVideo = true;
                 _onImageButtonPressed(ImageSource.camera, context: context);
               },
-              heroTag: 'video1',
+              heroTag: 'takeVideo',
               tooltip: 'Take a video',
               label: const Text('Take a video'),
               icon: const Icon(Icons.videocam),
