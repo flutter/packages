@@ -339,7 +339,9 @@ public class ImagePickerPlugin implements FlutterPlugin, ActivityAware, ImagePic
 
     setCameraDevice(delegate, source);
     if (generalOptions.getAllowMultiple()) {
-      result.error(new RuntimeException("Multi-video selection is not implemented"));
+      int limit = ImagePickerUtils.getLimitFromOption(generalOptions);
+      delegate.chooseMultiVideoFromGallery(
+          options, generalOptions.getUsePhotoPicker(), limit, result);
     } else {
       switch (source.getType()) {
         case GALLERY:

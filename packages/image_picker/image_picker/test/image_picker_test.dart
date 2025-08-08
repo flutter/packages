@@ -397,6 +397,32 @@ void main() {
           expect(response.exception!.message, 'test_error_message');
         });
       });
+
+      group('#pickMultiVideo', () {
+        setUp(() {
+          when(mockPlatform.getMultiVideoWithOptions(
+            options: any,
+          )).thenAnswer((Invocation _) async => <XFile>[]);
+        });
+
+        test('passes the arguments correctly', () async {
+          final ImagePicker picker = ImagePicker();
+          await picker.pickMultiVideo();
+          await picker.pickMultiVideo(maxDuration: const Duration(seconds: 10));
+          await picker.pickMultiVideo(
+            limit: 5,
+          );
+
+          verifyInOrder(<Object>[
+            mockPlatform.getMultiVideoWithOptions(),
+            mockPlatform.getMultiVideoWithOptions(
+                options: const MultiVideoPickerOptions(
+                    maxDuration: Duration(seconds: 10))),
+            mockPlatform.getMultiVideoWithOptions(
+                options: const MultiVideoPickerOptions(limit: 5)),
+          ]);
+        });
+      });
     });
 
     group('#Multi images', () {

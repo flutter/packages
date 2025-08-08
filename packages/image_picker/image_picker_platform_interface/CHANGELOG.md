@@ -1,5 +1,7 @@
-## NEXT
 
+## 2.11.0
+
+* Adds `getMultiVideo` method.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 2.10.1
