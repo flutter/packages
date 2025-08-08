@@ -1,3 +1,7 @@
+## 0.5.13
+
+* Adds Advanced markers support.
+
 ## 0.5.12+2
 
 * Fix broken cameraTargetBounds option on web.
