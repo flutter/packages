@@ -16,7 +16,64 @@ static void *durationContext = &durationContext;
 static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *rateContext = &rateContext;
 
-@implementation FVPVideoPlayer
+/// Registers KVO observers on 'object' for each entry in 'observations', which must be a
+/// dictionary mapping KVO keys to NSValue-wrapped context pointers.
+///
+/// This does not call any methods on 'observer', so is safe to call from 'observer's init.
+static void FVPRegisterKeyValueObservers(NSObject *observer,
+                                         NSDictionary<NSString *, NSValue *> *observations,
+                                         NSObject *target) {
+  // It is important not to use NSKeyValueObservingOptionInitial here, because that will cause
+  // synchronous calls to 'observer', violating the requirement that this method does not call its
+  // methods. If there are use cases for specific pieces of initial state, those should be handled
+  // explicitly by the caller, rather than by adding initial-state KVO notifications here.
+  for (NSString *key in observations) {
+    [target addObserver:observer
+             forKeyPath:key
+                options:NSKeyValueObservingOptionNew
+                context:observations[key].pointerValue];
+  }
+}
+
+/// Registers KVO observers on 'object' for each entry in 'observations', which must be a
+/// dictionary mapping KVO keys to NSValue-wrapped context pointers.
+///
+/// This should only be called to balance calls to FVPRegisterKeyValueObservers, as it is an
+/// error to try to remove observers that are not currently set.
+///
+/// This does not call any methods on 'observer', so is safe to call from 'observer's dealloc.
+static void FVPRemoveKeyValueObservers(NSObject *observer,
+                                       NSDictionary<NSString *, NSValue *> *observations,
+                                       NSObject *target) {
+  for (NSString *key in observations) {
+    [target removeObserver:observer forKeyPath:key];
+  }
+}
+
+/// Returns a mapping of KVO keys to NSValue-wrapped observer context pointers for observations that
+/// should be set for AVPlayer instances.
+static NSDictionary<NSString *, NSValue *> *FVPGetPlayerObservations(void) {
+  return @{
+    @"rate" : [NSValue valueWithPointer:rateContext],
+  };
+}
+
+/// Returns a mapping of KVO keys to NSValue-wrapped observer context pointers for observations that
+/// should be set for AVPlayerItem instances.
+static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
+  return @{
+    @"loadedTimeRanges" : [NSValue valueWithPointer:timeRangeContext],
+    @"status" : [NSValue valueWithPointer:statusContext],
+    @"presentationSize" : [NSValue valueWithPointer:presentationSizeContext],
+    @"duration" : [NSValue valueWithPointer:durationContext],
+    @"playbackLikelyToKeepUp" : [NSValue valueWithPointer:playbackLikelyToKeepUpContext],
+  };
+}
+
+@implementation FVPVideoPlayer {
+  // Whether or not player and player item listeners have ever been registered.
+  BOOL _listenersRegistered;
+}
 
 - (instancetype)initWithURL:(NSURL *)url
                 httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
@@ -82,25 +139,33 @@ static void *rateContext = &rateContext;
   };
   _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
 
-  [self addObserversForItem:item player:_player];
-
   [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
 
   return self;
 }
 
 - (void)dealloc {
-  if (!_disposed) {
-    [self removeKeyValueObservers];
+  if (_listenersRegistered && !_disposed) {
+    // If dispose was never called for some reason, remove observers to prevent crashes.
+    FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), _player.currentItem);
+    FVPRemoveKeyValueObservers(self, FVPGetPlayerObservations(), _player);
   }
 }
 
 - (void)dispose {
+  // In some hot restart scenarios, dispose can be called twice, so no-op after the first time.
+  if (_disposed) {
+    return;
+  }
   _disposed = YES;
-  [self removeKeyValueObservers];
+
+  if (_listenersRegistered) {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    FVPRemoveKeyValueObservers(self, FVPGetPlayerItemObservations(), self.player.currentItem);
+    FVPRemoveKeyValueObservers(self, FVPGetPlayerObservations(), self.player);
+  }
 
   [self.player replaceCurrentItemWithPlayerItem:nil];
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   if (_onDisposed) {
     _onDisposed();
@@ -108,40 +173,23 @@ static void *rateContext = &rateContext;
   [self.eventListener videoPlayerWasDisposed];
 }
 
-- (void)addObserversForItem:(AVPlayerItem *)item player:(AVPlayer *)player {
-  [item addObserver:self
-         forKeyPath:@"loadedTimeRanges"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:timeRangeContext];
-  [item addObserver:self
-         forKeyPath:@"status"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:statusContext];
-  [item addObserver:self
-         forKeyPath:@"presentationSize"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:presentationSizeContext];
-  [item addObserver:self
-         forKeyPath:@"duration"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:durationContext];
-  [item addObserver:self
-         forKeyPath:@"playbackLikelyToKeepUp"
-            options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-            context:playbackLikelyToKeepUpContext];
-
-  // Add observer to AVPlayer instead of AVPlayerItem since the AVPlayerItem does not have a "rate"
-  // property
-  [player addObserver:self
-           forKeyPath:@"rate"
-              options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew
-              context:rateContext];
-
-  // Add an observer that will respond to itemDidPlayToEndTime
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(itemDidPlayToEndTime:)
-                                               name:AVPlayerItemDidPlayToEndTimeNotification
-                                             object:item];
+- (void)setEventListener:(NSObject<FVPVideoEventListener> *)eventListener {
+  _eventListener = eventListener;
+  // The first time an event listener is set, set up video event listeners to relay status changes
+  // changes to the event listener.
+  if (eventListener && !_listenersRegistered) {
+    AVPlayerItem *item = self.player.currentItem;
+    // If the item is already ready to play, ensure that the intialized event is sent first.
+    [self reportStatusForPlayerItem:item];
+    // Set up all necessary observers to report video events.
+    FVPRegisterKeyValueObservers(self, FVPGetPlayerItemObservations(), item);
+    FVPRegisterKeyValueObservers(self, FVPGetPlayerObservations(), _player);
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(itemDidPlayToEndTime:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:item];
+    _listenersRegistered = YES;
+  }
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification *)notification {
@@ -228,17 +276,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     [self.eventListener videoPlayerDidUpdateBufferRegions:values];
   } else if (context == statusContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
-    switch (item.status) {
-      case AVPlayerItemStatusFailed:
-        [self sendFailedToLoadVideoEvent];
-        break;
-      case AVPlayerItemStatusUnknown:
-        break;
-      case AVPlayerItemStatusReadyToPlay:
-        [item addOutput:_videoOutput];
-        [self reportInitializedIfReadyToPlay];
-        break;
-    }
+    [self reportStatusForPlayerItem:item];
   } else if (context == presentationSizeContext || context == durationContext) {
     AVPlayerItem *item = (AVPlayerItem *)object;
     if (item.status == AVPlayerItemStatusReadyToPlay) {
@@ -259,6 +297,20 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     // as it is not available in AVPlayerItem.
     AVPlayer *player = (AVPlayer *)object;
     [self.eventListener videoPlayerDidSetPlaying:(player.rate > 0)];
+  }
+}
+
+- (void)reportStatusForPlayerItem:(AVPlayerItem *)item {
+  switch (item.status) {
+    case AVPlayerItemStatusFailed:
+      [self sendFailedToLoadVideoEvent];
+      break;
+    case AVPlayerItemStatusUnknown:
+      break;
+    case AVPlayerItemStatusReadyToPlay:
+      [item addOutput:_videoOutput];
+      [self reportInitializedIfReadyToPlay];
+      break;
   }
 }
 
@@ -434,19 +486,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // `[AVPlayerItem duration]` can be `kCMTimeIndefinite`,
   // use `[[AVPlayerItem asset] duration]` instead.
   return FVPCMTimeToMillis([[[_player currentItem] asset] duration]);
-}
-
-/// Removes all key-value observers set up for the player.
-///
-/// This is called from dealloc, so must not use any methods on self.
-- (void)removeKeyValueObservers {
-  AVPlayerItem *currentItem = _player.currentItem;
-  [currentItem removeObserver:self forKeyPath:@"status"];
-  [currentItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
-  [currentItem removeObserver:self forKeyPath:@"presentationSize"];
-  [currentItem removeObserver:self forKeyPath:@"duration"];
-  [currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
-  [_player removeObserver:self forKeyPath:@"rate"];
 }
 
 @end

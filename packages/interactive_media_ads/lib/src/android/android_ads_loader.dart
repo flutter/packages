@@ -89,10 +89,36 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
     final ima.AdsRequest androidRequest = await _sdkFactory.createAdsRequest();
 
     await Future.wait(<Future<void>>[
-      androidRequest.setAdTagUrl(request.adTagUrl),
-      if (request.contentProgressProvider != null)
+      if (request case final PlatformAdsRequestWithAdTagUrl request)
+        androidRequest.setAdTagUrl(request.adTagUrl),
+      if (request case final PlatformAdsRequestWithAdsResponse request)
+        androidRequest.setAdsResponse(request.adsResponse),
+      if (request.adWillAutoPlay case final bool adWillAutoPlay)
+        androidRequest.setAdWillAutoPlay(adWillAutoPlay),
+      if (request.adWillPlayMuted case final bool adWillPlayMuted)
+        androidRequest.setAdWillPlayMuted(adWillPlayMuted),
+      if (request.continuousPlayback case final bool continuousPlayback)
+        androidRequest.setContinuousPlayback(continuousPlayback),
+      if (request.contentDuration case final Duration contentDuration)
+        androidRequest.setContentDuration(
+            contentDuration.inMilliseconds / Duration.millisecondsPerSecond),
+      if (request.contentKeywords case final List<String> contentKeywords)
+        androidRequest.setContentKeywords(contentKeywords),
+      if (request.contentTitle case final String contentTitle)
+        androidRequest.setContentTitle(contentTitle),
+      if (request.liveStreamPrefetchMaxWaitTime
+          case final Duration liveStreamPrefetchMaxWaitTime)
+        androidRequest.setLiveStreamPrefetchSeconds(
+          liveStreamPrefetchMaxWaitTime.inMilliseconds /
+              Duration.millisecondsPerSecond,
+        ),
+      if (request.vastLoadTimeout case final Duration vastLoadTimeout)
+        androidRequest
+            .setVastLoadTimeout(vastLoadTimeout.inMilliseconds.toDouble()),
+      if (request.contentProgressProvider
+          case final PlatformContentProgressProvider contentProgressProvider)
         androidRequest.setContentProgressProvider(
-          (request.contentProgressProvider! as AndroidContentProgressProvider)
+          (contentProgressProvider as AndroidContentProgressProvider)
               .progressProvider,
         ),
       adsLoader.requestAds(androidRequest),

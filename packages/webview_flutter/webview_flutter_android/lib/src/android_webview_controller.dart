@@ -18,6 +18,41 @@ import 'android_webkit_constants.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
 
+/// Object specifying parameters for loading a local file in a
+/// [AndroidWebViewController].
+@immutable
+base class AndroidLoadFileParams extends LoadFileParams {
+  /// Constructs a [AndroidLoadFileParams], the subclass of a [LoadFileParams].
+  AndroidLoadFileParams({
+    required String absoluteFilePath,
+    this.headers = const <String, String>{},
+  }) : super(
+          absoluteFilePath: absoluteFilePath.startsWith('file://')
+              ? absoluteFilePath
+              : Uri.file(absoluteFilePath).toString(),
+        );
+
+  /// Constructs a [AndroidLoadFileParams] using a [LoadFileParams].
+  factory AndroidLoadFileParams.fromLoadFileParams(
+    LoadFileParams params, {
+    Map<String, String> headers = const <String, String>{},
+  }) {
+    return AndroidLoadFileParams(
+      absoluteFilePath: params.absoluteFilePath,
+      headers: headers,
+    );
+  }
+
+  /// Additional HTTP headers to be included when loading the local file.
+  ///
+  /// If not provided at initialization time, doesn't add any additional headers.
+  ///
+  /// On Android, WebView supports adding headers when loading local or remote
+  /// content. This can be useful for scenarios like authentication,
+  /// content-type overrides, or custom request context.
+  final Map<String, String> headers;
+}
+
 /// Object specifying creation parameters for creating a [AndroidWebViewController].
 ///
 /// When adding additional fields make sure they can be null or have a default
@@ -386,12 +421,29 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> loadFile(
     String absoluteFilePath,
   ) {
-    final String url = absoluteFilePath.startsWith('file://')
-        ? absoluteFilePath
-        : Uri.file(absoluteFilePath).toString();
+    return loadFileWithParams(
+      AndroidLoadFileParams(
+        absoluteFilePath: absoluteFilePath,
+      ),
+    );
+  }
 
-    _webView.settings.setAllowFileAccess(true);
-    return _webView.loadUrl(url, <String, String>{});
+  @override
+  Future<void> loadFileWithParams(
+    LoadFileParams params,
+  ) async {
+    switch (params) {
+      case final AndroidLoadFileParams params:
+        await Future.wait(<Future<void>>[
+          _webView.settings.setAllowFileAccess(true),
+          _webView.loadUrl(params.absoluteFilePath, params.headers),
+        ]);
+
+      default:
+        await loadFileWithParams(
+          AndroidLoadFileParams.fromLoadFileParams(params),
+        );
+    }
   }
 
   @override

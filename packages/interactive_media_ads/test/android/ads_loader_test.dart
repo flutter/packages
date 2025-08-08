@@ -133,14 +133,96 @@ void main() {
         AndroidContentProgressProviderCreationParams(proxy: proxy),
       );
       await adsLoader.requestAds(
-        PlatformAdsRequest(
+        PlatformAdsRequest.withAdTagUrl(
           adTagUrl: 'url',
+          adWillAutoPlay: true,
+          adWillPlayMuted: false,
+          continuousPlayback: true,
+          contentDuration: const Duration(seconds: 2),
+          contentKeywords: <String>['keyword1', 'keyword2'],
+          contentTitle: 'contentTitle',
+          liveStreamPrefetchMaxWaitTime: const Duration(seconds: 3),
+          vastLoadTimeout: const Duration(milliseconds: 5000),
           contentProgressProvider: progressProvider,
         ),
       );
 
+      verifyNever(mockAdsRequest.setAdsResponse(any));
       verifyInOrder(<Future<void>>[
         mockAdsRequest.setAdTagUrl('url'),
+        mockAdsRequest.setAdWillAutoPlay(true),
+        mockAdsRequest.setAdWillPlayMuted(false),
+        mockAdsRequest.setContinuousPlayback(true),
+        mockAdsRequest.setContentDuration(2.0),
+        mockAdsRequest.setContentKeywords(<String>['keyword1', 'keyword2']),
+        mockAdsRequest.setContentTitle('contentTitle'),
+        mockAdsRequest.setLiveStreamPrefetchSeconds(3.0),
+        mockAdsRequest.setVastLoadTimeout(5000.0),
+        mockAdsRequest.setContentProgressProvider(
+          progressProvider.progressProvider,
+        ),
+        mockAdsLoader.requestAds(mockAdsRequest),
+      ]);
+    });
+
+    testWidgets('requestAds with adsResponse', (WidgetTester tester) async {
+      final AndroidAdDisplayContainer container =
+          await _pumpAdDisplayContainer(tester);
+
+      final MockAdsLoader mockAdsLoader = MockAdsLoader();
+      final MockAdsRequest mockAdsRequest = MockAdsRequest();
+      _mockImaSdkFactoryInstance(
+        adsRequest: mockAdsRequest,
+        adsLoader: mockAdsLoader,
+      );
+
+      final InteractiveMediaAdsProxy proxy = InteractiveMediaAdsProxy(
+        newContentProgressProvider: () =>
+            ima.ContentProgressProvider.pigeon_detached(),
+      );
+
+      final AndroidAdsLoader adsLoader = AndroidAdsLoader(
+        AndroidAdsLoaderCreationParams(
+          container: container,
+          settings: AndroidImaSettings(
+            const PlatformImaSettingsCreationParams(),
+          ),
+          onAdsLoaded: (PlatformOnAdsLoadedData data) {},
+          onAdsLoadError: (AdsLoadErrorData data) {},
+          proxy: proxy,
+        ),
+      );
+
+      final AndroidContentProgressProvider progressProvider =
+          AndroidContentProgressProvider(
+        AndroidContentProgressProviderCreationParams(proxy: proxy),
+      );
+      await adsLoader.requestAds(
+        PlatformAdsRequest.withAdsResponse(
+          adsResponse: 'url',
+          adWillAutoPlay: true,
+          adWillPlayMuted: false,
+          continuousPlayback: true,
+          contentDuration: const Duration(seconds: 2),
+          contentKeywords: <String>['keyword1', 'keyword2'],
+          contentTitle: 'contentTitle',
+          liveStreamPrefetchMaxWaitTime: const Duration(seconds: 3),
+          vastLoadTimeout: const Duration(milliseconds: 5000),
+          contentProgressProvider: progressProvider,
+        ),
+      );
+
+      verifyNever(mockAdsRequest.setAdTagUrl(any));
+      verifyInOrder(<Future<void>>[
+        mockAdsRequest.setAdsResponse('url'),
+        mockAdsRequest.setAdWillAutoPlay(true),
+        mockAdsRequest.setAdWillPlayMuted(false),
+        mockAdsRequest.setContinuousPlayback(true),
+        mockAdsRequest.setContentDuration(2.0),
+        mockAdsRequest.setContentKeywords(<String>['keyword1', 'keyword2']),
+        mockAdsRequest.setContentTitle('contentTitle'),
+        mockAdsRequest.setLiveStreamPrefetchSeconds(3.0),
+        mockAdsRequest.setVastLoadTimeout(5000.0),
         mockAdsRequest.setContentProgressProvider(
           progressProvider.progressProvider,
         ),
