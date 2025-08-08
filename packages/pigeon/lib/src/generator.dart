@@ -345,16 +345,13 @@ abstract class StructuredGenerator<T extends InternalOptions>
     required String dartPackageName,
   }) {}
 
-  /// Writes the base codec to be used by all ProxyApis.
+  /// Writes the base codec to be used by the Dart proxy class or the native
+  /// type API.
   ///
   /// This codec should use `128` as the identifier for objects that exist in
   /// an `InstanceManager`. The write implementation should convert an instance
   /// to an identifier. The read implementation should covert the identifier
   /// to an instance.
-  ///
-  /// This will serve as the default codec for all ProxyApis. If a ProxyApi
-  /// needs to create its own codec (it has methods/fields/constructor that use
-  /// a data class) it should extend this codec and not `StandardMessageCodec`.
   void writeProxyApiBaseCodec(
     T generatorOptions,
     Root root,
