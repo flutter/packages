@@ -52,6 +52,35 @@ Java:
 import io.flutter.plugins.webviewflutter.WebViewFlutterAndroidExternalApi;
 ```
 
+## Enable Payment Request in WebView
+
+Payment Request feature can be enabled by `AndroidWebViewController.setPaymentRequestEnabled` after checking `AndroidWebViewController.isWebViewFeatureSupported`.
+
+```dart
+final bool paymentRequestEnabled = await androidController
+    .isWebViewFeatureSupported(WebViewFeatureType.paymentRequest);
+
+if (paymentRequestEnabled) {
+  await androidController.setPaymentRequestEnabled(true);
+}
+```
+
+Add intent filters to your AndroidManifest.xml to discover and invoke Android payment apps using system intents:
+
+```xml
+<queries>
+  <intent>
+    <action android:name="org.chromium.intent.action.PAY"/>
+  </intent>
+  <intent>
+    <action android:name="org.chromium.intent.action.IS_READY_TO_PAY"/>
+  </intent>
+  <intent>
+    <action android:name="org.chromium.intent.action.UPDATE_PAYMENT_DETAILS"/>
+  </intent>
+</queries>
+```
+
 ## Fullscreen Video
 
 To display a video as fullscreen, an app must manually handle the notification that the current page
