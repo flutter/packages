@@ -746,7 +746,7 @@ public class ImagePickerDelegate
       return;
     }
 
-    // User cancelled choosing a picture.
+    // User cancelled choosing a video.
     finishWithSuccess(null);
   }
 
