@@ -32,7 +32,7 @@ Modify the `<head>` tag of your `web/index.html` to load the Google Maps JavaScr
 The Google Maps Web SDK splits some of its functionality in [separate libraries](https://developers.google.com/maps/documentation/javascript/libraries#libraries-for-dynamic-library-import).
 
 If your app needs the `drawing` library (to draw polygons, rectangles, polylines,
-circles or markers on a map), include it like this:
+circles or legacy markers on a map), include it like this:
 
 ```html
 <script
@@ -40,11 +40,18 @@ circles or markers on a map), include it like this:
 </script>
 ```
 
+If your app uses Advanced Markers, include `marker` library like this:
+```html
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=marker">
+</script>
+```
+
 To request multiple libraries, separate them with commas:
 
 ```html
 <script
-  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing,visualization,places">
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=drawing,marker,visualization,places">
 </script>
 ```
 

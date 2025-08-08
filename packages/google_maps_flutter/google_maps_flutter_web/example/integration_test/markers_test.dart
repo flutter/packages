@@ -25,18 +25,17 @@ void main() {
 
   group('MarkersController', () {
     late StreamController<MapEvent<Object?>> events;
-    late MarkersController controller;
-    late ClusterManagersController clusterManagersController;
+    late LegacyMarkersController controller;
+    late ClusterManagersController<gmaps.Marker> clusterManagersController;
     late gmaps.Map map;
 
     setUp(() {
       events = StreamController<MapEvent<Object?>>();
 
-      clusterManagersController = ClusterManagersController(stream: events);
-      controller = MarkersController(
-        stream: events,
-        clusterManagersController: clusterManagersController,
-      );
+      clusterManagersController =
+          ClusterManagersController<gmaps.Marker>(stream: events);
+      controller = LegacyMarkersController(
+          stream: events, clusterManagersController: clusterManagersController);
       map = gmaps.Map(createDivElement());
       clusterManagersController.bindToMap(123, map);
       controller.bindToMap(123, map);

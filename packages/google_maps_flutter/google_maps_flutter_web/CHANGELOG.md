@@ -1,3 +1,7 @@
+## 0.5.15
+
+* Adds Advanced markers support.
+
 ## 0.5.14+3
 
 * Replaces uses of deprecated `Color` properties.
