@@ -801,7 +801,6 @@ class SampleMenu extends StatelessWidget {
     if (paymentRequestEnabled) {
       await androidController.setPaymentRequestEnabled(true);
     }
-
     // #enddocregion payment_request_example
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
