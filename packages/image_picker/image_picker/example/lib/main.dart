@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
           files = <XFile>[if (file != null) file];
         }
         // Just play the first file, to keep the example simple.
-        await _playVideo(files.first);
+        await _playVideo(files.firstOrNull);
       } else if (allowMultiple) {
         await _displayPickImageDialog(context, true, (double? maxWidth,
             double? maxHeight, int? quality, int? limit) async {
