@@ -184,6 +184,20 @@ class SharedPreferencesWithCache {
             SharedPreferencesAsync(options: sharedPreferencesOptions),
         _cache = cache ?? <String, Object?>{};
 
+  /// Creates a new instance with the given options
+  static SharedPreferencesWithCache createWithoutWarmedUpCache({
+    SharedPreferencesOptions sharedPreferencesOptions =
+        const SharedPreferencesOptions(),
+    required SharedPreferencesWithCacheOptions cacheOptions,
+    Map<String, Object?>? cache,
+  }) {
+    return SharedPreferencesWithCache._create(
+      sharedPreferencesOptions: sharedPreferencesOptions,
+      cacheOptions: cacheOptions,
+      cache: cache,
+    );
+  }
+
   /// Creates a new instance with the given options and reloads the cache from
   /// the platform data.
   static Future<SharedPreferencesWithCache> create({
