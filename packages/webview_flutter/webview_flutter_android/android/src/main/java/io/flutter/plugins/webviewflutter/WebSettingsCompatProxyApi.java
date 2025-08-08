@@ -4,10 +4,10 @@
 
 package io.flutter.plugins.webviewflutter;
 
+import android.annotation.SuppressLint;
 import android.webkit.WebSettings;
 import androidx.annotation.NonNull;
 import androidx.webkit.WebSettingsCompat;
-import androidx.webkit.WebViewFeature;
 
 /**
  * Proxy API implementation for {@link WebSettingsCompat}.
@@ -20,10 +20,13 @@ public class WebSettingsCompatProxyApi extends PigeonApiWebSettingsCompat {
     super(pigeonRegistrar);
   }
 
+  /**
+   * This method should only be called if {@link WebViewFeatureProxyApi#isFeatureSupported(String)}
+   * with PAYMENT_REQUEST returns true.
+   */
+  @SuppressLint("RequiresFeature")
   @Override
   public void setPaymentRequestEnabled(@NonNull WebSettings webSettings, boolean enabled) {
-    if (WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST)) {
-      WebSettingsCompat.setPaymentRequestEnabled(webSettings, enabled);
-    }
+    WebSettingsCompat.setPaymentRequestEnabled(webSettings, enabled);
   }
 }
