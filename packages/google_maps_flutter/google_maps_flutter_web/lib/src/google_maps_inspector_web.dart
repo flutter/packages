@@ -15,8 +15,8 @@ import 'marker_clustering.dart';
 typedef ConfigurationProvider = MapConfiguration Function(int mapId);
 
 /// Function that gets the [ClusterManagersController] for a given `mapId`.
-typedef ClusterManagersControllerProvider =
-    ClusterManagersController? Function(int mapId);
+typedef ClusterManagersControllerProvider = ClusterManagersController<dynamic>?
+    Function(int mapId);
 
 /// Function that gets the [GroundOverlaysController] for a given `mapId`.
 typedef GroundOverlaysControllerProvider =
@@ -103,16 +103,15 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
     final JSAny? clickable = groundOverlay.get('clickable');
 
     return GroundOverlay.fromBounds(
-      groundOverlayId: groundOverlayId,
-      image: BytesMapBitmap(
-        Uint8List.fromList(<int>[0]),
-        bitmapScaling: MapBitmapScaling.none,
-      ),
-      bounds: gmLatLngBoundsTolatLngBounds(groundOverlay.bounds),
-      transparency: 1.0 - groundOverlay.opacity,
-      visible: groundOverlay.map != null,
-      clickable: clickable != null && (clickable as JSBoolean).toDart,
-    );
+        groundOverlayId: groundOverlayId,
+        image: BytesMapBitmap(
+          Uint8List.fromList(<int>[0]),
+          bitmapScaling: MapBitmapScaling.none,
+        ),
+        bounds: gmLatLngBoundsToLatLngBounds(groundOverlay.bounds),
+        transparency: 1.0 - groundOverlay.opacity,
+        visible: groundOverlay.map != null,
+        clickable: clickable != null && (clickable as JSBoolean).toDart);
   }
 
   @override
