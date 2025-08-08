@@ -1,3 +1,7 @@
+## 2.3.0
+
+* Changes internal implementation to use JNI.
+
 ## 2.2.17
 
 * Removes obsolete code related to supporting SDK <21.
