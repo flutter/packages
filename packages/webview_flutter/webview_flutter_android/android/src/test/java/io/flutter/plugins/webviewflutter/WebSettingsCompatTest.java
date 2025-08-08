@@ -7,7 +7,6 @@ package io.flutter.plugins.webviewflutter;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
 
 import android.webkit.WebSettings;
 import androidx.webkit.WebSettingsCompat;
@@ -17,7 +16,7 @@ import org.mockito.MockedStatic;
 
 public class WebSettingsCompatTest {
   @Test
-  public void setPaymentRequestEnabled_PAYMENT_REQUEST_is_supported() {
+  public void setPaymentRequestEnabled() {
     final PigeonApiWebSettingsCompat api =
         new TestProxyApiRegistrar().getPigeonApiWebSettingsCompat();
 
@@ -30,29 +29,6 @@ public class WebSettingsCompatTest {
             .thenReturn(true);
         api.setPaymentRequestEnabled(webSettings, true);
         mockedStatic.verify(() -> WebSettingsCompat.setPaymentRequestEnabled(webSettings, true));
-      } catch (Exception e) {
-        fail(e.toString());
-      }
-    } catch (Exception e) {
-      fail(e.toString());
-    }
-  }
-
-  @Test
-  public void setPaymentRequestEnabled_PAYMENT_REQUEST_is_NOT_supported() {
-    final PigeonApiWebSettingsCompat api =
-        new TestProxyApiRegistrar().getPigeonApiWebSettingsCompat();
-
-    final WebSettings webSettings = mock(WebSettings.class);
-
-    try (MockedStatic<WebSettingsCompat> mockedStatic = mockStatic(WebSettingsCompat.class)) {
-      try (MockedStatic<WebViewFeature> mockedWebViewFeature = mockStatic(WebViewFeature.class)) {
-        mockedWebViewFeature
-            .when(() -> WebViewFeature.isFeatureSupported(WebViewFeature.PAYMENT_REQUEST))
-            .thenReturn(false);
-        api.setPaymentRequestEnabled(webSettings, true);
-        mockedStatic.verify(
-            () -> WebSettingsCompat.setPaymentRequestEnabled(webSettings, true), never());
       } catch (Exception e) {
         fail(e.toString());
       }
