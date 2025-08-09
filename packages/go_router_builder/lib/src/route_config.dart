@@ -189,45 +189,12 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
   String get dataConvertionFunctionName => r'$branch';
 }
 
-/// The configuration to generate class declarations for a GoRouteData.
-class GoRouteConfig extends RouteBaseConfig {
-  GoRouteConfig._({
-    required this.path,
-    required this.name,
-    required this.caseSensitive,
-    required this.parentNavigatorKey,
-    required super.routeDataClass,
-    required super.parent,
-  }) : super._();
-
-  /// The path of the GoRoute to be created by this configuration.
-  final String path;
-
-  /// The name of the GoRoute to be created by this configuration.
-  final String? name;
-
-  /// The case sensitivity of the GoRoute to be created by this configuration.
-  final bool caseSensitive;
-
-  /// The parent navigator key.
-  final String? parentNavigatorKey;
+/// A mixin that provides common functionality for GoRoute-based configurations.
+mixin _GoRouteMixin on RouteBaseConfig {
+  String get _basePathForLocation;
 
   late final Set<String> _pathParams =
-      pathParametersFromPattern(_rawJoinedPath);
-
-  String get _rawJoinedPath {
-    final List<String> pathSegments = <String>[];
-
-    RouteBaseConfig? config = this;
-    while (config != null) {
-      if (config is GoRouteConfig) {
-        pathSegments.add(config.path);
-      }
-      config = config.parent;
-    }
-
-    return p.url.joinAll(pathSegments.reversed);
-  }
+      pathParametersFromPattern(_basePathForLocation);
 
   // construct path bits using parent bits
   // if there are any queryParam objects, add in the `queryParam` bits
@@ -254,9 +221,12 @@ class GoRouteConfig extends RouteBaseConfig {
         return MapEntry<String, String>(pathParameter, valueBuffer.toString());
       }),
     );
-    final String location = patternToPath(_rawJoinedPath, pathParameters);
+    final String location = patternToPath(_basePathForLocation, pathParameters);
     return "'$location'";
   }
+
+  /// The definition of the mixin to be generated.
+  String get _mixinDefinition;
 
   ParameterElement? get _extraParam => _ctor.parameters
       .singleWhereOrNull((ParameterElement element) => element.isExtraField);
@@ -398,46 +368,6 @@ class GoRouteConfig extends RouteBaseConfig {
         ..._enumDeclarations(),
       ];
 
-  String get _mixinDefinition {
-    final bool hasMixin = getNodeDeclaration<ClassDeclaration>(routeDataClass)
-            ?.withClause
-            ?.mixinTypes
-            .any((NamedType e) => e.name2.toString() == _mixinName) ??
-        false;
-
-    if (!hasMixin) {
-      throw InvalidGenerationSourceError(
-        'Missing mixin clause `with $_mixinName`',
-        element: routeDataClass,
-      );
-    }
-
-    return '''
-mixin $_mixinName on GoRouteData {
-  static $_className _fromState(GoRouterState state) $_fromStateConstructor
-  $_castedSelf
-  @override
-  String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
-  
-  @override
-  void go(BuildContext context) =>
-      context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
-  @override
-  Future<T?> push<T>(BuildContext context) =>
-      context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
-  @override
-  void pushReplacement(BuildContext context) =>
-      context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
-  @override
-  void replace(BuildContext context) =>
-      context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-}
-''';
-  }
-
   /// Returns code representing the constant maps that contain the `enum` to
   /// [String] mapping for each referenced enum.
   Iterable<String> _enumDeclarations() {
@@ -465,6 +395,93 @@ mixin $_mixinName on GoRouteData {
   String get factorConstructorParameters => 'factory: $_mixinName._fromState,';
 
   @override
+  String get dataConvertionFunctionName => r'$route';
+}
+
+/// The configuration to generate class declarations for a GoRouteData.
+class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
+  GoRouteConfig._({
+    required this.path,
+    required this.name,
+    required this.caseSensitive,
+    required this.parentNavigatorKey,
+    required super.routeDataClass,
+    required super.parent,
+  }) : super._();
+
+  /// The path of the GoRoute to be created by this configuration.
+  final String path;
+
+  /// The name of the GoRoute to be created by this configuration.
+  final String? name;
+
+  /// The case sensitivity of the GoRoute to be created by this configuration.
+  final bool caseSensitive;
+
+  /// The parent navigator key.
+  final String? parentNavigatorKey;
+
+  String get _rawJoinedPath {
+    final List<String> pathSegments = <String>[];
+
+    RouteBaseConfig? config = this;
+    while (config != null) {
+      if (config
+          case GoRouteConfig(:final String path) ||
+              RelativeGoRouteConfig(:final String path)) {
+        pathSegments.add(path);
+      }
+      config = config.parent;
+    }
+
+    return p.url.joinAll(pathSegments.reversed);
+  }
+
+  @override
+  String get _basePathForLocation => _rawJoinedPath;
+
+  @override
+  String get _mixinDefinition {
+    final bool hasMixin = getNodeDeclaration<ClassDeclaration>(routeDataClass)
+            ?.withClause
+            ?.mixinTypes
+            .any((NamedType e) => e.name2.toString() == _mixinName) ??
+        false;
+
+    if (!hasMixin) {
+      throw InvalidGenerationSourceError(
+        'Missing mixin clause `with $_mixinName`',
+        element: routeDataClass,
+      );
+    }
+
+    return '''
+mixin $_mixinName on $routeDataClassName {
+  static $_className _fromState(GoRouterState state) $_fromStateConstructor
+  $_castedSelf
+  @override
+  String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
+  
+  @override
+  void go(BuildContext context) =>
+      context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
+  Future<T?> push<T>(BuildContext context) =>
+      context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
+  void replace(BuildContext context) =>
+      context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+}
+''';
+  }
+
+  @override
   String get routeConstructorParameters => '''
     path: ${escapeDartString(path)},
     ${name != null ? 'name: ${escapeDartString(name!)},' : ''}
@@ -474,9 +491,83 @@ mixin $_mixinName on GoRouteData {
 
   @override
   String get routeDataClassName => 'GoRouteData';
+}
+
+/// The configuration to generate class declarations for a RelativeGoRouteData.
+class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
+  RelativeGoRouteConfig._({
+    required this.path,
+    required this.caseSensitive,
+    required this.parentNavigatorKey,
+    required super.routeDataClass,
+    required super.parent,
+  }) : super._();
+
+  /// The path of the GoRoute to be created by this configuration.
+  final String path;
+
+  /// The case sensitivity of the GoRoute to be created by this configuration.
+  final bool caseSensitive;
+
+  /// The parent navigator key.
+  final String? parentNavigatorKey;
 
   @override
-  String get dataConvertionFunctionName => r'$route';
+  String get _basePathForLocation => path;
+
+  @override
+  String get _mixinDefinition {
+    final bool hasMixin = getNodeDeclaration<ClassDeclaration>(routeDataClass)
+            ?.withClause
+            ?.mixinTypes
+            .any((NamedType e) => e.name2.toString() == _mixinName) ??
+        false;
+
+    if (!hasMixin) {
+      throw InvalidGenerationSourceError(
+        'Missing mixin clause `with $_mixinName`',
+        element: routeDataClass,
+      );
+    }
+
+    return '''
+mixin $_mixinName on $routeDataClassName {
+  static $_className _fromState(GoRouterState state) $_fromStateConstructor
+  $_castedSelf
+  @override
+  String get subpath => RelativeGoRouteData.\$location($_locationArgs,$_locationQueryParams);
+  
+  @override
+  String get relativeLocation => './\$subpath';
+
+  @override
+  void goRelative(BuildContext context) =>
+      context.go(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+
+  @override
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+  
+  @override
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
+}
+''';
+  }
+
+  @override
+  String get routeConstructorParameters => '''
+    path: ${escapeDartString(path)},
+    ${caseSensitive ? '' : 'caseSensitive: $caseSensitive,'}
+    ${parentNavigatorKey == null ? '' : 'parentNavigatorKey: $parentNavigatorKey,'}
+''';
+
+  @override
+  String get routeDataClassName => 'RelativeGoRouteData';
 }
 
 /// Represents a `TypedGoRoute` annotation to the builder.
@@ -508,11 +599,23 @@ abstract class RouteBaseConfig {
   factory RouteBaseConfig._fromAnnotation(
     ConstantReader reader,
     InterfaceElement element,
-    RouteBaseConfig? parent,
-  ) {
+    RouteBaseConfig? parent, {
+    bool isAncestorRelative = false,
+  }) {
     assert(!reader.isNull, 'reader should not be null');
     final InterfaceType type = reader.objectValue.type! as InterfaceType;
     final String typeName = type.element.name;
+
+    if (isAncestorRelative && typeName == 'TypedGoRoute') {
+      throw InvalidGenerationSourceError(
+        'TypedRelativeGoRoute cannot have a TypedGoRoute descendant.',
+        element: element,
+      );
+    }
+
+    final bool isRelative =
+        isAncestorRelative || typeName == 'TypedRelativeGoRoute';
+
     final DartType typeParamType = type.typeArguments.single;
     if (typeParamType is! InterfaceType) {
       throw InvalidGenerationSourceError(
@@ -611,6 +714,32 @@ abstract class RouteBaseConfig {
             parameterName: r'$parentNavigatorKey',
           ),
         );
+      case 'TypedRelativeGoRoute':
+        final ConstantReader pathValue = reader.read('path');
+        if (pathValue.isNull) {
+          throw InvalidGenerationSourceError(
+            'Missing `path` value on annotation.',
+            element: element,
+          );
+        }
+        final String pathString = pathValue.stringValue;
+        if (pathString.startsWith('/')) {
+          throw InvalidGenerationSourceError(
+            'The path for a TypedRelativeGoRoute cannot start with "/".',
+            element: element,
+          );
+        }
+        final ConstantReader caseSensitiveValue = reader.read('caseSensitive');
+        value = RelativeGoRouteConfig._(
+          path: pathValue.stringValue,
+          caseSensitive: caseSensitiveValue.boolValue,
+          routeDataClass: classElement,
+          parent: parent,
+          parentNavigatorKey: _generateParameterGetterCode(
+            classElement,
+            parameterName: r'$parentNavigatorKey',
+          ),
+        );
       default:
         throw UnsupportedError('Unrecognized type $typeName');
     }
@@ -619,7 +748,8 @@ abstract class RouteBaseConfig {
         .read(_generateChildrenGetterName(typeName))
         .listValue
         .map<RouteBaseConfig>((DartObject e) => RouteBaseConfig._fromAnnotation(
-            ConstantReader(e), element, value)));
+            ConstantReader(e), element, value,
+            isAncestorRelative: isRelative)));
 
     return value;
   }
