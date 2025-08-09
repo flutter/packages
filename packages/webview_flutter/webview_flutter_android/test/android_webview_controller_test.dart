@@ -89,6 +89,9 @@ void main() {
     android_webview.WebViewClient? mockWebViewClient,
     android_webview.WebStorage? mockWebStorage,
     android_webview.WebSettings? mockSettings,
+    Future<bool> Function(String)? isWebViewFeatureSupported,
+    Future<void> Function(android_webview.WebSettings, bool)?
+        setPaymentRequestEnabled,
   }) {
     final android_webview.WebView nonNullMockWebView =
         mockWebView ?? MockWebView();
@@ -247,6 +250,10 @@ void main() {
                     postMessage,
               }) =>
                   mockJavaScriptChannel ?? MockJavaScriptChannel(),
+              isWebViewFeatureSupported:
+                  isWebViewFeatureSupported ?? (_) async => false,
+              setPaymentRequestEnabled:
+                  setPaymentRequestEnabled ?? (_, __) async {},
             ));
 
     when(nonNullMockWebView.settings)
@@ -1861,6 +1868,48 @@ void main() {
     );
 
     expect(controller.webViewIdentifier, 0);
+  });
+
+  test('isWebViewFeatureSupported', () async {
+    String? captured;
+    const bool expectedIsWebViewFeatureEnabled = true;
+
+    final AndroidWebViewController controller = createControllerWithMocks(
+      isWebViewFeatureSupported: (String feature) async {
+        captured = feature;
+        return expectedIsWebViewFeatureEnabled;
+      },
+    );
+
+    final bool result = await controller.isWebViewFeatureSupported(
+      WebViewFeatureType.paymentRequest,
+    );
+
+    expect(WebViewFeatureConstants.paymentRequest, captured);
+    expect(expectedIsWebViewFeatureEnabled, result);
+  });
+
+  test('setPaymentRequestEnabled', () async {
+    android_webview.WebSettings? capturedSettings;
+    bool? capturedEnabled;
+    const bool expectedEnabled = true;
+
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+      setPaymentRequestEnabled:
+          (android_webview.WebSettings settings, bool enabled) async {
+        capturedSettings = settings;
+        capturedEnabled = enabled;
+      },
+    );
+
+    await controller.setPaymentRequestEnabled(expectedEnabled);
+
+    expect(mockSettings, capturedSettings);
+    expect(expectedEnabled, capturedEnabled);
   });
 
   group('AndroidWebViewWidget', () {

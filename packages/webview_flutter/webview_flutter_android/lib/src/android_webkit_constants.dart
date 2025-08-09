@@ -117,3 +117,14 @@ class WebViewClientConstants {
   /// See https://developer.android.com/reference/android/webkit/WebViewClient#ERROR_UNSUPPORTED_SCHEME
   static const int errorUnsupportedScheme = -10;
 }
+
+/// Class constants for [WebViewFeature].
+///
+/// Since the Dart [WebViewFeature] is generated, the constants for the class
+/// are added here.
+class WebViewFeatureConstants {
+  /// This feature covers [WebSettingsCompat.setPaymentRequestEnabled].
+  ///
+  /// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#PAYMENT_REQUEST.
+  static const String paymentRequest = 'PAYMENT_REQUEST';
+}

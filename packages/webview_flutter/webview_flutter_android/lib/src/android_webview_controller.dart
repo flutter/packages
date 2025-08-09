@@ -833,6 +833,38 @@ class AndroidWebViewController extends PlatformWebViewController {
     };
     return _webView.settings.setMixedContentMode(androidMode);
   }
+
+  /// Checks if a WebView feature is supported on the current device.
+  ///
+  /// This method uses [android_webview.WebViewFeature.isFeatureSupported] to check
+  /// if the specified WebView feature is available on the current device and WebView version.
+  ///
+  /// See [WebViewFeatureType] for available feature constants.
+  Future<bool> isWebViewFeatureSupported(WebViewFeatureType featureType) {
+    final String feature = switch (featureType) {
+      WebViewFeatureType.paymentRequest =>
+        WebViewFeatureConstants.paymentRequest,
+    };
+    return _androidWebViewParams.androidWebViewProxy
+        .isWebViewFeatureSupported(feature);
+  }
+
+  /// Sets whether the WebView should enable the Payment Request API.
+  ///
+  /// This method uses [android_webview.WebSettingsCompat.setPaymentRequestEnabled]
+  /// to enable or disable the Payment Request API for the WebView.
+  ///
+  /// Before calling this method, you should check if the feature is supported using
+  /// [isWebViewFeatureSupported] with [WebViewFeatureType.paymentRequest].
+  ///
+  /// This feature requires adding queries to the AndroidManifest.xml to allow WebView to query the device for the user's payment applications:
+  /// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setPaymentRequestEnabled(android.webkit.WebSettings,boolean).
+  Future<void> setPaymentRequestEnabled(bool enabled) {
+    return _androidWebViewParams.androidWebViewProxy.setPaymentRequestEnabled(
+      _webView.settings,
+      enabled,
+    );
+  }
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
@@ -959,6 +991,16 @@ enum MixedContentMode {
   ///
   /// This is the default mode.
   neverAllow,
+}
+
+/// WebView support library feature types used to query for support on the device.
+///
+/// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#constants_1.
+enum WebViewFeatureType {
+  /// Feature for isFeatureSupported.
+  ///
+  /// This feature covers [WebSettingsCompat.setPaymentRequestEnabled].
+  paymentRequest,
 }
 
 /// Parameters received when the `WebView` should show a file selector.
