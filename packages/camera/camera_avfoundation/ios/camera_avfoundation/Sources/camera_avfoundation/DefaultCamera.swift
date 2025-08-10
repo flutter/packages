@@ -10,6 +10,9 @@ import CoreMotion
 #endif
 
 final class DefaultCamera: FLTCam, Camera {
+  var dartAPI: FCPCameraEventApi?
+  var onFrameAvailable: (() -> Void)?
+
   override var videoFormat: FourCharCode {
     didSet {
       captureVideoOutput.videoSettings = [
@@ -17,6 +20,8 @@ final class DefaultCamera: FLTCam, Camera {
       ]
     }
   }
+
+  private(set) var isPreviewPaused = false
 
   override var deviceOrientation: UIDeviceOrientation {
     get { super.deviceOrientation }
@@ -42,11 +47,30 @@ final class DefaultCamera: FLTCam, Camera {
   /// Videos are written to disk by `videoAdaptor` on an internal queue managed by AVFoundation.
   private let photoIOQueue = DispatchQueue(label: "io.flutter.camera.photoIOQueue")
 
+  private var videoWriter: FLTAssetWriter?
+  private var videoWriterInput: FLTAssetWriterInput?
+  private var audioWriterInput: FLTAssetWriterInput?
+  private var videoAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
+
+  private var imageStreamHandler: FLTImageStreamHandler?
+
   /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
   /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
   private var latestPixelBuffer: CVPixelBuffer?
+
+  private var videoRecordingPath: String?
+  private var isRecordingPaused = false
+  private var isFirstVideoSample = false
+  private var videoIsDisconnected = false
+  private var audioIsDisconnected = false
+  private var isAudioSetup = false
   private var lastVideoSampleTime = CMTime.zero
   private var lastAudioSampleTime = CMTime.zero
+  private var videoTimeOffset = CMTime.zero
+  private var audioTimeOffset = CMTime.zero
+
+  /// Number of frames currently pending processing.
+  private var streamingPendingFramesCount = 0
 
   /// Maximum number of frames pending processing.
   /// To limit memory consumption, limit the number of frames pending processing.
