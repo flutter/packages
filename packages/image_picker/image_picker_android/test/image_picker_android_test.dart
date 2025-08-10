@@ -1031,6 +1031,7 @@ class _FakeImagePickerApi implements ImagePickerApi {
     passedVideoOptions = options;
     passedAllowMultiple = generalOptions.allowMultiple;
     passedPhotoPickerFlag = generalOptions.usePhotoPicker;
+    limit = generalOptions.limit;
     return returnValue as List<String>? ?? <String>[];
   }
 

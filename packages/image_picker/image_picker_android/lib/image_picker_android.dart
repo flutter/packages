@@ -135,21 +135,6 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     return paths.isEmpty ? null : paths.first;
   }
 
-  Future<List<String>> _getMultiVideoPath({
-    Duration? maxDuration,
-    int? limit,
-  }) {
-    return _hostApi.pickVideos(
-      SourceSpecification(type: SourceType.gallery),
-      VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
-      GeneralOptions(
-        allowMultiple: true,
-        usePhotoPicker: useAndroidPhotoPicker,
-        limit: limit,
-      ),
-    );
-  }
-
   @override
   Future<PickedFile?> pickVideo({
     required ImageSource source,
@@ -280,9 +265,14 @@ class ImagePickerAndroid extends ImagePickerPlatform {
   Future<List<XFile>> getMultiVideoWithOptions({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
   }) async {
-    final List<String> paths = await _getMultiVideoPath(
-      maxDuration: options.maxDuration,
-      limit: options.limit,
+    final List<String> paths = await _hostApi.pickVideos(
+      SourceSpecification(type: SourceType.gallery),
+      VideoSelectionOptions(maxDurationSeconds: options.maxDuration?.inSeconds),
+      GeneralOptions(
+        allowMultiple: true,
+        usePhotoPicker: useAndroidPhotoPicker,
+        limit: options.limit,
+      ),
     );
 
     if (paths.isEmpty) {

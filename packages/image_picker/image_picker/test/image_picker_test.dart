@@ -401,7 +401,7 @@ void main() {
       group('#pickMultiVideo', () {
         setUp(() {
           when(mockPlatform.getMultiVideoWithOptions(
-            options: any,
+            options: anyNamed('options'),
           )).thenAnswer((Invocation _) async => <XFile>[]);
         });
 
@@ -409,17 +409,30 @@ void main() {
           final ImagePicker picker = ImagePicker();
           await picker.pickMultiVideo();
           await picker.pickMultiVideo(maxDuration: const Duration(seconds: 10));
-          await picker.pickMultiVideo(
-            limit: 5,
-          );
+          await picker.pickMultiVideo(limit: 5);
 
           verifyInOrder(<Object>[
-            mockPlatform.getMultiVideoWithOptions(),
             mockPlatform.getMultiVideoWithOptions(
-                options: const MultiVideoPickerOptions(
-                    maxDuration: Duration(seconds: 10))),
+                options: argThat(
+              isInstanceOf<MultiVideoPickerOptions>(),
+              named: 'options',
+            )),
             mockPlatform.getMultiVideoWithOptions(
-                options: const MultiVideoPickerOptions(limit: 5)),
+                options: argThat(
+              isInstanceOf<MultiVideoPickerOptions>().having(
+                  (MultiVideoPickerOptions options) => options.maxDuration,
+                  'maxDuration',
+                  equals(const Duration(seconds: 10))),
+              named: 'options',
+            )),
+            mockPlatform.getMultiVideoWithOptions(
+                options: argThat(
+              isInstanceOf<MultiVideoPickerOptions>().having(
+                  (MultiVideoPickerOptions options) => options.limit,
+                  'limit',
+                  equals(5)),
+              named: 'options',
+            )),
           ]);
         });
       });
