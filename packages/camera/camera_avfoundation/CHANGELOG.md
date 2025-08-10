@@ -1,3 +1,8 @@
+## 0.9.21+1
+
+* Migrates `startImageStream` and `setUpCaptureSessionForAudioIfNeeded` methods to Swift.
+* Removes Objective-C implementation of `reportErrorMessage` method.
+
 ## 0.9.21
 
 * Fixes crash when streaming is enabled during recording.
