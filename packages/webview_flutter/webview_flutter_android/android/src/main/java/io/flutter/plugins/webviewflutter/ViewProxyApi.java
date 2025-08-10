@@ -19,6 +19,12 @@ public class ViewProxyApi extends PigeonApiView {
     super(pigeonRegistrar);
   }
 
+  @NonNull
+  @Override
+  public ProxyApiRegistrar getPigeonRegistrar() {
+    return (ProxyApiRegistrar) super.getPigeonRegistrar();
+  }
+
   @Override
   public void scrollTo(@NonNull View pigeon_instance, long x, long y) {
     pigeon_instance.scrollTo((int) x, (int) y);
@@ -33,5 +39,32 @@ public class ViewProxyApi extends PigeonApiView {
   @Override
   public WebViewPoint getScrollPosition(@NonNull View pigeon_instance) {
     return new WebViewPoint(pigeon_instance.getScrollX(), pigeon_instance.getScrollY());
+  }
+
+  @Override
+  public void setVerticalScrollBarEnabled(@NonNull View pigeon_instance, boolean enabled) {
+    pigeon_instance.setVerticalScrollBarEnabled(enabled);
+  }
+
+  @Override
+  public void setHorizontalScrollBarEnabled(@NonNull View pigeon_instance, boolean enabled) {
+    pigeon_instance.setHorizontalScrollBarEnabled(enabled);
+  }
+
+  @Override
+  public void setOverScrollMode(@NonNull View pigeon_instance, @NonNull OverScrollMode mode) {
+    switch (mode) {
+      case ALWAYS:
+        pigeon_instance.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
+        break;
+      case IF_CONTENT_SCROLLS:
+        pigeon_instance.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+        break;
+      case NEVER:
+        pigeon_instance.setOverScrollMode(View.OVER_SCROLL_NEVER);
+        break;
+      case UNKNOWN:
+        throw getPigeonRegistrar().createUnknownEnumException(OverScrollMode.UNKNOWN);
+    }
   }
 }

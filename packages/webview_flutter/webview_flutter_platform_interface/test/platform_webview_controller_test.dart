@@ -69,6 +69,22 @@ void main() {
     );
   });
 
+  test('loadFileWithParams redirects to loadFile with correct path', () async {
+    final LoadFileSpyPlatformWebViewController controller =
+        LoadFileSpyPlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
+
+    const String testPath = 'file:///test/index.html';
+    const LoadFileParams params = LoadFileParams(
+      absoluteFilePath: testPath,
+    );
+
+    await controller.loadFileWithParams(params);
+
+    expect(controller.loadFilePath, equals(testPath));
+  });
+
   test(
       'Default implementation of loadFlutterAsset should throw unimplemented error',
       () {
@@ -312,6 +328,41 @@ void main() {
   });
 
   test(
+      'Default implementation of setVerticalScrollBarEnabled should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setVerticalScrollBarEnabled(false),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
+      'Default implementation of setHorizontalScrollBarEnabled should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setHorizontalScrollBarEnabled(false),
+      throwsUnimplementedError,
+    );
+  });
+
+  test('Default implementation of supportsSetScrollBarsEnabled returns false',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(controller.supportsSetScrollBarsEnabled(), isFalse);
+  });
+
+  test(
       'Default implementation of getScrollPosition should throw unimplemented error',
       () {
     final PlatformWebViewController controller =
@@ -457,6 +508,19 @@ void main() {
       throwsUnimplementedError,
     );
   });
+
+  test(
+      'Default implementation of setOverScrollMode should throw unimplemented error',
+      () {
+    final PlatformWebViewController controller =
+        ExtendsPlatformWebViewController(
+            const PlatformWebViewControllerCreationParams());
+
+    expect(
+      () => controller.setOverScrollMode(WebViewOverScrollMode.always),
+      throwsUnimplementedError,
+    );
+  });
 }
 
 class MockWebViewPlatformWithMixin extends MockWebViewPlatform
@@ -478,6 +542,17 @@ class MockWebViewControllerDelegate extends Mock
 
 class ExtendsPlatformWebViewController extends PlatformWebViewController {
   ExtendsPlatformWebViewController(super.params) : super.implementation();
+}
+
+class LoadFileSpyPlatformWebViewController extends PlatformWebViewController {
+  LoadFileSpyPlatformWebViewController(super.params) : super.implementation();
+
+  String? loadFilePath;
+
+  @override
+  Future<void> loadFile(String absoluteFilePath) async {
+    loadFilePath = absoluteFilePath;
+  }
 }
 
 // ignore: must_be_immutable

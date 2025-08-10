@@ -133,7 +133,7 @@ void main() {
       final VerificationResult result = verify(
           mockFileSelectorPlatform.openFiles(
               acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups')));
-      expect(capturedTypeGroups(result)[0].extensions,
+      expect(capturedTypeGroups(result)[0].mimeTypes,
           <String>['image/*', 'video/*']);
     });
 

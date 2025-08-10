@@ -20,24 +20,24 @@ import androidx.media3.exoplayer.source.MediaSource;
 import java.util.Map;
 
 final class HttpVideoAsset extends VideoAsset {
-  private static final String DEFAULT_USER_AGENT = "ExoPlayer";
-  private static final String HEADER_USER_AGENT = "User-Agent";
-
   @NonNull private final StreamingFormat streamingFormat;
   @NonNull private final Map<String, String> httpHeaders;
+  @Nullable private final String userAgent;
 
   HttpVideoAsset(
       @Nullable String assetUrl,
       @NonNull StreamingFormat streamingFormat,
-      @NonNull Map<String, String> httpHeaders) {
+      @NonNull Map<String, String> httpHeaders,
+      @Nullable String userAgent) {
     super(assetUrl);
     this.streamingFormat = streamingFormat;
     this.httpHeaders = httpHeaders;
+    this.userAgent = userAgent;
   }
 
   @NonNull
   @Override
-  MediaItem getMediaItem() {
+  public MediaItem getMediaItem() {
     MediaItem.Builder builder = new MediaItem.Builder().setUri(assetUrl);
     String mimeType = null;
     switch (streamingFormat) {
@@ -57,8 +57,9 @@ final class HttpVideoAsset extends VideoAsset {
     return builder.build();
   }
 
+  @NonNull
   @Override
-  MediaSource.Factory getMediaSourceFactory(Context context) {
+  public MediaSource.Factory getMediaSourceFactory(@NonNull Context context) {
     return getMediaSourceFactory(context, new DefaultHttpDataSource.Factory());
   }
 
@@ -74,10 +75,6 @@ final class HttpVideoAsset extends VideoAsset {
   @VisibleForTesting
   MediaSource.Factory getMediaSourceFactory(
       Context context, DefaultHttpDataSource.Factory initialFactory) {
-    String userAgent = DEFAULT_USER_AGENT;
-    if (!httpHeaders.isEmpty() && httpHeaders.containsKey(HEADER_USER_AGENT)) {
-      userAgent = httpHeaders.get(HEADER_USER_AGENT);
-    }
     unstableUpdateDataSourceFactory(initialFactory, httpHeaders, userAgent);
     DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(context, initialFactory);
     return new DefaultMediaSourceFactory(context).setDataSourceFactory(dataSourceFactory);

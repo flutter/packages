@@ -12,7 +12,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import android.net.http.SslError;
+import android.os.Message;
+import android.webkit.ClientCertRequest;
 import android.webkit.HttpAuthHandler;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import org.junit.Test;
@@ -157,5 +161,111 @@ public class WebViewClientCompatTest {
     verify(mockApi)
         .onReceivedHttpAuthRequest(
             eq(instance), eq(webView), eq(handler), eq(host), eq(realm), any());
+  }
+
+  @Test
+  public void onFormResubmission() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientProxyApi.WebViewClientImpl instance =
+        new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final android.webkit.WebView view = mock(WebView.class);
+    final android.os.Message dontResend = mock(Message.class);
+    final android.os.Message resend = mock(Message.class);
+    instance.onFormResubmission(view, dontResend, resend);
+
+    verify(mockApi).onFormResubmission(eq(instance), eq(view), eq(dontResend), eq(resend), any());
+  }
+
+  @Test
+  public void onLoadResource() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientProxyApi.WebViewClientImpl instance =
+        new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final android.webkit.WebView view = mock(WebView.class);
+    final String url = "myString";
+    instance.onLoadResource(view, url);
+
+    verify(mockApi).onLoadResource(eq(instance), eq(view), eq(url), any());
+  }
+
+  @Test
+  public void onPageCommitVisible() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientProxyApi.WebViewClientImpl instance =
+        new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final android.webkit.WebView view = mock(WebView.class);
+    final String url = "myString";
+    instance.onPageCommitVisible(view, url);
+
+    verify(mockApi).onPageCommitVisible(eq(instance), eq(view), eq(url), any());
+  }
+
+  @Test
+  public void onReceivedClientCertRequest() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientProxyApi.WebViewClientImpl instance =
+        new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final android.webkit.WebView view = mock(WebView.class);
+    final android.webkit.ClientCertRequest request = mock(ClientCertRequest.class);
+    instance.onReceivedClientCertRequest(view, request);
+
+    verify(mockApi).onReceivedClientCertRequest(eq(instance), eq(view), eq(request), any());
+  }
+
+  @Test
+  public void onReceivedLoginRequest() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientProxyApi.WebViewClientImpl instance =
+        new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final android.webkit.WebView view = mock(WebView.class);
+    final String realm = "myString";
+    final String account = "myString1";
+    final String args = "myString2";
+    instance.onReceivedLoginRequest(view, realm, account, args);
+
+    verify(mockApi)
+        .onReceivedLoginRequest(eq(instance), eq(view), eq(realm), eq(account), eq(args), any());
+  }
+
+  @Test
+  public void onReceivedSslError() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientProxyApi.WebViewClientImpl instance =
+        new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final android.webkit.WebView view = mock(WebView.class);
+    final android.webkit.SslErrorHandler handler = mock(SslErrorHandler.class);
+    final android.net.http.SslError error = mock(SslError.class);
+    instance.onReceivedSslError(view, handler, error);
+
+    verify(mockApi).onReceivedSslError(eq(instance), eq(view), eq(handler), eq(error), any());
+  }
+
+  @Test
+  public void onScaleChanged() {
+    final WebViewClientProxyApi mockApi = mock(WebViewClientProxyApi.class);
+    when(mockApi.getPigeonRegistrar()).thenReturn(new TestProxyApiRegistrar());
+
+    final WebViewClientProxyApi.WebViewClientImpl instance =
+        new WebViewClientProxyApi.WebViewClientImpl(mockApi);
+    final android.webkit.WebView view = mock(WebView.class);
+    final float oldScale = 1.0f;
+    final float newScale = 2.0f;
+    instance.onScaleChanged(view, oldScale, newScale);
+
+    verify(mockApi)
+        .onScaleChanged(
+            eq(instance), eq(view), eq((double) oldScale), eq((double) newScale), any());
   }
 }

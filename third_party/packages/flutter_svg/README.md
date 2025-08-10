@@ -33,6 +33,53 @@ final Widget svgIcon = SvgPicture.asset(
 );
 ```
 
+For more advanced color manipulation, you can use the `colorMapper` property.
+This allows you to define a custom mapping function that will be called for
+every color encountered during SVG parsing, enabling you to substitute colors
+based on various criteria like the color value itself, the element name, or the
+attribute name.
+
+To use this feature, you need to create a class that extends `ColorMapper` and
+override the `substitute` method.
+
+Here's an example of how to implement a `ColorMapper` to replace specific colors in an SVG:
+
+<?code-excerpt "example/lib/readme_excerpts.dart (ColorMapper)"?>
+```dart
+class _MyColorMapper extends ColorMapper {
+  const _MyColorMapper();
+
+  @override
+  Color substitute(
+    String? id,
+    String elementName,
+    String attributeName,
+    Color color,
+  ) {
+    if (color == const Color(0xFFFF0000)) {
+      return Colors.blue;
+    }
+    if (color == const Color(0xFF00FF00)) {
+      return Colors.yellow;
+    }
+    return color;
+  }
+}
+// ···
+  const String svgString = '''
+<svg viewBox="0 0 100 100">
+  <rect width="50" height="50" fill="#FF0000" />
+  <circle cx="75" cy="75" r="25" fill="#00FF00" />
+</svg>
+''';
+  final Widget svgIcon = SvgPicture.string(
+    svgString,
+    colorMapper: const _MyColorMapper(),
+  );
+```
+
+In this example, all red colors in the SVG will be rendered as blue, and all green colors will be rendered as yellow. You can customize the `substitute` method to implement more complex color mapping logic based on your requirements.
+
 The default placeholder is an empty box (`LimitedBox`) - although if a `height`
 or `width` is specified on the `SvgPicture`, a `SizedBox` will be used instead
 (which ensures better layout experience). There is currently no way to show an
@@ -67,6 +114,7 @@ If you'd like to render the SVG to some other canvas, you can do something like:
 <?code-excerpt "example/lib/readme_excerpts.dart (OutputConversion)"?>
 ```dart
 import 'dart:ui' as ui;
+
 // ···
   const String rawSvg = '''<svg ...>...</svg>''';
   final PictureInfo pictureInfo =
@@ -82,10 +130,15 @@ import 'dart:ui' as ui;
 ```
 
 The `SvgPicture` helps to automate this logic, and it provides some convenience
-wrappers for getting assets from multiple sources. Unlike the `vector_graphics`
-package, this package _does not render the data to an `Image` at any point_.
-This carries a performance penalty for some common use cases, but also allows
-for more flexibility around scaling.
+wrappers for getting assets from multiple sources.
+
+This package now supports a render strategy setting, allowing certain
+applications to achieve better performance when needed. By default, the
+rendering uses the original `picture` mode, which retains full flexibility in
+scaling. Alternatively, when using the `raster` strategy, the SVG data is
+rendered into an `Image`, which is then drawn using drawImage. This approach may
+sacrifice some flexibility—especially around resolution scaling—but can
+significantly improve rendering performance in specific use cases.
 
 ## Precompiling and Optimizing SVGs
 

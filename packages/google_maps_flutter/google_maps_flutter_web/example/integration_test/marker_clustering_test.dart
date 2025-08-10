@@ -63,10 +63,6 @@ void main() {
 
       addTearDown(() => plugin.dispose(mapId: mapId));
 
-      final LatLng latlon = await plugin
-          .getLatLng(const ScreenCoordinate(x: 0, y: 0), mapId: mapId);
-      debugPrint(latlon.toString());
-
       final List<Cluster> clusters =
           await waitForValueMatchingPredicate<List<Cluster>>(
                   tester,
@@ -137,6 +133,7 @@ Marker _copyMarkerWithClusterManagerId(
     position: marker.position,
     rotation: marker.rotation,
     visible: marker.visible,
+    // ignore: deprecated_member_use
     zIndex: marker.zIndex,
     onTap: marker.onTap,
     onDragStart: marker.onDragStart,

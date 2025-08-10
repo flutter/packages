@@ -5,15 +5,12 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:flutter/material.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'mini_controller.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
-      home: _App(),
-    ),
-  );
+  runApp(MaterialApp(home: _App()));
 }
 
 class _App extends StatelessWidget {
@@ -36,9 +33,17 @@ class _App extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            _BumbleBeeRemoteVideo(),
-            _RtspRemoteVideo(),
-            _ButterFlyAssetVideo(),
+            _ViewTypeTabBar(
+              builder:
+                  (VideoViewType viewType) => _BumbleBeeRemoteVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) => _RtspRemoteVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder:
+                  (VideoViewType viewType) => _ButterFlyAssetVideo(viewType),
+            ),
           ],
         ),
       ),
@@ -46,7 +51,62 @@ class _App extends StatelessWidget {
   }
 }
 
+class _ViewTypeTabBar extends StatefulWidget {
+  const _ViewTypeTabBar({required this.builder});
+
+  final Widget Function(VideoViewType) builder;
+
+  @override
+  State<_ViewTypeTabBar> createState() => _ViewTypeTabBarState();
+}
+
+class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          tabs: const <Widget>[
+            Tab(icon: Icon(Icons.texture), text: 'Texture view'),
+            Tab(icon: Icon(Icons.construction), text: 'Platform view'),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: <Widget>[
+              widget.builder(VideoViewType.textureView),
+              widget.builder(VideoViewType.platformView),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _ButterFlyAssetVideo extends StatefulWidget {
+  const _ButterFlyAssetVideo(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _ButterFlyAssetVideoState createState() => _ButterFlyAssetVideoState();
 }
@@ -57,7 +117,10 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
   @override
   void initState() {
     super.initState();
-    _controller = MiniController.asset('assets/Butterfly-209.mp4');
+    _controller = MiniController.asset(
+      'assets/Butterfly-209.mp4',
+      viewType: widget.viewType,
+    );
 
     _controller.addListener(() {
       setState(() {});
@@ -76,9 +139,7 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(top: 20.0),
-          ),
+          Container(padding: const EdgeInsets.only(top: 20.0)),
           const Text('With assets mp4'),
           Container(
             padding: const EdgeInsets.all(20),
@@ -101,6 +162,10 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
 }
 
 class _BumbleBeeRemoteVideo extends StatefulWidget {
+  const _BumbleBeeRemoteVideo(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _BumbleBeeRemoteVideoState createState() => _BumbleBeeRemoteVideoState();
 }
@@ -113,6 +178,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     super.initState();
     _controller = MiniController.network(
       'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+      viewType: widget.viewType,
     );
 
     _controller.addListener(() {
@@ -155,6 +221,10 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
 }
 
 class _RtspRemoteVideo extends StatefulWidget {
+  const _RtspRemoteVideo(this.viewType);
+
+  final VideoViewType viewType;
+
   @override
   _RtspRemoteVideoState createState() => _RtspRemoteVideoState();
 }
@@ -174,7 +244,7 @@ class _RtspRemoteVideoState extends State<_RtspRemoteVideo> {
     }
 
     setState(() {
-      _controller = MiniController.network(url);
+      _controller = MiniController.network(url, viewType: widget.viewType);
     });
 
     _controller!.addListener(() {
@@ -261,19 +331,21 @@ class _ControlsOverlay extends StatelessWidget {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 50),
           reverseDuration: const Duration(milliseconds: 200),
-          child: controller.value.isPlaying
-              ? const SizedBox.shrink()
-              : const ColoredBox(
-                  color: Colors.black26,
-                  child: Center(
-                    child: Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                      size: 100.0,
-                      semanticLabel: 'Play',
+          child:
+              controller.value.isPlaying
+                  ? const SizedBox.shrink()
+                  : const ColoredBox(
+                    color: Colors.black26,
+                    child: Center(
+                      child: Icon(
+                        key: ValueKey<String>('Play'),
+                        Icons.play_arrow,
+                        color: Colors.white,
+                        size: 100.0,
+                        semanticLabel: 'Play',
+                      ),
                     ),
                   ),
-                ),
         ),
         GestureDetector(
           onTap: () {
@@ -291,10 +363,7 @@ class _ControlsOverlay extends StatelessWidget {
             itemBuilder: (BuildContext context) {
               return <PopupMenuItem<double>>[
                 for (final double speed in _examplePlaybackRates)
-                  PopupMenuItem<double>(
-                    value: speed,
-                    child: Text('${speed}x'),
-                  )
+                  PopupMenuItem<double>(value: speed, child: Text('${speed}x')),
               ];
             },
             child: Padding(

@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:file/file.dart';
 
 import 'common/core.dart';
+import 'common/file_filters.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
@@ -27,6 +28,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addFlag(platformAndroid,
         help: 'Runs the Android implementation of the examples',
@@ -66,6 +68,17 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       'This command requires "flutter" to be in your path.';
 
   Map<String, List<String>> _targetDeviceFlags = const <String, List<String>>{};
+
+  @override
+  bool shouldIgnoreFile(String path) {
+    return isRepoLevelNonCodeImpactingFile(path) ||
+        isPackageSupportFile(path) ||
+        // This isn't part of isRepoLevelNonCodeImpactingFile since there could
+        // potentially be code-based commands that it could affect, but it
+        // should not affect integration tests, and they are the most expensive
+        // and flaky tests.
+        path == '.gitignore';
+  }
 
   @override
   Future<void> initializeRun() async {

@@ -13,6 +13,7 @@ final class TestInteractiveMediaAdsPlatform
     required this.onCreatePlatformAdDisplayContainer,
     required this.onCreatePlatformContentProgressProvider,
     this.onCreatePlatformAdsRenderingSettings,
+    this.onCreatePlatformCompanionAdSlot,
   });
 
   PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params)
@@ -33,6 +34,14 @@ final class TestInteractiveMediaAdsPlatform
   PlatformAdsRenderingSettings Function(
     PlatformAdsRenderingSettingsCreationParams params,
   )? onCreatePlatformAdsRenderingSettings;
+
+  PlatformCompanionAdSlot Function(
+    PlatformCompanionAdSlotCreationParams params,
+  )? onCreatePlatformCompanionAdSlot;
+
+  PlatformImaSettings Function(
+    PlatformImaSettingsCreationParams params,
+  )? onCreatePlatformImaSettings;
 
   @override
   PlatformAdsLoader createPlatformAdsLoader(
@@ -69,6 +78,24 @@ final class TestInteractiveMediaAdsPlatform
     return onCreatePlatformAdsRenderingSettings?.call(params) ??
         TestAdsRenderingSettings(params);
   }
+
+  @override
+  PlatformCompanionAdSlot createPlatformCompanionAdSlot(
+    PlatformCompanionAdSlotCreationParams params,
+  ) {
+    return onCreatePlatformCompanionAdSlot?.call(params) ??
+        TestCompanionAdSlot(
+          params,
+          onBuildWidget: (_) => Container(),
+        );
+  }
+
+  @override
+  PlatformImaSettings createPlatformImaSettings(
+    PlatformImaSettingsCreationParams params,
+  ) {
+    return onCreatePlatformImaSettings?.call(params) ?? TestImaSettings(params);
+  }
 }
 
 final class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
@@ -81,7 +108,7 @@ final class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
 
   @override
   Widget build(BuildContext context) {
-    return onBuild.call(context);
+    return onBuild(context);
   }
 }
 
@@ -205,4 +232,86 @@ class TestContentProgressProvider extends PlatformContentProgressProvider {
 
 final class TestAdsRenderingSettings extends PlatformAdsRenderingSettings {
   TestAdsRenderingSettings(super.params) : super.implementation();
+}
+
+final class TestCompanionAdSlot extends PlatformCompanionAdSlot {
+  TestCompanionAdSlot(
+    super.params, {
+    required this.onBuildWidget,
+  }) : super.implementation();
+
+  Widget Function(BuildWidgetCreationParams params) onBuildWidget;
+
+  @override
+  Widget buildWidget(BuildWidgetCreationParams params) {
+    return onBuildWidget(params);
+  }
+}
+
+final class TestImaSettings extends PlatformImaSettings {
+  TestImaSettings(
+    super.params, {
+    this.onSetPpid,
+    this.onSetMaxRedirects,
+    this.onSetFeatureFlags,
+    this.onSetAutoPlayAdBreaks,
+    this.onSetPlayerType,
+    this.onSetPlayerVersion,
+    this.onSetSessionID,
+    this.onSetDebugMode,
+  }) : super.implementation();
+
+  void Function(String ppid)? onSetPpid;
+
+  void Function(int maxRedirects)? onSetMaxRedirects;
+
+  void Function(Map<String, String> featureFlags)? onSetFeatureFlags;
+
+  void Function(bool autoPlayAdBreaks)? onSetAutoPlayAdBreaks;
+
+  void Function(String playerType)? onSetPlayerType;
+
+  void Function(String playerVersion)? onSetPlayerVersion;
+
+  void Function(String sessionID)? onSetSessionID;
+
+  void Function(bool enableDebugMode)? onSetDebugMode;
+
+  @override
+  Future<void> setPpid(String ppid) async => onSetPpid?.call(ppid);
+
+  @override
+  Future<void> setMaxRedirects(int maxRedirects) async {
+    onSetMaxRedirects?.call(maxRedirects);
+  }
+
+  @override
+  Future<void> setFeatureFlags(Map<String, String> featureFlags) async {
+    onSetFeatureFlags?.call(featureFlags);
+  }
+
+  @override
+  Future<void> setAutoPlayAdBreaks(bool autoPlayAdBreaks) async {
+    onSetAutoPlayAdBreaks?.call(autoPlayAdBreaks);
+  }
+
+  @override
+  Future<void> setPlayerType(String playerType) async {
+    onSetPlayerType?.call(playerType);
+  }
+
+  @override
+  Future<void> setPlayerVersion(String playerVersion) async {
+    onSetPlayerVersion?.call(playerVersion);
+  }
+
+  @override
+  Future<void> setSessionID(String sessionID) async {
+    onSetSessionID?.call(sessionID);
+  }
+
+  @override
+  Future<void> setDebugMode(bool enableDebugMode) async {
+    onSetDebugMode?.call(enableDebugMode);
+  }
 }

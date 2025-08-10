@@ -6,9 +6,9 @@ import 'dart:convert';
 
 import 'package:args/command_runner.dart';
 import 'package:file/file.dart';
-import 'package:file/memory.dart';
 import 'package:flutter_plugin_tools/src/common/core.dart';
 import 'package:flutter_plugin_tools/src/publish_check_command.dart';
+import 'package:git/git.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:test/test.dart';
@@ -18,21 +18,21 @@ import 'util.dart';
 
 void main() {
   group('PublishCheckCommand tests', () {
-    FileSystem fileSystem;
     late MockPlatform mockPlatform;
     late Directory packagesDir;
     late RecordingProcessRunner processRunner;
+    // Separate process runner for the mock gitDir to make asserting the
+    // expected command-specific calls easier.
+    late GitDir gitDir;
     late CommandRunner<void> runner;
 
-    setUp(() {
-      fileSystem = MemoryFileSystem();
-      mockPlatform = MockPlatform();
-      packagesDir = createPackagesDirectory(fileSystem: fileSystem);
-      processRunner = RecordingProcessRunner();
+    CommandRunner<void> configureRunner({MockClient? httpClient}) {
       final PublishCheckCommand publishCheckCommand = PublishCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
+        gitDir: gitDir,
+        httpClient: httpClient,
       );
 
       runner = CommandRunner<void>(
@@ -40,6 +40,15 @@ void main() {
         'Test for publish-check command.',
       );
       runner.addCommand(publishCheckCommand);
+      return runner;
+    }
+
+    setUp(() {
+      mockPlatform = MockPlatform();
+      (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
+          configureBaseCommandMocks(platform: mockPlatform);
+
+      runner = configureRunner();
     });
 
     test('publish check all packages', () async {
@@ -282,14 +291,7 @@ void main() {
         return http.Response('', 500);
       });
 
-      runner = CommandRunner<void>(
-        'publish_check_command',
-        'Test for publish-check command.',
-      );
-      runner.addCommand(PublishCheckCommand(packagesDir,
-          platform: mockPlatform,
-          processRunner: processRunner,
-          httpClient: mockClient));
+      runner = configureRunner(httpClient: mockClient);
 
       processRunner.mockProcessesForExecutable['flutter'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1, stdout: 'Some error from pub'),
@@ -356,14 +358,7 @@ void main() {
         return http.Response('', 500);
       });
 
-      runner = CommandRunner<void>(
-        'publish_check_command',
-        'Test for publish-check command.',
-      );
-      runner.addCommand(PublishCheckCommand(packagesDir,
-          platform: mockPlatform,
-          processRunner: processRunner,
-          httpClient: mockClient));
+      runner = configureRunner(httpClient: mockClient);
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['publish-check']);
@@ -532,14 +527,8 @@ void main() {
         }
         return http.Response('', 500);
       });
-      final PublishCheckCommand command = PublishCheckCommand(packagesDir,
-          processRunner: processRunner, httpClient: mockClient);
 
-      runner = CommandRunner<void>(
-        'publish_check_command',
-        'Test for publish-check command.',
-      );
-      runner.addCommand(command);
+      runner = configureRunner(httpClient: mockClient);
 
       createFakePlugin('no_publish_a', packagesDir, version: '0.1.0');
       createFakePlugin('no_publish_b', packagesDir, version: '0.2.0');
@@ -597,14 +586,8 @@ void main() {
         }
         return http.Response('', 500);
       });
-      final PublishCheckCommand command = PublishCheckCommand(packagesDir,
-          processRunner: processRunner, httpClient: mockClient);
 
-      runner = CommandRunner<void>(
-        'publish_check_command',
-        'Test for publish-check command.',
-      );
-      runner.addCommand(command);
+      runner = configureRunner(httpClient: mockClient);
 
       createFakePlugin('no_publish_a', packagesDir, version: '0.1.0');
       createFakePlugin('no_publish_b', packagesDir, version: '0.2.0');
@@ -664,14 +647,8 @@ void main() {
         }
         return http.Response('', 500);
       });
-      final PublishCheckCommand command = PublishCheckCommand(packagesDir,
-          processRunner: processRunner, httpClient: mockClient);
 
-      runner = CommandRunner<void>(
-        'publish_check_command',
-        'Test for publish-check command.',
-      );
-      runner.addCommand(command);
+      runner = configureRunner(httpClient: mockClient);
 
       final RepositoryPackage plugin =
           createFakePlugin('no_publish_a', packagesDir, version: '0.1.0');

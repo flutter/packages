@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -25,6 +27,18 @@ void main() {
       video = web.HTMLVideoElement()
         ..controls = true
         ..playsInline = false;
+    });
+
+    testWidgets('initialize() calls load', (WidgetTester _) async {
+      bool loadCalled = false;
+
+      video['load'] = () {
+        loadCalled = true;
+      }.toJS;
+
+      VideoPlayer(videoElement: video).initialize();
+
+      expect(loadCalled, isTrue);
     });
 
     testWidgets('fixes critical video element config', (WidgetTester _) async {
@@ -130,6 +144,11 @@ void main() {
         );
       });
 
+      tearDown(() {
+        streamController.close();
+        player.dispose();
+      });
+
       testWidgets('buffering dispatches only when it changes',
           (WidgetTester tester) async {
         // Take all the "buffering" events that we see during the next few seconds
@@ -222,8 +241,7 @@ void main() {
         expect(events[0].eventType, VideoEventType.initialized);
       });
 
-      // Issue: https://github.com/flutter/flutter/issues/137023
-      testWidgets('loadedmetadata dispatches initialized',
+      testWidgets('loadedmetadata does not dispatch initialized',
           (WidgetTester tester) async {
         video.dispatchEvent(web.Event('loadedmetadata'));
         video.dispatchEvent(web.Event('loadedmetadata'));
@@ -235,8 +253,22 @@ void main() {
 
         final List<VideoEvent> events = await stream;
 
-        expect(events, hasLength(1));
-        expect(events[0].eventType, VideoEventType.initialized);
+        expect(events, isEmpty);
+      });
+
+      testWidgets('loadeddata does not dispatch initialized',
+          (WidgetTester tester) async {
+        video.dispatchEvent(web.Event('loadeddata'));
+        video.dispatchEvent(web.Event('loadeddata'));
+
+        final Future<List<VideoEvent>> stream = timedStream
+            .where((VideoEvent event) =>
+                event.eventType == VideoEventType.initialized)
+            .toList();
+
+        final List<VideoEvent> events = await stream;
+
+        expect(events, isEmpty);
       });
 
       // Issue: https://github.com/flutter/flutter/issues/105649
@@ -399,6 +431,78 @@ void main() {
           );
 
           expect(video.disableRemotePlayback, isTrue);
+        });
+      });
+
+      group('poster', () {
+        testWidgets('when null expect no poster attribute',
+            (WidgetTester tester) async {
+          await player.setOptions(
+            const VideoPlayerWebOptions(),
+          );
+
+          expect(video.poster, isEmpty);
+          expect(video.getAttribute('poster'), isNull);
+        });
+
+        testWidgets('when provided expect poster attribute set',
+            (WidgetTester tester) async {
+          final Uri posterUri = Uri.parse('https://example.com/poster.jpg');
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: posterUri,
+            ),
+          );
+
+          expect(video.poster, posterUri.toString());
+          expect(video.getAttribute('poster'), posterUri.toString());
+        });
+
+        testWidgets('when set to null after having value expect poster removed',
+            (WidgetTester tester) async {
+          final Uri posterUri = Uri.parse('https://example.com/poster.jpg');
+
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: posterUri,
+            ),
+          );
+
+          expect(video.poster, posterUri.toString());
+
+          await player.setOptions(
+            const VideoPlayerWebOptions(),
+          );
+
+          expect(video.poster, isEmpty);
+          expect(video.getAttribute('poster'), isNull);
+        });
+
+        testWidgets('when updated expect poster attribute updated',
+            (WidgetTester tester) async {
+          final Uri initialPoster =
+              Uri.parse('https://example.com/poster1.jpg');
+          final Uri updatedPoster =
+              Uri.parse('https://example.com/poster2.jpg');
+
+          // Set initial poster
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: initialPoster,
+            ),
+          );
+
+          expect(video.poster, initialPoster.toString());
+
+          // Update poster
+          await player.setOptions(
+            VideoPlayerWebOptions(
+              poster: updatedPoster,
+            ),
+          );
+
+          expect(video.poster, updatedPoster.toString());
+          expect(video.getAttribute('poster'), updatedPoster.toString());
         });
       });
 

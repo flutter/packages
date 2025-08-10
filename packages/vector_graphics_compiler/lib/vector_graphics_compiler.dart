@@ -40,6 +40,7 @@ VectorInstructions parseWithoutOptimizers(
   String key = '',
   bool warningsAsErrors = false,
   SvgTheme theme = const SvgTheme(),
+  ColorMapper? colorMapper,
 }) {
   return parse(
     xml,
@@ -49,6 +50,7 @@ VectorInstructions parseWithoutOptimizers(
     enableClippingOptimizer: false,
     enableMaskingOptimizer: false,
     enableOverdrawOptimizer: false,
+    colorMapper: colorMapper,
   );
 }
 

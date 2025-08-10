@@ -7,7 +7,7 @@ which can be the App Store (on iOS and macOS) or Google Play (on Android).
 
 |             | Android | iOS   | macOS  |
 |-------------|---------|-------|--------|
-| **Support** | SDK 16+ | 12.0+ | 10.15+ |
+| **Support** | SDK 21+ | 12.0+ | 10.15+ |
 
 <p>
   <img src="https://github.com/flutter/packages/blob/main/packages/in_app_purchase/in_app_purchase/doc/iap_ios.gif?raw=true"
@@ -356,6 +356,14 @@ if (productDetails is AppStoreProductDetails) {
   SKProductWrapper skProduct = (productDetails as AppStoreProductDetails).skProduct;
   print(skProduct.subscriptionGroupIdentifier);
 }
+
+// With StoreKit 2
+import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
+
+if (productDetails is AppStoreProduct2Details) {
+   SK2Product product = (productDetails as AppStoreProduct2Details).sk2Product;
+   print(product.subscription?.subscriptionGroupID);
+}
 ```
 
 The `purchaseStream` provides objects of type `PurchaseDetails`. PurchaseDetails' provides all
@@ -377,7 +385,7 @@ if (purchaseDetails is GooglePlayPurchaseDetails) {
 }
 ```
 
-How to get the `transactionState` of a purchase in iOS:
+How to get the `transactionState` of a purchase in iOS, using the original StoreKit API:
 ```dart
 //import for AppStorePurchaseDetails
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
@@ -388,6 +396,15 @@ if (purchaseDetails is AppStorePurchaseDetails) {
   SKPaymentTransactionWrapper skProduct = (purchaseDetails as AppStorePurchaseDetails).skPaymentTransaction;
   print(skProduct.transactionState);
 }
+```
+
+How to get the `jsonRepresentation` of a transaction in iOS, using StoreKit 2:
+```dart
+//import for SK2TransactionWrapper
+import 'package:in_app_purchase_storekit/store_kit_2_wrappers.dart';
+
+List<SK2Transaction> transactions = await SK2Transaction.transactions();
+print(transactions[0].jsonRepresentation);
 ```
 
 Please note that it is required to import `in_app_purchase_android` and/or `in_app_purchase_storekit`.

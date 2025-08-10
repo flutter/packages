@@ -66,6 +66,9 @@ void main() {
         onReceivedRequestError: anyNamed('onReceivedRequestError'),
         requestLoading: anyNamed('requestLoading'),
         urlLoading: anyNamed('urlLoading'),
+        onReceivedSslError: anyNamed('onReceivedSslError'),
+        onFormResubmission: anyNamed('onFormResubmission'),
+        onReceivedClientCertRequest: anyNamed('onReceivedClientCertRequest'),
       )).thenReturn(mockWebViewClient);
 
       mockCallbacksHandler = MockWebViewPlatformCallbacksHandler();
@@ -237,6 +240,10 @@ void main() {
             onReceivedRequestError: anyNamed('onReceivedRequestError'),
             requestLoading: anyNamed('requestLoading'),
             urlLoading: anyNamed('urlLoading'),
+            onReceivedSslError: anyNamed('onReceivedSslError'),
+            onFormResubmission: anyNamed('onFormResubmission'),
+            onReceivedClientCertRequest:
+                anyNamed('onReceivedClientCertRequest'),
           )).thenReturn(mockWebViewClient);
 
           await buildWidget(
@@ -733,6 +740,9 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
+          onReceivedSslError: anyNamed('onReceivedSslError'),
+          onFormResubmission: anyNamed('onFormResubmission'),
+          onReceivedClientCertRequest: anyNamed('onReceivedClientCertRequest'),
         )).captured.single as void Function(
                 android_webview.WebViewClient, android_webview.WebView, String);
 
@@ -752,6 +762,9 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
+          onReceivedSslError: anyNamed('onReceivedSslError'),
+          onFormResubmission: anyNamed('onFormResubmission'),
+          onReceivedClientCertRequest: anyNamed('onReceivedClientCertRequest'),
         )).captured.single as void Function(
                 android_webview.WebViewClient, android_webview.WebView, String);
 
@@ -772,6 +785,9 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
+          onReceivedSslError: anyNamed('onReceivedSslError'),
+          onFormResubmission: anyNamed('onFormResubmission'),
+          onReceivedClientCertRequest: anyNamed('onReceivedClientCertRequest'),
         )).captured.single as void Function(android_webview.WebViewClient,
                 android_webview.WebView, int, String, String);
 
@@ -810,6 +826,9 @@ void main() {
           onReceivedRequestError: captureAnyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
+          onReceivedSslError: anyNamed('onReceivedSslError'),
+          onFormResubmission: anyNamed('onFormResubmission'),
+          onReceivedClientCertRequest: anyNamed('onReceivedClientCertRequest'),
         )).captured.single as void Function(
           android_webview.WebViewClient,
           android_webview.WebView,
@@ -862,6 +881,9 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: captureAnyNamed('urlLoading'),
+          onReceivedSslError: anyNamed('onReceivedSslError'),
+          onFormResubmission: anyNamed('onFormResubmission'),
+          onReceivedClientCertRequest: anyNamed('onReceivedClientCertRequest'),
         )).captured.single as void Function(
                 android_webview.WebViewClient, android_webview.WebView, String);
 
@@ -892,6 +914,9 @@ void main() {
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: captureAnyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
+          onReceivedSslError: anyNamed('onReceivedSslError'),
+          onFormResubmission: anyNamed('onFormResubmission'),
+          onReceivedClientCertRequest: anyNamed('onReceivedClientCertRequest'),
         )).captured.single as void Function(
           android_webview.WebViewClient,
           android_webview.WebView,

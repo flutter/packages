@@ -1,3 +1,43 @@
+## 2.18.1
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 2.18.0
+
+* Adds support for warming up the Google Maps SDK 
+  via `GoogleMapsFlutterAndroid.warmup()`.
+
+## 2.17.0
+
+* Updates `com.google.android.gms:play-services-maps` to 19.2.0.
+* Marks `AndroidMapRenderer.legacy` as deprecated, since it's deprecated in the
+  current version of the Google Maps SDK.
+
+## 2.16.2
+
+* Removes documentation related to the map renderer selection API, as the
+  legacy renderer is no longer available, so requesting it is a no-op.
+
+## 2.16.1
+
+* Removes obsolete code related to supporting SDK <21.
+
+## 2.16.0
+
+* Adds support for animating the camera with a duration.
+
+## 2.15.0
+
+* Adds support for ground overlay.
+
+## 2.14.14
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
+## 2.14.13
+
+* Updates READMEs and API docs.
+
 ## 2.14.12
 
 * Updates androidx.annotation:annotation to 1.9.1.

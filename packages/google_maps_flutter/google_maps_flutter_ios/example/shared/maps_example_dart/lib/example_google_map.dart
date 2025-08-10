@@ -82,6 +82,9 @@ class ExampleGoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onCircleTap(mapId: mapId)
         .listen((CircleTapEvent e) => _googleMapState.onCircleTap(e.value));
+    GoogleMapsFlutterPlatform.instance.onGroundOverlayTap(mapId: mapId).listen(
+        (GroundOverlayTapEvent e) =>
+            _googleMapState.onGroundOverlayTap(e.value));
     GoogleMapsFlutterPlatform.instance
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
@@ -109,6 +112,13 @@ class ExampleGoogleMapController {
       ClusterManagerUpdates clusterManagerUpdates) {
     return GoogleMapsFlutterPlatform.instance
         .updateClusterManagers(clusterManagerUpdates, mapId: mapId);
+  }
+
+  /// Updates ground overlay configuration.
+  Future<void> _updateGroundOverlays(
+      GroundOverlayUpdates groundOverlayUpdates) {
+    return GoogleMapsFlutterPlatform.instance
+        .updateGroundOverlays(groundOverlayUpdates, mapId: mapId);
   }
 
   /// Updates polygon configuration.
@@ -143,9 +153,10 @@ class ExampleGoogleMapController {
   }
 
   /// Starts an animated change of the map camera position.
-  Future<void> animateCamera(CameraUpdate cameraUpdate) {
-    return GoogleMapsFlutterPlatform.instance
-        .animateCamera(cameraUpdate, mapId: mapId);
+  Future<void> animateCamera(CameraUpdate cameraUpdate, {Duration? duration}) {
+    return GoogleMapsFlutterPlatform.instance.animateCameraWithConfiguration(
+        cameraUpdate, CameraUpdateAnimationConfiguration(duration: duration),
+        mapId: mapId);
   }
 
   /// Changes the map camera position.
@@ -248,6 +259,7 @@ class ExampleGoogleMap extends StatefulWidget {
     this.clusterManagers = const <ClusterManager>{},
     this.onCameraMoveStarted,
     this.tileOverlays = const <TileOverlay>{},
+    this.groundOverlays = const <GroundOverlay>{},
     this.onCameraMove,
     this.onCameraIdle,
     this.onTap,
@@ -318,6 +330,9 @@ class ExampleGoogleMap extends StatefulWidget {
   /// Cluster Managers to be placed for the map.
   final Set<ClusterManager> clusterManagers;
 
+  /// Ground overlays to be initialized for the map.
+  final Set<GroundOverlay> groundOverlays;
+
   /// Called when the camera starts moving.
   final VoidCallback? onCameraMoveStarted;
 
@@ -379,6 +394,8 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
   Map<CircleId, Circle> _circles = <CircleId, Circle>{};
   Map<ClusterManagerId, ClusterManager> _clusterManagers =
       <ClusterManagerId, ClusterManager>{};
+  Map<GroundOverlayId, GroundOverlay> _groundOverlays =
+      <GroundOverlayId, GroundOverlay>{};
   late MapConfiguration _mapConfiguration;
 
   @override
@@ -399,6 +416,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
         polylines: widget.polylines,
         circles: widget.circles,
         clusterManagers: widget.clusterManagers,
+        groundOverlays: widget.groundOverlays,
       ),
       mapConfiguration: _mapConfiguration,
     );
@@ -413,6 +431,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     _polygons = keyByPolygonId(widget.polygons);
     _polylines = keyByPolylineId(widget.polylines);
     _circles = keyByCircleId(widget.circles);
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   @override
@@ -432,6 +451,7 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     _updatePolylines();
     _updateCircles();
     _updateTileOverlays();
+    _updateGroundOverlays();
   }
 
   Future<void> _updateOptions() async {
@@ -457,6 +477,13 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
     unawaited(controller._updateClusterManagers(ClusterManagerUpdates.from(
         _clusterManagers.values.toSet(), widget.clusterManagers)));
     _clusterManagers = keyByClusterManagerId(widget.clusterManagers);
+  }
+
+  Future<void> _updateGroundOverlays() async {
+    final ExampleGoogleMapController controller = await _controller.future;
+    unawaited(controller._updateGroundOverlays(GroundOverlayUpdates.from(
+        _groundOverlays.values.toSet(), widget.groundOverlays)));
+    _groundOverlays = keyByGroundOverlayId(widget.groundOverlays);
   }
 
   Future<void> _updatePolygons() async {
@@ -523,6 +550,10 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
 
   void onCircleTap(CircleId circleId) {
     _circles[circleId]!.onTap?.call();
+  }
+
+  void onGroundOverlayTap(GroundOverlayId groundOverlayId) {
+    _groundOverlays[groundOverlayId]!.onTap?.call();
   }
 
   void onInfoWindowTap(MarkerId markerId) {

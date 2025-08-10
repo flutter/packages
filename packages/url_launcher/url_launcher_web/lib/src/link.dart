@@ -199,6 +199,16 @@ class LinkTriggerSignals {
   /// considered valid. If they don't, the signals are reset.
   final Duration staleTimeout;
 
+  /// Whether the browser can do the navigation itself.
+  ///
+  /// If the link is activated by a click event, then we know the browser can do the navigation by
+  /// itself.
+  ///
+  /// In some cases, we decide to prevent default on the click event, so [canBrowserNavigate] is
+  /// set to false to indicate that the browser is not able to perform the navigation anymore. In
+  /// such case, the navigation has to be performed programmatically (using `launchUrl`).
+  bool canBrowserNavigate = false;
+
   bool get _hasAllSignals => _hasFollowLink && _hasDomEvent;
 
   int? get _viewId {
@@ -232,7 +242,7 @@ class LinkTriggerSignals {
   void onFollowLink({required int viewId}) {
     _hasFollowLink = true;
     _viewIdFromFollowLink = viewId;
-    _didUpdate();
+    _scheduleReset();
   }
 
   /// Handles a [mouseEvent] signal from a specific [viewId].
@@ -254,7 +264,26 @@ class LinkTriggerSignals {
     _hasDomEvent = true;
     _viewIdFromDomEvent = viewId;
     _mouseEvent = mouseEvent;
-    _didUpdate();
+    _scheduleReset();
+
+    if (mouseEvent != null) {
+      canBrowserNavigate = true;
+      // We have to make a decision whether to allow the browser to navigate or not. The decision
+      // has to be made before the end of the event loop.
+      //
+      // If we don't hear back from the `followLink` signal by the end of the event loop, we should
+      // prevent the browser from navigating. If the `followLink` signal arrives later, we can
+      // navigate programmatically using `launchUrl`.
+      scheduleMicrotask(() {
+        if (!_hasDomEvent) {
+          // By the time the microtask runs, the link may have already been triggered. In that case,
+          // we want to do nothing here.
+          return;
+        }
+        canBrowserNavigate = false;
+        mouseEvent.preventDefault();
+      });
+    }
   }
 
   bool _hasFollowLink = false;
@@ -279,7 +308,7 @@ class LinkTriggerSignals {
 
   Timer? _resetTimer;
 
-  void _didUpdate() {
+  void _scheduleReset() {
     _resetTimer?.cancel();
     _resetTimer = Timer(staleTimeout, reset);
   }
@@ -296,6 +325,7 @@ class LinkTriggerSignals {
     _viewIdFromDomEvent = null;
 
     _mouseEvent = null;
+    canBrowserNavigate = false;
   }
 }
 
@@ -514,7 +544,7 @@ class LinkViewController extends PlatformViewController {
   static void _triggerLink(int viewId, html.MouseEvent? mouseEvent) {
     final LinkViewController controller = _instancesByViewId[viewId]!;
 
-    if (mouseEvent != null && _isModifierKey(mouseEvent)) {
+    if (_triggerSignals.canBrowserNavigate && _isModifierKey(mouseEvent)) {
       // When the click is accompanied by a modifier key (e.g. cmd+click or
       // shift+click), we want to let the browser do its thing (e.g. open a new
       // tab or a new window).
@@ -522,15 +552,15 @@ class LinkViewController extends PlatformViewController {
     }
 
     if (controller._isExternalLink) {
-      if (mouseEvent == null) {
-        // When external links are triggered by keyboard, they are not handled by
-        // the browser. So we have to launch the url manually.
-        UrlLauncherPlatform.instance
-            .launchUrl(controller._uri.toString(), const LaunchOptions());
+      if (!_triggerSignals.canBrowserNavigate) {
+        // When the browser can't do the navigation, we have to launch the url manually.
+        UrlLauncherPlatform.instance.launchUrl(
+          controller._uri.toString(),
+          const LaunchOptions(),
+        );
       }
 
-      // When triggerd by a mouse event, external links will be handled by the
-      // browser, so we don't have to do anything.
+      // Otherwise, let the browser handle it, so we don't have to do anything.
       return;
     }
 
@@ -675,7 +705,11 @@ html.Element? _getClosestSemanticsLink(html.Element element) {
   return element.closest('a[id^="flt-semantic-node-"]');
 }
 
-bool _isModifierKey(html.Event event) {
+bool _isModifierKey(html.Event? event) {
+  if (event == null) {
+    return false;
+  }
+
   // This method accepts both KeyboardEvent and MouseEvent but there's no common
   // interface that contains the `ctrlKey`, `altKey`, `metaKey`, and `shiftKey`
   // properties. So we have to cast the event to either `KeyboardEvent` or

@@ -87,6 +87,9 @@ class $dartInstanceManagerClassName {
   late final void Function(int) onWeakReferenceRemoved;
 
   static $dartInstanceManagerClassName _initInstance() {
+    if (Platform.environment['FLUTTER_TEST'] == 'true') {
+      return $dartInstanceManagerClassName(onWeakReferenceRemoved: (_) {});
+    }
     WidgetsFlutterBinding.ensureInitialized();
     final $dartInstanceManagerApiClassName api = $dartInstanceManagerApiClassName();
     // Clears the native `$dartInstanceManagerClassName` on the initial use of the Dart one.
@@ -110,8 +113,17 @@ class $dartInstanceManagerClassName {
   ///
   /// Returns the randomly generated id of the [instance] added.
   int addDartCreatedInstance($proxyApiBaseClassName instance) {
+    assert(getIdentifier(instance) == null);
+
     final int identifier = _nextUniqueIdentifier();
-    _addInstanceWithIdentifier(instance, identifier);
+    _identifiers[instance] = identifier;
+    _weakInstances[identifier] =
+        WeakReference<$proxyApiBaseClassName>(instance);
+    _finalizer.attach(instance, identifier, detach: instance);
+
+    final $proxyApiBaseClassName copy = instance.pigeon_copy();
+    _identifiers[copy] = identifier;
+    _strongInstances[identifier] = copy;
     return identifier;
   }
 
@@ -143,9 +155,15 @@ class $dartInstanceManagerClassName {
   /// it was removed. Returns `null` if [identifier] was not associated with
   /// any strong reference.
   ///
-  /// This does not remove the weak referenced instance associated with
-  /// [identifier]. This can be done with [removeWeakReference].
+  /// Throws an `AssertionError` if the weak referenced instance associated with
+  /// [identifier] is not removed first. This can be done with
+  /// [removeWeakReference].
   T? remove<T extends $proxyApiBaseClassName>(int identifier) {
+    final T? instance = _weakInstances[identifier]?.target as T?;
+    assert(
+      instance == null,
+      'A strong instance with identifier \$identifier is being removed despite the weak reference still existing: \$instance',
+    );
     return _strongInstances.remove(identifier) as T?;
   }
 
@@ -191,24 +209,13 @@ class $dartInstanceManagerClassName {
   ///
   /// Throws assertion error if the instance or its identifier has already been
   /// added.
-  ///
-  /// Returns unique identifier of the [instance] added.
   void addHostCreatedInstance($proxyApiBaseClassName instance, int identifier) {
-    _addInstanceWithIdentifier(instance, identifier);
-  }
-
-  void _addInstanceWithIdentifier($proxyApiBaseClassName instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
 
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] = WeakReference<$proxyApiBaseClassName>(instance);
-    _finalizer.attach(instance, identifier, detach: instance);
-
-    final $proxyApiBaseClassName copy = instance.${classMemberNamePrefix}copy();
-    _identifiers[copy] = identifier;
-    _strongInstances[identifier] = copy;
+    _strongInstances[identifier] = instance;
   }
 
   /// Whether this manager contains the given [identifier].

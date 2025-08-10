@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'common/core.dart';
+import 'common/flutter_command_utils.dart';
 import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
@@ -27,6 +28,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
     super.packagesDir, {
     super.processRunner,
     super.platform,
+    super.gitDir,
   }) {
     argParser.addFlag(_dartFlag, defaultsTo: true, help: 'Run "pub get"');
     argParser.addFlag(_supportingTargetPlatformsOnlyFlag,
@@ -178,12 +180,9 @@ class FetchDepsCommand extends PackageLoopingCommand {
           processRunner: processRunner, platform: platform);
 
       if (!gradleProject.isConfigured()) {
-        final int exitCode = await processRunner.runAndStream(
-          flutterCommand,
-          <String>['build', 'apk', '--config-only'],
-          workingDir: example.directory,
-        );
-        if (exitCode != 0) {
+        final bool buildSuccess = await runConfigOnlyBuild(
+            example, processRunner, platform, FlutterPlatform.android);
+        if (!buildSuccess) {
           printError('Unable to configure Gradle project.');
           return PackageResult.fail(<String>['Unable to configure Gradle.']);
         }
@@ -202,23 +201,25 @@ class FetchDepsCommand extends PackageLoopingCommand {
   }
 
   Future<PackageResult> _fetchDarwinDeps(
-      RepositoryPackage package, final String platform) async {
-    if (!pluginSupportsPlatform(platform, package,
+      RepositoryPackage package, final String platformString) async {
+    if (!pluginSupportsPlatform(platformString, package,
         requiredMode: PlatformSupport.inline)) {
       // Convert from the flag (lower case ios/macos) to the actual name.
-      final String displayPlatform = platform.replaceFirst('os', 'OS');
+      final String displayPlatform = platformString.replaceFirst('os', 'OS');
       return PackageResult.skip(
           'Package does not have native $displayPlatform dependencies.');
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
       // Create the necessary native build files, which will run pub get and pod install if needed.
-      final int exitCode = await processRunner.runAndStream(
-        flutterCommand,
-        <String>['build', platform, '--config-only'],
-        workingDir: example.directory,
-      );
-      if (exitCode != 0) {
+      final bool buildSuccess = await runConfigOnlyBuild(
+          example,
+          processRunner,
+          platform,
+          platformString == platformIOS
+              ? FlutterPlatform.ios
+              : FlutterPlatform.macos);
+      if (!buildSuccess) {
         printError('Unable to prepare native project files.');
         return PackageResult.fail(<String>['Unable to configure project.']);
       }

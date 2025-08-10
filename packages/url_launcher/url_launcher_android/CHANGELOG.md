@@ -1,3 +1,15 @@
+## 6.3.17
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 6.3.16
+
+* Removes obsolete code related to supporting SDK <21.
+
+## 6.3.15
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 6.3.14
 
 * Bumps androidx.annotation:annotation from 1.9.0 to 1.9.1.

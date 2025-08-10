@@ -77,8 +77,6 @@ class VideoPlayer {
       ..playsInline = true;
 
     _videoElement.onCanPlay.listen(_onVideoElementInitialization);
-    // Needed for Safari iOS 17, which may not send `canplay`.
-    _videoElement.onLoadedMetadata.listen(_onVideoElementInitialization);
 
     _videoElement.onCanPlayThrough.listen((dynamic _) {
       setBuffering(false);
@@ -131,6 +129,10 @@ class VideoPlayer {
     if (src != null) {
       _videoElement.src = src;
     }
+
+    // Explicitly triggers media loading in preparation for playback. Needed on
+    // iOS to ensure the first frame becomes visible before playback begins.
+    _videoElement.load();
   }
 
   /// Attempts to play the video.
@@ -260,6 +262,10 @@ class VideoPlayer {
     if (!options.allowRemotePlayback) {
       _videoElement.disableRemotePlayback = true;
     }
+
+    if (options.poster != null) {
+      _videoElement.poster = options.poster!.toString();
+    }
   }
 
   void _resetOptions() {
@@ -271,6 +277,7 @@ class VideoPlayer {
       _onContextMenu = null;
     }
     _videoElement.removeAttribute('disableRemotePlayback');
+    _videoElement.removeAttribute('poster');
   }
 
   /// Disposes of the current [web.HTMLVideoElement].

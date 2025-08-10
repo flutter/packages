@@ -341,6 +341,40 @@ void main() {
       verify(mockWebView.loadFileUrl('/path/to/file.html', '/path/to'));
     });
 
+    group('loadFileWithParams', () {
+      test('Using LoadFileParams model', () async {
+        final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        );
+
+        await controller.loadFileWithParams(
+          const LoadFileParams(absoluteFilePath: '/path/to/file.html'),
+        );
+        verify(mockWebView.loadFileUrl('/path/to/file.html', '/path/to'));
+      });
+
+      test('Using WebKitLoadFileParams with custom readAccessPath', () async {
+        final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        );
+
+        await controller.loadFileWithParams(
+          WebKitLoadFileParams(
+            absoluteFilePath: '/path/to/file.html',
+            readAccessPath: '/path/to/resources/',
+          ),
+        );
+        verify(mockWebView.loadFileUrl(
+          '/path/to/file.html',
+          '/path/to/resources/',
+        ));
+      });
+    });
+
     test('loadFlutterAsset', () async {
       final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
 
@@ -675,6 +709,64 @@ void main() {
         controller.getScrollPosition(),
         completion(const Offset(8.0, 16.0)),
       );
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('setVerticalScrollBarEnabled', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await controller.setVerticalScrollBarEnabled(true);
+      verify(mockScrollView.setShowsVerticalScrollIndicator(true));
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('setHorizontalScrollBarEnabled', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      await controller.setHorizontalScrollBarEnabled(false);
+      verify(mockScrollView.setShowsHorizontalScrollIndicator(false));
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('supportsSetScrollBarsEnabled returns true for iOS', () {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+
+      expect(controller.supportsSetScrollBarsEnabled(), true);
+
+      debugDefaultTargetPlatformOverride = null;
+    });
+
+    test('supportsSetScrollBarsEnabled returns false for macOS', () {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+
+      expect(controller.supportsSetScrollBarsEnabled(), false);
 
       debugDefaultTargetPlatformOverride = null;
     });
@@ -1383,6 +1475,30 @@ void main() {
       expect(urlChange.url, null);
     });
 
+    test('setOverScrollMode', () async {
+      final MockUIScrollView mockScrollView = MockUIScrollView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        mockScrollView: mockScrollView,
+      );
+
+      await controller.setOverScrollMode(WebViewOverScrollMode.always);
+      verify(mockScrollView.setBounces(true));
+      verify(mockScrollView.setAlwaysBounceVertical(true));
+      verify(mockScrollView.setAlwaysBounceHorizontal(true));
+
+      clearInteractions(mockScrollView);
+      await controller
+          .setOverScrollMode(WebViewOverScrollMode.ifContentScrolls);
+      verify(mockScrollView.setBounces(true));
+      verify(mockScrollView.setAlwaysBounceVertical(false));
+      verify(mockScrollView.setAlwaysBounceHorizontal(false));
+
+      clearInteractions(mockScrollView);
+      await controller.setOverScrollMode(WebViewOverScrollMode.never);
+      verify(mockScrollView.setBounces(false));
+    });
+
     test('webViewIdentifier', () {
       final PigeonInstanceManager instanceManager = TestInstanceManager();
 
@@ -1576,6 +1692,17 @@ void main() {
 
       await controller.setInspectable(true);
       verify(mockWebView.setInspectable(true));
+    });
+
+    test('setAllowsLinkPreview', () async {
+      final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+      final WebKitWebViewController controller = createControllerWithMocks(
+        createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+      );
+
+      await controller.setAllowsLinkPreview(true);
+      verify(mockWebView.setAllowsLinkPreview(true));
     });
 
     group('Console logging', () {

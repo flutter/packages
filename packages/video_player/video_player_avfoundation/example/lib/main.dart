@@ -4,8 +4,6 @@
 
 // ignore_for_file: public_member_api_docs
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
@@ -44,27 +42,20 @@ class _App extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: Platform.isIOS
-              ? <Widget>[
-                  _ViewTypeTabBar(
-                    builder: (VideoViewType viewType) =>
-                        _BumbleBeeRemoteVideo(viewType),
-                  ),
-                  _ViewTypeTabBar(
-                    builder: (VideoViewType viewType) =>
-                        _BumbleBeeEncryptedLiveStream(viewType),
-                  ),
-                  _ViewTypeTabBar(
-                    builder: (VideoViewType viewType) =>
-                        _ButterFlyAssetVideo(viewType),
-                  ),
-                ]
-              // Platform views are only supported on iOS as of now.
-              : const <Widget>[
-                  _BumbleBeeRemoteVideo(VideoViewType.textureView),
-                  _BumbleBeeEncryptedLiveStream(VideoViewType.textureView),
-                  _ButterFlyAssetVideo(VideoViewType.textureView),
-                ],
+          children: <Widget>[
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _BumbleBeeRemoteVideo(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _BumbleBeeEncryptedLiveStream(viewType),
+            ),
+            _ViewTypeTabBar(
+              builder: (VideoViewType viewType) =>
+                  _ButterFlyAssetVideo(viewType),
+            ),
+          ],
         ),
       ),
     );
@@ -153,8 +144,10 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
     _controller.addListener(() {
       setState(() {});
     });
-    _controller.initialize().then((_) => setState(() {}));
-    _controller.play();
+    _controller.initialize().then((_) {
+      _controller.play();
+      setState(() {});
+    });
   }
 
   @override
@@ -276,9 +269,9 @@ class _BumbleBeeEncryptedLiveStreamState
     _controller.addListener(() {
       setState(() {});
     });
-    _controller.initialize();
-
-    _controller.play();
+    _controller.initialize().then((_) {
+      _controller.play();
+    });
   }
 
   @override

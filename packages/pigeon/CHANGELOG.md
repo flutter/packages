@@ -1,7 +1,56 @@
+## 26.0.0
+
+* **Breaking Change** [dart] Changes name of constructors used to create subclasses of ProxyApis to
+  `pigeon_**original_name**`.
+* [dart] Adds ProxyApi overrides classes to be used in Flutter unit tests.
+
+## 25.5.0
+
+* [dart] Changes the default InstanceManager and its initialization to no longer make a message call
+  when used in a Flutter unit test.
+
+## 25.4.0
+
+* [gobject] Adds type id constants in header files so that they can be used by the user.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 25.3.2
+
+* [dart] Fixes null pointer crashes/exceptions caused by premature finalization of Dart instances
+  for ProxyApis.
+
+## 25.3.1
+
+* [kotlin] Fixes Kotlin InstanceManager not properly removing callbacks from handler.
+* [kotlin] Fixes `SyntheticAccessor` lint caused by private utility methods.
+
+## 25.3.0
+
+* [swift] Adds equality methods to generated data classes.
+* [dart, kotlin] Shortens equality methods.
+
+## 25.2.0
+
+* [kotlin] Adds equality methods to generated data classes.
+
+## 25.1.0
+
+* [dart] Adds equality methods to generated data classes.
+
+## 25.0.0
+
+* **Breaking Change** Removes `oneLanguage` field from `PigeonOptions`.
+* Separates internal options classes from user facing options.
+* Adds `mergeDefinitionFileOptions` parameter to `runWithOptions` method.
+* Relocates `injectOverflowTypes` to non-public facing method.
+
+## 24.2.2
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 24.2.1
 
-* [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in
-  an async method.
+* [dart] Fixes potential race condition caused by a ProxyApi constructor message call being made in an async method.
 
 ## 24.2.0
 

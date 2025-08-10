@@ -1,3 +1,8 @@
+## 0.11.2
+
+* Fixes overflowed toggles in the camera example.
+* Fixes `CameraLensType` export.
+
 ## 0.11.1
 
 * Adds API support query for image streaming.

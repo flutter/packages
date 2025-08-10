@@ -1,3 +1,27 @@
+## 6.1.0
+
+* Updates to `GoogleSignIn` 9.0.
+* Adds support for the `nonce` parameter.
+
+## 6.0.1
+
+* Returns configuration errors as `PlatformException`s in Dart instead of
+  crashing the app.
+
+## 6.0.0
+
+* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
+  interface package, rather than 2.x, significantly changing the API surface.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 5.9.0
+
+* Updates Google Sign-In SDK to 8.0+.
+
+## 5.8.1
+
+* Asserts that new `forceAccountName` parameter is null (not used in iOS).
+
 ## 5.8.0
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

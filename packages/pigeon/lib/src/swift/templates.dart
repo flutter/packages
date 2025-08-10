@@ -2,28 +2,29 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import '../../pigeon.dart';
 import '../generator_tools.dart';
+import 'swift_generator.dart' show InternalSwiftOptions;
 
 /// Name of delegate that handles the callback when an object is deallocated
 /// in an `InstanceManager`.
-String instanceManagerFinalizerDelegateName(SwiftOptions options) =>
+String instanceManagerFinalizerDelegateName(InternalSwiftOptions options) =>
     '${_instanceManagerFinalizerName(options)}Delegate';
 
 /// The name of the registrar containing all the ProxyApi implementations.
-String proxyApiRegistrarName(SwiftOptions options) =>
+String proxyApiRegistrarName(InternalSwiftOptions options) =>
     '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}ProxyApiRegistrar';
 
 /// The name of the `ReaderWriter` that handles ProxyApis.
-String proxyApiReaderWriterName(SwiftOptions options) =>
+String proxyApiReaderWriterName(InternalSwiftOptions options) =>
     '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}ProxyApiCodecReaderWriter';
 
 /// Name of the Swift `InstanceManager`.
-String swiftInstanceManagerClassName(SwiftOptions options) =>
+String swiftInstanceManagerClassName(InternalSwiftOptions options) =>
     '${options.fileSpecificClassNameComponent ?? ''}${proxyApiClassNamePrefix}InstanceManager';
 
 /// Template for delegate with callback when an object is deallocated.
-String instanceManagerFinalizerDelegateTemplate(SwiftOptions options) => '''
+String instanceManagerFinalizerDelegateTemplate(InternalSwiftOptions options) =>
+    '''
 /// Handles the callback when an object is deallocated.
 protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
@@ -33,15 +34,15 @@ protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject {
 ''';
 
 /// Template for an object that tracks when an object is deallocated.
-String instanceManagerFinalizerTemplate(SwiftOptions options) => '''
+String instanceManagerFinalizerTemplate(InternalSwiftOptions options) => '''
 // Attaches to an object to receive a callback when the object is deallocated.
 internal final class ${_instanceManagerFinalizerName(options)} {
-  private static let associatedObjectKey = malloc(1)!
+  internal static let associatedObjectKey = malloc(1)!
 
   private let identifier: Int64
   // Reference to the delegate is weak because the callback should be ignored if the
   // `InstanceManager` is deallocated.
-  private weak var delegate: ${instanceManagerFinalizerDelegateName(options)}?
+  internal weak var delegate: ${instanceManagerFinalizerDelegateName(options)}?
 
   private init(identifier: Int64, delegate: ${instanceManagerFinalizerDelegateName(options)}) {
     self.identifier = identifier
@@ -56,7 +57,11 @@ internal final class ${_instanceManagerFinalizerName(options)} {
   }
 
   static func detach(from instance: AnyObject) {
-    objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
+    let finalizer = objc_getAssociatedObject(instance, associatedObjectKey) as? ${_instanceManagerFinalizerName(options)}
+    if let finalizer = finalizer {
+      finalizer.delegate = nil
+      objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
+    }
   }
 
   deinit {
@@ -67,7 +72,7 @@ internal final class ${_instanceManagerFinalizerName(options)} {
 ''';
 
 /// The Swift `InstanceManager`.
-String instanceManagerTemplate(SwiftOptions options) {
+String instanceManagerTemplate(InternalSwiftOptions options) {
   return '''
 /// Maintains instances used to communicate with the corresponding objects in Dart.
 ///
@@ -218,6 +223,10 @@ final class ${swiftInstanceManagerClassName(options)} {
   /// The manager will be empty after this call returns.
   func removeAllObjects() throws {
     lockQueue.sync {
+      let weakInstancesEnumerator = weakInstances.objectEnumerator()!
+      while let instance = weakInstancesEnumerator.nextObject() {
+        ${_instanceManagerFinalizerName(options)}.detach(from: instance as AnyObject)
+      }
       identifiers.removeAllObjects()
       weakInstances.removeAllObjects()
       strongInstances.removeAllObjects()
@@ -252,5 +261,5 @@ final class ${swiftInstanceManagerClassName(options)} {
 ''';
 }
 
-String _instanceManagerFinalizerName(SwiftOptions options) =>
+String _instanceManagerFinalizerName(InternalSwiftOptions options) =>
     '${options.fileSpecificClassNameComponent ?? ''}${classNamePrefix}Finalizer';

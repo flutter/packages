@@ -69,9 +69,12 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
       ..maxZoom = zoomPreference.maxZoom;
   }
 
-  if (configuration.cameraTargetBounds != null) {
-    // Needs gmaps.MapOptions.restriction and gmaps.MapRestriction
-    // see: https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions.restriction
+  final LatLngBounds? cameraTargetLatLngBounds =
+      configuration.cameraTargetBounds?.bounds;
+  if (cameraTargetLatLngBounds != null) {
+    options.restriction = gmaps.MapRestriction(
+      latLngBounds: latLngBoundsToGmlatLngBounds(cameraTargetLatLngBounds),
+    );
   }
 
   if (configuration.zoomControlsEnabled != null) {
@@ -200,6 +203,12 @@ LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
   );
 }
 
+/// Converts a [LatLngBounds] into a [gmaps.LatLngBounds].
+gmaps.LatLngBounds latLngBoundsToGmlatLngBounds(LatLngBounds latLngBounds) {
+  return gmaps.LatLngBounds(_latLngToGmLatLng(latLngBounds.southwest),
+      _latLngToGmLatLng(latLngBounds.northeast));
+}
+
 CameraPosition _gmViewportToCameraPosition(gmaps.Map map) {
   return CameraPosition(
     target:
@@ -219,7 +228,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   // If both the title and snippet of an infowindow are empty, we don't really
   // want an infowindow...
-  if ((markerTitle.isEmpty) && (markerSnippet.isEmpty)) {
+  if (markerTitle.isEmpty && markerSnippet.isEmpty) {
     return null;
   }
 
@@ -266,6 +275,8 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   return gmaps.InfoWindowOptions()
     ..content = container
+    // The deprecated parameter is used here to avoid losing precision.
+    // ignore: deprecated_member_use
     ..zIndex = marker.zIndex;
   // TODO(ditman): Compute the pixelOffset of the infoWindow, from the size of the Marker,
   // and the marker.infoWindow.anchor property.
@@ -294,6 +305,18 @@ void _setIconSize({
   final gmaps.Size gmapsSize = gmaps.Size(size.width, size.height);
   icon.size = gmapsSize;
   icon.scaledSize = gmapsSize;
+}
+
+void _setIconAnchor({
+  required Size size,
+  required Offset anchor,
+  required gmaps.Icon icon,
+}) {
+  final gmaps.Point gmapsAnchor = gmaps.Point(
+    size.width * anchor.dx,
+    size.height * anchor.dy,
+  );
+  icon.anchor = gmapsAnchor;
 }
 
 /// Determines the appropriate size for a bitmap based on its descriptor.
@@ -371,21 +394,11 @@ void _cleanUpBitmapConversionCaches() {
 
 // Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
 Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
-    BitmapDescriptor bitmapDescriptor) async {
+    BitmapDescriptor bitmapDescriptor, Offset anchor) async {
   gmaps.Icon? icon;
 
   if (bitmapDescriptor is MapBitmap) {
-    final String url = switch (bitmapDescriptor) {
-      (final BytesMapBitmap bytesMapBitmap) =>
-        _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
-          final Blob blob =
-              Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
-          return URL.createObjectURL(blob as JSObject);
-        }),
-      (final AssetMapBitmap assetMapBitmap) =>
-        ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
-      _ => throw UnimplementedError(),
-    };
+    final String url = urlFromMapBitmap(bitmapDescriptor);
 
     icon = gmaps.Icon()..url = url;
 
@@ -394,6 +407,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
         final Size? size = await _getBitmapSize(bitmapDescriptor, url);
         if (size != null) {
           _setIconSize(size: size, icon: icon);
+          _setIconAnchor(size: size, anchor: anchor, icon: icon);
         }
       case MapBitmapScaling.none:
         break;
@@ -444,8 +458,8 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
   return icon;
 }
 
-// Computes the options for a new [gmaps.Marker] from an incoming set of options
-// [marker], and the existing marker registered with the map: [currentMarker].
+/// Computes the options for a new [gmaps.Marker] from an incoming set of options
+/// [marker], and the existing marker registered with the map: [currentMarker].
 Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
   Marker marker,
   gmaps.Marker? currentMarker,
@@ -456,11 +470,13 @@ Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
       marker.position.longitude,
     )
     ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+    // The deprecated parameter is used here to avoid losing precision.
+    // ignore: deprecated_member_use
     ..zIndex = marker.zIndex
     ..visible = marker.visible
     ..opacity = marker.alpha
     ..draggable = marker.draggable
-    ..icon = await _gmIconFromBitmapDescriptor(marker.icon);
+    ..icon = await _gmIconFromBitmapDescriptor(marker.icon, marker.anchor);
   // TODO(ditman): Compute anchor properly, otherwise infowindows attach to the wrong spot.
   // Flat and Rotation are not supported directly on the web.
 }
@@ -676,6 +692,22 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
     default:
       throw UnimplementedError('Unimplemented CameraMove: ${json[0]}.');
   }
+}
+
+/// Converts a [MapBitmap] into a URL.
+String urlFromMapBitmap(MapBitmap mapBitmap) {
+  return switch (mapBitmap) {
+    (final BytesMapBitmap bytesMapBitmap) =>
+      _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
+        final Blob blob =
+            Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
+        return URL.createObjectURL(blob as JSObject);
+      }),
+    (final AssetMapBitmap assetMapBitmap) =>
+      ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
+    _ => throw UnimplementedError(
+        'Only BytesMapBitmap and AssetMapBitmap are supported.'),
+  };
 }
 
 // original JS by: Byron Singh (https://stackoverflow.com/a/30541162)

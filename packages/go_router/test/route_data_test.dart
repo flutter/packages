@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -50,7 +51,7 @@ class _ShellRouteDataWithKey extends ShellRouteData {
     GoRouterState state,
     Widget navigator,
   ) =>
-      SizedBox(
+      KeyedSubtree(
         key: key,
         child: navigator,
       );
@@ -226,6 +227,14 @@ final List<GoRoute> _routes = <GoRoute>[
   _goRouteDataRedirect,
 ];
 
+String fromBase64(String value) {
+  return const Utf8Decoder().convert(base64.decode(value));
+}
+
+String toBase64(String value) {
+  return base64.encode(const Utf8Encoder().convert(value));
+}
+
 void main() {
   group('GoRouteData', () {
     testWidgets(
@@ -253,6 +262,101 @@ void main() {
         await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
         expect(find.byKey(const Key('build')), findsNothing);
         expect(find.byKey(const Key('buildPage')), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'It should build a go route with the default case sensitivity',
+      (WidgetTester tester) async {
+        final GoRoute routeWithDefaultCaseSensitivity = GoRouteData.$route(
+          path: '/path',
+          factory: (GoRouterState state) => const _GoRouteDataBuild(),
+        );
+
+        expect(routeWithDefaultCaseSensitivity.caseSensitive, true);
+      },
+    );
+
+    testWidgets(
+      'It should build a go route with the overridden case sensitivity',
+      (WidgetTester tester) async {
+        final GoRoute routeWithDefaultCaseSensitivity = GoRouteData.$route(
+          path: '/path',
+          caseSensitive: false,
+          factory: (GoRouterState state) => const _GoRouteDataBuild(),
+        );
+
+        expect(routeWithDefaultCaseSensitivity.caseSensitive, false);
+      },
+    );
+
+    testWidgets(
+      'It should throw beacuase there is no code generated',
+      (WidgetTester tester) async {
+        final List<FlutterErrorDetails> errors = <FlutterErrorDetails>[];
+
+        FlutterError.onError =
+            (FlutterErrorDetails details) => errors.add(details);
+
+        const String errorText = 'Should be generated';
+
+        Widget buildWidget(void Function(BuildContext) onTap) {
+          return MaterialApp(
+            home: Builder(
+              builder: (BuildContext context) => GestureDetector(
+                child: const Text('Tap'),
+                onTap: () => onTap(context),
+              ),
+            ),
+          );
+        }
+
+        final Widget pushThrower = buildWidget((BuildContext context) {
+          const _GoRouteDataBuild().push<void>(context);
+        });
+        await tester.pumpWidget(pushThrower);
+        await tester.tap(find.text('Tap'));
+
+        expect(errors.first.exception, isA<UnimplementedError>());
+        expect(errors.first.exception.toString(), contains(errorText));
+
+        errors.clear();
+
+        final Widget goThrower = buildWidget((BuildContext context) {
+          const _GoRouteDataBuild().go(context);
+        });
+        await tester.pumpWidget(goThrower);
+        await tester.tap(find.text('Tap'));
+
+        expect(errors.first.exception, isA<UnimplementedError>());
+        expect(errors.first.exception.toString(), contains(errorText));
+
+        errors.clear();
+
+        final Widget pushReplacementThrower =
+            buildWidget((BuildContext context) {
+          const _GoRouteDataBuild().pushReplacement(context);
+        });
+        await tester.pumpWidget(pushReplacementThrower);
+        await tester.tap(find.text('Tap'));
+
+        expect(errors.first.exception, isA<UnimplementedError>());
+        expect(errors.first.exception.toString(), contains(errorText));
+
+        errors.clear();
+
+        final Widget replaceThrower = buildWidget((BuildContext context) {
+          const _GoRouteDataBuild().pushReplacement(context);
+        });
+        await tester.pumpWidget(replaceThrower);
+        await tester.tap(find.text('Tap'));
+
+        expect(errors.first.exception, isA<UnimplementedError>());
+        expect(errors.first.exception.toString(), contains(errorText));
+
+        errors.clear();
+
+        FlutterError.onError = FlutterError.dumpErrorToConsole;
       },
     );
   });
@@ -492,4 +596,60 @@ void main() {
       expect(find.byKey(const Key('buildPage')), findsNothing);
     },
   );
+  test('TypedGoRoute with default parameters', () {
+    const TypedGoRoute<GoRouteData> typedGoRoute = TypedGoRoute<GoRouteData>(
+      path: '/path',
+    );
+
+    expect(typedGoRoute.path, '/path');
+    expect(typedGoRoute.name, isNull);
+    expect(typedGoRoute.caseSensitive, true);
+    expect(typedGoRoute.routes, isEmpty);
+  });
+
+  test('TypedGoRoute with provided parameters', () {
+    const TypedGoRoute<GoRouteData> typedGoRoute = TypedGoRoute<GoRouteData>(
+      path: '/path',
+      name: 'name',
+      caseSensitive: false,
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<GoRouteData>(
+          path: 'sub-path',
+          name: 'subName',
+          caseSensitive: false,
+        ),
+      ],
+    );
+
+    expect(typedGoRoute.path, '/path');
+    expect(typedGoRoute.name, 'name');
+    expect(typedGoRoute.caseSensitive, false);
+    expect(typedGoRoute.routes, hasLength(1));
+    expect(
+      typedGoRoute.routes.single,
+      isA<TypedGoRoute<GoRouteData>>()
+          .having((TypedGoRoute<GoRouteData> route) => route.path, 'path',
+              'sub-path')
+          .having(
+            (TypedGoRoute<GoRouteData> route) => route.name,
+            'name',
+            'subName',
+          )
+          .having(
+            (TypedGoRoute<GoRouteData> route) => route.caseSensitive,
+            'caseSensitive',
+            false,
+          ),
+    );
+  });
+
+  test('CustomParameterCodec with required parameters', () {
+    const CustomParameterCodec customParameterCodec = CustomParameterCodec(
+      encode: toBase64,
+      decode: fromBase64,
+    );
+
+    expect(customParameterCodec.encode, toBase64);
+    expect(customParameterCodec.decode, fromBase64);
+  });
 }

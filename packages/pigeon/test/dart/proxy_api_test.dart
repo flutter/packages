@@ -71,7 +71,7 @@ void main() {
       final StringBuffer sink = StringBuffer();
       const DartGenerator generator = DartGenerator();
       generator.generate(
-        const DartOptions(),
+        const InternalDartOptions(),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -98,7 +98,13 @@ void main() {
       expect(
         collapsedCode,
         contains(
-          r'Api.name({ super.pigeon_binaryMessenger, super.pigeon_instanceManager, required this.someField, this.doSomethingElse, required Input input, })',
+          r'factory Api.name({ BinaryMessenger? pigeon_binaryMessenger, PigeonInstanceManager? pigeon_instanceManager, required int someField, String Function( Api pigeon_instance, Input input, )? doSomethingElse, required Input input, })',
+        ),
+      );
+      expect(
+        collapsedCode,
+        contains(
+          r'Api.pigeon_name({ super.pigeon_binaryMessenger, super.pigeon_instanceManager, required this.someField, this.doSomethingElse, required Input input, })',
         ),
       );
       expect(
@@ -139,7 +145,7 @@ void main() {
       final StringBuffer sink = StringBuffer();
       const DartGenerator generator = DartGenerator();
       generator.generate(
-        const DartOptions(),
+        const InternalDartOptions(),
         root,
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -190,7 +196,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -215,7 +221,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -258,7 +264,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -300,7 +306,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -352,7 +358,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -406,7 +412,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -448,7 +454,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -459,7 +465,14 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'Api({ super.pigeon_binaryMessenger, '
+            r'factory Api({ BinaryMessenger? pigeon_binaryMessenger, '
+            r'PigeonInstanceManager? pigeon_instanceManager, })',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            r'Api.pigeon_new({ super.pigeon_binaryMessenger, '
             r'super.pigeon_instanceManager, })',
           ),
         );
@@ -554,7 +567,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -565,7 +578,20 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'Api.name({ super.pigeon_binaryMessenger, '
+            r'factory Api.name({ BinaryMessenger? pigeon_binaryMessenger, '
+            r'PigeonInstanceManager? pigeon_instanceManager, '
+            r'required int validType, '
+            r'required AnEnum enumType, '
+            r'required Api2 proxyApiType, '
+            r'int? nullableValidType, '
+            r'AnEnum? nullableEnumType, '
+            r'Api2? nullableProxyApiType, })',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            r'Api.pigeon_name({ super.pigeon_binaryMessenger, '
             r'super.pigeon_instanceManager, '
             r'required int validType, '
             r'required AnEnum enumType, '
@@ -664,7 +690,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -675,7 +701,20 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r'Api.name({ super.pigeon_binaryMessenger, '
+            r'factory Api.name({ BinaryMessenger? pigeon_binaryMessenger, '
+            r'PigeonInstanceManager? pigeon_instanceManager, '
+            r'required int validType, '
+            r'required AnEnum enumType, '
+            r'required Api2 proxyApiType, '
+            r'int? nullableValidType, '
+            r'AnEnum? nullableEnumType, '
+            r'Api2? nullableProxyApiType, })',
+          ),
+        );
+        expect(
+          collapsedCode,
+          contains(
+            r'Api.pigeon_name({ super.pigeon_binaryMessenger, '
             r'super.pigeon_instanceManager, '
             r'required this.validType, '
             r'required this.enumType, '
@@ -753,7 +792,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -798,7 +837,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -806,7 +845,11 @@ void main() {
         final String code = sink.toString();
         expect(code, contains('class Api'));
         expect(
-            code, contains(r'static final Api2 aField = pigeonVar_aField();'));
+            code,
+            contains(
+                r'static Api2 get aField => PigeonOverrides.api_aField ?? _aField;'));
+        expect(
+            code, contains(r'static final Api2 _aField = pigeonVar_aField();'));
         expect(code, contains(r'static Api2 pigeonVar_aField()'));
       });
     });
@@ -890,7 +933,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -941,7 +984,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
@@ -1035,7 +1078,7 @@ void main() {
         final StringBuffer sink = StringBuffer();
         const DartGenerator generator = DartGenerator();
         generator.generate(
-          const DartOptions(),
+          const InternalDartOptions(),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,

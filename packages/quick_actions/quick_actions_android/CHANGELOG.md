@@ -1,3 +1,15 @@
+## 1.0.22
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 1.0.21
+
+* Removes obsolete code related to supporting SDK <21.
+
+## 1.0.20
+
+* Updates compileSdk 34 to flutter.compileSdkVersion.
+
 ## 1.0.19
 
 * Updates `pigeon` dependency to version 24.

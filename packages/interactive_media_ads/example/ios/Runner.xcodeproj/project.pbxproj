@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -13,6 +13,7 @@
 		4E107A500F4C07EF26C07FFF /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DDCBAC040E6F614A1CDCF896 /* Pods_Runner.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
+		8F0EDFD12E0A2906001938E6 /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F0EDFD02E0A2906001938E6 /* SettingsTests.swift */; };
 		8F599BB12C2DD1FD0090A0DF /* AdsManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BB02C2DD1FD0090A0DF /* AdsManagerTests.swift */; };
 		8F599BB32C2DD87D0090A0DF /* AdsLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BB22C2DD87D0090A0DF /* AdsLoaderTests.swift */; };
 		8F599BB52C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F599BB42C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift */; };
@@ -75,6 +76,7 @@
 		7A0E5CD036C0A19847922937 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		89C6230E68C80A6F4B207726 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8F0EDFD02E0A2906001938E6 /* SettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
 		8F599BB02C2DD1FD0090A0DF /* AdsManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsManagerTests.swift; sourceTree = "<group>"; };
 		8F599BB22C2DD87D0090A0DF /* AdsLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsLoaderTests.swift; sourceTree = "<group>"; };
 		8F599BB42C2DD8EC0090A0DF /* AdsLoaderDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdsLoaderDelegateTests.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 		331C8082294A63A400263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
+				8F0EDFD02E0A2906001938E6 /* SettingsTests.swift */,
 				8FC919912CA5D86F00188068 /* FriendlyObstructionTests.swift */,
 				8F977DCE2C2B99C600A90D4B /* AdDisplayContainerTests.swift */,
 				8F977DD22C2BA15100A90D4B /* TestProxyApiRegistrar.swift */,
@@ -296,7 +299,7 @@
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -414,6 +417,7 @@
 			files = (
 				8F599BBF2C3335B40090A0DF /* ViewControllerTests.swift in Sources */,
 				8F8382A32CBDB4A4007F28E0 /* CompanionAdProxyApiTests.swift in Sources */,
+				8F0EDFD12E0A2906001938E6 /* SettingsTests.swift in Sources */,
 				8FC919922CA5D86F00188068 /* FriendlyObstructionTests.swift in Sources */,
 				8F977DD92C2C8C6A00A90D4B /* AdLoadingErrorDataTests.swift in Sources */,
 				8F599BB32C2DD87D0090A0DF /* AdsLoaderTests.swift in Sources */,
@@ -789,7 +793,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};

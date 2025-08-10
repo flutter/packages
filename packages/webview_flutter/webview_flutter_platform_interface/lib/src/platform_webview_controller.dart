@@ -61,6 +61,20 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'loadFile is not implemented on the current platform');
   }
 
+  /// Loads a local HTML file using the provided [params].
+  ///
+  /// The [params.absoluteFilePath] should contain the absolute path to the file
+  /// on the device.
+  /// For example: `/Users/username/Documents/www/index.html`.
+  ///
+  /// Platform-specific implementations may extend [LoadFileParams] to support
+  /// additional parameters, such as iOS/macOS-specific read access options.
+  Future<void> loadFileWithParams(
+    LoadFileParams params,
+  ) {
+    return loadFile(params.absoluteFilePath);
+  }
+
   /// Loads the Flutter asset specified in the pubspec.yaml file.
   ///
   /// Throws an ArgumentError if [key] is not part of the specified assets
@@ -229,6 +243,26 @@ abstract class PlatformWebViewController extends PlatformInterface {
         'scrollBy is not implemented on the current platform');
   }
 
+  /// Whether the vertical scrollbar should be drawn or not.
+  Future<void> setVerticalScrollBarEnabled(bool enabled) {
+    throw UnimplementedError(
+        'setVerticalScrollBarEnabled is not implemented on the current platform');
+  }
+
+  /// Whether the horizontal scrollbar should be drawn or not.
+  Future<void> setHorizontalScrollBarEnabled(bool enabled) {
+    throw UnimplementedError(
+        'setHorizontalScrollBarEnabled is not implemented on the current platform');
+  }
+
+  /// Returns true if the current platform supports setting whether scrollbars
+  /// should be drawn or not.
+  ///
+  /// See [setVerticalScrollBarEnabled] and [setHorizontalScrollBarEnabled].
+  bool supportsSetScrollBarsEnabled() {
+    return false;
+  }
+
   /// Return the current scroll position of this view.
   ///
   /// Scroll position is measured from the top left.
@@ -322,6 +356,13 @@ abstract class PlatformWebViewController extends PlatformInterface {
           onJavaScriptTextInputDialog) async {
     throw UnimplementedError(
       'setOnJavaScriptTextInputDialog is not implemented on the current platform',
+    );
+  }
+
+  /// Sets the over-scroll mode for the WebView.
+  Future<void> setOverScrollMode(WebViewOverScrollMode mode) async {
+    throw UnimplementedError(
+      'setOverScrollMode is not implemented on the current platform',
     );
   }
 }

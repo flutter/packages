@@ -9,7 +9,8 @@ void main() {
   test('patternToRegExp without path parameter', () async {
     const String pattern = '/settings/detail';
     final List<String> pathParameter = <String>[];
-    final RegExp regex = patternToRegExp(pattern, pathParameter);
+    final RegExp regex =
+        patternToRegExp(pattern, pathParameter, caseSensitive: true);
     expect(pathParameter.isEmpty, isTrue);
     expect(regex.hasMatch('/settings/detail'), isTrue);
     expect(regex.hasMatch('/settings/'), isFalse);
@@ -22,7 +23,8 @@ void main() {
   test('patternToRegExp with path parameter', () async {
     const String pattern = '/user/:id/book/:bookId';
     final List<String> pathParameter = <String>[];
-    final RegExp regex = patternToRegExp(pattern, pathParameter);
+    final RegExp regex =
+        patternToRegExp(pattern, pathParameter, caseSensitive: true);
     expect(pathParameter.length, 2);
     expect(pathParameter[0], 'id');
     expect(pathParameter[1], 'bookId');
@@ -44,7 +46,8 @@ void main() {
   test('patternToPath without path parameter', () async {
     const String pattern = '/settings/detail';
     final List<String> pathParameter = <String>[];
-    final RegExp regex = patternToRegExp(pattern, pathParameter);
+    final RegExp regex =
+        patternToRegExp(pattern, pathParameter, caseSensitive: true);
 
     const String url = '/settings/detail';
     final RegExpMatch? match = regex.firstMatch(url);
@@ -60,7 +63,8 @@ void main() {
   test('patternToPath with path parameter', () async {
     const String pattern = '/user/:id/book/:bookId';
     final List<String> pathParameter = <String>[];
-    final RegExp regex = patternToRegExp(pattern, pathParameter);
+    final RegExp regex =
+        patternToRegExp(pattern, pathParameter, caseSensitive: true);
 
     const String url = '/user/123/book/456';
     final RegExpMatch? match = regex.firstMatch(url);

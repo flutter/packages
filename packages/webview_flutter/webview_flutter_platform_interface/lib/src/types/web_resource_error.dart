@@ -72,7 +72,6 @@ enum WebResourceErrorType {
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// {@tool sample}
 /// This example demonstrates how to extend the [WebResourceError] to
 /// provide additional platform specific parameters.
 ///
@@ -98,7 +97,6 @@ enum WebResourceErrorType {
 ///   final String? domain;
 /// }
 /// ```
-/// {@end-tool}
 @immutable
 class WebResourceError {
   /// Used by the platform implementation to create a new [WebResourceError].

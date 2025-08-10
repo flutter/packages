@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:path/path.dart' as path;
+
 import '../ast.dart';
 import '../generator.dart';
 import '../generator_tools.dart';
@@ -27,7 +29,7 @@ class GObjectOptions {
     this.headerOutPath,
   });
 
-  /// The path to the header that will get placed in the source filed (example:
+  /// The path to the header that will get placed in the source file (example:
   /// "foo.h").
   final String? headerIncludePath;
 
@@ -71,15 +73,60 @@ class GObjectOptions {
   }
 }
 
+/// Options that control how GObject code will be generated.
+class InternalGObjectOptions extends InternalOptions {
+  /// Creates a [InternalGObjectOptions] object
+  const InternalGObjectOptions({
+    required this.headerIncludePath,
+    required this.gobjectHeaderOut,
+    required this.gobjectSourceOut,
+    this.module,
+    this.copyrightHeader,
+    this.headerOutPath,
+  });
+
+  /// Creates InternalGObjectOptions from GObjectOptions.
+  InternalGObjectOptions.fromGObjectOptions(
+    GObjectOptions options, {
+    required this.gobjectHeaderOut,
+    required this.gobjectSourceOut,
+    Iterable<String>? copyrightHeader,
+  })  : headerIncludePath =
+            options.headerIncludePath ?? path.basename(gobjectHeaderOut),
+        module = options.module,
+        copyrightHeader = options.copyrightHeader ?? copyrightHeader,
+        headerOutPath = options.headerOutPath;
+
+  /// The path to the header that will get placed in the source file (example:
+  /// "foo.h").
+  final String headerIncludePath;
+
+  /// Path to the ".h" GObject file that will be generated.
+  final String gobjectHeaderOut;
+
+  /// Path to the ".cc" GObject file that will be generated.
+  final String gobjectSourceOut;
+
+  /// The module where the generated class will live.
+  final String? module;
+
+  /// A copyright header that will get prepended to generated code.
+  final Iterable<String>? copyrightHeader;
+
+  /// The path to the output header file location.
+  final String? headerOutPath;
+}
+
 /// Class that manages all GObject code generation.
-class GObjectGenerator extends Generator<OutputFileOptions<GObjectOptions>> {
+class GObjectGenerator
+    extends Generator<OutputFileOptions<InternalGObjectOptions>> {
   /// Constructor.
   const GObjectGenerator();
 
   /// Generates GObject file of type specified in [generatorOptions]
   @override
   void generate(
-    OutputFileOptions<GObjectOptions> generatorOptions,
+    OutputFileOptions<InternalGObjectOptions> generatorOptions,
     Root root,
     StringSink sink, {
     required String dartPackageName,
@@ -105,13 +152,14 @@ class GObjectGenerator extends Generator<OutputFileOptions<GObjectOptions>> {
 }
 
 /// Writes GObject header (.h) file to sink.
-class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
+class GObjectHeaderGenerator
+    extends StructuredGenerator<InternalGObjectOptions> {
   /// Constructor.
   const GObjectHeaderGenerator();
 
   @override
   void writeFilePrologue(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -125,7 +173,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeFileImports(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -141,7 +189,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeOpenNamespace(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -152,7 +200,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeEnum(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Enum anEnum, {
@@ -192,7 +240,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeDataClass(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -281,7 +329,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeGeneralCodec(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -290,11 +338,33 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
     indent.newln();
     _writeDeclareFinalType(indent, module, _codecBaseName,
         parentClassName: _standardCodecName);
+
+    final Iterable<EnumeratedType> customTypes =
+        getEnumeratedTypes(root, excludeSealedClasses: true);
+
+    if (customTypes.isNotEmpty) {
+      indent.newln();
+      addDocumentationComments(
+          indent,
+          <String>[
+            'Custom type ID constants:',
+            '',
+            'Constants used to identify custom types in the codec.',
+            'They are used in the codec to encode and decode custom types.',
+            'They may be used in custom object creation functions to identify the type.',
+          ],
+          _docCommentSpec);
+    }
+
+    for (final EnumeratedType customType in customTypes) {
+      final String customTypeId = _getCustomTypeId(module, customType);
+      indent.writeln('extern const int $customTypeId;');
+    }
   }
 
   @override
   void writeFlutterApi(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -506,7 +576,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeHostApi(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -714,7 +784,7 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeCloseNamespace(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -729,13 +799,14 @@ class GObjectHeaderGenerator extends StructuredGenerator<GObjectOptions> {
 }
 
 /// Writes GObject source (.cc) file to sink.
-class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
+class GObjectSourceGenerator
+    extends StructuredGenerator<InternalGObjectOptions> {
   /// Constructor.
   const GObjectSourceGenerator();
 
   @override
   void writeFilePrologue(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -749,7 +820,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeFileImports(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -760,7 +831,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeDataClass(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Class classDefinition, {
@@ -950,7 +1021,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeGeneralCodec(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent, {
     required String dartPackageName,
@@ -970,10 +1041,18 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
     _writeDefineType(indent, module, _codecBaseName,
         parentType: 'fl_standard_message_codec_get_type()');
 
+    indent.newln();
+    for (final EnumeratedType customType in customTypes) {
+      final String customTypeId = _getCustomTypeId(module, customType);
+      indent.writeln('const int $customTypeId = ${customType.enumeration};');
+    }
+
     for (final EnumeratedType customType in customTypes) {
       final String customTypeName = _getClassName(module, customType.name);
       final String snakeCustomTypeName =
           _snakeCaseFromCamelCase(customTypeName);
+      final String customTypeId = _getCustomTypeId(module, customType);
+
       indent.newln();
       final String valueType = customType.type == CustomTypes.customClass
           ? '$customTypeName*'
@@ -981,7 +1060,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       indent.writeScoped(
           'static gboolean ${codecMethodPrefix}_write_$snakeCustomTypeName($_standardCodecName* codec, GByteArray* buffer, $valueType value, GError** error) {',
           '}', () {
-        indent.writeln('uint8_t type = ${customType.enumeration};');
+        indent.writeln('uint8_t type = $customTypeId;');
         indent.writeln('g_byte_array_append(buffer, &type, sizeof(uint8_t));');
         if (customType.type == CustomTypes.customClass) {
           indent.writeln(
@@ -1004,7 +1083,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
         indent.writeScoped('switch (fl_value_get_custom_type(value)) {', '}',
             () {
           for (final EnumeratedType customType in customTypes) {
-            indent.writeln('case ${customType.enumeration}:');
+            final String customTypeId = _getCustomTypeId(module, customType);
+            indent.writeln('case $customTypeId:');
             indent.nest(1, () {
               final String customTypeName =
                   _getClassName(module, customType.name);
@@ -1033,6 +1113,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       final String customTypeName = _getClassName(module, customType.name);
       final String snakeCustomTypeName =
           _snakeCaseFromCamelCase(customTypeName);
+      final String customTypeId = _getCustomTypeId(module, customType);
       indent.newln();
       indent.writeScoped(
           'static FlValue* ${codecMethodPrefix}_read_$snakeCustomTypeName($_standardCodecName* codec, GBytes* buffer, size_t* offset, GError** error) {',
@@ -1053,10 +1134,10 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
           });
           indent.newln();
           indent.writeln(
-              'return fl_value_new_custom_object(${customType.enumeration}, G_OBJECT(value));');
+              'return fl_value_new_custom_object($customTypeId, G_OBJECT(value));');
         } else if (customType.type == CustomTypes.customEnum) {
           indent.writeln(
-              'return fl_value_new_custom(${customType.enumeration}, fl_standard_message_codec_read_value(codec, buffer, offset, error), (GDestroyNotify)fl_value_unref);');
+              'return fl_value_new_custom($customTypeId, fl_standard_message_codec_read_value(codec, buffer, offset, error), (GDestroyNotify)fl_value_unref);');
         }
       });
     }
@@ -1068,9 +1149,10 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
       indent.writeScoped('switch (type) {', '}', () {
         for (final EnumeratedType customType in customTypes) {
           final String customTypeName = _getClassName(module, customType.name);
+          final String customTypeId = _getCustomTypeId(module, customType);
           final String snakeCustomTypeName =
               _snakeCaseFromCamelCase(customTypeName);
-          indent.writeln('case ${customType.enumeration}:');
+          indent.writeln('case $customTypeId:');
           indent.nest(1, () {
             indent.writeln(
                 'return ${codecMethodPrefix}_read_$snakeCustomTypeName(codec, buffer, offset, error);');
@@ -1106,7 +1188,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeFlutterApi(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -1365,7 +1447,7 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 
   @override
   void writeHostApi(
-    GObjectOptions generatorOptions,
+    InternalGObjectOptions generatorOptions,
     Root root,
     Indent indent,
     Api api, {
@@ -1705,7 +1787,8 @@ class GObjectSourceGenerator extends StructuredGenerator<GObjectOptions> {
 }
 
 // Returns the module name to use.
-String _getModule(GObjectOptions generatorOptions, String dartPackageName) {
+String _getModule(
+    InternalGObjectOptions generatorOptions, String dartPackageName) {
   return generatorOptions.module ?? _camelCaseFromSnakeCase(dartPackageName);
 }
 
@@ -1872,6 +1955,16 @@ String _getMethodPrefix(String module, String name) {
   return _snakeCaseFromCamelCase(className);
 }
 
+// Returns the code for the custom type id definition for [customType].
+String _getCustomTypeId(String module, EnumeratedType customType) {
+  final String customTypeName = _getClassName(module, customType.name);
+
+  final String snakeCustomTypeName = _snakeCaseFromCamelCase(customTypeName);
+
+  final String customTypeId = '${snakeCustomTypeName}_type_id';
+  return customTypeId;
+}
+
 // Returns an enumeration value in C++ form.
 String _getEnumValue(String module, String enumName, String memberName) {
   final String snakeEnumName = _snakeCaseFromCamelCase(enumName);
@@ -2012,12 +2105,14 @@ String _referenceValue(String module, TypeDeclaration type, String variableName,
   }
 }
 
-int _getTypeEnumeration(Root root, TypeDeclaration type) {
-  return getEnumeratedTypes(root, excludeSealedClasses: true)
-      .firstWhere((EnumeratedType t) =>
-          (type.isClass && t.associatedClass == type.associatedClass) ||
-          (type.isEnum && t.associatedEnum == type.associatedEnum))
-      .enumeration;
+String _getCustomTypeIdFromDeclaration(
+    Root root, TypeDeclaration type, String module) {
+  return _getCustomTypeId(
+      module,
+      getEnumeratedTypes(root, excludeSealedClasses: true).firstWhere(
+          (EnumeratedType t) =>
+              (type.isClass && t.associatedClass == type.associatedClass) ||
+              (type.isEnum && t.associatedEnum == type.associatedEnum)));
 }
 
 // Returns code to convert the native data type stored in [variableName] to a FlValue.
@@ -2028,12 +2123,15 @@ String _makeFlValue(
     {String? lengthVariableName}) {
   final String value;
   if (type.isClass) {
-    final int enumeration = _getTypeEnumeration(root, type);
-    value = 'fl_value_new_custom_object($enumeration, G_OBJECT($variableName))';
-  } else if (type.isEnum) {
-    final int enumeration = _getTypeEnumeration(root, type);
+    final String customTypeId =
+        _getCustomTypeIdFromDeclaration(root, type, module);
     value =
-        'fl_value_new_custom($enumeration, fl_value_new_int(${type.isNullable ? '*$variableName' : variableName}), (GDestroyNotify)fl_value_unref)';
+        'fl_value_new_custom_object($customTypeId, G_OBJECT($variableName))';
+  } else if (type.isEnum) {
+    final String customTypeId =
+        _getCustomTypeIdFromDeclaration(root, type, module);
+    value =
+        'fl_value_new_custom($customTypeId, fl_value_new_int(${type.isNullable ? '*$variableName' : variableName}), (GDestroyNotify)fl_value_unref)';
   } else if (_isFlValueWrappedType(type)) {
     value = 'fl_value_ref($variableName)';
   } else if (type.baseName == 'void') {
