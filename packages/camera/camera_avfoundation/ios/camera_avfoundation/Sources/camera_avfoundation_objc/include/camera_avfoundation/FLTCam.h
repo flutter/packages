@@ -23,37 +23,27 @@ NS_ASSUME_NONNULL_BEGIN
 // captureDevice is assignable for the Swift DefaultCamera subclass
 @property(strong, nonatomic) NSObject<FLTCaptureDevice> *captureDevice;
 @property(readonly, nonatomic) CGSize previewSize;
-// Format used for video and image streaming.
-@property(assign, nonatomic) FourCharCode videoFormat;
 @property(assign, nonatomic) FCPPlatformImageFileFormat fileFormat;
 
 // Properties exposed for the Swift DefaultCamera subclass
 @property(assign, nonatomic) BOOL isRecording;
-@property(readonly, nonatomic) NSObject<FLTCaptureSession> *videoCaptureSession;
-@property(readonly, nonatomic) NSObject<FLTCaptureSession> *audioCaptureSession;
-@property(readonly, nonatomic) NSObject<FLTDeviceOrientationProviding> *deviceOrientationProvider;
+// videoCaptureSession is assignable for the Swift DefaultCamera subclass
+@property(strong, nonatomic) NSObject<FLTCaptureSession> *videoCaptureSession;
+// audioCaptureSession is assignable for the Swift DefaultCamera subclass
+@property(strong, nonatomic) NSObject<FLTCaptureSession> *audioCaptureSession;
 @property(assign, nonatomic) UIDeviceOrientation lockedCaptureOrientation;
 @property(assign, nonatomic) UIDeviceOrientation deviceOrientation;
-@property(assign, nonatomic) FCPPlatformFlashMode flashMode;
 @property(nonatomic) CMMotionManager *motionManager;
-@property(nonatomic, copy) CaptureDeviceFactory captureDeviceFactory;
 @property(strong, nonatomic) NSObject<FLTCaptureInput> *captureVideoInput;
-@property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
-/// All FLTCam's state access and capture session related operations should be on run on this queue.
-@property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
-@property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
-@property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
-@property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
-@property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
-/// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
-@property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
-
-/// Initializes an `FLTCam` instance with the given configuration.
-/// @param error report to the caller if any error happened creating the camera.
-- (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration error:(NSError **)error;
+/// A wrapper for CMVideoFormatDescriptionGetDimensions.
+/// Allows for alternate implementations in tests.
+@property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
 
 // Methods exposed for the Swift DefaultCamera subclass
 - (void)updateOrientation;
+
+- (BOOL)setCaptureSessionPreset:(FCPPlatformResolutionPreset)resolutionPreset
+                      withError:(NSError **)error;
 
 @end
 

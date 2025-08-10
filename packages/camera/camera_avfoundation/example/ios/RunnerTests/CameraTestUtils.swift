@@ -82,7 +82,7 @@ enum CameraTestUtils {
   }
 
   static func createTestCamera(_ configuration: FLTCamConfiguration) -> DefaultCamera {
-    return DefaultCamera(configuration: configuration, error: nil)
+    return (try? DefaultCamera(configuration: configuration))!
   }
 
   static func createTestCamera() -> DefaultCamera {
