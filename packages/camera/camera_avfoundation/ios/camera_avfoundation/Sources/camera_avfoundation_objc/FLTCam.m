@@ -21,14 +21,6 @@
 
 @interface FLTCam () <AVCaptureVideoDataOutputSampleBufferDelegate,
                       AVCaptureAudioDataOutputSampleBufferDelegate>
-
-@property(readonly, nonatomic) int64_t textureId;
-
-@property(readonly, nonatomic) CGSize captureSize;
-@property(strong, nonatomic)
-    NSObject<FLTAssetWriterInputPixelBufferAdaptor> *assetWriterPixelBufferAdaptor;
-@property(strong, nonatomic) AVCaptureVideoDataOutput *videoOutput;
-
 /// A wrapper for CMVideoFormatDescriptionGetDimensions.
 /// Allows for alternate implementations in tests.
 @property(nonatomic, copy) VideoDimensionsForFormat videoDimensionsForFormat;
