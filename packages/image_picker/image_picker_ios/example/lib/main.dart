@@ -235,26 +235,18 @@ class _MyHomePageState extends State<MyHomePage> {
           itemBuilder: (BuildContext context, int index) {
             final XFile image = _mediaFileList![index];
             final String? mime = lookupMimeType(_mediaFileList![index].path);
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(image.name,
-                    key: const Key('image_picker_example_picked_image_name')),
-                Semantics(
-                  label: 'image_picker_example_picked_image',
-                  child: mime == null || mime.startsWith('image/')
-                      ? Image.file(
-                          File(_mediaFileList![index].path),
-                          errorBuilder: (BuildContext context, Object error,
-                              StackTrace? stackTrace) {
-                            return const Center(
-                                child:
-                                    Text('This image type is not supported'));
-                          },
-                        )
-                      : _buildInlineVideoPlayer(index),
-                ),
-              ],
+            return Semantics(
+              label: 'image_picker_example_picked_image',
+              child: mime == null || mime.startsWith('image/')
+                  ? Image.file(
+                      File(_mediaFileList![index].path),
+                      errorBuilder: (BuildContext context, Object error,
+                          StackTrace? stackTrace) {
+                        return const Center(
+                            child: Text('This image type is not supported'));
+                      },
+                    )
+                  : _buildInlineVideoPlayer(index),
             );
           },
           itemCount: _mediaFileList!.length,
