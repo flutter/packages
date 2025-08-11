@@ -1,3 +1,7 @@
+## 0.5.12+3
+
+* Fixes a bug where using `cloudMapId` for cloud-based styling would fail if the `style` property was also present.
+
 ## 0.5.12+2
 
 * Fix broken cameraTargetBounds option on web.
