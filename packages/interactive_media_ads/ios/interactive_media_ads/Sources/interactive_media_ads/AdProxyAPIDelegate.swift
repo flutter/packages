@@ -83,9 +83,9 @@ class AdProxyAPIDelegate: PigeonApiDelegateIMAAd {
     return pigeonInstance.skipTimeOffset
   }
 
-  //  func adPodInfo(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> IMAAdPodInfo {
-  //    return pigeonInstance.adPodInfo
-  //  }
+  func adPodInfo(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> IMAAdPodInfo {
+    return pigeonInstance.adPodInfo
+  }
 
   func traffickingParameters(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String {
     return pigeonInstance.traffickingParameters
@@ -99,9 +99,10 @@ class AdProxyAPIDelegate: PigeonApiDelegateIMAAd {
     return pigeonInstance.creativeAdID
   }
 
-  //  func universalAdIDs(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [IMAUniversalAdID] {
-  //    return pigeonInstance.universalAdIDs
-  //  }
+  func universalAdIDs(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [IMAUniversalAdID]
+  {
+    return pigeonInstance.universalAdIDs
+  }
 
   func advertiserName(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String {
     return pigeonInstance.advertiserName

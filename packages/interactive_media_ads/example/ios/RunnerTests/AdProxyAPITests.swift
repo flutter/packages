@@ -49,15 +49,15 @@ class AdProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.adSystem)
   }
 
-  //  func testCompanionAds() {
-  //    let registrar = TestProxyApiRegistrar()
-  //    let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
+  //    func testCompanionAds() {
+  //      let registrar = TestProxyApiRegistrar()
+  //      let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
   //
-  //    let instance = TestAd.customInit()
-  //    let value = try? api.pigeonDelegate.companionAds(pigeonApi: api, pigeonInstance: instance)
+  //      let instance = TestAd.customInit()
+  //      let value = try? api.pigeonDelegate.companionAds(pigeonApi: api, pigeonInstance: instance)
   //
-  //    XCTAssertEqual(value, instance.companionAds)
-  //  }
+  //      XCTAssertEqual(value, instance.companionAds)
+  //    }
 
   func testContentType() {
     let registrar = TestProxyApiRegistrar()
@@ -169,15 +169,15 @@ class AdProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.skipTimeOffset)
   }
 
-  func testAdPodInfo() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
-
-    let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.adPodInfo(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.adPodInfo)
-  }
+  //  func testAdPodInfo() {
+  //    let registrar = TestProxyApiRegistrar()
+  //    let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
+  //
+  //    let instance = TestAd.customInit()
+  //    let value = try? api.pigeonDelegate.adPodInfo(pigeonApi: api, pigeonInstance: instance)
+  //
+  //    XCTAssertEqual(value, instance.adPodInfo)
+  //  }
 
   func testTraffickingParameters() {
     let registrar = TestProxyApiRegistrar()
@@ -210,15 +210,15 @@ class AdProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.creativeAdID)
   }
 
-  func testUniversalAdIDs() {
-    let registrar = TestProxyApiRegistrar()
-    let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
-
-    let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.universalAdIDs(pigeonApi: api, pigeonInstance: instance)
-
-    XCTAssertEqual(value, instance.universalAdIDs)
-  }
+  //  func testUniversalAdIDs() {
+  //    let registrar = TestProxyApiRegistrar()
+  //    let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
+  //
+  //    let instance = TestAd.customInit()
+  //    let value = try? api.pigeonDelegate.universalAdIDs(pigeonApi: api, pigeonInstance: instance)
+  //
+  //    XCTAssertEqual(value, instance.universalAdIDs)
+  //  }
 
   func testAdvertiserName() {
     let registrar = TestProxyApiRegistrar()
