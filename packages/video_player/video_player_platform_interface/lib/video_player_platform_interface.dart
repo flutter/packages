@@ -121,6 +121,11 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
   }
+
+  /// Gets the available audio tracks for the video.
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) {
+    throw UnimplementedError('getAudioTracks() has not been implemented.');
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}
@@ -530,4 +535,125 @@ class VideoCreationOptions {
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+}
+
+/// Represents an audio track in a video.
+@immutable
+class VideoAudioTrack {
+  /// Creates a new [VideoAudioTrack].
+  const VideoAudioTrack({
+    required this.id,
+    required this.label,
+    required this.language,
+    this.isSelected = false,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  /// The unique identifier for this audio track.
+  final String id;
+
+  /// The display label for this audio track.
+  final String label;
+
+  /// The language code for this audio track (e.g., 'en', 'es', 'fr').
+  final String language;
+
+  /// Whether this audio track is currently selected.
+  final bool isSelected;
+
+  /// The bitrate of this audio track in bits per second.
+  ///
+  /// This represents the quality/bandwidth of the audio stream.
+  /// Common values: 64000 (64kbps), 128000 (128kbps), 256000 (256kbps).
+  /// May be null if the information is not available.
+  final int? bitrate;
+
+  /// The sample rate of this audio track in Hz.
+  ///
+  /// Common values: 44100 (44.1kHz), 48000 (48kHz).
+  /// May be null if the information is not available.
+  final int? sampleRate;
+
+  /// The number of audio channels in this track.
+  ///
+  /// Common values: 1 (mono), 2 (stereo), 6 (5.1 surround), 8 (7.1 surround).
+  /// May be null if the information is not available.
+  final int? channelCount;
+
+  /// The audio codec used for this track.
+  ///
+  /// Common values: 'aac', 'mp3', 'opus', 'ac3', 'eac3'.
+  /// May be null if the information is not available.
+  final String? codec;
+
+  /// Returns a human-readable quality description based on bitrate and channels.
+  String get qualityDescription {
+    final List<String> parts = [];
+
+    if (bitrate != null) {
+      final kbps = (bitrate! / 1000).round();
+      parts.add('${kbps}kbps');
+    }
+
+    if (channelCount != null) {
+      switch (channelCount!) {
+        case 1:
+          parts.add('Mono');
+          break;
+        case 2:
+          parts.add('Stereo');
+          break;
+        case 6:
+          parts.add('5.1');
+          break;
+        case 8:
+          parts.add('7.1');
+          break;
+        default:
+          parts.add('${channelCount}ch');
+      }
+    }
+
+    if (codec != null) {
+      parts.add(codec!.toUpperCase());
+    }
+
+    return parts.isEmpty ? 'Unknown Quality' : parts.join(' • ');
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is VideoAudioTrack &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          label == other.label &&
+          language == other.language &&
+          isSelected == other.isSelected &&
+          bitrate == other.bitrate &&
+          sampleRate == other.sampleRate &&
+          channelCount == other.channelCount &&
+          codec == other.codec;
+
+  @override
+  int get hashCode => Object.hash(
+        id,
+        label,
+        language,
+        isSelected,
+        bitrate,
+        sampleRate,
+        channelCount,
+        codec,
+      );
+
+  @override
+  String toString() {
+    return 'VideoAudioTrack{id: $id, label: $label, language: $language, '
+        'isSelected: $isSelected, bitrate: $bitrate, sampleRate: $sampleRate, '
+        'channelCount: $channelCount, codec: $codec}';
+  }
 }

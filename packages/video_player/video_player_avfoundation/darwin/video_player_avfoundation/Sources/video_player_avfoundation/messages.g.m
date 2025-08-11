@@ -53,6 +53,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
+@interface FVPAudioTrackMessage ()
++ (FVPAudioTrackMessage *)fromList:(NSArray<id> *)list;
++ (nullable FVPAudioTrackMessage *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
 @implementation FVPPlatformVideoViewCreationParams
 + (instancetype)makeWithPlayerId:(NSInteger)playerId {
   FVPPlatformVideoViewCreationParams *pigeonResult =
@@ -106,6 +112,55 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
+@implementation FVPAudioTrackMessage
++ (instancetype)makeWithId:(NSString *)id
+                     label:(NSString *)label
+                  language:(NSString *)language
+                isSelected:(BOOL)isSelected
+                   bitrate:(nullable NSNumber *)bitrate
+                sampleRate:(nullable NSNumber *)sampleRate
+              channelCount:(nullable NSNumber *)channelCount
+                     codec:(nullable NSString *)codec {
+  FVPAudioTrackMessage *pigeonResult = [[FVPAudioTrackMessage alloc] init];
+  pigeonResult.id = id;
+  pigeonResult.label = label;
+  pigeonResult.language = language;
+  pigeonResult.isSelected = isSelected;
+  pigeonResult.bitrate = bitrate;
+  pigeonResult.sampleRate = sampleRate;
+  pigeonResult.channelCount = channelCount;
+  pigeonResult.codec = codec;
+  return pigeonResult;
+}
++ (FVPAudioTrackMessage *)fromList:(NSArray<id> *)list {
+  FVPAudioTrackMessage *pigeonResult = [[FVPAudioTrackMessage alloc] init];
+  pigeonResult.id = GetNullableObjectAtIndex(list, 0);
+  pigeonResult.label = GetNullableObjectAtIndex(list, 1);
+  pigeonResult.language = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.isSelected = [GetNullableObjectAtIndex(list, 3) boolValue];
+  pigeonResult.bitrate = GetNullableObjectAtIndex(list, 4);
+  pigeonResult.sampleRate = GetNullableObjectAtIndex(list, 5);
+  pigeonResult.channelCount = GetNullableObjectAtIndex(list, 6);
+  pigeonResult.codec = GetNullableObjectAtIndex(list, 7);
+  return pigeonResult;
+}
++ (nullable FVPAudioTrackMessage *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FVPAudioTrackMessage fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    self.id ?: [NSNull null],
+    self.label ?: [NSNull null],
+    self.language ?: [NSNull null],
+    @(self.isSelected),
+    self.bitrate ?: [NSNull null],
+    self.sampleRate ?: [NSNull null],
+    self.channelCount ?: [NSNull null],
+    self.codec ?: [NSNull null],
+  ];
+}
+@end
+
 @interface FVPMessagesPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FVPMessagesPigeonCodecReader
@@ -121,6 +176,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
       return [FVPPlatformVideoViewCreationParams fromList:[self readValue]];
     case 131:
       return [FVPCreationOptions fromList:[self readValue]];
+    case 132:
+      return [FVPAudioTrackMessage fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -140,6 +197,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FVPCreationOptions class]]) {
     [self writeByte:131];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FVPAudioTrackMessage class]]) {
+    [self writeByte:132];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -463,6 +523,27 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
         FlutterError *error;
         [api pauseWithError:&error];
         callback(wrapResult(nil, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString stringWithFormat:@"%@%@",
+                                                   @"dev.flutter.pigeon.video_player_avfoundation."
+                                                   @"VideoPlayerInstanceApi.getAudioTracks",
+                                                   messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FVPGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(getAudioTracks:)],
+                @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to @selector(getAudioTracks:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        FlutterError *error;
+        NSArray<FVPAudioTrackMessage *> *output = [api getAudioTracks:&error];
+        callback(wrapResult(output, error));
       }];
     } else {
       [channel setMessageHandler:nil];

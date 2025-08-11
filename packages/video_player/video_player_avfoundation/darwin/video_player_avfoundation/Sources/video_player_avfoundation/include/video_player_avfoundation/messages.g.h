@@ -27,6 +27,7 @@ typedef NS_ENUM(NSUInteger, FVPPlatformVideoViewType) {
 
 @class FVPPlatformVideoViewCreationParams;
 @class FVPCreationOptions;
+@class FVPAudioTrackMessage;
 
 /// Information passed to the platform view creation.
 @interface FVPPlatformVideoViewCreationParams : NSObject
@@ -45,6 +46,28 @@ typedef NS_ENUM(NSUInteger, FVPPlatformVideoViewType) {
 @property(nonatomic, copy) NSString *uri;
 @property(nonatomic, copy) NSDictionary<NSString *, NSString *> *httpHeaders;
 @property(nonatomic, assign) FVPPlatformVideoViewType viewType;
+@end
+
+/// Represents an audio track in a video.
+@interface FVPAudioTrackMessage : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithId:(NSString *)id
+                     label:(NSString *)label
+                  language:(NSString *)language
+                isSelected:(BOOL)isSelected
+                   bitrate:(nullable NSNumber *)bitrate
+                sampleRate:(nullable NSNumber *)sampleRate
+              channelCount:(nullable NSNumber *)channelCount
+                     codec:(nullable NSString *)codec;
+@property(nonatomic, copy) NSString *id;
+@property(nonatomic, copy) NSString *label;
+@property(nonatomic, copy) NSString *language;
+@property(nonatomic, assign) BOOL isSelected;
+@property(nonatomic, strong, nullable) NSNumber *bitrate;
+@property(nonatomic, strong, nullable) NSNumber *sampleRate;
+@property(nonatomic, strong, nullable) NSNumber *channelCount;
+@property(nonatomic, copy, nullable) NSString *codec;
 @end
 
 /// The codec used by all APIs.
@@ -79,6 +102,9 @@ extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(
 - (nullable NSNumber *)position:(FlutterError *_Nullable *_Nonnull)error;
 - (void)seekTo:(NSInteger)position completion:(void (^)(FlutterError *_Nullable))completion;
 - (void)pauseWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<FVPAudioTrackMessage *> *)getAudioTracks:
+    (FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger,

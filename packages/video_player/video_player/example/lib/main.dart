@@ -10,6 +10,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 void main() {
   runApp(
@@ -295,6 +296,8 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late VideoPlayerController _controller;
+  List<VideoAudioTrack> _audioTracks = [];
+  bool _isLoadingTracks = false;
 
   Future<ClosedCaptionFile> _loadCaptions() async {
     final String fileContents = await DefaultAssetBundle.of(context)
@@ -347,6 +350,96 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
               ),
+            ),
+          ),
+          // Audio Tracks Button and Display
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    if (_controller.value.isInitialized) {
+                      final audioTracks = await _controller.getAudioTracks();
+                      setState(() {
+                        _audioTracks = audioTracks;
+                        _isLoadingTracks = false;
+                      });
+                    }
+                  },
+                  icon: _isLoadingTracks
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.audiotrack),
+                  label: const Text('Get Audio Tracks'),
+                ),
+                const SizedBox(height: 16),
+                if (_audioTracks.isNotEmpty) ...[
+                  const Text(
+                    'Available Audio Tracks:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ...(_audioTracks.map((track) => Card(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                track.isSelected ? Colors.green : Colors.grey,
+                            child: Icon(
+                              track.isSelected ? Icons.check : Icons.audiotrack,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                          title: Text(
+                            track.label,
+                            style: TextStyle(
+                              fontWeight: track.isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                  'Language: ${track.language} | ID: ${track.id}'),
+                              if (track.bitrate != null ||
+                                  track.sampleRate != null ||
+                                  track.channelCount != null ||
+                                  track.codec != null)
+                                Text(
+                                  track.qualityDescription,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          trailing: track.isSelected
+                              ? const Chip(
+                                  label: Text('Selected',
+                                      style: TextStyle(fontSize: 12)),
+                                  backgroundColor: Colors.green,
+                                  labelStyle: TextStyle(color: Colors.white),
+                                )
+                              : null,
+                        ),
+                      ))),
+                ] else if (_audioTracks.isEmpty && !_isLoadingTracks) ...[
+                  const Text(
+                    'No audio tracks found. Click "Get Audio Tracks" to retrieve them.',
+                    style: TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ],
             ),
           ),
         ],

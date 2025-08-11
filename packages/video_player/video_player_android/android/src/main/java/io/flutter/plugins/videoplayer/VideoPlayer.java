@@ -11,10 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
+import androidx.media3.common.Format;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackParameters;
+import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class responsible for managing video playback using {@link ExoPlayer}.
@@ -123,6 +127,46 @@ public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   @NonNull
   public ExoPlayer getExoPlayer() {
     return exoPlayer;
+  }
+
+  @Override
+  public @NonNull List<Messages.AudioTrackMessage> getAudioTracks() {
+    List<Messages.AudioTrackMessage> audioTracks = new ArrayList<>();
+
+    // Get the current tracks from ExoPlayer
+    Tracks tracks = exoPlayer.getCurrentTracks();
+
+    // Iterate through all track groups
+    for (int groupIndex = 0; groupIndex < tracks.getGroups().size(); groupIndex++) {
+      Tracks.Group group = tracks.getGroups().get(groupIndex);
+
+      // Only process audio tracks
+      if (group.getType() == C.TRACK_TYPE_AUDIO) {
+        for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
+          Format format = group.getTrackFormat(trackIndex);
+          boolean isSelected = group.isTrackSelected(trackIndex);
+
+          // Create AudioTrackMessage with metadata
+          Messages.AudioTrackMessage audioTrack =
+              new Messages.AudioTrackMessage.Builder()
+                  .setId(String.valueOf(groupIndex) + "_" + String.valueOf(trackIndex))
+                  .setLabel(format.label != null ? format.label : "Audio Track " + (trackIndex + 1))
+                  .setLanguage(format.language != null ? format.language : "und")
+                  .setIsSelected(isSelected)
+                  .setBitrate(format.bitrate != Format.NO_VALUE ? (long) format.bitrate : null)
+                  .setSampleRate(
+                      format.sampleRate != Format.NO_VALUE ? (long) format.sampleRate : null)
+                  .setChannelCount(
+                      format.channelCount != Format.NO_VALUE ? (long) format.channelCount : null)
+                  .setCodec(format.codecs != null ? format.codecs : null)
+                  .build();
+
+          audioTracks.add(audioTrack);
+        }
+      }
+    }
+
+    return audioTracks;
   }
 
   public void dispose() {

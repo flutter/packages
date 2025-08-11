@@ -84,6 +84,11 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {}
+
+  @override
+  Future<List<VideoAudioTrack>> getAudioTracks() async {
+    return [];
+  }
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -1409,6 +1414,231 @@ void main() {
 
     await controller.seekTo(const Duration(seconds: 20));
   });
+
+  group('getAudioTracks', () {
+    test('returns audio tracks with metadata', () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUrl(
+        _localhostUri,
+        videoPlayerOptions: VideoPlayerOptions(),
+      );
+      addTearDown(controller.dispose);
+
+      await controller.initialize();
+
+      final List<VideoAudioTrack> audioTracks =
+          await controller.getAudioTracks();
+
+      expect(audioTracks, hasLength(4));
+      expect(fakeVideoPlayerPlatform.calls, contains('getAudioTracks'));
+
+      // Test first track (selected English high quality)
+      final VideoAudioTrack firstTrack = audioTracks[0];
+      expect(firstTrack.id, '0_0');
+      expect(firstTrack.label, 'English');
+      expect(firstTrack.language, 'en');
+      expect(firstTrack.isSelected, true);
+      expect(firstTrack.bitrate, 128000);
+      expect(firstTrack.sampleRate, 48000);
+      expect(firstTrack.channelCount, 2);
+      expect(firstTrack.codec, 'aac');
+
+      // Test second track (unselected English low quality)
+      final VideoAudioTrack secondTrack = audioTracks[1];
+      expect(secondTrack.id, '0_1');
+      expect(secondTrack.label, 'English');
+      expect(secondTrack.language, 'en');
+      expect(secondTrack.isSelected, false);
+      expect(secondTrack.bitrate, 64000);
+      expect(secondTrack.sampleRate, 44100);
+      expect(secondTrack.channelCount, 2);
+      expect(secondTrack.codec, 'aac');
+
+      // Test third track (Spanish high quality)
+      final VideoAudioTrack thirdTrack = audioTracks[2];
+      expect(thirdTrack.id, '1_0');
+      expect(thirdTrack.label, 'Spanish');
+      expect(thirdTrack.language, 'es');
+      expect(thirdTrack.isSelected, false);
+      expect(thirdTrack.bitrate, 128000);
+      expect(thirdTrack.sampleRate, 48000);
+      expect(thirdTrack.channelCount, 2);
+      expect(thirdTrack.codec, 'aac');
+
+      // Test fourth track (Spanish low quality mono)
+      final VideoAudioTrack fourthTrack = audioTracks[3];
+      expect(fourthTrack.id, '1_1');
+      expect(fourthTrack.label, 'Spanish');
+      expect(fourthTrack.language, 'es');
+      expect(fourthTrack.isSelected, false);
+      expect(fourthTrack.bitrate, 64000);
+      expect(fourthTrack.sampleRate, 44100);
+      expect(fourthTrack.channelCount, 1);
+      expect(fourthTrack.codec, 'mp3');
+    });
+
+    test('qualityDescription returns formatted string', () {
+      const VideoAudioTrack track = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        bitrate: 128000,
+        sampleRate: 48000,
+        channelCount: 2,
+        codec: 'aac',
+      );
+
+      expect(track.qualityDescription, '128kbps • Stereo • AAC');
+    });
+
+    test('qualityDescription handles missing metadata', () {
+      const VideoAudioTrack trackWithoutMetadata = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+      );
+
+      expect(trackWithoutMetadata.qualityDescription, 'Unknown Quality');
+    });
+
+    test('qualityDescription handles partial metadata', () {
+      const VideoAudioTrack trackWithBitrateOnly = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        bitrate: 96000,
+      );
+
+      expect(trackWithBitrateOnly.qualityDescription, '96kbps');
+
+      const VideoAudioTrack trackWithChannelsOnly = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        channelCount: 6,
+      );
+
+      expect(trackWithChannelsOnly.qualityDescription, '5.1');
+    });
+
+    test('qualityDescription handles different channel configurations', () {
+      const VideoAudioTrack monoTrack = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        channelCount: 1,
+      );
+      expect(monoTrack.qualityDescription, 'Mono');
+
+      const VideoAudioTrack stereoTrack = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        channelCount: 2,
+      );
+      expect(stereoTrack.qualityDescription, 'Stereo');
+
+      const VideoAudioTrack surroundTrack = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        channelCount: 8,
+      );
+      expect(surroundTrack.qualityDescription, '7.1');
+
+      const VideoAudioTrack customChannelTrack = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        channelCount: 4,
+      );
+      expect(customChannelTrack.qualityDescription, '4ch');
+    });
+
+    test('VideoAudioTrack equality works correctly', () {
+      const VideoAudioTrack track1 = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        bitrate: 128000,
+        sampleRate: 48000,
+        channelCount: 2,
+        codec: 'aac',
+      );
+
+      const VideoAudioTrack track2 = VideoAudioTrack(
+        id: 'test',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        bitrate: 128000,
+        sampleRate: 48000,
+        channelCount: 2,
+        codec: 'aac',
+      );
+
+      const VideoAudioTrack track3 = VideoAudioTrack(
+        id: 'different',
+        label: 'Test Track',
+        language: 'en',
+        isSelected: false,
+        bitrate: 128000,
+        sampleRate: 48000,
+        channelCount: 2,
+        codec: 'aac',
+      );
+
+      expect(track1, equals(track2));
+      expect(track1, isNot(equals(track3)));
+      expect(track1.hashCode, equals(track2.hashCode));
+      expect(track1.hashCode, isNot(equals(track3.hashCode)));
+    });
+
+    test('VideoAudioTrack toString includes all fields', () {
+      const VideoAudioTrack track = VideoAudioTrack(
+        id: 'test_id',
+        label: 'Test Label',
+        language: 'en',
+        isSelected: true,
+        bitrate: 128000,
+        sampleRate: 48000,
+        channelCount: 2,
+        codec: 'aac',
+      );
+
+      final String trackString = track.toString();
+      expect(trackString, contains('test_id'));
+      expect(trackString, contains('Test Label'));
+      expect(trackString, contains('en'));
+      expect(trackString, contains('true'));
+      expect(trackString, contains('128000'));
+      expect(trackString, contains('48000'));
+      expect(trackString, contains('2'));
+      expect(trackString, contains('aac'));
+    });
+
+    test('getAudioTracks returns empty list when controller not initialized',
+        () async {
+      final VideoPlayerController controller = VideoPlayerController.networkUrl(
+        _localhostUri,
+        videoPlayerOptions: VideoPlayerOptions(),
+      );
+      addTearDown(controller.dispose);
+
+      // Don't initialize the controller
+      final List<VideoAudioTrack> audioTracks =
+          await controller.getAudioTracks();
+      expect(audioTracks, isEmpty);
+    });
+  });
 }
 
 class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
@@ -1532,5 +1762,53 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     }
     calls.add('setWebOptions');
     webOptions[playerId] = options;
+  }
+
+  @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    calls.add('getAudioTracks');
+    // Return mock audio tracks with metadata for testing
+    return [
+      const VideoAudioTrack(
+        id: '0_0',
+        label: 'English',
+        language: 'en',
+        isSelected: true,
+        bitrate: 128000,
+        sampleRate: 48000,
+        channelCount: 2,
+        codec: 'aac',
+      ),
+      const VideoAudioTrack(
+        id: '0_1',
+        label: 'English',
+        language: 'en',
+        isSelected: false,
+        bitrate: 64000,
+        sampleRate: 44100,
+        channelCount: 2,
+        codec: 'aac',
+      ),
+      const VideoAudioTrack(
+        id: '1_0',
+        label: 'Spanish',
+        language: 'es',
+        isSelected: false,
+        bitrate: 128000,
+        sampleRate: 48000,
+        channelCount: 2,
+        codec: 'aac',
+      ),
+      const VideoAudioTrack(
+        id: '1_1',
+        label: 'Spanish',
+        language: 'es',
+        isSelected: false,
+        bitrate: 64000,
+        sampleRate: 44100,
+        channelCount: 1,
+        codec: 'mp3',
+      ),
+    ];
   }
 }

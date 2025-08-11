@@ -1,3 +1,7 @@
+## 2.11.0
+
+* Adds audio track metadata support including bitrate, sample rate, channel count, and codec information.
+
 ## 2.10.0
 
 * Adds support for platform views as an optional way of displaying a video on Android and iOS.

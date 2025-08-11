@@ -44,6 +44,29 @@ class CreationOptions {
   PlatformVideoViewType viewType;
 }
 
+/// Represents an audio track in a video.
+class AudioTrackMessage {
+  AudioTrackMessage({
+    required this.id,
+    required this.label,
+    required this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  String id;
+  String label;
+  String language;
+  bool isSelected;
+  int? bitrate;
+  int? sampleRate;
+  int? channelCount;
+  String? codec;
+}
+
 @HostApi()
 abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('initialize')
@@ -74,4 +97,6 @@ abstract class VideoPlayerInstanceApi {
   @ObjCSelector('seekTo:')
   void seekTo(int position);
   void pause();
+  @ObjCSelector('getAudioTracks')
+  List<AudioTrackMessage> getAudioTracks();
 }
