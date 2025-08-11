@@ -7657,6 +7657,11 @@ public class Messages {
      */
     void initializeWithPreferredRenderer(
         @Nullable PlatformRendererType type, @NonNull Result<PlatformRendererType> result);
+    /**
+     * Attempts to trigger any thread-blocking work the Google Maps SDK normally does when a map is
+     * shown for the first time.
+     */
+    void warmup();
 
     /** The codec used by MapsInitializerApi. */
     static @NonNull MessageCodec<Object> getCodec() {
@@ -7701,6 +7706,29 @@ public class Messages {
                     };
 
                 api.initializeWithPreferredRenderer(typeArg, resultCallback);
+              });
+        } else {
+          channel.setMessageHandler(null);
+        }
+      }
+      {
+        BasicMessageChannel<Object> channel =
+            new BasicMessageChannel<>(
+                binaryMessenger,
+                "dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.warmup"
+                    + messageChannelSuffix,
+                getCodec());
+        if (api != null) {
+          channel.setMessageHandler(
+              (message, reply) -> {
+                ArrayList<Object> wrapped = new ArrayList<>();
+                try {
+                  api.warmup();
+                  wrapped.add(0, null);
+                } catch (Throwable exception) {
+                  wrapped = wrapError(exception);
+                }
+                reply.reply(wrapped);
               });
         } else {
           channel.setMessageHandler(null);

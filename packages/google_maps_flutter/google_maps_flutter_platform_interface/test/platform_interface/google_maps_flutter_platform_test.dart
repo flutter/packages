@@ -123,6 +123,15 @@ void main() {
     );
 
     test(
+      'default implementation of isAdvancedMarkersAvailable returns false',
+      () async {
+        final GoogleMapsFlutterPlatform platform =
+            BuildViewGoogleMapsFlutterPlatform();
+        expect(await platform.isAdvancedMarkersAvailable(mapId: 0), isFalse);
+      },
+    );
+
+    test(
         'default implementation of `animateCameraWithConfiguration` delegates to `animateCamera`',
         () {
       final GoogleMapsFlutterPlatform platform =
@@ -170,6 +179,7 @@ class BuildViewGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     Set<Factory<OneSequenceGestureRecognizer>>? gestureRecognizers =
         const <Factory<OneSequenceGestureRecognizer>>{},
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
+    MarkerType markerType = MarkerType.marker,
   }) {
     return const Text('');
   }

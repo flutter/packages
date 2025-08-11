@@ -22,7 +22,8 @@ To use Google Sign-In, you'll need to register your application, either
 
 * If you are use the `google-services.json` file and Gradle-based registration
   system, no identifiers need to be provided in Dart when initializing the
-  `GoogleSignIn` instance when running on Android.
+  `GoogleSignIn` instance when running on Android, as long as your
+  `google-services.json` contains a web OAuth client entry.
 * If you are not using `google-services.json`, you need to pass the client
   ID of the *web* application you registered as the `serverClientId` when
   initializing the `GoogleSignIn` instance.
@@ -51,6 +52,16 @@ errors include:
 * Sign-in working in one build configuration but not another.
 
 Common sources of configuration errors include:
-* Missing or incorrect `serverClientId`.
 * Missing or incorrect signing SHA for one or more build configurations.
 * Incorrect Android package name on the server side.
+* Missing or incorrect `serverClientId`.
+
+If you are using `google-services.json` and recieve a "serverClientId must be
+provided on Android" error message, check that:
+  * Your `google-services.json` contains a web OAuth client, which should be an
+    `oauth_client` entry with `client_type: 3`. This should have been created
+    automatically when enabling Google Sign In using the Firebase console, but
+    if not (or if it was later removed), add a web app to the project and then
+    re-download `google-services.json`.
+  * You correctly followed all of the Gradle configuration steps in the Firebase
+    integration documentation.

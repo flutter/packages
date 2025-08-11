@@ -1,6 +1,18 @@
+## 2.8.4
+
+* Removes unnecessary workarounds for detecting initialized status.
+
+## 2.8.3
+
+* Removes calls to self from init and dealloc, for maintainability.
+
+## 2.8.2
+
+* Restructure internals of Dart notification of video player events.
+
 ## 2.8.1
 
-* Removes unnecessary workarounds, fixes "initialized" event not firing when the duration of the media is 0.
+* Restructures internal logic to move more code to Dart.
 
 ## 2.8.0
 

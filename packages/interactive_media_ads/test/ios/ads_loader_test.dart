@@ -10,6 +10,7 @@ import 'package:interactive_media_ads/src/ios/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/ios/ios_ad_display_container.dart';
 import 'package:interactive_media_ads/src/ios/ios_ads_loader.dart';
 import 'package:interactive_media_ads/src/ios/ios_content_progress_provider.dart';
+import 'package:interactive_media_ads/src/ios/ios_ima_settings.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -22,11 +23,16 @@ import 'ads_loader_test.mocks.dart';
   MockSpec<ima.IMAAdsLoaderDelegate>(),
   MockSpec<ima.IMAAdsManager>(),
   MockSpec<ima.IMAAdsRequest>(),
+  MockSpec<ima.IMASettings>(),
   MockSpec<ima.UIView>(),
   MockSpec<ima.UIViewController>(),
 ])
 void main() {
   group('IOSAdsLoader', () {
+    setUp(() {
+      ima.PigeonOverrides.pigeon_reset();
+    });
+
     testWidgets('instantiate IOSAdsLoader', (WidgetTester tester) async {
       final IOSAdDisplayContainer container =
           await _pumpAdDisplayContainer(tester);
@@ -34,6 +40,7 @@ void main() {
       IOSAdsLoader(
         IOSAdsLoaderCreationParams(
           container: container,
+          settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
         ),
@@ -45,6 +52,8 @@ void main() {
         tester,
       );
 
+      ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
+
       final MockIMAAdsLoader mockLoader = MockIMAAdsLoader();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
@@ -53,6 +62,7 @@ void main() {
       final IOSAdsLoader loader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
           container: container,
+          settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
           proxy: imaProxy,
@@ -68,29 +78,34 @@ void main() {
         tester,
       );
 
+      ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
+
       const String adTag = 'myAdTag';
 
       final MockIMAAdsLoader mockLoader = MockIMAAdsLoader();
       final ima.IMAContentPlayhead contentPlayheadInstance =
           ima.IMAContentPlayhead();
+      final MockIMAAdsRequest mockRequest = MockIMAAdsRequest();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
-        newIMAAdsRequest: ({
-          required String adTagUrl,
-          required ima.IMAAdDisplayContainer adDisplayContainer,
-          ima.IMAContentPlayhead? contentPlayhead,
-        }) {
-          expect(adTagUrl, adTag);
-          expect(adDisplayContainer, container.adDisplayContainer);
-          expect(contentPlayhead, contentPlayheadInstance);
-          return MockIMAAdsRequest();
-        },
         newIMAContentPlayhead: () => contentPlayheadInstance,
       );
+
+      ima.PigeonOverrides.iMAAdsRequest_new = ({
+        required String adTagUrl,
+        required ima.IMAAdDisplayContainer adDisplayContainer,
+        ima.IMAContentPlayhead? contentPlayhead,
+      }) {
+        expect(adTagUrl, adTag);
+        expect(adDisplayContainer, container.adDisplayContainer);
+        expect(contentPlayhead, contentPlayheadInstance);
+        return mockRequest;
+      };
 
       final IOSAdsLoader loader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
           container: container,
+          settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
           proxy: imaProxy,
@@ -101,10 +116,27 @@ void main() {
         IOSContentProgressProviderCreationParams(proxy: imaProxy),
       );
 
-      await loader.requestAds(PlatformAdsRequest(
+      await loader.requestAds(PlatformAdsRequest.withAdTagUrl(
         adTagUrl: adTag,
+        adWillAutoPlay: true,
+        adWillPlayMuted: false,
+        continuousPlayback: true,
+        contentDuration: const Duration(seconds: 2),
+        contentKeywords: <String>['keyword1', 'keyword2'],
+        contentTitle: 'contentTitle',
+        liveStreamPrefetchMaxWaitTime: const Duration(seconds: 3),
+        vastLoadTimeout: const Duration(milliseconds: 5000),
         contentProgressProvider: provider,
       ));
+
+      verify(mockRequest.setAdWillAutoPlay(true));
+      verify(mockRequest.setAdWillPlayMuted(false));
+      verify(mockRequest.setContinuousPlayback(true));
+      verify(mockRequest.setContentDuration(2.0));
+      verify(mockRequest.setContentKeywords(<String>['keyword1', 'keyword2']));
+      verify(mockRequest.setContentTitle('contentTitle'));
+      verify(mockRequest.setLiveStreamPrefetchSeconds(3.0));
+      verify(mockRequest.setVastLoadTimeout(5000.0));
 
       verify(mockLoader.requestAds(any));
     });
@@ -112,6 +144,8 @@ void main() {
     testWidgets('onAdsLoaded', (WidgetTester tester) async {
       final IOSAdDisplayContainer container =
           await _pumpAdDisplayContainer(tester);
+
+      ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
 
       late final void Function(
         ima.IMAAdsLoaderDelegate,
@@ -134,14 +168,17 @@ void main() {
         },
       );
 
-      IOSAdsLoader(
+      final IOSAdsLoader adsLoader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
           container: container,
+          settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
           onAdsLoaded: expectAsync1((_) {}),
           onAdsLoadError: (AdsLoadErrorData data) {},
           proxy: imaProxy,
         ),
       );
+      // Trigger lazy initialization of native IMAAdsLoader
+      await adsLoader.contentComplete();
 
       adLoaderLoadedWithCallback(
         MockIMAAdsLoaderDelegate(),
@@ -158,6 +195,8 @@ void main() {
     testWidgets('onAdsLoadError', (WidgetTester tester) async {
       final IOSAdDisplayContainer container =
           await _pumpAdDisplayContainer(tester);
+
+      ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
 
       late final void Function(
         ima.IMAAdsLoaderDelegate,
@@ -180,9 +219,10 @@ void main() {
         },
       );
 
-      IOSAdsLoader(
+      final IOSAdsLoader adsLoader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
           container: container,
+          settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: expectAsync1((AdsLoadErrorData data) {
             expect(data.error.type, AdErrorType.loading);
@@ -191,6 +231,8 @@ void main() {
           proxy: imaProxy,
         ),
       );
+      // Trigger lazy initialization of native IMAAdsLoader
+      await adsLoader.contentComplete();
 
       final ima.PigeonInstanceManager instanceManager =
           ima.PigeonInstanceManager(

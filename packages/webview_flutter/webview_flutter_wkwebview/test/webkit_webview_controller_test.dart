@@ -341,6 +341,40 @@ void main() {
       verify(mockWebView.loadFileUrl('/path/to/file.html', '/path/to'));
     });
 
+    group('loadFileWithParams', () {
+      test('Using LoadFileParams model', () async {
+        final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        );
+
+        await controller.loadFileWithParams(
+          const LoadFileParams(absoluteFilePath: '/path/to/file.html'),
+        );
+        verify(mockWebView.loadFileUrl('/path/to/file.html', '/path/to'));
+      });
+
+      test('Using WebKitLoadFileParams with custom readAccessPath', () async {
+        final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          createMockWebView: (_, {dynamic observeValue}) => mockWebView,
+        );
+
+        await controller.loadFileWithParams(
+          WebKitLoadFileParams(
+            absoluteFilePath: '/path/to/file.html',
+            readAccessPath: '/path/to/resources/',
+          ),
+        );
+        verify(mockWebView.loadFileUrl(
+          '/path/to/file.html',
+          '/path/to/resources/',
+        ));
+      });
+    });
+
     test('loadFlutterAsset', () async {
       final MockUIViewWKWebView mockWebView = MockUIViewWKWebView();
 
