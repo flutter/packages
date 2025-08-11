@@ -5,17 +5,20 @@
 import Foundation
 import GoogleInteractiveMediaAds
 
-
 /// ProxyApi implementation for `IMAUniversalAdID`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class UniversalAdIDProxyAPIDelegate : PigeonApiDelegateIMAUniversalAdID {
-  func adIDValue(pigeonApi: PigeonApiIMAUniversalAdID, pigeonInstance: IMAUniversalAdID) throws -> String {
+class UniversalAdIDProxyAPIDelegate: PigeonApiDelegateIMAUniversalAdID {
+  func adIDValue(pigeonApi: PigeonApiIMAUniversalAdID, pigeonInstance: IMAUniversalAdID) throws
+    -> String
+  {
     return pigeonInstance.adIDValue
   }
 
-  func adIDRegistry(pigeonApi: PigeonApiIMAUniversalAdID, pigeonInstance: IMAUniversalAdID) throws -> String {
+  func adIDRegistry(pigeonApi: PigeonApiIMAUniversalAdID, pigeonInstance: IMAUniversalAdID) throws
+    -> String
+  {
     return pigeonInstance.adIDRegistry
   }
 }

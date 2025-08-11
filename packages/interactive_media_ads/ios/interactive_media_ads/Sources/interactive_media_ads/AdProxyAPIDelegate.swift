@@ -5,12 +5,11 @@
 import Foundation
 import GoogleInteractiveMediaAds
 
-
 /// ProxyApi implementation for `IMAAd`.
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class AdProxyAPIDelegate : PigeonApiDelegateIMAAd {
+class AdProxyAPIDelegate: PigeonApiDelegateIMAAd {
   func adId(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String {
     return pigeonInstance.adId
   }
@@ -41,13 +40,13 @@ class AdProxyAPIDelegate : PigeonApiDelegateIMAAd {
 
   func uiElements(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [UIElementType] {
     return pigeonInstance.uiElements.map {
-      switch($0.intValue) {
+      switch $0.intValue {
       case IMAUiElementType.elements_AD_ATTRIBUTION.rawValue:
-        return UIElementType.adAttribution;
+        return UIElementType.adAttribution
       case IMAUiElementType.elements_COUNTDOWN.rawValue:
-        return UIElementType.countdown;
+        return UIElementType.countdown
       default:
-        return UIElementType.unknown;
+        return UIElementType.unknown
       }
     }
   }
@@ -84,9 +83,9 @@ class AdProxyAPIDelegate : PigeonApiDelegateIMAAd {
     return pigeonInstance.skipTimeOffset
   }
 
-  func adPodInfo(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> IMAAdPodInfo {
-    return pigeonInstance.adPodInfo
-  }
+  //  func adPodInfo(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> IMAAdPodInfo {
+  //    return pigeonInstance.adPodInfo
+  //  }
 
   func traffickingParameters(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String {
     return pigeonInstance.traffickingParameters
@@ -100,9 +99,9 @@ class AdProxyAPIDelegate : PigeonApiDelegateIMAAd {
     return pigeonInstance.creativeAdID
   }
 
-  func universalAdIDs(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [IMAUniversalAdID] {
-    return pigeonInstance.universalAdIDs
-  }
+  //  func universalAdIDs(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [IMAUniversalAdID] {
+  //    return pigeonInstance.universalAdIDs
+  //  }
 
   func advertiserName(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String {
     return pigeonInstance.advertiserName
