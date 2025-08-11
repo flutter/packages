@@ -82,11 +82,11 @@ class Method extends Node {
 
   /// Whether this method is required to be implemented.
   ///
-  /// This flag is typically used to determine whether a callback method for
-  /// a `ProxyApi` is nullable or not.
+  /// This flag is typically only used to determine whether a callback method
+  /// for an instance of a Dart proxy class of a ProxyAPI is nonnull.
   bool isRequired;
 
-  /// Whether this is a static method of a ProxyApi.
+  /// Whether the method of an [AstProxyApi] is denoted with [static].
   bool isStatic;
 
   @override
@@ -134,7 +134,7 @@ class AstFlutterApi extends Api {
   }
 }
 
-/// Represents an API that wraps a native class.
+/// Represents the AST for the class denoted with the ProxyAPI annotation.
 class AstProxyApi extends Api {
   /// Parametric constructor for [AstProxyApi].
   AstProxyApi({
@@ -149,16 +149,16 @@ class AstProxyApi extends Api {
     this.kotlinOptions,
   });
 
-  /// List of constructors inside the API.
+  /// List of constructors declared in the class.
   final List<Constructor> constructors;
 
-  /// List of fields inside the API.
+  /// List of fields declared in the class.
   List<ApiField> fields;
 
-  /// Name of the class this class considers the super class.
+  /// A [TypeDeclaration] of the parent class if the class had one.
   TypeDeclaration? superClass;
 
-  /// Name of the classes this class considers to be implemented.
+  /// A set of [TypeDeclaration]s that this class implements.
   Set<TypeDeclaration> interfaces;
 
   /// Options that control how Swift code will be generated for a specific
@@ -169,12 +169,12 @@ class AstProxyApi extends Api {
   /// ProxyApi.
   final KotlinProxyApiOptions? kotlinOptions;
 
-  /// Methods implemented in the host platform language.
+  /// Methods that handled by an implementation of the native type api.
   Iterable<Method> get hostMethods => methods.where(
         (Method method) => method.location == ApiLocation.host,
       );
 
-  /// Methods implemented in Flutter.
+  /// Methods that are handled by an instance of the Dart proxy class.
   Iterable<Method> get flutterMethods => methods.where(
         (Method method) => method.location == ApiLocation.flutter,
       );
@@ -193,15 +193,16 @@ class AstProxyApi extends Api {
         (ApiField field) => !field.isAttached,
       );
 
-  /// A list of AstProxyApis where each `extends` the API that follows it.
+  /// A list of [AstProxyApi]s where each is the [superClass] of the one
+  /// proceeding it.
   ///
-  /// Returns an empty list if this api does not extend a ProxyApi.
+  /// Returns an empty list if this class did not provide a [superClass].
   ///
-  /// This method assumes the super classes of each ProxyApi doesn't create a
-  /// loop. Throws a [ArgumentError] if a loop is found.
+  /// This method assumes the [superClass] of each class doesn't lead to a loop
+  /// Throws a [ArgumentError] if a loop is found.
   ///
-  /// This method also assumes that all super classes are ProxyApis. Otherwise,
-  /// throws an [ArgumentError].
+  /// This method also assumes that the type of [superClass] is annotated with
+  /// `@ProxyApi`. Otherwise, throws an [ArgumentError].
   Iterable<AstProxyApi> allSuperClasses() {
     final List<AstProxyApi> superClassChain = <AstProxyApi>[];
 
@@ -236,12 +237,12 @@ class AstProxyApi extends Api {
     return superClassChain;
   }
 
-  /// All ProxyApis this API `implements` and all the interfaces those APIs
+  /// All classes this class `implements` and all the interfaces those classes
   /// `implements`.
   Iterable<AstProxyApi> apisOfInterfaces() => _recursiveFindAllInterfaceApis();
 
-  /// Returns a record for each method inherited from an interface and its
-  /// corresponding ProxyApi.
+  /// Returns a record for each Flutter method inherited from an interface and
+  /// the AST of its corresponding class.
   Iterable<(Method, AstProxyApi)> flutterMethodsFromInterfacesWithApis() sync* {
     for (final AstProxyApi proxyApi in apisOfInterfaces()) {
       yield* proxyApi.methods.map((Method method) => (method, proxyApi));
@@ -250,8 +251,7 @@ class AstProxyApi extends Api {
 
   /// Returns a record for each Flutter method inherited from [superClass].
   ///
-  /// This also includes methods that super classes inherited from interfaces
-  /// with `implements`.
+  /// This also includes methods that the [superClass] inherits from interfaces.
   Iterable<(Method, AstProxyApi)>
       flutterMethodsFromSuperClassesWithApis() sync* {
     for (final AstProxyApi proxyApi in allSuperClasses().toList().reversed) {
@@ -266,32 +266,30 @@ class AstProxyApi extends Api {
     }
   }
 
-  /// All methods inherited from interfaces and the interfaces of interfaces.
+  /// All methods inherited from interfaces.
   Iterable<Method> flutterMethodsFromInterfaces() sync* {
     yield* flutterMethodsFromInterfacesWithApis().map(
       ((Method, AstProxyApi) method) => method.$1,
     );
   }
 
-  /// A list of Flutter methods inherited from the ProxyApi that this ProxyApi
-  /// `extends`.
+  /// A list of Flutter methods inherited from [superClass].
   ///
-  /// This also recursively checks the ProxyApi that the super class `extends`
-  /// and so on.
+  /// This also recursively checks the [superClass] of [superClass].
   ///
-  /// This also includes methods that super classes inherited from interfaces
-  /// with `implements`.
+  /// This also includes methods that [superClass] inherits from interfaces with
+  /// `implements`.
   Iterable<Method> flutterMethodsFromSuperClasses() sync* {
     yield* flutterMethodsFromSuperClassesWithApis().map(
       ((Method, AstProxyApi) method) => method.$1,
     );
   }
 
-  /// Whether the API has a method that callbacks to Dart to add a new instance
-  /// to the InstanceManager.
+  /// Whether the generated ProxyAPI should generate a method in the native type
+  /// API that calls to Dart to instantiate a Dart proxy class instance.
   ///
-  /// This is possible as long as no callback methods are required to
-  /// instantiate the class.
+  /// This is possible as the class does not contain a method that is required
+  /// to be handled by an instance of the Dart proxy class.
   bool hasCallbackConstructor() {
     return flutterMethods
         .followedBy(flutterMethodsFromSuperClasses())
@@ -299,18 +297,19 @@ class AstProxyApi extends Api {
         .every((Method method) => !method.isRequired);
   }
 
-  /// Whether the API has any message calls from Dart to host.
+  /// Whether the Dart proxy class makes any message calls to the native type
+  /// API.
   bool hasAnyHostMessageCalls() =>
       constructors.isNotEmpty ||
       attachedFields.isNotEmpty ||
       hostMethods.isNotEmpty;
 
-  /// Whether the API has any message calls from host to Dart.
+  /// Whether the native type API makes any message calls to the Dart proxy
+  /// class or calls to instantiate a Dart proxy class instance.
   bool hasAnyFlutterMessageCalls() =>
       hasCallbackConstructor() || flutterMethods.isNotEmpty;
 
-  /// Whether the host proxy API class will have methods that need to be
-  /// implemented.
+  /// Whether the native type API will have methods that need to be implemented.
   bool hasMethodsRequiringImplementation() =>
       hasAnyHostMessageCalls() || unattachedFields.isNotEmpty;
 
@@ -407,7 +406,7 @@ class Constructor extends Method {
   }
 }
 
-/// Represents a field of an API.
+/// Represents a field declared in a class denoted with the ProxyApi annotation.
 class ApiField extends NamedType {
   /// Constructor for [ApiField].
   ApiField({
@@ -419,17 +418,17 @@ class ApiField extends NamedType {
     this.isStatic = false,
   }) : assert(!isStatic || isAttached);
 
-  /// Whether this is an attached field for a [AstProxyApi].
+  /// Whether this represents an attached field of an [AstProxyApi].
   ///
   /// See [attached].
   final bool isAttached;
 
-  /// Whether this is a static field of a [AstProxyApi].
+  /// Whether this represents a static field of an [AstProxyApi].
   ///
-  /// A static field must also be attached. See [attached].
+  /// A static field must also be attached. See [static].
   final bool isStatic;
 
-  /// Returns a copy of [Parameter] instance with new attached [TypeDeclaration].
+  /// Returns a copy of an [ApiField] with the new [TypeDeclaration].
   @override
   ApiField copyWithType(TypeDeclaration type) {
     return ApiField(
