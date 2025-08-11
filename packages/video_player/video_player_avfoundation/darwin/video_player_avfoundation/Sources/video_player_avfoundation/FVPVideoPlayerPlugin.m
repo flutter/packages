@@ -188,11 +188,17 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 
 - (nullable NSNumber *)createWithOptions:(nonnull FVPCreationOptions *)options
                                    error:(FlutterError **)error {
-  BOOL textureBased = options.viewType == FVPPlatformVideoViewTypeTextureView;
-
   @try {
-    FVPVideoPlayer *player = textureBased ? [self texturePlayerWithOptions:options]
-                                          : [self platformViewPlayerWithOptions:options];
+    NSDictionary<NSString *, NSString *> *headers = options.httpHeaders;
+    NSDictionary<NSString *, id> *itemOptions =
+        headers.count == 0 ? nil : @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
+    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:[NSURL URLWithString:options.uri]
+                                            options:itemOptions];
+    AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:asset];
+
+    BOOL textureBased = options.viewType == FVPPlatformVideoViewTypeTextureView;
+    FVPVideoPlayer *player =
+        textureBased ? [self texturePlayerWithItem:item] : [self platformViewPlayerWithItem:item];
     return @([self onPlayerSetup:player]);
   } @catch (NSException *exception) {
     *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
@@ -200,8 +206,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   }
 }
 
-- (nonnull FVPTextureBasedVideoPlayer *)texturePlayerWithOptions:
-    (nonnull FVPCreationOptions *)options {
+- (nonnull FVPTextureBasedVideoPlayer *)texturePlayerWithItem:(nonnull AVPlayerItem *)item {
   FVPFrameUpdater *frameUpdater =
       [[FVPFrameUpdater alloc] initWithRegistry:self.registrar.textures];
   NSObject<FVPDisplayLink> *displayLink =
@@ -210,20 +215,18 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                                  [frameUpdater displayLinkFired];
                                                }];
 
-  return [[FVPTextureBasedVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
-                                            frameUpdater:frameUpdater
-                                             displayLink:displayLink
-                                             httpHeaders:options.httpHeaders
-                                               avFactory:self.avFactory
-                                            viewProvider:self.viewProvider];
+  return [[FVPTextureBasedVideoPlayer alloc] initWithPlayerItem:item
+                                                   frameUpdater:frameUpdater
+                                                    displayLink:displayLink
+                                                      avFactory:self.avFactory
+                                                   viewProvider:self.viewProvider];
 }
 
-- (nonnull FVPVideoPlayer *)platformViewPlayerWithOptions:(nonnull FVPCreationOptions *)options {
+- (nonnull FVPVideoPlayer *)platformViewPlayerWithItem:(nonnull AVPlayerItem *)item {
   // FVPVideoPlayer contains all required logic for platform views.
-  return [[FVPVideoPlayer alloc] initWithURL:[NSURL URLWithString:options.uri]
-                                 httpHeaders:options.httpHeaders
-                                   avFactory:self.avFactory
-                                viewProvider:self.viewProvider];
+  return [[FVPVideoPlayer alloc] initWithPlayerItem:item
+                                          avFactory:self.avFactory
+                                       viewProvider:self.viewProvider];
 }
 
 - (void)disposePlayer:(NSInteger)playerIdentifier error:(FlutterError **)error {

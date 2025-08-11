@@ -35,25 +35,6 @@
 
 @implementation FVPTextureBasedVideoPlayer
 
-- (instancetype)initWithURL:(NSURL *)url
-               frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(NSObject<FVPDisplayLink> *)displayLink
-                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-                  avFactory:(id<FVPAVFactory>)avFactory
-               viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
-  NSDictionary<NSString *, id> *options = nil;
-  if ([headers count] != 0) {
-    options = @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
-  }
-  AVURLAsset *urlAsset = [AVURLAsset URLAssetWithURL:url options:options];
-  AVPlayerItem *item = [AVPlayerItem playerItemWithAsset:urlAsset];
-  return [self initWithPlayerItem:item
-                     frameUpdater:frameUpdater
-                      displayLink:displayLink
-                        avFactory:avFactory
-                     viewProvider:viewProvider];
-}
-
 - (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
                        displayLink:(NSObject<FVPDisplayLink> *)displayLink

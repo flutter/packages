@@ -14,14 +14,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// updates frames, and handles display link callbacks.
 /// If you need to display a video using platform view, use FVPVideoPlayer instead.
 @interface FVPTextureBasedVideoPlayer : FVPVideoPlayer <FlutterTexture>
-/// Initializes a new instance of FVPTextureBasedVideoPlayer with the given URL, frame updater,
-/// display link, HTTP headers, AV factory, and registrar.
-- (instancetype)initWithURL:(NSURL *)url
-               frameUpdater:(FVPFrameUpdater *)frameUpdater
-                displayLink:(NSObject<FVPDisplayLink> *)displayLink
-                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-                  avFactory:(id<FVPAVFactory>)avFactory
-               viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
+/// Initializes a new instance of FVPTextureBasedVideoPlayer with the given player item,
+/// frame updater, display link, AV factory, and view provider.
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+                      frameUpdater:(FVPFrameUpdater *)frameUpdater
+                       displayLink:(NSObject<FVPDisplayLink> *)displayLink
+                         avFactory:(id<FVPAVFactory>)avFactory
+                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
 /// Sets the texture Identifier for the frame updater. This method should be called once the texture
 /// identifier is obtained from the texture registry.

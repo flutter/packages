@@ -604,10 +604,9 @@
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                                       output:nil];
   FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithURL:self.mp4TestURL
-                              httpHeaders:@{}
-                                avFactory:stubAVFactory
-                             viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+                                       avFactory:stubAVFactory
+                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
   NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
   player.eventListener = listener;
 
@@ -628,10 +627,9 @@
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                                       output:nil];
   FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithURL:self.mp4TestURL
-                              httpHeaders:@{}
-                                avFactory:stubAVFactory
-                             viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+                                       avFactory:stubAVFactory
+                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
   NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
   player.eventListener = listener;
 
@@ -655,10 +653,9 @@
   NSURL *testURL = [NSURL URLWithString:testURI];
   XCTAssertNotNil(testURL);
   FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithURL:testURL
-                              httpHeaders:@{}
-                                avFactory:[[FVPDefaultAVFactory alloc] init]
-                             viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -851,11 +848,10 @@
 }
 
 - (void)testUpdatePlayingStateShouldNotResetRate {
-  FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithURL:self.mp4TestURL
-                              httpHeaders:@{}
-                                avFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
-                             viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
+      initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+               avFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+            viewProvider:[[StubViewProvider alloc] initWithView:nil]];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
   StubEventListener *listener =
@@ -1021,6 +1017,11 @@
 - (nonnull NSURL *)mp4TestURL {
   return (NSURL *_Nonnull)[NSURL
       URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"];
+}
+
+- (nonnnll AVPlayerItem *)playerItemWithURL:(NSURL *)url {
+  return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:[NSURL URLWithString:url]
+                                                               options:nil]];
 }
 
 @end
