@@ -21,7 +21,8 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  video_player_platform_interface: ^6.4.0
+  video_player_platform_interface: 
+    path: ../video_player_platform_interface
   web: ">=0.5.1 <2.0.0"
 
 dev_dependencies:

@@ -31,7 +31,8 @@ dependencies:
     path: ../video_player_avfoundation
   video_player_platform_interface: 
     path: ../video_player_platform_interface
-  video_player_web: ^2.4.0
+  video_player_web: 
+    path: ../video_player_web
 
 dev_dependencies:
   flutter_test:
