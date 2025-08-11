@@ -321,6 +321,9 @@ class PigeonInstanceManager {
         pigeon_instanceManager: instanceManager);
     IMAAdPodInfo.pigeon_setUpMessageHandlers(
         pigeon_instanceManager: instanceManager);
+    IMAAd.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
+    IMAUniversalAdID.pigeon_setUpMessageHandlers(
+        pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -5916,6 +5919,501 @@ class IMAAdPodInfo extends PigeonInternalProxyApiBaseClass {
       timeOffset: timeOffset,
       totalAds: totalAds,
       isBumper: isBumper,
+    );
+  }
+}
+
+/// Data object representing a single ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAd.
+class IMAAd extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [IMAAd] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  IMAAd.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.adId,
+    required this.adTitle,
+    required this.adDescription,
+    required this.adSystem,
+    required this.companionAds,
+    required this.contentType,
+    required this.duration,
+    required this.uiElements,
+    required this.width,
+    required this.height,
+    required this.vastMediaWidth,
+    required this.vastMediaHeight,
+    required this.vastMediaBitrate,
+    required this.isLinear,
+    required this.isSkippable,
+    required this.skipTimeOffset,
+    required this.adPodInfo,
+    required this.traffickingParameters,
+    required this.creativeID,
+    required this.creativeAdID,
+    required this.universalAdIDs,
+    required this.advertiserName,
+    this.surveyURL,
+    required this.dealID,
+    required this.wrapperAdIDs,
+    required this.wrapperCreativeIDs,
+    required this.wrapperSystems,
+  });
+
+  /// The ad ID as specified in the VAST response.
+  final String adId;
+
+  /// The ad title from the VAST response.
+  final String adTitle;
+
+  /// The ad description.
+  final String adDescription;
+
+  /// The source ad server information included in the ad response.
+  final String adSystem;
+
+  /// The companion ads specified in the VAST response when using DAI.
+  ///
+  /// Empty for client-side ads.
+  final List<IMACompanionAd> companionAds;
+
+  /// Content type of the currently selected creative.
+  ///
+  /// For linear creatives returns the content type of the currently selected
+  /// media file. Returns empty string if no creative or media file is selected
+  /// on this ad.
+  final String contentType;
+
+  /// The duration of the ad from the VAST response.
+  final double duration;
+
+  /// The UI elements that will be displayed during ad playback.
+  final List<UIElementType> uiElements;
+
+  /// The width of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual width of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// width.
+  final int width;
+
+  /// The height of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual height of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// height.
+  final int height;
+
+  /// The width of the selected creative as specified in the VAST response.
+  final int vastMediaWidth;
+
+  /// The height of the selected creative as specified in the VAST response.
+  final int vastMediaHeight;
+
+  /// The bitrate of the selected creative as specified in the VAST response.
+  final int vastMediaBitrate;
+
+  /// Specifies whether the ad is linear or non-linear.
+  final bool isLinear;
+
+  /// Specifies whether the ad is skippable.
+  final bool isSkippable;
+
+  /// The number of seconds of playback before the ad becomes skippable.
+  ///
+  /// -1 is returned for non skippable ads or if this is unavailable.
+  final double skipTimeOffset;
+
+  /// Set of ad podding properties.
+  final IMAAdPodInfo adPodInfo;
+
+  /// String representing custom trafficking parameters from the VAST response.
+  final String traffickingParameters;
+
+  /// Returns the ID of the selected creative for the ad.
+  final String creativeID;
+
+  /// Returns the ISCI (Industry Standard Commercial Identifier) code for an ad.
+  ///
+  /// This is the Ad-ID of the selected creative in the VAST response.
+  final String creativeAdID;
+
+  /// The list of all UniversalAdIds of the selected creative for this ad.
+  ///
+  /// Returns an empty array if no universal ad IDs are found.
+  final List<IMAUniversalAdID> universalAdIDs;
+
+  /// The advertiser name as defined by the serving party.
+  final String advertiserName;
+
+  /// Returns the URL associated with the survey for the given ad.
+  final String? surveyURL;
+
+  /// Returns the first deal ID present in the wrapper chain for the current ad,
+  /// starting from the top.
+  final String dealID;
+
+  /// The IDs of the ads, starting with the first wrapper ad.
+  final List<String> wrapperAdIDs;
+
+  /// The IDs of the ads’ creatives, starting with the first wrapper ad.
+  final List<String> wrapperCreativeIDs;
+
+  /// Ad systems used for wrapper ads.
+  ///
+  /// The ad systems returned begin with the first wrapper ad and continue to
+  /// each wrapper ad recursively.
+  final List<String> wrapperSystems;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    IMAAd Function(
+      String adId,
+      String adTitle,
+      String adDescription,
+      String adSystem,
+      List<IMACompanionAd> companionAds,
+      String contentType,
+      double duration,
+      List<UIElementType> uiElements,
+      int width,
+      int height,
+      int vastMediaWidth,
+      int vastMediaHeight,
+      int vastMediaBitrate,
+      bool isLinear,
+      bool isSkippable,
+      double skipTimeOffset,
+      IMAAdPodInfo adPodInfo,
+      String traffickingParameters,
+      String creativeID,
+      String creativeAdID,
+      List<IMAUniversalAdID> universalAdIDs,
+      String advertiserName,
+      String? surveyURL,
+      String dealID,
+      List<String> wrapperAdIDs,
+      List<String> wrapperCreativeIDs,
+      List<String> wrapperSystems,
+    )? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null int.');
+          final String? arg_adId = (args[1] as String?);
+          assert(arg_adId != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final String? arg_adTitle = (args[2] as String?);
+          assert(arg_adTitle != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final String? arg_adDescription = (args[3] as String?);
+          assert(arg_adDescription != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final String? arg_adSystem = (args[4] as String?);
+          assert(arg_adSystem != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final List<IMACompanionAd>? arg_companionAds =
+              (args[5] as List<Object?>?)?.cast<IMACompanionAd>();
+          assert(arg_companionAds != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null List<IMACompanionAd>.');
+          final String? arg_contentType = (args[6] as String?);
+          assert(arg_contentType != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final double? arg_duration = (args[7] as double?);
+          assert(arg_duration != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null double.');
+          final List<UIElementType>? arg_uiElements =
+              (args[8] as List<Object?>?)?.cast<UIElementType>();
+          assert(arg_uiElements != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null List<UIElementType>.');
+          final int? arg_width = (args[9] as int?);
+          assert(arg_width != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_height = (args[10] as int?);
+          assert(arg_height != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_vastMediaWidth = (args[11] as int?);
+          assert(arg_vastMediaWidth != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_vastMediaHeight = (args[12] as int?);
+          assert(arg_vastMediaHeight != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null int.');
+          final int? arg_vastMediaBitrate = (args[13] as int?);
+          assert(arg_vastMediaBitrate != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null int.');
+          final bool? arg_isLinear = (args[14] as bool?);
+          assert(arg_isLinear != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null bool.');
+          final bool? arg_isSkippable = (args[15] as bool?);
+          assert(arg_isSkippable != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null bool.');
+          final double? arg_skipTimeOffset = (args[16] as double?);
+          assert(arg_skipTimeOffset != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null double.');
+          final IMAAdPodInfo? arg_adPodInfo = (args[17] as IMAAdPodInfo?);
+          assert(arg_adPodInfo != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null IMAAdPodInfo.');
+          final String? arg_traffickingParameters = (args[18] as String?);
+          assert(arg_traffickingParameters != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final String? arg_creativeID = (args[19] as String?);
+          assert(arg_creativeID != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final String? arg_creativeAdID = (args[20] as String?);
+          assert(arg_creativeAdID != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final List<IMAUniversalAdID>? arg_universalAdIDs =
+              (args[21] as List<Object?>?)?.cast<IMAUniversalAdID>();
+          assert(arg_universalAdIDs != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null List<IMAUniversalAdID>.');
+          final String? arg_advertiserName = (args[22] as String?);
+          assert(arg_advertiserName != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final String? arg_surveyURL = (args[23] as String?);
+          final String? arg_dealID = (args[24] as String?);
+          assert(arg_dealID != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null String.');
+          final List<String>? arg_wrapperAdIDs =
+              (args[25] as List<Object?>?)?.cast<String>();
+          assert(arg_wrapperAdIDs != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null List<String>.');
+          final List<String>? arg_wrapperCreativeIDs =
+              (args[26] as List<Object?>?)?.cast<String>();
+          assert(arg_wrapperCreativeIDs != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null List<String>.');
+          final List<String>? arg_wrapperSystems =
+              (args[27] as List<Object?>?)?.cast<String>();
+          assert(arg_wrapperSystems != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance was null, expected non-null List<String>.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(
+                      arg_adId!,
+                      arg_adTitle!,
+                      arg_adDescription!,
+                      arg_adSystem!,
+                      arg_companionAds!,
+                      arg_contentType!,
+                      arg_duration!,
+                      arg_uiElements!,
+                      arg_width!,
+                      arg_height!,
+                      arg_vastMediaWidth!,
+                      arg_vastMediaHeight!,
+                      arg_vastMediaBitrate!,
+                      arg_isLinear!,
+                      arg_isSkippable!,
+                      arg_skipTimeOffset!,
+                      arg_adPodInfo!,
+                      arg_traffickingParameters!,
+                      arg_creativeID!,
+                      arg_creativeAdID!,
+                      arg_universalAdIDs!,
+                      arg_advertiserName!,
+                      arg_surveyURL,
+                      arg_dealID!,
+                      arg_wrapperAdIDs!,
+                      arg_wrapperCreativeIDs!,
+                      arg_wrapperSystems!) ??
+                  IMAAd.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    adId: arg_adId!,
+                    adTitle: arg_adTitle!,
+                    adDescription: arg_adDescription!,
+                    adSystem: arg_adSystem!,
+                    companionAds: arg_companionAds!,
+                    contentType: arg_contentType!,
+                    duration: arg_duration!,
+                    uiElements: arg_uiElements!,
+                    width: arg_width!,
+                    height: arg_height!,
+                    vastMediaWidth: arg_vastMediaWidth!,
+                    vastMediaHeight: arg_vastMediaHeight!,
+                    vastMediaBitrate: arg_vastMediaBitrate!,
+                    isLinear: arg_isLinear!,
+                    isSkippable: arg_isSkippable!,
+                    skipTimeOffset: arg_skipTimeOffset!,
+                    adPodInfo: arg_adPodInfo!,
+                    traffickingParameters: arg_traffickingParameters!,
+                    creativeID: arg_creativeID!,
+                    creativeAdID: arg_creativeAdID!,
+                    universalAdIDs: arg_universalAdIDs!,
+                    advertiserName: arg_advertiserName!,
+                    surveyURL: arg_surveyURL,
+                    dealID: arg_dealID!,
+                    wrapperAdIDs: arg_wrapperAdIDs!,
+                    wrapperCreativeIDs: arg_wrapperCreativeIDs!,
+                    wrapperSystems: arg_wrapperSystems!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  IMAAd pigeon_copy() {
+    return IMAAd.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      adId: adId,
+      adTitle: adTitle,
+      adDescription: adDescription,
+      adSystem: adSystem,
+      companionAds: companionAds,
+      contentType: contentType,
+      duration: duration,
+      uiElements: uiElements,
+      width: width,
+      height: height,
+      vastMediaWidth: vastMediaWidth,
+      vastMediaHeight: vastMediaHeight,
+      vastMediaBitrate: vastMediaBitrate,
+      isLinear: isLinear,
+      isSkippable: isSkippable,
+      skipTimeOffset: skipTimeOffset,
+      adPodInfo: adPodInfo,
+      traffickingParameters: traffickingParameters,
+      creativeID: creativeID,
+      creativeAdID: creativeAdID,
+      universalAdIDs: universalAdIDs,
+      advertiserName: advertiserName,
+      surveyURL: surveyURL,
+      dealID: dealID,
+      wrapperAdIDs: wrapperAdIDs,
+      wrapperCreativeIDs: wrapperCreativeIDs,
+      wrapperSystems: wrapperSystems,
+    );
+  }
+}
+
+/// Simple data object containing universal ad ID information.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAUniversalAdID.html.
+class IMAUniversalAdID extends PigeonInternalProxyApiBaseClass {
+  /// Constructs [IMAUniversalAdID] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  IMAUniversalAdID.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required this.adIDValue,
+    required this.adIDRegistry,
+  });
+
+  /// The universal ad ID value.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  final String adIDValue;
+
+  /// The universal ad ID registry with which the value is registered.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  final String adIDRegistry;
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    IMAUniversalAdID Function(
+      String adIDValue,
+      String adIDRegistry,
+    )? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final BasicMessageChannel<
+          Object?> pigeonVar_channel = BasicMessageChannel<
+              Object?>(
+          'dev.flutter.pigeon.interactive_media_ads.IMAUniversalAdID.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAUniversalAdID.pigeon_newInstance was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAUniversalAdID.pigeon_newInstance was null, expected non-null int.');
+          final String? arg_adIDValue = (args[1] as String?);
+          assert(arg_adIDValue != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAUniversalAdID.pigeon_newInstance was null, expected non-null String.');
+          final String? arg_adIDRegistry = (args[2] as String?);
+          assert(arg_adIDRegistry != null,
+              'Argument for dev.flutter.pigeon.interactive_media_ads.IMAUniversalAdID.pigeon_newInstance was null, expected non-null String.');
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+              pigeon_newInstance?.call(arg_adIDValue!, arg_adIDRegistry!) ??
+                  IMAUniversalAdID.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                    adIDValue: arg_adIDValue!,
+                    adIDRegistry: arg_adIDRegistry!,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+                error: PlatformException(code: 'error', message: e.toString()));
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  IMAUniversalAdID pigeon_copy() {
+    return IMAUniversalAdID.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      adIDValue: adIDValue,
+      adIDRegistry: adIDRegistry,
     );
   }
 }

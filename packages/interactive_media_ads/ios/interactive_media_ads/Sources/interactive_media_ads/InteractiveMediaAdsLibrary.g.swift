@@ -472,6 +472,14 @@ protocol InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   /// `IMAAdPodInfo` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiIMAAdPodInfo(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
     -> PigeonApiIMAAdPodInfo
+  /// An implementation of [PigeonApiIMAAd] used to add a new Dart instance of
+  /// `IMAAd` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiIMAAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAAd
+  /// An implementation of [PigeonApiIMAUniversalAdID] used to add a new Dart instance of
+  /// `IMAUniversalAdID` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiIMAUniversalAdID(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar)
+    -> PigeonApiIMAUniversalAdID
 }
 
 extension InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
@@ -859,6 +867,28 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
 
       if let instance = value as? IMAAdPodInfo {
         pigeonRegistrar.apiDelegate.pigeonApiIMAAdPodInfo(pigeonRegistrar).pigeonNewInstance(
+          pigeonInstance: instance
+        ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as? IMAAd {
+        pigeonRegistrar.apiDelegate.pigeonApiIMAAd(pigeonRegistrar).pigeonNewInstance(
+          pigeonInstance: instance
+        ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as? IMAUniversalAdID {
+        pigeonRegistrar.apiDelegate.pigeonApiIMAUniversalAdID(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -4639,6 +4669,264 @@ final class PigeonApiIMAAdPodInfo: PigeonApiProtocolIMAAdPodInfo {
           totalAdsArg, isBumperArg,
         ] as [Any?]
       ) { response in
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(PigeonError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
+        }
+      }
+    }
+  }
+}
+protocol PigeonApiDelegateIMAAd {
+  /// The ad ID as specified in the VAST response.
+  func adId(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// The ad title from the VAST response.
+  func adTitle(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// The ad description.
+  func adDescription(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// The source ad server information included in the ad response.
+  func adSystem(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// The companion ads specified in the VAST response when using DAI.
+  ///
+  /// Empty for client-side ads.
+  func companionAds(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [IMACompanionAd]
+  /// Content type of the currently selected creative.
+  ///
+  /// For linear creatives returns the content type of the currently selected
+  /// media file. Returns empty string if no creative or media file is selected
+  /// on this ad.
+  func contentType(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// The duration of the ad from the VAST response.
+  func duration(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Double
+  /// The UI elements that will be displayed during ad playback.
+  func uiElements(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [UIElementType]
+  /// The width of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual width of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// width.
+  func width(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Int64
+  /// The height of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual height of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// height.
+  func height(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Int64
+  /// The width of the selected creative as specified in the VAST response.
+  func vastMediaWidth(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Int64
+  /// The height of the selected creative as specified in the VAST response.
+  func vastMediaHeight(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Int64
+  /// The bitrate of the selected creative as specified in the VAST response.
+  func vastMediaBitrate(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Int64
+  /// Specifies whether the ad is linear or non-linear.
+  func isLinear(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Bool
+  /// Specifies whether the ad is skippable.
+  func isSkippable(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Bool
+  /// The number of seconds of playback before the ad becomes skippable.
+  ///
+  /// -1 is returned for non skippable ads or if this is unavailable.
+  func skipTimeOffset(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Double
+  /// Set of ad podding properties.
+  func adPodInfo(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> IMAAdPodInfo
+  /// String representing custom trafficking parameters from the VAST response.
+  func traffickingParameters(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// Returns the ID of the selected creative for the ad.
+  func creativeID(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// Returns the ISCI (Industry Standard Commercial Identifier) code for an ad.
+  ///
+  /// This is the Ad-ID of the selected creative in the VAST response.
+  func creativeAdID(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// The list of all UniversalAdIds of the selected creative for this ad.
+  ///
+  /// Returns an empty array if no universal ad IDs are found.
+  func universalAdIDs(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [IMAUniversalAdID]
+  /// The advertiser name as defined by the serving party.
+  func advertiserName(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// Returns the URL associated with the survey for the given ad.
+  func surveyURL(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String?
+  /// Returns the first deal ID present in the wrapper chain for the current ad,
+  /// starting from the top.
+  func dealID(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> String
+  /// The IDs of the ads, starting with the first wrapper ad.
+  func wrapperAdIDs(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [String]
+  /// The IDs of the ads’ creatives, starting with the first wrapper ad.
+  func wrapperCreativeIDs(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [String]
+  /// Ad systems used for wrapper ads.
+  ///
+  /// The ad systems returned begin with the first wrapper ad and continue to
+  /// each wrapper ad recursively.
+  func wrapperSystems(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [String]
+}
+
+protocol PigeonApiProtocolIMAAd {
+}
+
+final class PigeonApiIMAAd: PigeonApiProtocolIMAAd {
+  unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateIMAAd
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAAd
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  ///Creates a Dart instance of IMAAd and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: IMAAd, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(()))
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let adIdArg = try! pigeonDelegate.adId(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let adTitleArg = try! pigeonDelegate.adTitle(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let adDescriptionArg = try! pigeonDelegate.adDescription(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let adSystemArg = try! pigeonDelegate.adSystem(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let companionAdsArg = try! pigeonDelegate.companionAds(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let contentTypeArg = try! pigeonDelegate.contentType(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let durationArg = try! pigeonDelegate.duration(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let uiElementsArg = try! pigeonDelegate.uiElements(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let widthArg = try! pigeonDelegate.width(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let heightArg = try! pigeonDelegate.height(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let vastMediaWidthArg = try! pigeonDelegate.vastMediaWidth(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let vastMediaHeightArg = try! pigeonDelegate.vastMediaHeight(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let vastMediaBitrateArg = try! pigeonDelegate.vastMediaBitrate(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let isLinearArg = try! pigeonDelegate.isLinear(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let isSkippableArg = try! pigeonDelegate.isSkippable(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let skipTimeOffsetArg = try! pigeonDelegate.skipTimeOffset(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let adPodInfoArg = try! pigeonDelegate.adPodInfo(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let traffickingParametersArg = try! pigeonDelegate.traffickingParameters(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let creativeIDArg = try! pigeonDelegate.creativeID(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let creativeAdIDArg = try! pigeonDelegate.creativeAdID(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let universalAdIDsArg = try! pigeonDelegate.universalAdIDs(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let advertiserNameArg = try! pigeonDelegate.advertiserName(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let surveyURLArg = try! pigeonDelegate.surveyURL(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let dealIDArg = try! pigeonDelegate.dealID(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let wrapperAdIDsArg = try! pigeonDelegate.wrapperAdIDs(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let wrapperCreativeIDsArg = try! pigeonDelegate.wrapperCreativeIDs(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let wrapperSystemsArg = try! pigeonDelegate.wrapperSystems(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let binaryMessenger = pigeonRegistrar.binaryMessenger
+      let codec = pigeonRegistrar.codec
+      let channelName: String = "dev.flutter.pigeon.interactive_media_ads.IMAAd.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage(
+        [
+          pigeonIdentifierArg, adIdArg, adTitleArg, adDescriptionArg, adSystemArg, companionAdsArg,
+          contentTypeArg, durationArg, uiElementsArg, widthArg, heightArg, vastMediaWidthArg,
+          vastMediaHeightArg, vastMediaBitrateArg, isLinearArg, isSkippableArg, skipTimeOffsetArg,
+          adPodInfoArg, traffickingParametersArg, creativeIDArg, creativeAdIDArg, universalAdIDsArg,
+          advertiserNameArg, surveyURLArg, dealIDArg, wrapperAdIDsArg, wrapperCreativeIDsArg,
+          wrapperSystemsArg,
+        ] as [Any?]
+      ) { response in
+        guard let listResponse = response as? [Any?] else {
+          completion(.failure(createConnectionError(withChannelName: channelName)))
+          return
+        }
+        if listResponse.count > 1 {
+          let code: String = listResponse[0] as! String
+          let message: String? = nilOrValue(listResponse[1])
+          let details: String? = nilOrValue(listResponse[2])
+          completion(.failure(PigeonError(code: code, message: message, details: details)))
+        } else {
+          completion(.success(()))
+        }
+      }
+    }
+  }
+}
+protocol PigeonApiDelegateIMAUniversalAdID {
+  /// The universal ad ID value.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  func adIDValue(pigeonApi: PigeonApiIMAUniversalAdID, pigeonInstance: IMAUniversalAdID) throws
+    -> String
+  /// The universal ad ID registry with which the value is registered.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  func adIDRegistry(pigeonApi: PigeonApiIMAUniversalAdID, pigeonInstance: IMAUniversalAdID) throws
+    -> String
+}
+
+protocol PigeonApiProtocolIMAUniversalAdID {
+}
+
+final class PigeonApiIMAUniversalAdID: PigeonApiProtocolIMAUniversalAdID {
+  unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateIMAUniversalAdID
+  init(
+    pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
+    delegate: PigeonApiDelegateIMAUniversalAdID
+  ) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  ///Creates a Dart instance of IMAUniversalAdID and attaches it to [pigeonInstance].
+  func pigeonNewInstance(
+    pigeonInstance: IMAUniversalAdID, completion: @escaping (Result<Void, PigeonError>) -> Void
+  ) {
+    if pigeonRegistrar.ignoreCallsToDart {
+      completion(
+        .failure(
+          PigeonError(
+            code: "ignore-calls-error",
+            message: "Calls to Dart are being ignored.", details: "")))
+    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+      completion(.success(()))
+    } else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+        pigeonInstance as AnyObject)
+      let adIDValueArg = try! pigeonDelegate.adIDValue(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let adIDRegistryArg = try! pigeonDelegate.adIDRegistry(
+        pigeonApi: self, pigeonInstance: pigeonInstance)
+      let binaryMessenger = pigeonRegistrar.binaryMessenger
+      let codec = pigeonRegistrar.codec
+      let channelName: String =
+        "dev.flutter.pigeon.interactive_media_ads.IMAUniversalAdID.pigeon_newInstance"
+      let channel = FlutterBasicMessageChannel(
+        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      channel.sendMessage([pigeonIdentifierArg, adIDValueArg, adIDRegistryArg] as [Any?]) {
+        response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return

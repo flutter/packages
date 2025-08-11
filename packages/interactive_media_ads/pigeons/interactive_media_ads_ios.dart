@@ -887,3 +887,134 @@ abstract class IMAAdPodInfo {
   /// Bumpers are short videos used to open and close ad breaks.
   late final bool isBumper;
 }
+
+/// Data object representing a single ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAd.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
+)
+abstract class IMAAd {
+  /// The ad ID as specified in the VAST response.
+  late final String adId;
+
+  /// The ad title from the VAST response.
+  late final String adTitle;
+
+  /// The ad description.
+  late final String adDescription;
+
+  /// The source ad server information included in the ad response.
+  late final String adSystem;
+
+  /// The companion ads specified in the VAST response when using DAI.
+  ///
+  /// Empty for client-side ads.
+  late final List<IMACompanionAd> companionAds;
+
+  /// Content type of the currently selected creative.
+  ///
+  /// For linear creatives returns the content type of the currently selected
+  /// media file. Returns empty string if no creative or media file is selected
+  /// on this ad.
+  late final String contentType;
+
+  /// The duration of the ad from the VAST response.
+  late final double duration;
+
+  /// The UI elements that will be displayed during ad playback.
+  late final List<UIElementType> uiElements;
+
+  /// The width of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual width of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// width.
+  late final int width;
+
+  /// The height of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual height of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// height.
+  late final int height;
+
+  /// The width of the selected creative as specified in the VAST response.
+  late final int vastMediaWidth;
+
+  /// The height of the selected creative as specified in the VAST response.
+  late final int vastMediaHeight;
+
+  /// The bitrate of the selected creative as specified in the VAST response.
+  late final int vastMediaBitrate;
+
+  /// Specifies whether the ad is linear or non-linear.
+  late final bool isLinear;
+
+  /// Specifies whether the ad is skippable.
+  late final bool isSkippable;
+
+  /// The number of seconds of playback before the ad becomes skippable.
+  ///
+  /// -1 is returned for non skippable ads or if this is unavailable.
+  late final double skipTimeOffset;
+
+  /// Set of ad podding properties.
+  late final IMAAdPodInfo adPodInfo;
+
+  /// String representing custom trafficking parameters from the VAST response.
+  late final String traffickingParameters;
+
+  /// Returns the ID of the selected creative for the ad.
+  late final String creativeID;
+
+  /// Returns the ISCI (Industry Standard Commercial Identifier) code for an ad.
+  ///
+  /// This is the Ad-ID of the selected creative in the VAST response.
+  late final String creativeAdID;
+
+  /// The list of all UniversalAdIds of the selected creative for this ad.
+  ///
+  /// Returns an empty array if no universal ad IDs are found.
+  late final List<IMAUniversalAdID> universalAdIDs;
+
+  /// The advertiser name as defined by the serving party.
+  late final String advertiserName;
+
+  /// Returns the URL associated with the survey for the given ad.
+  late final String? surveyURL;
+
+  /// Returns the first deal ID present in the wrapper chain for the current ad,
+  /// starting from the top.
+  late final String dealID;
+
+  /// The IDs of the ads, starting with the first wrapper ad.
+  late final List<String> wrapperAdIDs;
+
+  /// The IDs of the ads’ creatives, starting with the first wrapper ad.
+  late final List<String> wrapperCreativeIDs;
+
+  /// Ad systems used for wrapper ads.
+  ///
+  /// The ad systems returned begin with the first wrapper ad and continue to
+  /// each wrapper ad recursively.
+  late final List<String> wrapperSystems;
+}
+
+/// Simple data object containing universal ad ID information.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAUniversalAdID.html.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
+)
+abstract class IMAUniversalAdID {
+  /// The universal ad ID value.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  late final String adIDValue;
+
+  /// The universal ad ID registry with which the value is registered.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  late final String adIDRegistry;
+}
