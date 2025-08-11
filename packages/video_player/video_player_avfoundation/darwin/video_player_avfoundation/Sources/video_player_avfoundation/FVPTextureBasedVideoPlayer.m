@@ -28,6 +28,9 @@
 // (e.g., after a seek while paused). If YES, the display link should continue to run until the next
 // frame is successfully provided.
 @property(nonatomic, assign) BOOL waitingForFrame;
+
+/// Ensures that the frame updater runs until a frame is rendered, regardless of play/pause state.
+- (void)expectFrame;
 @end
 
 @implementation FVPTextureBasedVideoPlayer
@@ -81,6 +84,10 @@
 
 - (void)setTextureIdentifier:(int64_t)textureIdentifier {
   self.frameUpdater.textureIdentifier = textureIdentifier;
+
+  // Ensure that the first frame is drawn once available, even if the video isn't played, since
+  // the engine is now expecting the texture to be populated.
+  [self expectFrame];
 }
 
 - (void)expectFrame {

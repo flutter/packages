@@ -137,10 +137,6 @@
 
   self.playersByIdentifier[@(playerIdentifier)] = player;
 
-  // Ensure that the first frame is drawn once available, even if the video isn't played, since
-  // the engine is now expecting the texture to be populated.
-  [textureBasedPlayer expectFrame];
-
   return playerIdentifier;
 }
 
