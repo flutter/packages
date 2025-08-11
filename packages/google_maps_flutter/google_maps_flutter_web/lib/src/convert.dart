@@ -95,14 +95,16 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
     options.rotateControl = configuration.fortyFiveDegreeImageryEnabled;
   }
 
+  // If using cloud map, do not set options.styles
+  if (configuration.cloudMapId == null) {
+    options.styles = styles;
+  }
+
   // These don't have any configuration entries, but they seem to be off in the
   // native maps.
   options.mapTypeControl = false;
   options.fullscreenControl = false;
   options.streetViewControl = false;
-
-  // See updateMapConfiguration for why this is not using configuration.style.
-  options.styles = styles;
 
   options.mapId = configuration.cloudMapId;
 
