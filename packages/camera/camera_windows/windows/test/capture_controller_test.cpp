@@ -33,7 +33,7 @@ void MockInitCaptureController(
     CaptureControllerImpl* capture_controller,
     MockTextureRegistrar* texture_registrar, MockCaptureEngine* engine,
     MockCamera* camera, int64_t mock_texture_id,
-    std::shared_ptr<TaskRunner> task_runner,
+    std::unique_ptr<TaskRunner> task_runner,
     const PlatformMediaSettings media_settings =
         PlatformMediaSettings(PlatformResolutionPreset::kMax, true)) {
   ComPtr<MockMediaSource> video_source = new MockMediaSource();

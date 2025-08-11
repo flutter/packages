@@ -305,7 +305,7 @@ void CaptureControllerImpl::ResetCaptureController() {
 bool CaptureControllerImpl::InitCaptureDevice(
     flutter::TextureRegistrar* texture_registrar, const std::string& device_id,
     const PlatformMediaSettings& media_settings,
-    std::shared_ptr<TaskRunner> task_runner) {
+    std::unique_ptr<TaskRunner> task_runner) {
   assert(capture_controller_listener_);
 
   if (IsInitialized()) {

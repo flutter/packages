@@ -204,7 +204,7 @@ class MockCamera : public Camera {
               (flutter::TextureRegistrar * texture_registrar,
                flutter::BinaryMessenger* messenger,
                const PlatformMediaSettings& media_settings,
-               std::shared_ptr<TaskRunner> task_runner),
+               std::unique_ptr<TaskRunner> task_runner),
               (override));
 
   std::unique_ptr<CaptureController> capture_controller_;
@@ -238,7 +238,7 @@ class MockCaptureController : public CaptureController {
               (flutter::TextureRegistrar * texture_registrar,
                const std::string& device_id,
                const PlatformMediaSettings& media_settings,
-               std::shared_ptr<TaskRunner> task_runner),
+               std::unique_ptr<TaskRunner> task_runner),
               (override));
 
   MOCK_METHOD(uint32_t, GetPreviewWidth, (), (const override));

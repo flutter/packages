@@ -40,7 +40,7 @@ CameraImpl::~CameraImpl() {
 bool CameraImpl::InitCamera(flutter::TextureRegistrar* texture_registrar,
                             flutter::BinaryMessenger* messenger,
                             const PlatformMediaSettings& media_settings,
-                            std::shared_ptr<TaskRunner> task_runner) {
+                            std::unique_ptr<TaskRunner> task_runner) {
   auto capture_controller_factory =
       std::make_unique<CaptureControllerFactoryImpl>();
   return InitCamera(std::move(capture_controller_factory), texture_registrar,
@@ -52,7 +52,7 @@ bool CameraImpl::InitCamera(
     flutter::TextureRegistrar* texture_registrar,
     flutter::BinaryMessenger* messenger,
     const PlatformMediaSettings& media_settings,
-    std::shared_ptr<TaskRunner> task_runner) {
+    std::unique_ptr<TaskRunner> task_runner) {
   assert(!device_id_.empty());
   messenger_ = messenger;
   capture_controller_ =

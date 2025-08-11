@@ -74,7 +74,7 @@ class CaptureController {
   virtual bool InitCaptureDevice(TextureRegistrar* texture_registrar,
                                  const std::string& device_id,
                                  const PlatformMediaSettings& media_settings,
-                                 std::shared_ptr<TaskRunner> task_runner) = 0;
+                                 std::unique_ptr<TaskRunner> task_runner) = 0;
 
   // Returns preview frame width
   virtual uint32_t GetPreviewWidth() const = 0;
@@ -133,7 +133,7 @@ class CaptureControllerImpl : public CaptureController,
   bool InitCaptureDevice(TextureRegistrar* texture_registrar,
                          const std::string& device_id,
                          const PlatformMediaSettings& media_settings,
-                         std::shared_ptr<TaskRunner> task_runner) override;
+                         std::unique_ptr<TaskRunner> task_runner) override;
   uint32_t GetPreviewWidth() const override { return preview_frame_width_; }
   uint32_t GetPreviewHeight() const override { return preview_frame_height_; }
   void StartPreview() override;
@@ -242,7 +242,7 @@ class CaptureControllerImpl : public CaptureController,
   std::unique_ptr<PreviewHandler> preview_handler_;
   std::unique_ptr<PhotoHandler> photo_handler_;
   std::unique_ptr<TextureHandler> texture_handler_;
-  std::shared_ptr<TaskRunner> task_runner_;
+  std::unique_ptr<TaskRunner> task_runner_;
   std::shared_ptr<flutter::EventSink<flutter::EncodableValue>>
       image_stream_sink_;
   CaptureControllerListener* capture_controller_listener_;

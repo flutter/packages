@@ -55,7 +55,7 @@ void MockInitCamera(MockCamera* camera, bool success) {
       .WillOnce([camera, success](flutter::TextureRegistrar* texture_registrar,
                                   flutter::BinaryMessenger* messenger,
                                   const PlatformMediaSettings& media_settings,
-                                  std::shared_ptr<TaskRunner> task_runner) {
+                                  std::unique_ptr<TaskRunner> task_runner) {
         assert(camera->pending_int_result_);
         if (success) {
           camera->pending_int_result_(1);

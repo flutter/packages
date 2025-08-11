@@ -136,7 +136,7 @@ CameraPlugin::CameraPlugin(flutter::TextureRegistrar* texture_registrar,
     : texture_registrar_(texture_registrar),
       messenger_(messenger),
       camera_factory_(std::make_unique<CameraFactoryImpl>()),
-      task_runner_(std::make_shared<TaskRunnerWindow>()) {}
+      task_runner_(std::make_unique<TaskRunnerWindow>()) {}
 
 CameraPlugin::CameraPlugin(flutter::TextureRegistrar* texture_registrar,
                            flutter::BinaryMessenger* messenger,
