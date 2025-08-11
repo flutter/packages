@@ -289,6 +289,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)reportStatusForPlayerItem:(AVPlayerItem *)item {
+  NSAssert(self.eventListener,
+           @"reportInitializedIfReadyToPlay was called when the event listener was not set.");
   switch (item.status) {
     case AVPlayerItemStatusFailed:
       [self sendFailedToLoadVideoEvent];
