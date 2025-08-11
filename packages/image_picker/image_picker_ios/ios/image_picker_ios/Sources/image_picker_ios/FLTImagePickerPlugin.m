@@ -123,7 +123,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
   imagePickerController.delegate = self;
   NSMutableArray<NSString *> *mediaTypes = [[NSMutableArray alloc] init];
-  if (context) {
+  if (context.includeImages) {
     [mediaTypes addObject:(NSString *)kUTTypeImage];
   }
   if (context.includeVideo) {
