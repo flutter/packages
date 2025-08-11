@@ -181,4 +181,18 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
+
+  @override
+  _i4.Future<List<_i2.AudioTrackMessage>> getAudioTracks() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAudioTracks, []),
+            returnValue: _i4.Future<List<_i2.AudioTrackMessage>>.value(
+              <_i2.AudioTrackMessage>[],
+            ),
+            returnValueForMissingStub:
+                _i4.Future<List<_i2.AudioTrackMessage>>.value(
+                  <_i2.AudioTrackMessage>[],
+                ),
+          )
+          as _i4.Future<List<_i2.AudioTrackMessage>>);
 }

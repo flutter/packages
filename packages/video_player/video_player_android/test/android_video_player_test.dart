@@ -704,5 +704,273 @@ void main() {
         ]),
       );
     });
+
+    group('getAudioTracks', () {
+      test('returns audio tracks with complete metadata', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi instanceApi,
+        ) = setUpMockPlayer(playerId: 1);
+
+        final List<AudioTrackMessage> mockTracks = <AudioTrackMessage>[
+          AudioTrackMessage(
+            id: 'track1',
+            label: 'English',
+            language: 'en',
+            isSelected: true,
+            bitrate: 128000,
+            sampleRate: 48000,
+            channelCount: 2,
+            codec: 'aac',
+          ),
+          AudioTrackMessage(
+            id: 'track2',
+            label: 'Spanish',
+            language: 'es',
+            isSelected: false,
+            bitrate: 96000,
+            sampleRate: 44100,
+            channelCount: 2,
+            codec: 'mp3',
+          ),
+        ];
+
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockTracks);
+
+        final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
+
+        expect(tracks, hasLength(2));
+        
+        expect(tracks[0].id, 'track1');
+        expect(tracks[0].label, 'English');
+        expect(tracks[0].language, 'en');
+        expect(tracks[0].isSelected, true);
+        expect(tracks[0].bitrate, 128000);
+        expect(tracks[0].sampleRate, 48000);
+        expect(tracks[0].channelCount, 2);
+        expect(tracks[0].codec, 'aac');
+
+        expect(tracks[1].id, 'track2');
+        expect(tracks[1].label, 'Spanish');
+        expect(tracks[1].language, 'es');
+        expect(tracks[1].isSelected, false);
+        expect(tracks[1].bitrate, 96000);
+        expect(tracks[1].sampleRate, 44100);
+        expect(tracks[1].channelCount, 2);
+        expect(tracks[1].codec, 'mp3');
+
+        verify(instanceApi.getAudioTracks()).called(1);
+      });
+
+      test('returns audio tracks with partial metadata', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi instanceApi,
+        ) = setUpMockPlayer(playerId: 1);
+
+        final List<AudioTrackMessage> mockTracks = <AudioTrackMessage>[
+          AudioTrackMessage(
+            id: 'track1',
+            label: 'Default',
+            language: 'und',
+            isSelected: true,
+            bitrate: null,
+            sampleRate: null,
+            channelCount: null,
+            codec: null,
+          ),
+          AudioTrackMessage(
+            id: 'track2',
+            label: 'High Quality',
+            language: 'en',
+            isSelected: false,
+            bitrate: 256000,
+            sampleRate: 48000,
+            channelCount: null,
+            codec: 'aac',
+          ),
+        ];
+
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockTracks);
+
+        final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
+
+        expect(tracks, hasLength(2));
+        
+        expect(tracks[0].id, 'track1');
+        expect(tracks[0].label, 'Default');
+        expect(tracks[0].language, 'und');
+        expect(tracks[0].isSelected, true);
+        expect(tracks[0].bitrate, null);
+        expect(tracks[0].sampleRate, null);
+        expect(tracks[0].channelCount, null);
+        expect(tracks[0].codec, null);
+
+        expect(tracks[1].id, 'track2');
+        expect(tracks[1].label, 'High Quality');
+        expect(tracks[1].language, 'en');
+        expect(tracks[1].isSelected, false);
+        expect(tracks[1].bitrate, 256000);
+        expect(tracks[1].sampleRate, 48000);
+        expect(tracks[1].channelCount, null);
+        expect(tracks[1].codec, 'aac');
+
+        verify(instanceApi.getAudioTracks()).called(1);
+      });
+
+      test('returns empty list when no audio tracks available', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi instanceApi,
+        ) = setUpMockPlayer(playerId: 1);
+
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => <AudioTrackMessage>[]);
+
+        final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
+
+        expect(tracks, isEmpty);
+        verify(instanceApi.getAudioTracks()).called(1);
+      });
+
+      test('handles different channel configurations', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi instanceApi,
+        ) = setUpMockPlayer(playerId: 1);
+
+        final List<AudioTrackMessage> mockTracks = <AudioTrackMessage>[
+          AudioTrackMessage(
+            id: 'mono',
+            label: 'Mono Track',
+            language: 'en',
+            isSelected: false,
+            bitrate: 64000,
+            sampleRate: 22050,
+            channelCount: 1,
+            codec: 'aac',
+          ),
+          AudioTrackMessage(
+            id: 'stereo',
+            label: 'Stereo Track',
+            language: 'en',
+            isSelected: true,
+            bitrate: 128000,
+            sampleRate: 44100,
+            channelCount: 2,
+            codec: 'aac',
+          ),
+          AudioTrackMessage(
+            id: 'surround',
+            label: '5.1 Surround',
+            language: 'en',
+            isSelected: false,
+            bitrate: 384000,
+            sampleRate: 48000,
+            channelCount: 6,
+            codec: 'ac3',
+          ),
+          AudioTrackMessage(
+            id: 'surround71',
+            label: '7.1 Surround',
+            language: 'en',
+            isSelected: false,
+            bitrate: 512000,
+            sampleRate: 48000,
+            channelCount: 8,
+            codec: 'eac3',
+          ),
+        ];
+
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockTracks);
+
+        final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
+
+        expect(tracks, hasLength(4));
+        expect(tracks[0].channelCount, 1);
+        expect(tracks[1].channelCount, 2);
+        expect(tracks[2].channelCount, 6);
+        expect(tracks[3].channelCount, 8);
+
+        verify(instanceApi.getAudioTracks()).called(1);
+      });
+
+      test('handles different codec types', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi instanceApi,
+        ) = setUpMockPlayer(playerId: 1);
+
+        final List<AudioTrackMessage> mockTracks = <AudioTrackMessage>[
+          AudioTrackMessage(
+            id: 'aac_track',
+            label: 'AAC Track',
+            language: 'en',
+            isSelected: true,
+            bitrate: 128000,
+            sampleRate: 48000,
+            channelCount: 2,
+            codec: 'aac',
+          ),
+          AudioTrackMessage(
+            id: 'mp3_track',
+            label: 'MP3 Track',
+            language: 'en',
+            isSelected: false,
+            bitrate: 320000,
+            sampleRate: 44100,
+            channelCount: 2,
+            codec: 'mp3',
+          ),
+          AudioTrackMessage(
+            id: 'opus_track',
+            label: 'Opus Track',
+            language: 'en',
+            isSelected: false,
+            bitrate: 96000,
+            sampleRate: 48000,
+            channelCount: 2,
+            codec: 'opus',
+          ),
+        ];
+
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockTracks);
+
+        final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
+
+        expect(tracks, hasLength(3));
+        expect(tracks[0].codec, 'aac');
+        expect(tracks[1].codec, 'mp3');
+        expect(tracks[2].codec, 'opus');
+
+        verify(instanceApi.getAudioTracks()).called(1);
+      });
+
+      test('throws PlatformException when native method fails', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi instanceApi,
+        ) = setUpMockPlayer(playerId: 1);
+
+        when(instanceApi.getAudioTracks()).thenThrow(
+          PlatformException(
+            code: 'AUDIO_TRACKS_ERROR',
+            message: 'Failed to retrieve audio tracks',
+          ),
+        );
+
+        expect(
+          () => player.getAudioTracks(1),
+          throwsA(isA<PlatformException>()),
+        );
+
+        verify(instanceApi.getAudioTracks()).called(1);
+      });
+    });
   });
 }
