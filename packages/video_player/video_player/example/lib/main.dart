@@ -307,6 +307,40 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     return WebVTTCaptionFile(fileContents); // For vtt files, use WebVTTCaptionFile
   }
 
+  String _formatQualityInfo(VideoAudioTrack track) {
+    final List<String> parts = [];
+
+    if (track.bitrate != null) {
+      final kbps = (track.bitrate! / 1000).round();
+      parts.add('${kbps}kbps');
+    }
+
+    if (track.channelCount != null) {
+      switch (track.channelCount!) {
+        case 1:
+          parts.add('Mono');
+          break;
+        case 2:
+          parts.add('Stereo');
+          break;
+        case 6:
+          parts.add('5.1');
+          break;
+        case 8:
+          parts.add('7.1');
+          break;
+        default:
+          parts.add('${track.channelCount}ch');
+      }
+    }
+
+    if (track.codec != null) {
+      parts.add(track.codec!.toUpperCase());
+    }
+
+    return parts.isEmpty ? 'Unknown Quality' : parts.join(' • ');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -411,7 +445,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                                   track.channelCount != null ||
                                   track.codec != null)
                                 Text(
-                                  track.qualityDescription,
+                                  _formatQualityInfo(track),
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.blue,

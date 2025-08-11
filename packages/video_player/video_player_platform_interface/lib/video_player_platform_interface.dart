@@ -589,40 +589,7 @@ class VideoAudioTrack {
   /// May be null if the information is not available.
   final String? codec;
 
-  /// Returns a human-readable quality description based on bitrate and channels.
-  String get qualityDescription {
-    final List<String> parts = [];
 
-    if (bitrate != null) {
-      final kbps = (bitrate! / 1000).round();
-      parts.add('${kbps}kbps');
-    }
-
-    if (channelCount != null) {
-      switch (channelCount!) {
-        case 1:
-          parts.add('Mono');
-          break;
-        case 2:
-          parts.add('Stereo');
-          break;
-        case 6:
-          parts.add('5.1');
-          break;
-        case 8:
-          parts.add('7.1');
-          break;
-        default:
-          parts.add('${channelCount}ch');
-      }
-    }
-
-    if (codec != null) {
-      parts.add(codec!.toUpperCase());
-    }
-
-    return parts.isEmpty ? 'Unknown Quality' : parts.join(' • ');
-  }
 
   @override
   bool operator ==(Object other) =>
