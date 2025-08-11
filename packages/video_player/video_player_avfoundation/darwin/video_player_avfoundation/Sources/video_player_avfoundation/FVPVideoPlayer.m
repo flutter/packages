@@ -262,7 +262,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-  NSAssert([NSThread isMainThread], @"event sink must only be accessed from the main thread");
   if (context == timeRangeContext) {
     NSMutableArray<NSArray<NSNumber *> *> *values = [[NSMutableArray alloc] init];
     for (NSValue *rangeValue in [object loadedTimeRanges]) {
