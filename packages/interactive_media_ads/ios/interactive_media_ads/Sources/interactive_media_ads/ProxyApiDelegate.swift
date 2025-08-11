@@ -165,4 +165,12 @@ open class ProxyApiDelegate: InteractiveMediaAdsLibraryPigeonProxyApiDelegate {
   {
     return PigeonApiIMASettings(pigeonRegistrar: registrar, delegate: SettingsProxyAPIDelegate())
   }
+  
+  func pigeonApiIMAAd(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAAd {
+    return PigeonApiIMAAd(pigeonRegistrar: registrar, delegate: AdProxyAPIDelegate())
+  }
+  
+  func pigeonApiIMAUniversalAdID(_ registrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar) -> PigeonApiIMAUniversalAdID {
+    return PigeonApiIMAUniversalAdID(pigeonRegistrar: registrar, delegate: UniversalAdIDProxyAPIDelegate())
+  }
 }
