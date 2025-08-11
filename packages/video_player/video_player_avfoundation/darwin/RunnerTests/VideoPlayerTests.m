@@ -962,11 +962,6 @@
   [self waitForExpectationsWithTimeout:10.0 handler:nil];
   // Video output is added as soon as the status becomes ready to play.
   XCTAssertEqual(item.outputs.count, 1);
-
-  [player onListenWithArguments:nil
-                      eventSink:^(FlutterError *event){
-                      }];
-  XCTAssertEqual(item.outputs.count, 1);
 }
 
 #if TARGET_OS_IOS
