@@ -234,12 +234,12 @@ class _MyHomePageState extends State<MyHomePage> {
           key: UniqueKey(),
           itemBuilder: (BuildContext context, int index) {
             final XFile image = _mediaFileList![index];
-            final String? mime = lookupMimeType(_mediaFileList![index].path);
+            final String? mime = lookupMimeType(image.path);
             return Semantics(
               label: 'image_picker_example_picked_image',
               child: mime == null || mime.startsWith('image/')
                   ? Image.file(
-                      File(_mediaFileList![index].path),
+                      File(image.path),
                       errorBuilder: (BuildContext context, Object error,
                           StackTrace? stackTrace) {
                         return const Center(
