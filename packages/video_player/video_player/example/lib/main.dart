@@ -9,8 +9,11 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+
+import 'audio_tracks_demo.dart';
 
 void main() {
   runApp(
@@ -24,7 +27,7 @@ class _App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         key: const ValueKey<String>('home_page'),
         appBar: AppBar(
@@ -52,23 +55,22 @@ class _App extends StatelessWidget {
               ),
               Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset'),
               Tab(icon: Icon(Icons.list), text: 'List example'),
+              Tab(icon: Icon(Icons.audiotrack), text: 'Audio Tracks'),
             ],
           ),
         ),
         body: TabBarView(
           children: <Widget>[
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _BumbleBeeRemoteVideo(viewType),
+              builder: (VideoViewType viewType) => _BumbleBeeRemoteVideo(viewType),
             ),
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _ButterFlyAssetVideo(viewType),
+              builder: (VideoViewType viewType) => _ButterFlyAssetVideo(viewType),
             ),
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _ButterFlyAssetVideoInList(viewType),
+              builder: (VideoViewType viewType) => _ButterFlyAssetVideoInList(viewType),
             ),
+            const AudioTracksDemo(),
           ],
         ),
       ),
@@ -160,8 +162,8 @@ class _ButterFlyAssetVideoInList extends StatelessWidget {
                 title: Text('Video video'),
               ),
               Stack(
-                  alignment: FractionalOffset.bottomRight +
-                      const FractionalOffset(-0.1, -0.1),
+                  alignment:
+                      FractionalOffset.bottomRight + const FractionalOffset(-0.1, -0.1),
                   children: <Widget>[
                     _ButterFlyAssetVideo(viewType),
                     Image.asset('assets/flutter-mark-square-64.png'),
@@ -300,18 +302,16 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   bool _isLoadingTracks = false;
 
   Future<ClosedCaptionFile> _loadCaptions() async {
-    final String fileContents = await DefaultAssetBundle.of(context)
-        .loadString('assets/bumble_bee_captions.vtt');
-    return WebVTTCaptionFile(
-        fileContents); // For vtt files, use WebVTTCaptionFile
+    final String fileContents =
+        await DefaultAssetBundle.of(context).loadString('assets/bumble_bee_captions.vtt');
+    return WebVTTCaptionFile(fileContents); // For vtt files, use WebVTTCaptionFile
   }
 
   @override
   void initState() {
     super.initState();
     _controller = VideoPlayerController.networkUrl(
-      Uri.parse(
-          'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
+      Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
       closedCaptionFile: _loadCaptions(),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
       viewType: widget.viewType,
@@ -398,16 +398,14 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                           title: Text(
                             track.label,
                             style: TextStyle(
-                              fontWeight: track.isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
+                              fontWeight:
+                                  track.isSelected ? FontWeight.bold : FontWeight.normal,
                             ),
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                  'Language: ${track.language} | ID: ${track.id}'),
+                              Text('Language: ${track.language} | ID: ${track.id}'),
                               if (track.bitrate != null ||
                                   track.sampleRate != null ||
                                   track.channelCount != null ||
@@ -424,8 +422,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                           ),
                           trailing: track.isSelected
                               ? const Chip(
-                                  label: Text('Selected',
-                                      style: TextStyle(fontSize: 12)),
+                                  label: Text('Selected', style: TextStyle(fontSize: 12)),
                                   backgroundColor: Colors.green,
                                   labelStyle: TextStyle(color: Colors.white),
                                 )
@@ -577,8 +574,7 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
   void initState() {
     super.initState();
 
-    _videoPlayerController =
-        VideoPlayerController.asset('assets/Butterfly-209.mp4');
+    _videoPlayerController = VideoPlayerController.asset('assets/Butterfly-209.mp4');
     _videoPlayerController.addListener(() {
       if (startedPlaying && !_videoPlayerController.value.isPlaying) {
         Navigator.pop(context);

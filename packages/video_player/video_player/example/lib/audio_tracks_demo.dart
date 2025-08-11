@@ -25,9 +25,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   }
 
   Future<void> _initializeVideoPlayer() async {
-    // Example URL with multiple audio tracks (replace with your test video)
+    // Apple's test HLS stream with multiple audio tracks
     const String videoUrl =
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+        'https://devstreaming-cdn.apple.com/videos/streaming/examples/bipbop_16x9/bipbop_16x9_variant.m3u8';
 
     _controller = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
 
