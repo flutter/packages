@@ -62,8 +62,6 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   return @{
     @"loadedTimeRanges" : [NSValue valueWithPointer:timeRangeContext],
     @"status" : [NSValue valueWithPointer:statusContext],
-    @"presentationSize" : [NSValue valueWithPointer:presentationSizeContext],
-    @"duration" : [NSValue valueWithPointer:durationContext],
     @"playbackLikelyToKeepUp" : [NSValue valueWithPointer:playbackLikelyToKeepUpContext],
   };
 }
