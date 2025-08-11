@@ -91,12 +91,13 @@
 }
 
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  FlutterError *error;
   for (FVPVideoPlayer *player in self.playersByIdentifier.allValues) {
     // Remove the channel and texture cleanup, and the event listener, to ensure that the player
     // doesn't message the engine that is no longer connected.
     player.onDisposed = nil;
     player.eventListener = nil;
-    [player dispose];
+    [player disposeWithError:&error];
   }
   [self.playersByIdentifier removeAllObjects];
   SetUpFVPAVFoundationVideoPlayerApi(registrar.messenger, nil);
@@ -127,6 +128,7 @@
     if (isTextureBased) {
       [weakSelf.registrar.textures unregisterTexture:playerIdentifier];
     }
+    [weakSelf.playersByIdentifier removeObjectForKey:@(playerIdentifier)];
   };
   // Set up the event channel.
   FVPEventBridge *eventBridge = [[FVPEventBridge alloc]
@@ -182,7 +184,12 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   upgradeAudioSessionCategory(AVAudioSessionCategoryPlayback, 0, 0);
 #endif
 
-  [self.playersByIdentifier.allValues makeObjectsPerformSelector:@selector(dispose)];
+  FlutterError *disposeError;
+  // Disposing a player removes it from the dictionary, so iterate over a copy.
+  NSArray<FVPVideoPlayer *> *players = [self.playersByIdentifier.allValues copy];
+  for (FVPVideoPlayer *player in players) {
+    [player disposeWithError:&disposeError];
+  }
   [self.playersByIdentifier removeAllObjects];
 }
 
@@ -227,13 +234,6 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   return [[FVPVideoPlayer alloc] initWithPlayerItem:item
                                           avFactory:self.avFactory
                                        viewProvider:self.viewProvider];
-}
-
-- (void)disposePlayer:(NSInteger)playerIdentifier error:(FlutterError **)error {
-  NSNumber *playerKey = @(playerIdentifier);
-  FVPVideoPlayer *player = self.playersByIdentifier[playerKey];
-  [self.playersByIdentifier removeObjectForKey:playerKey];
-  [player dispose];
 }
 
 - (void)setMixWithOthers:(BOOL)mixWithOthers

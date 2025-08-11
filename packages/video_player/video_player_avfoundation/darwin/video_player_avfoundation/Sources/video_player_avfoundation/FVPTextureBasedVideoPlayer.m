@@ -106,8 +106,8 @@
       }];
 }
 
-- (void)dispose {
-  [super dispose];
+- (void)disposeWithError:(FlutterError *_Nullable *_Nonnull)error {
+  [super disposeWithError:error];
 
   [self.playerLayer removeFromSuperlayer];
 
@@ -202,7 +202,8 @@
 - (void)onTextureUnregistered:(NSObject<FlutterTexture> *)texture {
   dispatch_async(dispatch_get_main_queue(), ^{
     if (!self.disposed) {
-      [self dispose];
+      FlutterError *error;
+      [self disposeWithError:&error];
     }
   });
 }

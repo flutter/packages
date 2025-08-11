@@ -55,12 +55,12 @@ void main() {
     test('dispose', () async {
       final (
         AVFoundationVideoPlayer player,
-        MockAVFoundationVideoPlayerApi api,
         _,
+        MockVideoPlayerInstanceApi playerApi,
       ) = setUpMockPlayer(playerId: 1);
       await player.dispose(1);
 
-      verify(api.dispose(1));
+      verify(playerApi.dispose());
       expect(player.playerViewStates, isEmpty);
     });
 

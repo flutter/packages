@@ -499,7 +499,7 @@
 
   [self keyValueObservingExpectationForObject:avPlayer keyPath:@"currentItem" expectedValue:nil];
 
-  [videoPlayerPlugin disposePlayer:playerIdentifier.integerValue error:&error];
+  [player disposeWithError:&error];
   XCTAssertEqual(videoPlayerPlugin.playersByIdentifier.count, 0);
   XCTAssertNil(error);
 
@@ -719,7 +719,7 @@
     weakPlayer = player;
     avPlayer = player.player;
 
-    [videoPlayerPlugin disposePlayer:playerIdentifier.integerValue error:&error];
+    [player disposeWithError:&error];
     XCTAssertNil(error);
   }
 
@@ -1019,9 +1019,8 @@
       URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"];
 }
 
-- (nonnnll AVPlayerItem *)playerItemWithURL:(NSURL *)url {
-  return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:[NSURL URLWithString:url]
-                                                               options:nil]];
+- (nonnull AVPlayerItem *)playerItemWithURL:(NSURL *)url {
+  return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:url options:nil]];
 }
 
 @end

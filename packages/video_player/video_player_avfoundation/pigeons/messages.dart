@@ -51,8 +51,6 @@ abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('createWithOptions:')
   // Creates a new player and returns its ID.
   int create(CreationOptions creationOptions);
-  @ObjCSelector('disposePlayer:')
-  void dispose(int playerId);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
   @ObjCSelector('fileURLForAssetWithName:package:')
@@ -74,4 +72,5 @@ abstract class VideoPlayerInstanceApi {
   @ObjCSelector('seekTo:')
   void seekTo(int position);
   void pause();
+  void dispose();
 }

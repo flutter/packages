@@ -139,7 +139,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   }
 }
 
-- (void)dispose {
+- (void)disposeWithError:(FlutterError *_Nullable *_Nonnull)error {
   // In some hot restart scenarios, dispose can be called twice, so no-op after the first time.
   if (_disposed) {
     return;

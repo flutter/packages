@@ -42,9 +42,6 @@ NS_ASSUME_NONNULL_BEGIN
                          avFactory:(id<FVPAVFactory>)avFactory
                       viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
-/// Disposes the video player and releases any resources it holds.
-- (void)dispose;
-
 @end
 
 NS_ASSUME_NONNULL_END

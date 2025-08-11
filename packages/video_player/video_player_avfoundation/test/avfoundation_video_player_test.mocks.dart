@@ -63,16 +63,6 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
       ) as _i4.Future<int>);
 
   @override
-  _i4.Future<void> dispose(int? playerId) => (super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [playerId],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
-
-  @override
   _i4.Future<void> setMixWithOthers(bool? mixWithOthers) => (super.noSuchMethod(
         Invocation.method(
           #setMixWithOthers,
@@ -182,6 +172,16 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
   _i4.Future<void> pause() => (super.noSuchMethod(
         Invocation.method(
           #pause,
+          [],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> dispose() => (super.noSuchMethod(
+        Invocation.method(
+          #dispose,
           [],
         ),
         returnValue: _i4.Future<void>.value(),

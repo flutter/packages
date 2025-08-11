@@ -52,9 +52,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> dispose(int playerId) async {
-    await _api.dispose(playerId);
+    final VideoPlayerInstanceApi? player = _players.remove(playerId);
+    await player?.dispose();
     playerViewStates.remove(playerId);
-    _players.remove(playerId);
   }
 
   @override
