@@ -87,7 +87,7 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
 
   @override
   Future<List<VideoAudioTrack>> getAudioTracks() async {
-    return [];
+    return <VideoAudioTrack>[];
   }
 }
 
@@ -1427,7 +1427,6 @@ void main() {
         id: 'test',
         label: 'Test Track',
         language: 'en',
-        isSelected: false,
         bitrate: 128000,
         sampleRate: 48000,
         channelCount: 2,
@@ -1438,7 +1437,6 @@ void main() {
         id: 'test',
         label: 'Test Track',
         language: 'en',
-        isSelected: false,
         bitrate: 128000,
         sampleRate: 48000,
         channelCount: 2,
@@ -1449,7 +1447,6 @@ void main() {
         id: 'different',
         label: 'Test Track',
         language: 'en',
-        isSelected: false,
         bitrate: 128000,
         sampleRate: 48000,
         channelCount: 2,
@@ -1624,26 +1621,17 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
     calls.add('getAudioTracks');
     // Return mock audio tracks matching Apple's bipbop HLS stream
-    return [
+    return <VideoAudioTrack>[
       const VideoAudioTrack(
         id: 'hls_audio_0',
         label: 'BipBop Audio 1',
         language: 'eng',
         isSelected: true,
-        bitrate: null, // HLS metadata may not always be available
-        sampleRate: null,
-        channelCount: null,
-        codec: null,
       ),
       const VideoAudioTrack(
         id: 'hls_audio_1',
         label: 'BipBop Audio 2',
         language: 'eng',
-        isSelected: false,
-        bitrate: null,
-        sampleRate: null,
-        channelCount: null,
-        codec: null,
       ),
     ];
   }

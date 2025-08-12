@@ -7,6 +7,7 @@ import 'package:video_player/video_player.dart';
 
 /// Demo page showing how to retrieve and display available audio tracks
 class AudioTracksDemo extends StatefulWidget {
+  /// Creates an AudioTracksDemo widget.
   const AudioTracksDemo({super.key});
 
   @override
@@ -15,7 +16,7 @@ class AudioTracksDemo extends StatefulWidget {
 
 class _AudioTracksDemoState extends State<AudioTracksDemo> {
   VideoPlayerController? _controller;
-  List<VideoAudioTrack> _audioTracks = [];
+  List<VideoAudioTrack> _audioTracks = <VideoAudioTrack>[];
   bool _isLoading = false;
 
   @override
@@ -33,7 +34,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
 
     try {
       await _controller!.initialize();
-      setState(() {});
+      setState(() {
+        // Video initialized
+      });
 
       // Get audio tracks after initialization
       await _getAudioTracks();
@@ -43,14 +46,16 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   }
 
   Future<void> _getAudioTracks() async {
-    if (_controller == null) return;
+    if (_controller == null) {
+      return;
+    }
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final tracks = await _controller!.getAudioTracks();
+      final List<VideoAudioTrack> tracks = await _controller!.getAudioTracks();
       setState(() {
         _audioTracks = tracks;
         _isLoading = false;
@@ -77,7 +82,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
         backgroundColor: Colors.blue,
       ),
       body: Column(
-        children: [
+        children: <Widget>[
           // Video Player
           if (_controller != null && _controller!.value.isInitialized)
             AspectRatio(
@@ -96,13 +101,15 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
           if (_controller != null && _controller!.value.isInitialized)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 IconButton(
                   onPressed: () {
                     setState(() {
-                      _controller!.value.isPlaying
-                          ? _controller!.pause()
-                          : _controller!.play();
+                      if (_controller!.value.isPlaying) {
+                        _controller!.pause();
+                      } else {
+                        _controller!.play();
+                      }
                     });
                   },
                   icon: Icon(
@@ -127,9 +134,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Row(
-                    children: [
+                    children: <Widget>[
                       const Text(
                         'Available Audio Tracks:',
                         style: TextStyle(
@@ -156,8 +163,8 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
                     Expanded(
                       child: ListView.builder(
                         itemCount: _audioTracks.length,
-                        itemBuilder: (context, index) {
-                          final track = _audioTracks[index];
+                        itemBuilder: (BuildContext context, int index) {
+                          final VideoAudioTrack track = _audioTracks[index];
                           return Card(
                             margin: const EdgeInsets.only(bottom: 8),
                             child: ListTile(
@@ -182,7 +189,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                                children: <Widget>[
                                   Text('ID: ${track.id}'),
                                   Text('Language: ${track.language}'),
                                 ],

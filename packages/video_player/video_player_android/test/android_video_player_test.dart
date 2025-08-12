@@ -776,10 +776,6 @@ void main() {
             label: 'Default',
             language: 'und',
             isSelected: true,
-            bitrate: null,
-            sampleRate: null,
-            channelCount: null,
-            codec: null,
           ),
           AudioTrackMessage(
             id: 'track2',
@@ -788,7 +784,6 @@ void main() {
             isSelected: false,
             bitrate: 256000,
             sampleRate: 48000,
-            channelCount: null,
             codec: 'aac',
           ),
         ];

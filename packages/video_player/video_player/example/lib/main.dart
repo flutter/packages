@@ -9,9 +9,7 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
-import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 
 import 'audio_tracks_demo.dart';
 
@@ -298,7 +296,7 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late VideoPlayerController _controller;
-  List<VideoAudioTrack> _audioTracks = [];
+  List<VideoAudioTrack> _audioTracks = <VideoAudioTrack>[];
   bool _isLoadingTracks = false;
 
   Future<ClosedCaptionFile> _loadCaptions() async {
@@ -308,10 +306,10 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   }
 
   String _formatQualityInfo(VideoAudioTrack track) {
-    final List<String> parts = [];
+    final List<String> parts = <String>[];
 
     if (track.bitrate != null) {
-      final kbps = (track.bitrate! / 1000).round();
+      final int kbps = (track.bitrate! / 1000).round();
       parts.add('${kbps}kbps');
     }
 
@@ -319,16 +317,12 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
       switch (track.channelCount!) {
         case 1:
           parts.add('Mono');
-          break;
         case 2:
           parts.add('Stereo');
-          break;
         case 6:
           parts.add('5.1');
-          break;
         case 8:
           parts.add('7.1');
-          break;
         default:
           parts.add('${track.channelCount}ch');
       }
@@ -390,11 +384,11 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
-              children: [
+              children: <Widget>[
                 ElevatedButton.icon(
                   onPressed: () async {
                     if (_controller.value.isInitialized) {
-                      final audioTracks = await _controller.getAudioTracks();
+                      final List<VideoAudioTrack> audioTracks = await _controller.getAudioTracks();
                       setState(() {
                         _audioTracks = audioTracks;
                         _isLoadingTracks = false;
@@ -411,13 +405,13 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                   label: const Text('Get Audio Tracks'),
                 ),
                 const SizedBox(height: 16),
-                if (_audioTracks.isNotEmpty) ...[
+                if (_audioTracks.isNotEmpty) ...<Widget>[
                   const Text(
                     'Available Audio Tracks:',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  ...(_audioTracks.map((track) => Card(
+                  ...(_audioTracks.map((VideoAudioTrack track) => Card(
                         margin: const EdgeInsets.symmetric(vertical: 4),
                         child: ListTile(
                           leading: CircleAvatar(
@@ -438,7 +432,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                           ),
                           subtitle: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: <Widget>[
                               Text('Language: ${track.language} | ID: ${track.id}'),
                               if (track.bitrate != null ||
                                   track.sampleRate != null ||
@@ -463,7 +457,7 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                               : null,
                         ),
                       ))),
-                ] else if (_audioTracks.isEmpty && !_isLoadingTracks) ...[
+                ] else if (_audioTracks.isEmpty && !_isLoadingTracks) ...<Widget>[
                   const Text(
                     'No audio tracks found. Click "Get Audio Tracks" to retrieve them.',
                     style: TextStyle(color: Colors.grey),

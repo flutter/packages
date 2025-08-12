@@ -663,10 +663,6 @@ void main() {
             label: 'Default Audio',
             language: 'und',
             isSelected: true,
-            bitrate: null,
-            sampleRate: null,
-            channelCount: null,
-            codec: null,
           ),
           AudioTrackMessage(
             id: 'hls_track2',
