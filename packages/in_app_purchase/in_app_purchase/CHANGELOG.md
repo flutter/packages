@@ -2,6 +2,9 @@
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
+## 3.2.4
+* Updates minimum `in_app_purchase_storekit` version to 0.4.4.
+
 ## 3.2.3
 * Updates minimum `in_app_purchase_storekit` version to 0.4.0.
 
