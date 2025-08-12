@@ -303,7 +303,12 @@ class GoRouteConfig extends RouteBaseConfig {
         );
       }
     }
-    final String fromStateExpression = decodeParameter(element, _pathParams);
+    final FieldElement? fieldElement = _fieldElement(element.name);
+    final String fromStateExpression = decodeParameter(
+      element,
+      _pathParams,
+      fieldElement,
+    );
 
     if (element.isPositional) {
       return '$fromStateExpression,';
@@ -328,7 +333,8 @@ class GoRouteConfig extends RouteBaseConfig {
       );
     }
 
-    return encodeField(field);
+    final FieldElement? fieldElement = _fieldElement(fieldName);
+    return encodeField(field, fieldElement);
   }
 
   String get _locationQueryParams {
@@ -418,19 +424,19 @@ mixin $_mixinName on GoRouteData {
   $_castedSelf
   @override
   String get location => GoRouteData.\$location($_locationArgs,$_locationQueryParams);
-  
+
   @override
   void go(BuildContext context) =>
       context.go(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
+
   @override
   Future<T?> push<T>(BuildContext context) =>
       context.push<T>(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
+
   @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
-  
+
   @override
   void replace(BuildContext context) =>
       context.replace(location${_extraParam != null ? ', extra: $selfFieldName.$extraFieldName' : ''});
@@ -751,6 +757,9 @@ $routeDataClassName.$dataConvertionFunctionName(
 
   PropertyAccessorElement? _field(String name) =>
       routeDataClass.getGetter(name);
+
+  FieldElement? _fieldElement(String name) => routeDataClass.fields
+      .firstWhereOrNull((FieldElement element) => element.displayName == name);
 
   /// The name of `RouteData` subclass this configuration represents.
   @protected
