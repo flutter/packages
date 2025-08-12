@@ -21,8 +21,7 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  video_player_platform_interface: 
-    path: ../video_player_platform_interface
+  video_player_platform_interface: ^6.3.0
   web: ">=0.5.1 <2.0.0"
 
 dev_dependencies:
@@ -32,3 +31,7 @@ dev_dependencies:
 topics:
   - video
   - video-player
+# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
+# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
+dependency_overrides:
+  video_player_platform_interface: {path: ../../../packages/video_player/video_player_platform_interface}
