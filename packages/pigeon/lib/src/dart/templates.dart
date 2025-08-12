@@ -4,14 +4,14 @@
 
 import '../generator_tools.dart';
 
-/// Name for the generated InstanceManager for ProxyApis.
+/// Name for the generated InstanceManager for Dart proxy classes.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
 const String dartInstanceManagerClassName =
     '${proxyApiClassNamePrefix}InstanceManager';
 
-/// Name for the generated InstanceManager API for ProxyApis.
+/// Name for the generated InstanceManager API.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
@@ -60,7 +60,7 @@ class $dartInstanceManagerClassName {
   // 0 <= n < 2^16.
   static const int _maxDartCreatedIdentifier = 65536;
 
-  /// The default [$dartInstanceManagerClassName] used by ProxyApis.
+  /// The default [$dartInstanceManagerClassName] used by Dart proxy classes.
   ///
   /// On creation, this manager makes a call to clear the native
   /// InstanceManager. This is to prevent identifier conflicts after a host
@@ -236,12 +236,12 @@ class $dartInstanceManagerClassName {
 ''';
 }
 
-/// The base class for all ProxyApis.
+/// The base class for all Dart proxy classes.
 ///
-/// All Dart classes generated as a ProxyApi extends this one.
+/// All Dart proxy classes generated as a part of a ProxyApi extends this one.
 const String proxyApiBaseClass = '''
-/// An immutable object that serves as the base class for all ProxyApis and
-/// can provide functional copies of itself.
+/// An immutable object that serves as the base class for all Dart proxy classes
+/// and can provide functional copies of itself.
 ///
 /// All implementers are expected to be [immutable] as defined by the annotation
 /// and override [${classMemberNamePrefix}copy] returning an instance of itself.
@@ -276,11 +276,11 @@ abstract class $proxyApiBaseClassName {
 }
 ''';
 
-/// The base codec for ProxyApis.
+/// The Dart base codec for ProxyApis.
 ///
-/// All generated Dart proxy apis should use this codec or extend it. This codec
-/// adds support to convert instances to their corresponding identifier from an
-/// `InstanceManager` and vice versa.
+/// All generated Dart proxy classes should use this codec or extend it. This
+/// codec adds support to convert instances to their corresponding identifier
+/// from an `InstanceManager` and vice versa.
 const String proxyApiBaseCodec = '''
 class $_proxyApiCodecName extends _PigeonCodec {
  const $_proxyApiCodecName(this.instanceManager);
@@ -307,7 +307,7 @@ class $_proxyApiCodecName extends _PigeonCodec {
 }
 ''';
 
-/// Name of the base class of all ProxyApis.
+/// Name of the base class of all Dart proxy classes.
 const String proxyApiBaseClassName = '${classNamePrefix}ProxyApiBaseClass';
 const String _proxyApiBaseClassMessengerVarName =
     '${classMemberNamePrefix}binaryMessenger';
