@@ -1,6 +1,6 @@
 ## 0.2.6+3
 
-* Updates README with details about adding enabling desugarging on Android.
+* Updates `README` with information about enabling desugaring on Android.
 
 ## 0.2.6+2
 
