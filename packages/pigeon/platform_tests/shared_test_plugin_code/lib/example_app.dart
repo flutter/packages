@@ -5,6 +5,8 @@
 import 'package:flutter/material.dart';
 
 import 'generated.dart';
+import 'src/generated/jni_tests.gen.dart';
+import 'test_types.dart';
 
 void main() {
   runApp(const ExampleApp());
@@ -38,7 +40,13 @@ class _ExampleAppState extends State<ExampleApp> {
     try {
       // Make a single trivial call just to validate that everything is wired
       // up.
-      await api.noop();
+      // await api.noop();
+      final JniHostIntegrationCoreApiForNativeInterop? api =
+          JniHostIntegrationCoreApiForNativeInterop.getInstance();
+      print(api);
+      // const int sentInt = regularInt;
+      api!.noop();
+      // print(receivedInt);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';

@@ -114,7 +114,7 @@ class InternalPigeonOptions {
                 copyrightHeader: copyrightHeader,
                 useJni: options.kotlinOptions?.useJni ?? false,
                 useFfi: options.swiftOptions?.useFfi ?? false,
-              ),
+                ffiErrorClassName: options.swiftOptions?.errorClassName),
         copyrightHeader = options.copyrightHeader != null
             ? _lineReader(path.posix
                 .join(options.basePath ?? '', options.copyrightHeader))

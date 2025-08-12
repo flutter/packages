@@ -21,8 +21,7 @@ external ffi.Pointer<objc.ObjCObject> _test_plugin_protocolTrampoline_1mbt9g9(
   ffi.Pointer<ffi.Void> arg0,
 );
 
-late final _class_JniHostIntegrationCoreApiSetup =
-    objc.getClass("test_plugin.JniHostIntegrationCoreApiSetup");
+late final _class_BasicClass = objc.getClass("test_plugin.BasicClass");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 final _objc_msgSend_19nvye5 = objc.msgSendPointer
     .cast<
@@ -36,7 +35,41 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _sel_init = objc.registerName("init");
+late final _sel_initWithAnInt_aString_ =
+    objc.registerName("initWithAnInt:aString:");
+final _objc_msgSend_1j962g9 = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Int64,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>,
+            int,
+            ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_anInt = objc.registerName("anInt");
+final _objc_msgSend_pysgoz = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Int64 Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>)>>()
+    .asFunction<
+        int Function(
+            ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
+late final _sel_setAnInt_ = objc.registerName("setAnInt:");
+final _objc_msgSend_17gvxvj = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>, ffi.Int64)>>()
+    .asFunction<
+        void Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, int)>();
+late final _sel_aString = objc.registerName("aString");
 final _objc_msgSend_151sglz = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
@@ -45,18 +78,18 @@ final _objc_msgSend_151sglz = objc.msgSendPointer
     .asFunction<
         ffi.Pointer<objc.ObjCObject> Function(
             ffi.Pointer<objc.ObjCObject>, ffi.Pointer<objc.ObjCSelector>)>();
-late final _sel_getInstanceWithName_ =
-    objc.registerName("getInstanceWithName:");
-final _objc_msgSend_1sotr3r = objc.msgSendPointer
+late final _sel_setAString_ = objc.registerName("setAString:");
+final _objc_msgSend_xtuoz7 = objc.msgSendPointer
     .cast<
         ffi.NativeFunction<
-            ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Void Function(
                 ffi.Pointer<objc.ObjCObject>,
                 ffi.Pointer<objc.ObjCSelector>,
                 ffi.Pointer<objc.ObjCObject>)>>()
     .asFunction<
-        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
+        void Function(ffi.Pointer<objc.ObjCObject>,
             ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_init = objc.registerName("init");
 late final _sel_new = objc.registerName("new");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
 final _objc_msgSend_1cwp428 = objc.msgSendPointer
@@ -172,6 +205,299 @@ extension ObjCBlock_objcObjCObject_ffiVoid_CallExtension on objc
 late final _sel_retain = objc.registerName("retain");
 late final _sel_autorelease = objc.registerName("autorelease");
 
+/// Generated class from Pigeon that represents data sent in messages.
+class BasicClass extends objc.NSObject {
+  BasicClass._(ffi.Pointer<objc.ObjCObject> pointer,
+      {bool retain = false, bool release = false})
+      : super.castFromPointer(pointer, retain: retain, release: release);
+
+  /// Constructs a [BasicClass] that points to the same underlying object as [other].
+  BasicClass.castFrom(objc.ObjCObjectBase other)
+      : this._(other.ref.pointer, retain: true, release: true);
+
+  /// Constructs a [BasicClass] that wraps the given raw object pointer.
+  BasicClass.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
+      {bool retain = false, bool release = false})
+      : this._(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [BasicClass].
+  static bool isInstance(objc.ObjCObjectBase obj) {
+    return _objc_msgSend_19nvye5(
+        obj.ref.pointer, _sel_isKindOfClass_, _class_BasicClass);
+  }
+
+  /// initWithAnInt:aString:
+  BasicClass initWithAnInt(int anInt, {required objc.NSString aString}) {
+    final _ret = _objc_msgSend_1j962g9(this.ref.retainAndReturnPointer(),
+        _sel_initWithAnInt_aString_, anInt, aString.ref.pointer);
+    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// anInt
+  int get anInt {
+    return _objc_msgSend_pysgoz(this.ref.pointer, _sel_anInt);
+  }
+
+  /// setAnInt:
+  set anInt(int value) {
+    _objc_msgSend_17gvxvj(this.ref.pointer, _sel_setAnInt_, value);
+  }
+
+  /// aString
+  objc.NSString get aString {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aString);
+    return objc.NSString.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setAString:
+  set aString(objc.NSString value) {
+    _objc_msgSend_xtuoz7(this.ref.pointer, _sel_setAString_, value.ref.pointer);
+  }
+
+  /// init
+  BasicClass init() {
+    objc.checkOsVersionInternal('BasicClass.init',
+        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
+    final _ret =
+        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// new
+  static BasicClass new$() {
+    final _ret = _objc_msgSend_151sglz(_class_BasicClass, _sel_new);
+    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static BasicClass allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret =
+        _objc_msgSend_1cwp428(_class_BasicClass, _sel_allocWithZone_, zone);
+    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// alloc
+  static BasicClass alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_BasicClass, _sel_alloc);
+    return BasicClass.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// self
+  BasicClass self$1() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
+    return BasicClass.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// retain
+  BasicClass retain() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
+    return BasicClass.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// autorelease
+  BasicClass autorelease() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
+    return BasicClass.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns a new instance of BasicClass constructed with the default `new` method.
+  factory BasicClass() => new$();
+}
+
+late final _class_JniHostIntegrationCoreApiSetup =
+    objc.getClass("test_plugin.JniHostIntegrationCoreApiSetup");
+late final _sel_getInstanceWithName_ =
+    objc.registerName("getInstanceWithName:");
+final _objc_msgSend_1sotr3r = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>, ffi.Pointer<objc.ObjCObject>)>();
+late final _class_JniTestsError = objc.getClass("test_plugin.JniTestsError");
+late final _sel_code = objc.registerName("code");
+late final _sel_setCode_ = objc.registerName("setCode:");
+late final _sel_message = objc.registerName("message");
+late final _sel_setMessage_ = objc.registerName("setMessage:");
+late final _sel_details = objc.registerName("details");
+late final _sel_setDetails_ = objc.registerName("setDetails:");
+late final _sel_initWithCode_message_details_ =
+    objc.registerName("initWithCode:message:details:");
+final _objc_msgSend_11spmsz = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>)>();
+
+/// Error class for passing custom error details to Dart side.
+class JniTestsError extends objc.NSObject {
+  JniTestsError._(ffi.Pointer<objc.ObjCObject> pointer,
+      {bool retain = false, bool release = false})
+      : super.castFromPointer(pointer, retain: retain, release: release);
+
+  /// Constructs a [JniTestsError] that points to the same underlying object as [other].
+  JniTestsError.castFrom(objc.ObjCObjectBase other)
+      : this._(other.ref.pointer, retain: true, release: true);
+
+  /// Constructs a [JniTestsError] that wraps the given raw object pointer.
+  JniTestsError.castFromPointer(ffi.Pointer<objc.ObjCObject> other,
+      {bool retain = false, bool release = false})
+      : this._(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [JniTestsError].
+  static bool isInstance(objc.ObjCObjectBase obj) {
+    return _objc_msgSend_19nvye5(
+        obj.ref.pointer, _sel_isKindOfClass_, _class_JniTestsError);
+  }
+
+  /// code
+  objc.NSString? get code {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_code);
+    return _ret.address == 0
+        ? null
+        : objc.NSString.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setCode:
+  set code(objc.NSString? value) {
+    _objc_msgSend_xtuoz7(
+        this.ref.pointer, _sel_setCode_, value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// message
+  objc.NSString? get message {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_message);
+    return _ret.address == 0
+        ? null
+        : objc.NSString.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// setMessage:
+  set message(objc.NSString? value) {
+    _objc_msgSend_xtuoz7(
+        this.ref.pointer, _sel_setMessage_, value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// details
+  objc.ObjCObjectBase? get details {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_details);
+    return _ret.address == 0
+        ? null
+        : objc.ObjCObjectBase(_ret, retain: true, release: true);
+  }
+
+  /// setDetails:
+  set details(objc.ObjCObjectBase? value) {
+    _objc_msgSend_xtuoz7(
+        this.ref.pointer, _sel_setDetails_, value?.ref.pointer ?? ffi.nullptr);
+  }
+
+  /// init
+  JniTestsError init() {
+    objc.checkOsVersionInternal('JniTestsError.init',
+        iOS: (false, (2, 0, 0)), macOS: (false, (10, 0, 0)));
+    final _ret =
+        _objc_msgSend_151sglz(this.ref.retainAndReturnPointer(), _sel_init);
+    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// initWithCode:message:details:
+  JniTestsError initWithCode(objc.NSString? code$1,
+      {objc.NSString? message$1, objc.ObjCObjectBase? details$1}) {
+    final _ret = _objc_msgSend_11spmsz(
+        this.ref.retainAndReturnPointer(),
+        _sel_initWithCode_message_details_,
+        code$1?.ref.pointer ?? ffi.nullptr,
+        message$1?.ref.pointer ?? ffi.nullptr,
+        details$1?.ref.pointer ?? ffi.nullptr);
+    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// new
+  static JniTestsError new$() {
+    final _ret = _objc_msgSend_151sglz(_class_JniTestsError, _sel_new);
+    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// allocWithZone:
+  static JniTestsError allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret =
+        _objc_msgSend_1cwp428(_class_JniTestsError, _sel_allocWithZone_, zone);
+    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// alloc
+  static JniTestsError alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_JniTestsError, _sel_alloc);
+    return JniTestsError.castFromPointer(_ret, retain: false, release: true);
+  }
+
+  /// self
+  JniTestsError self$1() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
+    return JniTestsError.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// retain
+  JniTestsError retain() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
+    return JniTestsError.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// autorelease
+  JniTestsError autorelease() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
+    return JniTestsError.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns a new instance of JniTestsError constructed with the default `new` method.
+  factory JniTestsError() => new$();
+}
+
+late final _sel_noopWithWrappedError_ =
+    objc.registerName("noopWithWrappedError:");
+late final _sel_echoIntWithAnInt_wrappedError_ =
+    objc.registerName("echoIntWithAnInt:wrappedError:");
+final _objc_msgSend_15qeuct = objc.msgSendPointer
+    .cast<
+        ffi.NativeFunction<
+            ffi.Pointer<objc.ObjCObject> Function(
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCSelector>,
+                ffi.Pointer<objc.ObjCObject>,
+                ffi.Pointer<objc.ObjCObject>)>>()
+    .asFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCSelector>,
+            ffi.Pointer<objc.ObjCObject>,
+            ffi.Pointer<objc.ObjCObject>)>();
+late final _sel_echoDoubleWithADouble_wrappedError_ =
+    objc.registerName("echoDoubleWithADouble:wrappedError:");
+late final _sel_echoBoolWithABool_wrappedError_ =
+    objc.registerName("echoBoolWithABool:wrappedError:");
+late final _sel_echoStringWithAString_wrappedError_ =
+    objc.registerName("echoStringWithAString:wrappedError:");
+late final _sel_echoBasicClassWithABasicClass_wrappedError_ =
+    objc.registerName("echoBasicClassWithABasicClass:wrappedError:");
+late final _sel_echoEnumWithAnEnum_wrappedError_ =
+    objc.registerName("echoEnumWithAnEnum:wrappedError:");
+
 /// Generated setup class from Pigeon to register implemented JniHostIntegrationCoreApi classes.
 class JniHostIntegrationCoreApiSetup extends objc.NSObject {
   JniHostIntegrationCoreApiSetup._(ffi.Pointer<objc.ObjCObject> pointer,
@@ -214,6 +540,90 @@ class JniHostIntegrationCoreApiSetup extends objc.NSObject {
         ? null
         : JniHostIntegrationCoreApiSetup.castFromPointer(_ret,
             retain: true, release: true);
+  }
+
+  /// noopWithWrappedError:
+  void noopWithWrappedError(JniTestsError wrappedError) {
+    _objc_msgSend_xtuoz7(
+        this.ref.pointer, _sel_noopWithWrappedError_, wrappedError.ref.pointer);
+  }
+
+  /// echoIntWithAnInt:wrappedError:
+  objc.NSNumber? echoIntWithAnInt(objc.NSNumber anInt,
+      {required JniTestsError wrappedError}) {
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoIntWithAnInt_wrappedError_,
+        anInt.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// echoDoubleWithADouble:wrappedError:
+  objc.NSNumber? echoDoubleWithADouble(objc.NSNumber aDouble,
+      {required JniTestsError wrappedError}) {
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoDoubleWithADouble_wrappedError_,
+        aDouble.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// echoBoolWithABool:wrappedError:
+  objc.NSNumber? echoBoolWithABool(objc.NSNumber aBool,
+      {required JniTestsError wrappedError}) {
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoBoolWithABool_wrappedError_,
+        aBool.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// echoStringWithAString:wrappedError:
+  objc.NSString? echoStringWithAString(objc.NSString aString,
+      {required JniTestsError wrappedError}) {
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoStringWithAString_wrappedError_,
+        aString.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSString.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// echoBasicClassWithABasicClass:wrappedError:
+  BasicClass? echoBasicClassWithABasicClass(BasicClass aBasicClass,
+      {required JniTestsError wrappedError}) {
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoBasicClassWithABasicClass_wrappedError_,
+        aBasicClass.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : BasicClass.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// echoEnumWithAnEnum:wrappedError:
+  objc.NSNumber? echoEnumWithAnEnum(objc.NSNumber anEnum,
+      {required JniTestsError wrappedError}) {
+    final _ret = _objc_msgSend_15qeuct(
+        this.ref.pointer,
+        _sel_echoEnumWithAnEnum_wrappedError_,
+        anEnum.ref.pointer,
+        wrappedError.ref.pointer);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// new

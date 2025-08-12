@@ -177,8 +177,11 @@ class _FfiType {
         return 'NSDictionary';
       default:
         {
-          if (type.isClass || type.isEnum) {
+          if (type.isClass) {
             return 'ffi_bridge.${type.baseName}';
+          }
+          if (type.isEnum) {
+            return 'NSNumber';
           }
           return 'There is something wrong, a type is not classified';
         }
@@ -230,20 +233,16 @@ class _FfiType {
     return false;
   }
 
-  String getFfiGetterMethodName(String field) {
-    return 'get${toUpperCamelCase(field)}()';
-  }
-
   String get primitiveToDartMethodName {
     switch (type.baseName) {
       case 'String':
-        return 'toDartString';
+        return 'toDartString()';
       case 'int':
         return 'longValue';
       case 'double':
         return 'doubleValue';
       case 'bool':
-        return 'booleanValue';
+        return 'boolValue';
       default:
         return '';
     }
@@ -253,6 +252,7 @@ class _FfiType {
     TypeDeclaration type, {
     String varName = '',
     bool forceConversion = false,
+    bool classField = false,
   }) {
     if (type.isClass || type.isEnum) {
       return '${type.baseName}.fromFfi($varName)${_getForceNonNullSymbol(!type.isNullable)}';
@@ -261,10 +261,14 @@ class _FfiType {
     String castCall = '';
     final String codecCall =
         '_PigeonFfiCodec.readValue($varName)${_getForceNonNullSymbol(!type.isNullable)}';
-    String primitiveGetter(String converter, bool unwrap) {
-      return unwrap
-          ? '$varName${_getNullableSymbol(type.isNullable)}.$converter${'()'}'
-          : varName;
+    String primitiveGetter(String converter, bool classField) {
+      return classField &&
+              !type.isNullable &&
+              (type.baseName == 'int' ||
+                  type.baseName == 'double' ||
+                  type.baseName == 'bool')
+          ? varName
+          : '$varName${_getNullableSymbol(type.isNullable)}.$converter';
     }
 
     switch (type.baseName) {
@@ -272,10 +276,7 @@ class _FfiType {
       case 'int':
       case 'double':
       case 'bool':
-        return primitiveGetter(
-          primitiveToDartMethodName,
-          type.baseName == 'String' || type.isNullable || forceConversion,
-        );
+        return primitiveGetter(primitiveToDartMethodName, classField);
       case 'Object':
         asType = '';
       case 'List':
@@ -295,28 +296,31 @@ class _FfiType {
     TypeDeclaration type,
     String name,
     _FfiType ffiType, {
+    bool classField = false,
     bool forceNonNull = false,
   }) {
-    if (type.isClass || type.isEnum) {
+    if (type.isClass) {
       return _wrapInNullCheckIfNullable(
         type.isNullable,
         name,
         '$name${_getForceNonNullSymbol(type.isNullable && forceNonNull)}.toFfi()',
       );
-    } else if (!type.isNullable &&
+    }
+    if (type.isEnum) {
+      return 'NSNumber.alloc().initWithLong($name)';
+    }
+    if (!type.isNullable &&
+        classField &&
         (type.baseName == 'int' ||
             type.baseName == 'double' ||
             type.baseName == 'bool')) {
       return name;
     }
-    return '_PigeonFfiCodec.writeValue<${getFfiCallReturnType(true)}>($name)';
+    return '_PigeonFfiCodec.writeValue<${getFfiCallReturnType(type.isNullable)}>($name)';
   }
 
-  String getFfiCallReturnType(bool forceUnwrap) {
-    if (forceUnwrap || type.isNullable || nonNullableNeedsUnwrapping) {
-      return '$ffiName$ffiCollectionTypeAnnotations${_getNullableSymbol(type.isNullable)}';
-    }
-    return type.baseName;
+  String getFfiCallReturnType(bool forceUnwrap, {bool forceNullable = false}) {
+    return '$ffiName$ffiCollectionTypeAnnotations${_getNullableSymbol(forceNullable || type.isNullable)}';
   }
 
   String getDartReturnType(bool forceUnwrap) {
@@ -687,6 +691,7 @@ class InternalDartOptions extends InternalOptions {
     this.testOut,
     this.useJni = false,
     this.useFfi = false,
+    this.ffiErrorClassName,
   });
 
   /// Creates InternalDartOptions from DartOptions.
@@ -697,6 +702,7 @@ class InternalDartOptions extends InternalOptions {
     String? testOut,
     required this.useJni,
     required this.useFfi,
+    this.ffiErrorClassName,
   })  : copyrightHeader = copyrightHeader ?? options.copyrightHeader,
         dartOut = (dartOut ?? options.sourceOutPath)!,
         testOut = testOut ?? options.testOutPath;
@@ -715,6 +721,9 @@ class InternalDartOptions extends InternalOptions {
 
   /// Whether to use Ffi for generating swift interop code.
   final bool useFfi;
+
+  /// The error class name used for FFI methods.
+  final String? ffiErrorClassName;
 }
 
 /// Class that manages all Dart code generation.
@@ -835,7 +844,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         final _FfiType ffiType = _FfiType.fromEnum(anEnum);
         indent.newln();
         indent.writeScoped('${ffiType.ffiName} toFfi() {', '}', () {
-          indent.writeln('return ${ffiType.ffiName}.Companion.ofRaw(index)!;');
+          indent.writeln(
+              'return ${ffiType.getToFfiCall(ffiType.type, 'index', ffiType)};');
         });
 
         indent.newln();
@@ -844,7 +854,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           '}',
           () {
             indent.writeln(
-              'return ffiEnum == null ? null : ${anEnum.name}.values[ffiEnum.getRaw()];',
+              'return ffiEnum == null ? null : ${anEnum.name}.values[ffiEnum.intValue];',
             );
           },
         );
@@ -979,7 +989,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         )) {
           final _JniType jniType = _JniType.fromTypeDeclaration(field.type);
           indent.writeln(
-            '${jniType.getToJniCall(field.type, field.name, jniType, forceNonNull: true)},',
+            '${field.name}: ${jniType.getToJniCall(field.type, field.name, jniType, forceNonNull: true)},',
           );
         }
       });
@@ -988,15 +998,25 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
 
   void _writeToFfi(Indent indent, Class classDefinition) {
     indent.writeScoped('ffi_bridge.${classDefinition.name} toFfi() {', '}', () {
-      indent.writeScoped('return ffi_bridge.${classDefinition.name} (', ');',
-          () {
-        for (final NamedType field in getFieldsInSerializationOrder(
-          classDefinition,
-        )) {
+      final Iterable<NamedType> fields = getFieldsInSerializationOrder(
+        classDefinition,
+      );
+      indent.writeScoped(
+          'return ffi_bridge.${classDefinition.name}().initWith${toUpperCamelCase(fields.first.name)}(',
+          ');', () {
+        bool first = true;
+        for (final NamedType field in fields) {
           final _FfiType ffiType = _FfiType.fromTypeDeclaration(field.type);
           indent.writeln(
-            '${ffiType.getToFfiCall(field.type, field.name, ffiType, forceNonNull: true)},',
+            '${first ? '' : '${field.name}: '}${ffiType.getToFfiCall(
+              field.type,
+              field.name,
+              ffiType,
+              forceNonNull: true,
+              classField: true,
+            )},',
           );
+          first = false;
         }
       });
     });
@@ -1041,7 +1061,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             )) {
               final _FfiType ffiType = _FfiType.fromTypeDeclaration(field.type);
               indent.writeln(
-                '${field.name}: ${ffiType.getToDartCall(field.type, varName: 'ffiClass.${ffiType.getFfiGetterMethodName(field.name)}')},',
+                '${field.name}: ${ffiType.getToDartCall(
+                  field.type,
+                  varName: 'ffiClass.${field.name}',
+                  classField: true,
+                )},',
               );
             }
           },
@@ -1607,14 +1631,14 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      res = $dartApiName._withRegistrar(jniApi: link!);
+      res = $dartApiName._withRegistrar(jniApi: link);
     } else if (Platform.isIOS || Platform.isMacOS) {
       final $ffiApiRegistrarName? link =
           $ffiApiRegistrarName.getInstanceWithName(NSString(channelName));
       if (link == null) {
         _throwNoInstanceError(channelName);
       }
-      res = $dartApiName._withRegistrar(ffiApi: link!);
+      res = $dartApiName._withRegistrar(ffiApi: link);
     }
     return res;
   }
@@ -1629,58 +1653,62 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           () {
             indent.writeScoped('try {', '}', () {
               indent.writeScoped('if (_jniApi != null) {', '}', () {
-                final _JniType returnType = _JniType.fromTypeDeclaration(
-                  method.returnType,
-                );
-                final String methodCallReturnString = returnType
-                                .type.baseName ==
-                            'void' &&
-                        method.isAsynchronous
-                    ? ''
-                    : (!returnType.nonNullableNeedsUnwrapping &&
-                            !method.returnType.isNullable &&
-                            !method.isAsynchronous)
-                        ? 'return '
-                        : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} res = ';
-                indent.writeln(
-                  '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_jniApi.${method.name}(${_getJniMethodCallArguments(method.parameters)});',
-                );
-                if ((method.returnType.isNullable ||
-                        method.isAsynchronous ||
-                        returnType.nonNullableNeedsUnwrapping) &&
-                    returnType.type.baseName != 'void') {
-                  indent.writeln(
-                    'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};',
-                  );
-                  indent.writeln('return dartTypeRes;');
-                }
+                //   final _JniType returnType = _JniType.fromTypeDeclaration(
+                //     method.returnType,
+                //   );
+                //   final String methodCallReturnString = returnType
+                //                   .type.baseName ==
+                //               'void' &&
+                //           method.isAsynchronous
+                //       ? ''
+                //       : (!returnType.nonNullableNeedsUnwrapping &&
+                //               !method.returnType.isNullable &&
+                //               !method.isAsynchronous)
+                //           ? 'return '
+                //           : 'final ${returnType.getJniCallReturnType(method.isAsynchronous)} res = ';
+                //   indent.writeln(
+                //     '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_jniApi.${method.name}(${_getJniMethodCallArguments(method.parameters)});',
+                //   );
+                //   if ((method.returnType.isNullable ||
+                //           method.isAsynchronous ||
+                //           returnType.nonNullableNeedsUnwrapping) &&
+                //       returnType.type.baseName != 'void') {
+                //     indent.writeln(
+                //       'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};',
+                //     );
+                //     indent.writeln('return dartTypeRes;');
+                //   }
               }, addTrailingNewline: false);
               indent.addScoped(' else if (_ffiApi != null) {', '}', () {
                 final _FfiType returnType = _FfiType.fromTypeDeclaration(
                   method.returnType,
                 );
-                final String methodCallReturnString = returnType
-                                .type.baseName ==
-                            'void' &&
+                final String methodCallReturnString = returnType.type.isVoid &&
                         method.isAsynchronous
                     ? ''
-                    : (!returnType.nonNullableNeedsUnwrapping &&
-                            !method.returnType.isNullable &&
-                            !method.isAsynchronous)
-                        ? 'return '
-                        : 'final ${returnType.getFfiCallReturnType(method.isAsynchronous)} res = ';
+                    : (returnType.type.isVoid)
+                        ? ''
+                        : 'final ${returnType.getFfiCallReturnType(method.isAsynchronous, forceNullable: true)} res = ';
                 indent.writeln(
-                  '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_ffiApi.${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : ''}(${_getFfiMethodCallArguments(method.parameters)});',
+                    'final ffi_bridge.${generatorOptions.ffiErrorClassName} error = ffi_bridge.${generatorOptions.ffiErrorClassName}();');
+                indent.writeln(
+                  '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_ffiApi.${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : 'WithWrappedError'}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error);',
                 );
-                if ((method.returnType.isNullable ||
-                        method.isAsynchronous ||
-                        returnType.nonNullableNeedsUnwrapping) &&
-                    returnType.type.baseName != 'void') {
+                indent.writeScoped('if (error.code != null) {', '}', () {
                   indent.writeln(
-                    'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res', forceConversion: method.isAsynchronous)};',
+                    'throw PlatformException(code: error.code!.toDartString(), message: error.message?.toDartString(), details: error.details.toString());',
                   );
-                  indent.writeln('return dartTypeRes;');
-                }
+                }, addTrailingNewline: false);
+                indent.addScoped(' else {', '}', () {
+                  if (!returnType.type.isVoid) {
+                    indent.writeln(
+                      'final ${returnType.getDartReturnType(method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res!', forceConversion: method.isAsynchronous)};',
+                    );
+                    indent.writeln('return dartTypeRes;');
+                  } else {
+                    indent.writeln('return;');
+                  }
+                });
               });
             }, addTrailingNewline: false);
             indent.addScoped(' on JniException catch (e) {', '}', () {
@@ -1714,7 +1742,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   String _getFfiMethodCallArguments(Iterable<Parameter> parameters) {
     return parameters.map((Parameter parameter) {
       final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
-      return ffiType.getToFfiCall(parameter.type, parameter.name, ffiType);
+      return ffiType.getToFfiCall(parameter.type,
+          '${parameter.name}${parameter.type.isEnum ? '.index' : ''}', ffiType);
     }).join(', ');
   }
 
@@ -2564,7 +2593,7 @@ class _PigeonFfiCodec {
     } else if (value is NSNumber) {
       switch (outType) {
         case const (int):
-          return value.intValue;
+          return value.longValue;
         case const (double):
           return value.doubleValue;
         case const (bool):
@@ -2613,17 +2642,15 @@ class _PigeonFfiCodec {
     ${root.classes.map((Class dataClass) {
       final _FfiType ffiType = _FfiType.fromClass(dataClass);
       return '''
-      } else if (value.isA<${ffiType.ffiName}>(
-          ${ffiType.ffiName}.type)) {
-        return ${ffiType.type.baseName}.fromFfi(value.as(${ffiType.ffiName}.type));
+      } else if (value is ${ffiType.ffiName}) {
+        return ${ffiType.type.baseName}.fromFfi(value);
         ''';
     }).join()}
     ${root.enums.map((Enum enumDefinition) {
       final _FfiType ffiType = _FfiType.fromEnum(enumDefinition);
       return '''
-      } else if (value.isA<${ffiType.ffiName}>(
-          ${ffiType.ffiName}.type)) {
-        return ${ffiType.type.baseName}.fromFfi(value.as(${ffiType.ffiName}.type));
+      } else if (value is ${ffiType.ffiName}) {
+        return ${ffiType.type.baseName}.fromFfi(value);
         ''';
     }).join()}
     } else {
@@ -2635,12 +2662,12 @@ class _PigeonFfiCodec {
     if (value == null) {
       return null as T;
     } else if (value is bool) {
-      return NSNumber().initWithBool(value) as T;
+      return NSNumber.alloc().initWithBool(value) as T;
     } else if (value is double) {
-      return NSNumber().initWithDouble(value) as T;
+      return NSNumber.alloc().initWithDouble(value) as T;
       // ignore: avoid_double_and_int_checks
     } else if (value is int) {
-      return NSNumber().initWithInt(value) as T;
+      return NSNumber.alloc().initWithLong(value) as T;
     } else if (value is String) {
       return NSString(value) as T;
     // } else if (isTypeOrNullableType<NSByteArray>(T)) {

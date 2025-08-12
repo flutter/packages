@@ -12,40 +12,40 @@ const int biggerThanBigInt = 3000000000;
 const int regularInt = 42;
 const double doublePi = 3.14159;
 
-// final List<Object> nonNullList = <Object>[
-//   'Thing 1',
-//   2,
-//   true,
-//   3.14,
-// ];
+final List<Object> nonNullList = <Object>[
+  'Thing 1',
+  2,
+  true,
+  3.14,
+];
 
-// final List<String> nonNullStringList = <String>[
-//   'Thing 1',
-//   '2',
-//   'true',
-//   '3.14',
-// ];
+final List<String> nonNullStringList = <String>[
+  'Thing 1',
+  '2',
+  'true',
+  '3.14',
+];
 
-// final List<int> nonNullIntList = <int>[
-//   1,
-//   2,
-//   3,
-//   4,
-// ];
+final List<int> nonNullIntList = <int>[
+  1,
+  2,
+  3,
+  4,
+];
 
-// final List<double> nonNullDoubleList = <double>[
-//   1,
-//   2.99999,
-//   3,
-//   3.14,
-// ];
+final List<double> nonNullDoubleList = <double>[
+  1,
+  2.99999,
+  3,
+  3.14,
+];
 
-// final List<bool> nonNullBoolList = <bool>[
-//   true,
-//   false,
-//   true,
-//   false,
-// ];
+final List<bool> nonNullBoolList = <bool>[
+  true,
+  false,
+  true,
+  false,
+];
 
 // final List<JniAnEnum> nonNullEnumList = <JniAnEnum>[
 //   JniAnEnum.one,
@@ -277,10 +277,10 @@ const double doublePi = 3.14159;
 //   aNullableInt64: biggerThanBigInt,
 //   aNullableDouble: doublePi,
 //   aNullableString: 'Hello host!',
-//   aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-//   aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-//   aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-//   aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
+//   // aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+//   // aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+//   // aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+//   // aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
 //   aNullableEnum: JniAnEnum.fourHundredTwentyTwo,
 //   aNullableObject: 0,
 //   list: list,
@@ -323,10 +323,10 @@ const double doublePi = 3.14159;
 //   anInt64: biggerThanBigInt,
 //   aDouble: doublePi,
 //   aString: 'Hello host!',
-//   aByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-//   a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-//   a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-//   aFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
+//   // aByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+//   // a4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+//   // a8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+//   // aFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
 //   anEnum: JniAnEnum.fortyTwo,
 //   anObject: 1,
 //   list: list,
@@ -365,10 +365,10 @@ const double doublePi = 3.14159;
 //   aNullableInt64: biggerThanBigInt,
 //   aNullableDouble: doublePi,
 //   aNullableString: 'Hello host!',
-//   aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-//   aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-//   aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-//   aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
+//   // aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+//   // aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+//   // aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+//   // aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
 //   aNullableEnum: JniAnEnum.fourHundredTwentyTwo,
 //   aNullableObject: 0,
 //   list: list,
@@ -420,10 +420,10 @@ const double doublePi = 3.14159;
 //   aNullableInt64: biggerThanBigInt,
 //   aNullableDouble: doublePi,
 //   aNullableString: 'Hello host!',
-//   aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-//   aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-//   aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-//   aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
+//   // aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+//   // aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+//   // aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+//   // aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
 //   aNullableEnum: JniAnEnum.fourHundredTwentyTwo,
 //   aNullableObject: 0,
 //   allNullableTypes: genericJniAllNullableTypes,

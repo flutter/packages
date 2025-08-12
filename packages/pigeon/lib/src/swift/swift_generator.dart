@@ -430,14 +430,21 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
     Indent indent,
     Class classDefinition, {
     bool private = false,
+    bool useFfi = false,
   }) {
     final String privateString = private ? 'private ' : '';
+    final String objcString = useFfi ? '@objc ' : '';
+    final String nsExtends = !useFfi
+        ? ''
+        : classDefinition.superClass != null
+            ? ', NSObject '
+            : ': NSObject';
     final String extendsString = classDefinition.superClass != null
-        ? ': ${classDefinition.superClass!.name}'
-        : '';
-    if (classDefinition.isSwiftClass) {
+        ? ': ${classDefinition.superClass!.name}$nsExtends'
+        : nsExtends;
+    if (classDefinition.isSwiftClass || useFfi) {
       indent.write(
-          '${privateString}class ${classDefinition.name}$extendsString ');
+          '$privateString${objcString}class ${classDefinition.name}$extendsString ');
     } else if (classDefinition.isSealed) {
       indent.write('protocol ${classDefinition.name} ');
     } else {
@@ -449,14 +456,14 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
       final Iterable<NamedType> fields =
           getFieldsInSerializationOrder(classDefinition);
 
-      if (classDefinition.isSwiftClass) {
-        _writeClassInit(indent, fields.toList());
+      if (classDefinition.isSwiftClass || useFfi) {
+        _writeClassInit(indent, fields.toList(), objcString);
       }
 
       for (final NamedType field in fields) {
         addDocumentationComments(
             indent, field.documentationComments, _docCommentSpec);
-        indent.write('var ');
+        indent.write('${objcString}var ');
         _writeClassField(indent, field, addNil: !classDefinition.isSwiftClass);
         indent.newln();
       }
@@ -554,12 +561,12 @@ if (wrapped == nil) {
     addDocumentationComments(
         indent, classDefinition.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
-    _writeDataClassSignature(indent, classDefinition);
+    _writeDataClassSignature(indent, classDefinition,
+        useFfi: generatorOptions.useFfi);
     indent.writeScoped('', '}', () {
       if (classDefinition.isSealed) {
         return;
       }
-      indent.newln();
       writeClassDecode(
         generatorOptions,
         root,
@@ -577,8 +584,8 @@ if (wrapped == nil) {
     });
   }
 
-  void _writeClassInit(Indent indent, List<NamedType> fields) {
-    indent.writeScoped('init(', ')', () {
+  void _writeClassInit(Indent indent, List<NamedType> fields, String objc) {
+    indent.writeScoped('${objc}init(', ')', () {
       for (int i = 0; i < fields.length; i++) {
         indent.write('');
         _writeClassField(indent, fields[i]);
@@ -693,6 +700,11 @@ if (wrapped == nil) {
         api.methods.any((Method it) => it.isAsynchronous))) {
       indent.newln();
     }
+    if (generatorOptions.useFfi) {
+      indent.writeln(
+        'let defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u";',
+      );
+    }
     super.writeApis(generatorOptions, root, indent,
         dartPackageName: dartPackageName);
   }
@@ -783,7 +795,8 @@ if (wrapped == nil) {
         indent.writeln('private var api: ${api.name}?');
         indent.writeln('override init() {}');
         indent.writeScoped(
-            'static func register(name: String, api: ${api.name}?) {', '}', () {
+            'static func register(api: ${api.name}?, name: String = defaultInstanceName) {',
+            '}', () {
           indent.writeln('let wrapper = ${api.name}Setup()');
           indent.writeln('wrapper.api = api');
           indent.writeln('instancesOf${api.name}[name] = wrapper');
@@ -801,14 +814,37 @@ if (wrapped == nil) {
           name: method.name,
           parameters: method.parameters,
           returnType: method.returnType,
-          errorTypeName: 'Error',
+          errorTypeName: generatorOptions.errorClassName ?? 'Error',
           useFfi: generatorOptions.useFfi,
           isAsynchronous: method.isAsynchronous,
           swiftFunction: method.swiftFunction,
         ));
         indent.addScoped(' {', '}', () {
-          indent.writeln(
-              'return api!.${method.name}(${method.parameters.map((NamedType param) => '${param.name}: ${param.name}').join(', ')})');
+          indent.writeScoped(
+            'do {',
+            '}',
+            () {
+              indent.writeln(
+                  'return try ${_swiftToFfiConversion(method.returnType, 'api!.${method.name}(${method.parameters.map((NamedType param) {
+                        return '${param.name}: ${_ffiToSwiftConversion(param)}';
+                      }).join(', ')})')}');
+            },
+            addTrailingNewline: false,
+          );
+          indent.addScoped(
+              ' catch let error as ${_getErrorClassName(generatorOptions)} {',
+              '}', () {
+            indent.writeln('wrappedError.code = error.code');
+            indent.writeln('wrappedError.message = error.message');
+            indent.writeln('wrappedError.details = error.details');
+          }, addTrailingNewline: false);
+          indent.addScoped(' catch let error {', '}', () {
+            indent.writeln(r'wrappedError.code = "\(error)"');
+            indent.writeln(r'wrappedError.message = "\(type(of: error))"');
+            indent.writeln(
+                r'wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"');
+          });
+          indent.writeln('return${method.returnType.isVoid ? '' : ' nil'}');
         });
       }
     });
@@ -839,9 +875,7 @@ if (wrapped == nil) {
     addDocumentationComments(indent, api.documentationComments, _docCommentSpec,
         generatorComments: generatedComments);
 
-    final String objc = generatorOptions.useFfi ? '@objc ' : '';
-
-    indent.write('${objc}protocol $apiName ');
+    indent.write('protocol $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
         addDocumentationComments(
@@ -852,7 +886,6 @@ if (wrapped == nil) {
           returnType: method.returnType,
           errorTypeName: 'Error',
           isAsynchronous: method.isAsynchronous,
-          useFfi: generatorOptions.useFfi,
           swiftFunction: method.swiftFunction,
         ));
       }
@@ -2662,19 +2695,26 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   }
 
   void _writePigeonError(InternalSwiftOptions generatorOptions, Indent indent) {
+    final String objc = generatorOptions.useFfi ? '@objc ' : '';
     indent.newln();
     indent.writeln(
         '/// Error class for passing custom error details to Dart side.');
     indent.writeScoped(
-        'final class ${_getErrorClassName(generatorOptions)}: Error {', '}',
-        () {
-      indent.writeln('let code: String');
-      indent.writeln('let message: String?');
-      indent.writeln('let details: Sendable?');
+        '${objc}final class ${_getErrorClassName(generatorOptions)}: ${generatorOptions.useFfi ? 'NSObject, ' : ''}Error {',
+        '}', () {
+      final String declaration = generatorOptions.useFfi ? '${objc}var' : 'let';
+      indent.writeln(
+          '$declaration code: String${generatorOptions.useFfi ? '?' : ''}');
+      indent.writeln('$declaration message: String?');
+      indent.writeln('$declaration details: Sendable?');
+      if (generatorOptions.useFfi) {
+        indent.newln();
+        indent.writeln('@objc override init() {}');
+      }
       indent.newln();
       indent.writeScoped(
-          'init(code: String, message: String?, details: Sendable?) {', '}',
-          () {
+          '${objc}init(code: String${generatorOptions.useFfi ? '?' : ''}, message: String?, details: Sendable?) {',
+          '}', () {
         indent.writeln('self.code = code');
         indent.writeln('self.message = message');
         indent.writeln('self.details = details');
@@ -2683,7 +2723,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
       indent.writeScoped('var localizedDescription: String {', '}', () {
         indent.writeScoped('return', '', () {
           indent.writeln(
-              '"${_getErrorClassName(generatorOptions)}(code: \\(code), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>")"');
+              '"${_getErrorClassName(generatorOptions)}(code: \\(code${generatorOptions.useFfi ? ' ?? "<nil>"' : ''}), message: \\(message ?? "<nil>"), details: \\(details ?? "<nil>")"');
         }, addTrailingNewline: false);
       });
     });
@@ -2852,8 +2892,14 @@ String _camelCase(String text) {
 
 /// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
 /// used in Swift code.
-String _flattenTypeArguments(List<TypeDeclaration> args) {
+String _flattenSwiftTypeArguments(List<TypeDeclaration> args) {
   return args.map((TypeDeclaration e) => _swiftTypeForDartType(e)).join(', ');
+}
+
+/// Converts a [List] of [TypeDeclaration]s to a comma separated [String] to be
+/// used in Ffi code.
+String _flattenFfiTypeArguments(List<TypeDeclaration> args) {
+  return args.map((TypeDeclaration e) => _ffiTypeForDartType(e)).join(', ');
 }
 
 String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
@@ -2871,7 +2917,27 @@ String _swiftTypeForBuiltinGenericDartType(TypeDeclaration type) {
     } else if (type.baseName == 'Map') {
       return '[${_nullSafeSwiftTypeForDartType(type.typeArguments.first, mapKey: true)}: ${_nullSafeSwiftTypeForDartType(type.typeArguments.last)}]';
     } else {
-      return '${type.baseName}<${_flattenTypeArguments(type.typeArguments)}>';
+      return '${type.baseName}<${_flattenSwiftTypeArguments(type.typeArguments)}>';
+    }
+  }
+}
+
+String _ffiTypeForBuiltinGenericDartType(TypeDeclaration type) {
+  if (type.typeArguments.isEmpty) {
+    if (type.baseName == 'List') {
+      return '[NSObject]';
+    } else if (type.baseName == 'Map') {
+      return '[NSObject: NSObject]';
+    } else {
+      return 'NSObject';
+    }
+  } else {
+    if (type.baseName == 'List') {
+      return '[${_nullSafeFfiTypeForDartType(type.typeArguments.first, collectionSubType: true)}]';
+    } else if (type.baseName == 'Map') {
+      return '[${_nullSafeFfiTypeForDartType(type.typeArguments.first, collectionSubType: true)}: ${_nullSafeFfiTypeForDartType(type.typeArguments.last, collectionSubType: true)}]';
+    } else {
+      return '${type.baseName}<${_flattenFfiTypeArguments(type.typeArguments)}>';
     }
   }
 }
@@ -2904,6 +2970,36 @@ String? _swiftTypeForBuiltinDartType(
   }
 }
 
+String? _ffiTypeForBuiltinDartType(
+  TypeDeclaration type, {
+  bool collectionSubType = false,
+}) {
+  const Map<String, String> ffiTypeForDartTypeMap = <String, String>{
+    'void': 'Void',
+    'bool': 'NSNumber',
+    'String': 'String',
+    'int': 'NSNumber',
+    'double': 'NSNumber',
+    'Uint8List': 'FlutterStandardTypedData',
+    'Int32List': 'FlutterStandardTypedData',
+    'Int64List': 'FlutterStandardTypedData',
+    'Float32List': 'FlutterStandardTypedData',
+    'Float64List': 'FlutterStandardTypedData',
+    'Object': 'Any',
+  };
+  if (type.baseName == 'Object' && collectionSubType) {
+    return 'NSObject';
+  } else if (ffiTypeForDartTypeMap.containsKey(type.baseName)) {
+    return ffiTypeForDartTypeMap[type.baseName];
+  } else if (type.baseName == 'List' || type.baseName == 'Map') {
+    return _ffiTypeForBuiltinGenericDartType(type);
+  } else if (type.isEnum) {
+    return ffiTypeForDartTypeMap['int'];
+  } else {
+    return null;
+  }
+}
+
 String? _swiftTypeForProxyApiType(TypeDeclaration type) {
   if (type.isProxyApi) {
     return type.associatedProxyApi!.swiftOptions?.name ??
@@ -2919,12 +3015,40 @@ String _swiftTypeForDartType(TypeDeclaration type, {bool mapKey = false}) {
       type.baseName;
 }
 
+String _ffiTypeForDartType(TypeDeclaration type,
+    {bool collectionSubType = false}) {
+  return _ffiTypeForBuiltinDartType(type,
+          collectionSubType: collectionSubType) ??
+      type.baseName;
+}
+
 String _nullSafeSwiftTypeForDartType(
   TypeDeclaration type, {
   bool mapKey = false,
 }) {
   final String nullSafe = type.isNullable ? '?' : '';
   return '${_swiftTypeForDartType(type, mapKey: mapKey)}$nullSafe';
+}
+
+String _nullSafeFfiTypeForDartType(TypeDeclaration type,
+    {bool collectionSubType = false, bool forceNullable = false}) {
+  return '${_ffiTypeForDartType(type, collectionSubType: collectionSubType)}${forceNullable ? '?' : ''}';
+}
+
+String _ffiToSwiftConversion(NamedType param) {
+  if (param.type.isEnum) {
+    return '${param.type.baseName}(rawValue: ${param.name}.intValue)${param.type.isNullable ? '' : '!'}';
+  }
+  return '${param.name}${_conversionToObjcRequired(param.type) ? '.${toLowerCamelCase(_swiftTypeForBuiltinDartType(param.type)!)}Value' : ''}';
+}
+
+String _swiftToFfiConversion(TypeDeclaration type, String toConvert) {
+  if (type.isEnum) {
+    return 'NSNumber(value: $toConvert.rawValue)';
+  }
+  return _conversionToObjcRequired(type)
+      ? '$toConvert as ${_ffiTypeForBuiltinDartType(type)}'
+      : toConvert;
 }
 
 String _getMethodSignature({
@@ -2944,15 +3068,35 @@ String _getMethodSignature({
     returnType: returnType,
     swiftFunction: swiftFunction,
   );
-  final String returnTypeString =
+  String methodName = components.name;
+  String returnTypeString =
       returnType.isVoid ? 'Void' : _nullSafeSwiftTypeForDartType(returnType);
 
-  final Iterable<String> types =
+  Iterable<String> types =
       parameters.map((NamedType e) => _nullSafeSwiftTypeForDartType(e.type));
   final Iterable<String> labels = indexMap(components.arguments,
       (int index, _SwiftFunctionArgument argument) {
     return argument.label ?? _getArgumentName(index, argument.namedType);
   });
+
+  String objc = useFfi ? '@objc ' : '';
+  String throwString = ' throws';
+  String errorParam = isAsynchronous
+      ? '${parameters.isEmpty ? '' : ', '}completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void'
+      : '';
+
+  if (useFfi) {
+    methodName = name;
+    objc = '@objc ';
+    returnTypeString =
+        _nullSafeFfiTypeForDartType(returnType, forceNullable: true);
+    types =
+        parameters.map((NamedType e) => _nullSafeFfiTypeForDartType(e.type));
+    throwString = '';
+    errorParam =
+        '${parameters.isEmpty ? '' : ', '}wrappedError: $errorTypeName';
+  }
+
   final Iterable<String> names = indexMap(parameters, getParameterName);
   final String parameterSignature =
       map3(types, labels, names, (String type, String label, String name) {
@@ -2960,17 +3104,12 @@ String _getMethodSignature({
   }).join(', ');
 
   if (isAsynchronous) {
-    if (parameters.isEmpty) {
-      return 'func ${components.name}(completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
-    } else {
-      return 'func ${components.name}($parameterSignature, completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void)';
-    }
+    return '${objc}func $methodName($parameterSignature$errorParam)';
   } else {
-    final String throws = useFfi ? '' : ' throws';
     if (returnType.isVoid) {
-      return 'func ${components.name}($parameterSignature)$throws';
+      return '${objc}func $methodName($parameterSignature$errorParam)$throwString';
     } else {
-      return 'func ${components.name}($parameterSignature)$throws -> $returnTypeString';
+      return '${objc}func $methodName($parameterSignature$errorParam)$throwString -> $returnTypeString';
     }
   }
 }
@@ -3057,3 +3196,8 @@ class _SwiftFunctionComponents {
   final List<_SwiftFunctionArgument> arguments;
   final TypeDeclaration returnType;
 }
+
+bool _conversionToObjcRequired(TypeDeclaration type) =>
+    type.baseName == 'int' ||
+    type.baseName == 'double' ||
+    type.baseName == 'bool';

@@ -40,7 +40,7 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
     proxyApiRegistrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
     proxyApiRegistrar!.setUp()
-    JniHostIntegrationCoreApiSetup.register(name: "Host", api: JniTestsClass())
+    JniHostIntegrationCoreApiSetup.register(api: JniTestsClass())
   }
 
   public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
@@ -1216,24 +1216,33 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class JniTestsClass: NSObject, JniHostIntegrationCoreApi {
+
   func noop() {
     return
   }
 
-  func echoInt(anInt: Int64) -> Int64 {
+  func echoInt(anInt: Int64) throws -> Int64 {
     return anInt
   }
 
-  func echoDouble(aDouble: Double) -> Double {
+  func echoDouble(aDouble: Double) throws -> Double {
     return aDouble
   }
 
-  func echoBool(aBool: Bool) -> Bool {
+  func echoBool(aBool: Bool) throws -> Bool {
     return aBool
   }
 
-  func echoString(aString: String) -> String {
+  func echoString(aString: String) throws -> String {
     return aString
+  }
+
+  func echoBasicClass(aBasicClass: BasicClass) throws -> BasicClass {
+    return aBasicClass
+  }
+
+  func echoEnum(anEnum: JniAnEnum) throws -> JniAnEnum {
+    return anEnum
   }
 
 }

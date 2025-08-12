@@ -22,6 +22,51 @@ class JniTestsError(
 ) : Throwable()
 
 const val defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
+
+enum class JniAnEnum(val raw: Int) {
+  ONE(0),
+  TWO(1),
+  THREE(2),
+  FORTY_TWO(3),
+  FOUR_HUNDRED_TWENTY_TWO(4);
+
+  companion object {
+    fun ofRaw(raw: Int): JniAnEnum? {
+      return entries.firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class BasicClass(val anInt: Long, val aString: String) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): BasicClass {
+      val anInt = pigeonVar_list[0] as Long
+      val aString = pigeonVar_list[1] as String
+      return BasicClass(anInt, aString)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        anInt,
+        aString,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is BasicClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return anInt == other.anInt && aString == other.aString
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
 val JniHostIntegrationCoreApiInstances: MutableMap<String, JniHostIntegrationCoreApiRegistrar> =
     mutableMapOf()
 
@@ -36,6 +81,10 @@ abstract class JniHostIntegrationCoreApi {
   abstract fun echoBool(aBool: Boolean): Boolean
 
   abstract fun echoString(aString: String): String
+
+  abstract fun echoBasicClass(aBasicClass: BasicClass): BasicClass
+
+  abstract fun echoEnum(anEnum: JniAnEnum): JniAnEnum
 }
 
 @Keep
@@ -104,6 +153,28 @@ class JniHostIntegrationCoreApiRegistrar : JniHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun echoBasicClass(aBasicClass: BasicClass): BasicClass {
+    api?.let {
+      try {
+        return api!!.echoBasicClass(aBasicClass)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("JniHostIntegrationCoreApi has not been set")
+  }
+
+  override fun echoEnum(anEnum: JniAnEnum): JniAnEnum {
+    api?.let {
+      try {
+        return api!!.echoEnum(anEnum)
       } catch (e: Exception) {
         throw e
       }

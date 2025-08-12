@@ -18,3 +18,5 @@ log_level: all
 classes:
   - 'JniHostIntegrationCoreApi'
   - 'JniHostIntegrationCoreApiRegistrar'
+  - 'BasicClass'
+  - 'JniAnEnum'

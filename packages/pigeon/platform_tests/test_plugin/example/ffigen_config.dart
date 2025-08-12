@@ -7,8 +7,12 @@ Future<void> main() async {
   final List<String> classes = <String>[
     'JniHostIntegrationCoreApi',
     'JniHostIntegrationCoreApiSetup',
+    'BasicClass',
+    'JniTestsError'
   ];
-  final List<String> enums = <String>[];
+  final List<String> enums = <String>[
+    'JniAnEnum',
+  ];
   await SwiftGen(
     target: Target(
       // triple: 'x86_64-apple-macosx14.0',

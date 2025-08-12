@@ -54,7 +54,7 @@ import 'package:swiftgen/swiftgen.dart';
   ''');
     indent.writeScoped('Future<void> main() async {', '}', () {
       indent.writeScoped('final List<String> classes = <String>[', '];', () {
-        indent.inc(1);
+        indent.inc();
         for (final Api api in root.apis) {
           if (api is AstHostApi || api is AstFlutterApi) {
             indent.writeln("'${api.name}',");
@@ -64,14 +64,16 @@ import 'package:swiftgen/swiftgen.dart';
         for (final Class dataClass in root.classes) {
           indent.writeln("'${dataClass.name}',");
         }
-        indent.dec(1);
+        indent.writeln(
+            "'${generatorOptions.swiftOptions.errorClassName ?? 'PigeonError'}'");
+        indent.dec();
       });
       indent.writeScoped('final List<String> enums = <String>[', '];', () {
-        indent.inc(1);
+        indent.inc();
         for (final Enum enumType in root.enums) {
           indent.writeln("'${enumType.name}',");
         }
-        indent.dec(1);
+        indent.dec();
       });
 
       indent.format('''

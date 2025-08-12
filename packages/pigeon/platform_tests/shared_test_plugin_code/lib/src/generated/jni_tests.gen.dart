@@ -79,6 +79,10 @@ class _PigeonJniCodec {
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
+      // } else if (value.isA<jni_bridge.BasicClass>(jni_bridge.BasicClass.type)) {
+      //   return BasicClass.fromJni(value.as(jni_bridge.BasicClass.type));
+    } else if (value.isA<jni_bridge.JniAnEnum>(jni_bridge.JniAnEnum.type)) {
+      return JniAnEnum.fromJni(value.as(jni_bridge.JniAnEnum.type));
     } else {
       throw ArgumentError.value(value);
     }
@@ -157,6 +161,10 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
+      // } else if (value is BasicClass) {
+      //   return value.toJni() as T;
+    } else if (value is JniAnEnum) {
+      return value.toJni() as T;
     } else {
       throw ArgumentError.value(value);
     }
@@ -170,7 +178,7 @@ class _PigeonFfiCodec {
     } else if (value is NSNumber) {
       switch (outType) {
         case const (int):
-          return value.intValue;
+          return value.longValue;
         case const (double):
           return value.doubleValue;
         case const (bool):
@@ -217,6 +225,10 @@ class _PigeonFfiCodec {
             readValue(entry.value as NSObject?);
       }
       return res;
+    } else if (value is ffi_bridge.BasicClass) {
+      return BasicClass.fromFfi(value);
+    } else if (value is NSNumber) {
+      return JniAnEnum.fromFfi(value);
     } else {
       throw ArgumentError.value(value);
     }
@@ -226,12 +238,12 @@ class _PigeonFfiCodec {
     if (value == null) {
       return null as T;
     } else if (value is bool) {
-      return NSNumber().initWithBool(value) as T;
+      return NSNumber.alloc().initWithBool(value) as T;
     } else if (value is double) {
-      return NSNumber().initWithDouble(value) as T;
+      return NSNumber.alloc().initWithDouble(value) as T;
       // ignore: avoid_double_and_int_checks
     } else if (value is int) {
-      return NSNumber().initWithInt(value) as T;
+      return NSNumber.alloc().initWithLong(value) as T;
     } else if (value is String) {
       return NSString(value) as T;
       // } else if (isTypeOrNullableType<NSByteArray>(T)) {
@@ -274,6 +286,10 @@ class _PigeonFfiCodec {
         res.setObject(writeValue(entry.value), forKey: writeValue(entry.key));
       }
       return res as T;
+    } else if (value is BasicClass) {
+      return value.toFfi() as T;
+    } else if (value is JniAnEnum) {
+      return value.toFfi() as T;
     } else {
       throw ArgumentError.value(value);
     }
@@ -291,6 +307,108 @@ void _throwNoInstanceError(String channelName) {
   throw ArgumentError(error);
 }
 
+enum JniAnEnum {
+  one,
+  two,
+  three,
+  fortyTwo,
+  fourHundredTwentyTwo;
+
+  jni_bridge.JniAnEnum toJni() {
+    return jni_bridge.JniAnEnum.Companion.ofRaw(index)!;
+  }
+
+  static JniAnEnum? fromJni(jni_bridge.JniAnEnum? jniEnum) {
+    return jniEnum == null ? null : JniAnEnum.values[jniEnum.getRaw()];
+  }
+
+  NSNumber toFfi() {
+    return NSNumber.alloc().initWithLong(index);
+  }
+
+  static JniAnEnum? fromFfi(NSNumber? ffiEnum) {
+    return ffiEnum == null ? null : JniAnEnum.values[ffiEnum.intValue];
+  }
+}
+
+class BasicClass {
+  BasicClass({
+    required this.anInt,
+    required this.aString,
+  });
+
+  int anInt;
+
+  String aString;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      anInt,
+      aString,
+    ];
+  }
+
+  // jni_bridge.BasicClass toJni() {
+  //   return jni_bridge.BasicClass(
+  //     anInt: anInt,
+  //     aString: _PigeonJniCodec.writeValue<JString>(aString),
+  //   );
+  // }
+
+  ffi_bridge.BasicClass toFfi() {
+    return ffi_bridge.BasicClass().initWithAnInt(
+      anInt,
+      aString: _PigeonFfiCodec.writeValue<NSString>(aString),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  // static BasicClass? fromJni(jni_bridge.BasicClass? jniClass) {
+  //   return jniClass == null
+  //       ? null
+  //       : BasicClass(
+  //           anInt: jniClass.getAnInt(),
+  //           aString: jniClass.getAString().toDartString(releaseOriginal: true),
+  //         );
+  // }
+
+  static BasicClass? fromFfi(ffi_bridge.BasicClass? ffiClass) {
+    return ffiClass == null
+        ? null
+        : BasicClass(
+            anInt: ffiClass.anInt,
+            aString: ffiClass.aString.toDartString(),
+          );
+  }
+
+  static BasicClass decode(Object result) {
+    result as List<Object?>;
+    return BasicClass(
+      anInt: result[0]! as int,
+      aString: result[1]! as String,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! BasicClass || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return anInt == other.anInt && aString == other.aString;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -298,6 +416,12 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
+    } else if (value is JniAnEnum) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.index);
+    } else if (value is BasicClass) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -306,6 +430,11 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
+      case 129:
+        final int? value = readValue(buffer) as int?;
+        return value == null ? null : JniAnEnum.values[value];
+      case 130:
+        return BasicClass.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -334,7 +463,7 @@ class JniHostIntegrationCoreApiForNativeInterop {
         _throwNoInstanceError(channelName);
       }
       res = JniHostIntegrationCoreApiForNativeInterop._withRegistrar(
-          jniApi: link!);
+          jniApi: link);
     } else if (Platform.isIOS || Platform.isMacOS) {
       final ffi_bridge.JniHostIntegrationCoreApiSetup? link =
           ffi_bridge.JniHostIntegrationCoreApiSetup.getInstanceWithName(
@@ -343,7 +472,7 @@ class JniHostIntegrationCoreApiForNativeInterop {
         _throwNoInstanceError(channelName);
       }
       res = JniHostIntegrationCoreApiForNativeInterop._withRegistrar(
-          ffiApi: link!);
+          ffiApi: link);
     }
     return res;
   }
@@ -354,9 +483,17 @@ class JniHostIntegrationCoreApiForNativeInterop {
   void noop() {
     try {
       if (_jniApi != null) {
-        return _jniApi.noop();
       } else if (_ffiApi != null) {
-        return _ffiApi.noop();
+        final ffi_bridge.JniTestsError error = ffi_bridge.JniTestsError();
+        _ffiApi.noopWithWrappedError(error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          return;
+        }
       }
     } on JniException catch (e) {
       throw PlatformException(
@@ -373,9 +510,20 @@ class JniHostIntegrationCoreApiForNativeInterop {
   int echoInt(int anInt) {
     try {
       if (_jniApi != null) {
-        return _jniApi.echoInt(anInt);
       } else if (_ffiApi != null) {
-        return _ffiApi.echoIntWithAnInt(anInt);
+        final ffi_bridge.JniTestsError error = ffi_bridge.JniTestsError();
+        final NSNumber? res = _ffiApi.echoIntWithAnInt(
+            _PigeonFfiCodec.writeValue<NSNumber>(anInt),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final int dartTypeRes = res!.longValue;
+          return dartTypeRes;
+        }
       }
     } on JniException catch (e) {
       throw PlatformException(
@@ -392,9 +540,20 @@ class JniHostIntegrationCoreApiForNativeInterop {
   double echoDouble(double aDouble) {
     try {
       if (_jniApi != null) {
-        return _jniApi.echoDouble(aDouble);
       } else if (_ffiApi != null) {
-        return _ffiApi.echoDoubleWithADouble(aDouble);
+        final ffi_bridge.JniTestsError error = ffi_bridge.JniTestsError();
+        final NSNumber? res = _ffiApi.echoDoubleWithADouble(
+            _PigeonFfiCodec.writeValue<NSNumber>(aDouble),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final double dartTypeRes = res!.doubleValue;
+          return dartTypeRes;
+        }
       }
     } on JniException catch (e) {
       throw PlatformException(
@@ -411,9 +570,20 @@ class JniHostIntegrationCoreApiForNativeInterop {
   bool echoBool(bool aBool) {
     try {
       if (_jniApi != null) {
-        return _jniApi.echoBool(aBool);
       } else if (_ffiApi != null) {
-        return _ffiApi.echoBoolWithABool(aBool);
+        final ffi_bridge.JniTestsError error = ffi_bridge.JniTestsError();
+        final NSNumber? res = _ffiApi.echoBoolWithABool(
+            _PigeonFfiCodec.writeValue<NSNumber>(aBool),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final bool dartTypeRes = res!.boolValue;
+          return dartTypeRes;
+        }
       }
     } on JniException catch (e) {
       throw PlatformException(
@@ -430,15 +600,80 @@ class JniHostIntegrationCoreApiForNativeInterop {
   String echoString(String aString) {
     try {
       if (_jniApi != null) {
-        final JString res =
-            _jniApi.echoString(_PigeonJniCodec.writeValue<JString>(aString));
-        final String dartTypeRes = res.toDartString(releaseOriginal: true);
-        return dartTypeRes;
       } else if (_ffiApi != null) {
-        final NSString res = _ffiApi.echoStringWithAString(
-            _PigeonFfiCodec.writeValue<NSString>(aString));
-        final String dartTypeRes = res.toDartString();
-        return dartTypeRes;
+        final ffi_bridge.JniTestsError error = ffi_bridge.JniTestsError();
+        final NSString? res = _ffiApi.echoStringWithAString(
+            _PigeonFfiCodec.writeValue<NSString>(aString),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final String dartTypeRes = res!.toDartString();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  BasicClass echoBasicClass(BasicClass aBasicClass) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.JniTestsError error = ffi_bridge.JniTestsError();
+        final ffi_bridge.BasicClass? res =
+            _ffiApi.echoBasicClassWithABasicClass(aBasicClass.toFfi(),
+                wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final BasicClass dartTypeRes = BasicClass.fromFfi(res!)!;
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  JniAnEnum echoEnum(JniAnEnum anEnum) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.JniTestsError error = ffi_bridge.JniTestsError();
+        final NSNumber? res = _ffiApi.echoEnumWithAnEnum(
+            NSNumber.alloc().initWithLong(anEnum.index),
+            wrappedError: error);
+        if (error.code != null) {
+          throw PlatformException(
+              code: error.code!.toDartString(),
+              message: error.message?.toDartString(),
+              details: error.details.toString());
+        } else {
+          final JniAnEnum dartTypeRes = JniAnEnum.fromFfi(res!)!;
+          return dartTypeRes;
+        }
       }
     } on JniException catch (e) {
       throw PlatformException(
@@ -672,6 +907,76 @@ class JniHostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as String?)!;
+    }
+  }
+
+  Future<BasicClass> echoBasicClass(BasicClass aBasicClass) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoBasicClass(aBasicClass);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoBasicClass$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[aBasicClass]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as BasicClass?)!;
+    }
+  }
+
+  Future<JniAnEnum> echoEnum(JniAnEnum anEnum) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoEnum(anEnum);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.JniHostIntegrationCoreApi.echoEnum$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[anEnum]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as JniAnEnum?)!;
     }
   }
 }

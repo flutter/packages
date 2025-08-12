@@ -8,12 +8,14 @@
 import Foundation
 
 /// Error class for passing custom error details to Dart side.
-final class JniTestsError: Error {
-  let code: String
-  let message: String?
-  let details: Sendable?
+@objc final class JniTestsError: NSObject, Error {
+  @objc var code: String?
+  @objc var message: String?
+  @objc var details: Sendable?
 
-  init(code: String, message: String?, details: Sendable?) {
+  @objc override init() {}
+
+  @objc init(code: String?, message: String?, details: Sendable?) {
     self.code = code
     self.message = message
     self.details = details
@@ -21,7 +23,7 @@ final class JniTestsError: Error {
 
   var localizedDescription: String {
     return
-      "JniTestsError(code: \(code), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
+      "JniTestsError(code: \(code ?? "<nil>"), message: \(message ?? "<nil>"), details: \(details ?? "<nil>")"
   }
 }
 
@@ -33,25 +35,62 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   if value is NSNull { return nil }
   return value as! T?
 }
+
+enum JniAnEnum: Int {
+  case one = 0
+  case two = 1
+  case three = 2
+  case fortyTwo = 3
+  case fourHundredTwentyTwo = 4
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+@objc class BasicClass: NSObject {
+  @objc init(
+    anInt: Int64,
+    aString: String
+  ) {
+    self.anInt = anInt
+    self.aString = aString
+  }
+  @objc var anInt: Int64
+  @objc var aString: String
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> BasicClass? {
+    let anInt = pigeonVar_list[0] as! Int64
+    let aString = pigeonVar_list[1] as! String
+
+    return BasicClass(
+      anInt: anInt,
+      aString: aString
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      anInt,
+      aString,
+    ]
+  }
+}
+let defaultInstanceName = "PigeonDefaultClassName32uh4ui3lh445uh4h3l2l455g4y34u"
 var instancesOfJniHostIntegrationCoreApi = [String: JniHostIntegrationCoreApiSetup?]()
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
-<<<<<<< HEAD
-@objc protocol JniHostIntegrationCoreApi {
-=======
 protocol JniHostIntegrationCoreApi {
->>>>>>> 373652861ebbe628d2e64c5ed3da89cbe139b7dc
-  func noop()
-  func echoInt(anInt: Int64) -> Int64
-  func echoDouble(aDouble: Double) -> Double
-  func echoBool(aBool: Bool) -> Bool
-  func echoString(aString: String) -> String
+  func noop() throws
+  func echoInt(anInt: Int64) throws -> Int64
+  func echoDouble(aDouble: Double) throws -> Double
+  func echoBool(aBool: Bool) throws -> Bool
+  func echoString(aString: String) throws -> String
+  func echoBasicClass(aBasicClass: BasicClass) throws -> BasicClass
+  func echoEnum(anEnum: JniAnEnum) throws -> JniAnEnum
 }
 
 /// Generated setup class from Pigeon to register implemented JniHostIntegrationCoreApi classes.
 @objc class JniHostIntegrationCoreApiSetup: NSObject {
   private var api: JniHostIntegrationCoreApi?
   override init() {}
-  static func register(name: String, api: JniHostIntegrationCoreApi?) {
+  static func register(api: JniHostIntegrationCoreApi?, name: String = defaultInstanceName) {
     let wrapper = JniHostIntegrationCoreApiSetup()
     wrapper.api = api
     instancesOfJniHostIntegrationCoreApi[name] = wrapper
@@ -59,32 +98,103 @@ protocol JniHostIntegrationCoreApi {
   @objc static func getInstance(name: String) -> JniHostIntegrationCoreApiSetup? {
     return instancesOfJniHostIntegrationCoreApi[name] ?? nil
   }
-  func noop() {
-    return api!.noop()
+  @objc func noop(wrappedError: JniTestsError) {
+    do {
+      return try api!.noop()
+    } catch let error as JniTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return
   }
-<<<<<<< HEAD
-  func echoInt(anInt: Int64) -> Int64 {
-    return api!.echoInt(anInt: anInt)
+  @objc func echoInt(anInt: NSNumber, wrappedError: JniTestsError) -> NSNumber? {
+    do {
+      return try api!.echoInt(anInt: anInt.int64Value) as NSNumber
+    } catch let error as JniTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
   }
-  func echoDouble(aDouble: Double) -> Double {
-    return api!.echoDouble(aDouble: aDouble)
+  @objc func echoDouble(aDouble: NSNumber, wrappedError: JniTestsError) -> NSNumber? {
+    do {
+      return try api!.echoDouble(aDouble: aDouble.doubleValue) as NSNumber
+    } catch let error as JniTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
   }
-  func echoBool(aBool: Bool) -> Bool {
-    return api!.echoBool(aBool: aBool)
+  @objc func echoBool(aBool: NSNumber, wrappedError: JniTestsError) -> NSNumber? {
+    do {
+      return try api!.echoBool(aBool: aBool.boolValue) as NSNumber
+    } catch let error as JniTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
   }
-  func echoString(aString: String) -> String {
-=======
-  func echoInt(anInt: NSNumber) -> NSNumber? {
-    return NSNumber(nonretainedObject: api!.echoInt(anInt: anInt.int64Value))
+  @objc func echoString(aString: String, wrappedError: JniTestsError) -> String? {
+    do {
+      return try api!.echoString(aString: aString)
+    } catch let error as JniTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
   }
-  func echoDouble(aDouble: NSNumber) -> NSNumber? {
-    return NSNumber(nonretainedObject: api!.echoDouble(aDouble: aDouble.doubleValue))
+  @objc func echoBasicClass(aBasicClass: BasicClass, wrappedError: JniTestsError) -> BasicClass? {
+    do {
+      return try api!.echoBasicClass(aBasicClass: aBasicClass)
+    } catch let error as JniTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
   }
-  func echoBool(aBool: NSNumber) -> NSNumber? {
-    return NSNumber(nonretainedObject: api!.echoBool(aBool: aBool.boolValue))
-  }
-  func echoString(aString: String) -> String? {
->>>>>>> 373652861ebbe628d2e64c5ed3da89cbe139b7dc
-    return api!.echoString(aString: aString)
+  @objc func echoEnum(anEnum: NSNumber, wrappedError: JniTestsError) -> NSNumber? {
+    do {
+      return try NSNumber(
+        value: api!.echoEnum(anEnum: JniAnEnum(rawValue: anEnum.intValue)!).rawValue)
+    } catch let error as JniTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
   }
 }
