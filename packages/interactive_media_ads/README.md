@@ -14,8 +14,7 @@ a separate video player positioned on top of the app's content video player.
 | **Support** | SDK 21+ | 12.0+ |
 
 **NOTE:**
-* Companion ads, Background Audio ads and Google Dynamic Ad Insertion methods are currently not
-  supported.
+* Background Audio ads and Google Dynamic Ad Insertion methods are currently not supported.
 
 ## IMA client-side overview
 
@@ -37,9 +36,13 @@ initialization and playback.
 This guide demonstrates how to integrate the IMA SDK into a new `Widget` using the [video_player][7]
 plugin to display content.
 
-### 1. Add Android Required Permissions
+### 1. Update Android App
 
-If building on Android, add the user permissions required by the IMA SDK for requesting ads in
+If not building for Android, skip this step.
+
+#### Update Android Manifest
+
+Add the user permissions required by the IMA SDK for requesting ads in
 `android/app/src/main/AndroidManifest.xml`.
 
 <?code-excerpt "example/android/app/src/main/AndroidManifest.xml (android_manifest)"?>
@@ -48,6 +51,32 @@ If building on Android, add the user permissions required by the IMA SDK for req
     <!-- Required permissions for the IMA SDK -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+```
+
+#### Update Android App-level Gradle
+
+The IMA SDK requires library desugaring enabled, which you must do by setting
+`coreLibraryDesugaringEnabled true` and adding
+`coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'` as a dependency in the
+`android/app/build.gradle` file. For more details, see
+[Java 11+ APIs available through desugaring with the nio specification](https://developer.android.com/studio/write/java11-nio-support-table).
+
+<?code-excerpt "example/android/app/build.gradle (android_desugaring)"?>
+```groovy
+android {
+// ···
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    // ···
+}
+// ···
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+    // ···
+}
 ```
 
 ### 2. Add Imports

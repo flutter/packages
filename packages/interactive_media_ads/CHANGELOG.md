@@ -1,3 +1,7 @@
+## 0.2.6+3
+
+* Updates README with details about adding enabling desugarging on Android.
+
 ## 0.2.6+2
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
