@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, debugDefaultTargetPlatformOverride, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -959,6 +959,76 @@ void main() {
         expect(controller.value.isPlaying, isFalse);
         expect(controller.value.position, nonzeroDuration);
         await tester.runAsync(controller.dispose);
+      });
+
+      testWidgets('playing completed - Windows platform behavior', (WidgetTester tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+        );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        const Duration nonzeroDuration = Duration(milliseconds: 100);
+        controller.value = controller.value.copyWith(duration: nonzeroDuration);
+        expect(controller.value.isPlaying, isFalse);
+        await controller.play();
+        expect(controller.value.isPlaying, isTrue);
+        
+        fakeVideoPlayerPlatform.calls.clear();
+        
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.playerId]!;
+
+        fakeVideoEventStream
+            .add(VideoEvent(eventType: VideoEventType.completed));
+        await tester.pumpAndSettle();
+
+        expect(controller.value.isPlaying, isFalse);
+        expect(controller.value.isCompleted, isTrue);
+        
+        expect(fakeVideoPlayerPlatform.calls, contains('pause'));
+        expect(fakeVideoPlayerPlatform.calls, isNot(contains('seekTo')));
+      });
+
+      testWidgets('playing completed - non-Windows platform behavior', (WidgetTester tester) async {
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        addTearDown(() => debugDefaultTargetPlatformOverride = null);
+        
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+        );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        const Duration nonzeroDuration = Duration(milliseconds: 100);
+        controller.value = controller.value.copyWith(duration: nonzeroDuration);
+        expect(controller.value.isPlaying, isFalse);
+        await controller.play();
+        expect(controller.value.isPlaying, isTrue);
+        
+        fakeVideoPlayerPlatform.calls.clear();
+        
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.playerId]!;
+
+        fakeVideoEventStream
+            .add(VideoEvent(eventType: VideoEventType.completed));
+        await tester.pumpAndSettle();
+
+        expect(controller.value.isPlaying, isFalse);
+        expect(controller.value.isCompleted, isTrue);
+        
+        expect(fakeVideoPlayerPlatform.calls, contains('pause'));
+        expect(fakeVideoPlayerPlatform.calls, contains('seekTo'));
+        
+        final int seekToIndex = fakeVideoPlayerPlatform.calls.indexOf('seekTo');
+        expect(seekToIndex, greaterThan(-1));
+        expect(fakeVideoPlayerPlatform._positions[controller.playerId], nonzeroDuration);
       });
 
       testWidgets('playback status', (WidgetTester tester) async {
