@@ -67,6 +67,60 @@ class AudioTrackMessage {
   String? codec;
 }
 
+/// Raw audio track data from AVAssetTrack (for regular assets).
+class AssetAudioTrackData {
+  AssetAudioTrackData({
+    required this.trackId,
+    this.label,
+    this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  int trackId;
+  String? label;
+  String? language;
+  bool isSelected;
+  int? bitrate;
+  int? sampleRate;
+  int? channelCount;
+  String? codec;
+}
+
+/// Raw audio track data from AVMediaSelectionOption (for HLS streams).
+class MediaSelectionAudioTrackData {
+  MediaSelectionAudioTrackData({
+    required this.index,
+    this.displayName,
+    this.languageCode,
+    required this.isSelected,
+    this.commonMetadataTitle,
+  });
+
+  int index;
+  String? displayName;
+  String? languageCode;
+  bool isSelected;
+  String? commonMetadataTitle;
+}
+
+/// Container for raw audio track data from native platforms.
+class NativeAudioTrackData {
+  NativeAudioTrackData({
+    this.assetTracks,
+    this.mediaSelectionTracks,
+  });
+  
+  /// Asset-based tracks (for regular video files)
+  List<AssetAudioTrackData>? assetTracks;
+  
+  /// Media selection-based tracks (for HLS streams)
+  List<MediaSelectionAudioTrackData>? mediaSelectionTracks;
+}
+
 @HostApi()
 abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('initialize')
@@ -97,6 +151,6 @@ abstract class VideoPlayerInstanceApi {
   @ObjCSelector('seekTo:')
   void seekTo(int position);
   void pause();
-  @ObjCSelector('getAudioTracks')
-  List<AudioTrackMessage> getAudioTracks();
+  @ObjCSelector('getRawAudioTrackData')
+  NativeAudioTrackData getRawAudioTrackData();
 }

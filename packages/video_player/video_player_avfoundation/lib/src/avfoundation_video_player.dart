@@ -21,8 +21,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   /// Creates a new AVFoundation-based video player implementation instance.
   AVFoundationVideoPlayer({
     @visibleForTesting AVFoundationVideoPlayerApi? pluginApi,
-    @visibleForTesting
-    VideoPlayerInstanceApi Function(int playerId)? playerProvider,
+    @visibleForTesting VideoPlayerInstanceApi Function(int playerId)? playerProvider,
   })  : _api = pluginApi ?? AVFoundationVideoPlayerApi(),
         _playerProvider = playerProvider ?? _productionApiProvider;
 
@@ -34,11 +33,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   /// A map that associates player ID with a view state.
   /// This is used to determine which view type to use when building a view.
   @visibleForTesting
-  final Map<int, VideoPlayerViewState> playerViewStates =
-      <int, VideoPlayerViewState>{};
+  final Map<int, VideoPlayerViewState> playerViewStates = <int, VideoPlayerViewState>{};
 
-  final Map<int, VideoPlayerInstanceApi> _players =
-      <int, VideoPlayerInstanceApi>{};
+  final Map<int, VideoPlayerInstanceApi> _players = <int, VideoPlayerInstanceApi>{};
 
   /// Registers this class as the default instance of [VideoPlayerPlatform].
   static void registerWith() {
@@ -92,8 +89,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
           // implementation, which threw on the native side.
           throw PlatformException(
               code: 'video_player',
-              message:
-                  'Asset $asset not found in package ${dataSource.package}.');
+              message: 'Asset $asset not found in package ${dataSource.package}.');
         }
       case DataSourceType.network:
       case DataSourceType.file:
@@ -112,8 +108,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final int playerId = await _api.create(pigeonCreationOptions);
     playerViewStates[playerId] = switch (viewType) {
       // playerId is also the textureId when using texture view.
-      VideoViewType.textureView =>
-        VideoPlayerTextureViewState(textureId: playerId),
+      VideoViewType.textureView => VideoPlayerTextureViewState(textureId: playerId),
       VideoViewType.platformView => const VideoPlayerPlatformViewState(),
     };
     ensureApiInitialized(playerId);
@@ -170,9 +165,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Stream<VideoEvent> videoEventsFor(int playerId) {
-    return _eventChannelFor(playerId)
-        .receiveBroadcastStream()
-        .map((dynamic event) {
+    return _eventChannelFor(playerId).receiveBroadcastStream().map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
       return switch (map['event']) {
         'initialized' => VideoEvent(
@@ -192,8 +185,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
                 .toList(),
             eventType: VideoEventType.bufferingUpdate,
           ),
-        'bufferingStart' =>
-          VideoEvent(eventType: VideoEventType.bufferingStart),
+        'bufferingStart' => VideoEvent(eventType: VideoEventType.bufferingStart),
         'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
         'isPlayingStateUpdate' => VideoEvent(
             eventType: VideoEventType.isPlayingStateUpdate,
@@ -212,20 +204,74 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
     final VideoPlayerInstanceApi player = _playerWith(id: playerId);
-    final List<AudioTrackMessage> audioTracks = await player.getAudioTracks();
+    final NativeAudioTrackData rawData = await player.getRawAudioTrackData();
 
-    return audioTracks.map((AudioTrackMessage track) {
-      return VideoAudioTrack(
-        id: track.id,
-        label: track.label,
-        language: track.language,
-        isSelected: track.isSelected,
-        bitrate: track.bitrate,
-        sampleRate: track.sampleRate,
-        channelCount: track.channelCount,
-        codec: track.codec,
-      );
-    }).toList();
+    final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
+
+    // Process media selection tracks (HLS streams)
+    if (rawData.mediaSelectionTracks != null) {
+      for (int i = 0; i < rawData.mediaSelectionTracks!.length; i++) {
+        final MediaSelectionAudioTrackData mediaTrack = rawData.mediaSelectionTracks![i];
+
+        // Generate consistent track ID
+        final String trackId = 'hls_audio_${mediaTrack.index}';
+
+        // Determine best label from available data
+        String label = mediaTrack.commonMetadataTitle ??
+            mediaTrack.displayName ??
+            'Audio Track ${i + 1}';
+
+        // Use language code or fallback
+        final String language = mediaTrack.languageCode ?? 'und';
+
+        tracks.add(VideoAudioTrack(
+          id: trackId,
+          label: label,
+          language: language,
+          isSelected: mediaTrack.isSelected,
+          // Media selection tracks don't provide detailed metadata
+          bitrate: null,
+          sampleRate: null,
+          channelCount: null,
+          codec: null,
+        ));
+      }
+    }
+
+    // Process asset tracks (regular video files)
+    else if (rawData.assetTracks != null) {
+      for (int i = 0; i < rawData.assetTracks!.length; i++) {
+        final AssetAudioTrackData assetTrack = rawData.assetTracks![i];
+
+        // Generate consistent track ID
+        final String trackId = 'audio_${assetTrack.trackId}';
+
+        // Determine best label with fallbacks
+        String label = assetTrack.label ?? 'Audio Track ${i + 1}';
+        if (label.isEmpty) {
+          // Use language as label if available and not 'und'
+          final String lang = assetTrack.language ?? 'und';
+          if (lang != 'und') {
+            label = lang.toUpperCase();
+          } else {
+            label = 'Audio Track ${i + 1}';
+          }
+        }
+
+        tracks.add(VideoAudioTrack(
+          id: trackId,
+          label: label,
+          language: assetTrack.language ?? 'und',
+          isSelected: assetTrack.isSelected,
+          bitrate: assetTrack.bitrate,
+          sampleRate: assetTrack.sampleRate,
+          channelCount: assetTrack.channelCount,
+          codec: assetTrack.codec,
+        ));
+      }
+    }
+
+    return tracks;
   }
 
   @override
@@ -241,8 +287,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerViewState? viewState = playerViewStates[playerId];
 
     return switch (viewState) {
-      VideoPlayerTextureViewState(:final int textureId) =>
-        Texture(textureId: textureId),
+      VideoPlayerTextureViewState(:final int textureId) => Texture(textureId: textureId),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
       null => throw Exception(
           'Could not find corresponding view type for playerId: $playerId',
