@@ -697,6 +697,12 @@ abstract class IMAAdEvent extends NSObject {
 
   /// Extra data about the ad.
   late final Map<String, Object>? adData;
+
+  /// The current ad that is playing or just played.
+  ///
+  /// This will be null except for events where an ad is available (start,
+  /// quartiles, midpoint, complete, and tap).
+  late final IMAAd? ad;
 }
 
 /// Set of properties that influence how ads are rendered.

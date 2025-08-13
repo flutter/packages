@@ -3636,6 +3636,11 @@ protocol PigeonApiDelegateIMAAdEvent {
   func typeString(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> String
   /// Extra data about the ad.
   func adData(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> [String: Any]?
+  /// The current ad that is playing or just played.
+  ///
+  /// This will be null except for events where an ad is available (start,
+  /// quartiles, midpoint, complete, and tap).
+  func ad(pigeonApi: PigeonApiIMAAdEvent, pigeonInstance: IMAAdEvent) throws -> IMAAd?
 }
 
 protocol PigeonApiProtocolIMAAdEvent {
@@ -3675,14 +3680,16 @@ final class PigeonApiIMAAdEvent: PigeonApiProtocolIMAAdEvent {
       let typeStringArg = try! pigeonDelegate.typeString(
         pigeonApi: self, pigeonInstance: pigeonInstance)
       let adDataArg = try! pigeonDelegate.adData(pigeonApi: self, pigeonInstance: pigeonInstance)
+      let adArg = try! pigeonDelegate.ad(pigeonApi: self, pigeonInstance: pigeonInstance)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
       let channelName: String =
         "dev.flutter.pigeon.interactive_media_ads.IMAAdEvent.pigeon_newInstance"
       let channel = FlutterBasicMessageChannel(
         name: channelName, binaryMessenger: binaryMessenger, codec: codec)
-      channel.sendMessage([pigeonIdentifierArg, typeArg, typeStringArg, adDataArg] as [Any?]) {
-        response in
+      channel.sendMessage(
+        [pigeonIdentifierArg, typeArg, typeStringArg, adDataArg, adArg] as [Any?]
+      ) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))
           return

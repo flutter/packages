@@ -4,6 +4,7 @@
 
 package dev.flutter.packages.interactive_media_ads
 
+import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.ads.interactivemedia.v3.api.AdEvent
 
 /**
@@ -49,5 +50,9 @@ class AdEventProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun adData(pigeon_instance: AdEvent): Map<String, String>? {
     return pigeon_instance.adData
+  }
+
+  override fun ad(pigeon_instance: AdEvent): Ad? {
+    return pigeon_instance.ad
   }
 }

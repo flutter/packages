@@ -4367,6 +4367,7 @@ class IMAAdEvent extends NSObject {
     required this.type,
     required this.typeString,
     this.adData,
+    this.ad,
   }) : super.pigeon_detached();
 
   /// Type of the event.
@@ -4378,6 +4379,12 @@ class IMAAdEvent extends NSObject {
   /// Extra data about the ad.
   final Map<String, Object>? adData;
 
+  /// The current ad that is playing or just played.
+  ///
+  /// This will be null except for events where an ad is available (start,
+  /// quartiles, midpoint, complete, and tap).
+  final IMAAd? ad;
+
   static void pigeon_setUpMessageHandlers({
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
@@ -4386,6 +4393,7 @@ class IMAAdEvent extends NSObject {
       AdEventType type,
       String typeString,
       Map<String, Object>? adData,
+      IMAAd? ad,
     )? pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -4417,17 +4425,19 @@ class IMAAdEvent extends NSObject {
               'Argument for dev.flutter.pigeon.interactive_media_ads.IMAAdEvent.pigeon_newInstance was null, expected non-null String.');
           final Map<String, Object>? arg_adData =
               (args[3] as Map<Object?, Object?>?)?.cast<String, Object>();
+          final IMAAd? arg_ad = (args[4] as IMAAd?);
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
               pigeon_newInstance?.call(
-                      arg_type!, arg_typeString!, arg_adData) ??
+                      arg_type!, arg_typeString!, arg_adData, arg_ad) ??
                   IMAAdEvent.pigeon_detached(
                     pigeon_binaryMessenger: pigeon_binaryMessenger,
                     pigeon_instanceManager: pigeon_instanceManager,
                     type: arg_type!,
                     typeString: arg_typeString!,
                     adData: arg_adData,
+                    ad: arg_ad,
                   ),
               arg_pigeon_instanceIdentifier!,
             );
@@ -4451,6 +4461,7 @@ class IMAAdEvent extends NSObject {
       type: type,
       typeString: typeString,
       adData: adData,
+      ad: ad,
     );
   }
 }
