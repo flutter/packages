@@ -652,7 +652,7 @@
   NSURL *testURL = [NSURL URLWithString:testURI];
   XCTAssertNotNil(testURL);
   FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:testURL]
                                        avFactory:[[FVPDefaultAVFactory alloc] init]
                                     viewProvider:[[StubViewProvider alloc] initWithView:nil]];
   XCTAssertNotNil(player);
