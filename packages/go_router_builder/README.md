@@ -455,6 +455,33 @@ class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
 
 An example is available [here](https://github.com/flutter/packages/blob/main/packages/go_router_builder/example/lib/shell_route_with_keys_example.dart).
 
+## Relative routes
+
+Define a relative route by extending RelativeGoRouteData.
+
+<?code-excerpt "example/lib/readme_excerpts.dart (relativeRoute)"?>
+```dart
+@TypedRelativeGoRoute<DetailsRoute>(
+  path: 'details',
+)
+class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
+  const DetailsRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) =>
+      const DetailsScreen();
+}
+```
+
+Navigate using the `goRelative` or `pushRelative` methods provided by the code generator:
+
+<?code-excerpt "example/lib/readme_excerpts.dart (goRelative)"?>
+```dart
+void onTapRelative() => const DetailsRoute().goRelative(context);
+```
+
+Relative routing methods are not idempotent and will cause an error when the relative location does not match a route.
+
 ## Run tests
 
 To run unit tests, run command `dart tool/run_tests.dart` from `packages/go_router_builder/`.
