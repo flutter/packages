@@ -97,12 +97,12 @@ mixin _$DetailsRoute on RelativeGoRouteData {
   DetailsRoute get _self => this as DetailsRoute;
 
   @override
-  String get location => RelativeGoRouteData.$location(
+  String get subpath => RelativeGoRouteData.$location(
         'details/${Uri.encodeComponent(_self.detailId)}',
       );
 
   @override
-  String get relativeLocation => './$location';
+  String get relativeLocation => './$subpath';
 
   @override
   void goRelative(BuildContext context) => context.go(relativeLocation);
@@ -128,12 +128,12 @@ mixin _$SettingsRoute on RelativeGoRouteData {
   SettingsRoute get _self => this as SettingsRoute;
 
   @override
-  String get location => RelativeGoRouteData.$location(
+  String get subpath => RelativeGoRouteData.$location(
         'settings/${Uri.encodeComponent(_self.settingId)}',
       );
 
   @override
-  String get relativeLocation => './$location';
+  String get relativeLocation => './$subpath';
 
   @override
   void goRelative(BuildContext context) => context.go(relativeLocation);

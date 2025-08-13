@@ -18,11 +18,11 @@ class HomeRoute extends GoRouteData with _$HomeRoute {
 
 const TypedRelativeGoRoute<RelativeRoute> relativeRoute =
     TypedRelativeGoRoute<RelativeRoute>(
-  path: 'relative-route',
-  routes: <TypedRoute<RouteData>>[
-    TypedGoRoute<NonRelativeRoute>(path: 'non-relative-route'),
-  ],
-);
+      path: 'relative-route',
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<NonRelativeRoute>(path: 'non-relative-route'),
+      ],
+    );
 
 class RelativeRoute extends RelativeGoRouteData with _$RelativeRoute {
   const RelativeRoute();

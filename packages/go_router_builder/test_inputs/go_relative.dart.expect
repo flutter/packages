@@ -41,12 +41,12 @@ mixin _$RelativeRoute on RelativeGoRouteData {
   static RelativeRoute _fromState(GoRouterState state) => const RelativeRoute();
 
   @override
-  String get location => RelativeGoRouteData.$location(
+  String get subpath => RelativeGoRouteData.$location(
         'relative-route',
       );
 
   @override
-  String get relativeLocation => './$location';
+  String get relativeLocation => './$subpath';
 
   @override
   void goRelative(BuildContext context) => context.go(relativeLocation);
@@ -69,12 +69,12 @@ mixin _$InnerRelativeRoute on RelativeGoRouteData {
       const InnerRelativeRoute();
 
   @override
-  String get location => RelativeGoRouteData.$location(
+  String get subpath => RelativeGoRouteData.$location(
         'inner-relative-route',
       );
 
   @override
-  String get relativeLocation => './$location';
+  String get relativeLocation => './$subpath';
 
   @override
   void goRelative(BuildContext context) => context.go(relativeLocation);

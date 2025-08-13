@@ -457,7 +457,8 @@ An example is available [here](https://github.com/flutter/packages/blob/main/pac
 
 ## Relative routes
 
-Define a relative route by extending RelativeGoRouteData.
+Relative routes allow reusing the same `RouteData` in different parts of the route tree.
+Define a relative route by extending `RelativeGoRouteData`.
 
 <?code-excerpt "example/lib/readme_excerpts.dart (relativeRoute)"?>
 ```dart

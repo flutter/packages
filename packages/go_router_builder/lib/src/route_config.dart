@@ -190,8 +190,9 @@ class StatefulShellBranchConfig extends RouteBaseConfig {
 mixin _GoRouteMixin on RouteBaseConfig {
   String get _basePathForLocation;
 
-  late final Set<String> _pathParams =
-      pathParametersFromPattern(_basePathForLocation);
+  late final Set<String> _pathParams = pathParametersFromPattern(
+    _basePathForLocation,
+  );
 
   // construct path bits using parent bits
   // if there are any queryParam objects, add in the `queryParam` bits
@@ -467,7 +468,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
     }
 
     return '''
-mixin $_mixinName on GoRouteData {
+mixin $_mixinName on $routeDataClassName {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
   $_castedSelf
   @override
@@ -527,7 +528,8 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
 
   @override
   String get _mixinDefinition {
-    final bool hasMixin = getNodeDeclaration<ClassDeclaration>(routeDataClass)
+    final bool hasMixin =
+        getNodeDeclaration<ClassDeclaration>(routeDataClass)
             ?.withClause
             ?.mixinTypes
             .any((NamedType e) => e.name2.toString() == _mixinName) ??
@@ -541,14 +543,14 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
     }
 
     return '''
-mixin $_mixinName on RelativeGoRouteData {
+mixin $_mixinName on $routeDataClassName {
   static $_className _fromState(GoRouterState state) $_fromStateConstructor
   $_castedSelf
   @override
-  String get location => RelativeGoRouteData.\$location($_locationArgs,$_locationQueryParams);
+  String get subpath => RelativeGoRouteData.\$location($_locationArgs,$_locationQueryParams);
   
   @override
-  String get relativeLocation => './\$location';
+  String get relativeLocation => './\$subpath';
 
   @override
   void goRelative(BuildContext context) =>
@@ -754,12 +756,19 @@ abstract class RouteBaseConfig {
         throw UnsupportedError('Unrecognized type $typeName');
     }
 
-    value._children.addAll(reader
-        .read(_generateChildrenGetterName(typeName))
-        .listValue
-        .map<RouteBaseConfig>((DartObject e) => RouteBaseConfig._fromAnnotation(
-            ConstantReader(e), element, value,
-            isAncestorRelative: isRelative),),);
+    value._children.addAll(
+      reader
+          .read(_generateChildrenGetterName(typeName))
+          .listValue
+          .map<RouteBaseConfig>(
+            (DartObject e) => RouteBaseConfig._fromAnnotation(
+              ConstantReader(e),
+              element,
+              value,
+              isAncestorRelative: isRelative,
+            ),
+          ),
+    );
 
     return value;
   }

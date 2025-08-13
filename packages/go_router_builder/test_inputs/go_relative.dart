@@ -11,11 +11,11 @@ mixin _$InnerRelativeRoute {}
 
 const TypedRelativeGoRoute<RelativeRoute> relativeRoute =
     TypedRelativeGoRoute<RelativeRoute>(
-  path: 'relative-route',
-  routes: <TypedRoute<RouteData>>[
-    TypedRelativeGoRoute<InnerRelativeRoute>(path: 'inner-relative-route')
-  ],
-);
+      path: 'relative-route',
+      routes: <TypedRoute<RouteData>>[
+        TypedRelativeGoRoute<InnerRelativeRoute>(path: 'inner-relative-route'),
+      ],
+    );
 
 @TypedGoRoute<Route1>(
   path: 'route-1',
