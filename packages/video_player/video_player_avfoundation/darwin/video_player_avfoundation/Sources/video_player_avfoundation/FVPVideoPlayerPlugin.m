@@ -18,10 +18,6 @@
 // https://github.com/flutter/packages/pull/6675/#discussion_r1591210702
 #import "./include/video_player_avfoundation/messages.g.h"
 
-#if !__has_feature(objc_arc)
-#error Code Requires ARC.
-#endif
-
 /// Non-test implementation of the diplay link factory.
 @interface FVPDefaultDisplayLinkFactory : NSObject <FVPDisplayLinkFactory>
 @end
