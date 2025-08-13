@@ -25,19 +25,41 @@ abstract class _GoRouteData extends RouteData {
   const _GoRouteData();
 
   /// Creates the [Widget] for `this` route.
+  ///
+  /// Subclasses must override one of [build], [buildPage], or
+  /// [redirect].
+  ///
+  /// Corresponds to [GoRoute.builder].
   Widget build(BuildContext context, GoRouterState state) =>
       throw UnimplementedError(
         'One of `build` or `buildPage` must be implemented.',
       );
 
   /// A page builder for this route.
+  ///
+  /// Subclasses can override this function to provide a custom [Page].
+  ///
+  /// Subclasses must override one of [build], [buildPage] or
+  /// [redirect].
+  ///
+  /// Corresponds to [GoRoute.pageBuilder].
+  ///
+  /// By default, returns a [Page] instance that is ignored, causing a default
+  /// [Page] implementation to be used with the results of [build].
   Page<void> buildPage(BuildContext context, GoRouterState state) =>
       const NoOpPage();
 
   /// An optional redirect function for this route.
+  ///
+  /// Subclasses must override one of [build], [buildPage], or
+  /// [redirect].
+  ///
+  /// Corresponds to [GoRoute.redirect].
   FutureOr<String?> redirect(BuildContext context, GoRouterState state) => null;
 
   /// Called when this route is removed from GoRouter's route history.
+  ///
+  /// Corresponds to [GoRoute.onExit].
   FutureOr<bool> onExit(BuildContext context, GoRouterState state) => true;
 
   /// The error thrown when a user-facing method is not implemented by the
@@ -118,48 +140,6 @@ abstract class GoRouteData extends _GoRouteData {
   /// [GoRouteData] is abstract and cannot be instantiated directly.
   const GoRouteData();
 
-  /// Creates the [Widget] for `this` route.
-  ///
-  /// Subclasses must override one of [build], [buildPage], or
-  /// [redirect].
-  ///
-  /// Corresponds to [GoRoute.builder].
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      super.build(context, state);
-
-  /// A page builder for this route.
-  ///
-  /// Subclasses can override this function to provide a custom [Page].
-  ///
-  /// Subclasses must override one of [build], [buildPage] or
-  /// [redirect].
-  ///
-  /// Corresponds to [GoRoute.pageBuilder].
-  ///
-  /// By default, returns a [Page] instance that is ignored, causing a default
-  /// [Page] implementation to be used with the results of [build].
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      super.buildPage(context, state);
-
-  /// An optional redirect function for this route.
-  ///
-  /// Subclasses must override one of [build], [buildPage], or
-  /// [redirect].
-  ///
-  /// Corresponds to [GoRoute.redirect].
-  @override
-  FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
-      super.redirect(context, state);
-
-  /// Called when this route is removed from GoRouter's route history.
-  ///
-  /// Corresponds to [GoRoute.onExit].
-  @override
-  FutureOr<bool> onExit(BuildContext context, GoRouterState state) =>
-      super.onExit(context, state);
-
   /// A helper function used by generated code.
   ///
   /// Should not be used directly.
@@ -230,48 +210,6 @@ abstract class RelativeGoRouteData extends _GoRouteData {
   ///
   /// [RelativeGoRouteData] is abstract and cannot be instantiated directly.
   const RelativeGoRouteData();
-
-  /// Creates the [Widget] for `this` route.
-  ///
-  /// Subclasses must override one of [build], [buildPage], or
-  /// [redirect].
-  ///
-  /// Corresponds to [GoRoute.builder].
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      super.build(context, state);
-
-  /// A page builder for this route.
-  ///
-  /// Subclasses can override this function to provide a custom [Page].
-  ///
-  /// Subclasses must override one of [build], [buildPage] or
-  /// [redirect].
-  ///
-  /// Corresponds to [GoRoute.pageBuilder].
-  ///
-  /// By default, returns a [Page] instance that is ignored, causing a default
-  /// [Page] implementation to be used with the results of [build].
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) =>
-      super.buildPage(context, state);
-
-  /// An optional redirect function for this route.
-  ///
-  /// Subclasses must override one of [build], [buildPage], or
-  /// [redirect].
-  ///
-  /// Corresponds to [GoRoute.redirect].
-  @override
-  FutureOr<String?> redirect(BuildContext context, GoRouterState state) =>
-      super.redirect(context, state);
-
-  /// Called when this route is removed from GoRouter's route history.
-  ///
-  /// Corresponds to [GoRoute.onExit].
-  @override
-  FutureOr<bool> onExit(BuildContext context, GoRouterState state) =>
-      super.onExit(context, state);
 
   /// A helper function used by generated code.
   ///
