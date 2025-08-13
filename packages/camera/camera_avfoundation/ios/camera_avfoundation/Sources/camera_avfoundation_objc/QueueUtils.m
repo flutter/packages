@@ -4,16 +4,10 @@
 
 #import "./include/camera_avfoundation/QueueUtils.h"
 
-const char *FLTCaptureSessionQueueSpecific = "capture_session_queue";
-
 void FLTEnsureToRunOnMainQueue(dispatch_block_t block) {
   if (!NSThread.isMainThread) {
     dispatch_async(dispatch_get_main_queue(), block);
   } else {
     block();
   }
-}
-
-void FLTDispatchQueueSetSpecific(dispatch_queue_t queue, const void *key) {
-  dispatch_queue_set_specific(queue, key, (void *)key, NULL);
 }

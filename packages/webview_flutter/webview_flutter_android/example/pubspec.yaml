@@ -17,7 +17,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  webview_flutter_platform_interface: ^2.13.0
+  webview_flutter_platform_interface: ^2.14.0
 
 dev_dependencies:
   espresso: ^0.4.0

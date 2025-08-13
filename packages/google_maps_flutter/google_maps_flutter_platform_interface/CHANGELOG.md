@@ -1,3 +1,7 @@
+## 2.13.0
+
+* Adds Advanced marker support.
+
 ## 2.12.1
 
 * Fixes the `zIndex` issue in the `copyWith` method.

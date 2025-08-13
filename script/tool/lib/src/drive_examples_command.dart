@@ -140,10 +140,6 @@ class DriveExamplesCommand extends PackageLoopingCommand {
         platformWeb: <String>[
           '-d',
           'web-server',
-          // TODO(stuartmorgan): Remove once drive works without it. See
-          // https://github.com/dart-lang/sdk/issues/60289 and
-          // https://github.com/flutter/flutter/pull/169174
-          '--no-web-experimental-hot-reload',
           '--web-port=7357',
           '--browser-name=chrome',
           if (useWasm) '--wasm',

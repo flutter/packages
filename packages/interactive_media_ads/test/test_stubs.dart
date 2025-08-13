@@ -39,6 +39,10 @@ final class TestInteractiveMediaAdsPlatform
     PlatformCompanionAdSlotCreationParams params,
   )? onCreatePlatformCompanionAdSlot;
 
+  PlatformImaSettings Function(
+    PlatformImaSettingsCreationParams params,
+  )? onCreatePlatformImaSettings;
+
   @override
   PlatformAdsLoader createPlatformAdsLoader(
     PlatformAdsLoaderCreationParams params,
@@ -84,6 +88,13 @@ final class TestInteractiveMediaAdsPlatform
           params,
           onBuildWidget: (_) => Container(),
         );
+  }
+
+  @override
+  PlatformImaSettings createPlatformImaSettings(
+    PlatformImaSettingsCreationParams params,
+  ) {
+    return onCreatePlatformImaSettings?.call(params) ?? TestImaSettings(params);
   }
 }
 
@@ -234,5 +245,73 @@ final class TestCompanionAdSlot extends PlatformCompanionAdSlot {
   @override
   Widget buildWidget(BuildWidgetCreationParams params) {
     return onBuildWidget(params);
+  }
+}
+
+final class TestImaSettings extends PlatformImaSettings {
+  TestImaSettings(
+    super.params, {
+    this.onSetPpid,
+    this.onSetMaxRedirects,
+    this.onSetFeatureFlags,
+    this.onSetAutoPlayAdBreaks,
+    this.onSetPlayerType,
+    this.onSetPlayerVersion,
+    this.onSetSessionID,
+    this.onSetDebugMode,
+  }) : super.implementation();
+
+  void Function(String ppid)? onSetPpid;
+
+  void Function(int maxRedirects)? onSetMaxRedirects;
+
+  void Function(Map<String, String> featureFlags)? onSetFeatureFlags;
+
+  void Function(bool autoPlayAdBreaks)? onSetAutoPlayAdBreaks;
+
+  void Function(String playerType)? onSetPlayerType;
+
+  void Function(String playerVersion)? onSetPlayerVersion;
+
+  void Function(String sessionID)? onSetSessionID;
+
+  void Function(bool enableDebugMode)? onSetDebugMode;
+
+  @override
+  Future<void> setPpid(String ppid) async => onSetPpid?.call(ppid);
+
+  @override
+  Future<void> setMaxRedirects(int maxRedirects) async {
+    onSetMaxRedirects?.call(maxRedirects);
+  }
+
+  @override
+  Future<void> setFeatureFlags(Map<String, String> featureFlags) async {
+    onSetFeatureFlags?.call(featureFlags);
+  }
+
+  @override
+  Future<void> setAutoPlayAdBreaks(bool autoPlayAdBreaks) async {
+    onSetAutoPlayAdBreaks?.call(autoPlayAdBreaks);
+  }
+
+  @override
+  Future<void> setPlayerType(String playerType) async {
+    onSetPlayerType?.call(playerType);
+  }
+
+  @override
+  Future<void> setPlayerVersion(String playerVersion) async {
+    onSetPlayerVersion?.call(playerVersion);
+  }
+
+  @override
+  Future<void> setSessionID(String sessionID) async {
+    onSetSessionID?.call(sessionID);
+  }
+
+  @override
+  Future<void> setDebugMode(bool enableDebugMode) async {
+    onSetDebugMode?.call(enableDebugMode);
   }
 }

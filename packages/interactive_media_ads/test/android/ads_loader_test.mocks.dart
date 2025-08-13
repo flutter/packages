@@ -919,6 +919,101 @@ class MockAdsRequest extends _i1.Mock implements _i2.AdsRequest {
       ) as _i5.Future<void>);
 
   @override
+  _i5.Future<void> setAdWillAutoPlay(bool? willAutoPlay) => (super.noSuchMethod(
+        Invocation.method(
+          #setAdWillAutoPlay,
+          [willAutoPlay],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setAdWillPlayMuted(bool? willPlayMuted) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAdWillPlayMuted,
+          [willPlayMuted],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setAdsResponse(String? cannedAdResponse) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAdsResponse,
+          [cannedAdResponse],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setContentDuration(double? duration) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentDuration,
+          [duration],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setContentKeywords(List<String>? keywords) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setContentKeywords,
+          [keywords],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setContentTitle(String? title) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentTitle,
+          [title],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setContinuousPlayback(bool? continuousPlayback) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setContinuousPlayback,
+          [continuousPlayback],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setLiveStreamPrefetchSeconds(double? prefetchTime) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLiveStreamPrefetchSeconds,
+          [prefetchTime],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setVastLoadTimeout(double? timeout) => (super.noSuchMethod(
+        Invocation.method(
+          #setVastLoadTimeout,
+          [timeout],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
   _i2.AdsRequest pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
           #pigeon_copy,
@@ -1190,6 +1285,99 @@ class MockImaSdkSettings extends _i1.Mock implements _i2.ImaSdkSettings {
           Invocation.getter(#pigeon_instanceManager),
         ),
       ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i5.Future<void> setAutoPlayAdBreaks(bool? autoPlayAdBreaks) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAutoPlayAdBreaks,
+          [autoPlayAdBreaks],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setDebugMode(bool? debugMode) => (super.noSuchMethod(
+        Invocation.method(
+          #setDebugMode,
+          [debugMode],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setFeatureFlags(Map<String, String>? featureFlags) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setFeatureFlags,
+          [featureFlags],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setLanguage(String? language) => (super.noSuchMethod(
+        Invocation.method(
+          #setLanguage,
+          [language],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setMaxRedirects(int? maxRedirects) => (super.noSuchMethod(
+        Invocation.method(
+          #setMaxRedirects,
+          [maxRedirects],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setPlayerType(String? playerType) => (super.noSuchMethod(
+        Invocation.method(
+          #setPlayerType,
+          [playerType],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setPlayerVersion(String? playerVersion) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setPlayerVersion,
+          [playerVersion],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setPpid(String? ppid) => (super.noSuchMethod(
+        Invocation.method(
+          #setPpid,
+          [ppid],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setSessionId(String? sessionId) => (super.noSuchMethod(
+        Invocation.method(
+          #setSessionId,
+          [sessionId],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
   _i2.ImaSdkSettings pigeon_copy() => (super.noSuchMethod(

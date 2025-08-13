@@ -15,7 +15,8 @@ import 'package:mockito/mockito.dart';
 
 import 'google_maps_flutter_android_test.mocks.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<MapsApi>()])
+@GenerateNiceMocks(
+    <MockSpec<Object>>[MockSpec<MapsApi>(), MockSpec<MapsInitializerApi>()])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -30,6 +31,40 @@ void main() {
   test('registers instance', () async {
     GoogleMapsFlutterAndroid.registerWith();
     expect(GoogleMapsFlutterPlatform.instance, isA<GoogleMapsFlutterAndroid>());
+  });
+
+  test('normal usage does not call MapsInitializerApi', () async {
+    final MockMapsApi api = MockMapsApi();
+    final MockMapsInitializerApi initializerApi = MockMapsInitializerApi();
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid(
+        apiProvider: (_) => api, initializerApi: initializerApi);
+    const int mapId = 1;
+    maps.ensureApiInitialized(mapId);
+    await maps.init(1);
+
+    verifyZeroInteractions(initializerApi);
+  });
+
+  test('initializeWithPreferredRenderer forwards the initialization call',
+      () async {
+    final MockMapsApi api = MockMapsApi();
+    final MockMapsInitializerApi initializerApi = MockMapsInitializerApi();
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid(
+        apiProvider: (_) => api, initializerApi: initializerApi);
+    await maps.initializeWithRenderer(AndroidMapRenderer.latest);
+
+    verify(initializerApi
+        .initializeWithPreferredRenderer(PlatformRendererType.latest));
+  });
+
+  test('warmup forwards the initialization call', () async {
+    final MockMapsApi api = MockMapsApi();
+    final MockMapsInitializerApi initializerApi = MockMapsInitializerApi();
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid(
+        apiProvider: (_) => api, initializerApi: initializerApi);
+    await maps.warmup();
+
+    verify(initializerApi.warmup());
   });
 
   test('init calls waitForMap', () async {

@@ -37,17 +37,15 @@ void setUpGenerics({
   );
 
   camerax.CameraInfo.pigeon_setUpMessageHandlers(
-    pigeon_newInstance: (
-      int sensorRotationDegrees,
-      camerax.ExposureState exposureState,
-    ) {
-      return CameraInfo.detached(
-        sensorRotationDegrees: sensorRotationDegrees,
-        exposureState: exposureState,
-        pigeon_binaryMessenger: pigeonBinaryMessenger,
-        pigeon_instanceManager: pigeonInstanceManager,
-      );
-    },
+    pigeon_newInstance:
+        (int sensorRotationDegrees, camerax.ExposureState exposureState) {
+          return CameraInfo.detached(
+            sensorRotationDegrees: sensorRotationDegrees,
+            exposureState: exposureState,
+            pigeon_binaryMessenger: pigeonBinaryMessenger,
+            pigeon_instanceManager: pigeonInstanceManager,
+          );
+        },
   );
 }
 

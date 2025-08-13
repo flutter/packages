@@ -786,6 +786,10 @@ abstract class MapsInitializerApi {
   @async
   PlatformRendererType initializeWithPreferredRenderer(
       PlatformRendererType? type);
+
+  /// Attempts to trigger any thread-blocking work
+  /// the Google Maps SDK normally does when a map is shown for the first time.
+  void warmup();
 }
 
 /// Dummy interface to force generation of the platform view creation params,

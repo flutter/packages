@@ -1,3 +1,7 @@
+## 2.0.29
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
 ## 2.0.28
 
 * Removes obsolete code related to supporting SDK <21.

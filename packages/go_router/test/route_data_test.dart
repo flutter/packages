@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -225,6 +226,14 @@ final List<GoRoute> _routes = <GoRoute>[
   _goRouteDataBuildPage,
   _goRouteDataRedirect,
 ];
+
+String fromBase64(String value) {
+  return const Utf8Decoder().convert(base64.decode(value));
+}
+
+String toBase64(String value) {
+  return base64.encode(const Utf8Encoder().convert(value));
+}
 
 void main() {
   group('GoRouteData', () {
@@ -632,5 +641,15 @@ void main() {
             false,
           ),
     );
+  });
+
+  test('CustomParameterCodec with required parameters', () {
+    const CustomParameterCodec customParameterCodec = CustomParameterCodec(
+      encode: toBase64,
+      decode: fromBase64,
+    );
+
+    expect(customParameterCodec.encode, toBase64);
+    expect(customParameterCodec.decode, fromBase64);
   });
 }

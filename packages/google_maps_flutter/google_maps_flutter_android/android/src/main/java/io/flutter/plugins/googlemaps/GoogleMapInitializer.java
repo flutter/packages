@@ -5,9 +5,11 @@
 package io.flutter.plugins.googlemaps;
 
 import android.content.Context;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapsSdkInitializedCallback;
 import io.flutter.plugin.common.BinaryMessenger;
@@ -15,6 +17,7 @@ import io.flutter.plugin.common.BinaryMessenger;
 /** GoogleMaps initializer used to initialize the Google Maps SDK with preferred settings. */
 final class GoogleMapInitializer
     implements OnMapsSdkInitializedCallback, Messages.MapsInitializerApi {
+  private static final String TAG = "GoogleMapInitializer";
   private final Context context;
   private static Messages.Result<Messages.PlatformRendererType> initializationResult;
   private boolean rendererInitialized = false;
@@ -38,6 +41,24 @@ final class GoogleMapInitializer
     } else {
       initializationResult = result;
       initializeWithRendererRequest(Convert.toMapRendererType(type));
+    }
+  }
+
+  @Override
+  public void warmup() {
+    Log.i(TAG, "Google Maps warmup started.");
+    try {
+      // This creates a fake map view in order to trigger the SDK's
+      // initialization. For context, see
+      // https://github.com/flutter/flutter/issues/28493#issuecomment-2919150669.
+      MapView mv = new MapView(context);
+      mv.onCreate(null);
+      mv.onResume();
+      mv.onPause();
+      mv.onDestroy();
+      Log.i(TAG, "Maps warmup complete.");
+    } catch (Exception e) {
+      throw new Messages.FlutterError("Could not warm up", e.toString(), null);
     }
   }
 

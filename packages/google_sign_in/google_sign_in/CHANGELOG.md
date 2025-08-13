@@ -1,3 +1,9 @@
+## 7.1.1
+
+* Adds more documentation about the requirement to call `initialize` exactly
+  once.
+* Adds information about `GoogleSignInException` to the migration guide.
+
 ## 7.1.0
 
 * Adds the missing export of `GoogleSignInExceptionCode`, to allow for

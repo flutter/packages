@@ -34,14 +34,12 @@ class PlatformVideoViewCreationParams {
 
 class CreationOptions {
   CreationOptions({
+    required this.uri,
     required this.httpHeaders,
     required this.viewType,
   });
 
-  String? asset;
-  String? uri;
-  String? packageName;
-  String? formatHint;
+  String uri;
   Map<String, String> httpHeaders;
   PlatformVideoViewType viewType;
 }
@@ -57,6 +55,8 @@ abstract class AVFoundationVideoPlayerApi {
   void dispose(int playerId);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
+  @ObjCSelector('fileURLForAssetWithName:package:')
+  String? getAssetUrl(String asset, String? package);
 }
 
 @HostApi()

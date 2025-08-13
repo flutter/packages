@@ -260,6 +260,42 @@ void main() {
       expect(lastPurchaseOptions.winBackOfferId, isNull);
       expect(lastPurchaseOptions.promotionalOffer, isNull);
     });
+
+    test('should pass quantity for consumable product with Sk2PurchaseParam',
+        () async {
+      final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam(
+        productDetails:
+            AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        quantity: 3,
+        applicationUserName: 'testUser',
+      );
+
+      await iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.appAccountToken, 'testUser');
+      expect(lastPurchaseOptions.quantity, 3);
+      expect(lastPurchaseOptions.winBackOfferId, isNull);
+      expect(lastPurchaseOptions.promotionalOffer, isNull);
+    });
+
+    test('should default to quantity = 1 when not provided in Sk2PurchaseParam',
+        () async {
+      final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam(
+        productDetails:
+            AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+      );
+
+      await iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.quantity, 1);
+    });
   });
 
   group('restore purchases', () {

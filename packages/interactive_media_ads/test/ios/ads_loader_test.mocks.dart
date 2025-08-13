@@ -96,9 +96,19 @@ class _FakeIMAAdsRequest_6 extends _i1.SmartFake implements _i2.IMAAdsRequest {
         );
 }
 
-class _FakeUIViewController_7 extends _i1.SmartFake
+class _FakeIMASettings_7 extends _i1.SmartFake implements _i2.IMASettings {
+  _FakeIMASettings_7(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeUIViewController_8 extends _i1.SmartFake
     implements _i2.UIViewController {
-  _FakeUIViewController_7(
+  _FakeUIViewController_8(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -506,6 +516,146 @@ class MockIMAAdsRequest extends _i1.Mock implements _i2.IMAAdsRequest {
       ) as _i2.PigeonInstanceManager);
 
   @override
+  _i3.Future<String?> getAdTagUrl() => (super.noSuchMethod(
+        Invocation.method(
+          #getAdTagUrl,
+          [],
+        ),
+        returnValue: _i3.Future<String?>.value(),
+        returnValueForMissingStub: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
+
+  @override
+  _i3.Future<String?> getAdsResponse() => (super.noSuchMethod(
+        Invocation.method(
+          #getAdsResponse,
+          [],
+        ),
+        returnValue: _i3.Future<String?>.value(),
+        returnValueForMissingStub: _i3.Future<String?>.value(),
+      ) as _i3.Future<String?>);
+
+  @override
+  _i3.Future<_i2.IMAAdDisplayContainer> getAdDisplayContainer() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getAdDisplayContainer,
+          [],
+        ),
+        returnValue: _i3.Future<_i2.IMAAdDisplayContainer>.value(
+            _FakeIMAAdDisplayContainer_2(
+          this,
+          Invocation.method(
+            #getAdDisplayContainer,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i3.Future<_i2.IMAAdDisplayContainer>.value(
+            _FakeIMAAdDisplayContainer_2(
+          this,
+          Invocation.method(
+            #getAdDisplayContainer,
+            [],
+          ),
+        )),
+      ) as _i3.Future<_i2.IMAAdDisplayContainer>);
+
+  @override
+  _i3.Future<void> setAdWillAutoPlay(bool? adWillAutoPlay) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAdWillAutoPlay,
+          [adWillAutoPlay],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setAdWillPlayMuted(bool? adWillPlayMuted) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setAdWillPlayMuted,
+          [adWillPlayMuted],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContinuousPlayback(bool? continuousPlayback) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setContinuousPlayback,
+          [continuousPlayback],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContentDuration(double? duration) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentDuration,
+          [duration],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContentKeywords(List<String>? keywords) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setContentKeywords,
+          [keywords],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContentTitle(String? title) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentTitle,
+          [title],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setContentURL(String? contentURL) => (super.noSuchMethod(
+        Invocation.method(
+          #setContentURL,
+          [contentURL],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setVastLoadTimeout(double? timeout) => (super.noSuchMethod(
+        Invocation.method(
+          #setVastLoadTimeout,
+          [timeout],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setLiveStreamPrefetchSeconds(double? seconds) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setLiveStreamPrefetchSeconds,
+          [seconds],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
   _i2.IMAAdsRequest pigeon_copy() => (super.noSuchMethod(
         Invocation.method(
           #pigeon_copy,
@@ -526,6 +676,169 @@ class MockIMAAdsRequest extends _i1.Mock implements _i2.IMAAdsRequest {
           ),
         ),
       ) as _i2.IMAAdsRequest);
+}
+
+/// A class which mocks [IMASettings].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockIMASettings extends _i1.Mock implements _i2.IMASettings {
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
+        Invocation.getter(#pigeon_instanceManager),
+        returnValue: _FakePigeonInstanceManager_1(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+        returnValueForMissingStub: _FakePigeonInstanceManager_1(
+          this,
+          Invocation.getter(#pigeon_instanceManager),
+        ),
+      ) as _i2.PigeonInstanceManager);
+
+  @override
+  _i3.Future<void> setPPID(String? ppid) => (super.noSuchMethod(
+        Invocation.method(
+          #setPPID,
+          [ppid],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setLanguage(String? language) => (super.noSuchMethod(
+        Invocation.method(
+          #setLanguage,
+          [language],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setMaxRedirects(int? max) => (super.noSuchMethod(
+        Invocation.method(
+          #setMaxRedirects,
+          [max],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setFeatureFlags(Map<String, String>? flags) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setFeatureFlags,
+          [flags],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setEnableBackgroundPlayback(bool? enabled) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setEnableBackgroundPlayback,
+          [enabled],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setAutoPlayAdBreaks(bool? autoPlay) => (super.noSuchMethod(
+        Invocation.method(
+          #setAutoPlayAdBreaks,
+          [autoPlay],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setDisableNowPlayingInfo(bool? disable) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setDisableNowPlayingInfo,
+          [disable],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setPlayerType(String? type) => (super.noSuchMethod(
+        Invocation.method(
+          #setPlayerType,
+          [type],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setPlayerVersion(String? version) => (super.noSuchMethod(
+        Invocation.method(
+          #setPlayerVersion,
+          [version],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setSessionID(String? sessionID) => (super.noSuchMethod(
+        Invocation.method(
+          #setSessionID,
+          [sessionID],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setSameAppKeyEnabled(bool? enabled) => (super.noSuchMethod(
+        Invocation.method(
+          #setSameAppKeyEnabled,
+          [enabled],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> setEnableDebugMode(bool? enable) => (super.noSuchMethod(
+        Invocation.method(
+          #setEnableDebugMode,
+          [enable],
+        ),
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
+
+  @override
+  _i2.IMASettings pigeon_copy() => (super.noSuchMethod(
+        Invocation.method(
+          #pigeon_copy,
+          [],
+        ),
+        returnValue: _FakeIMASettings_7(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+        returnValueForMissingStub: _FakeIMASettings_7(
+          this,
+          Invocation.method(
+            #pigeon_copy,
+            [],
+          ),
+        ),
+      ) as _i2.IMASettings);
 }
 
 /// A class which mocks [UIView].
@@ -626,14 +939,14 @@ class MockUIViewController extends _i1.Mock implements _i2.UIViewController {
           #pigeon_copy,
           [],
         ),
-        returnValue: _FakeUIViewController_7(
+        returnValue: _FakeUIViewController_8(
           this,
           Invocation.method(
             #pigeon_copy,
             [],
           ),
         ),
-        returnValueForMissingStub: _FakeUIViewController_7(
+        returnValueForMissingStub: _FakeUIViewController_8(
           this,
           Invocation.method(
             #pigeon_copy,
