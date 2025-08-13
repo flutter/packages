@@ -402,9 +402,7 @@ class MyGoRouteData extends GoRouteData with _$MyGoRouteData {
 // #enddocregion MyShellRouteData
 
 // #docregion relativeRoute
-@TypedRelativeGoRoute<DetailsRoute>(
-  path: 'details',
-)
+@TypedRelativeGoRoute<DetailsRoute>(path: 'details')
 class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
   const DetailsRoute();
 

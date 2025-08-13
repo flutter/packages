@@ -360,6 +360,7 @@ mixin _$MyGoRouteData on GoRouteData {
 
 RouteBase get $detailsRoute => RelativeGoRouteData.$route(
   path: 'details',
+
   factory: _$DetailsRoute._fromState,
 );
 
