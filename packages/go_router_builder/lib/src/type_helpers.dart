@@ -298,7 +298,7 @@ class _TypeHelperExtensionType extends _TypeHelper {
 
   @override
   String _decode(
-      ParameterElement parameterElement, Set<String> pathParameters) {
+      FormalParameterElement parameterElement, Set<String> pathParameters) {
     final DartType paramType = parameterElement.type;
     if (paramType.isNullableType && parameterElement.hasDefaultValue) {
       throw NullableDefaultValueError(parameterElement);
