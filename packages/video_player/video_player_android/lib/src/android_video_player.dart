@@ -259,7 +259,7 @@ class _PlayerInstance {
   final VideoPlayerInstanceApi _api;
   late final EventChannel _eventChannel;
   final StreamController<VideoEvent> _eventStreamController =
-      StreamController<VideoEvent>.broadcast();
+      StreamController<VideoEvent>();
   late final StreamSubscription<dynamic> _eventSubscription;
   int _lastBufferPosition = -1;
 
