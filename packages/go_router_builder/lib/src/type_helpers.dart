@@ -298,7 +298,9 @@ class _TypeHelperExtensionType extends _TypeHelper {
 
   @override
   String _decode(
-      FormalParameterElement parameterElement, Set<String> pathParameters) {
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  ) {
     final DartType paramType = parameterElement.type;
     if (paramType.isNullableType && parameterElement.hasDefaultValue) {
       throw NullableDefaultValueError(parameterElement);
@@ -323,8 +325,9 @@ class _TypeHelperExtensionType extends _TypeHelper {
           '.$enumExtensionHelperName($stateValue) as $castType';
     }
 
-    final String representationTypeName =
-        withoutNullability(representationType.getDisplayString());
+    final String representationTypeName = withoutNullability(
+      representationType.getDisplayString(),
+    );
     if (paramType.isNullableType || parameterElement.hasDefaultValue) {
       return "$representationTypeName.tryParse($stateValue ?? '') as $castType";
     } else {
@@ -361,12 +364,15 @@ class _TypeHelperExtensionType extends _TypeHelper {
         representationType.isDartCoreNum ||
         representationType.isDartCoreBool ||
         representationType.isEnum ||
-        const TypeChecker.fromRuntime(BigInt)
-            .isAssignableFromType(representationType) ||
-        const TypeChecker.fromRuntime(DateTime)
-            .isAssignableFromType(representationType) ||
-        const TypeChecker.fromRuntime(Uri)
-            .isAssignableFromType(representationType);
+        const TypeChecker.fromRuntime(
+          BigInt,
+        ).isAssignableFromType(representationType) ||
+        const TypeChecker.fromRuntime(
+          DateTime,
+        ).isAssignableFromType(representationType) ||
+        const TypeChecker.fromRuntime(
+          Uri,
+        ).isAssignableFromType(representationType);
   }
 }
 
