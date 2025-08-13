@@ -17,19 +17,22 @@ mixin _$ExtensionTypeBigIntParam {}
 mixin _$ExtensionTypeDateTimeParam {}
 mixin _$ExtensionTypeUriType {}
 
-@TypedGoRoute<ExtensionTypeParam>(path: '/', routes: <TypedRoute<RouteData>>[
-  TypedGoRoute<ExtensionTypeStringParam>(path: 'string/:s'),
-  TypedGoRoute<ExtensionTypeStringDefaultParam>(path: 'string_default/:s'),
-  TypedGoRoute<ExtensionTypeIntParam>(path: 'int/:x'),
-  TypedGoRoute<ExtensionTypeIntDefaultParam>(path: 'int_default/:x'),
-  TypedGoRoute<ExtensionTypeDoubleParam>(path: 'double/:d'),
-  TypedGoRoute<ExtensionTypeNumParam>(path: 'num/:n'),
-  TypedGoRoute<ExtensionTypeBoolParam>(path: 'bool/:b'),
-  TypedGoRoute<ExtensionTypeEnumType>(path: 'enum/:value'),
-  TypedGoRoute<ExtensionTypeBigIntParam>(path: 'bigint/:bi'),
-  TypedGoRoute<ExtensionTypeDateTimeParam>(path: 'datetime/:dt'),
-  TypedGoRoute<ExtensionTypeUriType>(path: 'uri/:uri'),
-])
+@TypedGoRoute<ExtensionTypeParam>(
+  path: '/',
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<ExtensionTypeStringParam>(path: 'string/:s'),
+    TypedGoRoute<ExtensionTypeStringDefaultParam>(path: 'string_default/:s'),
+    TypedGoRoute<ExtensionTypeIntParam>(path: 'int/:x'),
+    TypedGoRoute<ExtensionTypeIntDefaultParam>(path: 'int_default/:x'),
+    TypedGoRoute<ExtensionTypeDoubleParam>(path: 'double/:d'),
+    TypedGoRoute<ExtensionTypeNumParam>(path: 'num/:n'),
+    TypedGoRoute<ExtensionTypeBoolParam>(path: 'bool/:b'),
+    TypedGoRoute<ExtensionTypeEnumType>(path: 'enum/:value'),
+    TypedGoRoute<ExtensionTypeBigIntParam>(path: 'bigint/:bi'),
+    TypedGoRoute<ExtensionTypeDateTimeParam>(path: 'datetime/:dt'),
+    TypedGoRoute<ExtensionTypeUriType>(path: 'uri/:uri'),
+  ],
+)
 class ExtensionTypeParam extends GoRouteData with _$ExtensionTypeParam {
   ExtensionTypeParam();
 }
@@ -71,9 +74,7 @@ class ExtensionTypeIntParam extends GoRouteData with _$ExtensionTypeIntParam {
 
 class ExtensionTypeIntDefaultParam extends GoRouteData
     with _$ExtensionTypeIntDefaultParam {
-  ExtensionTypeIntDefaultParam({
-    this.x = const IntExtensionType(42),
-  });
+  ExtensionTypeIntDefaultParam({this.x = const IntExtensionType(42)});
   final IntExtensionType x;
 }
 
