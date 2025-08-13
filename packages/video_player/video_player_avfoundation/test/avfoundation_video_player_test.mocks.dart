@@ -23,6 +23,17 @@ import 'package:video_player_avfoundation/src/messages.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeNativeAudioTrackData_0 extends _i1.SmartFake
+    implements _i2.NativeAudioTrackData {
+  _FakeNativeAudioTrackData_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AVFoundationVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -189,16 +200,27 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<List<_i2.AudioTrackMessage>> getAudioTracks() =>
+  _i4.Future<_i2.NativeAudioTrackData> getRawAudioTrackData() =>
       (super.noSuchMethod(
         Invocation.method(
-          #getAudioTracks,
+          #getRawAudioTrackData,
           [],
         ),
-        returnValue: _i4.Future<List<_i2.AudioTrackMessage>>.value(
-            <_i2.AudioTrackMessage>[]),
-        returnValueForMissingStub:
-            _i4.Future<List<_i2.AudioTrackMessage>>.value(
-                <_i2.AudioTrackMessage>[]),
-      ) as _i4.Future<List<_i2.AudioTrackMessage>>);
+        returnValue: _i4.Future<_i2.NativeAudioTrackData>.value(
+            _FakeNativeAudioTrackData_0(
+          this,
+          Invocation.method(
+            #getRawAudioTrackData,
+            [],
+          ),
+        )),
+        returnValueForMissingStub: _i4.Future<_i2.NativeAudioTrackData>.value(
+            _FakeNativeAudioTrackData_0(
+          this,
+          Invocation.method(
+            #getRawAudioTrackData,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.NativeAudioTrackData>);
 }
