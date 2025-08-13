@@ -18,23 +18,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-    );
+    return MaterialApp.router(routerConfig: _router);
   }
 }
 
 /// The route configuration.
-final GoRouter _router = GoRouter(
-  routes: $appRoutes,
-);
+final GoRouter _router = GoRouter(routes: $appRoutes);
 const TypedRelativeGoRoute<DetailsRoute> detailRoute =
     TypedRelativeGoRoute<DetailsRoute>(
-  path: 'details/:detailId',
-  routes: <TypedRoute<RouteData>>[
-    TypedRelativeGoRoute<SettingsRoute>(path: 'settings/:settingId'),
-  ],
-);
+      path: 'details/:detailId',
+      routes: <TypedRoute<RouteData>>[
+        TypedRelativeGoRoute<SettingsRoute>(path: 'settings/:settingId'),
+      ],
+    );
 
 @TypedGoRoute<HomeRoute>(
   path: '/',
@@ -71,9 +67,7 @@ class DetailsRoute extends RelativeGoRouteData with _$DetailsRoute {
 }
 
 class SettingsRoute extends RelativeGoRouteData with _$SettingsRoute {
-  const SettingsRoute({
-    required this.settingId,
-  });
+  const SettingsRoute({required this.settingId});
   final String settingId;
 
   @override
@@ -142,10 +136,7 @@ class DashboardScreen extends StatelessWidget {
 /// The details screen
 class DetailsScreen extends StatelessWidget {
   /// Constructs a [DetailsScreen]
-  const DetailsScreen({
-    super.key,
-    required this.id,
-  });
+  const DetailsScreen({super.key, required this.id});
 
   final String id;
 
@@ -161,9 +152,10 @@ class DetailsScreen extends StatelessWidget {
               child: const Text('Go back'),
             ),
             ElevatedButton(
-              onPressed: () => const SettingsRoute(
-                settingId: 'SettingsId',
-              ).goRelative(context),
+              onPressed:
+                  () => const SettingsRoute(
+                    settingId: 'SettingsId',
+                  ).goRelative(context),
               child: const Text('Go to the Settings screen'),
             ),
           ],
@@ -176,10 +168,7 @@ class DetailsScreen extends StatelessWidget {
 /// The details screen
 class SettingsScreen extends StatelessWidget {
   /// Constructs a [SettingsScreen]
-  const SettingsScreen({
-    super.key,
-    required this.id,
-  });
+  const SettingsScreen({super.key, required this.id});
 
   final String id;
 

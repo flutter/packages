@@ -8,50 +8,50 @@ part of 'go_relative.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-      $homeRoute,
-    ];
+List<RouteBase> get $appRoutes => [$homeRoute];
 
 RouteBase get $homeRoute => GoRouteData.$route(
-      path: '/',
-      factory: _$HomeRoute._fromState,
+  path: '/',
+  factory: _$HomeRoute._fromState,
+  routes: [
+    GoRouteData.$route(
+      path: '/dashboard',
+      factory: _$DashboardRoute._fromState,
       routes: [
-        GoRouteData.$route(
-          path: '/dashboard',
-          factory: _$DashboardRoute._fromState,
-          routes: [
-            RelativeGoRouteData.$route(
-              path: 'details/:detailId',
-              factory: _$DetailsRoute._fromState,
-              routes: [
-                RelativeGoRouteData.$route(
-                  path: 'settings/:settingId',
-                  factory: _$SettingsRoute._fromState,
-                ),
-              ],
-            ),
-          ],
-        ),
         RelativeGoRouteData.$route(
           path: 'details/:detailId',
+
           factory: _$DetailsRoute._fromState,
           routes: [
             RelativeGoRouteData.$route(
               path: 'settings/:settingId',
+
               factory: _$SettingsRoute._fromState,
             ),
           ],
         ),
       ],
-    );
+    ),
+    RelativeGoRouteData.$route(
+      path: 'details/:detailId',
+
+      factory: _$DetailsRoute._fromState,
+      routes: [
+        RelativeGoRouteData.$route(
+          path: 'settings/:settingId',
+
+          factory: _$SettingsRoute._fromState,
+        ),
+      ],
+    ),
+  ],
+);
 
 mixin _$HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => HomeRoute();
 
   @override
-  String get location => GoRouteData.$location(
-        '/',
-      );
+  String get location => GoRouteData.$location('/');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -71,9 +71,7 @@ mixin _$DashboardRoute on GoRouteData {
   static DashboardRoute _fromState(GoRouterState state) => DashboardRoute();
 
   @override
-  String get location => GoRouteData.$location(
-        '/dashboard',
-      );
+  String get location => GoRouteData.$location('/dashboard');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -90,16 +88,15 @@ mixin _$DashboardRoute on GoRouteData {
 }
 
 mixin _$DetailsRoute on RelativeGoRouteData {
-  static DetailsRoute _fromState(GoRouterState state) => DetailsRoute(
-        detailId: state.pathParameters['detailId']!,
-      );
+  static DetailsRoute _fromState(GoRouterState state) =>
+      DetailsRoute(detailId: state.pathParameters['detailId']!);
 
   DetailsRoute get _self => this as DetailsRoute;
 
   @override
   String get subLocation => RelativeGoRouteData.$location(
-        'details/${Uri.encodeComponent(_self.detailId)}',
-      );
+    'details/${Uri.encodeComponent(_self.detailId)}',
+  );
 
   @override
   String get relativeLocation => './$subLocation';
@@ -121,16 +118,15 @@ mixin _$DetailsRoute on RelativeGoRouteData {
 }
 
 mixin _$SettingsRoute on RelativeGoRouteData {
-  static SettingsRoute _fromState(GoRouterState state) => SettingsRoute(
-        settingId: state.pathParameters['settingId']!,
-      );
+  static SettingsRoute _fromState(GoRouterState state) =>
+      SettingsRoute(settingId: state.pathParameters['settingId']!);
 
   SettingsRoute get _self => this as SettingsRoute;
 
   @override
   String get subLocation => RelativeGoRouteData.$location(
-        'settings/${Uri.encodeComponent(_self.settingId)}',
-      );
+    'settings/${Uri.encodeComponent(_self.settingId)}',
+  );
 
   @override
   String get relativeLocation => './$subLocation';
