@@ -191,8 +191,9 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   }
 }
 
-- (nullable NSNumber *)createTexturePlayerWithOptions:(nonnull FVPCreationOptions *)options
-                                                error:(FlutterError **)error {
+- (nullable FVPTexturePlayerIds *)createTexturePlayerWithOptions:
+                                      (nonnull FVPCreationOptions *)options
+                                                           error:(FlutterError **)error {
   @try {
     AVPlayerItem *item = [self playerItemWithCreationOptions:options];
     FVPFrameUpdater *frameUpdater =
