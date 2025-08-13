@@ -6,9 +6,7 @@ import 'package:go_router/go_router.dart';
 
 mixin _$RelativeRoute {}
 
-@TypedRelativeGoRoute<RelativeRoute>(
-  path: '/relative-route',
-)
+@TypedRelativeGoRoute<RelativeRoute>(path: '/relative-route')
 class RelativeRoute extends RelativeGoRouteData with _$RelativeRoute {
   const RelativeRoute();
 }

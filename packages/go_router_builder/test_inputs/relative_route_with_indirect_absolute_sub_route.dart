@@ -19,15 +19,17 @@ class HomeRoute extends GoRouteData with _$HomeRoute {
 
 const TypedRelativeGoRoute<RelativeRoute> relativeRoute =
     TypedRelativeGoRoute<RelativeRoute>(
-  path: 'relative-route',
-  routes: <TypedRoute<RouteData>>[shellRoute],
+      path: 'relative-route',
+      routes: <TypedRoute<RouteData>>[shellRoute],
+    );
+
+const TypedShellRoute<ShellRoute> shellRoute = TypedShellRoute<ShellRoute>(
+  routes: <TypedRoute<RouteData>>[absoluteRoute],
 );
 
-const TypedShellRoute<ShellRoute> shellRoute =
-    TypedShellRoute<ShellRoute>(routes: <TypedRoute<RouteData>>[absoluteRoute]);
-
-const TypedGoRoute<AbsoluteRoute> absoluteRoute =
-    TypedGoRoute<AbsoluteRoute>(path: 'absolute-route');
+const TypedGoRoute<AbsoluteRoute> absoluteRoute = TypedGoRoute<AbsoluteRoute>(
+  path: 'absolute-route',
+);
 
 class RelativeRoute extends RelativeGoRouteData with _$RelativeRoute {
   const RelativeRoute();
