@@ -45,6 +45,11 @@ abstract class _GoRouteData extends RouteData {
   static UnimplementedError get shouldBeGeneratedError => UnimplementedError(
         'Should be generated using [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).',
       );
+
+  /// Used to cache [_GoRouteData] that corresponds to a given [GoRouterState]
+  /// to minimize the number of times it has to be deserialized.
+  static final Expando<_GoRouteData> stateObjectExpando =
+      Expando<_GoRouteData>('GoRouteState to _GoRouteData expando');
 }
 
 /// Helper to build a location string from a path and query parameters.
@@ -174,7 +179,7 @@ abstract class GoRouteData extends _GoRouteData {
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
-      expando: _stateObjectExpando,
+      expando: _GoRouteData.stateObjectExpando,
     );
 
     return GoRoute(
@@ -189,13 +194,6 @@ abstract class GoRouteData extends _GoRouteData {
       onExit: params.onExit,
     );
   }
-
-  /// Used to cache [GoRouteData] that corresponds to a given [GoRouterState]
-  /// to minimize the number of times it has to be deserialized.
-  static final Expando<_GoRouteData> _stateObjectExpando =
-      Expando<_GoRouteData>(
-    'GoRouteState to GoRouteData expando',
-  );
 
   /// The location of this route, e.g. /family/f2/person/p1
   String get location => throw _GoRouteData.shouldBeGeneratedError;
@@ -293,7 +291,7 @@ abstract class RelativeGoRouteData extends _GoRouteData {
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
-      expando: _stateObjectExpando,
+      expando: _GoRouteData.stateObjectExpando,
     );
 
     return GoRoute(
@@ -307,13 +305,6 @@ abstract class RelativeGoRouteData extends _GoRouteData {
       onExit: params.onExit,
     );
   }
-
-  /// Used to cache [RelativeGoRouteData] that corresponds to a given [GoRouterState]
-  /// to minimize the number of times it has to be deserialized.
-  static final Expando<_GoRouteData> _stateObjectExpando =
-      Expando<_GoRouteData>(
-    'GoRouteState to RelativeGoRouteData expando',
-  );
 
   /// The sub-location of this route, e.g. person/p1
   String get subLocation => throw _GoRouteData.shouldBeGeneratedError;
