@@ -1,3 +1,7 @@
+## 0.5.12+2
+
+* Fix broken cameraTargetBounds option on web.
+
 ## 0.5.12+1
 
 * Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.

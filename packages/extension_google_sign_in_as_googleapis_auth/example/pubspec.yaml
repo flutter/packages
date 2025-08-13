@@ -16,7 +16,7 @@ dependencies:
     path: ../
   flutter:
     sdk: flutter
-  google_sign_in: ^6.0.0
+  google_sign_in: ^7.0.0
   googleapis: ">=10.1.0 <14.0.0"
   googleapis_auth: ^1.1.0
 

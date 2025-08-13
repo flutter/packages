@@ -260,6 +260,42 @@ void main() {
       expect(lastPurchaseOptions.winBackOfferId, isNull);
       expect(lastPurchaseOptions.promotionalOffer, isNull);
     });
+
+    test('should pass quantity for consumable product with Sk2PurchaseParam',
+        () async {
+      final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam(
+        productDetails:
+            AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        quantity: 3,
+        applicationUserName: 'testUser',
+      );
+
+      await iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.appAccountToken, 'testUser');
+      expect(lastPurchaseOptions.quantity, 3);
+      expect(lastPurchaseOptions.winBackOfferId, isNull);
+      expect(lastPurchaseOptions.promotionalOffer, isNull);
+    });
+
+    test('should default to quantity = 1 when not provided in Sk2PurchaseParam',
+        () async {
+      final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam(
+        productDetails:
+            AppStoreProduct2Details.fromSK2Product(dummyProductWrapper),
+        applicationUserName: 'testUser',
+      );
+
+      await iapStoreKitPlatform.buyConsumable(purchaseParam: purchaseParam);
+
+      final SK2ProductPurchaseOptionsMessage lastPurchaseOptions =
+          fakeStoreKit2Platform.lastPurchaseOptions!;
+
+      expect(lastPurchaseOptions.quantity, 1);
+    });
   });
 
   group('restore purchases', () {
@@ -426,6 +462,121 @@ void main() {
           'sub1',
           'winback1',
         ),
+        throwsA(isA<PlatformException>().having(
+          (PlatformException e) => e.code,
+          'code',
+          'storekit2_not_enabled',
+        )),
+      );
+    });
+  });
+
+  group('introductory offers eligibility', () {
+    late FakeStoreKit2Platform fakeStoreKit2Platform;
+
+    setUp(() async {
+      fakeStoreKit2Platform = FakeStoreKit2Platform();
+      fakeStoreKit2Platform.reset();
+      TestInAppPurchase2Api.setUp(fakeStoreKit2Platform);
+      await InAppPurchaseStoreKitPlatform.enableStoreKit2();
+    });
+
+    test('should return true when introductory offer is eligible', () async {
+      fakeStoreKit2Platform.validProductIDs = <String>{'sub1'};
+      fakeStoreKit2Platform.eligibleIntroductoryOffers['sub1'] = true;
+      fakeStoreKit2Platform.validProducts['sub1'] = SK2Product(
+        id: 'sub1',
+        displayName: 'Subscription',
+        displayPrice: r'$9.99',
+        description: 'Monthly subscription',
+        price: 9.99,
+        type: SK2ProductType.autoRenewable,
+        subscription: const SK2SubscriptionInfo(
+          subscriptionGroupID: 'group1',
+          promotionalOffers: <SK2SubscriptionOffer>[],
+          subscriptionPeriod: SK2SubscriptionPeriod(
+            value: 1,
+            unit: SK2SubscriptionPeriodUnit.month,
+          ),
+        ),
+        priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
+      );
+
+      final bool result =
+          await iapStoreKitPlatform.isIntroductoryOfferEligible('sub1');
+
+      expect(result, isTrue);
+    });
+
+    test('should return false when introductory offer is not eligible',
+        () async {
+      fakeStoreKit2Platform.validProductIDs = <String>{'sub1'};
+      fakeStoreKit2Platform.eligibleIntroductoryOffers['sub1'] = false;
+      fakeStoreKit2Platform.validProducts['sub1'] = SK2Product(
+        id: 'sub1',
+        displayName: 'Subscription',
+        displayPrice: r'$9.99',
+        description: 'Monthly subscription',
+        price: 9.99,
+        type: SK2ProductType.autoRenewable,
+        subscription: const SK2SubscriptionInfo(
+          subscriptionGroupID: 'group1',
+          promotionalOffers: <SK2SubscriptionOffer>[],
+          subscriptionPeriod: SK2SubscriptionPeriod(
+            value: 1,
+            unit: SK2SubscriptionPeriodUnit.month,
+          ),
+        ),
+        priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
+      );
+
+      final bool result =
+          await iapStoreKitPlatform.isIntroductoryOfferEligible('sub1');
+
+      expect(result, isFalse);
+    });
+
+    test('should throw product not found error for invalid product', () async {
+      expect(
+        () =>
+            iapStoreKitPlatform.isIntroductoryOfferEligible('invalid_product'),
+        throwsA(isA<PlatformException>().having(
+          (PlatformException e) => e.code,
+          'code',
+          'storekit2_failed_to_fetch_product',
+        )),
+      );
+    });
+
+    test('should throw subscription error for non-subscription product',
+        () async {
+      fakeStoreKit2Platform.validProductIDs = <String>{'consumable1'};
+      fakeStoreKit2Platform.validProducts['consumable1'] = SK2Product(
+        id: 'consumable1',
+        displayName: 'Coins',
+        displayPrice: r'$0.99',
+        description: 'Game currency',
+        price: 0.99,
+        type: SK2ProductType.consumable,
+        priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
+      );
+
+      expect(
+        () => iapStoreKitPlatform.isIntroductoryOfferEligible('consumable1'),
+        throwsA(isA<PlatformException>().having(
+          (PlatformException e) => e.code,
+          'code',
+          'storekit2_not_subscription',
+        )),
+      );
+    });
+
+    test('should throw platform exception when StoreKit2 is not supported',
+        () async {
+      await InAppPurchaseStoreKitPlatform.enableStoreKit1();
+
+      expect(
+        () => iapStoreKitPlatform.isIntroductoryOfferEligible('sub1'),
         throwsA(isA<PlatformException>().having(
           (PlatformException e) => e.code,
           'code',

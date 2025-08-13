@@ -51,7 +51,7 @@ final class FLTCamSetDeviceOrientationTests: XCTestCase {
       videoSetVideoOrientationCalled = true
     }
 
-    camera.setDeviceOrientation(.landscapeLeft)
+    camera.deviceOrientation = .landscapeLeft
 
     XCTAssertTrue(photoSetVideoOrientationCalled)
     XCTAssertTrue(videoSetVideoOrientationCalled)
@@ -75,7 +75,7 @@ final class FLTCamSetDeviceOrientationTests: XCTestCase {
 
     camera.lockCaptureOrientation(FCPPlatformDeviceOrientation.portraitDown)
 
-    camera.setDeviceOrientation(.landscapeLeft)
+    camera.deviceOrientation = .landscapeLeft
 
     XCTAssertTrue(photoSetVideoOrientationCalled)
     XCTAssertTrue(videoSetVideoOrientationCalled)
@@ -89,7 +89,7 @@ final class FLTCamSetDeviceOrientationTests: XCTestCase {
     mockPhotoCaptureConnection.setVideoOrientationStub = { _ in XCTFail() }
     mockVideoCaptureConnection.setVideoOrientationStub = { _ in XCTFail() }
 
-    camera.setDeviceOrientation(.landscapeLeft)
+    camera.deviceOrientation = .landscapeLeft
   }
 
   func testSetDeviceOrientation_doesNotSetOrientations_forDuplicateUpdates() {
@@ -104,8 +104,8 @@ final class FLTCamSetDeviceOrientationTests: XCTestCase {
       videoSetVideoOrientationCallCount += 1
     }
 
-    camera.setDeviceOrientation(.landscapeRight)
-    camera.setDeviceOrientation(.landscapeRight)
+    camera.deviceOrientation = .landscapeRight
+    camera.deviceOrientation = .landscapeRight
 
     XCTAssertEqual(photoSetVideoOrientationCallCount, 1)
     XCTAssertEqual(videoSetVideoOrientationCallCount, 1)

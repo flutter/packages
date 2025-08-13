@@ -1,3 +1,14 @@
+## 7.1.1
+
+* Adds more documentation about the requirement to call `initialize` exactly
+  once.
+* Adds information about `GoogleSignInException` to the migration guide.
+
+## 7.1.0
+
+* Adds the missing export of `GoogleSignInExceptionCode`, to allow for
+  structured error handling as intended by the API.
+
 ## 7.0.0
 
 * **BREAKING CHANGE**: Many APIs have changed or been replaced to reflect the
@@ -13,7 +24,7 @@
 
 * Adds a sign-in field to allow Android clients to explicitly specify an account name. This
   capability is only available within Android for the underlying libraries.
-* Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 6.2.2
 

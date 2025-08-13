@@ -355,6 +355,33 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     return _useStoreKit2;
   }
 
+  /// Checks if the user is eligible for an introductory offer (StoreKit2 only).
+  ///
+  /// Throws [PlatformException] if StoreKit2 is not enabled, if the product is not found,
+  /// if the product is not a subscription, or if any error occurs during the eligibility check.
+  ///
+  /// [PlatformException.code] can be one of:
+  /// - `storekit2_not_enabled`
+  /// - `storekit2_failed_to_fetch_product`
+  /// - `storekit2_not_subscription`
+  /// - `storekit2_eligibility_check_failed`
+  Future<bool> isIntroductoryOfferEligible(
+    String productId,
+  ) async {
+    if (!_useStoreKit2) {
+      throw PlatformException(
+        code: 'storekit2_not_enabled',
+        message: 'Win back offers require StoreKit2 which is not enabled.',
+      );
+    }
+
+    final bool eligibility = await SK2Product.isIntroductoryOfferEligible(
+      productId,
+    );
+
+    return eligibility;
+  }
+
   /// Checks if the user is eligible for a specific win back offer (StoreKit2 only).
   ///
   /// Throws [PlatformException] if StoreKit2 is not enabled, if the product is not found,

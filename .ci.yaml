@@ -28,10 +28,10 @@ platform_properties:
       device_type: none
       dependencies: >-
         [
-          {"dependency": "android_sdk", "version": "version:33v6"},
+          {"dependency": "android_sdk", "version": "version:36v1"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8719362231152674241"}
         ]
   linux_android_legacy:
     properties:
@@ -250,9 +250,6 @@ targets:
 
   # Wasm unit tests in master
   - name: Linux_web web_dart_unit_test_wasm_shard_1 master
-    # Broken on master. See flutter/flutter#170433 and
-    # flutter/flutter#170434
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -268,9 +265,6 @@ targets:
         }
 
   - name: Linux_web web_dart_unit_test_wasm_shard_2 master
-    # Broken on master. See flutter/flutter#170433 and
-    # flutter/flutter#170434
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -362,7 +356,7 @@ targets:
       # web_benchmarks needs Chrome.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
@@ -385,7 +379,7 @@ targets:
       # See comments on 'master' version above.
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"},
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"},
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
           {"dependency": "cmake", "version": "build_id:8787856497187628321"},
           {"dependency": "ninja", "version": "version:1.9.0"},
@@ -400,7 +394,7 @@ targets:
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       version_file: flutter_master.version
       # This builds the all_packages app only in a current JDK.
@@ -413,7 +407,7 @@ targets:
 
   - name: Linux_android android_build_all_packages stable
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
@@ -435,7 +429,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -453,7 +447,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -471,7 +465,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -489,7 +483,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -507,7 +501,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -525,7 +519,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -544,7 +538,7 @@ targets:
       package_sharding: "--shardIndex 0 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -563,7 +557,7 @@ targets:
       package_sharding: "--shardIndex 1 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -582,7 +576,7 @@ targets:
       package_sharding: "--shardIndex 2 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -601,7 +595,7 @@ targets:
       package_sharding: "--shardIndex 3 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -620,7 +614,7 @@ targets:
       package_sharding: "--shardIndex 4 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -639,7 +633,7 @@ targets:
       package_sharding: "--shardIndex 5 --shardCount 6"
       dependencies: >-
         [
-          {"dependency": "android_virtual_device", "version": "android_34_google_apis_x64.textpb"}
+          {"dependency": "android_virtual_device", "version": "android_36_google_apis_x64.textpb"}
         ]
       env_variables: >-
         {
@@ -1043,10 +1037,6 @@ targets:
     properties:
       version_file: flutter_master.version
       target_file: macos_repo_checks.yaml
-      dependencies: >
-        [
-          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
-        ]
 
   ### macOS desktop tasks ###
   # macos-platform_tests builds all the packages on ARM, so this build is run
@@ -1116,10 +1106,6 @@ targets:
         {
           "CHANNEL": "master"
         }
-      dependencies: >
-        [
-          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
-        ]
 
   - name: Mac_arm64 custom_package_tests stable
     recipe: packages/packages
@@ -1132,10 +1118,6 @@ targets:
         {
           "CHANNEL": "stable"
         }
-      dependencies: >
-        [
-          {"dependency": "swift_format", "version": "build_id:8797338979890974865"}
-        ]
 
   ### iOS tasks ###
   # ios_platform_tests builds all the packages on ARM, so this build is run
@@ -1449,7 +1431,6 @@ targets:
     recipe: packages/packages
     presubmit: false
     timeout: 30
-    bringup: true # https://github.com/flutter/flutter/issues/134083
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
@@ -1484,7 +1465,6 @@ targets:
     recipe: packages/packages
     presubmit: false
     timeout: 30
-    bringup: true
     properties:
       target_file: windows_build_all_packages.yaml
       channel: stable

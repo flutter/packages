@@ -698,4 +698,15 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i5.Future<void>.value(),
         returnValueForMissingStub: _i5.Future<void>.value(),
       ) as _i5.Future<void>);
+
+  @override
+  _i5.Future<void> setMixedContentMode(_i6.MixedContentMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setMixedContentMode,
+          [mode],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 }

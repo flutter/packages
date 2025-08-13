@@ -301,6 +301,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
   bool isListenerRegistered = false;
   SK2ProductPurchaseOptionsMessage? lastPurchaseOptions;
   Map<String, Set<String>> eligibleWinBackOffers = <String, Set<String>>{};
+  Map<String, bool> eligibleIntroductoryOffers = <String, bool>{};
 
   void reset() {
     validProductIDs = <String>{'123', '456'};
@@ -318,6 +319,7 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
       validProducts[validID] = product;
     }
     eligibleWinBackOffers = <String, Set<String>>{};
+    eligibleIntroductoryOffers = <String, bool>{};
   }
 
   SK2TransactionMessage createRestoredTransaction(
@@ -433,6 +435,29 @@ class FakeStoreKit2Platform implements TestInAppPurchase2Api {
     }
 
     return eligibleWinBackOffers[productId]?.contains(offerId) ?? false;
+  }
+
+  @override
+  Future<bool> isIntroductoryOfferEligible(
+    String productId,
+  ) async {
+    if (!validProductIDs.contains(productId)) {
+      throw PlatformException(
+        code: 'storekit2_failed_to_fetch_product',
+        message: 'StoreKit failed to fetch product',
+        details: 'Product ID: $productId',
+      );
+    }
+
+    if (validProducts[productId]?.type != SK2ProductType.autoRenewable) {
+      throw PlatformException(
+        code: 'storekit2_not_subscription',
+        message: 'Product is not a subscription',
+        details: 'Product ID: $productId',
+      );
+    }
+
+    return eligibleIntroductoryOffers[productId] ?? false;
   }
 }
 

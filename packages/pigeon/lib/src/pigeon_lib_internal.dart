@@ -860,7 +860,7 @@ List<Error> _validateProxyApi(
 
   AstProxyApi? directSuperClass;
 
-  // Validate direct super class is another ProxyApi
+  // Validate direct super class is annotated with @ProxyApi
   if (api.superClass != null) {
     directSuperClass = proxyApis.firstWhereOrNull(
       (AstProxyApi proxyApi) => proxyApi.name == api.superClass?.baseName,
@@ -868,7 +868,8 @@ List<Error> _validateProxyApi(
     if (directSuperClass == null) {
       result.add(
         Error(
-          message: 'Super class of ${api.name} is not marked as a @ProxyApi: '
+          message:
+              'Super class of ${api.name} is not annotated with @ProxyApi: '
               '${api.superClass?.baseName}',
         ),
       );
@@ -888,7 +889,7 @@ List<Error> _validateProxyApi(
     ));
   }
 
-  // Validate all interfaces are other ProxyApis
+  // Validate all interfaces are annotated with @ProxyApi
   final Iterable<String> interfaceNames = api.interfaces.map(
     (TypeDeclaration type) => type.baseName,
   );
@@ -896,7 +897,7 @@ List<Error> _validateProxyApi(
     if (!proxyApis.any((AstProxyApi api) => api.name == interfaceName)) {
       result.add(Error(
         message:
-            'Interface of ${api.name} is not marked as a @ProxyApi: $interfaceName',
+            'Interface of ${api.name} is not annotated with a @ProxyApi: $interfaceName',
       ));
     }
   }

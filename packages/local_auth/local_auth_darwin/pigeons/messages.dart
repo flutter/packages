@@ -6,14 +6,8 @@ import 'package:pigeon/pigeon.dart';
 
 @ConfigurePigeon(PigeonOptions(
   dartOut: 'lib/src/messages.g.dart',
-  objcHeaderOut:
-      'darwin/local_auth_darwin/Sources/local_auth_darwin/include/local_auth_darwin/messages.g.h',
-  objcSourceOut:
-      'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.m',
-  objcOptions: ObjcOptions(
-    headerIncludePath: './include/local_auth_darwin/messages.g.h',
-    prefix: 'FLAD', // Avoid runtime collisions with old local_auth_ios classes.
-  ),
+  swiftOut:
+      'darwin/local_auth_darwin/Sources/local_auth_darwin/messages.g.swift',
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
@@ -26,7 +20,7 @@ class AuthStrings {
     required this.reason,
     required this.lockOut,
     this.goToSettingsButton,
-    this.goToSettingsDescription,
+    required this.goToSettingsDescription,
     required this.cancelButton,
     required this.localizedFallbackTitle,
   });
@@ -34,7 +28,7 @@ class AuthStrings {
   final String reason;
   final String lockOut;
   final String? goToSettingsButton;
-  final String? goToSettingsDescription;
+  final String goToSettingsDescription;
   final String cancelButton;
   final String? localizedFallbackTitle;
 }
@@ -55,6 +49,15 @@ enum AuthResult {
 
   /// No passcode is set.
   errorPasscodeNotSet,
+
+  /// The user cancelled the authentication.
+  errorUserCancelled,
+
+  /// The user tapped the "Enter Password" fallback.
+  errorUserFallback,
+
+  /// The user biometrics is disabled.
+  errorBiometricNotAvailable,
 }
 
 class AuthOptions {
@@ -104,6 +107,5 @@ abstract class LocalAuthApi {
   /// Attempts to authenticate the user with the provided [options], and using
   /// [strings] for any UI.
   @async
-  @ObjCSelector('authenticateWithOptions:strings:')
   AuthResultDetails authenticate(AuthOptions options, AuthStrings strings);
 }

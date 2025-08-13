@@ -1,3 +1,13 @@
+## 6.1.0
+
+* Updates to `GoogleSignIn` 9.0.
+* Adds support for the `nonce` parameter.
+
+## 6.0.1
+
+* Returns configuration errors as `PlatformException`s in Dart instead of
+  crashing the app.
+
 ## 6.0.0
 
 * **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform

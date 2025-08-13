@@ -81,6 +81,10 @@ enum GetCredentialFailureType {
   /// Indicates that a server client ID was not provided.
   missingServerClientId,
 
+  /// Indicates that the user needs to be prompted for authorization, but there
+  /// is no current activity to prompt in.
+  noActivity,
+
   // Types from https://developer.android.com/reference/android/credentials/GetCredentialException
   /// The request was internally interrupted.
   interrupted,

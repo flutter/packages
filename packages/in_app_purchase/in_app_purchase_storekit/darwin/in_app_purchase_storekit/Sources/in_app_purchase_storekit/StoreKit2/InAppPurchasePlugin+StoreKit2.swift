@@ -60,6 +60,9 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         {
           purchaseOptions.insert(.appAccountToken(accountTokenUUID))
         }
+        if let quantity = options?.quantity {
+          purchaseOptions.insert(.quantity(Int(quantity)))
+        }
 
         if #available(iOS 17.4, macOS 14.4, *) {
           if let promotionalOffer = options?.promotionalOffer {
@@ -179,6 +182,53 @@ extension InAppPurchasePlugin: InAppPurchase2API {
             code: "storekit2_unsupported_platform_version",
             message: "Win back offers require iOS 18+ or macOS 15.0+",
             details: nil)))
+    }
+  }
+
+  /// Checks if the user is eligible for an introductory offer.
+  ///
+  /// - Parameters:
+  ///   - productId: The product ID associated with the offer.
+  ///   - completion: Returns `Bool` for eligibility or `Error` on failure.
+  ///
+  /// - Availability: iOS 15.0+, macOS 12.0+
+  func isIntroductoryOfferEligible(
+    productId: String,
+    completion: @escaping (Result<Bool, Error>) -> Void
+  ) {
+    Task {
+      do {
+        guard let product = try await Product.products(for: [productId]).first else {
+          completion(
+            .failure(
+              PigeonError(
+                code: "storekit2_failed_to_fetch_product",
+                message: "Storekit has failed to fetch this product.",
+                details: "Product ID: \(productId)")))
+          return
+        }
+
+        guard let subscription = product.subscription else {
+          completion(
+            .failure(
+              PigeonError(
+                code: "storekit2_not_subscription",
+                message: "Product is not a subscription",
+                details: "Product ID: \(productId)")))
+          return
+        }
+
+        let isEligible = await subscription.isEligibleForIntroOffer
+
+        completion(.success(isEligible))
+      } catch {
+        completion(
+          .failure(
+            PigeonError(
+              code: "storekit2_eligibility_check_failed",
+              message: "Failed to check offer eligibility: \(error.localizedDescription)",
+              details: "Product ID: \(productId), Error: \(error)")))
+      }
     }
   }
 

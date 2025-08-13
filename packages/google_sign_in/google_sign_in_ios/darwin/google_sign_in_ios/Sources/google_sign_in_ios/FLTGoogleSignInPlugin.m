@@ -196,7 +196,6 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
               }];
   } @catch (NSException *e) {
     completion(nil, [FlutterError errorWithCode:@"google_sign_in" message:e.reason details:e.name]);
-    [e raise];
   }
 }
 
@@ -277,18 +276,17 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
                  nonce:(nullable NSString *)nonce
             completion:(void (^)(GIDSignInResult *_Nullable signInResult,
                                  NSError *_Nullable error))completion {
-  // TODO(stuartmorgan): Add the nonce parameter to the calls below once it's available; it was
-  // added after 8.0, and based on https://github.com/google/GoogleSignIn-iOS/releases appears to
-  // be slated for an 8.1 release. See https://github.com/flutter/flutter/issues/85439.
 #if TARGET_OS_OSX
   [self.signIn signInWithPresentingWindow:self.registrar.view.window
                                      hint:hint
                          additionalScopes:additionalScopes
+                                    nonce:nonce
                                completion:completion];
 #else
   [self.signIn signInWithPresentingViewController:[self topViewController]
                                              hint:hint
                                  additionalScopes:additionalScopes
+                                            nonce:nonce
                                        completion:completion];
 #endif
 }

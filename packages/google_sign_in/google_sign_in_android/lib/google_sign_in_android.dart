@@ -164,6 +164,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
             // distinct code.
             code = GoogleSignInExceptionCode.providerConfigurationError;
             message = 'Unexpected credential type: $message';
+          case GetCredentialFailureType.noActivity:
+            code = GoogleSignInExceptionCode.uiUnavailable;
           case GetCredentialFailureType.interrupted:
             code = GoogleSignInExceptionCode.interrupted;
           case GetCredentialFailureType.providerConfigurationIssue:
