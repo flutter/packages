@@ -54,7 +54,7 @@ class AdProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.companionAds(pigeonApi: api, pigeonInstance: instance)
+    let value = try! api.pigeonDelegate.companionAds(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.companionAds)
   }
@@ -215,7 +215,7 @@ class AdProxyAPITests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.universalAdIDs(pigeonApi: api, pigeonInstance: instance)
+    let value = try! api.pigeonDelegate.universalAdIDs(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, instance.universalAdIDs)
   }
@@ -283,17 +283,18 @@ class AdProxyAPITests: XCTestCase {
 
 class TestAd: IMAAd {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
-  static func customInit() -> IMAAd {
+  static func customInit() -> TestAd {
     let instance =
       TestAd.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAd
+    instance._companionAd = TestCompanionAd.customInit()
+    instance._universalAdID = TestUniversalAdID.customInit()
+    instance._adPodInfo = TestAdPodInfo.customInit()
     return instance
   }
 
-  let _universalAdID = TestUniversalAdID.customInit()
-
-  let _adPodInfo = TestAdPodInfo.customInit()
-
-  let _companionAd = TestCompanionAd.customInit()
+  var _companionAd: TestCompanionAd?
+  var _adPodInfo: TestAdPodInfo?
+  var _universalAdID: TestUniversalAdID?
 
   override var adId: String {
     return "string1"
@@ -312,7 +313,7 @@ class TestAd: IMAAd {
   }
 
   override var companionAds: [IMACompanionAd] {
-    return [_companionAd]
+    return [_companionAd!]
   }
 
   override var contentType: String {
@@ -360,7 +361,7 @@ class TestAd: IMAAd {
   }
 
   override var adPodInfo: IMAAdPodInfo {
-    return _adPodInfo
+    return _adPodInfo!
   }
 
   override var traffickingParameters: String {
@@ -376,7 +377,7 @@ class TestAd: IMAAd {
   }
 
   override var universalAdIDs: [IMAUniversalAdID] {
-    return [_universalAdID]
+    return [_universalAdID!]
   }
 
   override var advertiserName: String {
