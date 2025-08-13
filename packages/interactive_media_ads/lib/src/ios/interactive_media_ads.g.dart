@@ -5179,7 +5179,7 @@ class IMACompanionAd extends NSObject {
 /// Ad slot for companion ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMACompanionAdSlot.
-class IMACompanionAdSlot extends PigeonInternalProxyApiBaseClass {
+class IMACompanionAdSlot extends NSObject {
   /// Initializes an instance of a IMACompanionAdSlot with fluid size.
   factory IMACompanionAdSlot({
     BinaryMessenger? pigeon_binaryMessenger,
@@ -5202,7 +5202,7 @@ class IMACompanionAdSlot extends PigeonInternalProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.view,
-  }) {
+  }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -5273,7 +5273,7 @@ class IMACompanionAdSlot extends PigeonInternalProxyApiBaseClass {
     required this.view,
     required int width,
     required int height,
-  }) {
+  }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -5315,7 +5315,7 @@ class IMACompanionAdSlot extends PigeonInternalProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.view,
-  });
+  }) : super.pigeon_detached();
 
   late final _PigeonInternalProxyApiBaseCodec
       _pigeonVar_codecIMACompanionAdSlot =
@@ -5775,7 +5775,7 @@ class IMACompanionDelegate extends NSObject {
 /// Simple data object containing podding metadata.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdPodInfo.html.
-class IMAAdPodInfo extends PigeonInternalProxyApiBaseClass {
+class IMAAdPodInfo extends NSObject {
   /// Constructs [IMAAdPodInfo] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -5790,7 +5790,7 @@ class IMAAdPodInfo extends PigeonInternalProxyApiBaseClass {
     required this.timeOffset,
     required this.totalAds,
     required this.isBumper,
-  });
+  }) : super.pigeon_detached();
 
   /// The position of this ad within an ad pod.
   ///
@@ -5937,7 +5937,7 @@ class IMAAdPodInfo extends PigeonInternalProxyApiBaseClass {
 /// Data object representing a single ad.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAd.
-class IMAAd extends PigeonInternalProxyApiBaseClass {
+class IMAAd extends NSObject {
   /// Constructs [IMAAd] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -5973,7 +5973,7 @@ class IMAAd extends PigeonInternalProxyApiBaseClass {
     required this.wrapperAdIDs,
     required this.wrapperCreativeIDs,
     required this.wrapperSystems,
-  });
+  }) : super.pigeon_detached();
 
   /// The ad ID as specified in the VAST response.
   final String adId;
@@ -6335,7 +6335,7 @@ class IMAAd extends PigeonInternalProxyApiBaseClass {
 /// Simple data object containing universal ad ID information.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAUniversalAdID.html.
-class IMAUniversalAdID extends PigeonInternalProxyApiBaseClass {
+class IMAUniversalAdID extends NSObject {
   /// Constructs [IMAUniversalAdID] without creating the associated native object.
   ///
   /// This should only be used by subclasses created by this library or to
@@ -6346,7 +6346,7 @@ class IMAUniversalAdID extends PigeonInternalProxyApiBaseClass {
     super.pigeon_instanceManager,
     required this.adIDValue,
     required this.adIDRegistry,
-  });
+  }) : super.pigeon_detached();
 
   /// The universal ad ID value.
   ///

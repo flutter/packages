@@ -799,7 +799,7 @@ abstract class IMACompanionAd extends NSObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMACompanionAdSlot.
 @ProxyApi()
-abstract class IMACompanionAdSlot {
+abstract class IMACompanionAdSlot extends NSObject {
   /// Initializes an instance of a IMACompanionAdSlot with fluid size.
   IMACompanionAdSlot();
 
@@ -851,7 +851,7 @@ abstract class IMACompanionDelegate extends NSObject {
 @ProxyApi(
   swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
 )
-abstract class IMAAdPodInfo {
+abstract class IMAAdPodInfo extends NSObject {
   /// The position of this ad within an ad pod.
   ///
   /// Will be 1 for standalone ads.
@@ -900,7 +900,7 @@ abstract class IMAAdPodInfo {
 @ProxyApi(
   swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
 )
-abstract class IMAAd {
+abstract class IMAAd extends NSObject {
   /// The ad ID as specified in the VAST response.
   late final String adId;
 
@@ -1013,7 +1013,7 @@ abstract class IMAAd {
 @ProxyApi(
   swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
 )
-abstract class IMAUniversalAdID {
+abstract class IMAUniversalAdID extends NSObject {
   /// The universal ad ID value.
   ///
   /// This will be “unknown” if it isn’t defined by the ad.

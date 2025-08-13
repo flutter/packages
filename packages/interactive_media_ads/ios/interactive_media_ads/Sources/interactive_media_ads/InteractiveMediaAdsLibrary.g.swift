@@ -854,17 +854,6 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
         return
       }
 
-      if let instance = value as? NSObject {
-        pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar).pigeonNewInstance(
-          pigeonInstance: instance
-        ) { _ in }
-        super.writeByte(128)
-        super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(
-            forInstance: instance as AnyObject)!)
-        return
-      }
-
       if let instance = value as? IMAAdPodInfo {
         pigeonRegistrar.apiDelegate.pigeonApiIMAAdPodInfo(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
@@ -889,6 +878,17 @@ private class InteractiveMediaAdsLibraryPigeonInternalProxyApiCodecReaderWriter:
 
       if let instance = value as? IMAUniversalAdID {
         pigeonRegistrar.apiDelegate.pigeonApiIMAUniversalAdID(pigeonRegistrar).pigeonNewInstance(
+          pigeonInstance: instance
+        ) { _ in }
+        super.writeByte(128)
+        super.writeValue(
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(
+            forInstance: instance as AnyObject)!)
+        return
+      }
+
+      if let instance = value as? NSObject {
+        pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar).pigeonNewInstance(
           pigeonInstance: instance
         ) { _ in }
         super.writeByte(128)
@@ -4259,6 +4259,11 @@ protocol PigeonApiProtocolIMACompanionAdSlot {
 final class PigeonApiIMACompanionAdSlot: PigeonApiProtocolIMACompanionAdSlot {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMACompanionAdSlot
+  ///An implementation of [NSObject] used to access callback methods
+  var pigeonApiNSObject: PigeonApiNSObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMACompanionAdSlot
@@ -4630,6 +4635,11 @@ protocol PigeonApiProtocolIMAAdPodInfo {
 final class PigeonApiIMAAdPodInfo: PigeonApiProtocolIMAAdPodInfo {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAdPodInfo
+  ///An implementation of [NSObject] used to access callback methods
+  var pigeonApiNSObject: PigeonApiNSObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAdPodInfo
@@ -4779,6 +4789,11 @@ protocol PigeonApiProtocolIMAAd {
 final class PigeonApiIMAAd: PigeonApiProtocolIMAAd {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAAd
+  ///An implementation of [NSObject] used to access callback methods
+  var pigeonApiNSObject: PigeonApiNSObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAAd
@@ -4900,6 +4915,11 @@ protocol PigeonApiProtocolIMAUniversalAdID {
 final class PigeonApiIMAUniversalAdID: PigeonApiProtocolIMAUniversalAdID {
   unowned let pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateIMAUniversalAdID
+  ///An implementation of [NSObject] used to access callback methods
+  var pigeonApiNSObject: PigeonApiNSObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  }
+
   init(
     pigeonRegistrar: InteractiveMediaAdsLibraryPigeonProxyApiRegistrar,
     delegate: PigeonApiDelegateIMAUniversalAdID
