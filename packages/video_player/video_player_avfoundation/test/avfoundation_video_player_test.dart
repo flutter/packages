@@ -71,7 +71,9 @@ void main() {
         _,
       ) = setUpMockPlayer(playerId: 1);
       const int newPlayerId = 2;
-      when(api.create(any)).thenAnswer((_) async => newPlayerId);
+      const int textureId = 100;
+      when(api.createForTextureView(any)).thenAnswer((_) async =>
+          TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
@@ -88,13 +90,14 @@ void main() {
         ),
       );
 
-      final VerificationResult verification = verify(api.create(captureAny));
+      final VerificationResult verification =
+          verify(api.createForTextureView(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
-          const VideoPlayerTextureViewState(textureId: newPlayerId));
+          const VideoPlayerTextureViewState(textureId: textureId));
     });
 
     test('create with asset throws PlatformException for missing asset',
@@ -129,7 +132,9 @@ void main() {
         _,
       ) = setUpMockPlayer(playerId: 1);
       const int newPlayerId = 2;
-      when(api.create(any)).thenAnswer((_) async => newPlayerId);
+      const int textureId = 100;
+      when(api.createForTextureView(any)).thenAnswer((_) async =>
+          TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
 
       const String uri = 'https://example.com';
       final int? playerId = await player.create(
@@ -140,14 +145,15 @@ void main() {
         ),
       );
 
-      final VerificationResult verification = verify(api.create(captureAny));
+      final VerificationResult verification =
+          verify(api.createForTextureView(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, uri);
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
-          const VideoPlayerTextureViewState(textureId: newPlayerId));
+          const VideoPlayerTextureViewState(textureId: textureId));
     });
 
     test('create with network passes headers', () async {
@@ -156,7 +162,8 @@ void main() {
         MockAVFoundationVideoPlayerApi api,
         _,
       ) = setUpMockPlayer(playerId: 1);
-      when(api.create(any)).thenAnswer((_) async => 2);
+      when(api.createForTextureView(any)).thenAnswer(
+          (_) async => TexturePlayerIds(playerId: 2, textureId: 100));
 
       const Map<String, String> headers = <String, String>{
         'Authorization': 'Bearer token',
@@ -168,7 +175,8 @@ void main() {
           httpHeaders: headers,
         ),
       );
-      final VerificationResult verification = verify(api.create(captureAny));
+      final VerificationResult verification =
+          verify(api.createForTextureView(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.httpHeaders, headers);
@@ -181,19 +189,22 @@ void main() {
         _,
       ) = setUpMockPlayer(playerId: 1);
       const int newPlayerId = 2;
-      when(api.create(any)).thenAnswer((_) async => newPlayerId);
+      const int textureId = 100;
+      when(api.createForTextureView(any)).thenAnswer((_) async =>
+          TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
 
       const String fileUri = 'file:///foo/bar';
       final int? playerId = await player.create(
         DataSource(sourceType: DataSourceType.file, uri: fileUri),
       );
-      final VerificationResult verification = verify(api.create(captureAny));
+      final VerificationResult verification =
+          verify(api.createForTextureView(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, fileUri);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
-          const VideoPlayerTextureViewState(textureId: newPlayerId));
+          const VideoPlayerTextureViewState(textureId: textureId));
     });
 
     test('createWithOptions with asset', () async {
@@ -203,7 +214,9 @@ void main() {
         _,
       ) = setUpMockPlayer(playerId: 1);
       const int newPlayerId = 2;
-      when(api.create(any)).thenAnswer((_) async => newPlayerId);
+      const int textureId = 100;
+      when(api.createForTextureView(any)).thenAnswer((_) async =>
+          TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
 
       const String asset = 'someAsset';
       const String package = 'somePackage';
@@ -222,13 +235,14 @@ void main() {
         ),
       );
 
-      final VerificationResult verification = verify(api.create(captureAny));
+      final VerificationResult verification =
+          verify(api.createForTextureView(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
-          const VideoPlayerTextureViewState(textureId: newPlayerId));
+          const VideoPlayerTextureViewState(textureId: textureId));
     });
 
     test('createWithOptions with network', () async {
@@ -238,7 +252,9 @@ void main() {
         _,
       ) = setUpMockPlayer(playerId: 1);
       const int newPlayerId = 2;
-      when(api.create(any)).thenAnswer((_) async => newPlayerId);
+      const int textureId = 100;
+      when(api.createForTextureView(any)).thenAnswer((_) async =>
+          TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
 
       const String uri = 'https://example.com';
       final int? playerId = await player.createWithOptions(
@@ -252,14 +268,15 @@ void main() {
         ),
       );
 
-      final VerificationResult verification = verify(api.create(captureAny));
+      final VerificationResult verification =
+          verify(api.createForTextureView(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, uri);
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
-          const VideoPlayerTextureViewState(textureId: newPlayerId));
+          const VideoPlayerTextureViewState(textureId: textureId));
     });
 
     test('createWithOptions with network passes headers', () async {
@@ -269,7 +286,8 @@ void main() {
         _,
       ) = setUpMockPlayer(playerId: 1);
       const int newPlayerId = 2;
-      when(api.create(any)).thenAnswer((_) async => newPlayerId);
+      when(api.createForTextureView(any)).thenAnswer(
+          (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100));
 
       const Map<String, String> headers = <String, String>{
         'Authorization': 'Bearer token',
@@ -285,7 +303,8 @@ void main() {
         ),
       );
 
-      final VerificationResult verification = verify(api.create(captureAny));
+      final VerificationResult verification =
+          verify(api.createForTextureView(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.httpHeaders, headers);
@@ -299,7 +318,9 @@ void main() {
         _,
       ) = setUpMockPlayer(playerId: 1);
       const int newPlayerId = 2;
-      when(api.create(any)).thenAnswer((_) async => newPlayerId);
+      const int textureId = 100;
+      when(api.createForTextureView(any)).thenAnswer((_) async =>
+          TexturePlayerIds(playerId: newPlayerId, textureId: textureId));
 
       const String fileUri = 'file:///foo/bar';
       final int? playerId = await player.createWithOptions(
@@ -309,13 +330,14 @@ void main() {
         ),
       );
 
-      final VerificationResult verification = verify(api.create(captureAny));
+      final VerificationResult verification =
+          verify(api.createForTextureView(captureAny));
       final CreationOptions creationOptions =
           verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, fileUri);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
-          const VideoPlayerTextureViewState(textureId: newPlayerId));
+          const VideoPlayerTextureViewState(textureId: textureId));
     });
 
     test('createWithOptions with platform view', () async {
@@ -325,7 +347,7 @@ void main() {
         _,
       ) = setUpMockPlayer(playerId: 1);
       const int newPlayerId = 2;
-      when(api.create(any)).thenAnswer((_) async => newPlayerId);
+      when(api.createForPlatformView(any)).thenAnswer((_) async => newPlayerId);
 
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
@@ -337,10 +359,6 @@ void main() {
         ),
       );
 
-      final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
-      expect(creationOptions.viewType, PlatformVideoViewType.platformView);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
           const VideoPlayerPlatformViewState());

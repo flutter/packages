@@ -30,17 +30,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return (result == [NSNull null]) ? nil : result;
 }
 
-/// Pigeon equivalent of VideoViewType.
-@implementation FVPPlatformVideoViewTypeBox
-- (instancetype)initWithValue:(FVPPlatformVideoViewType)value {
-  self = [super init];
-  if (self) {
-    _value = value;
-  }
-  return self;
-}
-@end
-
 @interface FVPPlatformVideoViewCreationParams ()
 + (FVPPlatformVideoViewCreationParams *)fromList:(NSArray<id> *)list;
 + (nullable FVPPlatformVideoViewCreationParams *)nullableFromList:(NSArray<id> *)list;
@@ -50,6 +39,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @interface FVPCreationOptions ()
 + (FVPCreationOptions *)fromList:(NSArray<id> *)list;
 + (nullable FVPCreationOptions *)nullableFromList:(NSArray<id> *)list;
+- (NSArray<id> *)toList;
+@end
+
+@interface FVPTexturePlayerIds ()
++ (FVPTexturePlayerIds *)fromList:(NSArray<id> *)list;
++ (nullable FVPTexturePlayerIds *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -78,20 +73,16 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 
 @implementation FVPCreationOptions
 + (instancetype)makeWithUri:(NSString *)uri
-                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders
-                   viewType:(FVPPlatformVideoViewType)viewType {
+                httpHeaders:(NSDictionary<NSString *, NSString *> *)httpHeaders {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
   pigeonResult.uri = uri;
   pigeonResult.httpHeaders = httpHeaders;
-  pigeonResult.viewType = viewType;
   return pigeonResult;
 }
 + (FVPCreationOptions *)fromList:(NSArray<id> *)list {
   FVPCreationOptions *pigeonResult = [[FVPCreationOptions alloc] init];
   pigeonResult.uri = GetNullableObjectAtIndex(list, 0);
   pigeonResult.httpHeaders = GetNullableObjectAtIndex(list, 1);
-  FVPPlatformVideoViewTypeBox *boxedFVPPlatformVideoViewType = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.viewType = boxedFVPPlatformVideoViewType.value;
   return pigeonResult;
 }
 + (nullable FVPCreationOptions *)nullableFromList:(NSArray<id> *)list {
@@ -101,7 +92,30 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return @[
     self.uri ?: [NSNull null],
     self.httpHeaders ?: [NSNull null],
-    [[FVPPlatformVideoViewTypeBox alloc] initWithValue:self.viewType],
+  ];
+}
+@end
+
+@implementation FVPTexturePlayerIds
++ (instancetype)makeWithPlayerId:(NSInteger)playerId textureId:(NSInteger)textureId {
+  FVPTexturePlayerIds *pigeonResult = [[FVPTexturePlayerIds alloc] init];
+  pigeonResult.playerId = playerId;
+  pigeonResult.textureId = textureId;
+  return pigeonResult;
+}
++ (FVPTexturePlayerIds *)fromList:(NSArray<id> *)list {
+  FVPTexturePlayerIds *pigeonResult = [[FVPTexturePlayerIds alloc] init];
+  pigeonResult.playerId = [GetNullableObjectAtIndex(list, 0) integerValue];
+  pigeonResult.textureId = [GetNullableObjectAtIndex(list, 1) integerValue];
+  return pigeonResult;
+}
++ (nullable FVPTexturePlayerIds *)nullableFromList:(NSArray<id> *)list {
+  return (list) ? [FVPTexturePlayerIds fromList:list] : nil;
+}
+- (NSArray<id> *)toList {
+  return @[
+    @(self.playerId),
+    @(self.textureId),
   ];
 }
 @end
@@ -111,16 +125,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @implementation FVPMessagesPigeonCodecReader
 - (nullable id)readValueOfType:(UInt8)type {
   switch (type) {
-    case 129: {
-      NSNumber *enumAsNumber = [self readValue];
-      return enumAsNumber == nil
-                 ? nil
-                 : [[FVPPlatformVideoViewTypeBox alloc] initWithValue:[enumAsNumber integerValue]];
-    }
-    case 130:
+    case 129:
       return [FVPPlatformVideoViewCreationParams fromList:[self readValue]];
-    case 131:
+    case 130:
       return [FVPCreationOptions fromList:[self readValue]];
+    case 131:
+      return [FVPTexturePlayerIds fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -131,14 +141,13 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @end
 @implementation FVPMessagesPigeonCodecWriter
 - (void)writeValue:(id)value {
-  if ([value isKindOfClass:[FVPPlatformVideoViewTypeBox class]]) {
-    FVPPlatformVideoViewTypeBox *box = (FVPPlatformVideoViewTypeBox *)value;
+  if ([value isKindOfClass:[FVPPlatformVideoViewCreationParams class]]) {
     [self writeByte:129];
-    [self writeValue:(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])];
-  } else if ([value isKindOfClass:[FVPPlatformVideoViewCreationParams class]]) {
-    [self writeByte:130];
     [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FVPCreationOptions class]]) {
+    [self writeByte:130];
+    [self writeValue:[value toList]];
+  } else if ([value isKindOfClass:[FVPTexturePlayerIds class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
   } else {
@@ -202,22 +211,49 @@ void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMessenger> bin
   }
   {
     FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
-           initWithName:[NSString stringWithFormat:@"%@%@",
-                                                   @"dev.flutter.pigeon.video_player_avfoundation."
-                                                   @"AVFoundationVideoPlayerApi.create",
-                                                   messageChannelSuffix]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.video_player_avfoundation."
+                                             @"AVFoundationVideoPlayerApi.createForPlatformView",
+                                             messageChannelSuffix]
         binaryMessenger:binaryMessenger
                   codec:FVPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(createWithOptions:error:)],
+      NSCAssert([api respondsToSelector:@selector(createPlatformViewPlayerWithOptions:error:)],
                 @"FVPAVFoundationVideoPlayerApi api (%@) doesn't respond to "
-                @"@selector(createWithOptions:error:)",
+                @"@selector(createPlatformViewPlayerWithOptions:error:)",
+                api);
+      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
+        NSArray<id> *args = message;
+        FVPCreationOptions *arg_params = GetNullableObjectAtIndex(args, 0);
+        FlutterError *error;
+        NSNumber *output = [api createPlatformViewPlayerWithOptions:arg_params error:&error];
+        callback(wrapResult(output, error));
+      }];
+    } else {
+      [channel setMessageHandler:nil];
+    }
+  }
+  {
+    FlutterBasicMessageChannel *channel = [[FlutterBasicMessageChannel alloc]
+           initWithName:[NSString
+                            stringWithFormat:@"%@%@",
+                                             @"dev.flutter.pigeon.video_player_avfoundation."
+                                             @"AVFoundationVideoPlayerApi.createForTextureView",
+                                             messageChannelSuffix]
+        binaryMessenger:binaryMessenger
+                  codec:FVPGetMessagesCodec()];
+    if (api) {
+      NSCAssert([api respondsToSelector:@selector(createTexturePlayerWithOptions:error:)],
+                @"FVPAVFoundationVideoPlayerApi api (%@) doesn't respond to "
+                @"@selector(createTexturePlayerWithOptions:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
         FVPCreationOptions *arg_creationOptions = GetNullableObjectAtIndex(args, 0);
         FlutterError *error;
-        NSNumber *output = [api createWithOptions:arg_creationOptions error:&error];
+        FVPTexturePlayerIds *output = [api createTexturePlayerWithOptions:arg_creationOptions
+                                                                    error:&error];
         callback(wrapResult(output, error));
       }];
     } else {
