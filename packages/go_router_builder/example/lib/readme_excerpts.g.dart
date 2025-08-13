@@ -367,10 +367,10 @@ mixin _$DetailsRoute on RelativeGoRouteData {
   static DetailsRoute _fromState(GoRouterState state) => const DetailsRoute();
 
   @override
-  String get subpath => RelativeGoRouteData.$location('details');
+  String get subLocation => RelativeGoRouteData.$location('details');
 
   @override
-  String get relativeLocation => './$subpath';
+  String get relativeLocation => './$subLocation';
 
   @override
   void goRelative(BuildContext context) => context.go(relativeLocation);
