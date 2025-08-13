@@ -315,8 +315,8 @@ abstract class RelativeGoRouteData extends _GoRouteData {
     'GoRouteState to RelativeGoRouteData expando',
   );
 
-  /// The subpath of this route, e.g. person/p1
-  String get subpath => throw _GoRouteData.shouldBeGeneratedError;
+  /// The sub-location of this route, e.g. person/p1
+  String get subLocation => throw _GoRouteData.shouldBeGeneratedError;
 
   /// The relative location of this route, e.g. ./person/p1
   String get relativeLocation => throw _GoRouteData.shouldBeGeneratedError;
