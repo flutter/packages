@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:google_maps_flutter_platform_interface/src/types/utils/map_configuration_serialization.dart';
 
-const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+const String _kMapId = '000000000000000'; // Dummy map ID.
 
 void main() {
   test('empty serialization', () async {
@@ -20,26 +20,28 @@ void main() {
 
   test('complete serialization', () async {
     final MapConfiguration config = MapConfiguration(
-        compassEnabled: false,
-        mapToolbarEnabled: false,
-        cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-            northeast: const LatLng(30, 20), southwest: const LatLng(10, 40))),
-        mapType: MapType.normal,
-        minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
-        rotateGesturesEnabled: false,
-        scrollGesturesEnabled: false,
-        tiltGesturesEnabled: false,
-        trackCameraPosition: false,
-        zoomControlsEnabled: false,
-        zoomGesturesEnabled: false,
-        liteModeEnabled: false,
-        myLocationEnabled: false,
-        myLocationButtonEnabled: false,
-        padding: const EdgeInsets.all(5.0),
-        indoorViewEnabled: false,
-        trafficEnabled: false,
-        buildingsEnabled: false,
-        cloudMapId: _kCloudMapId);
+      compassEnabled: false,
+      mapToolbarEnabled: false,
+      cameraTargetBounds: CameraTargetBounds(LatLngBounds(
+          northeast: const LatLng(30, 20), southwest: const LatLng(10, 40))),
+      mapType: MapType.normal,
+      minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
+      rotateGesturesEnabled: false,
+      scrollGesturesEnabled: false,
+      tiltGesturesEnabled: false,
+      trackCameraPosition: false,
+      zoomControlsEnabled: false,
+      zoomGesturesEnabled: false,
+      liteModeEnabled: false,
+      myLocationEnabled: false,
+      myLocationButtonEnabled: false,
+      padding: const EdgeInsets.all(5.0),
+      indoorViewEnabled: false,
+      trafficEnabled: false,
+      buildingsEnabled: false,
+      mapId: _kMapId,
+      cloudMapId: _kMapId,
+    );
 
     final Map<String, Object> json = jsonForMapConfiguration(config);
 
@@ -72,7 +74,31 @@ void main() {
       'indoorEnabled': false,
       'trafficEnabled': false,
       'buildingsEnabled': false,
-      'cloudMapId': _kCloudMapId
+      'mapId': _kMapId,
+      'cloudMapId': _kMapId,
+    });
+  });
+
+  test('mapId preferred over cloudMapId', () {
+    const MapConfiguration config = MapConfiguration(
+      mapId: 'map-id',
+      cloudMapId: 'cloud-map-id',
+    );
+    final Map<String, Object> json = jsonForMapConfiguration(config);
+    expect(json, <String, Object>{
+      'mapId': 'map-id',
+      'cloudMapId': 'map-id',
+    });
+  });
+
+  test('mapId falls back to cloudMapId', () {
+    const MapConfiguration config = MapConfiguration(
+      cloudMapId: 'cloud-map-id',
+    );
+    final Map<String, Object> json = jsonForMapConfiguration(config);
+    expect(json, <String, Object>{
+      'mapId': 'cloud-map-id',
+      'cloudMapId': 'cloud-map-id',
     });
   });
 }

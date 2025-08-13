@@ -33,8 +33,8 @@ List<Object?> wrapResponse(
   return <Object?>[error.code, error.message, error.details];
 }
 
-/// Provides overrides for the constructors and static members of each proxy
-/// API.
+/// Provides overrides for the constructors and static members of each
+/// Dart proxy class.
 ///
 /// This is only intended to be used with unit tests to prevent errors from
 /// making message calls in a unit test.
@@ -313,8 +313,8 @@ class PigeonOverrides {
   }
 }
 
-/// An immutable object that serves as the base class for all ProxyApis and
-/// can provide functional copies of itself.
+/// An immutable object that serves as the base class for all Dart proxy classes
+/// and can provide functional copies of itself.
 ///
 /// All implementers are expected to be [immutable] as defined by the annotation
 /// and override [pigeon_copy] returning an instance of itself.
@@ -379,7 +379,7 @@ class PigeonInstanceManager {
   // 0 <= n < 2^16.
   static const int _maxDartCreatedIdentifier = 65536;
 
-  /// The default [PigeonInstanceManager] used by ProxyApis.
+  /// The default [PigeonInstanceManager] used by Dart proxy classes.
   ///
   /// On creation, this manager makes a call to clear the native
   /// InstanceManager. This is to prevent identifier conflicts after a host
