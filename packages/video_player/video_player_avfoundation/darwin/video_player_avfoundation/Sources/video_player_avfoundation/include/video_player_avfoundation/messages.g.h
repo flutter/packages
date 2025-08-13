@@ -148,7 +148,7 @@ extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMesseng
 - (void)seekTo:(NSInteger)position completion:(void (^)(FlutterError *_Nullable))completion;
 - (void)pauseWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable FVPNativeAudioTrackData *)getRawAudioTrackData:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FVPNativeAudioTrackData *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FVPVideoPlayerInstanceApi> *_Nullable api);

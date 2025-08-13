@@ -63,8 +63,7 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<int> create(_i2.CreationOptions? creationOptions) =>
-      (super.noSuchMethod(
+  _i4.Future<int> create(_i2.CreationOptions? creationOptions) => (super.noSuchMethod(
         Invocation.method(
           #create,
           [creationOptions],
@@ -114,8 +113,7 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
 /// A class which mocks [VideoPlayerInstanceApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockVideoPlayerInstanceApi extends _i1.Mock
-    implements _i2.VideoPlayerInstanceApi {
+class MockVideoPlayerInstanceApi extends _i1.Mock implements _i2.VideoPlayerInstanceApi {
   @override
   String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
         Invocation.getter(#pigeonVar_messageChannelSuffix),
@@ -200,25 +198,24 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<_i2.NativeAudioTrackData> getRawAudioTrackData() =>
-      (super.noSuchMethod(
+  _i4.Future<_i2.NativeAudioTrackData> getAudioTracks() => (super.noSuchMethod(
         Invocation.method(
-          #getRawAudioTrackData,
+          #getAudioTracks,
           [],
         ),
-        returnValue: _i4.Future<_i2.NativeAudioTrackData>.value(
-            _FakeNativeAudioTrackData_0(
+        returnValue:
+            _i4.Future<_i2.NativeAudioTrackData>.value(_FakeNativeAudioTrackData_0(
           this,
           Invocation.method(
-            #getRawAudioTrackData,
+            #getAudioTracks,
             [],
           ),
         )),
-        returnValueForMissingStub: _i4.Future<_i2.NativeAudioTrackData>.value(
-            _FakeNativeAudioTrackData_0(
+        returnValueForMissingStub:
+            _i4.Future<_i2.NativeAudioTrackData>.value(_FakeNativeAudioTrackData_0(
           this,
           Invocation.method(
-            #getRawAudioTrackData,
+            #getAudioTracks,
             [],
           ),
         )),

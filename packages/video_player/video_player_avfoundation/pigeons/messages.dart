@@ -113,10 +113,10 @@ class NativeAudioTrackData {
     this.assetTracks,
     this.mediaSelectionTracks,
   });
-  
+
   /// Asset-based tracks (for regular video files)
   List<AssetAudioTrackData>? assetTracks;
-  
+
   /// Media selection-based tracks (for HLS streams)
   List<MediaSelectionAudioTrackData>? mediaSelectionTracks;
 }
@@ -151,6 +151,6 @@ abstract class VideoPlayerInstanceApi {
   @ObjCSelector('seekTo:')
   void seekTo(int position);
   void pause();
-  @ObjCSelector('getRawAudioTrackData')
-  NativeAudioTrackData getRawAudioTrackData();
+  @ObjCSelector('getAudioTracks')
+  NativeAudioTrackData getAudioTracks();
 }

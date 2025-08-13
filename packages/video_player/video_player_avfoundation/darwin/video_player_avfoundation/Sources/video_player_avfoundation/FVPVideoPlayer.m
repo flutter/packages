@@ -490,7 +490,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return FVPCMTimeToMillis([[[_player currentItem] asset] duration]);
 }
 
-- (nullable FVPNativeAudioTrackData *)getRawAudioTrackData:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable FVPNativeAudioTrackData *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error {
   AVPlayerItem *currentItem = _player.currentItem;
   if (!currentItem || !currentItem.asset) {
     return [FVPNativeAudioTrackData makeWithAssetTracks:nil mediaSelectionTracks:nil];

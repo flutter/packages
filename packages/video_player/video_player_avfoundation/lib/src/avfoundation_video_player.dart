@@ -204,7 +204,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
     final VideoPlayerInstanceApi player = _playerWith(id: playerId);
-    final NativeAudioTrackData rawData = await player.getRawAudioTrackData();
+    final NativeAudioTrackData rawData = await player.getAudioTracks();
 
     final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
 

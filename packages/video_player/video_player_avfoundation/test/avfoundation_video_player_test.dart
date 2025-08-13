@@ -19,13 +19,9 @@ import 'avfoundation_video_player_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  (
-    AVFoundationVideoPlayer,
-    MockAVFoundationVideoPlayerApi,
-    MockVideoPlayerInstanceApi
-  ) setUpMockPlayer({required int playerId}) {
-    final MockAVFoundationVideoPlayerApi pluginApi =
-        MockAVFoundationVideoPlayerApi();
+  (AVFoundationVideoPlayer, MockAVFoundationVideoPlayerApi, MockVideoPlayerInstanceApi)
+      setUpMockPlayer({required int playerId}) {
+    final MockAVFoundationVideoPlayerApi pluginApi = MockAVFoundationVideoPlayerApi();
     final MockVideoPlayerInstanceApi instanceApi = MockVideoPlayerInstanceApi();
     final AVFoundationVideoPlayer player = AVFoundationVideoPlayer(
       pluginApi: pluginApi,
@@ -89,16 +85,14 @@ void main() {
       );
 
       final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
+      final CreationOptions creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
           const VideoPlayerTextureViewState(textureId: newPlayerId));
     });
 
-    test('create with asset throws PlatformException for missing asset',
-        () async {
+    test('create with asset throws PlatformException for missing asset', () async {
       final (
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
@@ -141,8 +135,7 @@ void main() {
       );
 
       final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
+      final CreationOptions creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, uri);
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
@@ -169,8 +162,7 @@ void main() {
         ),
       );
       final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
+      final CreationOptions creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.httpHeaders, headers);
     });
 
@@ -188,8 +180,7 @@ void main() {
         DataSource(sourceType: DataSourceType.file, uri: fileUri),
       );
       final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
+      final CreationOptions creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, fileUri);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
@@ -223,8 +214,7 @@ void main() {
       );
 
       final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
+      final CreationOptions creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
@@ -253,8 +243,7 @@ void main() {
       );
 
       final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
+      final CreationOptions creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, uri);
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
@@ -286,8 +275,7 @@ void main() {
       );
 
       final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
+      final CreationOptions creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.httpHeaders, headers);
       expect(playerId, newPlayerId);
     });
@@ -310,8 +298,7 @@ void main() {
       );
 
       final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
+      final CreationOptions creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, fileUri);
       expect(playerId, newPlayerId);
       expect(player.playerViewStates[newPlayerId],
@@ -338,12 +325,10 @@ void main() {
       );
 
       final VerificationResult verification = verify(api.create(captureAny));
-      final CreationOptions creationOptions =
-          verification.captured[0] as CreationOptions;
+      final CreationOptions creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.viewType, PlatformVideoViewType.platformView);
       expect(playerId, newPlayerId);
-      expect(player.playerViewStates[newPlayerId],
-          const VideoPlayerPlatformViewState());
+      expect(player.playerViewStates[newPlayerId], const VideoPlayerPlatformViewState());
     });
 
     test('setLooping', () async {
@@ -471,12 +456,10 @@ void main() {
           final MethodCall methodCall =
               const StandardMethodCodec().decodeMethodCall(message);
           if (methodCall.method == 'listen') {
-            await TestDefaultBinaryMessengerBinding
-                .instance.defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
-                    const StandardMethodCodec()
-                        .encodeSuccessEnvelope(<String, dynamic>{
+                    const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'initialized',
                       'duration': 98765,
                       'width': 1920,
@@ -484,22 +467,18 @@ void main() {
                     }),
                     (ByteData? data) {});
 
-            await TestDefaultBinaryMessengerBinding
-                .instance.defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
-                    const StandardMethodCodec()
-                        .encodeSuccessEnvelope(<String, dynamic>{
+                    const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'completed',
                     }),
                     (ByteData? data) {});
 
-            await TestDefaultBinaryMessengerBinding
-                .instance.defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
-                    const StandardMethodCodec()
-                        .encodeSuccessEnvelope(<String, dynamic>{
+                    const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'bufferingUpdate',
                       'values': <List<dynamic>>[
                         <int>[0, 1234],
@@ -508,43 +487,35 @@ void main() {
                     }),
                     (ByteData? data) {});
 
-            await TestDefaultBinaryMessengerBinding
-                .instance.defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
-                    const StandardMethodCodec()
-                        .encodeSuccessEnvelope(<String, dynamic>{
+                    const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'bufferingStart',
                     }),
                     (ByteData? data) {});
 
-            await TestDefaultBinaryMessengerBinding
-                .instance.defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
-                    const StandardMethodCodec()
-                        .encodeSuccessEnvelope(<String, dynamic>{
+                    const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'bufferingEnd',
                     }),
                     (ByteData? data) {});
 
-            await TestDefaultBinaryMessengerBinding
-                .instance.defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
-                    const StandardMethodCodec()
-                        .encodeSuccessEnvelope(<String, dynamic>{
+                    const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'isPlayingStateUpdate',
                       'isPlaying': true,
                     }),
                     (ByteData? data) {});
 
-            await TestDefaultBinaryMessengerBinding
-                .instance.defaultBinaryMessenger
+            await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
                 .handlePlatformMessage(
                     mockChannel,
-                    const StandardMethodCodec()
-                        .encodeSuccessEnvelope(<String, dynamic>{
+                    const StandardMethodCodec().encodeSuccessEnvelope(<String, dynamic>{
                       'event': 'isPlayingStateUpdate',
                       'isPlaying': false,
                     }),
@@ -625,12 +596,12 @@ void main() {
           ],
         );
 
-        when(instanceApi.getRawAudioTrackData()).thenAnswer((_) async => mockData);
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockData);
 
         final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
 
         expect(tracks, hasLength(2));
-        
+
         expect(tracks[0].id, 'audio_1');
         expect(tracks[0].label, 'English');
         expect(tracks[0].language, 'en');
@@ -649,7 +620,7 @@ void main() {
         expect(tracks[1].channelCount, 2);
         expect(tracks[1].codec, 'aac');
 
-        verify(instanceApi.getRawAudioTrackData()).called(1);
+        verify(instanceApi.getAudioTracks()).called(1);
       });
 
       test('returns audio tracks with partial metadata from HLS streams', () async {
@@ -678,12 +649,12 @@ void main() {
           ],
         );
 
-        when(instanceApi.getRawAudioTrackData()).thenAnswer((_) async => mockData);
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockData);
 
         final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
 
         expect(tracks, hasLength(2));
-        
+
         expect(tracks[0].id, 'hls_audio_0');
         expect(tracks[0].label, 'Default Audio');
         expect(tracks[0].language, 'und');
@@ -702,7 +673,7 @@ void main() {
         expect(tracks[1].channelCount, null);
         expect(tracks[1].codec, null);
 
-        verify(instanceApi.getRawAudioTrackData()).called(1);
+        verify(instanceApi.getAudioTracks()).called(1);
       });
 
       test('returns empty list when no audio tracks available', () async {
@@ -714,12 +685,12 @@ void main() {
 
         final NativeAudioTrackData mockData = NativeAudioTrackData();
 
-        when(instanceApi.getRawAudioTrackData()).thenAnswer((_) async => mockData);
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockData);
 
         final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
 
         expect(tracks, isEmpty);
-        verify(instanceApi.getRawAudioTrackData()).called(1);
+        verify(instanceApi.getAudioTracks()).called(1);
       });
 
       test('handles AVFoundation specific channel configurations', () async {
@@ -764,7 +735,7 @@ void main() {
           ],
         );
 
-        when(instanceApi.getRawAudioTrackData()).thenAnswer((_) async => mockData);
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockData);
 
         final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
 
@@ -774,7 +745,7 @@ void main() {
         expect(tracks[2].channelCount, 6);
         expect(tracks[2].codec, 'ac-3'); // AVFoundation specific codec format
 
-        verify(instanceApi.getRawAudioTrackData()).called(1);
+        verify(instanceApi.getAudioTracks()).called(1);
       });
 
       test('handles different sample rates common in iOS', () async {
@@ -829,7 +800,7 @@ void main() {
           ],
         );
 
-        when(instanceApi.getRawAudioTrackData()).thenAnswer((_) async => mockData);
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockData);
 
         final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
 
@@ -840,7 +811,7 @@ void main() {
         expect(tracks[3].sampleRate, 96000);
         expect(tracks[3].codec, 'alac'); // Apple Lossless codec
 
-        verify(instanceApi.getRawAudioTrackData()).called(1);
+        verify(instanceApi.getAudioTracks()).called(1);
       });
 
       test('handles multilingual tracks typical in iOS apps', () async {
@@ -895,7 +866,7 @@ void main() {
           ],
         );
 
-        when(instanceApi.getRawAudioTrackData()).thenAnswer((_) async => mockData);
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockData);
 
         final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
 
@@ -906,7 +877,7 @@ void main() {
         expect(tracks[3].language, 'ja');
         expect(tracks[3].label, '日本語'); // Unicode support
 
-        verify(instanceApi.getRawAudioTrackData()).called(1);
+        verify(instanceApi.getAudioTracks()).called(1);
       });
 
       test('throws PlatformException when AVFoundation method fails', () async {
@@ -916,7 +887,7 @@ void main() {
           MockVideoPlayerInstanceApi instanceApi,
         ) = setUpMockPlayer(playerId: 1);
 
-        when(instanceApi.getRawAudioTrackData()).thenThrow(
+        when(instanceApi.getAudioTracks()).thenThrow(
           PlatformException(
             code: 'AVFOUNDATION_ERROR',
             message: 'Failed to retrieve audio tracks from AVAsset',
@@ -928,7 +899,7 @@ void main() {
           throwsA(isA<PlatformException>()),
         );
 
-        verify(instanceApi.getRawAudioTrackData()).called(1);
+        verify(instanceApi.getAudioTracks()).called(1);
       });
 
       test('handles tracks with AVFoundation specific codec identifiers', () async {
@@ -973,7 +944,7 @@ void main() {
           ],
         );
 
-        when(instanceApi.getRawAudioTrackData()).thenAnswer((_) async => mockData);
+        when(instanceApi.getAudioTracks()).thenAnswer((_) async => mockData);
 
         final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
 
@@ -982,7 +953,7 @@ void main() {
         expect(tracks[1].codec, 'alac');
         expect(tracks[2].codec, 'ac-3');
 
-        verify(instanceApi.getRawAudioTrackData()).called(1);
+        verify(instanceApi.getAudioTracks()).called(1);
       });
     });
   });

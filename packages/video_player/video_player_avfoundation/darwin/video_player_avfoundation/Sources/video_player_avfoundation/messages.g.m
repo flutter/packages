@@ -604,14 +604,14 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
   {
     FlutterBasicMessageChannel *channel =
       [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.getRawAudioTrackData", messageChannelSuffix]
+        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.getAudioTracks", messageChannelSuffix]
         binaryMessenger:binaryMessenger
         codec:FVPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(getRawAudioTrackData:)], @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to @selector(getRawAudioTrackData:)", api);
+      NSCAssert([api respondsToSelector:@selector(getAudioTracks:)], @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to @selector(getAudioTracks:)", api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        FVPNativeAudioTrackData *output = [api getRawAudioTrackData:&error];
+        FVPNativeAudioTrackData *output = [api getAudioTracks:&error];
         callback(wrapResult(output, error));
       }];
     } else {
