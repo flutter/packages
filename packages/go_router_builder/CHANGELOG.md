@@ -1,3 +1,7 @@
+## 3.2.0
+
+- Adds support for`extension type`.
+
 ## 3.1.0
 
 - Updates dependencies to use the latest `analyzer`, `build`, and `source_gen`.
@@ -5,10 +9,6 @@
 - Migrates to the `element2` API.
 - Improves test code formatting consistency.
 - Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
-
-## 3.1.0
-
-- Adds support for`extension type`.
 
 ## 3.0.1
 
