@@ -18,6 +18,7 @@ List<RouteBase> get $appRoutes => [
   $myMaterialRouteWithKey,
   $fancyRoute,
   $myShellRouteData,
+  $detailsRoute,
 ];
 
 RouteBase get $homeRoute => GoRouteData.$route(
@@ -355,4 +356,34 @@ mixin _$MyGoRouteData on GoRouteData {
 
   @override
   void replace(BuildContext context) => context.replace(location);
+}
+
+RouteBase get $detailsRoute => RelativeGoRouteData.$route(
+  path: 'details',
+  factory: _$DetailsRoute._fromState,
+);
+
+mixin _$DetailsRoute on RelativeGoRouteData {
+  static DetailsRoute _fromState(GoRouterState state) => const DetailsRoute();
+
+  @override
+  String get location => RelativeGoRouteData.$location('details');
+
+  @override
+  String get relativeLocation => './$location';
+
+  @override
+  void goRelative(BuildContext context) => context.go(relativeLocation);
+
+  @override
+  Future<T?> pushRelative<T>(BuildContext context) =>
+      context.push<T>(relativeLocation);
+
+  @override
+  void pushReplacementRelative(BuildContext context) =>
+      context.pushReplacement(relativeLocation);
+
+  @override
+  void replaceRelative(BuildContext context) =>
+      context.replace(relativeLocation);
 }
