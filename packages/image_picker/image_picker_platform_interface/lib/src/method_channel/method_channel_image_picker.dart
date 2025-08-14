@@ -36,21 +36,6 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
   }
 
   @override
-  Future<List<XFile>> getMultiVideoWithOptions({
-    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
-  }) async {
-    final List<dynamic>? paths = await _getMultiVideoPath(
-      maxDuration: options.maxDuration,
-      limit: options.limit,
-    );
-    if (paths == null) {
-      return <XFile>[];
-    }
-
-    return paths.map((dynamic path) => XFile(path as String)).toList();
-  }
-
-  @override
   Future<List<PickedFile>?> pickMultiImage({
     double? maxWidth,
     double? maxHeight,
@@ -95,19 +80,6 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
         'maxHeight': maxHeight,
         'imageQuality': imageQuality,
         'requestFullMetadata': requestFullMetadata,
-        'limit': limit,
-      },
-    );
-  }
-
-  Future<List<dynamic>?> _getMultiVideoPath({
-    Duration? maxDuration,
-    int? limit,
-  }) {
-    return _channel.invokeMethod<List<dynamic>?>(
-      'pickMultiVideo',
-      <String, dynamic>{
-        'maxDuration': maxDuration?.inSeconds,
         'limit': limit,
       },
     );
