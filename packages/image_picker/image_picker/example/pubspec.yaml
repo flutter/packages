@@ -31,13 +31,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  image_picker_android: {path: ../../../../packages/image_picker/image_picker_android}
-  image_picker_for_web: {path: ../../../../packages/image_picker/image_picker_for_web}
-  image_picker_ios: {path: ../../../../packages/image_picker/image_picker_ios}
-  image_picker_linux: {path: ../../../../packages/image_picker/image_picker_linux}
-  image_picker_macos: {path: ../../../../packages/image_picker/image_picker_macos}
-  image_picker_platform_interface: {path: ../../../../packages/image_picker/image_picker_platform_interface}
-  image_picker_windows: {path: ../../../../packages/image_picker/image_picker_windows}

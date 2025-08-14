@@ -160,20 +160,6 @@ class ImagePickerMacOS extends CameraDelegatingImagePickerPlatform {
     return files;
   }
 
-  @override
-  Future<List<XFile>> getMultiVideoWithOptions(
-      {MultiVideoPickerOptions options =
-          const MultiVideoPickerOptions()}) async {
-    // TODO(stuartmorgan): Add a native implementation that can use
-    // PHPickerViewController on macOS 13+, with this as a fallback for
-    // older OS versions: https://github.com/flutter/flutter/issues/125829.
-    const XTypeGroup typeGroup =
-        XTypeGroup(uniformTypeIdentifiers: <String>['public.movie']);
-    final List<XFile> files = await fileSelector
-        .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-    return files;
-  }
-
   // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not currently
   // supported. If any of these arguments are supplied, they will be silently
   // ignored.

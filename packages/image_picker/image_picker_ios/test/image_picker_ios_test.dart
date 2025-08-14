@@ -97,16 +97,6 @@ class _ApiLogger implements TestHostImagePickerApi {
     }));
     return returnValue as String?;
   }
-
-  @override
-  Future<List<String>> pickMultiVideo(
-      int? maxDurationSeconds, int? limit) async {
-    calls.add(_LoggedMethodCall('pickMultiVideo', arguments: <String, dynamic>{
-      'maxDuration': maxDurationSeconds,
-      'limit': limit,
-    }));
-    return returnValue as List<String>;
-  }
 }
 
 void main() {
@@ -149,44 +139,6 @@ void main() {
             'cameraDevice': SourceCamera.rear,
             'requestFullMetadata': true,
           }),
-        ],
-      );
-    });
-  });
-
-  group('#getMultiVideoWithOptions', () {
-    test('calls the method correctly', () async {
-      log.returnValue = <String>['/foo.mp4', 'bar.mp4'];
-      await picker.getMultiVideoWithOptions();
-
-      expect(
-        log.calls,
-        <_LoggedMethodCall>[
-          const _LoggedMethodCall('pickMultiVideo',
-              arguments: <String, dynamic>{
-                'maxDuration': null,
-                'limit': null,
-              }),
-        ],
-      );
-    });
-
-    test('passes the arguments correctly', () async {
-      log.returnValue = <String>[];
-      await picker.getMultiVideoWithOptions(
-          options: const MultiVideoPickerOptions(
-        maxDuration: Duration(seconds: 10),
-        limit: 5,
-      ));
-
-      expect(
-        log.calls,
-        <_LoggedMethodCall>[
-          const _LoggedMethodCall('pickMultiVideo',
-              arguments: <String, dynamic>{
-                'maxDuration': 10,
-                'limit': 5,
-              }),
         ],
       );
     });

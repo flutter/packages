@@ -300,41 +300,6 @@ public class ImagePickerPluginTest {
   }
 
   @Test
-  public void pickVideos_invokesChooseMultiVideoFromGallery() {
-    plugin.pickVideos(
-        SOURCE_GALLERY,
-        DEFAULT_VIDEO_OPTIONS,
-        GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER,
-        mockResult);
-    verify(mockImagePickerDelegate)
-        .chooseMultiVideoFromGallery(any(), eq(false), eq(Integer.MAX_VALUE), any());
-    verifyNoInteractions(mockResult);
-  }
-
-  @Test
-  public void pickVideos_usingPhotoPicker_invokesChooseMultiVideoFromGallery() {
-    plugin.pickVideos(
-        SOURCE_GALLERY,
-        DEFAULT_VIDEO_OPTIONS,
-        GENERAL_OPTIONS_ALLOW_MULTIPLE_USE_PHOTO_PICKER,
-        mockResult);
-    verify(mockImagePickerDelegate)
-        .chooseMultiVideoFromGallery(any(), eq(true), eq(Integer.MAX_VALUE), any());
-    verifyNoInteractions(mockResult);
-  }
-
-  @Test
-  public void pickVideos_withLimit5_invokesChooseMultiVideoFromGallery() {
-    plugin.pickVideos(
-        SOURCE_GALLERY,
-        DEFAULT_VIDEO_OPTIONS,
-        GENERAL_OPTIONS_ALLOW_MULTIPLE_DONT_USE_PHOTO_PICKER_WITH_LIMIT,
-        mockResult);
-    verify(mockImagePickerDelegate).chooseMultiVideoFromGallery(any(), eq(false), eq(5), any());
-    verifyNoInteractions(mockResult);
-  }
-
-  @Test
   public void onConstructor_whenContextTypeIsActivity_shouldNotCrash() {
     new ImagePickerPlugin(mockImagePickerDelegate, mockActivity);
     assertTrue(

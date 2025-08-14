@@ -298,34 +298,6 @@ class ImagePicker {
     );
   }
 
-  /// Returns a [List<XFile>] of the videos that were picked.
-  ///
-  /// The returned [List<XFile>] is intended to be used within a single app
-  /// session. Do not save the file path and use it across sessions.
-  ///
-  /// The videos come from the gallery.
-  ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured
-  /// videos. If no [maxDuration] is specified, the maximum duration will be
-  /// infinite. This value may be ignored by platforms that cannot support it.
-  ///
-  /// The `limit` parameter modifies the maximum number of videos that can be
-  /// selected. This value may be ignored by platforms that cannot support it.
-  ///
-  /// The method can throw a [PlatformException] if the video selection process
-  /// fails.
-  Future<List<XFile>> pickMultiVideo({
-    Duration? maxDuration,
-    int? limit,
-  }) {
-    return platform.getMultiVideoWithOptions(
-      options: MultiVideoPickerOptions(
-        maxDuration: maxDuration,
-        limit: limit,
-      ),
-    );
-  }
-
   /// Retrieve the lost [XFile] when [pickImage], [pickMultiImage] or [pickVideo] failed because the MainActivity
   /// is destroyed. (Android only)
   ///

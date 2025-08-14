@@ -261,27 +261,6 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     return path != null ? XFile(path) : null;
   }
 
-  @override
-  Future<List<XFile>> getMultiVideoWithOptions({
-    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
-  }) async {
-    final List<String> paths = await _hostApi.pickVideos(
-      SourceSpecification(type: SourceType.gallery),
-      VideoSelectionOptions(maxDurationSeconds: options.maxDuration?.inSeconds),
-      GeneralOptions(
-        allowMultiple: true,
-        usePhotoPicker: useAndroidPhotoPicker,
-        limit: options.limit,
-      ),
-    );
-
-    if (paths.isEmpty) {
-      return <XFile>[];
-    }
-
-    return paths.map((String path) => XFile(path)).toList();
-  }
-
   MediaSelectionOptions _mediaOptionsToMediaSelectionOptions(
       MediaOptions mediaOptions) {
     final ImageSelectionOptions imageSelectionOptions =

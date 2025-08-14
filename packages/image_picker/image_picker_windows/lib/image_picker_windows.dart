@@ -184,17 +184,6 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     return files;
   }
 
-  @override
-  Future<List<XFile>> getMultiVideoWithOptions(
-      {MultiVideoPickerOptions options =
-          const MultiVideoPickerOptions()}) async {
-    const XTypeGroup typeGroup =
-        XTypeGroup(label: 'Videos', extensions: videoFormats);
-    final List<XFile> files = await fileSelector
-        .openFiles(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
-    return files;
-  }
-
   // `maxWidth`, `maxHeight`, and `imageQuality` arguments are not
   // supported on Windows. If any of these arguments is supplied,
   // they will be silently ignored by the Windows version of the plugin.

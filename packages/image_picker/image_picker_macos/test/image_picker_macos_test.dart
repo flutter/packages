@@ -130,17 +130,6 @@ void main() {
       await expectLater(
           plugin.getVideo(source: ImageSource.camera), throwsStateError);
     });
-
-    test('getMultiVideoWithOptions passes the accepted type groups correctly',
-        () async {
-      await plugin.getMultiVideoWithOptions();
-
-      final VerificationResult result = verify(
-          mockFileSelectorPlatform.openFiles(
-              acceptedTypeGroups: captureAnyNamed('acceptedTypeGroups')));
-      expect(capturedTypeGroups(result)[0].uniformTypeIdentifiers,
-          <String>['public.movie']);
-    });
   });
 
   group('media', () {

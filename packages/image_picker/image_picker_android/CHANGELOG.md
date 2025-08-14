@@ -1,7 +1,3 @@
-## 0.8.13
-
-* Adds support for `getMultiVideo`.
-
 ## 0.8.12+25
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support.

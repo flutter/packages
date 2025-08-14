@@ -79,10 +79,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _playVideo(XFile? file) async {
     if (file != null && mounted) {
       await _disposeVideoController();
-      final VideoPlayerController controller =
-          VideoPlayerController.file(File(file.path));
+      late VideoPlayerController controller;
+
+      controller = VideoPlayerController.file(File(file.path));
       _controller = controller;
-      await controller.setVolume(1.0);
+      const double volume = 1.0;
+      await controller.setVolume(volume);
       await controller.initialize();
       await controller.setLooping(true);
       await controller.play();
@@ -93,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _onImageButtonPressed(
     ImageSource source, {
     required BuildContext context,
-    bool allowMultiple = false,
+    bool isMultiImage = false,
     bool isMedia = false,
   }) async {
     if (_controller != null) {
@@ -101,20 +103,13 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     if (context.mounted) {
       if (_isVideo) {
-        final List<XFile> files;
-        if (allowMultiple) {
-          files = await _picker.getMultiVideoWithOptions();
-        } else {
-          final XFile? file = await _picker.getVideo(
-              source: source, maxDuration: const Duration(seconds: 10));
-          files = <XFile>[if (file != null) file];
+        final XFile? file = await _picker.getVideo(
+            source: source, maxDuration: const Duration(seconds: 10));
+        if (file != null && context.mounted) {
+          _showPickedSnackBar(context, <XFile>[file]);
         }
-        if (files.isNotEmpty && context.mounted) {
-          _showPickedSnackBar(context, files);
-          // Just play the first file, to keep the example simple.
-          await _playVideo(files.first);
-        }
-      } else if (allowMultiple) {
+        await _playVideo(file);
+      } else if (isMultiImage) {
         await _displayPickImageDialog(context, true, (double? maxWidth,
             double? maxHeight, int? quality, int? limit) async {
           try {
@@ -126,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
             final List<XFile> pickedFileList = isMedia
                 ? await _picker.getMedia(
                     options: MediaOptions(
-                      allowMultiple: allowMultiple,
+                      allowMultiple: isMultiImage,
                       imageOptions: imageOptions,
                       limit: limit,
                     ),
@@ -156,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
             final List<XFile> pickedFileList = <XFile>[];
             final XFile? media = _firstOrNull(await _picker.getMedia(
               options: MediaOptions(
-                  allowMultiple: allowMultiple,
+                  allowMultiple: isMultiImage,
                   imageOptions: ImageOptions(
                     maxWidth: maxWidth,
                     maxHeight: maxHeight,
@@ -295,7 +290,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _buildInlineVideoPlayer(int index) {
     final VideoPlayerController controller =
         VideoPlayerController.file(File(_mediaFileList![index].path));
-    controller.setVolume(1.0);
+    const double volume = 1.0;
+    controller.setVolume(volume);
     controller.initialize();
     controller.setLooping(true);
     controller.play();
@@ -318,7 +314,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (response.file != null) {
       if (response.type == RetrieveType.video) {
         _isVideo = true;
-        await _playVideo(response.files?.firstOrNull);
+        await _playVideo(response.file);
       } else {
         _isVideo = false;
         setState(() {
@@ -384,8 +380,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 _onImageButtonPressed(ImageSource.gallery, context: context);
               },
               heroTag: 'image0',
-              tooltip: 'Pick image from gallery',
-              label: const Text('Pick image from gallery'),
+              tooltip: 'Pick Image from gallery',
+              label: const Text('Pick Image from gallery'),
               icon: const Icon(Icons.photo),
             ),
           ),
@@ -397,12 +393,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 _onImageButtonPressed(
                   ImageSource.gallery,
                   context: context,
-                  allowMultiple: true,
+                  isMultiImage: true,
+                  isMedia: true,
                 );
               },
-              heroTag: 'image1',
-              tooltip: 'Pick multiple images',
-              label: const Text('Pick multiple images'),
+              heroTag: 'multipleMedia',
+              tooltip: 'Pick Multiple Media from gallery',
+              label: const Text('Pick Multiple Media from gallery'),
               icon: const Icon(Icons.photo_library),
             ),
           ),
@@ -418,9 +415,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               heroTag: 'media',
-              tooltip: 'Pick item from gallery',
-              label: const Text('Pick item from gallery'),
-              icon: const Icon(Icons.photo_outlined),
+              tooltip: 'Pick Single Media from gallery',
+              label: const Text('Pick Single Media from gallery'),
+              icon: const Icon(Icons.photo_library),
             ),
           ),
           Padding(
@@ -431,14 +428,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 _onImageButtonPressed(
                   ImageSource.gallery,
                   context: context,
-                  allowMultiple: true,
-                  isMedia: true,
+                  isMultiImage: true,
                 );
               },
-              heroTag: 'multipleMedia',
-              tooltip: 'Pick multiple items',
-              label: const Text('Pick multiple items'),
-              icon: const Icon(Icons.photo_library_outlined),
+              heroTag: 'image1',
+              tooltip: 'Pick Multiple Image from gallery',
+              label: const Text('Pick Multiple Image from gallery'),
+              icon: const Icon(Icons.photo_library),
             ),
           ),
           Padding(
@@ -449,8 +445,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 _onImageButtonPressed(ImageSource.camera, context: context);
               },
               heroTag: 'image2',
-              tooltip: 'Take a photo',
-              label: const Text('Take a photo'),
+              tooltip: 'Take a Photo',
+              label: const Text('Take a Photo'),
               icon: const Icon(Icons.camera_alt),
             ),
           ),
@@ -462,24 +458,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 _isVideo = true;
                 _onImageButtonPressed(ImageSource.gallery, context: context);
               },
-              heroTag: 'video',
-              tooltip: 'Pick video from gallery',
-              label: const Text('Pick video from gallery'),
-              icon: const Icon(Icons.video_file),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 16.0),
-            child: FloatingActionButton.extended(
-              backgroundColor: Colors.red,
-              onPressed: () {
-                _isVideo = true;
-                _onImageButtonPressed(ImageSource.gallery,
-                    context: context, allowMultiple: true);
-              },
-              heroTag: 'multiVideo',
-              tooltip: 'Pick multiple videos',
-              label: const Text('Pick multiple videos'),
+              heroTag: 'video0',
+              tooltip: 'Pick Video from gallery',
+              label: const Text('Pick Video from gallery'),
               icon: const Icon(Icons.video_library),
             ),
           ),
@@ -491,9 +472,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 _isVideo = true;
                 _onImageButtonPressed(ImageSource.camera, context: context);
               },
-              heroTag: 'takeVideo',
-              tooltip: 'Take a video',
-              label: const Text('Take a video'),
+              heroTag: 'video1',
+              tooltip: 'Take a Video',
+              label: const Text('Take a Video'),
               icon: const Icon(Icons.videocam),
             ),
           ),
