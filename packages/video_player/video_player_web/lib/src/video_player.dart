@@ -150,6 +150,16 @@ class VideoPlayer {
       // The rejection handler is called with a DOMException.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play
       final web.DOMException exception = e as web.DOMException;
+      // Some interruptions are benign and expected per modern browser behavior
+      // (e.g., an immediate pause(), a new load(), or media reaching its end)
+      // and should not be treated as errors. Chrome reports these as:
+      // "The play() request was interrupted by ...". See:
+      // https://developer.chrome.com/blog/play-request-was-interrupted
+      final String message = exception.message;
+      if (message.contains('The play() request was interrupted')) {
+        // Ignore non-fatal, expected interruptions.
+        return null;
+      }
       _eventController.addError(PlatformException(
         code: exception.name,
         message: exception.message,
@@ -306,8 +316,7 @@ class VideoPlayer {
 
   // Sends an [VideoEventType.initialized] [VideoEvent] with info about the wrapped video.
   void _sendInitialized() {
-    final Duration? duration =
-        convertNumVideoDurationToPluginDuration(_videoElement.duration);
+    final Duration? duration = convertNumVideoDurationToPluginDuration(_videoElement.duration);
 
     final Size? size = _videoElement.videoHeight.isFinite
         ? Size(
@@ -334,9 +343,7 @@ class VideoPlayer {
     if (_isBuffering != buffering) {
       _isBuffering = buffering;
       _eventController.add(VideoEvent(
-        eventType: _isBuffering
-            ? VideoEventType.bufferingStart
-            : VideoEventType.bufferingEnd,
+        eventType: _isBuffering ? VideoEventType.bufferingStart : VideoEventType.bufferingEnd,
       ));
     }
   }
