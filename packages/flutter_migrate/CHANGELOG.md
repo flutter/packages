@@ -1,6 +1,7 @@
-## NEXT
+## 0.1.1+1
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Add ios-language error handling for Flutter 3.35
 
 ## 0.0.1+4
 

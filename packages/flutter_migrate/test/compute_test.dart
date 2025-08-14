@@ -90,9 +90,9 @@ void main() {
 ''');
     environment =
         await FlutterToolsEnvironment.initializeFlutterToolsEnvironment(
-          envProcessManager,
-          logger,
-        );
+      envProcessManager,
+      logger,
+    );
     context = MigrateContext(
       flutterProject: flutterProject,
       skippedPrefixes: <String>{},
@@ -142,12 +142,11 @@ void main() {
           workingDir.createSync(recursive: true);
           final MigrateTargetFlutterProject targetProject =
               MigrateTargetFlutterProject(
-                path: null,
-                directory: targetDir,
-                name: 'base',
-                androidLanguage: 'java',
-                iosLanguage: 'objc',
-              );
+            path: null,
+            directory: targetDir,
+            name: 'base',
+            androidLanguage: 'java',
+          );
 
           await targetProject.createProject(
             context,
@@ -181,12 +180,11 @@ void main() {
           workingDir.createSync(recursive: true);
           final MigrateBaseFlutterProject baseProject =
               MigrateBaseFlutterProject(
-                path: null,
-                directory: baseDir,
-                name: 'base',
-                androidLanguage: 'java',
-                iosLanguage: 'objc',
-              );
+            path: null,
+            directory: baseDir,
+            name: 'base',
+            androidLanguage: 'java',
+          );
 
           await baseProject.createProject(
             context,
@@ -235,20 +233,18 @@ void main() {
 
           final MigrateBaseFlutterProject baseProject =
               MigrateBaseFlutterProject(
-                path: 'some_existing_base_path',
-                directory: baseDir,
-                name: 'base',
-                androidLanguage: 'java',
-                iosLanguage: 'objc',
-              );
+            path: 'some_existing_base_path',
+            directory: baseDir,
+            name: 'base',
+            androidLanguage: 'java',
+          );
           final MigrateTargetFlutterProject targetProject =
               MigrateTargetFlutterProject(
-                path: 'some_existing_target_path',
-                directory: targetDir,
-                name: 'base',
-                androidLanguage: 'java',
-                iosLanguage: 'objc',
-              );
+            path: 'some_existing_target_path',
+            directory: targetDir,
+            name: 'base',
+            androidLanguage: 'java',
+          );
 
           await baseProject.createProject(
             context,
@@ -511,101 +507,73 @@ migration:
         );
 
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.root]!
+          revisions.config.platformConfigs[FlutterProjectComponent.root]!
               .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.android]!
+          revisions.config.platformConfigs[FlutterProjectComponent.android]!
               .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.ios]!
+          revisions.config.platformConfigs[FlutterProjectComponent.ios]!
               .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.linux]!
+          revisions.config.platformConfigs[FlutterProjectComponent.linux]!
               .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.macos]!
+          revisions.config.platformConfigs[FlutterProjectComponent.macos]!
               .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.web]!
+          revisions.config.platformConfigs[FlutterProjectComponent.web]!
               .createRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.windows]!
+          revisions.config.platformConfigs[FlutterProjectComponent.windows]!
               .createRevision,
           '36427af29421f406ac95ff55ea31d1dc49a45b5f',
         );
 
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.root]!
+          revisions.config.platformConfigs[FlutterProjectComponent.root]!
               .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.android]!
+          revisions.config.platformConfigs[FlutterProjectComponent.android]!
               .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.ios]!
+          revisions.config.platformConfigs[FlutterProjectComponent.ios]!
               .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.linux]!
+          revisions.config.platformConfigs[FlutterProjectComponent.linux]!
               .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.macos]!
+          revisions.config.platformConfigs[FlutterProjectComponent.macos]!
               .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.web]!
+          revisions.config.platformConfigs[FlutterProjectComponent.web]!
               .baseRevision,
           '9b2d32b605630f28625709ebd9d78ab3016b2bf6',
         );
         expect(
-          revisions
-              .config
-              .platformConfigs[FlutterProjectComponent.windows]!
+          revisions.config.platformConfigs[FlutterProjectComponent.windows]!
               .baseRevision,
           '36427af29421f406ac95ff55ea31d1dc49a45b5f',
         );
@@ -645,16 +613,14 @@ migration:
           directory: baseDir,
           name: 'base',
           androidLanguage: 'java',
-          iosLanguage: 'objc',
         );
         final MigrateTargetFlutterProject targetProject =
             MigrateTargetFlutterProject(
-              path: null,
-              directory: targetDir,
-              name: 'base',
-              androidLanguage: 'java',
-              iosLanguage: 'objc',
-            );
+          path: null,
+          directory: targetDir,
+          name: 'base',
+          androidLanguage: 'java',
+        );
 
         await baseProject.createProject(
           context,
@@ -815,8 +781,8 @@ migration:
         );
         expect(
           canonicalizedDiffResults[canonicalize(
-                'android/app/src/main/AndroidManifest.xml',
-              )]!
+            'android/app/src/main/AndroidManifest.xml',
+          )]!
               .diff,
           contains(r'''
 @@ -1,39 +1,34 @@
@@ -895,16 +861,14 @@ migration:
           directory: baseDir,
           name: 'base',
           androidLanguage: 'java',
-          iosLanguage: 'objc',
         );
         final MigrateTargetFlutterProject targetProject =
             MigrateTargetFlutterProject(
-              path: null,
-              directory: targetDir,
-              name: 'base',
-              androidLanguage: 'java',
-              iosLanguage: 'objc',
-            );
+          path: null,
+          directory: targetDir,
+          name: 'base',
+          androidLanguage: 'java',
+        );
 
         await baseProject.createProject(
           context,

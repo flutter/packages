@@ -22,9 +22,9 @@ class MigrateUtils {
     required Logger logger,
     required FileSystem fileSystem,
     required ProcessManager processManager,
-  }) : _processManager = processManager,
-       _logger = logger,
-       _fileSystem = fileSystem;
+  })  : _processManager = processManager,
+        _logger = logger,
+        _fileSystem = fileSystem;
 
   final Logger _logger;
   final FileSystem _fileSystem;
@@ -104,7 +104,6 @@ class MigrateUtils {
     required String name,
     bool legacyNameParameter = false,
     required String androidLanguage,
-    required String iosLanguage,
     required String outputDirectory,
     String? createVersion,
     List<String> platforms = const <String>[],
@@ -123,7 +122,7 @@ class MigrateUtils {
       cmdArgs.add('--project-name=$name');
     }
     cmdArgs.add('--android-language=$androidLanguage');
-    cmdArgs.add('--ios-language=$iosLanguage');
+
     if (platforms.isNotEmpty) {
       String platformsArg = '--platforms=';
       for (int i = 0; i < platforms.length; i++) {
@@ -146,8 +145,6 @@ class MigrateUtils {
     );
     final String error = result.stderr as String;
 
-    // Catch errors due to parameters not existing.
-
     // Old versions of the tool does not include the platforms option.
     if (error.contains('Could not find an option named "platforms".')) {
       return createFromTemplates(
@@ -155,9 +152,8 @@ class MigrateUtils {
         name: name,
         legacyNameParameter: legacyNameParameter,
         androidLanguage: androidLanguage,
-        iosLanguage: iosLanguage,
         outputDirectory: outputDirectory,
-        iterationsAllowed: iterationsAllowed--,
+        iterationsAllowed: iterationsAllowed - 1,
       );
     }
     // Old versions of the tool does not include the project-name option.
@@ -169,10 +165,9 @@ class MigrateUtils {
         name: name,
         legacyNameParameter: true,
         androidLanguage: androidLanguage,
-        iosLanguage: iosLanguage,
         outputDirectory: outputDirectory,
         platforms: platforms,
-        iterationsAllowed: iterationsAllowed--,
+        iterationsAllowed: iterationsAllowed - 1,
       );
     }
     if (error.contains('Multiple output directories specified.')) {
@@ -182,9 +177,8 @@ class MigrateUtils {
           name: name,
           legacyNameParameter: legacyNameParameter,
           androidLanguage: androidLanguage,
-          iosLanguage: iosLanguage,
           outputDirectory: outputDirectory,
-          iterationsAllowed: iterationsAllowed--,
+          iterationsAllowed: iterationsAllowed - 1,
         );
       }
     }
@@ -365,8 +359,7 @@ class MigrateUtils {
 
   /// Returns true if the file does not contain any git conflit markers.
   bool conflictsResolved(String contents) {
-    final bool hasMarker =
-        contents.contains('>>>>>>>') ||
+    final bool hasMarker = contents.contains('>>>>>>>') ||
         contents.contains('=======') ||
         contents.contains('<<<<<<<');
     return !hasMarker;
@@ -421,12 +414,11 @@ void printCommandText(
   bool? standalone = true,
   bool newlineAfter = true,
 }) {
-  final String prefix =
-      standalone == null
-          ? ''
-          : (standalone
-              ? 'dart run <flutter_migrate_dir>${Platform.pathSeparator}bin${Platform.pathSeparator}flutter_migrate.dart '
-              : 'flutter migrate ');
+  final String prefix = standalone == null
+      ? ''
+      : (standalone
+          ? 'dart run <flutter_migrate_dir>${Platform.pathSeparator}bin${Platform.pathSeparator}flutter_migrate.dart '
+          : 'flutter migrate ');
   printCommand('$prefix$command', logger, newlineAfter: newlineAfter);
 }
 
@@ -437,10 +429,10 @@ enum DiffType { command, addition, deletion, ignored, none }
 /// file or deletion of an existing file.
 class DiffResult {
   DiffResult({required this.diffType, this.diff, this.exitCode})
-    : assert(
-        diffType == DiffType.command && exitCode != null ||
-            diffType != DiffType.command && exitCode == null,
-      );
+      : assert(
+          diffType == DiffType.command && exitCode != null ||
+              diffType != DiffType.command && exitCode == null,
+        );
 
   /// The diff string output by git.
   final String? diff;
@@ -457,8 +449,8 @@ class DiffResult {
 abstract class MergeResult {
   /// Initializes a MergeResult based off of a ProcessResult.
   MergeResult(ProcessResult result, this.localPath)
-    : hasConflict = result.exitCode != 0,
-      exitCode = result.exitCode;
+      : hasConflict = result.exitCode != 0,
+        exitCode = result.exitCode;
 
   /// Manually initializes a MergeResult with explicit values.
   MergeResult.explicit({
@@ -481,7 +473,7 @@ abstract class MergeResult {
 class StringMergeResult extends MergeResult {
   /// Initializes a BinaryMergeResult based off of a ProcessResult.
   StringMergeResult(super.result, super.localPath)
-    : mergedString = result.stdout as String;
+      : mergedString = result.stdout as String;
 
   /// Manually initializes a StringMergeResult with explicit values.
   StringMergeResult.explicit({
@@ -499,7 +491,7 @@ class StringMergeResult extends MergeResult {
 class BinaryMergeResult extends MergeResult {
   /// Initializes a BinaryMergeResult based off of a ProcessResult.
   BinaryMergeResult(super.result, super.localPath)
-    : mergedBytes = result.stdout as Uint8List;
+      : mergedBytes = result.stdout as Uint8List;
 
   /// Manually initializes a BinaryMergeResult with explicit values.
   BinaryMergeResult.explicit({

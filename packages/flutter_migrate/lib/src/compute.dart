@@ -51,8 +51,8 @@ bool _skipped(
   if (canonicalizedSkippedFiles.contains(canonicalizedLocalPath)) {
     return true;
   }
-  final Iterable<String> canonicalizedSkippedDirectories = _skippedDirectories
-      .map<String>((String path) => canonicalize(path));
+  final Iterable<String> canonicalizedSkippedDirectories =
+      _skippedDirectories.map<String>((String path) => canonicalize(path));
   for (final String dir in canonicalizedSkippedDirectories) {
     if (canonicalizedLocalPath.startsWith('$dir${fileSystem.path.separator}')) {
       return true;
@@ -274,12 +274,12 @@ Future<MigrateResult?> computeMigration({
   // Generate the base templates
   final ReferenceProjects referenceProjects =
       await _generateBaseAndTargetReferenceProjects(
-        context: context,
-        result: result,
-        revisionConfig: revisionConfig,
-        platforms: platforms,
-        commandParameters: commandParameters,
-      );
+    context: context,
+    result: result,
+    revisionConfig: revisionConfig,
+    platforms: platforms,
+    commandParameters: commandParameters,
+  );
 
   // Generate diffs. These diffs are used to determine if a file is newly added, needs merging,
   // or deleted (rare). Only files with diffs between the base and target revisions need to be
@@ -393,10 +393,10 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
   // Use user-provided projects if provided, if not, generate them internally.
   final bool customBaseProjectDir = commandParameters.baseAppPath != null;
   final bool customTargetProjectDir = commandParameters.targetAppPath != null;
-  Directory baseProjectDir = context.fileSystem.systemTempDirectory
-      .createTempSync('baseProject');
-  Directory targetProjectDir = context.fileSystem.systemTempDirectory
-      .createTempSync('targetProject');
+  Directory baseProjectDir =
+      context.fileSystem.systemTempDirectory.createTempSync('baseProject');
+  Directory targetProjectDir =
+      context.fileSystem.systemTempDirectory.createTempSync('targetProject');
   if (customBaseProjectDir) {
     baseProjectDir = context.fileSystem.directory(
       commandParameters.baseAppPath,
@@ -435,10 +435,6 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
       context.environment['FlutterProject.android.isKotlin']! as bool
           ? 'kotlin'
           : 'java';
-  final String iosLanguage =
-      context.environment['FlutterProject.ios.isSwift']! as bool
-          ? 'swift'
-          : 'objc';
 
   final Directory targetFlutterDirectory = context.fileSystem.directory(
     context.environment.getString('Cache.flutterRoot'),
@@ -454,7 +450,6 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
     directory: baseProjectDir,
     name: name,
     androidLanguage: androidLanguage,
-    iosLanguage: iosLanguage,
     platformWhitelist: platforms,
   );
   context.baseProject = baseProject;
@@ -482,7 +477,6 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
     directory: targetProjectDir,
     name: name,
     androidLanguage: androidLanguage,
-    iosLanguage: iosLanguage,
     platformWhitelist: platforms,
   );
   context.targetProject = targetProject;
@@ -531,7 +525,6 @@ abstract class MigrateFlutterProject {
     required this.directory,
     required this.name,
     required this.androidLanguage,
-    required this.iosLanguage,
     this.platformWhitelist,
   });
 
@@ -539,7 +532,6 @@ abstract class MigrateFlutterProject {
   final Directory directory;
   final String name;
   final String androidLanguage;
-  final String iosLanguage;
   final List<SupportedPlatform>? platformWhitelist;
 
   /// Run git diff over each matching pair of files in the this project and the provided target project.
@@ -662,8 +654,8 @@ abstract class MigrateFlutterProject {
       MetadataCustomMerge(logger: context.migrateLogger.logger),
     ];
     // For each existing file in the project, we attempt to 3 way merge if it is changed by the user.
-    final List<FileSystemEntity> currentFiles = context.flutterProject.directory
-        .listSync(recursive: true);
+    final List<FileSystemEntity> currentFiles =
+        context.flutterProject.directory.listSync(recursive: true);
     final String projectRootPath =
         context.flutterProject.directory.absolute.path;
     final Set<String> missingAlwaysMigrateFiles = Set<String>.of(
@@ -855,8 +847,8 @@ abstract class MigrateFlutterProject {
 
     // Add files that are in the target, marked as always migrate, and missing in the current project.
     for (final String localPath in missingAlwaysMigrateFiles) {
-      final File targetTemplateFile = result.generatedTargetTemplateDirectory!
-          .childFile(localPath);
+      final File targetTemplateFile =
+          result.generatedTargetTemplateDirectory!.childFile(localPath);
       if (targetTemplateFile.existsSync() &&
           !_skipped(
             localPath,
@@ -881,7 +873,6 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
     required super.directory,
     required super.name,
     required super.androidLanguage,
-    required super.iosLanguage,
     super.platformWhitelist,
   });
 
@@ -952,25 +943,22 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
         context.migrateLogger.printStatus(
           'Creating base app for $platforms with revision $revision.',
         );
-        final String newDirectoryPath = await context.migrateUtils
-            .createFromTemplates(
-              sdkDir.childDirectory('bin').absolute.path,
-              name: name,
-              androidLanguage: androidLanguage,
-              iosLanguage: iosLanguage,
-              outputDirectory:
-                  result.generatedBaseTemplateDirectory!.absolute.path,
-              platforms: platforms,
-            );
+        final String newDirectoryPath =
+            await context.migrateUtils.createFromTemplates(
+          sdkDir.childDirectory('bin').absolute.path,
+          name: name,
+          androidLanguage: androidLanguage,
+          outputDirectory: result.generatedBaseTemplateDirectory!.absolute.path,
+          platforms: platforms,
+        );
         if (newDirectoryPath != result.generatedBaseTemplateDirectory?.path) {
           result.generatedBaseTemplateDirectory = context.fileSystem.directory(
             newDirectoryPath,
           );
         }
         // Determine merge type for each newly generated file.
-        final List<FileSystemEntity> generatedBaseFiles = result
-            .generatedBaseTemplateDirectory!
-            .listSync(recursive: true);
+        final List<FileSystemEntity> generatedBaseFiles =
+            result.generatedBaseTemplateDirectory!.listSync(recursive: true);
         for (final FileSystemEntity entity in generatedBaseFiles) {
           if (entity is! File) {
             continue;
@@ -983,10 +971,9 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
           );
           if (!result.mergeTypeMap.containsKey(localPath)) {
             // Use two way merge when the base revision is the same as the target revision.
-            result.mergeTypeMap[localPath] =
-                revision == targetRevision
-                    ? MergeType.twoWay
-                    : MergeType.threeWay;
+            result.mergeTypeMap[localPath] = revision == targetRevision
+                ? MergeType.twoWay
+                : MergeType.threeWay;
           }
         }
         if (newDirectoryPath != result.generatedBaseTemplateDirectory?.path) {
@@ -1010,7 +997,6 @@ class MigrateTargetFlutterProject extends MigrateFlutterProject {
     required super.directory,
     required super.name,
     required super.androidLanguage,
-    required super.iosLanguage,
     super.platformWhitelist,
   });
 
@@ -1031,7 +1017,6 @@ class MigrateTargetFlutterProject extends MigrateFlutterProject {
         targetFlutterDirectory.childDirectory('bin').absolute.path,
         name: name,
         androidLanguage: androidLanguage,
-        iosLanguage: iosLanguage,
         outputDirectory: result.generatedTargetTemplateDirectory!.absolute.path,
       );
     }
@@ -1101,14 +1086,13 @@ class MigrateRevisions {
     if (baseRevision == null) {
       for (final MigratePlatformConfig platform
           in config.platformConfigs.values) {
-        final String effectiveRevision =
-            platform.baseRevision == null
-                ? metadataRevision ??
-                    _getFallbackBaseRevision(
-                      allowFallbackBaseRevision,
-                      context.migrateLogger,
-                    )
-                : platform.baseRevision!;
+        final String effectiveRevision = platform.baseRevision == null
+            ? metadataRevision ??
+                _getFallbackBaseRevision(
+                  allowFallbackBaseRevision,
+                  context.migrateLogger,
+                )
+            : platform.baseRevision!;
         if (!components.contains(platform.component)) {
           continue;
         }

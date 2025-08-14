@@ -93,15 +93,21 @@ void main() {
         ..createSync()
         ..writeAsStringSync('ignored_file.dart', flush: true);
 
-      await Process.run('git', <String>[
-        'add',
-        '.',
-      ], workingDirectory: projectRootPath);
-      await Process.run('git', <String>[
-        'commit',
-        '-m',
-        'Initial commit',
-      ], workingDirectory: projectRootPath);
+      await Process.run(
+          'git',
+          <String>[
+            'add',
+            '.',
+          ],
+          workingDirectory: projectRootPath);
+      await Process.run(
+          'git',
+          <String>[
+            'commit',
+            '-m',
+            'Initial commit',
+          ],
+          workingDirectory: projectRootPath);
 
       expect(await utils.hasUncommittedChanges(projectRootPath), false);
     });
@@ -144,10 +150,9 @@ void main() {
       await utils.gitInit(projectRootPath);
       expect(projectRoot.childDirectory('.git').existsSync(), true);
 
-      final File file1 =
-          projectRoot.childFile('some_file.dart')
-            ..createSync()
-            ..writeAsStringSync('void main() {}\n', flush: true);
+      final File file1 = projectRoot.childFile('some_file.dart')
+        ..createSync()
+        ..writeAsStringSync('void main() {}\n', flush: true);
 
       final File file2 = projectRoot.childFile('some_other_file.dart');
 
@@ -210,14 +215,12 @@ void main() {
         flush: true,
       );
 
-      StringMergeResult result =
-          await utils.gitMergeFile(
-                base: file1.path,
-                current: file2.path,
-                target: file3.path,
-                localPath: 'some_file.dart',
-              )
-              as StringMergeResult;
+      StringMergeResult result = await utils.gitMergeFile(
+        base: file1.path,
+        current: file2.path,
+        target: file3.path,
+        localPath: 'some_file.dart',
+      ) as StringMergeResult;
 
       expect(
         result.mergedString,
@@ -231,14 +234,12 @@ void main() {
         flush: true,
       );
 
-      result =
-          await utils.gitMergeFile(
-                base: file1.path,
-                current: file2.path,
-                target: file3.path,
-                localPath: 'some_file.dart',
-              )
-              as StringMergeResult;
+      result = await utils.gitMergeFile(
+        base: file1.path,
+        current: file2.path,
+        target: file3.path,
+        localPath: 'some_file.dart',
+      ) as StringMergeResult;
 
       expect(
         result.mergedString,
@@ -248,14 +249,12 @@ void main() {
       expect(result.exitCode, 1);
 
       // Two way merge
-      result =
-          await utils.gitMergeFile(
-                base: file1.path,
-                current: file1.path,
-                target: file3.path,
-                localPath: 'some_file.dart',
-              )
-              as StringMergeResult;
+      result = await utils.gitMergeFile(
+        base: file1.path,
+        current: file1.path,
+        target: file3.path,
+        localPath: 'some_file.dart',
+      ) as StringMergeResult;
 
       expect(
         result.mergedString,
@@ -313,7 +312,6 @@ void main() {
           projectRoot.childDirectory('bin').path,
           name: 'testapp',
           androidLanguage: 'java',
-          iosLanguage: 'objc',
           outputDirectory: appDir.path,
         );
         expect(appDir.childFile('pubspec.yaml').existsSync(), true);
