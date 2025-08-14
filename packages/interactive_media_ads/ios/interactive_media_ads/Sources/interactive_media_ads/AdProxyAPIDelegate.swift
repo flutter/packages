@@ -41,6 +41,10 @@ class AdProxyAPIDelegate: PigeonApiDelegateIMAAd {
   func uiElements(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [UIElementType] {
     var uiElements: [UIElementType] = []
     let uiElementsArray = pigeonInstance.uiElements as NSArray
+    // IMAAd.uiElements is expected to be NSArray<NSNumber *>, but is returning as
+    // an NSArray<NSString *> and causing a crash when using Swift. This attempts
+    // to handle both scenarios and returns UIElementType.unknown if the value
+    // can't be handled.
     for uiElement in uiElementsArray {
       switch uiElement {
       case let uiElement as String where uiElement == "adAttribution":

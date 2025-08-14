@@ -83,7 +83,7 @@ class AdProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
-    var elementArray = NSMutableArray()
+    let elementArray = NSMutableArray()
     elementArray.add(NSNumber(value: IMAUiElementType.elements_AD_ATTRIBUTION.rawValue))
     let instance = TestAd.customInit()
     instance.testElements = elementArray
@@ -96,7 +96,7 @@ class AdProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
-    var elementArray = NSMutableArray()
+    let elementArray = NSMutableArray()
     elementArray.add("adAttribution")
     let instance = TestAd.customInit()
     instance.testElements = elementArray
