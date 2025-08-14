@@ -115,7 +115,14 @@ const int kLimitedElementWaitingTime = 30;
             @(kLimitedElementWaitingTime));
   }
 
-  [aImage tap];
+  if (aImage.isHittable) {
+    [aImage tap];
+  } else {
+    // Known issue where tappable elements are not hittable. Tap it anyway.
+    // See https://github.com/flutter/plugins/pull/6783 for a similar case.
+    XCUICoordinate *coordinate = [aImage coordinateWithNormalizedOffset:CGVectorMake(0, 0)];
+    [coordinate tap];
+  }
 
   // Find the picked image.
   XCUIElement *pickedImage = self.app.images[@"image_picker_example_picked_image"].firstMatch;
