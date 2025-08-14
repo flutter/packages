@@ -1,3 +1,9 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -16,13 +22,14 @@ class ExampleFontSelectionState extends State<ExampleFontSelection> {
   );
 
   late String _selectedFont;
-  late Future _googleFontsPending;
+  late Future<List<void>> _googleFontsPending;
 
   @override
   void initState() {
     _selectedFont = fonts.first;
-    _googleFontsPending =
-        GoogleFonts.pendingFonts([GoogleFonts.getFont(_selectedFont)]);
+    _googleFontsPending = GoogleFonts.pendingFonts(<TextStyle>[
+      GoogleFonts.getFont(_selectedFont),
+    ]);
     super.initState();
   }
 
@@ -32,10 +39,9 @@ class ExampleFontSelectionState extends State<ExampleFontSelection> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
-          children: [
+          children: <Widget>[
             Expanded(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Wrap(
                     alignment: WrapAlignment.center,
@@ -43,7 +49,7 @@ class ExampleFontSelectionState extends State<ExampleFontSelection> {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     runSpacing: 20,
                     spacing: 20,
-                    children: [
+                    children: <Widget>[
                       SizedBox(
                         width: 360,
                         child: TextField(
@@ -58,25 +64,28 @@ class ExampleFontSelectionState extends State<ExampleFontSelection> {
                           setState(() {
                             _selectedFont = newValue!;
                             _googleFontsPending = GoogleFonts.pendingFonts(
-                              [GoogleFonts.getFont(_selectedFont)],
+                              <TextStyle>[GoogleFonts.getFont(_selectedFont)],
                             );
                           });
                         },
                         dropdownMenuEntries:
                             GoogleFonts.asMap().keys.map((String font) {
-                          return DropdownMenuEntry<String>(
-                            label: font,
-                            value: font,
-                          );
-                        }).toList(),
+                              return DropdownMenuEntry<String>(
+                                label: font,
+                                value: font,
+                              );
+                            }).toList(),
                       ),
                     ],
                   ),
                   const SizedBox(height: 100),
                   Expanded(
-                    child: FutureBuilder(
+                    child: FutureBuilder<List<void>>(
                       future: _googleFontsPending,
-                      builder: (context, snapshot) {
+                      builder: (
+                        BuildContext context,
+                        AsyncSnapshot<List<void>> snapshot,
+                      ) {
                         if (snapshot.connectionState != ConnectionState.done) {
                           return const SizedBox();
                         }

@@ -1,10 +1,14 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/src/google_fonts_variant.dart';
 
 void main() {
-  testWidgets('toString() works for normal w400', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('toString() works for normal w400', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     );
@@ -12,8 +16,8 @@ void main() {
     expect(variant.toString(), equals('regular'));
   });
 
-  testWidgets('toString() works for italic w400', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('toString() works for italic w400', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.italic,
     );
@@ -21,8 +25,8 @@ void main() {
     expect(variant.toString(), equals('italic'));
   });
 
-  testWidgets('toString() works for normal w500', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('toString() works for normal w500', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal,
     );
@@ -30,8 +34,8 @@ void main() {
     expect(variant.toString(), equals('500'));
   });
 
-  testWidgets('toString() works for italic w500', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('toString() works for italic w500', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.italic,
     );
@@ -39,8 +43,8 @@ void main() {
     expect(variant.toString(), equals('500italic'));
   });
 
-  testWidgets('fromString() works for regular', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('fromString() works for regular', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.normal,
     );
@@ -48,8 +52,8 @@ void main() {
     expect(GoogleFontsVariant.fromString('regular'), equals(variant));
   });
 
-  testWidgets('fromString() works for italic', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('fromString() works for italic', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w400,
       fontStyle: FontStyle.italic,
     );
@@ -57,8 +61,8 @@ void main() {
     expect(GoogleFontsVariant.fromString('italic'), equals(variant));
   });
 
-  testWidgets('fromString() works for 500', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('fromString() works for 500', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal,
     );
@@ -66,8 +70,8 @@ void main() {
     expect(GoogleFontsVariant.fromString('500'), equals(variant));
   });
 
-  testWidgets('fromString() works for 500italic', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('fromString() works for 500italic', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.italic,
     );
@@ -75,8 +79,9 @@ void main() {
     expect(GoogleFontsVariant.fromString('500italic'), equals(variant));
   });
 
-  testWidgets('toApiFilenamePart() works for all normal combintaions',
-      (tester) async {
+  testWidgets('toApiFilenamePart() works for all normal combintaions', (
+    WidgetTester tester,
+  ) async {
     expect(
       const GoogleFontsVariant(
         fontWeight: FontWeight.w100,
@@ -126,11 +131,12 @@ void main() {
     );
 
     expect(
-        const GoogleFontsVariant(
-          fontWeight: FontWeight.w700,
-          fontStyle: FontStyle.normal,
-        ).toApiFilenamePart(),
-        equals('Bold'));
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ).toApiFilenamePart(),
+      equals('Bold'),
+    );
 
     expect(
       const GoogleFontsVariant(
@@ -149,8 +155,9 @@ void main() {
     );
   });
 
-  testWidgets('toApiFilenamePart() works for all italic combintaions',
-      (tester) async {
+  testWidgets('toApiFilenamePart() works for all italic combintaions', (
+    WidgetTester tester,
+  ) async {
     expect(
       const GoogleFontsVariant(
         fontWeight: FontWeight.w100,
@@ -224,8 +231,9 @@ void main() {
     );
   });
 
-  testWidgets('fromApiFilenamePart() works for all normal combintaions',
-      (tester) async {
+  testWidgets('fromApiFilenamePart() works for all normal combintaions', (
+    WidgetTester tester,
+  ) async {
     expect(
       GoogleFontsVariant.fromApiFilenamePart('Thin'),
       equals(
@@ -317,8 +325,9 @@ void main() {
     );
   });
 
-  testWidgets('fromApiFilenamePart() works for all italic combintaions',
-      (tester) async {
+  testWidgets('fromApiFilenamePart() works for all italic combintaions', (
+    WidgetTester tester,
+  ) async {
     expect(
       GoogleFontsVariant.fromApiFilenamePart('ThinItalic'),
       equals(
@@ -410,59 +419,64 @@ void main() {
     );
   });
 
-  testWidgets('== works for for identical variants', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('== works for for identical variants', (
+    WidgetTester tester,
+  ) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.italic,
     );
-    const otherVariant = variant;
+    const GoogleFontsVariant otherVariant = variant;
 
     expect(variant == otherVariant, isTrue);
   });
 
-  testWidgets('== works for for clone variants', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('== works for for clone variants', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.italic,
     );
-    const otherVariant = GoogleFontsVariant(
+    const GoogleFontsVariant otherVariant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.italic,
     );
     expect(variant == otherVariant, isTrue);
   });
 
-  testWidgets('== fails for different fontWeights', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('== fails for different fontWeights', (
+    WidgetTester tester,
+  ) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.italic,
     );
-    const otherVariant = GoogleFontsVariant(
+    const GoogleFontsVariant otherVariant = GoogleFontsVariant(
       fontWeight: FontWeight.w900,
       fontStyle: FontStyle.italic,
     );
     expect(variant == otherVariant, isFalse);
   });
 
-  testWidgets('== fails for different fontStyles', (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('== fails for different fontStyles', (WidgetTester tester) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.italic,
     );
-    const otherVariant = GoogleFontsVariant(
+    const GoogleFontsVariant otherVariant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.normal,
     );
     expect(variant == otherVariant, isFalse);
   });
 
-  testWidgets('== fails for different fontWeights and different fontStyles',
-      (tester) async {
-    const variant = GoogleFontsVariant(
+  testWidgets('== fails for different fontWeights and different fontStyles', (
+    WidgetTester tester,
+  ) async {
+    const GoogleFontsVariant variant = GoogleFontsVariant(
       fontWeight: FontWeight.w500,
       fontStyle: FontStyle.italic,
     );
-    const otherVariant = GoogleFontsVariant(
+    const GoogleFontsVariant otherVariant = GoogleFontsVariant(
       fontWeight: FontWeight.w900,
       fontStyle: FontStyle.normal,
     );

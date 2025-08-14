@@ -1,6 +1,13 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts_tester/example_font_selection.dart';
-import 'package:google_fonts_tester/example_simple.dart';
+
+import 'example_font_selection.dart';
+import 'example_simple.dart';
 
 void main() => runApp(const MyApp());
 
@@ -19,17 +26,11 @@ class MyApp extends StatelessWidget {
           appBar: AppBar(
             title: const Text('Google Fonts Demo'),
             bottom: const TabBar(
-              tabs: <Widget>[
-                Tab(text: 'Simple'),
-                Tab(text: 'Select a font'),
-              ],
+              tabs: <Widget>[Tab(text: 'Simple'), Tab(text: 'Select a font')],
             ),
           ),
           body: const TabBarView(
-            children: <Widget>[
-              ExampleSimple(),
-              ExampleFontSelection(),
-            ],
+            children: <Widget>[ExampleSimple(), ExampleFontSelection()],
           ),
         ),
       ),

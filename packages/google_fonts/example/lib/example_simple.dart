@@ -1,3 +1,9 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// ignore_for_file: public_member_api_docs
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -10,7 +16,7 @@ class ExampleSimple extends StatefulWidget {
 
 class ExampleSimpleState extends State<ExampleSimple> {
   int _counter = 0;
-  late Future googleFontsPending;
+  late Future<List<void>> googleFontsPending;
 
   void _incrementCounter() {
     setState(() {
@@ -22,7 +28,7 @@ class ExampleSimpleState extends State<ExampleSimple> {
   void initState() {
     super.initState();
 
-    googleFontsPending = GoogleFonts.pendingFonts([
+    googleFontsPending = GoogleFonts.pendingFonts(<TextStyle>[
       GoogleFonts.poppins(),
       GoogleFonts.montserrat(fontStyle: FontStyle.italic),
     ]);
@@ -30,19 +36,19 @@ class ExampleSimpleState extends State<ExampleSimple> {
 
   @override
   Widget build(BuildContext context) {
-    final pushButtonTextStyle = GoogleFonts.poppins(
+    final TextStyle pushButtonTextStyle = GoogleFonts.poppins(
       textStyle: Theme.of(context).textTheme.headlineMedium,
     );
-    final counterTextStyle = GoogleFonts.montserrat(
+    final TextStyle counterTextStyle = GoogleFonts.montserrat(
       fontStyle: FontStyle.italic,
       textStyle: Theme.of(context).textTheme.displayLarge,
     );
 
     return Scaffold(
       body: Center(
-        child: FutureBuilder(
+        child: FutureBuilder<List<void>>(
           future: googleFontsPending,
-          builder: (context, snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<List<void>> snapshot) {
             if (snapshot.connectionState != ConnectionState.done) {
               return const SizedBox();
             }

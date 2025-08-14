@@ -1,6 +1,9 @@
-// Copyright 2020 The Flutter team. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+
+// TODO(stuartmorgan): Remove, and fix violations.
+// ignore_for_file: public_member_api_docs
 
 import 'google_fonts_family_with_variant.dart';
 

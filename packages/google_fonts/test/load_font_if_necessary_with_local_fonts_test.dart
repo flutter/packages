@@ -1,3 +1,10 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+@TestOn('vm') // Uses dart:io
+library;
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,15 +23,21 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 class MockHttpClient extends Mock implements http.Client {
   Future<http.Response> gets(dynamic uri, {dynamic headers}) {
-    super.noSuchMethod(Invocation.method(#get, [uri], {#headers: headers}));
-    return Future.value(http.Response('', 200));
+    super.noSuchMethod(
+      Invocation.method(
+        #get,
+        <Object?>[uri],
+        <Symbol, Object?>{#headers: headers},
+      ),
+    );
+    return Future<http.Response>.value(http.Response('', 200));
   }
 }
 
 class MockAssetManifest extends Mock implements AssetManifest {
   @override
   List<String> listAssets() {
-    return ['google_fonts/Foo-BlackItalic.ttf'];
+    return <String>['google_fonts/Foo-BlackItalic.ttf'];
   }
 }
 
@@ -41,13 +54,13 @@ class FakePathProviderPlatform extends Fake
   }
 }
 
-const _fakeResponse = 'fake response body - success';
+const String _fakeResponse = 'fake response body - success';
 // The number of bytes in _fakeResponse.
-const _fakeResponseLengthInBytes = 28;
+const int _fakeResponseLengthInBytes = 28;
 // Computed by converting _fakeResponse to bytes and getting sha 256 hash.
-const _fakeResponseHash =
+const String _fakeResponseHash =
     '1194f6ffe4d2f05258573616a77932c38041f3102763096c19437c3db1818a04';
-final _fakeResponseFile = GoogleFontsFile(
+final GoogleFontsFile _fakeResponseFile = GoogleFontsFile(
   _fakeResponseHash,
   _fakeResponseLengthInBytes,
 );
@@ -73,12 +86,13 @@ void main() {
 
     // Add Foo-BlackItalic to mock asset bundle.
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMessageHandler('flutter/assets', (message) {
-      final Uint8List encoded =
-          utf8.encoder.convert('{"google_fonts/Foo-BlackItalic.ttf":'
-              '["google_fonts/Foo-BlackItalic.ttf"]}');
-      return Future.value(encoded.buffer.asByteData());
-    });
+        .setMockMessageHandler('flutter/assets', (ByteData? message) {
+          final Uint8List encoded = utf8.encoder.convert(
+            '{"google_fonts/Foo-BlackItalic.ttf":'
+            '["google_fonts/Foo-BlackItalic.ttf"]}',
+          );
+          return Future<ByteData?>.value(encoded.buffer.asByteData());
+        });
 
     directory = await Directory.systemTemp.createTemp();
     PathProviderPlatform.instance = FakePathProviderPlatform(directory.path);
@@ -86,10 +100,9 @@ void main() {
 
   tearDown(() {});
 
-  test(
-      'loadFontIfNecessary method does nothing if the font is in the '
+  test('loadFontIfNecessary method does nothing if the font is in the '
       'Asset Manifest', () async {
-    final descriptorInAssets = GoogleFontsDescriptor(
+    final GoogleFontsDescriptor descriptorInAssets = GoogleFontsDescriptor(
       familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
@@ -105,7 +118,7 @@ void main() {
     await loadFontIfNecessary(descriptorInAssets);
     verifyNever(mockHttpClient.gets(anything));
 
-    final descriptorNotInAssets = GoogleFontsDescriptor(
+    final GoogleFontsDescriptor descriptorNotInAssets = GoogleFontsDescriptor(
       familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Bar',
         googleFontsVariant: GoogleFontsVariant(

@@ -1,4 +1,5 @@
 # google_fonts
+<?code-excerpt path-base="example/lib"?>
 
 [![pub package](https://img.shields.io/pub/v/google_fonts.svg)](https://pub.dev/packages/google_fonts)
 
@@ -20,52 +21,48 @@ For example, say you want to use the [Lato](https://fonts.google.com/specimen/La
 
 1. Add the `google_fonts` package to your [pubspec dependencies](https://pub.dev/packages/google_fonts/install).
 
-1. Import `GoogleFonts`.
-    ```dart
-    import 'package:google_fonts/google_fonts.dart';
-    ```
-
 ### Text styles
 To use `GoogleFonts` with the default `TextStyle`:
 
+<?code-excerpt "readme_excerpts.dart (StaticFont)"?>
 ```dart
-Text(
-  'This is Google Fonts',
-  style: GoogleFonts.lato(),
-),
+Text('This is Google Fonts', style: GoogleFonts.lato()),
 ```
 
 Or, if you want to load the font dynamically:
 
+<?code-excerpt "readme_excerpts.dart (DynamicFont)"?>
 ```dart
-Text(
-  'This is Google Fonts',
-  style: GoogleFonts.getFont('Lato'),
-),
+Text('This is Google Fonts', style: GoogleFonts.getFont('Lato')),
 ```
 
 To use `GoogleFonts` with an existing `TextStyle`:
 
+<?code-excerpt "readme_excerpts.dart (ExistingStyle)"?>
 ```dart
 Text(
   'This is Google Fonts',
   style: GoogleFonts.lato(
-    textStyle: TextStyle(color: Colors.blue, letterSpacing: .5),
+    textStyle: const TextStyle(color: Colors.blue, letterSpacing: .5),
   ),
 ),
 ```
 
 or
 
+<?code-excerpt "readme_excerpts.dart (ExistingThemeStyle)"?>
 ```dart
 Text(
   'This is Google Fonts',
-  style: GoogleFonts.lato(textStyle: Theme.of(context).textTheme.headline4),
+  style: GoogleFonts.lato(
+    textStyle: Theme.of(context).textTheme.headlineMedium,
+  ),
 ),
 ```
 
 To override the `fontSize`, `fontWeight`, or `fontStyle`:
 
+<?code-excerpt "readme_excerpts.dart (ExistingStyleWithOverrides)"?>
 ```dart
 Text(
   'This is Google Fonts',
@@ -82,15 +79,22 @@ Text(
 
 You can also use `GoogleFonts.latoTextTheme()` to make or modify an entire text theme to use the "Lato" font.
 
+<?code-excerpt "readme_excerpts.dart (AppThemeSimple)"?>
 ```dart
-...
-  return MaterialApp(
-    theme: _buildTheme(Brightness.dark),
-  );
+class MyApp extends StatelessWidget {
+  // ···
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      // ···
+      theme: _buildTheme(Brightness.dark),
+      // ···
+    );
+  }
 }
 
-ThemeData _buildTheme(brightness) {
-  var baseTheme = ThemeData(brightness: brightness);
+ThemeData _buildTheme(Brightness brightness) {
+  final ThemeData baseTheme = ThemeData(brightness: brightness);
 
   return baseTheme.copyWith(
     textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme),
@@ -100,28 +104,31 @@ ThemeData _buildTheme(brightness) {
 
 Or, if you want a `TextTheme` where a couple of styles should use a different font:
 
+<?code-excerpt "readme_excerpts.dart (AppThemeComplex)"?>
 ```dart
-final textTheme = Theme.of(context).textTheme;
+final TextTheme textTheme = Theme.of(context).textTheme;
 
-MaterialApp(
+return MaterialApp(
+  // ···
   theme: ThemeData(
     textTheme: GoogleFonts.latoTextTheme(textTheme).copyWith(
       bodyMedium: GoogleFonts.oswald(textStyle: textTheme.bodyMedium),
     ),
   ),
+  // ···
 );
 ```
 
 ### Visual font swapping
 To avoid visual font swaps that occur when a font is loading, use [FutureBuilder](https://api.flutter.dev/flutter/widgets/FutureBuilder-class.html) and [GoogleFonts.pendingFonts()](https://pub.dev/documentation/google_fonts/latest/google_fonts/GoogleFonts/pendingFonts.html).
 
-See the [example app](https://github.com/material-foundation/flutter-packages/blob/main/packages/google_fonts/example/lib/main.dart).
+See the [example app](https://pub.dev/packages/google_fonts/example).
 
 ### HTTP fetching
 
 For HTTP fetching to work, certain platforms require additional steps when running the app in debug and/or release mode. For example, macOS requires the following be present in the relevant .entitlements file:
 
-```
+```xml
 <key>com.apple.security.network.client</key>
 <true/>
 ```
@@ -138,8 +145,9 @@ you want to use:
    You only need to download the weights and styles you are using for any given family.
    Italic styles will include `Italic` in the filename. Font weights map to file names as follows:
 
+<?code-excerpt "readme_excerpts.dart (FontWeightMap)"?>
 ```dart
-{
+<FontWeight, String>{
   FontWeight.w100: 'Thin',
   FontWeight.w200: 'ExtraLight',
   FontWeight.w300: 'Light',
@@ -149,7 +157,7 @@ you want to use:
   FontWeight.w700: 'Bold',
   FontWeight.w800: 'ExtraBold',
   FontWeight.w900: 'Black',
-}
+};
 ```
 
 2. Move those fonts to some asset folder (e.g. `google_fonts`). You can name this folder whatever you like and use subdirectories.
@@ -176,17 +184,19 @@ licenses to your flutter app's [LicenseRegistry](https://api.flutter.dev/flutter
 
 For example:
 
+<?code-excerpt "readme_excerpts.dart (LicenseRegistration)"?>
 ```dart
 void main() {
   LicenseRegistry.addLicense(() async* {
-    final license = await rootBundle.loadString('google_fonts/OFL.txt');
-    yield LicenseEntryWithLineBreaks(['google_fonts'], license);
+    final String license = await rootBundle.loadString('google_fonts/OFL.txt');
+    yield LicenseEntryWithLineBreaks(<String>['google_fonts'], license);
   });
 
-  runApp(...);
+  runApp(const MyApp());
 }
+
 ```
 
 ## Testing
 
-See [example/test](https://github.com/material-foundation/flutter-packages/blob/main/packages/google_fonts/example/test) for testing examples.
+See [example/test](https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test) for testing examples.

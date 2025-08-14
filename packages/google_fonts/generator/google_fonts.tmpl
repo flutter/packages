@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT EDIT
 
-// Copyright 2019 The Flutter team. All rights reserved.
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,17 +8,17 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import 'src/google_fonts_base.dart';
+import 'google_fonts_base.dart';
 {{#allParts}}
 import '{{partFilePath}}';
 {{/allParts}}
 
 /// A collection of properties used to specify custom behavior of the
 /// GoogleFonts library.
-class _Config {
+class Config {
   /// Whether or not the GoogleFonts library can make requests to
   /// [fonts.google.com](https://fonts.google.com/) to retrieve font files.
-  var allowRuntimeFetching = true;
+  bool allowRuntimeFetching = true;
 }
 
 /// Provides configuration, and static methods to obtain [TextStyle]s and [TextTheme]s.
@@ -28,7 +28,7 @@ class _Config {
 /// Obtain a map of available fonts with [asMap]. Retrieve a font by family name
 /// with [getFont]. Retrieve a text theme by its font family name [getTextTheme].
 ///
-/// Check out the [README](https://github.com/material-foundation/flutter-packages/blob/main/packages/google_fonts/README.md) for more info.
+/// Check out the [README](https://pub.dev/packages/google_fonts) for more info.
 class GoogleFonts {
   /// Configuration for the [GoogleFonts] library.
   ///
@@ -39,7 +39,7 @@ class GoogleFonts {
   /// ```dart
   /// GoogleFonts.config.allowRuntimeFetching = false;
   /// ```
-  static final config = _Config();
+  static final Config config = Config();
 
   /// Returns a [Future] which resolves when requested fonts have finished
   /// loading and are ready to be rendered on screen.
