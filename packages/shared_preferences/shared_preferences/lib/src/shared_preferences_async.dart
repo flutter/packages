@@ -184,6 +184,26 @@ class SharedPreferencesWithCache {
             SharedPreferencesAsync(options: sharedPreferencesOptions),
         _cache = cache ?? <String, Object?>{};
 
+  /// Creates a new instance with the given options, but does not populate the
+  /// cache from the platform.
+  ///
+  /// This constructor is synchronous and does not load data from disk, which
+  /// can be useful for dependency injection frameworks that do not support
+  /// asynchronous object creation. The cache must be populated by calling
+  /// [reloadCache] before it can be used.
+  static SharedPreferencesWithCache createWithoutWarmedUpCache({
+    SharedPreferencesOptions sharedPreferencesOptions =
+        const SharedPreferencesOptions(),
+    required SharedPreferencesWithCacheOptions cacheOptions,
+    Map<String, Object?>? cache,
+  }) {
+    return SharedPreferencesWithCache._create(
+      sharedPreferencesOptions: sharedPreferencesOptions,
+      cacheOptions: cacheOptions,
+      cache: cache,
+    );
+  }
+
   /// Creates a new instance with the given options and reloads the cache from
   /// the platform data.
   static Future<SharedPreferencesWithCache> create({
