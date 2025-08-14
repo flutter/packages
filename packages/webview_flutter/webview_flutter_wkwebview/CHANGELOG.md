@@ -1,4 +1,4 @@
-## NEXT
+## 3.23.1
 
 * Removes specialization of 'map' to fix a Swift warning.
 
