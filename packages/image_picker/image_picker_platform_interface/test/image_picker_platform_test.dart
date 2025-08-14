@@ -76,6 +76,18 @@ void main() {
           fakePath);
     });
   });
+
+  test(
+      'Default implementation of pickMultiVideoWithOptions should throw '
+      'unimplemented error', () {
+    final FakeCameraDelegatingImagePickerPlatform implementation =
+        FakeCameraDelegatingImagePickerPlatform();
+
+    expect(
+      () => implementation.getMultiVideoWithOptions(),
+      throwsUnimplementedError,
+    );
+  });
 }
 
 class FakeImagePickerPlatform extends ImagePickerPlatform {}
