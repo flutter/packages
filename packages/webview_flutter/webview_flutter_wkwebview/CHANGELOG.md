@@ -1,3 +1,7 @@
+## NEXT
+
+* Removes specialization of 'map' in example app to fix a Swift warning.
+
 ## 3.23.0
 
 * Adds support for `PlatformWebViewController.loadFileWithParams`.
