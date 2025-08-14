@@ -83,7 +83,23 @@ class AdProxyAPITests: XCTestCase {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
+    var elementArray = NSMutableArray()
+    elementArray.add(NSNumber(value: IMAUiElementType.elements_AD_ATTRIBUTION.rawValue))
     let instance = TestAd.customInit()
+    instance.testElements = elementArray
+    let value = try? api.pigeonDelegate.uiElements(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertEqual(value, [UIElementType.adAttribution])
+  }
+
+  func testUiElementsWithStrings() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
+
+    var elementArray = NSMutableArray()
+    elementArray.add("adAttribution")
+    let instance = TestAd.customInit()
+    instance.testElements = elementArray
     let value = try? api.pigeonDelegate.uiElements(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertEqual(value, [UIElementType.adAttribution])
@@ -296,6 +312,8 @@ class TestAd: IMAAd {
   var _adPodInfo: TestAdPodInfo?
   var _universalAdID: TestUniversalAdID?
 
+  var testElements: NSArray = NSArray()
+
   override var adId: String {
     return "string1"
   }
@@ -325,7 +343,7 @@ class TestAd: IMAAd {
   }
 
   override var uiElements: [NSNumber] {
-    return [NSNumber(value: IMAUiElementType.elements_AD_ATTRIBUTION.rawValue)]
+    return testElements as! [NSNumber]
   }
 
   override var width: Int {
