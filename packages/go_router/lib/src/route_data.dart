@@ -21,8 +21,8 @@ abstract class RouteData {
 
 /// A base class for [GoRouteData] and [RelativeGoRouteData] that provides
 /// common functionality for type-safe routing.
-abstract class _GoRouteData extends RouteData {
-  const _GoRouteData();
+abstract class _GoRouteDataBase extends RouteData {
+  const _GoRouteDataBase();
 
   /// Creates the [Widget] for `this` route.
   ///
@@ -65,13 +65,13 @@ abstract class _GoRouteData extends RouteData {
   /// The error thrown when a user-facing method is not implemented by the
   /// generated code.
   static UnimplementedError get shouldBeGeneratedError => UnimplementedError(
-        'Should be generated using [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).',
-      );
+    'Should be generated using [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html).',
+  );
 
-  /// Used to cache [_GoRouteData] that corresponds to a given [GoRouterState]
+  /// Used to cache [_GoRouteDataBase] that corresponds to a given [GoRouterState]
   /// to minimize the number of times it has to be deserialized.
-  static final Expando<_GoRouteData> stateObjectExpando =
-      Expando<_GoRouteData>('GoRouteState to _GoRouteData expando');
+  static final Expando<_GoRouteDataBase> stateObjectExpando =
+      Expando<_GoRouteDataBase>('GoRouteState to _GoRouteDataBase expando');
 }
 
 /// Helper to build a location string from a path and query parameters.
@@ -100,9 +100,9 @@ class _GoRouteParameters {
 }
 
 /// Helper to create [GoRoute] parameters from a factory function and an Expando.
-_GoRouteParameters _createGoRouteParameters<T extends _GoRouteData>({
+_GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   required T Function(GoRouterState) factory,
-  required Expando<_GoRouteData> expando,
+  required Expando<_GoRouteDataBase> expando,
 }) {
   T factoryImpl(GoRouterState state) {
     final Object? extra = state.extra;
@@ -117,14 +117,18 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteData>({
   }
 
   return _GoRouteParameters(
-    builder: (BuildContext context, GoRouterState state) =>
-        factoryImpl(state).build(context, state),
-    pageBuilder: (BuildContext context, GoRouterState state) =>
-        factoryImpl(state).buildPage(context, state),
-    redirect: (BuildContext context, GoRouterState state) =>
-        factoryImpl(state).redirect(context, state),
-    onExit: (BuildContext context, GoRouterState state) =>
-        factoryImpl(state).onExit(context, state),
+    builder:
+        (BuildContext context, GoRouterState state) =>
+            factoryImpl(state).build(context, state),
+    pageBuilder:
+        (BuildContext context, GoRouterState state) =>
+            factoryImpl(state).buildPage(context, state),
+    redirect:
+        (BuildContext context, GoRouterState state) =>
+            factoryImpl(state).redirect(context, state),
+    onExit:
+        (BuildContext context, GoRouterState state) =>
+            factoryImpl(state).onExit(context, state),
   );
 }
 
@@ -134,7 +138,7 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteData>({
 /// Subclasses must override one of [build], [buildPage], or
 /// [redirect].
 /// {@category Type-safe routes}
-abstract class GoRouteData extends _GoRouteData {
+abstract class GoRouteData extends _GoRouteDataBase {
   /// Allows subclasses to have `const` constructors.
   ///
   /// [GoRouteData] is abstract and cannot be instantiated directly.
@@ -159,7 +163,7 @@ abstract class GoRouteData extends _GoRouteData {
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
-      expando: _GoRouteData.stateObjectExpando,
+      expando: _GoRouteDataBase.stateObjectExpando,
     );
 
     return GoRoute(
@@ -176,18 +180,19 @@ abstract class GoRouteData extends _GoRouteData {
   }
 
   /// The location of this route, e.g. /family/f2/person/p1
-  String get location => throw _GoRouteData.shouldBeGeneratedError;
+  String get location => throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Navigate to the route.
-  void go(BuildContext context) => throw _GoRouteData.shouldBeGeneratedError;
+  void go(BuildContext context) =>
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Push the route onto the page stack.
   Future<T?> push<T>(BuildContext context) =>
-      throw _GoRouteData.shouldBeGeneratedError;
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Replaces the top-most page of the page stack with the route.
   void pushReplacement(BuildContext context) =>
-      throw _GoRouteData.shouldBeGeneratedError;
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Replaces the top-most page of the page stack with the route but treats
   /// it as the same page.
@@ -196,7 +201,7 @@ abstract class GoRouteData extends _GoRouteData {
   /// page animation.
   ///
   void replace(BuildContext context) =>
-      throw _GoRouteData.shouldBeGeneratedError;
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 }
 
 /// A class to represent a relative [GoRoute] in
@@ -205,7 +210,7 @@ abstract class GoRouteData extends _GoRouteData {
 /// Subclasses must override one of [build], [buildPage], or
 /// [redirect].
 /// {@category Type-safe routes}
-abstract class RelativeGoRouteData extends _GoRouteData {
+abstract class RelativeGoRouteData extends _GoRouteDataBase {
   /// Allows subclasses to have `const` constructors.
   ///
   /// [RelativeGoRouteData] is abstract and cannot be instantiated directly.
@@ -229,7 +234,7 @@ abstract class RelativeGoRouteData extends _GoRouteData {
   }) {
     final _GoRouteParameters params = _createGoRouteParameters<T>(
       factory: factory,
-      expando: _GoRouteData.stateObjectExpando,
+      expando: _GoRouteDataBase.stateObjectExpando,
     );
 
     return GoRoute(
@@ -245,22 +250,22 @@ abstract class RelativeGoRouteData extends _GoRouteData {
   }
 
   /// The sub-location of this route, e.g. person/p1
-  String get subLocation => throw _GoRouteData.shouldBeGeneratedError;
+  String get subLocation => throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// The relative location of this route, e.g. ./person/p1
-  String get relativeLocation => throw _GoRouteData.shouldBeGeneratedError;
+  String get relativeLocation => throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Navigate to the route.
   void goRelative(BuildContext context) =>
-      throw _GoRouteData.shouldBeGeneratedError;
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Push the route onto the page stack.
   Future<T?> pushRelative<T>(BuildContext context) =>
-      throw _GoRouteData.shouldBeGeneratedError;
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Replaces the top-most page of the page stack with the route.
   void pushReplacementRelative(BuildContext context) =>
-      throw _GoRouteData.shouldBeGeneratedError;
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 
   /// Replaces the top-most page of the page stack with the route but treats
   /// it as the same page.
@@ -269,7 +274,7 @@ abstract class RelativeGoRouteData extends _GoRouteData {
   /// page animation.
   ///
   void replaceRelative(BuildContext context) =>
-      throw _GoRouteData.shouldBeGeneratedError;
+      throw _GoRouteDataBase.shouldBeGeneratedError;
 }
 
 /// A class to represent a [ShellRoute] in
