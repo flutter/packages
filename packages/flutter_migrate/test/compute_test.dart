@@ -129,7 +129,6 @@ void main() {
         directory: targetDir,
         name: 'base',
         androidLanguage: 'java',
-        iosLanguage: 'objc',
       );
 
       await targetProject.createProject(
@@ -159,7 +158,6 @@ void main() {
         directory: baseDir,
         name: 'base',
         androidLanguage: 'java',
-        iosLanguage: 'objc',
       );
 
       await baseProject.createProject(
@@ -202,7 +200,6 @@ void main() {
         directory: baseDir,
         name: 'base',
         androidLanguage: 'java',
-        iosLanguage: 'objc',
       );
       final MigrateTargetFlutterProject targetProject =
           MigrateTargetFlutterProject(
@@ -210,7 +207,6 @@ void main() {
         directory: targetDir,
         name: 'base',
         androidLanguage: 'java',
-        iosLanguage: 'objc',
       );
 
       await baseProject.createProject(
@@ -519,7 +515,6 @@ migration:
         directory: baseDir,
         name: 'base',
         androidLanguage: 'java',
-        iosLanguage: 'objc',
       );
       final MigrateTargetFlutterProject targetProject =
           MigrateTargetFlutterProject(
@@ -527,7 +522,6 @@ migration:
         directory: targetDir,
         name: 'base',
         androidLanguage: 'java',
-        iosLanguage: 'objc',
       );
 
       await baseProject.createProject(
@@ -757,7 +751,6 @@ migration:
         directory: baseDir,
         name: 'base',
         androidLanguage: 'java',
-        iosLanguage: 'objc',
       );
       final MigrateTargetFlutterProject targetProject =
           MigrateTargetFlutterProject(
@@ -765,7 +758,6 @@ migration:
         directory: targetDir,
         name: 'base',
         androidLanguage: 'java',
-        iosLanguage: 'objc',
       );
 
       await baseProject.createProject(

@@ -268,7 +268,6 @@ void main() {
         projectRoot.childDirectory('bin').path,
         name: 'testapp',
         androidLanguage: 'java',
-        iosLanguage: 'objc',
         outputDirectory: appDir.path,
       );
       expect(appDir.childFile('pubspec.yaml').existsSync(), true);

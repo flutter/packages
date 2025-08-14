@@ -405,10 +405,6 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
       context.environment['FlutterProject.android.isKotlin']! as bool
           ? 'kotlin'
           : 'java';
-  final String iosLanguage =
-      context.environment['FlutterProject.ios.isSwift']! as bool
-          ? 'swift'
-          : 'objc';
 
   final Directory targetFlutterDirectory = context.fileSystem
       .directory(context.environment.getString('Cache.flutterRoot'));
@@ -423,7 +419,6 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
     directory: baseProjectDir,
     name: name,
     androidLanguage: androidLanguage,
-    iosLanguage: iosLanguage,
     platformWhitelist: platforms,
   );
   context.baseProject = baseProject;
@@ -449,7 +444,6 @@ Future<ReferenceProjects> _generateBaseAndTargetReferenceProjects({
     directory: targetProjectDir,
     name: name,
     androidLanguage: androidLanguage,
-    iosLanguage: iosLanguage,
     platformWhitelist: platforms,
   );
   context.targetProject = targetProject;
@@ -498,7 +492,6 @@ abstract class MigrateFlutterProject {
     required this.directory,
     required this.name,
     required this.androidLanguage,
-    required this.iosLanguage,
     this.platformWhitelist,
   });
 
@@ -506,7 +499,6 @@ abstract class MigrateFlutterProject {
   final Directory directory;
   final String name;
   final String androidLanguage;
-  final String iosLanguage;
   final List<SupportedPlatform>? platformWhitelist;
 
   /// Run git diff over each matching pair of files in the this project and the provided target project.
@@ -795,7 +787,6 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
     required super.directory,
     required super.name,
     required super.androidLanguage,
-    required super.iosLanguage,
     super.platformWhitelist,
   });
 
@@ -867,7 +858,6 @@ class MigrateBaseFlutterProject extends MigrateFlutterProject {
           sdkDir.childDirectory('bin').absolute.path,
           name: name,
           androidLanguage: androidLanguage,
-          iosLanguage: iosLanguage,
           outputDirectory: result.generatedBaseTemplateDirectory!.absolute.path,
           platforms: platforms,
         );
@@ -914,7 +904,6 @@ class MigrateTargetFlutterProject extends MigrateFlutterProject {
     required super.directory,
     required super.name,
     required super.androidLanguage,
-    required super.iosLanguage,
     super.platformWhitelist,
   });
 
@@ -934,7 +923,6 @@ class MigrateTargetFlutterProject extends MigrateFlutterProject {
         targetFlutterDirectory.childDirectory('bin').absolute.path,
         name: name,
         androidLanguage: androidLanguage,
-        iosLanguage: iosLanguage,
         outputDirectory: result.generatedTargetTemplateDirectory!.absolute.path,
       );
     }
