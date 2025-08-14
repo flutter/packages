@@ -1,3 +1,7 @@
+## 6.5.0
+
+* Adds audio track metadata support including bitrate, sample rate, channel count, and codec information.
+
 ## 6.4.0
 
 * Adds HTML5 video poster support as a VideoPlayerWebOptions.

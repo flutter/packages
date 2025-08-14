@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Adds audio track metadata support including bitrate, sample rate, channel count, and codec information.
+
 ## 2.8.11
 
 * Updates kotlin version to 2.2.0 to enable gradle 8.11 support.

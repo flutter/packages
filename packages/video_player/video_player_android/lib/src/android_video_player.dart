@@ -247,6 +247,25 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return _api.setMixWithOthers(mixWithOthers);
   }
 
+  @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    final VideoPlayerInstanceApi player = _playerWith(id: playerId);
+    final List<AudioTrackMessage> audioTracks = await player.getAudioTracks();
+
+    return audioTracks.map((AudioTrackMessage track) {
+      return VideoAudioTrack(
+        id: track.id,
+        label: track.label,
+        language: track.language,
+        isSelected: track.isSelected,
+        bitrate: track.bitrate,
+        sampleRate: track.sampleRate,
+        channelCount: track.channelCount,
+        codec: track.codec,
+      );
+    }).toList();
+  }
+
   EventChannel _eventChannelFor(int playerId) {
     return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
   }

@@ -16,6 +16,7 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
     show
         DataSourceType,
         DurationRange,
+        VideoAudioTrack,
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
@@ -805,6 +806,20 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       caption: _getCaptionAt(position),
       isCompleted: position == value.duration,
     );
+  }
+
+  /// Retrieves all available audio tracks for the current video.
+  ///
+  /// Returns a list of [VideoAudioTrack] objects containing information about
+  /// each audio track including id, label, language, and selection status.
+  ///
+  /// This method can only be called after the video has been initialized.
+  /// If called before initialization, it will return an empty list.
+  Future<List<VideoAudioTrack>> getAudioTracks() async {
+    if (_isDisposedOrNotInitialized) {
+      return <VideoAudioTrack>[];
+    }
+    return _videoPlayerPlatform.getAudioTracks(_playerId);
   }
 
   @override

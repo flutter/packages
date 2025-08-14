@@ -479,6 +479,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [self updatePlayingState];
 }
 
+
+
 #pragma mark - Private
 
 - (int64_t)duration {
@@ -486,6 +488,127 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // `[AVPlayerItem duration]` can be `kCMTimeIndefinite`,
   // use `[[AVPlayerItem asset] duration]` instead.
   return FVPCMTimeToMillis([[[_player currentItem] asset] duration]);
+}
+
+- (nullable FVPNativeAudioTrackData *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  if (!currentItem || !currentItem.asset) {
+    return [FVPNativeAudioTrackData makeWithAssetTracks:nil mediaSelectionTracks:nil];
+  }
+
+  AVAsset *asset = currentItem.asset;
+  
+  // Check for media selection options (HLS streams)
+  AVMediaSelectionGroup *audioGroup = [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+  if (audioGroup && audioGroup.options.count > 0) {
+    // Return media selection track data for HLS streams
+    NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks = [[NSMutableArray alloc] init];
+    AVMediaSelectionOption *currentSelection = [currentItem selectedMediaOptionInMediaSelectionGroup:audioGroup];
+    
+    NSInteger trackIndex = 0;
+    for (NSInteger i = 0; i < audioGroup.options.count; i++) {
+      AVMediaSelectionOption *option = audioGroup.options[i];
+      if (!option) continue;
+      
+      BOOL isSelected = (currentSelection == option);
+      
+      // Extract metadata title
+      NSString *commonMetadataTitle = nil;
+      if (option.commonMetadata) {
+        for (AVMetadataItem *item in option.commonMetadata) {
+          if ([item.commonKey isEqualToString:AVMetadataCommonKeyTitle]) {
+            commonMetadataTitle = [item stringValue];
+            break;
+          }
+        }
+      }
+      
+      FVPMediaSelectionAudioTrackData *trackData = [FVPMediaSelectionAudioTrackData 
+        makeWithIndex:trackIndex
+        displayName:option.displayName
+        languageCode:option.locale ? option.locale.languageCode : nil
+        isSelected:isSelected
+        commonMetadataTitle:commonMetadataTitle];
+      
+      [mediaSelectionTracks addObject:trackData];
+      trackIndex++;
+    }
+    
+    return [FVPNativeAudioTrackData makeWithAssetTracks:nil mediaSelectionTracks:mediaSelectionTracks];
+  }
+  
+  // Return asset track data for regular video files
+  NSArray<AVAssetTrack *> *assetAudioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
+  NSMutableArray<FVPAssetAudioTrackData *> *assetTracks = [[NSMutableArray alloc] init];
+  
+  NSInteger trackIndex = 0;
+  for (NSInteger i = 0; i < assetAudioTracks.count; i++) {
+    AVAssetTrack *assetTrack = assetAudioTracks[i];
+    
+    // Extract metadata from format descriptions
+    NSNumber *bitrate = nil;
+    NSNumber *sampleRate = nil;
+    NSNumber *channelCount = nil;
+    NSString *codec = nil;
+    
+    if (assetTrack.formatDescriptions.count > 0) {
+      CMFormatDescriptionRef formatDesc = (__bridge CMFormatDescriptionRef)assetTrack.formatDescriptions[0];
+      if (formatDesc) {
+        const AudioStreamBasicDescription *asbd = CMAudioFormatDescriptionGetStreamBasicDescription(formatDesc);
+        if (asbd) {
+          sampleRate = @((NSInteger)asbd->mSampleRate);
+          channelCount = @((NSInteger)asbd->mChannelsPerFrame);
+        }
+        
+        FourCharCode codecType = CMFormatDescriptionGetMediaSubType(formatDesc);
+        switch (codecType) {
+          case kAudioFormatMPEG4AAC:
+            codec = @"aac";
+            break;
+          case kAudioFormatMPEGLayer3:
+            codec = @"mp3";
+            break;
+          case kAudioFormatAppleLossless:
+            codec = @"alac";
+            break;
+          default:
+            codec = @"unknown";
+            break;
+        }
+        
+        if (assetTrack.estimatedDataRate > 0) {
+          bitrate = @((NSInteger)assetTrack.estimatedDataRate);
+        }
+      }
+    }
+    
+    // Get label from metadata
+    NSString *label = nil;
+    for (AVMetadataItem *item in assetTrack.commonMetadata) {
+      if ([item.commonKey isEqualToString:AVMetadataCommonKeyTitle]) {
+        label = item.stringValue;
+        break;
+      }
+    }
+    
+    // Check if track is selected (for regular assets, usually the first track is selected)
+    BOOL isSelected = (i == 0);
+    
+    FVPAssetAudioTrackData *trackData = [FVPAssetAudioTrackData 
+      makeWithTrackId:trackIndex
+      label:label
+      language:assetTrack.languageCode
+      isSelected:isSelected
+      bitrate:bitrate
+      sampleRate:sampleRate
+      channelCount:channelCount
+      codec:codec];
+    
+    [assetTracks addObject:trackData];
+    trackIndex++;
+  }
+  
+  return [FVPNativeAudioTrackData makeWithAssetTracks:assetTracks mediaSelectionTracks:nil];
 }
 
 @end

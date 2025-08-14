@@ -23,6 +23,17 @@ import 'package:video_player_avfoundation/src/messages.g.dart' as _i2;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeNativeAudioTrackData_0 extends _i1.SmartFake
+    implements _i2.NativeAudioTrackData {
+  _FakeNativeAudioTrackData_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [AVFoundationVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -52,8 +63,7 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<int> create(_i2.CreationOptions? creationOptions) =>
-      (super.noSuchMethod(
+  _i4.Future<int> create(_i2.CreationOptions? creationOptions) => (super.noSuchMethod(
         Invocation.method(
           #create,
           [creationOptions],
@@ -103,8 +113,7 @@ class MockAVFoundationVideoPlayerApi extends _i1.Mock
 /// A class which mocks [VideoPlayerInstanceApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockVideoPlayerInstanceApi extends _i1.Mock
-    implements _i2.VideoPlayerInstanceApi {
+class MockVideoPlayerInstanceApi extends _i1.Mock implements _i2.VideoPlayerInstanceApi {
   @override
   String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
         Invocation.getter(#pigeonVar_messageChannelSuffix),
@@ -187,4 +196,28 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<_i2.NativeAudioTrackData> getAudioTracks() => (super.noSuchMethod(
+        Invocation.method(
+          #getAudioTracks,
+          [],
+        ),
+        returnValue:
+            _i4.Future<_i2.NativeAudioTrackData>.value(_FakeNativeAudioTrackData_0(
+          this,
+          Invocation.method(
+            #getAudioTracks,
+            [],
+          ),
+        )),
+        returnValueForMissingStub:
+            _i4.Future<_i2.NativeAudioTrackData>.value(_FakeNativeAudioTrackData_0(
+          this,
+          Invocation.method(
+            #getAudioTracks,
+            [],
+          ),
+        )),
+      ) as _i4.Future<_i2.NativeAudioTrackData>);
 }

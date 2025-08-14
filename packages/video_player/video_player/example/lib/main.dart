@@ -11,6 +11,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import 'audio_tracks_demo.dart';
+
 void main() {
   runApp(
     MaterialApp(
@@ -23,7 +25,7 @@ class _App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 4,
       child: Scaffold(
         key: const ValueKey<String>('home_page'),
         appBar: AppBar(
@@ -51,23 +53,22 @@ class _App extends StatelessWidget {
               ),
               Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset'),
               Tab(icon: Icon(Icons.list), text: 'List example'),
+              Tab(icon: Icon(Icons.audiotrack), text: 'Audio Tracks'),
             ],
           ),
         ),
         body: TabBarView(
           children: <Widget>[
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _BumbleBeeRemoteVideo(viewType),
+              builder: (VideoViewType viewType) => _BumbleBeeRemoteVideo(viewType),
             ),
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _ButterFlyAssetVideo(viewType),
+              builder: (VideoViewType viewType) => _ButterFlyAssetVideo(viewType),
             ),
             _ViewTypeTabBar(
-              builder: (VideoViewType viewType) =>
-                  _ButterFlyAssetVideoInList(viewType),
+              builder: (VideoViewType viewType) => _ButterFlyAssetVideoInList(viewType),
             ),
+            const AudioTracksDemo(),
           ],
         ),
       ),
@@ -159,8 +160,8 @@ class _ButterFlyAssetVideoInList extends StatelessWidget {
                 title: Text('Video video'),
               ),
               Stack(
-                  alignment: FractionalOffset.bottomRight +
-                      const FractionalOffset(-0.1, -0.1),
+                  alignment:
+                      FractionalOffset.bottomRight + const FractionalOffset(-0.1, -0.1),
                   children: <Widget>[
                     _ButterFlyAssetVideo(viewType),
                     Image.asset('assets/flutter-mark-square-64.png'),
@@ -295,20 +296,50 @@ class _BumbleBeeRemoteVideo extends StatefulWidget {
 
 class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
   late VideoPlayerController _controller;
+  List<VideoAudioTrack> _audioTracks = <VideoAudioTrack>[];
+  bool _isLoadingTracks = false;
 
   Future<ClosedCaptionFile> _loadCaptions() async {
-    final String fileContents = await DefaultAssetBundle.of(context)
-        .loadString('assets/bumble_bee_captions.vtt');
-    return WebVTTCaptionFile(
-        fileContents); // For vtt files, use WebVTTCaptionFile
+    final String fileContents =
+        await DefaultAssetBundle.of(context).loadString('assets/bumble_bee_captions.vtt');
+    return WebVTTCaptionFile(fileContents); // For vtt files, use WebVTTCaptionFile
+  }
+
+  String _formatQualityInfo(VideoAudioTrack track) {
+    final List<String> parts = <String>[];
+
+    if (track.bitrate != null) {
+      final int kbps = (track.bitrate! / 1000).round();
+      parts.add('${kbps}kbps');
+    }
+
+    if (track.channelCount != null) {
+      switch (track.channelCount!) {
+        case 1:
+          parts.add('Mono');
+        case 2:
+          parts.add('Stereo');
+        case 6:
+          parts.add('5.1');
+        case 8:
+          parts.add('7.1');
+        default:
+          parts.add('${track.channelCount}ch');
+      }
+    }
+
+    if (track.codec != null) {
+      parts.add(track.codec!.toUpperCase());
+    }
+
+    return parts.isEmpty ? 'Unknown Quality' : parts.join(' • ');
   }
 
   @override
   void initState() {
     super.initState();
     _controller = VideoPlayerController.networkUrl(
-      Uri.parse(
-          'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
+      Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'),
       closedCaptionFile: _loadCaptions(),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
       viewType: widget.viewType,
@@ -347,6 +378,93 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
               ),
+            ),
+          ),
+          // Audio Tracks Button and Display
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: <Widget>[
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    if (_controller.value.isInitialized) {
+                      final List<VideoAudioTrack> audioTracks = await _controller.getAudioTracks();
+                      setState(() {
+                        _audioTracks = audioTracks;
+                        _isLoadingTracks = false;
+                      });
+                    }
+                  },
+                  icon: _isLoadingTracks
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.audiotrack),
+                  label: const Text('Get Audio Tracks'),
+                ),
+                const SizedBox(height: 16),
+                if (_audioTracks.isNotEmpty) ...<Widget>[
+                  const Text(
+                    'Available Audio Tracks:',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  ...(_audioTracks.map((VideoAudioTrack track) => Card(
+                        margin: const EdgeInsets.symmetric(vertical: 4),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor:
+                                track.isSelected ? Colors.green : Colors.grey,
+                            child: Icon(
+                              track.isSelected ? Icons.check : Icons.audiotrack,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
+                          title: Text(
+                            track.label,
+                            style: TextStyle(
+                              fontWeight:
+                                  track.isSelected ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text('Language: ${track.language} | ID: ${track.id}'),
+                              if (track.bitrate != null ||
+                                  track.sampleRate != null ||
+                                  track.channelCount != null ||
+                                  track.codec != null)
+                                Text(
+                                  _formatQualityInfo(track),
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          trailing: track.isSelected
+                              ? const Chip(
+                                  label: Text('Selected', style: TextStyle(fontSize: 12)),
+                                  backgroundColor: Colors.green,
+                                  labelStyle: TextStyle(color: Colors.white),
+                                )
+                              : null,
+                        ),
+                      ))),
+                ] else if (_audioTracks.isEmpty && !_isLoadingTracks) ...<Widget>[
+                  const Text(
+                    'No audio tracks found. Click "Get Audio Tracks" to retrieve them.',
+                    style: TextStyle(color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ],
             ),
           ),
         ],
@@ -484,8 +602,7 @@ class _PlayerVideoAndPopPageState extends State<_PlayerVideoAndPopPage> {
   void initState() {
     super.initState();
 
-    _videoPlayerController =
-        VideoPlayerController.asset('assets/Butterfly-209.mp4');
+    _videoPlayerController = VideoPlayerController.asset('assets/Butterfly-209.mp4');
     _videoPlayerController.addListener(() {
       if (startedPlaying && !_videoPlayerController.value.isPlaying) {
         Navigator.pop(context);

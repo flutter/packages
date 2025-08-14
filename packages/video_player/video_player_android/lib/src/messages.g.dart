@@ -135,6 +135,83 @@ class CreateMessage {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Represents an audio track in a video.
+class AudioTrackMessage {
+  AudioTrackMessage({
+    required this.id,
+    required this.label,
+    required this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  String id;
+
+  String label;
+
+  String language;
+
+  bool isSelected;
+
+  int? bitrate;
+
+  int? sampleRate;
+
+  int? channelCount;
+
+  String? codec;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      id,
+      label,
+      language,
+      isSelected,
+      bitrate,
+      sampleRate,
+      channelCount,
+      codec,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static AudioTrackMessage decode(Object result) {
+    result as List<Object?>;
+    return AudioTrackMessage(
+      id: result[0]! as String,
+      label: result[1]! as String,
+      language: result[2]! as String,
+      isSelected: result[3]! as bool,
+      bitrate: result[4] as int?,
+      sampleRate: result[5] as int?,
+      channelCount: result[6] as int?,
+      codec: result[7] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AudioTrackMessage || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -154,6 +231,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is CreateMessage) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
+    } else if (value is AudioTrackMessage) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -172,6 +252,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
       case 132:
         return CreateMessage.decode(readValue(buffer)!);
+      case 133:
+        return AudioTrackMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -539,6 +621,37 @@ class VideoPlayerInstanceApi {
       );
     } else {
       return;
+    }
+  }
+
+  Future<List<AudioTrackMessage>> getAudioTracks() async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getAudioTracks$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<AudioTrackMessage>();
     }
   }
 }

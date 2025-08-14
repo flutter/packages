@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Adds audio track metadata support including bitrate, sample rate, channel count, and codec information.
+
 ## 2.8.3
 
 * Removes calls to self from init and dealloc, for maintainability.
