@@ -1,9 +1,11 @@
-## NEXT
+## 0.2.7+1
 
+* Restores Support for streaming frames.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 0.2.6+2
 
+* Restores support for streaming frames.
 * Fixes compile errors under strict standards mode.
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.
 

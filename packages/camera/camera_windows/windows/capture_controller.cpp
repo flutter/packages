@@ -5,13 +5,17 @@
 #include "capture_controller.h"
 
 #include <comdef.h>
+#include <flutter/event_stream_handler_functions.h>
+#include <flutter/standard_method_codec.h>
 #include <wincodec.h>
 #include <wrl/client.h>
 
 #include <cassert>
 #include <chrono>
+#include <iostream>
 
 #include "com_heap_ptr.h"
+#include "messages.g.h"
 #include "photo_handler.h"
 #include "preview_handler.h"
 #include "record_handler.h"
@@ -300,7 +304,8 @@ void CaptureControllerImpl::ResetCaptureController() {
 
 bool CaptureControllerImpl::InitCaptureDevice(
     flutter::TextureRegistrar* texture_registrar, const std::string& device_id,
-    const PlatformMediaSettings& media_settings) {
+    const PlatformMediaSettings& media_settings,
+    std::unique_ptr<TaskRunner> task_runner) {
   assert(capture_controller_listener_);
 
   if (IsInitialized()) {
@@ -317,6 +322,7 @@ bool CaptureControllerImpl::InitCaptureDevice(
   media_settings_ = media_settings;
   texture_registrar_ = texture_registrar;
   video_device_id_ = device_id;
+  task_runner_ = task_runner;
 
   // MFStartup must be called before using Media Foundation.
   if (!media_foundation_started_) {
@@ -554,6 +560,16 @@ void CaptureControllerImpl::StopRecord() {
     return OnRecordStopped(GetCameraResult(hr),
                            "Failed to stop video recording");
   }
+}
+void CaptureControllerImpl::StartImageStream(
+    std::unique_ptr<flutter::EventSink<flutter::EncodableValue>> sink) {
+  assert(capture_controller_listener_);
+  image_stream_sink_ = std::move(sink);
+}
+
+void CaptureControllerImpl::StopImageStream() {
+  assert(capture_controller_listener_);
+  image_stream_sink_.reset();
 }
 
 // Starts capturing preview frames using preview handler
@@ -860,8 +876,38 @@ void CaptureControllerImpl::OnRecordStopped(CameraResult result,
 // Implements CaptureEngineObserver::UpdateBuffer.
 bool CaptureControllerImpl::UpdateBuffer(uint8_t* buffer,
                                          uint32_t data_length) {
+  using flutter::EncodableValue, flutter::EncodableMap;
+
   if (!texture_handler_) {
     return false;
+  }
+  if (image_stream_sink_) {
+    // Create a strongly-typed frame data object using Pigeon
+    flutter::EncodableList data_list;
+    std::vector<uint8_t> buffer_data(buffer, buffer + data_length);
+    for (uint8_t byte : buffer_data) {
+      data_list.push_back(flutter::EncodableValue(static_cast<int64_t>(byte)));
+    }
+
+    PlatformFrameData frame_data(data_list,
+                                 static_cast<int64_t>(preview_frame_width_),
+                                 static_cast<int64_t>(preview_frame_height_),
+                                 static_cast<int64_t>(data_length));
+
+    // Use CameraApi::GetCodec() to properly encode the Pigeon-defined class
+    // This ensures the frame data is serialized using the same codec as other
+    // CameraApi messages
+    flutter::EncodableValue encoded_frame =
+        CameraApi::GetCodec().EncodeMessage(frame_data.ToEncodableList());
+
+    task_runner_->EnqueueTask([weak_sink = std::weak_ptr(image_stream_sink_),
+                               encoded_frame = std::move(encoded_frame)]() {
+      std::shared_ptr<flutter::EventSink<flutter::EncodableValue>> sink =
+          weak_sink.lock();
+      if (sink) {
+        sink->Success(encoded_frame);
+      }
+    });
   }
   return texture_handler_->UpdateBuffer(buffer, data_length);
 }

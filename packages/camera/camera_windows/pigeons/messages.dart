@@ -40,6 +40,21 @@ class PlatformSize {
   final double height;
 }
 
+/// A representation of frame data from the camera preview stream.
+class PlatformFrameData {
+  PlatformFrameData({
+    required this.data,
+    required this.width,
+    required this.height,
+    required this.length,
+  });
+
+  final List<int> data;
+  final int width;
+  final int height;
+  final int length;
+}
+
 @HostApi()
 abstract class CameraApi {
   /// Returns the names of all of the available capture devices.
@@ -69,6 +84,11 @@ abstract class CameraApi {
   /// the resulting file.
   @async
   String stopVideoRecording(int cameraId);
+
+  /// Starts the image stream for the given camera.
+  /// Returns the name of the [EventChannel] used to deliver the images.
+  /// Cancelling the subscription to the channel stops the capture.
+  String startImageStream(int cameraId);
 
   /// Starts the preview stream for the given camera.
   @async
