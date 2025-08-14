@@ -60,24 +60,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property(readonly, nonatomic) NSObject<FLTCaptureDeviceInputFactory> *captureDeviceInputFactory;
 /// All FLTCam's state access and capture session related operations should be on run on this queue.
 @property(strong, nonatomic) dispatch_queue_t captureSessionQueue;
+@property(nonatomic, copy) AssetWriterFactory assetWriterFactory;
+@property(readonly, nonatomic) FLTCamMediaSettingsAVWrapper *mediaSettingsAVWrapper;
+@property(readonly, nonatomic) FCPPlatformMediaSettings *mediaSettings;
+@property(nonatomic, copy) InputPixelBufferAdaptorFactory inputPixelBufferAdaptorFactory;
+@property(assign, nonatomic) BOOL isAudioSetup;
+/// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
+@property(nonatomic, copy) AudioCaptureDeviceFactory audioCaptureDeviceFactory;
 
 /// Initializes an `FLTCam` instance with the given configuration.
 /// @param error report to the caller if any error happened creating the camera.
 - (instancetype)initWithConfiguration:(FLTCamConfiguration *)configuration error:(NSError **)error;
-
-- (void)captureToFileWithCompletion:(void (^)(NSString *_Nullable,
-                                              FlutterError *_Nullable))completion;
-/// Starts recording a video with an optional streaming messenger.
-/// If the messenger is non-nil then it will be called for each
-/// captured frame, allowing streaming concurrently with recording.
-///
-/// @param messenger Nullable messenger for capturing each frame.
-- (void)startVideoRecordingWithCompletion:(void (^)(FlutterError *_Nullable))completion
-                    messengerForStreaming:(nullable NSObject<FlutterBinaryMessenger> *)messenger;
-
-- (void)startImageStreamWithMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
-                           completion:(nonnull void (^)(FlutterError *_Nullable))completion;
-- (void)setUpCaptureSessionForAudioIfNeeded;
 
 // Methods exposed for the Swift DefaultCamera subclass
 - (void)updateOrientation;

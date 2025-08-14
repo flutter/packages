@@ -31,18 +31,6 @@
 @end
 
 @implementation FVPTextureBasedVideoPlayer
-- (instancetype)initWithAsset:(NSString *)asset
-                 frameUpdater:(FVPFrameUpdater *)frameUpdater
-                  displayLink:(NSObject<FVPDisplayLink> *)displayLink
-                    avFactory:(id<FVPAVFactory>)avFactory
-                 viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
-  return [self initWithURL:[NSURL fileURLWithPath:[FVPVideoPlayer absolutePathForAssetName:asset]]
-              frameUpdater:frameUpdater
-               displayLink:displayLink
-               httpHeaders:@{}
-                 avFactory:avFactory
-              viewProvider:viewProvider];
-}
 
 - (instancetype)initWithURL:(NSURL *)url
                frameUpdater:(FVPFrameUpdater *)frameUpdater
@@ -130,16 +118,8 @@
       }];
 }
 
-- (void)disposeSansEventChannel {
-  // This check prevents the crash caused by removing the KVO observers twice.
-  // When performing a Hot Restart, the leftover players are disposed once directly
-  // by [FVPVideoPlayerPlugin initialize:] method and then disposed again by
-  // [FVPVideoPlayer onTextureUnregistered:] call leading to possible over-release.
-  if (self.disposed) {
-    return;
-  }
-
-  [super disposeSansEventChannel];
+- (void)dispose {
+  [super dispose];
 
   [self.playerLayer removeFromSuperlayer];
 

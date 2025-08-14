@@ -74,30 +74,38 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final DataSource dataSource = options.dataSource;
     final VideoViewType viewType = options.viewType;
 
-    String? asset;
-    String? packageName;
     String? uri;
-    String? formatHint;
-    Map<String, String> httpHeaders = <String, String>{};
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
-        asset = dataSource.asset;
-        packageName = dataSource.package;
+        final String? asset = dataSource.asset;
+        if (asset == null) {
+          throw ArgumentError(
+            '"asset" must be non-null for an asset data source',
+          );
+        }
+        uri = await _api.getAssetUrl(
+          asset,
+          dataSource.package,
+        );
+        if (uri == null) {
+          // Throw a platform exception for compatibility with the previous
+          // implementation, which threw on the native side.
+          throw PlatformException(
+              code: 'video_player',
+              message:
+                  'Asset $asset not found in package ${dataSource.package}.');
+        }
       case DataSourceType.network:
-        uri = dataSource.uri;
-        formatHint = _videoFormatStringMap[dataSource.formatHint];
-        httpHeaders = dataSource.httpHeaders;
       case DataSourceType.file:
-        uri = dataSource.uri;
       case DataSourceType.contentUri:
         uri = dataSource.uri;
     }
+    if (uri == null) {
+      throw ArgumentError('Unable to construct a video asset from $options');
+    }
     final CreationOptions pigeonCreationOptions = CreationOptions(
-      asset: asset,
-      packageName: packageName,
       uri: uri,
-      httpHeaders: httpHeaders,
-      formatHint: formatHint,
+      httpHeaders: dataSource.httpHeaders,
       viewType: _platformVideoViewTypeFromVideoViewType(viewType),
     );
 
@@ -166,37 +174,33 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
-      switch (map['event']) {
-        case 'initialized':
-          return VideoEvent(
+      return switch (map['event']) {
+        'initialized' => VideoEvent(
             eventType: VideoEventType.initialized,
             duration: Duration(milliseconds: map['duration'] as int),
-            size: Size((map['width'] as num?)?.toDouble() ?? 0.0,
-                (map['height'] as num?)?.toDouble() ?? 0.0),
-          );
-        case 'completed':
-          return VideoEvent(
+            size: Size(
+              (map['width'] as num?)?.toDouble() ?? 0.0,
+              (map['height'] as num?)?.toDouble() ?? 0.0,
+            ),
+          ),
+        'completed' => VideoEvent(
             eventType: VideoEventType.completed,
-          );
-        case 'bufferingUpdate':
-          final List<dynamic> values = map['values'] as List<dynamic>;
-
-          return VideoEvent(
-            buffered: values.map<DurationRange>(_toDurationRange).toList(),
+          ),
+        'bufferingUpdate' => VideoEvent(
+            buffered: (map['values'] as List<dynamic>)
+                .map<DurationRange>(_toDurationRange)
+                .toList(),
             eventType: VideoEventType.bufferingUpdate,
-          );
-        case 'bufferingStart':
-          return VideoEvent(eventType: VideoEventType.bufferingStart);
-        case 'bufferingEnd':
-          return VideoEvent(eventType: VideoEventType.bufferingEnd);
-        case 'isPlayingStateUpdate':
-          return VideoEvent(
+          ),
+        'bufferingStart' =>
+          VideoEvent(eventType: VideoEventType.bufferingStart),
+        'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
+        'isPlayingStateUpdate' => VideoEvent(
             eventType: VideoEventType.isPlayingStateUpdate,
             isPlaying: map['isPlaying'] as bool,
-          );
-        default:
-          return VideoEvent(eventType: VideoEventType.unknown);
-      }
+          ),
+        _ => VideoEvent(eventType: VideoEventType.unknown),
+      };
     });
   }
 
@@ -250,19 +254,13 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     return player ?? (throw StateError('No active player with ID $id.'));
   }
 
-  static const Map<VideoFormat, String> _videoFormatStringMap =
-      <VideoFormat, String>{
-    VideoFormat.ss: 'ss',
-    VideoFormat.hls: 'hls',
-    VideoFormat.dash: 'dash',
-    VideoFormat.other: 'other',
-  };
-
   DurationRange _toDurationRange(dynamic value) {
     final List<dynamic> pair = value as List<dynamic>;
+    final int startMilliseconds = pair[0] as int;
+    final int durationMilliseconds = pair[1] as int;
     return DurationRange(
-      Duration(milliseconds: pair[0] as int),
-      Duration(milliseconds: pair[1] as int),
+      Duration(milliseconds: startMilliseconds),
+      Duration(milliseconds: startMilliseconds + durationMilliseconds),
     );
   }
 }

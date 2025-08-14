@@ -250,9 +250,6 @@ targets:
 
   # Wasm unit tests in master
   - name: Linux_web web_dart_unit_test_wasm_shard_1 master
-    # Broken on master. See flutter/flutter#170433 and
-    # flutter/flutter#170434
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -268,9 +265,6 @@ targets:
         }
 
   - name: Linux_web web_dart_unit_test_wasm_shard_2 master
-    # Broken on master. See flutter/flutter#170433 and
-    # flutter/flutter#170434
-    bringup: true
     recipe: packages/packages
     timeout: 60
     properties:
@@ -400,7 +394,7 @@ targets:
   ### Android tasks ###
   - name: Linux_android android_build_all_packages master
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       version_file: flutter_master.version
       # This builds the all_packages app only in a current JDK.
@@ -413,7 +407,7 @@ targets:
 
   - name: Linux_android android_build_all_packages stable
     recipe: packages/packages
-    timeout: 30
+    timeout: 60
     properties:
       add_recipes_cq: "true"
       version_file: flutter_stable.version
@@ -1437,7 +1431,6 @@ targets:
     recipe: packages/packages
     presubmit: false
     timeout: 30
-    bringup: true # https://github.com/flutter/flutter/issues/134083
     properties:
       add_recipes_cq: "true"
       target_file: windows_build_all_packages.yaml
@@ -1472,7 +1465,6 @@ targets:
     recipe: packages/packages
     presubmit: false
     timeout: 30
-    bringup: true
     properties:
       target_file: windows_build_all_packages.yaml
       channel: stable
