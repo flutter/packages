@@ -206,7 +206,12 @@ class SK2ErrorMessage {
   final Map<String, Object>? userInfo;
 }
 
-enum SK2ProductPurchaseResultMessage { success, userCancelled, pending }
+enum SK2ProductPurchaseResultMessage {
+  success,
+  unverified,
+  userCancelled,
+  pending
+}
 
 @HostApi(dartHostTestHandler: 'TestInAppPurchase2Api')
 abstract class InAppPurchase2API {
