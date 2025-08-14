@@ -1,6 +1,6 @@
 ## NEXT
 
-* Removes specialization of 'map' in example app to fix a Swift warning.
+* Removes specialization of 'map' to fix a Swift warning.
 
 ## 3.23.0
 
