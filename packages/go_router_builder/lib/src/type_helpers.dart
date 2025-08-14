@@ -43,6 +43,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperDateTime(),
   _TypeHelperDouble(),
   _TypeHelperEnum(),
+  _TypeHelperExtensionType(),
   _TypeHelperInt(),
   _TypeHelperNum(),
   _TypeHelperString(),
@@ -279,6 +280,100 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
 
   @override
   bool _matchesType(DartType type) => type.isEnum;
+}
+
+/// A type helper for extension types.
+/// Supported extension types are:
+/// - [String]
+/// - [int]
+/// - [double]
+/// - [num]
+/// - [bool]
+/// - [Enum]
+/// - [BigInt]
+/// - [DateTime]
+/// - [Uri]
+class _TypeHelperExtensionType extends _TypeHelper {
+  const _TypeHelperExtensionType();
+
+  @override
+  String _decode(
+    FormalParameterElement parameterElement,
+    Set<String> pathParameters,
+  ) {
+    final DartType paramType = parameterElement.type;
+    if (paramType.isNullableType && parameterElement.hasDefaultValue) {
+      throw NullableDefaultValueError(parameterElement);
+    }
+
+    final String stateValue =
+        'state.${_stateValueAccess(parameterElement, pathParameters)}';
+    final String castType;
+    if (paramType.isNullableType || parameterElement.hasDefaultValue) {
+      castType = '$paramType${paramType.isNullableType ? '' : '?'}';
+    } else {
+      castType = '$paramType';
+    }
+
+    final DartType representationType = paramType.extensionTypeErasure;
+    if (representationType.isDartCoreString) {
+      return '$stateValue as $castType';
+    }
+
+    if (representationType.isEnum) {
+      return '${enumMapName(representationType as InterfaceType)}'
+          '.$enumExtensionHelperName($stateValue) as $castType';
+    }
+
+    final String representationTypeName = withoutNullability(
+      representationType.getDisplayString(),
+    );
+    if (paramType.isNullableType || parameterElement.hasDefaultValue) {
+      return "$representationTypeName.tryParse($stateValue ?? '') as $castType";
+    } else {
+      return '$representationTypeName.parse($stateValue) as $castType';
+    }
+  }
+
+  @override
+  String _encode(String fieldName, DartType type) {
+    final DartType representationType = type.extensionTypeErasure;
+    if (representationType.isDartCoreString) {
+      return '$fieldName${type.ensureNotNull} as String';
+    }
+
+    if (representationType.isEnum) {
+      return '${enumMapName(representationType as InterfaceType)}'
+          '[$fieldName${type.ensureNotNull} as ${withoutNullability(representationType.getDisplayString())}]!';
+    }
+
+    return '$fieldName${representationType.ensureNotNull}.toString()';
+  }
+
+  @override
+  bool _matchesType(DartType type) {
+    final DartType representationType = type.extensionTypeErasure;
+    if (type == representationType) {
+      // `type` is not an extension type.
+      return false;
+    }
+
+    return representationType.isDartCoreString ||
+        representationType.isDartCoreInt ||
+        representationType.isDartCoreDouble ||
+        representationType.isDartCoreNum ||
+        representationType.isDartCoreBool ||
+        representationType.isEnum ||
+        const TypeChecker.fromRuntime(
+          BigInt,
+        ).isAssignableFromType(representationType) ||
+        const TypeChecker.fromRuntime(
+          DateTime,
+        ).isAssignableFromType(representationType) ||
+        const TypeChecker.fromRuntime(
+          Uri,
+        ).isAssignableFromType(representationType);
+  }
 }
 
 class _TypeHelperInt extends _TypeHelperWithHelper {

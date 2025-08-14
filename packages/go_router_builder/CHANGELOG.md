@@ -1,3 +1,7 @@
+## 3.2.0
+
+- Adds support for`extension type`.
+
 ## 3.1.0
 
 - Updates dependencies to use the latest `analyzer`, `build`, and `source_gen`.
