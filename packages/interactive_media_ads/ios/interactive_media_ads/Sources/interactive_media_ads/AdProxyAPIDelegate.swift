@@ -39,16 +39,25 @@ class AdProxyAPIDelegate: PigeonApiDelegateIMAAd {
   }
 
   func uiElements(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> [UIElementType] {
-    return pigeonInstance.uiElements.map {
-      switch $0.intValue {
-      case IMAUiElementType.elements_AD_ATTRIBUTION.rawValue:
-        return UIElementType.adAttribution
-      case IMAUiElementType.elements_COUNTDOWN.rawValue:
-        return UIElementType.countdown
+    var uiElements: [UIElementType] = []
+    let uiElementsArray = pigeonInstance.uiElements as NSArray
+    for uiElement in uiElementsArray {
+      switch uiElement {
+      case let uiElement as String where uiElement == "adAttribution":
+        uiElements.append(UIElementType.adAttribution)
+      case let uiElement as NSNumber
+      where uiElement.intValue == IMAUiElementType.elements_AD_ATTRIBUTION.rawValue:
+        uiElements.append(UIElementType.adAttribution)
+      case let uiElement as String where uiElement == "countdown":
+        uiElements.append(UIElementType.countdown)
+      case let uiElement as NSNumber
+      where uiElement.intValue == IMAUiElementType.elements_COUNTDOWN.rawValue:
+        uiElements.append(UIElementType.countdown)
       default:
-        return UIElementType.unknown
+        uiElements.append(UIElementType.unknown)
       }
     }
+    return uiElements
   }
 
   func width(pigeonApi: PigeonApiIMAAd, pigeonInstance: IMAAd) throws -> Int64 {
