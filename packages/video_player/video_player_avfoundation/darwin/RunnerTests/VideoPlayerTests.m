@@ -939,6 +939,31 @@
   OCMVerifyAllWithDelay(mockTextureRegistry, 10);
 }
 
+- (void)testVideoOutputIsAddedWhenAVPlayerItemBecomesReady {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+  FVPCreationOptions *create = [FVPCreationOptions
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+      httpHeaders:@{}
+         viewType:FVPPlatformVideoViewTypeTextureView];
+
+  NSNumber *playerIdentifier = [videoPlayerPlugin createWithOptions:create error:&error];
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[playerIdentifier];
+  XCTAssertNotNil(player);
+
+  AVPlayerItem *item = player.player.currentItem;
+  [self keyValueObservingExpectationForObject:(id)item
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusReadyToPlay)];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
+  // Video output is added as soon as the status becomes ready to play.
+  XCTAssertEqual(item.outputs.count, 1);
+}
+
 #if TARGET_OS_IOS
 - (void)testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker {
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));

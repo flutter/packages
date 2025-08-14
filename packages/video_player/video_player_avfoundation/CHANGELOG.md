@@ -1,3 +1,7 @@
+## 2.8.4
+
+* Removes unnecessary workarounds for detecting initialized status.
+
 ## 2.8.3
 
 * Removes calls to self from init and dealloc, for maintainability.
