@@ -13,33 +13,35 @@
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   [GeneratedPluginRegistrant registerWithRegistry:self];
-    if (@available(iOS 14, *)) {
+  if (@available(iOS 14, *)) {
     // Seed the photo library with at least one image for tests to operate on.
     NSString *photoAddedKey = @"PhotoAdded";
     BOOL photoAdded = [NSUserDefaults.standardUserDefaults boolForKey:photoAddedKey];
     if (!photoAdded) {
-            NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-            __block NSError *saveError = nil;
-            [PHPhotoLibrary
-             requestAuthorizationForAccessLevel:PHAccessLevelAddOnly
-             handler:^(PHAuthorizationStatus status) {
-                if ([PHPhotoLibrary.sharedPhotoLibrary
-                      performChangesAndWait:^{
-                    NSURL *jpgImageTall =
-                    [bundle URLForResource:@"jpgImageTall"
-                             withExtension:@"jpg"];
-                    [PHAssetChangeRequest
-                     creationRequestForAssetFromImageAtFileURL:
-                         jpgImageTall];
-                }
-                     error:&saveError]) {
-                    [NSUserDefaults.standardUserDefaults setBool:YES forKey:photoAddedKey];
-                } else {
-                    os_log_error(OS_LOG_DEFAULT, "%@", saveError);
-                }
-            }];
-        }
+      NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+      __block NSError *saveError = nil;
+      [PHPhotoLibrary
+          requestAuthorizationForAccessLevel:PHAccessLevelAddOnly
+                                     handler:^(PHAuthorizationStatus status) {
+                                       if ([PHPhotoLibrary.sharedPhotoLibrary
+                                               performChangesAndWait:^{
+                                                 NSURL *jpgImageTall =
+                                                     [bundle URLForResource:@"jpgImageTall"
+                                                              withExtension:@"jpg"];
+                                                 [PHAssetChangeRequest
+                                                     creationRequestForAssetFromImageAtFileURL:
+                                                         jpgImageTall];
+                                               }
+                                                               error:&saveError]) {
+                                         [NSUserDefaults.standardUserDefaults
+                                             setBool:YES
+                                              forKey:photoAddedKey];
+                                       } else {
+                                         os_log_error(OS_LOG_DEFAULT, "%@", saveError);
+                                       }
+                                     }];
     }
+  }
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
 }
 
