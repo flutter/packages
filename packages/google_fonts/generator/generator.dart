@@ -11,7 +11,7 @@ import 'package:mustache_template/mustache.dart';
 import 'fonts.pb.dart';
 
 const _generatedMainFilePath = 'lib/google_fonts.dart';
-_generatedPartFilePath(String part) =>
+String _generatedPartFilePath(String part) =>
     'lib/src/google_fonts_parts/part_$part.dart';
 const _familiesSupportedPath = 'generator/families_supported';
 const _familiesDiffPath = 'generator/families_diff';
