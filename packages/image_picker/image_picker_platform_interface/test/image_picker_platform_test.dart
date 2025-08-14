@@ -78,7 +78,7 @@ void main() {
   });
 
   test(
-      'Default implementation of pickMultiVideoWithOptions should throw '
+      'Default implementation of getMultiVideoWithOptions should throw '
       'unimplemented error', () {
     final FakeCameraDelegatingImagePickerPlatform implementation =
         FakeCameraDelegatingImagePickerPlatform();
