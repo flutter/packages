@@ -1,6 +1,6 @@
 ## 3.1.0
 
-* Adds support for `getMultiVideo`.
+* Adds support for `getMultiVideoWithOptions`.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 3.0.6

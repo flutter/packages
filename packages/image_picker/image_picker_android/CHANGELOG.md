@@ -1,6 +1,6 @@
 ## 0.8.13
 
-* Adds support for `getMultiVideo`.
+* Adds support for `getMultiVideoWithOptions`.
 
 ## 0.8.12+25
 
