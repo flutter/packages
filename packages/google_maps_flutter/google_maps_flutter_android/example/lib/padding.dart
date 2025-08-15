@@ -12,7 +12,7 @@ import 'page.dart';
 
 class PaddingPage extends GoogleMapExampleAppPage {
   const PaddingPage({Key? key})
-    : super(const Icon(Icons.map), 'Add padding to the map', key: key);
+      : super(const Icon(Icons.map), 'Add padding to the map', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +49,11 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
-          child: SizedBox(width: 300.0, height: 200.0, child: googleMap),
+          child: SizedBox(
+            width: 300.0,
+            height: 200.0,
+            child: googleMap,
+          ),
         ),
       ),
       const Padding(
@@ -93,7 +97,9 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
               controller: _topController,
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
-              decoration: const InputDecoration(hintText: 'Top'),
+              decoration: const InputDecoration(
+                hintText: 'Top',
+              ),
             ),
           ),
           const Spacer(),
@@ -103,7 +109,9 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
               controller: _bottomController,
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
-              decoration: const InputDecoration(hintText: 'Bottom'),
+              decoration: const InputDecoration(
+                hintText: 'Bottom',
+              ),
             ),
           ),
           const Spacer(),
@@ -113,7 +121,9 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
               controller: _leftController,
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
-              decoration: const InputDecoration(hintText: 'Left'),
+              decoration: const InputDecoration(
+                hintText: 'Left',
+              ),
             ),
           ),
           const Spacer(),
@@ -123,7 +133,9 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
               controller: _rightController,
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
-              decoration: const InputDecoration(hintText: 'Right'),
+              decoration: const InputDecoration(
+                hintText: 'Right',
+              ),
             ),
           ),
         ],
@@ -142,11 +154,10 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
             onPressed: () {
               setState(() {
                 _padding = EdgeInsets.fromLTRB(
-                  double.tryParse(_leftController.value.text) ?? 0,
-                  double.tryParse(_topController.value.text) ?? 0,
-                  double.tryParse(_rightController.value.text) ?? 0,
-                  double.tryParse(_bottomController.value.text) ?? 0,
-                );
+                    double.tryParse(_leftController.value.text) ?? 0,
+                    double.tryParse(_topController.value.text) ?? 0,
+                    double.tryParse(_rightController.value.text) ?? 0,
+                    double.tryParse(_bottomController.value.text) ?? 0);
               });
             },
           ),
@@ -161,7 +172,7 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
                 _padding = EdgeInsets.zero;
               });
             },
-          ),
+          )
         ],
       ),
     );

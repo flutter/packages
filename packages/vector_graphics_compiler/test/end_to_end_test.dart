@@ -33,9 +33,8 @@ class TestBytesLoader extends BytesLoader {
 }
 
 void main() {
-  testWidgets('Can endcode and decode simple SVGs with no errors', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Can endcode and decode simple SVGs with no errors',
+      (WidgetTester tester) async {
     for (final String svg in allSvgTestStrings) {
       final Uint8List bytes = encodeSvg(
         xml: svg,
@@ -46,22 +45,17 @@ void main() {
         enableOverdrawOptimizer: false,
       );
 
-      await tester.pumpWidget(
-        Center(
+      await tester.pumpWidget(Center(
           child: VectorGraphic(
-            loader: TestBytesLoader(bytes.buffer.asByteData()),
-          ),
-        ),
-      );
+              loader: TestBytesLoader(bytes.buffer.asByteData()))));
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull);
     }
   });
 
-  testWidgets('Errors on unsupported image mime type', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Errors on unsupported image mime type',
+      (WidgetTester tester) async {
     const String svgInlineImage = r'''
 <svg width="248" height="100" viewBox="0 0 248 100">
 <image id="image0" width="50" height="50" xlink:href="data:image/foobar;base64,iVBORw0I5IAAM1SvoAAAAASUVORK5CYII=">
@@ -69,16 +63,15 @@ void main() {
 ''';
 
     expect(
-      () => encodeSvg(
-        xml: svgInlineImage,
-        debugName: 'test.svg',
-        warningsAsErrors: true,
-        enableClippingOptimizer: false,
-        enableMaskingOptimizer: false,
-        enableOverdrawOptimizer: false,
-      ),
-      throwsA(isA<UnimplementedError>()),
-    );
+        () => encodeSvg(
+              xml: svgInlineImage,
+              debugName: 'test.svg',
+              warningsAsErrors: true,
+              enableClippingOptimizer: false,
+              enableMaskingOptimizer: false,
+              enableOverdrawOptimizer: false,
+            ),
+        throwsA(isA<UnimplementedError>()));
   });
 
   test('encodeSvg encodes stroke shaders', () async {
@@ -217,49 +210,13 @@ void main() {
         shaderId: null,
       ),
       const OnTextConfig(
-        'Plain text Roboto',
-        0,
-        55,
-        'Roboto',
-        3,
-        0,
-        0,
-        4278190080,
-        0,
-      ),
+          'Plain text Roboto', 0, 55, 'Roboto', 3, 0, 0, 4278190080, 0),
       const OnTextConfig(
-        'Plain text Verdana',
-        0,
-        55,
-        'Verdana',
-        3,
-        0,
-        0,
-        4278190080,
-        1,
-      ),
+          'Plain text Verdana', 0, 55, 'Verdana', 3, 0, 0, 4278190080, 1),
       const OnTextConfig(
-        'Bold text Verdana',
-        0,
-        55,
-        'Verdana',
-        6,
-        0,
-        0,
-        4278190080,
-        2,
-      ),
+          'Bold text Verdana', 0, 55, 'Verdana', 6, 0, 0, 4278190080, 2),
       const OnTextConfig(
-        'Stroked bold line',
-        0,
-        55,
-        'Roboto',
-        8,
-        0,
-        0,
-        4278190080,
-        3,
-      ),
+          'Stroked bold line', 0, 55, 'Roboto', 8, 0, 0, 4278190080, 3),
       const OnTextConfig(' Line 3', 0, 55, 'Roboto', 3, 0, 0, 4278190080, 4),
       const OnDrawText(0, 0, null, null),
       const OnDrawText(1, 0, null, null),
@@ -378,15 +335,8 @@ class TestListener extends VectorGraphicsCodecListener {
   final List<Object> commands = <Object>[];
 
   @override
-  void onTextPosition(
-    int textPositionId,
-    double? x,
-    double? y,
-    double? dx,
-    double? dy,
-    bool reset,
-    Float64List? transform,
-  ) {}
+  void onTextPosition(int textPositionId, double? x, double? y, double? dx,
+      double? dy, bool reset, Float64List? transform) {}
 
   @override
   void onUpdateTextPosition(int textPositionId) {}
@@ -435,13 +385,7 @@ class TestListener extends VectorGraphicsCodecListener {
 
   @override
   void onPathCubicTo(
-    double x1,
-    double y1,
-    double x2,
-    double y2,
-    double x3,
-    double y3,
-  ) {
+      double x1, double y1, double x2, double y2, double x3, double y3) {
     commands.add(OnPathCubicTo(x1, y1, x2, y2, x3, y3));
   }
 
@@ -525,18 +469,16 @@ class TestListener extends VectorGraphicsCodecListener {
     int tileMode,
     int id,
   ) {
-    commands.add(
-      OnLinearGradient(
-        fromX: fromX,
-        fromY: fromY,
-        toX: toX,
-        toY: toY,
-        colors: colors,
-        offsets: offsets,
-        tileMode: tileMode,
-        id: id,
-      ),
-    );
+    commands.add(OnLinearGradient(
+      fromX: fromX,
+      fromY: fromY,
+      toX: toX,
+      toY: toY,
+      colors: colors,
+      offsets: offsets,
+      tileMode: tileMode,
+      id: id,
+    ));
   }
 
   @override
@@ -556,19 +498,17 @@ class TestListener extends VectorGraphicsCodecListener {
     int decorationColor,
     int id,
   ) {
-    commands.add(
-      OnTextConfig(
-        text,
-        xAnchorMultiplier,
-        fontSize,
-        fontFamily,
-        fontWeight,
-        decoration,
-        decorationStyle,
-        decorationColor,
-        id,
-      ),
-    );
+    commands.add(OnTextConfig(
+      text,
+      xAnchorMultiplier,
+      fontSize,
+      fontFamily,
+      fontWeight,
+      decoration,
+      decorationStyle,
+      decorationColor,
+      id,
+    ));
   }
 
   @override
@@ -595,18 +535,17 @@ class TestListener extends VectorGraphicsCodecListener {
     Uint8List data, {
     VectorGraphicsErrorListener? onError,
   }) {
-    commands.add(OnImage(imageId, format, data, onError: onError));
+    commands.add(OnImage(
+      imageId,
+      format,
+      data,
+      onError: onError,
+    ));
   }
 
   @override
-  void onPatternStart(
-    int patternId,
-    double x,
-    double y,
-    double width,
-    double height,
-    Float64List transform,
-  ) {
+  void onPatternStart(int patternId, double x, double y, double width,
+      double height, Float64List transform) {
     commands.add(OnPatternStart(patternId, x, y, width, height, transform));
   }
 }
@@ -640,15 +579,15 @@ class OnLinearGradient {
 
   @override
   int get hashCode => Object.hash(
-    fromX,
-    fromY,
-    toX,
-    toY,
-    Object.hashAll(colors),
-    Object.hashAll(offsets ?? <double>[]),
-    tileMode,
-    id,
-  );
+        fromX,
+        fromY,
+        toX,
+        toY,
+        Object.hashAll(colors),
+        Object.hashAll(offsets ?? <double>[]),
+        tileMode,
+        id,
+      );
 
   @override
   bool operator ==(Object other) {
@@ -705,17 +644,17 @@ class OnRadialGradient {
 
   @override
   int get hashCode => Object.hash(
-    centerX,
-    centerY,
-    radius,
-    focalX,
-    focalY,
-    Object.hashAll(colors),
-    Object.hashAll(offsets ?? <double>[]),
-    Object.hashAll(transform ?? <double>[]),
-    tileMode,
-    id,
-  );
+        centerX,
+        centerY,
+        radius,
+        focalX,
+        focalY,
+        Object.hashAll(colors),
+        Object.hashAll(offsets ?? <double>[]),
+        Object.hashAll(transform ?? <double>[]),
+        tileMode,
+        id,
+      );
 
   @override
   bool operator ==(Object other) {
@@ -796,10 +735,7 @@ class OnDrawVertices {
 
   @override
   int get hashCode => Object.hash(
-    Object.hashAll(vertices),
-    Object.hashAll(indices ?? <int>[]),
-    paintId,
-  );
+      Object.hashAll(vertices), Object.hashAll(indices ?? <int>[]), paintId);
 
   @override
   bool operator ==(Object other) =>
@@ -837,17 +773,8 @@ class OnPaintObject {
   final int? shaderId;
 
   @override
-  int get hashCode => Object.hash(
-    color,
-    strokeCap,
-    strokeJoin,
-    blendMode,
-    strokeMiterLimit,
-    strokeWidth,
-    paintStyle,
-    id,
-    shaderId,
-  );
+  int get hashCode => Object.hash(color, strokeCap, strokeJoin, blendMode,
+      strokeMiterLimit, strokeWidth, paintStyle, id, shaderId);
 
   @override
   bool operator ==(Object other) =>
@@ -1023,16 +950,16 @@ class OnTextConfig {
 
   @override
   int get hashCode => Object.hash(
-    text,
-    xAnchorMultiplier,
-    fontSize,
-    fontFamily,
-    fontWeight,
-    decoration,
-    decorationStyle,
-    decorationColor,
-    id,
-  );
+        text,
+        xAnchorMultiplier,
+        fontSize,
+        fontFamily,
+        fontWeight,
+        decoration,
+        decorationStyle,
+        decorationColor,
+        id,
+      );
 
   @override
   bool operator ==(Object other) =>
@@ -1139,13 +1066,7 @@ class OnDrawImage {
 @immutable
 class OnPatternStart {
   const OnPatternStart(
-    this.patternId,
-    this.x,
-    this.y,
-    this.width,
-    this.height,
-    this.transform,
-  );
+      this.patternId, this.x, this.y, this.width, this.height, this.transform);
 
   final int patternId;
   final double x;

@@ -8,19 +8,24 @@ part of 'case_sensitive_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$caseSensitiveRoute, $notCaseSensitiveRoute];
+List<RouteBase> get $appRoutes => [
+      $caseSensitiveRoute,
+      $notCaseSensitiveRoute,
+    ];
 
 RouteBase get $caseSensitiveRoute => GoRouteData.$route(
-  path: '/case-sensitive',
-  factory: _$CaseSensitiveRoute._fromState,
-);
+      path: '/case-sensitive',
+      factory: _$CaseSensitiveRoute._fromState,
+    );
 
 mixin _$CaseSensitiveRoute on GoRouteData {
   static CaseSensitiveRoute _fromState(GoRouterState state) =>
       const CaseSensitiveRoute();
 
   @override
-  String get location => GoRouteData.$location('/case-sensitive');
+  String get location => GoRouteData.$location(
+        '/case-sensitive',
+      );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -37,17 +42,19 @@ mixin _$CaseSensitiveRoute on GoRouteData {
 }
 
 RouteBase get $notCaseSensitiveRoute => GoRouteData.$route(
-  path: '/not-case-sensitive',
-  caseSensitive: false,
-  factory: _$NotCaseSensitiveRoute._fromState,
-);
+      path: '/not-case-sensitive',
+      caseSensitive: false,
+      factory: _$NotCaseSensitiveRoute._fromState,
+    );
 
 mixin _$NotCaseSensitiveRoute on GoRouteData {
   static NotCaseSensitiveRoute _fromState(GoRouterState state) =>
       const NotCaseSensitiveRoute();
 
   @override
-  String get location => GoRouteData.$location('/not-case-sensitive');
+  String get location => GoRouteData.$location(
+        '/not-case-sensitive',
+      );
 
   @override
   void go(BuildContext context) => context.go(location);

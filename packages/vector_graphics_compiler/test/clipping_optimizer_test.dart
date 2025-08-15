@@ -51,17 +51,16 @@ void main() {
     final ClippingOptimizer visitor = ClippingOptimizer();
     final Node newNode = visitor.apply(node);
 
-    final List<ResolvedClipNode> clipNodesNew = queryChildren<ResolvedClipNode>(
-      newNode,
-    );
+    final List<ResolvedClipNode> clipNodesNew =
+        queryChildren<ResolvedClipNode>(newNode);
 
     expect(clipNodesNew.length, 0);
   });
 
   test(
-    "Don't resolve a ClipNode if one of the PathNodes it's applied to has stroke.width set",
-    () async {
-      final Node node = parseAndResolve('''
+      "Don't resolve a ClipNode if one of the PathNodes it's applied to has stroke.width set",
+      () async {
+    final Node node = parseAndResolve('''
  <svg width="10" height="10">
   <clipPath id="clip0">
     <path d="M2 3h7.9v2H1" />
@@ -69,20 +68,18 @@ void main() {
   <path d="M2, 5L8,6" stroke="black" stroke-linecap="round" stroke-width="2" clip-path="url(#clip0)" />
 </svg>''');
 
-      final ClippingOptimizer visitor = ClippingOptimizer();
-      final Node newNode = visitor.apply(node);
+    final ClippingOptimizer visitor = ClippingOptimizer();
+    final Node newNode = visitor.apply(node);
 
-      final List<ResolvedClipNode> clipNodesNew =
-          queryChildren<ResolvedClipNode>(newNode);
+    final List<ResolvedClipNode> clipNodesNew =
+        queryChildren<ResolvedClipNode>(newNode);
 
-      expect(clipNodesNew.length, 1);
-    },
-  );
+    expect(clipNodesNew.length, 1);
+  });
 
-  test(
-    "Don't resolve ClipNode if intersection of Clip and Path is empty",
-    () async {
-      final Node node = parseAndResolve('''
+  test("Don't resolve ClipNode if intersection of Clip and Path is empty",
+      () async {
+    final Node node = parseAndResolve('''
 <svg width="200px" height="200x" viewBox="0 0 200 200">
   <defs>
     <clipPath id="a">
@@ -93,30 +90,27 @@ void main() {
 </svg>
 
 ''');
-      final ClippingOptimizer visitor = ClippingOptimizer();
-      final Node newNode = visitor.apply(node);
+    final ClippingOptimizer visitor = ClippingOptimizer();
+    final Node newNode = visitor.apply(node);
 
-      final List<ResolvedClipNode> clipNodesNew =
-          queryChildren<ResolvedClipNode>(newNode);
+    final List<ResolvedClipNode> clipNodesNew =
+        queryChildren<ResolvedClipNode>(newNode);
 
-      expect(clipNodesNew.length, 1);
-    },
-  );
+    expect(clipNodesNew.length, 1);
+  });
 
   test('ParentNode and PathNode count should stay the same', () async {
     final Node node = parseAndResolve(pathAndParent);
 
-    final List<ResolvedPathNode> pathNodesOld = queryChildren<ResolvedPathNode>(
-      node,
-    );
+    final List<ResolvedPathNode> pathNodesOld =
+        queryChildren<ResolvedPathNode>(node);
     final List<ParentNode> parentNodesOld = queryChildren<ParentNode>(node);
 
     final ClippingOptimizer visitor = ClippingOptimizer();
     final Node newNode = visitor.apply(node);
 
-    final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
-      newNode,
-    );
+    final List<ResolvedPathNode> pathNodesNew =
+        queryChildren<ResolvedPathNode>(newNode);
     final List<ParentNode> parentNodesNew = queryChildren<ParentNode>(newNode);
 
     expect(pathNodesOld.length, pathNodesNew.length);
@@ -127,13 +121,10 @@ void main() {
     final VectorInstructions instructions = parse(multiClip);
     expect(instructions.paths, <Path>[
       parseSvgPathData(
-        'M 250,75 L 323,301 131,161 369,161 177,301 z',
-        PathFillType.evenOdd,
-      ),
+          'M 250,75 L 323,301 131,161 369,161 177,301 z', PathFillType.evenOdd),
       PathBuilder().addOval(const Rect.fromCircle(400, 200, 150)).toPath(),
-      parseSvgPathData(
-        'M 250,75 L 323,301 131,161 369,161 177,301 z',
-      ).transformed(AffineMatrix.identity.translated(250, 0)),
+      parseSvgPathData('M 250,75 L 323,301 131,161 369,161 177,301 z')
+          .transformed(AffineMatrix.identity.translated(250, 0)),
       PathBuilder().addOval(const Rect.fromCircle(450, 300, 150)).toPath(),
     ]);
     expect(instructions.commands, const <DrawCommand>[
@@ -153,10 +144,8 @@ void main() {
   });
 
   test('Combines clips where possible', () {
-    final VectorInstructions instructions = parse(
-      basicClip,
-      enableClippingOptimizer: false,
-    );
+    final VectorInstructions instructions =
+        parse(basicClip, enableClippingOptimizer: false);
     final VectorInstructions instructionsWithOptimizer = parse(basicClip);
 
     expect(instructionsWithOptimizer.paths, basicClipsForClippingOptimzer);
@@ -189,6 +178,9 @@ void main() {
 </svg>''';
     final VectorInstructions instructions = parse(svg);
 
-    expect(instructions.paths.single.fillType, PathFillType.evenOdd);
+    expect(
+      instructions.paths.single.fillType,
+      PathFillType.evenOdd,
+    );
   });
 }

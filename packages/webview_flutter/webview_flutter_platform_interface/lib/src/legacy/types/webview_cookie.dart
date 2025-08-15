@@ -6,12 +6,11 @@
 /// using [WebViewCookieManagerPlatform].
 class WebViewCookie {
   /// Constructs a new [WebViewCookie].
-  const WebViewCookie({
-    required this.name,
-    required this.value,
-    required this.domain,
-    this.path = '/',
-  });
+  const WebViewCookie(
+      {required this.name,
+      required this.value,
+      required this.domain,
+      this.path = '/'});
 
   /// The cookie-name of the cookie.
   ///
@@ -44,7 +43,7 @@ class WebViewCookie {
       'name': name,
       'value': value,
       'domain': domain,
-      'path': path,
+      'path': path
     };
   }
 }

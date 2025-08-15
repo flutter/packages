@@ -20,7 +20,10 @@ import 'package:vector_graphics/vector_graphics.dart';
 Widget loadAsset() {
   // #docregion SimpleAsset
   const String assetName = 'assets/dart.svg';
-  final Widget svg = SvgPicture.asset(assetName, semanticsLabel: 'Dart Logo');
+  final Widget svg = SvgPicture.asset(
+    assetName,
+    semanticsLabel: 'Dart Logo',
+  );
   // #enddocregion SimpleAsset
   return svg;
 }
@@ -43,7 +46,9 @@ Widget loadMissingAsset() {
   // #docregion MissingAsset
   // Will print error messages to the console.
   const String assetName = 'assets/image_that_does_not_exist.svg';
-  final Widget svg = SvgPicture.asset(assetName);
+  final Widget svg = SvgPicture.asset(
+    assetName,
+  );
   // #enddocregion MissingAsset
   return svg;
 }
@@ -58,11 +63,9 @@ Widget loadNetworkAssetWithPlaceholder() {
   final Widget networkSvg = SvgPicture.network(
     'https://site-that-takes-a-while.com/image.svg',
     semanticsLabel: 'A shark?!',
-    placeholderBuilder:
-        (BuildContext context) => Container(
-          padding: const EdgeInsets.all(30.0),
-          child: const CircularProgressIndicator(),
-        ),
+    placeholderBuilder: (BuildContext context) => Container(
+        padding: const EdgeInsets.all(30.0),
+        child: const CircularProgressIndicator()),
   );
   // #enddocregion AssetWithPlaceholder
   return networkSvg;
@@ -86,10 +89,8 @@ Future<ui.Image> convertSvgOutput() async {
 
   // #docregion OutputConversion
   const String rawSvg = '''<svg ...>...</svg>''';
-  final PictureInfo pictureInfo = await vg.loadPicture(
-    const SvgStringLoader(rawSvg),
-    null,
-  );
+  final PictureInfo pictureInfo =
+      await vg.loadPicture(const SvgStringLoader(rawSvg), null);
 
   // You can draw the picture to a canvas:
   canvas.drawPicture(pictureInfo.picture);

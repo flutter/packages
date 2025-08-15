@@ -8,21 +8,28 @@ part of 'on_exit_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [$homeRoute];
+List<RouteBase> get $appRoutes => [
+      $homeRoute,
+    ];
 
 RouteBase get $homeRoute => GoRouteData.$route(
-  path: '/',
-  factory: _$HomeRoute._fromState,
-  routes: [
-    GoRouteData.$route(path: 'sub-route', factory: _$SubRoute._fromState),
-  ],
-);
+      path: '/',
+      factory: _$HomeRoute._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'sub-route',
+          factory: _$SubRoute._fromState,
+        ),
+      ],
+    );
 
 mixin _$HomeRoute on GoRouteData {
   static HomeRoute _fromState(GoRouterState state) => const HomeRoute();
 
   @override
-  String get location => GoRouteData.$location('/');
+  String get location => GoRouteData.$location(
+        '/',
+      );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -42,7 +49,9 @@ mixin _$SubRoute on GoRouteData {
   static SubRoute _fromState(GoRouterState state) => const SubRoute();
 
   @override
-  String get location => GoRouteData.$location('/sub-route');
+  String get location => GoRouteData.$location(
+        '/sub-route',
+      );
 
   @override
   void go(BuildContext context) => context.go(location);

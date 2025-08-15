@@ -26,13 +26,15 @@ const String svgString = '''
 ''';
 
 void main() {
-  runApp(
-    MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: SvgPicture.string(svgString, width: 500, height: 500),
+  runApp(MaterialApp(
+    home: Scaffold(
+      body: Center(
+        child: SvgPicture.string(
+          svgString,
+          width: 500,
+          height: 500,
         ),
       ),
     ),
-  );
+  ));
 }

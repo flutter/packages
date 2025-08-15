@@ -18,8 +18,9 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      MaterialApp.router(routerConfig: _router);
+  Widget build(BuildContext context) => MaterialApp.router(
+        routerConfig: _router,
+      );
 
   final GoRouter _router = GoRouter(
     routes: $appRoutes,

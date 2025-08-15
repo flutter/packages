@@ -7,7 +7,11 @@ import 'loaders.dart';
 class DefaultSvgTheme extends InheritedTheme {
   /// Creates a default SVG theme for the given subtree
   /// using the provided [theme].
-  const DefaultSvgTheme({super.key, required super.child, required this.theme});
+  const DefaultSvgTheme({
+    super.key,
+    required super.child,
+    required this.theme,
+  });
 
   /// The SVG theme to apply.
   final SvgTheme theme;
@@ -30,6 +34,9 @@ class DefaultSvgTheme extends InheritedTheme {
 
   @override
   Widget wrap(BuildContext context, Widget child) {
-    return DefaultSvgTheme(theme: theme, child: child);
+    return DefaultSvgTheme(
+      theme: theme,
+      child: child,
+    );
   }
 }

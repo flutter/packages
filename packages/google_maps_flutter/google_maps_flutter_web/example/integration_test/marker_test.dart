@@ -56,7 +56,11 @@ void main() {
       MarkerController(marker: marker, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.event.trigger(marker, 'click', gmaps.MapMouseEvent());
+      gmaps.event.trigger(
+        marker,
+        'click',
+        gmaps.MapMouseEvent(),
+      );
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -103,10 +107,9 @@ void main() {
 
     testWidgets('update', (WidgetTester tester) async {
       final MarkerController controller = MarkerController(marker: marker);
-      final gmaps.MarkerOptions options =
-          gmaps.MarkerOptions()
-            ..draggable = true
-            ..position = gmaps.LatLng(42, 54);
+      final gmaps.MarkerOptions options = gmaps.MarkerOptions()
+        ..draggable = true
+        ..position = gmaps.LatLng(42, 54);
 
       expect(marker.isDraggableDefined(), isFalse);
 
@@ -117,9 +120,8 @@ void main() {
       expect(marker.position?.lng, equals(54));
     });
 
-    testWidgets('infoWindow null, showInfoWindow.', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('infoWindow null, showInfoWindow.',
+        (WidgetTester tester) async {
       final MarkerController controller = MarkerController(marker: marker);
 
       controller.showInfoWindow();
@@ -173,11 +175,10 @@ void main() {
         expect(controller.marker, isNull);
       });
 
-      testWidgets('cannot call update after remove', (
-        WidgetTester tester,
-      ) async {
-        final gmaps.MarkerOptions options =
-            gmaps.MarkerOptions()..draggable = true;
+      testWidgets('cannot call update after remove',
+          (WidgetTester tester) async {
+        final gmaps.MarkerOptions options = gmaps.MarkerOptions()
+          ..draggable = true;
 
         controller.remove();
 
@@ -186,9 +187,8 @@ void main() {
         }, throwsAssertionError);
       });
 
-      testWidgets('cannot call showInfoWindow after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call showInfoWindow after remove',
+          (WidgetTester tester) async {
         controller.remove();
 
         expect(() {
@@ -196,9 +196,8 @@ void main() {
         }, throwsAssertionError);
       });
 
-      testWidgets('cannot call hideInfoWindow after remove', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('cannot call hideInfoWindow after remove',
+          (WidgetTester tester) async {
         controller.remove();
 
         expect(() {

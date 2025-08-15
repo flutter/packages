@@ -36,7 +36,9 @@ void main() {
 
     final VideoPlayerController controller = VideoPlayerController.networkUrl(
       Uri.parse('https://127.0.0.1'),
-      videoPlayerOptions: VideoPlayerOptions(webOptions: expected),
+      videoPlayerOptions: VideoPlayerOptions(
+        webOptions: expected,
+      ),
     );
     await controller.initialize();
 

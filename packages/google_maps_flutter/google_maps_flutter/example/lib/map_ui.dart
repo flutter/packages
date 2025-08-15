@@ -18,7 +18,7 @@ final LatLngBounds sydneyBounds = LatLngBounds(
 
 class MapUiPage extends GoogleMapExampleAppPage {
   const MapUiPage({Key? key})
-    : super(const Icon(Icons.map), 'User interface', key: key);
+      : super(const Icon(Icons.map), 'User interface', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -103,10 +103,9 @@ class MapUiBodyState extends State<MapUiBody> {
       ),
       onPressed: () {
         setState(() {
-          _cameraTargetBounds =
-              _cameraTargetBounds.bounds == null
-                  ? CameraTargetBounds(sydneyBounds)
-                  : CameraTargetBounds.unbounded;
+          _cameraTargetBounds = _cameraTargetBounds.bounds == null
+              ? CameraTargetBounds(sydneyBounds)
+              : CameraTargetBounds.unbounded;
         });
       },
     );
@@ -114,15 +113,14 @@ class MapUiBodyState extends State<MapUiBody> {
 
   Widget _zoomBoundsToggler() {
     return TextButton(
-      child: Text(
-        _minMaxZoomPreference.minZoom == null ? 'bound zoom' : 'release zoom',
-      ),
+      child: Text(_minMaxZoomPreference.minZoom == null
+          ? 'bound zoom'
+          : 'release zoom'),
       onPressed: () {
         setState(() {
-          _minMaxZoomPreference =
-              _minMaxZoomPreference.minZoom == null
-                  ? const MinMaxZoomPreference(12.0, 16.0)
-                  : MinMaxZoomPreference.unbounded;
+          _minMaxZoomPreference = _minMaxZoomPreference.minZoom == null
+              ? const MinMaxZoomPreference(12.0, 16.0)
+              : MinMaxZoomPreference.unbounded;
         });
       },
     );
@@ -187,9 +185,8 @@ class MapUiBodyState extends State<MapUiBody> {
 
   Widget _zoomControlsToggler() {
     return TextButton(
-      child: Text(
-        '${_zoomControlsEnabled ? 'disable' : 'enable'} zoom controls',
-      ),
+      child:
+          Text('${_zoomControlsEnabled ? 'disable' : 'enable'} zoom controls'),
       onPressed: () {
         setState(() {
           _zoomControlsEnabled = !_zoomControlsEnabled;
@@ -212,8 +209,7 @@ class MapUiBodyState extends State<MapUiBody> {
   Widget _myLocationToggler() {
     return TextButton(
       child: Text(
-        '${_myLocationEnabled ? 'disable' : 'enable'} my location marker',
-      ),
+          '${_myLocationEnabled ? 'disable' : 'enable'} my location marker'),
       onPressed: () {
         setState(() {
           _myLocationEnabled = !_myLocationEnabled;
@@ -225,8 +221,7 @@ class MapUiBodyState extends State<MapUiBody> {
   Widget _myLocationButtonToggler() {
     return TextButton(
       child: Text(
-        '${_myLocationButtonEnabled ? 'disable' : 'enable'} my location button',
-      ),
+          '${_myLocationButtonEnabled ? 'disable' : 'enable'} my location button'),
       onPressed: () {
         setState(() {
           _myLocationButtonEnabled = !_myLocationButtonEnabled;
@@ -293,7 +288,11 @@ class MapUiBodyState extends State<MapUiBody> {
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
-          child: SizedBox(width: 300.0, height: 200.0, child: googleMap),
+          child: SizedBox(
+            width: 300.0,
+            height: 200.0,
+            child: googleMap,
+          ),
         ),
       ),
     ];
@@ -305,9 +304,8 @@ class MapUiBodyState extends State<MapUiBody> {
             children: <Widget>[
               Text('camera bearing: ${_position.bearing}'),
               Text(
-                'camera target: ${_position.target.latitude.toStringAsFixed(4)},'
-                '${_position.target.longitude.toStringAsFixed(4)}',
-              ),
+                  'camera target: ${_position.target.latitude.toStringAsFixed(4)},'
+                  '${_position.target.longitude.toStringAsFixed(4)}'),
               Text('camera zoom: ${_position.zoom}'),
               Text('camera tilt: ${_position.tilt}'),
               Text(_isMoving ? '(Camera moving)' : '(Camera idle)'),

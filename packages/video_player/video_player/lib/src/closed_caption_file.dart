@@ -87,5 +87,10 @@ class Caption {
           text == other.text;
 
   @override
-  int get hashCode => Object.hash(number, start, end, text);
+  int get hashCode => Object.hash(
+        number,
+        start,
+        end,
+        text,
+      );
 }

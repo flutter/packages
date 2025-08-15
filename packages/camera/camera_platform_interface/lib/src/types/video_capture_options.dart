@@ -13,15 +13,14 @@ class VideoCaptureOptions {
   const VideoCaptureOptions(
     this.cameraId, {
     @Deprecated(
-      'This parameter is unused, and will be ignored on all platforms',
-    )
+        'This parameter is unused, and will be ignored on all platforms')
     this.maxDuration,
     this.streamCallback,
     this.streamOptions,
   }) : assert(
-         streamOptions == null || streamCallback != null,
-         'Must specify streamCallback if providing streamOptions.',
-       );
+          streamOptions == null || streamCallback != null,
+          'Must specify streamCallback if providing streamOptions.',
+        );
 
   /// The ID of the camera to use for capturing.
   final int cameraId;

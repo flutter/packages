@@ -44,8 +44,11 @@ enum RenderingStrategy {
 }
 
 /// The signature that [VectorGraphic.errorBuilder] uses to report exceptions.
-typedef VectorGraphicsErrorWidget =
-    Widget Function(BuildContext context, Object error, StackTrace stackTrace);
+typedef VectorGraphicsErrorWidget = Widget Function(
+  BuildContext context,
+  Object error,
+  StackTrace stackTrace,
+);
 
 /// A vector graphic/flutter_svg compatibility shim.
 VectorGraphic createCompatVectorGraphic({
@@ -285,11 +288,7 @@ class _PictureData {
 @immutable
 class _PictureKey {
   const _PictureKey(
-    this.cacheKey,
-    this.locale,
-    this.textDirection,
-    this.clipViewbox,
-  );
+      this.cacheKey, this.locale, this.textDirection, this.clipViewbox);
 
   final Object cacheKey;
   final Locale? locale;
@@ -355,27 +354,22 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   }
 
   Future<_PictureData> _loadPicture(
-    BuildContext context,
-    _PictureKey key,
-    BytesLoader loader,
-  ) {
+      BuildContext context, _PictureKey key, BytesLoader loader) {
     if (_pendingPictures.containsKey(key)) {
       return _pendingPictures[key]!;
     }
-    final Future<_PictureData> result = loader
-        .loadBytes(context)
-        .then((ByteData data) {
-          return decodeVectorGraphics(
-            data,
-            locale: key.locale,
-            textDirection: key.textDirection,
-            clipViewbox: key.clipViewbox,
-            loader: loader,
-          );
-        })
-        .then((PictureInfo pictureInfo) {
-          return _PictureData(pictureInfo, 0, key);
-        });
+    final Future<_PictureData> result =
+        loader.loadBytes(context).then((ByteData data) {
+      return decodeVectorGraphics(
+        data,
+        locale: key.locale,
+        textDirection: key.textDirection,
+        clipViewbox: key.clipViewbox,
+        loader: loader,
+      );
+    }).then((PictureInfo pictureInfo) {
+      return _PictureData(pictureInfo, 0, key);
+    });
     _pendingPictures[key] = result;
     result.whenComplete(() {
       _pendingPictures.remove(key);
@@ -397,12 +391,8 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   Future<void> _loadAssetBytes() async {
     // First check if we have an avilable picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
-    final _PictureKey key = _PictureKey(
-      loaderKey,
-      locale,
-      textDirection,
-      widget.clipViewbox,
-    );
+    final _PictureKey key =
+        _PictureKey(loaderKey, locale, textDirection, widget.clipViewbox);
     final _PictureData? data = _livePictureCache[key];
     if (data != null) {
       data.count += 1;
@@ -499,10 +489,9 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         final TextDirection direction = Directionality.of(context);
         if (direction == TextDirection.rtl) {
           child = Transform(
-            transform:
-                Matrix4.identity()
-                  ..translate(pictureInfo.size.width)
-                  ..scale(-1.0, 1.0),
+            transform: Matrix4.identity()
+              ..translate(pictureInfo.size.width)
+              ..scale(-1.0, 1.0),
             child: child,
           );
         }
@@ -515,7 +504,10 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
           fit: widget.fit,
           alignment: widget.alignment,
           clipBehavior: widget.clipBehavior,
-          child: SizedBox.fromSize(size: pictureInfo.size, child: child),
+          child: SizedBox.fromSize(
+            size: pictureInfo.size,
+            child: child,
+          ),
         ),
       );
     } else if (_error != null && widget.errorBuilder != null) {
@@ -525,9 +517,11 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         _stackTrace ?? StackTrace.empty,
       );
     } else {
-      child =
-          widget.placeholderBuilder?.call(context) ??
-          SizedBox(width: widget.width, height: widget.height);
+      child = widget.placeholderBuilder?.call(context) ??
+          SizedBox(
+            width: widget.width,
+            height: widget.height,
+          );
     }
 
     if (widget.transitionDuration != null) {
@@ -535,7 +529,10 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         duration: widget.transitionDuration!,
         child: child,
         transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(opacity: animation, child: child);
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
         },
       );
     }
@@ -609,7 +606,12 @@ class _RawWebVectorGraphicWidget extends SingleChildRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RenderWebVectorGraphic(pictureInfo, assetKey, colorFilter, opacity);
+    return RenderWebVectorGraphic(
+      pictureInfo,
+      assetKey,
+      colorFilter,
+      opacity,
+    );
   }
 
   @override
@@ -640,7 +642,11 @@ class _RawPictureVectorGraphicWidget extends SingleChildRenderObjectWidget {
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RenderPictureVectorGraphic(pictureInfo, colorFilter, opacity);
+    return RenderPictureVectorGraphic(
+      pictureInfo,
+      colorFilter,
+      opacity,
+    );
   }
 
   @override

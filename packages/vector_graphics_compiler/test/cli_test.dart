@@ -44,7 +44,9 @@ void main() {
     try {
       final IsolateProcessor processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[Pair('test_data/example.svg', output.path)],
+        <Pair>[
+          Pair('test_data/example.svg', output.path),
+        ],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,
@@ -65,7 +67,9 @@ void main() {
     try {
       final IsolateProcessor processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[Pair('test_data/example.svg', output.path)],
+        <Pair>[
+          Pair('test_data/example.svg', output.path),
+        ],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,
@@ -105,24 +109,20 @@ void main() {
       final Directory outDir = Directory(outTestDir);
 
       if (inputDir.existsSync() && outDir.existsSync()) {
-        final List<String> inputTestFiles =
-            inputDir
-                .listSync(recursive: true)
-                .whereType<File>()
-                .where((File element) => element.path.endsWith('svg'))
-                .map((File e) => p.basenameWithoutExtension(e.path))
-                .toList();
+        final List<String> inputTestFiles = inputDir
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((File element) => element.path.endsWith('svg'))
+            .map((File e) => p.basenameWithoutExtension(e.path))
+            .toList();
 
-        final List<String> outTestFiles =
-            outDir
-                .listSync(recursive: true)
-                .whereType<File>()
-                .where((File element) => element.path.endsWith('vec'))
-                .map(
-                  (File e) =>
-                      p.withoutExtension(p.basenameWithoutExtension(e.path)),
-                )
-                .toList();
+        final List<String> outTestFiles = outDir
+            .listSync(recursive: true)
+            .whereType<File>()
+            .where((File element) => element.path.endsWith('vec'))
+            .map((File e) =>
+                p.withoutExtension(p.basenameWithoutExtension(e.path)))
+            .toList();
 
         if (listEquals(inputTestFiles, outTestFiles)) {
           passed = true;

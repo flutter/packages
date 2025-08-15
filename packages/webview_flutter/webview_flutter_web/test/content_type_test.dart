@@ -16,9 +16,8 @@ void main() {
     });
 
     test('with charset', () {
-      final ContentType contentType = ContentType.parse(
-        'text/pLaIn; charset=utf-8',
-      );
+      final ContentType contentType =
+          ContentType.parse('text/pLaIn; charset=utf-8');
 
       expect(contentType.mimeType, 'text/plain');
       expect(contentType.boundary, isNull);
@@ -26,9 +25,8 @@ void main() {
     });
 
     test('with boundary', () {
-      final ContentType contentType = ContentType.parse(
-        'text/pLaIn; boundary=---xyz',
-      );
+      final ContentType contentType =
+          ContentType.parse('text/pLaIn; boundary=---xyz');
 
       expect(contentType.mimeType, 'text/plain');
       expect(contentType.boundary, '---xyz');
@@ -36,9 +34,8 @@ void main() {
     });
 
     test('with charset and boundary', () {
-      final ContentType contentType = ContentType.parse(
-        'text/pLaIn; charset=utf-8; boundary=---xyz',
-      );
+      final ContentType contentType =
+          ContentType.parse('text/pLaIn; charset=utf-8; boundary=---xyz');
 
       expect(contentType.mimeType, 'text/plain');
       expect(contentType.boundary, '---xyz');
@@ -46,9 +43,8 @@ void main() {
     });
 
     test('with boundary and charset', () {
-      final ContentType contentType = ContentType.parse(
-        'text/pLaIn; boundary=---xyz; charset=utf-8',
-      );
+      final ContentType contentType =
+          ContentType.parse('text/pLaIn; boundary=---xyz; charset=utf-8');
 
       expect(contentType.mimeType, 'text/plain');
       expect(contentType.boundary, '---xyz');
@@ -57,8 +53,7 @@ void main() {
 
     test('with a bunch of whitespace, boundary and charset', () {
       final ContentType contentType = ContentType.parse(
-        '     text/pLaIn   ; boundary=---xyz;    charset=utf-8    ',
-      );
+          '     text/pLaIn   ; boundary=---xyz;    charset=utf-8    ');
 
       expect(contentType.mimeType, 'text/plain');
       expect(contentType.boundary, '---xyz');

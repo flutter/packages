@@ -14,9 +14,12 @@ void main() {
         controls = const VideoPlayerWebOptionsControls.disabled();
       });
 
-      test('expect enabled isFalse', () {
-        expect(controls.enabled, isFalse);
-      });
+      test(
+        'expect enabled isFalse',
+        () {
+          expect(controls.enabled, isFalse);
+        },
+      );
     });
 
     group('when enabled', () {
@@ -25,17 +28,23 @@ void main() {
           controls = const VideoPlayerWebOptionsControls.enabled();
         });
 
-        test('expect enabled isTrue', () {
-          expect(controls.enabled, isTrue);
-          expect(controls.allowDownload, isTrue);
-          expect(controls.allowFullscreen, isTrue);
-          expect(controls.allowPlaybackRate, isTrue);
-          expect(controls.allowPictureInPicture, isTrue);
-        });
+        test(
+          'expect enabled isTrue',
+          () {
+            expect(controls.enabled, isTrue);
+            expect(controls.allowDownload, isTrue);
+            expect(controls.allowFullscreen, isTrue);
+            expect(controls.allowPlaybackRate, isTrue);
+            expect(controls.allowPictureInPicture, isTrue);
+          },
+        );
 
-        test('expect controlsList isEmpty', () {
-          expect(controls.controlsList, isEmpty);
-        });
+        test(
+          'expect controlsList isEmpty',
+          () {
+            expect(controls.controlsList, isEmpty);
+          },
+        );
       });
 
       group('and some options are disallowed', () {
@@ -47,20 +56,26 @@ void main() {
           );
         });
 
-        test('expect enabled isTrue', () {
-          expect(controls.enabled, isTrue);
-          expect(controls.allowDownload, isFalse);
-          expect(controls.allowFullscreen, isFalse);
-          expect(controls.allowPlaybackRate, isFalse);
-          expect(controls.allowPictureInPicture, isTrue);
-        });
+        test(
+          'expect enabled isTrue',
+          () {
+            expect(controls.enabled, isTrue);
+            expect(controls.allowDownload, isFalse);
+            expect(controls.allowFullscreen, isFalse);
+            expect(controls.allowPlaybackRate, isFalse);
+            expect(controls.allowPictureInPicture, isTrue);
+          },
+        );
 
-        test('expect controlsList is correct', () {
-          expect(
-            controls.controlsList,
-            'nodownload nofullscreen noplaybackrate',
-          );
-        });
+        test(
+          'expect controlsList is correct',
+          () {
+            expect(
+              controls.controlsList,
+              'nodownload nofullscreen noplaybackrate',
+            );
+          },
+        );
       });
     });
   });

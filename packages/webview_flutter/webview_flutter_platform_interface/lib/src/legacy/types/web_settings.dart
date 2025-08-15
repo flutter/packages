@@ -14,12 +14,16 @@ class WebSetting<T> {
   /// The [isPresent] field for the instance will be false.
   ///
   /// Accessing [value] for an absent instance will throw.
-  const WebSetting.absent() : _value = null, isPresent = false;
+  const WebSetting.absent()
+      : _value = null,
+        isPresent = false;
 
   /// Constructs a setting of the given `value`.
   ///
   /// The [isPresent] field for the instance will be true.
-  const WebSetting.of(T value) : _value = value, isPresent = true;
+  const WebSetting.of(T value)
+      : _value = value,
+        isPresent = true;
 
   final T? _value;
 

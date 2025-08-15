@@ -58,9 +58,8 @@ void main() {
         ),
       );
 
-      final HTMLImageElement img =
-          controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)!
-              as HTMLImageElement;
+      final HTMLImageElement img = controller.gmMapType
+          .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
       expect(img.naturalWidth, 0);
       expect(img.naturalHeight, 0);
       expect((img.hidden! as JSBoolean).toDart, true);
@@ -82,9 +81,8 @@ void main() {
         ),
       );
       {
-        final HTMLImageElement img =
-            controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)!
-                as HTMLImageElement;
+        final HTMLImageElement img = controller.gmMapType
+            .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
         await null; // let `getTile` `then` complete
         expect(
           img.src,
@@ -93,13 +91,13 @@ void main() {
         );
       }
 
-      controller.update(
-        const TileOverlay(tileOverlayId: id, tileProvider: TestTileProvider()),
-      );
+      controller.update(const TileOverlay(
+        tileOverlayId: id,
+        tileProvider: TestTileProvider(),
+      ));
       {
-        final HTMLImageElement img =
-            controller.gmMapType.getTile(gmaps.Point(0, 0), 0, document)!
-                as HTMLImageElement;
+        final HTMLImageElement img = controller.gmMapType
+            .getTile(gmaps.Point(0, 0), 0, document)! as HTMLImageElement;
 
         await img.onLoad.first;
 

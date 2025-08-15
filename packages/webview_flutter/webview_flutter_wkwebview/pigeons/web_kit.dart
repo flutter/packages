@@ -14,6 +14,7 @@ import 'package:pigeon/pigeon.dart';
         'darwin/webview_flutter_wkwebview/Sources/webview_flutter_wkwebview/WebKitLibrary.g.swift',
   ),
 )
+
 /// The values that can be returned in a change dictionary.
 ///
 /// See https://developer.apple.com/documentation/foundation/nskeyvalueobservingoptions.
@@ -757,8 +758,7 @@ abstract class WKScriptMessageHandler extends NSObject {
   late void Function(
     WKUserContentController controller,
     WKScriptMessage message,
-  )
-  didReceiveScriptMessage;
+  ) didReceiveScriptMessage;
 }
 
 /// Methods for accepting or rejecting navigation changes, and for tracking the
@@ -773,8 +773,10 @@ abstract class WKNavigationDelegate extends NSObject {
   late void Function(WKWebView webView, String? url)? didFinishNavigation;
 
   /// Tells the delegate that navigation from the main frame has started.
-  late void Function(WKWebView webView, String? url)?
-  didStartProvisionalNavigation;
+  late void Function(
+    WKWebView webView,
+    String? url,
+  )? didStartProvisionalNavigation;
 
   /// Asks the delegate for permission to navigate to new content based on the
   /// specified action information.
@@ -782,8 +784,7 @@ abstract class WKNavigationDelegate extends NSObject {
   late NavigationActionPolicy Function(
     WKWebView webView,
     WKNavigationAction navigationAction,
-  )
-  decidePolicyForNavigationAction;
+  ) decidePolicyForNavigationAction;
 
   /// Asks the delegate for permission to navigate to new content after the
   /// response to the navigation request is known.
@@ -791,8 +792,7 @@ abstract class WKNavigationDelegate extends NSObject {
   late NavigationResponsePolicy Function(
     WKWebView webView,
     WKNavigationResponse navigationResponse,
-  )
-  decidePolicyForNavigationResponse;
+  ) decidePolicyForNavigationResponse;
 
   /// Tells the delegate that an error occurred during navigation.
   void Function(WKWebView webView, NSError error)? didFailNavigation;
@@ -809,8 +809,7 @@ abstract class WKNavigationDelegate extends NSObject {
   late AuthenticationChallengeResponse Function(
     WKWebView webView,
     URLAuthenticationChallenge challenge,
-  )
-  didReceiveAuthenticationChallenge;
+  ) didReceiveAuthenticationChallenge;
 }
 
 /// The root class of most Objective-C class hierarchies, from which subclasses
@@ -828,8 +827,7 @@ abstract class NSObject {
     String? keyPath,
     NSObject? object,
     Map<KeyValueChangeKey, Object?>? change,
-  )?
-  observeValue;
+  )? observeValue;
 
   /// Registers the observer object to receive KVO notifications for the key
   /// path relative to the object receiving this message.
@@ -1032,7 +1030,10 @@ abstract class NSViewWKWebView extends NSObject implements WKWebView {
 ///
 /// See https://developer.apple.com/documentation/webkit/wkwebview.
 @ProxyApi(
-  swiftOptions: SwiftProxyApiOptions(import: 'WebKit', name: 'WKWebView'),
+  swiftOptions: SwiftProxyApiOptions(
+    import: 'WebKit',
+    name: 'WKWebView',
+  ),
 )
 abstract class WKWebView extends NSObject {}
 
@@ -1049,8 +1050,7 @@ abstract class WKUIDelegate extends NSObject {
     WKWebView webView,
     WKWebViewConfiguration configuration,
     WKNavigationAction navigationAction,
-  )?
-  onCreateWebView;
+  )? onCreateWebView;
 
   /// Determines whether a web resource, which the security origin object
   /// describes, can access to the device’s microphone audio and camera video.
@@ -1060,18 +1060,23 @@ abstract class WKUIDelegate extends NSObject {
     WKSecurityOrigin origin,
     WKFrameInfo frame,
     MediaCaptureType type,
-  )
-  requestMediaCapturePermission;
+  ) requestMediaCapturePermission;
 
   /// Displays a JavaScript alert panel.
   @async
-  void Function(WKWebView webView, String message, WKFrameInfo frame)?
-  runJavaScriptAlertPanel;
+  void Function(
+    WKWebView webView,
+    String message,
+    WKFrameInfo frame,
+  )? runJavaScriptAlertPanel;
 
   /// Displays a JavaScript confirm panel.
   @async
-  late bool Function(WKWebView webView, String message, WKFrameInfo frame)
-  runJavaScriptConfirmPanel;
+  late bool Function(
+    WKWebView webView,
+    String message,
+    WKFrameInfo frame,
+  ) runJavaScriptConfirmPanel;
 
   /// Displays a JavaScript text input panel.
   @async
@@ -1080,8 +1085,7 @@ abstract class WKUIDelegate extends NSObject {
     String prompt,
     String? defaultText,
     WKFrameInfo frame,
-  )?
-  runJavaScriptTextInputPanel;
+  )? runJavaScriptTextInputPanel;
 }
 
 /// An object that manages the HTTP cookies associated with a particular web
@@ -1110,8 +1114,11 @@ abstract class UIScrollViewDelegate extends NSObject {
   ///
   /// Note that this is a convenient method that includes the `contentOffset` of
   /// the `scrollView`.
-  void Function(UIScrollView scrollView, double x, double y)?
-  scrollViewDidScroll;
+  void Function(
+    UIScrollView scrollView,
+    double x,
+    double y,
+  )? scrollViewDidScroll;
 }
 
 /// An authentication credential consisting of information specific to the type

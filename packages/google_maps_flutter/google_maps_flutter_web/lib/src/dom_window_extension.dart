@@ -42,5 +42,7 @@ extension InnerHTMLString on web.HTMLElement {
 extension CreateHTMLNoArgs on web.TrustedTypePolicy {
   /// Allows calling `createHTML` with only the `input` argument.
   @JS('createHTML')
-  external web.TrustedHTML createHTMLNoArgs(String input);
+  external web.TrustedHTML createHTMLNoArgs(
+    String input,
+  );
 }

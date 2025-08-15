@@ -12,9 +12,8 @@ void main() {
 
   group('WebWebViewWidget', () {
     testWidgets('build returns a HtmlElementView', (WidgetTester tester) async {
-      final WebWebViewController controller = WebWebViewController(
-        WebWebViewControllerCreationParams(),
-      );
+      final WebWebViewController controller =
+          WebWebViewController(WebWebViewControllerCreationParams());
 
       final WebWebViewWidget widget = WebWebViewWidget(
         PlatformWebViewWidgetCreationParams(

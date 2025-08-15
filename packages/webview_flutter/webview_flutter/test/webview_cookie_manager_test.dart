@@ -16,12 +16,14 @@ void main() {
     test('clearCookies', () async {
       final MockPlatformWebViewCookieManager mockPlatformWebViewCookieManager =
           MockPlatformWebViewCookieManager();
-      when(
-        mockPlatformWebViewCookieManager.clearCookies(),
-      ).thenAnswer((_) => Future<bool>.value(false));
+      when(mockPlatformWebViewCookieManager.clearCookies()).thenAnswer(
+        (_) => Future<bool>.value(false),
+      );
 
       final WebViewCookieManager cookieManager =
-          WebViewCookieManager.fromPlatform(mockPlatformWebViewCookieManager);
+          WebViewCookieManager.fromPlatform(
+        mockPlatformWebViewCookieManager,
+      );
 
       await expectLater(cookieManager.clearCookies(), completion(false));
     });
@@ -31,7 +33,9 @@ void main() {
           MockPlatformWebViewCookieManager();
 
       final WebViewCookieManager cookieManager =
-          WebViewCookieManager.fromPlatform(mockPlatformWebViewCookieManager);
+          WebViewCookieManager.fromPlatform(
+        mockPlatformWebViewCookieManager,
+      );
 
       const WebViewCookie cookie = WebViewCookie(
         name: 'name',
@@ -41,11 +45,9 @@ void main() {
 
       await cookieManager.setCookie(cookie);
 
-      final WebViewCookie capturedCookie =
-          verify(
-                mockPlatformWebViewCookieManager.setCookie(captureAny),
-              ).captured.single
-              as WebViewCookie;
+      final WebViewCookie capturedCookie = verify(
+        mockPlatformWebViewCookieManager.setCookie(captureAny),
+      ).captured.single as WebViewCookie;
       expect(capturedCookie, cookie);
     });
   });

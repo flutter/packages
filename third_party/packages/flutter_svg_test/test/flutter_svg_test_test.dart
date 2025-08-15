@@ -15,7 +15,10 @@ void main() {
       testWidgets('asset svg', (WidgetTester widgetTester) async {
         final SvgPicture asset = SvgPicture.asset('test/flutter_logo.svg');
         await widgetTester.pumpWidget(
-          DefaultAssetBundle(bundle: _FakeAssetBundle(), child: asset),
+          DefaultAssetBundle(
+            bundle: _FakeAssetBundle(),
+            child: asset,
+          ),
         );
 
         expect(find.svg(asset.bytesLoader), findsOneWidget);

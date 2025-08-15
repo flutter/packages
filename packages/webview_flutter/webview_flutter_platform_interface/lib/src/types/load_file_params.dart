@@ -29,7 +29,9 @@ import 'package:flutter/material.dart';
 @immutable
 base class LoadFileParams {
   /// Creates a new [LoadFileParams] object.
-  const LoadFileParams({required this.absoluteFilePath});
+  const LoadFileParams({
+    required this.absoluteFilePath,
+  });
 
   /// The path to the local HTML file to be loaded.
   final String absoluteFilePath;

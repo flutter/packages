@@ -31,16 +31,18 @@ void main() {
       );
 
       when(
-        mockWKWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
-          WebsiteDataType.cookies,
-        ], 0.0),
+        mockWKWebsiteDataStore.removeDataOfTypes(
+          <WebsiteDataType>[WebsiteDataType.cookies],
+          0.0,
+        ),
       ).thenAnswer((_) => Future<bool>.value(true));
       expect(manager.clearCookies(), completion(true));
 
       when(
-        mockWKWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
-          WebsiteDataType.cookies,
-        ], 0.0),
+        mockWKWebsiteDataStore.removeDataOfTypes(
+          <WebsiteDataType>[WebsiteDataType.cookies],
+          0.0,
+        ),
       ).thenAnswer((_) => Future<bool>.value(false));
       expect(manager.clearCookies(), completion(false));
     });
@@ -75,12 +77,15 @@ void main() {
       );
 
       verify(mockCookieStore.setCookie(cookie));
-      expect(cookieProperties, <HttpCookiePropertyKey, Object>{
-        HttpCookiePropertyKey.name: 'a',
-        HttpCookiePropertyKey.value: 'b',
-        HttpCookiePropertyKey.domain: 'c',
-        HttpCookiePropertyKey.path: 'd',
-      });
+      expect(
+        cookieProperties,
+        <HttpCookiePropertyKey, Object>{
+          HttpCookiePropertyKey.name: 'a',
+          HttpCookiePropertyKey.value: 'b',
+          HttpCookiePropertyKey.domain: 'c',
+          HttpCookiePropertyKey.path: 'd',
+        },
+      );
     });
 
     test('setCookie throws argument error with invalid path', () async {

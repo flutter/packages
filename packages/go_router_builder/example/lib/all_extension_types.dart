@@ -11,41 +11,31 @@ import 'shared/data.dart';
 
 part 'all_extension_types.g.dart';
 
-@TypedGoRoute<AllTypesBaseRoute>(
-  path: '/',
-  routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<BigIntExtensionRoute>(
-      path: 'big-int-route/:requiredBigIntField',
-    ),
-    TypedGoRoute<BoolExtensionRoute>(path: 'bool-route/:requiredBoolField'),
-    TypedGoRoute<DateTimeExtensionRoute>(
-      path: 'date-time-route/:requiredDateTimeField',
-    ),
-    TypedGoRoute<DoubleExtensionRoute>(
-      path: 'double-route/:requiredDoubleField',
-    ),
-    TypedGoRoute<IntExtensionRoute>(path: 'int-route/:requiredIntField'),
-    TypedGoRoute<NumExtensionRoute>(path: 'num-route/:requiredNumField'),
-    TypedGoRoute<DoubleExtensionRoute>(
-      path: 'double-route/:requiredDoubleField',
-    ),
-    TypedGoRoute<EnumExtensionRoute>(path: 'enum-route/:requiredEnumField'),
-    TypedGoRoute<EnhancedEnumExtensionRoute>(
-      path: 'enhanced-enum-route/:requiredEnumField',
-    ),
-    TypedGoRoute<StringExtensionRoute>(
-      path: 'string-route/:requiredStringField',
-    ),
-    TypedGoRoute<UriExtensionRoute>(path: 'uri-route/:requiredUriField'),
-  ],
-)
+@TypedGoRoute<AllTypesBaseRoute>(path: '/', routes: <TypedGoRoute<GoRouteData>>[
+  TypedGoRoute<BigIntExtensionRoute>(
+      path: 'big-int-route/:requiredBigIntField'),
+  TypedGoRoute<BoolExtensionRoute>(path: 'bool-route/:requiredBoolField'),
+  TypedGoRoute<DateTimeExtensionRoute>(
+      path: 'date-time-route/:requiredDateTimeField'),
+  TypedGoRoute<DoubleExtensionRoute>(path: 'double-route/:requiredDoubleField'),
+  TypedGoRoute<IntExtensionRoute>(path: 'int-route/:requiredIntField'),
+  TypedGoRoute<NumExtensionRoute>(path: 'num-route/:requiredNumField'),
+  TypedGoRoute<DoubleExtensionRoute>(path: 'double-route/:requiredDoubleField'),
+  TypedGoRoute<EnumExtensionRoute>(path: 'enum-route/:requiredEnumField'),
+  TypedGoRoute<EnhancedEnumExtensionRoute>(
+      path: 'enhanced-enum-route/:requiredEnumField'),
+  TypedGoRoute<StringExtensionRoute>(path: 'string-route/:requiredStringField'),
+  TypedGoRoute<UriExtensionRoute>(path: 'uri-route/:requiredUriField'),
+])
 @immutable
 class AllTypesBaseRoute extends GoRouteData with _$AllTypesBaseRoute {
   const AllTypesBaseRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const BasePage<void>(dataTitle: 'Root');
+      const BasePage<void>(
+        dataTitle: 'Root',
+      );
 }
 
 extension type const BigIntExtension(BigInt value) {}
@@ -70,16 +60,16 @@ class BigIntExtensionRoute extends GoRouteData with _$BigIntExtensionRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => BasePage<BigInt>(
-    dataTitle: 'BigIntExtensionRoute',
-    param: requiredBigIntField.value,
-    queryParam: bigIntField?.value,
-  );
+        dataTitle: 'BigIntExtensionRoute',
+        param: requiredBigIntField.value,
+        queryParam: bigIntField?.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('BigIntExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('BigIntExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class BoolExtensionRoute extends GoRouteData with _$BoolExtensionRoute {
@@ -95,17 +85,17 @@ class BoolExtensionRoute extends GoRouteData with _$BoolExtensionRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => BasePage<bool>(
-    dataTitle: 'BoolExtensionRoute',
-    param: requiredBoolField.value,
-    queryParam: boolField?.value,
-    queryParamWithDefaultValue: boolFieldWithDefaultValue.value,
-  );
+        dataTitle: 'BoolExtensionRoute',
+        param: requiredBoolField.value,
+        queryParam: boolField?.value,
+        queryParamWithDefaultValue: boolFieldWithDefaultValue.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('BoolExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('BoolExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class DateTimeExtensionRoute extends GoRouteData with _$DateTimeExtensionRoute {
@@ -119,16 +109,16 @@ class DateTimeExtensionRoute extends GoRouteData with _$DateTimeExtensionRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => BasePage<DateTime>(
-    dataTitle: 'DateTimeExtensionRoute',
-    param: requiredDateTimeField.value,
-    queryParam: dateTimeField?.value,
-  );
+        dataTitle: 'DateTimeExtensionRoute',
+        param: requiredDateTimeField.value,
+        queryParam: dateTimeField?.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('DateTimeExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('DateTimeExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class DoubleExtensionRoute extends GoRouteData with _$DoubleExtensionRoute {
@@ -144,17 +134,17 @@ class DoubleExtensionRoute extends GoRouteData with _$DoubleExtensionRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => BasePage<double>(
-    dataTitle: 'DoubleExtensionRoute',
-    param: requiredDoubleField.value,
-    queryParam: doubleField?.value,
-    queryParamWithDefaultValue: doubleFieldWithDefaultValue.value,
-  );
+        dataTitle: 'DoubleExtensionRoute',
+        param: requiredDoubleField.value,
+        queryParam: doubleField?.value,
+        queryParamWithDefaultValue: doubleFieldWithDefaultValue.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('DoubleExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('DoubleExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class IntExtensionRoute extends GoRouteData with _$IntExtensionRoute {
@@ -170,17 +160,17 @@ class IntExtensionRoute extends GoRouteData with _$IntExtensionRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => BasePage<int>(
-    dataTitle: 'IntExtensionRoute',
-    param: requiredIntField.value,
-    queryParam: intField?.value,
-    queryParamWithDefaultValue: intFieldWithDefaultValue.value,
-  );
+        dataTitle: 'IntExtensionRoute',
+        param: requiredIntField.value,
+        queryParam: intField?.value,
+        queryParamWithDefaultValue: intFieldWithDefaultValue.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('IntExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('IntExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class NumExtensionRoute extends GoRouteData with _$NumExtensionRoute {
@@ -196,26 +186,25 @@ class NumExtensionRoute extends GoRouteData with _$NumExtensionRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => BasePage<num>(
-    dataTitle: 'NumExtensionRoute',
-    param: requiredNumField.value,
-    queryParam: numField?.value,
-    queryParamWithDefaultValue: numFieldWithDefaultValue.value,
-  );
+        dataTitle: 'NumExtensionRoute',
+        param: requiredNumField.value,
+        queryParam: numField?.value,
+        queryParamWithDefaultValue: numFieldWithDefaultValue.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('NumExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('NumExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class EnumExtensionRoute extends GoRouteData with _$EnumExtensionRoute {
   const EnumExtensionRoute({
     required this.requiredEnumField,
     this.enumField,
-    this.enumFieldWithDefaultValue = const PersonDetailsExtension(
-      PersonDetails.favoriteFood,
-    ),
+    this.enumFieldWithDefaultValue =
+        const PersonDetailsExtension(PersonDetails.favoriteFood),
   });
 
   final PersonDetailsExtension requiredEnumField;
@@ -232,10 +221,10 @@ class EnumExtensionRoute extends GoRouteData with _$EnumExtensionRoute {
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('EnumExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('EnumExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class EnhancedEnumExtensionRoute extends GoRouteData
@@ -243,9 +232,8 @@ class EnhancedEnumExtensionRoute extends GoRouteData
   const EnhancedEnumExtensionRoute({
     required this.requiredEnumField,
     this.enumField,
-    this.enumFieldWithDefaultValue = const SportDetailsExtension(
-      SportDetails.football,
-    ),
+    this.enumFieldWithDefaultValue =
+        const SportDetailsExtension(SportDetails.football),
   });
 
   final SportDetailsExtension requiredEnumField;
@@ -262,10 +250,10 @@ class EnhancedEnumExtensionRoute extends GoRouteData
       );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('EnhancedEnumExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('EnhancedEnumExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class StringExtensionRoute extends GoRouteData with _$StringExtensionRoute {
@@ -281,37 +269,40 @@ class StringExtensionRoute extends GoRouteData with _$StringExtensionRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) => BasePage<String>(
-    dataTitle: 'StringExtensionRoute',
-    param: requiredStringField.value,
-    queryParam: stringField?.value,
-    queryParamWithDefaultValue: stringFieldWithDefaultValue.value,
-  );
+        dataTitle: 'StringExtensionRoute',
+        param: requiredStringField.value,
+        queryParam: stringField?.value,
+        queryParamWithDefaultValue: stringFieldWithDefaultValue.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('StringExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('StringExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class UriExtensionRoute extends GoRouteData with _$UriExtensionRoute {
-  const UriExtensionRoute({required this.requiredUriField, this.uriField});
+  const UriExtensionRoute({
+    required this.requiredUriField,
+    this.uriField,
+  });
 
   final UriExtension requiredUriField;
   final UriExtension? uriField;
 
   @override
   Widget build(BuildContext context, GoRouterState state) => BasePage<Uri>(
-    dataTitle: 'UriExtensionRoute',
-    param: requiredUriField.value,
-    queryParam: uriField?.value,
-  );
+        dataTitle: 'UriExtensionRoute',
+        param: requiredUriField.value,
+        queryParam: uriField?.value,
+      );
 
   Widget drawerTile(BuildContext context) => ListTile(
-    title: const Text('UriExtensionRoute'),
-    onTap: () => go(context),
-    selected: GoRouterState.of(context).uri.path == location,
-  );
+        title: const Text('UriExtensionRoute'),
+        onTap: () => go(context),
+        selected: GoRouterState.of(context).uri.path == location,
+      );
 }
 
 class BasePage<T> extends StatelessWidget {
@@ -330,72 +321,73 @@ class BasePage<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Go router extension types')),
-    drawer: Drawer(
-      child: ListView(
-        children: <Widget>[
-          BigIntExtensionRoute(
-            requiredBigIntField: BigIntExtension(BigInt.two),
-            bigIntField: BigIntExtension(BigInt.zero),
-          ).drawerTile(context),
-          const BoolExtensionRoute(
-            requiredBoolField: BoolExtension(true),
-            boolField: BoolExtension(false),
-          ).drawerTile(context),
-          DateTimeExtensionRoute(
-            requiredDateTimeField: DateTimeExtension(DateTime(1970)),
-            dateTimeField: DateTimeExtension(DateTime(0)),
-          ).drawerTile(context),
-          const DoubleExtensionRoute(
-            requiredDoubleField: DoubleExtension(3.14),
-            doubleField: DoubleExtension(-3.14),
-          ).drawerTile(context),
-          const IntExtensionRoute(
-            requiredIntField: IntExtension(42),
-            intField: IntExtension(-42),
-          ).drawerTile(context),
-          const NumExtensionRoute(
-            requiredNumField: NumExtension(2.71828),
-            numField: NumExtension(-2.71828),
-          ).drawerTile(context),
-          const StringExtensionRoute(
-            requiredStringField: StringExtension(r'$!/#bob%%20'),
-            stringField: StringExtension(r'$!/#bob%%20'),
-          ).drawerTile(context),
-          const EnumExtensionRoute(
-            requiredEnumField: PersonDetailsExtension(
-              PersonDetails.favoriteSport,
-            ),
-            enumField: PersonDetailsExtension(PersonDetails.favoriteFood),
-          ).drawerTile(context),
-          const EnhancedEnumExtensionRoute(
-            requiredEnumField: SportDetailsExtension(SportDetails.football),
-            enumField: SportDetailsExtension(SportDetails.volleyball),
-          ).drawerTile(context),
-          UriExtensionRoute(
-            requiredUriField: UriExtension(Uri.parse('https://dart.dev')),
-            uriField: UriExtension(Uri.parse('https://dart.dev')),
-          ).drawerTile(context),
-        ],
-      ),
-    ),
-    body: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const Text('Built with Extension Types!'),
-          Text(dataTitle),
-          Text('Param: $param'),
-          Text('Query param: $queryParam'),
-          Text('Query param with default value: $queryParamWithDefaultValue'),
-          SelectableText(GoRouterState.of(context).uri.path),
-          SelectableText(
-            GoRouterState.of(context).uri.queryParameters.toString(),
+        appBar: AppBar(
+          title: const Text('Go router extension types'),
+        ),
+        drawer: Drawer(
+            child: ListView(
+          children: <Widget>[
+            BigIntExtensionRoute(
+              requiredBigIntField: BigIntExtension(BigInt.two),
+              bigIntField: BigIntExtension(BigInt.zero),
+            ).drawerTile(context),
+            const BoolExtensionRoute(
+              requiredBoolField: BoolExtension(true),
+              boolField: BoolExtension(false),
+            ).drawerTile(context),
+            DateTimeExtensionRoute(
+              requiredDateTimeField: DateTimeExtension(DateTime(1970)),
+              dateTimeField: DateTimeExtension(DateTime(0)),
+            ).drawerTile(context),
+            const DoubleExtensionRoute(
+              requiredDoubleField: DoubleExtension(3.14),
+              doubleField: DoubleExtension(-3.14),
+            ).drawerTile(context),
+            const IntExtensionRoute(
+              requiredIntField: IntExtension(42),
+              intField: IntExtension(-42),
+            ).drawerTile(context),
+            const NumExtensionRoute(
+              requiredNumField: NumExtension(2.71828),
+              numField: NumExtension(-2.71828),
+            ).drawerTile(context),
+            const StringExtensionRoute(
+              requiredStringField: StringExtension(r'$!/#bob%%20'),
+              stringField: StringExtension(r'$!/#bob%%20'),
+            ).drawerTile(context),
+            const EnumExtensionRoute(
+              requiredEnumField:
+                  PersonDetailsExtension(PersonDetails.favoriteSport),
+              enumField: PersonDetailsExtension(PersonDetails.favoriteFood),
+            ).drawerTile(context),
+            const EnhancedEnumExtensionRoute(
+              requiredEnumField: SportDetailsExtension(SportDetails.football),
+              enumField: SportDetailsExtension(SportDetails.volleyball),
+            ).drawerTile(context),
+            UriExtensionRoute(
+              requiredUriField: UriExtension(Uri.parse('https://dart.dev')),
+              uriField: UriExtension(Uri.parse('https://dart.dev')),
+            ).drawerTile(context),
+          ],
+        )),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const Text('Built with Extension Types!'),
+              Text(dataTitle),
+              Text('Param: $param'),
+              Text('Query param: $queryParam'),
+              Text(
+                'Query param with default value: $queryParamWithDefaultValue',
+              ),
+              SelectableText(GoRouterState.of(context).uri.path),
+              SelectableText(
+                  GoRouterState.of(context).uri.queryParameters.toString()),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 void main() => runApp(AllExtensionTypesApp());
@@ -404,8 +396,9 @@ class AllExtensionTypesApp extends StatelessWidget {
   AllExtensionTypesApp({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      MaterialApp.router(routerConfig: _router);
+  Widget build(BuildContext context) => MaterialApp.router(
+        routerConfig: _router,
+      );
 
   late final GoRouter _router = GoRouter(
     debugLogDiagnostics: true,

@@ -24,8 +24,7 @@ class WebViewAndroidCookieManager extends WebViewCookieManagerPlatform {
   Future<void> setCookie(WebViewCookie cookie) {
     if (!_isValidPath(cookie.path)) {
       throw ArgumentError(
-        'The path property for the provided cookie was not given a legal value.',
-      );
+          'The path property for the provided cookie was not given a legal value.');
     }
     return _cookieManager.setCookie(
       cookie.domain,

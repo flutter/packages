@@ -11,51 +11,44 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Utility methods', () {
     test(
-      'Should return CameraLensDirection when valid value is supplied when parsing camera lens direction',
-      () {
-        expect(
-          cameraLensDirectionFromPlatform(PlatformCameraLensDirection.back),
-          CameraLensDirection.back,
-        );
-        expect(
-          cameraLensDirectionFromPlatform(PlatformCameraLensDirection.front),
-          CameraLensDirection.front,
-        );
-        expect(
-          cameraLensDirectionFromPlatform(PlatformCameraLensDirection.external),
-          CameraLensDirection.external,
-        );
-      },
-    );
-
-    test('deviceOrientationFromPlatform() should convert correctly', () {
+        'Should return CameraLensDirection when valid value is supplied when parsing camera lens direction',
+        () {
       expect(
-        deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
-        DeviceOrientation.portraitUp,
+        cameraLensDirectionFromPlatform(PlatformCameraLensDirection.back),
+        CameraLensDirection.back,
       );
       expect(
-        deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
-        DeviceOrientation.portraitDown,
+        cameraLensDirectionFromPlatform(PlatformCameraLensDirection.front),
+        CameraLensDirection.front,
       );
       expect(
-        deviceOrientationFromPlatform(PlatformDeviceOrientation.landscapeRight),
-        DeviceOrientation.landscapeRight,
-      );
-      expect(
-        deviceOrientationFromPlatform(PlatformDeviceOrientation.landscapeLeft),
-        DeviceOrientation.landscapeLeft,
+        cameraLensDirectionFromPlatform(PlatformCameraLensDirection.external),
+        CameraLensDirection.external,
       );
     });
 
+    test('deviceOrientationFromPlatform() should convert correctly', () {
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
+          DeviceOrientation.portraitUp);
+      expect(
+          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
+          DeviceOrientation.portraitDown);
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeRight),
+          DeviceOrientation.landscapeRight);
+      expect(
+          deviceOrientationFromPlatform(
+              PlatformDeviceOrientation.landscapeLeft),
+          DeviceOrientation.landscapeLeft);
+    });
+
     test('exposureModeFromPlatform() should convert correctly', () {
-      expect(
-        exposureModeFromPlatform(PlatformExposureMode.auto),
-        ExposureMode.auto,
-      );
-      expect(
-        exposureModeFromPlatform(PlatformExposureMode.locked),
-        ExposureMode.locked,
-      );
+      expect(exposureModeFromPlatform(PlatformExposureMode.auto),
+          ExposureMode.auto);
+      expect(exposureModeFromPlatform(PlatformExposureMode.locked),
+          ExposureMode.locked);
     });
 
     test('focusModeFromPlatform() should convert correctly', () {

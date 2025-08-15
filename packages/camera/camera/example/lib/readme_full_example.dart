@@ -31,26 +31,23 @@ class _CameraAppState extends State<CameraApp> {
   void initState() {
     super.initState();
     controller = CameraController(_cameras[0], ResolutionPreset.max);
-    controller
-        .initialize()
-        .then((_) {
-          if (!mounted) {
-            return;
-          }
-          setState(() {});
-        })
-        .catchError((Object e) {
-          if (e is CameraException) {
-            switch (e.code) {
-              case 'CameraAccessDenied':
-                // Handle access errors here.
-                break;
-              default:
-                // Handle other errors here.
-                break;
-            }
-          }
-        });
+    controller.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    }).catchError((Object e) {
+      if (e is CameraException) {
+        switch (e.code) {
+          case 'CameraAccessDenied':
+            // Handle access errors here.
+            break;
+          default:
+            // Handle other errors here.
+            break;
+        }
+      }
+    });
   }
 
   @override
@@ -64,8 +61,9 @@ class _CameraAppState extends State<CameraApp> {
     if (!controller.value.isInitialized) {
       return Container();
     }
-    return MaterialApp(home: CameraPreview(controller));
+    return MaterialApp(
+      home: CameraPreview(controller),
+    );
   }
 }
-
 // #enddocregion FullAppExample

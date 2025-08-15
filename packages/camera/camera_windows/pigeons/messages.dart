@@ -4,15 +4,14 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(
-  PigeonOptions(
-    dartOut: 'lib/src/messages.g.dart',
-    cppOptions: CppOptions(namespace: 'camera_windows'),
-    cppHeaderOut: 'windows/messages.g.h',
-    cppSourceOut: 'windows/messages.g.cpp',
-    copyrightHeader: 'pigeons/copyright.txt',
-  ),
-)
+@ConfigurePigeon(PigeonOptions(
+  dartOut: 'lib/src/messages.g.dart',
+  cppOptions: CppOptions(namespace: 'camera_windows'),
+  cppHeaderOut: 'windows/messages.g.h',
+  cppSourceOut: 'windows/messages.g.cpp',
+  copyrightHeader: 'pigeons/copyright.txt',
+))
+
 /// Pigeon version of platform interface's ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 

@@ -10,14 +10,13 @@ double? parseDouble(String? rawDouble, {bool tryParse = false}) {
     return null;
   }
 
-  rawDouble =
-      rawDouble
-          .replaceFirst('rem', '')
-          .replaceFirst('em', '')
-          .replaceFirst('ex', '')
-          .replaceFirst('px', '')
-          .replaceFirst('pt', '')
-          .trim();
+  rawDouble = rawDouble
+      .replaceFirst('rem', '')
+      .replaceFirst('em', '')
+      .replaceFirst('ex', '')
+      .replaceFirst('px', '')
+      .replaceFirst('pt', '')
+      .trim();
 
   if (tryParse) {
     return double.tryParse(rawDouble);

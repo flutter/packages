@@ -21,7 +21,9 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(routerConfig: _router);
+    return MaterialApp.router(
+      routerConfig: _router,
+    );
   }
 }
 
@@ -101,13 +103,13 @@ class Splash extends StatelessWidget {
         children: <Widget>[
           const Placeholder(),
           ElevatedButton(
-            onPressed:
-                () => const RequiredExtraRoute($extra: Extra(1)).go(context),
+            onPressed: () =>
+                const RequiredExtraRoute($extra: Extra(1)).go(context),
             child: const Text('Required Extra'),
           ),
           ElevatedButton(
-            onPressed:
-                () => const OptionalExtraRoute($extra: Extra(2)).go(context),
+            onPressed: () =>
+                const OptionalExtraRoute($extra: Extra(2)).go(context),
             child: const Text('Optional Extra'),
           ),
           ElevatedButton(

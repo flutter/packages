@@ -39,7 +39,10 @@ import 'web_resource_response.dart';
 @immutable
 class HttpResponseError {
   /// Used by the platform implementation to create a new [HttpResponseError].
-  const HttpResponseError({this.request, this.response});
+  const HttpResponseError({
+    this.request,
+    this.response,
+  });
 
   /// The associated request.
   final WebResourceRequest? request;

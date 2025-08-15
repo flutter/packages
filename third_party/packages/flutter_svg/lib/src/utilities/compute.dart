@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' as foundation;
 
 Future<R> _testCompute<Q, R>(
-  foundation.ComputeCallback<Q, R> callback,
-  Q message, {
-  String? debugLabel,
-}) {
+    foundation.ComputeCallback<Q, R> callback, Q message,
+    {String? debugLabel}) {
   if (foundation.kDebugMode) {
     final Type? bindingType = foundation.BindingBase.debugBindingType();
     if (bindingType.toString() == 'AutomatedTestWidgetsFlutterBinding') {}

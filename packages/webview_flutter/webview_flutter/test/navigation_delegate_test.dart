@@ -125,12 +125,11 @@ void main() {
         }),
       );
 
-      final void Function(PlatformSslAuthError) callback =
-          verify(
-                (delegate.platform as MockPlatformNavigationDelegate)
-                    .setOnSSlAuthError(captureAny),
-              ).captured.single
-              as void Function(PlatformSslAuthError);
+      final void Function(PlatformSslAuthError) callback = verify(
+              (delegate.platform as MockPlatformNavigationDelegate)
+                  .setOnSSlAuthError(captureAny))
+          .captured
+          .single as void Function(PlatformSslAuthError);
 
       final MockPlatformSslAuthError mockPlatformError =
           MockPlatformSslAuthError();
