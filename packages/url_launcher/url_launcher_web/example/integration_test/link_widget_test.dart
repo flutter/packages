@@ -9,9 +9,7 @@ import 'dart:ui' show SemanticsFlag;
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show SemanticsNode;
-import 'package:flutter/semantics.dart'
-    show DebugSemanticsDumpOrder, SemanticsData;
+import 'package:flutter/rendering.dart' show SemanticsData, SemanticsNode;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
@@ -221,7 +219,6 @@ void main() {
           tester.getSemantics(firstButtonFinder);
       final SemanticsData firstData = firstSemantics.getSemanticsData();
 
-      handle.dispose();
       expect(
         firstData.hasFlag(SemanticsFlag.isLink),
         isTrue,
