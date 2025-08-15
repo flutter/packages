@@ -34,14 +34,16 @@ class InAppPurchaseStoreKitPlatformAddition
     try {
       final String receipt = await SKReceiptManager.retrieveReceiptData();
       return PurchaseVerificationData(
-          localVerificationData: receipt,
-          serverVerificationData: receipt,
-          source: kIAPSource);
+        localVerificationData: receipt,
+        serverVerificationData: receipt,
+        source: kIAPSource,
+      );
     } catch (e) {
       // ignore: avoid_print
       print(
-          'Something is wrong while fetching the receipt, this normally happens when the app is '
-          'running on a simulator: $e');
+        'Something is wrong while fetching the receipt, this normally happens when the app is '
+        'running on a simulator: $e',
+      );
       return null;
     }
   }
