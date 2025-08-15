@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 2.12.3
 
 * Updates the example app to use the zIndexInt param instead of the deprecated zIndex.
