@@ -132,12 +132,12 @@ void main() {
 
     expect(
       parseTransform('matrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0)'),
-      const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0),
+      const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 1.0),
     );
 
     expect(
       parseTransform('matrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0 )'),
-      const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0),
+      const AffineMatrix(1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 1.0),
     );
 
     expect(
@@ -198,7 +198,7 @@ void main() {
         0.70711, -0.70711, //
         0.70711, 0.70711, //
         -640.89, 452.68, //
-        0.70711, //
+        1.0, //
       ),
     );
   });
