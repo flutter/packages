@@ -21,25 +21,19 @@ final class IOSAdDisplayContainerCreationParams
     super.key,
     required super.onContainerAdded,
     super.companionSlots,
-    @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
-  })  : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : super();
 
   /// Creates a [IOSAdDisplayContainerCreationParams] from an instance of
   /// [PlatformAdDisplayContainerCreationParams].
   factory IOSAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
-    PlatformAdDisplayContainerCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
-  }) {
+    PlatformAdDisplayContainerCreationParams params,
+  ) {
     return IOSAdDisplayContainerCreationParams(
       key: params.key,
       onContainerAdded: params.onContainerAdded,
       companionSlots: params.companionSlots,
-      imaProxy: imaProxy,
     );
   }
-
-  final InteractiveMediaAdsProxy _imaProxy;
 }
 
 /// Implementation of [PlatformAdDisplayContainer] for iOS.
@@ -72,7 +66,7 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
       key: _iosParams.key,
       viewType: 'interactive_media_ads.packages.flutter.dev/view',
       onPlatformViewCreated: (_) async {
-        adDisplayContainer = _iosParams._imaProxy.newIMAAdDisplayContainer(
+        adDisplayContainer = IMAAdDisplayContainer(
           adContainer: _controller.view,
           adContainerViewController: _controller,
           companionSlots: _iosParams.companionSlots
@@ -96,7 +90,7 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
   static UIViewController _createViewController(
     WeakReference<IOSAdDisplayContainer> interfaceContainer,
   ) {
-    return interfaceContainer.target!._iosParams._imaProxy.newUIViewController(
+    return UIViewController(
       viewDidAppear: (_, bool animated) {
         final IOSAdDisplayContainer? container = interfaceContainer.target;
         if (container != null &&

@@ -16,14 +16,9 @@ import 'interactive_media_ads_proxy.dart';
 class AndroidAdsManager extends PlatformAdsManager {
   /// Constructs an [AndroidAdsManager].
   @internal
-  AndroidAdsManager(
-    ima.AdsManager manager, {
-    InteractiveMediaAdsProxy? proxy,
-  })  : _manager = manager,
-        _proxy = proxy ?? const InteractiveMediaAdsProxy();
+  AndroidAdsManager(this._manager);
 
   final ima.AdsManager _manager;
-  final InteractiveMediaAdsProxy _proxy;
 
   PlatformAdsManagerDelegate? _managerDelegate;
 
@@ -81,9 +76,8 @@ class AndroidAdsManager extends PlatformAdsManager {
   // any wrapped classes must not reference the encapsulating object. This is to
   // prevent a circular reference that prevents garbage collection.
   static void _addListeners(WeakReference<AndroidAdsManager> weakThis) {
-    final InteractiveMediaAdsProxy proxy = weakThis.target!._proxy;
     weakThis.target?._manager.addAdEventListener(
-      proxy.newAdEventListener(
+      ima.AdEventListener(
         onAdEvent: (_, ima.AdEvent event) {
           weakThis.target?._managerDelegate?.params.onAdEvent?.call(
             AdEvent(
@@ -96,7 +90,7 @@ class AndroidAdsManager extends PlatformAdsManager {
       ),
     );
     weakThis.target?._manager.addAdErrorListener(
-      proxy.newAdErrorListener(
+      ima.AdErrorListener(
         onAdError: (_, ima.AdErrorEvent event) {
           weakThis.target?._managerDelegate?.params.onAdErrorEvent?.call(
             AdErrorEvent(

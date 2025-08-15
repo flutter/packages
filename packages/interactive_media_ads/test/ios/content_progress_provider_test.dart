@@ -20,12 +20,10 @@ void main() {
       final MockIMAContentPlayhead mockContentPlayhead =
           MockIMAContentPlayhead();
 
+      PigeonOverrides.contentPlayhead_new = () => mockContentPlayhead;
+
       final IOSContentProgressProvider provider = IOSContentProgressProvider(
-        IOSContentProgressProviderCreationParams(
-          proxy: InteractiveMediaAdsProxy(
-            newIMAContentPlayhead: () => mockContentPlayhead,
-          ),
-        ),
+        const IOSContentProgressProviderCreationParams(),
       );
 
       await provider.setProgress(

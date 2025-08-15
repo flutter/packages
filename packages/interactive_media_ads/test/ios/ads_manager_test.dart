@@ -38,18 +38,17 @@ void main() {
       final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
 
       final IOSAdsRenderingSettings settings = IOSAdsRenderingSettings(
-        IOSAdsRenderingSettingsCreationParams(
+        const IOSAdsRenderingSettingsCreationParams(
           bitrate: 1000,
           enablePreloading: false,
-          loadVideoTimeout: const Duration(seconds: 9),
-          mimeTypes: const <String>['value'],
-          playAdsAfterTime: const Duration(seconds: 5),
-          uiElements: const <AdUIElement>{AdUIElement.countdown},
-          proxy: InteractiveMediaAdsProxy(
-            newIMAAdsRenderingSettings: () => mockAdsRenderingSettings,
-          ),
+          loadVideoTimeout: Duration(seconds: 9),
+          mimeTypes: <String>['value'],
+          playAdsAfterTime: Duration(seconds: 5),
+          uiElements: <AdUIElement>{AdUIElement.countdown},
         ),
       );
+      ima.PigeonOverrides.adsRenderingSettings_new =
+          () => mockAdsRenderingSettings;
       await adsManager.init(settings: settings);
 
       verifyInOrder(<Future<void>>[
@@ -110,39 +109,36 @@ void main() {
       final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
 
       late final ima.IMAAdsManagerDelegate delegate;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
-        newIMAAdsManagerDelegate: ({
-          required void Function(
-            ima.IMAAdsManagerDelegate,
-            ima.IMAAdsManager,
-            ima.IMAAdEvent,
-          ) didReceiveAdEvent,
-          required void Function(
-            ima.IMAAdsManagerDelegate,
-            ima.IMAAdsManager,
-            ima.IMAAdError,
-          ) didReceiveAdError,
-          required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
-              didRequestContentPause,
-          required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
-              didRequestContentResume,
-        }) {
-          delegate = ima.IMAAdsManagerDelegate.pigeon_detached(
-            didReceiveAdEvent: didReceiveAdEvent,
-            didReceiveAdError: didReceiveAdError,
-            didRequestContentPause: didRequestContentPause,
-            didRequestContentResume: didRequestContentResume,
-            pigeon_instanceManager: ima.PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-          return delegate;
-        },
-      );
+      ima.PigeonOverrides.adsManagerDelegate_new = ({
+        required void Function(
+          ima.IMAAdsManagerDelegate,
+          ima.IMAAdsManager,
+          ima.IMAAdEvent,
+        ) didReceiveAdEvent,
+        required void Function(
+          ima.IMAAdsManagerDelegate,
+          ima.IMAAdsManager,
+          ima.IMAAdError,
+        ) didReceiveAdError,
+        required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
+            didRequestContentPause,
+        required void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
+            didRequestContentResume,
+      }) {
+        delegate = ima.IMAAdsManagerDelegate.pigeon_detached(
+          didReceiveAdEvent: didReceiveAdEvent,
+          didReceiveAdError: didReceiveAdError,
+          didRequestContentPause: didRequestContentPause,
+          didRequestContentResume: didRequestContentResume,
+          pigeon_instanceManager:
+              ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {}),
+        );
+        return delegate;
+      };
 
-      adsManager.setAdsManagerDelegate(IOSAdsManagerDelegate(
-        IOSAdsManagerDelegateCreationParams(proxy: imaProxy),
-      ));
+      adsManager.setAdsManagerDelegate(
+        IOSAdsManagerDelegate(const IOSAdsManagerDelegateCreationParams()),
+      );
 
       verify(mockAdsManager.setDelegate(delegate));
     });

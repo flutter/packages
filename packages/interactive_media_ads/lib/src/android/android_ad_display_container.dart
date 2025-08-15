@@ -22,10 +22,8 @@ final class AndroidAdDisplayContainerCreationParams
     super.key,
     required super.onContainerAdded,
     super.companionSlots,
-    @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  })  : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
-        _platformViewsProxy =
+  })  : _platformViewsProxy =
             platformViewsProxy ?? const PlatformViewsServiceProxy(),
         super();
 
@@ -33,19 +31,16 @@ final class AndroidAdDisplayContainerCreationParams
   /// [PlatformAdDisplayContainerCreationParams].
   factory AndroidAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
     PlatformAdDisplayContainerCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   }) {
     return AndroidAdDisplayContainerCreationParams(
       key: params.key,
       onContainerAdded: params.onContainerAdded,
       companionSlots: params.companionSlots,
-      imaProxy: imaProxy,
       platformViewsProxy: platformViewsProxy,
     );
   }
 
-  final InteractiveMediaAdsProxy _imaProxy;
   final PlatformViewsServiceProxy _platformViewsProxy;
 }
 
@@ -142,8 +137,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       platformViewsServiceProxy: _androidParams._platformViewsProxy,
       layoutDirection: params.layoutDirection,
       onPlatformViewCreated: () async {
-        adDisplayContainer = await _androidParams._imaProxy
-            .createAdDisplayContainerImaSdkFactory(
+        adDisplayContainer = await ima.ImaSdkFactory.createAdDisplayContainer(
           _frameLayout,
           _videoAdPlayer,
         );
@@ -183,8 +177,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
     _adProgressTimer = Timer.periodic(
       const Duration(milliseconds: _progressPollingMs),
       (Timer timer) async {
-        final ima.VideoProgressUpdate currentProgress =
-            _androidParams._imaProxy.newVideoProgressUpdate(
+        final ima.VideoProgressUpdate currentProgress = ima.VideoProgressUpdate(
           currentTimeMs: await _videoView.getCurrentPosition(),
           durationMs: _adDuration!,
         );
@@ -217,7 +210,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   static ima.VideoView _setUpVideoView(
     WeakReference<AndroidAdDisplayContainer> weakThis,
   ) {
-    return weakThis.target!._androidParams._imaProxy.newVideoView(
+    return ima.VideoView(
       onCompletion: (_, __) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
@@ -265,7 +258,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   static ima.VideoAdPlayer _setUpVideoAdPlayer(
     WeakReference<AndroidAdDisplayContainer> weakThis,
   ) {
-    return weakThis.target!._androidParams._imaProxy.newVideoAdPlayer(
+    return ima.VideoAdPlayer(
       addCallback: (_, ima.VideoAdPlayerCallback callback) {
         weakThis.target?.videoAdPlayerCallbacks.add(callback);
       },

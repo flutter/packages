@@ -19,24 +19,18 @@ final class IOSCompanionAdSlotCreationParams
   const IOSCompanionAdSlotCreationParams({
     required super.size,
     super.onClicked,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : super();
 
   /// Creates an [IOSCompanionAdSlotCreationParams] from an instance of
   /// [PlatformCompanionAdSlotCreationParams].
   factory IOSCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
-    PlatformCompanionAdSlotCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) {
+    PlatformCompanionAdSlotCreationParams params,
+  ) {
     return IOSCompanionAdSlotCreationParams(
       size: params.size,
       onClicked: params.onClicked,
-      proxy: proxy,
     );
   }
-
-  final InteractiveMediaAdsProxy _proxy;
 }
 
 /// Implementation of [PlatformCompanionAdSlot] for iOS.
@@ -48,7 +42,7 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
       _initIOSParams(params);
 
   // View used to display the Ad.
-  late final UIView _view = _iosParams._proxy.newUIView();
+  late final UIView _view = UIView();
 
   late final IMACompanionDelegate _delegate = _createCompanionDelegate(
     WeakReference<IOSCompanionAdSlot>(this),
@@ -82,14 +76,12 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
 
   IMACompanionAdSlot _initCompanionAdSlot() {
     final IMACompanionAdSlot adSlot = switch (params.size) {
-      final CompanionAdSlotSizeFixed size =>
-        _iosParams._proxy.sizeIMACompanionAdSlot(
+      final CompanionAdSlotSizeFixed size => IMACompanionAdSlot.size(
           view: _view,
           width: size.width,
           height: size.height,
         ),
-      CompanionAdSlotSizeFluid() =>
-        _iosParams._proxy.newIMACompanionAdSlot(view: _view),
+      CompanionAdSlotSizeFluid() => IMACompanionAdSlot(view: _view),
     };
 
     if (params.onClicked != null) {
@@ -105,7 +97,7 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
   static IMACompanionDelegate _createCompanionDelegate(
     WeakReference<IOSCompanionAdSlot> weakThis,
   ) {
-    return weakThis.target!._iosParams._proxy.newIMACompanionDelegate(
+    return IMACompanionDelegate(
       companionSlotWasClicked: (_, __) {
         weakThis.target?.params.onClicked!.call();
       },
