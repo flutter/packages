@@ -1,3 +1,7 @@
+## 2.8.4
+
+* Simplifies native code.
+
 ## 2.8.3
 
 * Removes calls to self from init and dealloc, for maintainability.

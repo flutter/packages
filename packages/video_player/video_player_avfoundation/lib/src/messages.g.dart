@@ -33,12 +33,6 @@ bool _deepEquals(Object? a, Object? b) {
   return a == b;
 }
 
-/// Pigeon equivalent of VideoViewType.
-enum PlatformVideoViewType {
-  textureView,
-  platformView,
-}
-
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   PlatformVideoViewCreationParams({
@@ -86,20 +80,16 @@ class CreationOptions {
   CreationOptions({
     required this.uri,
     required this.httpHeaders,
-    required this.viewType,
   });
 
   String uri;
 
   Map<String, String> httpHeaders;
 
-  PlatformVideoViewType viewType;
-
   List<Object?> _toList() {
     return <Object?>[
       uri,
       httpHeaders,
-      viewType,
     ];
   }
 
@@ -113,7 +103,6 @@ class CreationOptions {
       uri: result[0]! as String,
       httpHeaders:
           (result[1] as Map<Object?, Object?>?)!.cast<String, String>(),
-      viewType: result[2]! as PlatformVideoViewType,
     );
   }
 
@@ -134,6 +123,52 @@ class CreationOptions {
   int get hashCode => Object.hashAll(_toList());
 }
 
+class TexturePlayerIds {
+  TexturePlayerIds({
+    required this.playerId,
+    required this.textureId,
+  });
+
+  int playerId;
+
+  int textureId;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      playerId,
+      textureId,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static TexturePlayerIds decode(Object result) {
+    result as List<Object?>;
+    return TexturePlayerIds(
+      playerId: result[0]! as int,
+      textureId: result[1]! as int,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! TexturePlayerIds || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -141,13 +176,13 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    } else if (value is PlatformVideoViewType) {
-      buffer.putUint8(129);
-      writeValue(buffer, value.index);
     } else if (value is PlatformVideoViewCreationParams) {
-      buffer.putUint8(130);
+      buffer.putUint8(129);
       writeValue(buffer, value.encode());
     } else if (value is CreationOptions) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is TexturePlayerIds) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
@@ -159,12 +194,11 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        final int? value = readValue(buffer) as int?;
-        return value == null ? null : PlatformVideoViewType.values[value];
-      case 130:
         return PlatformVideoViewCreationParams.decode(readValue(buffer)!);
-      case 131:
+      case 130:
         return CreationOptions.decode(readValue(buffer)!);
+      case 131:
+        return TexturePlayerIds.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -211,9 +245,41 @@ class AVFoundationVideoPlayerApi {
     }
   }
 
-  Future<int> create(CreationOptions creationOptions) async {
+  Future<int> createForPlatformView(CreationOptions params) async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.create$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.createForPlatformView$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[params]);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as int?)!;
+    }
+  }
+
+  Future<TexturePlayerIds> createForTextureView(
+      CreationOptions creationOptions) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.createForTextureView$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
@@ -238,33 +304,7 @@ class AVFoundationVideoPlayerApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as int?)!;
-    }
-  }
-
-  Future<void> dispose(int playerId) async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.video_player_avfoundation.AVFoundationVideoPlayerApi.dispose$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[playerId]);
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
+      return (pigeonVar_replyList[0] as TexturePlayerIds?)!;
     }
   }
 
@@ -498,6 +538,31 @@ class VideoPlayerInstanceApi {
   Future<void> pause() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.pause$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> dispose() async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.dispose$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
       pigeonVar_channelName,
