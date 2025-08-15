@@ -17,7 +17,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  image_picker_platform_interface: ^2.11.0
+  image_picker_platform_interface: ^2.10.0
   mime: ^1.0.4
   video_player: ^2.7.0
 
@@ -31,12 +31,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-# FOR TESTING AND INITIAL REVIEW ONLY. DO NOT MERGE.
-# See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
-dependency_overrides:
-  image_picker_android: {path: ../../../../packages/image_picker/image_picker_android}
-  image_picker_for_web: {path: ../../../../packages/image_picker/image_picker_for_web}
-  image_picker_ios: {path: ../../../../packages/image_picker/image_picker_ios}
-  image_picker_linux: {path: ../../../../packages/image_picker/image_picker_linux}
-  image_picker_macos: {path: ../../../../packages/image_picker/image_picker_macos}
-  image_picker_windows: {path: ../../../../packages/image_picker/image_picker_windows}
