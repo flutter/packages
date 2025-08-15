@@ -1,3 +1,7 @@
+## 3.2.1
+
+- Changes generated whitespace for better compatibility with new Dart formatter.
+
 ## 3.2.0
 
 - Adds support for`extension type`.
