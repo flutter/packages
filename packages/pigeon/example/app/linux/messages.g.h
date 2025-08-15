@@ -95,6 +95,16 @@ G_DECLARE_FINAL_TYPE(PigeonExamplePackageMessageCodec,
                      PIGEON_EXAMPLE_PACKAGE, MESSAGE_CODEC,
                      FlStandardMessageCodec)
 
+/**
+ * Custom type ID constants:
+ *
+ * Constants used to identify custom types in the codec.
+ * They are used in the codec to encode and decode custom types.
+ * They may be used in custom object creation functions to identify the type.
+ */
+extern const int pigeon_example_package_code_type_id;
+extern const int pigeon_example_package_message_data_type_id;
+
 G_DECLARE_FINAL_TYPE(PigeonExamplePackageExampleHostApi,
                      pigeon_example_package_example_host_api,
                      PIGEON_EXAMPLE_PACKAGE, EXAMPLE_HOST_API, GObject)

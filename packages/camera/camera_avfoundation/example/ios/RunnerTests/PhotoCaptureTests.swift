@@ -9,12 +9,12 @@ import XCTest
 
 // Import Objectice-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
+  import camera_avfoundation_objc
 #endif
 
 /// Includes test cases related to photo capture operations for FLTCam class.
 final class PhotoCaptureTests: XCTestCase {
-  private func createCam(with captureSessionQueue: DispatchQueue) -> FLTCam {
+  private func createCam(with captureSessionQueue: DispatchQueue) -> DefaultCamera {
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
     return CameraTestUtils.createTestCamera(configuration)
@@ -24,7 +24,8 @@ final class PhotoCaptureTests: XCTestCase {
     let errorExpectation = expectation(
       description: "Must send error to result if save photo delegate completes with error.")
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     let error = NSError(domain: "test", code: 0, userInfo: nil)
 
@@ -57,7 +58,8 @@ final class PhotoCaptureTests: XCTestCase {
     let pathExpectation = expectation(
       description: "Must send file path to result if save photo delegate completes with file path.")
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     let filePath = "test"
 
@@ -90,7 +92,8 @@ final class PhotoCaptureTests: XCTestCase {
       description: "Test must set extension to heif if availablePhotoCodecTypes contains HEVC.")
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     cam.setImageFileFormat(FCPPlatformImageFileFormat.heif)
 
@@ -125,7 +128,8 @@ final class PhotoCaptureTests: XCTestCase {
         "Test must set extension to jpg if availablePhotoCodecTypes does not contain HEVC.")
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let cam = createCam(with: captureSessionQueue)
     cam.setImageFileFormat(FCPPlatformImageFileFormat.heif)
 
@@ -170,7 +174,8 @@ final class PhotoCaptureTests: XCTestCase {
     }
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
     configuration.captureDeviceFactory = { _ in captureDeviceMock }

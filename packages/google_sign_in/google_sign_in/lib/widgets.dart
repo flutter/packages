@@ -6,8 +6,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-import 'src/common.dart';
 import 'src/fife.dart' as fife;
+import 'src/identity_types.dart';
 
 /// Builds a CircleAvatar profile image of the appropriate resolution
 class GoogleUserCircleAvatar extends StatelessWidget {

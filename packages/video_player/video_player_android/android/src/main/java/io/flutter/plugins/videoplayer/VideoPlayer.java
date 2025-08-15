@@ -21,12 +21,10 @@ import io.flutter.view.TextureRegistry.SurfaceProducer;
  *
  * <p>It provides methods to control playback, adjust volume, and handle seeking.
  */
-public abstract class VideoPlayer {
-  @NonNull private final ExoPlayerProvider exoPlayerProvider;
-  @NonNull private final MediaItem mediaItem;
-  @NonNull private final VideoPlayerOptions options;
+public abstract class VideoPlayer implements Messages.VideoPlayerInstanceApi {
   @NonNull protected final VideoPlayerCallbacks videoPlayerEvents;
   @Nullable protected final SurfaceProducer surfaceProducer;
+  @Nullable private DisposeHandler disposeHandler;
   @NonNull protected ExoPlayer exoPlayer;
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
@@ -40,6 +38,11 @@ public abstract class VideoPlayer {
     ExoPlayer get();
   }
 
+  /** A handler to run when dispose is called. */
+  public interface DisposeHandler {
+    void onDispose();
+  }
+
   public VideoPlayer(
       @NonNull VideoPlayerCallbacks events,
       @NonNull MediaItem mediaItem,
@@ -47,22 +50,16 @@ public abstract class VideoPlayer {
       @Nullable SurfaceProducer surfaceProducer,
       @NonNull ExoPlayerProvider exoPlayerProvider) {
     this.videoPlayerEvents = events;
-    this.mediaItem = mediaItem;
-    this.options = options;
-    this.exoPlayerProvider = exoPlayerProvider;
     this.surfaceProducer = surfaceProducer;
-    this.exoPlayer = createVideoPlayer();
-  }
-
-  @NonNull
-  protected ExoPlayer createVideoPlayer() {
-    ExoPlayer exoPlayer = exoPlayerProvider.get();
+    exoPlayer = exoPlayerProvider.get();
     exoPlayer.setMediaItem(mediaItem);
     exoPlayer.prepare();
     exoPlayer.addListener(createExoPlayerEventListener(exoPlayer, surfaceProducer));
     setAudioAttributes(exoPlayer, options.mixWithOthers);
+  }
 
-    return exoPlayer;
+  public void setDisposeHandler(@Nullable DisposeHandler handler) {
+    disposeHandler = handler;
   }
 
   @NonNull
@@ -79,37 +76,48 @@ public abstract class VideoPlayer {
         !isMixMode);
   }
 
-  void play() {
+  @Override
+  public void play() {
     exoPlayer.play();
   }
 
-  void pause() {
+  @Override
+  public void pause() {
     exoPlayer.pause();
   }
 
-  void setLooping(boolean value) {
-    exoPlayer.setRepeatMode(value ? REPEAT_MODE_ALL : REPEAT_MODE_OFF);
+  @Override
+  public void setLooping(@NonNull Boolean looping) {
+    exoPlayer.setRepeatMode(looping ? REPEAT_MODE_ALL : REPEAT_MODE_OFF);
   }
 
-  void setVolume(double value) {
-    float bracketedValue = (float) Math.max(0.0, Math.min(1.0, value));
+  @Override
+  public void setVolume(@NonNull Double volume) {
+    float bracketedValue = (float) Math.max(0.0, Math.min(1.0, volume));
     exoPlayer.setVolume(bracketedValue);
   }
 
-  void setPlaybackSpeed(double value) {
+  @Override
+  public void setPlaybackSpeed(@NonNull Double speed) {
     // We do not need to consider pitch and skipSilence for now as we do not handle them and
     // therefore never diverge from the default values.
-    final PlaybackParameters playbackParameters = new PlaybackParameters(((float) value));
+    final PlaybackParameters playbackParameters = new PlaybackParameters(speed.floatValue());
 
     exoPlayer.setPlaybackParameters(playbackParameters);
   }
 
-  void seekTo(int location) {
-    exoPlayer.seekTo(location);
+  @Override
+  public @NonNull Long getPosition() {
+    long position = exoPlayer.getCurrentPosition();
+    // TODO(stuartmorgan): Move this; this is relying on the fact that getPosition is called
+    //  frequently to drive buffering updates, which is a fragile hack.
+    sendBufferingUpdate();
+    return position;
   }
 
-  long getPosition() {
-    return exoPlayer.getCurrentPosition();
+  @Override
+  public void seekTo(@NonNull Long position) {
+    exoPlayer.seekTo(position);
   }
 
   @NonNull
@@ -118,6 +126,9 @@ public abstract class VideoPlayer {
   }
 
   public void dispose() {
+    if (disposeHandler != null) {
+      disposeHandler.onDispose();
+    }
     exoPlayer.release();
   }
 }

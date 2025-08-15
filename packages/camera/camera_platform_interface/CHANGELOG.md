@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 2.10.0
 
 * Introduces a new `CameraLensType` enum to provide lens type information about

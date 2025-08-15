@@ -338,6 +338,28 @@ class GObjectHeaderGenerator
     indent.newln();
     _writeDeclareFinalType(indent, module, _codecBaseName,
         parentClassName: _standardCodecName);
+
+    final Iterable<EnumeratedType> customTypes =
+        getEnumeratedTypes(root, excludeSealedClasses: true);
+
+    if (customTypes.isNotEmpty) {
+      indent.newln();
+      addDocumentationComments(
+          indent,
+          <String>[
+            'Custom type ID constants:',
+            '',
+            'Constants used to identify custom types in the codec.',
+            'They are used in the codec to encode and decode custom types.',
+            'They may be used in custom object creation functions to identify the type.',
+          ],
+          _docCommentSpec);
+    }
+
+    for (final EnumeratedType customType in customTypes) {
+      final String customTypeId = _getCustomTypeId(module, customType);
+      indent.writeln('extern const int $customTypeId;');
+    }
   }
 
   @override
@@ -1019,10 +1041,18 @@ class GObjectSourceGenerator
     _writeDefineType(indent, module, _codecBaseName,
         parentType: 'fl_standard_message_codec_get_type()');
 
+    indent.newln();
+    for (final EnumeratedType customType in customTypes) {
+      final String customTypeId = _getCustomTypeId(module, customType);
+      indent.writeln('const int $customTypeId = ${customType.enumeration};');
+    }
+
     for (final EnumeratedType customType in customTypes) {
       final String customTypeName = _getClassName(module, customType.name);
       final String snakeCustomTypeName =
           _snakeCaseFromCamelCase(customTypeName);
+      final String customTypeId = _getCustomTypeId(module, customType);
+
       indent.newln();
       final String valueType = customType.type == CustomTypes.customClass
           ? '$customTypeName*'
@@ -1030,7 +1060,7 @@ class GObjectSourceGenerator
       indent.writeScoped(
           'static gboolean ${codecMethodPrefix}_write_$snakeCustomTypeName($_standardCodecName* codec, GByteArray* buffer, $valueType value, GError** error) {',
           '}', () {
-        indent.writeln('uint8_t type = ${customType.enumeration};');
+        indent.writeln('uint8_t type = $customTypeId;');
         indent.writeln('g_byte_array_append(buffer, &type, sizeof(uint8_t));');
         if (customType.type == CustomTypes.customClass) {
           indent.writeln(
@@ -1053,7 +1083,8 @@ class GObjectSourceGenerator
         indent.writeScoped('switch (fl_value_get_custom_type(value)) {', '}',
             () {
           for (final EnumeratedType customType in customTypes) {
-            indent.writeln('case ${customType.enumeration}:');
+            final String customTypeId = _getCustomTypeId(module, customType);
+            indent.writeln('case $customTypeId:');
             indent.nest(1, () {
               final String customTypeName =
                   _getClassName(module, customType.name);
@@ -1082,6 +1113,7 @@ class GObjectSourceGenerator
       final String customTypeName = _getClassName(module, customType.name);
       final String snakeCustomTypeName =
           _snakeCaseFromCamelCase(customTypeName);
+      final String customTypeId = _getCustomTypeId(module, customType);
       indent.newln();
       indent.writeScoped(
           'static FlValue* ${codecMethodPrefix}_read_$snakeCustomTypeName($_standardCodecName* codec, GBytes* buffer, size_t* offset, GError** error) {',
@@ -1102,10 +1134,10 @@ class GObjectSourceGenerator
           });
           indent.newln();
           indent.writeln(
-              'return fl_value_new_custom_object(${customType.enumeration}, G_OBJECT(value));');
+              'return fl_value_new_custom_object($customTypeId, G_OBJECT(value));');
         } else if (customType.type == CustomTypes.customEnum) {
           indent.writeln(
-              'return fl_value_new_custom(${customType.enumeration}, fl_standard_message_codec_read_value(codec, buffer, offset, error), (GDestroyNotify)fl_value_unref);');
+              'return fl_value_new_custom($customTypeId, fl_standard_message_codec_read_value(codec, buffer, offset, error), (GDestroyNotify)fl_value_unref);');
         }
       });
     }
@@ -1117,9 +1149,10 @@ class GObjectSourceGenerator
       indent.writeScoped('switch (type) {', '}', () {
         for (final EnumeratedType customType in customTypes) {
           final String customTypeName = _getClassName(module, customType.name);
+          final String customTypeId = _getCustomTypeId(module, customType);
           final String snakeCustomTypeName =
               _snakeCaseFromCamelCase(customTypeName);
-          indent.writeln('case ${customType.enumeration}:');
+          indent.writeln('case $customTypeId:');
           indent.nest(1, () {
             indent.writeln(
                 'return ${codecMethodPrefix}_read_$snakeCustomTypeName(codec, buffer, offset, error);');
@@ -1922,6 +1955,16 @@ String _getMethodPrefix(String module, String name) {
   return _snakeCaseFromCamelCase(className);
 }
 
+// Returns the code for the custom type id definition for [customType].
+String _getCustomTypeId(String module, EnumeratedType customType) {
+  final String customTypeName = _getClassName(module, customType.name);
+
+  final String snakeCustomTypeName = _snakeCaseFromCamelCase(customTypeName);
+
+  final String customTypeId = '${snakeCustomTypeName}_type_id';
+  return customTypeId;
+}
+
 // Returns an enumeration value in C++ form.
 String _getEnumValue(String module, String enumName, String memberName) {
   final String snakeEnumName = _snakeCaseFromCamelCase(enumName);
@@ -2062,12 +2105,14 @@ String _referenceValue(String module, TypeDeclaration type, String variableName,
   }
 }
 
-int _getTypeEnumeration(Root root, TypeDeclaration type) {
-  return getEnumeratedTypes(root, excludeSealedClasses: true)
-      .firstWhere((EnumeratedType t) =>
-          (type.isClass && t.associatedClass == type.associatedClass) ||
-          (type.isEnum && t.associatedEnum == type.associatedEnum))
-      .enumeration;
+String _getCustomTypeIdFromDeclaration(
+    Root root, TypeDeclaration type, String module) {
+  return _getCustomTypeId(
+      module,
+      getEnumeratedTypes(root, excludeSealedClasses: true).firstWhere(
+          (EnumeratedType t) =>
+              (type.isClass && t.associatedClass == type.associatedClass) ||
+              (type.isEnum && t.associatedEnum == type.associatedEnum)));
 }
 
 // Returns code to convert the native data type stored in [variableName] to a FlValue.
@@ -2078,12 +2123,15 @@ String _makeFlValue(
     {String? lengthVariableName}) {
   final String value;
   if (type.isClass) {
-    final int enumeration = _getTypeEnumeration(root, type);
-    value = 'fl_value_new_custom_object($enumeration, G_OBJECT($variableName))';
-  } else if (type.isEnum) {
-    final int enumeration = _getTypeEnumeration(root, type);
+    final String customTypeId =
+        _getCustomTypeIdFromDeclaration(root, type, module);
     value =
-        'fl_value_new_custom($enumeration, fl_value_new_int(${type.isNullable ? '*$variableName' : variableName}), (GDestroyNotify)fl_value_unref)';
+        'fl_value_new_custom_object($customTypeId, G_OBJECT($variableName))';
+  } else if (type.isEnum) {
+    final String customTypeId =
+        _getCustomTypeIdFromDeclaration(root, type, module);
+    value =
+        'fl_value_new_custom($customTypeId, fl_value_new_int(${type.isNullable ? '*$variableName' : variableName}), (GDestroyNotify)fl_value_unref)';
   } else if (_isFlValueWrappedType(type)) {
     value = 'fl_value_ref($variableName)';
   } else if (type.baseName == 'void') {

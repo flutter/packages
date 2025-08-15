@@ -8,13 +8,13 @@ import XCTest
 
 // Import Objectice-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
+  import camera_avfoundation_objc
 #endif
 
 /// Tests of `CameraPlugin` methods delegating to `FLTCam` instance
 final class CameraPluginDelegatingMethodTests: XCTestCase {
-  private func createCameraPlugin() -> (CameraPlugin, MockFLTCam) {
-    let mockCamera = MockFLTCam()
+  private func createCameraPlugin() -> (CameraPlugin, MockCamera) {
+    let mockCamera = MockCamera()
 
     let cameraPlugin = CameraPlugin(
       registry: MockFlutterTextureRegistry(),
@@ -39,7 +39,7 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     let targetOrientation = FCPPlatformDeviceOrientation.landscapeLeft
 
     var lockCaptureCalled = false
-    mockCamera.lockCaptureStub = { orientation in
+    mockCamera.lockCaptureOrientationStub = { orientation in
       XCTAssertEqual(orientation, targetOrientation)
       lockCaptureCalled = true
     }
@@ -261,8 +261,9 @@ final class CameraPluginDelegatingMethodTests: XCTestCase {
     let expectation = expectation(description: "Call completed")
 
     var startImageStreamCalled = false
-    mockCamera.startImageStreamStub = { _ in
+    mockCamera.startImageStreamStub = { messenger, completion in
       startImageStreamCalled = true
+      completion(nil)
     }
 
     cameraPlugin.startImageStream { error in

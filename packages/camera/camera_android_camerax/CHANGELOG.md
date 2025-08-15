@@ -1,3 +1,42 @@
+## 0.6.20+1
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 0.6.20
+
+* Fixes pausing and resuming the camera preview.
+* Updates minimum supported SDK version to Flutter 3.32.8/Dart 3.8.1.
+
+## 0.6.19+1
+
+* Fixes incorrect camera switching by selecting a camera via its CameraInfo.
+
+## 0.6.19
+
+* Changes target rotation of captured images to current default display rotation to fix captured
+  photo orientation to upright.
+
+## 0.6.18+3
+
+* Fixes incorrect camera preview mirroring for front cameras of devices using the Impeller backend.
+
+## 0.6.18+2
+
+* Fixes premature garbage collection of native objects when app is under memory pressure.
+
+## 0.6.18+1
+
+* Makes Java style improvements.
+
+## 0.6.18
+
+* Adds support for the `MediaSettings.enableAudio` setting, which determines whether or not audio is
+  recorded during video recording.
+
+## 0.6.17+1
+
+* Replaces deprecated `onSurfaceDestroyed` with `onSurfaceCleanup`.
+
 ## 0.6.17
 
 * Replaces `BroadcastReceiver` usage with an `OrientationEventListener` to detect changes in device

@@ -1007,6 +1007,17 @@ class MockAndroidWebViewController extends _i1.Mock
         returnValue: _i8.Future<void>.value(),
         returnValueForMissingStub: _i8.Future<void>.value(),
       ) as _i8.Future<void>);
+
+  @override
+  _i8.Future<void> setMixedContentMode(_i7.MixedContentMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setMixedContentMode,
+          [mode],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 }
 
 /// A class which mocks [AndroidWebViewProxy].
@@ -3000,6 +3011,17 @@ class MockWebSettings extends _i1.Mock implements _i2.WebSettings {
           ),
         )),
       ) as _i8.Future<String>);
+
+  @override
+  _i8.Future<void> setMixedContentMode(_i2.MixedContentMode? mode) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setMixedContentMode,
+          [mode],
+        ),
+        returnValue: _i8.Future<void>.value(),
+        returnValueForMissingStub: _i8.Future<void>.value(),
+      ) as _i8.Future<void>);
 
   @override
   _i2.WebSettings pigeon_copy() => (super.noSuchMethod(

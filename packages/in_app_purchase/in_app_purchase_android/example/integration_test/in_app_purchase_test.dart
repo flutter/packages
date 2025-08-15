@@ -106,6 +106,8 @@ void main() {
     testWidgets('BillingClient.queryPurchaseHistory',
         (WidgetTester tester) async {
       try {
+        // Intentional use of a deprecated method to make sure it still works.
+        // ignore: deprecated_member_use
         await billingClient.queryPurchaseHistory(ProductType.inapp);
       } on MissingPluginException {
         fail('Method channel is not setup correctly');

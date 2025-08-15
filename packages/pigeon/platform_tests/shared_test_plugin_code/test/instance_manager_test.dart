@@ -167,7 +167,7 @@ void main() {
       instanceManager.addDartCreatedInstance(object);
 
       object = null;
-      await forceGC();
+      await forceGC(fullGcCycles: 2);
 
       expect(weakReferencedRemovedCalled, isTrue);
     });
@@ -188,10 +188,49 @@ void main() {
       instanceManager.addHostCreatedInstance(object, 0);
 
       object = null;
-      await forceGC();
+      await forceGC(fullGcCycles: 2);
 
       expect(weakReferencedRemovedCalled, isFalse);
     });
+
+    testWidgets(
+      'instantiating default InstanceManager does not make a message call',
+      (WidgetTester tester) async {
+        bool messageCallMade = false;
+        TestDefaultBinaryMessengerBinding
+            .instance.defaultBinaryMessenger.allMessagesHandler = (_, __, ___) {
+          messageCallMade = true;
+          return null;
+        };
+
+        // Initialize default InstanceManager
+        // ignore: unnecessary_statements
+        PigeonInstanceManager.instance;
+
+        expect(messageCallMade, isFalse);
+      },
+    );
+
+    testWidgets(
+      'default InstanceManager does not make message call when weak reference is removed',
+      (WidgetTester tester) async {
+        bool messageCallMade = false;
+        TestDefaultBinaryMessengerBinding
+            .instance.defaultBinaryMessenger.allMessagesHandler = (_, __, ___) {
+          messageCallMade = true;
+          return null;
+        };
+
+        final PigeonInstanceManager instanceManager =
+            PigeonInstanceManager.instance;
+
+        final int identifier =
+            instanceManager.addDartCreatedInstance(CopyableObject());
+        instanceManager.onWeakReferenceRemoved(identifier);
+
+        expect(messageCallMade, isFalse);
+      },
+    );
   });
 }
 

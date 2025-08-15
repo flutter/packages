@@ -25,12 +25,12 @@ void main() {
     setUp(() {
       VideoPlayerPlatform.instance = VideoPlayerPlugin();
       playerId = VideoPlayerPlatform.instance
-          .create(
-            DataSource(
-              sourceType: DataSourceType.network,
-              uri: getUrlForAssetAsNetworkSource(_videoAssetKey),
-            ),
-          )
+          .createWithOptions(VideoCreationOptions(
+              dataSource: DataSource(
+                sourceType: DataSourceType.network,
+                uri: getUrlForAssetAsNetworkSource(_videoAssetKey),
+              ),
+              viewType: VideoViewType.platformView))
           .then((int? playerId) => playerId!);
     });
 
@@ -40,46 +40,46 @@ void main() {
 
     testWidgets('can create from network', (WidgetTester tester) async {
       expect(
-          VideoPlayerPlatform.instance.create(
-            DataSource(
-              sourceType: DataSourceType.network,
-              uri: getUrlForAssetAsNetworkSource(_videoAssetKey),
-            ),
-          ),
+          VideoPlayerPlatform.instance.createWithOptions(VideoCreationOptions(
+              dataSource: DataSource(
+                sourceType: DataSourceType.network,
+                uri: getUrlForAssetAsNetworkSource(_videoAssetKey),
+              ),
+              viewType: VideoViewType.platformView)),
           completion(isNonZero));
     });
 
     testWidgets('can create from asset', (WidgetTester tester) async {
       expect(
-          VideoPlayerPlatform.instance.create(
-            DataSource(
-              sourceType: DataSourceType.asset,
-              asset: 'videos/bee.mp4',
-              package: 'bee_vids',
-            ),
-          ),
+          VideoPlayerPlatform.instance.createWithOptions(VideoCreationOptions(
+              dataSource: DataSource(
+                sourceType: DataSourceType.asset,
+                asset: 'videos/bee.mp4',
+                package: 'bee_vids',
+              ),
+              viewType: VideoViewType.platformView)),
           completion(isNonZero));
     });
 
     testWidgets('cannot create from file', (WidgetTester tester) async {
       expect(
-          VideoPlayerPlatform.instance.create(
-            DataSource(
-              sourceType: DataSourceType.file,
-              uri: '/videos/bee.mp4',
-            ),
-          ),
+          VideoPlayerPlatform.instance.createWithOptions(VideoCreationOptions(
+              dataSource: DataSource(
+                sourceType: DataSourceType.file,
+                uri: '/videos/bee.mp4',
+              ),
+              viewType: VideoViewType.platformView)),
           throwsUnimplementedError);
     });
 
     testWidgets('cannot create from content URI', (WidgetTester tester) async {
       expect(
-          VideoPlayerPlatform.instance.create(
-            DataSource(
-              sourceType: DataSourceType.contentUri,
-              uri: 'content://video',
-            ),
-          ),
+          VideoPlayerPlatform.instance.createWithOptions(VideoCreationOptions(
+              dataSource: DataSource(
+                sourceType: DataSourceType.contentUri,
+                uri: 'content://video',
+              ),
+              viewType: VideoViewType.platformView)),
           throwsUnimplementedError);
     });
 
@@ -102,12 +102,14 @@ void main() {
 
     testWidgets('throws PlatformException when playing bad media',
         (WidgetTester tester) async {
-      final int videoPlayerId = (await VideoPlayerPlatform.instance.create(
-        DataSource(
-          sourceType: DataSourceType.network,
-          uri: getUrlForAssetAsNetworkSource('assets/__non_existent.webm'),
-        ),
-      ))!;
+      final int videoPlayerId = (await VideoPlayerPlatform.instance
+          .createWithOptions(VideoCreationOptions(
+              dataSource: DataSource(
+                sourceType: DataSourceType.network,
+                uri:
+                    getUrlForAssetAsNetworkSource('assets/__non_existent.webm'),
+              ),
+              viewType: VideoViewType.platformView)))!;
 
       final Stream<VideoEvent> eventStream =
           VideoPlayerPlatform.instance.videoEventsFor(videoPlayerId);
@@ -160,7 +162,9 @@ void main() {
     });
 
     testWidgets('can build view', (WidgetTester tester) async {
-      expect(VideoPlayerPlatform.instance.buildView(await playerId),
+      expect(
+          VideoPlayerPlatform.instance
+              .buildViewWithOptions(VideoViewOptions(playerId: await playerId)),
           isInstanceOf<Widget>());
     });
 
@@ -201,7 +205,9 @@ void main() {
               isPlaying: true,
             )
           ]));
-    });
+    },
+        // MEDIA_ELEMENT_ERROR, see https://github.com/flutter/flutter/issues/169219
+        skip: true);
 
     testWidgets('video playback lifecycle', (WidgetTester tester) async {
       final int videoPlayerId = await playerId;
@@ -238,7 +244,9 @@ void main() {
             VideoEventType.initialized,
             VideoEventType.bufferingEnd,
           ]));
-    });
+    },
+        // MEDIA_ELEMENT_ERROR, see https://github.com/flutter/flutter/issues/169219
+        skip: true);
 
     testWidgets('can set web options', (WidgetTester tester) async {
       expect(

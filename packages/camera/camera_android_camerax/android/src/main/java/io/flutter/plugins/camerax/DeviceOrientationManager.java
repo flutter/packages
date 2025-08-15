@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.camerax;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +48,8 @@ public class DeviceOrientationManager {
    * <p>When orientation information is updated, the callback method of the {@link
    * DeviceOrientationManagerProxyApi} is called with the new orientation.
    */
+  @SuppressLint(
+      "UnprotectedReceiver") // orientationIntentFilter only listens to protected broadcast
   public void start() {
     stop();
 
@@ -68,7 +71,7 @@ public class DeviceOrientationManager {
     return new OrientationEventListener(getContext()) {
       @Override
       public void onOrientationChanged(int orientation) {
-        handleUIOrientationChange();
+        handleUiOrientationChange();
       }
     };
   }
@@ -91,8 +94,8 @@ public class DeviceOrientationManager {
    * class.
    */
   @VisibleForTesting
-  void handleUIOrientationChange() {
-    PlatformChannel.DeviceOrientation orientation = getUIOrientation();
+  void handleUiOrientationChange() {
+    PlatformChannel.DeviceOrientation orientation = getUiOrientation();
     handleOrientationChange(this, orientation, lastOrientation, api);
     lastOrientation = orientation;
   }
@@ -143,7 +146,7 @@ public class DeviceOrientationManager {
   // Configuration.ORIENTATION_SQUARE is deprecated.
   @SuppressWarnings("deprecation")
   @NonNull
-  PlatformChannel.DeviceOrientation getUIOrientation() {
+  PlatformChannel.DeviceOrientation getUiOrientation() {
     final int rotation = getDefaultRotation();
     final int orientation = getContext().getResources().getConfiguration().orientation;
 

@@ -11,6 +11,7 @@ import 'package:meta/meta.dart';
 import '../platform_interface/platform_interface.dart';
 import 'interactive_media_ads.g.dart';
 import 'interactive_media_ads_proxy.dart';
+import 'ios_companion_ad_slot.dart';
 
 /// Implementation of [PlatformAdDisplayContainerCreationParams] for iOS.
 final class IOSAdDisplayContainerCreationParams
@@ -19,6 +20,7 @@ final class IOSAdDisplayContainerCreationParams
   const IOSAdDisplayContainerCreationParams({
     super.key,
     required super.onContainerAdded,
+    super.companionSlots,
     @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
   })  : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
         super();
@@ -32,6 +34,7 @@ final class IOSAdDisplayContainerCreationParams
     return IOSAdDisplayContainerCreationParams(
       key: params.key,
       onContainerAdded: params.onContainerAdded,
+      companionSlots: params.companionSlots,
       imaProxy: imaProxy,
     );
   }
@@ -72,6 +75,10 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         adDisplayContainer = _iosParams._imaProxy.newIMAAdDisplayContainer(
           adContainer: _controller.view,
           adContainerViewController: _controller,
+          companionSlots: _iosParams.companionSlots
+              .cast<IOSCompanionAdSlot>()
+              .map((IOSCompanionAdSlot slot) => slot.nativeCompanionAdSlot)
+              .toList(),
         );
         await _viewDidAppearCompleter.future;
         params.onContainerAdded(this);

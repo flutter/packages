@@ -58,7 +58,7 @@ public class DeviceOrientationManagerApiTest {
     final DeviceOrientationManager instance = mock(DeviceOrientationManager.class);
     final PlatformChannel.DeviceOrientation orientation =
         PlatformChannel.DeviceOrientation.LANDSCAPE_RIGHT;
-    when(instance.getUIOrientation()).thenReturn(orientation);
+    when(instance.getUiOrientation()).thenReturn(orientation);
 
     assertEquals(orientation.toString(), api.getUiOrientation(instance));
   }
@@ -74,11 +74,11 @@ public class DeviceOrientationManagerApiTest {
         new DeviceOrientationManager(mockApi) {
           @NonNull
           @Override
-          PlatformChannel.DeviceOrientation getUIOrientation() {
+          PlatformChannel.DeviceOrientation getUiOrientation() {
             return orientation;
           }
         };
-    instance.handleUIOrientationChange();
+    instance.handleUiOrientationChange();
 
     verify(mockApi).onDeviceOrientationChanged(eq(instance), eq(orientation.toString()), any());
   }

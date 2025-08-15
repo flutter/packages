@@ -18,7 +18,6 @@ import 'package:pigeon/pigeon.dart';
     ),
   ),
 )
-
 /// Immutable class for describing width and height dimensions in pixels.
 ///
 /// See https://developer.android.com/reference/android/util/Size.html.
@@ -291,7 +290,10 @@ enum LensFacing {
   ),
 )
 abstract class CameraSelector {
-  CameraSelector(LensFacing? requireLensFacing);
+  CameraSelector(
+    LensFacing? requireLensFacing,
+    CameraInfo? cameraInfoForFilter,
+  );
 
   /// A static `CameraSelector` that selects the default back facing camera.
   @static
@@ -518,6 +520,9 @@ abstract class VideoRecordEventListener {
   ),
 )
 abstract class PendingRecording {
+  /// Enables/disables audio to be recorded for this recording.
+  PendingRecording withAudioEnabled(bool initialMuted);
+
   /// Starts the recording, making it an active recording.
   Recording start(VideoRecordEventListener listener);
 }

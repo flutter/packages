@@ -21,7 +21,7 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
      *
      * This must match the version in pubspec.yaml.
      */
-    const val pluginVersion = "0.2.3+12"
+    const val pluginVersion = "0.2.6+2"
   }
 
   override fun setAdTagUrl(pigeon_instance: AdsRequest, adTagUrl: String) {
@@ -38,5 +38,41 @@ class AdsRequestProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
       provider: ContentProgressProvider
   ) {
     pigeon_instance.contentProgressProvider = provider
+  }
+
+  override fun setAdWillAutoPlay(pigeon_instance: AdsRequest, willAutoPlay: Boolean) {
+    pigeon_instance.setAdWillAutoPlay(willAutoPlay)
+  }
+
+  override fun setAdWillPlayMuted(pigeon_instance: AdsRequest, willPlayMuted: Boolean) {
+    pigeon_instance.setAdWillPlayMuted(willPlayMuted)
+  }
+
+  override fun setAdsResponse(pigeon_instance: AdsRequest, cannedAdResponse: String) {
+    pigeon_instance.adsResponse = cannedAdResponse
+  }
+
+  override fun setContentDuration(pigeon_instance: AdsRequest, duration: Double) {
+    pigeon_instance.setContentDuration(duration.toFloat())
+  }
+
+  override fun setContentKeywords(pigeon_instance: AdsRequest, keywords: List<String>) {
+    pigeon_instance.setContentKeywords(keywords)
+  }
+
+  override fun setContentTitle(pigeon_instance: AdsRequest, title: String) {
+    pigeon_instance.setContentTitle(title)
+  }
+
+  override fun setContinuousPlayback(pigeon_instance: AdsRequest, continuousPlayback: Boolean) {
+    pigeon_instance.setContinuousPlayback(continuousPlayback)
+  }
+
+  override fun setLiveStreamPrefetchSeconds(pigeon_instance: AdsRequest, prefetchTime: Double) {
+    pigeon_instance.setLiveStreamPrefetchSeconds(prefetchTime.toFloat())
+  }
+
+  override fun setVastLoadTimeout(pigeon_instance: AdsRequest, timeout: Double) {
+    pigeon_instance.setVastLoadTimeout(timeout.toFloat())
   }
 }

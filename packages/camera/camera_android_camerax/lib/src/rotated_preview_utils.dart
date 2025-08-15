@@ -16,7 +16,8 @@ int getQuarterTurnsFromSurfaceRotationConstant(int surfaceRotationConstant) {
     Surface.rotation180 => 2,
     Surface.rotation270 => 1,
     int() => throw ArgumentError(
-        '$surfaceRotationConstant is an unknown Surface rotation constant, so counter-clockwise quarter turns cannot be determined.'),
+      '$surfaceRotationConstant is an unknown Surface rotation constant, so counter-clockwise quarter turns cannot be determined.',
+    ),
   };
 }
 
@@ -24,7 +25,8 @@ int getQuarterTurnsFromSurfaceRotationConstant(int surfaceRotationConstant) {
 /// based on [orientation], the current device orientation (see
 /// camera/camera/lib/src/camera_preview.dart).
 int getPreAppliedQuarterTurnsRotationFromDeviceOrientation(
-    DeviceOrientation orientation) {
+  DeviceOrientation orientation,
+) {
   return switch (orientation) {
     DeviceOrientation.portraitUp => 0,
     DeviceOrientation.landscapeRight => 1,

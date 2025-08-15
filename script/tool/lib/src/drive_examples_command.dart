@@ -71,7 +71,13 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
   @override
   bool shouldIgnoreFile(String path) {
-    return isRepoLevelNonCodeImpactingFile(path) || isPackageSupportFile(path);
+    return isRepoLevelNonCodeImpactingFile(path) ||
+        isPackageSupportFile(path) ||
+        // This isn't part of isRepoLevelNonCodeImpactingFile since there could
+        // potentially be code-based commands that it could affect, but it
+        // should not affect integration tests, and they are the most expensive
+        // and flaky tests.
+        path == '.gitignore';
   }
 
   @override

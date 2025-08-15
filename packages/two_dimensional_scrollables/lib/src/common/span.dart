@@ -346,7 +346,6 @@ class SpanDecoration {
   /// This same row decoration will consume any padding from the column spans so
   /// as to decorate the row as one continuous span.
   ///
-  /// {@tool snippet}
   /// This example illustrates how [consumeSpanPadding] affects
   /// [SpanDecoration.color]. By default, the color of the decoration
   /// consumes the padding, coloring the row fully by including the padding
@@ -379,7 +378,6 @@ class SpanDecoration {
   ///   },
   /// );
   /// ```
-  /// {@end-tool}
   final bool consumeSpanPadding;
 
   /// Called to draw the decoration around a span.

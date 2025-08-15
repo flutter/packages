@@ -15,7 +15,8 @@ import 'package:mockito/mockito.dart';
 
 import 'google_maps_flutter_android_test.mocks.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<MapsApi>()])
+@GenerateNiceMocks(
+    <MockSpec<Object>>[MockSpec<MapsApi>(), MockSpec<MapsInitializerApi>()])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -30,6 +31,40 @@ void main() {
   test('registers instance', () async {
     GoogleMapsFlutterAndroid.registerWith();
     expect(GoogleMapsFlutterPlatform.instance, isA<GoogleMapsFlutterAndroid>());
+  });
+
+  test('normal usage does not call MapsInitializerApi', () async {
+    final MockMapsApi api = MockMapsApi();
+    final MockMapsInitializerApi initializerApi = MockMapsInitializerApi();
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid(
+        apiProvider: (_) => api, initializerApi: initializerApi);
+    const int mapId = 1;
+    maps.ensureApiInitialized(mapId);
+    await maps.init(1);
+
+    verifyZeroInteractions(initializerApi);
+  });
+
+  test('initializeWithPreferredRenderer forwards the initialization call',
+      () async {
+    final MockMapsApi api = MockMapsApi();
+    final MockMapsInitializerApi initializerApi = MockMapsInitializerApi();
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid(
+        apiProvider: (_) => api, initializerApi: initializerApi);
+    await maps.initializeWithRenderer(AndroidMapRenderer.latest);
+
+    verify(initializerApi
+        .initializeWithPreferredRenderer(PlatformRendererType.latest));
+  });
+
+  test('warmup forwards the initialization call', () async {
+    final MockMapsApi api = MockMapsApi();
+    final MockMapsInitializerApi initializerApi = MockMapsInitializerApi();
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid(
+        apiProvider: (_) => api, initializerApi: initializerApi);
+    await maps.warmup();
+
+    verify(initializerApi.warmup());
   });
 
   test('init calls waitForMap', () async {
@@ -444,6 +479,7 @@ void main() {
       expect(firstChanged.position.longitude, object2new.position.longitude);
       expect(firstChanged.rotation, object2new.rotation);
       expect(firstChanged.visible, object2new.visible);
+      // ignore: deprecated_member_use
       expect(firstChanged.zIndex, object2new.zIndex);
       expect(firstChanged.markerId, object2new.markerId.value);
       expect(firstChanged.clusterManagerId, object2new.clusterManagerId?.value);
@@ -472,6 +508,7 @@ void main() {
       expect(firstAdded.position.longitude, object3.position.longitude);
       expect(firstAdded.rotation, object3.rotation);
       expect(firstAdded.visible, object3.visible);
+      // ignore: deprecated_member_use
       expect(firstAdded.zIndex, object3.zIndex);
       expect(firstAdded.markerId, object3.markerId.value);
       expect(firstAdded.clusterManagerId, object3.clusterManagerId?.value);
