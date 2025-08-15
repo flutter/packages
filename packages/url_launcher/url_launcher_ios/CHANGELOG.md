@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes integration test button text matcher to work on iOS 26.
+
 ## 6.3.4
 
 * Updates to Pigeon 25.5.0.

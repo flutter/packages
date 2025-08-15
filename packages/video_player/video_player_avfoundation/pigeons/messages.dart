@@ -17,12 +17,6 @@ import 'package:pigeon/pigeon.dart';
   copyrightHeader: 'pigeons/copyright.txt',
 ))
 
-/// Pigeon equivalent of VideoViewType.
-enum PlatformVideoViewType {
-  textureView,
-  platformView,
-}
-
 /// Information passed to the platform view creation.
 class PlatformVideoViewCreationParams {
   const PlatformVideoViewCreationParams({
@@ -36,23 +30,30 @@ class CreationOptions {
   CreationOptions({
     required this.uri,
     required this.httpHeaders,
-    required this.viewType,
   });
 
   String uri;
   Map<String, String> httpHeaders;
-  PlatformVideoViewType viewType;
+}
+
+class TexturePlayerIds {
+  TexturePlayerIds({required this.playerId, required this.textureId});
+
+  final int playerId;
+  final int textureId;
 }
 
 @HostApi()
 abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('initialize')
   void initialize();
-  @ObjCSelector('createWithOptions:')
-  // Creates a new player and returns its ID.
-  int create(CreationOptions creationOptions);
-  @ObjCSelector('disposePlayer:')
-  void dispose(int playerId);
+  // Creates a new player using a platform view for rendering and returns its
+  // ID.
+  @ObjCSelector('createPlatformViewPlayerWithOptions:')
+  int createForPlatformView(CreationOptions params);
+  // Creates a new player using a texture for rendering and returns its IDs.
+  @ObjCSelector('createTexturePlayerWithOptions:')
+  TexturePlayerIds createForTextureView(CreationOptions creationOptions);
   @ObjCSelector('setMixWithOthers:')
   void setMixWithOthers(bool mixWithOthers);
   @ObjCSelector('fileURLForAssetWithName:package:')
@@ -74,4 +75,5 @@ abstract class VideoPlayerInstanceApi {
   @ObjCSelector('seekTo:')
   void seekTo(int position);
   void pause();
+  void dispose();
 }

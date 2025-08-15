@@ -25,12 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// Indicates whether the video player has been initialized.
 @property(nonatomic, readonly) BOOL isInitialized;
 
-/// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, frame updater, display
-/// link, AV factory, and view provider.
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
-                         avFactory:(id<FVPAVFactory>)avFactory
-                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
-
 /// Updates the playing state of the video player.
 - (void)updatePlayingState;
 @end
