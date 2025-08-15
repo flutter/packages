@@ -4,19 +4,20 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  objcHeaderOut:
-      'ios/camera_avfoundation/Sources/camera_avfoundation_objc/include/camera_avfoundation/messages.g.h',
-  objcSourceOut:
-      'ios/camera_avfoundation/Sources/camera_avfoundation_objc/messages.g.m',
-  objcOptions: ObjcOptions(
-    prefix: 'FCP',
-    headerIncludePath: './include/camera_avfoundation/messages.g.h',
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    objcHeaderOut:
+        'ios/camera_avfoundation/Sources/camera_avfoundation_objc/include/camera_avfoundation/messages.g.h',
+    objcSourceOut:
+        'ios/camera_avfoundation/Sources/camera_avfoundation_objc/messages.g.m',
+    objcOptions: ObjcOptions(
+      prefix: 'FCP',
+      headerIncludePath: './include/camera_avfoundation/messages.g.h',
+    ),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+)
 // Pigeon version of CameraLensDirection.
 enum PlatformCameraLensDirection {
   /// Front facing camera (a user looking at the screen is seen by the camera).
@@ -38,53 +39,26 @@ enum PlatformDeviceOrientation {
 }
 
 // Pigeon version of ExposureMode.
-enum PlatformExposureMode {
-  auto,
-  locked,
-}
+enum PlatformExposureMode { auto, locked }
 
 // Pigeon version of FlashMode.
-enum PlatformFlashMode {
-  off,
-  auto,
-  always,
-  torch,
-}
+enum PlatformFlashMode { off, auto, always, torch }
 
 // Pigeon version of FocusMode.
-enum PlatformFocusMode {
-  auto,
-  locked,
-}
+enum PlatformFocusMode { auto, locked }
 
 /// Pigeon version of ImageFileFormat.
-enum PlatformImageFileFormat {
-  jpeg,
-  heif,
-}
+enum PlatformImageFileFormat { jpeg, heif }
 
 // Pigeon version of the subset of ImageFormatGroup supported on iOS.
-enum PlatformImageFormatGroup {
-  bgra8888,
-  yuv420,
-}
+enum PlatformImageFormatGroup { bgra8888, yuv420 }
 
 // Pigeon version of ResolutionPreset.
-enum PlatformResolutionPreset {
-  low,
-  medium,
-  high,
-  veryHigh,
-  ultraHigh,
-  max,
-}
+enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
-  PlatformCameraDescription({
-    required this.name,
-    required this.lensDirection,
-  });
+  PlatformCameraDescription({required this.name, required this.lensDirection});
 
   /// The name of the camera device.
   final String name;
