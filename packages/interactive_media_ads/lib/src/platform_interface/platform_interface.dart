@@ -16,3 +16,4 @@ export 'platform_ads_rendering_settings.dart';
 export 'platform_ads_request.dart';
 export 'platform_companion_ad_slot.dart';
 export 'platform_content_progress_provider.dart';
+export 'platform_ima_settings.dart';

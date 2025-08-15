@@ -89,6 +89,9 @@ void main() {
     android_webview.WebViewClient? mockWebViewClient,
     android_webview.WebStorage? mockWebStorage,
     android_webview.WebSettings? mockSettings,
+    Future<bool> Function(String)? isWebViewFeatureSupported,
+    Future<void> Function(android_webview.WebSettings, bool)?
+        setPaymentRequestEnabled,
   }) {
     final android_webview.WebView nonNullMockWebView =
         mockWebView ?? MockWebView();
@@ -247,6 +250,10 @@ void main() {
                     postMessage,
               }) =>
                   mockJavaScriptChannel ?? MockJavaScriptChannel(),
+              isWebViewFeatureSupported:
+                  isWebViewFeatureSupported ?? (_) async => false,
+              setPaymentRequestEnabled:
+                  setPaymentRequestEnabled ?? (_, __) async {},
             ));
 
     when(nonNullMockWebView.settings)
@@ -274,7 +281,7 @@ void main() {
           ));
     }
 
-    test('loadFile without file prefix', () async {
+    test('Initializing WebView settings on controller creation', () async {
       final MockWebView mockWebView = MockWebView();
       final MockWebSettings mockWebSettings = MockWebSettings();
       createControllerWithMocks(
@@ -292,56 +299,209 @@ void main() {
       verify(mockWebSettings.setUseWideViewPort(false)).called(1);
     });
 
-    test('loadFile without file prefix', () async {
-      final MockWebView mockWebView = MockWebView();
-      final MockWebSettings mockWebSettings = MockWebSettings();
-      final AndroidWebViewController controller = createControllerWithMocks(
-        mockWebView: mockWebView,
-        mockSettings: mockWebSettings,
-      );
+    group('loadFile', () {
+      test('Without file prefix', () async {
+        final MockWebView mockWebView = MockWebView();
+        final MockWebSettings mockWebSettings = MockWebSettings();
+        final AndroidWebViewController controller = createControllerWithMocks(
+          mockWebView: mockWebView,
+          mockSettings: mockWebSettings,
+        );
 
-      await controller.loadFile('/path/to/file.html');
+        await controller.loadFile('/path/to/file.html');
 
-      verify(mockWebSettings.setAllowFileAccess(true)).called(1);
-      verify(mockWebView.loadUrl(
-        'file:///path/to/file.html',
-        <String, String>{},
-      )).called(1);
+        verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+        verify(mockWebView.loadUrl(
+          'file:///path/to/file.html',
+          <String, String>{},
+        )).called(1);
+      });
+
+      test('Without file prefix and characters to be escaped', () async {
+        final MockWebView mockWebView = MockWebView();
+        final MockWebSettings mockWebSettings = MockWebSettings();
+        final AndroidWebViewController controller = createControllerWithMocks(
+          mockWebView: mockWebView,
+          mockSettings: mockWebSettings,
+        );
+
+        await controller.loadFile('/path/to/?_<_>_.html');
+
+        verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+        verify(mockWebView.loadUrl(
+          'file:///path/to/%3F_%3C_%3E_.html',
+          <String, String>{},
+        )).called(1);
+      });
+
+      test('With file prefix', () async {
+        final MockWebView mockWebView = MockWebView();
+        final MockWebSettings mockWebSettings = MockWebSettings();
+        final AndroidWebViewController controller = createControllerWithMocks(
+          mockWebView: mockWebView,
+        );
+
+        when(mockWebView.settings).thenReturn(mockWebSettings);
+
+        await controller.loadFile('file:///path/to/file.html');
+
+        verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+        verify(mockWebView.loadUrl(
+          'file:///path/to/file.html',
+          <String, String>{},
+        )).called(1);
+      });
     });
 
-    test('loadFile without file prefix and characters to be escaped', () async {
-      final MockWebView mockWebView = MockWebView();
-      final MockWebSettings mockWebSettings = MockWebSettings();
-      final AndroidWebViewController controller = createControllerWithMocks(
-        mockWebView: mockWebView,
-        mockSettings: mockWebSettings,
-      );
+    group('loadFileWithParams', () {
+      group('Using LoadFileParams model', () {
+        test('Without file prefix', () async {
+          final MockWebView mockWebView = MockWebView();
+          final MockWebSettings mockWebSettings = MockWebSettings();
+          final AndroidWebViewController controller = createControllerWithMocks(
+            mockWebView: mockWebView,
+            mockSettings: mockWebSettings,
+          );
 
-      await controller.loadFile('/path/to/?_<_>_.html');
+          await controller.loadFileWithParams(
+            const LoadFileParams(absoluteFilePath: '/path/to/file.html'),
+          );
 
-      verify(mockWebSettings.setAllowFileAccess(true)).called(1);
-      verify(mockWebView.loadUrl(
-        'file:///path/to/%3F_%3C_%3E_.html',
-        <String, String>{},
-      )).called(1);
-    });
+          verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+          verify(mockWebView.loadUrl(
+            'file:///path/to/file.html',
+            <String, String>{},
+          )).called(1);
+        });
 
-    test('loadFile with file prefix', () async {
-      final MockWebView mockWebView = MockWebView();
-      final MockWebSettings mockWebSettings = MockWebSettings();
-      final AndroidWebViewController controller = createControllerWithMocks(
-        mockWebView: mockWebView,
-      );
+        test('Without file prefix and characters to be escaped', () async {
+          final MockWebView mockWebView = MockWebView();
+          final MockWebSettings mockWebSettings = MockWebSettings();
+          final AndroidWebViewController controller = createControllerWithMocks(
+            mockWebView: mockWebView,
+            mockSettings: mockWebSettings,
+          );
 
-      when(mockWebView.settings).thenReturn(mockWebSettings);
+          await controller.loadFileWithParams(
+            const LoadFileParams(absoluteFilePath: '/path/to/?_<_>_.html'),
+          );
 
-      await controller.loadFile('file:///path/to/file.html');
+          verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+          verify(mockWebView.loadUrl(
+            'file:///path/to/%3F_%3C_%3E_.html',
+            <String, String>{},
+          )).called(1);
+        });
 
-      verify(mockWebSettings.setAllowFileAccess(true)).called(1);
-      verify(mockWebView.loadUrl(
-        'file:///path/to/file.html',
-        <String, String>{},
-      )).called(1);
+        test('With file prefix', () async {
+          final MockWebView mockWebView = MockWebView();
+          final MockWebSettings mockWebSettings = MockWebSettings();
+          final AndroidWebViewController controller = createControllerWithMocks(
+            mockWebView: mockWebView,
+            mockSettings: mockWebSettings,
+          );
+
+          await controller.loadFileWithParams(
+            const LoadFileParams(absoluteFilePath: 'file:///path/to/file.html'),
+          );
+
+          verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+          verify(mockWebView.loadUrl(
+            'file:///path/to/file.html',
+            <String, String>{},
+          )).called(1);
+        });
+      });
+
+      group('Using WebKitLoadFileParams model', () {
+        test('Without file prefix', () async {
+          final MockWebView mockWebView = MockWebView();
+          final MockWebSettings mockWebSettings = MockWebSettings();
+          final AndroidWebViewController controller = createControllerWithMocks(
+            mockWebView: mockWebView,
+            mockSettings: mockWebSettings,
+          );
+
+          await controller.loadFileWithParams(
+            AndroidLoadFileParams(absoluteFilePath: '/path/to/file.html'),
+          );
+
+          verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+          verify(mockWebView.loadUrl(
+            'file:///path/to/file.html',
+            <String, String>{},
+          )).called(1);
+        });
+
+        test('Without file prefix and characters to be escaped', () async {
+          final MockWebView mockWebView = MockWebView();
+          final MockWebSettings mockWebSettings = MockWebSettings();
+          final AndroidWebViewController controller = createControllerWithMocks(
+            mockWebView: mockWebView,
+            mockSettings: mockWebSettings,
+          );
+
+          await controller.loadFileWithParams(
+            AndroidLoadFileParams(absoluteFilePath: '/path/to/?_<_>_.html'),
+          );
+
+          verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+          verify(mockWebView.loadUrl(
+            'file:///path/to/%3F_%3C_%3E_.html',
+            <String, String>{},
+          )).called(1);
+        });
+
+        test('With file prefix', () async {
+          final MockWebView mockWebView = MockWebView();
+          final MockWebSettings mockWebSettings = MockWebSettings();
+          final AndroidWebViewController controller = createControllerWithMocks(
+            mockWebView: mockWebView,
+            mockSettings: mockWebSettings,
+          );
+
+          await controller.loadFileWithParams(
+            AndroidLoadFileParams(
+                absoluteFilePath: 'file:///path/to/file.html'),
+          );
+
+          verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+          verify(mockWebView.loadUrl(
+            'file:///path/to/file.html',
+            <String, String>{},
+          )).called(1);
+        });
+
+        test('With additional headers', () async {
+          final MockWebView mockWebView = MockWebView();
+          final MockWebSettings mockWebSettings = MockWebSettings();
+          final AndroidWebViewController controller = createControllerWithMocks(
+            mockWebView: mockWebView,
+            mockSettings: mockWebSettings,
+          );
+
+          await controller.loadFileWithParams(
+            AndroidLoadFileParams(
+              absoluteFilePath: 'file:///path/to/file.html',
+              headers: const <String, String>{
+                'Authorization': 'Bearer test_token',
+                'Cache-Control': 'no-cache',
+                'X-Custom-Header': 'test-value',
+              },
+            ),
+          );
+
+          verify(mockWebSettings.setAllowFileAccess(true)).called(1);
+          verify(mockWebView.loadUrl(
+            'file:///path/to/file.html',
+            const <String, String>{
+              'Authorization': 'Bearer test_token',
+              'Cache-Control': 'no-cache',
+              'X-Custom-Header': 'test-value',
+            },
+          )).called(1);
+        });
+      });
     });
 
     test('loadFlutterAsset when asset does not exist', () async {
@@ -1708,6 +1868,48 @@ void main() {
     );
 
     expect(controller.webViewIdentifier, 0);
+  });
+
+  test('isWebViewFeatureSupported', () async {
+    String? captured;
+    const bool expectedIsWebViewFeatureEnabled = true;
+
+    final AndroidWebViewController controller = createControllerWithMocks(
+      isWebViewFeatureSupported: (String feature) async {
+        captured = feature;
+        return expectedIsWebViewFeatureEnabled;
+      },
+    );
+
+    final bool result = await controller.isWebViewFeatureSupported(
+      WebViewFeatureType.paymentRequest,
+    );
+
+    expect(WebViewFeatureConstants.paymentRequest, captured);
+    expect(expectedIsWebViewFeatureEnabled, result);
+  });
+
+  test('setPaymentRequestEnabled', () async {
+    android_webview.WebSettings? capturedSettings;
+    bool? capturedEnabled;
+    const bool expectedEnabled = true;
+
+    final MockWebView mockWebView = MockWebView();
+    final MockWebSettings mockSettings = MockWebSettings();
+    final AndroidWebViewController controller = createControllerWithMocks(
+      mockWebView: mockWebView,
+      mockSettings: mockSettings,
+      setPaymentRequestEnabled:
+          (android_webview.WebSettings settings, bool enabled) async {
+        capturedSettings = settings;
+        capturedEnabled = enabled;
+      },
+    );
+
+    await controller.setPaymentRequestEnabled(expectedEnabled);
+
+    expect(mockSettings, capturedSettings);
+    expect(expectedEnabled, capturedEnabled);
   });
 
   group('AndroidWebViewWidget', () {

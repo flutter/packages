@@ -630,6 +630,7 @@ packages/package_a/$file
             <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: '''
 .gemini/config.yaml
+AGENTS.md
 README.md
 CODEOWNERS
 packages/package_a/CHANGELOG.md

@@ -1,3 +1,19 @@
+## 2.8.4
+
+* Simplifies native code.
+
+## 2.8.3
+
+* Removes calls to self from init and dealloc, for maintainability.
+
+## 2.8.2
+
+* Restructure internals of Dart notification of video player events.
+
+## 2.8.1
+
+* Restructures internal logic to move more code to Dart.
+
 ## 2.8.0
 
 * Adds platform view support for macOS.

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+const String _kMapId = '000000000000000'; // Dummy map ID.
 
 void main() {
   group('diffs', () {
@@ -58,7 +58,7 @@ void main() {
       expect(updated.liteModeEnabled, isNot(null));
       expect(updated.padding, isNot(null));
       expect(updated.trafficEnabled, isNot(null));
-      expect(updated.cloudMapId, null);
+      expect(updated.mapId, null);
     });
 
     test('handle webGestureHandling', () async {
@@ -395,7 +395,7 @@ void main() {
     });
 
     test('handle cloudMapId', () async {
-      const MapConfiguration diff = MapConfiguration(cloudMapId: _kCloudMapId);
+      const MapConfiguration diff = MapConfiguration(cloudMapId: _kMapId);
 
       const MapConfiguration empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -405,7 +405,24 @@ void main() {
       // The diff from empty options should be the diff itself.
       expect(diff.diffFrom(empty), diff);
       // A diff applied to non-empty options should update that field.
-      expect(updated.cloudMapId, _kCloudMapId);
+      expect(updated.cloudMapId, _kMapId);
+      expect(updated.mapId, _kMapId);
+      // The hash code should change.
+      expect(empty.hashCode, isNot(diff.hashCode));
+    });
+
+    test('handle mapId', () async {
+      const MapConfiguration diff = MapConfiguration(mapId: _kMapId);
+
+      const MapConfiguration empty = MapConfiguration();
+      final MapConfiguration updated = diffBase.applyDiff(diff);
+
+      // A diff applied to empty options should be the diff itself.
+      expect(empty.applyDiff(diff), diff);
+      // The diff from empty options should be the diff itself.
+      expect(diff.diffFrom(empty), diff);
+      // A diff applied to non-empty options should update that field.
+      expect(updated.mapId, _kMapId);
       // The hash code should change.
       expect(empty.hashCode, isNot(diff.hashCode));
     });
@@ -555,7 +572,13 @@ void main() {
     });
 
     test('is false with cloudMapId', () async {
-      const MapConfiguration diff = MapConfiguration(cloudMapId: _kCloudMapId);
+      const MapConfiguration diff = MapConfiguration(mapId: _kMapId);
+
+      expect(diff.isEmpty, false);
+    });
+
+    test('is false with mapId', () async {
+      const MapConfiguration diff = MapConfiguration(mapId: _kMapId);
 
       expect(diff.isEmpty, false);
     });

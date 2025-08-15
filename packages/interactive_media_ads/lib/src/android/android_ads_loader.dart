@@ -10,6 +10,7 @@ import '../platform_interface/platform_interface.dart';
 import 'android_ad_display_container.dart';
 import 'android_ads_manager.dart';
 import 'android_content_progress_provider.dart';
+import 'android_ima_settings.dart';
 import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
 import 'interactive_media_ads_proxy.dart';
@@ -19,6 +20,7 @@ final class AndroidAdsLoaderCreationParams
     extends PlatformAdsLoaderCreationParams {
   /// Constructs a [AndroidAdsLoaderCreationParams].
   const AndroidAdsLoaderCreationParams({
+    required super.settings,
     required super.container,
     required super.onAdsLoaded,
     required super.onAdsLoadError,
@@ -33,6 +35,7 @@ final class AndroidAdsLoaderCreationParams
     @visibleForTesting InteractiveMediaAdsProxy? proxy,
   }) {
     return AndroidAdsLoaderCreationParams(
+      settings: params.settings,
       container: params.container,
       onAdsLoaded: params.onAdsLoaded,
       onAdsLoadError: params.onAdsLoadError,
@@ -86,10 +89,36 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
     final ima.AdsRequest androidRequest = await _sdkFactory.createAdsRequest();
 
     await Future.wait(<Future<void>>[
-      androidRequest.setAdTagUrl(request.adTagUrl),
-      if (request.contentProgressProvider != null)
+      if (request case final PlatformAdsRequestWithAdTagUrl request)
+        androidRequest.setAdTagUrl(request.adTagUrl),
+      if (request case final PlatformAdsRequestWithAdsResponse request)
+        androidRequest.setAdsResponse(request.adsResponse),
+      if (request.adWillAutoPlay case final bool adWillAutoPlay)
+        androidRequest.setAdWillAutoPlay(adWillAutoPlay),
+      if (request.adWillPlayMuted case final bool adWillPlayMuted)
+        androidRequest.setAdWillPlayMuted(adWillPlayMuted),
+      if (request.continuousPlayback case final bool continuousPlayback)
+        androidRequest.setContinuousPlayback(continuousPlayback),
+      if (request.contentDuration case final Duration contentDuration)
+        androidRequest.setContentDuration(
+            contentDuration.inMilliseconds / Duration.millisecondsPerSecond),
+      if (request.contentKeywords case final List<String> contentKeywords)
+        androidRequest.setContentKeywords(contentKeywords),
+      if (request.contentTitle case final String contentTitle)
+        androidRequest.setContentTitle(contentTitle),
+      if (request.liveStreamPrefetchMaxWaitTime
+          case final Duration liveStreamPrefetchMaxWaitTime)
+        androidRequest.setLiveStreamPrefetchSeconds(
+          liveStreamPrefetchMaxWaitTime.inMilliseconds /
+              Duration.millisecondsPerSecond,
+        ),
+      if (request.vastLoadTimeout case final Duration vastLoadTimeout)
+        androidRequest
+            .setVastLoadTimeout(vastLoadTimeout.inMilliseconds.toDouble()),
+      if (request.contentProgressProvider
+          case final PlatformContentProgressProvider contentProgressProvider)
         androidRequest.setContentProgressProvider(
-          (request.contentProgressProvider! as AndroidContentProgressProvider)
+          (contentProgressProvider as AndroidContentProgressProvider)
               .progressProvider,
         ),
       adsLoader.requestAds(androidRequest),
@@ -97,11 +126,13 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
   }
 
   Future<ima.AdsLoader> _createAdsLoader() async {
-    final ima.ImaSdkSettings settings =
-        await _sdkFactory.createImaSdkSettings();
+    final AndroidImaSettings settings = switch (_androidParams.settings) {
+      final AndroidImaSettings androidSettings => androidSettings,
+      _ => AndroidImaSettings(_androidParams.settings.params),
+    };
 
     final ima.AdsLoader adsLoader = await _sdkFactory.createAdsLoader(
-      settings,
+      await settings.nativeSettingsFuture,
       (params.container as AndroidAdDisplayContainer).adDisplayContainer!,
     );
 

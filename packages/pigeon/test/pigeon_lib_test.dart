@@ -1484,7 +1484,7 @@ abstract class MyClass extends DataClass {
       expect(parseResult.errors, isNotEmpty);
       expect(
         parseResult.errors[0].message,
-        contains('Super class of MyClass is not marked as a @ProxyApi'),
+        contains('Super class of MyClass is not annotated with @ProxyApi'),
       );
     });
 
@@ -1503,7 +1503,7 @@ abstract class MyClass implements DataClass {
       expect(parseResult.errors, isNotEmpty);
       expect(
         parseResult.errors[0].message,
-        contains('Interface of MyClass is not marked as a @ProxyApi'),
+        contains('Interface of MyClass is not annotated with a @ProxyApi'),
       );
     });
 

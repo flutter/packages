@@ -1,3 +1,7 @@
+## 2.15.5
+
+* Fixes `kCGImageAlphaPremultipliedLast` implicit conversion from enumeration type warning.
+
 ## 2.15.4
 
 * Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.

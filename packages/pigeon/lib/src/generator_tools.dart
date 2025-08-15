@@ -15,7 +15,7 @@ import 'generator.dart';
 /// The current version of pigeon.
 ///
 /// This must match the version in pubspec.yaml.
-const String pigeonVersion = '26.0.0';
+const String pigeonVersion = '26.0.1';
 
 /// Read all the content from [stdin] to a String.
 String readStdin() {
@@ -323,16 +323,13 @@ const String seeAlsoWarning = 'See also: https://pub.dev/packages/pigeon';
 /// parameters.
 const String classNamePrefix = 'PigeonInternal';
 
-/// Prefix for classes generated to use with ProxyApis.
+/// Prefix for utility classes generated to be used with ProxyAPIs.
 ///
 /// This lowers the chances of variable name collisions with user defined
 /// parameters.
 const String proxyApiClassNamePrefix = 'Pigeon';
 
-/// Prefix for APIs generated for ProxyApi.
-///
-/// Since ProxyApis are intended to wrap a class and will often share the name
-/// of said class, host APIs should prefix the API with this protected name.
+/// Prefix for the name of generated native type APIs of ProxyAPIs.
 const String hostProxyApiPrefix = '${proxyApiClassNamePrefix}Api';
 
 /// Prefix for class member names not defined by the user.
@@ -459,7 +456,8 @@ const List<String> validTypes = <String>[
   'Object',
 ];
 
-/// The dedicated key for accessing an InstanceManager in ProxyApi base codecs.
+/// The dedicated key for the base codecs used to access references in the
+/// InstanceManager.
 ///
 /// Generated codecs override the `StandardMessageCodec` which reserves the byte
 /// keys of 0-127, so this value is chosen because it is the lowest available

@@ -1,3 +1,7 @@
+## 2.14.0
+
+* Adds `PlatformWebViewController.loadFileWithParams(LoadFileParams)` to support loading local HTML files with platform-specific parameters.
+
 ## 2.13.1
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
