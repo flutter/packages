@@ -37,9 +37,7 @@ void main() {
 
     test('Stream can be sliced', () async {
       expect(
-        await pickedFile.openRead(2, 5).first,
-        equals(bytes.sublist(2, 5)),
-      );
+          await pickedFile.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
     });
   });
 }

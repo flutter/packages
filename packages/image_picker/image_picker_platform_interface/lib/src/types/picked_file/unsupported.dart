@@ -13,7 +13,6 @@ class PickedFile extends PickedFileBase {
   /// Optionally, you may pass a `path`. See caveats in [PickedFileBase.path].
   PickedFile(super.path) {
     throw UnimplementedError(
-      'PickedFile is not available in your current platform.',
-    );
+        'PickedFile is not available in your current platform.');
   }
 }
