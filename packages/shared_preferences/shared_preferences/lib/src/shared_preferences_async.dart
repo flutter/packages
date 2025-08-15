@@ -23,8 +23,7 @@ class SharedPreferencesAsync {
   }) : _options = options {
     if (SharedPreferencesAsyncPlatform.instance == null) {
       throw StateError(
-        'The SharedPreferencesAsyncPlatform instance must be set.',
-      );
+          'The SharedPreferencesAsyncPlatform instance must be set.');
     } else {
       _platform = SharedPreferencesAsyncPlatform.instance!;
     }
@@ -43,8 +42,7 @@ class SharedPreferencesAsync {
   /// Ignores any keys whose values are types which are incompatible with shared_preferences.
   Future<Set<String>> getKeys({Set<String>? allowList}) async {
     final GetPreferencesParameters parameters = GetPreferencesParameters(
-      filter: PreferencesFilters(allowList: allowList),
-    );
+        filter: PreferencesFilters(allowList: allowList));
     return _platform.getKeys(parameters, _options);
   }
 
@@ -55,8 +53,7 @@ class SharedPreferencesAsync {
   /// Ignores any entries of types which are incompatible with shared_preferences.
   Future<Map<String, Object?>> getAll({Set<String>? allowList}) async {
     final GetPreferencesParameters parameters = GetPreferencesParameters(
-      filter: PreferencesFilters(allowList: allowList),
-    );
+        filter: PreferencesFilters(allowList: allowList));
     return _platform.getPreferences(parameters, _options);
   }
 
@@ -129,11 +126,9 @@ class SharedPreferencesAsync {
   /// Removes an entry from the platform.
   Future<void> remove(String key) {
     return _platform.clear(
-      ClearPreferencesParameters(
-        filter: PreferencesFilters(allowList: <String>{key}),
-      ),
-      _options,
-    );
+        ClearPreferencesParameters(
+            filter: PreferencesFilters(allowList: <String>{key})),
+        _options);
   }
 
   /// Clears all preferences from the platform.
@@ -146,8 +141,7 @@ class SharedPreferencesAsync {
   /// It is highly recommended that an [allowList] be provided to this call.
   Future<void> clear({Set<String>? allowList}) {
     final ClearPreferencesParameters parameters = ClearPreferencesParameters(
-      filter: PreferencesFilters(allowList: allowList),
-    );
+        filter: PreferencesFilters(allowList: allowList));
     return _platform.clear(parameters, _options);
   }
 }
@@ -155,7 +149,9 @@ class SharedPreferencesAsync {
 /// Options necessary to create a [SharedPreferencesWithCache].
 class SharedPreferencesWithCacheOptions {
   /// Creates a new instance with the given options.
-  const SharedPreferencesWithCacheOptions({this.allowList});
+  const SharedPreferencesWithCacheOptions({
+    this.allowList,
+  });
 
   /// Information about what data will be fetched during `get` and `init`
   /// methods, what data can be `set`, as well as what data will be removed by `clear`.
@@ -183,11 +179,10 @@ class SharedPreferencesWithCache {
     required SharedPreferencesOptions sharedPreferencesOptions,
     required SharedPreferencesWithCacheOptions cacheOptions,
     Map<String, Object?>? cache,
-  }) : _cacheOptions = cacheOptions,
-       _platformMethods = SharedPreferencesAsync(
-         options: sharedPreferencesOptions,
-       ),
-       _cache = cache ?? <String, Object?>{};
+  })  : _cacheOptions = cacheOptions,
+        _platformMethods =
+            SharedPreferencesAsync(options: sharedPreferencesOptions),
+        _cache = cache ?? <String, Object?>{};
 
   /// Creates a new instance with the given options and reloads the cache from
   /// the platform data.
@@ -199,10 +194,10 @@ class SharedPreferencesWithCache {
   }) async {
     final SharedPreferencesWithCache preferences =
         SharedPreferencesWithCache._create(
-          sharedPreferencesOptions: sharedPreferencesOptions,
-          cacheOptions: cacheOptions,
-          cache: cache,
-        );
+      sharedPreferencesOptions: sharedPreferencesOptions,
+      cacheOptions: cacheOptions,
+      cache: cache,
+    );
 
     await preferences.reloadCache();
 
@@ -229,8 +224,7 @@ class SharedPreferencesWithCache {
   Future<void> reloadCache() async {
     _cache.clear();
     _cache.addAll(
-      await _platformMethods.getAll(allowList: _cacheOptions.allowList),
-    );
+        await _platformMethods.getAll(allowList: _cacheOptions.allowList));
   }
 
   /// Returns true if cache contains the given [key].
@@ -239,8 +233,7 @@ class SharedPreferencesWithCache {
   bool containsKey(String key) {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     return _cache.containsKey(key);
   }
@@ -254,8 +247,7 @@ class SharedPreferencesWithCache {
   Object? get(String key) {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     return _cache[key];
   }
@@ -267,8 +259,7 @@ class SharedPreferencesWithCache {
   bool? getBool(String key) {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     return get(key) as bool?;
   }
@@ -280,8 +271,7 @@ class SharedPreferencesWithCache {
   int? getInt(String key) {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     return get(key) as int?;
   }
@@ -293,8 +283,7 @@ class SharedPreferencesWithCache {
   double? getDouble(String key) {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     return get(key) as double?;
   }
@@ -306,8 +295,7 @@ class SharedPreferencesWithCache {
   String? getString(String key) {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     return get(key) as String?;
   }
@@ -319,8 +307,7 @@ class SharedPreferencesWithCache {
   List<String>? getStringList(String key) {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     // Make a copy of the list so that later mutations won't propagate
     return (_cache[key] as List<Object?>?)?.cast<String>().toList();
@@ -332,8 +319,7 @@ class SharedPreferencesWithCache {
   Future<void> setBool(String key, bool value) async {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     _cache[key] = value;
     return _platformMethods.setBool(key, value);
@@ -345,8 +331,7 @@ class SharedPreferencesWithCache {
   Future<void> setInt(String key, int value) async {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     _cache[key] = value;
     return _platformMethods.setInt(key, value);
@@ -361,8 +346,7 @@ class SharedPreferencesWithCache {
   Future<void> setDouble(String key, double value) async {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     _cache[key] = value;
     return _platformMethods.setDouble(key, value);
@@ -379,8 +363,7 @@ class SharedPreferencesWithCache {
   Future<void> setString(String key, String value) async {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     _cache[key] = value;
     return _platformMethods.setString(key, value);
@@ -392,8 +375,7 @@ class SharedPreferencesWithCache {
   Future<void> setStringList(String key, List<String> value) async {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     _cache[key] = value;
     return _platformMethods.setStringList(key, value);
@@ -405,8 +387,7 @@ class SharedPreferencesWithCache {
   Future<void> remove(String key) async {
     if (!_isValidKey(key)) {
       throw ArgumentError(
-        '$key is not included in the PreferencesFilter allowlist',
-      );
+          '$key is not included in the PreferencesFilter allowlist');
     }
     _cache.remove(key);
     return _platformMethods.remove(key);

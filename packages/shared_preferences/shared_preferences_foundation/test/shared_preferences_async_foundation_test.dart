@@ -76,13 +76,12 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
     ]);
 
     final Map<String, Object?> gotAll = await preferences.getPreferences(
-      const GetPreferencesParameters(filter: PreferencesFilters()),
-      emptyOptions,
-    );
+        const GetPreferencesParameters(filter: PreferencesFilters()),
+        emptyOptions);
 
     expect(gotAll.length, 5);
     expect(gotAll[stringKey], testString);
@@ -99,15 +98,14 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
     ]);
 
     final Map<String, Object?> gotAll = await preferences.getPreferences(
-      const GetPreferencesParameters(
-        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
-      ),
-      emptyOptions,
-    );
+        const GetPreferencesParameters(
+            filter:
+                PreferencesFilters(allowList: <String>{stringKey, boolKey})),
+        emptyOptions);
 
     expect(gotAll.length, 2);
     expect(gotAll[stringKey], testString);
@@ -121,7 +119,7 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
     ]);
 
     final Set<String> keys = await preferences.getKeys(
@@ -144,7 +142,7 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
     ]);
 
     final Set<String> keys = await preferences.getKeys(
@@ -166,12 +164,11 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
     ]);
     await preferences.clear(
-      const ClearPreferencesParameters(filter: PreferencesFilters()),
-      emptyOptions,
-    );
+        const ClearPreferencesParameters(filter: PreferencesFilters()),
+        emptyOptions);
     expect(await preferences.getString(stringKey, emptyOptions), null);
     expect(await preferences.getBool(boolKey, emptyOptions), null);
     expect(await preferences.getInt(intKey, emptyOptions), null);
@@ -186,7 +183,7 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions),
+      preferences.setStringList(listKey, testList, emptyOptions)
     ]);
     await preferences.clear(
       const ClearPreferencesParameters(
@@ -207,9 +204,7 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
 
   @override
   Future<bool> clear(
-    List<String?>? allowList,
-    SharedPreferencesPigeonOptions options,
-  ) async {
+      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
     if (allowList != null) {
       items.removeWhere((String key, _) => allowList.contains(key));
     } else {
@@ -221,9 +216,7 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
 
   @override
   Future<Map<String, Object>> getAll(
-    List<String?>? allowList,
-    SharedPreferencesPigeonOptions options,
-  ) async {
+      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
     final Map<String, Object> filteredItems = <String, Object>{...items};
     if (allowList != null) {
       filteredItems.removeWhere((String key, _) => !allowList.contains(key));
@@ -233,9 +226,7 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
 
   @override
   Future<List<String>> getKeys(
-    List<String?>? allowList,
-    SharedPreferencesPigeonOptions options,
-  ) async {
+      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
     final List<String> filteredItems = items.keys.toList();
     if (allowList != null) {
       filteredItems.removeWhere((String key) => !allowList.contains(key));
@@ -245,18 +236,13 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
 
   @override
   Future<void> set(
-    String key,
-    Object value,
-    SharedPreferencesPigeonOptions options,
-  ) async {
+      String key, Object value, SharedPreferencesPigeonOptions options) async {
     items[key] = value;
   }
 
   @override
   Future<Object?> getValue(
-    String key,
-    SharedPreferencesPigeonOptions options,
-  ) async {
+      String key, SharedPreferencesPigeonOptions options) async {
     return items[key];
   }
 

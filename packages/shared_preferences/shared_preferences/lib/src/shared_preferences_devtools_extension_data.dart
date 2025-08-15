@@ -13,8 +13,10 @@ const String _eventPrefix = 'shared_preferences.';
 
 /// A typedef for the post event function.
 @visibleForTesting
-typedef PostEvent =
-    void Function(String eventKind, Map<String, Object?> eventData);
+typedef PostEvent = void Function(
+  String eventKind,
+  Map<String, Object?> eventData,
+);
 
 /// A helper class that provides data to the DevTools extension.
 ///
@@ -50,9 +52,9 @@ class SharedPreferencesDevToolsExtensionData {
           await SharedPreferences.getInstance();
       value = legacyPrefs.get(key);
     } else {
-      value = await SharedPreferencesAsync()
-          .getAll(allowList: <String>{key})
-          .then((Map<String, Object?> map) => map.values.firstOrNull);
+      value = await SharedPreferencesAsync().getAll(allowList: <String>{
+        key
+      }).then((Map<String, Object?> map) => map.values.firstOrNull);
     }
 
     _postEvent('${_eventPrefix}value', <String, Object?>{
@@ -107,7 +109,10 @@ class SharedPreferencesDevToolsExtensionData {
         case 'String':
           await prefs.setString(key, value! as String);
         case 'List<String>':
-          await prefs.setStringList(key, (value! as List<Object?>).cast());
+          await prefs.setStringList(
+            key,
+            (value! as List<Object?>).cast(),
+          );
       }
     }
     _postEvent('${_eventPrefix}change_value', <String, Object?>{});

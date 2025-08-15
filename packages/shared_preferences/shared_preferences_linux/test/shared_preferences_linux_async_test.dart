@@ -88,9 +88,8 @@ void main() {
     await preferences.setStringList(listKey, testList, emptyOptions);
 
     final Map<String, Object?> gotAll = await preferences.getPreferences(
-      const GetPreferencesParameters(filter: PreferencesFilters()),
-      emptyOptions,
-    );
+        const GetPreferencesParameters(filter: PreferencesFilters()),
+        emptyOptions);
 
     expect(gotAll.length, 5);
     expect(gotAll[stringKey], testString);
@@ -110,11 +109,10 @@ void main() {
     await preferences.setStringList(listKey, testList, emptyOptions);
 
     final Map<String, Object?> gotAll = await preferences.getPreferences(
-      const GetPreferencesParameters(
-        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
-      ),
-      emptyOptions,
-    );
+        const GetPreferencesParameters(
+            filter:
+                PreferencesFilters(allowList: <String>{stringKey, boolKey})),
+        emptyOptions);
 
     expect(gotAll.length, 2);
     expect(gotAll[stringKey], testString);
@@ -173,9 +171,8 @@ void main() {
     await preferences.setDouble(doubleKey, testDouble, emptyOptions);
     await preferences.setStringList(listKey, testList, emptyOptions);
     await preferences.clear(
-      const ClearPreferencesParameters(filter: PreferencesFilters()),
-      emptyOptions,
-    );
+        const ClearPreferencesParameters(filter: PreferencesFilters()),
+        emptyOptions);
     expect(await preferences.getString(stringKey, emptyOptions), null);
     expect(await preferences.getBool(boolKey, emptyOptions), null);
     expect(await preferences.getInt(intKey, emptyOptions), null);

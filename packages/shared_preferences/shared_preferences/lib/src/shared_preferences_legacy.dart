@@ -199,7 +199,10 @@ class SharedPreferences {
       try {
         return _store.clearWithParameters(
           ClearParameters(
-            filter: PreferencesFilter(prefix: _prefix, allowList: _allowList),
+            filter: PreferencesFilter(
+              prefix: _prefix,
+              allowList: _allowList,
+            ),
           ),
         );
       } catch (e) {
@@ -235,7 +238,10 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
         fromSystem.addAll(
           await _store.getAllWithParameters(
             GetAllParameters(
-              filter: PreferencesFilter(prefix: _prefix, allowList: _allowList),
+              filter: PreferencesFilter(
+                prefix: _prefix,
+                allowList: _allowList,
+              ),
             ),
           ),
         );
@@ -271,18 +277,16 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
   /// If the singleton instance has been initialized already, it is nullified.
   @visibleForTesting
   static void setMockInitialValues(Map<String, Object> values) {
-    final Map<String, Object> newValues = values.map<String, Object>((
-      String key,
-      Object value,
-    ) {
+    final Map<String, Object> newValues =
+        values.map<String, Object>((String key, Object value) {
       String newKey = key;
       if (!key.startsWith(_prefix)) {
         newKey = '$_prefix$key';
       }
       return MapEntry<String, Object>(newKey, value);
     });
-    SharedPreferencesStorePlatform
-        .instance = InMemorySharedPreferencesStore.withData(newValues);
+    SharedPreferencesStorePlatform.instance =
+        InMemorySharedPreferencesStore.withData(newValues);
     _completer = null;
   }
 }

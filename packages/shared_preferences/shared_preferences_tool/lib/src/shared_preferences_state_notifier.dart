@@ -15,8 +15,9 @@ class SharedPreferencesStateNotifier
   /// Default constructor that takes an instance of [SharedPreferencesToolEval].
   ///
   /// You don't need to call this constructor directly. Use [SharedPreferencesStateNotifierProvider] instead.
-  SharedPreferencesStateNotifier(this._eval)
-    : super(const SharedPreferencesState());
+  SharedPreferencesStateNotifier(
+    this._eval,
+  ) : super(const SharedPreferencesState());
 
   final SharedPreferencesToolEval _eval;
 
@@ -71,10 +72,8 @@ class SharedPreferencesStateNotifier
     );
 
     try {
-      final SharedPreferencesData keyValue = await _eval.fetchValue(
-        key,
-        _legacyApi,
-      );
+      final SharedPreferencesData keyValue =
+          await _eval.fetchValue(key, _legacyApi);
       value = value.copyWith(
         selectedKey: SelectedSharedPreferencesKey(
           key: key,
@@ -85,7 +84,10 @@ class SharedPreferencesStateNotifier
       value = value.copyWith(
         selectedKey: SelectedSharedPreferencesKey(
           key: key,
-          value: AsyncState<SharedPreferencesData>.error(error, stackTrace),
+          value: AsyncState<SharedPreferencesData>.error(
+            error,
+            stackTrace,
+          ),
         ),
       );
     }
@@ -105,7 +107,9 @@ class SharedPreferencesStateNotifier
   }
 
   /// Changes the value of the selected key in the shared preferences of the target debug session.
-  Future<void> changeValue(SharedPreferencesData newValue) async {
+  Future<void> changeValue(
+    SharedPreferencesData newValue,
+  ) async {
     if (value.selectedKey case final SelectedSharedPreferencesKey selectedKey) {
       value = value.copyWith(
         selectedKey: SelectedSharedPreferencesKey(

@@ -43,12 +43,11 @@ class SharedPreferencesApi {
   /// Constructor for [SharedPreferencesApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  SharedPreferencesApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix =
-           messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  SharedPreferencesApi(
+      {BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix =
+            messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -61,10 +60,10 @@ class SharedPreferencesApi {
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.remove$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[key]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -91,10 +90,10 @@ class SharedPreferencesApi {
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setBool$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[key, value]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -121,10 +120,10 @@ class SharedPreferencesApi {
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setString$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[key, value]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -151,10 +150,10 @@ class SharedPreferencesApi {
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setInt$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[key, value]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -181,10 +180,10 @@ class SharedPreferencesApi {
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setDouble$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[key, value]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -211,10 +210,10 @@ class SharedPreferencesApi {
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setEncodedStringList$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[key, value]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -243,10 +242,10 @@ class SharedPreferencesApi {
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.setDeprecatedStringList$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_channel.send(<Object?>[key, value]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -273,13 +272,12 @@ class SharedPreferencesApi {
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.clear$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[prefix, allowList])
-            as List<Object?>?;
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[prefix, allowList]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -300,20 +298,17 @@ class SharedPreferencesApi {
 
   /// Gets all properties from shared preferences data set with matching prefix.
   Future<Map<String, Object>> getAll(
-    String prefix,
-    List<String>? allowList,
-  ) async {
+      String prefix, List<String>? allowList) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.shared_preferences_android.SharedPreferencesApi.getAll$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_channel.send(<Object?>[prefix, allowList])
-            as List<Object?>?;
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList = await pigeonVar_channel
+        .send(<Object?>[prefix, allowList]) as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

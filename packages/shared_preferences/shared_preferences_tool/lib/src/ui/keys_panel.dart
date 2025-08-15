@@ -61,7 +61,9 @@ class _KeysPanelState extends State<KeysPanel> {
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 if (searching) ...<Widget>[
-                  const SizedBox(width: denseSpacing),
+                  const SizedBox(
+                    width: denseSpacing,
+                  ),
                   Expanded(
                     child: _SearchField(
                       searchFocusNode: searchFocusNode,
@@ -76,7 +78,9 @@ class _KeysPanelState extends State<KeysPanel> {
                     onPressed: _startSearching,
                   ),
                 ],
-                const SizedBox(width: denseRowSpacing),
+                const SizedBox(
+                  width: denseRowSpacing,
+                ),
                 _ToolbarAction(
                   tooltipMessage: 'Refresh',
                   icon: Icons.refresh,
@@ -89,7 +93,9 @@ class _KeysPanelState extends State<KeysPanel> {
             ),
           ),
           const ApiSwitch(),
-          const Expanded(child: _StateMapper()),
+          const Expanded(
+            child: _StateMapper(),
+          ),
         ],
       ),
     );
@@ -149,7 +155,9 @@ class _SearchField extends StatelessWidget {
       child: TextField(
         autofocus: true,
         decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: densePadding),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: densePadding,
+          ),
           hintText: 'Search',
           border: const OutlineInputBorder(),
           suffix: _ToolbarAction(
@@ -172,20 +180,24 @@ class _StateMapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (SharedPreferencesStateProvider.keysListStateOf(context)) {
-      final AsyncStateData<List<String>> value => _KeysList(keys: value.data),
+      final AsyncStateData<List<String>> value => _KeysList(
+          keys: value.data,
+        ),
       final AsyncStateError<List<String>> value => ErrorPanel(
-        error: value.error,
-        stackTrace: value.stackTrace,
-      ),
+          error: value.error,
+          stackTrace: value.stackTrace,
+        ),
       AsyncStateLoading<List<String>>() => const Center(
-        child: CircularProgressIndicator(),
-      ),
+          child: CircularProgressIndicator(),
+        ),
     };
   }
 }
 
 class _KeysList extends StatefulWidget {
-  const _KeysList({required this.keys});
+  const _KeysList({
+    required this.keys,
+  });
 
   final List<String> keys;
 
@@ -209,7 +221,10 @@ class _KeysListState extends State<_KeysList> {
       child: ListView(
         controller: scrollController,
         children: <Widget>[
-          for (final String keyName in widget.keys) _KeyItem(keyName: keyName),
+          for (final String keyName in widget.keys)
+            _KeyItem(
+              keyName: keyName,
+            ),
         ],
       ),
     );
@@ -217,7 +232,9 @@ class _KeysListState extends State<_KeysList> {
 }
 
 class _KeyItem extends StatelessWidget {
-  const _KeyItem({required this.keyName});
+  const _KeyItem({
+    required this.keyName,
+  });
 
   final String keyName;
 
@@ -242,7 +259,10 @@ class _KeyItem extends StatelessWidget {
           top: densePadding,
           bottom: densePadding,
         ),
-        child: Text(keyName, style: Theme.of(context).textTheme.titleSmall),
+        child: Text(
+          keyName,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
       ),
     );
   }

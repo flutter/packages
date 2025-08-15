@@ -41,29 +41,32 @@ void main() {
   });
 
   group('SharedPreferences with setPrefix and allowList', () {
-    runAllGroups(() {
-      final Set<String> allowList = <String>{
-        'prefix.$boolKey',
-        'prefix.$intKey',
-        'prefix.$doubleKey',
-        'prefix.$listKey',
-      };
-      SharedPreferences.setPrefix('prefix.', allowList: allowList);
-    }, stringValue: null);
+    runAllGroups(
+      () {
+        final Set<String> allowList = <String>{
+          'prefix.$boolKey',
+          'prefix.$intKey',
+          'prefix.$doubleKey',
+          'prefix.$listKey'
+        };
+        SharedPreferences.setPrefix('prefix.', allowList: allowList);
+      },
+      stringValue: null,
+    );
   });
 
   group('SharedPreferences with prefix set to empty string', () {
-    runAllGroups(() {
-      SharedPreferences.setPrefix('');
-    }, keysCollide: true);
+    runAllGroups(
+      () {
+        SharedPreferences.setPrefix('');
+      },
+      keysCollide: true,
+    );
   });
 }
 
-void runAllGroups(
-  void Function() legacySharedPrefsConfig, {
-  String? stringValue = testString,
-  bool keysCollide = false,
-}) {
+void runAllGroups(void Function() legacySharedPrefsConfig,
+    {String? stringValue = testString, bool keysCollide = false}) {
   group('default sharedPreferencesAsyncOptions', () {
     const SharedPreferencesOptions sharedPreferencesAsyncOptions =
         SharedPreferencesOptions();
@@ -81,22 +84,21 @@ void runAllGroups(
     if (Platform.isAndroid) {
       sharedPreferencesAsyncOptions =
           const SharedPreferencesAsyncAndroidOptions(
-            backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-            originalSharedPreferencesOptions:
-                AndroidSharedPreferencesStoreOptions(fileName: 'fileName'),
-          );
-    } else if (Platform.isIOS || Platform.isMacOS) {
-      sharedPreferencesAsyncOptions = SharedPreferencesAsyncFoundationOptions(
-        suiteName: 'group.fileName',
+        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+        originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+          fileName: 'fileName',
+        ),
       );
+    } else if (Platform.isIOS || Platform.isMacOS) {
+      sharedPreferencesAsyncOptions =
+          SharedPreferencesAsyncFoundationOptions(suiteName: 'group.fileName');
     } else if (Platform.isLinux) {
       sharedPreferencesAsyncOptions = const SharedPreferencesLinuxOptions(
         fileName: 'fileName',
       );
     } else if (Platform.isWindows) {
-      sharedPreferencesAsyncOptions = const SharedPreferencesWindowsOptions(
-        fileName: 'fileName',
-      );
+      sharedPreferencesAsyncOptions =
+          const SharedPreferencesWindowsOptions(fileName: 'fileName');
     } else {
       sharedPreferencesAsyncOptions = const SharedPreferencesOptions();
     }
@@ -112,10 +114,10 @@ void runAllGroups(
     group('Android default sharedPreferences', () {
       const SharedPreferencesOptions sharedPreferencesAsyncOptions =
           SharedPreferencesAsyncAndroidOptions(
-            backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-            originalSharedPreferencesOptions:
-                AndroidSharedPreferencesStoreOptions(),
-          );
+        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+        originalSharedPreferencesOptions:
+            AndroidSharedPreferencesStoreOptions(),
+      );
 
       runTests(
         sharedPreferencesAsyncOptions,
@@ -126,12 +128,9 @@ void runAllGroups(
   }
 }
 
-void runTests(
-  SharedPreferencesOptions sharedPreferencesAsyncOptions,
-  void Function() legacySharedPrefsConfig, {
-  String? stringValue = testString,
-  bool keysAndNamesCollide = false,
-}) {
+void runTests(SharedPreferencesOptions sharedPreferencesAsyncOptions,
+    void Function() legacySharedPrefsConfig,
+    {String? stringValue = testString, bool keysAndNamesCollide = false}) {
   setUp(() async {
     // Configure and populate the source legacy shared preferences.
     SharedPreferences.resetStatic();
@@ -147,9 +146,8 @@ void runTests(
   });
 
   tearDown(() async {
-    await SharedPreferencesAsync(
-      options: sharedPreferencesAsyncOptions,
-    ).clear();
+    await SharedPreferencesAsync(options: sharedPreferencesAsyncOptions)
+        .clear();
   });
 
   testWidgets('data is successfully transferred to new system', (_) async {
@@ -160,9 +158,8 @@ void runTests(
       migrationCompletedKey: migrationCompletedKey,
     );
 
-    final SharedPreferencesAsync asyncPreferences = SharedPreferencesAsync(
-      options: sharedPreferencesAsyncOptions,
-    );
+    final SharedPreferencesAsync asyncPreferences =
+        SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
 
     expect(await asyncPreferences.getBool(boolKey), testBool);
     expect(await asyncPreferences.getInt(intKey), testInt);
@@ -179,9 +176,8 @@ void runTests(
       migrationCompletedKey: migrationCompletedKey,
     );
 
-    final SharedPreferencesAsync asyncPreferences = SharedPreferencesAsync(
-      options: sharedPreferencesAsyncOptions,
-    );
+    final SharedPreferencesAsync asyncPreferences =
+        SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
 
     expect(await asyncPreferences.getBool(migrationCompletedKey), true);
   });
@@ -197,9 +193,8 @@ void runTests(
         migrationCompletedKey: migrationCompletedKey,
       );
 
-      final SharedPreferencesAsync asyncPreferences = SharedPreferencesAsync(
-        options: sharedPreferencesAsyncOptions,
-      );
+      final SharedPreferencesAsync asyncPreferences =
+          SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
       await preferences.setInt(intKey, -0);
       await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
         legacySharedPreferencesInstance: preferences,
@@ -209,8 +204,7 @@ void runTests(
       expect(await asyncPreferences.getInt(intKey), testInt);
     },
     // Skips platforms that would be adding the preferences to the same file.
-    skip:
-        keysAndNamesCollide &&
+    skip: keysAndNamesCollide &&
         (Platform.isWindows ||
             Platform.isLinux ||
             Platform.isMacOS ||

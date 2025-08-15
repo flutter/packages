@@ -12,19 +12,17 @@ void main() {
 
   group(SharedPreferencesStorePlatform, () {
     test('disallows implementing interface', () {
-      expect(
-        () {
-          SharedPreferencesStorePlatform.instance = IllegalImplementation();
-        },
-        // In versions of `package:plugin_platform_interface` prior to fixing
-        // https://github.com/flutter/flutter/issues/109339, an attempt to
-        // implement a platform interface using `implements` would sometimes
-        // throw a `NoSuchMethodError` and other times throw an
-        // `AssertionError`. After the issue is fixed, an `AssertionError` will
-        // always be thrown. For the purpose of this test, we don't really care
-        // what exception is thrown, so just allow any exception.
-        throwsA(anything),
-      );
+      expect(() {
+        SharedPreferencesStorePlatform.instance = IllegalImplementation();
+      },
+          // In versions of `package:plugin_platform_interface` prior to fixing
+          // https://github.com/flutter/flutter/issues/109339, an attempt to
+          // implement a platform interface using `implements` would sometimes
+          // throw a `NoSuchMethodError` and other times throw an
+          // `AssertionError`. After the issue is fixed, an `AssertionError` will
+          // always be thrown. For the purpose of this test, we don't really care
+          // what exception is thrown, so just allow any exception.
+          throwsA(anything));
     });
 
     test('supports MockPlatformInterfaceMixin', () {
@@ -71,8 +69,7 @@ class IllegalImplementation implements SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-    GetAllParameters parameters,
-  ) {
+      GetAllParameters parameters) {
     throw UnimplementedError();
   }
 
@@ -118,8 +115,7 @@ class LegacyIsMockImplementation implements SharedPreferencesStorePlatform {
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-    GetAllParameters parameters,
-  ) {
+      GetAllParameters parameters) {
     throw UnimplementedError();
   }
 
@@ -167,8 +163,7 @@ class ModernMockImplementation
 
   @override
   Future<Map<String, Object>> getAllWithParameters(
-    GetAllParameters parameters,
-  ) {
+      GetAllParameters parameters) {
     throw UnimplementedError();
   }
 

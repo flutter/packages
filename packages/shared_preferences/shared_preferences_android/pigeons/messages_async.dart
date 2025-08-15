@@ -4,19 +4,18 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(
-  PigeonOptions(
-    input: 'pigeons/messages_async.dart',
-    kotlinOut:
-        'android/src/main/kotlin/io/flutter/plugins/sharedpreferences/MessagesAsync.g.kt',
-    kotlinOptions: KotlinOptions(
-      package: 'io.flutter.plugins.sharedpreferences',
-      errorClassName: 'SharedPreferencesError',
-    ),
-    dartOut: 'lib/src/messages_async.g.dart',
-    copyrightHeader: 'pigeons/copyright.txt',
+@ConfigurePigeon(PigeonOptions(
+  input: 'pigeons/messages_async.dart',
+  kotlinOut:
+      'android/src/main/kotlin/io/flutter/plugins/sharedpreferences/MessagesAsync.g.kt',
+  kotlinOptions: KotlinOptions(
+    package: 'io.flutter.plugins.sharedpreferences',
+    errorClassName: 'SharedPreferencesError',
   ),
-)
+  dartOut: 'lib/src/messages_async.g.dart',
+  copyrightHeader: 'pigeons/copyright.txt',
+))
+
 /// Possible types found during a getStringList call.
 enum StringListLookupResultType {
   /// A deprecated platform-side encoding string list.
@@ -33,13 +32,19 @@ enum StringListLookupResultType {
 }
 
 class SharedPreferencesPigeonOptions {
-  SharedPreferencesPigeonOptions({this.fileName, this.useDataStore = true});
+  SharedPreferencesPigeonOptions({
+    this.fileName,
+    this.useDataStore = true,
+  });
   String? fileName;
   bool useDataStore;
 }
 
 class StringListResult {
-  StringListResult({required this.jsonEncodedValue, required this.type});
+  StringListResult({
+    required this.jsonEncodedValue,
+    required this.type,
+  });
 
   /// The JSON-encoded stored value, or null if something else was found.
   String? jsonEncodedValue;
@@ -64,7 +69,11 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Adds property to shared preferences data set of type int.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  void setInt(String key, int value, SharedPreferencesPigeonOptions options);
+  void setInt(
+    String key,
+    int value,
+    SharedPreferencesPigeonOptions options,
+  );
 
   /// Adds property to shared preferences data set of type double.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
@@ -94,19 +103,31 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Gets individual String value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  String? getString(String key, SharedPreferencesPigeonOptions options);
+  String? getString(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  );
 
   /// Gets individual  void value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  bool? getBool(String key, SharedPreferencesPigeonOptions options);
+  bool? getBool(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  );
 
   /// Gets individual double value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  double? getDouble(String key, SharedPreferencesPigeonOptions options);
+  double? getDouble(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  );
 
   /// Gets individual int value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  int? getInt(String key, SharedPreferencesPigeonOptions options);
+  int? getInt(
+    String key,
+    SharedPreferencesPigeonOptions options,
+  );
 
   /// Gets individual List<String> value stored with [key], if any.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
@@ -124,7 +145,10 @@ abstract class SharedPreferencesAsyncApi {
 
   /// Removes all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
-  void clear(List<String>? allowList, SharedPreferencesPigeonOptions options);
+  void clear(
+    List<String>? allowList,
+    SharedPreferencesPigeonOptions options,
+  );
 
   /// Gets all properties from shared preferences data set with matching prefix.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)

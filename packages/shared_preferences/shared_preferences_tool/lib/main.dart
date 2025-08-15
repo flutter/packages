@@ -18,7 +18,9 @@ class _SharedPreferencesTool extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const DevToolsExtension(child: _ConnectionManager());
+    return const DevToolsExtension(
+      child: _ConnectionManager(),
+    );
   }
 }
 
@@ -46,16 +48,17 @@ class _ConnectionManagerState extends State<_ConnectionManager> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Object>(
-      future: serviceManager.onServiceAvailable,
-      builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+        future: serviceManager.onServiceAvailable,
+        builder: (BuildContext context, AsyncSnapshot<Object> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-        return const SharedPreferencesStateProvider(
-          child: SharedPreferencesBody(),
-        );
-      },
-    );
+          return const SharedPreferencesStateProvider(
+            child: SharedPreferencesBody(),
+          );
+        });
   }
 }
