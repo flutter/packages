@@ -4,18 +4,20 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  dartTestOut: 'test/test_api.g.dart',
-  objcHeaderOut:
-      'ios/image_picker_ios/Sources/image_picker_ios/include/image_picker_ios/messages.g.h',
-  objcSourceOut: 'ios/image_picker_ios/Sources/image_picker_ios/messages.g.m',
-  objcOptions: ObjcOptions(
-    prefix: 'FLT',
-    headerIncludePath: './include/image_picker_ios/messages.g.h',
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    dartTestOut: 'test/test_api.g.dart',
+    objcHeaderOut:
+        'ios/image_picker_ios/Sources/image_picker_ios/include/image_picker_ios/messages.g.h',
+    objcSourceOut: 'ios/image_picker_ios/Sources/image_picker_ios/messages.g.m',
+    objcOptions: ObjcOptions(
+      prefix: 'FLT',
+      headerIncludePath: './include/image_picker_ios/messages.g.h',
+    ),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+)
 class MaxSize {
   MaxSize(this.width, this.height);
   double? width;
@@ -54,12 +56,20 @@ class SourceSpecification {
 abstract class ImagePickerApi {
   @async
   @ObjCSelector('pickImageWithSource:maxSize:quality:fullMetadata:')
-  String? pickImage(SourceSpecification source, MaxSize maxSize,
-      int? imageQuality, bool requestFullMetadata);
+  String? pickImage(
+    SourceSpecification source,
+    MaxSize maxSize,
+    int? imageQuality,
+    bool requestFullMetadata,
+  );
   @async
   @ObjCSelector('pickMultiImageWithMaxSize:quality:fullMetadata:limit:')
   List<String> pickMultiImage(
-      MaxSize maxSize, int? imageQuality, bool requestFullMetadata, int? limit);
+    MaxSize maxSize,
+    int? imageQuality,
+    bool requestFullMetadata,
+    int? limit,
+  );
   @async
   @ObjCSelector('pickVideoWithSource:maxDuration:')
   String? pickVideo(SourceSpecification source, int? maxDurationSeconds);

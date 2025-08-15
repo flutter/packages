@@ -3,14 +3,16 @@
 // found in the LICENSE file.
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  input: 'pigeons/messages.dart',
-  swiftOut:
-      'darwin/path_provider_foundation/Sources/path_provider_foundation/messages.g.swift',
-  dartOut: 'lib/messages.g.dart',
-  dartTestOut: 'test/messages_test.g.dart',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+@ConfigurePigeon(
+  PigeonOptions(
+    input: 'pigeons/messages.dart',
+    swiftOut:
+        'darwin/path_provider_foundation/Sources/path_provider_foundation/messages.g.swift',
+    dartOut: 'lib/messages.g.dart',
+    dartTestOut: 'test/messages_test.g.dart',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 enum DirectoryType {
   applicationDocuments,
   applicationSupport,

@@ -4,15 +4,16 @@
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  dartTestOut: 'test/test_api.g.dart',
-  javaOut: 'android/src/main/java/io/flutter/plugins/imagepicker/Messages.java',
-  javaOptions: JavaOptions(
-    package: 'io.flutter.plugins.imagepicker',
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    dartTestOut: 'test/test_api.g.dart',
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/imagepicker/Messages.java',
+    javaOptions: JavaOptions(package: 'io.flutter.plugins.imagepicker'),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
+)
 class GeneralOptions {
   GeneralOptions(this.allowMultiple, this.usePhotoPicker, this.limit);
   bool allowMultiple;
@@ -37,9 +38,7 @@ class ImageSelectionOptions {
 }
 
 class MediaSelectionOptions {
-  MediaSelectionOptions({
-    required this.imageSelectionOptions,
-  });
+  MediaSelectionOptions({required this.imageSelectionOptions});
 
   ImageSelectionOptions imageSelectionOptions;
 }
@@ -79,8 +78,11 @@ enum CacheRetrievalType { image, video }
 
 /// The result of retrieving cached results from a previous run.
 class CacheRetrievalResult {
-  CacheRetrievalResult(
-      {required this.type, this.error, this.paths = const <String>[]});
+  CacheRetrievalResult({
+    required this.type,
+    this.error,
+    this.paths = const <String>[],
+  });
 
   /// The type of the retrieved data.
   final CacheRetrievalType type;

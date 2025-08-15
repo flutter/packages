@@ -18,8 +18,8 @@ class PickedFile extends PickedFileBase {
   /// Optionally, this can be initialized with `bytes`
   /// so no http requests are performed to retrieve files later.
   const PickedFile(this.path, {Uint8List? bytes})
-      : _initBytes = bytes,
-        super(path);
+    : _initBytes = bytes,
+      super(path);
 
   @override
   final String path;

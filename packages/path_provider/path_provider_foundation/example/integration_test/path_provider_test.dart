@@ -61,7 +61,8 @@ void main() {
     if (Platform.isIOS) {
       final PathProviderFoundation provider = PathProviderFoundation();
       final String? result = await provider.getContainerPath(
-          appGroupIdentifier: 'group.flutter.appGroupTest');
+        appGroupIdentifier: 'group.flutter.appGroupTest',
+      );
       _verifySampleFile(result, 'appGroup');
     }
   });

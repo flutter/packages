@@ -12,13 +12,13 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 Image getImageFromPath(XFile pickedFile) {
   final Image image;
 
-// #docregion ImageFromPath
+  // #docregion ImageFromPath
   if (kIsWeb) {
     image = Image.network(pickedFile.path);
   } else {
     image = Image.file(File(pickedFile.path));
   }
-// #enddocregion ImageFromPath
+  // #enddocregion ImageFromPath
 
   return image;
 }
@@ -27,9 +27,9 @@ Image getImageFromPath(XFile pickedFile) {
 Future<Image> getImageFromBytes(XFile pickedFile) async {
   final Image image;
 
-// #docregion ImageFromBytes
+  // #docregion ImageFromBytes
   image = Image.memory(await pickedFile.readAsBytes());
-// #enddocregion ImageFromBytes
+  // #enddocregion ImageFromBytes
 
   return image;
 }
