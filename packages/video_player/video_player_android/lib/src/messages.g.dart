@@ -401,6 +401,7 @@ class VideoPlayerInstanceApi {
 
   final String pigeonVar_messageChannelSuffix;
 
+  /// Sets whether to automatically loop playback of the video.
   Future<void> setLooping(bool looping) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setLooping$pigeonVar_messageChannelSuffix';
@@ -428,6 +429,7 @@ class VideoPlayerInstanceApi {
     }
   }
 
+  /// Sets the volume, with 0.0 being muted and 1.0 being full volume.
   Future<void> setVolume(double volume) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setVolume$pigeonVar_messageChannelSuffix';
@@ -455,6 +457,7 @@ class VideoPlayerInstanceApi {
     }
   }
 
+  /// Sets the playback speed as a multiple of normal speed.
   Future<void> setPlaybackSpeed(double speed) async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setPlaybackSpeed$pigeonVar_messageChannelSuffix';
@@ -482,6 +485,7 @@ class VideoPlayerInstanceApi {
     }
   }
 
+  /// Begins playback if the video is not currently playing.
   Future<void> play() async {
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.play$pigeonVar_messageChannelSuffix';
@@ -507,18 +511,17 @@ class VideoPlayerInstanceApi {
     }
   }
 
-  Future<void> seekTo(int position) async {
+  /// Pauses playback if the video is currently playing.
+  Future<void> pause() async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[position],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -534,16 +537,19 @@ class VideoPlayerInstanceApi {
     }
   }
 
-  Future<void> pause() async {
+  /// Seeks to the given playback position, in milliseconds.
+  Future<void> seekTo(int position) async {
     final String pigeonVar_channelName =
-        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause$pigeonVar_messageChannelSuffix';
+        'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[position],
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {

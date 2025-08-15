@@ -631,18 +631,18 @@ public class Messages {
   }
   /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
   public interface VideoPlayerInstanceApi {
-
+    /** Sets whether to automatically loop playback of the video. */
     void setLooping(@NonNull Boolean looping);
-
+    /** Sets the volume, with 0.0 being muted and 1.0 being full volume. */
     void setVolume(@NonNull Double volume);
-
+    /** Sets the playback speed as a multiple of normal speed. */
     void setPlaybackSpeed(@NonNull Double speed);
-
+    /** Begins playback if the video is not currently playing. */
     void play();
-
-    void seekTo(@NonNull Long position);
-
+    /** Pauses playback if the video is currently playing. */
     void pause();
+    /** Seeks to the given playback position, in milliseconds. */
+    void seekTo(@NonNull Long position);
     /**
      * Returns the current playback state.
      *
@@ -772,17 +772,15 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo"
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause"
                     + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
-                ArrayList<Object> args = (ArrayList<Object>) message;
-                Long positionArg = (Long) args.get(0);
                 try {
-                  api.seekTo(positionArg);
+                  api.pause();
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);
@@ -797,15 +795,17 @@ public class Messages {
         BasicMessageChannel<Object> channel =
             new BasicMessageChannel<>(
                 binaryMessenger,
-                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause"
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo"
                     + messageChannelSuffix,
                 getCodec());
         if (api != null) {
           channel.setMessageHandler(
               (message, reply) -> {
                 ArrayList<Object> wrapped = new ArrayList<>();
+                ArrayList<Object> args = (ArrayList<Object>) message;
+                Long positionArg = (Long) args.get(0);
                 try {
-                  api.pause();
+                  api.seekTo(positionArg);
                   wrapped.add(0, null);
                 } catch (Throwable exception) {
                   wrapped = wrapError(exception);

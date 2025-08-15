@@ -11,6 +11,12 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'messages.g.dart';
 import 'platform_view_player.dart';
 
+/// The string to append a player ID to in order to construct the event channel
+/// name for the event channel used to receive player state updates.
+///
+/// Must match the string used to create the EventChannel on the Java side.
+const String _videoEventChannelNameBase = 'flutter.io/videoPlayer/videoEvents';
+
 /// The non-test implementation of `_apiProvider`.
 VideoPlayerInstanceApi _productionApiProvider(int playerId) {
   return VideoPlayerInstanceApi(messageChannelSuffix: playerId.toString());
@@ -133,8 +139,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         ),
         VideoViewType.platformView => const _VideoPlayerPlatformViewState(),
       };
-      final String eventChannelName =
-          'flutter.io/videoPlayer/videoEvents$playerId';
+      final String eventChannelName = '$_videoEventChannelNameBase$playerId';
       return _PlayerInstance(
         _playerProvider(playerId),
         viewState,
