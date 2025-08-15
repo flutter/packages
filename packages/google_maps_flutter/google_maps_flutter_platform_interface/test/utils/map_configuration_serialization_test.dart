@@ -22,8 +22,12 @@ void main() {
     final MapConfiguration config = MapConfiguration(
       compassEnabled: false,
       mapToolbarEnabled: false,
-      cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-          northeast: const LatLng(30, 20), southwest: const LatLng(10, 40))),
+      cameraTargetBounds: CameraTargetBounds(
+        LatLngBounds(
+          northeast: const LatLng(30, 20),
+          southwest: const LatLng(10, 40),
+        ),
+      ),
       mapType: MapType.normal,
       minMaxZoomPreference: const MinMaxZoomPreference(1.0, 10.0),
       rotateGesturesEnabled: false,
@@ -56,8 +60,8 @@ void main() {
       'cameraTargetBounds': <Object>[
         <Object>[
           <double>[10.0, 40.0],
-          <double>[30.0, 20.0]
-        ]
+          <double>[30.0, 20.0],
+        ],
       ],
       'mapType': 1,
       'minMaxZoomPreference': <double>[1.0, 10.0],
@@ -85,10 +89,7 @@ void main() {
       cloudMapId: 'cloud-map-id',
     );
     final Map<String, Object> json = jsonForMapConfiguration(config);
-    expect(json, <String, Object>{
-      'mapId': 'map-id',
-      'cloudMapId': 'map-id',
-    });
+    expect(json, <String, Object>{'mapId': 'map-id', 'cloudMapId': 'map-id'});
   });
 
   test('mapId falls back to cloudMapId', () {

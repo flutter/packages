@@ -111,11 +111,15 @@ void main() {
       final gmaps.Circle circle = controller.circles.values.first.circle!;
 
       expect((circle.get('fillColor')! as JSString).toDart, '#fabada');
-      expect((circle.get('fillOpacity')! as JSNumber).toDartDouble,
-          closeTo(0.5, _acceptableDelta));
+      expect(
+        (circle.get('fillOpacity')! as JSNumber).toDartDouble,
+        closeTo(0.5, _acceptableDelta),
+      );
       expect((circle.get('strokeColor')! as JSString).toDart, '#c0ffee');
-      expect((circle.get('strokeOpacity')! as JSNumber).toDartDouble,
-          closeTo(1, _acceptableDelta));
+      expect(
+        (circle.get('strokeOpacity')! as JSNumber).toDartDouble,
+        closeTo(1, _acceptableDelta),
+      );
     });
   });
 
@@ -150,7 +154,9 @@ void main() {
       controller.addPolygons(polygons);
 
       expect(
-          controller.polygons[const PolygonId('1')]?.polygon?.visible, isTrue);
+        controller.polygons[const PolygonId('1')]?.polygon?.visible,
+        isTrue,
+      );
 
       // Update the polygon
       final Set<Polygon> updatedPolygons = <Polygon>{
@@ -160,7 +166,9 @@ void main() {
 
       expect(controller.polygons.length, 1);
       expect(
-          controller.polygons[const PolygonId('1')]?.polygon?.visible, isFalse);
+        controller.polygons[const PolygonId('1')]?.polygon?.visible,
+        isFalse,
+      );
     });
 
     testWidgets('removePolygons', (WidgetTester tester) async {
@@ -202,11 +210,15 @@ void main() {
       final gmaps.Polygon polygon = controller.polygons.values.first.polygon!;
 
       expect((polygon.get('fillColor')! as JSString).toDart, '#fabada');
-      expect((polygon.get('fillOpacity')! as JSNumber).toDartDouble,
-          closeTo(0.5, _acceptableDelta));
+      expect(
+        (polygon.get('fillOpacity')! as JSNumber).toDartDouble,
+        closeTo(0.5, _acceptableDelta),
+      );
       expect((polygon.get('strokeColor')! as JSString).toDart, '#c0ffee');
-      expect((polygon.get('strokeOpacity')! as JSNumber).toDartDouble,
-          closeTo(1, _acceptableDelta));
+      expect(
+        (polygon.get('strokeOpacity')! as JSNumber).toDartDouble,
+        closeTo(1, _acceptableDelta),
+      );
     });
 
     testWidgets('Handle Polygons with holes', (WidgetTester tester) async {
@@ -262,8 +274,9 @@ void main() {
       expect(geometry.poly.containsLocation(pointInHole, polygon!), false);
     });
 
-    testWidgets('Hole Path gets reversed to display correctly',
-        (WidgetTester tester) async {
+    testWidgets('Hole Path gets reversed to display correctly', (
+      WidgetTester tester,
+    ) async {
       final Set<Polygon> polygons = <Polygon>{
         const Polygon(
           polygonId: PolygonId('BermudaTriangle'),
@@ -361,10 +374,7 @@ void main() {
 
     testWidgets('Converts colors to CSS', (WidgetTester tester) async {
       final Set<Polyline> lines = <Polyline>{
-        const Polyline(
-          polylineId: PolylineId('1'),
-          color: Color(0x7FFABADA),
-        ),
+        const Polyline(polylineId: PolylineId('1'), color: Color(0x7FFABADA)),
       };
 
       controller.addPolylines(lines);
@@ -372,8 +382,10 @@ void main() {
       final gmaps.Polyline line = controller.lines.values.first.line!;
 
       expect((line.get('strokeColor')! as JSString).toDart, '#fabada');
-      expect((line.get('strokeOpacity')! as JSNumber).toDartDouble,
-          closeTo(0.5, _acceptableDelta));
+      expect(
+        (line.get('strokeOpacity')! as JSNumber).toDartDouble,
+        closeTo(0.5, _acceptableDelta),
+      );
     });
   });
 
@@ -394,7 +406,7 @@ void main() {
       WeightedLatLng(LatLng(37.785, -122.441)),
       WeightedLatLng(LatLng(37.785, -122.439)),
       WeightedLatLng(LatLng(37.785, -122.437)),
-      WeightedLatLng(LatLng(37.785, -122.435))
+      WeightedLatLng(LatLng(37.785, -122.435)),
     ];
 
     setUp(() {
@@ -497,9 +509,9 @@ void main() {
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: heatmapPoints,
-          gradient: HeatmapGradient(
-            <HeatmapGradientColor>[HeatmapGradientColor(Color(0xFFFABADA), 0)],
-          ),
+          gradient: HeatmapGradient(<HeatmapGradientColor>[
+            HeatmapGradientColor(Color(0xFFFABADA), 0),
+          ]),
           radius: HeatmapRadius.fromPixels(20),
         ),
       };
@@ -510,9 +522,9 @@ void main() {
           controller.heatmaps.values.first.heatmap!;
 
       expect(
-        (heatmap.get('gradient')! as JSArray<JSString>)
-            .toDart
-            .map((JSString? value) => value!.toDart),
+        (heatmap.get('gradient')! as JSArray<JSString>).toDart.map(
+          (JSString? value) => value!.toDart,
+        ),
         <String>['rgba(250, 186, 218, 0.00)', 'rgba(250, 186, 218, 1.00)'],
       );
     });
