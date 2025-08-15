@@ -24,23 +24,13 @@ import 'package:webview_flutter_android/src/android_webkit.g.dart' as _i2;
 
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
-  _FakePigeonInstanceManager_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePigeonInstanceManager_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeCookieManager_1 extends _i1.SmartFake implements _i2.CookieManager {
-  _FakeCookieManager_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeCookieManager_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [CookieManager].
@@ -52,39 +42,32 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
   }
 
   @override
-  _i2.PigeonInstanceManager get pigeon_instanceManager => (super.noSuchMethod(
-        Invocation.getter(#pigeon_instanceManager),
-        returnValue: _FakePigeonInstanceManager_0(
-          this,
-          Invocation.getter(#pigeon_instanceManager),
-        ),
-      ) as _i2.PigeonInstanceManager);
-
-  @override
-  _i3.Future<void> setCookie(
-    String? url,
-    String? value,
-  ) =>
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setCookie,
-          [
-            url,
-            value,
-          ],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<bool> removeAllCookies() => (super.noSuchMethod(
-        Invocation.method(
-          #removeAllCookies,
-          [],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+  _i3.Future<void> setCookie(String? url, String? value) =>
+      (super.noSuchMethod(
+            Invocation.method(#setCookie, [url, value]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<bool> removeAllCookies() =>
+      (super.noSuchMethod(
+            Invocation.method(#removeAllCookies, []),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
 
   @override
   _i3.Future<void> setAcceptThirdPartyCookies(
@@ -92,29 +75,20 @@ class MockCookieManager extends _i1.Mock implements _i2.CookieManager {
     bool? accept,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setAcceptThirdPartyCookies,
-          [
-            webView,
-            accept,
-          ],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+            Invocation.method(#setAcceptThirdPartyCookies, [webView, accept]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i2.CookieManager pigeon_copy() => (super.noSuchMethod(
-        Invocation.method(
-          #pigeon_copy,
-          [],
-        ),
-        returnValue: _FakeCookieManager_1(
-          this,
-          Invocation.method(
-            #pigeon_copy,
-            [],
-          ),
-        ),
-      ) as _i2.CookieManager);
+  _i2.CookieManager pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeCookieManager_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.CookieManager);
 }
